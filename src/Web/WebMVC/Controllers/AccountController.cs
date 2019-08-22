@@ -11,6 +11,8 @@ using System;
 
 namespace Microsoft.eShopOnContainers.WebMVC.Controllers
 {
+    //No test
+
     [Authorize]
     public class AccountController : Controller
     {
