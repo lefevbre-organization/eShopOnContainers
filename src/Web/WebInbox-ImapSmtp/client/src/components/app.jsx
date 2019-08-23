@@ -155,9 +155,7 @@ class App extends Component {
           >
 
               <div>
-
                   <MainBar sideBarCollapsed={sideBar.collapsed} sideBarToggle={this.toggleSideBar} />
-
                   <TopBar sideBarCollapsed={sideBar.collapsed} sideBarToggle={this.toggleSideBar} />
                   <div id="mainnav-app" />
                   {/*<SplitPane split="vertical" minSize={200} maxSize={800} defaultSize={450}  primary="second">*/}
