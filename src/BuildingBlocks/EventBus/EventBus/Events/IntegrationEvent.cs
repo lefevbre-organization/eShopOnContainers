@@ -1,4 +1,6 @@
 ﻿using System;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
 namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events
@@ -22,6 +24,6 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events
         public Guid Id { get; private set; }
 
         [JsonProperty]
-        public DateTime CreationDate { get; private set; }
+        public DateTime CreationDate { get; internal set; }
     }
 }
