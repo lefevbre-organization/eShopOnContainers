@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Logging;
 using System;
 
+// Test
+
 namespace Microsoft.eShopOnContainers.WebMVC.Controllers
 {
     [Authorize]
