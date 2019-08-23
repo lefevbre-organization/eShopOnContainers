@@ -1,0 +1,491 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{89de7b78-bdf6-4095-8587-6f540a8b1096}</ProjectGuid>
+    <ProjectHome>
+    </ProjectHome>
+    <ProjectView>ShowAllFiles</ProjectView>
+    <StartupFile />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <LastActiveSolutionConfig>Debug|Any CPU</LastActiveSolutionConfig>
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+    <Name>WebInbox-ImapSmtp</Name>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <ItemGroup>
+    <Content Include=".dockerignore" />
+    <Content Include=".travis.yml" />
+    <Content Include="client\.eslintignore" />
+    <Content Include="client\.eslintrc" />
+    <Content Include="client\assets\images\calendarfake.png" />
+    <Content Include="client\assets\images\googlefake.png" />
+    <Content Include="client\assets\images\icon-calendar.png" />
+    <Content Include="client\assets\images\icon-compliance.png" />
+    <Content Include="client\assets\images\icon-lexon.png" />
+    <Content Include="client\assets\images\icon-products.png" />
+    <Content Include="client\assets\images\icon-qmemento.png" />
+    <Content Include="client\assets\images\icon-user.png" />
+    <Content Include="client\assets\images\imap.png" />
+    <Content Include="client\assets\images\lefevbre-logo.png" />
+    <Content Include="client\assets\images\lexon-fake-null.png" />
+    <Content Include="client\assets\images\lexon-fake.png" />
+    <Content Include="client\assets\images\LogoLefebvre.png" />
+    <Content Include="client\assets\images\settings-gears.svg" />
+    <Content Include="client\src\components\app.scss" />
+    <Content Include="client\src\components\attachment\attachment-card.scss" />
+    <Content Include="client\src\components\dialog\single-input-dialog.scss" />
+    <Content Include="client\src\components\folders\folder-container.scss" />
+    <Content Include="client\src\components\folders\folder-item.scss" />
+    <Content Include="client\src\components\folders\folder-list.scss" />
+    <Content Include="client\src\components\login\login.scss" />
+    <Content Include="client\src\components\Main-bar\button-user.scss" />
+    <Content Include="client\src\components\Main-bar\button-modules.scss" />
+    <Content Include="client\src\components\main-bar\filter-dialog-user.scss" />
+    <Content Include="client\src\components\Main-bar\filter-dialog.scss" />
+    <Content Include="client\src\components\Main-bar\top-bar-user-button.scss" />
+    <Content Include="client\src\components\Main-bar\top-bar-message-list.scss" />
+    <Content Include="client\src\components\Main-bar\top-bar-button.scss" />
+    <Content Include="client\src\components\Main-bar\main-bar.scss" />
+    <Content Include="client\src\components\message-editor\message-editor.scss" />
+    <Content Include="client\src\components\message-list\message-list.scss" />
+    <Content Include="client\src\components\message-viewer\header-to.scss" />
+    <Content Include="client\src\components\message-viewer\message-viewer.scss" />
+    <Content Include="client\src\components\settings\settings.scss" />
+    <Content Include="client\src\components\side-bar\side-bar.scss" />
+    <Content Include="client\src\components\top-bar\button-filter.scss" />
+    <Content Include="client\src\components\top-bar\filter-dialog.scss" />
+    <Content Include="client\src\components\top-bar\top-bar-button.scss" />
+    <Content Include="client\src\components\top-bar\top-bar.scss" />
+    <Content Include="client\src\lex-on_connector\main.scss">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="client\src\styles\main.scss" />
+    <Content Include="client\src\styles\partials\_base.scss" />
+    <Content Include="client\src\styles\partials\_fonts.scss" />
+    <Content Include="client\src\styles\partials\_mdc-checkbox-extended.scss" />
+    <Content Include="client\src\styles\partials\_mdc-snackbar-extended.scss" />
+    <Content Include="client\src\styles\partials\_mdc-switch-extended.scss" />
+    <Content Include="client\src\styles\partials\_mdc-textfield-extended.scss" />
+    <Content Include="client\src\styles\partials\_mixins.scss" />
+    <Content Include="client\src\styles\partials\_spinner.scss" />
+    <Content Include="client\src\styles\partials\_tinymce.scss" />
+    <Content Include="client\src\styles\partials\_tooltip.scss" />
+    <Content Include="client\src\styles\partials\_variables.scss" />
+    <Content Include="Dockerfile-client" />
+    <Content Include="Dockerfile-server" />
+    <Content Include="dockerfile" />
+    <Content Include="docker\nginx\default.conf" />
+    <o Include="docker\traefik\docker-compose.yml" />
+    <Content Include="package.json" />
+    <Content Include="README.md" />
+    <Content Include="client\package.json" />
+    <Content Include="client\babel.config.js" />
+    <Content Include="client\jest-setup.js" />
+    <Content Include="client\webpack.config.js" />
+    <Content Include="client\src\index.html" />
+    <Content Include="client\src\favicon.ico" />
+    <Content Include="client\src\index.jsx" />
+    <Content Include="client\assets\favicons\favicon-16x16.png" />
+    <Content Include="client\assets\favicons\favicon-32x32.png" />
+    <Content Include="client\assets\favicons\favicon-96x96.png" />
+    <Content Include="client\assets\images\notification-icon.png" />
+    <Content Include="client\assets\images\logo_loading.gif" />
+    <Content Include="client\assets\locales\en\isotope.json" />
+    <Content Include="client\assets\locales\es\isotope.json" />
+    <Content Include="client\src\actions\action-types.js" />
+    <Content Include="client\src\actions\application.js" />
+    <Content Include="client\src\actions\folders.js" />
+    <Content Include="client\src\actions\login.js" />
+    <Content Include="client\src\actions\messages.js" />
+    <Content Include="client\src\components\app.jsx" />
+    <Content Include="client\src\polyfills\eventsource.js" />
+    <Content Include="client\src\polyfills\IDBIndex.js" />
+    <Content Include="client\src\reducers\application.js" />
+    <Content Include="client\src\reducers\folders.js" />
+    <Content Include="client\src\reducers\index.js" />
+    <Content Include="client\src\reducers\login.js" />
+    <Content Include="client\src\reducers\messages.js" />
+    <Content Include="client\src\routes\history.js" />
+    <Content Include="client\src\routes\private-route.jsx" />
+    <Content Include="client\src\routes\routes.jsx" />
+    <Content Include="client\src\selectors\application.js" />
+    <Content Include="client\src\selectors\folders.js" />
+    <Content Include="client\src\selectors\messages.js" />
+    <Content Include="client\src\services\application.js" />
+    <Content Include="client\src\services\base64.js" />
+    <Content Include="client\src\services\debounce.js" />
+    <Content Include="client\src\services\fetch.js" />
+    <Content Include="client\src\services\folder.js" />
+    <Content Include="client\src\services\i18n.js" />
+    <Content Include="client\src\services\indexed-db.js" />
+    <Content Include="client\src\services\message-addresses.js" />
+    <Content Include="client\src\services\message-filters.js" />
+    <Content Include="client\src\services\message-read.js" />
+    <Content Include="client\src\services\message.js" />
+    <Content Include="client\src\services\notification.js" />
+    <Content Include="client\src\services\prettify.js" />
+    <Content Include="client\src\services\provider.js" />
+    <Content Include="client\src\services\sanitize.js" />
+    <Content Include="client\src\services\sjcl.worker.js" />
+    <Content Include="client\src\services\smtp.js" />
+    <Content Include="client\src\services\url.js" />
+    <Content Include="client\src\services\validation.js" />
+    <Content Include="client\src\__testutils__\enzyme-utils.js" />
+    <Content Include="client\src\__testutils__\store.js" />
+    <Content Include="client\src\components\attachment\attachment-card.jsx" />
+    <Content Include="client\src\components\buttons\button.jsx" />
+    <Content Include="client\src\components\buttons\icon-button.jsx" />
+    <Content Include="client\src\components\dialog\dialog.jsx" />
+    <Content Include="client\src\components\dialog\single-input-dialog.jsx" />
+    <Content Include="client\src\components\folders\folder-container.jsx" />
+    <Content Include="client\src\components\folders\folder-create-dialog.jsx" />
+    <Content Include="client\src\components\folders\folder-item.jsx" />
+    <Content Include="client\src\components\folders\folder-list.jsx" />
+    <Content Include="client\src\components\folders\folder-rename-dialog.jsx" />
+    <Content Include="client\src\components\login\login-snackbar.jsx" />
+    <Content Include="client\src\components\login\login.jsx" />
+    <Content Include="client\src\components\message-editor\editor-buttons.js" />
+    <Content Include="client\src\components\message-editor\editor-config.js" />
+    <Content Include="client\src\components\message-editor\header-address.jsx" />
+    <Content Include="client\src\components\message-editor\insert-link-dialog.jsx" />
+    <Content Include="client\src\components\message-editor\mce-button.jsx" />
+    <Content Include="client\src\components\message-editor\message-editor.jsx" />
+    <Content Include="client\src\components\message-list\clear-folder-list-item.jsx" />
+    <Content Include="client\src\components\message-list\confirm-clear-folder-dialog.jsx" />
+    <Content Include="client\src\components\message-list\message-list.jsx" />
+    <Content Include="client\src\components\message-snackbar\message-snackbar.jsx" />
+    <Content Include="client\src\components\message-viewer\header-to.jsx" />
+    <Content Include="client\src\components\message-viewer\message-viewer.jsx" />
+    <Content Include="client\src\components\side-bar\side-bar.jsx" />
+    <Content Include="client\src\components\snackbar\snackbar.jsx" />
+    <Content Include="client\src\components\spinner\spinner.jsx" />
+    <Content Include="client\src\components\top-bar\button-collapse.jsx" />
+    <Content Include="client\src\components\top-bar\button-filter.jsx" />
+    <Content Include="client\src\components\top-bar\button-forward.jsx" />
+    <Content Include="client\src\components\top-bar\button-reply.jsx" />
+    <Content Include="client\src\components\top-bar\confirm-delete-from-trash-dialog.jsx" />
+    <Content Include="client\src\components\top-bar\filter-dialog.jsx" />
+    <Content Include="client\src\components\top-bar\top-bar-button.jsx" />
+    <Content Include="client\src\components\top-bar\top-bar-message-editor.jsx" />
+    <Content Include="client\src\components\top-bar\top-bar-message-list.jsx" />
+    <Content Include="client\src\components\top-bar\top-bar-message-viewer.jsx" />
+    <Content Include="client\src\components\top-bar\top-bar.jsx" />
+    <Content Include="client\src\components\attachment\__tests__\attachment-card.test.jsx" />
+    <Content Include="client\src\components\buttons\__tests__\button.test.jsx" />
+    <Content Include="client\src\components\buttons\__tests__\icon-button.test.jsx" />
+    <Content Include="client\src\components\dialog\__tests__\dialog.test.jsx" />
+    <Content Include="client\src\components\dialog\__tests__\single-input-dialog.test.jsx" />
+    <Content Include="client\src\components\folders\__tests__\folder-container.test.jsx" />
+    <Content Include="client\src\components\folders\__tests__\folder-create-dialog.test.jsx" />
+    <Content Include="client\src\components\folders\__tests__\folder-item.test.jsx" />
+    <Content Include="client\src\components\folders\__tests__\folder-list.test.jsx" />
+    <Content Include="client\src\components\folders\__tests__\folder-rename-dialog.test.jsx" />
+    <Content Include="client\src\components\form\checkbox\checkbox.jsx" />
+    <Content Include="client\src\components\form\switch\switch.jsx" />
+    <Content Include="client\src\components\form\text-field\text-field.jsx" />
+    <Content Include="client\src\components\form\checkbox\__tests__\checkbox.test.jsx" />
+    <Content Include="client\src\components\form\switch\__tests__\switch.test.jsx" />
+    <Content Include="client\src\components\form\text-field\__tests__\text-field.test.jsx" />
+    <Content Include="client\src\components\login\__tests__\login-snackbar.test.jsx" />
+    <Content Include="client\src\components\login\__tests__\login.test.jsx" />
+    <Content Include="client\src\components\message-editor\__tests__\editor-buttons.test.js" />
+    <Content Include="client\src\components\message-editor\__tests__\header-address.test.jsx" />
+    <Content Include="client\src\components\message-editor\__tests__\insert-link-dialog.test.jsx" />
+    <Content Include="client\src\components\message-editor\__tests__\mce-button.test.jsx" />
+    <Content Include="client\src\components\message-list\__tests__\clear-folder-list-item.test.jsx" />
+    <Content Include="client\src\components\message-list\__tests__\confirm-clear-folder-dialog.test.jsx" />
+    <Content Include="client\src\components\message-snackbar\__tests__\message-snackbar.test.jsx" />
+    <Content Include="client\src\components\message-viewer\__tests__\message-viewer.test.jsx" />
+    <Content Include="client\src\components\snackbar\__tests__\snackbar.test.jsx" />
+    <Content Include="client\src\components\top-bar\__tests__\button-collapse.test.jsx" />
+    <Content Include="client\src\components\top-bar\__tests__\button-filter.test.jsx" />
+    <Content Include="client\src\components\top-bar\__tests__\button-forward.test.jsx" />
+    <Content Include="client\src\components\top-bar\__tests__\button-reply.test.jsx" />
+    <Content Include="client\src\components\top-bar\__tests__\confirm-delete-from-trash-dialog.test.jsx" />
+    <Content Include="client\src\components\top-bar\__tests__\filter-dialog.test.jsx" />
+    <Content Include="client\src\components\top-bar\__tests__\top-bar-button.test.jsx" />
+    <Content Include="client\src\components\top-bar\__tests__\top-bar-message-editor.test.jsx" />
+    <Content Include="client\src\components\top-bar\__tests__\top-bar-message-list.test.jsx" />
+    <Content Include="client\src\components\top-bar\__tests__\top-bar-message-viewer.test.jsx" />
+    <Content Include="client\src\components\top-bar\__tests__\top-bar.test.jsx" />
+    <Content Include="client\src\reducers\__tests__\application.test.js" />
+    <Content Include="client\src\reducers\__tests__\folders.test.js" />
+    <Content Include="client\src\reducers\__tests__\login.test.js" />
+    <Content Include="client\src\reducers\__tests__\messages.test.js" />
+    <Content Include="client\src\selectors\__tests__\application.test.js" />
+    <Content Include="client\src\selectors\__tests__\folders.test.js" />
+    <Content Include="client\src\selectors\__tests__\messages.test.js" />
+    <Content Include="client\src\services\__tests__\application.test.js" />
+    <Content Include="client\src\services\__tests__\base64.test.js" />
+    <Content Include="client\src\services\__tests__\debounce.test.js" />
+    <Content Include="client\src\services\__tests__\fetch.test.js" />
+    <Content Include="client\src\services\__tests__\folder.test.js" />
+    <Content Include="client\src\services\__tests__\message-addresses.test.js" />
+    <Content Include="client\src\services\__tests__\message-filters.test.js" />
+    <Content Include="client\src\services\__tests__\message-read.test.js" />
+    <Content Include="client\src\services\__tests__\message.test.js" />
+    <Content Include="client\src\services\__tests__\notification.test.js" />
+    <Content Include="client\src\services\__tests__\state.test.js" />
+    <Content Include="client\src\services\__tests__\validation.test.js" />
+    <Content Include="server\.gradle\4.8.1\fileChanges\last-build.bin" />
+    <Content Include="server\.gradle\4.8.1\fileContent\annotation-processors.bin" />
+    <Content Include="server\.gradle\4.8.1\fileContent\fileContent.lock" />
+    <Content Include="server\.gradle\4.8.1\fileHashes\fileHashes.bin" />
+    <Content Include="server\.gradle\4.8.1\fileHashes\fileHashes.lock" />
+    <Content Include="server\.gradle\4.8.1\fileHashes\resourceHashesCache.bin" />
+    <Content Include="server\.gradle\4.8.1\taskHistory\taskHistory.bin" />
+    <Content Include="server\.gradle\4.8.1\taskHistory\taskHistory.lock" />
+    <Content Include="server\.gradle\buildOutputCleanup\buildOutputCleanup.lock" />
+    <Content Include="server\.gradle\buildOutputCleanup\cache.properties" />
+    <Content Include="server\.gradle\buildOutputCleanup\outputFiles.bin" />
+    <Content Include="server\.gradle\vcsWorkingDirs\gc.properties" />
+    <Content Include="server\build.gradle" />
+    <Content Include="server\build\libs\api-0.0.1-SNAPSHOT.jar" />
+    <Content Include="server\gradlew" />
+    <Content Include="server\gradlew.bat" />
+    <Content Include="server\gradle\wrapper\gradle-wrapper.jar" />
+    <Content Include="server\gradle\wrapper\gradle-wrapper.properties" />
+    <Content Include="server\settings.gradle" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\application\ApplicationResource.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\configuration\IsotopeApiConfiguration.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\configuration\IsotopeControllerAdvice.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\configuration\SecurityConfiguration.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\configuration\SSLConfiguration.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\configuration\WebConfiguration.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\credentials\Credentials.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\credentials\CredentialsAuthenticationFilter.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\credentials\CredentialsRefreshFilter.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\credentials\CredentialsService.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\exception\AuthenticationException.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\exception\InvalidFieldException.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\exception\IsotopeException.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\exception\NotFoundException.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\folder\Folder.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\folder\FolderResource.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\folder\FolderUtils.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\http\HttpHeaders.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\http\IsotopeURLDataSource.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\imap\ImapService.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\imap\MessageFluxSinkConsumer.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\IsotopeApiApplication.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\message\Attachment.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\message\Message.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\message\MessageUtils.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\message\MessageWithFolder.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\message\Recipient.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\resource\IsotopeResource.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\resource\LinkDeserializer.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\resource\LinkSerializer.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\smtp\SmtpResource.java" />
+    <Content Include="server\src\main\java\com\marcnuri\isotope\api\smtp\SmtpService.java" />
+    <Content Include="server\src\main\resources\application.properties" />
+    <Content Include="server\src\main\resources\logback-spring.xml" />
+    <Content Include="server\src\test\java\com\marcnuri\isotope\api\configuration\WithMockCredentials.java" />
+    <Content Include="server\src\test\java\com\marcnuri\isotope\api\configuration\WithMockCredentialsSecurityContextFactory.java" />
+    <Content Include="server\src\test\java\com\marcnuri\isotope\api\credentials\CredentialsAuthenticationFilterTest.java" />
+    <Content Include="server\src\test\java\com\marcnuri\isotope\api\credentials\CredentialsRefreshFilterTest.java" />
+    <Content Include="server\src\test\java\com\marcnuri\isotope\api\credentials\CredentialsServiceTest.java" />
+    <Content Include="server\src\test\java\com\marcnuri\isotope\api\folder\FolderResourceTest.java" />
+    <Content Include="server\src\test\java\com\marcnuri\isotope\api\folder\FolderTest.java" />
+    <Content Include="server\src\test\java\com\marcnuri\isotope\api\folder\FolderUtilsTest.java" />
+    <Content Include="server\src\test\java\com\marcnuri\isotope\api\imap\ImapServiceTest.java" />
+    <Content Include="server\src\test\java\com\marcnuri\isotope\api\message\MessageUtilsTest.java" />
+    <Content Include="server\src\test\java\com\marcnuri\isotope\api\smtp\SmtpResourceTest.java" />
+    <Content Include="server\src\test\java\com\marcnuri\isotope\api\smtp\SmtpServiceTest.java" />
+    <Content Include="sonar-project.properties" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="client" />
+    <Folder Include="client\assets" />
+    <Folder Include="client\assets\favicons" />
+    <Folder Include="client\assets\images" />
+    <Folder Include="client\assets\locales" />
+    <Folder Include="client\assets\locales\en" />
+    <Folder Include="client\assets\locales\es" />
+    <Folder Include="client\src" />
+    <Folder Include="client\src\apps\" />
+    <Folder Include="client\src\components\main-bar\" />
+    <Folder Include="client\src\components\main-bar\__tests__\" />
+    <Folder Include="client\src\components\settings\" />
+    <Folder Include="client\src\__testutils__" />
+    <Folder Include="client\src\actions" />
+    <Folder Include="client\src\components" />
+    <Folder Include="client\src\components\attachment" />
+    <Folder Include="client\src\components\attachment\__tests__" />
+    <Folder Include="client\src\components\attachment\__tests__\__snapshots__" />
+    <Folder Include="client\src\components\buttons" />
+    <Folder Include="client\src\components\buttons\__tests__" />
+    <Folder Include="client\src\components\buttons\__tests__\__snapshots__" />
+    <Folder Include="client\src\components\dialog" />
+    <Folder Include="client\src\components\dialog\__tests__" />
+    <Folder Include="client\src\components\dialog\__tests__\__snapshots__" />
+    <Folder Include="client\src\components\folders" />
+    <Folder Include="client\src\components\folders\__tests__" />
+    <Folder Include="client\src\components\folders\__tests__\__snapshots__" />
+    <Folder Include="client\src\components\form" />
+    <Folder Include="client\src\components\form\checkbox" />
+    <Folder Include="client\src\components\form\checkbox\__tests__" />
+    <Folder Include="client\src\components\form\checkbox\__tests__\__snapshots__" />
+    <Folder Include="client\src\components\form\switch" />
+    <Folder Include="client\src\components\form\switch\__tests__" />
+    <Folder Include="client\src\components\form\switch\__tests__\__snapshots__" />
+    <Folder Include="client\src\components\form\text-field" />
+    <Folder Include="client\src\components\form\text-field\__tests__" />
+    <Folder Include="client\src\components\form\text-field\__tests__\__snapshots__" />
+    <Folder Include="client\src\components\login" />
+    <Folder Include="client\src\components\login\__tests__" />
+    <Folder Include="client\src\components\login\__tests__\__snapshots__" />
+    <Folder Include="client\src\components\message-editor" />
+    <Folder Include="client\src\components\message-editor\__tests__" />
+    <Folder Include="client\src\components\message-editor\__tests__\__snapshots__" />
+    <Folder Include="client\src\components\message-list" />
+    <Folder Include="client\src\components\message-list\__tests__" />
+    <Folder Include="client\src\components\message-list\__tests__\__snapshots__" />
+    <Folder Include="client\src\components\message-snackbar" />
+    <Folder Include="client\src\components\message-snackbar\__tests__" />
+    <Folder Include="client\src\components\message-snackbar\__tests__\__snapshots__" />
+    <Folder Include="client\src\components\message-viewer" />
+    <Folder Include="client\src\components\message-viewer\__tests__" />
+    <Folder Include="client\src\components\message-viewer\__tests__\__snapshots__" />
+    <Folder Include="client\src\components\side-bar" />
+    <Folder Include="client\src\components\snackbar" />
+    <Folder Include="client\src\components\snackbar\__tests__" />
+    <Folder Include="client\src\components\snackbar\__tests__\__snapshots__" />
+    <Folder Include="client\src\components\spinner" />
+    <Folder Include="client\src\components\top-bar" />
+    <Folder Include="client\src\components\top-bar\__tests__" />
+    <Folder Include="client\src\components\top-bar\__tests__\__snapshots__" />
+    <Folder Include="client\src\polyfills" />
+    <Folder Include="client\src\reducers" />
+    <Folder Include="client\src\reducers\__tests__" />
+    <Folder Include="client\src\routes" />
+    <Folder Include="client\src\selectors" />
+    <Folder Include="client\src\selectors\__tests__" />
+    <Folder Include="client\src\services" />
+    <Folder Include="client\src\services\__tests__" />
+    <Folder Include="client\src\styles" />
+    <Folder Include="client\src\styles\partials" />
+    <Folder Include="doc" />
+    <Folder Include="docker" />
+    <Folder Include="docker\nginx" />
+    <Folder Include="docker\traefik" />
+    <Folder Include="client\src\lex-on_connector\" />
+    <Folder Include="server" />
+    <Folder Include="server\.gradle\" />
+    <Folder Include="server\.gradle\4.8.1\" />
+    <Folder Include="server\.gradle\4.8.1\fileChanges\" />
+    <Folder Include="server\.gradle\4.8.1\fileContent\" />
+    <Folder Include="server\.gradle\4.8.1\fileHashes\" />
+    <Folder Include="server\.gradle\4.8.1\taskHistory\" />
+    <Folder Include="server\.gradle\buildOutputCleanup\" />
+    <Folder Include="server\.gradle\vcsWorkingDirs\" />
+    <Folder Include="server\build\" />
+    <Folder Include="server\build\libs\" />
+    <Folder Include="server\gradle\" />
+    <Folder Include="server\gradle\wrapper\" />
+    <Folder Include="server\src" />
+    <Folder Include="server\src\main" />
+    <Folder Include="server\src\main\java" />
+    <Folder Include="server\src\main\java\com" />
+    <Folder Include="server\src\main\java\com\marcnuri" />
+    <Folder Include="server\src\main\java\com\marcnuri\isotope" />
+    <Folder Include="server\src\main\java\com\marcnuri\isotope\api" />
+    <Folder Include="server\src\main\java\com\marcnuri\isotope\api\application" />
+    <Folder Include="server\src\main\java\com\marcnuri\isotope\api\configuration" />
+    <Folder Include="server\src\main\java\com\marcnuri\isotope\api\credentials" />
+    <Folder Include="server\src\main\java\com\marcnuri\isotope\api\exception" />
+    <Folder Include="server\src\main\java\com\marcnuri\isotope\api\folder" />
+    <Folder Include="server\src\main\java\com\marcnuri\isotope\api\http" />
+    <Folder Include="server\src\main\java\com\marcnuri\isotope\api\imap" />
+    <Folder Include="server\src\main\java\com\marcnuri\isotope\api\message" />
+    <Folder Include="server\src\main\java\com\marcnuri\isotope\api\resource" />
+    <Folder Include="server\src\main\java\com\marcnuri\isotope\api\smtp" />
+    <Folder Include="server\src\main\resources" />
+    <Folder Include="server\src\test" />
+    <Folder Include="server\src\test\java" />
+    <Folder Include="server\src\test\java\com" />
+    <Folder Include="server\src\test\java\com\marcnuri" />
+    <Folder Include="server\src\test\java\com\marcnuri\isotope" />
+    <Folder Include="server\src\test\java\com\marcnuri\isotope\api" />
+    <Folder Include="server\src\test\java\com\marcnuri\isotope\api\configuration" />
+    <Folder Include="server\src\test\java\com\marcnuri\isotope\api\credentials" />
+    <Folder Include="server\src\test\java\com\marcnuri\isotope\api\folder" />
+    <Folder Include="server\src\test\java\com\marcnuri\isotope\api\imap" />
+    <Folder Include="server\src\test\java\com\marcnuri\isotope\api\message" />
+    <Folder Include="server\src\test\java\com\marcnuri\isotope\api\smtp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="client\src\apps\lexonconn-app.js" />
+    <Compile Include="client\src\apps\mainnav-app.js" />
+    <Compile Include="client\src\apps\material_title_panel.js" />
+    <Compile Include="client\src\apps\sidebar_content.js" />
+    <Compile Include="client\src\apps\utils.js" />
+    <Compile Include="client\src\components\Main-bar\button-user.jsx" />
+    <Compile Include="client\src\components\Main-bar\button-modules.jsx" />
+    <Compile Include="client\src\components\main-bar\filter-dialog-user.jsx" />
+    <Compile Include="client\src\components\Main-bar\filter-dialog.jsx" />
+    <Compile Include="client\src\components\Main-bar\top-bar-user-button.jsx" />
+    <Compile Include="client\src\components\Main-bar\top-bar-button.jsx" />
+    <Compile Include="client\src\components\Main-bar\top-bar-message-list.jsx" />
+    <Compile Include="client\src\components\Main-bar\main-bar.jsx" />
+    <Compile Include="client\src\components\settings\settings.jsx" />
+    <Compile Include="client\src\lex-on_connector\index.js" />
+    <Compile Include="client\src\lex-on_connector\list.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="client\src\lex-on_connector\main.js" />
+    <Compile Include="client\src\services\state.js" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <!--Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them.-->
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
+  <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:48022/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

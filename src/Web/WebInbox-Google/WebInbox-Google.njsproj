@@ -1,0 +1,232 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9efbf2b2-eb6b-4fde-8797-9436208ada8d}</ProjectGuid>
+    <ProjectHome>
+    </ProjectHome>
+    <ProjectView>ShowAllFiles</ProjectView>
+    <StartupFile />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <LastActiveSolutionConfig>Debug|Any CPU</LastActiveSolutionConfig>
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+    <StartWebBrowser>False</StartWebBrowser>
+    <SaveNodeJsSettingsInProjectFile>True</SaveNodeJsSettingsInProjectFile>
+    <Name>WebInbox-Google</Name>
+    <NameOfLastUsedPublishProfile>WebInbox-Google20190319014241 - Web Deploy</NameOfLastUsedPublishProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <ItemGroup>
+    <Content Include=".dockerignore" />
+    <Content Include=".env" />
+    <Content Include="package.json" />
+    <Content Include="public\assets\css\customBootstrap.css" />
+    <Content Include="public\assets\img\file-extensions\default.png" />
+    <Content Include="public\assets\img\file-extensions\doc.png" />
+    <Content Include="public\assets\img\file-extensions\jpg.png" />
+    <Content Include="public\assets\img\file-extensions\pdf.png" />
+    <Content Include="public\assets\img\file-extensions\png.png" />
+    <Content Include="public\assets\img\file-extensions\txt.png" />
+    <Content Include="public\assets\img\gmail-logo.png" />
+    <Content Include="public\assets\img\gmail.png" />
+    <Content Include="public\assets\img\lefebvre-logo.png" />
+    <Content Include="public\assets\img\logo-elderecho.png" />
+    <Content Include="public\assets\img\logoGoogle-mini.png" />
+    <Content Include="public\assets\img\menu.png" />
+    <Content Include="public\assets\img\microservices.png" />
+    <Content Include="public\assets\img\react-template.png" />
+    <Content Include="public\assets\img\settings-gears.svg" />
+    <Content Include="public\assets\img\singinms.png" />
+    <Content Include="public\assets\locales\en\isotope.json" />
+    <Content Include="public\assets\locales\es\isotope.json" />
+    <Content Include="public\assets\scss\_mixins.scss" />
+    <Content Include="public\assets\scss\_variables.scss" />
+    <Content Include="public\favicon.ico" />
+    <Content Include="public\uppy.min.css" />
+    <Content Include="public\web.config" />
+    <Content Include="README.md" />
+    <Content Include="config.jsx" />
+    <Content Include="public\index.html" />
+    <Content Include="src\App.css" />
+    <Content Include="src\components\aside\aside.scss" />
+    <Content Include="src\components\common\checkbox.scss" />
+    <Content Include="src\components\compose-message\composeMessage.scss" />
+    <Content Include="src\components\content\message-list\list-footer\ListFooter.scss" />
+    <Content Include="src\components\content\message-list\list-toolbar\listToolbar.scss" />
+    <Content Include="src\components\content\message-list\message-content\messageContent.scss" />
+    <Content Include="src\components\content\message-list\message-toolbar\messageToolbar.scss" />
+    <Content Include="src\components\content\message-list\messageList.scss" />
+    <Content Include="src\components\header\header.scss" />
+    <Content Include="src\components\main\main-docks\main_bot.scss" />
+    <Content Include="src\components\main\main.scss" />
+    <Content Include="src\components\sidebar\sidebar.scss" />
+    <Content Include="src\index.css" />
+    <Content Include="src\App.js" />
+    <Content Include="src\index.js" />
+    <Content Include="src\lex-on_connector\main.scss" />
+    <Content Include="src\serviceWorker.js" />
+    <Content Include="src\AppContainer.jsx" />
+    <Content Include="src\store.jsx" />
+    <Content Include="src\api\authentication.jsx" />
+    <Content Include="src\api\scripts.jsx" />
+    <Content Include="src\api\utils.jsx" />
+    <Content Include="src\constants\index.jsx" />
+    <Content Include="src\reducers\gapi.reducers.jsx" />
+    <Content Include="src\reducers\rootReducer.jsx" />
+    <Content Include="src\utils\index.jsx" />
+    <Content Include="src\components\authenticating\Authenticating.jsx" />
+    <Content Include="src\components\common\Checkbox.jsx" />
+    <Content Include="src\components\header\Header.jsx" />
+    <Content Include="src\components\login\Login.jsx" />
+    <Content Include="src\components\main\main-docks\Main-dock.jsx" />
+    <Content Include="src\components\not-found\NotFound.jsx" />
+    <Content Include="src\components\sidebar\LabelItem.jsx" />
+    <Content Include="src\components\sidebar\sidebar.actions.jsx" />
+    <Content Include="src\components\sidebar\Sidebar.jsx" />
+    <Content Include="src\components\sidebar\sidebar.reducers.jsx" />
+    <Content Include="src\components\signout\Signout.jsx" />
+    <Content Include="src\components\content\message-list\MessageList.jsx" />
+    <Content Include="src\components\content\message-list\actions\message-list.actions.jsx" />
+    <Content Include="src\components\content\message-list\list-footer\ListFooter.jsx" />
+    <Content Include="src\components\content\message-list\list-toolbar\ListActionButtons.jsx" />
+    <Content Include="src\components\content\message-list\list-toolbar\ListToolbar.jsx" />
+    <Content Include="src\components\content\message-list\message-content\MessageContent.jsx" />
+    <Content Include="src\components\content\message-list\message-row\AttachmentDateFields.jsx" />
+    <Content Include="src\components\content\message-list\message-row\MessageCheckbox.jsx" />
+    <Content Include="src\components\content\message-list\message-row\MessageRow.jsx" />
+    <Content Include="src\components\content\message-list\message-row\NameSubjectFields.jsx" />
+    <Content Include="src\components\content\message-list\message-toolbar\MessageToolbar.jsx" />
+    <Content Include="src\components\content\message-list\pager-buttons\PagerButtons.jsx" />
+    <Content Include="src\components\content\message-list\reducers\message-list.reducers.jsx" />
+    <Content Include="web.config" />
+    <Content Include="yarn.lock" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="public" />
+    <Folder Include="public\assets\" />
+    <Folder Include="public\assets\css\" />
+    <Folder Include="public\assets\img\" />
+    <Folder Include="public\assets\img\file-extensions\" />
+    <Folder Include="public\assets\js\" />
+    <Folder Include="public\assets\locales\" />
+    <Folder Include="public\assets\locales\en\" />
+    <Folder Include="public\assets\locales\es\" />
+    <Folder Include="public\assets\scss\" />
+    <Folder Include="src" />
+    <Folder Include="src\actions\" />
+    <Folder Include="src\api" />
+    <Folder Include="src\apps\" />
+    <Folder Include="src\components" />
+    <Folder Include="src\components\authenticating" />
+    <Folder Include="src\components\common" />
+    <Folder Include="src\components\compose-message" />
+    <Folder Include="src\components\content" />
+    <Folder Include="src\components\content\message-list" />
+    <Folder Include="src\components\content\message-list\actions" />
+    <Folder Include="src\components\content\message-list\list-footer" />
+    <Folder Include="src\components\content\message-list\list-toolbar" />
+    <Folder Include="src\components\content\message-list\message-content" />
+    <Folder Include="src\components\content\message-list\message-row" />
+    <Folder Include="src\components\content\message-list\message-toolbar" />
+    <Folder Include="src\components\aside\" />
+    <Folder Include="src\components\content\message-list\pager-buttons" />
+    <Folder Include="src\components\content\message-list\reducers" />
+    <Folder Include="src\components\header" />
+    <Folder Include="src\components\login" />
+    <Folder Include="src\components\main" />
+    <Folder Include="src\components\main\main-docks\" />
+    <Folder Include="src\components\not-found" />
+    <Folder Include="src\components\sidebar" />
+    <Folder Include="src\components\signout" />
+    <Folder Include="src\constants" />
+    <Folder Include="src\lex-on_connector\" />
+    <Folder Include="src\lex-on_connector\actions\" />
+    <Folder Include="src\lex-on_connector\reducers\" />
+    <Folder Include="src\reducers" />
+    <Folder Include="src\services\" />
+    <Folder Include="src\utils" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="dockerfile">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="public\assets\js\jquery.overlayScrollbars.min.js" />
+    <Compile Include="public\assets\js\OverlayScrollbars.min.js" />
+    <Compile Include="src\actions\settings.actions.jsx" />
+    <Compile Include="src\api\index.jsx" />
+    <Compile Include="src\apps\lexonconn-app.js" />
+    <Compile Include="src\apps\mainmenu-app.js" />
+    <Compile Include="src\apps\react-app.js" />
+    <Compile Include="src\apps\utils.js" />
+    <Compile Include="src\components\aside\aside.jsx" />
+    <Compile Include="src\components\compose-message\ComposeMessage.jsx" />
+    <Compile Include="src\components\main\main-docks\Main-bot.jsx" />
+    <Compile Include="src\components\main\main-docks\Main-dock3.jsx" />
+    <Compile Include="src\components\main\main-docks\Main-dock2.jsx" />
+    <Compile Include="src\components\main\main-docks\Main-flex-good.jsx" />
+    <Compile Include="src\components\main\main-docks\Main-flex2.jsx" />
+    <Compile Include="src\components\main\main-docks\Main_flex1.jsx" />
+    <Compile Include="src\components\main\main-docks\Main-flex.jsx" />
+    <Compile Include="src\components\main\main-docks\Main-good.jsx" />
+    <Compile Include="src\components\main\Main.jsx" />
+    <Compile Include="src\lex-on_connector\actions\lex-on_message-list.actions.jsx" />
+    <Compile Include="src\lex-on_connector\index.js" />
+    <Compile Include="src\lex-on_connector\lex-on_connector.jsx" />
+    <Compile Include="src\lex-on_connector\list.js" />
+    <Compile Include="src\lex-on_connector\main.js" />
+    <Compile Include="src\lex-on_connector\reducers\lex-on_message-list.reducrers.jsx" />
+    <Compile Include="src\reducers\settings.reducers.jsx" />
+    <Compile Include="src\services\i18n.js" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <!--Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them.-->
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
+  <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:48022/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

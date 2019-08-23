@@ -1,0 +1,80 @@
+.compose-panel {
+    border-bottom: 1px solid #d9dfe2;
+
+    .compose-btn {
+        height: 45px;
+    }
+}
+
+.compose-dialog {
+    height: 100%;
+
+    > .modal-content {
+        height: 80%;
+
+        .editor-wrapper {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 142px;
+            bottom: 42px;
+
+            .quill {
+                height: 100%;
+
+                .ql-container.ql-snow {
+                    border: 0;
+                }
+            }
+        }
+    }
+
+    .message-fields {
+        .input-group {
+            margin-bottom: 2px;
+
+            .input-group-text {
+                min-width: 75px;
+                background-color: #f9f9f9;
+            }
+
+            .form-control {
+                border-left-width: 0;
+
+                &.is-invalid {
+                    border-color: red;
+                }
+
+                &:placeholder-shown {
+                    font-style: italic;
+                    font-size: 11px;
+                }
+
+                &:focus {
+                    outline: none;
+                    box-shadow: none;
+                }
+            }
+        }
+    }
+}
+.FileList{
+    max-height:70px;
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    height: initial !important;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    -webkit-transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
