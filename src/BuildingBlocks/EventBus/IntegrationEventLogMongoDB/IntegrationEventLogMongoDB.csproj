@@ -2,7 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\IntegrationEventLogEF\EventStateEnum.cs" Link="EventStateEnum.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MongoDB.Driver" Version="2.9.1" />
