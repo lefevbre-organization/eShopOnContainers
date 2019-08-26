@@ -61,9 +61,17 @@
     <Folder Include="public" />
     <Folder Include="scripts" />
     <Folder Include="src" />
+    <Folder Include="src\actions\" />
+    <Folder Include="src\reducers\" />
+    <Folder Include="src\store\" />
     <Folder Include="src\styles" />
     <Folder Include="src\styles\bootstrap" />
     <Folder Include="src\styles\fonts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="src\actions\lex-on_message-list.actions.jsx" />
+    <Compile Include="src\reducers\lex-on_message-list.reducrers.jsx" />
+    <Compile Include="src\store\store.jsx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <!--Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them.-->
