@@ -9,10 +9,10 @@ import sortBy from "lodash/sortBy";
 
 import {
   faInbox,
-  faEnvelope,
-  faTrash,
-  faCircle,
-  faExclamationCircle
+  faEnvelopeSquare,
+  faTrashAlt,
+  faFolderOpen,
+  faExclamationTriangle
 } from "@fortawesome/free-solid-svg-icons";
 
 import LabelItem from "./LabelItem";
@@ -86,18 +86,19 @@ export class Sidebar extends PureComponent {
       ...labels.find(el => el.id === "SENT"),
       messagesUnread: 0,
       name: t('sidebar.sent'),
-      icon: faEnvelope
+      icon:  faEnvelopeSquare
     };
     const trashLabel = {
       ...labels.find(el => el.id === "TRASH"),
       messagesUnread: 0,
       name: t('sidebar.trash'),
-      icon: faTrash
+      icon:faTrashAlt
+
     };
     const spamLabel = {
       ...labels.find(el => el.id === "SPAM"),
       name: t('sidebar.spam'),
-      icon: faExclamationCircle
+      icon: faExclamationTriangle
     };
 
     const folders = [inboxLabel, sentLabel, trashLabel, spamLabel];
@@ -105,7 +106,8 @@ export class Sidebar extends PureComponent {
     return (
       <React.Fragment>
         <li key="olders-nav-title" className="pl-2 nav-title">
-          {t('sidebar.folders')}
+            <img className="logo-ext" border="0" alt="otulook" src="assets/img/gmail.png"></img>
+            {t('sidebar.folders')}
         </li>
         {folders.map(el => {
           const iconProps = { icon: el.icon, size: "lg" };
@@ -135,9 +137,9 @@ export class Sidebar extends PureComponent {
         </li>
         {labels.map(el => {
           const iconProps = {
-            icon: faCircle,
-            color: el.color ? el.color.backgroundColor : "gainsboro",
-            size: "sm"
+            icon: faFolderOpen,
+            color: "#001978",
+            size: "lg"
           };
           return (
             <LabelItem
@@ -166,8 +168,10 @@ export class Sidebar extends PureComponent {
               subject=""
               to=""
             >
-                <button className="btn btn btn-outline-secondary uppercase align-self-center w-75 font-weight-bold uppercase">
+                <button className="btn font-weight-bold BtnLfcolor uppercase">
+                <img className="ImgLf" border="0" alt="otulook" src="assets/img/plus.png"></img> 
                 {t('sidebar.compose')}
+
               </button>
             </ComposeMessage>
           </div>

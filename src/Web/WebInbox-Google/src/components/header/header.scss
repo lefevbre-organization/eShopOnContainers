@@ -2,17 +2,16 @@
   height: 29px;  
 }
 .search {
-  max-width: 650px;
+  max-width: 450px;
 }
 .img-menu{
   padding-top:5px
 }
-.logo-ext {
-  /*height: 29px;*/
-}
+
 .header {
 border-bottom: 1px solid #d9dfe2;
 background-color: #001978;
+height:65px;
 
 color: #000;
 .header-logo {
@@ -39,8 +38,12 @@ color: #000;
 }
 }
 
+.menu-user {
+    padding-right: 5%;
+}
+
 .img-circle {
-  border-radius: 50%;
+  border-radius: 50%; 
 }
 .btn-search {
  border-color: #ced4da

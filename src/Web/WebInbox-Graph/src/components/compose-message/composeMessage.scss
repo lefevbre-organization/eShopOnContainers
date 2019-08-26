@@ -1,8 +1,10 @@
 .compose-panel {
     border-bottom: 1px solid #d9dfe2;
+    height: 65px;
 
     .compose-btn {
-        height: 45px;
+        /*height: 45px;*/
+        background-color: #fff;
     }
 }
 

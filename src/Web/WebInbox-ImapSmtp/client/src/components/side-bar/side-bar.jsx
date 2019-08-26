@@ -51,7 +51,9 @@ class SideBar extends Component {
                   <button style={{height: 48 }} className={`${mainCss['mdc-button']}
                     ${mainCss['mdc-button']} ${styles['compose']}`}
                       onClick={this.props.newMessage.bind(this)}>
-                      <i className='material-icons mdc-button__icon' style={{ fontSize: 48 }}>add_circle_outline</i>
+
+                      {/* <i className='material-icons mdc-button__icon' style={{ fontSize: 48 }}>add_circle_outline</i>*/}
+                      <img className={styles.plusbuttton} border="0" src="assets/images/plus.png"></img>
                       <span className="mdc-button__label" style={{ fontSize: 10.6 }}>{t('sideBar.compose')}</span>
                   </button>
           <span className={styles.toggle} isotip={t('sideBar.hide')} isotip-position='bottom-end' isotip-size='small'>
