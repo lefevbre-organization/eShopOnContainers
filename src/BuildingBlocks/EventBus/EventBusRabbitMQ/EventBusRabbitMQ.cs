@@ -20,6 +20,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ
 {
     public class EventBusRabbitMQ : IEventBus, IDisposable
     {
+        //todo: review if needed twon queeues
         const string BROKER_NAME = "eshop_event_bus";
 
         private readonly IRabbitMQPersistentConnection _persistentConnection;
