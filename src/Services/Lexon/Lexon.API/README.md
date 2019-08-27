@@ -34,6 +34,33 @@ Only copy de projects in relation with this api
 
 ### Startup
 
+- Refactorize the methods in Extensions/CustomExtensionsMethods.cs
+- AddAppInsight (not implemented)
+- AddCustomDbContext (not neccessary)
+- AddCustomOptions (similar with other class of settings)
+- AddIntegrationServices (only add de rabbitmq, thes AzureServiceBus is not implemented)
+- [ ] AddEventBus (only add de rabbitmq, thes AzureServiceBus is not implemented, needed test)
+- AddSwagger
+- [ ] AddCustomHealthCheck (in work)
+
+### Infrastucture
+
+#### ActionResults
+
+Identical
+
+#### Exceptions
+
+Only changue the name
+
+#### Filters
+
+Identical
+
+### ViewModel
+
+Identical, but need review de location Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel
+
 
 
 

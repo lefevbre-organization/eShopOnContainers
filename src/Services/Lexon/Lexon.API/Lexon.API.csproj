@@ -7,6 +7,8 @@
 
 
   <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.AzureServiceBus" Version="2.2.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.AzureStorage" Version="2.2.0" />
     <PackageReference Include="AspNetCore.HealthChecks.MongoDb" Version="2.2.3" />
     <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="2.2.1" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="2.2.4" />
@@ -33,11 +35,8 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
-    <Folder Include="Extensions\" />
-    <Folder Include="Infrastructure\" />
     <Folder Include="IntegrationEvents\" />
     <Folder Include="Model\" />
-    <Folder Include="ViewModel\" />
   </ItemGroup>
 
 </Project>
