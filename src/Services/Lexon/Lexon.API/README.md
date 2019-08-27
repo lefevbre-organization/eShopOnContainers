@@ -15,6 +15,13 @@ https://github.com/dotnet/eShopOnContainers/wiki
 
 ## Implementation differences
 
+### References
+
+- Exclude project IntegrationEventLofEF and WebHost.Customization
+- [ ] Add Project of IntegrationEventLogMongoDB ( need revision)
+- Not implementation nugets of Insights
+- In general, keep the version´s nugets libraries of the rest of solutions`s services
+
 ### Dockerfile
 
 Only copy de projects in relation with this api
