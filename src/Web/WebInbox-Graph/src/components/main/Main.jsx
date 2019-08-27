@@ -239,8 +239,8 @@ export class Main extends Component {
               />
               <section className="main hbox space-between">
                   <ReflexContainer orientation="vertical">
-                      <ReflexElement maxSize={300} minSize={150} className="left-pane"
-                          propagateDimensionsRate={200}
+                      <ReflexElement maxSize={240} minSize={153} className="left-pane"
+                          propagateDimensionsRate={240}
                           propagateDimensions={true}
                           flex={0.2}>
                           <PerfectScrollbar>
@@ -256,7 +256,7 @@ export class Main extends Component {
                       </ReflexElement>
                       <ReflexSplitter propagate={true} />
                       <ReflexElement minSize={400} className="middle-pane"
-                          propagateDimensionsRate={400}
+                          propagateDimensionsRate={800}
                           propagateDimensions={true}
                           flex={0.6}>
                           <PerfectScrollbar>
@@ -280,8 +280,8 @@ export class Main extends Component {
                           </PerfectScrollbar>
                       </ReflexElement>
                       <ReflexSplitter propagate={true} />
-                      <ReflexElement minSize={400} className="right-pane"
-                          propagateDimensionsRate={400}
+                      <ReflexElement minSize={200} className="right-pane"
+                          propagateDimensionsRate={200}
                           propagateDimensions={true}
                           flex={0.2}>
                           <div id="main-content" className="connector" style={{
@@ -290,7 +290,7 @@ export class Main extends Component {
                               backgroundPosition: 'center 5%',
                               backgroundRepeat: 'no-repeat',
                           }}>
-                              <div className="connector" id="lexon-app" />
+                              {/*<div className="connector" id="lexon-app" />*/}
                           </div>
                       </ReflexElement>
                   </ReflexContainer>

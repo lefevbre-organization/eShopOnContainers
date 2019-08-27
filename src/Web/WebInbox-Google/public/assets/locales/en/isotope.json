@@ -1,13 +1,13 @@
 {
-    "sidebar": {
-        "folders": "FOLDERS",
-        "inbox": "Inbox",
-        "sent": "Sent",
-        "trash": "Trash",
-        "spam": "Spam",
-        "compose": "Compose",
-        "labels": "LABELS"
-    },
+  "sidebar": {
+    "folders": "Gmail",
+    "inbox": "Inbox",
+    "sent": "Sent",
+    "trash": "Trash",
+    "spam": "Spam",
+    "compose": "Compose",
+    "labels": "LABELS"
+  },
     "message-list": {
         "no-message": "There are no messages with this label.",
         "move-to-trash": "Move to Trash"

@@ -29,7 +29,6 @@
     <Content Include=".dockerignore" />
     <Content Include=".env" />
     <Content Include="package.json" />
-    <Content Include="public\assets\css\customBootstrap.css" />
     <Content Include="public\assets\img\file-extensions\default.png" />
     <Content Include="public\assets\img\file-extensions\doc.png" />
     <Content Include="public\assets\img\file-extensions\jpg.png" />
@@ -48,8 +47,6 @@
     <Content Include="public\assets\img\singinms.png" />
     <Content Include="public\assets\locales\en\isotope.json" />
     <Content Include="public\assets\locales\es\isotope.json" />
-    <Content Include="public\assets\scss\_mixins.scss" />
-    <Content Include="public\assets\scss\_variables.scss" />
     <Content Include="public\favicon.ico" />
     <Content Include="public\uppy.min.css" />
     <Content Include="public\web.config" />
@@ -113,14 +110,11 @@
   <ItemGroup>
     <Folder Include="public" />
     <Folder Include="public\assets\" />
-    <Folder Include="public\assets\css\" />
     <Folder Include="public\assets\img\" />
     <Folder Include="public\assets\img\file-extensions\" />
-    <Folder Include="public\assets\js\" />
     <Folder Include="public\assets\locales\" />
     <Folder Include="public\assets\locales\en\" />
     <Folder Include="public\assets\locales\es\" />
-    <Folder Include="public\assets\scss\" />
     <Folder Include="src" />
     <Folder Include="src\actions\" />
     <Folder Include="src\api" />
@@ -159,8 +153,6 @@
     <Compile Include="dockerfile">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="public\assets\js\jquery.overlayScrollbars.min.js" />
-    <Compile Include="public\assets\js\OverlayScrollbars.min.js" />
     <Compile Include="src\actions\settings.actions.jsx" />
     <Compile Include="src\api\index.jsx" />
     <Compile Include="src\apps\lexonconn-app.js" />

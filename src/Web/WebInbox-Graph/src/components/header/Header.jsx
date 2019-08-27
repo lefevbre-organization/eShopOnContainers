@@ -96,16 +96,16 @@ export class Header extends PureComponent {
         const userInfo = this.props.microsoftUser;
         const email = userInfo.email;
         const fullName = userInfo.displayName;
-        const picUrl = "assets/img/user.png";
+        const picUrl = "assets/img/icon-user.png";
 
         return (
             <header className="d-flex p-3 align-content-center align-items-center header ">
                 <div className="justify-content-left">
-                    <Link to="/inbox"><img border="0" alt="lefebvre" src="assets/img/lefebvre-logo.png"></img></Link>
+                    <Link to="/inbox"><img border="0" alt="lefebvre" src="assets/img/LogoLefebvre.png"></img></Link>
                 </div>
                 <div className="header-logo justify-content-center">
-                    {/*<Link to="/inbox"><img border="0" alt="gmail" src="assets/img/logo-elderecho.png"></img></Link>*/}
-                    <Link to="/inbox"><img className="logo-ext" border="0" alt="office 365" src="assets/img/office365.png"></img></Link>
+                    {/*<Link to="/inbox"><img border="0" alt="gmail" src="assets/img/logo-elderecho.png"></img></Link>
+                    <Link to="/inbox"><img className="logo-ext" border="0" alt="office 365" src="assets/img/office365.png"></img></Link>*/}
                 </div>
                 <div className="header-search">
                     <div className="input-group w-75 ml-1 mr-auto">
@@ -128,33 +128,15 @@ export class Header extends PureComponent {
                     {/*<div className="header-logo justify-content-center">
                         <Link to="/inbox"><img className="logo-ext" border="0" alt="otulook" src="assets/img/gmail.png"></img></Link>                       
                     </div>*/}
-                    <div>
-                        <Nav className="ml-auto" navbar>
-                            <NavItem className="d-md-down-none">
-                                <NavLink href="#"><i className="icon-location-pin"></i></NavLink>
-                            </NavItem>
-                            <Dropdown nav isOpen={this.state.dropdownMenuOpen} toggle={this.toggleMenu}>
-                                <DropdownToggle nav>
-                                    <img className="img-menu" src="assets/img/menu.png" alt="" />
-                                </DropdownToggle>
-                                <DropdownMenu right>                                   
-                                    <DropdownItem><i className="fa fa-shield"></i> Calendar</DropdownItem>
-                                    <DropdownItem><i className="fa fa-shield"></i> File Manager</DropdownItem>
-                                    <DropdownItem><i className="fa fa-shield"></i><span onClick={this._handleOnClick}> Configure New Account</span></DropdownItem>
-                                    <DropdownItem divider />
-                                    <DropdownItem><i className="fa fa-lock"></i> Return to Lex-on</DropdownItem>
-                                </DropdownMenu>
-                            </Dropdown>
-                        </Nav>
-                    </div>   
-                    <div>
+                    
+                    <div className="menu-user">
                         <Nav className="ml-auto" navbar>
                             <NavItem className="d-md-down-none">
                                 <NavLink href="#"><i className="icon-location-pin"></i></NavLink>
                             </NavItem>
                             <Dropdown nav isOpen={this.state.dropdownOpen} toggle={this.toggle}>
                                 <DropdownToggle nav>
-                                    <img className="mx-2 profile-pic img-circle" src={picUrl} alt="" />
+                                    <img className="mx-2 profile-pic" src={picUrl} alt="" />
                                 </DropdownToggle>
                                 <DropdownMenu right>
                                     <DropdownItem header tag="div" className="text-center"><strong title={email}>{fullName}</strong></DropdownItem>
@@ -167,6 +149,26 @@ export class Header extends PureComponent {
                             </Dropdown>
                         </Nav>
                     </div> 
+
+                    <div>
+                        <Nav className="ml-auto" navbar>
+                            <NavItem className="d-md-down-none">
+                                <NavLink href="#"><i className="icon-location-pin"></i></NavLink>
+                            </NavItem>
+                            <Dropdown nav isOpen={this.state.dropdownMenuOpen} toggle={this.toggleMenu}>
+                                <DropdownToggle nav>
+                                    <img className="img-menu" src="assets/img/icon-products.png" alt="" />
+                                </DropdownToggle>
+                                <DropdownMenu right>
+                                    <DropdownItem><i className="fa fa-shield"></i> Calendar</DropdownItem>
+                                    <DropdownItem><i className="fa fa-shield"></i> File Manager</DropdownItem>
+                                    <DropdownItem><i className="fa fa-shield"></i><span onClick={this._handleOnClick}> Configure New Account</span></DropdownItem>
+                                    <DropdownItem divider />
+                                    <DropdownItem><i className="fa fa-lock"></i> Return to Lex-on</DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                        </Nav>
+                    </div>  
                 </div>                
             </header>
         );

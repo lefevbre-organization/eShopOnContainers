@@ -1,16 +1,38 @@
 
 .BtnLfcolor {
-    background-color: #001978;
-    color: #ffffff;
+    background-color: #ffffff;
 }
+
+.ImgLf {
+    margin-right: 10px;
+    width: 40px;
+    height: 40px;
+}
+
 .uppercase {
     text-transform: uppercase;
 }
+
+.text-dark {
+    color: #001978 !important;
+}
+
+.btn:focus {
+    background: #ffffff;
+    border-color: transparent;
+    box-shadow: none;
+}
+
+
+.logo-ext {
+    height: 22px;
+    padding-right: 10px;
+}
+
 .left-panel {
     background-color: #ffffff;
     /*border-width: 0px 1px 1px 0px;
     border-color: #d9dfe2;*/
-
     .sidebar {
         overflow-y: auto;
         overflow-x: hidden;
@@ -28,11 +50,11 @@
         li:not(.nav-title) {
             list-style-type: none;
             cursor: pointer;
-            font-weight: 600;
+            /*font-weight: 600;*/
             flex-shrink: 0;
             position: relative;
-            /*border-radius: 0px 15px 15px 0px;
-            width: 95%;*/
+            /*border-radius: 0px 15px 15px 0px;*/
+            /*width: 95%;*/
             user-select: none;
 
             > .msg-count {

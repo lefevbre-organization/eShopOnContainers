@@ -2,10 +2,10 @@
   height: 29px;  
 }
 .search {
-  max-width: 650px;
+  max-width: 450px;
 }
 .img-menu{
-  padding-top:5px
+  /*padding-top:5px*/
 }
 .logo-ext {
   /*height: 29px;*/
@@ -13,6 +13,7 @@
 .header {
 border-bottom: 1px solid #d9dfe2;
 background-color: #001978;
+height:65px;
 color: #000;
 .header-logo {
   display: flex;
@@ -32,10 +33,14 @@ color: #000;
     user-select: none;
   }
   .profile-pic {
-    height: 28px;
-    width: auto;
+    /*height: 28px;
+    width: auto;*/
   }
 }
+}
+
+.menu-user {
+    padding-right: 5%;
 }
 
 .img-circle {

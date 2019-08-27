@@ -16,7 +16,7 @@ import {
   faCircle,
   faExclamationCircle,
   faArchive,
-  faFolder
+  faFolderOpen
 } from "@fortawesome/free-solid-svg-icons";
 
 import LabelItem from "./LabelItem";
@@ -158,8 +158,8 @@ export class Sidebar extends PureComponent {
           </li>
           {labels.map(el => {
             const iconProps = {
-              icon: faFolder,
-              color: el.color ? el.color.backgroundColor : "gainsboro",
+              icon: faFolderOpen,
+              color: "#001978",
               size: "lg"
             };            
             if (folder === "") {
