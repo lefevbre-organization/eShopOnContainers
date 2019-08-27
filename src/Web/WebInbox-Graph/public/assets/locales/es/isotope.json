@@ -1,11 +1,11 @@
 {
     "sidebar": {
-        "folders": "CARPETAS",
+        "folders": "Office 365",
         "inbox": "Bandeja de entrada",
         "sent": "Enviados",
         "trash": "Papelera",
         "spam": "Spam",
-        "compose": "Componer",
+        "compose": "Nuevo correo",
         "labels": "ETIQUETAS"
     },
     "message-list": {

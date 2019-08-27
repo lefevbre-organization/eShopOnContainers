@@ -154,6 +154,7 @@ export class Sidebar extends PureComponent {
       return (
         <React.Fragment>
           <li key="olders-nav-title" className="pl-2 nav-title">
+            <img className="logo-ext" border="0" alt="otulook" src="assets/img/office365.png"></img>
             {t('sidebar.folders')}
           </li>
           {labels.map(el => {
@@ -192,8 +193,9 @@ export class Sidebar extends PureComponent {
               subject=""
               to=""
             >
-                <button className="btn btn btn-outline-secondary uppercase align-self-center w-75 font-weight-bold uppercase">
-                 {t('sidebar.compose')}
+                <button className="btn font-weight-bold BtnLfcolor uppercase">
+                    <img className="ImgLf" border="0" alt="otulook" src="assets/img/plus.png"></img> 
+                    <span className="text-dark">{t('sidebar.compose')}</span>
               </button>
             </ComposeMessage>
           </div>
