@@ -150,11 +150,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Devspace.Support", "Devspac
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Devspaces.Support", "src\BuildingBlocks\Devspaces.Support\Devspaces.Support.csproj", "{56C2EF0B-6BF2-41D9-BE07-6E6D08D06B35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationEventLogMongoDB", "src\BuildingBlocks\EventBus\IntegrationEventLogMongoDB\IntegrationEventLogMongoDB.csproj", "{EFFA4F3D-146A-4E58-B0B4-CC5904565DD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegrationEventLogMongoDB", "src\BuildingBlocks\EventBus\IntegrationEventLogMongoDB\IntegrationEventLogMongoDB.csproj", "{EFFA4F3D-146A-4E58-B0B4-CC5904565DD2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lexon", "Lexon", "{3F68DD1B-D7B0-4053-924E-FD297ECAD0B2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lexon.API", "src\Services\Lexon\Lexon.API\Lexon.API.csproj", "{26F84F13-7F6D-47AD-88F8-1FBB1F7054DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexon.API", "src\Services\Lexon\Lexon.API\Lexon.API.csproj", "{26F84F13-7F6D-47AD-88F8-1FBB1F7054DF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{16B2CBBE-25BC-4553-9DD0-1BE1DD715570}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1967,6 +1969,7 @@ Global
 		{EFFA4F3D-146A-4E58-B0B4-CC5904565DD2} = {807BB76E-B2BB-47A2-A57B-3D1B20FF5E7F}
 		{3F68DD1B-D7B0-4053-924E-FD297ECAD0B2} = {91CF7717-08AB-4E65-B10E-0B426F01E2E8}
 		{26F84F13-7F6D-47AD-88F8-1FBB1F7054DF} = {3F68DD1B-D7B0-4053-924E-FD297ECAD0B2}
+		{16B2CBBE-25BC-4553-9DD0-1BE1DD715570} = {3F68DD1B-D7B0-4053-924E-FD297ECAD0B2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {25728519-5F0F-4973-8A64-0A81EB4EA8D9}

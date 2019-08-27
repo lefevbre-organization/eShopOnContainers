@@ -30,4 +30,14 @@
     <ProjectReference Include="..\..\..\BuildingBlocks\EventBus\IntegrationEventLogMongoDB\IntegrationEventLogMongoDB.csproj" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Infrastructure\" />
+    <Folder Include="IntegrationEvents\" />
+    <Folder Include="Model\" />
+    <Folder Include="ViewModel\" />
+  </ItemGroup>
+
 </Project>
