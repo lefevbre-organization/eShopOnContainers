@@ -34,9 +34,7 @@
 
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="IntegrationEvents\" />
-    <Folder Include="Model\" />
   </ItemGroup>
 
 </Project>
