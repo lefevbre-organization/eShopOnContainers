@@ -25,7 +25,7 @@ import {
 import {selectLabel} from '../sidebar/sidebar.actions';
 import {signOut} from '../../api/authentication';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner, faWindowClose, faClosedCaptioning, faDoorClosed, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faSpinner, faWindowClose, faClosedCaptioning, faDoorClosed, faTimes, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {
@@ -40,10 +40,14 @@ import { start, registerApplication } from 'single-spa'
 import * as singleSpa from 'single-spa';
 import { registerLexonApp } from "../../apps/lexonconn-app";
 
-import SidebarContent from "react-sidebar";
+import SidebarCnn from "react-sidebar";
+import SidebarComponent from "../../apps/sidebar_content"
 
-export class Main extends Component {
-  constructor(props) {
+
+export class Main extends Component {    
+
+    constructor(props) {   
+
     super(props);
 
     this.getLabelList = this.getLabelList.bind(this);
@@ -64,10 +68,57 @@ export class Main extends Component {
        fluid: true,
        customAnimation: false,
        slow: false,
-       size: 0.25
-    };     
+       size: 0.25,       
+       sidebarOpen: false,
+       sidebarDocked: false,
+       sidebarComponent: <SidebarComponent />,
+       sideBar: {
+          collapsed: false
+       }
+      };  
+      
+      this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
+      this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
      
-  }
+    }
+    onSetSidebarOpenCalendar(open) {
+        this.setState({ sidebarComponent: <SidebarComponent /> });
+        this.onSetSidebarDocked(true);
+    }
+
+    onSetSidebarOpenLexon(open) {
+        let lexon = <img border="0" alt="Lefebvre" src="assets/img/lexon-fake.png"></img>;
+        this.setState({ sidebarComponent: lexon });
+        this.onSetSidebarDocked(true);
+    }
+
+    onSetSidebarOpenQMemento(open) {
+        let lexon = <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>;
+        this.setState({ sidebarComponent: lexon });
+        this.onSetSidebarDocked(true);
+    }
+
+    onSetSidebarOpenCompliance(open) {
+        let lexon = <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>;
+        this.setState({ sidebarComponent: lexon });
+        this.onSetSidebarDocked(true);
+    }
+
+
+    onSetSidebarOpenDatabase(open) {
+        let lexon = <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>;
+        this.setState({ sidebarComponent: lexon });
+        this.onSetSidebarDocked(true);
+    }
+
+    onSetSidebarOpen(open) {
+        this.setState({ sidebarOpen: open });
+    }
+
+    onSetSidebarDocked(open) {
+        this.setState({ sidebarDocked: open });
+        this.setState({ sidebarOpen: open });
+    }
   
   componentDidMount() {
     /* Label list is fetched from here 
@@ -220,11 +271,11 @@ export class Main extends Component {
 
 
 
-          <SidebarContent
-              sidebar={<div>*****  *****  ***** SIDEBAR *****  *****  *****</div>}
-              open={true}
+          <SidebarCnn
+              sidebar={this.state.sidebarComponent}
+              open={false}
               pullRight={true}
-              docked={true}
+              docked={this.state.sidebarDocked}
               styles={{
                   sidebar: {
                       background: "white",
@@ -321,8 +372,9 @@ export class Main extends Component {
                               </div>
                           </span>
                           <span className="productsbutton">
-                              <div onClick={() => this.onSetSidebarDocked(false)}>
-                              </div>
+                              <button onClick={() => this.onSetSidebarDocked(false)}  className="btn compose-btn">
+                                  <img className="" border="0" alt="Calendar" src="assets/img/icon-close-empty.png"></img>
+                              </button>                             
                           </span>
                           <span className="spaceproduct">
                           </span>
@@ -330,7 +382,7 @@ export class Main extends Component {
                   </section>
               </Fragment>  
 
-          </SidebarContent>
+          </SidebarCnn>
 
            
       );
