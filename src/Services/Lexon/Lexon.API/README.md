@@ -61,6 +61,12 @@ Identical
 
 Identical, but need review de location Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel
 
+## IntegrationEvents
+
+## Model
+
+
+
 
 
 

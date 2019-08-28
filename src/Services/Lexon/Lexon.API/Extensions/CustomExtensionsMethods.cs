@@ -1,5 +1,7 @@
 ﻿using Autofac;
 using Lexon.API.Infrastructure.Filters;
+using Lexon.API.Infrastructure.Repositories;
+using Lexon.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
@@ -11,10 +13,6 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Lexon.API.Extensions
 {
@@ -46,8 +44,8 @@ namespace Lexon.API.Extensions
 
             //TODO: implement of services
             //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            //services.AddTransient<IUsersService, UsersService>();
-            //services.AddTransient<IUsersRepository, UsersRepository>();
+            services.AddTransient<IUsersService, UsersService>();
+            services.AddTransient<IUsersRepository, UsersRepository>();
             return services;
         }
 
@@ -184,7 +182,6 @@ namespace Lexon.API.Extensions
             var subscriptionClientName = configuration["SubscriptionClientName"];
             //var subscriptionConsumerName = configuration["SubscriptionConsumerName"];
 
-
             if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
             {
                 //no implementado y posiblemente no se necesite
@@ -211,6 +208,5 @@ namespace Lexon.API.Extensions
 
             return services;
         }
-
     }
 }

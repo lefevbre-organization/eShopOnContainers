@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Lexon.API.Model
@@ -24,5 +25,7 @@ namespace Lexon.API.Model
         public LexonSolicitor[] Solicitors { get; set; }
         public LexonNotary[] Notaries { get; set; }
         public LexonCourt[] Courts { get; set; }
+
+        public IntegrationEventLogEntry[] Events { get; set; }
     }
 }

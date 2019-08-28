@@ -121,9 +121,19 @@ namespace Lexon.API.Infrastructure
             return IntegrationEventLogsTransaction(session).UpdateOneAsync(filter, update);
         }
 
-        public Task SaveEventAsync(IntegrationEvent @event, IClientSessionHandle transaction)
+        private Task UpdateEventStatusInDocument(Guid eventId, EventStateEnum status, IClientSessionHandle session)
         {
-            throw new System.NotImplementedException();
+            var filter = Builders<IntegrationEventLogEntry>.Filter.Eq(u => u.EventId, eventId);
+
+            var eventLogEntry = IntegrationEventLogsTransaction(session).Find(filter).Single();
+
+            var builder = Builders<IntegrationEventLogEntry>.Update;
+            var update = builder.Set(u => u.State, status);
+
+            if (status == EventStateEnum.InProgress)
+                eventLogEntry.TimesSent++;
+
+            return IntegrationEventLogsTransaction(session).UpdateOneAsync(filter, update);
         }
 
         public async Task<IEnumerable<IntegrationEventLogEntry>> RetrieveEventLogsPendingToPublishAsync(Guid transactionId)
@@ -140,6 +150,7 @@ namespace Lexon.API.Infrastructure
                 .Sort(sort)
                 .ToListAsync();
         }
+
 
         public Task MarkEventAsInProgressAsync(Guid eventId, IClientSessionHandle transaction)
         {
@@ -161,6 +172,11 @@ namespace Lexon.API.Infrastructure
             var session = await _client.StartSessionAsync(cancellationToken: cancellactionToken);
             Session = session;
             return session;
+        }
+
+        public Task SaveEventAsync(IntegrationEvent @event, IClientSessionHandle transaction)
+        {
+            throw new NotImplementedException();
         }
     }
 }
