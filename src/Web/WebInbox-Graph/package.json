@@ -34,6 +34,7 @@
     "react-reflex": "^3.0.9",
     "react-router-dom": "^4.3.1",
     "react-scripts": "^2.1.8",
+    "react-sidebar": "^3.0.2",
     "react-split-pane": "^0.1.85",
     "react-split-pane-2": "^0.1.36",
     "reactstrap": "^6.5.0",

@@ -16,7 +16,7 @@
 }
 
 .btn:focus {
-    background: #ffffff;   
+    background: transparent;
     border-color: transparent;
     box-shadow: none;
 }
@@ -29,8 +29,8 @@
 
 .left-panel {
     background-color: #ffffff;
-    /*border-width: 0px 1px 1px 0px;
-    border-color: #d9dfe2;*/
+    border-width: 0px 1px 1px 0px;
+    border-color: #d9dfe2;
 
     .sidebar {
         overflow-y: auto;

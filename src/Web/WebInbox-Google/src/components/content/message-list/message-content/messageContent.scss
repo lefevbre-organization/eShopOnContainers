@@ -6,15 +6,16 @@
 }
 
 .message-content {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 45px;
-  bottom: 10px;
-  > iframe {
-    width: 98%;
-    height: 98%;
-    border: 0;
-  }
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 45px;
+    bottom: 10px;   
+
+    > iframe {
+        width: 98%;
+        height: 98%;
+        border: 0;
+    }
 }
 

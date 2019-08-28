@@ -1,10 +1,11 @@
 .compose-panel {
     border-bottom: 1px solid #d9dfe2;
     height: 65px;
+    background-color: #f4f4f4;
 
-    /*.compose-btn {
-        height: 45px;
-    }*/
+    .compose-btn {
+        background-color: transparent;
+    }
 }
 
 .compose-dialog {

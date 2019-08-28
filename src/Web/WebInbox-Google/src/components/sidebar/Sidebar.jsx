@@ -168,7 +168,7 @@ export class Sidebar extends PureComponent {
               subject=""
               to=""
             >
-              <button className="btn font-weight-bold BtnLfcolor uppercase">
+              <button className="btn font-weight-bold BtnLfcolor uppercase compose-btn">
                 <img className="ImgLf" border="0" alt="otulook" src="assets/img/plus.png"></img> 
                 <span className="text-dark">{t('sidebar.compose')}</span>
 

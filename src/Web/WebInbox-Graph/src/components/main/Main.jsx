@@ -40,6 +40,8 @@ import e from '../../event-bus'
 import * as singleSpa from 'single-spa';
 import { registerLexonApp } from "../../apps/lexonconn-app";
 
+import SidebarContent from "react-sidebar";
+
 export class Main extends Component {
   constructor(props) {
     super(props);
@@ -230,72 +232,117 @@ export class Main extends Component {
     }
 
       return (   
-          <Fragment>
-              <Header microsoftUser={this.props.User}
-                  onSignout={this.onSignout}
-                  setSearchQuery={this.props.setSearchQuery}
-                  getLabelMessages={this.getLabelMessages}
-                  searchQuery={this.props.searchQuery}
-              />
-              <section className="main hbox space-between">
-                  <ReflexContainer orientation="vertical">
-                      <ReflexElement maxSize={240} minSize={153} className="left-pane"
-                          propagateDimensionsRate={240}
-                          propagateDimensions={true}
-                          flex={0.2}>
-                          <PerfectScrollbar>
-                              <div className="pane-content">
-                                  <Sidebar
-                                      getLabelList={this.getLabelList}
-                                      pathname={this.props.location.pathname}
-                                      labelsResult={this.props.labelsResult}
-                                      onLabelClick={this.loadLabelMessages}
-                                  />
+          <SidebarContent
+              sidebar={<div>*****  *****  ***** SIDEBAR *****  *****  *****</div>}
+              open={true}
+              pullRight={true}
+              docked={true}
+              styles={{
+                  sidebar: {
+                      background: "white",
+                      zIndex: 9999,
+                      overflowY: "hidden",
+                      WebkitTransition: "-webkit-transform 0s",
+                      willChange: "transform",
+                      overflowY: "hidden"
+                  },
+                  content: {
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      overflowY: "hidden",
+                      overflowX: "hidden",
+                      WebkitOverflowScrolling: "touch",
+                      transition: "left .0s ease-out, right .0s ease-out",
+                  },
+                  overlay: {
+                      zIndex: 1,
+                      position: "fixed",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      opacity: 0,
+                      visibility: "hidden",
+                      //transition: "opacity .3s ease-out, visibility .0s ease-out",
+                      backgroundColor: "rgba(0,0,0,.3)"
+                  },
+                  dragHandle: {
+                      zIndex: 1,
+                      position: "fixed",
+                      top: 0,
+                      bottom: 0
+                  }
+              }}
+
+          >
+
+              <Fragment>
+                  <Header microsoftUser={this.props.User}
+                      onSignout={this.onSignout}
+                      setSearchQuery={this.props.setSearchQuery}
+                      getLabelMessages={this.getLabelMessages}
+                      searchQuery={this.props.searchQuery}
+                  />
+                  <section className="main hbox space-between">
+                      <Sidebar
+                          getLabelList={this.getLabelList}
+                          pathname={this.props.location.pathname}
+                          labelsResult={this.props.labelsResult}
+                          onLabelClick={this.loadLabelMessages}
+                      />
+                      <article className="d-flex flex-column position-relative">
+                          <Switch>
+                              {this.renderLabelRoutes()}
+                              <Route
+                                  exact
+                                  path="/notfound"
+                                  component={NotFound}
+                              />
+                              <Route
+                                  exact
+                                  path="/:id([a-zA-Z0-9!@#$%^&+=_-]+)"
+                                  component={MessageContent}
+                              />
+                          </Switch>
+                      </article>
+
+
+
+                      <div className="productpanel">
+                          <span className="productsbutton">
+                              <div onClick={() => this.onSetSidebarOpenLexon(true)}>
+                                  <img className="imgproduct" border="0" alt="Lex-On" src="assets/img/icon-lexon.png"></img>
                               </div>
-                          </PerfectScrollbar>
-                      </ReflexElement>
-                      <ReflexSplitter propagate={true} />
-                      <ReflexElement minSize={400} className="middle-pane"
-                          propagateDimensionsRate={800}
-                          propagateDimensions={true}
-                          flex={0.6}>
-                          <PerfectScrollbar>
-                              <div className="pane-content" style={{ height: '60%' }}>
-                                  <article className="d-flex flex-column">
-                                      <Switch>
-                                          {this.renderLabelRoutes()}
-                                          <Route
-                                              exact
-                                              path="/notfound"
-                                              component={NotFound}
-                                          />
-                                          <Route
-                                              exact
-                                              path="/:id([a-zA-Z0-9!@#$%^&+=_-]+)"
-                                              component={MessageContent}
-                                          />
-                                      </Switch>
-                                  </article>
+                          </span>
+                          <span className="productsbutton">
+                              <div onClick={() => this.onSetSidebarOpenQMemento(true)}>
+                                  <img className="imgproduct" border="0" alt="Calendar" src="assets/img/icon-qmemento.png"></img>
                               </div>
-                          </PerfectScrollbar>
-                      </ReflexElement>
-                      <ReflexSplitter propagate={true} />
-                      <ReflexElement minSize={200} className="right-pane"
-                          propagateDimensionsRate={200}
-                          propagateDimensions={true}
-                          flex={0.2}>
-                          <div id="main-content" className="connector" style={{
-                              backgroundImage: 'url(' + imgUrl + ')',
-                              backgroundSize: '120px',
-                              backgroundPosition: 'center 5%',
-                              backgroundRepeat: 'no-repeat',
-                          }}>
-                              {/*<div className="connector" id="lexon-app" />*/}
-                          </div>
-                      </ReflexElement>
-                  </ReflexContainer>
-              </section>
-          </Fragment>  
+                          </span>
+                          <span className="productsbutton">
+                              <div onClick={() => this.onSetSidebarOpenCompliance(true)}>
+                                  <img className="imgproduct" border="0" alt="Calendar" src="assets/img/icon-compliance.png"></img>
+                              </div>
+                          </span>
+                          <span className="productsbutton">
+                              <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
+                                  <img className="imgproduct" border="0" alt="Calendar" src="assets/img/icon-calendar.png"></img>
+                              </div>
+                          </span>
+                          <span className="productsbutton">
+                              <div onClick={() => this.onSetSidebarDocked(false)}>
+                              </div>
+                          </span>
+                          <span className="spaceproduct">
+                          </span>
+                      </div>
+                  </section>
+              </Fragment>
+
+          </SidebarContent>
     );
   }
 
