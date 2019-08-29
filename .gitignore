@@ -202,6 +202,8 @@ ClientBin/
 *.dbproj.schemaview
 *.publishsettings
 node_modules/
+dist/
+build/
 orleans.codegen.cs
 
 # Since there are multiple workflows, uncomment next line to ignore bower_components
