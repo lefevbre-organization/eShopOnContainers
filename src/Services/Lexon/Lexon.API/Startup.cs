@@ -1,13 +1,16 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using HealthChecks.UI.Client;
 using Lexon.API.Extensions;
 using Lexon.API.IntegrationsEvents.EventHandling;
 using Lexon.API.IntegrationsEvents.Events;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 
 namespace Lexon.API
@@ -37,21 +40,42 @@ namespace Lexon.API
             return new AutofacServiceProvider(container.Build());
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             var pathBase = Configuration["PATH_BASE"];
 
-            if (env.IsDevelopment())
+            if (!string.IsNullOrEmpty(pathBase))
             {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                loggerFactory.CreateLogger<Startup>().LogDebug("Using PATH BASE '{pathBase}'", pathBase);
+                app.UsePathBase(pathBase);
             }
 
-            app.UseHttpsRedirection();
+            app.UseHealthChecks("/hc", new HealthCheckOptions()
+            {
+                Predicate = _ => true,
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
+
+            app.UseHealthChecks("/liveness", new HealthCheckOptions
+            {
+                Predicate = r => r.Name.Contains("self")
+            });
+
+            app.UseCors("CorsPolicy");
+            app.UseMvcWithDefaultRoute();
+
+
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
+            //else
+            //{
+            //    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            //    app.UseHsts();
+            //}
+
+            //app.UseHttpsRedirection();
             app.UseSwagger()
               .UseSwaggerUI(c =>
               {

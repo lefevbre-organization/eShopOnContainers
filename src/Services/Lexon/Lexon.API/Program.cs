@@ -60,7 +60,17 @@ namespace Lexon.API
 
         private static Serilog.ILogger CreateSerilogLogger(IConfiguration configuration)
         {
-            throw new NotImplementedException();
+            //var seqServerUrl = configuration["Serilog:SeqServerUrl"];
+            //var logstashUrl = configuration["Serilog:LogstashgUrl"];
+            return new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .Enrich.WithProperty("ApplicationContext", AppName)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                //.WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
+                //.WriteTo.Http(string.IsNullOrWhiteSpace(logstashUrl) ? "http://logstash:8080" : logstashUrl)
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
         }
 
         private static IConfiguration GetConfiguration()

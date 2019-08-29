@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Lexon.API.Infrastructure.Filters;
 using Lexon.API.Infrastructure.Repositories;
+using Lexon.API.IntegrationsEvents.EventHandling;
 using Lexon.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -204,7 +205,7 @@ namespace Lexon.API.Extensions
                 });
             }
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
-            //services.AddTransient<AddFileToUserIntegrationEventHandler>();
+            services.AddTransient<AddFileToUserIntegrationEventHandler>();
 
             return services;
         }
