@@ -92,6 +92,10 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ
 
                 channel.ExchangeDeclare(exchange: BROKER_NAME, type: "direct");
 
+                channel.QueueBind(queue: _queueName,
+                      exchange: BROKER_NAME,
+                      routingKey: eventName);
+
                 var message = JsonConvert.SerializeObject(@event);
                 var body = Encoding.UTF8.GetBytes(message);
 
