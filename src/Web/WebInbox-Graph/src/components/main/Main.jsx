@@ -64,10 +64,7 @@ export class Main extends Component {
        size: 0.25,
        sidebarOpen: false,
        sidebarDocked: false,
-       sidebarComponent: <SidebarComponent />,
-       sideBar: {
-            collapsed: false
-        }
+       sidebarComponent: <img border="0" alt="Lefebvre" src="assets/img/lexon-fake.png"></img>      
        
     };
 
@@ -76,49 +73,48 @@ export class Main extends Component {
           e.emit('received', { text: 'Woohoo! Hello from Multi-channel app!' })
       });
 
-      this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
       this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
+      this.onSetSidebarOpenCalendar = this.onSetSidebarOpenCalendar.bind(this);
+      this.onSetSidebarOpenLexon = this.onSetSidebarOpenLexon.bind(this);
+      this.onSetSidebarOpenQMemento = this.onSetSidebarOpenQMemento.bind(this);
+      this.onSetSidebarOpenCompliance = this.onSetSidebarOpenCompliance.bind(this);
+      this.onSetSidebarOpenDatabase = this.onSetSidebarOpenDatabase.bind(this); 
 
   }
 
     onSetSidebarOpenCalendar(open) {
         this.setState({ sidebarComponent: <SidebarComponent /> });
-        this.onSetSidebarDocked(true);
+        this.setState({ sidebarDocked: open });
     }
 
     onSetSidebarOpenLexon(open) {
         let lexon = <img border="0" alt="Lefebvre" src="assets/img/lexon-fake.png"></img>;
         this.setState({ sidebarComponent: lexon });
-        this.onSetSidebarDocked(true);
+        this.setState({ sidebarDocked: open });
     }
 
     onSetSidebarOpenQMemento(open) {
         let lexon = <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>;
         this.setState({ sidebarComponent: lexon });
-        this.onSetSidebarDocked(true);
+        this.setState({ sidebarDocked: open });
     }
 
     onSetSidebarOpenCompliance(open) {
         let lexon = <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>;
         this.setState({ sidebarComponent: lexon });
-        this.onSetSidebarDocked(true);
+        this.setState({ sidebarDocked: open });
     }
-
 
     onSetSidebarOpenDatabase(open) {
         let lexon = <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>;
         this.setState({ sidebarComponent: lexon });
-        this.onSetSidebarDocked(true);
-    }
-
-    onSetSidebarOpen(open) {
-        this.setState({ sidebarOpen: open });
+        this.setState({ sidebarDocked: open });
     }
 
     onSetSidebarDocked(open) {
         this.setState({ sidebarDocked: open });
-        this.setState({ sidebarOpen: open });
     }
+
   componentDidMount() {
     /* Label list is fetched from here 
     so that we can declare Routes by labelId 

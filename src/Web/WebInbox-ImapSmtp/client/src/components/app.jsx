@@ -29,7 +29,7 @@ import { registerLexonApp } from "../apps/lexonconn-app";
 import { registerMainnavApp } from "../apps/mainnav-app";
 
 import Sidebar from "react-sidebar";
-import SidebarContent from "../apps/sidebar_content"
+import SidebarComponent from "../apps/sidebar_content"
 
 
 //const activityFunction = location => location.pathname.startsWith('/lexon-connector');
@@ -51,55 +51,53 @@ class App extends Component {
       this.state = {
           sidebarOpen: false,
           sidebarDocked: false,
-          sidebarContent: <SidebarContent />,
-      sideBar: {
-        collapsed: false
-      }
+          sideBar: {
+              collapsed: false
+          },
+          sidebarComponent: <img border="0" alt="Lefebvre" src="assets/images/lexon-fake.png"></img>       
     };
 
-      this.toggleSideBar = this.toggleSideBar.bind(this); 
-      this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
+      //this.toggleSideBar = this.toggleSideBar.bind(this); 
       this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
+      this.onSetSidebarOpenCalendar = this.onSetSidebarOpenCalendar.bind(this);
+      this.onSetSidebarOpenLexon = this.onSetSidebarOpenLexon.bind(this);
+      this.onSetSidebarOpenQMemento = this.onSetSidebarOpenQMemento.bind(this);
+      this.onSetSidebarOpenCompliance = this.onSetSidebarOpenCompliance.bind(this);
+      this.onSetSidebarOpenDatabase = this.onSetSidebarOpenDatabase.bind(this); 
      
     }
 
     onSetSidebarOpenCalendar(open) {
-        this.setState({ sidebarContent: <SidebarContent /> });
-        this.onSetSidebarDocked(true);
+        this.setState({ sidebarComponent: <SidebarComponent /> });
+        this.setState({ sidebarDocked: open });
     }
 
     onSetSidebarOpenLexon(open) {
         let lexon = <img border="0" alt="Lefebvre" src="assets/images/lexon-fake.png"></img>;
-        this.setState({ sidebarContent: lexon });
-        this.onSetSidebarDocked(true);
+        this.setState({ sidebarComponent: lexon });
+        this.setState({ sidebarDocked: open });
     }
 
     onSetSidebarOpenQMemento(open) {
         let lexon = <img border="0" alt="Lefebvre" src="assets/images/lexon-fake-null.png"></img>;
-        this.setState({ sidebarContent: lexon });
-        this.onSetSidebarDocked(true);
+        this.setState({ sidebarComponent: lexon });
+        this.setState({ sidebarDocked: open });
     }
 
     onSetSidebarOpenCompliance(open) {
         let lexon = <img border="0" alt="Lefebvre" src="assets/images/lexon-fake-null.png"></img>;
-        this.setState({ sidebarContent: lexon });
-        this.onSetSidebarDocked(true);
+        this.setState({ sidebarComponent: lexon });
+        this.setState({ sidebarDocked: open });
     }
-       
 
     onSetSidebarOpenDatabase(open) {
         let lexon = <img border="0" alt="Lefebvre" src="assets/images/lexon-fake-null.png"></img>;
-        this.setState({ sidebarContent: lexon });
-        this.onSetSidebarDocked(true);
-    }
-  
-    onSetSidebarOpen(open) {
-      this.setState({ sidebarOpen: open });      
+        this.setState({ sidebarComponent: lexon });
+        this.setState({ sidebarDocked: open });
     }
 
-    onSetSidebarDocked(open) {       
+    onSetSidebarDocked(open) {
         this.setState({ sidebarDocked: open });
-        this.setState({ sidebarOpen: open });
     }
 
     render() {
@@ -108,7 +106,7 @@ class App extends Component {
         
       return (
           <Sidebar 
-              sidebar={this.state.sidebarContent}
+              sidebar={this.state.sidebarComponent}
               open={false}
               pullRight={true}
               docked={this.state.sidebarDocked}
