@@ -1,0 +1,43 @@
+@import '../../styles/partials/variables';
+@import '@material/top-app-bar/mixins';
+
+.divheader {
+    background-color: $mdc-theme-primary;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    /*height: 45px;*/
+}
+.topBar {
+   
+    display: flex;
+    flex-wrap: wrap;
+    font-family: Roboto;
+    font-size: 16px;
+    /*height: 72px;*/
+    /*box-shadow: 0 2px 4px -1px rgba(0, 0, 0, .2), 0 4px 2px 0 rgba(0, 0, 0, .14), 0 1px 10px 0 rgba(0, 0, 0, .12);*/
+    position: relative;
+    z-index: 2;
+    justify-content: space-between;
+    display: flex;
+    box-sizing: border-box;
+    /*padding: 0 16px;*/
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    white-space: nowrap;
+    /*margin-bottom:2px;*/
+    z-index: 9999;
+
+
+    margin-left: 0px;
+    width: 100%;
+    transition: margin $drawerAnimationSpeed, width $drawerAnimationSpeed;
+
+    &.with-custom-styles {
+        @include mdc-top-app-bar-fill-color($mdc-theme-secondary);
+    }
+
+    &.with-side-bar {
+        width: 100%;
+    }
+}
+

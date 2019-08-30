@@ -1,0 +1,32 @@
+{
+    "sidebar": {
+        "folders": "Gmail",
+        "inbox": "Bandeja de entrada",
+        "sent": "Enviados",
+        "trash": "Papelera",
+        "spam": "Spam",
+        "compose": "Nuevo correo",
+        "labels": "ETIQUETAS"
+    },
+    "message-list": {
+        "no-message": "No hay mensajes para esta etiqueta.",
+        "move-to-trash": "Mover a la Papelera"
+    },
+    "pager-buttons": {
+        "previous-page": "Página Anterior",
+        "next-page": "Página Siguiente"
+    },
+    "compose-message": {
+        "compose-message": "Componer Mensaje",
+        "to": "Para:",
+        "subject": "Asunto:",
+        "comma-separated": "lista de emails separados por coma",
+        "send-message": "Enviar mensaje",
+        "send": "Enviar",
+        "discard": "Descartar"
+    },
+    "message-toolbar": {
+        "move-to-trash": "Mover a la Papelera",
+        "reply": "Responder"
+    }
+}
