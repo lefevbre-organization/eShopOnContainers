@@ -17,7 +17,8 @@ namespace Lexon.API.Infrastructure
 {
     //TODO: https://www.mongodb.com/blog/post/working-with-mongodb-transactions-with-c-and-the-net-framework
     //TODO: create replica set from settings and from docker
-    //TODO: simplificar la llamada y refactorizar
+    //TODO: changue context to evaluate if hace a session and get collections from Session or database
+    //TODO: test senf reasilent transaction https://docs.mongodb.com/manual/reference/method/Session.startTransaction/
     public class LexonContext : IMongoDbContext, IIntegrationEventLogContextMongoDB
     {
         public IMongoDatabase Database { get; }
