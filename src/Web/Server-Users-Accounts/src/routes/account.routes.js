@@ -31,7 +31,7 @@ router.get('/user/:id', async (req, res) => {
 router.post('/defaultaccount/:user/:provider/:email', function (req, res) {
     Account.find({
         user: req.params.user,
-        provider: 'GOOGLE'
+        provider: req.params.provider
     }, function(err, accounts) {
     if (!accounts) {
         const account = new Account({ 
