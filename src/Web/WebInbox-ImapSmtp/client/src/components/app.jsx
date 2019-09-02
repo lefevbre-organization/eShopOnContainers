@@ -57,7 +57,7 @@ class App extends Component {
           sidebarComponent: <img border="0" alt="Lefebvre" src="assets/images/lexon-fake.png"></img>       
     };
 
-      //this.toggleSideBar = this.toggleSideBar.bind(this); 
+      this.toggleSideBar = this.toggleSideBar.bind(this); 
       this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
       this.onSetSidebarOpenCalendar = this.onSetSidebarOpenCalendar.bind(this);
       this.onSetSidebarOpenLexon = this.onSetSidebarOpenLexon.bind(this);

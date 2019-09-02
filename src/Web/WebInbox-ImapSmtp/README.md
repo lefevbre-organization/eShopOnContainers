@@ -119,7 +119,7 @@ $ docker login --username=avalverdelefebvre
 Password: Alberto1971.-
 
 to add tag:
-$ docker tag xxxxxxxxxx avalverdelefebvre/react-imapsmtp-docker:newdesign
+$ docker tag xxxxxxxxxx avalverdelefebvre/react-imapsmtp-docker:client-latest-newdesign
 
 To upload to docker hub:
 $ docker push avalverdelefebvre/react-imapsmtp-docker

@@ -23,9 +23,9 @@ const dev = {
 const prod = {
     url: {
         URL_INBOX_GOOGLE: 'https://lefebvre-multichannel-inbox-google.azurewebsites.net',
-        URL_INBOX_OUTLOOK: 'https://lefebvre-multichannel-inbox-graph.azurewebsites.net',
-        URL_INBOX_IMAP: 'http://lefebvre.eastus.cloudapp.azure.com',
-        API_ACCOUNTS: 'https://useraccounts.azurewebsites.net/api/accounts'
+        URL_INBOX_OUTLOOK: 'https://lefebvre-multichannel-office365.azurewebsites.net',
+        URL_INBOX_IMAP: 'http://lefebvre.westeurope.cloudapp.azure.com/login',
+        API_ACCOUNTS: 'https://lefebvre-multichannel-apinode.azurewebsites.net/api/accounts'
     },
     login: {
         URL_ENCRYPTED_USER: 'https://online.elderecho.com/ws/encriptarEntrada.do?nEntrada=',
