@@ -1,9 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Lexon.API.Extensions
+﻿namespace EmailUserAccount.API.Extensions
 {
+    #region Using
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    #endregion
+
     public static class LinqSelectExtensions
     {
         public static IEnumerable<SelectTryResult<TSource, TResult>> SelectTry<TSource, TResult>(this IEnumerable<TSource> enumerable, Func<TSource, TResult> selector)

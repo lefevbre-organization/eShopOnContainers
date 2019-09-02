@@ -5,7 +5,7 @@ namespace EmailUserAccount.API
     using Autofac;
     using Autofac.Extensions.DependencyInjection;
     using HealthChecks.UI.Client;
-    using Lexon.API.Extensions;
+    using Extensions;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Diagnostics.HealthChecks;
     using Microsoft.AspNetCore.Hosting;
@@ -81,7 +81,7 @@ namespace EmailUserAccount.API
             app.UseSwagger()
               .UseSwaggerUI(c =>
               {
-                  c.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "Lexon.API V1");
+                  c.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "EmailUserAccount.API V1");
                   c.RoutePrefix = @"api";
               });
 

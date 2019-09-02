@@ -1,14 +1,18 @@
-﻿using Lexon.API.Infrastructure.ActionResults;
-using Lexon.API.Infrastructure.Exceptions;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Logging;
-using System.Net;
-
-namespace Lexon.API.Infrastructure.Filters
+﻿namespace EmailUserAccount.API.Infrastructure.Filters
 {
+    #region Using
+
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.Filters;
+    using Microsoft.Extensions.Logging;
+    using System.Net;
+    using ActionResults;
+    using Exceptions;
+
+    #endregion
+
     public class HttpGlobalExceptionFilter : IExceptionFilter
     {
         private readonly IHostingEnvironment env;
@@ -26,7 +30,7 @@ namespace Lexon.API.Infrastructure.Filters
                 context.Exception,
                 context.Exception.Message);
 
-            if (context.Exception.GetType() == typeof(LexonDomainException))
+            if (context.Exception.GetType() == typeof(EmailUserAccountDomainException))
             {
                 var problemDetails = new ValidationProblemDetails()
                 {
@@ -35,7 +39,7 @@ namespace Lexon.API.Infrastructure.Filters
                     Detail = "Please refer to the errors property for additional details."
                 };
 
-                problemDetails.Errors.Add("DomainValidations", new string[] { context.Exception.Message.ToString() });
+                problemDetails.Errors.Add("DomainValidations", new[] { context.Exception.Message });
 
                 context.Result = new BadRequestObjectResult(problemDetails);
                 context.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;

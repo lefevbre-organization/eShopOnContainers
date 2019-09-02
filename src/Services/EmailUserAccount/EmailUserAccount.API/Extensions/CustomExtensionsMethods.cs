@@ -1,22 +1,27 @@
-﻿using Autofac;
-using Lexon.API.Infrastructure.Filters;
-using Lexon.API.Infrastructure.Repositories;
-using Lexon.API.IntegrationsEvents.EventHandling;
-using Lexon.Infrastructure.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using RabbitMQ.Client;
-
-namespace Lexon.API.Extensions
+﻿namespace EmailUserAccount.API.Extensions
 {
+    #region Using
+
+    using Autofac;
+    using API;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
+    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+    using Microsoft.eShopOnContainers.BuildingBlocks.EventBusRabbitMQ;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Diagnostics.HealthChecks;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
+    using RabbitMQ.Client;
+    using Infrastructure.Filters;
+    using EmailUserAccount.API.Infrastructure.Repositories;
+    using Infrastructure.Services;
+    using IntegrationEvents.Events;
+
+    #endregion
+
     public static class CustomExtensionsMethods
     {
         public static IServiceCollection AddAppInsight(this IServiceCollection services, IConfiguration configuration)
@@ -45,8 +50,8 @@ namespace Lexon.API.Extensions
 
             //TODO: implement of services
             //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddTransient<IUsersService, UsersService>();
-            services.AddTransient<IUsersRepository, UsersRepository>();
+            services.AddTransient<IAccountsService, AccountsService>();
+            services.AddTransient<IAccountsRepository, AccountsRepository>();
             return services;
         }
 
@@ -71,7 +76,7 @@ namespace Lexon.API.Extensions
                     .AddAzureBlobStorage(
                         $"DefaultEndpointsProtocol=https;AccountName={accountName};AccountKey={accountKey};EndpointSuffix=core.windows.net",
                         name: "catalog-storage-check",
-                        tags: new string[] { "lexonstorage" });
+                        tags: new string[] { "emailuseraccountstorage" });
             }
 
             if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
@@ -79,7 +84,7 @@ namespace Lexon.API.Extensions
                 hcBuilder
                     .AddAzureServiceBusTopic(
                         configuration["EventBusConnection"],
-                        topicName: "lexon_event_bus",
+                        topicName: "emailuseraccount_event_bus",
                         name: "lexon-servicebus-check",
                         tags: new string[] { "servicebus" });
             }
@@ -88,7 +93,7 @@ namespace Lexon.API.Extensions
                 hcBuilder
                     .AddRabbitMQ(
                         $"amqp://{configuration["EventBusConnection"]}",
-                        name: "lexon-rabbitmqbus-check",
+                        name: "emailuseraccount-rabbitmqbus-check",
                         tags: new string[] { "rabbitmqbus" });
             }
 
@@ -102,7 +107,7 @@ namespace Lexon.API.Extensions
 
         public static IServiceCollection AddCustomOptions(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<LexonSettings>(configuration);
+            services.Configure<EmailUserAccountSettings>(configuration);
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.InvalidModelStateResponseFactory = context =>
@@ -131,9 +136,9 @@ namespace Lexon.API.Extensions
                 options.DescribeAllEnumsAsStrings();
                 options.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info
                 {
-                    Title = "Lefebvre Now - Lexon HTTP API",
+                    Title = "Lefebvre Now - EmailUserAccount HTTP API",
                     Version = "v1",
-                    Description = "The Lexon Microservice HTTP API. This is a Data-Driven/CRUD microservice sample",
+                    Description = "The EmailUserAccount Microservice HTTP API. This is a Data-Driven/CRUD microservice sample",
                     TermsOfService = "Terms Of Service"
                 });
             });
@@ -151,7 +156,7 @@ namespace Lexon.API.Extensions
             {
                 services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
                 {
-                    var settings = sp.GetRequiredService<IOptions<LexonSettings>>().Value;
+                    var settings = sp.GetRequiredService<IOptions<EmailUserAccountSettings>>().Value;
                     var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
                     var factory = new ConnectionFactory
                     {
@@ -205,7 +210,7 @@ namespace Lexon.API.Extensions
                 });
             }
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
-            services.AddTransient<AddFileToUserIntegrationEventHandler>();
+            services.AddTransient<AddOperationEmailUserAccountIntegrationEvent>();
 
             return services;
         }

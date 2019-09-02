@@ -6,10 +6,10 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 62799
+          "Port": 64755
         }
       ],
-      "UpstreamPathTemplate": "/api/{version}/emailuseraccount/{everything}",
+      "UpstreamPathTemplate": "/api/{version}/accounts/{everything}",
       "UpstreamHttpMethod": []
     }
   ],

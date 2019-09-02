@@ -1,7 +1,10 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel
+﻿namespace EmailUserAccount.API.ViewModel
 {
+    #region Using
+
     using System.Collections.Generic;
 
+    #endregion
 
     public class PaginatedItemsViewModel<TEntity> where TEntity : class
     {
@@ -15,10 +18,10 @@
 
         public PaginatedItemsViewModel(int pageIndex, int pageSize, long count, IEnumerable<TEntity> data)
         {
-            this.PageIndex = pageIndex;
-            this.PageSize = pageSize;
-            this.Count = count;
-            this.Data = data;
+            PageIndex = pageIndex;
+            PageSize = pageSize;
+            Count = count;
+            Data = data;
         }
     }
 }

@@ -1,8 +1,11 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-
-namespace Lexon.API.Model
+﻿namespace EmailUserAccount.API.Model
 {
+    #region Using
+
+    using MongoDB.Bson;
+    using MongoDB.Bson.Serialization.Attributes;
+
+    #endregion
 
     public abstract class MongoModel
     {

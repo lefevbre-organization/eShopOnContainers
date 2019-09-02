@@ -1,37 +1,41 @@
-﻿using Lexon.API.Model;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF;
-using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
-using Microsoft.Extensions.Options;
-using MongoDB.Bson.Serialization;
-using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Lexon.API.Infrastructure
+﻿namespace EmailUserAccount.API.Infrastructure
 {
+    #region
+
+    using Model;
+    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
+    using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF;
+    using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
+    using Microsoft.Extensions.Options;
+    using MongoDB.Bson.Serialization;
+    using MongoDB.Driver;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    #endregion
+
     //TODO: https://www.mongodb.com/blog/post/working-with-mongodb-transactions-with-c-and-the-net-framework
     //TODO: create replica set from settings and from docker
     //TODO: changue context to evaluate if hace a session and get collections from Session or database
     //TODO: test senf reasilent transaction https://docs.mongodb.com/manual/reference/method/Session.startTransaction/
-    public class LexonContext : IMongoDbContext, IIntegrationEventLogContextMongoDB
+
+    public class EmailUserAccountContext : IMongoDbContext, IIntegrationEventLogContextMongoDB
     {
         public IMongoDatabase Database { get; }
         public IClientSessionHandle Session { get; private set; }
-        private readonly IMongoClient _client = null;
+        private readonly IMongoClient _client;
         private readonly List<Type> _eventTypes;
         private readonly IEventBus _eventBus;
-        private readonly IOptions<LexonSettings> _settings;
+        private readonly IOptions<EmailUserAccountSettings> _settings;
 
-        public LexonContext(
-            IOptions<LexonSettings> settings,
-              IEventBus eventBus
-            )
+        public EmailUserAccountContext(
+            IOptions<EmailUserAccountSettings> settings,
+            IEventBus eventBus)
         {
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _settings = settings;
@@ -39,7 +43,7 @@ namespace Lexon.API.Infrastructure
             if (_client != null)
                 Database = _client.GetDatabase(settings.Value.Database);
 
-            _eventTypes = Assembly.Load(Assembly.GetEntryAssembly().FullName)
+            _eventTypes = Assembly.Load(Assembly.GetEntryAssembly()?.FullName ?? throw new InvalidOperationException())
                 .GetTypes()
                 .Where(t => t.Name.EndsWith(nameof(IntegrationEvent), StringComparison.CurrentCulture))
                 .ToList();
@@ -47,40 +51,17 @@ namespace Lexon.API.Infrastructure
             ClassMapping();
         }
 
-        //public LexonContext()
-        //{
-        //    var settings = new MongoClientSettings
-        //    {
-        //        Servers = new[]
-        //    {
-        //            new MongoServerAddress("localhost", 37017),
-        //            new MongoServerAddress("localhost", 37018),
-        //            new MongoServerAddress("localhost", 37019)
-        //        },
-        //        ConnectionMode = ConnectionMode.ReplicaSet,
-        //        ReadPreference = ReadPreference.Primary
-        //    };
-
-        //    _client = new MongoClient(settings);
-        //    Database = _client.GetDatabase("usersystem");
-        //    ClassMapping();
-
-        //}
-
         private static void ClassMapping()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(IntegrationEventLogEntry))) { BsonClassMap.RegisterClassMap<IntegrationEventLogEntry>(); }
-            if (!BsonClassMap.IsClassMapRegistered(typeof(LexonUser))) { BsonClassMap.RegisterClassMap<LexonUser>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(Account))) { BsonClassMap.RegisterClassMap<Account>(); }
         }
 
-        public IMongoCollection<LexonUser> LexonUsers
-        {
-            get { return Database.GetCollection<LexonUser>("Users"); }
-        }
+        public IMongoCollection<Account> Accounts => Database.GetCollection<Account>("accounts");
 
-        public IMongoCollection<LexonUser> LexonUsersTransaction(IClientSessionHandle session)
+        public IMongoCollection<Account> AccountsTransaction(IClientSessionHandle session)
         {
-            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<LexonUser>("Users");
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<Account>("accounts");
         }
 
         public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogs
