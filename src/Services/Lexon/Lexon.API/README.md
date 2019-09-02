@@ -34,7 +34,7 @@ Only copy de projects in relation with this api
 
 ### Startup
 
-- Refactorize the methods in Extensions/CustomExtensionsMethods.cs
+- Refactorize the methods in Extensions/CustomExtensionsMethods.cs  
 - AddAppInsight (not implemented)
 - AddCustomDbContext (not neccessary)
 - AddCustomOptions (similar with other class of settings)
