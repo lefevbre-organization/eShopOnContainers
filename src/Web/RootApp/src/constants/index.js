@@ -3,8 +3,8 @@ const dev = {
         URL_INBOX_GOOGLE: 'http://localhost:3001',
         URL_INBOX_OUTLOOK: 'http://localhost:3002',
         URL_INBOX_IMAP: 'http://localhost:3003',
-        //API_ACCOUNTS: 'https://useraccounts.azurewebsites.net/api/accounts'
-        API_ACCOUNTS: 'http://localhost:3500/api/accounts'
+        API_ACCOUNTS: 'https://lefebvre-multichannel-apinode.azurewebsites.net/api/accounts'
+        //API_ACCOUNTS: 'http://localhost:3500/api/accounts'
     },
     login: {
         URL_ENCRYPTED_USER: 'https://online.elderecho.com/ws/encriptarEntrada.do?nEntrada=',
@@ -25,7 +25,7 @@ const prod = {
         URL_INBOX_GOOGLE: 'https://lefebvre-multichannel-inbox-google.azurewebsites.net',
         URL_INBOX_OUTLOOK: 'https://lefebvre-multichannel-inbox-graph.azurewebsites.net',
         URL_INBOX_IMAP: 'http://lefebvre.eastus.cloudapp.azure.com',
-        API_ACCOUNTS: 'https://useraccounts.azurewebsites.net/api/accounts'
+        API_ACCOUNTS: 'https://lefebvre-multichannel-apinode.azurewebsites.net/api/accounts'
     },
     login: {
         URL_ENCRYPTED_USER: 'https://online.elderecho.com/ws/encriptarEntrada.do?nEntrada=',
