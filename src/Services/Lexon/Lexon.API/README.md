@@ -59,7 +59,7 @@ Identical
 
 ### ViewModel
 
-Identical, but need review de location Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel
+Identical, but need review the location Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel
 
 ## IntegrationEvents
 
