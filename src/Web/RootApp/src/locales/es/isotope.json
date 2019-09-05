@@ -1,17 +1,17 @@
 {
-    "page-goto": {
-        "add-account-mail": "Añadir cuenta de correo",
-        "other-server-mail": "Otro servidor de correo",
-        "mail": "MAIL",
-        "my-accounts": "Mis cuentas de correo"
-    },
-    "footer": {
-        "all-reserved-right": "©2019 Lefebvre. Todos los derechos reservados.",
-        "legal-warning": "Aviso legal",
-        "privacy-policy": "Política de privacidad",
-        "cookies-policy": "Política de cookies"
-    },
-    "accounts": {
-        "nothing-user-email-added": "Ninguna cuenta de correo añadida"
-    }
+  "page-goto": {
+    "add-account-mail": "Añadir cuenta de correo",
+    "other-server-mail": "Otro servidor de correo",
+    "mail": "MAIL",
+    "my-accounts": "Mis cuentas de correo"
+  },
+  "footer": {
+    "all-reserved-right": "©2019 Lefebvre. Todos los derechos reservados.",
+    "legal-warning": "Aviso legal",
+    "privacy-policy": "Política de privacidad",
+    "cookies-policy": "Política de cookies"
+  },
+  "accounts": {
+    "nothing-user-email-added": "Ninguna cuenta de correo añadida"
+  }
 }

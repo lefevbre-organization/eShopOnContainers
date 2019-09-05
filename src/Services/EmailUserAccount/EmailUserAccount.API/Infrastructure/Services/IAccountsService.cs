@@ -10,8 +10,14 @@
 
     public interface IAccountsService
     {
-        Task<List<Account>> GetListAccountsAsync(int pageSize, int pageIndex);
-
-        Task<List<Account>> GetListAccountsByUserAsync(int pageSize, int pageIndex, string idUser);
+        Task<List<Account>> Get();
+        Task<Account> Get(string id);
+        Task Create(Account account);
+        Task Remove(string id);
+        Task Update(string id, Account accountIn);
+        Task<List<Account>> GetByUser(string user);
+        Task UpdateDefaultAccount(string user, string provider, string email);
+        Task<bool> DeleteAccountByUserAndProvider(string user, string provider);
+        Task<bool> ResetDefaultAccountByUser(string user);
     }
 }
