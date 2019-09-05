@@ -33,5 +33,5 @@
         }
     }
 
-    public enum EnTypeOperation { Add = 1, Remove, UpdateDefaultAccount }
+    public enum EnTypeOperation { Add = 1, Remove, UpdateDefaultAccount, Get, Update }
 }
