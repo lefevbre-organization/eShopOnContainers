@@ -4,16 +4,13 @@ import React, { Component } from 'react';
 import { getUserDetails } from './GraphService';
 import 'bootstrap/dist/css/bootstrap.css';
 import { withRouter } from "react-router-dom";
-
 import { bindActionCreators, compose } from "redux";
 import { connect } from "react-redux";
-
 import Main from "./components/main/Main";
 import Login from "./components/login/Login";
 import Authenticating from "./components/authenticating/Authenticating";
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import { mountScripts } from "./api_graph/scripts";
-
 import {
     SIGNED_OUT,   
     AUTH_SUCCESS,
@@ -21,9 +18,7 @@ import {
     AUTH_IN_PROGRESS,
     PROVIDER,
 } from "./constants";
-
 import { config as constants } from "./constants";
-
 import { storeUser } from "./actions/settings.actions";
 
 class AppContainerGraph extends Component {

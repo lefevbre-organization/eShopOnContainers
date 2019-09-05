@@ -4,13 +4,10 @@ import Main from "./components/main/Main";
 import Login from "./components/login/Login";
 import Authenticating from "./components/authenticating/Authenticating";
 import 'react-perfect-scrollbar/dist/css/styles.css';
-
 import { bindActionCreators, compose } from "redux";
 import { connect } from "react-redux";
-
 import { signIn, checkSignInStatus } from "./api/authentication";
 import { mountScripts } from "./api/scripts";
-
 import {
   SIGNED_OUT,
   AUTH_SUCCESS,
@@ -18,9 +15,7 @@ import {
   AUTH_IN_PROGRESS,
   PROVIDER
 } from "./constants";
-
 import { config as constants } from "./constants";
-
 import { storeUser } from "./actions/settings.actions";
 
 export class AppContainer extends Component {
@@ -123,13 +118,7 @@ export class AppContainer extends Component {
         {this.renderView()}       
       </React.Fragment>
 
-      // <React.Fragment>        
-      //   {this.props.location.pathname === "/" ? (
-      //     <Redirect to="/inbox" />
-      //   ) : (
-      //     this.renderView()
-      //   )}
-      // </React.Fragment>
+      
     );
   }
 }

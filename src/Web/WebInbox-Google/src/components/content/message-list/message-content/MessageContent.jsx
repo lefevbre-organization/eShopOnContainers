@@ -198,7 +198,7 @@ export class MessageContent extends Component {
 
   renderErrorModal() {
     return <Redirect to="/notfound" />;
-  }
+  }  
 
   modifyMessage(addLabelIds, removeLabelIds) {
     const id = this.props.emailMessageResult.result.id;

@@ -10,8 +10,7 @@ import MessageList from "../content/message-list/MessageList";
 import MessageContent from "../content/message-list/message-content/MessageContent";
 import { Route, Switch, withRouter } from "react-router-dom";
 import { getLabels } from "../sidebar/sidebar.actions";
-
-
+import ComposeMessage from "../compose-message/ComposeMessage-fixed";
 import {
   getLabelMessages,
   emptyLabelMessages,
@@ -21,27 +20,22 @@ import {
   clearPageTokens,
   setSearchQuery
 } from "../content/message-list/actions/message-list.actions";
-
 import {selectLabel} from '../sidebar/sidebar.actions';
 import {signOut} from '../../api/authentication';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner, faWindowClose, faClosedCaptioning, faDoorClosed, faTimes, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
-
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {
     ReflexContainer,
     ReflexSplitter,
     ReflexElement
 } from 'react-reflex'
-import 'react-reflex/styles.css'
-
 import { start, registerApplication } from 'single-spa'
-
 import * as singleSpa from 'single-spa';
 import { registerLexonApp } from "../../apps/lexonconn-app";
-
 import SidebarCnn from "react-sidebar";
 import SidebarComponent from "../../apps/sidebar_content"
+import 'react-reflex/styles.css'
 
 
 export class Main extends Component {    
@@ -258,13 +252,15 @@ export class Main extends Component {
   }
 
   renderInboxViewport() {
-
+    
     let imgUrl = 'assets/img/settings-gears.svg'
     if (this.props.labelsResult.labels.length < 1) {
         return this.renderSpinner();       
     }
 
       return ( 
+
+         
 
           <SidebarCnn
               sidebar={this.state.sidebarComponent}
@@ -328,8 +324,13 @@ export class Main extends Component {
                           onLabelClick={this.loadLabelMessages}
                       />
                       <article className="d-flex flex-column position-relative">
-                          <Switch>
+                            <Switch>
                               {this.renderLabelRoutes()}
+                              <Route
+                                  exact
+                                  path="/compose"
+                                  component={ComposeMessage}
+                              />
                               <Route
                                   exact
                                   path="/notfound"
@@ -340,7 +341,12 @@ export class Main extends Component {
                                   path="/:id([a-zA-Z0-9]+)"
                                   component={MessageContent}
                               />
-                          </Switch>
+                             
+                              
+                            </Switch>                                                   
+                         
+
+                         
                       </article>
                  
                   

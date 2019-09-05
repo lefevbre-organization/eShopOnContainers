@@ -1,12 +1,8 @@
 import React, { PureComponent } from "react";
 import { withTranslation } from 'react-i18next';
-
-import ComposeMessage from "../compose-message/ComposeMessage";
 import PerfectScrollbar from "react-perfect-scrollbar";
-
 import groupBy from "lodash/groupBy";
 import sortBy from "lodash/sortBy";
-
 import {
   faInbox,
   faEnvelopeSquare,
@@ -14,9 +10,8 @@ import {
   faFolderOpen,
   faExclamationTriangle
 } from "@fortawesome/free-solid-svg-icons";
-
 import LabelItem from "./LabelItem";
-
+import { Link } from "react-router-dom";
 import "./sidebar.scss";
 
 export class Sidebar extends PureComponent {
@@ -28,13 +23,18 @@ export class Sidebar extends PureComponent {
     };
 
     //this.renderLabels = this.renderLabels.bind(this);
-    this.navigateToList = this.navigateToList.bind(this);
+      this.navigateToList = this.navigateToList.bind(this);
+      this.composeClick = this.composeClick.bind(this);
   }
 
   componentDidMount() {
     //this.props.getLabelList(); //.then(labels => {});
     /*  */
     //this.props.getLabelMessages();
+  }
+
+  composeClick() {
+      this.props.history.push('/compose')
   }
 
   navigateToList(evt, labelId) {
@@ -163,17 +163,13 @@ export class Sidebar extends PureComponent {
     return (
       <nav className="d-flex flex-column text-truncate left-panel">
         <div className="compose-panel">
-          <div className="d-flex justify-content-center p-2 compose-btn">
-            <ComposeMessage
-              subject=""
-              to=""
-            >
-              <button className="btn font-weight-bold BtnLfcolor uppercase compose-btn">
-                <img className="ImgLf" border="0" alt="otulook" src="assets/img/plus.png"></img> 
-                <span className="text-dark">{t('sidebar.compose')}</span>
-
-              </button>
-            </ComposeMessage>
+          <div className="d-flex justify-content-center p-2 compose-btn">            
+              <div>     
+                  <Link className="btn font-weight-bold BtnLfcolor uppercase compose-btn" to='/compose' >
+                     <img className="ImgLf" border="0" alt="otulook" src="assets/img/plus.png"></img>
+                     {t('sidebar.compose')}
+                  </Link>               
+              </div>
           </div>
         </div>
         <PerfectScrollbar
