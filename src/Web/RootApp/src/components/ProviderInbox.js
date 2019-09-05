@@ -4,13 +4,34 @@ import i18n from "i18next";
 import { config, INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP } from "../constants";
 
 class ProviderInbox extends Component {
-  render() {
+
+  getUser() {
     const { userId, provider, email } = this.props;
-    console.log("ProviderInbox [props] ->", this.props);
-    let user = "";
-    if (userId != null) {
-      user = userId;
+    switch (provider) {
+      case INBOX_GOOGLE:
+        if (email !== undefined && email !== '') {
+          return `GO0${userId}`;
+        }
+        return `GO1${userId}`;
+      case INBOX_OUTLOOK:
+          if (email !== undefined && email !== '') {
+            return `OU0${userId}`;
+          }
+          return `OU1${userId}`;  
+      case INBOX_IMAP:
+          if (email !== undefined && email !== '') {
+            return `IM0${userId}`;
+          }
+          return `IM1${userId}`;  
+      
+      default:
+        return null;
     }
+  }
+
+  render() {
+    const { provider, email } = this.props;
+    let user = this.getUser();
 
     let title;
     switch (provider) {

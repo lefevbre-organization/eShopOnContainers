@@ -7,6 +7,7 @@ import Accounts from "./Accounts";
 import { INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP } from "../constants";
 
 class GoTo extends Component {
+
   renderAddAccount(provider) {
     const { userId, accounts } = this.props;
 
@@ -55,9 +56,12 @@ class GoTo extends Component {
                 <div className="row">
                   <div className="col">
                     <ul>
-                      {this.renderAddAccount(INBOX_GOOGLE)}
+                      <li><ProviderInbox userId={userId} provider={INBOX_GOOGLE} /></li>
+                      <li><ProviderInbox userId={userId} provider={INBOX_OUTLOOK} /></li>
+                      <li><ProviderInbox userId={userId} provider={INBOX_IMAP} /></li>
+                      {/* {this.renderAddAccount(INBOX_GOOGLE)}
                       {this.renderAddAccount(INBOX_OUTLOOK)}
-                      {this.renderAddAccount(INBOX_IMAP)}
+                      {this.renderAddAccount(INBOX_IMAP)} */}
                     </ul>
                   </div>
                 </div>
@@ -68,6 +72,7 @@ class GoTo extends Component {
       </aside>
     );
   }
+
 }
 
 export default GoTo;
