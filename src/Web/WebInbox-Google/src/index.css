@@ -13,6 +13,17 @@ a {
     color: #001978 !important;
 }
 
+.btn-primary {
+    color: #fff;
+    background-color: #001978;
+    border-color: #001978;
+}
+
+.btn-primary:hover {
+        background-color: #001978;
+        border-color: #001978;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
