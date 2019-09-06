@@ -18,94 +18,93 @@ router.get('/user/:id', async (req, res) => {
     await Account.find({
         user: req.params.id
     })
-        .sort('-defaultAccount')
-        .exec(function (err, accounts) {
-            if (err) {
-                throw err;
-            }
-            console.log(accounts);
-            res.json(accounts)
-        });
+    .sort('-defaultAccount')
+    .exec(function(err, accounts) {
+        if (err) {
+            throw err;
+        }         
+        console.log(accounts);
+        res.json(accounts)
+    });    
 });
 
 router.post('/defaultaccount/:user/:provider/:email', function (req, res) {
     Account.find({
         user: req.params.user,
         provider: req.params.provider
-    }, function (err, accounts) {
-        if (!accounts) {
-            const account = new Account({
-                user: req.params.user,
-                provider: req.params.provider,
-                email: req.params.email,
-                defaultAccount: true
-            });
-            account.save().then(account => {
-                res.json({ status: 'Account saved' });
-            })
-                .catch(err => {
-                    res.json({ status: 'Error in save account' });
-                });
-        } else {
-            console.log('accounts ->', accounts);
-            const exists = accounts.some(account => (account.provider === req.params.provider));
-            if (exists) {
-                const cloneAccounts = accounts.slice();
-                cloneAccounts.map(function (account, i) {
-                    if (account.provider === req.params.provider) {
-                        const newAccount = {
-                            user: account.user,
-                            provider: account.provider,
-                            email: account.email,
-                            defaultAccount: true
-                        };
-                        Account.findByIdAndUpdate(account._id, newAccount)
-                            .then(
-                                console.log(`IN if ... update -> ${account._id}`)
-                            )
-                            .catch(err => {
-                                console.log(`ERROR -> ${err}`)
-                            });
-                    } else {
-                        const newAccount = {
-                            user: account.user,
-                            provider: account.provider,
-                            email: account.email,
-                            defaultAccount: false
-                        };
-                        Account.findByIdAndUpdate(account._id, newAccount)
-                            .then(
-                                console.log(`IN else ... update -> ${account._id}`)
-                            )
-                            .catch(err => {
-                                console.log(`ERROR -> ${err}`)
-                            });
-                    }
-                });
-                res.json({ status: 'USERS-ACCOUNTS updated' });
-            } else {
-                accounts.map(function (account, i) {
-                    const newAccount = {
-                        user: account.user,
-                        provider: account.provider,
-                        email: account.email,
+    }, function(err, accounts) {
+    if (!accounts) {
+        const account = new Account({ 
+            user: req.params.user, 
+            provider: req.params.provider, 
+            email: req.params.email, 
+            defaultAccount: true });
+        account.save().then(account => {
+            res.json({ status: 'Account saved' });
+        })
+        .catch(err => {
+            res.json({ status: 'Error in save account' });
+        });                    
+    } else {
+        console.log('accounts ->', accounts);
+        const exists = accounts.some(account => (account.provider === req.params.provider));
+        if (exists) {
+            const cloneAccounts = accounts.slice();
+            cloneAccounts.map(function(account, i) {
+                if (account.provider === req.params.provider) {
+                    const newAccount = { 
+                        user: account.user, 
+                        provider: account.provider, 
+                        email: account.email, 
+                        defaultAccount: true
+                    };
+                    Account.findByIdAndUpdate(account._id, newAccount)
+                    .then(
+                        console.log(`IN if ... update -> ${account._id}`)
+                    )
+                    .catch(err => {
+                        console.log(`ERROR -> ${err}`)
+                    });
+                } else {
+                    const newAccount = { 
+                        user: account.user, 
+                        provider: account.provider, 
+                        email: account.email, 
                         defaultAccount: false
                     };
-                    Account.findByIdAndUpdate(account._id, newAccount).then(
-                        console.log(`update -> ${account._id}`)
-                    );
-                });
-                const account = new Account({
-                    user: req.params.user,
-                    provider: req.params.provider,
-                    email: req.params.email,
-                    defaultAccount: true
-                });
-                account.save();
-                res.json({ status: 'USERS-ACCOUNTS updated' });
-            }
+                    Account.findByIdAndUpdate(account._id, newAccount)
+                    .then(
+                        console.log(`IN else ... update -> ${account._id}`)
+                    )
+                    .catch(err => {
+                        console.log(`ERROR -> ${err}`)
+                    });
+                }
+            });            
+            res.json({ status: 'USERS-ACCOUNTS updated' });    
+        } else {
+            accounts.map(function(account, i) {
+                const newAccount = { 
+                    user: account.user, 
+                    provider: account.provider,
+                    email: account.email,
+                    defaultAccount: false
+                };    
+                Account.findByIdAndUpdate(account._id, newAccount).then(
+                    console.log(`update -> ${account._id}`)
+                );                
+            });
+            const account = new Account({ 
+                user: req.params.user, 
+                provider: req.params.provider, 
+                email: req.params.email, 
+                defaultAccount: true
+            });
+            account.save();
+            res.json({ status: 'USERS-ACCOUNTS updated' });
         }
-    });
+    }
+  });
 });
 
 router.post('/deleteaccount', function (req, res) {
@@ -115,9 +114,9 @@ router.post('/deleteaccount', function (req, res) {
         user: user,
         provider: provider,
         email: email
-    }, function (err, accounts) {
+    }, function(err, accounts) {
         if (accounts) {
-            accounts.map(function (account) {
+            accounts.map(function(account){
                 Account.findByIdAndRemove(account._id)
                     .then(
                         console.log(`Delete _id -> ${account._id}`)
@@ -137,9 +136,9 @@ router.post('/deleteaccountbyprovider', function (req, res) {
     Account.find({
         user: user,
         provider: provider
-    }, function (err, accounts) {
+    }, function(err, accounts) {
         if (accounts) {
-            accounts.map(function (account) {
+            accounts.map(function(account){
                 Account.findByIdAndRemove(account._id)
                     .then(
                         console.log(`Delete _id -> ${account._id}`)
@@ -156,17 +155,17 @@ router.post('/deleteaccountbyprovider', function (req, res) {
 router.post('/resetdefaultaccount/:user', function (req, res) {
     Account.find({
         user: req.params.user
-    }, function (err, accounts) {
-        accounts.map(function (account) {
-            const newAccount = {
-                user: account.user,
+    }, function(err, accounts) {
+        accounts.map(function(account) {
+            const newAccount = { 
+                user: account.user, 
                 provider: account.provider,
                 email: account.email,
                 defaultAccount: false
-            };
+            };    
             Account.findByIdAndUpdate(account._id, newAccount).then(
                 console.log(`update -> ${account._id}`)
-            );
+            );                
         });
         res.json({ status: 'USERS-ACCOUNTS updated' });
     });

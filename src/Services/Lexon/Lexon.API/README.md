@@ -34,7 +34,7 @@ Only copy de projects in relation with this api
 
 ### Startup
 
-- Refactorize the methods in Extensions/CustomExtensionsMethods.cs
+- Refactorize the methods in Extensions/CustomExtensionsMethods.cs  
 - AddAppInsight (not implemented)
 - AddCustomDbContext (not neccessary)
 - AddCustomOptions (similar with other class of settings)
@@ -59,7 +59,7 @@ Identical
 
 ### ViewModel
 
-Identical, but need review de location Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel
+Identical, but need review the location Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel
 
 ## IntegrationEvents
 
