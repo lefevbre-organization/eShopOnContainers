@@ -45,3 +45,6 @@ export const outboxSetSent = sent =>
 export const outboxSetError = error =>
   ({type: ActionTypes.APPLICATION_OUTBOX_SET_ERROR, payload: error});
 export const outboxMessageProcessed = () => ({type: ActionTypes.APPLICATION_OUTBOX_MESSAGE_PROCESSED});
+export const setUserLexon = user =>
+  ({type: ActionTypes.APPLICATION_USERLEXON, payload: user});
+

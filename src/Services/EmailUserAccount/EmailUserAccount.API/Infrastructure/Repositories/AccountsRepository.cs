@@ -18,12 +18,14 @@
     public class AccountsRepository : IAccountsRepository
     {
         private readonly EmailUserAccountContext _context;
+        private readonly IEventBus _eventBus;
 
         public AccountsRepository(
             IOptions<EmailUserAccountSettings> settings,
             IEventBus eventBus)
         {
             _context = new EmailUserAccountContext(settings, eventBus);
+            _eventBus = eventBus;
         }
 
         public async Task<List<Account>> Get()
@@ -45,7 +47,7 @@
             await _context.Accounts.InsertOneAsync(account);
 
             var eventAssoc = new AddOperationEmailUserAccountIntegrationEvent(account.User, account.Provider, account.Email, account.DefaultAccount, EnTypeOperation.Create);
-            //await CreateAndPublishIntegrationEventLogEntry(_context.Session, eventAssoc);
+            _eventBus.Publish(eventAssoc);
         }
 
         public async Task Remove(string id)
@@ -55,7 +57,7 @@
             await _context.Accounts.DeleteOneAsync(account => account.Id == id);
             
             var eventAssoc = new AddOperationEmailUserAccountIntegrationEvent(accountRemove.User, accountRemove.Provider, accountRemove.Email, accountRemove.DefaultAccount, EnTypeOperation.Remove);
-            //await CreateAndPublishIntegrationEventLogEntry(null, eventAssoc);
+            _eventBus.Publish(eventAssoc);
         }
 
         public async Task Update(string id, Account accountIn)
@@ -65,7 +67,7 @@
             await _context.Accounts.ReplaceOneAsync(account => account.Id == id, accountIn);
 
             var eventAssoc = new AddOperationEmailUserAccountIntegrationEvent(accountUpdate.User, accountUpdate.Provider, accountUpdate.Email, accountUpdate.DefaultAccount, EnTypeOperation.Update);
-            //await CreateAndPublishIntegrationEventLogEntry(null, eventAssoc);
+            _eventBus.Publish(eventAssoc);
         }
 
         public async Task<List<Account>> GetByUser(string user)
@@ -96,7 +98,7 @@
             }
 
             var eventAssoc = new AddOperationEmailUserAccountIntegrationEvent(user, provider, email, true, EnTypeOperation.UpdateDefaultAccount);
-            //await CreateAndPublishIntegrationEventLogEntry(null, eventAssoc);
+            _eventBus.Publish(eventAssoc);
         }
 
         public async Task<bool> DeleteAccountByUserAndProvider(string user, string provider)
@@ -107,7 +109,7 @@
                 await _context.Accounts.DeleteOneAsync(accountDelete => accountDelete.Id == account.Id);
 
                 var eventAssoc = new AddOperationEmailUserAccountIntegrationEvent(account.User, account.Provider, account.Email, account.DefaultAccount, EnTypeOperation.Remove);
-                //await CreateAndPublishIntegrationEventLogEntry(null, eventAssoc);
+                _eventBus.Publish(eventAssoc);
 
                 return true;
             }
@@ -125,7 +127,7 @@
                 await _context.Accounts.UpdateManyAsync(account => account.User == user, Builders<Account>.Update.Set(x => x.DefaultAccount, false));
 
                 var eventAssoc = new AddOperationEmailUserAccountIntegrationEvent(user, string.Empty, string.Empty, false, EnTypeOperation.Update);
-                //await CreateAndPublishIntegrationEventLogEntry(null, eventAssoc);
+                _eventBus.Publish(eventAssoc);
 
                 return true;
             }

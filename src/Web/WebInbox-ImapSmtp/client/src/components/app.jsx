@@ -284,6 +284,8 @@ class App extends Component {
       //adding connector App to right slide panel
       //setTimeout(function () { this.registerConnectorApp(); }, 2200);
       this.registerConnectorApp();
+
+      console.log('lexon ->', this.props.lexon);
   }
 
   componentDidUpdate() {   
@@ -351,7 +353,8 @@ const mapStateToProps = state => ({
   application: state.application,
   outbox: state.application.outbox,
   folders: state.folders,
-  messages: state.messages
+  messages: state.messages,
+  lexon: state.lexon
 });
 
 const mapDispatchToProps = dispatch => ({
