@@ -1,4 +1,3 @@
-# Keep the project list and command dotnet restore identical in all Dockfiles to maximize image cache utilization
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS base
 WORKDIR /app
 EXPOSE 80
@@ -27,18 +26,12 @@ COPY test/ServicesTests/LoadTest/LoadTest.csproj test/ServicesTests/LoadTest/
 RUN dotnet restore eLefebvreOnContainers-ServicesAndWebApps.sln
 
 COPY . .
-WORKDIR /src/src/Services/Lexon/Lexon.API
+WORKDIR /src/src/ApiGateways/ApiGw-Lefebvre/
 RUN dotnet publish --no-restore -c Release -o /app
-
-#FROM build as unittest
-#WORKDIR /src/src/Services/EmailUserAccount/EmailUserAccount.UnitTests
-#
-#FROM build as functionaltest
-#WORKDIR /src/src/Services/EmailUserAccount/EmailUserAccount.FunctionalTests
 
 FROM build AS publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "EmailUserAccount.API.dll"]
+ENTRYPOINT ["dotnet", "ApiGw-Lefebvre.dll"]

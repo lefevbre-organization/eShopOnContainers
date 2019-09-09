@@ -54,11 +54,4 @@ services:
     build:
       context: .
       dockerfile: src/Web/WebStatus/Dockerfile
-
-  webhooks.client:
-    image: ${REGISTRY:-eshop}/webhooks.client:${PLATFORM:-linux}-${TAG:-latest}
-    build:
-      context: .
-      dockerfile: src/Web/WebhookClient/Dockerfile
-    depends_on:
-      - webhooks.api    
+  
