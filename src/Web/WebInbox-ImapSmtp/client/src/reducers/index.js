@@ -40,7 +40,10 @@ export const INITIAL_STATE = {
     activeRequests: 0
   },
   lexon: {
-    user: null
+    user: null,
+    userId: null,
+    provider: null,
+    isNewAccount: false
   }
 };
 

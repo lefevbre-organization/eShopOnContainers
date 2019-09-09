@@ -1,297 +1,389 @@
-import React, {Component, Fragment} from 'react';
-import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
-import history from '../routes/history';
-import Spinner from './spinner/spinner';
-import TopBar from './top-bar/top-bar';
-import MainBar from './main-bar/main-bar';
-import SideBar from './side-bar/side-bar';
-import MessageEditor from './message-editor/message-editor';
-import MessageList from './message-list/message-list';
-import MessageViewer from './message-viewer/message-viewer';
-import MessageSnackbar from './message-snackbar/message-snackbar';
-import {clearUserCredentials} from '../actions/application';
-import {AuthenticationException} from '../services/fetch';
-import {editNewMessage} from '../services/application';
-import {getFolders} from '../services/folder';
-import { resetFolderMessagesCache } from '../services/message';
-import SplitPane from "react-split-pane";
-import mainCss from '../styles/main.scss';
-import styles from './app.scss';
-import IconButton from './buttons/icon-button';
-import {translate} from 'react-i18next';
+/* eslint-disable indent */
+import React, { Component, Fragment } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import history from "../routes/history";
+import Spinner from "./spinner/spinner";
+import TopBar from "./top-bar/top-bar";
+import MainBar from "./main-bar/main-bar";
+import SideBar from "./side-bar/side-bar";
+import MessageEditor from "./message-editor/message-editor";
+import MessageList from "./message-list/message-list";
+import MessageViewer from "./message-viewer/message-viewer";
+import MessageSnackbar from "./message-snackbar/message-snackbar";
+import { clearUserCredentials } from "../actions/application";
+import { AuthenticationException } from "../services/fetch";
+import { editNewMessage } from "../services/application";
+import { getFolders } from "../services/folder";
+import { resetFolderMessagesCache } from "../services/message";
+// import SplitPane from "react-split-pane";
+import mainCss from "../styles/main.scss";
+import styles from "./app.scss";
+import IconButton from "./buttons/icon-button";
+import { translate } from "react-i18next";
 
+// import { start, registerApplication } from "single-spa";
 
-import { start, registerApplication } from 'single-spa'
-
-import * as singleSpa from 'single-spa';
-import { registerLexonApp } from "../apps/lexonconn-app";
-import { registerMainnavApp } from "../apps/mainnav-app";
+// import * as singleSpa from "single-spa";
+// import { registerLexonApp } from "../apps/lexonconn-app";
+// import { registerMainnavApp } from "../apps/mainnav-app";
 
 import Sidebar from "react-sidebar";
-import SidebarComponent from "../apps/sidebar_content"
+import SidebarComponent from "../apps/sidebar_content";
+import { config, PROVIDER } from "../constants";
 
+// const activityFunction = location => location.pathname.startsWith('/lexon-connector');
 
-//const activityFunction = location => location.pathname.startsWith('/lexon-connector');
+// registerApplication('lex-on-connector', () => import('../lex-on_connector/index.js'), activityFunction);
+// start();
 
-//registerApplication('lex-on-connector', () => import('../lex-on_connector/index.js'), activityFunction);
-//start();
+// const hashPrefix = prefix => location => location.hash.startsWith(`#${prefix}`)
 
-//const hashPrefix = prefix => location => location.hash.startsWith(`#${prefix}`)
+// registerApplication('lex-on-connector_debug', () => import('../lex-on_connector/index.js'), hashPrefix('/lexon-connector'))
 
-//registerApplication('lex-on-connector_debug', () => import('../lex-on_connector/index.js'), hashPrefix('/lexon-connector'))
-
-//start() 
-
-
+// start()
 
 class App extends Component {
   constructor(props) {
     super(props);
-      this.state = {
-          sidebarOpen: false,
-          sidebarDocked: false,
-          sideBar: {
-              collapsed: false
-          },
-          sidebarComponent: <img border="0" alt="Lefebvre" src="assets/images/lexon-fake.png"></img>       
+    this.state = {
+      sidebarOpen: false,
+      sidebarDocked: false,
+      sideBar: {
+        collapsed: false
+      },
+      sidebarComponent: (
+        <img border="0" alt="Lefebvre" src="assets/images/lexon-fake.png"></img>
+      )
     };
 
-      this.toggleSideBar = this.toggleSideBar.bind(this); 
-      this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
-      this.onSetSidebarOpenCalendar = this.onSetSidebarOpenCalendar.bind(this);
-      this.onSetSidebarOpenLexon = this.onSetSidebarOpenLexon.bind(this);
-      this.onSetSidebarOpenQMemento = this.onSetSidebarOpenQMemento.bind(this);
-      this.onSetSidebarOpenCompliance = this.onSetSidebarOpenCompliance.bind(this);
-      this.onSetSidebarOpenDatabase = this.onSetSidebarOpenDatabase.bind(this); 
-     
-    }
+    this.toggleSideBar = this.toggleSideBar.bind(this);
+    this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
+    this.onSetSidebarOpenCalendar = this.onSetSidebarOpenCalendar.bind(this);
+    this.onSetSidebarOpenLexon = this.onSetSidebarOpenLexon.bind(this);
+    this.onSetSidebarOpenQMemento = this.onSetSidebarOpenQMemento.bind(this);
+    this.onSetSidebarOpenCompliance = this.onSetSidebarOpenCompliance.bind(
+      this
+    );
+    this.onSetSidebarOpenDatabase = this.onSetSidebarOpenDatabase.bind(this);
+  }
 
-    onSetSidebarOpenCalendar(open) {
-        this.setState({ sidebarComponent: <SidebarComponent /> });
-        this.setState({ sidebarDocked: open });
-    }
+  onSetSidebarOpenCalendar(open) {
+    this.setState({ sidebarComponent: <SidebarComponent /> });
+    this.setState({ sidebarDocked: open });
+  }
 
-    onSetSidebarOpenLexon(open) {
-        let lexon = <img border="0" alt="Lefebvre" src="assets/images/lexon-fake.png"></img>;
-        this.setState({ sidebarComponent: lexon });
-        this.setState({ sidebarDocked: open });
-    }
+  onSetSidebarOpenLexon(open) {
+    const lexon = (
+      <img border="0" alt="Lefebvre" src="assets/images/lexon-fake.png"></img>
+    );
+    this.setState({ sidebarComponent: lexon });
+    this.setState({ sidebarDocked: open });
+  }
 
-    onSetSidebarOpenQMemento(open) {
-        let lexon = <img border="0" alt="Lefebvre" src="assets/images/lexon-fake-null.png"></img>;
-        this.setState({ sidebarComponent: lexon });
-        this.setState({ sidebarDocked: open });
-    }
+  onSetSidebarOpenQMemento(open) {
+    const lexon = (
+      <img
+        border="0"
+        alt="Lefebvre"
+        src="assets/images/lexon-fake-null.png"
+      ></img>
+    );
+    this.setState({ sidebarComponent: lexon });
+    this.setState({ sidebarDocked: open });
+  }
 
-    onSetSidebarOpenCompliance(open) {
-        let lexon = <img border="0" alt="Lefebvre" src="assets/images/lexon-fake-null.png"></img>;
-        this.setState({ sidebarComponent: lexon });
-        this.setState({ sidebarDocked: open });
-    }
+  onSetSidebarOpenCompliance(open) {
+    const lexon = (
+      <img
+        border="0"
+        alt="Lefebvre"
+        src="assets/images/lexon-fake-null.png"
+      ></img>
+    );
+    this.setState({ sidebarComponent: lexon });
+    this.setState({ sidebarDocked: open });
+  }
 
-    onSetSidebarOpenDatabase(open) {
-        let lexon = <img border="0" alt="Lefebvre" src="assets/images/lexon-fake-null.png"></img>;
-        this.setState({ sidebarComponent: lexon });
-        this.setState({ sidebarDocked: open });
-    }
+  onSetSidebarOpenDatabase(open) {
+    const lexon = (
+      <img
+        border="0"
+        alt="Lefebvre"
+        src="assets/images/lexon-fake-null.png"
+      ></img>
+    );
+    this.setState({ sidebarComponent: lexon });
+    this.setState({ sidebarDocked: open });
+  }
 
-    onSetSidebarDocked(open) {
-        this.setState({ sidebarDocked: open });
-    }
+  onSetSidebarDocked(open) {
+    this.setState({ sidebarDocked: open });
+  }
 
-    render() {
-        const {t} = this.props;
-        const { sideBar } = this.state;      
-        
-      return (
-          <Sidebar 
-              sidebar={this.state.sidebarComponent}
-              open={false}
-              pullRight={true}
-              docked={this.state.sidebarDocked}
-              styles={{
-                  sidebar: {
-                      background: "white",
-                      zIndex: 9999,
-                      overflowY: "hidden",
-                      WebkitTransition: "-webkit-transform 0s",
-                      willChange: "transform",
-                      overflowY: "hidden"
-                  },
-                  content: {
-                      position: "absolute",
-                      top: 0,
-                      left:0,
-                      right: 0,
-                      bottom: 0,
-                      overflowY: "hidden",
-                      overflowX: "hidden",
-                      WebkitOverflowScrolling: "touch", 
-                      transition: "left .0s ease-out, right .0s ease-out",
-                  },
-                  overlay: {
-                      zIndex: 1,
-                      position: "fixed",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      opacity: 0,
-                      visibility: "hidden",
-                      //transition: "opacity .3s ease-out, visibility .0s ease-out",
-                      backgroundColor: "rgba(0,0,0,.3)"
-                  },
-                  dragHandle: {
-                      zIndex: 1,
-                      position: "fixed",
-                      top: 0,
-                      bottom: 0
-                  }
-              }}
+  render() {
+    const { t } = this.props;
+    const { sideBar } = this.state;
 
-          >
+    return (
+      <Sidebar
+        sidebar={this.state.sidebarComponent}
+        open={false}
+        pullRight={true}
+        docked={this.state.sidebarDocked}
+        styles={{
+          sidebar: {
+            background: "white",
+            zIndex: 9999,
+            overflowY: "hidden",
+            WebkitTransition: "-webkit-transform 0s",
+            willChange: "transform"
+          },
+          content: {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            overflowY: "hidden",
+            overflowX: "hidden",
+            WebkitOverflowScrolling: "touch",
+            transition: "left .0s ease-out, right .0s ease-out"
+          },
+          overlay: {
+            zIndex: 1,
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            opacity: 0,
+            visibility: "hidden",
+            //transition: "opacity .3s ease-out, visibility .0s ease-out",
+            backgroundColor: "rgba(0,0,0,.3)"
+          },
+          dragHandle: {
+            zIndex: 1,
+            position: "fixed",
+            top: 0,
+            bottom: 0
+          }
+        }}
+      >
+        <div>
+          <MainBar
+            sideBarCollapsed={sideBar.collapsed}
+            sideBarToggle={this.toggleSideBar}
+          />
+          <TopBar
+            sideBarCollapsed={sideBar.collapsed}
+            sideBarToggle={this.toggleSideBar}
+          />
+          <div id="mainnav-app" />
+          {/*<SplitPane split="vertical" minSize={200} maxSize={800} defaultSize={450}  primary="second">*/}
+          <div className={styles.app}>
+            <Spinner
+              visible={this.props.application.activeRequests > 0}
+              className={styles.spinner}
+              pathClassName={styles.spinnerPath}
+            />
 
-              <div>
-                  <MainBar sideBarCollapsed={sideBar.collapsed} sideBarToggle={this.toggleSideBar} />
-                  <TopBar sideBarCollapsed={sideBar.collapsed} sideBarToggle={this.toggleSideBar} />
-                  <div id="mainnav-app" />
-                  {/*<SplitPane split="vertical" minSize={200} maxSize={800} defaultSize={450}  primary="second">*/}
-                  <div className={styles.app}>
-                      <Spinner
-                          visible={this.props.application.activeRequests > 0}
-                          className={styles.spinner} pathClassName={styles.spinnerPath} />
+            <SideBar
+              collapsed={sideBar.collapsed}
+              sideBarToggle={this.toggleSideBar}
+            />
+            <div id="mainnav-app" />
 
-                      <SideBar collapsed={sideBar.collapsed} sideBarToggle={this.toggleSideBar} />
-                      <div id="mainnav-app" />
+            <div
+              className={`${styles["content-wrapper"]}
+                                ${
+                                  sideBar.collapsed
+                                    ? ""
+                                    : styles["with-side-bar"]
+                                } ${styles["custom-padding-top"]}`}
+            >
+              {this.renderContent()}
+            </div>
 
-                      <div className={`${styles['content-wrapper']}
-                                ${sideBar.collapsed ? '' : styles['with-side-bar']} ${styles['custom-padding-top']}`}>
-                          {this.renderContent()}
-                      </div>
+            <div className={styles.productpanel}>
+              <span
+                className={styles.productsbutton}
+                isotip={t("productBar.lexon")}
+                isotip-position="bottom-end"
+                isotip-size="small"
+              >
+                <IconButton onClick={() => this.onSetSidebarOpenLexon(true)}>
+                  <img
+                    border="0"
+                    alt="Lex-On"
+                    src="assets/images/icon-lexon.png"
+                  ></img>
+                </IconButton>
+                <div className={styles.btnselect}></div>
+              </span>
+              <span
+                className={styles.productsbutton}
+                isotip={t("productBar.database")}
+                isotip-position="bottom-end"
+                isotip-size="small"
+              >
+                <IconButton onClick={() => this.onSetSidebarOpenQMemento(true)}>
+                  <img
+                    border="0"
+                    alt="Calendar"
+                    src="assets/images/icon-qmemento.png"
+                  ></img>
+                </IconButton>
+                <div className={styles.btnselect}></div>
+              </span>
+              <span
+                className={styles.productsbutton}
+                isotip={t("productBar.compliance")}
+                isotip-position="bottom-end"
+                isotip-size="small"
+              >
+                <IconButton
+                  onClick={() => this.onSetSidebarOpenCompliance(true)}
+                >
+                  <img
+                    border="0"
+                    alt="Calendar"
+                    src="assets/images/icon-compliance.png"
+                  ></img>
+                </IconButton>
+                <div className={styles.btnselect}></div>
+              </span>
+              <span
+                className={styles.productsbutton}
+                isotip={t("productBar.calendar")}
+                isotip-position="bottom-end"
+                isotip-size="small"
+              >
+                <IconButton onClick={() => this.onSetSidebarOpenCalendar(true)}>
+                  <img
+                    border="0"
+                    alt="Calendar"
+                    src="assets/images/icon-calendar.png"
+                  ></img>
+                </IconButton>
+                <div className={styles.btnselect}></div>
+              </span>
+              <span
+                className={styles.productsbutton}
+                isotip={t("sideBar.hide")}
+                isotip-position="bottom-end"
+                isotip-size="small"
+              >
+                <IconButton onClick={() => this.onSetSidebarDocked(false)}>
+                  close
+                </IconButton>
+                <div className={styles.btnselect}></div>
+              </span>
 
-                      <div className={styles.productpanel}>
-                          <span className={styles.productsbutton} isotip={t('productBar.lexon')} isotip-position='bottom-end' isotip-size='small'>
-                              <IconButton onClick={() => this.onSetSidebarOpenLexon(true)}>
-                                  <img border="0" alt="Lex-On" src="assets/images/icon-lexon.png"></img>
-                              </IconButton>
-                              <div className={styles.btnselect}></div>
-                          </span>
-                          <span className={styles.productsbutton} isotip={t('productBar.database')} isotip-position='bottom-end' isotip-size='small'>
-                              <IconButton onClick={() => this.onSetSidebarOpenQMemento(true)}>
-                                  <img border="0" alt="Calendar" src="assets/images/icon-qmemento.png"></img>                                  
-                              </IconButton>
-                              <div className={styles.btnselect}></div>
-                          </span>
-                          <span className={styles.productsbutton} isotip={t('productBar.compliance')} isotip-position='bottom-end' isotip-size='small'>
-                              <IconButton onClick={() => this.onSetSidebarOpenCompliance(true)}>
-                                  <img border="0" alt="Calendar" src="assets/images/icon-compliance.png"></img>
-                              </IconButton>
-                              <div className={styles.btnselect}></div>
-                          </span>
-                          <span className={styles.productsbutton} isotip={t('productBar.calendar')} isotip-position='bottom-end' isotip-size='small'>
-                              <IconButton onClick={() => this.onSetSidebarOpenCalendar(true)}>
-                                  <img border="0" alt="Calendar" src="assets/images/icon-calendar.png"></img>
-                              </IconButton>
-                              <div className={styles.btnselect}></div>
-                          </span>
-                          <span className={styles.productsbutton} isotip={t('sideBar.hide')} isotip-position='bottom-end' isotip-size='small'>
-                              <IconButton onClick={() => this.onSetSidebarDocked(false)}>
-                                  close
-                              </IconButton>
-                              <div className={styles.btnselect}></div>
-                          </span>   
+              <span className={styles.spaceproduct}></span>
+            </div>
 
-                          <span className={styles.spaceproduct}>
-                             
-                          </span>   
-                      </div>
+            <MessageSnackbar />
+          </div>
 
-                      <MessageSnackbar />
-
-                  </div>
-
-                  {/*<div className={styles.connector}  style={{
+          {/*<div className={styles.connector}  style={{
                       backgroundImage: 'url(' + imgUrl + ')',
                       backgroundSize: '120px',
                       backgroundPosition: 'center 110px',
                       backgroundRepeat: 'no-repeat',
-                      height: '100%',                     
+                      height: '100%'
                   }}>
                       <div id="lexon-app" className={styles.panelconnectortitle}>
-                      </div> 
-                      <div id="lexon-app-dev" className={styles.panelconnectortitle}>                         
-                      </div>   
-                      
+                      </div>
+                      <div id="lexon-app-dev" className={styles.panelconnectortitle}>
+                      </div>
+
                   </div>*/}
-                  {/*</SplitPane>*/}
-
-              </div>
-
-          </Sidebar>
-          
+          {/*</SplitPane>*/}
+        </div>
+      </Sidebar>
     );
-    }
+  }
 
-  renderConnector() { 
-      this.props.history.push('/#/lexon-connector')
+  renderConnector() {
+    this.props.history.push("/#/lexon-connector");
   }
 
   renderContent() {
-    const {application, outbox} = this.props;
-    if (application.newMessage && Object.keys(application.newMessage).length > 0) {
-      return <MessageEditor className={styles['message-viewer']} />;
-    } else if (application.selectedMessage && Object.keys(application.selectedMessage).length > 0) {
-      return <MessageViewer className={styles['message-viewer']} />;
+    const { application, outbox } = this.props;
+    if (
+      application.newMessage &&
+      Object.keys(application.newMessage).length > 0
+    ) {
+      return <MessageEditor className={styles["message-viewer"]} />;
+    } else if (
+      application.selectedMessage &&
+      Object.keys(application.selectedMessage).length > 0
+    ) {
+      return <MessageViewer className={styles["message-viewer"]} />;
     }
     return (
       <Fragment>
-        <MessageList className={styles['message-grid']} />
-        <div className={styles['fab-container']}>
-          {outbox === null ?
-            <button className={`${mainCss['mdc-fab']} ${mainCss['mdc-button--raised']}`} >            
-              <span className={`material-icons ${mainCss['mdc-fab__icon']}`}>chat_bubble_outline</span>
+        <MessageList className={styles["message-grid"]} />
+        <div className={styles["fab-container"]}>
+          {outbox === null ? (
+            <button
+              className={`${mainCss["mdc-fab"]} ${
+                mainCss["mdc-button--raised"]
+              }`}
+            >
+              <span className={`material-icons ${mainCss["mdc-fab__icon"]}`}>
+                chat_bubble_outline
+              </span>
             </button>
-            : null}
-            </div>           
+          ) : null}
+        </div>
       </Fragment>
     );
   }
 
-  registerConnectorApp() {  
-        // let el = document.getElementById('main-lexon-connector')
-        // if (!el) {
-        //     try {
-        //         const activityFunction = location => location.pathname.startsWith('/');
-        //         registerApplication('lexon-app-dev', () => import('../lex-on_connector/index.js'), activityFunction);
-        //         start();
-
-        //         //registerLexonApp();
-        //         registerMainnavApp();
-        //         //singleSpa.start();
-        //     }
-        //     catch (error) {
-        //         //console.error(error);
-        //     }
-        // }      
-             
+  registerConnectorApp() {
+    // let el = document.getElementById('main-lexon-connector')
+    // if (!el) {
+    //     try {
+    //         const activityFunction = location => location.pathname.startsWith('/');
+    //         registerApplication('lexon-app-dev', () => import('../lex-on_connector/index.js'), activityFunction);
+    //         start();
+    //         //registerLexonApp();
+    //         registerMainnavApp();
+    //         //singleSpa.start();
+    //     }
+    //     catch (error) {
+    //         //console.error(error);
+    //     }
+    // }
   }
 
-  componentDidMount() {       
-      document.title = this.props.application.title;
-      //Starting poll to update the inbox automatically
-      this.startPoll();
-      //adding connector App to right slide panel
-      //setTimeout(function () { this.registerConnectorApp(); }, 2200);
-      this.registerConnectorApp();
+  componentDidMount() {
+    document.title = this.props.application.title;
+    //Starting poll to update the inbox automatically
+    this.startPoll();
+    //adding connector App to right slide panel
+    //setTimeout(function () { this.registerConnectorApp(); }, 2200);
+    this.registerConnectorApp();
 
-      console.log('lexon ->', this.props.lexon);
+    const { userId } = this.props.lexon;
+    const { email } = this.props;
+    if (userId !== null && email !== null) {
+      const url = `${config.url.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${PROVIDER}/${email}`;
+      fetch(url, {
+        method: "GET"
+      })
+      // .then(r => r.json())
+      .then(result => {
+        console.log(result);
+      });
+    }
   }
 
-  componentDidUpdate() {   
-   this.startPoll();
+  componentDidUpdate() {
+    this.startPoll();
   }
- 
 
   componentWillUnmount() {
     clearTimeout(this.refreshPollTimeout);
@@ -299,8 +391,11 @@ class App extends Component {
 
   startPoll() {
     // Start polling when everything is ready
-    if (this.props.application.selectedFolderId && Object.keys(this.props.folders.explodedItems).length > 0
-      && !this.pollStarted) {
+    if (
+      this.props.application.selectedFolderId &&
+      Object.keys(this.props.folders.explodedItems).length > 0 &&
+      !this.pollStarted
+    ) {
       this.pollStarted = true;
       this.refreshPoll();
     }
@@ -315,7 +410,10 @@ class App extends Component {
     let keepPolling = true;
     try {
       const folderPromise = this.props.reloadFolders();
-      const selectedFolder = this.props.folders.explodedItems[this.props.application.selectedFolderId] || {};
+      const selectedFolder =
+        this.props.folders.explodedItems[
+          this.props.application.selectedFolderId
+        ] || {};
       const messagePromise = this.props.reloadMessageCache(selectedFolder);
       await Promise.all([folderPromise, messagePromise]);
     } catch (e) {
@@ -326,7 +424,10 @@ class App extends Component {
       }
     }
     if (keepPolling) {
-      this.refreshPollTimeout = setTimeout(this.refreshPoll.bind(this), this.props.application.pollInterval);
+      this.refreshPollTimeout = setTimeout(
+        this.refreshPoll.bind(this),
+        this.props.application.pollInterval
+      );
     }
   }
 
@@ -354,22 +455,32 @@ const mapStateToProps = state => ({
   outbox: state.application.outbox,
   folders: state.folders,
   messages: state.messages,
-  lexon: state.lexon
+  lexon: state.lexon,
+  email: state.login.formValues.user,
+  all: state
 });
 
 const mapDispatchToProps = dispatch => ({
   reloadFolders: credentials => getFolders(dispatch, credentials, true),
-  reloadMessageCache: (user, folder) => resetFolderMessagesCache(dispatch, user, folder),
+  reloadMessageCache: (user, folder) =>
+    resetFolderMessagesCache(dispatch, user, folder),
   newMessage: () => editNewMessage(dispatch),
   logout: () => {
     dispatch(clearUserCredentials());
-    history.push('/login');
+    history.push("/login");
   }
 });
 
-const mergeProps = (stateProps, dispatchProps, ownProps) => (Object.assign({}, stateProps, dispatchProps, ownProps, {
-  reloadFolders: () => dispatchProps.reloadFolders(stateProps.application.user.credentials),
-  reloadMessageCache: folder => dispatchProps.reloadMessageCache(stateProps.application.user, folder)
-}));
+const mergeProps = (stateProps, dispatchProps, ownProps) =>
+  Object.assign({}, stateProps, dispatchProps, ownProps, {
+    reloadFolders: () =>
+      dispatchProps.reloadFolders(stateProps.application.user.credentials),
+    reloadMessageCache: folder =>
+      dispatchProps.reloadMessageCache(stateProps.application.user, folder)
+  });
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(translate()(App));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
+)(translate()(App));
