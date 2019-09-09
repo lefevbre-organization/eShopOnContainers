@@ -1,0 +1,64 @@
+version: '3.4'
+
+services:
+
+  seq:
+    image: datalust/seq:latest
+
+  nosql.data:
+    image: mongo
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+
+  lexon.api:
+    image: paconaf/lexon.api:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Services/Lexon/Lexon.API/Dockerfile    
+    depends_on:
+      - nosql.data
+      - rabbitmq
+
+  emailuser.api:
+    image: paconaf/emailuser.api:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Services/EmailUserAccount/EmailUserAccount.API/Dockerfile
+    depends_on:
+      - nosql.data
+      - rabbitmq
+
+  lexonapigw:
+    image: paconaf/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/ApiGateways/ApiGw-Base/Dockerfile
+    depends_on:
+      - nosql.data
+      - rabbitmq
+      - lexon.api
+
+  emailuserapigw:
+    image: paconaf/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/ApiGateways/ApiGw-Base/Dockerfile
+    depends_on:
+      - nosql.data
+      - rabbitmq
+      - emailuser.api
+
+  webstatus:
+    image: ${REGISTRY:-eshop}/webstatus:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Web/WebStatus/Dockerfile
+
+  webhooks.client:
+    image: ${REGISTRY:-eshop}/webhooks.client:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Web/WebhookClient/Dockerfile
+    depends_on:
+      - webhooks.api    
