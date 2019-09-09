@@ -12,7 +12,7 @@ services:
     image: rabbitmq:3-management-alpine
 
   lexon.api:
-    image: paconaf/lexon.api:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-paconaf}/lexon.api:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Services/Lexon/Lexon.API/Dockerfile    
@@ -21,7 +21,7 @@ services:
       - rabbitmq
 
   emailuser.api:
-    image: paconaf/emailuser.api:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-paconaf}/emailuser.api:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Services/EmailUserAccount/EmailUserAccount.API/Dockerfile
@@ -30,27 +30,27 @@ services:
       - rabbitmq
 
   lexonapigw:
-    image: paconaf/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-paconaf}/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
-      dockerfile: src/ApiGateways/ApiGw-Base/Dockerfile
+      dockerfile: src/ApiGateways/ApiGw-Lefebvre/Dockerfile
     depends_on:
       - nosql.data
       - rabbitmq
       - lexon.api
 
   emailuserapigw:
-    image: paconaf/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-paconaf}/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
-      dockerfile: src/ApiGateways/ApiGw-Base/Dockerfile
+      dockerfile: src/ApiGateways/ApiGw-Lefebvre/Dockerfile
     depends_on:
       - nosql.data
       - rabbitmq
       - emailuser.api
 
   webstatus:
-    image: ${REGISTRY:-eshop}/webstatus:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-paconaf}/webstatus:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Web/WebStatus/Dockerfile

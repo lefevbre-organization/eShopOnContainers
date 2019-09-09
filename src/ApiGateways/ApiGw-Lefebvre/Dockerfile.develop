@@ -5,10 +5,10 @@ ENV DOTNET_USE_POLLING_FILE_WATCHER=true
 EXPOSE 80
 
 WORKDIR /src
-COPY ["src/ApiGateways/ApiGw-Base/OcelotApiGw.csproj", "src/ApiGateways/ApiGw-Base/"]
-RUN dotnet restore "src/ApiGateways/ApiGw-Base/OcelotApiGw.csproj"
+COPY ["src/ApiGateways/ApiGw-Lefebvre/ApiGw-Lefebvre.csproj", "src/ApiGateways/ApiGw-Lefebvre/"]
+RUN dotnet restore "src/ApiGateways/ApiGw-Lefebvre/ApiGw-Lefebvre.csproj"
 COPY . .
-WORKDIR "/src/src/ApiGateways/ApiGw-Base"
-RUN dotnet build --no-restore "OcelotApiGw.csproj" -c $BUILD_CONFIGURATION
+WORKDIR "/src/src/ApiGateways/ApiGw-Lefebvre"
+RUN dotnet build --no-restore "ApiGw-Lefebvre.csproj" -c $BUILD_CONFIGURATION
 
 ENTRYPOINT ["dotnet", "run", "--no-build", "--no-launch-profile", "-c", "$BUILD_CONFIGURATION", "--"]
