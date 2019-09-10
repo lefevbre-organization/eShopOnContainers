@@ -53,7 +53,10 @@ export class Main extends Component {
        size: 0.25,
        sidebarOpen: false,
        sidebarDocked: false,
-       sidebarComponent: <img border="0" alt="Lefebvre" src="assets/img/lexon-fake.png"></img>      
+       sidebarComponent: <img border="0" alt="Lefebvre" src="assets/img/lexon-fake.png"></img>,  
+       leftSideBar: {
+          collapsed: false
+       },
        
     };
 
@@ -69,7 +72,17 @@ export class Main extends Component {
       this.onSetSidebarOpenCompliance = this.onSetSidebarOpenCompliance.bind(this);
       this.onSetSidebarOpenDatabase = this.onSetSidebarOpenDatabase.bind(this); 
 
-  }
+      this.toggleSideBar = this.toggleSideBar.bind(this);
+    }
+
+    toggleSideBar() {
+        const toggleCollapsed = !this.state.leftSideBar.collapsed;
+        this.setState({
+            leftSideBar: {
+                collapsed: toggleCollapsed
+            }
+        });
+    }
 
     onSetSidebarOpenCalendar(open) {
         this.setState({ sidebarComponent: <SidebarComponent /> });
@@ -215,6 +228,7 @@ export class Main extends Component {
   }
 
   renderLabelRoutes() {
+    const { leftSideBar } = this.state;  
     return this.props.labelsResult.labels.map(el => (
       <Route
         key={el.id + '_route'}
@@ -225,6 +239,7 @@ export class Main extends Component {
           return (
             <MessageList
               {...props}
+              sideBarCollapsed={leftSideBar.collapsed} sideBarToggle={this.toggleSideBar} 
               getLabelMessages={this.getLabelMessages}
               messagesResult={this.props.messagesResult}
               toggleSelected={this.props.toggleSelected}
@@ -258,6 +273,8 @@ export class Main extends Component {
   }
 
   renderInboxViewport() {
+    const { t } = this.props;
+    const { leftSideBar } = this.state;  
 
     let imgUrl = 'assets/img/settings-gears.svg'
 
@@ -322,6 +339,8 @@ export class Main extends Component {
                   />
                   <section className="main hbox space-between">
                       <Sidebar
+                          sideBarCollapsed={leftSideBar.collapsed}
+                          sideBarToggle={this.toggleSideBar}
                           getLabelList={this.getLabelList}
                           pathname={this.props.location.pathname}
                           labelsResult={this.props.labelsResult}
@@ -333,7 +352,7 @@ export class Main extends Component {
                               <Route
                                   exact
                                   path="/compose"
-                                  component={ComposeMessage}
+                                  component={() => <ComposeMessage history={this.props.history} sideBarCollapsed={leftSideBar.collapsed} sideBarToggle={this.toggleSideBar} />}        
                               />
                               <Route
                                   exact

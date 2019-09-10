@@ -1,3 +1,18 @@
+.btn-transparent {
+    background-color: transparent;
+    border-color: transparent;
+    color: #001978;
+}
+
+.sidebar-open {
+    min-width:205px;
+    flex: 1 1;
+}
+
+.sidebar-close {
+    min-width: 0px;
+    flex: 0;
+}
 
 .BtnLfcolor {
     background-color:#ffffff;    

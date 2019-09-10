@@ -26,7 +26,7 @@ export class ButtonFilter extends React.Component {
     const {dialogVisible} = this.state;
     const active = activeMessageFilter.key !== MessageFilters.ALL.key;
     return <span
-        className={`${styles['button-filter']} ${styles['icon-user-space']} ${mainCss['mdc-menu-surface--anchor']}`}
+      className={`${styles['button-filter']} ${styles['icon-user-space']} ${mainCss['mdc-menu-surface--anchor']}`}
       isotip={t('mainBar.quickUser')} isotip-position='bottom-end' isotip-size='small'
       isotip-hidden={dialogVisible.toString()}>
        
