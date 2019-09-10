@@ -10,10 +10,15 @@ import {
   faCircle,
   faExclamationCircle,
   faArchive,
-  faFolderOpen
+  faFolderOpen,
+  faChevronLeft
 } from "@fortawesome/free-solid-svg-icons";
 import LabelItem from "./LabelItem";
 import { Link } from "react-router-dom";
+
+import { Button } from "reactstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import "./sidebar.scss";
 
 export class Sidebar extends PureComponent {
@@ -22,11 +27,13 @@ export class Sidebar extends PureComponent {
 
     this.state = {
       selectedLabel: props.pathname,
-      selectedFolder: ""
+      selectedFolder: "",      
+      leftSideBarOpen: true
     };
 
     //this.renderLabels = this.renderLabels.bind(this);
-    this.navigateToList = this.navigateToList.bind(this);
+      this.navigateToList = this.navigateToList.bind(this);
+      this.sidebarAction = this.sidebarAction.bind(this);
   }
 
   componentDidMount() {
@@ -39,6 +46,10 @@ export class Sidebar extends PureComponent {
     const label = this.props.labelsResult.labels.find(el => el.id === labelId);
     this.setState({selectedFolder: labelId});
     this.props.onLabelClick(label || { id: "" });
+  }
+
+  sidebarAction() {
+        this.props.onSidebarCloseClick(this.state.leftSideBarOpen);
   }
 
   renderItems(labelList) {
@@ -175,11 +186,13 @@ export class Sidebar extends PureComponent {
       );
   }
 
-  render() {
+    render() {
+
+    const collapsed = this.props.sideBarCollapsed;
     const { t } = this.props;
 
     return (
-      <nav className="d-flex flex-column text-truncate left-panel">
+      <nav id="left-sidebar" className={collapsed ? "d-flex flex-column text-truncate left-panel sidebar-close" : "d-flex flex-column text-truncate left-panel sidebar-open"}>
         <div className="compose-panel">
           <div className="d-flex justify-content-center p-2 compose-btn">
              <div>
@@ -187,6 +200,11 @@ export class Sidebar extends PureComponent {
                    <img className="ImgLf" border="0" alt="otulook" src="assets/img/plus.png"></img>
                    {t('sidebar.compose')}
                 </Link>
+                <Button
+                     onClick={this.props.sideBarToggle}
+                     className="btn-transparent margin-right-20">
+                     <FontAwesomeIcon icon={faChevronLeft} size="1x" />
+                </Button>          
              </div>
           </div>
         </div>

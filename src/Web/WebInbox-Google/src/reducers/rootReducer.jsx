@@ -15,7 +15,7 @@ export default combineReducers({
   messagesResult,
   emailMessageResult,
   pageTokens,
-  searchQuery,
+  searchQuery,  
   messageList,
   lexonMessageListReducer
 });

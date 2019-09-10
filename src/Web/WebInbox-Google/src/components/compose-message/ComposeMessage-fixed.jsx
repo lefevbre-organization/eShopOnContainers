@@ -12,13 +12,11 @@ import {
 } from "reactstrap";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 
 import ReactQuill from "react-quill";
 import "../../../node_modules/react-quill/dist/quill.snow.css";
 import "./composeMessage.scss";
-
-import { Link } from "react-router-dom";
 
 
 //import '@uppy/core/dist/style.css'
@@ -166,14 +164,25 @@ export class ComposeMessage extends PureComponent {
     return fieldValue.length > 0 && !getValidEmails(fieldValue).length;
   }
   
-  render() {
+    render() {
+
+        const collapsed = this.props.sideBarCollapsed;
+
         const { showInlineDashboard } = this.state;
         const { t } = this.props;
 
     return (
         <React.Fragment>             
             <div className="compose-dialog" >
-                <div className="compose-panel"></div>
+                <div className="compose-panel">
+                    <span className={collapsed ? "" : "with-side-bar"}>
+                        <Button
+                            onClick={this.props.sideBarToggle}
+                            className="btn-transparent margin-right-10 burguer-btn">
+                            <FontAwesomeIcon icon={faBars} size="1x" />
+                        </Button>
+                    </span>
+                </div>
                 <div className="container-panel">
                     <div className="compose-message">
                        <div className="message-fields">
