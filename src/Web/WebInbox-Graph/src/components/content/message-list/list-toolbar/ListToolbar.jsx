@@ -86,7 +86,7 @@ export class MessageToolbar extends PureComponent {
 
     return (
       <div className="msg-toolbar">
-        <div className="pl-2 py-2 pr-4 d-flex align-items-center bd-highlight ">
+        <div className="pl-2 py-2 pr-4 d-flex align-items-center bd-highlight">
           <div className="d-flex align-content-center align-items-center">
            <div className="padding-top-10">
                 <span className={collapsed ? "" : "with-side-bar"}>

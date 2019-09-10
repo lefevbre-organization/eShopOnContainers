@@ -127,7 +127,7 @@
 // First break: when one row does not fit, make it 2 rows
 @media all and (min-width: (540px)) {
     nav.sidebar-open {
-        min-width: 205px;
+        min-width: 210px;
         flex: 1 1;
     }
 }
@@ -189,6 +189,6 @@
     min-height: 64px;
 
     > div {
-        height: 45px;
+        /*height: 45px;*/
     }
 }

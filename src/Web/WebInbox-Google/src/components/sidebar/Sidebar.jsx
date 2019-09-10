@@ -182,14 +182,14 @@ export class Sidebar extends PureComponent {
           <nav id="left-sidebar" className={collapsed ? "d-flex flex-column text-truncate left-panel sidebar-close" : "d-flex flex-column text-truncate left-panel sidebar-open"}>
             <div className="compose-panel">
               <div className="d-flex justify-content-center p-2 compose-btn">            
-                  <div>     
+                   <div className="compose-div">     
                       <Link className="btn font-weight-bold BtnLfcolor uppercase compose-btn" to='/compose' >
                          <img className="ImgLf" border="0" alt="otulook" src="assets/img/plus.png"></img>
                          {t('sidebar.compose')}
                           </Link>
                           <Button
                               onClick={this.props.sideBarToggle}
-                              className="btn-transparent margin-right-20">
+                              className="btn-transparent margin-right-20 float-right margin-top-10">
                               <FontAwesomeIcon icon={faChevronLeft} size="1x" />
                           </Button>                      
                   </div>
