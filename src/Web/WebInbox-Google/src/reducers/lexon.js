@@ -1,8 +1,14 @@
-import { INITIAL_STATE } from "./index";
-import { ActionTypes } from "../actions/action-types";
+import { ActionTypes } from "../actions/lexon";
 
-const lexon = (state = INITIAL_STATE.lexon, action = {}) => {
-  switch (action.type) {
+const defaultLexon = {
+  user: null,
+  userId: null,
+  provider: null,
+  isNewAccount: false  
+};
+
+export const lexon = (state = defaultLexon, action = {}) => {
+  switch (action.type) {    
     case ActionTypes.LEXON_USER:
       const user = action.payload;
       const provider = user.slice(0, 2);
@@ -21,4 +27,3 @@ const lexon = (state = INITIAL_STATE.lexon, action = {}) => {
   }
 };
 
-export default lexon;
