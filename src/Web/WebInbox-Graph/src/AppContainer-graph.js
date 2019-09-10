@@ -50,7 +50,7 @@ class AppContainerGraph extends Component {
     componentDidMount() {
         mountScripts().then(this.init);
     
-        this.props.location.pathname = '/inbox';
+        this.props.location.pathname = '/aamkadywn2u5owzllwuwzdktndq3yi05mtq2ltmxymuymgexmjcwngauaaaaaaabgtrist65r5xlvfmy3kaqaqacnbiklwlkqrvib8xkwxacaaaaaae-aaa=';
     }
 
     init() {
