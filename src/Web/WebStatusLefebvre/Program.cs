@@ -1,20 +1,19 @@
-﻿using System;
+﻿using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Serilog;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Serilog;
+using System.Reflection;
 
-namespace Lexon.API
+namespace WebStatusLefebvre
 {
     public class Program
     {
         public static readonly string Namespace = typeof(Program).Namespace;
-        public static readonly string AppName = Namespace.Substring(Namespace.LastIndexOf('.', Namespace.LastIndexOf('.') - 1) + 1);
+        public static readonly string AppName = Namespace;
 
         public static int Main(string[] args)
         {
@@ -27,18 +26,7 @@ namespace Lexon.API
                 Log.Information("Configuring web host ({ApplicationContext})...", AppName);
                 var host = BuildWebHost(configuration, args);
 
-                //Log.Information("Applying migrations ({ApplicationContext})...", AppName);
-                //host.MigrateDbContext<CatalogContext>((context, services) =>
-                //{
-                //    var env = services.GetService<IHostingEnvironment>();
-                //    var settings = services.GetService<IOptions<CatalogSettings>>();
-                //    var logger = services.GetService<ILogger<CatalogContextSeed>>();
-
-                //    new CatalogContextSeed()
-                //        .SeedAsync(context, env, settings, logger)
-                //        .Wait();
-                //})
-                //.MigrateDbContext<IntegrationEventLogContext>((_, __) => { });
+                LogPackagesVersionInfo();
 
                 Log.Information("Starting web host ({ApplicationContext})...", AppName);
                 host.Run();
@@ -54,14 +42,23 @@ namespace Lexon.API
             {
                 Log.CloseAndFlush();
             }
-
-
         }
+
+        private static IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
+                .CaptureStartupErrors(false)
+                .UseStartup<Startup>()
+                //.UseApplicationInsights()
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseConfiguration(configuration)
+                .UseSerilog()
+                .Build();
 
         private static Serilog.ILogger CreateSerilogLogger(IConfiguration configuration)
         {
             var seqServerUrl = configuration["Serilog:SeqServerUrl"];
             var logstashUrl = configuration["Serilog:LogstashgUrl"];
+
             return new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .Enrich.WithProperty("ApplicationContext", AppName)
@@ -84,7 +81,6 @@ namespace Lexon.API
 
             if (config.GetValue<bool>("UseVault", false))
             {
-                //is mandatory take values from azurevault
                 //builder.AddAzureKeyVault(
                 //    $"https://{config["Vault:Name"]}.vault.azure.net/",
                 //    config["Vault:ClientId"],
@@ -94,17 +90,38 @@ namespace Lexon.API
             return builder.Build();
         }
 
+        private static string GetVersion(Assembly assembly)
+        {
+            try
+            {
+                return $"{assembly.GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version} ({assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split()[0]})";
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
 
-        private static IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .CaptureStartupErrors(false)
-                .UseStartup<Startup>()
-                //.UseApplicationInsights()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseWebRoot("Pics")
-                .UseConfiguration(configuration)
-                .UseSerilog()
-                .Build();
+        private static void LogPackagesVersionInfo()
+        {
+            var assemblies = new List<Assembly>();
 
+            foreach (var dependencyName in typeof(Program).Assembly.GetReferencedAssemblies())
+            {
+                try
+                {
+                    // Try to load the referenced assembly...
+                    assemblies.Add(Assembly.Load(dependencyName));
+                }
+                catch
+                {
+                    // Failed to load assembly. Skip it.
+                }
+            }
+
+            var versionList = assemblies.Select(a => $"-{a.GetName().Name} - {GetVersion(a)}").OrderBy(value => value);
+
+            Log.Logger.ForContext("PackageVersions", string.Join("\n", versionList)).Information("Package versions ({ApplicationContext})", AppName);
+        }
     }
 }

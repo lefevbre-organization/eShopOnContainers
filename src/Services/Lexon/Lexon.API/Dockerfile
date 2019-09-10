@@ -23,7 +23,7 @@ COPY src/BuildingBlocks/WebHostCustomization/WebHost.Customization/WebHost.Custo
 COPY src/Services/Lexon/Lexon.API/Lexon.API.csproj src/Services/Lexon/Lexon.API/
 COPY src/Services/Lexon/Lexon.FunctionalTests/Lexon.FunctionalTests.csproj src/Services/Lexon/Lexon.FunctionalTests/
 COPY src/Services/EmailUserAccount/EmailUserAccount.API/EmailUserAccount.API.csproj src/Services/EmailUserAccount/EmailUserAccount.API/
-COPY src/Web/WebStatus/WebStatus.csproj src/Web/WebStatus/
+COPY src/Web/WebStatusLefebvre/WebStatusLefebvre.csproj src/Web/WebStatusLefebvre/
 COPY src/Web/RootApp/RootApp.njsproj src/Web/RootApp/
 COPY src/Web/WebInbox-Google/WebInbox-Google.njsproj src/Web/WebInbox-Google/
 COPY src/Web/WebInbox-ImapSmtp/WebInbox-ImapSmtp.njsproj src/Web/WebInbox-ImapSmtp/

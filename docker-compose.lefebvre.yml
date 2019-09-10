@@ -53,5 +53,5 @@ services:
     image: ${REGISTRY:-paconaf}/webstatus:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
-      dockerfile: src/Web/WebStatus/Dockerfile
+      dockerfile: src/Web/WebStatusLefebvre/Dockerfile
   

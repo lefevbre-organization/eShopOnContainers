@@ -35,7 +35,7 @@ COPY src/Web/MF-LexonConn/MF-LexonConn.njsproj src/Web/MF-LexonConn/
 RUN dotnet restore eLefebvreOnContainers-Main.sln
 
 COPY . .
-WORKDIR /src/src/ApiGateways/ApiGw-Lefebvre/
+WORKDIR /src/src/Web/WebStatusLefebvre/
 RUN dotnet publish --no-restore -c Release -o /app
 
 FROM build AS publish
@@ -43,4 +43,4 @@ FROM build AS publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "ApiGw-Lefebvre.dll"]
+ENTRYPOINT ["dotnet", "WebStatusLefebvre.dll"]
