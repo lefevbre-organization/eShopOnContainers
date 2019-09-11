@@ -10,8 +10,7 @@ import MessageList from "../content/message-list/MessageList";
 import MessageContent from "../content/message-list/message-content/MessageContent";
 import { Route, Switch, withRouter } from "react-router-dom";
 import { getLabels } from "../sidebar/sidebar.actions";
-
-
+import ComposeMessage from "../compose-message/ComposeMessage-fixed";
 import {
   getLabelMessages,
   emptyLabelMessages,
@@ -21,27 +20,23 @@ import {
   clearPageTokens,
   setSearchQuery
 } from "../content/message-list/actions/message-list.actions";
-
 import {selectLabel} from '../sidebar/sidebar.actions';
 import {signOut} from '../../api/authentication';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner, faWindowClose, faClosedCaptioning, faDoorClosed, faTimes, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
-
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {
     ReflexContainer,
     ReflexSplitter,
     ReflexElement
 } from 'react-reflex'
-import 'react-reflex/styles.css'
-
 import { start, registerApplication } from 'single-spa'
-
 import * as singleSpa from 'single-spa';
 import { registerLexonApp } from "../../apps/lexonconn-app";
-
 import SidebarCnn from "react-sidebar";
 import SidebarComponent from "../../apps/sidebar_content"
+import 'react-reflex/styles.css'
+
 
 
 export class Main extends Component {    
@@ -58,6 +53,9 @@ export class Main extends Component {
     this.navigateToPrevPage = this.navigateToPrevPage.bind(this);
     this.addInitialPageToken = this.addInitialPageToken.bind(this);
     this.onSignout = this.onSignout.bind(this);
+
+    //this.leftSidebarOpen = leftSidebarOpen;
+   
     
     //registerReactApp();
 
@@ -71,54 +69,71 @@ export class Main extends Component {
        size: 0.25,       
        sidebarOpen: false,
        sidebarDocked: false,
-       sidebarComponent: <SidebarComponent />,
-       sideBar: {
-          collapsed: false
-       }
+       leftSideBar: {
+            collapsed: false
+       },
+       sidebarComponent: <img border="0" alt="Lefebvre" src="assets/img/lexon-fake.png"></img>      
       };  
       
-      this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
-      this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
-     
+        this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
+        this.onSetSidebarOpenCalendar = this.onSetSidebarOpenCalendar.bind(this);
+        this.onSetSidebarOpenLexon = this.onSetSidebarOpenLexon.bind(this);
+        this.onSetSidebarOpenQMemento = this.onSetSidebarOpenQMemento.bind(this);
+        this.onSetSidebarOpenCompliance = this.onSetSidebarOpenCompliance.bind(this);
+        this.onSetSidebarOpenDatabase = this.onSetSidebarOpenDatabase.bind(this); 
+        //this.handleShowLeftSidebarClick = this.handleShowLeftSidebarClick.bind(this);
+
+        this.toggleSideBar = this.toggleSideBar.bind(this); 
     }
+
+    toggleSideBar() {
+        const toggleCollapsed = !this.state.leftSideBar.collapsed;
+        this.setState({
+            leftSideBar: {
+                collapsed: toggleCollapsed
+            }
+        });
+    }
+
+    //handleShowLeftSidebarClick() {
+    //    this.setState({
+    //        leftSidebarOpen: !this.leftSidebarOpen
+    //    })
+    //}
+
     onSetSidebarOpenCalendar(open) {
         this.setState({ sidebarComponent: <SidebarComponent /> });
-        this.onSetSidebarDocked(true);
+        this.setState({ sidebarDocked: open });
     }
 
     onSetSidebarOpenLexon(open) {
         let lexon = <img border="0" alt="Lefebvre" src="assets/img/lexon-fake.png"></img>;
         this.setState({ sidebarComponent: lexon });
-        this.onSetSidebarDocked(true);
+        this.setState({ sidebarDocked: open });
     }
 
     onSetSidebarOpenQMemento(open) {
         let lexon = <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>;
         this.setState({ sidebarComponent: lexon });
-        this.onSetSidebarDocked(true);
+        this.setState({ sidebarDocked: open });
     }
 
     onSetSidebarOpenCompliance(open) {
         let lexon = <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>;
         this.setState({ sidebarComponent: lexon });
-        this.onSetSidebarDocked(true);
+        this.setState({ sidebarDocked: open });
     }
-
 
     onSetSidebarOpenDatabase(open) {
         let lexon = <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>;
         this.setState({ sidebarComponent: lexon });
-        this.onSetSidebarDocked(true);
-    }
-
-    onSetSidebarOpen(open) {
-        this.setState({ sidebarOpen: open });
-    }
-
-    onSetSidebarDocked(open) {
         this.setState({ sidebarDocked: open });
-        this.setState({ sidebarOpen: open });
     }
+
+    onSetSidebarDocked(open) {       
+        this.setState({ sidebarDocked: open });
+    }
+   
   
   componentDidMount() {
     /* Label list is fetched from here 
@@ -217,7 +232,8 @@ export class Main extends Component {
     this.props.addInitialPageToken(token);
   }
 
-  renderLabelRoutes() {
+    renderLabelRoutes() {
+    const { leftSideBar } = this.state;  
     return this.props.labelsResult.labels.map(el => (
       <Route
         key={el.id + '_route'}
@@ -228,6 +244,7 @@ export class Main extends Component {
           return (
             <MessageList
               {...props}
+              sideBarCollapsed={leftSideBar.collapsed} sideBarToggle={this.toggleSideBar} 
               getLabelMessages={this.getLabelMessages}
               messagesResult={this.props.messagesResult}
               toggleSelected={this.props.toggleSelected}
@@ -262,6 +279,9 @@ export class Main extends Component {
 
   renderInboxViewport() {
 
+    const { t } = this.props;
+    const { leftSideBar } = this.state;  
+
     let imgUrl = 'assets/img/settings-gears.svg'
     if (this.props.labelsResult.labels.length < 1) {
         return this.renderSpinner();       
@@ -269,11 +289,11 @@ export class Main extends Component {
 
       return ( 
 
-
+         
 
           <SidebarCnn
               sidebar={this.state.sidebarComponent}
-              open={false}
+              open={this.state.sidebarOpen}
               pullRight={true}
               docked={this.state.sidebarDocked}
               styles={{
@@ -287,7 +307,7 @@ export class Main extends Component {
                   },
                   content: {
                       position: "absolute",
-                      top: 0,
+                      top: 0,                     
                       left: 0,
                       right: 0,
                       bottom: 0,
@@ -325,30 +345,37 @@ export class Main extends Component {
                       getLabelMessages={this.getLabelMessages}
                       searchQuery={this.props.searchQuery}
                   />
-                  <section className="main hbox space-between">
+                  <section className="main hbox space-between">                    
                       <Sidebar
-                          getLabelList={this.getLabelList}
-                          pathname={this.props.location.pathname}
-                          labelsResult={this.props.labelsResult}
-                          onLabelClick={this.loadLabelMessages}
-                      />
+                              sideBarCollapsed={leftSideBar.collapsed}
+                              sideBarToggle={this.toggleSideBar}
+                              getLabelList={this.getLabelList}
+                              pathname={this.props.location.pathname}
+                              labelsResult={this.props.labelsResult}
+                              onLabelClick={this.loadLabelMessages}
+                              onSidebarCloseClick={this.handleShowLeftSidebarClick}
+
+                          />                                       
                       <article className="d-flex flex-column position-relative">
-                          <Switch>
+                            <Switch>
                               {this.renderLabelRoutes()}
+                              <Route                                  
+                                  exact
+                                  path="/compose"                                  
+                                  component={() => <ComposeMessage history={this.props.history} sideBarCollapsed={leftSideBar.collapsed} sideBarToggle={this.toggleSideBar}/>}                             
+                              />
                               <Route
                                   exact
                                   path="/notfound"
                                   component={NotFound}
                               />
-                              <Route
+                              <Route                                  
                                   exact
                                   path="/:id([a-zA-Z0-9]+)"
                                   component={MessageContent}
-                              />
-                          </Switch>
-                      </article>
-                 
-                  
+                              />  
+                            </Switch> 
+                      </article> 
 
                       <div className="productpanel">
                           <span className="productsbutton">
@@ -390,7 +417,7 @@ export class Main extends Component {
   }
 
     render()
-    { 
+    {       
        return this.renderInboxViewport();
     }
 }
@@ -413,7 +440,7 @@ const mapDispatchToProps = dispatch =>
       setPageTokens,
       addInitialPageToken,
       clearPageTokens,
-      setSearchQuery
+      setSearchQuery     
     },
     dispatch
   );

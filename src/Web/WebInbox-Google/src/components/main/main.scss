@@ -1,3 +1,13 @@
+.panelClosed {
+    width: 0px;
+}
+.panelSidebar {
+    width: 260px;
+    height: 100%;
+}
+.panelOpened {
+    width: auto;
+}
 .CloseButton{
     cursor:pointer;   
     padding-left:5px;

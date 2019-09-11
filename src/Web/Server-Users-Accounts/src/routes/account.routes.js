@@ -31,7 +31,7 @@ router.get('/user/:id', async (req, res) => {
 router.post('/defaultaccount/:user/:provider/:email', function (req, res) {
     Account.find({
         user: req.params.user,
-        provider: 'GOOGLE'
+        provider: req.params.provider
     }, function(err, accounts) {
     if (!accounts) {
         const account = new Account({ 
@@ -114,6 +114,28 @@ router.post('/deleteaccount', function (req, res) {
         user: user,
         provider: provider,
         email: email
+    }, function(err, accounts) {
+        if (accounts) {
+            accounts.map(function(account){
+                Account.findByIdAndRemove(account._id)
+                    .then(
+                        console.log(`Delete _id -> ${account._id}`)
+                    )
+                    .catch(error => {
+                        console.log('error ->', error);
+                    });
+            });
+        }
+        res.json({ status: 'USERS-ACCOUNTS updated' });
+    });
+});
+
+router.post('/deleteaccountbyprovider', function (req, res) {
+    const { user, provider } = req.body;
+    // console.log(`user -> ${user}, provider -> ${provider}`);
+    Account.find({
+        user: user,
+        provider: provider
     }, function(err, accounts) {
         if (accounts) {
             accounts.map(function(account){

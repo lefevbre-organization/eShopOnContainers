@@ -146,14 +146,17 @@ export class MessageList extends PureComponent {
       return { nextToken, prevToken };
   }  
 
-  render() {
+    render() {
+
+    const collapsed = this.props.sideBarCollapsed;
     const { messagesResult } = this.props;
     const messagesTotal = messagesResult.label ? messagesResult.label.result.messagesTotal : 0;
     const { nextToken, prevToken } = this.getPageTokens();        
 
     return (
       <React.Fragment>       
-        <ListToolbar
+         <ListToolbar
+          sideBarCollapsed={collapsed} sideBarToggle={this.props.sideBarToggle}
           nextToken={nextToken}
           prevToken={prevToken}
           navigateToNextPage={this.props.navigateToNextPage}

@@ -156,6 +156,7 @@
     <Compile Include="src\apps\mainmenu-app.js" />
     <Compile Include="src\apps\utils.js" />
     <Compile Include="src\components\authenticating\Authenticating_01.jsx" />
+    <Compile Include="src\components\compose-message\ComposeMessage-fixed.jsx" />
     <Compile Include="src\components\login\Login_01.jsx" />
     <Compile Include="src\event-bus\index.js" />
     <Compile Include="src\GraphService.js" />

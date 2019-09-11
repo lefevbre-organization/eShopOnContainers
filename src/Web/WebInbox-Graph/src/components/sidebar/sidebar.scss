@@ -1,3 +1,22 @@
+.compose-div {
+    width: 100%;
+    text-align: center;
+}
+.btn-transparent {
+    background-color: transparent;
+    border-color: transparent;
+    color: #001978;
+}
+
+.sidebar-open {
+    min-width: 210px;
+    flex: 1 1;
+}
+
+.sidebar-close {
+    min-width: 0px;
+    flex: 0;
+}
 
 .BtnLfcolor {
     background-color: #ffffff;
@@ -22,7 +41,6 @@
     border-color: transparent;
     box-shadow: none;
 }
-
 
 .logo-ext {
     height: 22px;

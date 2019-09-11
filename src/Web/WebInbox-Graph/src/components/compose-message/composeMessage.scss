@@ -1,6 +1,6 @@
 .compose-panel {
     border-bottom: 1px solid #d9dfe2;
-    height: 65px;
+    height: 64px;
     background-color: #f4f4f4;
 
     .compose-btn {
@@ -8,8 +8,58 @@
     }
 }
 
+.burguer-btn {
+    margin-top: 17px;
+}
+
+.margin-right-10 {
+    margin-right: 10px;
+}
+
+.container-panel {
+    height: 100%;
+    overflow-y: auto;
+}
+
+.compose-layout {
+    padding: 20px 20px 20px 20px;
+}
+
+.compose-droppanel {
+    padding: 0px 20px 20px 20px;
+}
+
+.compose-footer {
+    padding: 0px 20px 20px 20px;
+}
+
+.compose-message {
+    padding: 20px 20px 20px 20px;
+}
+
+.compose-dropcontainer {
+    padding: 30px 0px 0px 20px;
+}
+
 .compose-btn {
     background-color: transparent;
+}
+
+.compose-btn {
+    background-color: transparent;
+}
+
+.alignright {
+    float: right;
+}
+
+.marleft {
+    margin-left: 5px;
+}
+
+.autoResizeHeight {
+    height: 200px !important;
+    /*height: calc(100% - 50px);*/
 }
 
 .compose-dialog {

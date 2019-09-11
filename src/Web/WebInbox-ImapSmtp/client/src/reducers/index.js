@@ -3,6 +3,7 @@ import application from './application';
 import folders from './folders';
 import login from './login';
 import messages from './messages';
+import lexon from './lexon';
 
 export const INITIAL_STATE = {
   application: {
@@ -37,6 +38,9 @@ export const INITIAL_STATE = {
     selected: [],
     locked: [],
     activeRequests: 0
+  },
+  lexon: {
+    user: null
   }
 };
 
@@ -45,5 +49,6 @@ export default combineReducers({
   application,
   login,
   folders: folders,
-  messages: messages
+  messages: messages,
+  lexon: lexon
 });

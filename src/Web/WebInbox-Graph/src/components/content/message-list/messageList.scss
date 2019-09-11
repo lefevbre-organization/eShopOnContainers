@@ -7,7 +7,7 @@
 
 
  $margin: 0px;
- $text-width: 180px;
+ $text-width: 140px;
  $num-width: 80px;
  
  /*
@@ -103,16 +103,34 @@
 //  $num-width: 80px;
  
  // First break: when one row does not fit, make it 2 rows
- @media all and (max-width: (640px)) {
-   // inner wrappers vertical
-   .text-2, .num-2 {
-     @include vertical();
-   }
-   // fix the widths of the inner level wrappers, else they take
-   // children's natural size
-   .text-2 { width: $text-width; }
-   .num-2  { width: $num-width;  }
- }
+@media all and (max-width: (640px)) {
+    // inner wrappers vertical
+    .text-2, .num-2 {
+        @include vertical();
+    }
+    // fix the widths of the inner level wrappers, else they take
+    // children's natural size
+    .text-2 {
+        width: $text-width;
+    }
+
+    .num-2 {
+        width: $num-width;
+    }
+
+    nav.sidebar-open {
+        min-width: 0px;
+        flex: 0 1;
+    }
+}
+
+// First break: when one row does not fit, make it 2 rows
+@media all and (min-width: (540px)) {
+    nav.sidebar-open {
+        min-width: 210px;
+        flex: 1 1;
+    }
+}
  
  // Second break: when two rows is not enough, make it four
 //  @media all and (max-width: ($margin*2 + $text-width*1 + $num-width*1)) {
@@ -171,6 +189,6 @@
     min-height: 64px;
 
     > div {
-        height: 45px;
+        /*height: 45px;*/
     }
 }

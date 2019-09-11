@@ -11,6 +11,10 @@ import ListActionButtons from "./ListActionButtons";
 
 import { deleteListMessages, addListMessages } from "../actions/message-list.actions";
 
+import { Button } from "reactstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
+
 export class MessageToolbar extends PureComponent {
   constructor(props) {
     super(props);
@@ -70,6 +74,8 @@ export class MessageToolbar extends PureComponent {
 
   render() {
 
+    const collapsed = this.props.sideBarCollapsed;
+
     let checked = false;
     let selectedMessages = [];
 
@@ -80,9 +86,17 @@ export class MessageToolbar extends PureComponent {
 
     return (
       <div className="msg-toolbar">
-        <div className="pl-2 py-2 pr-4 d-flex align-items-center bd-highlight ">
+         <div className={collapsed ? "pl-2 py-2 pr-4 d-flex align-items-center bd-highlight" : "pl-2 py-2 pr-4 d-flex align-items-center bd-highlight margin-top-5"}>
           <div className="d-flex align-content-center align-items-center">
-            <div>
+           <div className="padding-top-10">
+                <span className={collapsed ? "" : "with-side-bar"}>
+                   <Button
+                      onClick={this.props.sideBarToggle}
+                      className="btn-transparent margin-right-10 margin-bottom-10">
+                      <FontAwesomeIcon icon={faBars} size="1x" />
+                   </Button>
+                </span>
+                
               <Checkbox checked={checked} onChange={this.onSelectionChange} />
             </div>
             <div />

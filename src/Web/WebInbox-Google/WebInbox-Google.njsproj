@@ -160,6 +160,7 @@
     <Compile Include="src\apps\react-app.js" />
     <Compile Include="src\apps\utils.js" />
     <Compile Include="src\components\aside\aside.jsx" />
+    <Compile Include="src\components\compose-message\ComposeMessage-fixed.jsx" />
     <Compile Include="src\components\compose-message\ComposeMessage.jsx" />
     <Compile Include="src\components\main\main-docks\Main-bot.jsx" />
     <Compile Include="src\components\main\main-docks\Main-dock3.jsx" />
