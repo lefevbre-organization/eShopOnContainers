@@ -29,7 +29,7 @@ services:
       - ConnectionString=${ESHOP_AZURE_NOSQL_DB}
       - Database=LexonApiDB
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
-      - EventBusUserName=${ESHOP_SERVICE_BUS_PASSWORD
+      - EventBusUserName=${ESHOP_SERVICE_BUS_PASSWORD}
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD}
       - EventBus__username=${ESHOP_SERVICE_BUS_USERNAME}      
       - EventBus__password=${ESHOP_SERVICE_BUS_PASSWORD}      
@@ -52,7 +52,7 @@ services:
       - ConnectionString=${ESHOP_AZURE_NOSQL_DB}
       - Database=users-accounts
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
-      - EventBusUserName=${ESHOP_SERVICE_BUS_PASSWORD
+      - EventBusUserName=${ESHOP_SERVICE_BUS_PASSWORD}
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD}
       - EventBus__username=${ESHOP_SERVICE_BUS_USERNAME}      
       - EventBus__password=${ESHOP_SERVICE_BUS_PASSWORD}      
