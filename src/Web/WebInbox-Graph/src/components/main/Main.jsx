@@ -362,7 +362,7 @@ export class Main extends Component {
                               <Route
                                   exact
                                   path="/:id([a-zA-Z0-9!@#$%^&+=_-]+)"
-                                  component={MessageContent}
+                                  component={() => <MessageContent sideBarCollapsed={leftSideBar.collapsed} sideBarToggle={this.toggleSideBar} />}
                               />
                           </Switch>
                       </article>

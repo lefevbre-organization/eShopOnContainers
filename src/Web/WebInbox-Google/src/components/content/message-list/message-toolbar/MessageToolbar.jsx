@@ -6,6 +6,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faReply } from "@fortawesome/free-solid-svg-icons";
 import { getNameEmail } from "../../../../utils";
 import moment from "moment";
+import {Button} from "reactstrap";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
+
 import "./messageToolbar.scss";
 
 export class MessageToolbar extends PureComponent {
@@ -78,11 +81,22 @@ export class MessageToolbar extends PureComponent {
           ${replyHeader}
           <blockquote>${this.props.messageResult.body}</blockquote>`,
       ...(cc && { cc: cc.value })
-    };
+      };
+
+    const collapsed = this.props.sideBarCollapsed;
 
     return (
+        
       <div className="d-flex justify-content-center align-items-center message-toolbar">
+       
         <div className="action-btns">
+          <span className={collapsed ? "action-btn mr-2" : "action-btn mr-2 with-side-bar"}>
+                    <Button
+                        onClick={this.props.sideBarToggle}
+                        className="btn-transparent">
+                        <FontAwesomeIcon icon={faBars} size="1x" />
+                    </Button>
+          </span>
           <div className="action-btn mr-2">
             <button className="btn" onClick={this.trashHandler}>
               <FontAwesomeIcon

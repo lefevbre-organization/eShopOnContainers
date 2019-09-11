@@ -214,7 +214,9 @@ export class MessageContent extends Component {
 
     return (
       <React.Fragment>
-        <MessageToolbar 
+       <MessageToolbar 
+          sideBarCollapsed={this.props.sideBarCollapsed}
+          sideBarToggle={this.props.sideBarToggle}
           onClick={this.modifyMessage} 
           messageResult={this.props.emailMessageResult}
         />
