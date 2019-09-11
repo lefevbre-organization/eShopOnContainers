@@ -1,0 +1,512 @@
+[{
+        "_id": "5d514f4f36d99aaea9ae75d6",
+        "idUser": "112",
+        "Name": "Micha Vila Bola",
+        "Companies": [{
+                "idCompany": 14,
+                "Name": "Lacasitos SA",
+                "Logo": "url/laca.png"
+            },
+            {
+                "idCompany": 15,
+                "Name": "Cerebritos SL",
+                "Logo": "url/topicCerebrito.png"
+            }
+        ],
+        "Clients": [{
+                "idClient": 12345,
+                "Name": "Cliente otra cosa",
+                "Tlf": "123454664"
+            },
+            {
+                "idClient": 1237,
+                "Name": "Cliente comatoso",
+                "Tlf": "123445677"
+            }
+        ],
+        "Classifications": [{
+                "idClassification": 25,
+                "Type": "Client",
+                "idMail": "12312312312312",
+                "idRelated": 12345
+            },
+            {
+                "idClassification": 36,
+                "Type": "Document",
+                "idMail": "1232145425451",
+                "idRelated": 12347
+            },
+            {
+                "idClassification": 1,
+                "Type": "Client",
+                "idMail": "klajksdajklsd",
+                "idRelated": 12
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "wrewewrewr",
+                "idRelated": 234
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "4444",
+                "idRelated": 23
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "43534534",
+                "idRelated": 222
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "232222",
+                "idRelated": 124
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "33333",
+                "idRelated": 12334444
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "mail4444",
+                "idRelated": 12333
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "mail44452",
+                "idRelated": 11
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "msilfromlex234",
+                "idRelated": 222
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "mail44453",
+                "idRelated": 11333
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "mailwu12",
+                "idRelated": 123
+            },
+            {
+                "idClassification": 1,
+                "Type": "Client",
+                "idMail": "mail2222",
+                "idRelated": 111
+            }
+        ],
+        "Courts": [{
+                "idCourt": 34,
+                "Name": "Juzgado 12 Social Madrid"
+            },
+            {
+                "idCourt": 35,
+                "Name": "Juzgado 27 Penal Madrid"
+            }
+        ],
+        "Documents": [{
+            "idDocument": 12347,
+            "Name": "cerebro.docx",
+            "Description": "paco por escrito"
+        }],
+        "Files": [{
+                "idFile": 347,
+                "Name": "exp 347",
+                "Description": "expediente 347"
+            },
+            {
+                "idFile": 348,
+                "Name": "exp 348",
+                "Description": "expediente muy largo"
+            },
+            {
+                "idFile": 345,
+                "Name": "expedientado",
+                "Description": "muy importante para mi"
+            }
+        ],
+        "Lawyers": [{
+                "idLawyer": 44,
+                "Propio": true,
+                "Name": "Lima Mimon"
+            },
+            {
+                "idLawyer": 33,
+                "Propio": false,
+                "Name": "Naranja Naranjón"
+            }
+        ],
+        "Solicitors": [{
+                "idSolicitor": 46,
+                "Propio": true,
+                "Name": "Antonio Verdaguer"
+            },
+            {
+                "idSolicitor": 55,
+                "Propio": false,
+                "Name": "Jaime De MariChalado"
+            }
+        ],
+        "Notaries": [{
+            "idNotary": 4,
+            "Name": "Notario de Soria"
+        }]
+    },
+    {
+        "_id": "5d514f4336d99aaea9ae75d5",
+        "idUser": "111",
+        "Name": "Marcelo Grande Molusco",
+        "Companies": [{
+                "idCompany": 12,
+                "Name": "Lacayos de Hacienda SA",
+                "Logo": "url/topicGob.png"
+            },
+            {
+                "idCompany": 23,
+                "Name": "Tomasin asociados SL",
+                "Logo": "url/topicTomasin.png"
+            }
+        ],
+        "Clients": [{
+                "idClient": 1234,
+                "Name": "Cliente bien cobrado",
+                "Tlf": "123454664"
+            },
+            {
+                "idClient": 1236,
+                "Name": "Cliente climatológico",
+                "Tlf": "123445677"
+            }
+        ],
+        "Classifications": [{
+                "idClassification": 23,
+                "Type": "Client",
+                "idMail": "123454664",
+                "idRelated": 1234
+            },
+            {
+                "idClassification": 24,
+                "Type": "Document",
+                "idMail": "1232145425451",
+                "idRelated": 23468888
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "seqwr1234123131231",
+                "idRelated": 123
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "ewrwerewr",
+                "idRelated": 123
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "3123123123123",
+                "idRelated": 3456
+            },
+            {
+                "idClassification": 1,
+                "Type": "Client",
+                "idMail": "qqqqweqweqwe",
+                "idRelated": 11
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "ewrqewreqwrqwer",
+                "idRelated": 1
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "upsmail",
+                "idRelated": 11
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "prueba9",
+                "idRelated": 22
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "mail12345",
+                "idRelated": 33
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "qqwqwqw",
+                "idRelated": 99
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "qqwqwqw",
+                "idRelated": 99
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "qqqqqq",
+                "idRelated": 321
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "wwwww",
+                "idRelated": 54
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "eeeee",
+                "idRelated": 234
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "ttttt",
+                "idRelated": 17
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "tttttrrr",
+                "idRelated": 173
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "tttttrrr",
+                "idRelated": 172
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "434342",
+                "idRelated": 14
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "4343423",
+                "idRelated": 14
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "3434534",
+                "idRelated": 34
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "3434534wwwww",
+                "idRelated": 345
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "yyyyyy",
+                "idRelated": 345
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "yyyyyy2222",
+                "idRelated": 345
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "yyyyyy2222qq",
+                "idRelated": 346
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "yyyyyy2222qqqqq",
+                "idRelated": 341
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "32323222222",
+                "idRelated": 777
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "44444",
+                "idRelated": 44
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "42234234",
+                "idRelated": 46
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "1234",
+                "idRelated": 1234
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "12345",
+                "idRelated": 12345
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "12",
+                "idRelated": 12
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "5555",
+                "idRelated": 55567
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "1212",
+                "idRelated": 12345
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "otroNoHandled",
+                "idRelated": 12222
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "www",
+                "idRelated": 1213
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "23231",
+                "idRelated": 123
+            },
+            {
+                "idClassification": 1,
+                "Type": "File",
+                "idMail": "mailguay999",
+                "idRelated": 888
+            }
+        ],
+        "Courts": [{
+                "idCourt": 32,
+                "Name": "Juzgado 13 Social Madrid"
+            },
+            {
+                "idCourt": 33,
+                "Name": "Juzgado 17 Penal Madrid"
+            }
+        ],
+        "Documents": [{
+                "idDocument": 12345,
+                "Name": "paco.docx",
+                "Description": "paco por escrito"
+            },
+            {
+                "idDocument": 12346,
+                "Name": "paco.xls",
+                "Description": "paco cuadriculado"
+            }
+        ],
+        "Files": [{
+                "idFile": 345,
+                "Name": "exp 345",
+                "Description": "expediente expedientoso"
+            },
+            {
+                "idFile": 346,
+                "Name": "exp 346",
+                "Description": "expediente expedientado"
+            },
+            {
+                "idFile": 57,
+                "Name": "federico",
+                "Description": "Creado en la consola, No tiene descripción"
+            },
+            {
+                "idFile": 3456,
+                "Name": "desde la api",
+                "Description": "uff que bonito"
+            },
+            {
+                "idFile": 221,
+                "Name": "apiapi",
+                "Description": "otro"
+            },
+            {
+                "idFile": 556,
+                "Name": "desdeConsolaEsguay",
+                "Description": "Creado en la consola, No tiene descripción"
+            },
+            {
+                "idFile": 234,
+                "Name": "fede champion",
+                "Description": "Creado en la consola, No tiene descripción"
+            }
+        ],
+        "Lawyers": [{
+                "idLawyer": 11,
+                "Propio": true,
+                "Name": "Jorge Venturoso"
+            },
+            {
+                "idLawyer": 36,
+                "Propio": false,
+                "Name": "Laura Mazo de Criminales"
+            }
+        ],
+        "Solicitors": [{
+                "idSolicitor": 46,
+                "Propio": true,
+                "Name": "Antonio Verdaguer"
+            },
+            {
+                "idSolicitor": 55,
+                "Propio": false,
+                "Name": "Jaime De MariChalado"
+            }
+        ],
+        "Notaries": [{
+                "idNotary": 3,
+                "Name": "Notario de Huelva"
+            },
+            {
+                "idNotary": 14,
+                "Name": "No no Notorius"
+            }
+        ]
+    }
+]

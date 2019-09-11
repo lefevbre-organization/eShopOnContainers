@@ -1,0 +1,23 @@
+[
+  {
+    "id": "5d678a39c4bf563678267305",
+    "user": "1255717",
+    "provider": "OUTLOOK",
+    "email": "j.sanchez-ext@lefebvre.es",
+    "defaultAccount": false
+  },
+  {
+    "id": "5d7643b2f86d9a2840a382b5",
+    "user": "1255717",
+    "provider": "IMAP",
+    "email": "alberto.valverde1971@yahoo.com",
+    "defaultAccount": false
+  },
+  {
+    "id": "5d77bea42850e72e04d67b6c",
+    "user": "1255717",
+    "provider": "GOOGLE",
+    "email": "jsanchco@gmail.com",
+    "defaultAccount": true
+  }
+]

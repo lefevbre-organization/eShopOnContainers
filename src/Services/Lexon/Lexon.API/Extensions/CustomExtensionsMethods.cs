@@ -156,6 +156,7 @@ namespace Lexon.API.Extensions
                     var factory = new ConnectionFactory
                     {
                         HostName = settings.EventBus.HostName,
+                        DispatchConsumersAsync = true
                     };
 
                     if (!string.IsNullOrEmpty(settings.EventBus.Username))
@@ -164,11 +165,11 @@ namespace Lexon.API.Extensions
                     if (!string.IsNullOrEmpty(settings.EventBus.Password))
                         factory.Password = settings.EventBus.Password;
 
-                    if (settings.EventBus.Port != 0)
-                        factory.Port = settings.EventBus.Port;
+                    //if (settings.EventBus.Port != 0)
+                    //    factory.Port = settings.EventBus.Port;
 
-                    if (!string.IsNullOrEmpty(settings.EventBus.VirtualHost))
-                        factory.VirtualHost = settings.EventBus.VirtualHost;
+                    //if (!string.IsNullOrEmpty(settings.EventBus.VirtualHost))
+                    //    factory.VirtualHost = settings.EventBus.VirtualHost;
 
                     var retryCount = settings.EventBus.RetryCount != 0 ? settings.EventBus.RetryCount : 5;
 
