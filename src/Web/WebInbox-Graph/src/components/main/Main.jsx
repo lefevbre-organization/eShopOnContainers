@@ -283,11 +283,10 @@ export class Main extends Component {
         method: "GET"
       }).then(result => {
         console.log(result);
+        const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+        signOut(urlRedirect);    
       });
     }
-
-    const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-    signOut(urlRedirect);
   }
 
   renderInboxViewport() {

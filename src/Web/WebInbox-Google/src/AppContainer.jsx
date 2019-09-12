@@ -34,7 +34,7 @@ class AppContainer extends Component {
     if (!isNewAccount) {
       mountScripts().then(this.init);
     }
-    
+
     this.props.location.pathname = "/inbox";
   }
 
@@ -70,10 +70,10 @@ class AppContainer extends Component {
   renderView() {
     const { signInStatus } = this.state;
 
-    if (signInStatus === AUTH_SUCCESS) {   
+    if (signInStatus === AUTH_SUCCESS) {
       return <Main googleUser={this.state.googleUser} />;
     } else if (signInStatus === AUTH_IN_PROGRESS) {
-      return <Authenticating />;      
+      return <Authenticating />;
     } else {
       return <Login onSignIn={this.onSignIn} />;
     }

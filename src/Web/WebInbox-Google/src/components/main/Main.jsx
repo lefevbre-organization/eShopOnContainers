@@ -145,6 +145,7 @@ export class Main extends Component {
         method: "GET"
       }).then(result => {
         console.log(result);
+        this.props.history.push('/inbox');
       });
     }
   }
@@ -275,12 +276,19 @@ export class Main extends Component {
 
   onSignout() {
     const { userId } = this.props.lexon;
-    const that = this;
-    signOut().then(_ => {
-      const url = `user/${userId}`;
-      that.props.history.replace(url);
-      window.location.reload(true);
-    });
+
+    const url = `${config.url.URL_RESET_DEFAULTACCOUNT}/${userId}`;
+    fetch(url, {
+      method: "GET"
+    })
+      .then(result => {
+        console.log(result);
+        signOut();
+      })
+      .then(_ => {
+        const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+        window.open(urlRedirect, "_self");
+      });
   }
 
   renderInboxViewport() {

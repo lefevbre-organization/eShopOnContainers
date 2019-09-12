@@ -13,8 +13,7 @@ class App extends Component {
       <Router>
         <Switch>
           <Route exact path="/user/:id" component={UserLexon} />
-          <Route exact path="/login" component={Login} />
-          <Route exact path="/" component={AppContainer} />
+          <Route path="/" component={AppContainer} />
           {/* <AppContainer /> */}
         </Switch>
       </Router>
