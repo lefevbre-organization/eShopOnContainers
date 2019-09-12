@@ -19,7 +19,9 @@ services:
 
   mongo-seed: 
     build: ./mongo-seed
-    links:
+    network_mode: host
+    restart: on-failure
+    depends_on:
       - nosql.data
 
   rabbitmq:
