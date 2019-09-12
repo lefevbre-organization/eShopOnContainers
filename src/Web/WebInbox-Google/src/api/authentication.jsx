@@ -61,6 +61,5 @@ export const updateSigninStatus = isSignedIn => {
 };
 
 export const signOut = () => {
-  console.log('signOut');
   return window.gapi.auth2.getAuthInstance().signOut();
 };

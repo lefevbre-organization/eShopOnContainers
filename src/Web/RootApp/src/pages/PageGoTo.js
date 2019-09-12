@@ -39,23 +39,23 @@ export class PageGoTo extends Component {
 
           if (data.accounts.length !== 0) {
             const account = data.accounts[0];
-            // if (account.defaultAccount)  {
-            //     switch (account.provider) {
-            //         case INBOX_GOOGLE:
-            //                 window.open(`${config.url.URL_INBOX_GOOGLE}/${this.state.userId}`, '_self');
-            //                 break;
-            //             case INBOX_OUTLOOK:
-            //                 window.open(`${config.url.URL_INBOX_OUTLOOK}/${this.state.userId}`, '_self');
-            //                 break;
-            //             case INBOX_IMAP:
-            //                 window.open(`${config.url.URL_INBOX_IMAP}/${this.state.userId}`, '_self');
-            //                 break;
+            if (account.defaultAccount)  {
+                switch (account.provider) {
+                    case INBOX_GOOGLE:
+                            window.open(`${config.url.URL_INBOX_GOOGLE}/user/GO0${this.state.userId}`, '_self');
+                            break;
+                        case INBOX_OUTLOOK:
+                            window.open(`${config.url.URL_INBOX_OUTLOOK}/user/OU0${this.state.userId}`, '_self');
+                            break;
+                        case INBOX_IMAP:
+                            window.open(`${config.url.URL_INBOX_IMAP}/user/IM0${this.state.userId}`, '_self');
+                            break;
 
-            //             default:
-            //                 console.log("Valor no válido");
-            //                 break;
-            //     }
-            // }
+                        default:
+                            console.log("Valor no válido");
+                            break;
+                }
+            }
           }
         }
       })

@@ -123,6 +123,10 @@
             {
                 return NotFound();
             }
+            else
+            {
+                accounts = accounts.OrderByDescending(x => x.DefaultAccount).ToList();
+            }
 
             return Ok(accounts);
         }
