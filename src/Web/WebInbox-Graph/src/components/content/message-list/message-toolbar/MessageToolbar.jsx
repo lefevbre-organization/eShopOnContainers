@@ -8,14 +8,17 @@ import { getNameEmail } from "../../../../utils";
 import moment from "moment";
 import { Button } from "reactstrap";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
-
+import { Link } from "react-router-dom";
 import "./messageToolbar.scss";
+
 
 export class MessageToolbar extends PureComponent {
   constructor(props) {
     super(props);
-    this.trashHandler = this.getClickHandler(["TRASH"]);
-  }
+      this.trashHandler = this.getClickHandler(["TRASH"]);
+   
+    }
+  
 
   getClickHandler(action) {
     return evt => {
@@ -61,7 +64,9 @@ export class MessageToolbar extends PureComponent {
           ${replyHeader}
           <blockquote>${this.props.messageResult.body.content}</blockquote>`,
       ...(cc && { cc: cc.value })
-    };
+      };
+
+    
 
       const collapsed = this.props.sideBarCollapsed;
 
@@ -77,16 +82,21 @@ export class MessageToolbar extends PureComponent {
                 <FontAwesomeIcon icon={faBars} size="1x" />
              </Button>
           </span>
-          <div className="action-btn mr-2">
-            <ComposeMessage {...composeProps}>
-              <button className="btn">
-                <FontAwesomeIcon
-                  title={t('message-toolbar.reply')}
-                  icon={faReply}
-                  size="lg"
-                />
-              </button>
-            </ComposeMessage>
+          <div className="action-btn mr-2"> 
+               <Link to={{
+                          pathname: '/compose',
+                          search: '',
+                          sideBarCollapsed: this.props.sideBarCollapsed ,
+                          sideBarToggle: this.props.sideBarToggle ,
+                          state: { composeProps  }
+                       }}>
+                          <FontAwesomeIcon
+                              title={t('message-toolbar.reply')}
+                              icon={faReply}
+                              size="lg"
+                          />
+               </Link>
+           
           </div>
         </div>
       </div>

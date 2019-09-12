@@ -8,7 +8,7 @@ import { getNameEmail } from "../../../../utils";
 import moment from "moment";
 import {Button} from "reactstrap";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
-
+import { Link } from "react-router-dom";
 import "./messageToolbar.scss";
 
 export class MessageToolbar extends PureComponent {
@@ -107,15 +107,19 @@ export class MessageToolbar extends PureComponent {
             </button>
           </div>
           <div className="action-btn mr-2">
-            <ComposeMessage {...composeProps}>
-              <button className="btn">
-                <FontAwesomeIcon
-                  title={t('message-toolbar.reply')}
-                  icon={faReply}
-                  size="lg"
-                />
-              </button>
-            </ComposeMessage>
+                    <Link to={{
+                        pathname: '/compose',
+                        search: '',
+                        sideBarCollapsed: this.props.sideBarCollapsed,
+                        sideBarToggle: this.props.sideBarToggle,
+                        state: { composeProps }
+                    }}>
+                        <FontAwesomeIcon
+                            title={t('message-toolbar.reply')}
+                            icon={faReply}
+                            size="lg"
+                        />
+                    </Link>
           </div>
         </div>
       </div>

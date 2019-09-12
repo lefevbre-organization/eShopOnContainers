@@ -1,15 +1,10 @@
 import React, { PureComponent } from "react";
 import { withTranslation } from 'react-i18next';
-
 import { sendMessage } from "../../api_graph";
 import { getValidEmails } from "../../utils";
 
 import {
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
+  Button, 
   InputGroup,
   InputGroupAddon,
   Input
@@ -20,27 +15,29 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 import ReactQuill from "react-quill";
 import "../../../node_modules/react-quill/dist/quill.snow.css";
+
+
+import { faBars } from "@fortawesome/free-solid-svg-icons";
+
 import "./composeMessage.scss";
 
-//import '@uppy/core/dist/style.css'
-//import '@uppy/drag-drop/dist/style.css'
+
 
 const Uppy = require('@uppy/core')
 const Tus = require('@uppy/tus')
 const GoogleDrive = require('@uppy/google-drive')
-const { Dashboard, DashboardModal, DragDrop, ProgressBar } = require('@uppy/react')
+const { DragDrop, ProgressBar } = require('@uppy/react')
 
 export class Compose extends PureComponent {
   constructor(props) {
-    super(props);
+    super(props);  
 
-    this.state = {
-      displayModal: false,
-      to: props.to || "",
-      cc: props.cc || "",
-      bcc: props.bcc || "",
-      subject: props.subject || "",
-      content: props.content || "",       
+    this.state = {      
+      to: props.history.location.state.composeProps.to || "",
+      cc: props.history.location.state.composeProps.cc || "",
+      bcc: props.history.location.state.composeProps.bcc || "",
+      subject: props.history.location.state.composeProps.subject || "",
+      content: props.history.location.state.composeProps.content || "",       
       showInlineDashboard: false,
       open: false,
       uppyPreviews: []       
@@ -53,71 +50,64 @@ export class Compose extends PureComponent {
     this.setField = this.setField.bind(this);
 
 
-      this.uppy = new Uppy({ id: 'uppy1', autoProceed: false, debug: true })
+   this.uppy = new Uppy({ id: 'uppy1', autoProceed: false, debug: true })
           .use(Tus, { endpoint: 'https://master.tus.io/files/' })
           .use(GoogleDrive, { serverUrl: 'https://companion.uppy.io' })
           
-      this.reader = new FileReader();      
+   this.reader = new FileReader();  
+   this.handleModalClick = this.handleModalClick.bind(this)
+   this.uploadFile = this.uploadFile.bind(this);
+   this.addFileToState = this.addFileToState.bind(this);
 
-      //this.uppy2 = new Uppy({ id: 'uppy2', autoProceed: false, debug: true })
-      //    .use(Tus, { endpoint: 'https://master.tus.io/files/' }) 
-          
-
-      this.handleModalClick = this.handleModalClick.bind(this)
-
-      this.uploadFile = this.uploadFile.bind(this);
-      this.addFileToState = this.addFileToState.bind(this);
-
-      this.uppy.on('complete', (result) => {
+   this.uppy.on('complete', (result) => {
           console.log('Upload complete! We�ve uploaded these files:', result.successful)
-      })
+   })
 
 
 
-      this.uppy.on('file-added', (file) => {
+  this.uppy.on('file-added', (file) => {
           console.log('Added file', file);  
           this.reader.onload = (readerEvt) =>
           this.addFileToState({ file, base64: readerEvt.target.result });
           // Define this onload every time to get file and base64 every time
           this.reader.readAsDataURL(file.data);
-      }); 
+       }); 
     
-    }  
+  }  
 
-    addFileToState({ file, base64 }) {
-        this.setState({ uppyPreviews: [{ file, base64 }, ...this.state.uppyPreviews] });
-    }
+  addFileToState({ file, base64 }) {
+      this.setState({ uppyPreviews: [{ file, base64 }, ...this.state.uppyPreviews] });
+  }
 
-    uploadFile() {
-        console.log(this.state.uppyPreviews);
+  uploadFile() {
+      console.log(this.state.uppyPreviews);
         // this.uppyOne.upload();
-    }
+  }
 
 
-    componentWillUnmount() {
-        this.uppy.close()      
-    }
+  componentWillUnmount() {
+      this.uppy.close()      
+  }
 
-    handleModalClick() {
-        this.setState({
+  handleModalClick() {
+     this.setState({
             open: !this.state.open
-        })
-    } 
+     })
+  } 
 
-    closeModal() {
-        this.props.history.push('/inbox')
-    }
+  closeModal() {
+     this.props.history.push('/inbox')
+  }
 
-    goBack() {
-        this.props.history.goBack();
-    }
+  goBack() {
+     this.props.history.goBack();
+  }
 
-    handleChange(value) {
-      this.setState({ content: value });      
+  handleChange(value) {
+     this.setState({ content: value }); 
+  }
 
-    }
-
-    sendEmail() {                 
+  sendEmail() {                 
         
     const validTo = getValidEmails(this.state.to);
 
@@ -183,13 +173,26 @@ export class Compose extends PureComponent {
 
   
     render() {
-        const { showInlineDashboard } = this.state
+        
         const { t } = this.props;
+        const collapsed = this.props.sideBarCollapsed;
 
     return (
         <React.Fragment>
             <div className="compose-dialog" >
-                <div className="compose-panel"></div>
+                <div className="compose-panel">
+                    <div className="d-flex justify-content-center align-items-center message-toolbar">
+                        <div className="action-btns">
+                            <span className={collapsed ? "action-btn mr-2" : "action-btn mr-2 with-side-bar"}>
+                                <Button
+                                    onClick={this.props.sideBarToggle}
+                                    className="btn-transparent">
+                                    <FontAwesomeIcon icon={faBars} size="1x" />
+                                </Button>
+                            </span>                        
+                        </div>
+                    </div>
+                </div>
                 <div className="container-panel">
                     <div className="compose-message">
                         <div className="message-fields">

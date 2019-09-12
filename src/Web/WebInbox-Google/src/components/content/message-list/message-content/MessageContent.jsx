@@ -6,13 +6,9 @@ import {
   getEmailMessage,
   modifyMessages
 } from "../actions/message-list.actions";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import MessageToolbar from "../message-toolbar/MessageToolbar";
-
 import "./messageContent.scss";
 
 //BEGIN functions for attachment functionality
@@ -220,6 +216,7 @@ export class MessageContent extends Component {
         <MessageToolbar 
           sideBarCollapsed={this.props.sideBarCollapsed}
           sideBarToggle={this.props.sideBarToggle}
+          history={this.props.history}
           onClick={this.modifyMessage} 
           messageResult={this.props.emailMessageResult}
         />

@@ -217,6 +217,7 @@ export class MessageContent extends Component {
        <MessageToolbar 
           sideBarCollapsed={this.props.sideBarCollapsed}
           sideBarToggle={this.props.sideBarToggle}
+          history={this.props.history}
           onClick={this.modifyMessage} 
           messageResult={this.props.emailMessageResult}
         />

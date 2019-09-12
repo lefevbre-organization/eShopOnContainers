@@ -176,6 +176,12 @@ export class Sidebar extends PureComponent {
       const { t } = this.props;
 
       const collapsed = this.props.sideBarCollapsed;
+
+      const composeProps = {
+          subject: '',
+          to: '',
+          content: ''
+      };
       
       return (
           //${ collapsed ? '' : styles['with-side-bar'] }
@@ -183,9 +189,13 @@ export class Sidebar extends PureComponent {
             <div className="compose-panel">
               <div className="d-flex justify-content-center p-2 compose-btn">            
                    <div className="compose-div">     
-                      <Link className="btn font-weight-bold BtnLfcolor uppercase compose-btn" to='/compose' >
-                         <img className="ImgLf" border="0" alt="otulook" src="assets/img/plus.png"></img>
-                         {t('sidebar.compose')}
+                          <Link className="btn font-weight-bold BtnLfcolor uppercase compose-btn" to={{
+                              pathname: '/compose',
+                              search: '',
+                              state: { composeProps }
+                          }} >
+                              <img className="ImgLf" border="0" alt="otulook" src="assets/img/plus.png"></img>
+                              {t('sidebar.compose')}
                           </Link>
                           <Button
                               onClick={this.props.sideBarToggle}

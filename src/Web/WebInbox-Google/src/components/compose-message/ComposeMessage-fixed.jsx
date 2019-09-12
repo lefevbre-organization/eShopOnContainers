@@ -16,28 +16,25 @@ import { faBars } from "@fortawesome/free-solid-svg-icons";
 
 import ReactQuill from "react-quill";
 import "../../../node_modules/react-quill/dist/quill.snow.css";
+
 import "./composeMessage.scss";
 
-
-//import '@uppy/core/dist/style.css'
-//import '@uppy/drag-drop/dist/style.css'
 
 const Uppy = require('@uppy/core')
 const Tus = require('@uppy/tus')
 const GoogleDrive = require('@uppy/google-drive')
-const { Dashboard, DashboardModal, DragDrop, ProgressBar } = require('@uppy/react')
+const { DragDrop, ProgressBar } = require('@uppy/react')
 
 
 export class ComposeMessage extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      displayModal: false,
-      to: props.to || "",
-      cc: props.cc || "",
-      bcc: props.bcc || "",
-      subject: props.subject || "",
-      content: props.content || "",       
+      to: props.history.location.state.composeProps.to || "",
+      cc: props.history.location.state.composeProps.cc || "",
+      bcc: props.history.location.state.composeProps.bcc || "",
+      subject: props.history.location.state.composeProps.subject || "",
+      content: props.history.location.state.composeProps.content || "", 
       showInlineDashboard: false,
       open: false,
       uppyPreviews: []       
@@ -166,22 +163,24 @@ export class ComposeMessage extends PureComponent {
   
     render() {
 
-        const collapsed = this.props.sideBarCollapsed;
-
-        const { showInlineDashboard } = this.state;
+        const collapsed = this.props.sideBarCollapsed;       
         const { t } = this.props;
 
     return (
         <React.Fragment>             
             <div className="compose-dialog" >
                 <div className="compose-panel">
-                    <span className={collapsed ? "" : "with-side-bar"}>
-                        <Button
-                            onClick={this.props.sideBarToggle}
-                            className="btn-transparent margin-right-10 burguer-btn">
-                            <FontAwesomeIcon icon={faBars} size="1x" />
-                        </Button>
-                    </span>
+                    <div className="d-flex justify-content-center align-items-center message-toolbar">
+                        <div className="action-btns">
+                            <span className={collapsed ? "action-btn mr-2" : "action-btn mr-2 with-side-bar"}>
+                                <Button
+                                    onClick={this.props.sideBarToggle}
+                                    className="btn-transparent">
+                                    <FontAwesomeIcon icon={faBars} size="1x" />
+                                </Button>
+                            </span>
+                        </div>
+                    </div>
                 </div>
                 <div className="container-panel">
                     <div className="compose-message">
