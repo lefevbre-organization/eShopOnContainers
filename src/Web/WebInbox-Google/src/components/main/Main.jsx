@@ -276,7 +276,6 @@ export class Main extends Component {
 
   onSignout() {
     const { userId } = this.props.lexon;
-
     const url = `${config.url.URL_RESET_DEFAULTACCOUNT}/${userId}`;
     fetch(url, {
       method: "GET"

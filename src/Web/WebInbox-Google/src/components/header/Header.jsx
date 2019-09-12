@@ -40,11 +40,10 @@ export class Header extends PureComponent {
         method: "GET"
       }).then(result => {
         console.log(result);
+        const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+        window.open(urlRedirect, "_self");    
       });
     }
-
-    const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-    window.open(urlRedirect, "_self");
   }
 
   toggle() {
