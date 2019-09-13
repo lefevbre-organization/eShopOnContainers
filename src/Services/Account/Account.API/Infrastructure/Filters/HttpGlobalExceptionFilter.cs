@@ -30,7 +30,7 @@
                 context.Exception,
                 context.Exception.Message);
 
-            if (context.Exception.GetType() == typeof(EmailUserAccountDomainException))
+            if (context.Exception.GetType() == typeof(AccountDomainException))
             {
                 var problemDetails = new ValidationProblemDetails()
                 {

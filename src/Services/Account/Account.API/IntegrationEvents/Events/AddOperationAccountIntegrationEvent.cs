@@ -6,7 +6,7 @@
 
     #endregion
 
-    public class AddOperationEmailUserAccountIntegrationEvent : IntegrationEvent
+    public class AddOperationAccountIntegrationEvent : IntegrationEvent
     {
         public string User { get; set; }
 
@@ -18,7 +18,7 @@
 
         public EnTypeOperation TypeOperation { get; set; }
 
-        public AddOperationEmailUserAccountIntegrationEvent(
+        public AddOperationAccountIntegrationEvent(
             string user,
             string provider,
             string email,

@@ -22,12 +22,12 @@
     {
         private readonly IAccountsService _accountsService;
 
-        private readonly EmailUserAccountSettings _settings;
+        private readonly AccountSettings _settings;
         private readonly IEventBus _eventBus;
 
         public EmailUserAccountController(
             IAccountsService accountsService,
-            IOptionsSnapshot<EmailUserAccountSettings> emailUserAccountSettings,
+            IOptionsSnapshot<AccountSettings> emailUserAccountSettings,
             IEventBus eventBus)
         {
             _accountsService = accountsService ?? throw new ArgumentNullException(nameof(accountsService));

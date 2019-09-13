@@ -76,7 +76,7 @@
                     .AddAzureBlobStorage(
                         $"DefaultEndpointsProtocol=https;AccountName={accountName};AccountKey={accountKey};EndpointSuffix=core.windows.net",
                         name: "catalog-storage-check",
-                        tags: new string[] { "emailuseraccountstorage" });
+                        tags: new string[] { "accountstorage" });
             }
 
             if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
@@ -84,7 +84,7 @@
                 hcBuilder
                     .AddAzureServiceBusTopic(
                         configuration["EventBusConnection"],
-                        topicName: "emailuseraccount_event_bus",
+                        topicName: "account_event_bus",
                         name: "lexon-servicebus-check",
                         tags: new string[] { "servicebus" });
             }
@@ -93,7 +93,7 @@
                 hcBuilder
                     .AddRabbitMQ(
                         $"amqp://{configuration["EventBusConnection"]}",
-                        name: "emailuseraccount-rabbitmqbus-check",
+                        name: "account-rabbitmqbus-check",
                         tags: new string[] { "rabbitmqbus" });
             }
 
@@ -107,7 +107,7 @@
 
         public static IServiceCollection AddCustomOptions(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<EmailUserAccountSettings>(configuration);
+            services.Configure<AccountSettings>(configuration);
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.InvalidModelStateResponseFactory = context =>
@@ -136,9 +136,9 @@
                 options.DescribeAllEnumsAsStrings();
                 options.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info
                 {
-                    Title = "Lefebvre Now - EmailUserAccount HTTP API",
+                    Title = "Lefebvre Now - Account HTTP API",
                     Version = "v1",
-                    Description = "The EmailUserAccount Microservice HTTP API. This is a Data-Driven/CRUD microservice sample",
+                    Description = "The Account Microservice HTTP API. This is a Data-Driven/CRUD microservice sample",
                     TermsOfService = "Terms Of Service"
                 });
             });
@@ -156,7 +156,7 @@
             {
                 services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
                 {
-                    var settings = sp.GetRequiredService<IOptions<EmailUserAccountSettings>>().Value;
+                    var settings = sp.GetRequiredService<IOptions<AccountSettings>>().Value;
                     var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
                     var factory = new ConnectionFactory
                     {
@@ -210,7 +210,7 @@
                 });
             }
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
-            services.AddTransient<AddOperationEmailUserAccountIntegrationEvent>();
+            services.AddTransient<AddOperationAccountIntegrationEvent>();
 
             return services;
         }

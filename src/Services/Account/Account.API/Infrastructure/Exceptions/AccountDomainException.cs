@@ -9,16 +9,16 @@
     /// <summary>
     /// Exception type for app exceptions
     /// </summary>
-    public class EmailUserAccountDomainException : Exception
+    public class AccountDomainException : Exception
     {
-        public EmailUserAccountDomainException()
+        public AccountDomainException()
         { }
 
-        public EmailUserAccountDomainException(string message)
+        public AccountDomainException(string message)
             : base(message)
         { }
 
-        public EmailUserAccountDomainException(string message, Exception innerException)
+        public AccountDomainException(string message, Exception innerException)
             : base(message, innerException)
         { }
     }

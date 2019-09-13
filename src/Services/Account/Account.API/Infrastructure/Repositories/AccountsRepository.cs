@@ -17,14 +17,14 @@
 
     public class AccountsRepository : IAccountsRepository
     {
-        private readonly EmailUserAccountContext _context;
+        private readonly AccountContext _context;
         private readonly IEventBus _eventBus;
 
         public AccountsRepository(
-            IOptions<EmailUserAccountSettings> settings,
+            IOptions<AccountSettings> settings,
             IEventBus eventBus)
         {
-            _context = new EmailUserAccountContext(settings, eventBus);
+            _context = new AccountContext(settings, eventBus);
             _eventBus = eventBus;
         }
 
@@ -46,7 +46,7 @@
         {
             await _context.Accounts.InsertOneAsync(account);
 
-            var eventAssoc = new AddOperationEmailUserAccountIntegrationEvent(account.User, account.Provider, account.Email, account.DefaultAccount, EnTypeOperation.Create);
+            var eventAssoc = new AddOperationAccountIntegrationEvent(account.User, account.Provider, account.Email, account.DefaultAccount, EnTypeOperation.Create);
             _eventBus.Publish(eventAssoc);
         }
 
@@ -56,7 +56,7 @@
 
             await _context.Accounts.DeleteOneAsync(account => account.Id == id);
             
-            var eventAssoc = new AddOperationEmailUserAccountIntegrationEvent(accountRemove.User, accountRemove.Provider, accountRemove.Email, accountRemove.DefaultAccount, EnTypeOperation.Remove);
+            var eventAssoc = new AddOperationAccountIntegrationEvent(accountRemove.User, accountRemove.Provider, accountRemove.Email, accountRemove.DefaultAccount, EnTypeOperation.Remove);
             _eventBus.Publish(eventAssoc);
         }
 
@@ -66,7 +66,7 @@
 
             await _context.Accounts.ReplaceOneAsync(account => account.Id == id, accountIn);
 
-            var eventAssoc = new AddOperationEmailUserAccountIntegrationEvent(accountUpdate.User, accountUpdate.Provider, accountUpdate.Email, accountUpdate.DefaultAccount, EnTypeOperation.Update);
+            var eventAssoc = new AddOperationAccountIntegrationEvent(accountUpdate.User, accountUpdate.Provider, accountUpdate.Email, accountUpdate.DefaultAccount, EnTypeOperation.Update);
             _eventBus.Publish(eventAssoc);
         }
 
@@ -97,7 +97,7 @@
                 await _context.Accounts.UpdateManyAsync(account => account.User == user && account.Provider == provider, Builders<Account>.Update.Set(x => x.DefaultAccount, true).Set(x => x.Email, email));
             }
 
-            var eventAssoc = new AddOperationEmailUserAccountIntegrationEvent(user, provider, email, true, EnTypeOperation.UpdateDefaultAccount);
+            var eventAssoc = new AddOperationAccountIntegrationEvent(user, provider, email, true, EnTypeOperation.UpdateDefaultAccount);
             _eventBus.Publish(eventAssoc);
         }
 
@@ -108,7 +108,7 @@
             {
                 await _context.Accounts.DeleteOneAsync(accountDelete => accountDelete.Id == account.Id);
 
-                var eventAssoc = new AddOperationEmailUserAccountIntegrationEvent(account.User, account.Provider, account.Email, account.DefaultAccount, EnTypeOperation.Remove);
+                var eventAssoc = new AddOperationAccountIntegrationEvent(account.User, account.Provider, account.Email, account.DefaultAccount, EnTypeOperation.Remove);
                 _eventBus.Publish(eventAssoc);
 
                 return true;
@@ -126,7 +126,7 @@
             {
                 await _context.Accounts.UpdateManyAsync(account => account.User == user, Builders<Account>.Update.Set(x => x.DefaultAccount, false));
 
-                var eventAssoc = new AddOperationEmailUserAccountIntegrationEvent(user, string.Empty, string.Empty, false, EnTypeOperation.Update);
+                var eventAssoc = new AddOperationAccountIntegrationEvent(user, string.Empty, string.Empty, false, EnTypeOperation.Update);
                 _eventBus.Publish(eventAssoc);
 
                 return true;

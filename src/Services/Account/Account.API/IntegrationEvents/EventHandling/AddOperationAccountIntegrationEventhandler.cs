@@ -10,17 +10,17 @@
 
     #endregion
 
-    public class AddOperationEmailUserAccountIntegrationEventHandler : IIntegrationEventHandler<AddOperationEmailUserAccountIntegrationEvent>
+    public class AddOperationAccountIntegrationEventHandler : IIntegrationEventHandler<AddOperationAccountIntegrationEvent>
     {
         private readonly IAccountsRepository _repository;
 
-        public AddOperationEmailUserAccountIntegrationEventHandler(
+        public AddOperationAccountIntegrationEventHandler(
             IAccountsRepository repository)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public async Task Handle(AddOperationEmailUserAccountIntegrationEvent @event)
+        public async Task Handle(AddOperationAccountIntegrationEvent @event)
         {
             // await _repository.AddFileToListAsync(@event.UserId, @event.FileId, @event.FileName, @event.FileDescription);
         }

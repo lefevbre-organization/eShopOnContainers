@@ -24,17 +24,17 @@
     //TODO: changue context to evaluate if hace a session and get collections from Session or database
     //TODO: test senf reasilent transaction https://docs.mongodb.com/manual/reference/method/Session.startTransaction/
 
-    public class EmailUserAccountContext : IMongoDbContext, IIntegrationEventLogContextMongoDB
+    public class AccountContext : IMongoDbContext, IIntegrationEventLogContextMongoDB
     {
         public IMongoDatabase Database { get; }
         public IClientSessionHandle Session { get; private set; }
         private readonly IMongoClient _client;
         private readonly List<Type> _eventTypes;
         private readonly IEventBus _eventBus;
-        private readonly IOptions<EmailUserAccountSettings> _settings;
+        private readonly IOptions<AccountSettings> _settings;
 
-        public EmailUserAccountContext(
-            IOptions<EmailUserAccountSettings> settings,
+        public AccountContext(
+            IOptions<AccountSettings> settings,
             IEventBus eventBus)
         {
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));

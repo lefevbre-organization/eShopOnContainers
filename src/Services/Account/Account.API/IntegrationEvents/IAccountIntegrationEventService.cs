@@ -7,9 +7,9 @@
 
     #endregion
 
-    public interface IEmailUserAccountIntegrationEventService
+    public interface IAccountIntegrationEventService
     {
-        Task SaveEventAndEmailUserAccountContextChangesAsync(IntegrationEvent evt);
+        Task SaveEventAndAccountContextChangesAsync(IntegrationEvent evt);
         Task PublishThroughEventBusAsync(IntegrationEvent evt);
     }
 }
