@@ -4,35 +4,32 @@
 
 [[_TOC_]]
 
-## Jira
+## Specs in Work items
 
-#### 1. Mostrar localización de la documentación en las actuaciones de tipo email
+### Jira of Documents
 
-- http://jira-led:8080/browse/WEB-23406
+| Jira Link | Related also:|  
+|:-----------|:-----------:| 
+| [Mostrar localización de la documentación en las actuaciones de tipo email](http://jira-led:8080/browse/WEB-23406)  | [Documents](#Documents) |   
+| [Guardar los documentos del correo en el gestor documental](http://jira-led:8080/browse/WEB-22107 ) | [Documents](#Documents) |  
+| [Guardar copia de los correos en Lex-ON](http://jira-led:8080/browse/WEB-22108 ) | [Documents](#Documents) |  
 
-#### 2. Guardar los documentos del correo en el gestor documental
-- http://jira-led:8080/browse/WEB-22107
+### Jira of Classifications
 
-#### 3. Guardar copia de los correos en Lex-ON
-- http://jira-led:8080/browse/WEB-22108
+| Jira Link | Related also:|  
+|:-----------|:-----------:| 
+| [Creación automática de clasificaciones]( http://jira-led:8080/browse/WEB-23404)  | [Lawyers](#Lawyers) |   
+| [Mostrar clasificaciones en las actuaciones de tipo email](http://jira-led:8080/browse/WEB-23400 ) | [Solicitors](#Solicitors) |  
+| [Eliminar clasificaciones en las actuaciones de tipo email]( http://jira-led:8080/browse/WEB-23402) | [Notaries](#Notaries) |  
+| [Crear clasificaciones en las actuaciones de tipo email]( http://jira-led:8080/browse/WEB-22079) | [Files](#Files) |  
 
-#### 4. Creación automática de clasificaciones
-- http://jira-led:8080/browse/WEB-23404
+### Jira of Users and Companies
 
-#### 5. Mostrar clasificaciones en las actuaciones de tipo email
-- http://jira-led:8080/browse/WEB-23400
-
-#### 6. Eliminar clasificaciones en las actuaciones de tipo email
-- http://jira-led:8080/browse/WEB-23402
-
-#### 7. Crear clasificaciones en las actuaciones de tipo email
-- http://jira-led:8080/browse/WEB-22079
-
-#### 8. Cambio de empresa desde el gestor de correo
-- http://jira-led:8080/browse/WEB-23399
-
-#### 9. Selector de empresa desde el gestor de correo
-- http://jira-led:8080/browse/WEB-22084
+| Jira Link | Related also:|  
+|:-----------|:-----------:| 
+| [ Cambio de empresa desde el gestor de correo](http://jira-led:8080/browse/WEB-23399)  | [Companies](#Companies) |   
+| [Selector de empresa desde el gestor de correo](http://jira-led:8080/browse/WEB-22084) | [Connect](#Connect) |  
+  
 
 
 ## Operaciones:
@@ -40,8 +37,14 @@
 ### Companies
 
 #### 1. Obtener Empresas usuario
-- Lexon.Api -> GetCompanies 
-- Lexon.Lef -> SyncCompaniesLef(id)
+
+| Web.Client | Lexon.Api| Lexon.Lef |  
+|:-----------:|:-----------:|:-----------:|  
+| --> |  GetCompanies() | GetCompanies() |  
+| results | <-- | <-- |  
+|  | SyncCompaniesLef() |<-- |  
+
+
 
 #### 2. Select Company
 Lexon.Api
@@ -81,17 +84,6 @@ asociado a la anterior operación o incluida en ella
 |  |  | Push(AssociateMailToFileError) | error | <-- |
 | Suscribe(AssociateMailToFileConfirm) | Suscribe(AssociateMailToFileConfirm) |  |  |  |
 | Suscribe(AssociateMailToFileError)  | Suscribe(AssociateMailToFileError) |  |  |  |
-|  |  |  |  |  |
-
-
-- Lexon.Api -> AssocciateMail(type:string, idMail:string, idRelated:string)
-- Lexon.Api -> Push(AssociateMailToFile) -> Rabbit
-- Lexon.Task -> Suscribe(AssociateMailToFile)
-- Lexon.DB -> InsertAssociationMailToFile()
-    - Lexon.Task -> Rabbit push message AssociateMailToFileConfirm
-    - Lexon.Task -> Rabbit push message AssociateMailToFileError
-- Lexon.Api -> Suscribe(AssociateMailToFileConfirm) + Suscribe(AssociateMailToFileError)
-- Web.Client -> Suscribe(AssociateMailToFileConfirm) + Suscribe(AssociateMailToFileError)
 
 
 ##### Option Limited
@@ -159,80 +151,98 @@ asociado a la anterior operación o incluida en ella
 | Web.Client | Lexon.Api| Rabbit | Lexon.Task | Lexon.Lef |
 |:-----:|:------:|:-----:|:-------:|:------:|
 |  | DisassociateMail() | Push(DisassociateMailFromFile) |  |  |
-|  |  | --> | Suscribe(DisassociateMailFromFile)  | UpdateAssociationMailFromFile() |
+|  |  | --> | Suscribe(DisassociateMailFromFile)  | UpdateDeleteAssociation() |
 |  |  | Push(DisassociateMailFromFileConfirm) | results | <-- |
 |  |  | Push(DisassociateMailFromFileError) | error | <-- |
-| Suscribe(AssociateMailToFileConfirm) | Suscribe(AssociateMailToFileConfirm) |  |  |  |
-| Suscribe(AssociateMailToFileError)  | Suscribe(AssociateMailToFileError) |  |  |  |
-|  |  |  |  |  |
+| Suscribe(DisassociateMailFromFileConfirm) | Suscribe(DisassociateMailFromFileConfirm) |  |  |  |
+| Suscribe(DisassociateMailFromFileConfirm)  | Suscribe(DisassociateMailFromFileConfirm) |  |  |  |
 
-- Lexon.Api -> DisassociateMail(type:string, idMail:string, idRelated:string)
-- Lexon.Api -> Push(DisassociateMailFromFile) -> Rabbit
-- Lexon.Task -> Suscribe(DisassociateMailFromFile)
-- Lexon.DB -> UpdateAssociationMailFromFile()
-    - Lexon.Task -> Rabbit push message DisassociateMailFromFileConfirm
-    - Lexon.Task -> Rabbit push message DisassociateMailFromFileError
-- Lexon.Api -> Suscribe(DisassociateMailFromFileConfirm) + Suscribe(DisassociateMailFromFileError)
-- Web.Client -> Suscribe(DisassociateMailFromFileConfirm) + Suscribe(DisassociateMailFromFileError)
+
 
 ### Clients
 
 #### 1. Get Clients user
-- Lexon.Api -> GetClients 
-- Lexon.Lef -> SyncClientsLef(id)
+
+| Web.Client | Lexon.Api| Lexon.Lef |  
+|:-----------:|:-----------:|:-----------:|  
+| --> |  GetClients() | GetClients() |  
+| results | <-- | <-- |  
+|  | SyncClientsLef() |<-- |  
+
 
 #### 2. Associate Client to Mail 
-- Lexon.Api -> AssociateClient(type:string, idMail:string, idRelated:string)
-- Lexon.Api -> Push(AssociateMailToClient) -> Rabbit
-- Lexon.Task -> Suscribe(AssociateMailToClient)
-- Lexon.DB -> InsertAssociationClientToFile()
-    - Lexon.Task -> Rabbit push message AssociateMailToClientConfirm
-    - Lexon.Task -> Rabbit push message AssociateMailToClientError
-- Lexon.Api -> Suscribe(AssociateMailToClientConfirm) + Suscribe(AssociateMailToClientError)
-- Web.Client -> Suscribe(AssociateMailToClientConfirm) + Suscribe(AssociateMailToClientError)
+
+| Web.Client | Lexon.Api| Rabbit | Lexon.Task | Lexon.Lef |
+|:-----:|:------:|:-----:|:-------:|:------:|
+|  | AssociateClient() | Push(AssociateMailToClient) |  |  |
+|  |  | --> | Suscribe(AssociateMailToClient)  | InsertAssociation() |
+|  |  | Push(AssociateMailToClientConfirm) | results | <-- |
+|  |  | Push(AssociateMailToFileError) | error | <-- |
+| Suscribe(AssociateMailToClientConfirm) | Suscribe(AssociateMailToClientConfirm) |  |  |  |
+| Suscribe(AssociateMailToClientError)  | Suscribe(AssociateMailToClientError) |  |  |  |
+
+
 
 #### 3. Disassociate Client 
-- Lexon.Api -> DisassociateMail(type:string, idMail:string, idRelated:string)
-- Lexon.Api -> Push(DisassociateMailFromClient) -> Rabbit
-- Lexon.Task -> Suscribe(DisassociateMailFromClient)
-- Lexon.DB -> InsertAssociationMailFromClient()
-    - Lexon.Task -> Rabbit push message DisassociateMailFromClientConfirm
-    - Lexon.Task -> Rabbit push message DisassociateMailFromClientError
-- Lexon.Api -> Suscribe(DisassociateMailFromClientConfirm) + Suscribe(DisassociateMailFromClientError)
-- Web.Client -> Suscribe(DisassociateMailFromClientConfirm) + Suscribe(DisassociateMailFromClientError)
+
+| Web.Client | Lexon.Api| Rabbit | Lexon.Task | Lexon.Lef |
+|:-----:|:------:|:-----:|:-------:|:------:|
+|  | DisassociateMail() | Push(DisassociateMailFromFile) |  |  |
+|  |  | --> | Suscribe(DisassociateMailFromClient)  | UpdateDeleteAssociation() |
+|  |  | Push(DisassociateMailFromClientConfirm) | results | <-- |
+|  |  | Push(DisassociateMailFromClientError) | error | <-- |
+| Suscribe(DisassociateMailFromClientConfirm) | Suscribe(DisassociateMailFromClientConfirm) |  |  |  |
+| Suscribe(DisassociateMailFromClientError)  | Suscribe(DisassociateMailFromClientError) |  |  |  |
+
 
 ### Courts
 
 #### 1. Get Courts user
-- Lexon.Api -> GetCourts 
-- Lexon.Lef -> SyncCourtsLef(id)
+
+| Web.Client | Lexon.Api| Lexon.Lef |  
+|:-----------:|:-----------:|:-----------:|  
+| --> |  GetCourts() | GetCourts() |  
+| results | <-- | <-- |  
+|  | SyncCourtsLef() |<-- |  
+
 
 #### 2. Associate Court to Mail 
-- Lexon.Api -> AssociateCourt(type:string, idMail:string, idRelated:string)
-- Lexon.Api -> Push(AssociateMailToCourt) -> Rabbit
-- Lexon.Task -> Suscribe(AssociateMailToCourt)
-- Lexon.DB -> InsertAssociationCourtToFile()
-    - Lexon.Task -> Rabbit push message AssociateMailToCourtConfirm
-    - Lexon.Task -> Rabbit push message AssociateMailToCourtError
-- Lexon.Api -> Suscribe(AssociateMailToCourtConfirm) + Suscribe(AssociateMailToCourtError)
-- Web.Client -> Suscribe(AssociateMailToCourtConfirm) + Suscribe(AssociateMailToCourtError)
+
+| Web.Client | Lexon.Api| Rabbit | Lexon.Task | Lexon.Lef |
+|:-----:|:------:|:-----:|:-------:|:------:|
+|  | AssociateCourt() | Push(AssociateMailToCourt) |  |  |
+|  |  | --> | Suscribe(AssociateMailToCourt)  | InsertAssociation() |
+|  |  | Push(AssociateMailToCourtConfirm) | results | <-- |
+|  |  | Push(AssociateMailToCourtError) | error | <-- |
+| Suscribe(AssociateMailToCourtConfirm) | Suscribe(AssociateMailToCourtConfirm) |  |  |  |
+| Suscribe(AssociateMailToCourtError)  | Suscribe(AssociateMailToCourtError) |  |  |  |
+
 
 #### 3. Disassociate Court 
-- Lexon.Api -> DisassociateMail(type:string, idMail:string, idRelated:string)
-- Lexon.Api -> Push(DisassociateMailFromCourt) -> Rabbit
-- Lexon.Task -> Suscribe(DisassociateMailFromCourt)
-- Lexon.DB -> InsertAssociationMailFromCourt()
-    - Lexon.Task -> Rabbit push message DisassociateMailFromCourtConfirm
-    - Lexon.Task -> Rabbit push message DisassociateMailFromCourtError
-- Lexon.Api -> Suscribe(DisassociateMailFromCourtConfirm) + Suscribe(DisassociateMailFromCourtError)
-- Web.Court -> Suscribe(DisassociateMailFromCourtConfirm) + Suscribe(DisassociateMailFromCourtError)
+
+| Web.Client | Lexon.Api| Rabbit | Lexon.Task | Lexon.Lef |
+|:-----:|:------:|:-----:|:-------:|:------:|
+|  | DisassociateMail() | Push(DisassociateMailFromCourt) |  |  |
+|  |  | --> | Suscribe(DisassociateMailFromCourt)  | UpdateDeleteAssociation() |
+|  |  | Push(DisassociateMailFromCourtConfirm) | results | <-- |
+|  |  | Push(DisassociateMailFromCourtError) | error | <-- |
+| Suscribe(DisassociateMailFromCourtConfirm) | Suscribe(DisassociateMailFromCourtConfirm) |  |  |  |
+| Suscribe(DisassociateMailFromCourtError)  | Suscribe(DisassociateMailFromCourtError) |  |  |  |
+
 
 ### Documents
+
 #### 1. Get Documents user
-- Lexon.Api -> GetDocuments 
-- Lexon.Lef -> SyncDocumentsLef(id)
+
+| Web.Client | Lexon.Api| Lexon.Lef | 
+|:-----------:|:-----------:|:-----------:|  
+| --> |  GetDocuments() | GetDocuments() |  
+| results | <-- | <-- |  
+|  | SyncDocumentsLef() |<-- |  
+
 
 #### 2. Upload Document
+
 - Web.Client -> Mail.Api
     - GetMsgFromMail()
     - GetAttachmentFromMail()
@@ -246,79 +256,106 @@ asociado a la anterior operación o incluida en ella
 - Web.Client -> Suscribe(InsertDocumentConfirm) + Suscribe(InsertDocumentError)
 
 ### Lawyers
+
 #### 1. Get Lawyers user
-- Lexon.Api -> GetLawyers 
-- Lexon.Lef -> SyncLawyersLef(id)
+
+| Web.Client | Lexon.Api| Lexon.Lef | 
+|:-----------:|:-----------:|:-----------:|  
+| --> |  GetLawyers() | GetLawyers() |  
+| results | <-- | <-- |  
+|  | SyncLawyersLef() |<-- |  
+
+
 
 #### 2. Associate Lawyer to Mail 
-- Lexon.Api -> AssociateLawyer(type:string, idMail:string, idRelated:string, own:bool)
-- Lexon.Api -> Push(AssociateMailToLawyer) -> Rabbit
-- Lexon.Task -> Suscribe(AssociateMailToLawyer)
-- Lexon.DB -> InsertAssociationMailToLawyer()
-    - Lexon.Task -> Rabbit push message AssociateMailToLawyerConfirm
-    - Lexon.Task -> Rabbit push message AssociateMailToLawyerError
-- Lexon.Api -> Suscribe(AssociateMailToLawyerConfirm) + Suscribe(AssociateMailToLawyerError)
-- Web.Client -> Suscribe(AssociateMailToLawyerConfirm) + Suscribe(AssociateMailToLawyerError)
+
+| Web.Client | Lexon.Api| Rabbit | Lexon.Task | Lexon.Lef |
+|:-----:|:------:|:-----:|:-------:|:------:|
+|  | AssociateLawyer() | Push(AssociateMailToLawyer) |  |  |
+|  |  | --> | Suscribe(AssociateMailToLawyer)  | InsertAssociation() |
+|  |  | Push(AssociateMailToLawyerConfirm) | results | <-- |
+|  |  | Push(AssociateMailToLawyerError) | error | <-- |
+| Suscribe(AssociateMailToLawyerConfirm) | Suscribe(AssociateMailToLawyerConfirm) |  |  |  |
+| Suscribe(AssociateMailToLawyerError)  | Suscribe(AssociateMailToLawyerError) |  |  |  |
+
 
 #### 3. Disassociate Lawyer 
-- Lexon.Api -> DisassociateMail(type:string, idMail:string, idRelated:string, own:bool)
-- Lexon.Api -> Push(DisassociateMailFromLawyer) -> Rabbit
-- Lexon.Task -> Suscribe(DisassociateMailFromLawyer)
-- Lexon.DB -> InsertAssociationMailFromLawyer()
-    - Lexon.Task -> Rabbit push message DisassociateMailFromLawyerConfirm
-    - Lexon.Task -> Rabbit push message DisassociateMailFromLawyerError
-- Lexon.Api -> Suscribe(DisassociateMailFromLawyerConfirm) + Suscribe(DisassociateMailFromLawyerError)
-- Web.Client -> Suscribe(DisassociateMailFromLawyerConfirm) + Suscribe(DisassociateMailFromLawyerError)
+
+| Web.Client | Lexon.Api| Rabbit | Lexon.Task | Lexon.Lef |
+|:-----:|:------:|:-----:|:-------:|:------:|
+|  | DisassociateMail() | Push(DisassociateMailFromLawyer) |  |  |
+|  |  | --> | Suscribe(DisassociateMailFromLawyer)  | UpdateDeleteAssociation() |
+|  |  | Push(DisassociateMailFromLawyerConfirm) | results | <-- |
+|  |  | Push(DisassociateMailFromLawyerError) | error | <-- |
+| Suscribe(DisassociateMailFromLawyerConfirm) | Suscribe(DisassociateMailFromLawyerConfirm) |  |  |  |
+| Suscribe(DisassociateMailFromLawyerError)  | Suscribe(DisassociateMailFromLawyerError) |  |  |  |
+
 
 ### Solicitors
 #### 1. Get Solicitors user
-- Lexon.Api -> GetSolicitors 
-- Lexon.Lef -> SyncSolicitorsLef(id)
+
+| Web.Client | Lexon.Api| Lexon.Lef | 
+|:-----------:|:-----------:|:-----------:|  
+| --> |  GetSolicitors() | GetSolicitors() |  
+| results | <-- | <-- |  
+|  | SyncSolicitorsLef() |<-- |  
+
 
 #### 2. Associate Solicitor to Mail 
-- Lexon.Api -> AssociateSolicitor(type:string, idMail:string, idRelated:string, own:bool)
-- Lexon.Api -> Push(AssociateMailToSolicitor) -> Rabbit
-- Lexon.Task -> Suscribe(AssociateMailToSolicitor)
-- Lexon.DB -> InsertAssociationMailToSolicitor()
-    - Lexon.Task -> Rabbit push message AssociateMailToSolicitorConfirm
-    - Lexon.Task -> Rabbit push message AssociateMailToSolicitorError
-- Lexon.Api -> Suscribe(AssociateMailToSolicitorConfirm) + Suscribe(AssociateMailToSolicitorError)
-- Web.Client -> Suscribe(AssociateMailToSolicitorConfirm) + Suscribe(AssociateMailToSolicitorError)
+
+| Web.Client | Lexon.Api| Rabbit | Lexon.Task | Lexon.Lef |
+|:-----:|:------:|:-----:|:-------:|:------:|
+|  | AssociateSolicitor() | Push(AssociateMailToSolicitor) |  |  |
+|  |  | --> | Suscribe(AssociateMailToSolicitor)  | InsertAssociation() |
+|  |  | Push(AssociateMailToSolicitorConfirm) | results | <-- |
+|  |  | Push(AssociateMailToSolicitorError) | error | <-- |
+| Suscribe(AssociateMailToSolicitorConfirm) | Suscribe(AssociateMailToSolicitorConfirm) |  |  |  |
+| Suscribe(AssociateMailToSolicitorError)  | Suscribe(AssociateMailToSolicitorError) |  |  |  |
+
 
 #### 3. Disassociate Solicitor 
-- Lexon.Api -> DisassociateMail(type:string, idMail:string, idRelated:string, own:bool)
-- Lexon.Api -> Push(DisassociateMailFromSolicitor) -> Rabbit
-- Lexon.Task -> Suscribe(DisassociateMailFromSolicitor)
-- Lexon.DB -> InsertAssociationMailFromSolicitor()
-    - Lexon.Task -> Rabbit push message DisassociateMailFromSolicitorConfirm
-    - Lexon.Task -> Rabbit push message DisassociateMailFromSolicitorError
-- Lexon.Api -> Suscribe(DisassociateMailFromSolicitorConfirm) + Suscribe(DisassociateMailFromSolicitorError)
-- Web.Client -> Suscribe(DisassociateMailFromSolicitorConfirm) + Suscribe(DisassociateMailFromSolicitorError)
+
+| Web.Client | Lexon.Api| Rabbit | Lexon.Task | Lexon.Lef |
+|:-----:|:------:|:-----:|:-------:|:------:|
+|  | DisassociateMail() | Push(DisassociateMailFromSolicitor) |  |  |
+|  |  | --> | Suscribe(DisassociateMailFromSolicitor)  | UpdateDeleteAssociation() |
+|  |  | Push(DisassociateMailFromSolicitorConfirm) | results | <-- |
+|  |  | Push(DisassociateMailFromSolicitorError) | error | <-- |
+| Suscribe(DisassociateMailFromSolicitorConfirm) | Suscribe(DisassociateMailFromSolicitorConfirm) |  |  |  |
+| Suscribe(DisassociateMailFromSolicitorError)  | Suscribe(DisassociateMailFromSolicitorError) |  |  |  |
+
 
 ###  Notaries
 #### 1. Get Notarys user
-- Lexon.Api -> GetNotaries 
-- Lexon.Lef -> SyncNotariesLef(id)
+
+| Web.Client | Lexon.Api| Lexon.Lef | 
+|:-----------:|:-----------:|:-----------:|  
+| --> |  GetNotaries() | GetNotaries() |  
+| results | <-- | <-- |  
+|  | SyncNotariesLef() |<-- |  
+
 
 #### 2. Associate Notary to Mail 
-- Lexon.Api -> AssociateNotary(type:string, idMail:string, idRelated:string, own:bool)
-- Lexon.Api -> Push(AssociateMailToNotary) -> Rabbit
-- Lexon.Task -> Suscribe(AssociateMailToNotary)
-- Lexon.DB -> InsertAssociationMailToNotary()
-    - Lexon.Task -> Rabbit push message AssociateMailToNotaryConfirm
-    - Lexon.Task -> Rabbit push message AssociateMailToNotaryError
-- Lexon.Api -> Suscribe(AssociateMailToNotaryConfirm) + Suscribe(AssociateMailToNotaryError)
-- Web.Client -> Suscribe(AssociateMailToNotaryConfirm) + Suscribe(AssociateMailToNotaryError)
+
+| Web.Client | Lexon.Api| Rabbit | Lexon.Task | Lexon.Lef |
+|:-----:|:------:|:-----:|:-------:|:------:|
+|  | AssociateNotary() | Push(AssociateMailToNotary) |  |  |
+|  |  | --> | Suscribe(AssociateMailToNotary)  | InsertAssociation() |
+|  |  | Push(AssociateMailToNotaryConfirm) | results | <-- |
+|  |  | Push(AssociateMailToNotaryError) | error | <-- |
+| Suscribe(AssociateMailToNotaryConfirm) | Suscribe(AssociateMailToNotaryConfirm) |  |  |  |
+| Suscribe(AssociateMailToNotaryError)  | Suscribe(AssociateMailToNotaryError) |  |  |  |
 
 #### 3. Disassociate Notary 
-- Lexon.Api -> DisassociateMail(type:string, idMail:string, idRelated:string, own:bool)
-- Lexon.Api -> Push(DisassociateMailFromNotary) -> Rabbit
-- Lexon.Task -> Suscribe(DisassociateMailFromNotary)
-- Lexon.DB -> InsertAssociationMailFromNotary()
-    - Lexon.Task -> Rabbit push message DisassociateMailFromNotaryConfirm
-    - Lexon.Task -> Rabbit push message DisassociateMailFromNotaryError
-- Lexon.Api -> Suscribe(DisassociateMailFromNotaryConfirm) + Suscribe(DisassociateMailFromNotaryError)
-- Web.Client -> Suscribe(DisassociateMailFromNotaryConfirm) + Suscribe(DisassociateMailFromNotaryError)
+
+| Web.Client | Lexon.Api| Rabbit | Lexon.Task | Lexon.Lef |
+|:-----:|:------:|:-----:|:-------:|:------:|
+|  | DisassociateMail() | Push(DisassociateMailFromNotary) |  |  |
+|  |  | --> | Suscribe(DisassociateMailFromNotary)  | UpdateDeleteAssociation() |
+|  |  | Push(DisassociateMailFromNotaryConfirm) | results | <-- |
+|  |  | Push(DisassociateMailFromNotaryError) | error | <-- |
+| Suscribe(DisassociateMailFromNotaryConfirm) | Suscribe(DisassociateMailFromNotaryConfirm) |  |  |  |
+| Suscribe(DisassociateMailFromNotaryError)  | Suscribe(DisassociateMailFromNotaryError) |  |  |  |
 
 ### Masters
 
