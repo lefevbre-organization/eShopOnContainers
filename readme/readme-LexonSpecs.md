@@ -36,7 +36,7 @@
 
 ### Companies
 
-#### 1. Obtener Empresas usuario
+#### 1. Get User's Companies
 
 | Web.Client | Lexon.Api| Lexon.Lef |  
 |:-----------:|:-----------:|:-----------:|  
@@ -47,11 +47,15 @@
 
 
 #### 2. Select Company
-Lexon.Api
+
+| Web.Client | Lexon.Api| 
+|:-----------:|:-----------:| 
+| --> |  SelectCompany() |   
+| results | <-- | 
+ 
 
 #### 3. Deselect Company
-:arrow_right: Lexon.Api
-asociado a la anterior operación o incluida en ella
+:arrow_right: associated to the [previous operation](#GetUserCompanies) or included in it
 
 ### Files
 
@@ -66,10 +70,10 @@ asociado a la anterior operación o incluida en ella
 
 
 ```c#
-    # Obtenemos resultados filtrados 
+    # We get filtered results 
     public string GetFiles(int idFile, string search, int index, int count )
 
-    # Ampliamos y actualizamos datos de los datos de trabajo
+    # We expand and update work data
     public string SyncFilesLef(string results)
 ```
 
@@ -97,13 +101,13 @@ asociado a la anterior operación o incluida en ella
 
 
 ```c#
-    # Método común que asocia en base al tipo especificado (mail, client...)
+    # Common method that associates based on the specified type (mail, client...)
     public int AssocciateMail(string type, string idMail, string idRelated)
 
-    # lanzamiento de evento a la cola
+    # queue event launch example
     public string PublishThroughEventBusAsync(IntegrationEventLogEntry eventAssoc)
 
-
+    # example of IntegrationEvent
     public class IntegrationEventLogEntry
     {
         #simplified
@@ -124,7 +128,7 @@ asociado a la anterior operación o incluida en ella
 
     }
 
-    #suscripción a cola
+    # queue subscription
     private void DoInternalSubscription(string eventName)
     {
         var containsKey = _subsManager.HasSubscriptionsForEvent(eventName);
@@ -161,7 +165,7 @@ asociado a la anterior operación o incluida en ella
 
 ### Clients
 
-#### 1. Get Clients user
+#### 1. Get User Clients
 
 | Web.Client | Lexon.Api| Lexon.Lef |  
 |:-----------:|:-----------:|:-----------:|  
@@ -197,7 +201,7 @@ asociado a la anterior operación o incluida en ella
 
 ### Courts
 
-#### 1. Get Courts user
+#### 1. Get User Courts
 
 | Web.Client | Lexon.Api| Lexon.Lef |  
 |:-----------:|:-----------:|:-----------:|  
@@ -232,7 +236,7 @@ asociado a la anterior operación o incluida en ella
 
 ### Documents
 
-#### 1. Get Documents user
+#### 1. Get User Documents
 
 | Web.Client | Lexon.Api| Lexon.Lef | 
 |:-----------:|:-----------:|:-----------:|  
@@ -257,7 +261,7 @@ asociado a la anterior operación o incluida en ella
 
 ### Lawyers
 
-#### 1. Get Lawyers user
+#### 1. Get User Lawyers
 
 | Web.Client | Lexon.Api| Lexon.Lef | 
 |:-----------:|:-----------:|:-----------:|  
@@ -292,7 +296,7 @@ asociado a la anterior operación o incluida en ella
 
 
 ### Solicitors
-#### 1. Get Solicitors user
+#### 1. Get User Solicitors
 
 | Web.Client | Lexon.Api| Lexon.Lef | 
 |:-----------:|:-----------:|:-----------:|  
@@ -326,7 +330,7 @@ asociado a la anterior operación o incluida en ella
 
 
 ###  Notaries
-#### 1. Get Notarys user
+#### 1. Get User Notaries
 
 | Web.Client | Lexon.Api| Lexon.Lef | 
 |:-----------:|:-----------:|:-----------:|  
@@ -359,7 +363,7 @@ asociado a la anterior operación o incluida en ella
 
 ### Masters
 
-#### 1. Get Notarys user
+#### 1. Get User Folders
 - Lexon.Api -> GetFolders(level:short, name:string) 
 - Lexon.Lef -> SyncFoldersLef()
 
@@ -450,19 +454,6 @@ asociado a la anterior operación o incluida en ella
             "idCompany": 14,
             "name": "Lacasitos SA",
             "selected": true,
-            "Folders": [{
-                    "idFolder": 12345,
-                    "name": "Chapulin colorado",
-                    "path": "Documentos Guays/Chapulines/Chapulin colorado",
-                    "docs":["123123123123","123123123123"]
-                },
-                {
-                    "idFolder": 1234445,
-                    "name": "Chapulin verde",
-                    "path": "Documentos Guays/Chapulines/Chapulin verde",
-                    "docs":["123123123123","123123123123"]
-                }
-            ],
             "Clients": [{
                     "idClient": 12345,
                     "name": "Cliente otra cosa",
@@ -580,17 +571,6 @@ asociado a la anterior operación o incluida en ella
                     "mails": ["121211111", "as2341234sa121"]
                 }
             ],
-            "Documents": [{
-                    "idDocument": 12345,
-                    "name": "paco.docx",
-                    "Description": "paco por escrito"
-                },
-                {
-                    "idDocument": 12346,
-                    "name": "paco.xls",
-                    "Description": "paco cuadriculado"
-                }
-            ],
             "Files": [{
                     "idFile": 345,
                     "name": "exp 345",
@@ -679,3 +659,90 @@ asociado a la anterior operación o incluida en ella
 }]
 ```
 
+### schema related with masters and documents
+
+
+- timestamp is possibly used in other parts of structure, is useful to determine the time for the next synchro or automatized
+- The path field allows you to position the folder within the folder structure
+- The array of subdocuments named *Documents* is the list of docs in folders
+
+```json
+
+    "masters":{
+        "timestamp":"2019-09-12T21:26:17Z",
+        "folders":[
+          {
+            "level": 1,
+            "idFolder": 12121,
+            "idParent": 12121,
+            "name": "avellanas",
+            "Documents": [
+              {
+                "idDocument": 12347,
+                "name": "cerebro.docx",
+                "Description": "paco por escrito"
+              },
+              {
+                "idDocument": 123344,
+                "name": "estomago.ppt",
+                "Description": "paco por powerpoint"
+              }
+            ]
+          },
+          {
+            "level": 1,
+            "idFolder": 12312,
+            "idParent": 12312,
+            "name": "Documentos Guays"
+          },
+            {"level":2,"idFolder":12313, "idParent": 12312,"name":"Chapulines"},
+          {
+            "level": 3,
+            "idFolder": 12314,
+            "idParent": 12313,
+            "name": "Chapulin Colorado"
+          },
+          {
+            "level": 3,
+            "idFolder": 12315,
+            "idParent": 12313,
+            "name": "Chapulin Verde"
+          }
+            ]
+    },
+```
+
+### schema of relations
+
+the subdocuments that we will relate to emails have an array with their id as we see in the example
+
+```json
+
+            "Courts": [{
+                    "idCourt": 32,
+                    "name": "Juzgado 13 Social Madrid",
+                    "mails": ["121211111"]
+                },
+                {
+                    "idCourt": 33,
+                    "name": "Juzgado 17 Penal Madrid",
+                    "mails": ["121211111", "as2341234sa121"]
+                }
+            ],
+
+
+            "Files": [{
+                    "idFile": 345,
+                    "name": "exp 345",
+                    "Description": "expediente expedientoso",
+                    "mails": ["as2341234sa121"]
+                },
+                {
+                    "idFile": 346,
+                    "name": "exp 346",
+                    "Description": "expediente expedientado",
+                    "mails": ["121211111", "as2341234sa121", "11111134456"]
+                }]
+
+
+```
