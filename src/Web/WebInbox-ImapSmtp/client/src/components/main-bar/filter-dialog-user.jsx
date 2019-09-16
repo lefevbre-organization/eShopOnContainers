@@ -42,18 +42,23 @@ class FilterDialogUser extends Component {
     //window.location.reload();
 
     const { userId } = this.props.lexon;
-    const url = `${config.url.URL_RESET_DEFAULTACCOUNT}/${userId}`;
-    fetch(url, {
-      method: "GET"
-    })
-      .then(result => {
-        console.log(result);
-        removeState();
+    if (userId !== null) {
+      const url = `${config.url.URL_RESET_DEFAULTACCOUNT}/${userId}`;
+      fetch(url, {
+        method: "GET"
       })
-      .then(_ => {
-        const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-        window.open(urlRedirect, "_self");
-      });
+        .then(result => {
+          console.log(result);
+          removeState();
+        })
+        .then(_ => {
+          const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+          window.open(urlRedirect, "_self");
+        });
+    } else {
+      removeState();
+      window.location.reload();
+    }
   }
 
   renderSettings() {
