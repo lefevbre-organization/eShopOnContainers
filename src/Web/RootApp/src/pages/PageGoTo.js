@@ -4,6 +4,7 @@ import "./PageGoTo.css";
 
 import GoTo from "../components/GoTo";
 import Footer from "../components/footer/Footer";
+import ConfirmRemoveAccount from "../components/confirm-remove-account/ConfirmRemoveAccount";
 import { UserNotFound } from "../components/user-not-found/UserNotFound";
 
 import { getAccounts } from "../services/user-accounts";
@@ -100,13 +101,16 @@ export class PageGoTo extends Component {
     }
 
     return (
-      <div>
-        {this.renderSpinner()}
-        <div className="container-fluid d-flex h-100 flex-column" id="borrar">
-          {this.renderGoTo()}
-          {this.renderFooter()}
+      <React.Fragment>
+        <ConfirmRemoveAccount />
+        <div>        
+          {this.renderSpinner()}
+          <div className="container-fluid d-flex h-100 flex-column" id="borrar">
+            {this.renderGoTo()}
+            {this.renderFooter()}
+          </div>
         </div>
-      </div>
+      </React.Fragment>
     );
   }
 }

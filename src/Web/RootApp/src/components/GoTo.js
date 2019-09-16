@@ -29,42 +29,29 @@ class GoTo extends Component {
         <div className="container">
           <div className="row">
             <div className="col d-flex justify-content-center">
-              <div className="col form-box p-md-5 p-3">
-                <div className="row logo text-center">
+              <div className="col form-box w-100">
+                
+                <div className="row logo text-center p-md-5 p-3">
                   <div className="col">
                     <span className="naming">{i18n.t("page-goto.mail")}</span>
-                    <span className="mb-5">
-                      {i18n.t("page-goto.my-accounts")}
-                    </span>
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="col">
-                    <Accounts userId={userId} accounts={this.props.accounts} />
-                  </div>
-                </div>
-                <br></br>
-                <br></br>
-                <br></br>
-                <div className="row logo text-center">
-                  <div className="col">
-                    <span className="mb-5">
+                    <span className="">
                       {i18n.t("page-goto.add-account-mail")}
                     </span>
                   </div>
                 </div>
-                <div className="row">
+                
+                <div className="row content px-md-5 px-3">
                   <div className="col">
                     <ul>
                       <li><ProviderInbox userId={userId} provider={INBOX_GOOGLE} /></li>
                       <li><ProviderInbox userId={userId} provider={INBOX_OUTLOOK} /></li>
                       <li><ProviderInbox userId={userId} provider={INBOX_IMAP} /></li>
-                      {/* {this.renderAddAccount(INBOX_GOOGLE)}
-                      {this.renderAddAccount(INBOX_OUTLOOK)}
-                      {this.renderAddAccount(INBOX_IMAP)} */}
                     </ul>
                   </div>
                 </div>
+
+                <Accounts userId={userId} accounts={this.props.accounts} />
+
               </div>
             </div>
           </div>

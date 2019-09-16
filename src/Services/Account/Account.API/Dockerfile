@@ -6,7 +6,7 @@ FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 WORKDIR /src
 
 # Keep the project list and command dotnet restore identical in all Dockfiles to maximize image cache utilization
-COPY eLefebvreOnContainers-ServicesAndWebApps.sln .
+COPY eLefebvreOnContainers-Main.sln .
 COPY docker-compose.dcproj /src/
 #COPY src/ApiGateways/ApiGw-Base/OcelotApiGw.csproj src/ApiGateways/ApiGw-Base/
 #COPY src/ApiGateways/Mobile.Bff.Shopping/aggregator/Mobile.Shopping.HttpAggregator.csproj src/ApiGateways/Mobile.Bff.Shopping/aggregator/
