@@ -16,7 +16,8 @@ const dev = {
     PWD: "22lcqsp11lsw"
   },
   api: {
-    ACCOUNTS: "api/v1/accounts/emailuseraccount/getbyuser"
+    ACCOUNTS: "api/v1/accounts/emailuseraccount/getbyuser",
+    DELETACCOUNTBYUSERANDPROVIDER: 'api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider'
   }
   // login: {
   //     URL_ENCRYPTED_USER: 'http://herculesppd.lefebvre.es/webclient46/ws/encriptarEntrada.do?nEntrada=',
@@ -44,7 +45,8 @@ const prod = {
     PWD: "22lcqsp11lsw"
   },
   api: {
-    ACCOUNTS: "api/v1/accounts/emailuseraccount/getbyuser"
+    ACCOUNTS: "api/v1/accounts/emailuseraccount/getbyuser",
+    DELETACCOUNTBYUSERANDPROVIDER: 'api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider'
   }
 };
 

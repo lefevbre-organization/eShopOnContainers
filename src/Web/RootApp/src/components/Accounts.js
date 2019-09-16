@@ -30,6 +30,7 @@ class Accounts extends Component {
                     userId={userId}
                     provider={el.provider}
                     email={el.email}
+                    removeAccount={this.props.removeAccount}
                   />
                 </li>
               );

@@ -8,10 +8,20 @@ class ConfirmRemoveAccount extends Component {
     this.state = {
       show: false
     };
+
+    this._handleOnHide = this._handleOnHide.bind(this);
   }
 
   _handleOnHide() {
+    this.setState = {
+      show: false
+    };
+  }
 
+  _handleOnShow() {
+    this.setState = {
+      show: true
+    };
   }
 
   render() {
@@ -19,20 +29,20 @@ class ConfirmRemoveAccount extends Component {
 
     return (
       <div>
-        {/* <Modal show={show} onHide={handleClose}>
+        <Modal show={show} onHide={this._handleOnHide()}>
           <Modal.Header closeButton>
             <Modal.Title>Modal heading</Modal.Title>
           </Modal.Header>
           <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="secondary" onClick={this._handleOnHide()}>
               Close
             </Button>
-            <Button variant="primary" onClick={handleClose}>
+            <Button variant="primary" onClick={this._handleOnHide()}>
               Save Changes
             </Button>
           </Modal.Footer>
-        </Modal> */}
+        </Modal>
       </div>
     );
   }

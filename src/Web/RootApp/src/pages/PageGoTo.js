@@ -7,7 +7,7 @@ import Footer from "../components/footer/Footer";
 import ConfirmRemoveAccount from "../components/confirm-remove-account/ConfirmRemoveAccount";
 import { UserNotFound } from "../components/user-not-found/UserNotFound";
 
-import { getAccounts } from "../services/user-accounts";
+import { getAccounts, deleteAccountByUserAndProvider } from "../services/user-accounts";
 
 import { config, INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP } from "../constants";
 
@@ -18,11 +18,16 @@ export class PageGoTo extends Component {
       loading: true,
       accounts: [],
       userId: null,
-      redirect: false
+      redirect: false,
+      showConfirmRemoveAccount: false
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.getAccounts();
+  }
+
+  async getAccounts() {
     const userId = this.props.match.params.userId;
     const encrypt = this.props.match.params.encrypt;
 
@@ -65,6 +70,28 @@ export class PageGoTo extends Component {
       });
   }
 
+  removeAccount = (provider) => {
+    const userId = this.props.match.params.userId;
+
+    deleteAccountByUserAndProvider(userId, provider)
+    .then(result => {
+      if (result === 'OK') {
+        this.getAccounts()
+      } else {
+        console.log(`Ha ocurrido un error cuando se borraba: userId -> ${userId}, provider -> ${provider}`);
+      }
+      
+    })
+    .then(alert("Cuenta Borrada"))
+    .catch(error => {
+      console.log('error =>', error);
+    })
+  }
+
+  openConfirmRemoveAccount() {
+
+  }
+
   renderSpinner() {
     const { loading } = this.state;
 
@@ -81,7 +108,7 @@ export class PageGoTo extends Component {
     const { loading, userId, accounts } = this.state;
 
     if (!loading) {
-      return <GoTo userId={userId} accounts={accounts} />;
+      return <GoTo userId={userId} accounts={accounts} removeAccount={this.removeAccount}/>;
     }
   }
 

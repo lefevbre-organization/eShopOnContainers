@@ -61,7 +61,6 @@ export const getAccountsWithUserEncrypt = userId => {
 };
 
 export const getAccountsWithUserNoEncrypt = userId => {
-  console.log("userId ->", userId);
   return new Promise((resolve, reject) => {
     const url = `${config.url.API_ACCOUNTS}/${config.api.ACCOUNTS}/${userId}`;
     fetch(url, {
@@ -105,3 +104,20 @@ const getUser = userId => {
       });
   });
 };
+
+export const deleteAccountByUserAndProvider = (userId, provider) => {
+  return new Promise((resolve, reject) => {
+    const url = `${config.url.API_ACCOUNTS}/${config.api.DELETACCOUNTBYUSERANDPROVIDER}/${userId}/${provider}`;
+    fetch(url, {
+      method: "GET"
+    })
+    .then(_ => {
+        resolve('OK');        
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+};
+
+

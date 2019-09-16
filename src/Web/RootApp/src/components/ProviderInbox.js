@@ -2,10 +2,33 @@ import React, { Component } from "react";
 import i18n from "i18next";
 
 import { config, INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP } from "../constants";
+import { deleteAccountByUserAndProvider } from "../services/user-accounts";
 
 class ProviderInbox extends Component {
-  _handleOnClick() {
-    alert("onClick!!!");
+  constructor(props) {
+    super(props);
+
+    this._handleOnClick = this._handleOnClick.bind(this);
+  }
+
+  _handleOnClick(provider) {
+    const { removeAccount } = this.props;
+
+    removeAccount(provider);
+    
+    // const url = `${config.api.DELETACCOUNTBYUSERANDPROVIDER}/${userId}/${provider}`;
+    // fetch(url, {
+    //   method: "GET"
+    // })
+    //   .then(data => {
+    //     // this.props.getAccounts();
+    //   })
+    //   .then(data1 => {
+    //     alert("Cuenta Borrada");
+    //   })
+    //   .catch(error => {
+    //     console.log("error ->", error);
+    //   });
   }
 
   getUser() {
@@ -32,12 +55,12 @@ class ProviderInbox extends Component {
     }
   }
 
-  getTrash() {
+  getTrash(provider) {    
     const { email } = this.props;
     if (email != null && email !== undefined) {
       return (
         <React.Fragment>
-          <a href="#" className="trash" onClick={this._handleOnClick}>
+          <a href="#" className="trash" onClick={() => this._handleOnClick(provider)}>
             <span className="icon lf-icon-trash"></span>
           </a>
         </React.Fragment>
@@ -69,7 +92,7 @@ class ProviderInbox extends Component {
               </span>
               <span>{title}</span>
             </a>
-            {this.getTrash()}
+            {this.getTrash(INBOX_GOOGLE)}
           </React.Fragment>
         );
       case INBOX_OUTLOOK:
@@ -88,7 +111,7 @@ class ProviderInbox extends Component {
               </span>
               <span>{title}</span>
             </a>
-            {this.getTrash()}
+            {this.getTrash(INBOX_OUTLOOK)}
           </React.Fragment>
         );
       case INBOX_IMAP:
@@ -105,7 +128,7 @@ class ProviderInbox extends Component {
               <span className="lf-icon-mail"></span>
               <span>{title}</span>
             </a>
-            {this.getTrash()}
+            {this.getTrash(INBOX_IMAP)}
           </React.Fragment>
         );
 

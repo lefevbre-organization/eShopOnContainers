@@ -50,7 +50,7 @@ class GoTo extends Component {
                   </div>
                 </div>
 
-                <Accounts userId={userId} accounts={this.props.accounts} />
+                <Accounts userId={userId} accounts={this.props.accounts} removeAccount={this.props.removeAccount}/>
 
               </div>
             </div>
