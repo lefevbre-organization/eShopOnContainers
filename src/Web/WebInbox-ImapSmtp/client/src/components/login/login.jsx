@@ -86,10 +86,12 @@ export class Login extends Component {
               <TextField id='password' type={'password'} fieldClass={`${styles.formField} ${styles.fullWidth}`}
                 value={password} onChange={this.onFieldChange}
                 focused={this.isFocused('password')} required={true} label={t('login.Password')}/>
-              <Button className={styles.advancedButton} label={t('login.Advanced')}
-                icon={advanced ? 'unfold_less' : 'unfold_more'}
-                onClick={e => this.toggleAdvanced(e)}
-              />
+              <div className={styles.advancedButtonExpand}>
+                  <Button className={styles.advancedButton} label={t('login.Advanced')}
+                    icon={advanced ? 'unfold_less' : 'unfold_more'}
+                    onClick={e => this.toggleAdvanced(e)}
+                                />
+              </div>
               {advanced &&
                 <div className={styles.advancedContainer}>
                   <Switch id='imapSsl' checked={imapSsl} label={t('login.ImapSSL')}

@@ -123,23 +123,24 @@ h6 {
     color: #333333 !important;
 }
 
-    .mdc-top-app-bar {
+.mdc-top-app-bar {
         color: #333333 !important;
     }
 
-    .mdc-button {
+.mdc-button {
         /*height: auto !important;*/
         width: auto !important;
-    }
+}
 
-    .mdc-button .mdc-button__icon {
-        width: auto !important;
-        height: auto !important;
-        /*margin-right: auto !important;*/
-    }
+.mdc-button .mdc-button__icon {
+    width: auto !important;
+    height: auto !important;
+   
+}
 
-
-    .mdc-top-app-bar .mdc-top-app-bar__action-item, .mdc-top-app-bar .mdc-top-app-bar__navigation-icon {
+.mdc-top-app-bar .mdc-top-app-bar__action-item, .mdc-top-app-bar .mdc-top-app-bar__navigation-icon {
         color: #333333 !important;
-    }
+}
+
+
   
