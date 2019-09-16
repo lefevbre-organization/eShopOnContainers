@@ -22,7 +22,7 @@ COPY src/BuildingBlocks/EventBus/IntegrationEventLogMongoDB/IntegrationEventLogM
 COPY src/BuildingBlocks/WebHostCustomization/WebHost.Customization/WebHost.Customization.csproj src/BuildingBlocks/WebHostCustomization/WebHost.Customization/
 COPY src/Services/Lexon/Lexon.API/Lexon.API.csproj src/Services/Lexon/Lexon.API/
 COPY src/Services/Lexon/Lexon.FunctionalTests/Lexon.FunctionalTests.csproj src/Services/Lexon/Lexon.FunctionalTests/
-COPY src/Services/EmailUserAccount/EmailUserAccount.API/EmailUserAccount.API.csproj src/Services/EmailUserAccount/EmailUserAccount.API/
+COPY src/Services/Account/Account.API/Account.API.csproj src/Services/Account/Account.API/
 COPY src/Web/WebStatusLefebvre/WebStatusLefebvre.csproj src/Web/WebStatusLefebvre/
 COPY src/Web/RootApp/RootApp.njsproj src/Web/RootApp/
 COPY src/Web/WebInbox-Google/WebInbox-Google.njsproj src/Web/WebInbox-Google/

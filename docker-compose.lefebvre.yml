@@ -24,7 +24,7 @@ services:
 #    image: ${REGISTRY:-paconaf}/emailuser.api:${PLATFORM:-linux}-${TAG:-latest}
 #    build:
 #      context: .
-#      dockerfile: src/Services/EmailUserAccount/EmailUserAccount.API/Dockerfile
+#      dockerfile: src/Services/Account/Account.API/Dockerfile
 #    depends_on:
 #      - nosql.data
 #      - rabbitmq
