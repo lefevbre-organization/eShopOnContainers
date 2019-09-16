@@ -155,7 +155,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="src\actions\lexon.js" />
-    <Compile Include="src\actions\settings.actions.jsx" />
     <Compile Include="src\api\index.jsx" />
     <Compile Include="src\apps\lexonconn-app.js" />
     <Compile Include="src\apps\mainmenu-app.js" />
@@ -181,7 +180,6 @@
     <Compile Include="src\lex-on_connector\main.js" />
     <Compile Include="src\lex-on_connector\reducers\lex-on_message-list.reducrers.jsx" />
     <Compile Include="src\reducers\lexon.js" />
-    <Compile Include="src\reducers\settings.reducers.jsx" />
     <Compile Include="src\services\i18n.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

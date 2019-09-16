@@ -68,6 +68,7 @@
     <Content Include="src\components\login\Login.scss" />
     <Content Include="src\components\main\main.scss" />
     <Content Include="src\components\sidebar\sidebar.scss" />
+    <Content Include="src\components\user-not-found\UserNotFound.css" />
     <Content Include="src\index.css" />
     <Content Include="src\App.js" />
     <Content Include="src\index.js" />
@@ -139,6 +140,8 @@
     <Folder Include="src\components\not-found" />
     <Folder Include="src\components\sidebar" />
     <Folder Include="src\components\signout" />
+    <Folder Include="src\components\user-lexon\" />
+    <Folder Include="src\components\user-not-found\" />
     <Folder Include="src\constants" />
     <Folder Include="src\event-bus\" />
     <Folder Include="src\lex-on_connector\" />
@@ -147,7 +150,7 @@
     <Folder Include="src\utils" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\actions\settings.actions.jsx" />
+    <Compile Include="src\actions\lexon.js" />
     <Compile Include="src\api_graph\authentication.jsx" />
     <Compile Include="src\api_graph\index.jsx" />
     <Compile Include="src\api_graph\scripts.jsx" />
@@ -158,6 +161,8 @@
     <Compile Include="src\components\authenticating\Authenticating_01.jsx" />
     <Compile Include="src\components\compose-message\ComposeMessage-fixed.jsx" />
     <Compile Include="src\components\login\Login_01.jsx" />
+    <Compile Include="src\components\user-lexon\UserLexon.jsx" />
+    <Compile Include="src\components\user-not-found\UserNotFound.jsx" />
     <Compile Include="src\event-bus\index.js" />
     <Compile Include="src\GraphService.js" />
     <Compile Include="src\AppContainer-graph.js">
@@ -174,7 +179,7 @@
     <Compile Include="src\lex-on_connector\index.js" />
     <Compile Include="src\lex-on_connector\list.js" />
     <Compile Include="src\lex-on_connector\root.component.js" />
-    <Compile Include="src\reducers\settings.reducers.jsx" />
+    <Compile Include="src\reducers\lexon.js" />
     <Compile Include="src\services\i18n.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
