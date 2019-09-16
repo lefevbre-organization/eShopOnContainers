@@ -15,8 +15,12 @@ a{
 	padding: 0 15px;
 }
 
+.form-box .bg-grey{
+	background-color: #F5F5F5;
+}
+
 .form-box .content{
-	padding-bottom: 120px;
+	padding-bottom: 30px;
 }
 
 .form-box ul{	    
@@ -26,6 +30,40 @@ a{
 .form-box li{
 	list-style: none;
 	border-top: 1px solid #ccd1e4;	
+}
+
+.form-box .bg-grey li{
+	list-style: none;
+	border-top: none;
+	padding: 15px;	
+	height: 60px
+}
+
+.form-box .bg-grey li:last-of-type{
+	border-bottom: 0;
+}
+
+.form-box .bg-grey .asociadas{
+	color: #001978;
+	font-size: 18px;
+	font-family: MTTMilano, Lato, Arial, sans-serif;
+	padding: 18px;
+	padding-left: 60px;
+}
+
+.form-box .bg-grey a{
+	padding: 0;
+	padding-left: 60px;
+}
+
+.form-box .bg-grey .trash{
+	position: relative;
+	top: -26px;
+	left: 88%;
+	font-size: 20px;
+	text-align: right;
+	width: 50px;
+	padding-left: 0px;
 }
 
 .form-box li:hover{

@@ -1,4 +1,4 @@
-﻿namespace EmailUserAccount.API.IntegrationEvents.Events
+﻿namespace Account.API.IntegrationEvents.Events
 {
     #region Using
 

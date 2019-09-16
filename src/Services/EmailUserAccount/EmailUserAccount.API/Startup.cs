@@ -1,4 +1,4 @@
-namespace EmailUserAccount.API
+namespace Account.API
 {
     #region Using
 

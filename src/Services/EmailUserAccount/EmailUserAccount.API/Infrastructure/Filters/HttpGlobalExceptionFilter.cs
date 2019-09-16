@@ -1,4 +1,4 @@
-﻿namespace EmailUserAccount.API.Infrastructure.Filters
+﻿namespace Account.API.Infrastructure.Filters
 {
     #region Using
 

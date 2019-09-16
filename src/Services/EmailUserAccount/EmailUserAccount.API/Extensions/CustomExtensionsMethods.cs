@@ -1,4 +1,4 @@
-﻿namespace EmailUserAccount.API.Extensions
+﻿namespace Account.API.Extensions
 {
     #region Using
 
@@ -16,7 +16,7 @@
     using Microsoft.Extensions.Options;
     using RabbitMQ.Client;
     using Infrastructure.Filters;
-    using EmailUserAccount.API.Infrastructure.Repositories;
+    using Account.API.Infrastructure.Repositories;
     using Infrastructure.Services;
     using IntegrationEvents.Events;
 

@@ -22,7 +22,7 @@
     "comma-dangle": [2, "never"],
     "computed-property-spacing": [2, "never"],
     "no-cond-assign": 2,
-    "no-console": 2,
+    // "no-console": 2,
     "no-constant-condition": 2,
     "no-control-regex": 2,
     "no-debugger": 2,
@@ -162,7 +162,7 @@
     "space-in-parens": 2,
     "space-infix-ops": 2,
     "space-unary-ops": 2,
-    "spaced-comment": 2,
+    // "spaced-comment": 2,
     "wrap-regex": 0,
     // Legacy
     "max-depth": 0,

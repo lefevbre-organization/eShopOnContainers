@@ -68,11 +68,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiGw-Lexon", "src\ApiGatew
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiGw-NoDocker", "ApiGw-NoDocker", "{5D448279-4725-4912-96B6-191E1F8D7ED2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EmailUserAccount", "EmailUserAccount", "{DEEF75F4-2602-49C9-8091-DDE74E0C7A14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiGw-Account", "src\ApiGateways\ApiGw-Account\ApiGw-Account.csproj", "{DC3D90CD-C62B-460A-AC8D-15BC8058AE37}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmailUserAccount.API", "src\Services\EmailUserAccount\EmailUserAccount.API\EmailUserAccount.API.csproj", "{DE49863E-EC3F-4974-B76C-88ACDFC851EC}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Account", "Account", "{8FA8F29C-AF46-4D4A-B1A4-567079B287BF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiGw-EmailUserAccount", "src\ApiGateways\ApiGw-EmailUserAccount\ApiGw-EmailUserAccount.csproj", "{4DBC063C-53F4-444C-B2FC-D62E07CA7A1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Account.API", "src\Services\Account\Account.API\Account.API.csproj", "{E0AF6A96-C240-4825-9209-2734B374810B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web.Bff.Lexon", "Web.Bff.Lexon", "{71A3B3D3-653C-43A1-823F-B72A2591A75A}"
 	ProjectSection(SolutionItems) = preProject

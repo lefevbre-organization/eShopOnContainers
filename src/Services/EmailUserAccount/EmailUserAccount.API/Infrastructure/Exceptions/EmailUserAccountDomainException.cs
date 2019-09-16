@@ -1,4 +1,4 @@
-﻿namespace EmailUserAccount.API.Infrastructure.Exceptions
+﻿namespace Account.API.Infrastructure.Exceptions
 {
     #region Using
 

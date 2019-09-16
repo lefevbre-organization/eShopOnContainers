@@ -1,16 +1,13 @@
-import React from 'react';
-import {connect} from 'react-redux';
-import {translate} from 'react-i18next';
-import TopBarUserButton from './top-bar-user-button';
-import FilterDialogUser from './filter-dialog-user';
-import MessageFilters, {getFromKey} from '../../services/message-filters';
-import mainCss from '../../styles/main.scss';
-import styles from './button-user.scss';
-
-
+import React from "react";
+import { connect } from "react-redux";
+import { translate } from "react-i18next";
+import TopBarUserButton from "./top-bar-user-button";
+import FilterDialogUser from "./filter-dialog-user";
+import MessageFilters, { getFromKey } from "../../services/message-filters";
+import mainCss from "../../styles/main.scss";
+import styles from "./button-user.scss";
 
 export class ButtonFilter extends React.Component {
-    
   constructor(props) {
     super(props);
     this.state = {
@@ -18,12 +15,11 @@ export class ButtonFilter extends React.Component {
     };
     this.handleOnToggleDialog = this.onToggleDialog.bind(this);
     this.handleOnCloseDialog = this.onCloseDialog.bind(this);
-    }
-  
-    render() {
-    
-    const {t, activeMessageFilter} = this.props;
-    const {dialogVisible} = this.state;
+  }
+
+  render() {
+    const { t, activeMessageFilter } = this.props;
+    const { dialogVisible } = this.state;
     const active = activeMessageFilter.key !== MessageFilters.ALL.key;
     return <span
       className={`${styles['button-filter']} ${styles['icon-user-space']} ${mainCss['mdc-menu-surface--anchor']}`}
@@ -33,26 +29,25 @@ export class ButtonFilter extends React.Component {
       <TopBarUserButton       
         onClick={this.handleOnToggleDialog}>person</TopBarUserButton>
         <FilterDialogUser visible={dialogVisible} />
-
-        
-    </span>;
+      </span>
+    );
   }
 
   componentDidMount() {
-    window.addEventListener('click', this.handleOnCloseDialog);
+    window.addEventListener("click", this.handleOnCloseDialog);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('click', this.handleOnCloseDialog);
+    window.removeEventListener("click", this.handleOnCloseDialog);
   }
 
   onToggleDialog(event) {
-    this.setState({dialogVisible: !this.state.dialogVisible});
+    this.setState({ dialogVisible: !this.state.dialogVisible });
     event.stopPropagation();
   }
 
   onCloseDialog() {
-    this.setState({dialogVisible: false});
+    this.setState({ dialogVisible: false });
   }
 }
 

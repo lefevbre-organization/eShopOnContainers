@@ -141,6 +141,7 @@
     <Folder Include="src\components\not-found" />
     <Folder Include="src\components\sidebar" />
     <Folder Include="src\components\signout" />
+    <Folder Include="src\components\user-lexon\" />
     <Folder Include="src\constants" />
     <Folder Include="src\lex-on_connector\" />
     <Folder Include="src\lex-on_connector\actions\" />
@@ -153,6 +154,7 @@
     <Compile Include="dockerfile">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\actions\lexon.js" />
     <Compile Include="src\actions\settings.actions.jsx" />
     <Compile Include="src\api\index.jsx" />
     <Compile Include="src\apps\lexonconn-app.js" />
@@ -171,12 +173,14 @@
     <Compile Include="src\components\main\main-docks\Main-flex.jsx" />
     <Compile Include="src\components\main\main-docks\Main-good.jsx" />
     <Compile Include="src\components\main\Main.jsx" />
+    <Compile Include="src\components\user-lexon\UserLexon.jsx" />
     <Compile Include="src\lex-on_connector\actions\lex-on_message-list.actions.jsx" />
     <Compile Include="src\lex-on_connector\index.js" />
     <Compile Include="src\lex-on_connector\lex-on_connector.jsx" />
     <Compile Include="src\lex-on_connector\list.js" />
     <Compile Include="src\lex-on_connector\main.js" />
     <Compile Include="src\lex-on_connector\reducers\lex-on_message-list.reducrers.jsx" />
+    <Compile Include="src\reducers\lexon.js" />
     <Compile Include="src\reducers\settings.reducers.jsx" />
     <Compile Include="src\services\i18n.js" />
   </ItemGroup>

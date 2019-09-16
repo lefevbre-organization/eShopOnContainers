@@ -2,7 +2,7 @@ const dev = {
   url: {
     URL_INBOX_GOOGLE: "http://localhost:3001",
     URL_INBOX_OUTLOOK: "http://localhost:3002",
-    URL_INBOX_IMAP: "http://localhost:3003",
+    URL_INBOX_IMAP: "http://localhost:9000",
     // API_ACCOUNTS: 'https://lefebvre-multichannel-apinode.azurewebsites.net/api/accounts'
     // API_ACCOUNTS: 'http://localhost:3500/api/accounts'
     API_ACCOUNTS: "http://localhost:60980"

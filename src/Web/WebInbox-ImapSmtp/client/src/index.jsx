@@ -39,13 +39,13 @@ async function init () {
   }
   const store = createStore(rootReducer, previousState, enhancer);
 
-    //if (module.hot) {
-    //    // Enable Webpack hot module replacement for reducers
-    //    module.hot.accept('../reducers', () => {
-    //        const nextRootReducer = require('../reducers/index');
-    //        store.replaceReducer(nextRootReducer);
-    //    });
-    //}
+  //if (module.hot) {
+  //    // Enable Webpack hot module replacement for reducers
+  //    module.hot.accept('../reducers', () => {
+  //        const nextRootReducer = require('../reducers/index');
+  //        store.replaceReducer(nextRootReducer);
+  //    });
+  //}
 
   store.subscribe(debounce(() => saveState(store.dispatch, store.getState()), SAVE_STATE_DEBOUNCE_PERIOD_IN_MILLIS));
 

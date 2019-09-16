@@ -10,13 +10,20 @@ class Accounts extends Component {
   }
 
   render() {
-    const { userId } = this.props;
+    const { userId, accounts } = this.props;
+
+    if (!Array.isArray(accounts) || accounts.length === 0) {
+      return null;
+    }
+
     return (
-      <div>
-        <div>{this.renderWithOutAccounts()}</div>
-        <div>
+      <div className="row content bg-grey">
+        <div className="col-12 mt-2">
+          <span className="asociadas"> {i18n.t("page-goto.my-accounts")}</span>
+        </div>
+        <div className="col-12 p-0">
           <ul>
-            {this.props.accounts.map(el => {
+            {accounts.map(el => {
               return (
                 <li key={el.provider}>
                   <ProviderInbox

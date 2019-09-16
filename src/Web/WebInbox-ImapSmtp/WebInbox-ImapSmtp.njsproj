@@ -317,6 +317,8 @@
     <Folder Include="client\src\components\main-bar\" />
     <Folder Include="client\src\components\main-bar\__tests__\" />
     <Folder Include="client\src\components\settings\" />
+    <Folder Include="client\src\components\user-lexon\" />
+    <Folder Include="client\src\constants\" />
     <Folder Include="client\src\__testutils__" />
     <Folder Include="client\src\actions" />
     <Folder Include="client\src\components" />
@@ -425,6 +427,7 @@
     <Folder Include="server\src\test\java\com\marcnuri\isotope\api\smtp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="client\src\actions\lexon.js" />
     <Compile Include="client\src\apps\lexonconn-app.js" />
     <Compile Include="client\src\apps\mainnav-app.js" />
     <Compile Include="client\src\apps\material_title_panel.js" />
@@ -439,11 +442,14 @@
     <Compile Include="client\src\components\Main-bar\top-bar-message-list.jsx" />
     <Compile Include="client\src\components\Main-bar\main-bar.jsx" />
     <Compile Include="client\src\components\settings\settings.jsx" />
+    <Compile Include="client\src\components\user-lexon\UserLexon.jsx" />
+    <Compile Include="client\src\constants\index.jsx" />
     <Compile Include="client\src\lex-on_connector\index.js" />
     <Compile Include="client\src\lex-on_connector\list.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="client\src\lex-on_connector\main.js" />
+    <Compile Include="client\src\reducers\lexon.js" />
     <Compile Include="client\src\services\state.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

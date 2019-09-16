@@ -1,4 +1,4 @@
-﻿namespace EmailUserAccount.API.Controllers
+﻿namespace Account.API.Controllers
 {
     #region
 
@@ -9,7 +9,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
     using Microsoft.Extensions.Options;
-    using EmailUserAccount.API.ViewModel;
+    using Account.API.ViewModel;
     using Infrastructure.Services;
     using Model;
     using System.Linq;
@@ -123,12 +123,16 @@
             {
                 return NotFound();
             }
+            else
+            {
+                accounts = accounts.OrderByDescending(x => x.DefaultAccount).ToList();
+            }
 
             return Ok(accounts);
         }
 
         // GET api/v1/emailuseraccount/updatedefaultaccount/12456567/GOOGLE/test@gmail.com
-        [HttpGet("updatedefaulaccount/{user}/{provider}/{email}")]
+        [HttpGet("updatedefaultaccount/{user}/{provider}/{email}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> UpdateDefaultAccount(string user, string provider, string email)
         {
@@ -152,8 +156,8 @@
             return Ok();
         }
 
-        // GET api/v1/emailuseraccount/deleteaccountbyuserandprovider/12456567
-        [HttpGet("deleteaccountbyuserandprovider/{user}")]
+        // GET api/v1/emailuseraccount/resetdefaultaccountbyuser/12456567
+        [HttpGet("resetdefaultaccountbyuser/{user}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Account), (int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> resetdefaultaccountbyuser(string user)

@@ -1,8 +1,6 @@
 export const signIn = () => {
-  return window.gapi.auth2
-    .getAuthInstance()
-    .signIn()
-}
+  return window.gapi.auth2.getAuthInstance().signIn();
+};
 
 export const initGmailClient = (apiKey, clientId) => {
   const API_KEY = process.env.REACT_APP_API_KEY;
@@ -28,45 +26,40 @@ export const initGmailClient = (apiKey, clientId) => {
   });
 };
 
-export const checkSignInStatus = () => {  
-
+export const checkSignInStatus = () => {
   return new Promise((resolve, reject) => {
-    initGmailClient().then(_ => {
-      const gapi = window.gapi;
+    initGmailClient()
+      .then(_ => {
+        const gapi = window.gapi;
 
-      const googleAuthInstance = gapi.auth2.getAuthInstance();
+        const googleAuthInstance = gapi.auth2.getAuthInstance();
 
-      const isSignedIn = googleAuthInstance.isSignedIn.get();
+        const isSignedIn = googleAuthInstance.isSignedIn.get();
 
-      if (isSignedIn) {
-        // Listen for sign-in state changes.
-        googleAuthInstance.isSignedIn.listen(isSignedIn => {
-          updateSigninStatus(isSignedIn);
-        });
+        if (isSignedIn) {
+          // Listen for sign-in state changes.
+          googleAuthInstance.isSignedIn.listen(isSignedIn => {
+            updateSigninStatus(isSignedIn);
+          });
 
-        resolve(googleAuthInstance.currentUser.Ab);
-      } else {
-        reject();
-      }
-    })
+          resolve(googleAuthInstance.currentUser.Ab);
+        } else {
+          reject();
+        }
+      })
       .catch(error => {
         reject(error);
       });
-  })
-
-    
-  
+  });
 };
 
 // Listener for sign-in state
-export const updateSigninStatus = (isSignedIn) => {
+export const updateSigninStatus = isSignedIn => {
   if (!isSignedIn) {
     // TODO: react to logged out status
   }
 };
 
 export const signOut = () => {
-  return window.gapi.auth2
-    .getAuthInstance()
-    .signOut()
+  return window.gapi.auth2.getAuthInstance().signOut();
 };

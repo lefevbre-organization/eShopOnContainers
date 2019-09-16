@@ -5,7 +5,7 @@ import Header from "../header/Header";
 import Sidebar from "../sidebar/Sidebar";
 import LexonConnector from "../../lex-on_connector/lex-on_connector";
 import NotFound from "../not-found/NotFound";
-import './main.scss';
+import "./main.scss";
 import MessageList from "../content/message-list/MessageList";
 import MessageContent from "../content/message-list/message-content/MessageContent";
 import { Route, Switch, withRouter } from "react-router-dom";
@@ -20,29 +20,30 @@ import {
   clearPageTokens,
   setSearchQuery
 } from "../content/message-list/actions/message-list.actions";
-import {selectLabel} from '../sidebar/sidebar.actions';
-import {signOut} from '../../api/authentication';
+import { selectLabel } from "../sidebar/sidebar.actions";
+import { signOut } from "../../api/authentication";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner, faWindowClose, faClosedCaptioning, faDoorClosed, faTimes, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
-import PerfectScrollbar from "react-perfect-scrollbar";
 import {
-    ReflexContainer,
-    ReflexSplitter,
-    ReflexElement
-} from 'react-reflex'
-import { start, registerApplication } from 'single-spa'
-import * as singleSpa from 'single-spa';
+  faSpinner,
+  faWindowClose,
+  faClosedCaptioning,
+  faDoorClosed,
+  faTimes,
+  faTimesCircle
+} from "@fortawesome/free-solid-svg-icons";
+import PerfectScrollbar from "react-perfect-scrollbar";
+import { ReflexContainer, ReflexSplitter, ReflexElement } from "react-reflex";
+import { start, registerApplication } from "single-spa";
+import * as singleSpa from "single-spa";
 import { registerLexonApp } from "../../apps/lexonconn-app";
 import SidebarCnn from "react-sidebar";
-import SidebarComponent from "../../apps/sidebar_content"
-import 'react-reflex/styles.css'
+import SidebarComponent from "../../apps/sidebar_content";
+import "react-reflex/styles.css";
 
+import { config, PROVIDER } from "../../constants";
 
-
-export class Main extends Component {    
-
-    constructor(props) {   
-
+export class Main extends Component {
+  constructor(props) {
     super(props);
 
     this.getLabelList = this.getLabelList.bind(this);
@@ -101,49 +102,72 @@ export class Main extends Component {
     //    })
     //}
 
-    onSetSidebarOpenCalendar(open) {
-        this.setState({ sidebarComponent: <SidebarComponent /> });
-        this.setState({ sidebarDocked: open });
-    }
+  onSetSidebarOpenCalendar(open) {
+    this.setState({ sidebarComponent: <SidebarComponent /> });
+    this.setState({ sidebarDocked: open });
+  }
 
-    onSetSidebarOpenLexon(open) {
-        let lexon = <img border="0" alt="Lefebvre" src="assets/img/lexon-fake.png"></img>;
-        this.setState({ sidebarComponent: lexon });
-        this.setState({ sidebarDocked: open });
-    }
+  onSetSidebarOpenLexon(open) {
+    let lexon = (
+      <img border="0" alt="Lefebvre" src="assets/img/lexon-fake.png"></img>
+    );
+    this.setState({ sidebarComponent: lexon });
+    this.setState({ sidebarDocked: open });
+  }
 
-    onSetSidebarOpenQMemento(open) {
-        let lexon = <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>;
-        this.setState({ sidebarComponent: lexon });
-        this.setState({ sidebarDocked: open });
-    }
+  onSetSidebarOpenQMemento(open) {
+    let lexon = (
+      <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>
+    );
+    this.setState({ sidebarComponent: lexon });
+    this.setState({ sidebarDocked: open });
+  }
 
-    onSetSidebarOpenCompliance(open) {
-        let lexon = <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>;
-        this.setState({ sidebarComponent: lexon });
-        this.setState({ sidebarDocked: open });
-    }
+  onSetSidebarOpenCompliance(open) {
+    let lexon = (
+      <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>
+    );
+    this.setState({ sidebarComponent: lexon });
+    this.setState({ sidebarDocked: open });
+  }
 
-    onSetSidebarOpenDatabase(open) {
-        let lexon = <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>;
-        this.setState({ sidebarComponent: lexon });
-        this.setState({ sidebarDocked: open });
-    }
+  onSetSidebarOpenDatabase(open) {
+    let lexon = (
+      <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>
+    );
+    this.setState({ sidebarComponent: lexon });
+    this.setState({ sidebarDocked: open });
+  }
 
-    onSetSidebarDocked(open) {       
-        this.setState({ sidebarDocked: open });
-    }
-   
-  
+  onSetSidebarDocked(open) {
+    this.setState({ sidebarDocked: open });
+  }
+
   componentDidMount() {
     /* Label list is fetched from here 
     so that we can declare Routes by labelId 
-    before rendering anything else */   
+    before rendering anything else */
+
     this.getLabelList();
 
-    window.addEventListener("toggleClock", function (event) {
-        alert(event.detail.name);
-    });   
+    window.addEventListener("toggleClock", function(event) {
+      alert(event.detail.name);
+    });
+
+    const { userId } = this.props.lexon;
+    const { googleUser } = this.props;
+    const email = googleUser.w3.U3;
+    if (userId !== null && email !== null) {
+      const { googleUser } = this.props;
+      const email = googleUser.w3.U3;
+      const url = `${config.url.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${PROVIDER}/${email}`;
+      fetch(url, {
+        method: "GET"
+      }).then(result => {
+        console.log(result);
+        this.props.history.push('/inbox');
+      });
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -153,29 +177,31 @@ export class Main extends Component {
       });
     }
 
-    const {labels} = this.props.labelsResult;
-    const {pathname} = this.props.location;
+    const { labels } = this.props.labelsResult;
+    const { pathname } = this.props.location;
     const selectedLabel = labels.find(el => el.selected);
-    const labelPathMatch = labels.find(el => el.id.toLowerCase() === pathname.slice(1));
+    const labelPathMatch = labels.find(
+      el => el.id.toLowerCase() === pathname.slice(1)
+    );
     if (!selectedLabel) {
       if (labelPathMatch && this.props.searchQuery === "") {
         this.props.selectLabel(labelPathMatch.id);
-      }      
-    }
-    else {
+      }
+    } else {
       if (labelPathMatch && selectedLabel.id !== labelPathMatch.id) {
         this.props.selectLabel(labelPathMatch.id);
-      } 
+      }
     }
   }
 
   navigateToNextPage(token) {
     const searchParam = this.props.location.search;
-    const currentToken = searchParam.indexOf("?") === 0 ? searchParam.slice(1) : "";
+    const currentToken =
+      searchParam.indexOf("?") === 0 ? searchParam.slice(1) : "";
     this.props.setPageTokens({
       prevPageToken: currentToken
     });
-      this.props.history.push(token);      
+    this.props.history.push(token);
   }
 
   navigateToPrevPage(token) {
@@ -185,15 +211,15 @@ export class Main extends Component {
   loadLabelMessages(label) {
     const currentSearchQuery = this.props.searchQuery;
     this.props.clearPageTokens();
-    this.props.selectLabel(label.id);    
+    this.props.selectLabel(label.id);
 
     const newPathToPush = `/${label.id.toLowerCase()}`;
 
     if (currentSearchQuery && currentSearchQuery !== "") {
       this.props.setSearchQuery("");
-      const {pathname} = this.props.location;
+      const { pathname } = this.props.location;
       if (newPathToPush === pathname) {
-        this.getLabelMessages({labelIds: [label.id] });
+        this.getLabelMessages({ labelIds: [label.id] });
         return;
       }
     }
@@ -202,29 +228,28 @@ export class Main extends Component {
   }
 
   registerConnectorApp() {
-    let el = document.getElementById('main-lexon-connector')
+    let el = document.getElementById("main-lexon-connector");
     if (!el) {
       try {
-          // const activityFunction = location => location.pathname.startsWith('/');
-          // registerApplication('lex-on-connector', () => import('../../lex-on_connector/index.js'), activityFunction);
-          // start();
-          
-          registerLexonApp();
-          singleSpa.start();
+        // const activityFunction = location => location.pathname.startsWith('/');
+        // registerApplication('lex-on-connector', () => import('../../lex-on_connector/index.js'), activityFunction);
+        // start();
+
+        registerLexonApp();
+        singleSpa.start();
+      } catch (error) {
+        console.error(error);
       }
-      catch (error) {
-          console.error(error);
-      }
-    }               
-  }
-  
-  getLabelList() {
-      this.props.getLabels();     
+    }
   }
 
-  getLabelMessages({labelIds, q, pageToken}) {
-    this.props.emptyLabelMessages();    
-    this.props.getLabelMessages({ labelIds, q, pageToken });  
+  getLabelList() {
+    this.props.getLabels();
+  }
+
+  getLabelMessages({ labelIds, q, pageToken }) {
+    this.props.emptyLabelMessages();
+    this.props.getLabelMessages({ labelIds, q, pageToken });
     this.registerConnectorApp();
   }
 
@@ -236,10 +261,10 @@ export class Main extends Component {
     const { leftSideBar } = this.state;  
     return this.props.labelsResult.labels.map(el => (
       <Route
-        key={el.id + '_route'}
+        key={el.id + "_route"}
         exact
         path={"/" + el.id}
-        render={props => {          
+        render={props => {
           const that = this;
           return (
             <MessageList
@@ -252,13 +277,15 @@ export class Main extends Component {
               navigateToPrevPage={this.navigateToPrevPage}
               pageTokens={this.props.pageTokens}
               addInitialPageToken={this.addInitialPageToken}
-              parentLabel={that.props.labelsResult.labels.find(el => el.id === props.match.path.slice(1) )}
+              parentLabel={that.props.labelsResult.labels.find(
+                el => el.id === props.match.path.slice(1)
+              )}
               searchQuery={this.props.searchQuery}
             />
-          )
+          );
         }}
       />
-    ));    
+    ));
   }
 
   renderSpinner() {
@@ -266,15 +293,23 @@ export class Main extends Component {
       <div className="d-flex h-100 align-items-center justify-content-center">
         <FontAwesomeIcon icon={faSpinner} spin size="3x" />
       </div>
-    )
+    );
   }
 
   onSignout() {
-    const that = this;
-    signOut().then(_ => {
-      that.props.history.replace('inbox');
-      window.location.reload(true);
+    const { userId } = this.props.lexon;
+    const url = `${config.url.URL_RESET_DEFAULTACCOUNT}/${userId}`;
+    fetch(url, {
+      method: "GET"
     })
+      .then(result => {
+        console.log(result);
+        signOut();
+      })
+      .then(_ => {
+        const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+        window.open(urlRedirect, "_self");
+      });
   }
 
   renderInboxViewport() {
@@ -284,7 +319,7 @@ export class Main extends Component {
 
     let imgUrl = 'assets/img/settings-gears.svg'
     if (this.props.labelsResult.labels.length < 1) {
-        return this.renderSpinner();       
+      return this.renderSpinner();
     }
 
       return ( 
@@ -416,17 +451,17 @@ export class Main extends Component {
       
   }
 
-    render()
-    {       
-       return this.renderInboxViewport();
-    }
+  render() {
+    return this.renderInboxViewport();
+  }
 }
 
 const mapStateToProps = state => ({
   labelsResult: state.labelsResult,
   messagesResult: state.messagesResult,
   pageTokens: state.pageTokens,
-  searchQuery: state.searchQuery
+  searchQuery: state.searchQuery,
+  lexon: state.lexon
 });
 
 const mapDispatchToProps = dispatch =>

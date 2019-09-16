@@ -1,4 +1,4 @@
-﻿namespace EmailUserAccount.API.Infrastructure.Repositories
+﻿namespace Account.API.Infrastructure.Repositories
 {
     #region Using
 
@@ -10,7 +10,7 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using EmailUserAccount.API.Model;
+    using Account.API.Model;
     using IntegrationEvents.Events;
 
     #endregion

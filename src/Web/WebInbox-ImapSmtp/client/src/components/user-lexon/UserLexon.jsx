@@ -1,30 +1,46 @@
 import React, { Component } from "react";
-import {Redirect} from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 
 import ACTIONS from "../../actions/lexon";
+import { clearUserCredentials } from "../../actions/application";
+import history from "../../routes/history";
 
 class UserLexon extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      readyToRedirect: false
+      readyToRedirect: false,
+      isNewAccount: false
     };
   }
 
   componentDidMount() {
-    this.setState({
-      readyToRedirect: true
-    });
+    const user = this.props.match.params.id;
+    this.props.setUser(user);
 
-    const userId = this.props.match.params.id;
-    this.props.setUser(userId);
+    const isNewAccount = user.slice(2, 3) === "1" ? true : false;
+    if (!isNewAccount) {
+      this.setState({
+        readyToRedirect: true
+      });
+    } else {
+      this.setState({
+        isNewAccount: true
+      });
+    }
   }
 
   render() {
-    if (this.state.readyToRedirect) {
+    const { readyToRedirect, isNewAccount } = this.state;
+    if (readyToRedirect) {
       return <Redirect to="/" />;
+    }
+
+    if (isNewAccount) {
+      this.props.logout();
+      return <Redirect to="/login" />;
     }
 
     return null;
@@ -36,7 +52,14 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setUser: user => dispatch(ACTIONS.setUser(user))
+  setUser: user => dispatch(ACTIONS.setUser(user)),
+  logout: () => {
+    dispatch(clearUserCredentials());
+    history.push("/login");
+  }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserLexon);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(UserLexon);

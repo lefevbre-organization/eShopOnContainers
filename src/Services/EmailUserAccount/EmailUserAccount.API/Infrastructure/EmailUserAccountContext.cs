@@ -1,4 +1,4 @@
-﻿namespace EmailUserAccount.API.Infrastructure
+﻿namespace Account.API.Infrastructure
 {
     #region
 
