@@ -67,8 +67,8 @@ export class Login extends Component {
             className={styles.spinner} pathClassName={styles.spinnerPath}/>
           <div className={`${mainCss['mdc-card']} ${styles.card}`}>
             <header>
-              <h1 className={styles.title}>{this.props.application.title}</h1>
-              <h2 className={styles.subtitle}>{t('login.Login')}</h2>
+              <div className={styles.title}>{this.props.application.title}</div>
+              <div className={styles.subtitle}>{t('login.Login')}</div>
             </header>
             <form onSubmit={this.login}>
               <div className={styles.server}>

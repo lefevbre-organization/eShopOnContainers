@@ -33,3 +33,25 @@
 :not(.mdc-list--non-interactive) > :not(.mdc-list-item--disabled).mdc-list-item::before, :not(.mdc-list--non-interactive) > :not(.mdc-list-item--disabled).mdc-list-item::after {
     background-color: #001978 !important;
 }
+
+
+.mdc-text-field:not(.mdc-text-field--disabled) .mdc-text-field__input {
+    color: #001978 !important;
+}
+
+.mdc-text-field:not(.mdc-text-field--disabled):not(.mdc-text-field--outlined):not(.mdc-text-field--textarea) .mdc-text-field__input {
+    border-bottom-color: #001978 !important;
+}
+
+.mdc-switch.mdc-switch--checked .mdc-switch__thumb {
+    background-color: #767676 !important;
+    background-color: var(--mdc-theme-secondary, #767676) !important;
+    border-color: #767676 !important;
+    border-color: #001978 !important;
+}
+
+.login--background___1ujQy .login--container___2Q4ry .card___1DExF .section___3WNyJ {
+    margin: 16px 0;
+    font-size: 1.2rem;
+    color: #001978 !important;
+}

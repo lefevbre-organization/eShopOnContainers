@@ -7,7 +7,7 @@ import lexon from './lexon';
 
 export const INITIAL_STATE = {
   application: {
-    title: 'Lefebvre Mail Client',
+    title: 'Mail',
     user: {},
     newMessage: null,
     selectedFolderId: {},
