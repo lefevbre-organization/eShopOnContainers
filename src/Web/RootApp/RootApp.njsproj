@@ -46,6 +46,7 @@
     <Folder Include="public\assets\scss\" />
     <Folder Include="src\" />
     <Folder Include="src\components\" />
+    <Folder Include="src\components\confirm-remove-account\" />
     <Folder Include="src\components\footer\" />
     <Folder Include="src\components\not-found\" />
     <Folder Include="src\components\user-not-found\" />
@@ -96,6 +97,7 @@
     <Content Include="public\web.config" />
     <Content Include="README.md" />
     <Content Include="src\App.css" />
+    <Content Include="src\components\confirm-remove-account\ConfirmRemoveAccout.css" />
     <Content Include="src\components\footer\Footer.css" />
     <Content Include="src\components\not-found\NotFound.css" />
     <Content Include="src\components\user-not-found\UserNotFound.css" />
@@ -112,6 +114,7 @@
     <Compile Include="src\App.js" />
     <Compile Include="src\App.test.js" />
     <Compile Include="src\components\Accounts.js" />
+    <Compile Include="src\components\confirm-remove-account\ConfirmRemoveAccount.js" />
     <Compile Include="src\components\footer\Footer.js" />
     <Compile Include="src\components\GoTo.js" />
     <Compile Include="src\components\not-found\NotFound.js" />
