@@ -119,6 +119,24 @@
             }
         }
 
+        public async Task<bool> DeleteAccountByUserAndEmail(string user, string email)
+        {
+            var account = await _context.Accounts.Find(x => x.User == user && x.Email == email).FirstOrDefaultAsync();
+            if (account != null)
+            {
+                await _context.Accounts.DeleteOneAsync(accountDelete => accountDelete.Id == account.Id);
+
+                var eventAssoc = new AddOperationAccountIntegrationEvent(account.User, account.Provider, account.Email, account.DefaultAccount, EnTypeOperation.Remove);
+                _eventBus.Publish(eventAssoc);
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public async Task<bool> ResetDefaultAccountByUser(string user)
         {
             var accountFind = await _context.Accounts.Find(x => x.User == user).FirstOrDefaultAsync();

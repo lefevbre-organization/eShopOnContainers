@@ -31,6 +31,7 @@ class Accounts extends Component {
                     provider={el.provider}
                     email={el.email}
                     removeAccount={this.props.removeAccount}
+                    toggleConfirmRemoveAccount={this.props.toggleConfirmRemoveAccount}
                   />
                 </li>
               );

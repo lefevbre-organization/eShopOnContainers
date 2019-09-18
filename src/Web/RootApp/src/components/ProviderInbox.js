@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import i18n from "i18next";
 
 import { config, INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP } from "../constants";
-import { deleteAccountByUserAndProvider } from "../services/user-accounts";
 
 class ProviderInbox extends Component {
   constructor(props) {
@@ -11,24 +10,10 @@ class ProviderInbox extends Component {
     this._handleOnClick = this._handleOnClick.bind(this);
   }
 
-  _handleOnClick(provider) {
-    const { removeAccount } = this.props;
+  _handleOnClick(provider, email) {
+    const { toggleConfirmRemoveAccount } = this.props;
 
-    removeAccount(provider);
-    
-    // const url = `${config.api.DELETACCOUNTBYUSERANDPROVIDER}/${userId}/${provider}`;
-    // fetch(url, {
-    //   method: "GET"
-    // })
-    //   .then(data => {
-    //     // this.props.getAccounts();
-    //   })
-    //   .then(data1 => {
-    //     alert("Cuenta Borrada");
-    //   })
-    //   .catch(error => {
-    //     console.log("error ->", error);
-    //   });
+    toggleConfirmRemoveAccount(false, email);
   }
 
   getUser() {
@@ -60,7 +45,7 @@ class ProviderInbox extends Component {
     if (email != null && email !== undefined) {
       return (
         <React.Fragment>
-          <a href="#" className="trash" onClick={() => this._handleOnClick(provider)}>
+          <a href="#" className="trash" onClick={() => this._handleOnClick(provider, email)}>
             <span className="icon lf-icon-trash"></span>
           </a>
         </React.Fragment>

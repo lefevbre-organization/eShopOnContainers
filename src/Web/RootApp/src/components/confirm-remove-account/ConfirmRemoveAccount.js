@@ -1,45 +1,60 @@
 import React, { Component } from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Button, Modal, Container, Col, Row } from "react-bootstrap";
+import i18n from "i18next";
+
+import "./ConfirmRemoveAccout.css";
 
 class ConfirmRemoveAccount extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      show: false
-    };
-
-    this._handleOnHide = this._handleOnHide.bind(this);
-  }
-
-  _handleOnHide() {
-    this.setState = {
-      show: false
+      modal: props.initialModalState
     };
   }
 
-  _handleOnShow() {
-    this.setState = {
-      show: true
-    };
+  toggle() {
+    this.setState({
+      modal: !this.state.modal
+    });
   }
 
   render() {
-    const { show } = this.state;
+    const { initialModalState, toggleConfirmRemoveAccount, email } = this.props;
 
     return (
       <div>
-        <Modal show={show} onHide={this._handleOnHide()}>
+        <Modal
+          show={initialModalState}
+          onHide={toggleConfirmRemoveAccount}
+          size="lg"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+        >
           <Modal.Header closeButton>
-            <Modal.Title>Modal heading</Modal.Title>
+            {/* <Modal.Title>Modal heading</Modal.Title> */}
           </Modal.Header>
-          <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+          <Modal.Body>
+            <Container>
+              <Row>
+                <Col xs={2} md={2}>
+                  <img
+                    className='img-question'
+                    alt=""
+                    src="/assets/imgs/icon-question.png"
+                  ></img>
+                </Col>
+                <Col xs={10} md={10}>
+                  {i18n.t("confirm-remove-accounts.body")}
+                </Col>
+              </Row>
+            </Container>
+          </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={this._handleOnHide()}>
-              Close
+            <Button className='btn-primary' onClick={() => toggleConfirmRemoveAccount(false, email)}>
+              {i18n.t("confirm-remove-accounts.no")}
             </Button>
-            <Button variant="primary" onClick={this._handleOnHide()}>
-              Save Changes
+            <Button className='btn-secondary' onClick={() => toggleConfirmRemoveAccount(true, email)}>
+              {i18n.t("confirm-remove-accounts.yes")}
             </Button>
           </Modal.Footer>
         </Modal>
@@ -49,38 +64,3 @@ class ConfirmRemoveAccount extends Component {
 }
 
 export default ConfirmRemoveAccount;
-
-// import React, { useState } from "react";
-// import { Modal, Button } from "react-bootstrap";
-
-// const ConfirmRemoveAccount = () => {
-//   const [show, setShow] = useState(false);
-
-//   const handleClose = () => setShow(false);
-//   const handleShow = () => setShow(true);
-
-//   return (
-//     <div>
-//       <Button variant="primary" onClick={handleShow}>
-//         Launch demo modal
-//       </Button>
-
-//       <Modal show={show} onHide={handleClose}>
-//         <Modal.Header closeButton>
-//           <Modal.Title>Modal heading</Modal.Title>
-//         </Modal.Header>
-//         <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
-//         <Modal.Footer>
-//           <Button variant="secondary" onClick={handleClose}>
-//             Close
-//           </Button>
-//           <Button variant="primary" onClick={handleClose}>
-//             Save Changes
-//           </Button>
-//         </Modal.Footer>
-//       </Modal>
-//     </div>
-//   );
-// };
-
-// export default ConfirmRemoveAccount;

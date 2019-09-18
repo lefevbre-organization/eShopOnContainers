@@ -1,4 +1,4 @@
-import { config, PROXY_CORS } from "../constants";
+import { config, PROXY_CORS, RESULT_OK } from "../constants";
 
 export const getAccounts = (userId, encrypt) => {
   if (encrypt === "1") {
@@ -38,11 +38,19 @@ export const getAccountsWithUserEncrypt = userId => {
             method: "GET"
           })
             .then(data => data.json())
-            .then(accounts => {
-              resolve({
-                user: user,
-                accounts: accounts
-              });
+            .then(result => {
+              if (result.status === RESULT_OK) {
+                resolve({
+                  user: user,
+                  accounts: result.result
+                });
+              } else {
+                console.log("Error ->", result.description);
+                resolve({
+                  user: user,
+                  accounts: []
+                });
+              }
             })
             .catch(error => {
               reject(error);
@@ -67,11 +75,19 @@ export const getAccountsWithUserNoEncrypt = userId => {
       method: "GET"
     })
       .then(data => data.json())
-      .then(accounts => {
-        resolve({
-          user: { ID_ENTRADA: userId },
-          accounts: accounts
-        });
+      .then(result => {
+        if (result.status === RESULT_OK) {
+          resolve({
+            user: { ID_ENTRADA: userId },
+            accounts: result.result
+          });
+        } else {
+          console.log("Error ->", result.description);
+          resolve({
+            user: { ID_ENTRADA: userId },
+            accounts: []
+          });
+        }
       })
       .catch(error => {
         reject(error);
@@ -105,19 +121,94 @@ const getUser = userId => {
   });
 };
 
-export const deleteAccountByUserAndProvider = (userId, provider) => {
+export const deleteAccountByUserAndProvider = (encrypt, userId, provider) => {
   return new Promise((resolve, reject) => {
-    const url = `${config.url.API_ACCOUNTS}/${config.api.DELETACCOUNTBYUSERANDPROVIDER}/${userId}/${provider}`;
-    fetch(url, {
-      method: "GET"
-    })
-    .then(_ => {
-        resolve('OK');        
-      })
-      .catch(error => {
-        reject(error);
+    if (encrypt === "1") {
+      getUser(userId).then(user => {
+        if (user.ID_ENTRADA != null) {
+          const url = `${config.url.API_ACCOUNTS}/${config.api.DELETACCOUNTBYUSERANDPROVIDER}/${user.ID_ENTRADA}/${provider}`;
+          fetch(url, {
+            method: "GET"
+          })
+            .then(data => data.json())
+            .then(result => {
+              if (result.status === RESULT_OK) {
+                resolve("OK");
+              } else {
+                console.log("Error ->", result.description);
+                resolve("Error ->", result.description);
+              }
+            })
+            .catch(error => {
+              reject(error);
+            });
+        } else {
+          resolve("Error ->");
+        }
       });
+    } else {
+      const url = `${config.url.API_ACCOUNTS}/${config.api.DELETACCOUNTBYUSERANDPROVIDER}/${userId}/${provider}`;
+      fetch(url, {
+        method: "GET"
+      })
+        .then(data => data.json())
+        .then(result => {
+          if (result.status === RESULT_OK) {
+            resolve("OK");
+          } else {
+            console.log("Error ->", result.description);
+            resolve("Error ->", result.description);
+          }
+        })
+        .catch(error => {
+          reject(error);
+        });
+    }
   });
 };
 
-
+export const deleteAccountByUserAndEmail = (encrypt, userId, email) => {
+  return new Promise((resolve, reject) => {
+    if (encrypt === "1") {
+      getUser(userId).then(user => {
+        if (user.ID_ENTRADA != null) {
+          const url = `${config.url.API_ACCOUNTS}/${config.api.DELETACCOUNTBYUSERANDEMAIL}/${user.ID_ENTRADA}/${email}`;
+          fetch(url, {
+            method: "GET"
+          })
+            .then(data => data.json())
+            .then(result => {
+              if (result.status === RESULT_OK) {
+                resolve("OK");
+              } else {
+                console.log("Error ->", result.description);
+                resolve("Error ->", result.description);
+              }
+            })
+            .catch(error => {
+              reject(error);
+            });
+        } else {
+          resolve("Error ->");
+        }
+      });
+    } else {
+      const url = `${config.url.API_ACCOUNTS}/${config.api.DELETACCOUNTBYUSERANDEMAIL}/${userId}/${email}`;
+      fetch(url, {
+        method: "GET"
+      })
+        .then(data => data.json())
+        .then(result => {
+          if (result.status === RESULT_OK) {
+            resolve("OK");
+          } else {
+            console.log("Error ->", result.description);
+            resolve("Error ->", result.description);
+          }
+        })
+        .catch(error => {
+          reject(error);
+        });
+    }
+  });
+};
