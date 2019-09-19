@@ -1,42 +1,36 @@
-export const ADD_MESSAGE = "ADD_MESSAGE";
-export const DELETE_MESSAGE = "DELETE_MESSAGE";
-export const DELETE_LIST_MESSAGES = "DELETE_LIST_MESSAGES";
-export const ADD_LIST_MESSAGES = "ADD_LIST_MESSAGES";
-
-export const addMessage = (messageId) => dispatch => {
-    const data = {
-        id: messageId,
-        content: messageId
-    };
-
-    dispatch({
-        type: ADD_MESSAGE,
-        data
-    });
+// types of action
+const Types = {
+    ADD_MESSAGE: 'ADD_MESSAGE',
+    DELETE_MESSAGE: 'DELETE_MESSAGE',
+    ADD_LIST_MESSAGES: 'ADD_LIST_MESSAGES',
+    DELETE_LIST_MESSAGES: 'DELETE_LIST_MESSAGES'
 };
 
-export const deleteMessage = (messageId) => dispatch => {
-    const data = {
-        id: messageId,
-        content: messageId
-    };
+// actions
+const addMessage = item => ({
+    type: Types.ADD_MESSAGE,
+    payload: item
+});
 
-    dispatch({
-        type: DELETE_MESSAGE,
-        data     
-    });
-};
+const deleteMessage = id => ({
+    type: Types.DELETE_MESSAGE,
+    payload: id
+});
 
-export const deleteListMessages = (listMessages) => dispatch => {
-    dispatch({
-        type: DELETE_LIST_MESSAGES,
-        listMessages
-    });    
-};
+const addListMessages = listItems => ({
+    type: Types.ADD_LIST_MESSAGES,
+    payload: listItems
+});
 
-export const addListMessages = (listMessages) => dispatch => {
-    dispatch({
-        type: ADD_LIST_MESSAGES,
-        listMessages
-    });    
+const deleteListMessages = listItems => ({
+    type: Types.DELETE_LIST_MESSAGES,
+    payload: listItems
+});  
+
+export default {
+    addMessage,
+    deleteMessage,
+    addListMessages,
+    deleteListMessages,
+    Types
 };
