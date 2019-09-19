@@ -63,6 +63,10 @@
         {
             return await _accountsRepository.DeleteAccountByUserAndProvider(user, provider);
         }
+        public async Task<bool> DeleteAccountByUserAndEmail(string user, string email)
+        {
+            return await _accountsRepository.DeleteAccountByUserAndEmail(user, email);
+        }
 
         public async Task<bool> ResetDefaultAccountByUser(string user)
         {

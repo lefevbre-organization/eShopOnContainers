@@ -69,7 +69,12 @@
     <Content Include="src\index.css" />
     <Content Include="src\App.js" />
     <Content Include="src\index.js" />
+    <Content Include="src\lex-on_connector\App.css" />
+    <Content Include="src\lex-on_connector\App.js" />
+    <Content Include="src\lex-on_connector\index.css" />
+    <Content Include="src\lex-on_connector\main.css" />
     <Content Include="src\lex-on_connector\main.scss" />
+    <Content Include="src\lex-on_connector\store\store.jsx" />
     <Content Include="src\serviceWorker.js" />
     <Content Include="src\AppContainer.jsx" />
     <Content Include="src\store.jsx" />
@@ -146,6 +151,7 @@
     <Folder Include="src\lex-on_connector\" />
     <Folder Include="src\lex-on_connector\actions\" />
     <Folder Include="src\lex-on_connector\reducers\" />
+    <Folder Include="src\lex-on_connector\store\" />
     <Folder Include="src\reducers" />
     <Folder Include="src\services\" />
     <Folder Include="src\utils" />
@@ -178,7 +184,7 @@
     <Compile Include="src\lex-on_connector\lex-on_connector.jsx" />
     <Compile Include="src\lex-on_connector\list.js" />
     <Compile Include="src\lex-on_connector\main.js" />
-    <Compile Include="src\lex-on_connector\reducers\lex-on_message-list.reducrers.jsx" />
+    <Compile Include="src\lex-on_connector\reducers\lex-on_message-list.reducers.jsx" />
     <Compile Include="src\reducers\lexon.js" />
     <Compile Include="src\services\i18n.js" />
   </ItemGroup>

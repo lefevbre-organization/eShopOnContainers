@@ -121,14 +121,14 @@
 
             if (accounts?.Count == 0)
             {
-                return NotFound();
+                return NotFound(new OperationReturn { Status = EStatusOpetation.Error, Description = "No accounts" });
             }
             else
             {
                 accounts = accounts.OrderByDescending(x => x.DefaultAccount).ToList();
             }
 
-            return Ok(accounts);
+            return Ok(new OperationReturn { Status = EStatusOpetation.Ok, Result = accounts });
         }
 
         // GET api/v1/emailuseraccount/updatedefaultaccount/12456567/GOOGLE/test@gmail.com
@@ -138,7 +138,7 @@
         {
             await _accountsService.UpdateDefaultAccount(user, provider, email);
 
-            return Ok();
+            return Ok(new OperationReturn { Status = EStatusOpetation.Ok });
         }
 
         // GET api/v1/emailuseraccount/deleteaccountbyuserandprovider/12456567/GOOGLE
@@ -150,10 +150,25 @@
             var result = await _accountsService.DeleteAccountByUserAndProvider(user, provider);
             if (!result)
             {
-                return NotFound();
+                return NotFound(new OperationReturn { Status = EStatusOpetation.Error, Description = "User/Provider Not found" });
             }
 
-            return Ok();
+            return Ok(new OperationReturn { Status = EStatusOpetation.Ok });
+        }
+
+        // GET api/v1/emailuseraccount/deleteaccountbyuserandemail/12456567/jsanchco@gmail.com
+        [HttpGet("deleteaccountbyuserandemail/{user}/{email}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Account), (int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> DeleteAccountByUserAndEmail(string user, string email)
+        {
+            var result = await _accountsService.DeleteAccountByUserAndEmail(user, email);
+            if (!result)
+            {
+                return NotFound(new OperationReturn { Status = EStatusOpetation.Error, Description = "User/Email Not found" });
+            }
+
+            return Ok(new OperationReturn { Status = EStatusOpetation.Ok });
         }
 
         // GET api/v1/emailuseraccount/resetdefaultaccountbyuser/12456567
@@ -165,10 +180,10 @@
             var result = await _accountsService.ResetDefaultAccountByUser(user);
             if (!result)
             {
-                return NotFound();
+                return NotFound(new OperationReturn { Status = EStatusOpetation.Error, Description = "User Not found" });
             }
 
-            return Ok();
+            return Ok(new OperationReturn { Status = EStatusOpetation.Ok });
         }
     }
 }

@@ -18,6 +18,7 @@
         Task<List<Account>> GetByUser(string user);
         Task UpdateDefaultAccount(string user, string provider, string email);
         Task<bool> DeleteAccountByUserAndProvider(string user, string provider);
+        Task<bool> DeleteAccountByUserAndEmail(string user, string email);
         Task<bool> ResetDefaultAccountByUser(string user);
     }
 }

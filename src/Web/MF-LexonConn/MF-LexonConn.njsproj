@@ -70,7 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\actions\lex-on_message-list.actions.jsx" />
-    <Compile Include="src\reducers\lex-on_message-list.reducrers.jsx" />
+    <Compile Include="src\reducers\lex-on_message-list.reducers.jsx" />
     <Compile Include="src\store\store.jsx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
