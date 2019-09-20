@@ -41,7 +41,13 @@
 .imgproduct {
     width: 24px;
     height: 24px;
-    cursor: pointer;
+    cursor: pointer;    
+}
+
+.imgproductdisable {
+    width: 24px;
+    height: 24px;    
+    opacity: 0.3;
 }
 
 spaceproduct {

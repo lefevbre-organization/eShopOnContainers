@@ -54,6 +54,9 @@
     <Content Include="config.jsx" />
     <Content Include="public\index.html" />
     <Content Include="src\App.css" />
+    <Content Include="src\apps\calendar_content.js" />
+    <Content Include="src\apps\material_title_panel.js" />
+    <Content Include="src\apps\lexon_content.js" />
     <Content Include="src\components\aside\aside.scss" />
     <Content Include="src\components\common\checkbox.scss" />
     <Content Include="src\components\compose-message\composeMessage.scss" />

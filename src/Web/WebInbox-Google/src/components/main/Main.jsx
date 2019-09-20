@@ -37,7 +37,8 @@ import { start, registerApplication } from "single-spa";
 import * as singleSpa from "single-spa";
 import { registerLexonApp } from "../../apps/lexonconn-app";
 import SidebarCnn from "react-sidebar";
-import SidebarComponent from "../../apps/sidebar_content";
+import LexonComponent from "../../apps/lexon_content";
+import CalendarComponent from "../../apps/calendar_content";
 import "react-reflex/styles.css";
 
 import { config, PROVIDER } from "../../constants";
@@ -103,16 +104,14 @@ export class Main extends Component {
     //}
 
   onSetSidebarOpenCalendar(open) {
-    this.setState({ sidebarComponent: <SidebarComponent /> });
-    this.setState({ sidebarDocked: open });
+      this.setState({ sidebarComponent: <CalendarComponent /> });
+      this.setState({ sidebarDocked: open });    
   }
 
   onSetSidebarOpenLexon(open) {
-    let lexon = (
-      <img border="0" alt="Lefebvre" src="assets/img/lexon-fake.png"></img>
-    );
-    this.setState({ sidebarComponent: lexon });
-    this.setState({ sidebarDocked: open });
+        this.setState({ sidebarComponent: <LexonComponent /> });
+        this.setState({ sidebarDocked: open });    
+
   }
 
   onSetSidebarOpenQMemento(open) {
@@ -227,21 +226,7 @@ export class Main extends Component {
     this.props.history.push(`/${label.id.toLowerCase()}`);
   }
 
-  registerConnectorApp() {
-    let el = document.getElementById("main-lexon-connector");
-    if (!el) {
-      try {
-        // const activityFunction = location => location.pathname.startsWith('/');
-        // registerApplication('lex-on-connector', () => import('../../lex-on_connector/index.js'), activityFunction);
-        // start();
 
-        registerLexonApp();
-        singleSpa.start();
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  }
 
   getLabelList() {
     this.props.getLabels();
@@ -250,7 +235,7 @@ export class Main extends Component {
   getLabelMessages({ labelIds, q, pageToken }) {
     this.props.emptyLabelMessages();
     this.props.getLabelMessages({ labelIds, q, pageToken });
-    this.registerConnectorApp();
+    //this.registerConnectorApp();
   }
 
   addInitialPageToken(token) {
@@ -373,7 +358,7 @@ export class Main extends Component {
 
           >
 
-              <Fragment>
+              <Fragment>                 
                   <Header googleUser={this.props.googleUser}
                       onSignout={this.onSignout}
                       setSearchQuery={this.props.setSearchQuery}
@@ -417,20 +402,20 @@ export class Main extends Component {
                               <div onClick={() => this.onSetSidebarOpenLexon(true)}>
                                   <img className="imgproduct" border="0" alt="Lex-On" src="assets/img/icon-lexon.png"></img>
                               </div>
+                          </span>                         
+                          <span className="productsbutton">
+                              <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
+                                  <img className="imgproduct" border="0" alt="Calendar" src="assets/img/icon-calendar.png"></img>
+                              </div>
                           </span>
                           <span className="productsbutton">
                               <div onClick={() => this.onSetSidebarOpenQMemento(true)}>
-                                  <img className="imgproduct" border="0" alt="Calendar" src="assets/img/icon-qmemento.png"></img>
+                                  <img className="imgproductdisable" border="0" alt="Calendar" src="assets/img/icon-qmemento.png"></img>
                               </div>
                           </span>
                           <span className="productsbutton">
                               <div onClick={() => this.onSetSidebarOpenCompliance(true)}>
-                                  <img className="imgproduct" border="0" alt="Calendar" src="assets/img/icon-compliance.png"></img>
-                              </div>
-                          </span>
-                          <span className="productsbutton">
-                              <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
-                                  <img className="imgproduct" border="0" alt="Calendar" src="assets/img/icon-calendar.png"></img>
+                                  <img className="imgproductdisable" border="0" alt="Calendar" src="assets/img/icon-compliance.png"></img>
                               </div>
                           </span>
                           <span className="productsbutton">

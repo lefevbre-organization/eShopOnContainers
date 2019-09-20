@@ -225,7 +225,8 @@ export class ComposeMessage extends PureComponent {
                                     onChange={this.setField("subject", false)}
                                 />
                             </InputGroup>
-                        </div>                   
+                        </div>   
+                        <div>
                        <div className="editor-wrapper" >
                             <ReactQuill
                                 tabIndex={5}
@@ -233,7 +234,8 @@ export class ComposeMessage extends PureComponent {
                                 onChange={this.handleChange}
                                 className="autoResizeHeight"
                              />
-                        </div>  
+                            </div>  
+                            </div>
                     </div>                 
                     <div className="ImagePreviewContainer compose-dropcontainer">
                         {

@@ -78,7 +78,7 @@ body {
         padding-bottom: 15px
     }
 
-    spaceproduct {
+    .spaceproduct {
         border-top: 1px solid #dadce0;
         content: '';
         display: block;
@@ -89,6 +89,7 @@ body {
         padding-bottom: 16px;
         width: 20px;
     }
+        
 
     .content-wrapper {
         flex-grow: 1;

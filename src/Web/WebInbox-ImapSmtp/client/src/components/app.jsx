@@ -29,7 +29,8 @@ import { translate } from "react-i18next";
 // import { registerMainnavApp } from "../apps/mainnav-app";
 
 import Sidebar from "react-sidebar";
-import SidebarComponent from "../apps/sidebar_content";
+import LexonComponent from "../apps/lexon_content";
+import CalendarComponent from "../apps/calendar_content";
 import { config, PROVIDER } from "../constants";
 
 // const activityFunction = location => location.pathname.startsWith('/lexon-connector');
@@ -69,16 +70,13 @@ class App extends Component {
   }
 
   onSetSidebarOpenCalendar(open) {
-    this.setState({ sidebarComponent: <SidebarComponent /> });
-    this.setState({ sidebarDocked: open });
+        this.setState({ sidebarComponent: <CalendarComponent /> });
+        this.setState({ sidebarDocked: open });
   }
 
   onSetSidebarOpenLexon(open) {
-    const lexon = (
-      <img border="0" alt="Lefebvre" src="assets/images/lexon-fake.png"></img>
-    );
-    this.setState({ sidebarComponent: lexon });
-    this.setState({ sidebarDocked: open });
+        this.setState({ sidebarComponent: <LexonComponent /> });
+        this.setState({ sidebarDocked: open });
   }
 
   onSetSidebarOpenQMemento(open) {
@@ -231,24 +229,25 @@ class App extends Component {
                   <img
                     border="0"
                     alt="Calendar"
-                    src="assets/images/icon-qmemento.png"
+                    src="assets/images/icon-qmemento.png"                   
                   ></img>
                 </IconButton>
                 <div className={styles.btnselect}></div>
               </span>
               <span
                 className={styles.productsbutton}
-                isotip={t("productBar.compliance")}
+                
                 isotip-position="bottom-end"
                 isotip-size="small"
               >
-                <IconButton
+                <IconButton  disabled 
                   onClick={() => this.onSetSidebarOpenCompliance(true)}
                 >
                   <img
                     border="0"
                     alt="Calendar"
                     src="assets/images/icon-compliance.png"
+                    className="disabledimg"
                   ></img>
                 </IconButton>
                 <div className={styles.btnselect}></div>

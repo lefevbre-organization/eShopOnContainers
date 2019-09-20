@@ -51,7 +51,7 @@
     "whatwg-fetch": "2.0.3"
   },
   "scripts": {
-    "start": "set PORT=3002 && node scripts/start.js",
+    "start": "set PORT=3004 && node scripts/start.js",
     "serve": "node scripts/http-server.js build 3004",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom"

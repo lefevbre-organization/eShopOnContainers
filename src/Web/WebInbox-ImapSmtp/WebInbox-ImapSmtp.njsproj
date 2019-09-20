@@ -41,6 +41,8 @@
     <Content Include="client\assets\images\lexon-fake.png" />
     <Content Include="client\assets\images\LogoLefebvre.png" />
     <Content Include="client\assets\images\settings-gears.svg" />
+    <Content Include="client\src\apps\calendar_content.js" />
+    <Content Include="client\src\apps\lexon_content.js" />
     <Content Include="client\src\components\app.scss" />
     <Content Include="client\src\components\attachment\attachment-card.scss" />
     <Content Include="client\src\components\dialog\single-input-dialog.scss" />
@@ -431,7 +433,6 @@
     <Compile Include="client\src\apps\lexonconn-app.js" />
     <Compile Include="client\src\apps\mainnav-app.js" />
     <Compile Include="client\src\apps\material_title_panel.js" />
-    <Compile Include="client\src\apps\sidebar_content.js" />
     <Compile Include="client\src\apps\utils.js" />
     <Compile Include="client\src\components\Main-bar\button-user.jsx" />
     <Compile Include="client\src\components\Main-bar\button-modules.jsx" />
