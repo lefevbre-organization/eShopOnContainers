@@ -3,7 +3,7 @@
     "idUser": "114",
     "idNavision": "E123456",
     "Name": "Chomin Chon",
-    "version": 6,
+    "version": 7,
     "masters": {
       "entities": {
         "timestamp": "2019-09-12T21:26:17Z",
@@ -46,7 +46,7 @@
           },
           {
             "id": 10,
-            "name": "Jusgados"
+            "name": "Juzgados"
           },
           {
             "id": 11,
@@ -59,41 +59,10 @@
           {
             "id": 13,
             "name": "Carpetas"
-          }
-        ]
-      },
-      "folders": {
-        "timestamp": "2019-09-13T11:26:17Z",
-        "list": [
-          {
-            "level": 1,
-            "idFolder": 12121,
-            "idParent": 12121,
-            "name": "avellanas"
           },
           {
-            "level": 1,
-            "idFolder": 12312,
-            "idParent": 12312,
-            "name": "Documentos Guays"
-          },
-          {
-            "level": 2,
-            "idFolder": 12313,
-            "idParent": 12312,
-            "name": "Chapulines"
-          },
-          {
-            "level": 3,
-            "idFolder": 12314,
-            "idParent": 12313,
-            "name": "Chapulin Colorado"
-          },
-          {
-            "level": 3,
-            "idFolder": 12315,
-            "idParent": 12313,
-            "name": "Chapulin Verde"
+            "id": 14,
+            "name": "Documentos"
           }
         ]
       }
@@ -111,13 +80,17 @@
             "timestamp": "2019-09-11T12:35:28Z",
             "list": [
               {
+                "level": 3,
                 "idFolder": 12345,
+                "idParent": 12121,
                 "name": "Chapulin colorado",
                 "path": "Documentos Guays/Chapulines/Chapulin colorado",
-                "docs": [ "123123123123", "123123123123" ]
+                "Documents": {}
               },
               {
-                "idFolder": 1234445,
+                "level": 3,
+                "idFolder": 12445,
+                "idParent": 12121,
                 "name": "Chapulin verde",
                 "path": "Documentos Guays/Chapulines/Chapulin verde",
                 "Documents": {
@@ -126,15 +99,41 @@
                     {
                       "idDocument": 12347,
                       "name": "cerebro.docx",
-                      "Description": "paco por escrito"
+                      "description": "paco por escrito"
                     },
                     {
                       "idDocument": 123344,
                       "name": "estomago.ppt",
-                      "Description": "paco por powerpoint"
+                      "description": "paco por powerpoint"
                     }
                   ]
                 }
+              },
+              {
+                "level": 1,
+                "idFolder": 12312,
+                "idParent": 12312,
+                "path": "Documentos Guays/",
+                "name": "Documentos Guays"
+              },
+              {
+                "level": 2,
+                "idFolder": 12313,
+                "idParent": 12312,
+                "path": "Documentos Guays/Chapulines/",
+                "name": "Chapulines"
+              },
+              {
+                "level": 3,
+                "idFolder": 12314,
+                "idParent": 12313,
+                "name": "Chapulin Colorado"
+              },
+              {
+                "level": 3,
+                "idFolder": 12315,
+                "idParent": 12313,
+                "name": "Chapulin Verde"
               }
             ]
           },
@@ -278,7 +277,9 @@
             "timestamp": "2019-09-14T13:36:29Z",
             "list": [
               {
-                "idFolder": 23141,
+                "idFolder": 12111,
+                "idParent": 12101,
+                "level": 3,
                 "name": "avellanas",
                 "path": "Leche/Cacao/Avellanas",
                 "Documents": {
@@ -298,10 +299,41 @@
                 }
               },
               {
-                "idFolder": 563434,
+                "idFolder": 16343,
+                "idParent": 16240,
+                "level": 3,
                 "name": "lima",
                 "path": "Hispanoamerica/Peru/Lima",
                 "Documents": []
+              },
+
+              {
+                "level": 2,
+                "idFolder": 16240,
+                "idParent": 16130,
+                "path": "Hispanoamerica/Peru/",
+                "name": "Peru"
+              },
+              {
+                "level": 1,
+                "idFolder": 16130,
+                "idParent": 16130,
+                "path": "Hispanoamerica/",
+                "name": "Hispanoamerica"
+              },
+              {
+                "level": 2,
+                "idFolder": 12101,
+                "idParent": 12100,
+                "path": "Leche/Cacao/",
+                "name": "Cacao"
+              },
+              {
+                "level": 1,
+                "idFolder": 12100,
+                "idParent": 12100,
+                "path": "Leche/",
+                "name": "Leche"
               }
             ]
           },
