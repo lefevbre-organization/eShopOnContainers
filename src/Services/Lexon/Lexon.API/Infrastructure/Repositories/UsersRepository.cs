@@ -33,17 +33,6 @@ namespace Lexon.API.Infrastructure.Repositories
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<List<LexonClassification>> GetClassificationListAsync(int pageSize, int pageIndex, string idUser)
-        {
-            var filter = Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser);
-
-            var user = await _context.LexonUsers
-                .Find(filter)
-                .SingleAsync();
-
-            return user.Classifications.Take(pageSize).ToList();
-        }
-
         public async Task<List<LexonCompany>> GetCompaniesListAsync(int pageSize, int pageIndex, string idUser)
         {
             var filter = Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser);
@@ -52,19 +41,9 @@ namespace Lexon.API.Infrastructure.Repositories
                 .Find(filter)
                 .SingleAsync();
 
-            return user.Companies.Take(pageSize).ToList();
+            return user.Companies.List.Take(pageSize).ToList();
         }
 
-        public async Task<List<LexonFile>> GetFileListAsync(int pageSize, int pageIndex, string idUser)
-        {
-            var filter = Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser);
-
-            var user = await _context.LexonUsers
-                .Find(filter)
-                .SingleAsync();
-
-            return user.Files.Take(pageSize).ToList();
-        }
 
         public async Task<List<LexonUser>> GetListAsync(int pageSize, int pageIndex, string idUser)
         {
@@ -87,13 +66,57 @@ namespace Lexon.API.Infrastructure.Repositories
             await _context.PublishThroughEventBusAsync(eventAssoc, session);
         }
 
-        public async Task<long> AddFileToListAsync(string idUser, long idFile, string nameFile, string descriptionFile = "")
+
+        //public async Task<long> AddFileToListInDocumentAsync(string idUser, long idFile, string nameFile, string descriptionFile = "")
+        //{
+        //    var cancel = default(CancellationToken);
+        //    using (var session = await _context.StartSession(cancel))
+        //    {
+        //        //var transactionOptions = new TransactionOptions(ReadConcern.Snapshot, ReadPreference.Primary, WriteConcern.WMajority);
+        //        //session.StartTransaction(transactionOptions);
+        //        session.StartTransaction();
+        //        try
+        //        {
+        //            var filter = Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser);
+        //            var user = await _context.LexonUsers
+        //                .Find(filter)
+        //                .SingleAsync();
+
+        //            var builder = Builders<LexonUser>.Update;
+        //            var subitem = new LexonFile
+        //            {
+        //                IdFile = (int)idFile,
+        //                Name = nameFile,
+        //                Description = descriptionFile
+        //            };
+        //            var update = builder.Push("Files", subitem);
+
+        //            var result = await _context.LexonUsers.UpdateOneAsync(filter, update);
+
+        //            var eventAssoc = new AddFileToUserIntegrationEvent(idUser, idFile, nameFile, descriptionFile);
+        //            await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
+
+        //            await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
+        //            return result.ModifiedCount;
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            Console.WriteLine(e.Message);
+        //            session.AbortTransaction(cancel);
+        //            return 0;
+        //        }
+        //    }
+        //}
+
+        public async Task<long> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "")
         {
+            //todo: hacer método para desclasificar mail 
             var cancel = default(CancellationToken);
             using (var session = await _context.StartSession(cancel))
             {
                 //var transactionOptions = new TransactionOptions(ReadConcern.Snapshot, ReadPreference.Primary, WriteConcern.WMajority);
                 //session.StartTransaction(transactionOptions);
+                //todo: ver como hacer update de una subcoleción
                 session.StartTransaction();
                 try
                 {
@@ -102,7 +125,10 @@ namespace Lexon.API.Infrastructure.Repositories
                         .Find(filter)
                         .SingleAsync();
 
+                    var company = user.Companies.List.FirstOrDefault(x => x.IdCompany == idCompany);
+
                     var builder = Builders<LexonUser>.Update;
+                    //var builder = Builders<LexonCompany>.Update;
                     var subitem = new LexonFile
                     {
                         IdFile = (int)idFile,
@@ -113,48 +139,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
                     var result = await _context.LexonUsers.UpdateOneAsync(filter, update);
 
-                    var eventAssoc = new AddFileToUserIntegrationEvent(idUser, idFile, nameFile, descriptionFile);
-                    await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
-
-                    await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
-                    return result.ModifiedCount;
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                    session.AbortTransaction(cancel);
-                    return 0;
-                }
-            }
-        }
-
-        public async Task<long> AddFileToListInDocumentAsync(string idUser, long idFile, string nameFile, string descriptionFile = "")
-        {
-            var cancel = default(CancellationToken);
-            using (var session = await _context.StartSession(cancel))
-            {
-                //var transactionOptions = new TransactionOptions(ReadConcern.Snapshot, ReadPreference.Primary, WriteConcern.WMajority);
-                //session.StartTransaction(transactionOptions);
-                session.StartTransaction();
-                try
-                {
-                    var filter = Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser);
-                    var user = await _context.LexonUsers
-                        .Find(filter)
-                        .SingleAsync();
-
-                    var builder = Builders<LexonUser>.Update;
-                    var subitem = new LexonFile
-                    {
-                        IdFile = (int)idFile,
-                        Name = nameFile,
-                        Description = descriptionFile
-                    };
-                    var update = builder.Push("Files", subitem);
-
-                    var result = await _context.LexonUsers.UpdateOneAsync(filter, update);
-
-                    var eventAssoc = new AddFileToUserIntegrationEvent(idUser, idFile, nameFile, descriptionFile);
+                    var eventAssoc = new AddFileToUserIntegrationEvent(idUser, idCompany, idFile, nameFile, descriptionFile);
                     await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
 
                     await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
@@ -226,6 +211,123 @@ namespace Lexon.API.Infrastructure.Repositories
                 }
             }
         }
+
+        public Task<LexonUser> GetAsync(string idUser)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public async Task<List<LexonFile>> GetFileListAsync(int pageSize, int pageIndex, string idUser, long idCompany, string search)
+        {
+            var filter = Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser);
+
+            var user = await _context.LexonUsers
+                .Find(filter)
+                .SingleAsync();
+
+            var company = user.Companies.List.FirstOrDefault(x => x.IdCompany == idCompany);
+            //todo: hacer busqueda combinada de la comnpañia y del usuario
+
+            //todo: hacer procedimiento para buscar los datos de expedientes en mongo
+            return company.Files.List.ToList();
+        }
+
+
+
+        public async Task<List<LexonClassificationType>> GetClassificationMasterListAsync()
+        {
+            throw new NotImplementedException();
+        }
+        public async Task<long> AddClassificationToListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType = 1)
+        {
+            var cancel = default(CancellationToken);
+            var raiseAssociateMailToFileEvent = idClassificationType == 1; // type == "File";
+            var raiseAssociateMailToClientEvent = idClassificationType == 2; //type == "Client";
+            var raiseAssociateMailToDocumentEvent = idClassificationType == 3; //type == "Document";
+
+            using (var session = await _context.StartSession(cancel))
+            {
+                //var transactionOptions = new TransactionOptions(ReadConcern.Snapshot, ReadPreference.Primary, WriteConcern.WMajority);
+                //session.StartTransaction(transactionOptions);
+                session.StartTransaction();
+                try
+                {
+                    var filter = Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser);
+                    var user = await _context.LexonUsersTransaction(session)
+                        .Find(filter)
+                        .SingleAsync();
+
+                    var builder = Builders<LexonUser>.Update;
+                    var cla = new LexonClassification
+                    {
+                        IdClassification = 1,
+                        IdMail = idMail,
+                        IdRelated = idRelated,
+                        Type = "wup"
+                    };
+                    var update = builder.Push("Classifications", cla);
+
+                    var result = await _context.LexonUsersTransaction(session).UpdateOneAsync(filter, update);
+                    if (raiseAssociateMailToFileEvent)
+                    {
+                        var eventAssoc = new AssociateMailToFileIntegrationEvent(idUser, idRelated, idMail);
+                        await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
+                    }
+                    else if (raiseAssociateMailToClientEvent)
+                    {
+                        var eventAssoc = new AssociateMailToClientIntegrationEvent(idUser, idRelated, idMail);
+                        await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
+                    }
+                    else if (raiseAssociateMailToDocumentEvent)
+                    {
+                        var eventAssoc = new AssociateMailToDocumentIntegrationEvent(idUser, idRelated, idMail);
+                        await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
+                    }
+
+                    await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
+                    return result.ModifiedCount;
+                }
+                catch (Exception e)
+
+                {
+                    Console.WriteLine(e.Message);
+                    session.AbortTransaction();
+                    return 0;
+                }
+            }
+        }
+
+        public async Task<long> RemoveClassificationFromListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<LexonCompany> SelectCompanyAsync(string idUser, long idCompany)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<LexonClassificationMail> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail)
+        {
+
+            var filter = Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser);
+
+            var user = await _context.LexonUsers
+                .Find(filter)
+                .SingleAsync();
+
+            var company = user.Companies.List.FirstOrDefault(x => x.IdCompany == idCompany);
+
+            //todo: hacer procedimiento para buscar los datos de clasificaciones en mongo
+            return new LexonClassificationMail();
+
+        }
+
+
+
+
+
 
         #endregion PublishEvents
     }

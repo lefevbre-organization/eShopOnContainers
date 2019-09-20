@@ -22,29 +22,36 @@ namespace Lexon.Infrastructure.Services
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
         }
 
-        public async Task<long> AddClassificationToListAsync(string idUser, string idMail, long idRelated, string type = "File")
+
+        public async Task<long> AddClassificationToListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType = 1)
         {
-            return await _usersRepository.AddClassificationToListAsync(idUser, idMail, idRelated, type);
+            return await _usersRepository.AddClassificationToListAsync(idUser, idCompany, idMail, idRelated, idClassificationType);
         }
 
-        public async Task<long> AddFileToListAsync(string idUser, long idFile, string nameFile, string descriptionFile = "")
+
+        public async Task<long> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "")
         {
-            return await _usersRepository.AddFileToListAsync(idUser, idFile, nameFile, descriptionFile);
+            return await _usersRepository.AddFileToListAsync(idUser, idCompany, idFile, nameFile, descriptionFile);
         }
 
-        public async Task<List<LexonClassification>> GetClassificationListAsync(int pageSize, int pageIndex, string idUser)
+        public async Task<LexonClassificationMail> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail)
         {
-            return await _usersRepository.GetClassificationListAsync(pageSize, pageIndex, idUser);
+            return await _usersRepository.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
         }
 
-        public async Task<List<LexonCompany>> GetCompaniesbyUserAsync(int pageSize, int pageIndex, string idUser)
+        public async Task<List<LexonClassificationType>> GetClassificationMasterListAsync()
+        {
+            return await _usersRepository.GetClassificationMasterListAsync();
+        }
+
+        public async Task<List<LexonCompany>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser)
         {
             return await _usersRepository.GetCompaniesListAsync(pageSize, pageIndex, idUser);
         }
 
-        public async Task<List<LexonFile>> GetFileListAsync(int pageSize, int pageIndex, string idUser)
+        public async Task<List<LexonFile>> GetFileListAsync(int pageSize, int pageIndex, string idUser, long idCompany, string search)
         {
-            return await _usersRepository.GetFileListAsync(pageSize, pageIndex, idUser);
+            return await _usersRepository.GetFileListAsync(pageSize, pageIndex, idUser, idCompany, search);
         }
 
         public async Task<List<LexonUser>> GetListUsersAsync(int pageSize, int pageIndex, string idUser)
@@ -52,9 +59,22 @@ namespace Lexon.Infrastructure.Services
             return await _usersRepository.GetListAsync(pageSize, pageIndex, idUser);
         }
 
-        public async Task<LexonUser> GetUserAsync(int idUser)
+
+        public async Task<LexonUser> GetUserAsync(string idUser)
         {
             return await _usersRepository.GetAsync(idUser);
         }
+
+        public async Task<long> RemoveClassificationFromListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType = 1)
+        {
+            return await _usersRepository.RemoveClassificationFromListAsync(idUser, idCompany, idMail, idRelated, idClassificationType);
+        }
+
+        public async Task<LexonCompany> SelectCompanyAsync(string idUser, long idCompany)
+        {
+            return await _usersRepository.SelectCompanyAsync(idUser, idCompany);
+        }
+
+
     }
 }
