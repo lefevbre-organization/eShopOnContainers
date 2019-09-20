@@ -7,7 +7,6 @@ import Accounts from "./Accounts";
 import { INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP } from "../constants";
 
 class GoTo extends Component {
-
   renderAddAccount(provider) {
     const { userId, accounts } = this.props;
 
@@ -30,7 +29,6 @@ class GoTo extends Component {
           <div className="row">
             <div className="col d-flex justify-content-center">
               <div className="col form-box w-100">
-                
                 <div className="row logo text-center p-md-5 p-3">
                   <div className="col">
                     <span className="naming">{i18n.t("page-goto.mail")}</span>
@@ -39,19 +37,35 @@ class GoTo extends Component {
                     </span>
                   </div>
                 </div>
-                
+
                 <div className="row content px-md-5 px-3">
                   <div className="col">
                     <ul>
-                      <li><ProviderInbox userId={userId} provider={INBOX_GOOGLE} /></li>
-                      <li><ProviderInbox userId={userId} provider={INBOX_OUTLOOK} /></li>
-                      <li><ProviderInbox userId={userId} provider={INBOX_IMAP} /></li>
+                      <li>
+                        <ProviderInbox
+                          userId={userId}
+                          provider={INBOX_GOOGLE}
+                        />
+                      </li>
+                      <li>
+                        <ProviderInbox
+                          userId={userId}
+                          provider={INBOX_OUTLOOK}
+                        />
+                      </li>
+                      <li>
+                        <ProviderInbox userId={userId} provider={INBOX_IMAP} />
+                      </li>
                     </ul>
                   </div>
                 </div>
 
-                <Accounts userId={userId} accounts={this.props.accounts} />
-
+                <Accounts
+                  userId={userId}
+                  accounts={this.props.accounts}
+                  removeAccount={this.props.removeAccount}
+                  toggleConfirmRemoveAccount={this.props.toggleConfirmRemoveAccount}
+                />
               </div>
             </div>
           </div>
@@ -59,7 +73,6 @@ class GoTo extends Component {
       </aside>
     );
   }
-
 }
 
 export default GoTo;

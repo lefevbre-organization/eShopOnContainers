@@ -1,0 +1,50 @@
+[
+  {
+    "idMail": "dkljsajslfcdn123vndfdsffasades",
+    "Classifications": [
+      {
+        "idClassification": 14,
+        "name": "lo que sea será",
+        "description": "si la tiene la tiene",
+        "type": "EXP"
+      },
+
+      {
+        "idClassification": 15,
+        "name": "tiene otro nombre",
+        "description": "",
+        "type": "CLC"
+      },
+      {
+        "idClassification": 16,
+        "name": "pues va a ser que no",
+        "description": "notario de cuenca",
+        "type": "NOT"
+      }
+    ]
+  },
+  {
+    "idMail": "13123dsfvdsfdsfq23w34",
+    "Classifications": [
+      {
+        "idClassification": 34,
+        "name": "nombre expediente",
+        "description": "descrito muy bien",
+        "type": "EXP"
+      },
+
+      {
+        "idClassification": 35,
+        "name": "nombre propio",
+        "description": "",
+        "type": "CLP"
+      },
+      {
+        "idClassification": 36,
+        "name": "nombre contrario",
+        "description": "",
+        "type": "CLC"
+      }
+    ]
+  }
+]

@@ -16,7 +16,9 @@ const dev = {
     PWD: "22lcqsp11lsw"
   },
   api: {
-    ACCOUNTS: "api/v1/accounts/emailuseraccount/getbyuser"
+    ACCOUNTS: "api/v1/accounts/emailuseraccount/getbyuser",
+    DELETACCOUNTBYUSERANDPROVIDER: 'api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider',
+    DELETACCOUNTBYUSERANDEMAIL: 'api/v1/accounts/emailuseraccount/deleteaccountbyuserandemail'
   }
   // login: {
   //     URL_ENCRYPTED_USER: 'http://herculesppd.lefebvre.es/webclient46/ws/encriptarEntrada.do?nEntrada=',
@@ -44,7 +46,9 @@ const prod = {
     PWD: "22lcqsp11lsw"
   },
   api: {
-    ACCOUNTS: "api/v1/accounts/emailuseraccount/getbyuser"
+    ACCOUNTS: "api/v1/accounts/emailuseraccount/getbyuser",
+    DELETACCOUNTBYUSERANDPROVIDER: 'api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider',
+    DELETACCOUNTBYUSERANDEMAIL: 'api/v1/accounts/emailuseraccount/deleteaccountbyuserandemail'
   }
 };
 
@@ -54,3 +58,4 @@ export const INBOX_GOOGLE = "GOOGLE";
 export const INBOX_OUTLOOK = "OUTLOOK";
 export const INBOX_IMAP = "IMAP";
 export const PROXY_CORS = "https://cors-anywhere.herokuapp.com/";
+export const RESULT_OK = 1;

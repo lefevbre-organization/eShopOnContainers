@@ -10,6 +10,7 @@ namespace Lexon.API.IntegrationsEvents.Events
     {
         public string UserId { get; set; }
 
+        public long CompanyId { get; set; }
         public long FileId { get; set; }
 
         public string FileName { get; set; }
@@ -19,12 +20,14 @@ namespace Lexon.API.IntegrationsEvents.Events
 
         public AddFileToUserIntegrationEvent(
             string userId,
+            long companyId,
             long fileId,
             string fileName,
             string fileDescription
             )
         {
             UserId = userId;
+            CompanyId = companyId;
             FileId = fileId;
             FileName = fileName;
             FileDescription = fileDescription;

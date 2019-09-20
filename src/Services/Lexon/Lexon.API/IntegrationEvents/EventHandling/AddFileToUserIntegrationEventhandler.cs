@@ -22,7 +22,7 @@ namespace Lexon.API.IntegrationsEvents.EventHandling
 
         public async Task Handle(AddFileToUserIntegrationEvent @event)
         {
-            await _repository.AddFileToListAsync(@event.UserId, @event.FileId, @event.FileName, @event.FileDescription);
+            await _repository.AddFileToListAsync(@event.UserId, @event.CompanyId, @event.FileId, @event.FileName, @event.FileDescription);
         }
     }
 }
