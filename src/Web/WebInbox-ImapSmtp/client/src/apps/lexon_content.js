@@ -24,7 +24,7 @@ const styles = {
   content: {
     padding: 0,
     height: "100%",
-    backgroundColor: "#e6e9f1"
+    backgroundColor: "#fff"
   }
 };
 
@@ -75,7 +75,7 @@ const lexonContent = props => {
 
 const addImg = (value) => {  
 
-    document.getElementById("myImg1").src = "assets/images/lexon-3.png";
+    document.getElementById("myImg1").src = "assets/images/lexon-2.png";
 
     //document.getElementById("myImg").src = "assets/img/lexon-3.png";
 };

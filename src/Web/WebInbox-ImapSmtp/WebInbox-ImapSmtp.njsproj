@@ -41,6 +41,8 @@
     <Content Include="client\assets\images\lexon-fake.png" />
     <Content Include="client\assets\images\LogoLefebvre.png" />
     <Content Include="client\assets\images\settings-gears.svg" />
+    <Content Include="client\src\apps\database_content.js" />
+    <Content Include="client\src\apps\material_title_panel.scss" />
     <Content Include="client\src\apps\calendar_content.js" />
     <Content Include="client\src\apps\lexon_content.js" />
     <Content Include="client\src\components\app.scss" />
