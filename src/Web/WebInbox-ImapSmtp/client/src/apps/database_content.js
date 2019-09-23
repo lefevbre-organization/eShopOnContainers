@@ -6,7 +6,7 @@ import MaterialTitlePanel from "./material_title_panel";
 
 const styles = {
   sidebar: {
-    width: 319,
+    width: 450,
     height: "100%"
   },
   sidebarLink: {
@@ -34,9 +34,9 @@ const databaseContent = props => {
   
    
   return (
-    <MaterialTitlePanel title="CALENDARIO" style={style}>
+    <MaterialTitlePanel title="B.D JURIDICA" style={style}>
       <div style={styles.content}>       
-              <img border="0" alt="Lefebvre" src="assets/images/database-fake.png"></img> 
+              <img border="0" alt="Lefebvre" src="assets/images/basedatos-fake.png"></img> 
       </div>
     </MaterialTitlePanel>
   );
