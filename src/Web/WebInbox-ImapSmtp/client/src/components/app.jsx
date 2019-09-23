@@ -31,6 +31,7 @@ import { translate } from "react-i18next";
 import Sidebar from "react-sidebar";
 import LexonComponent from "../apps/lexon_content";
 import CalendarComponent from "../apps/calendar_content";
+import DataBaseComponent from "../apps/database_content";
 import { config, PROVIDER } from "../constants";
 
 // const activityFunction = location => location.pathname.startsWith('/lexon-connector');
@@ -80,15 +81,8 @@ class App extends Component {
   }
 
   onSetSidebarOpenQMemento(open) {
-    const lexon = (
-      <img
-        border="0"
-        alt="Lefebvre"
-        src="assets/images/lexon-fake-null.png"
-      ></img>
-    );
-    this.setState({ sidebarComponent: lexon });
-    this.setState({ sidebarDocked: open });
+      this.setState({ sidebarComponent: <DataBaseComponent /> });
+      this.setState({ sidebarDocked: open });
   }
 
   onSetSidebarOpenCompliance(open) {

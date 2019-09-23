@@ -13,5 +13,10 @@
   },
   "accounts": {
     "nothing-user-email-added": "Nothing user email added"
+  },
+  "confirm-remove-accounts": {
+    "body": "If you discard this email account you will stop accessing its content from the Lefebvre Mail service. Do you want to continue?",
+    "yes": "Yes",
+    "no": "No"
   }
 }

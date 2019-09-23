@@ -27,6 +27,7 @@
     <Content Include=".travis.yml" />
     <Content Include="client\.eslintignore" />
     <Content Include="client\.eslintrc" />
+    <Content Include="client\assets\images\basedatos-fake.png" />
     <Content Include="client\assets\images\calendarfake.png" />
     <Content Include="client\assets\images\googlefake.png" />
     <Content Include="client\assets\images\icon-calendar.png" />
@@ -37,10 +38,13 @@
     <Content Include="client\assets\images\icon-user.png" />
     <Content Include="client\assets\images\imap.png" />
     <Content Include="client\assets\images\lefevbre-logo.png" />
+    <Content Include="client\assets\images\lexon-2.png" />
     <Content Include="client\assets\images\lexon-fake-null.png" />
     <Content Include="client\assets\images\lexon-fake.png" />
     <Content Include="client\assets\images\LogoLefebvre.png" />
     <Content Include="client\assets\images\settings-gears.svg" />
+    <Content Include="client\src\apps\database_content.js" />
+    <Content Include="client\src\apps\material_title_panel.scss" />
     <Content Include="client\src\apps\calendar_content.js" />
     <Content Include="client\src\apps\lexon_content.js" />
     <Content Include="client\src\components\app.scss" />

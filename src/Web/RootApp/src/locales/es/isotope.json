@@ -13,5 +13,10 @@
   },
   "accounts": {
     "nothing-user-email-added": "Ninguna cuenta de correo añadida"
+  },
+  "confirm-remove-accounts": {
+    "body": "Si descartas esta cuenta de correo dejarás de acceder a su contenido desde el servicio Mail de Lefebvre. ¿Quieres continuar?",
+    "yes": "Si",
+    "no": "No"
   }
 }

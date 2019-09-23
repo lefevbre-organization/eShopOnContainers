@@ -1,19 +1,16 @@
 import React, {Component} from 'react'
-import './main.scss';
-import { bindActionCreators, compose } from "redux";
-import { connect } from "react-redux";
+import {connect} from "react-redux";
 
-import { addMessage, deleteMessage, deleteListMessages, addListMessages } from "./actions/lex-on_message-list.actions.jsx";
+import './main.css';
+import ACTIONS from "./actions/lex-on_message-list.actions";
 
-// export class main extends Component {
-export class main extends Component {
+class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
             running : true,
             date: new Date(),
-            message: 'Seleccione elemento/s de la lista',
-            listMessages: [] 
+            message: 'Seleccione elemento/s de la lista',   
         };
 
         this.handleEnter = this.handleEnter.bind(this);
@@ -51,8 +48,8 @@ export class main extends Component {
             1000
         );
 
-        window.addEventListener("Checkclick", this.handleKeyPress);
-        window.addEventListener("CheckAllclick", this.handleCheckAllclick);       
+        window.addEventListener("Checkclick", this.handleKeyPress)    
+        window.addEventListener("CheckAllclick", this.handleCheckAllclick);        
     }
 
     componentWillUnmount() {
@@ -67,11 +64,13 @@ export class main extends Component {
         }));
     }
 
-    handleKeyPress(event) {
+    handleKeyPress(event) {              
+        // this.handleEnter(event);
+
         this.setState({           
             message: event.detail.name + " Selected: " + event.detail.chkselected
         });
-
+        
         event.detail.chkselected ? this.props.addMessage(event.detail.name) : this.props.deleteMessage(event.detail.name);
         this.handleEnter(event);
     }
@@ -80,8 +79,6 @@ export class main extends Component {
         this.setState({           
             message: event.detail.name + " Selected: " + event.detail.chkselected
         });
-
-//        addMessage(event.detail.name);
     }
 
     handleCheckAllclick(event) {
@@ -89,11 +86,10 @@ export class main extends Component {
     }
 
     render() {
-        console.log('IN ... dev');
         const clockStateClass = this.state.running ? 'clock--running' : 'clock--paused';
         return (
             <div id="main-lexon-connector" className={`clock ${clockStateClass}`}>
-                <h1>LEX-ON Connector DEV mode!!!</h1>
+                <h1>LEX-ON Connector!</h1>
                 <h2 className='clock__time'>It is {this.state.date.toLocaleTimeString()}</h2> 
                 {/*<img height="120px" border="0" alt="gears" src="assets/img/settings-gears.svg"></img>*/}
                 <p>
@@ -104,12 +100,12 @@ export class main extends Component {
                 <p>{this.state.message}</p> 
 
                 <h1>Lista de Mensajes</h1>
-                {/* { 
+                { 
                     this.props.selectedMessages.map((message) => (
-                        <div key={ message.id }>
-                            { message.content }
+                        <div key={ message }>
+                            { message }
                         </div>
-                ))} */}
+                ))}
             </div>
         );
     }    
@@ -117,28 +113,16 @@ export class main extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        selectedMessages: state.lexonMessageListReducer.selectedMessages
+        selectedMessages: state.selectedMessages
     }    
-};  
+};
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators(
-    {
-      addMessage,
-      deleteMessage,
-      deleteListMessages,
-      addListMessages
-    },
-    dispatch
-);
+const mapDispatchToProps = dispatch => ({
+    addMessage: item => dispatch(ACTIONS.addMessage(item)),
+    deleteMessage: id => dispatch(ACTIONS.deleteMessage(id)),
+    addListMessages: listMessages => dispatch(ACTIONS.addListMessages(listMessages)),
+    deleteListMessages: listMessages => dispatch(ACTIONS.deleteListMessages(listMessages))
+});
 
-export default compose(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps
-    )
-)(main);
+export default connect(mapStateToProps, mapDispatchToProps)(Main);
 
-//export default connect(mapStateToProps, mapDispatchToProps)(main);
-
-//export default main;

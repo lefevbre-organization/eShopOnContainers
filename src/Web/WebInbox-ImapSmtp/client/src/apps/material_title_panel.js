@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import mainCss from "./material_title_panel.scss";
 
 const styles = {
   root: {
@@ -14,7 +15,8 @@ const styles = {
     fontSize: "1em",   
     height: "33px",
     marginLeft: "1px"    
-  }
+    }
+  
 };
 
 const MaterialTitlePanel = props => {
@@ -24,7 +26,7 @@ const MaterialTitlePanel = props => {
 
   return (
     <div style={rootStyle}>
-      <div style={styles.header}>{props.title}</div>
+          <div style={styles.header}><span>{props.title}</span><img className={`${mainCss["headerButtons"]}`} border="0" src="assets/images/buttons.png"></img></div>
       {props.children}
     </div>
   );

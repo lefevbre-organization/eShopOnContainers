@@ -33,7 +33,7 @@ class FilterDialogUser extends Component {
       });
     }
 
-    const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+    const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;oji
     window.open(urlRedirect, "_self");
   }
 

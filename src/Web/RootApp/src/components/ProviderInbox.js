@@ -4,8 +4,16 @@ import i18n from "i18next";
 import { config, INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP } from "../constants";
 
 class ProviderInbox extends Component {
-  _handleOnClick() {
-    alert("onClick!!!");
+  constructor(props) {
+    super(props);
+
+    this._handleOnClick = this._handleOnClick.bind(this);
+  }
+
+  _handleOnClick(provider, email) {
+    const { toggleConfirmRemoveAccount } = this.props;
+
+    toggleConfirmRemoveAccount(false, email);
   }
 
   getUser() {
@@ -32,12 +40,12 @@ class ProviderInbox extends Component {
     }
   }
 
-  getTrash() {
+  getTrash(provider) {    
     const { email } = this.props;
     if (email != null && email !== undefined) {
       return (
         <React.Fragment>
-          <a href="#" className="trash" onClick={this._handleOnClick}>
+          <a href="#" className="trash" onClick={() => this._handleOnClick(provider, email)}>
             <span className="icon lf-icon-trash"></span>
           </a>
         </React.Fragment>
@@ -69,7 +77,7 @@ class ProviderInbox extends Component {
               </span>
               <span>{title}</span>
             </a>
-            {this.getTrash()}
+            {this.getTrash(INBOX_GOOGLE)}
           </React.Fragment>
         );
       case INBOX_OUTLOOK:
@@ -88,7 +96,7 @@ class ProviderInbox extends Component {
               </span>
               <span>{title}</span>
             </a>
-            {this.getTrash()}
+            {this.getTrash(INBOX_OUTLOOK)}
           </React.Fragment>
         );
       case INBOX_IMAP:
@@ -105,7 +113,7 @@ class ProviderInbox extends Component {
               <span className="lf-icon-mail"></span>
               <span>{title}</span>
             </a>
-            {this.getTrash()}
+            {this.getTrash(INBOX_IMAP)}
           </React.Fragment>
         );
 
