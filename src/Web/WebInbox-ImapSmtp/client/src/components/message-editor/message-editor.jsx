@@ -93,9 +93,6 @@ class MessageEditor extends Component {
             </div>
           </form>
         </div>
-            <div>
-
-            
         <div className={styles['editor-wrapper']} onClick={() => this.editorWrapperClick()}>
           <div className={styles['editor-container']}>
             <Editor
@@ -121,9 +118,7 @@ class MessageEditor extends Component {
             </div>
           </div>
           {this.renderEditorButtons()}
-                </div>
-
-                </div>
+        </div>
         <div className={styles['action-buttons']}>
           <button
             className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']}
