@@ -1,0 +1,8 @@
+{
+  "select-company": {
+    "select-company": "Select company:",
+    "enter": "ENTER",
+    "open-all-window": "Open in all window",
+    "hide-column": "Hide column"
+  }
+}

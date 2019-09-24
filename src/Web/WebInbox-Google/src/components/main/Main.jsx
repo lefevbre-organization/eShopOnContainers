@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { bindActionCreators, compose } from "redux";
 import Header from "../header/Header";
 import Sidebar from "../sidebar/Sidebar";
-import LexonConnector from "../../lex-on_connector/lex-on_connector";
 import NotFound from "../not-found/NotFound";
 import "./main.scss";
 import MessageList from "../content/message-list/MessageList";
