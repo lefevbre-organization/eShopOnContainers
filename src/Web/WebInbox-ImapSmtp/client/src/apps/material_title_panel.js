@@ -13,7 +13,7 @@ const styles = {
     color: "white",
     padding: "16px",
     fontSize: "1em",   
-    height: "33px",
+    height: "65px",
     marginLeft: "1px"    
     }
   
