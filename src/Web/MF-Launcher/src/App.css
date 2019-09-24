@@ -1,13 +1,76 @@
 body {
-  background-color: #f4f4f4;
+    height: 100vh;
+    margin: 0;
 }
-.contentpresentation {
-  width: 320px;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  right: 0;
-  border: none;
-  background-color: white;
-  padding-top: 75px;
+
+#root {
+    height: 100%;
+}
+
+.App {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #FFF;
+}
+
+.App-logo {
+    animation: App-logo-spin infinite 20s linear;
+    height: 80px;
+}
+
+.App-header {   
+    padding: 5px;   
+}
+
+.App-title {
+    font-size: 1.5em;
+}
+
+.App-content {
+    font-size: large;
+    display: flex;
+    flex-grow: 1;
+}
+
+.App-content > * {
+    margin-bottom: 10px;
+}
+
+.Menu {
+    height: 100%;
+}
+
+.Menu-Item {
+    text-align:left;
+    padding: 15px;
+    cursor: pointer;
+    color:black;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+}
+
+.Menu-Item:hover {
+    /*background-color: #500000;
+    transition: 200ms;*/
+}
+
+.Menu-Item--Selected,.Menu-Item--Selected:hover {
+    /*background-color: #840000;
+    border-color: red;*/
+}
+
+.App-container {
+    flex-grow: 1;
+    overflow: auto;
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
