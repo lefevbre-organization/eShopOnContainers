@@ -68,21 +68,25 @@ class App extends Component {
       this
     );
     this.onSetSidebarOpenDatabase = this.onSetSidebarOpenDatabase.bind(this);
+    this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
+      this
+    );
   }
 
   onSetSidebarOpenCalendar(open) {
-        this.setState({ sidebarComponent: <CalendarComponent /> });
-        this.setState({ sidebarDocked: open });
+    this.setState({ sidebarComponent: <CalendarComponent /> });
+    this.setState({ sidebarDocked: open });
   }
 
   onSetSidebarOpenLexon(open) {
-        this.setState({ sidebarComponent: <LexonComponent /> });
-        this.setState({ sidebarDocked: open });
+    this.setState({ sidebarComponent: <LexonComponent /> });
+    this.setState({ sidebarDocked: open });
+    this.setState({ actualSidebarComponent: 1 });
   }
 
   onSetSidebarOpenQMemento(open) {
-      this.setState({ sidebarComponent: <DataBaseComponent /> });
-      this.setState({ sidebarDocked: open });
+    this.setState({ sidebarComponent: <DataBaseComponent /> });
+    this.setState({ sidebarDocked: open });
   }
 
   onSetSidebarOpenCompliance(open) {
@@ -111,6 +115,23 @@ class App extends Component {
 
   onSetSidebarDocked(open) {
     this.setState({ sidebarDocked: open });
+  }
+
+  sendMessagePutUser(user) {
+    window.dispatchEvent(
+      new CustomEvent("PutUserFromLexonConnector", {
+        detail: {
+          user
+        }
+      })
+    );
+  }
+
+  handleGetUserFromLexonConnector() {
+    const { userId } = this.props.lexon;
+    if (userId) {
+      this.sendMessagePutUser(userId);
+    }
   }
 
   render() {
@@ -223,18 +244,18 @@ class App extends Component {
                   <img
                     border="0"
                     alt="Calendar"
-                    src="assets/images/icon-qmemento.png"                   
+                    src="assets/images/icon-qmemento.png"
                   ></img>
                 </IconButton>
                 <div className={styles.btnselect}></div>
               </span>
               <span
                 className={styles.productsbutton}
-                
                 isotip-position="bottom-end"
                 isotip-size="small"
               >
-                <IconButton  disabled 
+                <IconButton
+                  disabled
                   onClick={() => this.onSetSidebarOpenCompliance(true)}
                 >
                   <img
@@ -367,11 +388,16 @@ class App extends Component {
       fetch(url, {
         method: "GET"
       })
-      // .then(r => r.json())
-      .then(result => {
-        console.log(result);
-      });
+        // .then(r => r.json())
+        .then(result => {
+          console.log(result);
+        });
     }
+
+    window.addEventListener(
+      "GetUserFromLexonConnector",
+      this.handleGetUserFromLexonConnector
+    );
   }
 
   componentDidUpdate() {
@@ -380,6 +406,11 @@ class App extends Component {
 
   componentWillUnmount() {
     clearTimeout(this.refreshPollTimeout);
+
+    window.removeEventListener(
+      "GetUserFromLexonConnector",
+      this.handleGetUserFromLexonConnector
+    );
   }
 
   startPoll() {

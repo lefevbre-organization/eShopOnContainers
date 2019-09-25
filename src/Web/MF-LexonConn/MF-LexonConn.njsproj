@@ -39,10 +39,16 @@
     <Content Include="scripts\start.js" />
     <Content Include="scripts\test.js" />
     <Content Include="src\App.css" />
+    <Content Include="src\components\company\company.css" />
+    <Content Include="src\components\company\company.js" />
+    <Content Include="src\components\constants\index.js" />
     <Content Include="src\components\header\header.css" />
     <Content Include="src\components\header\header.js" />
     <Content Include="src\components\select-company\select-company.css" />
     <Content Include="src\components\select-company\select-company.js" />
+    <Content Include="src\components\spinner\spinner.css" />
+    <Content Include="src\components\spinner\spinner.js" />
+    <Content Include="src\constants\index.js" />
     <Content Include="src\locales\en\isotope.json" />
     <Content Include="src\locales\es\isotope.json" />
     <Content Include="src\main.css" />
@@ -55,6 +61,7 @@
     <Content Include="config\jest\cssTransform.js" />
     <Content Include="config\jest\fileTransform.js" />
     <Content Include="src\services\i18n.js" />
+    <Content Include="src\services\services-lexon.js" />
     <Content Include="src\styles\bootstrap\bootstrap.min.css" />
     <Content Include="src\styles\fonts\glyphicons-halflings-regular.eot" />
     <Content Include="src\styles\fonts\glyphicons-halflings-regular.svg" />
@@ -70,8 +77,12 @@
     <Folder Include="src" />
     <Folder Include="src\actions\" />
     <Folder Include="src\components\" />
+    <Folder Include="src\components\company\" />
+    <Folder Include="src\components\constants\" />
     <Folder Include="src\components\header\" />
     <Folder Include="src\components\select-company\" />
+    <Folder Include="src\components\spinner\" />
+    <Folder Include="src\constants\" />
     <Folder Include="src\locales\" />
     <Folder Include="src\locales\en\" />
     <Folder Include="src\locales\es\" />

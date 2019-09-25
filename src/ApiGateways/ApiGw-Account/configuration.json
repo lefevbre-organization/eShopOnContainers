@@ -11,6 +11,18 @@
       ],
       "UpstreamPathTemplate": "/api/{version}/accounts/{everything}",
       "UpstreamHttpMethod": []
+    },
+    {
+      "DownstreamPathTemplate": "/api/{version}/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 64745
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/lex/{everything}",
+      "UpstreamHttpMethod": []
     }
   ],
   "GlobalConfiguration": {

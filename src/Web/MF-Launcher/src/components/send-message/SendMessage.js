@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import "./SendMessage.css";
 
 class SendMessage extends Component {
   toggle(event) {
@@ -22,7 +23,7 @@ class SendMessage extends Component {
           id="option1"
           onClick={this.toggle.bind(this)}
         />
-        <label for="option1">
+        <label htmlFor="option1">
           <strong>Message 1</strong>
         </label>
         <br />
@@ -32,7 +33,7 @@ class SendMessage extends Component {
           id="option2"
           onClick={this.toggle.bind(this)}
         />
-        <label for="option2">
+        <label htmlFor="option2">
           <strong>Message 2</strong>
         </label>
         <br />
@@ -42,7 +43,7 @@ class SendMessage extends Component {
           id="option3"
           onClick={this.toggle.bind(this)}
         />
-        <label for="option3">
+        <label htmlFor="option3">
           <strong>Message 3</strong>
         </label>
       </div>
