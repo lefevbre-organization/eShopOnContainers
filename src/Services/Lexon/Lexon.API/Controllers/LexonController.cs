@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,21 +41,29 @@ namespace Lexon.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<LexonCompany>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CompaniesAsync([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0, string idUser = null)
-
         {
-            if (!string.IsNullOrEmpty(idUser))
-            {
-                var itemsByUser = await _usersService.GetCompaniesFromUserAsync(pageSize, pageIndex, idUser);
-                return !itemsByUser.Any()
-                    ? (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment")
-                    : Ok(itemsByUser);
-            }
+            var companies = new List<LexonCompany> {
+                new LexonCompany { IdCompany = 1, Name = "Abogados de Atocha, S.L." },
+                new LexonCompany { IdCompany = 2, Name = "Servicios Jurídicos Arganzuela" },
+                new LexonCompany { IdCompany = 3, Name = "Barconsa Asesoresssss" }
+            };
 
-            var itemsOnPage = await _usersService.GetCompaniesFromUserAsync(pageSize, pageIndex, idUser);
-            var totalItems = itemsOnPage.Count;
+            var companiesJson = JsonConvert.SerializeObject(companies);
+            return Ok(companiesJson);
 
-            var model = new PaginatedItemsViewModel<LexonCompany>(pageIndex, pageSize, totalItems, itemsOnPage);
-            return Ok(model);
+            //if (!string.IsNullOrEmpty(idUser))
+            //{
+            //    var itemsByUser = await _usersService.GetCompaniesFromUserAsync(pageSize, pageIndex, idUser);
+            //    return !itemsByUser.Any()
+            //        ? (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment")
+            //        : Ok(itemsByUser);
+            //}
+
+            //var itemsOnPage = await _usersService.GetCompaniesFromUserAsync(pageSize, pageIndex, idUser);
+            //var totalItems = itemsOnPage.Count;
+
+            //var model = new PaginatedItemsViewModel<LexonCompany>(pageIndex, pageSize, totalItems, itemsOnPage);
+            //return Ok(model);
         }
 
         // GET api/v1/[controller]/classifications[?pageSize=3&pageIndex=10]
