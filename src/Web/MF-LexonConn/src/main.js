@@ -5,8 +5,9 @@ import ACTIONS from "./actions/lex-on_message-list.actions";
 import "./main.css";
 
 import Header from "./components/header/header";
-import SelectCompany from "./components/select-company/select-company";
+import Routing from "./components/routing/routing";
 import Spinner from "./components/spinner/spinner";
+import ClassifyEmails from "./components/classify-emails/classify-emails";
 
 import { getCompanies } from "./services/services-lexon";
 
@@ -15,21 +16,30 @@ class Main extends Component {
     super(props);
 
     this.state = {
-      user: null, 
+      user: null,
       companies: [],
-      isLoading: true
+      isLoading: true,
+      showClassifyEmails: false
     };
 
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleCheckAllclick = this.handleCheckAllclick.bind(this);
+    this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
+      this
+    );
     this.handlePutUserFromLexonConnector = this.handlePutUserFromLexonConnector.bind(
       this
     );
+    this.toggleClassifyEmails = this.toggleClassifyEmails.bind(this);
   }
 
   componentDidMount() {
     window.addEventListener("Checkclick", this.handleKeyPress);
     window.addEventListener("CheckAllclick", this.handleCheckAllclick);
+    window.addEventListener(
+      "GetUserFromLexonConnector",
+      this.handleGetUserFromLexonConnector
+    );
     window.addEventListener(
       "PutUserFromLexonConnector",
       this.handlePutUserFromLexonConnector
@@ -41,6 +51,10 @@ class Main extends Component {
   componentWillUnmount() {
     window.removeEventListener("Checkclick", this.handleKeyPress);
     window.removeEventListener("CheckAllclick", this.handleCheckAllclick);
+    window.removeEventListener(
+      "GetUserFromLexonConnector",
+      this.handleGetUserFromLexonConnector
+    );
     window.removeEventListener(
       "PutUserFromLexonConnector",
       this.handlePutUserFromLexonConnector
@@ -64,23 +78,46 @@ class Main extends Component {
   }
 
   sendMessageGetUser() {
-    console.log('IN ... MF-LexonConnector [sendMessageGetUser]');
     window.dispatchEvent(new CustomEvent("GetUserFromLexonConnector"));
+  }
+
+  sendMessagePutUser(user) {
+    window.dispatchEvent(
+      new CustomEvent("PutUserFromLexonConnector", {
+        detail: {
+          user
+        }
+      })
+    );
+  }
+
+  handleGetUserFromLexonConnector(event) {
+    this.sendMessagePutUser("1255717");
   }
 
   async handlePutUserFromLexonConnector(event) {
     const user = event.detail.user;
     getCompanies(user)
-    .then(result => {
-      this.setState({ isLoading: false, user: user, companies: result.companies });
-    })
-    .catch(error => {
-      console.log('error ->', error);
-    });
+      .then(result => {
+        this.setState({
+          isLoading: false,
+          user: user,
+          companies: result.companies
+        });
+      })
+      .catch(error => {
+        console.log("error ->", error);
+      });
+  }
+
+  toggleClassifyEmails(remove, email) {
+    this.setState(state => ({
+      showClassifyEmails: !state.showClassifyEmails
+    }));
   }
 
   render() {
-    const { isLoading, user, companies } = this.state;
+    const { isLoading, user, companies, showClassifyEmails } = this.state;
 
     if (isLoading) {
       return <Spinner />;
@@ -88,18 +125,11 @@ class Main extends Component {
 
     return (
       <Fragment>
-        {/* <Header title={"LEX-ON"} /> */}
-        <SelectCompany user={user} companies={companies} />
-        <div className="container">
-          <div className="row">
-            <div className="col-12 form-selection-business">
-              <h3>Lista de Mensajes</h3>
-              {this.props.selectedMessages.map(message => (
-                <div key={message}>{message}</div>
-              ))}
-            </div>
-          </div>
-        </div>
+        <ClassifyEmails
+          initialModalState={showClassifyEmails}
+          toggleClassifyEmails={this.toggleClassifyEmails}
+        />
+        <Routing user={user} companies={companies} toggleClassifyEmails={this.toggleClassifyEmails} />
       </Fragment>
     );
   }

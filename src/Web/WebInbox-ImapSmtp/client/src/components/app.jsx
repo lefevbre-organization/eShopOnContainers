@@ -147,7 +147,7 @@ class App extends Component {
         styles={{
           sidebar: {
             background: "white",
-            zIndex: 9999,
+            zIndex: 999,
             overflowY: "hidden",
             WebkitTransition: "-webkit-transform 0s",
             willChange: "transform"

@@ -1,0 +1,63 @@
+strong {
+  font-weight: 500;
+  font-family: MTTMilano-Medium, Lato, Arial, sans-serif;
+}
+
+/* Items list: BOC */
+.selected-messages {
+  color: #7f8cbb;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 25px;
+  text-align: center;
+  text-transform: uppercase;
+  font-family: MTTMilano, Lato, Arial, sans-serif;
+  padding-top: 20px;
+}
+.selected-messages span {
+  background-color: #e5e8f1;
+  color: #001978;
+  font-family: Lato;
+  font-size: 14px;
+  font-weight: normal;
+  padding-right: 1em;
+  padding-left: 1em;
+}
+.company-id {
+  font-size: 14px;
+  position: relative;
+  line-height: 21px;
+  margin-bottom: 30px;
+  font-family: MTTMilano, Lato, Arial, sans-serif;
+}
+
+.company-id:before {
+  background-color: #e5e8f1;
+  /* height: 76px;
+  width: 10px; */
+  content: "";
+  display: block;
+  position: absolute;
+  top: -20px;
+  left: -15px;
+}
+.company-id strong {
+  color: #001978;
+  font-weight: 500;
+}
+.company-id a {
+  color: #001978;
+  font-size: 20px;
+  display: block;
+  width: 34px;
+  height: 34px;
+  padding: 7px;
+  transition: background-color 0.3ms;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+}
+.company-id a:hover {
+  background-color: #e5e8f1;
+}

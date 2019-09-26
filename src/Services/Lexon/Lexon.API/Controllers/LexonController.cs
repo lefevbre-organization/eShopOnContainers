@@ -45,7 +45,7 @@ namespace Lexon.API.Controllers
             var companies = new List<LexonCompany> {
                 new LexonCompany { IdCompany = 1, Name = "Abogados de Atocha, S.L." },
                 new LexonCompany { IdCompany = 2, Name = "Servicios Jurídicos Arganzuela" },
-                new LexonCompany { IdCompany = 3, Name = "Barconsa Asesoresssss" }
+                new LexonCompany { IdCompany = 3, Name = "Barconsa Asesores" }
             };
 
             var companiesJson = JsonConvert.SerializeObject(companies);

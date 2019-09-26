@@ -17,3 +17,5 @@ const prod = {
 };
 
 export const config = process.env.NODE_ENV === "development" ? dev : prod;
+export const PAGE_SELECT_COMPANY = 'PAGE_SELECT_COMPANY';
+export const PAGE_SELECT_ACTION = 'PAGE_SELECT_ACTION';
