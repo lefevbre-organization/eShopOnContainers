@@ -4,6 +4,12 @@
     "enter": "ENTRAR",
     "open-all-window": "Abrir en pantalla completa",
     "hide-column": "Ocultar columna"
+  },
+  "select-action-header": {
+    "messages-selected": "MENSAJES SELECCIONADOS:",
+    "company-selected": "Empresa identificada:",
+    "change-company": "Cambiar de empresa",
+    "select-another-company": "Seleccionar otra empresa diferente"
   }
 }
 

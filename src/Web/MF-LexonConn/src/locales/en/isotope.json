@@ -4,5 +4,11 @@
     "enter": "ENTER",
     "open-all-window": "Open in all window",
     "hide-column": "Hide column"
+  },
+  "select-action-header": {
+    "messages-selected": "SELECTED MESSAGES:",
+    "company-selected": "Company identified:",
+    "change-company": "Change company",
+    "select-another-company": "Select another company"
   }
 }

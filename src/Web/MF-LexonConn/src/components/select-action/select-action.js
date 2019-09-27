@@ -17,14 +17,19 @@ class SelectAction extends Component {
   }
 
   render() {
+    const { companies } = this.props;
     return (
       <div className="container-fluid">
-        <SelectActionHeader changePage={this.props.changePage} />
+        <SelectActionHeader companies={companies} changePage={this.props.changePage} />
       </div>
     );
   }
 }
 
-SelectAction.propTypes = {};
+SelectAction.propTypes = {
+  user: PropTypes.string.isRequired,
+  companies: PropTypes.array.isRequired,
+  changePage: PropTypes.func.isRequired
+};
 
 export default SelectAction;

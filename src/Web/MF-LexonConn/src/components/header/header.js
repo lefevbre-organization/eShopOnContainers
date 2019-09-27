@@ -11,7 +11,7 @@ const Header = ({ title }) => {
           <h1 className="col-6">{title}</h1>
           <ul className="list-inline col-6 text-right tools-bar">
             <li className="list-inline-item">
-              <a href="#" title={i18n.t("select-company.open-all-window")}>
+              <a href="#/" title={i18n.t("select-company.open-all-window")}>
                 <strong className="sr-only sr-only-focusable">
                   {i18n.t("select-company.open-all-window")}
                 </strong>
@@ -19,7 +19,7 @@ const Header = ({ title }) => {
               </a>
             </li>
             <li className="list-inline-item">
-              <a href="#" title={i18n.t("select-company.hide-column")}>
+              <a href="#/" title={i18n.t("select-company.hide-column")}>
                 <strong className="sr-only sr-only-focusable">
                   {i18n.t("select-company.hide-column")}
                 </strong>

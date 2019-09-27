@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import "./select-action-header.css";
 import { connect } from "react-redux";
+import i18n from "i18next";
 
 import { PAGE_SELECT_COMPANY } from "../../../constants";
 
@@ -16,28 +17,41 @@ class SelectActionHeader extends Component {
     this.props.changePage(PAGE_SELECT_COMPANY);
   }
 
+  renderArrowChangePage() {
+    const { companies } = this.props;
+    if (companies.length > 1) {
+      return (
+        <span
+          className="lf-icon-arrow-exchange"
+          onClick={this._handelOnClick}
+        ></span>
+      );
+    } else {
+      return null;
+    }
+  }
+
   render() {
-    const { selectedMessages } = this.props;    
-    
+    const { selectedMessages, companySelected } = this.props;
+
     return (
       <Fragment>
         <p className="selected-messages">
-          <span className="badge badge-pill badge-light">{selectedMessages.length}</span>
+          <span className="badge badge-pill badge-light">
+            {selectedMessages.length}
+          </span>
           <br />
-          mensajes seleccionados
+          {i18n.t("select-action-header.messages-selected")}
         </p>
         <p className="company-id">
-          Empresa identificada:
+          {i18n.t("select-action-header.company-selected")}
           <br />
-          <strong>Abogados de Atocha, S.L.</strong>
-          <a href="#" title="Cambiar de empresa">
+          <strong>{companySelected.Name}</strong>
+          <a href="#/" title={i18n.t("select-action-header.change-company")}>
             <strong className="sr-only sr-only-focusable">
-              Seleccionar una empresa diferente
+              {i18n.t("select-action-header.select-another-company")}
             </strong>
-            <span
-              className="lf-icon-arrow-exchange"
-              onClick={this._handelOnClick}
-            ></span>
+            {this.renderArrowChangePage()}
           </a>
         </p>
       </Fragment>
@@ -45,11 +59,15 @@ class SelectActionHeader extends Component {
   }
 }
 
-SelectActionHeader.propTypes = {};
+SelectActionHeader.propTypes = {
+  companies: PropTypes.array.isRequired,
+  changePage: PropTypes.func.isRequired
+};
 
 const mapStateToProps = state => {
   return {
-    selectedMessages: state.email.selectedMessages
+    selectedMessages: state.email.selectedMessages,
+    companySelected: state.selections.companySelected
   };
 };
 

@@ -5,7 +5,6 @@ class Company extends Component {
   constructor(props) {
     super(props);
 
-
     this.toggle = this.toggle.bind(this);
   }
 
@@ -20,30 +19,26 @@ class Company extends Component {
     const name = this.props.company.Name;
     const { checked } = this.props;
 
-    if (checked) {
-      return (
-        <li>
-          <input type="radio" name="optionsRadios" id={id} value={value} onClick={this.toggle.bind(this)} checked/>
-          <label htmlFor={id}>
-            <strong>{name}</strong>
-          </label>
-        </li>
-      );  
-    } else {
-      return (
-        <li>
-          <input type="radio" name="optionsRadios" id={id} value={value} onClick={this.toggle.bind(this)} />
-          <label htmlFor={id}>
-            <strong>{name}</strong>
-          </label>
-        </li>
-      );  
-    }
+    return (
+      <li>
+        <input
+          type="radio"
+          name="optionsRadios"
+          id={id}
+          value={value}
+          onClick={this.toggle.bind(this)}
+          defaultChecked={checked}
+        />
+        <label htmlFor={id}>
+          <strong>{name}</strong>
+        </label>
+      </li>
+    );
   }
 }
 
 Company.propTypes = {
-   company: PropTypes.object.isRequired
+  company: PropTypes.object.isRequired
 };
 
 export default Company;

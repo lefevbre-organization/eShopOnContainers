@@ -53,6 +53,8 @@
     <Content Include="src\components\routing\routing.js" />
     <Content Include="src\components\select-action\select-action-header\select-action-header.css" />
     <Content Include="src\components\select-action\select-action-header\select-action-header.js" />
+    <Content Include="src\components\select-action\select-action-tab\select-action-tab.css" />
+    <Content Include="src\components\select-action\select-action-tab\select-action-tab.js" />
     <Content Include="src\components\select-action\select-action.css" />
     <Content Include="src\components\select-action\select-action.js" />
     <Content Include="src\components\select-company\select-company.css" />
@@ -99,6 +101,7 @@
     <Folder Include="src\components\routing\" />
     <Folder Include="src\components\select-action\" />
     <Folder Include="src\components\select-action\select-action-header\" />
+    <Folder Include="src\components\select-action\select-action-tab\" />
     <Folder Include="src\components\select-company\" />
     <Folder Include="src\components\spinner\" />
     <Folder Include="src\constants\" />
