@@ -10,5 +10,8 @@
     "company-selected": "Company identified:",
     "change-company": "Change company",
     "select-another-company": "Select another company"
+  },
+  "new-classification": {
+    "new-classification": "New classification"
   }
 }

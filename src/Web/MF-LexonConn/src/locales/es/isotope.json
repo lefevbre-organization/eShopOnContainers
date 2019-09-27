@@ -10,6 +10,9 @@
     "company-selected": "Empresa identificada:",
     "change-company": "Cambiar de empresa",
     "select-another-company": "Seleccionar otra empresa diferente"
+  },
+  "new-classification": {
+    "new-classification": "Nueva clasificación"
   }
 }
 

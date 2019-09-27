@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import "./select-action.css";
 import PropTypes from "prop-types";
 
-import SelectActionHeader from "../select-action/select-action-header/select-action-header"
+import SelectActionHeader from "../select-action/select-action-header/select-action-header";
+import SelectActionTab from "../select-action/select-action-tab/select-action-tab";
 import { PAGE_SELECT_COMPANY } from "../../constants";
 
 class SelectAction extends Component {
@@ -21,6 +22,7 @@ class SelectAction extends Component {
     return (
       <div className="container-fluid">
         <SelectActionHeader companies={companies} changePage={this.props.changePage} />
+        <SelectActionTab />
       </div>
     );
   }
