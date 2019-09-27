@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 
-import ACTIONS from "./actions/lex-on_message-list.actions";
+import ACTIONS from "./actions/email";
 import "./main.css";
 
 import Header from "./components/header/header";
@@ -129,6 +129,7 @@ class Main extends Component {
           initialModalState={showClassifyEmails}
           toggleClassifyEmails={this.toggleClassifyEmails}
         />
+        {/* <Header title={"LEX-ON"} /> */}
         <Routing user={user} companies={companies} toggleClassifyEmails={this.toggleClassifyEmails} />
       </Fragment>
     );
@@ -137,7 +138,7 @@ class Main extends Component {
 
 const mapStateToProps = state => {
   return {
-    selectedMessages: state.selectedMessages
+    selectedMessages: state.email.selectedMessages
   };
 };
 

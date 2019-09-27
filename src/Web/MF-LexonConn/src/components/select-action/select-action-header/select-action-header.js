@@ -49,7 +49,7 @@ SelectActionHeader.propTypes = {};
 
 const mapStateToProps = state => {
   return {
-    selectedMessages: state.selectedMessages
+    selectedMessages: state.email.selectedMessages
   };
 };
 

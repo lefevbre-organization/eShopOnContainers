@@ -38,6 +38,8 @@
     <Content Include="scripts\http-server.js" />
     <Content Include="scripts\start.js" />
     <Content Include="scripts\test.js" />
+    <Content Include="src\actions\email.jsx" />
+    <Content Include="src\actions\selections.jsx" />
     <Content Include="src\App.css" />
     <Content Include="src\classify-emails\classify-emails.css" />
     <Content Include="src\classify-emails\classify-emails.js" />
@@ -66,6 +68,9 @@
     <Content Include="src\App.test.js" />
     <Content Include="src\main.js" />
     <Content Include="src\index.js" />
+    <Content Include="src\reducers\email.jsx" />
+    <Content Include="src\reducers\index.jsx" />
+    <Content Include="src\reducers\selections.jsx" />
     <Content Include="src\registerServiceWorker.js" />
     <Content Include="config\jest\cssTransform.js" />
     <Content Include="config\jest\fileTransform.js" />

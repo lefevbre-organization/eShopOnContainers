@@ -1,10 +1,7 @@
-import ACTIONS from "../actions/lex-on_message-list.actions";
+import { INITIAL_STATE } from "./index";
+import ACTIONS from "../actions/email";
 
-const defaultMessageList = {
-    selectedMessages: []
-};
-
-const lexonMessageListReducer = (state = defaultMessageList, action) => {
+const email = (state = INITIAL_STATE.email, action) => {
     switch(action.type) {
         case ACTIONS.Types.ADD_MESSAGE: {
             const index = state.selectedMessages.findIndex(message => message === action.payload)
@@ -53,4 +50,4 @@ const lexonMessageListReducer = (state = defaultMessageList, action) => {
     }
 }
 
-export default lexonMessageListReducer;
+export default email;
