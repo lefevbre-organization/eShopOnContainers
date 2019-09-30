@@ -3,7 +3,8 @@ const dev = {
     API_ACCOUNTS: "http://localhost:60980"
   },
   api: {
-    COMPANIES: "api/v1/lex/lexon/companies"
+    COMPANIES: "api/v1/lex/lexon/companies",
+    CLASSIFICATIONS: "api/v1/lex/lexon/classifications"
   }
 };
 
@@ -12,7 +13,8 @@ const prod = {
     API_ACCOUNTS: "http://localhost:60980"
   },
   api: {
-    COMPANIES: "api/v1/lex/lexon/companies"
+    COMPANIES: "api/v1/lex/lexon/companies",
+    CLASSIFICATIONS: "api/v1/lex/lexon/classifications"
   }
 };
 

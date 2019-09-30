@@ -8,6 +8,8 @@ class TabKeepRecord extends Component {
   }
 }
 
-TabKeepRecord.propTypes = {};
+TabKeepRecord.propTypes = {
+  user: PropTypes.string.isRequired
+};
 
 export default TabKeepRecord;

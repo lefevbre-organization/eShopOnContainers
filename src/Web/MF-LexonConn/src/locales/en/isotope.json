@@ -13,5 +13,10 @@
   },
   "new-classification": {
     "new-classification": "New classification"
+  },
+  "classification": {
+    "type": "Type: ",
+    "assigned": "Assigned to: ",
+    "remove-document": "Remove docucment of the classification"
   }
 }

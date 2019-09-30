@@ -73,21 +73,53 @@ namespace Lexon.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<LexonActuation>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ClassificationsAsync([FromQuery]string idUser, [FromQuery]long idCompany, [FromQuery]string idMail, [FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)
-
         {
-            if (!string.IsNullOrEmpty(idUser))
+            var classifications = new LexonClassificationMail
             {
-                var itemsByUser = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
-                return !itemsByUser.Classifications.List.Any()
-                    ? (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment")
-                    : Ok(itemsByUser);
-            }
+                IdMail = idMail,
+                Classifications = new LexonActuationList
+                {
+                    TimeStamp = DateTime.Now.ToString(),
+                    List = new List<LexonActuation>
+                    {
+                        new LexonActuation
+                        {
+                            Name = "Actuación 1",
+                            Description = "2018/000002 - Reclamación a seguros OCASO por accidente múltiple",
+                            Type = "Expediente"
+                        },
+                        new LexonActuation
+                        {
+                            Name = "Actuación 2",
+                            Description = "2018/000003 - Reclamación a seguros OCASO por accidente múltiple",
+                            Type = "Abogados contrarios"
+                        },
+                        new LexonActuation
+                        {
+                            Name = "Actuación 3",
+                            Description = "2018/000004 - Reclamación a seguros OCASO por accidente múltiple",
+                            Type = "Otro tipo"
+                        }
 
-            var itemsOnPage = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
-            var totalItems = itemsOnPage.Classifications.List.Length;
+                    }.ToArray()
+                }
+            };
+            var classificationsJson = JsonConvert.SerializeObject(classifications);
+            return Ok(classificationsJson);
 
-            var model = new PaginatedItemsViewModel<LexonActuation>(pageIndex, pageSize, totalItems, itemsOnPage.Classifications.List.ToList());
-            return Ok(model);
+            //if (!string.IsNullOrEmpty(idUser))
+            //{
+            //    var itemsByUser = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
+            //    return !itemsByUser.Classifications.List.Any()
+            //        ? (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment")
+            //        : Ok(itemsByUser);
+            //}
+
+            //var itemsOnPage = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
+            //var totalItems = itemsOnPage.Classifications.List.Length;
+
+            //var model = new PaginatedItemsViewModel<LexonActuation>(pageIndex, pageSize, totalItems, itemsOnPage.Classifications.List.ToList());
+            //return Ok(model);
         }
 
         [HttpGet]

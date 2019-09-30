@@ -8,19 +8,23 @@ import TabKeepRecord from "../tab-keeprecord/tab-keeprecord";
 
 class SelectActionTab extends Component {
   render() {
+    const { user } = this.props;
+
     return (
       <Tabs defaultActiveKey="classify" id="uncontrolled-tab-example">
         <Tab eventKey="classify" title="Clasificar">
-          <TabClassify />
+          <TabClassify user={user} />
         </Tab>
         <Tab eventKey="keeprecord" title="Documentar">
-          <TabKeepRecord />
+          <TabKeepRecord user={user} />
         </Tab>
       </Tabs>
     );
   }
 }
 
-SelectActionTab.propTypes = {};
+SelectActionTab.propTypes = {
+  user: PropTypes.string.isRequired
+};
 
 export default SelectActionTab;

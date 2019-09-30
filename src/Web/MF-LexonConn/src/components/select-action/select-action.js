@@ -18,11 +18,11 @@ class SelectAction extends Component {
   }
 
   render() {
-    const { companies } = this.props;
+    const { user, companies } = this.props;
     return (
       <div className="container-fluid">
         <SelectActionHeader companies={companies} changePage={this.props.changePage} />
-        <SelectActionTab />
+        <SelectActionTab user={user} />
       </div>
     );
   }

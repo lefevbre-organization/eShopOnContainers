@@ -1,0 +1,39 @@
+.lexon-document-list {
+  padding: 0;
+  width: 320px;
+  float: left;
+  max-height: 525px;
+  overflow: auto;
+  margin-bottom: 10px;
+  display: block;
+  font-family: MTTMilano, Lato, Arial, sans-serif;
+}
+.lexon-document-list .lexon-item {
+  font-size: 14px;
+  margin-top: 15px;  
+}
+.lexon-document-list .lexon-item p {
+  margin-bottom: 0.5rem;
+}
+.lexon-document-list .lexon-item strong {
+  color: #001978;
+}
+.lexon-document-list .lexon-item p:last-child {
+  border-bottom: dotted 1px #001978;
+  padding-bottom: 1rem;
+}
+.lexon-document-list .lexon-item p.tools-bar {
+  padding-bottom: 5px;
+}
+.lexon-document-list .lexon-item a {
+  color: #001978;
+  font-size: 20px;
+  width: 34px;
+  height: 34px;
+  padding: 7px;
+  transition: background-color 0.3ms;
+  border-radius: 50%;
+}
+.lexon-document-list .lexon-item a:hover {
+  background-color: #e5e8f1;
+}

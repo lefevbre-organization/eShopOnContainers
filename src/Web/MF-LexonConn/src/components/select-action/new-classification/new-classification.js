@@ -16,6 +16,8 @@ class NewClassification extends Component {
   }
 }
 
-NewClassification.propTypes = {};
+NewClassification.propTypes = {
+  user: PropTypes.string.isRequired
+};
 
 export default NewClassification;
