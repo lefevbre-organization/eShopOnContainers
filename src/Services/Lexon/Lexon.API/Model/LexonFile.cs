@@ -2,7 +2,7 @@
 
 namespace Lexon.API.Model
 {
-    public class LexonFile : MongoModel, IDoc, IName
+    public class LexonFile : MongoModel, IDoc, IName, ILexonFile
     {
         [BsonElement("idFile")]
         public long IdFile { get; set; }
@@ -10,5 +10,8 @@ namespace Lexon.API.Model
         public string Name { get; set; }
 
         public string Description { get; set; }
+
+        [BsonElement("mails")]
+        public string[] Mails { get; set; }
     }
 }

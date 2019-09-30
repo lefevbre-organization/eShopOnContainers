@@ -74,22 +74,22 @@ namespace Lexon.API.Infrastructure
 
         public IMongoCollection<LexonUser> LexonUsers
         {
-            get { return Database.GetCollection<LexonUser>("Users"); }
+            get { return Database.GetCollection<LexonUser>(_settings.Value.Collection); }
         }
 
         public IMongoCollection<LexonUser> LexonUsersTransaction(IClientSessionHandle session)
         {
-            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<LexonUser>("Users");
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<LexonUser>(_settings.Value.Collection);
         }
 
         public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogs
         {
-            get { return Database.GetCollection<IntegrationEventLogEntry>("IntegrationEventLog"); }
+            get { return Database.GetCollection<IntegrationEventLogEntry>(_settings.Value.CollectionEvents); }
         }
 
         public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogsTransaction(IClientSessionHandle session)
         {
-            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<IntegrationEventLogEntry>("IntegrationEventLog");
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<IntegrationEventLogEntry>(_settings.Value.CollectionEvents);
         }
 
         public async Task PublishThroughEventBusAsync(IntegrationEvent evt, IClientSessionHandle session)

@@ -154,67 +154,11 @@ namespace Lexon.API.Infrastructure.Repositories
             }
         }
 
-        public async Task<long> AddClassificationToListAsync(string idUser, string idMail, long idRelated, string type = "File")
+
+        public async Task<LexonUser> GetAsync(string idUser)
         {
-            var cancel = default(CancellationToken);
-            var raiseAssociateMailToFileEvent = type == "File";
-            var raiseAssociateMailToClientEvent = type == "Client";
-            var raiseAssociateMailToDocumentEvent = type == "Document";
-
-            using (var session = await _context.StartSession(cancel))
-            {
-                //var transactionOptions = new TransactionOptions(ReadConcern.Snapshot, ReadPreference.Primary, WriteConcern.WMajority);
-                //session.StartTransaction(transactionOptions);
-                session.StartTransaction();
-                try
-                {
-                    var filter = Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser);
-                    var user = await _context.LexonUsersTransaction(session)
-                        .Find(filter)
-                        .SingleAsync();
-
-                    var builder = Builders<LexonUser>.Update;
-                    var cla = new LexonClassification
-                    {
-                        IdClassification = 1,
-                        IdMail = idMail,
-                        IdRelated = idRelated,
-                        Type = type
-                    };
-                    var update = builder.Push("Classifications", cla);
-
-                    var result = await _context.LexonUsersTransaction(session).UpdateOneAsync(filter, update);
-                    if (raiseAssociateMailToFileEvent)
-                    {
-                        var eventAssoc = new AssociateMailToFileIntegrationEvent(idUser, idRelated, idMail);
-                        await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
-                    }else if(raiseAssociateMailToClientEvent)
-                    {
-                        var eventAssoc = new AssociateMailToClientIntegrationEvent(idUser, idRelated, idMail);
-                        await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
-                    }
-                    else if (raiseAssociateMailToDocumentEvent)
-                    {
-                        var eventAssoc = new AssociateMailToDocumentIntegrationEvent(idUser, idRelated, idMail);
-                        await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
-                    }
-
-                    await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
-                    return result.ModifiedCount;
-                }
-                catch (Exception e)
-
-                {
-                    Console.WriteLine(e.Message);
-                    session.AbortTransaction();
-                    return 0;
-                }
-            }
-        }
-
-        public Task<LexonUser> GetAsync(string idUser)
-        {
-            throw new NotImplementedException();
+            var filter = Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser);
+            return await _context.LexonUsers.Find(filter).SingleAsync();
         }
 
 
@@ -234,10 +178,13 @@ namespace Lexon.API.Infrastructure.Repositories
         }
 
 
-
-        public async Task<List<LexonClassificationType>> GetClassificationMasterListAsync()
+        public async Task<List<LexonEntity>> GetClassificationMasterListAsync()
         {
-            throw new NotImplementedException();
+            var filter = Builders<LexonUser>.Filter.Gte(u => u.Version, 7);
+            var user = await _context.LexonUsers
+                .Find(filter).FirstAsync();
+            return user.Masters.Entities.List.ToList();
+                
         }
         public async Task<long> AddClassificationToListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType = 1)
         {
@@ -258,21 +205,16 @@ namespace Lexon.API.Infrastructure.Repositories
                         .Find(filter)
                         .SingleAsync();
 
-                    var builder = Builders<LexonUser>.Update;
-                    var cla = new LexonClassification
-                    {
-                        IdClassification = 1,
-                        IdMail = idMail,
-                        IdRelated = idRelated,
-                        Type = "wup"
-                    };
-                    var update = builder.Push("Classifications", cla);
-
-                    var result = await _context.LexonUsersTransaction(session).UpdateOneAsync(filter, update);
                     if (raiseAssociateMailToFileEvent)
-                    {
+                    { 
+
+                        var result = await _context.LexonUsersTransaction(session).FindOneAndUpdateAsync(
+                            u => u.IdUser == idUser && u.Companies.List.Any(c => c.IdCompany == idCompany) && u.Companies.List[-1].Files.List.Any(f => f.IdFile == idRelated),
+                            Builders<LexonUser>.Update.AddToSet(up => up.Companies.List[-1].Files.List[-1].Mails, idMail));
+
                         var eventAssoc = new AssociateMailToFileIntegrationEvent(idUser, idRelated, idMail);
                         await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
+
                     }
                     else if (raiseAssociateMailToClientEvent)
                     {
@@ -286,7 +228,7 @@ namespace Lexon.API.Infrastructure.Repositories
                     }
 
                     await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
-                    return result.ModifiedCount;
+                    return 1;
                 }
                 catch (Exception e)
 
@@ -308,7 +250,7 @@ namespace Lexon.API.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<LexonClassificationMail> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail)
+        public async Task<LexonActuationMailList> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail)
         {
 
             var filter = Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser);
@@ -320,7 +262,7 @@ namespace Lexon.API.Infrastructure.Repositories
             var company = user.Companies.List.FirstOrDefault(x => x.IdCompany == idCompany);
 
             //todo: hacer procedimiento para buscar los datos de clasificaciones en mongo
-            return new LexonClassificationMail();
+            return new LexonActuationMailList();
 
         }
 

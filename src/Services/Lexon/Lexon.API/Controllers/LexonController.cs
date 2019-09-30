@@ -124,9 +124,9 @@ namespace Lexon.API.Controllers
         // GET api/v1/[controller]/classifications[?pageSize=3&pageIndex=10]
         [HttpGet]
         [Route("classifications/types")]
-        [ProducesResponseType(typeof(IEnumerable<LexonClassificationType>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IEnumerable<LexonEntity>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> ClassificationsTypesAsync([FromQuery]string idUser, [FromQuery]long idCompany, [FromQuery]string idMail, [FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)
+        public async Task<IActionResult> ClassificationsTypesAsync()
 
         {
             var itemsByUser = await _usersService.GetClassificationMasterListAsync();
@@ -157,7 +157,7 @@ namespace Lexon.API.Controllers
 
         [HttpGet]
         [Route("files")]
-        [ProducesResponseType(typeof(PaginatedItemsViewModel<LexonClassification>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(PaginatedItemsViewModel<LexonFile>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(IEnumerable<LexonFile>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> FilesAsync([FromQuery]string idUser, [FromQuery]long idCompany, string search = null, [FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)

@@ -19,11 +19,13 @@ namespace Lexon.API.Model
 
         public string Name { get; set; }
 
+        [BsonElement("version")]
+        public short Version { get; set; }
+
         public LexonCompaniesList Companies { get; set; }
 
-        public LexonDocument[] Documents { get; set; }
+     
+        public LexonMasters Masters { get; set; }
 
-
-        //public IntegrationEventLogEntry[] Events { get; set; }
     }
 }

@@ -3,12 +3,13 @@
 namespace Lexon.API.Model
 {
     [BsonIgnoreExtraElements]
-    public class LexonActuationList : MongoModel, ILexonList<LexonActuation>
+    public class LexonEntityList : MongoModel, ILexonList<LexonEntity>
     {
 
         public string TimeStamp { get; set; }
 
-        public LexonActuation[] List { get; set; }
+        [BsonElement("list")]
+        public LexonEntity[] List { get; set; }
 
     }
 }

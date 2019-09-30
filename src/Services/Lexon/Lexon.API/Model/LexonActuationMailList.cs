@@ -3,9 +3,8 @@
 namespace Lexon.API.Model
 {
     [BsonIgnoreExtraElements]
-    public class LexonClassificationMail : MongoModel
+    public class LexonActuationMailList : MongoModel
     {
-
 
         public string IdMail { get; set; }
 

@@ -3,9 +3,9 @@
 namespace Lexon.API.Model
 {
     [BsonIgnoreExtraElements]
-    public class LexonClassificationType : MongoModel
+    public class LexonEntity : MongoModel
     {
-        public long id { get; set; }
+        public long idEntity { get; set; }
 
         public string name { get; set; }
 
