@@ -7,11 +7,14 @@ import ListClassifications from "../list-classifications/list-classifications";
 
 class TabClassify extends Component {
   render() {
-    const { user } = this.props;
+    const { user, toggleClassifyEmails } = this.props;
 
     return (
       <Fragment>
-        <NewClassification user={user} />
+        <NewClassification
+          user={user}
+          toggleClassifyEmails={toggleClassifyEmails}
+        />
         <ListClassifications user={user} />
       </Fragment>
     );
@@ -19,7 +22,8 @@ class TabClassify extends Component {
 }
 
 TabClassify.propTypes = {
-  user: PropTypes.string.isRequired
+  user: PropTypes.string.isRequired,
+  toggleClassifyEmails: PropTypes.func.isRequired
 };
 
 export default TabClassify;

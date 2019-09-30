@@ -55,7 +55,7 @@ input[type="checkbox"]:checked + label:after {
   height: 10px;
   background-color: #001978;
   /*border-bottom: 2px solid #01385f;
-    border-left: 2px solid #01385f;*/
+      border-left: 2px solid #01385f;*/
   position: absolute;
   top: 5px;
   left: 5px;
@@ -135,4 +135,15 @@ input[type="radio"]:checked + label:after {
 .btn-primary:hover {
   margin: 0;
   padding: 10px;
+}
+
+.business-alert-warning {
+  color: #d0021b;
+  font-size: 14px;
+  border: solid 1px #d0021b;
+  padding: 5px;
+}
+.business-alert-warning span {
+  font-size: 18px;
+  margin-right: 5px;
 }

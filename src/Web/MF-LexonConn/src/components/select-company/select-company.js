@@ -20,6 +20,14 @@ class SelectCompany extends Component {
     this.updateSelectedCompany = this.updateSelectedCompany.bind(this);
   }
 
+  componentDidMount() {
+    const { companies } = this.props;
+    if (companies.length === 1) {
+      this.props.setCompanySelected(companies[0]);
+      this.props.changePage(PAGE_SELECT_ACTION);
+    }
+  }
+
   _handleOnClick() {
     // const { toggleClassifyEmails } = this.props;
 
@@ -48,13 +56,21 @@ class SelectCompany extends Component {
     const { showMessageSelectCompany } = this.state;
 
     if (showMessageSelectCompany) {
-      return <div>Debes seleccionar una compañía</div>;
+      return (
+        <p class="d-flex align-items-center business-alert-warning">
+          <span class="lf-icon-close-round-full"></span>
+          <strong>{i18n.t("select-company.must-select-company")}</strong>
+        </p>
+      );
     }
   }
 
   renderCompany(company) {
     const { companySelected } = this.props;
-    if (companySelected == null || companySelected.IdCompany !== Number(company.IdCompany)) {
+    if (
+      companySelected == null ||
+      companySelected.IdCompany !== Number(company.IdCompany)
+    ) {
       return (
         <Company
           company={company}

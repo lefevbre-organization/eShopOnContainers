@@ -25,9 +25,22 @@ class Routing extends Component {
 
     switch (actualPage) {
       case PAGE_SELECT_COMPANY:
-        return <SelectCompany user={user} companies={companies} toggleClassifyEmails={toggleClassifyEmails} changePage={this.changePage} />;
+        return (
+          <SelectCompany
+            user={user}
+            companies={companies}
+            changePage={this.changePage}
+          />
+        );
       case PAGE_SELECT_ACTION:
-        return <SelectAction user={user} companies={companies} changePage={this.changePage} />;
+        return (
+          <SelectAction
+            user={user}
+            companies={companies}
+            toggleClassifyEmails={toggleClassifyEmails}
+            changePage={this.changePage}
+          />
+        );
 
       default:
         return <SelectCompany changePage={this.changePage} />;

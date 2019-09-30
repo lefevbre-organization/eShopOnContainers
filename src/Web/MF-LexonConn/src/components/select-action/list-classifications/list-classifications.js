@@ -18,13 +18,13 @@ class ListClassifications extends Component {
   }
 
   componentDidMount() {
-      const { selectedMessages } = this.props;
-      
-      if (selectedMessages.length === 1) {
-        this.getClassifications(this.props.selectedMessages[0]);
-      } else {
-        this.setState({ classifications: [] });
-      }
+    const { selectedMessages } = this.props;
+
+    if (selectedMessages.length === 1) {
+      this.getClassifications(this.props.selectedMessages[0]);
+    } else {
+      this.setState({ classifications: [] });
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -53,16 +53,21 @@ class ListClassifications extends Component {
 
   render() {
     const { classifications } = this.state;
+    const { user, selectedMessages } = this.props;
+    const mail = selectedMessages[0];
 
     return (
       <Fragment>
-        <h2 class="lexon-title-list">Clasificaciones:</h2>
-        <ul class="row lexon-document-list">
+        <h2 className="lexon-title-list">Clasificaciones:</h2>
+        <ul className="row lexon-document-list">
           {classifications.map(classification => {
             return (
               <Classification
                 classification={classification}
                 key={classification.Name}
+                user={user}
+                mail={mail}
+                updateClassifications={getClassifications}
               />
             );
           })}

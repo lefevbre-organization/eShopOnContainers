@@ -14,15 +14,18 @@ class SelectAction extends Component {
   }
 
   _handelOnClick() {
-      this.props.changePage(PAGE_SELECT_COMPANY);
+    this.props.changePage(PAGE_SELECT_COMPANY);
   }
 
   render() {
-    const { user, companies } = this.props;
+    const { user, companies, toggleClassifyEmails } = this.props;
     return (
       <div className="container-fluid">
-        <SelectActionHeader companies={companies} changePage={this.props.changePage} />
-        <SelectActionTab user={user} />
+        <SelectActionHeader
+          companies={companies}
+          changePage={this.props.changePage}
+        />
+        <SelectActionTab user={user} toggleClassifyEmails={toggleClassifyEmails} />
       </div>
     );
   }
@@ -31,7 +34,8 @@ class SelectAction extends Component {
 SelectAction.propTypes = {
   user: PropTypes.string.isRequired,
   companies: PropTypes.array.isRequired,
-  changePage: PropTypes.func.isRequired
+  changePage: PropTypes.func.isRequired,
+  toggleClassifyEmails: PropTypes.func.isRequired
 };
 
 export default SelectAction;

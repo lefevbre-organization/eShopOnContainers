@@ -3,7 +3,8 @@
     "select-company": "Selecciona una empresa:",
     "enter": "ENTRAR",
     "open-all-window": "Abrir en pantalla completa",
-    "hide-column": "Ocultar columna"
+    "hide-column": "Ocultar columna",
+    "must-select-company": "Debes seleccionar una empresa."
   },
   "select-action-header": {
     "messages-selected": "MENSAJES SELECCIONADOS:",
@@ -18,6 +19,10 @@
     "type": "Tipo: ",
     "assigned": "Asignado a: ",
     "remove-document": "Eliminar documento de la clasificación"
+  },
+  "classify-emails": {
+    "cancel": "CANCELAR",
+    "save": "GUARDAR"
   }
 }
 

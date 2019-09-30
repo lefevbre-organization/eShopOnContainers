@@ -1,0 +1,38 @@
+.menu-lexon-actions {
+  border-bottom: 2px solid #001978;
+  margin-bottom: 25px;
+  font-family: MTTMilano, Lato, Arial, sans-serif;
+}
+.menu-lexon-actions ul {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 6px;
+}
+.menu-lexon-actions li {
+  display: inline;
+  width: 50%;
+}
+.menu-lexon-actions a {
+  background-color: #e5e8f1;
+  color: #7f8cbb;
+  padding: 9px 50px 7px 8px;
+  position: relative;
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.menu-lexon-actions a:after {
+  border-top: 32px solid #ffffff;
+  border-left: 32px solid #e5e8f1;
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.menu-lexon-actions a.active {
+  background-color: #001978;
+  color: #ffffff;
+}
+.menu-lexon-actions a.active:after {
+  border-left: 32px solid #001978;
+}
