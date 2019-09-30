@@ -206,11 +206,27 @@ namespace Lexon.API.Infrastructure.Repositories
                         .SingleAsync();
 
                     if (raiseAssociateMailToFileEvent)
-                    { 
+                    {
+                        //var collection = _context.LexonUsersTransaction(session);
+                        //var update = Builders<LexonUser>.Update.Set("Files.List.$.Mails", idMail);
+
+                        //var builder = Builders<LexonUser>.Filter;
+                        //var filter = builder.And(builder.Eq(u => u.IdUser , idUser), builder.ElemMatch(u => u.Companies.List, c => c.IdCompany == idCompany), builder.Eq("status", "D"));
+                        //var result = collection.Find(filter).ToList();
+
+                        //var result = await collection.UpdateOneAsync(
+                        //        FilterDefinition<LexonUser>.And(
+                        //          Query.EQ("_id", clockDocumentID),
+                        //          Query.ElemMatch("FilesList", Query.EQ("FileName", "AAA-TEST123-002.mpg"))
+                        //        ),
+                        //        update, UpdateFlags.Upsert
+                        //);
+
 
                         var result = await _context.LexonUsersTransaction(session).FindOneAndUpdateAsync(
                             u => u.IdUser == idUser && u.Companies.List.Any(c => c.IdCompany == idCompany) && u.Companies.List[-1].Files.List.Any(f => f.IdFile == idRelated),
-                            Builders<LexonUser>.Update.AddToSet(up => up.Companies.List[-1].Files.List[-1].Mails, idMail));
+                            Builders<LexonUser>.Update.AddToSet("Companies.List.Files.List.$$.Mails", idMail ));
+                        //Builders<LexonUser>.Update.AddToSet(up => up.Companies.List[-1].Files.List[-1].Mails, idMail));
 
                         var eventAssoc = new AssociateMailToFileIntegrationEvent(idUser, idRelated, idMail);
                         await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);

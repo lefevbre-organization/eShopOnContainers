@@ -85,11 +85,11 @@ namespace Lexon.API.Controllers
         [Route("classifications/add")]
         [ProducesResponseType(typeof(long), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddClassificationAsync([FromQuery]string idUser, [FromQuery]long idCompany, [FromQuery]string idMail, [FromQuery]int idRelated, [FromQuery]short idType = 1)
+        public async Task<IActionResult> AddClassificationAsync([FromQuery]string idUser, [FromQuery]long idCompany, [FromQuery]string idMail, [FromQuery]long idRelated, [FromQuery]short idType = 1)
 
         {
-            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(idMail))
-                return (IActionResult)BadRequest("values invalid. Must be a valid user, email, related and type for create the classification");
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(idMail) || idCompany <= 0 || idRelated <= 0 || idType <= 0)
+                return (IActionResult)BadRequest("values invalid. Must be a valid user, company, email, related and type for create the classification");
 
             var result = await _usersService.AddClassificationToListAsync(idUser, idCompany, idMail, idRelated, idType);
 
