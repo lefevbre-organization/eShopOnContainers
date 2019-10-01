@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Lexon.API.Model
 {
@@ -6,7 +7,7 @@ namespace Lexon.API.Model
     public class LexonActuationList : MongoModel, ILexonList<LexonActuation>
     {
 
-        public string TimeStamp { get; set; }
+        public BsonTimestamp TimeStamp { get; set; }
 
         public LexonActuation[] List { get; set; }
 

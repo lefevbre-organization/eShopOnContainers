@@ -1,8 +1,13 @@
-﻿namespace Lexon.API.Model
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
+namespace Lexon.API.Model
 {
     public class LexonClientsList : MongoModel, ILexonList<LexonClient>
     {
-        public string TimeStamp { get; set; }
+        [BsonElement("timestamp")]
+        public BsonTimestamp TimeStamp { get; set; }
+        [BsonElement("list")]
         public LexonClient[] List { get; set; }
     }
 }
