@@ -4,6 +4,7 @@ using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -199,34 +200,22 @@ namespace Lexon.API.Infrastructure.Repositories
                 //session.StartTransaction(transactionOptions);
                 session.StartTransaction();
                 try
-                {
-                    var filter = Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser);
-                    var user = await _context.LexonUsersTransaction(session)
-                        .Find(filter)
-                        .SingleAsync();
+                { 
 
                     if (raiseAssociateMailToFileEvent)
                     {
-                        //var collection = _context.LexonUsersTransaction(session);
-                        //var update = Builders<LexonUser>.Update.Set("Files.List.$.Mails", idMail);
 
-                        //var builder = Builders<LexonUser>.Filter;
-                        //var filter = builder.And(builder.Eq(u => u.IdUser , idUser), builder.ElemMatch(u => u.Companies.List, c => c.IdCompany == idCompany), builder.Eq("status", "D"));
-                        //var result = collection.Find(filter).ToList();
-
-                        //var result = await collection.UpdateOneAsync(
-                        //        FilterDefinition<LexonUser>.And(
-                        //          Query.EQ("_id", clockDocumentID),
-                        //          Query.ElemMatch("FilesList", Query.EQ("FileName", "AAA-TEST123-002.mpg"))
-                        //        ),
-                        //        update, UpdateFlags.Upsert
-                        //);
-
-
-                        var result = await _context.LexonUsersTransaction(session).FindOneAndUpdateAsync(
-                            u => u.IdUser == idUser && u.Companies.List.Any(c => c.IdCompany == idCompany) && u.Companies.List[-1].Files.List.Any(f => f.IdFile == idRelated),
-                            Builders<LexonUser>.Update.AddToSet("Companies.List.Files.List.$$.Mails", idMail ));
-                        //Builders<LexonUser>.Update.AddToSet(up => up.Companies.List[-1].Files.List[-1].Mails, idMail));
+                        await _context.LexonUsersTransaction(session).UpdateOneAsync(
+                            u => u.IdUser == idUser, // && u.Companies.List[-1].IdCompany == idCompany,
+                            Builders<LexonUser>.Update.AddToSet("Companies.list.$[i].Files.list.$[j].mails", idMail),
+                            new UpdateOptions
+                            {
+                                ArrayFilters = new List<ArrayFilterDefinition>
+                                {
+                                    new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.idCompany", idCompany)),
+                                    new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("j.idFile", idRelated))
+                                }
+                            });
 
                         var eventAssoc = new AssociateMailToFileIntegrationEvent(idUser, idRelated, idMail);
                         await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
@@ -258,7 +247,60 @@ namespace Lexon.API.Infrastructure.Repositories
 
         public async Task<long> RemoveClassificationFromListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType)
         {
-            throw new NotImplementedException();
+            var cancel = default(CancellationToken);
+            var raiseAssociateMailToFileEvent = idClassificationType == 1; // type == "File";
+            var raiseAssociateMailToClientEvent = idClassificationType == 2; //type == "Client";
+            var raiseAssociateMailToDocumentEvent = idClassificationType == 3; //type == "Document";
+
+            using (var session = await _context.StartSession(cancel))
+            {
+                //var transactionOptions = new TransactionOptions(ReadConcern.Snapshot, ReadPreference.Primary, WriteConcern.WMajority);
+                //session.StartTransaction(transactionOptions);
+                session.StartTransaction();
+                try
+                {
+
+                    if (raiseAssociateMailToFileEvent)
+                    {
+
+                        await _context.LexonUsersTransaction(session).UpdateOneAsync(
+                            u => u.IdUser == idUser, // && u.Companies.List[-1].IdCompany == idCompany,
+                            Builders<LexonUser>.Update.Pull("Companies.list.$[i].Files.list.$[j].mails", idMail),
+                            new UpdateOptions
+                            {
+                                ArrayFilters = new List<ArrayFilterDefinition>
+                                {
+                                    new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.idCompany", idCompany)),
+                                    new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("j.idFile", idRelated))
+                                }
+                            });
+
+                        var eventAssoc = new AssociateMailToFileIntegrationEvent(idUser, idRelated, idMail);
+                        await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
+
+                    }
+                    else if (raiseAssociateMailToClientEvent)
+                    {
+                        var eventAssoc = new AssociateMailToClientIntegrationEvent(idUser, idRelated, idMail);
+                        await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
+                    }
+                    else if (raiseAssociateMailToDocumentEvent)
+                    {
+                        var eventAssoc = new AssociateMailToDocumentIntegrationEvent(idUser, idRelated, idMail);
+                        await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
+                    }
+
+                    await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
+                    return 1;
+                }
+                catch (Exception e)
+
+                {
+                    Console.WriteLine(e.Message);
+                    session.AbortTransaction();
+                    return 0;
+                }
+            }
         }
 
         public async Task<LexonCompany> SelectCompanyAsync(string idUser, long idCompany)

@@ -1,74 +1,76 @@
 [
   {
-    "idUser": "114",
+    "idUser": "120",
     "idNavision": "E123456",
     "Name": "Chomin Chon",
     "version": 7,
-    "masters": {
-      "entities": {
-        "timestamp": "2019-09-12T21:26:17Z",
+    "Masters": {
+      "Entities": {
+        "timestamp": Timestamp(1569837286,
+        1),
         "list": [
           {
-            "id": 1,
+            "idEntity": 1,
             "name": "Expedientes"
           },
           {
-            "id": 2,
+            "idEntity": 2,
             "name": "Clientes"
           },
           {
-            "id": 3,
+            "idEntity": 3,
             "name": "Contrarios"
           },
           {
-            "id": 4,
+            "idEntity": 4,
             "name": "Proveedores"
           },
           {
-            "id": 5,
+            "idEntity": 5,
             "name": "Abogados propios"
           },
           {
-            "id": 6,
+            "idEntity": 6,
             "name": "Abogados contrarios"
           },
           {
-            "id": 7,
+            "idEntity": 7,
             "name": "Procuradores propios"
           },
           {
-            "id": 8,
+            "idEntity": 8,
             "name": "Procuradores contrarios"
           },
           {
-            "id": 9,
+            "idEntity": 9,
             "name": "Notarios"
           },
           {
-            "id": 10,
+            "idEntity": 10,
             "name": "Juzgados"
           },
           {
-            "id": 11,
+            "idEntity": 11,
             "name": "Aseguradoras"
           },
           {
-            "id": 12,
+            "idEntity": 12,
             "name": "Otros"
           },
           {
-            "id": 13,
+            "idEntity": 13,
             "name": "Carpetas"
           },
           {
-            "id": 14,
+            "idEntity": 14,
             "name": "Documentos"
           }
         ]
       }
     },
     "Companies": {
-      "timestamp": "2019-09-11T12:35:28Z",
+      "timestamp": Timestamp(1569837286,
+      1),
       "list": [
         {
           "idCompany": 14,
@@ -77,7 +79,8 @@
           "name": "Lacasitos SA",
           "selected": true,
           "Folders": {
-            "timestamp": "2019-09-11T12:35:28Z",
+            "timestamp": Timestamp(1569837286,
+            1),
             "list": [
               {
                 "level": 3,
@@ -85,7 +88,9 @@
                 "idParent": 12121,
                 "name": "Chapulin colorado",
                 "path": "Documentos Guays/Chapulines/Chapulin colorado",
-                "Documents": {}
+                "Documents": {
+
+                }
               },
               {
                 "level": 3,
@@ -94,7 +99,8 @@
                 "name": "Chapulin verde",
                 "path": "Documentos Guays/Chapulines/Chapulin verde",
                 "Documents": {
-                  "timestamp": "2019-09-14T13:36:29Z",
+                  "timestamp": Timestamp(1569837286,
+                  1),
                   "list": [
                     {
                       "idDocument": 12347,
@@ -138,7 +144,8 @@
             ]
           },
           "Clients": {
-            "timestamp": "2019-09-16T22:31:08Z",
+            "timestamp": Timestamp(1569837286,
+            1),
             "list": [
               {
                 "idClient": 12345,
@@ -155,37 +162,52 @@
             ]
           },
           "Insurances": {
-            "timestamp": "2019-09-14T10:11:51Z",
+            "timestamp": Timestamp(1569837286,
+            1),
             "list": [
               {
                 "idInsurance": 12,
                 "name": "La Segurata SA",
-                "mails": [ "sqweqwdasdasdeqwe1231", "adsfasfdsfsdcxvdeswfewewdx" ]
+                "mails": [
+                  "sqweqwdasdasdeqwe1231",
+                  "adsfasfdsfsdcxvdeswfewewdx"
+                ]
               },
               {
                 "idClient": 11,
                 "name": "Sure Sure Company",
-                "mails": [ "dsfdsfghghjtfytysdeqwe1231", "adsfasfdsfsdc2131212qwqw12" ]
+                "mails": [
+                  "dsfdsfghghjtfytysdeqwe1231",
+                  "adsfasfdsfsdc2131212qwqw12"
+                ]
               }
             ]
           },
           "Suppliers": {
-            "timestamp": "2019-09-14T10:11:51Z",
+            "timestamp": Timestamp(1569837286,
+            1),
             "list": [
               {
                 "idSupplier": 1,
                 "name": "togas y tocados SA",
-                "mails": [ "sqweqwdasdasdeqwe1231", "adsfasfdsfsdcxvdeswfewewdx" ]
+                "mails": [
+                  "sqweqwdasdasdeqwe1231",
+                  "adsfasfdsfsdcxvdeswfewewdx"
+                ]
               },
               {
                 "idSupplier": 23,
                 "name": "espiamos a cuenta SL",
-                "mails": [ "dsfdsfghghjtfytysdeqwe1231", "adsfasfdsfsdc2131212qwqw12" ]
+                "mails": [
+                  "dsfdsfghghjtfytysdeqwe1231",
+                  "adsfasfdsfsdc2131212qwqw12"
+                ]
               }
             ]
           },
           "Courts": {
-            "timestamp": "2019-09-16T22:31:08Z",
+            "timestamp": Timestamp(1569837286,
+            1),
             "list": [
               {
                 "idCourt": 34,
@@ -195,18 +217,25 @@
               {
                 "idCourt": 35,
                 "name": "Juzgado 27 Penal Madrid",
-                "mails": [ "sdewgdfhrtrth7788956" ]
+                "mails": [
+                  "sdewgdfhrtrth7788956"
+                ]
               }
             ]
           },
           "Files": {
-            "timestamp": "2019-09-16T22:31:08Z",
+            "timestamp": Timestamp(1569837286,
+            1),
             "list": [
               {
                 "idFile": 347,
                 "code": "exp 347",
                 "description": "expediente 347",
-                "mails": [ "45456456456", "as1712712" ]
+                "mails": [
+                  "4545645644",
+                  "as1712712",
+                  "email_nuevo_1"
+                ]
               },
               {
                 "idFile": 348,
@@ -223,7 +252,8 @@
             ]
           },
           "Lawyers": {
-            "timestamp": "2019-09-16T22:31:08Z",
+            "timestamp": Timestamp(1569837286,
+            1),
             "list": [
               {
                 "idLawyer": 44,
@@ -240,7 +270,8 @@
             ]
           },
           "Solicitors": {
-            "timestamp": "2019-09-16T22:31:08Z",
+            "timestamp": Timestamp(1569837286,
+            1),
             "list": [
               {
                 "idSolicitor": 46,
@@ -257,7 +288,8 @@
             ]
           },
           "Notaries": {
-            "timestamp": "2019-09-16T22:31:08Z",
+            "timestamp": Timestamp(1569837286,
+            1),
             "list": [
               {
                 "idNotary": 4,
@@ -274,7 +306,8 @@
           "conn": "db_chomin_02",
           "selected": false,
           "Folders": {
-            "timestamp": "2019-09-14T13:36:29Z",
+            "timestamp": Timestamp(1569837286,
+            1),
             "list": [
               {
                 "idFolder": 12111,
@@ -283,7 +316,8 @@
                 "name": "avellanas",
                 "path": "Leche/Cacao/Avellanas",
                 "Documents": {
-                  "timestamp": "2019-09-14T13:36:29Z",
+                  "timestamp": Timestamp(1569837286,
+                  1),
                   "list": [
                     {
                       "idDocument": 12345,
@@ -306,7 +340,6 @@
                 "path": "Hispanoamerica/Peru/Lima",
                 "Documents": []
               },
-
               {
                 "level": 2,
                 "idFolder": 16240,
@@ -338,7 +371,8 @@
             ]
           },
           "Clients": {
-            "timestamp": "2019-09-14T13:36:29Z",
+            "timestamp": Timestamp(1569837286,
+            1),
             "list": [
               {
                 "idClient": 1234,
@@ -354,148 +388,180 @@
               }
             ]
           },
-            "Insurances": {
-              "timestamp": "2019-09-14T10:11:51Z",
-              "list": [
-                {
-                  "idInsurance": 12,
-                  "name": "La Segurata SA",
-                  "mails": [ "sqweqwdasdasdeqwe1231", "adsfasfdsfsdcxvdeswfewewdx" ]
-                },
-                {
-                  "idClient": 11,
-                  "name": "Sure Sure Company",
-                  "mails": [ "dsfdsfghghjtfytysdeqwe1231", "adsfasfdsfsdc2131212qwqw12" ]
-                }
-              ]
-            },
-            "Suppliers": {
-              "timestamp": "2019-09-14T10:11:51Z",
-              "list": [
-                {
-                  "idSupplier": 1,
-                  "name": "togas y tocados SA",
-                  "mails": [ "sqweqwdasdasdeqwe1231", "adsfasfdsfsdcxvdeswfewewdx" ]
-                },
-                {
-                  "idSupplier": 23,
-                  "name": "espiamos a cuenta SL",
-                  "mails": [ "dsfdsfghghjtfytysdeqwe1231", "adsfasfdsfsdc2131212qwqw12" ]
-                }
-              ]
-            },
-            "Courts": {
-              "timestamp": "2019-09-14T13:36:29Z",
-              "list": [
-                {
-                  "idCourt": 32,
-                  "name": "Juzgado 13 Social Madrid",
-                  "mails": [ "121211111" ]
-                },
-                {
-                  "idCourt": 33,
-                  "name": "Juzgado 17 Penal Madrid",
-                  "mails": [ "121211111", "as2341234sa121" ]
-                }
-              ]
-            },
-            "Files": {
-              "timestamp": "2019-09-14T13:36:29Z",
-              "list": [
-                {
-                  "idFile": 345,
-                  "name": "exp 345",
-                  "Description": "expediente expedientoso",
-                  "mails": [ "as2341234sa121" ]
-                },
-                {
-                  "idFile": 346,
-                  "name": "exp 346",
-                  "Description": "expediente expedientado",
-                  "mails": [ "121211111", "as2341234sa121", "11111134456" ]
-                },
-                {
-                  "idFile": 57,
-                  "name": "federico",
-                  "Description": "Creado en la consola, No tiene descripción",
-                  "mails": [ "121211111" ]
-                },
-                {
-                  "idFile": 3456,
-                  "name": "desde la api",
-                  "Description": "uff que bonito",
-                  "mails": []
-                },
-                {
-                  "idFile": 221,
-                  "name": "apiapi",
-                  "Description": "otro",
-                  "mails": []
-                },
-                {
-                  "idFile": 556,
-                  "name": "desdeConsolaEsguay",
-                  "Description": "Creado en la consola, No tiene descripción",
-                  "mails": []
-                },
-                {
-                  "idFile": 234,
-                  "name": "fede champion",
-                  "Description": "Creado en la consola, No tiene descripción",
-                  "mails": []
-                }
-              ]
-            },
-            "Lawyers": {
-              "timestamp": "2019-09-16T22:31:08Z",
-              "list": [
-                {
-                  "idLawyer": 11,
-                  "own": true,
-                  "name": "Jorge Venturoso",
-                  "mails": []
-                },
-                {
-                  "idLawyer": 36,
-                  "own": false,
-                  "name": "Laura Mazo de Criminales",
-                  "mails": []
-                }
-              ]
-            },
-            "Solicitors": {
-              "timestamp": "2019-09-16T22:31:08Z",
-              "list": [
-                {
-                  "idSolicitor": 46,
-                  "own": true,
-                  "name": "Antonio Verdaguer",
-                  "mails": []
-                },
-                {
-                  "idSolicitor": 55,
-                  "own": false,
-                  "name": "Jaime De MariChalado",
-                  "mails": []
-                }
-              ]
-            },
-            "Notaries": {
-              "timestamp": "2019-09-16T22:31:08Z",
-              "list": [
-                {
-                  "idNotary": 3,
-                  "Name": "Notario de Huelva",
-                  "mails": []
-                },
-                {
-                  "idNotary": 14,
-                  "Name": "No no Notorius",
-                  "mails": []
-                }
-              ]
-            }
+          "Insurances": {
+            "timestamp": Timestamp(1569837286,
+            1),
+            "list": [
+              {
+                "idInsurance": 12,
+                "name": "La Segurata SA",
+                "mails": [
+                  "sqweqwdasdasdeqwe1231",
+                  "adsfasfdsfsdcxvdeswfewewdx"
+                ]
+              },
+              {
+                "idClient": 11,
+                "name": "Sure Sure Company",
+                "mails": [
+                  "dsfdsfghghjtfytysdeqwe1231",
+                  "adsfasfdsfsdc2131212qwqw12"
+                ]
+              }
+            ]
+          },
+          "Suppliers": {
+            "timestamp": Timestamp(1569837286,
+            1),
+            "list": [
+              {
+                "idSupplier": 1,
+                "name": "togas y tocados SA",
+                "mails": [
+                  "sqweqwdasdasdeqwe1231",
+                  "adsfasfdsfsdcxvdeswfewewdx"
+                ]
+              },
+              {
+                "idSupplier": 23,
+                "name": "espiamos a cuenta SL",
+                "mails": [
+                  "dsfdsfghghjtfytysdeqwe1231",
+                  "adsfasfdsfsdc2131212qwqw12"
+                ]
+              }
+            ]
+          },
+          "Courts": {
+            "timestamp": Timestamp(1569837286,
+            1),
+            "list": [
+              {
+                "idCourt": 32,
+                "name": "Juzgado 13 Social Madrid",
+                "mails": [
+                  "121211111"
+                ]
+              },
+              {
+                "idCourt": 33,
+                "name": "Juzgado 17 Penal Madrid",
+                "mails": [
+                  "121211111",
+                  "as2341234sa121"
+                ]
+              }
+            ]
+          },
+          "Files": {
+            "timestamp": Timestamp(1569837286,
+            1),
+            "list": [
+              {
+                "idFile": 345,
+                "name": "exp 345",
+                "Description": "expediente expedientoso",
+                "mails": [
+                  "as2341234sa121"
+                ]
+              },
+              {
+                "idFile": 346,
+                "name": "exp 346",
+                "Description": "expediente expedientado",
+                "mails": [
+                  "121211111",
+                  "as2341234sa121",
+                  "11111134456"
+                ]
+              },
+              {
+                "idFile": 57,
+                "name": "federico",
+                "Description": "Creado en la consola, No tiene descripción",
+                "mails": [
+                  "121211111"
+                ]
+              },
+              {
+                "idFile": 3456,
+                "name": "desde la api",
+                "Description": "uff que bonito",
+                "mails": []
+              },
+              {
+                "idFile": 221,
+                "name": "apiapi",
+                "Description": "otro",
+                "mails": []
+              },
+              {
+                "idFile": 556,
+                "name": "desdeConsolaEsguay",
+                "Description": "Creado en la consola, No tiene descripción",
+                "mails": []
+              },
+              {
+                "idFile": 234,
+                "name": "fede champion",
+                "Description": "Creado en la consola, No tiene descripción",
+                "mails": []
+              }
+            ]
+          },
+          "Lawyers": {
+            "timestamp": Timestamp(1569837286,
+            1),
+            "list": [
+              {
+                "idLawyer": 11,
+                "own": true,
+                "name": "Jorge Venturoso",
+                "mails": []
+              },
+              {
+                "idLawyer": 36,
+                "own": false,
+                "name": "Laura Mazo de Criminales",
+                "mails": []
+              }
+            ]
+          },
+          "Solicitors": {
+            "timestamp": Timestamp(1569837286,
+            1),
+            "list": [
+              {
+                "idSolicitor": 46,
+                "own": true,
+                "name": "Antonio Verdaguer",
+                "mails": []
+              },
+              {
+                "idSolicitor": 55,
+                "own": false,
+                "name": "Jaime De MariChalado",
+                "mails": []
+              }
+            ]
+          },
+          "Notaries": {
+            "timestamp": Timestamp(1569837286,
+            1),
+            "list": [
+              {
+                "idNotary": 3,
+                "Name": "Notario de Huelva",
+                "mails": []
+              },
+              {
+                "idNotary": 14,
+                "Name": "No no Notorius",
+                "mails": []
+              }
+            ]
           }
+        }
       ]
     }
   }
