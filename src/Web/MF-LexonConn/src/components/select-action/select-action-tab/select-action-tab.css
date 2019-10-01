@@ -13,6 +13,7 @@
   width: 50%;
 }
 .menu-lexon-actions a {
+  display: inline;
   background-color: #e5e8f1;
   color: #7f8cbb;
   padding: 9px 50px 7px 8px;

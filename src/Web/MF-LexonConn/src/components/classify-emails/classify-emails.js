@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Button, Modal, Container, Col, Row } from "react-bootstrap";
 import i18n from "i18next";
 import "./classify-emails.css";
+import ClassificationType from "./classification-type/classification-type";
 
 class ClassifyEmails extends Component {
   constructor(props) {
@@ -28,24 +29,27 @@ class ClassifyEmails extends Component {
           size="lg"
           aria-labelledby="contained-modal-title-vcenter"
           centered
+          dialogClassName="modal"
         >
-          <Modal.Header closeButton>
-            {/* <Modal.Title>Modal heading</Modal.Title> */}
+          <Modal.Header className="align-items-center" closeButton>
+            <Modal.Title>
+              <div className="modal-title h4">
+                <h5
+                  className="modal-title d-flex align-items-center"
+                  id="clasificarNuevaclasificacionLabel"
+                >
+                  <span className="lf-icon-bookmarks"></span>
+                  {i18n.t("classify-emails.title")}
+                </h5>
+              </div>
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Container>
-              <Row>
-                <Col xs={2} md={2}>
-                  <img
-                    className="img-question"
-                    alt=""
-                    src="/assets/imgs/icon-question.png"
-                  ></img>
-                </Col>
-                <Col xs={10} md={10}>
-                  {i18n.t("confirm-remove-accounts.body")}
-                </Col>
-              </Row>
+              <p>
+                <strong>{i18n.t("classify-emails.body")}</strong>
+              </p>
+              <ClassificationType />
             </Container>
           </Modal.Body>
           <Modal.Footer>

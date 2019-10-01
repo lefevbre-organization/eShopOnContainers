@@ -1,0 +1,84 @@
+.form-group .requerido {
+  color: #d81f2a;
+  font-size: 20px;
+  text-align: start;
+}
+
+.lexon-select-like-custom-trigger {
+  height: 45px;
+  width: 350px;
+  border: 1px solid #d2d2d2;
+  background-color: #ffffff;
+  outline: none;
+  color: #7c868c;
+  font-size: 15px;
+  text-align: left;
+  position: relative;
+  padding-left: 10px;
+}
+.lexon-select-like-custom-trigger:focus {
+  outline: none;
+}
+.lexon-select-like-custom-trigger span {
+  font-size: 20px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #001978;
+  transition: all 0.5s ease;
+}
+.lexon-select-like-custom-trigger.opened span {
+  -moz-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+.lexon-select-like-custom-list-container {
+  transition: all 0.5s ease;
+  height: 0;
+  width: 350px;
+  position: absolute;
+  z-index: 2;
+  overflow: hidden;
+}
+.lexon-select-like-custom-list-container.opened {
+  height: 230px;
+  overflow: visible;
+}
+.lexon-select-like-custom-list {
+  height: 230px;
+  width: 350px;
+  border: 1px solid #d2d2d2;
+  background-color: #ffffff;
+  box-shadow: 0 0 4px 1px rgba(102, 175, 233, 0.6);
+  position: absolute;
+  z-index: 1;
+  padding: 5px;
+  overflow: scroll;
+}
+.lexon-select-like-custom-list li {
+  border-bottom: solid 1px #001978;
+  height: 43px;
+  color: #7c868c;
+  font-size: 15px;
+  line-height: 43px;
+  padding: 0 10px;
+  margin: 0 2px;
+}
+.lexon-select-like-custom-list li:last-child {
+  border-bottom: none;
+}
+.lexon-select-like-custom-list li span {
+  color: #7c868c;
+}
+.lexon-select-like-custom-list li.selected,
+.lexon-select-like-custom-list li:hover {
+  background-color: #e5e8f1;
+  color: #001978;
+  cursor: pointer;
+}
+.lexon-select-like-custom-list li.selected span,
+.lexon-select-like-custom-list li:hover span {
+  color: #001978;
+}

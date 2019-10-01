@@ -51,6 +51,10 @@
     <Content Include="src\components\header\header.css" />
     <Content Include="src\components\header\header.js" />
     <Content Include="src\components\routing\routing.js" />
+    <Content Include="src\components\select-action\classification\classification.css" />
+    <Content Include="src\components\select-action\classification\classification.js" />
+    <Content Include="src\components\select-action\list-classifications\list-classifications.css" />
+    <Content Include="src\components\select-action\list-classifications\list-classifications.js" />
     <Content Include="src\components\select-action\new-classification\new-classification.css" />
     <Content Include="src\components\select-action\new-classification\new-classification.js" />
     <Content Include="src\components\select-action\select-action-header\select-action-header.css" />
@@ -106,6 +110,8 @@
     <Folder Include="src\components\header\" />
     <Folder Include="src\components\routing\" />
     <Folder Include="src\components\select-action\" />
+    <Folder Include="src\components\select-action\classification\" />
+    <Folder Include="src\components\select-action\list-classifications\" />
     <Folder Include="src\components\select-action\new-classification\" />
     <Folder Include="src\components\select-action\select-action-header\" />
     <Folder Include="src\components\select-action\select-action-tab\" />

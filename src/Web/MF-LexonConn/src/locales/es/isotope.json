@@ -22,7 +22,9 @@
   },
   "classify-emails": {
     "cancel": "CANCELAR",
-    "save": "GUARDAR"
+    "save": "GUARDAR",
+    "title": "Nueva clasificación",
+    "body": "Selecciona tipo de clasificación para cargar el listado correspondiente y asigna los mensajes a uno de los elementos de la lista."
   }
 }
 
