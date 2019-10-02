@@ -6,8 +6,7 @@
     "version": 7,
     "Masters": {
       "Entities": {
-        "timestamp": Timestamp(1569837286,
-        1),
+        "timestamp": 1569837286,
         "list": [
           {
             "idEntity": 1,
@@ -69,18 +68,15 @@
       }
     },
     "Companies": {
-      "timestamp": Timestamp(1569837286,
-      1),
+      "timestamp":1569837286,
       "list": [
         {
           "idCompany": 14,
-          "Logo": "url/laca.png",
           "conn": "db_chomin_01",
           "name": "Lacasitos SA",
           "selected": true,
           "Folders": {
-            "timestamp": Timestamp(1569837286,
-            1),
+            "timestamp":1569837286,
             "list": [
               {
                 "level": 3,
@@ -99,8 +95,8 @@
                 "name": "Chapulin verde",
                 "path": "Documentos Guays/Chapulines/Chapulin verde",
                 "Documents": {
-                  "timestamp": Timestamp(1569837286,
-                  1),
+                  "timestamp":1569837286,
+      
                   "list": [
                     {
                       "idDocument": 12347,
@@ -144,8 +140,7 @@
             ]
           },
           "Clients": {
-            "timestamp": Timestamp(1569837286,
-            1),
+            "timestamp":1569837286,
             "list": [
               {
                 "idClient": 12345,
@@ -162,8 +157,7 @@
             ]
           },
           "Insurances": {
-            "timestamp": Timestamp(1569837286,
-            1),
+            "timestamp":1569837286,
             "list": [
               {
                 "idInsurance": 12,
@@ -184,8 +178,7 @@
             ]
           },
           "Suppliers": {
-            "timestamp": Timestamp(1569837286,
-            1),
+            "timestamp":1569837286,
             "list": [
               {
                 "idSupplier": 1,
@@ -206,8 +199,7 @@
             ]
           },
           "Courts": {
-            "timestamp": Timestamp(1569837286,
-            1),
+            "timestamp":1569837286,
             "list": [
               {
                 "idCourt": 34,
@@ -224,8 +216,7 @@
             ]
           },
           "Files": {
-            "timestamp": Timestamp(1569837286,
-            1),
+            "timestamp":1569837286,
             "list": [
               {
                 "idFile": 347,
@@ -252,8 +243,7 @@
             ]
           },
           "Lawyers": {
-            "timestamp": Timestamp(1569837286,
-            1),
+            "timestamp":1569837286,
             "list": [
               {
                 "idLawyer": 44,
@@ -270,8 +260,8 @@
             ]
           },
           "Solicitors": {
-            "timestamp": Timestamp(1569837286,
-            1),
+            "timestamp":1569837286,
+
             "list": [
               {
                 "idSolicitor": 46,
@@ -288,8 +278,7 @@
             ]
           },
           "Notaries": {
-            "timestamp": Timestamp(1569837286,
-            1),
+            "timestamp":1569837286,
             "list": [
               {
                 "idNotary": 4,
@@ -301,13 +290,11 @@
         },
         {
           "idCompany": 15,
-          "Logo": "url/topicCerebrito.png",
           "name": "Cerebritos SL",
           "conn": "db_chomin_02",
           "selected": false,
           "Folders": {
-            "timestamp": Timestamp(1569837286,
-            1),
+            "timestamp":1569837286,
             "list": [
               {
                 "idFolder": 12111,
@@ -316,8 +303,7 @@
                 "name": "avellanas",
                 "path": "Leche/Cacao/Avellanas",
                 "Documents": {
-                  "timestamp": Timestamp(1569837286,
-                  1),
+                  "timestamp":1569837286,  
                   "list": [
                     {
                       "idDocument": 12345,
@@ -338,7 +324,7 @@
                 "level": 3,
                 "name": "lima",
                 "path": "Hispanoamerica/Peru/Lima",
-                "Documents": []
+                "Documents": {}
               },
               {
                 "level": 2,
@@ -371,8 +357,7 @@
             ]
           },
           "Clients": {
-            "timestamp": Timestamp(1569837286,
-            1),
+            "timestamp":1569837286,
             "list": [
               {
                 "idClient": 1234,
@@ -389,8 +374,7 @@
             ]
           },
           "Insurances": {
-            "timestamp": Timestamp(1569837286,
-            1),
+            "timestamp":1569837286,
             "list": [
               {
                 "idInsurance": 12,
@@ -411,8 +395,7 @@
             ]
           },
           "Suppliers": {
-            "timestamp": Timestamp(1569837286,
-            1),
+            "timestamp":1569837286,
             "list": [
               {
                 "idSupplier": 1,
@@ -433,8 +416,7 @@
             ]
           },
           "Courts": {
-            "timestamp": Timestamp(1569837286,
-            1),
+            "timestamp":1569837286,
             "list": [
               {
                 "idCourt": 32,
@@ -454,8 +436,7 @@
             ]
           },
           "Files": {
-            "timestamp": Timestamp(1569837286,
-            1),
+            "timestamp":1569837286,
             "list": [
               {
                 "idFile": 345,
@@ -510,8 +491,7 @@
             ]
           },
           "Lawyers": {
-            "timestamp": Timestamp(1569837286,
-            1),
+            "timestamp":1569837286,
             "list": [
               {
                 "idLawyer": 11,
@@ -528,8 +508,7 @@
             ]
           },
           "Solicitors": {
-            "timestamp": Timestamp(1569837286,
-            1),
+            "timestamp": 1569837286,
             "list": [
               {
                 "idSolicitor": 46,
@@ -546,8 +525,7 @@
             ]
           },
           "Notaries": {
-            "timestamp": Timestamp(1569837286,
-            1),
+            "timestamp":1569837286,
             "list": [
               {
                 "idNotary": 3,

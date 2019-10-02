@@ -8,7 +8,7 @@ namespace Lexon.API.Model
     {
 
         [BsonElement("timestamp")]
-        public BsonTimestamp TimeStamp { get; set; }
+        public long TimeStamp { get; set; }
         [BsonElement("list")]
         public LexonEntity[] List { get; set; }
 

@@ -6,7 +6,7 @@ namespace Lexon.API.Model
     public class LexonLawyersList : MongoModel, ILexonList<LexonLawyer>
     {
         [BsonElement("timestamp")]
-        public BsonTimestamp TimeStamp { get; set; }
+        public long TimeStamp { get; set; }
         [BsonElement("list")]
         public LexonLawyer[] List { get; set; }
     }

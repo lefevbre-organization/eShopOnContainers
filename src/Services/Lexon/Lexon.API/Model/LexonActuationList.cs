@@ -7,7 +7,7 @@ namespace Lexon.API.Model
     public class LexonActuationList : MongoModel, ILexonList<LexonActuation>
     {
 
-        public BsonTimestamp TimeStamp { get; set; }
+        public long TimeStamp { get; set; }
 
         public LexonActuation[] List { get; set; }
 

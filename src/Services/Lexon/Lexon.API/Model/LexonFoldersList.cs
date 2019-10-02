@@ -6,7 +6,7 @@ namespace Lexon.API.Model
     public class LexonFoldersList : MongoModel , ILexonList<LexonFolder>
     {
         [BsonElement("timestamp")]
-        public BsonTimestamp TimeStamp { get; set; }
+        public long TimeStamp { get; set; }
         [BsonElement("list")]
         public LexonFolder[] List { get; set; }
     }

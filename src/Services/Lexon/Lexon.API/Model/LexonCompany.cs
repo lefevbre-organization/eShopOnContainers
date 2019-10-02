@@ -10,9 +10,6 @@ namespace Lexon.API.Model
         [BsonElement("name")]
         public string Name { get; set; }
 
-        [BsonElement("logo")]
-        public string Logo { get; set; }
-
         [BsonElement("conn")]
         public string Conn { get; set; }
 
