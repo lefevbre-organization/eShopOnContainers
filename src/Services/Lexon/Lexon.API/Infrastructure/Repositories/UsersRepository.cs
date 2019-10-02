@@ -172,17 +172,31 @@ namespace Lexon.API.Infrastructure.Repositories
 
         public async Task<List<LexonFile>> GetFileListAsync(int pageSize, int pageIndex, string idUser, long idCompany, string search)
         {
-            var filter = Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser);
+            var filterDocuments = FilterDefinition<LexonUser>.Empty;
+            //if (!string.IsNullOrEmpty(search))
+            //{
+            //    filterDocuments = Builders<LexonUser>.Filter.Or(
+            //        Builders<LexonUser>.Filter.Regex("Companies.list.Files.list.Name", $"/*{search}*/i"),
+            //        Builders<LexonUser>.Filter.Regex("Companies.list.Files.list.Description", $"/*{search}*/i")
+            //    );
+            //}
+
+            var filter = Builders<LexonUser>.Filter.And(
+                Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser),
+                Builders<LexonUser>.Filter.Eq("Companies.list.idCompany", idCompany),
+                filterDocuments
+                );
 
             var user = await _context.LexonUsers
                 .Find(filter)
                 .SingleAsync();
 
             var company = user.Companies.List.FirstOrDefault(x => x.IdCompany == idCompany);
-            //todo: hacer busqueda combinada de la comnpañia y del usuario
+            var files = from s in company.Files.List
+                        where s.Description.Contains(search) ||  s.Name.Contains(search)
+                        select s;
+            return files.ToList();
 
-            //todo: hacer procedimiento para buscar los datos de expedientes en mongo
-            return company.Files.List.ToList();
         }
 
         public async Task<List<LexonEntity>> GetClassificationMasterListAsync()

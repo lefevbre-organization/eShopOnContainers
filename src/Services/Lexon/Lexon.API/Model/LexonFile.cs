@@ -7,8 +7,10 @@ namespace Lexon.API.Model
         [BsonElement("idFile")]
         public long IdFile { get; set; }
 
+        [BsonElement("code")]
         public string Name { get; set; }
 
+        [BsonElement("description")]
         public string Description { get; set; }
 
         [BsonElement("mails")]

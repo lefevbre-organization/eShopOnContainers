@@ -163,7 +163,7 @@ namespace Lexon.API.Controllers
         public async Task<IActionResult> FilesAsync([FromQuery]string idUser, [FromQuery]long idCompany, string search = null, [FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)
 
         {
-            if (!string.IsNullOrEmpty(idUser))
+            if (!string.IsNullOrEmpty(idUser) || idCompany <= 0)
             {
                 var itemsByUser = await _usersService.GetFileListAsync(pageSize, pageIndex, idUser, idCompany, search);
                 return !itemsByUser.Any()
