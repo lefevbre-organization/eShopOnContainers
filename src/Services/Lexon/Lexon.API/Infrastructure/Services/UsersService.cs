@@ -70,7 +70,7 @@ namespace Lexon.Infrastructure.Services
             return await _usersRepository.RemoveClassificationFromListAsync(idUser, idCompany, idMail, idRelated, idClassificationType);
         }
 
-        public async Task<LexonCompany> SelectCompanyAsync(string idUser, long idCompany)
+        public async Task<bool> SelectCompanyAsync(string idUser, long idCompany)
         {
             return await _usersRepository.SelectCompanyAsync(idUser, idCompany);
         }

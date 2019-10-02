@@ -20,6 +20,6 @@ namespace Lexon.API.Infrastructure.Repositories
         Task<List<LexonEntity>> GetClassificationMasterListAsync();
         Task<long> AddClassificationToListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType = 1);
         Task<long> RemoveClassificationFromListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType);
-        Task<LexonCompany> SelectCompanyAsync(string idUser, long idCompany);
+        Task<bool> SelectCompanyAsync(string idUser, long idCompany);
     }
 }

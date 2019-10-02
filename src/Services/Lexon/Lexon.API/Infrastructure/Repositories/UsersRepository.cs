@@ -303,9 +303,19 @@ namespace Lexon.API.Infrastructure.Repositories
             }
         }
 
-        public async Task<LexonCompany> SelectCompanyAsync(string idUser, long idCompany)
+        public async Task<bool> SelectCompanyAsync(string idUser, long idCompany)
         {
-            throw new NotImplementedException();
+            await _context.LexonUsers.UpdateOneAsync(
+                u => u.IdUser == idUser,
+                Builders<LexonUser>.Update.Set("Companies.list.$[i].selected", true),
+                new UpdateOptions
+                {
+                    ArrayFilters = new List<ArrayFilterDefinition>
+                    {
+                         new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.idCompany", idCompany))
+                    }
+                });
+            return true;
         }
 
         public async Task<LexonActuationMailList> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail)

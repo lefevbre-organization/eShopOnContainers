@@ -11,7 +11,7 @@ namespace Lexon.Infrastructure.Services
 
         Task<List<LexonCompany>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser);
 
-        Task<LexonCompany> SelectCompanyAsync(string idUser, long idCompany);
+        Task<bool> SelectCompanyAsync(string idUser, long idCompany);
 
         Task<LexonActuationMailList> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail);
 
