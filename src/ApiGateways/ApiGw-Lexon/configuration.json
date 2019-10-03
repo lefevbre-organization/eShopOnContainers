@@ -6,7 +6,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 62799
+          "Port": 64745
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/lex/{everything}",
