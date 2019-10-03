@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,29 +40,30 @@ namespace Lexon.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<LexonCompany>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CompaniesAsync([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0, string idUser = null)
+
         {
-            var companies = new List<LexonCompany> {
-                new LexonCompany { IdCompany = 1, Name = "Abogados de Atocha, S.L." },
-                new LexonCompany { IdCompany = 2, Name = "Servicios Jurídicos Arganzuela" },
-                new LexonCompany { IdCompany = 3, Name = "Barconsa Asesores" }
-            };
+            //var companies = new List<LexonCompany> {
+            //    new LexonCompany { IdCompany = 1, Name = "Abogados de Atocha, S.L." },
+            //    new LexonCompany { IdCompany = 2, Name = "Servicios Jurídicos Arganzuela" },
+            //    new LexonCompany { IdCompany = 3, Name = "Barconsa Asesores" }
+            //};
 
-            var companiesJson = JsonConvert.SerializeObject(companies);
-            return Ok(companiesJson);
+            //var companiesJson = JsonConvert.SerializeObject(companies);
+            //return Ok(companiesJson);
 
-            //if (!string.IsNullOrEmpty(idUser))
-            //{
-            //    var itemsByUser = await _usersService.GetCompaniesFromUserAsync(pageSize, pageIndex, idUser);
-            //    return !itemsByUser.Any()
-            //        ? (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment")
-            //        : Ok(itemsByUser);
-            //}
+            if (!string.IsNullOrEmpty(idUser))
+            {
+                var itemsByUser = await _usersService.GetCompaniesFromUserAsync(pageSize, pageIndex, idUser);
+                return !itemsByUser.Any()
+                    ? (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment")
+                    : Ok(itemsByUser);
+            }
 
-            //var itemsOnPage = await _usersService.GetCompaniesFromUserAsync(pageSize, pageIndex, idUser);
-            //var totalItems = itemsOnPage.Count;
+            var itemsOnPage = await _usersService.GetCompaniesFromUserAsync(pageSize, pageIndex, idUser);
+            var totalItems = itemsOnPage.Count;
 
-            //var model = new PaginatedItemsViewModel<LexonCompany>(pageIndex, pageSize, totalItems, itemsOnPage);
-            //return Ok(model);
+            var model = new PaginatedItemsViewModel<LexonCompany>(pageIndex, pageSize, totalItems, itemsOnPage);
+            return Ok(model);
         }
 
         // GET api/v1/[controller]/classifications[?pageSize=3&pageIndex=10]
@@ -73,53 +73,55 @@ namespace Lexon.API.Controllers
         [ProducesResponseType(typeof(IEnumerable<LexonActuation>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ClassificationsAsync([FromQuery]string idUser, [FromQuery]long idCompany, [FromQuery]string idMail, [FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)
+
         {
-            var classifications = new LexonClassificationMail
-            {
-                IdMail = idMail,
-                Classifications = new LexonActuationList
-                {
-                    TimeStamp = DateTime.Now.ToString(),
-                    List = new List<LexonActuation>
-                    {
-                        new LexonActuation
-                        {
-                            Name = "Actuación 1",
-                            Description = "2018/000002 - Reclamación a seguros OCASO por accidente múltiple",
-                            Type = "Expediente"
-                        },
-                        new LexonActuation
-                        {
-                            Name = "Actuación 2",
-                            Description = "2018/000003 - Reclamación a seguros OCASO por accidente múltiple",
-                            Type = "Abogados contrarios"
-                        },
-                        new LexonActuation
-                        {
-                            Name = "Actuación 3",
-                            Description = "2018/000004 - Reclamación a seguros OCASO por accidente múltiple",
-                            Type = "Otro tipo"
-                        }
-
-                    }.ToArray()
-                }
-            };
-            var classificationsJson = JsonConvert.SerializeObject(classifications);
-            return Ok(classificationsJson);
-
-            //if (!string.IsNullOrEmpty(idUser))
+            //var classifications = new LexonClassificationMail
             //{
-            //    var itemsByUser = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
-            //    return !itemsByUser.Classifications.List.Any()
-            //        ? (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment")
-            //        : Ok(itemsByUser);
-            //}
+            //    IdMail = idMail,
+            //    Classifications = new LexonActuationList
+            //    {
+            //        TimeStamp = DateTime.Now.ToString(),
+            //        List = new List<LexonActuation>
+            //        {
+            //            new LexonActuation
+            //            {
+            //                Name = "Actuación 1",
+            //                Description = "2018/000002 - Reclamación a seguros OCASO por accidente múltiple",
+            //                Type = "Expediente"
+            //            },
+            //            new LexonActuation
+            //            {
+            //                Name = "Actuación 2",
+            //                Description = "2018/000003 - Reclamación a seguros OCASO por accidente múltiple",
+            //                Type = "Abogados contrarios"
+            //            },
+            //            new LexonActuation
+            //            {
+            //                Name = "Actuación 3",
+            //                Description = "2018/000004 - Reclamación a seguros OCASO por accidente múltiple",
+            //                Type = "Otro tipo"
+            //            }
 
-            //var itemsOnPage = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
-            //var totalItems = itemsOnPage.Classifications.List.Length;
+            //        }.ToArray()
+            //    }
+            //};
+            //var classificationsJson = JsonConvert.SerializeObject(classifications);
+            //return Ok(classificationsJson);
 
-            //var model = new PaginatedItemsViewModel<LexonActuation>(pageIndex, pageSize, totalItems, itemsOnPage.Classifications.List.ToList());
-            //return Ok(model);
+
+            if (!string.IsNullOrEmpty(idUser))
+            {
+                var itemsByUser = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
+                return !itemsByUser.Classifications.List.Any()
+                    ? (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment")
+                    : Ok(itemsByUser);
+            }
+
+            var itemsOnPage = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
+            var totalItems = itemsOnPage.Classifications.List.Length;
+
+            var model = new PaginatedItemsViewModel<LexonActuation>(pageIndex, pageSize, totalItems, itemsOnPage.Classifications.List.ToList());
+            return Ok(model);
         }
 
         [HttpGet]
@@ -170,6 +172,56 @@ namespace Lexon.API.Controllers
         public async Task<IActionResult> ClassificationsTypesAsync()
 
         {
+            //var listLexonClassificationType = new List<LexonClassificationType>
+            //{
+            //    new LexonClassificationType {
+            //        id = 1, name = "Expedientes"
+            //    },
+            //    new LexonClassificationType {
+            //        id = 2, name = "Clientes"
+            //    },
+            //    new LexonClassificationType {
+            //        id = 3, name = "Contrarios"
+            //    },
+            //    new LexonClassificationType {
+            //        id = 4, name = "Proveedores"
+            //    },
+            //    new LexonClassificationType {
+            //        id = 5, name = "Abogados propios"
+            //    },
+            //    new LexonClassificationType {
+            //        id = 6, name = "Abogados contrarios"
+            //    },
+            //    new LexonClassificationType {
+            //        id = 7, name = "Procuradores propios"
+            //    },
+            //    new LexonClassificationType {
+            //        id = 8, name = "Procuradores contrarios"
+            //    },
+            //    new LexonClassificationType {
+            //        id = 9, name = "Notarios"
+            //    },
+            //    new LexonClassificationType {
+            //        id = 10, name = "Juzgados"
+            //    },
+            //    new LexonClassificationType {
+            //        id = 11, name = "Aseguradoras"
+            //    },
+            //    new LexonClassificationType {
+            //        id = 12, name = "Otros"
+            //    },
+            //    new LexonClassificationType {
+            //        id = 13, name = "Carpetas"
+            //    },
+            //    new LexonClassificationType {
+            //        id = 14, name = "Documentos"
+            //    },
+            //};
+
+            //var listLexonClassificationTypeJson = JsonConvert.SerializeObject(listLexonClassificationType);
+            //return Ok(listLexonClassificationTypeJson);
+
+
             var itemsByUser = await _usersService.GetClassificationMasterListAsync();
             return !itemsByUser.Any()
                 ? (IActionResult)BadRequest("error getting types of entities")
@@ -204,6 +256,18 @@ namespace Lexon.API.Controllers
         public async Task<IActionResult> FilesAsync([FromQuery]string idUser, [FromQuery]long idCompany, string search = null, [FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)
 
         {
+            //var listLexonFiles = new List<LexonFile>
+            //{
+            //    new LexonFile { IdFile = 345556, Name = "EXP-345556", Description = "Expediente 345556" },
+            //    new LexonFile { IdFile = 345557, Name = "EXP-345557", Description = "Expediente 345557" },
+            //    new LexonFile { IdFile = 345558, Name = "EXP-345558", Description = "Expediente 345558" },
+            //    new LexonFile { IdFile = 345559, Name = "EXP-345559", Description = "Expediente 345559" },
+            //    new LexonFile { IdFile = 345560, Name = "EXP-345560", Description = "Expediente 345560" }
+            //};
+
+            //var listLexonFilesJson = JsonConvert.SerializeObject(listLexonFiles);
+            //return Ok(listLexonFilesJson);
+
             if (!string.IsNullOrEmpty(idUser) || idCompany <= 0)
             {
                 var itemsByUser = await _usersService.GetFileListAsync(pageSize, pageIndex, idUser, idCompany, search);
