@@ -92,7 +92,7 @@ class Main extends Component {
   }
 
   handleGetUserFromLexonConnector(event) {
-    this.sendMessagePutUser("1255717");
+    this.sendMessagePutUser("120");
   }
 
   async handlePutUserFromLexonConnector(event) {
@@ -130,7 +130,7 @@ class Main extends Component {
           initialModalState={showClassifyEmails}
           toggleClassifyEmails={this.toggleClassifyEmails}
         />
-        {/* <Header title={"LEX-ON"} /> */}
+        <Header title={"LEX-ON"} />
         <Routing user={user} companies={companies} toggleClassifyEmails={this.toggleClassifyEmails} />
       </Fragment>
     );

@@ -14,9 +14,9 @@ class Company extends Component {
   }
 
   render() {
-    const id = `optionsRadios${this.props.company.IdCompany}`;
-    const value = this.props.company.IdCompany;
-    const name = this.props.company.Name;
+    const id = `optionsRadios${this.props.company.idCompany}`;
+    const value = this.props.company.idCompany;
+    const name = this.props.company.name;
     const { checked } = this.props;
 
     return (

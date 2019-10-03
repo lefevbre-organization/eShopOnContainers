@@ -13,7 +13,7 @@ class ClassificationType extends Component {
       showTypes: false,
       types: [],
       selectedType: {
-        id: 0,
+        idEntity: 0,
         name: i18n.t("classification-type.select")
       }
     };
@@ -42,14 +42,14 @@ class ClassificationType extends Component {
     this.setState({
       showTypes: !this.state.showTypes,
       selectedType: type ? {
-        id: type.id,
+        idEntity: type.idEntity,
         name: type.name
       } : this.state.selectedType
     });
 
     if (type) {
       const { searchResultsByType } = this.props;
-      searchResultsByType(type.id, 'null');  
+      searchResultsByType(type.idEntity, null);  
     }
   }
 
@@ -83,7 +83,7 @@ class ClassificationType extends Component {
               return (
                 <Entity
                   type={type}
-                  key={type.id}
+                  key={type.idEntity}
                   closeTypes={this._handleOnClick}
                 ></Entity>
               );

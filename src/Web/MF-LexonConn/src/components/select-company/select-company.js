@@ -42,9 +42,9 @@ class SelectCompany extends Component {
     }
   }
 
-  updateSelectedCompany(IdCompany) {
+  updateSelectedCompany(idCompany) {
     const company = this.props.companies.find(
-      company => company.IdCompany === Number(IdCompany)
+      company => company.idCompany === Number(idCompany)
     );
     this.props.setCompanySelected(company);
     this.setState({
@@ -69,12 +69,12 @@ class SelectCompany extends Component {
     const { companySelected } = this.props;
     if (
       companySelected == null ||
-      companySelected.IdCompany !== Number(company.IdCompany)
+      companySelected.idCompany !== Number(company.idCompany)
     ) {
       return (
         <Company
           company={company}
-          key={company.IdCompany}
+          key={company.idCompany}
           updateSelectedCompany={this.updateSelectedCompany}
           checked={false}
         />
@@ -83,7 +83,7 @@ class SelectCompany extends Component {
       return (
         <Company
           company={company}
-          key={company.IdCompany}
+          key={company.idCompany}
           updateSelectedCompany={this.updateSelectedCompany}
           checked={true}
         />

@@ -46,7 +46,7 @@ class SelectActionHeader extends Component {
         <p className="company-id">
           {i18n.t("select-action-header.company-selected")}
           <br />
-          <strong>{companySelected.Name}</strong>
+          <strong>{companySelected.name}</strong>
           <a href="#/" title={i18n.t("select-action-header.change-company")}>
             <strong className="sr-only sr-only-focusable">
               {i18n.t("select-action-header.select-another-company")}

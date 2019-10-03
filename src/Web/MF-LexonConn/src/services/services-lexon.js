@@ -2,8 +2,7 @@ import { config } from "../constants";
 
 export const getCompanies = userId => {
   return new Promise((resolve, reject) => {
-    //const url = `${config.url.API_ACCOUNTS}/${config.api.COMPANIES}/${userId}`;
-    const url = `${config.url.API_ACCOUNTS}/${config.api.COMPANIES}`;
+    const url = `${config.url.API_ACCOUNTS}/${config.api.COMPANIES}?idUser=${userId}`;
     fetch(url, {
       method: "GET"
     })
@@ -21,8 +20,7 @@ export const getCompanies = userId => {
 
 export const getClassifications = (userId, companyId, mailId) => {
   return new Promise((resolve, reject) => {
-    //const url = `${config.url.API_ACCOUNTS}/${config.api.CLASSIFICATIONS}/${userId}/${companyId}/${mailId}`;
-    const url = `${config.url.API_ACCOUNTS}/${config.api.CLASSIFICATIONS}`;
+    const url = `${config.url.API_ACCOUNTS}/${config.api.CLASSIFICATIONS}?idUser=${userId}&idCompany=${companyId}&idMail=${mailId}`;
     fetch(url, {
       method: "GET"
     })
@@ -73,7 +71,6 @@ export const removeClassification = (
 ) => {
   return new Promise((resolve, reject) => {
     const url = `${config.url.API_ACCOUNTS}/${config.api.CLASSIFICATIONS_REMOVE}?idUser=${userId}&idCompany=${companyId}&idMail=${mailId}&idRelated=${relatedId}&idType=${typeId}`;
-    //const url = `${config.url.API_ACCOUNTS}/${config.api.CLASSIFICATIONS_REMOVE}`;
     fetch(url, {
       method: "GET"
     })
@@ -91,7 +88,6 @@ export const removeClassification = (
 
 export const getTypes = () => {
   return new Promise((resolve, reject) => {
-    //const url = `${config.url.API_ACCOUNTS}/${config.api.COMPANIES}/${userId}`;
     const url = `${config.url.API_ACCOUNTS}/${config.api.TYPES}`;
     fetch(url, {
       method: "GET"

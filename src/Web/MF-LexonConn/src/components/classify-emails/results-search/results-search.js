@@ -17,9 +17,9 @@ class ResultsSearch extends Component {
 
   renderIconCheck() {
     const { resultsSelected } = this.props;  
-    const { IdFile } = this.props.result;
+    const { idFile } = this.props.result;
 
-    if (resultsSelected.map(e => e.IdFile).indexOf(IdFile) !== -1) {
+    if (resultsSelected.map(e => e.idFile).indexOf(idFile) !== -1) {
       return <span className="lf-icon-check"></span>;
     } else {
       return null;
@@ -27,16 +27,16 @@ class ResultsSearch extends Component {
   }
 
   render() {
-    const { IdFile, Name, Description } = this.props.result;
+    const { idFile, name, description } = this.props.result;
 
     return (
       <tr onClick={this._handleOnClick}>
         <td>
           {this.renderIconCheck()}
-          {IdFile}
+          {idFile}
         </td>
-        <td>{Name}</td>
-        <td>{Description}</td>
+        <td>{name}</td>
+        <td>{description}</td>
       </tr>
     );
   }

@@ -17,7 +17,7 @@ class ClassifyEmails extends Component {
       listResultsByType: [],
       resultsSelected: [],
       type: null,
-      search: null
+      search: ''
     };
 
     this._handleOnClick = this._handleOnClick.bind(this);
@@ -62,9 +62,9 @@ class ClassifyEmails extends Component {
         ) {
           addClassification(
             user,
-            companySelected.IdCompany,
+            companySelected.idCompany,
             selectedMessages[indexSelectedMessages],
-            resultsSelected[indexResultsSelected].IdFile,
+            resultsSelected[indexResultsSelected].idFile,
             type
           ).catch(error => {
             console.log("error ->", error);
@@ -84,7 +84,7 @@ class ClassifyEmails extends Component {
       return;
     }
 
-    getResults(user, companySelected.IdCompany, type, search)
+    getResults(user, companySelected.idCompany, type, search)
       .then(result => {
         this.setState({
           listResultsByType: result.results
@@ -102,7 +102,7 @@ class ClassifyEmails extends Component {
       });
     }
 
-    if (search) {
+    if (search != null) {
       this.setState({
         search: search
       });
@@ -112,7 +112,7 @@ class ClassifyEmails extends Component {
   updateResultsSelected(item) {
     const { resultsSelected } = { ...this.state };
 
-    var findElement = resultsSelected.map(e => e.IdFile).indexOf(item.IdFile);
+    var findElement = resultsSelected.map(e => e.idFile).indexOf(item.idFile);
     if (findElement === -1) {
       resultsSelected.push(item);
     } else {
