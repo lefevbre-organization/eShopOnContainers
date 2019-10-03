@@ -33,7 +33,7 @@ const lexonContent = props => {
     ? { ...styles.sidebar, ...props.style }
     : styles.sidebar;
 
-    let el = document.getElementById("main-lexon-connector");
+    let el = document.getElementById("lexon-app");
     if (!el) {
         try {
             //const activityFunction = location => location.pathname.startsWith('/');
@@ -61,9 +61,9 @@ const lexonContent = props => {
         </a>
         <div style={styles.divider} />
         {links}*/}
-       <img id="myImg1" onClick={addImg} border="0" alt="Lefebvre" src="assets/img/lexon-1.png"></img>
+       {/* <img id="myImg1" onClick={addImg} border="0" alt="Lefebvre" src="assets/img/lexon-1.png"></img> */}
 
-       {/*<div id="lexon-app"></div>*/}
+       <div id="lexon-app"></div>
        
        </div>
          

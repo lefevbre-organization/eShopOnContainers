@@ -41,13 +41,22 @@
     <Content Include="src\actions\email.jsx" />
     <Content Include="src\actions\selections.jsx" />
     <Content Include="src\App.css" />
-    <Content Include="src\classify-emails\classify-emails.css" />
-    <Content Include="src\classify-emails\classify-emails.js" />
+    <Content Include="src\components\classify-emails\assigned-to\assigned-to.css" />
+    <Content Include="src\components\classify-emails\assigned-to\assigned-to.js" />
+    <Content Include="src\components\classify-emails\classification-list-search\classification-list-search.css" />
+    <Content Include="src\components\classify-emails\classification-list-search\classification-list-search.js" />
+    <Content Include="src\components\classify-emails\classification-list\classification-list.css" />
+    <Content Include="src\components\classify-emails\classification-list\classification-list.js" />
+    <Content Include="src\components\classify-emails\classification-type\classification-type.css" />
+    <Content Include="src\components\classify-emails\classification-type\classification-type.js" />
     <Content Include="src\components\classify-emails\classify-emails.css" />
     <Content Include="src\components\classify-emails\classify-emails.js" />
+    <Content Include="src\components\classify-emails\entity\entity.css" />
+    <Content Include="src\components\classify-emails\entity\entity.js" />
+    <Content Include="src\components\classify-emails\results-search\results-search.css" />
+    <Content Include="src\components\classify-emails\results-search\results-search.js" />
     <Content Include="src\components\company\company.css" />
     <Content Include="src\components\company\company.js" />
-    <Content Include="src\components\constants\index.js" />
     <Content Include="src\components\header\header.css" />
     <Content Include="src\components\header\header.js" />
     <Content Include="src\components\routing\routing.js" />
@@ -102,11 +111,15 @@
     <Folder Include="scripts" />
     <Folder Include="src" />
     <Folder Include="src\actions\" />
-    <Folder Include="src\classify-emails\" />
     <Folder Include="src\components\" />
     <Folder Include="src\components\classify-emails\" />
+    <Folder Include="src\components\classify-emails\assigned-to\" />
+    <Folder Include="src\components\classify-emails\classification-list-search\" />
+    <Folder Include="src\components\classify-emails\classification-list\" />
+    <Folder Include="src\components\classify-emails\classification-type\" />
+    <Folder Include="src\components\classify-emails\entity\" />
+    <Folder Include="src\components\classify-emails\results-search\" />
     <Folder Include="src\components\company\" />
-    <Folder Include="src\components\constants\" />
     <Folder Include="src\components\header\" />
     <Folder Include="src\components\routing\" />
     <Folder Include="src\components\select-action\" />
@@ -132,7 +145,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\actions\lex-on_message-list.actions.jsx" />
-    <Compile Include="src\reducers\lex-on_message-list.reducers.jsx" />
     <Compile Include="src\store\store.jsx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

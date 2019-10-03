@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import ACTIONS from "./actions/email";
 import "./main.css";
 
-// import Header from "./components/header/header";
+import Header from "./components/header/header";
 import Routing from "./components/routing/routing";
 import Spinner from "./components/spinner/spinner";
 import ClassifyEmails from "./components/classify-emails/classify-emails";
@@ -110,7 +110,7 @@ class Main extends Component {
       });
   }
 
-  toggleClassifyEmails(remove, email) {
+  toggleClassifyEmails() {
     this.setState(state => ({
       showClassifyEmails: !state.showClassifyEmails
     }));
@@ -126,6 +126,7 @@ class Main extends Component {
     return (
       <Fragment>
         <ClassifyEmails
+          user={user}
           initialModalState={showClassifyEmails}
           toggleClassifyEmails={this.toggleClassifyEmails}
         />

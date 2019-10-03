@@ -25,5 +25,15 @@
     "save": "SAVE",
     "title": "New classification",
     "body": "Select classification type to load the corresponding list and assign the messages to one of the items in the list."
+  },
+  "classification-type": {
+    "type": "Type",
+    "select": "--Select--"
+  },
+  "classification-list-search": {
+    "results-total": "TOTAL RESULTS: ",
+    "show-search": "Show search",
+    "search-by": "Search by:",
+    "hide-search": "Hide search"
   }
 }

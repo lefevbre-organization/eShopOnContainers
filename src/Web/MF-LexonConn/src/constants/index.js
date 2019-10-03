@@ -5,7 +5,10 @@ const dev = {
   api: {
     COMPANIES: "api/v1/lex/lexon/companies",
     CLASSIFICATIONS: "api/v1/lex/lexon/classifications",
-    CLASSIFICATIONS_REMOVE: "api/v1/lex/lexon/classifications/remove"
+    CLASSIFICATIONS_ADD: "api/v1/lex/lexon/classifications/add",
+    CLASSIFICATIONS_REMOVE: "api/v1/lex/lexon/classifications/remove",
+    TYPES: "api/v1/lex/lexon/classifications/types",
+    RESULTS: "api/v1/lex/lexon/files"
   }
 };
 
@@ -16,7 +19,10 @@ const prod = {
   api: {
     COMPANIES: "api/v1/lex/lexon/companies",
     CLASSIFICATIONS: "api/v1/lex/lexon/classifications",
-    CLASSIFICATIONS_REMOVE: "api/v1/lex/lexon/classifications/remove"
+    CLASSIFICATIONS_ADD: "api/v1/lex/lexon/classifications/add",
+    CLASSIFICATIONS_REMOVE: "api/v1/lex/lexon/classifications/remove",
+    TYPES: "api/v1/lex/lexon/classifications/types",
+    RESULTS: "api/v1/lex/lexon/files"
   }
 };
 

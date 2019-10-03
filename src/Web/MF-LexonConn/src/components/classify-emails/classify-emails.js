@@ -1,25 +1,130 @@
 import React, { Component } from "react";
-import { Button, Modal, Container, Col, Row } from "react-bootstrap";
+import { Button, Modal, Container } from "react-bootstrap";
 import i18n from "i18next";
 import "./classify-emails.css";
 import ClassificationType from "./classification-type/classification-type";
+import ClassificationList from "./classification-list/classification-list";
+import PropTypes from "prop-types";
+import { getResults, addClassification } from "../../services/services-lexon";
+import { connect } from "react-redux";
 
 class ClassifyEmails extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      modal: props.initialModalState
+      modal: props.initialModalState,
+      listResultsByType: [],
+      resultsSelected: [],
+      type: null,
+      search: null
     };
+
+    this._handleOnClick = this._handleOnClick.bind(this);
   }
 
-  toggle() {
-    this.setState({
-      modal: !this.state.modal
-    });
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      this.state.type &&
+      (prevState.type !== this.state.type ||
+        prevState.search !== this.state.search)
+    ) {
+      this.getListResultsByType();
+    }
+
+    if (
+      prevProps.initialModalState !== this.props.initialModalState &&
+      this.props.initialModalState === false
+    ) {
+      this.setState({ listResultsByType:[], resultsSelected: [] });
+    }
+  }
+
+  _handleOnClick(fromSave) {
+    const { type, resultsSelected } = this.state;
+    const {
+      user,
+      companySelected,
+      toggleClassifyEmails,
+      selectedMessages
+    } = this.props;
+
+    if (fromSave === true) {
+      for (
+        let indexSelectedMessages = 0;
+        indexSelectedMessages < selectedMessages.length;
+        indexSelectedMessages++
+      ) {
+        for (
+          let indexResultsSelected = 0;
+          indexResultsSelected < resultsSelected.length;
+          indexResultsSelected++
+        ) {
+          addClassification(
+            user,
+            companySelected.IdCompany,
+            selectedMessages[indexSelectedMessages],
+            resultsSelected[indexResultsSelected].IdFile,
+            type
+          ).catch(error => {
+            console.log("error ->", error);
+          });
+        }
+      }
+    }
+
+    toggleClassifyEmails();
+  }
+
+  getListResultsByType() {
+    const { type, search } = this.state;
+    const { user, companySelected } = this.props;
+
+    if (type == null) {
+      return;
+    }
+
+    getResults(user, companySelected.IdCompany, type, search)
+      .then(result => {
+        this.setState({
+          listResultsByType: result.results
+        });
+      })
+      .catch(error => {
+        console.log("error ->", error);
+      });
+  }
+
+  searchResultsByType(type, search) {
+    if (type) {
+      this.setState({
+        type: type
+      });
+    }
+
+    if (search) {
+      this.setState({
+        search: search
+      });
+    }
+  }
+
+  updateResultsSelected(item) {
+    const { resultsSelected } = { ...this.state };
+
+    var findElement = resultsSelected.map(e => e.IdFile).indexOf(item.IdFile);
+    if (findElement === -1) {
+      resultsSelected.push(item);
+    } else {
+      resultsSelected.splice(findElement, 1);
+    }
+
+    this.setState({ resultsSelected: resultsSelected });
   }
 
   render() {
-    const { initialModalState, toggleClassifyEmails, email } = this.props;
+    const { listResultsByType, resultsSelected } = this.state;
+    const { initialModalState, toggleClassifyEmails } = this.props;
 
     return (
       <div>
@@ -49,19 +154,33 @@ class ClassifyEmails extends Component {
               <p>
                 <strong>{i18n.t("classify-emails.body")}</strong>
               </p>
-              <ClassificationType />
+              <ClassificationType
+                searchResultsByType={(type, search) => {
+                  this.searchResultsByType(type, search);
+                }}
+              />
+              <ClassificationList
+                resultsSelected={resultsSelected}
+                listResultsByType={listResultsByType}
+                searchResultsByType={(type, search) => {
+                  this.searchResultsByType(type, search);
+                }}
+                updateResultsSelected={item => {
+                  this.updateResultsSelected(item);
+                }}
+              />
             </Container>
           </Modal.Body>
           <Modal.Footer>
             <Button
               className="btn-primary"
-              onClick={() => toggleClassifyEmails(false, email)}
+              onClick={() => this._handleOnClick(false)}
             >
               {i18n.t("classify-emails.cancel")}
             </Button>
             <Button
               className="btn-secondary"
-              onClick={() => toggleClassifyEmails(true, email)}
+              onClick={() => this._handleOnClick(true)}
             >
               {i18n.t("classify-emails.save")}
             </Button>
@@ -72,6 +191,17 @@ class ClassifyEmails extends Component {
   }
 }
 
-ClassifyEmails.propTypes = {};
+ClassifyEmails.propTypes = {
+  user: PropTypes.string.isRequired,
+  initialModalState: PropTypes.bool.isRequired,
+  toggleClassifyEmails: PropTypes.func.isRequired
+};
 
-export default ClassifyEmails;
+const mapStateToProps = state => {
+  return {
+    companySelected: state.selections.companySelected,
+    selectedMessages: state.email.selectedMessages
+  };
+};
+
+export default connect(mapStateToProps)(ClassifyEmails);
