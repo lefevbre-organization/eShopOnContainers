@@ -356,10 +356,10 @@ input[type="radio"]:checked+label:after {
 	border-radius: 50%;
 	margin-right: 5px;
  }
-.lexon-clasification-list-container table tr.selected td span{
+.lexon-clasification-list-container table tr:hover td span{
     color: #001978;
 }
-.lexon-clasification-list-container table tr:hover td span {
+.lexon-clasification-list-container table tr.selected td span {
 	background-color: #001978;
 	color: #E5E8F1;
 }
