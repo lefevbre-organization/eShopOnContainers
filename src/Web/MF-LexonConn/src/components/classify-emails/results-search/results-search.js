@@ -15,24 +15,25 @@ class ResultsSearch extends Component {
     updateResultsSelected(result);
   }
 
-  renderIconCheck() {
-    const { resultsSelected } = this.props;  
+  classSelected() {
+    const { resultsSelected } = this.props;
     const { idFile } = this.props.result;
 
     if (resultsSelected.map(e => e.idFile).indexOf(idFile) !== -1) {
-      return <span className="lf-icon-check"></span>;
+      return "selected";
     } else {
-      return null;
+      return "";
     }
   }
 
   render() {
     const { idFile, name, description } = this.props.result;
+    const classSelected = this.classSelected();
 
     return (
-      <tr onClick={this._handleOnClick}>
+      <tr onClick={this._handleOnClick} className={classSelected}>
         <td>
-          {this.renderIconCheck()}
+          <span className="lf-icon-check"></span>
           {idFile}
         </td>
         <td>{name}</td>

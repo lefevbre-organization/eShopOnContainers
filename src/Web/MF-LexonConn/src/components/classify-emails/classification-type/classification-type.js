@@ -41,15 +41,17 @@ class ClassificationType extends Component {
   _handleOnClick(type) {
     this.setState({
       showTypes: !this.state.showTypes,
-      selectedType: type ? {
-        idEntity: type.idEntity,
-        name: type.name
-      } : this.state.selectedType
+      selectedType: type
+        ? {
+            idEntity: type.idEntity,
+            name: type.name
+          }
+        : this.state.selectedType
     });
 
     if (type) {
       const { searchResultsByType } = this.props;
-      searchResultsByType(type.idEntity, null);  
+      searchResultsByType(type.idEntity, null);
     }
   }
 
@@ -85,6 +87,7 @@ class ClassificationType extends Component {
                   type={type}
                   key={type.idEntity}
                   closeTypes={this._handleOnClick}
+                  selectedType={selectedType}
                 ></Entity>
               );
             })}

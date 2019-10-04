@@ -16,12 +16,15 @@ class Entity extends Component {
   }
 
   render() {
-    const { name } = this.props.type;
+    const { idEntity, name } = this.props.type;
+    const { selectedType } = this.props;
+
+    const classSelected = idEntity === selectedType.idEntity ? "selected" : "";
 
     return (
-      <li onClick={() => this._handleOnClick()}>
+      <li onClick={() => this._handleOnClick()} className={classSelected}>
         <span className="lf-icon-check"></span>
-        <span className="type-name">{name}</span>        
+        <span className="type-name">{name}</span>
       </li>
     );
   }
@@ -29,7 +32,8 @@ class Entity extends Component {
 
 Entity.propTypes = {
   type: PropTypes.object.isRequired,
-  closeTypes: PropTypes.func.isRequired
+  closeTypes: PropTypes.func.isRequired,
+  selectedType: PropTypes.object.isRequired
 };
 
 export default Entity;

@@ -17,7 +17,7 @@ class ClassifyEmails extends Component {
       listResultsByType: [],
       resultsSelected: [],
       type: null,
-      search: ''
+      search: ""
     };
 
     this._handleOnClick = this._handleOnClick.bind(this);
@@ -36,7 +36,7 @@ class ClassifyEmails extends Component {
       prevProps.initialModalState !== this.props.initialModalState &&
       this.props.initialModalState === false
     ) {
-      this.setState({ listResultsByType:[], resultsSelected: [] });
+      this.setState({ listResultsByType: [], resultsSelected: [] });
     }
   }
 
@@ -172,14 +172,11 @@ class ClassifyEmails extends Component {
             </Container>
           </Modal.Body>
           <Modal.Footer>
-            <Button
-              className="btn-primary"
-              onClick={() => this._handleOnClick(false)}
-            >
+            <Button className="btn" onClick={() => this._handleOnClick(false)}>
               {i18n.t("classify-emails.cancel")}
             </Button>
             <Button
-              className="btn-secondary"
+              className="btn-primary"
               onClick={() => this._handleOnClick(true)}
             >
               {i18n.t("classify-emails.save")}
