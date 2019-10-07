@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./new-classification.css";
 import PropTypes from "prop-types";
 import i18n from "i18next";
+import { connect } from "react-redux";
 
 class NewClassification extends Component {
   constructor(props) {
@@ -17,6 +18,17 @@ class NewClassification extends Component {
   }
 
   render() {
+    const { selectedMessages } = this.props;
+
+    if (selectedMessages.length === 0) {
+      return (
+        <p className="add-more-container add-more">
+          <span className="lf-icon-add-round"></span>
+          <strong>{i18n.t("new-classification.new-classification")}</strong>
+        </p>
+      );
+    }
+
     return (
       <p className="add-more-container">
         <a href="#/" className="add-more" onClick={this._handleOnClick}>
@@ -33,4 +45,10 @@ NewClassification.propTypes = {
   toggleClassifyEmails: PropTypes.func.isRequired
 };
 
-export default NewClassification;
+const mapStateToProps = state => {
+  return {
+    selectedMessages: state.email.selectedMessages
+  };
+};
+
+export default connect(mapStateToProps)(NewClassification);

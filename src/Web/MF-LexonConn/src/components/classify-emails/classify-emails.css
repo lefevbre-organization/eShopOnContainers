@@ -1,4 +1,4 @@
-strong {
+/* strong {
   font-weight: 500;
   font-family: MTTMilano-Medium, Lato, Arial, sans-serif;
 }
@@ -269,9 +269,9 @@ strong {
 }
 
 .lexon-clasification-list-container tr {
-  display: table; /* display purpose; th's border */
+  display: table;
   width: 100%;
-  box-sizing: border-box; /* because of the border (Chrome needs this line, but not FF) */
+  box-sizing: border-box;
 }
 .lexon-clasification-list-container table th,
 .lexon-clasification-list-container table td {
@@ -345,4 +345,4 @@ strong {
   .modal-xl {
     max-width: 900px;
   }
-}
+} */

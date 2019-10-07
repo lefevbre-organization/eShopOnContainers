@@ -1,6 +1,6 @@
 const dev = {
   url: {
-    API_ACCOUNTS: "http://localhost:60980"
+    API_GATEWAY: "http://localhost:60970"
   },
   api: {
     COMPANIES: "api/v1/lex/lexon/companies",
@@ -14,7 +14,7 @@ const dev = {
 
 const prod = {
   url: {
-    API_ACCOUNTS: "http://localhost:60980"
+    API_GATEWAY: "http://localhost:60970"
   },
   api: {
     COMPANIES: "api/v1/lex/lexon/companies",

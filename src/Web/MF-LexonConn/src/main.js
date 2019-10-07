@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import ACTIONS from "./actions/email";
 import "./main.css";
 
-import Header from "./components/header/header";
+// import Header from "./components/header/header";
 import Routing from "./components/routing/routing";
 import Spinner from "./components/spinner/spinner";
 import ClassifyEmails from "./components/classify-emails/classify-emails";
@@ -92,7 +92,7 @@ class Main extends Component {
   }
 
   handleGetUserFromLexonConnector(event) {
-    this.sendMessagePutUser("1255717");
+    this.sendMessagePutUser("120");
   }
 
   async handlePutUserFromLexonConnector(event) {

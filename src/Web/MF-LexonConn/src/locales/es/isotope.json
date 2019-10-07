@@ -24,7 +24,8 @@
     "cancel": "CANCELAR",
     "save": "GUARDAR",
     "title": "Nueva clasificación",
-    "body": "Selecciona tipo de clasificación para cargar el listado correspondiente y asigna los mensajes a uno de los elementos de la lista."
+    "body": "Selecciona tipo de clasificación para cargar el listado correspondiente y asigna los mensajes a uno de los elementos de la lista.",
+    "classification-saved-ok": "La clasificación se ha guardado correctamente"
   },
   "classification-type": {
     "type": "Tipo",
@@ -34,7 +35,7 @@
     "results-total": "TOTAL RESULTADOS: ",
     "show-search": "Mostrar buscador",
     "search-by": "Buscar por:",
-    "hide-search": "Ocultar buscador"
+    "hide-search": "Ocultar buscador"    
   }
 }
 

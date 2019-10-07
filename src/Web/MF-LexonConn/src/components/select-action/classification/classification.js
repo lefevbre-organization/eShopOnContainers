@@ -26,7 +26,7 @@ class Classification extends Component {
 
     removeClassification(
       user,
-      companySelected.IdCompany,
+      companySelected.idCompany,
       mail,
       idType,
       idRelated

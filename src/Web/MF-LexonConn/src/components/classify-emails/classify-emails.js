@@ -17,7 +17,10 @@ class ClassifyEmails extends Component {
       listResultsByType: [],
       resultsSelected: [],
       type: null,
-      search: null
+      search: "",
+      onlyHeader: false,
+      titleInHeader: "",
+      forceUpdate: null
     };
 
     this._handleOnClick = this._handleOnClick.bind(this);
@@ -27,6 +30,7 @@ class ClassifyEmails extends Component {
     if (
       this.state.type &&
       (prevState.type !== this.state.type ||
+        prevState.forceUpdate !== this.state.forceUpdate ||
         prevState.search !== this.state.search)
     ) {
       this.getListResultsByType();
@@ -36,11 +40,14 @@ class ClassifyEmails extends Component {
       prevProps.initialModalState !== this.props.initialModalState &&
       this.props.initialModalState === false
     ) {
-      this.setState({ listResultsByType:[], resultsSelected: [] });
+      this.setState({ listResultsByType: [], resultsSelected: [] });
+      this.showMessageInTitle();
     }
   }
 
   _handleOnClick(fromSave) {
+    const _this = this;
+
     const { type, resultsSelected } = this.state;
     const {
       user,
@@ -62,18 +69,32 @@ class ClassifyEmails extends Component {
         ) {
           addClassification(
             user,
-            companySelected.IdCompany,
+            companySelected.idCompany,
             selectedMessages[indexSelectedMessages],
-            resultsSelected[indexResultsSelected].IdFile,
+            resultsSelected[indexResultsSelected].idFile,
             type
-          ).catch(error => {
-            console.log("error ->", error);
-          });
+          )
+            .then(
+              _this.showMessageInTitle(
+                i18n.t("classify-emails.classification-saved-ok")
+              )
+            )
+            .catch(error => {
+              console.log("error ->", error);
+            });
         }
       }
+    } else {
+      toggleClassifyEmails();
     }
+  }
 
-    toggleClassifyEmails();
+  showMessageInTitle(title) {
+    if (title) {
+      this.setState({ onlyHeader: true, titleInHeader: title });
+    } else {
+      this.setState({ onlyHeader: false, titleInHeader: "" });
+    }
   }
 
   getListResultsByType() {
@@ -84,7 +105,7 @@ class ClassifyEmails extends Component {
       return;
     }
 
-    getResults(user, companySelected.IdCompany, type, search)
+    getResults(user, companySelected.idCompany, type, search)
       .then(result => {
         this.setState({
           listResultsByType: result.results
@@ -97,12 +118,19 @@ class ClassifyEmails extends Component {
 
   searchResultsByType(type, search) {
     if (type) {
-      this.setState({
-        type: type
-      });
+      if (this.state.type === type) {
+        const uuidv1 = require("uuid/v1");
+        this.setState({
+          forceUpdate: uuidv1()
+        });
+      } else {
+        this.setState({
+          type: type
+        });
+      }
     }
 
-    if (search) {
+    if (search != null) {
       this.setState({
         search: search
       });
@@ -112,7 +140,7 @@ class ClassifyEmails extends Component {
   updateResultsSelected(item) {
     const { resultsSelected } = { ...this.state };
 
-    var findElement = resultsSelected.map(e => e.IdFile).indexOf(item.IdFile);
+    var findElement = resultsSelected.map(e => e.idFile).indexOf(item.idFile);
     if (findElement === -1) {
       resultsSelected.push(item);
     } else {
@@ -122,9 +150,45 @@ class ClassifyEmails extends Component {
     this.setState({ resultsSelected: resultsSelected });
   }
 
-  render() {
-    const { listResultsByType, resultsSelected } = this.state;
+  renderOnlyHeader() {
+    const { titleInHeader } = this.state;
     const { initialModalState, toggleClassifyEmails } = this.props;
+
+    return (
+      <div>
+        <Modal
+          show={initialModalState}
+          onHide={toggleClassifyEmails}
+          size="lg"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+          dialogClassName="modal"
+        >
+          <Modal.Header className="align-items-center" closeButton>
+            <Modal.Title>
+              <div className="modal-title h4">
+                <h5
+                  className="modal-title d-flex align-items-center"
+                  id="clasificarNuevaclasificacionLabel"
+                >
+                  <span className="lf-icon-bookmarks"></span>
+                  {titleInHeader}
+                </h5>
+              </div>
+            </Modal.Title>
+          </Modal.Header>
+        </Modal>
+      </div>
+    );
+  }
+
+  render() {
+    const { listResultsByType, resultsSelected, onlyHeader } = this.state;
+    const { initialModalState, toggleClassifyEmails } = this.props;
+
+    if (onlyHeader) {
+      return this.renderOnlyHeader();
+    }
 
     return (
       <div>
@@ -172,14 +236,11 @@ class ClassifyEmails extends Component {
             </Container>
           </Modal.Body>
           <Modal.Footer>
-            <Button
-              className="btn-primary"
-              onClick={() => this._handleOnClick(false)}
-            >
+            <Button className="btn" onClick={() => this._handleOnClick(false)}>
               {i18n.t("classify-emails.cancel")}
             </Button>
             <Button
-              className="btn-secondary"
+              className="btn-primary"
               onClick={() => this._handleOnClick(true)}
             >
               {i18n.t("classify-emails.save")}

@@ -24,7 +24,8 @@
     "cancel": "CANCEL",
     "save": "SAVE",
     "title": "New classification",
-    "body": "Select classification type to load the corresponding list and assign the messages to one of the items in the list."
+    "body": "Select classification type to load the corresponding list and assign the messages to one of the items in the list.",
+    "classification-saved-ok": "The classification saved correctly"
   },
   "classification-type": {
     "type": "Type",

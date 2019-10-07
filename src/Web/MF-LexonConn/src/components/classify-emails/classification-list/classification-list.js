@@ -42,7 +42,7 @@ class ClassificationList extends Component {
             {listResultsByType.map(result => {
               return (
                 <ResultsSearch
-                  key={result.IdFile}
+                  key={result.idFile}
                   result={result}
                   resultsSelected={resultsSelected}
                   updateResultsSelected={item => {

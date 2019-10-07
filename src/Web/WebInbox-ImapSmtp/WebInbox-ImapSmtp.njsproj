@@ -27,6 +27,8 @@
     <Content Include=".travis.yml" />
     <Content Include="client\.eslintignore" />
     <Content Include="client\.eslintrc" />
+    <Content Include="client\assets\css\modal.css" />
+    <Content Include="client\assets\css\styles.css" />
     <Content Include="client\assets\images\basedatos-fake.png" />
     <Content Include="client\assets\images\calendarfake.png" />
     <Content Include="client\assets\images\googlefake.png" />
@@ -313,6 +315,7 @@
   <ItemGroup>
     <Folder Include="client" />
     <Folder Include="client\assets" />
+    <Folder Include="client\assets\css\" />
     <Folder Include="client\assets\favicons" />
     <Folder Include="client\assets\images" />
     <Folder Include="client\assets\locales" />

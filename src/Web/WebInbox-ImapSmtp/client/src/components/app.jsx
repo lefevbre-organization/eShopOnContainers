@@ -56,7 +56,8 @@ class App extends Component {
       },
       sidebarComponent: (
         <img border="0" alt="Lefebvre" src="assets/images/lexon-fake.png"></img>
-      )
+      ),
+      actualSidebarComponent: 0
     };
 
     this.toggleSideBar = this.toggleSideBar.bind(this);

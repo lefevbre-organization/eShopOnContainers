@@ -40,7 +40,7 @@ class ListClassifications extends Component {
   getClassifications(mailId) {
     const { user, companySelected } = this.props;
 
-    getClassifications(user, companySelected.IdCompany, mailId)
+    getClassifications(user, companySelected.idCompany, mailId)
       .then(result => {
         this.setState({
           classifications: result.classifications.Classifications.List

@@ -9,7 +9,7 @@ class ClssificationListSearch extends Component {
 
     this.state = {
       showSearch: false,
-      search: ""
+      search: ''
     };
 
     this._handleOnclick = this._handleOnclick.bind(this);

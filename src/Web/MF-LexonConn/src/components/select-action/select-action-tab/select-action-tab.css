@@ -1,8 +1,8 @@
-.menu-lexon-actions {
+/* .menu-lexon-actions {
   border-bottom: 2px solid #001978;
   margin-bottom: 25px;
   font-family: MTTMilano, Lato, Arial, sans-serif;
-  padding-bottom: 6px;
+  padding-bottom: 4px;
 }
 .menu-lexon-actions ul {
   list-style: none;
@@ -37,4 +37,4 @@
 }
 .menu-lexon-actions a.active:after {
   border-left: 32px solid #001978;
-}
+} */

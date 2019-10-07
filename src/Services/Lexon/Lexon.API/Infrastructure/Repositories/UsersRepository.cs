@@ -192,11 +192,17 @@ namespace Lexon.API.Infrastructure.Repositories
                 .SingleAsync();
 
             var company = user.Companies.List.FirstOrDefault(x => x.IdCompany == idCompany);
-            var files = from s in company.Files.List
-                        where s.Description.Contains(search) ||  s.Name.Contains(search)
-                        select s;
-            return files.ToList();
+            if (!string.IsNullOrEmpty(search))
+            {
+                var files = from s in company.Files.List
+                            where s.Description.Contains(search) || s.Name.Contains(search)
+                            select s;
+                return files.ToList();
+            }
 
+            var filesWithoutSearch = from s in company.Files.List
+                        select s;
+            return filesWithoutSearch.ToList();
         }
 
         public async Task<List<LexonEntity>> GetClassificationMasterListAsync()
