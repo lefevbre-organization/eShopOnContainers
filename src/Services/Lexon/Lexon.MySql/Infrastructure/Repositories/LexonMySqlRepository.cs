@@ -31,14 +31,22 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     conn.Open();
                     using (MySqlCommand command = new MySqlCommand())
                     {
+                        var p_filter = "{\"NavisionId\":\"E1621396\"}";
+                        var outParam = new MySqlParameter()
+                        {
+                            ParameterName = "P_ERROR",
+                            DbType = DbType.String,
+                            Direction = ParameterDirection.Output
+                        };
                         var inParam = new MySqlParameter()
                         {
-                            ParameterName = "P_USER",
+                            ParameterName = "P_FILTER",
                             DbType = DbType.String,
-                            Direction = ParameterDirection.Input
+                            Direction = ParameterDirection.Input,
+                            Value = p_filter
                         };
                         command.Parameters.Add(inParam);
-
+                        command.Parameters.Add(outParam);
                         command.CommandType = CommandType.StoredProcedure;
                         command.CommandText = "PROC_CONN_COMPANIES_GET";
                         command.Connection = conn;
