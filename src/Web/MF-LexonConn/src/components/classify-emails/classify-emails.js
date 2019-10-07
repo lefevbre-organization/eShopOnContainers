@@ -236,11 +236,14 @@ class ClassifyEmails extends Component {
             </Container>
           </Modal.Body>
           <Modal.Footer>
-            <Button className="btn" onClick={() => this._handleOnClick(false)}>
+            <Button
+              bsPrefix="btn btn-outline-primary"
+              onClick={() => this._handleOnClick(false)}
+            >
               {i18n.t("classify-emails.cancel")}
             </Button>
             <Button
-              className="btn-primary"
+              bsPrefix="btn btn-primary"
               onClick={() => this._handleOnClick(true)}
             >
               {i18n.t("classify-emails.save")}

@@ -2,7 +2,7 @@
 import { UserAgentApplication } from "msal";
 import React, { Component } from "react";
 import { getUserDetails } from "./GraphService";
-import "bootstrap/dist/css/bootstrap.css";
+// import "bootstrap/dist/css/bootstrap.css";
 import { connect } from "react-redux";
 import Main from "./components/main/Main";
 import Login from "./components/login/Login";

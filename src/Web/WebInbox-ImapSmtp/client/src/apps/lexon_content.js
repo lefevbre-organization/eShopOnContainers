@@ -23,7 +23,8 @@ const styles = {
   content: {
     padding: 0,
     height: "100%",
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
+    overflowY: "hidden"
   }
 };
 
