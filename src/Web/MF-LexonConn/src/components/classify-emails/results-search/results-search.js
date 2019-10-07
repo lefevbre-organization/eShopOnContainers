@@ -28,10 +28,9 @@ class ResultsSearch extends Component {
 
   render() {
     const { idFile, name, description } = this.props.result;
-    const classSelected = this.classSelected();
 
     return (
-      <tr onClick={this._handleOnClick} className={classSelected}>
+      <tr onClick={this._handleOnClick} className={this.classSelected()}>
         <td>
           <span className="lf-icon-check"></span>
           {idFile}
