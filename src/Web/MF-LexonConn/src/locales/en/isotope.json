@@ -36,5 +36,8 @@
     "show-search": "Show search",
     "search-by": "Search by:",
     "hide-search": "Hide search"
+  },
+  "tab-classify": {
+    "select-mail": "Select one or more emails"
   }
 }

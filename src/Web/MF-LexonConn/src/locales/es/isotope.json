@@ -35,7 +35,9 @@
     "results-total": "TOTAL RESULTADOS: ",
     "show-search": "Mostrar buscador",
     "search-by": "Buscar por:",
-    "hide-search": "Ocultar buscador"    
+    "hide-search": "Ocultar buscador"
+  },
+  "tab-classify": {
+    "select-mail": "Selecciona uno o varios correos"
   }
 }
-
