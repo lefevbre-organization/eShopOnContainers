@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,8 +48,7 @@ namespace Lexon.API.Controllers
             //    new LexonCompany { IdCompany = 3, Name = "Barconsa Asesores" }
             //};
 
-            //var companiesJson = JsonConvert.SerializeObject(companies);
-            //return Ok(companiesJson);
+            //return Ok(companies);
 
             if (!string.IsNullOrEmpty(idUser))
             {
@@ -68,8 +66,30 @@ namespace Lexon.API.Controllers
         }
 
         [HttpGet]
+        [Route("companies/wrong")]
+        [ProducesResponseType(typeof(PaginatedItemsViewModel<LexonCompany>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IEnumerable<LexonCompany>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> CompaniesWrongAsync([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0, string idUser = null)
+
+        {
+
+            var t = Task.Run(async delegate
+            {
+                await Task.Delay(5000);
+                return BadRequest("if the coupled service fails, all fail");
+            });
+            t.Wait();
+            Console.WriteLine("Task t Status: {0}, Result: {1}",
+                              t.Status, t.Result);
+
+
+            return BadRequest("if the coupled service fails, all fail");
+        }
+
+        [HttpGet]
         [Route("classifications")]
-        [ProducesResponseType(typeof(IEnumerable<LexonActuation>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(LexonActuationMailList), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ClassificationsAsync([FromQuery]string idUser, [FromQuery]long idCompany, [FromQuery]string idMail, [FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)
 
@@ -110,8 +130,9 @@ namespace Lexon.API.Controllers
                     }.ToArray()
                 }
             };
-            var classificationsJson = JsonConvert.SerializeObject(classifications);
-            return Ok(classificationsJson);
+            //var classificationsJson = JsonConvert.SerializeObject(classifications);
+            //return Ok(classificationsJson);
+            return Ok(classifications);
 
             var itemsByUser = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
             return !itemsByUser.Classifications.List.Any()
