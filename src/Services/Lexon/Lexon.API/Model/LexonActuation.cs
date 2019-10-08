@@ -12,6 +12,6 @@ namespace Lexon.API.Model
 
         public string Description { get; set; }
 
-        public string Type { get; set; }
+        public short IdType { get; set; }
     }
 }

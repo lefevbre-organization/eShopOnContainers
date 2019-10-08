@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,62 +67,62 @@ namespace Lexon.API.Controllers
             return Ok(model);
         }
 
-        // GET api/v1/[controller]/classifications[?pageSize=3&pageIndex=10]
         [HttpGet]
         [Route("classifications")]
-        [ProducesResponseType(typeof(PaginatedItemsViewModel<LexonActuation>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(IEnumerable<LexonActuation>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ClassificationsAsync([FromQuery]string idUser, [FromQuery]long idCompany, [FromQuery]string idMail, [FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)
 
         {
-            //var classifications = new LexonClassificationMail
-            //{
-            //    IdMail = idMail,
-            //    Classifications = new LexonActuationList
-            //    {
-            //        TimeStamp = DateTime.Now.ToString(),
-            //        List = new List<LexonActuation>
-            //        {
-            //            new LexonActuation
-            //            {
-            //                Name = "Actuación 1",
-            //                Description = "2018/000002 - Reclamación a seguros OCASO por accidente múltiple",
-            //                Type = "Expediente"
-            //            },
-            //            new LexonActuation
-            //            {
-            //                Name = "Actuación 2",
-            //                Description = "2018/000003 - Reclamación a seguros OCASO por accidente múltiple",
-            //                Type = "Abogados contrarios"
-            //            },
-            //            new LexonActuation
-            //            {
-            //                Name = "Actuación 3",
-            //                Description = "2018/000004 - Reclamación a seguros OCASO por accidente múltiple",
-            //                Type = "Otro tipo"
-            //            }
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(idMail) || idCompany <= 0)
+                return (IActionResult)BadRequest("values invalid. Must be a valid user, company and email in 0rder to search the classifications");
 
-            //        }.ToArray()
-            //    }
-            //};
-            //var classificationsJson = JsonConvert.SerializeObject(classifications);
-            //return Ok(classificationsJson);
-
-
-            if (!string.IsNullOrEmpty(idUser))
+            var classifications = new LexonActuationMailList
             {
-                var itemsByUser = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
-                return !itemsByUser.Classifications.List.Any()
-                    ? (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment")
-                    : Ok(itemsByUser);
-            }
+                IdMail = idMail,
+                Classifications = new LexonActuationList
+                {
+                    TimeStamp = DateTime.Now.Ticks,
+                    List = new List<LexonActuation>
+                    {
+                        new LexonActuation
+                        {
+                            Name = "Actuación 1",
+                            Description = "2018/000002 - Reclamación a seguros OCASO por accidente múltiple",
+                            IdClassification = 23,
+                            IdType = 1
+                        },
+                        new LexonActuation
+                        {
+                            Name = "Actuación 2",
+                            Description = "2018/000003 - Reclamación a seguros OCASO por accidente múltiple",
+                            IdClassification = 342,
+                            IdType = 2
+                        },
+                        new LexonActuation
+                        {
+                            Name = "Actuación 3",
+                            Description = "2018/000004 - Reclamación a seguros ACCIDENTE por ocaso múltiple",
+                            IdClassification = 231,
+                            IdType = 1
+                        }
 
-            var itemsOnPage = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
-            var totalItems = itemsOnPage.Classifications.List.Length;
+                    }.ToArray()
+                }
+            };
+            var classificationsJson = JsonConvert.SerializeObject(classifications);
+            return Ok(classificationsJson);
 
-            var model = new PaginatedItemsViewModel<LexonActuation>(pageIndex, pageSize, totalItems, itemsOnPage.Classifications.List.ToList());
-            return Ok(model);
+            var itemsByUser = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
+            return !itemsByUser.Classifications.List.Any()
+                ? (IActionResult)BadRequest("The search don´t return any data")
+                : Ok(itemsByUser);
+
+            //var itemsOnPage = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
+            //var totalItems = itemsOnPage.Classifications.List.Length;
+
+            //var model = new PaginatedItemsViewModel<LexonActuation>(pageIndex, pageSize, totalItems, itemsOnPage.Classifications.List.ToList());
+            //return Ok(model);
         }
 
         [HttpGet]
@@ -220,7 +221,6 @@ namespace Lexon.API.Controllers
 
             //var listLexonClassificationTypeJson = JsonConvert.SerializeObject(listLexonClassificationType);
             //return Ok(listLexonClassificationTypeJson);
-
 
             var itemsByUser = await _usersService.GetClassificationMasterListAsync();
             return !itemsByUser.Any()
