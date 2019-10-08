@@ -340,29 +340,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
         public async Task<LexonActuationMailList> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail)
         {
-            //var match1 = new BsonDocument
-            //{
-            //    {
-            //        "$match",
-            //        new BsonDocument
-            //            {
-            //                {"IdUser", idUser}
-            //            }
-            //    },
-            //    {
-            //        "$match",
-            //        new BsonDocument
-            //            {
-            //                {"Companies.list.idCompany", idCompany}
-            //            }
-            //    }
-            //};
-
-
-            //var filter = Builders<LexonUser>.Filter.And(
-            //    Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser),
-            //    Builders<LexonUser>.Filter.Eq("Companies.list.idCompany", idCompany)
-            //    );
+     
 
             //var projection = Builders<LexonUser>.Projection
             //    .Include("Companies.List.Clients.List.mails")
@@ -384,66 +362,8 @@ namespace Lexon.API.Infrastructure.Repositories
             //    .Include("Companies.List.Folders.List.mails")
             //    .Include("Companies.List.Folders.TimeStamp");
 
-            //var unwind = new BsonDocument
-            //{
-            //    { "$unwind" , new BsonDocument
-            //        {
-            //             { "path", "$Companies.List.Clients.List.mails" },
-            //            { "preserveNullAndEmptyArrays", true}
-            //        }
-            //    },
-            //    { "$unwind" , new BsonDocument
-            //        {
-            //             { "path", "$Companies.List.Files.List.mails" },
-            //            { "preserveNullAndEmptyArrays", true}
-            //        }
-            //    }
-            //};
-
-            var addFields = new BsonDocument
-            {
-                { "$addFields",
-
-                    new BsonDocument
-                    {
-                        { "IdMail", idMail},
-                        { "Classifications", new BsonDocument
-                            {
-                                { "TimeStamp",DateTime.Now.Ticks },
-                                { "List",  new BsonDocument
-                                    {
-                                        { "$push",  new BsonDocument  {  { "title", "$title" }, { "price", "$price" } }
-                                    }
-                                }
-                                                }
-        }
-                        }
-                    }
-                }
-            };
-
-            //var project = new BsonDocument
-            //    {
-            //        {
-            //            "$project",
-            //            new BsonDocument
-            //                {
-            //                    {"_id", 0},
-            //                    {"UserName","$_id.MyUser"},
-            //                    {"Count", 1},
-            //                }
-            //        }
-            //    };
-
-            //var pipeline = new EmptyPipelineDefinition<LexonUser>()
-            //    .Match(match1)
-            //    .Project(projection)
-            //    .Unwind(unwind)
-            //    .AddFields(addFields);
-
             try
             {
-               //var result = new List<Posts>();
 
                 var options = new AggregateOptions()
                 {
@@ -461,23 +381,15 @@ namespace Lexon.API.Infrastructure.Repositories
                         .Add("_id", 0)
                         .Add("Companies.list.idCompany",1)
                         //.Add("Companies.list.Clients.list",1)
-                        //.Add("Companies.list.Clients.timestamp",1)
                         .Add("Companies.list.Files.list",1)
-                        //.Add("Companies.list.Files.timestamp",1)
-                        //.Add("Companies.List.Insurances.List.mails",1)
-                        //.Add("Companies.List.Insurances.TimeStamp",1)
-                        //.Add("Companies.List.Suppliers.List.mails",1)
-                        //.Add("Companies.List.Suppliers.TimeStamp",1)
-                        //.Add("Companies.List.Courts.List.mails",1)
-                        //.Add("Companies.List.Courts.TimeStamp",1)
-                        //.Add("Companies.List.Lawyers.List.mails",1)
-                        //.Add("Companies.List.Lawyers.TimeStamp",1)
-                        //.Add("Companies.List.Solicitors.List.mails",1)
-                        //.Add("Companies.List.Solicitors.TimeStamp",1)
-                        //.Add("Companies.List.Notaries.List.mails",1)
-                        //.Add("Companies.List.Notaries.TimeStamp",1)
-                        //.Add("Companies.List.Folders.List.mails",1)
-                        //.Add("Companies.List.Folders.TimeStamp",1)
+                        //.Add("Companies.list.Insurances.list",1)
+                        //.Add("Companies.list.Suppliers.list",1)
+                        //.Add("Companies.list.Courts.list",1)
+                        //.Add("Companies.list.Lawyers.list",1)
+                        //.Add("Companies.list.Solicitors.list",1)
+                        //.Add("Companies.list.Notaries.list",1)
+                        //.Add("Companies.list.Folders.list",1)
+                        //.Add("Companies.list.Folders.list.Documents",0)
                     ),
                     new BsonDocument("$unwind", new BsonDocument()
                         .Add("path", "$Companies.list")
@@ -493,10 +405,30 @@ namespace Lexon.API.Infrastructure.Repositories
                         .Add("path", "$Companies.list.Files.list.mails")
                         .Add("preserveNullAndEmptyArrays", new BsonBoolean(true))
                         ),
+                    //new BsonDocument("$unwind", new BsonDocument()
+                    //    .Add("path", "$Companies.list.Clients.list") //.list.mails")
+                    //    .Add("preserveNullAndEmptyArrays", new BsonBoolean(true))
+                    //    ),
+                    //new BsonDocument("$unwind", new BsonDocument()
+                    //    .Add("path", "$Companies.list.Clients.list.mails")
+                    //    .Add("preserveNullAndEmptyArrays", new BsonBoolean(true))
+                        //),
+                    new BsonDocument("$addFields", new BsonDocument()
+                        .Add("ts", DateTime.Now.Ticks)
+                        ),
                     new BsonDocument("$project", new BsonDocument()
                         .Add("idMail", "$Companies.list.Files.list.mails")
-                        .Add("name", "$Companies.list.Files.code")
-                        .Add("description", "$Companies.list.Files.description"))
+                        .Add("name", "$Companies.list.Files.list.code")
+                        .Add("description", "$Companies.list.Files.list.description")
+                        .Add("timestamp", "$ts")
+                        ),
+                    new BsonDocument("$match", new BsonDocument()
+                        .Add("idMail", idMail)
+                    ),
+                    new BsonDocument("$group", new BsonDocument()
+                        .Add("_id", "$idMail")
+                        .Add("Classifications", new BsonDocument().Add("$push", "$$ROOT"))
+                        ),
                 };
 
                 var resultado = await _context.LexonUsers.AggregateAsync(pipeline, options);
@@ -509,8 +441,6 @@ namespace Lexon.API.Infrastructure.Repositories
                         {
                             Console.WriteLine($"S/N: {document.ToString()}");
 
-                            //var home_feeds = BsonSerializer.Deserialize<Posts>(document);
-                            //result.Add(home_feeds);
                         }
                     }
                 }
