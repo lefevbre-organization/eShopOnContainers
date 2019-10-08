@@ -34,7 +34,27 @@ class ConfirmRemoveAccount extends Component {
             {/* <Modal.Title>Modal heading</Modal.Title> */}
           </Modal.Header>
           <Modal.Body>
-            <Container>
+            <div className="container-fluid content">
+              <div className="row d-flex justify-content-center">
+                <div className="col col-12">
+                  <h5
+                    className="modal-title d-flex align-items-center"
+                    id="clasificarEliminarclasificacionLabel"
+                  >
+                    <img
+                      className="img-question"
+                      alt=""
+                      src="/assets/imgs/icon-question.png"
+                    ></img>
+                    Si eliminas este vínculo dejarás de visualizar el correo en
+                    la clasificación correspondiente de Lex-on. ¿Quieres
+                    continuar?
+                  </h5>
+                </div>
+              </div>
+            </div>
+
+            {/* <Container>
               <Row>
                 <Col xs={2} md={2}>
                   <img
@@ -47,13 +67,19 @@ class ConfirmRemoveAccount extends Component {
                   {i18n.t("confirm-remove-accounts.body")}
                 </Col>
               </Row>
-            </Container>
+            </Container> */}
           </Modal.Body>
           <Modal.Footer>
-            <Button className='btn-primary' onClick={() => toggleConfirmRemoveAccount(false, email)}>
+            <Button
+              className="btn-primary"
+              onClick={() => toggleConfirmRemoveAccount(false, email)}
+            >
               {i18n.t("confirm-remove-accounts.no")}
             </Button>
-            <Button className='btn-secondary' onClick={() => toggleConfirmRemoveAccount(true, email)}>
+            <Button
+              className="btn-secondary"
+              onClick={() => toggleConfirmRemoveAccount(true, email)}
+            >
               {i18n.t("confirm-remove-accounts.yes")}
             </Button>
           </Modal.Footer>
