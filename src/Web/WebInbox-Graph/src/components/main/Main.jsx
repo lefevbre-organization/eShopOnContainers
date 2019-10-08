@@ -33,6 +33,7 @@ import e from "../../event-bus";
 import * as singleSpa from "single-spa";
 import { registerLexonApp } from "../../apps/lexonconn-app";
 import SidebarCnn from "react-sidebar";
+import LexonComponent from "../../apps/lexon_content";
 import SidebarComponent from "../../apps/sidebar_content";
 import ComposeMessage from "../compose-message/ComposeMessage-fixed";
 import "react-reflex/styles.css";
@@ -101,7 +102,7 @@ export class Main extends Component {
     let lexon = (
       <img border="0" alt="Lefebvre" src="assets/img/lexon-fake.png"></img>
     );
-    this.setState({ sidebarComponent: lexon });
+    this.setState({ sidebarComponent: <LexonComponent /> });
     this.setState({ sidebarDocked: open });
   }
 
@@ -242,7 +243,7 @@ export class Main extends Component {
   getLabelMessages(labelIds, q, pageToken) {
     this.props.emptyLabelMessages();
     this.props.getLabelMessages(labelIds, q, pageToken);
-    this.registerConnectorApp();
+    //this.registerConnectorApp();
   }
 
   addInitialPageToken(token) {
@@ -321,7 +322,7 @@ export class Main extends Component {
               styles={{
                   sidebar: {
                       background: "white",
-                      zIndex: 9999,
+                      zIndex: 100,
                       overflowY: "hidden",
                       WebkitTransition: "-webkit-transform 0s",
                       willChange: "transform",

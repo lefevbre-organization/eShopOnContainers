@@ -1,0 +1,116 @@
+.modal-dialog{
+    margin-top: 6rem;
+}
+
+.modal-content{
+    border: 0;
+    border-radius: 0;
+}
+
+.modal-header{
+    border:0;
+    background-color: #001978;
+    color: #FFF;
+    font-size: 22px;
+    border-radius: 0;
+}
+
+.modal .modal-dialog .modal-content .modal-header:not(.infoModal){
+    min-height: 64px;
+    padding: 0 50px;
+}
+
+.modal-header h5 span{
+    font-size: 28px;
+    margin-right: 15px;
+}
+.modal-header .modal-title{
+    font-size: 22px;
+}
+.modal-header .close span:first-child {
+    color: #001978;
+}
+
+.modal-header .close span:first-child:before {
+    content: "\e938";
+    color: #fff;
+    font-family: 'lf-font' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+.modal-header .close{
+    font-family: MTTMilano, Lato, Arial, sans-serif;
+    opacity: 1;
+    color: #FFF;
+    font-size: 16px;        
+    text-shadow: 0 0 0;
+}
+
+.modal-body.info{    
+    background-color: #001978;
+}
+
+.modal-body.info .content {
+    color: #FFF;
+    font-size: 19px;
+}
+
+.modal-body.info .content [class^="lf-icon"]{    
+    font-size: 100px;
+    margin-right: 50px;
+}
+
+.modal-footer{
+    border: 0;
+    border-radius: 0;
+    justify-content: flex-end !important;
+}
+.modal-footer.info{
+    background-color: #001978;
+}
+
+.modal-footer .btn-primary, .modal-footer .btn-primary:hover{
+    margin-left: 10px;
+}
+
+@media (max-width: 374px) {
+    .modal-footer{
+        justify-content: space-between !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .modal .modal-dialog .modal-content .modal-header:not(.infoModal){     
+        padding: 1rem;
+    }
+    .modal-body{
+        padding: 1rem;
+    }    
+}
+
+@media (min-width: 768px) {
+    .modal-footer, .modal-body{     
+        padding: 1rem 50px;
+    }
+}
+
+@media (max-height: 570px) {
+    .modal-dialog{
+        margin-top: 3.5rem;
+    }
+}
+
+
+@media (min-width: 992px) {
+    .modal-lg, .modal-xl {
+        max-width: 900px;
+    }
+}

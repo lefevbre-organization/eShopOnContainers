@@ -56,61 +56,63 @@ export class Main extends Component {
     this.onSignout = this.onSignout.bind(this);
 
     //this.leftSidebarOpen = leftSidebarOpen;
-   
-    
+
     //registerReactApp();
 
     //singleSpa.start();
 
-    this.state = {         
-       isVisible: true,
-       fluid: true,
-       customAnimation: false,
-       slow: false,
-       size: 0.25,       
-       sidebarOpen: false,
-       sidebarDocked: false,
-       leftSideBar: {
-            collapsed: false
-       },
-       sidebarComponent: <img border="0" alt="Lefebvre" src="assets/img/lexon-fake.png"></img>      
-      };  
-      
-        this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
-        this.onSetSidebarOpenCalendar = this.onSetSidebarOpenCalendar.bind(this);
-        this.onSetSidebarOpenLexon = this.onSetSidebarOpenLexon.bind(this);
-        this.onSetSidebarOpenQMemento = this.onSetSidebarOpenQMemento.bind(this);
-        this.onSetSidebarOpenCompliance = this.onSetSidebarOpenCompliance.bind(this);
-        this.onSetSidebarOpenDatabase = this.onSetSidebarOpenDatabase.bind(this); 
-        //this.handleShowLeftSidebarClick = this.handleShowLeftSidebarClick.bind(this);
+    this.state = {
+      isVisible: true,
+      fluid: true,
+      customAnimation: false,
+      slow: false,
+      size: 0.25,
+      sidebarOpen: false,
+      sidebarDocked: false,
+      leftSideBar: {
+        collapsed: false
+      },
+      sidebarComponent: (
+        <img border="0" alt="Lefebvre" src="assets/img/lexon-fake.png"></img>
+      )
+    };
 
-        this.toggleSideBar = this.toggleSideBar.bind(this); 
-    }
+    this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
+    this.onSetSidebarOpenCalendar = this.onSetSidebarOpenCalendar.bind(this);
+    this.onSetSidebarOpenLexon = this.onSetSidebarOpenLexon.bind(this);
+    this.onSetSidebarOpenQMemento = this.onSetSidebarOpenQMemento.bind(this);
+    this.onSetSidebarOpenCompliance = this.onSetSidebarOpenCompliance.bind(
+      this
+    );
+    this.onSetSidebarOpenDatabase = this.onSetSidebarOpenDatabase.bind(this);
+    //this.handleShowLeftSidebarClick = this.handleShowLeftSidebarClick.bind(this);
 
-    toggleSideBar() {
-        const toggleCollapsed = !this.state.leftSideBar.collapsed;
-        this.setState({
-            leftSideBar: {
-                collapsed: toggleCollapsed
-            }
-        });
-    }
+    this.toggleSideBar = this.toggleSideBar.bind(this);
+  }
 
-    //handleShowLeftSidebarClick() {
-    //    this.setState({
-    //        leftSidebarOpen: !this.leftSidebarOpen
-    //    })
-    //}
+  toggleSideBar() {
+    const toggleCollapsed = !this.state.leftSideBar.collapsed;
+    this.setState({
+      leftSideBar: {
+        collapsed: toggleCollapsed
+      }
+    });
+  }
+
+  //handleShowLeftSidebarClick() {
+  //    this.setState({
+  //        leftSidebarOpen: !this.leftSidebarOpen
+  //    })
+  //}
 
   onSetSidebarOpenCalendar(open) {
-      this.setState({ sidebarComponent: <CalendarComponent /> });
-      this.setState({ sidebarDocked: open });    
+    this.setState({ sidebarComponent: <CalendarComponent /> });
+    this.setState({ sidebarDocked: open });
   }
 
   onSetSidebarOpenLexon(open) {
-        this.setState({ sidebarComponent: <LexonComponent /> });
-        this.setState({ sidebarDocked: open });    
-
+    this.setState({ sidebarComponent: <LexonComponent /> });
+    this.setState({ sidebarDocked: open });
   }
 
   onSetSidebarOpenQMemento(open) {
@@ -163,7 +165,7 @@ export class Main extends Component {
         method: "GET"
       }).then(result => {
         console.log(result);
-        this.props.history.push('/inbox');
+        this.props.history.push("/inbox");
       });
     }
   }
@@ -225,8 +227,6 @@ export class Main extends Component {
     this.props.history.push(`/${label.id.toLowerCase()}`);
   }
 
-
-
   getLabelList() {
     this.props.getLabels();
   }
@@ -241,8 +241,8 @@ export class Main extends Component {
     this.props.addInitialPageToken(token);
   }
 
-    renderLabelRoutes() {
-    const { leftSideBar } = this.state;  
+  renderLabelRoutes() {
+    const { leftSideBar } = this.state;
     return this.props.labelsResult.labels.map(el => (
       <Route
         key={el.id + "_route"}
@@ -253,7 +253,8 @@ export class Main extends Component {
           return (
             <MessageList
               {...props}
-              sideBarCollapsed={leftSideBar.collapsed} sideBarToggle={this.toggleSideBar} 
+              sideBarCollapsed={leftSideBar.collapsed}
+              sideBarToggle={this.toggleSideBar}
               getLabelMessages={this.getLabelMessages}
               messagesResult={this.props.messagesResult}
               toggleSelected={this.props.toggleSelected}
@@ -297,142 +298,166 @@ export class Main extends Component {
   }
 
   renderInboxViewport() {
-
     const { t } = this.props;
-    const { leftSideBar } = this.state;  
+    const { leftSideBar } = this.state;
 
-    let imgUrl = 'assets/img/settings-gears.svg'
+    let imgUrl = "assets/img/settings-gears.svg";
     if (this.props.labelsResult.labels.length < 1) {
       return this.renderSpinner();
     }
 
-      return ( 
+    return (
+      <SidebarCnn
+        sidebar={this.state.sidebarComponent}
+        open={this.state.sidebarOpen}
+        pullRight={true}
+        docked={this.state.sidebarDocked}
+        styles={{
+          sidebar: {
+            background: "white",
+            zIndex: 100,
+            overflowY: "hidden",
+            WebkitTransition: "-webkit-transform 0s",
+            willChange: "transform",
+            overflowY: "hidden"
+          },
+          content: {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            overflowY: "hidden",
+            overflowX: "hidden",
+            WebkitOverflowScrolling: "touch",
+            transition: "left .0s ease-out, right .0s ease-out"
+          },
+          overlay: {
+            zIndex: 1,
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            opacity: 0,
+            visibility: "hidden",
+            //transition: "opacity .3s ease-out, visibility .0s ease-out",
+            backgroundColor: "rgba(0,0,0,.3)"
+          },
+          dragHandle: {
+            zIndex: 1,
+            position: "fixed",
+            top: 0,
+            bottom: 0
+          }
+        }}
+      >
+        <Fragment>
+          <Header
+            googleUser={this.props.googleUser}
+            onSignout={this.onSignout}
+            setSearchQuery={this.props.setSearchQuery}
+            getLabelMessages={this.getLabelMessages}
+            searchQuery={this.props.searchQuery}
+          />
+          <section className="main hbox space-between">
+            <Sidebar
+              sideBarCollapsed={leftSideBar.collapsed}
+              sideBarToggle={this.toggleSideBar}
+              getLabelList={this.getLabelList}
+              pathname={this.props.location.pathname}
+              labelsResult={this.props.labelsResult}
+              onLabelClick={this.loadLabelMessages}
+              onSidebarCloseClick={this.handleShowLeftSidebarClick}
+            />
+            <article className="d-flex flex-column position-relative">
+              <Switch>
+                {this.renderLabelRoutes()}
+                <Route
+                  exact
+                  path="/compose"
+                  component={() => (
+                    <ComposeMessage
+                      history={this.props.history}
+                      sideBarCollapsed={leftSideBar.collapsed}
+                      sideBarToggle={this.toggleSideBar}
+                    />
+                  )}
+                />
+                <Route exact path="/notfound" component={NotFound} />
+                <Route
+                  exact
+                  path="/:id([a-zA-Z0-9]+)"
+                  component={() => (
+                    <MessageContent
+                      sideBarCollapsed={leftSideBar.collapsed}
+                      sideBarToggle={this.toggleSideBar}
+                    />
+                  )}
+                />
+              </Switch>
+            </article>
 
-         
-
-          <SidebarCnn
-              sidebar={this.state.sidebarComponent}
-              open={this.state.sidebarOpen}
-              pullRight={true}
-              docked={this.state.sidebarDocked}
-              styles={{
-                  sidebar: {
-                      background: "white",
-                      zIndex: 9999,
-                      overflowY: "hidden",
-                      WebkitTransition: "-webkit-transform 0s",
-                      willChange: "transform",
-                      overflowY: "hidden"
-                  },
-                  content: {
-                      position: "absolute",
-                      top: 0,                     
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      overflowY: "hidden",
-                      overflowX: "hidden",
-                      WebkitOverflowScrolling: "touch",
-                      transition: "left .0s ease-out, right .0s ease-out",
-                  },
-                  overlay: {
-                      zIndex: 1,
-                      position: "fixed",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      opacity: 0,
-                      visibility: "hidden",
-                      //transition: "opacity .3s ease-out, visibility .0s ease-out",
-                      backgroundColor: "rgba(0,0,0,.3)"
-                  },
-                  dragHandle: {
-                      zIndex: 1,
-                      position: "fixed",
-                      top: 0,
-                      bottom: 0
-                  }
-              }}
-
-          >
-
-              <Fragment>                 
-                  <Header googleUser={this.props.googleUser}
-                      onSignout={this.onSignout}
-                      setSearchQuery={this.props.setSearchQuery}
-                      getLabelMessages={this.getLabelMessages}
-                      searchQuery={this.props.searchQuery}
-                  />
-                  <section className="main hbox space-between">                    
-                      <Sidebar
-                              sideBarCollapsed={leftSideBar.collapsed}
-                              sideBarToggle={this.toggleSideBar}
-                              getLabelList={this.getLabelList}
-                              pathname={this.props.location.pathname}
-                              labelsResult={this.props.labelsResult}
-                              onLabelClick={this.loadLabelMessages}
-                              onSidebarCloseClick={this.handleShowLeftSidebarClick}
-
-                          />                                       
-                      <article className="d-flex flex-column position-relative">
-                            <Switch>
-                              {this.renderLabelRoutes()}
-                              <Route                                  
-                                  exact
-                                  path="/compose"                                  
-                                  component={() => <ComposeMessage history={this.props.history} sideBarCollapsed={leftSideBar.collapsed} sideBarToggle={this.toggleSideBar}/>}                             
-                              />
-                              <Route
-                                  exact
-                                  path="/notfound"
-                                  component={NotFound}
-                              />
-                              <Route                                  
-                                  exact
-                                  path="/:id([a-zA-Z0-9]+)"
-                                  component={() => <MessageContent sideBarCollapsed={leftSideBar.collapsed} sideBarToggle={this.toggleSideBar} />}
-                              />  
-                            </Switch> 
-                      </article> 
-
-                      <div className="productpanel">
-                          <span className="productsbutton">
-                              <div onClick={() => this.onSetSidebarOpenLexon(true)}>
-                                  <img className="imgproduct" border="0" alt="Lex-On" src="assets/img/icon-lexon.png"></img>
-                              </div>
-                          </span>                         
-                          <span className="productsbutton">
-                              <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
-                                  <img className="imgproduct" border="0" alt="Calendar" src="assets/img/icon-calendar.png"></img>
-                              </div>
-                          </span>
-                          <span className="productsbutton">
-                              <div onClick={() => this.onSetSidebarOpenQMemento(true)}>
-                                  <img className="imgproductdisable" border="0" alt="Calendar" src="assets/img/icon-qmemento.png"></img>
-                              </div>
-                          </span>
-                          <span className="productsbutton">
-                              <div onClick={() => this.onSetSidebarOpenCompliance(true)}>
-                                  <img className="imgproductdisable" border="0" alt="Calendar" src="assets/img/icon-compliance.png"></img>
-                              </div>
-                          </span>
-                          <span className="productsbutton">
-                              <button onClick={() => this.onSetSidebarDocked(false)}  className="btn compose-btn">
-                                  <img className="" border="0" alt="Calendar" src="assets/img/icon-close-empty.png"></img>
-                              </button>                             
-                          </span>
-                          <span className="spaceproduct">
-                          </span>
-                      </div>
-                  </section>
-              </Fragment>  
-
-          </SidebarCnn>
-
-           
-      );
-      
+            <div className="productpanel">
+              <span className="productsbutton">
+                <div onClick={() => this.onSetSidebarOpenLexon(true)}>
+                  <img
+                    className="imgproduct"
+                    border="0"
+                    alt="Lex-On"
+                    src="assets/img/icon-lexon.png"
+                  ></img>
+                </div>
+              </span>
+              <span className="productsbutton">
+                <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
+                  <img
+                    className="imgproduct"
+                    border="0"
+                    alt="Calendar"
+                    src="assets/img/icon-calendar.png"
+                  ></img>
+                </div>
+              </span>
+              <span className="productsbutton">
+                <div onClick={() => this.onSetSidebarOpenQMemento(true)}>
+                  <img
+                    className="imgproductdisable"
+                    border="0"
+                    alt="Calendar"
+                    src="assets/img/icon-qmemento.png"
+                  ></img>
+                </div>
+              </span>
+              <span className="productsbutton">
+                <div onClick={() => this.onSetSidebarOpenCompliance(true)}>
+                  <img
+                    className="imgproductdisable"
+                    border="0"
+                    alt="Calendar"
+                    src="assets/img/icon-compliance.png"
+                  ></img>
+                </div>
+              </span>
+              <span className="productsbutton">
+                <button
+                  onClick={() => this.onSetSidebarDocked(false)}
+                  className="btn compose-btn"
+                >
+                  <img
+                    className=""
+                    border="0"
+                    alt="Calendar"
+                    src="assets/img/icon-close-empty.png"
+                  ></img>
+                </button>
+              </span>
+              <span className="spaceproduct"></span>
+            </div>
+          </section>
+        </Fragment>
+      </SidebarCnn>
+    );
   }
 
   render() {
@@ -459,7 +484,7 @@ const mapDispatchToProps = dispatch =>
       setPageTokens,
       addInitialPageToken,
       clearPageTokens,
-      setSearchQuery     
+      setSearchQuery
     },
     dispatch
   );

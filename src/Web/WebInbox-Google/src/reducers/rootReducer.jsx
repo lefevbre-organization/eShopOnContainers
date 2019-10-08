@@ -5,7 +5,6 @@ import { lexon } from "./lexon";
 
 import { labelsResult } from "../components/sidebar/sidebar.reducers";
 import { messagesResult, emailMessageResult, pageTokens, searchQuery, messageList } from "../components/content/message-list/reducers/message-list.reducers";
-import lexonMessageListReducer from "../lex-on_connector/reducers/lex-on_message-list.reducers";
 
 export default combineReducers({
   signedOutReducer,
@@ -16,6 +15,5 @@ export default combineReducers({
   emailMessageResult,
   pageTokens,
   searchQuery,  
-  messageList,
-  lexonMessageListReducer
+  messageList
 });

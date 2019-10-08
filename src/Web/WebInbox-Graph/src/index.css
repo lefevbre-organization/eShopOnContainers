@@ -9,7 +9,8 @@ body {
 }
 
 a {
-    color: #001978 !important;
+    color: #001978;
+    /* color: #001978 !important; */
 }
 
 .btn-primary {
