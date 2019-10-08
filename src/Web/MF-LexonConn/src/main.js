@@ -24,9 +24,6 @@ class Main extends Component {
 
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleCheckAllclick = this.handleCheckAllclick.bind(this);
-    this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
-      this
-    );
     this.handlePutUserFromLexonConnector = this.handlePutUserFromLexonConnector.bind(
       this
     );
@@ -36,10 +33,6 @@ class Main extends Component {
   componentDidMount() {
     window.addEventListener("Checkclick", this.handleKeyPress);
     window.addEventListener("CheckAllclick", this.handleCheckAllclick);
-    window.addEventListener(
-      "GetUserFromLexonConnector",
-      this.handleGetUserFromLexonConnector
-    );
     window.addEventListener(
       "PutUserFromLexonConnector",
       this.handlePutUserFromLexonConnector
@@ -51,10 +44,6 @@ class Main extends Component {
   componentWillUnmount() {
     window.removeEventListener("Checkclick", this.handleKeyPress);
     window.removeEventListener("CheckAllclick", this.handleCheckAllclick);
-    window.removeEventListener(
-      "GetUserFromLexonConnector",
-      this.handleGetUserFromLexonConnector
-    );
     window.removeEventListener(
       "PutUserFromLexonConnector",
       this.handlePutUserFromLexonConnector
@@ -73,30 +62,20 @@ class Main extends Component {
       : this.props.deleteListMessages(event.detail.listMessages);
   }
 
-  async getCompanies(user) {
-    getCompanies(user);
-  }
-
   sendMessageGetUser() {
     window.dispatchEvent(new CustomEvent("GetUserFromLexonConnector"));
   }
 
-  sendMessagePutUser(user) {
-    window.dispatchEvent(
-      new CustomEvent("PutUserFromLexonConnector", {
-        detail: {
-          user
-        }
-      })
-    );
-  }
-
-  handleGetUserFromLexonConnector(event) {
-    this.sendMessagePutUser("120");
+  async getCompanies(user) {
+    getCompanies(user);
   }
 
   async handlePutUserFromLexonConnector(event) {
-    const user = event.detail.user;
+    const { user, selectedMessageId } = event.detail;
+    selectedMessageId.forEach((message) => {
+      this.props.addMessage(message);
+    });
+        
     getCompanies(user)
       .then(result => {
         this.setState({

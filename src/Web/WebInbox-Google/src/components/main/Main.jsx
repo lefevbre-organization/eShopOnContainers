@@ -85,7 +85,9 @@ export class Main extends Component {
       this
     );
     this.onSetSidebarOpenDatabase = this.onSetSidebarOpenDatabase.bind(this);
-    //this.handleShowLeftSidebarClick = this.handleShowLeftSidebarClick.bind(this);
+    this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
+      this
+    );
 
     this.toggleSideBar = this.toggleSideBar.bind(this);
   }
@@ -104,6 +106,34 @@ export class Main extends Component {
   //        leftSidebarOpen: !this.leftSidebarOpen
   //    })
   //}
+
+  sendMessagePutUser(user) {
+    const { selectedMessages } = this.props;
+    const listMessages = selectedMessages.map(
+      selectedMessage => selectedMessage.id
+    );
+
+    window.dispatchEvent(
+      new CustomEvent("PutUserFromLexonConnector", {
+        detail: {
+          user,
+          selectedMessageId: listMessages
+        }
+      })
+    );
+  }
+
+  handleGetUserFromLexonConnector() {
+    // const { userId } = this.props.lexon;
+
+    // Comentar esto (es para pruebas)
+    const userId = 120;
+    // Comentar esto (es para pruebas)
+
+    if (userId) {
+      this.sendMessagePutUser(userId);
+    }
+  }
 
   onSetSidebarOpenCalendar(open) {
     this.setState({ sidebarComponent: <CalendarComponent /> });
@@ -153,6 +183,10 @@ export class Main extends Component {
     window.addEventListener("toggleClock", function(event) {
       alert(event.detail.name);
     });
+    window.addEventListener(
+      "GetUserFromLexonConnector",
+      this.handleGetUserFromLexonConnector
+    );
 
     const { userId } = this.props.lexon;
     const { googleUser } = this.props;
@@ -168,6 +202,13 @@ export class Main extends Component {
         this.props.history.push("/inbox");
       });
     }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener(
+      "GetUserFromLexonConnector",
+      this.handleGetUserFromLexonConnector
+    );
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -470,7 +511,8 @@ const mapStateToProps = state => ({
   messagesResult: state.messagesResult,
   pageTokens: state.pageTokens,
   searchQuery: state.searchQuery,
-  lexon: state.lexon
+  lexon: state.lexon,
+  selectedMessages: state.messageList.selectedMessages
 });
 
 const mapDispatchToProps = dispatch =>

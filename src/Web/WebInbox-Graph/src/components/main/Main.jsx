@@ -39,7 +39,8 @@ import ComposeMessage from "../compose-message/ComposeMessage-fixed";
 import "react-reflex/styles.css";
 import { config, PROVIDER } from "../../constants";
 
-const labelFake = 'aamkadq2otc1owewltziztatngfhoc1hyjq1ltllztbim2m0mjjimwauaaaaaadqpxgwbokltpsmu5zpeutsaqbsqrn2szbhqz3t3raakff9aaaaaafoaaa=';
+const labelFake =
+  "aamkadq2otc1owewltziztatngfhoc1hyjq1ltllztbim2m0mjjimwauaaaaaadqpxgwbokltpsmu5zpeutsaqbsqrn2szbhqz3t3raakff9aaaaaafoaaa=";
 
 export class Main extends Component {
   constructor(props) {
@@ -54,19 +55,20 @@ export class Main extends Component {
     this.addInitialPageToken = this.addInitialPageToken.bind(this);
     this.onSignout = this.onSignout.bind(this);
 
-    this.state = {         
-       isVisible: true,
-       fluid: true,
-       customAnimation: false,
-       slow: false,
-       size: 0.25,
-       sidebarOpen: false,
-       sidebarDocked: false,
-       sidebarComponent: <img border="0" alt="Lefebvre" src="assets/img/lexon-fake.png"></img>,  
-       leftSideBar: {
-          collapsed: false
-       },
-       
+    this.state = {
+      isVisible: true,
+      fluid: true,
+      customAnimation: false,
+      slow: false,
+      size: 0.25,
+      sidebarOpen: false,
+      sidebarDocked: false,
+      sidebarComponent: (
+        <img border="0" alt="Lefebvre" src="assets/img/lexon-fake.png"></img>
+      ),
+      leftSideBar: {
+        collapsed: false
+      }
     };
 
     e.on("message", function(data) {
@@ -74,29 +76,62 @@ export class Main extends Component {
       e.emit("received", { text: "Woohoo! Hello from Multi-channel app!" });
     });
 
-      this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
-      this.onSetSidebarOpenCalendar = this.onSetSidebarOpenCalendar.bind(this);
-      this.onSetSidebarOpenLexon = this.onSetSidebarOpenLexon.bind(this);
-      this.onSetSidebarOpenQMemento = this.onSetSidebarOpenQMemento.bind(this);
-      this.onSetSidebarOpenCompliance = this.onSetSidebarOpenCompliance.bind(this);
-      this.onSetSidebarOpenDatabase = this.onSetSidebarOpenDatabase.bind(this); 
+    this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
+    this.onSetSidebarOpenCalendar = this.onSetSidebarOpenCalendar.bind(this);
+    this.onSetSidebarOpenLexon = this.onSetSidebarOpenLexon.bind(this);
+    this.onSetSidebarOpenQMemento = this.onSetSidebarOpenQMemento.bind(this);
+    this.onSetSidebarOpenCompliance = this.onSetSidebarOpenCompliance.bind(
+      this
+    );
+    this.onSetSidebarOpenDatabase = this.onSetSidebarOpenDatabase.bind(this);
+    this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
+      this
+    );
 
-      this.toggleSideBar = this.toggleSideBar.bind(this);
-    }
+    this.toggleSideBar = this.toggleSideBar.bind(this);
+  }
 
-    toggleSideBar() {
-        const toggleCollapsed = !this.state.leftSideBar.collapsed;
-        this.setState({
-            leftSideBar: {
-                collapsed: toggleCollapsed
-            }
-        });
-    }
+  toggleSideBar() {
+    const toggleCollapsed = !this.state.leftSideBar.collapsed;
+    this.setState({
+      leftSideBar: {
+        collapsed: toggleCollapsed
+      }
+    });
+  }
 
-    onSetSidebarOpenCalendar(open) {
-        this.setState({ sidebarComponent: <SidebarComponent /> });
-        this.setState({ sidebarDocked: open });
+  onSetSidebarOpenCalendar(open) {
+    this.setState({ sidebarComponent: <SidebarComponent /> });
+    this.setState({ sidebarDocked: open });
+  }
+
+  sendMessagePutUser(user) {
+    const { selectedMessages } = this.props;
+    const listMessages = selectedMessages.map(
+      selectedMessage => selectedMessage.id
+    );
+
+    window.dispatchEvent(
+      new CustomEvent("PutUserFromLexonConnector", {
+        detail: {
+          user,
+          selectedMessageId: listMessages
+        }
+      })
+    );
+  }
+
+  handleGetUserFromLexonConnector() {
+    // const { userId } = this.props.lexon;
+
+    // Comentar esto (es para pruebas)
+    const userId = 120;
+    // Comentar esto (es para pruebas)
+
+    if (userId) {
+      this.sendMessagePutUser(userId);
     }
+  }
 
   onSetSidebarOpenLexon(open) {
     let lexon = (
@@ -140,6 +175,11 @@ export class Main extends Component {
     before rendering anything else */
     this.getLabelList();
 
+    window.addEventListener(
+      "GetUserFromLexonConnector",
+      this.handleGetUserFromLexonConnector
+    );
+
     const { userId } = this.props.lexon;
     const { email } = this.props.User;
     if (userId !== null && email !== null) {
@@ -151,6 +191,13 @@ export class Main extends Component {
         this.props.history.push(`/${labelFake}`);
       });
     }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener(
+      "GetUserFromLexonConnector",
+      this.handleGetUserFromLexonConnector
+    );
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -251,7 +298,7 @@ export class Main extends Component {
   }
 
   renderLabelRoutes() {
-    const { leftSideBar } = this.state;  
+    const { leftSideBar } = this.state;
     return this.props.labelsResult.labels.map(el => (
       <Route
         key={el.id + "_route"}
@@ -262,7 +309,8 @@ export class Main extends Component {
           return (
             <MessageList
               {...props}
-              sideBarCollapsed={leftSideBar.collapsed} sideBarToggle={this.toggleSideBar} 
+              sideBarCollapsed={leftSideBar.collapsed}
+              sideBarToggle={this.toggleSideBar}
               getLabelMessages={this.getLabelMessages}
               messagesResult={this.props.messagesResult}
               toggleSelected={this.props.toggleSelected}
@@ -298,105 +346,111 @@ export class Main extends Component {
       }).then(result => {
         console.log(result);
         const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-        signOut(urlRedirect);    
+        signOut(urlRedirect);
       });
     }
   }
 
   renderInboxViewport() {
     const { t } = this.props;
-    const { leftSideBar } = this.state;  
+    const { leftSideBar } = this.state;
 
-    let imgUrl = 'assets/img/settings-gears.svg'
+    let imgUrl = "assets/img/settings-gears.svg";
 
     if (this.props.labelsResult.labels.length < 1) {
       return this.renderSpinner();
     }
 
-      return (   
-          <SidebarCnn
-              sidebar={this.state.sidebarComponent}
-              open={false}
-              pullRight={true}
-              docked={this.state.sidebarDocked}
-              styles={{
-                  sidebar: {
-                      background: "white",
-                      zIndex: 100,
-                      overflowY: "hidden",
-                      WebkitTransition: "-webkit-transform 0s",
-                      willChange: "transform",
-                      overflowY: "hidden"
-                  },
-                  content: {
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      overflowY: "hidden",
-                      overflowX: "hidden",
-                      WebkitOverflowScrolling: "touch",
-                      transition: "left .0s ease-out, right .0s ease-out",
-                  },
-                  overlay: {
-                      zIndex: 1,
-                      position: "fixed",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      opacity: 0,
-                      visibility: "hidden",
-                      //transition: "opacity .3s ease-out, visibility .0s ease-out",
-                      backgroundColor: "rgba(0,0,0,.3)"
-                  },
-                  dragHandle: {
-                      zIndex: 1,
-                      position: "fixed",
-                      top: 0,
-                      bottom: 0
-                  }
-              }}
-
-          >
-
-              <Fragment>
-                  <Header microsoftUser={this.props.User}
-                      onSignout={this.onSignout}
-                      setSearchQuery={this.props.setSearchQuery}
-                      getLabelMessages={this.getLabelMessages}
-                      searchQuery={this.props.searchQuery}
-                  />
-                  <section className="main hbox space-between">
-                      <Sidebar
-                          sideBarCollapsed={leftSideBar.collapsed}
-                          sideBarToggle={this.toggleSideBar}
-                          getLabelList={this.getLabelList}
-                          pathname={this.props.location.pathname}
-                          labelsResult={this.props.labelsResult}
-                          onLabelClick={this.loadLabelMessages}
-                      />
-                      <article className="d-flex flex-column position-relative">
-                          <Switch>
-                              {this.renderLabelRoutes()}
-                              <Route
-                                  exact
-                                  path="/compose"
-                                  component={() => <ComposeMessage history={this.props.history} sideBarCollapsed={leftSideBar.collapsed} sideBarToggle={this.toggleSideBar} />}        
-                              />
-                              <Route
-                                  exact
-                                  path="/notfound"
-                                  component={NotFound}
-                              />
-                              <Route
-                                  exact
-                                  path="/:id([a-zA-Z0-9!@#$%^&+=_-]+)"
-                                  component={() => <MessageContent sideBarCollapsed={leftSideBar.collapsed} sideBarToggle={this.toggleSideBar} />}
-                              />
-                          </Switch>
-                      </article>
+    return (
+      <SidebarCnn
+        sidebar={this.state.sidebarComponent}
+        open={false}
+        pullRight={true}
+        docked={this.state.sidebarDocked}
+        styles={{
+          sidebar: {
+            background: "white",
+            zIndex: 100,
+            overflowY: "hidden",
+            WebkitTransition: "-webkit-transform 0s",
+            willChange: "transform",
+            overflowY: "hidden"
+          },
+          content: {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            overflowY: "hidden",
+            overflowX: "hidden",
+            WebkitOverflowScrolling: "touch",
+            transition: "left .0s ease-out, right .0s ease-out"
+          },
+          overlay: {
+            zIndex: 1,
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            opacity: 0,
+            visibility: "hidden",
+            //transition: "opacity .3s ease-out, visibility .0s ease-out",
+            backgroundColor: "rgba(0,0,0,.3)"
+          },
+          dragHandle: {
+            zIndex: 1,
+            position: "fixed",
+            top: 0,
+            bottom: 0
+          }
+        }}
+      >
+        <Fragment>
+          <Header
+            microsoftUser={this.props.User}
+            onSignout={this.onSignout}
+            setSearchQuery={this.props.setSearchQuery}
+            getLabelMessages={this.getLabelMessages}
+            searchQuery={this.props.searchQuery}
+          />
+          <section className="main hbox space-between">
+            <Sidebar
+              sideBarCollapsed={leftSideBar.collapsed}
+              sideBarToggle={this.toggleSideBar}
+              getLabelList={this.getLabelList}
+              pathname={this.props.location.pathname}
+              labelsResult={this.props.labelsResult}
+              onLabelClick={this.loadLabelMessages}
+            />
+            <article className="d-flex flex-column position-relative">
+              <Switch>
+                {this.renderLabelRoutes()}
+                <Route
+                  exact
+                  path="/compose"
+                  component={() => (
+                    <ComposeMessage
+                      history={this.props.history}
+                      sideBarCollapsed={leftSideBar.collapsed}
+                      sideBarToggle={this.toggleSideBar}
+                    />
+                  )}
+                />
+                <Route exact path="/notfound" component={NotFound} />
+                <Route
+                  exact
+                  path="/:id([a-zA-Z0-9!@#$%^&+=_-]+)"
+                  component={() => (
+                    <MessageContent
+                      sideBarCollapsed={leftSideBar.collapsed}
+                      sideBarToggle={this.toggleSideBar}
+                    />
+                  )}
+                />
+              </Switch>
+            </article>
 
             <div className="productpanel">
               <span className="productsbutton">
@@ -471,7 +525,8 @@ const mapStateToProps = state => ({
   messagesResult: state.messagesResult,
   pageTokens: state.pageTokens,
   searchQuery: state.searchQuery,
-  lexon: state.lexon
+  lexon: state.lexon,
+  selectedMessages: state.messageList.selectedMessages
 });
 
 const mapDispatchToProps = dispatch =>
