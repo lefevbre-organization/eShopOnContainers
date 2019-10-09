@@ -33,13 +33,11 @@ namespace Lexon.API.Controllers
             _eventBus = eventBus;
         }
 
-        // GET api/v1/[controller]/companies[?pageSize=3&pageIndex=10]
         [HttpGet]
         [Route("companies")]
-        [ProducesResponseType(typeof(PaginatedItemsViewModel<LexonCompany>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(IEnumerable<LexonCompany>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CompaniesAsync([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0, string idUser = "E1621396")
+        public async Task<IActionResult> CompaniesAsync(string idUser = "E1621396")
 
         {
             //var companies = new List<LexonCompany> {
@@ -52,40 +50,36 @@ namespace Lexon.API.Controllers
 
             if (!string.IsNullOrEmpty(idUser))
             {
-                var itemsByUser = await _usersService.GetCompaniesFromUserAsync(pageSize, pageIndex, idUser);
+                var itemsByUser = await _usersService.GetCompaniesFromUserAsync(10, 0, idUser);
                 return !itemsByUser.Any()
                     ? (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment")
                     : Ok(itemsByUser);
             }
 
-            var itemsOnPage = await _usersService.GetCompaniesFromUserAsync(pageSize, pageIndex, idUser);
-            var totalItems = itemsOnPage.Count;
-
-            var model = new PaginatedItemsViewModel<LexonCompany>(pageIndex, pageSize, totalItems, itemsOnPage);
-            return Ok(model);
+            return BadRequest();
         }
 
-        [HttpGet]
-        [Route("companies/wrong")]
-        [ProducesResponseType(typeof(PaginatedItemsViewModel<LexonCompany>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(IEnumerable<LexonCompany>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CompaniesWrongAsync([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0, string idUser = null)
+        //[HttpGet]
+        //[Route("companies/wrong")]
+        //[ProducesResponseType(typeof(PaginatedItemsViewModel<LexonCompany>), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType(typeof(IEnumerable<LexonCompany>), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        //public async Task<IActionResult> CompaniesWrongAsync([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0, string idUser = null)
 
-        {
+        //{
 
-            var t = Task.Run(async delegate
-            {
-                await Task.Delay(5000);
-                return BadRequest("if the coupled service fails, all fail");
-            });
-            t.Wait();
-            Console.WriteLine("Task t Status: {0}, Result: {1}",
-                              t.Status, t.Result);
+        //    var t = Task.Run(async delegate
+        //    {
+        //        await Task.Delay(5000);
+        //        return BadRequest("if the coupled service fails, all fail");
+        //    });
+        //    t.Wait();
+        //    Console.WriteLine("Task t Status: {0}, Result: {1}",
+        //                      t.Status, t.Result);
 
 
-            return BadRequest("if the coupled service fails, all fail");
-        }
+        //    return BadRequest("if the coupled service fails, all fail");
+        //}
 
         [HttpGet]
         [Route("classifications")]
