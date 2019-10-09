@@ -127,7 +127,7 @@ export class Main extends Component {
   }
 
   onSetSidebarOpenLexon(open) {
-    this.setState({ sidebarComponent: <LexonComponent /> });
+    this.setState({ sidebarComponent: <LexonComponent sidebarDocked={this.onSetSidebarDocked} /> });
     this.setState({ sidebarDocked: open });
   }
 

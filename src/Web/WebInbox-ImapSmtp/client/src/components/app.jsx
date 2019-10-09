@@ -75,18 +75,28 @@ class App extends Component {
   }
 
   onSetSidebarOpenCalendar(open) {
-    this.setState({ sidebarComponent: <CalendarComponent /> });
+    this.setState({
+      sidebarComponent: (
+        <CalendarComponent toggleSideBar={this.toggleSideBar()} />
+      )
+    });
     this.setState({ sidebarDocked: open });
   }
 
   onSetSidebarOpenLexon(open) {
-    this.setState({ sidebarComponent: <LexonComponent /> });
+    this.setState({
+      sidebarComponent: <LexonComponent sidebarDocked={this.onSetSidebarDocked} />
+    });
     this.setState({ sidebarDocked: open });
     this.setState({ actualSidebarComponent: 1 });
   }
 
   onSetSidebarOpenQMemento(open) {
-    this.setState({ sidebarComponent: <DataBaseComponent /> });
+    this.setState({
+      sidebarComponent: (
+        <DataBaseComponent toggleSideBar={this.toggleSideBar()} />
+      )
+    });
     this.setState({ sidebarDocked: open });
   }
 

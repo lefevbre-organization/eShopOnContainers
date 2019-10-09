@@ -124,12 +124,12 @@ export class Main extends Component {
   }
 
   onSetSidebarOpenCalendar(open) {
-    this.setState({ sidebarComponent: <CalendarComponent /> });
+    this.setState({ sidebarComponent: <CalendarComponent sidebarDocked={this.onSetSidebarDocked} /> });
     this.setState({ sidebarDocked: open });
   }
 
   onSetSidebarOpenLexon(open) {
-    this.setState({ sidebarComponent: <LexonComponent /> });
+    this.setState({ sidebarComponent: <LexonComponent sidebarDocked={this.onSetSidebarDocked} /> });
     this.setState({ sidebarDocked: open });
   }
 
