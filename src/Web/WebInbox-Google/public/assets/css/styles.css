@@ -90,7 +90,7 @@ input[type="checkbox"]+label:before {
 	width: 20px;
 	height: 20px;
 	position: absolute;
-	top: 0;
+	top: 4px;
 	left: 0;
 	border: 1px solid #4A4A4A;
 	background: #fff;
@@ -113,7 +113,7 @@ input[type="radio"]+label:before {
 	width: 18px;
 	height: 18px;
 	position: absolute;
-	top: 0;
+	top: 4px;
 	left: 0;
 	border: 1px solid #001978;
 	background: #fff;

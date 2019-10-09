@@ -77,7 +77,7 @@ class App extends Component {
   onSetSidebarOpenCalendar(open) {
     this.setState({
       sidebarComponent: (
-        <CalendarComponent toggleSideBar={this.toggleSideBar()} />
+        <CalendarComponent sidebarDocked={this.onSetSidebarDocked} />
       )
     });
     this.setState({ sidebarDocked: open });
@@ -94,7 +94,7 @@ class App extends Component {
   onSetSidebarOpenQMemento(open) {
     this.setState({
       sidebarComponent: (
-        <DataBaseComponent toggleSideBar={this.toggleSideBar()} />
+        <DataBaseComponent sidebarDocked={this.onSetSidebarDocked} />
       )
     });
     this.setState({ sidebarDocked: open });
