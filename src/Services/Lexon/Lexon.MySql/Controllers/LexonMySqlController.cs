@@ -21,7 +21,6 @@ namespace Lexon.MySql.Controllers
             _lexonService = lexonService ?? throw new ArgumentNullException(nameof(lexonService));
         }
 
-        // GET api/v1/[controller]/companies[?pageSize=3&pageIndex=10]
         [HttpGet]
         [Route("companies")]
         [ProducesResponseType(typeof(JosUserCompanies), (int)HttpStatusCode.OK)]

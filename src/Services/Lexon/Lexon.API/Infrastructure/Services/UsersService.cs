@@ -3,6 +3,7 @@ using Lexon.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Lexon.Infrastructure.Services
@@ -12,14 +13,18 @@ namespace Lexon.Infrastructure.Services
     {
         public readonly IUsersRepository _usersRepository;
         private readonly IEventBus _eventBus;
+        private readonly IHttpClientFactory _clientFactory;
+
 
         public UsersService(
                     IUsersRepository usersRepository
                     , IEventBus eventBus
+                    , IHttpClientFactory clientFactory
             )
         {
             _usersRepository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
+            _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
         }
 
 
@@ -46,6 +51,30 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<List<LexonCompany>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser)
         {
+        
+            var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:44393/api/v1/LexonMySql/companies?pageSize={pageSize}&pageIndex={pageIndex}&idUser={idUser}");
+            request.Headers.Add("Accept", "text/plain");
+            request.Headers.Add("User-Agent", "HttpClientFactory-Sample");
+
+            var client = _clientFactory.CreateClient();
+            var companies = new List<LexonCompany>();
+
+            var response = await client.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                foreach (var company in (await response.Content.ReadAsAsync<JosUserCompanies>()).Companies)
+                {
+                    companies.Add(new LexonCompany() { Name=company.name, Conn= company.BBDD, IdCompany= company.IdCompany});
+                }
+                return companies;
+                //todo update collection
+            }
+            else
+            {
+                Console.WriteLine("error al obtener datos");
+            }
+
             return await _usersRepository.GetCompaniesListAsync(pageSize, pageIndex, idUser);
         }
 

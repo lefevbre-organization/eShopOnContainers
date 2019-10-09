@@ -33,6 +33,7 @@ namespace Lexon.API
              .AddIntegrationServices(Configuration)
              .AddEventBus(Configuration)
              .AddSwagger()
+             .AddHttpClient()
              .AddCustomHealthCheck(Configuration);
 
             var container = new ContainerBuilder();
