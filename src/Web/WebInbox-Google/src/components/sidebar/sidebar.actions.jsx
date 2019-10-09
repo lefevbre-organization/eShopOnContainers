@@ -1,9 +1,8 @@
 import { getLabelList } from "../../api";
-import { setSearchQuery } from "../content/message-list/actions/message-list.actions";
+//import { setSearchQuery } from "../content/message-list/actions/message-list.actions";
 
 export const GET_LABELS = "GET_LABELS";
 export const SELECT_LABEL = "SELECT_LABEL";
-
 
 export const getLabels = () => dispatch => {
   getLabelList().then(labelList => {
@@ -14,7 +13,7 @@ export const getLabels = () => dispatch => {
   });
 };
 
-export const selectLabel = (labelId) => dispatch => {
+export const selectLabel = labelId => dispatch => {
   //dispatch(setSearchQuery(""));
   dispatch({
     type: SELECT_LABEL,

@@ -15,7 +15,6 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import ListToolbar from "./list-toolbar/ListToolbar";
 import ListFooter from "./list-footer/ListFooter";
 import "./messageList.scss";
-import { checked } from "glamor";
 
 const ViewMode = {
   LIST: 1,

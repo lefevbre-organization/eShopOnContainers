@@ -22,19 +22,7 @@ import {
 import { selectLabel } from "../sidebar/sidebar.actions";
 import { signOut } from "../../api/authentication";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faSpinner,
-  faWindowClose,
-  faClosedCaptioning,
-  faDoorClosed,
-  faTimes,
-  faTimesCircle
-} from "@fortawesome/free-solid-svg-icons";
-import PerfectScrollbar from "react-perfect-scrollbar";
-import { ReflexContainer, ReflexSplitter, ReflexElement } from "react-reflex";
-import { start, registerApplication } from "single-spa";
-import * as singleSpa from "single-spa";
-import { registerLexonApp } from "../../apps/lexonconn-app";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import SidebarCnn from "react-sidebar";
 import LexonComponent from "../../apps/lexon_content";
 import CalendarComponent from "../../apps/calendar_content";
@@ -339,10 +327,8 @@ export class Main extends Component {
   }
 
   renderInboxViewport() {
-    const { t } = this.props;
     const { leftSideBar } = this.state;
 
-    let imgUrl = "assets/img/settings-gears.svg";
     if (this.props.labelsResult.labels.length < 1) {
       return this.renderSpinner();
     }
@@ -359,8 +345,7 @@ export class Main extends Component {
             zIndex: 100,
             overflowY: "hidden",
             WebkitTransition: "-webkit-transform 0s",
-            willChange: "transform",
-            overflowY: "hidden"
+            willChange: "transform"
           },
           content: {
             position: "absolute",

@@ -3,8 +3,6 @@ import { BrowserRouter as Router, Switch } from "react-router-dom";
 import { Route } from "react-router-dom";
 import AppContainer from "./AppContainer";
 import UserLexon from "./components/user-lexon/UserLexon";
-import Login from "./components/login/Login";
-
 import "./App.css";
 
 class App extends Component {

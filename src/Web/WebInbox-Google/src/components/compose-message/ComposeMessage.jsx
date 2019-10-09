@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { withTranslation } from 'react-i18next';
+import { withTranslation } from "react-i18next";
 
 import { sendMessage } from "../../api";
 import { getValidEmails } from "../../utils";
@@ -22,15 +22,13 @@ import ReactQuill from "react-quill";
 import "../../../node_modules/react-quill/dist/quill.snow.css";
 import "./composeMessage.scss";
 
-
 //import '@uppy/core/dist/style.css'
 //import '@uppy/drag-drop/dist/style.css'
 
-const Uppy = require('@uppy/core')
-const Tus = require('@uppy/tus')
-const GoogleDrive = require('@uppy/google-drive')
-const { Dashboard, DashboardModal, DragDrop, ProgressBar } = require('@uppy/react')
-
+const Uppy = require("@uppy/core");
+const Tus = require("@uppy/tus");
+const GoogleDrive = require("@uppy/google-drive");
+const { DragDrop, ProgressBar } = require("@uppy/react");
 
 export class Compose extends PureComponent {
   constructor(props) {
@@ -42,11 +40,11 @@ export class Compose extends PureComponent {
       cc: props.cc || "",
       bcc: props.bcc || "",
       subject: props.subject || "",
-      content: props.content || "",       
+      content: props.content || "",
       showInlineDashboard: false,
       open: false,
-      uppyPreviews: []       
-    };   
+      uppyPreviews: []
+    };
 
     this.showModal = this.showModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
@@ -54,85 +52,77 @@ export class Compose extends PureComponent {
     this.sendEmail = this.sendEmail.bind(this);
     this.setField = this.setField.bind(this);
 
+    this.uppy = new Uppy({ id: "uppy1", autoProceed: false, debug: true })
+      .use(Tus, { endpoint: "https://master.tus.io/files/" })
+      .use(GoogleDrive, { serverUrl: "https://companion.uppy.io" });
 
-      this.uppy = new Uppy({ id: 'uppy1', autoProceed: false, debug: true })
-          .use(Tus, { endpoint: 'https://master.tus.io/files/' })
-          .use(GoogleDrive, { serverUrl: 'https://companion.uppy.io' })
-          
-      this.reader = new FileReader();      
+    this.reader = new FileReader();
 
-      //this.uppy2 = new Uppy({ id: 'uppy2', autoProceed: false, debug: true })
-      //    .use(Tus, { endpoint: 'https://master.tus.io/files/' }) 
-          
+    //this.uppy2 = new Uppy({ id: 'uppy2', autoProceed: false, debug: true })
+    //    .use(Tus, { endpoint: 'https://master.tus.io/files/' })
 
-      this.handleModalClick = this.handleModalClick.bind(this)
+    this.handleModalClick = this.handleModalClick.bind(this);
 
-      this.uploadFile = this.uploadFile.bind(this);
-      this.addFileToState = this.addFileToState.bind(this);
+    this.uploadFile = this.uploadFile.bind(this);
+    this.addFileToState = this.addFileToState.bind(this);
 
-      this.uppy.on('complete', (result) => {
-          console.log('Upload complete! We�ve uploaded these files:', result.successful)
-      })
+    this.uppy.on("complete", result => {
+      console.log(
+        "Upload complete! We�ve uploaded these files:",
+        result.successful
+      );
+    });
 
+    this.uppy.on("file-added", file => {
+      console.log("Added file", file);
+      this.reader.onload = readerEvt =>
+        this.addFileToState({ file, base64: readerEvt.target.result });
+      // Define this onload every time to get file and base64 every time
+      this.reader.readAsDataURL(file.data);
+    });
+  }
 
+  addFileToState({ file, base64 }) {
+    this.setState({
+      uppyPreviews: [{ file, base64 }, ...this.state.uppyPreviews]
+    });
+  }
 
-      this.uppy.on('file-added', (file) => {
-          console.log('Added file', file);  
-          this.reader.onload = (readerEvt) =>
-          this.addFileToState({ file, base64: readerEvt.target.result });
-          // Define this onload every time to get file and base64 every time
-          this.reader.readAsDataURL(file.data);
-      });      
-      
-    
-    }  
+  uploadFile() {
+    console.log(this.state.uppyPreviews);
+    // this.uppyOne.upload();
+  }
 
-    addFileToState({ file, base64 }) {
-        this.setState({ uppyPreviews: [{ file, base64 }, ...this.state.uppyPreviews] });
-    }
+  componentWillUnmount() {
+    this.uppy.close();
+  }
 
-    uploadFile() {
-        console.log(this.state.uppyPreviews);
-        // this.uppyOne.upload();
-    }
-
-
-    componentWillUnmount() {
-        this.uppy.close()      
-    }
-
-    handleModalClick() {
-        this.setState({
-            open: !this.state.open
-        })
-    }
-    
+  handleModalClick() {
+    this.setState({
+      open: !this.state.open
+    });
+  }
 
   showModal() {
     this.setState({
       displayModal: true
-    });   
-
+    });
   }
 
   closeModal() {
     this.setState({
       displayModal: false
     });
-      this.uppy.close();
-      this.state.uppyPreviews = [];
-      this.uppy.reset();
+    this.uppy.close();
+    this.setState( { uppyPreviews: [] } );
+    this.uppy.reset();
   }
-
-  
 
   handleChange(value) {
-      this.setState({ content: value });      
-
+    this.setState({ content: value });
   }
 
-    sendEmail() {                 
-        
+  sendEmail() {
     const validTo = getValidEmails(this.state.to);
 
     if (
@@ -159,14 +149,13 @@ export class Compose extends PureComponent {
       headers.Bcc = validBcc.join(", ");
     }
 
-     const Fileattached = this.state.uppyPreviews;      
+    const Fileattached = this.state.uppyPreviews;
 
-  sendMessage({
+    sendMessage({
       headers,
       body: this.state.content,
       attachments: Fileattached
-      
-    }).then(_ => {      
+    }).then(_ => {
       this.closeModal();
       this.resetFields();
     });
@@ -188,7 +177,7 @@ export class Compose extends PureComponent {
   setField(field, trimValue = true) {
     return evt => {
       this.setState({
-        [field]: trimValue ? evt.target.value.trim() : evt.target.value 
+        [field]: trimValue ? evt.target.value.trim() : evt.target.value
       });
     };
   }
@@ -198,37 +187,37 @@ export class Compose extends PureComponent {
     return fieldValue.length > 0 && !getValidEmails(fieldValue).length;
   }
 
-  
-    render() {
-        const { showInlineDashboard } = this.state;
-        const { t } = this.props;
+  render() {
+    const { t } = this.props;
 
     return (
       <React.Fragment>
-        {
-          React.cloneElement(this.props.children, {
-            onClick: this.showModal
-          })
-        }
+        {React.cloneElement(this.props.children, {
+          onClick: this.showModal
+        })}
         {this.state.displayModal ? (
-          <Modal          
+          <Modal
             isOpen={this.state.displayModal}
             className="compose-dialog"
             size="lg"
-            overflow-y= "initial !important"
+            overflow-y="initial !important"
             onOpened={this.onModalOpened}
             backdrop="static"
             centered={true}
           >
-            <ModalHeader toggle={this.closeModal}>{t('compose-message.compose-message')}</ModalHeader>
+            <ModalHeader toggle={this.closeModal}>
+              {t("compose-message.compose-message")}
+            </ModalHeader>
             <ModalBody>
               <div className="message-fields">
                 <InputGroup>
-                  <InputGroupAddon addonType="prepend">{t('compose-message.to')}</InputGroupAddon>
+                  <InputGroupAddon addonType="prepend">
+                    {t("compose-message.to")}
+                  </InputGroupAddon>
                   <Input
                     tabIndex={1}
                     value={this.state.to}
-                    placeholder={t('compose-message.comma-separated')}
+                    placeholder={t("compose-message.comma-separated")}
                     invalid={this.isInvalid("to")}
                     onChange={this.setField("to")}
                   />
@@ -238,7 +227,7 @@ export class Compose extends PureComponent {
                   <Input
                     tabIndex={2}
                     value={this.state.cc}
-                    placeholder={t('compose-message.comma-separated')}
+                    placeholder={t("compose-message.comma-separated")}
                     invalid={this.isInvalid("cc")}
                     onChange={this.setField("cc")}
                   />
@@ -247,14 +236,14 @@ export class Compose extends PureComponent {
                   <InputGroupAddon addonType="prepend">Bcc:</InputGroupAddon>
                   <Input
                     tabIndex={3}
-                    placeholder={t('compose-message.comma-separated')}
+                    placeholder={t("compose-message.comma-separated")}
                     invalid={this.isInvalid("bcc")}
                     onChange={this.setField("bcc")}
                   />
                 </InputGroup>
                 <InputGroup>
                   <InputGroupAddon addonType="prepend">
-                    {t('compose-message.subject')}
+                    {t("compose-message.subject")}
                   </InputGroupAddon>
                   <Input
                     tabIndex={4}
@@ -270,58 +259,51 @@ export class Compose extends PureComponent {
                   value={this.state.content}
                   onChange={this.handleChange}
                 />
-              </div>  
-                                           
-            </ModalBody>                  
+              </div>
+            </ModalBody>
             <ModalFooter className="footer">
               <Button
                 className="mr-auto font-weight-bold"
                 size="lg"
                 color="primary"
                 onClick={this.sendEmail}
-                title={t('compose-message.send-message')}
+                title={t("compose-message.send-message")}
               >
-                {t('compose-message.send')}
-              </Button>{" "}            
-                            
-              <Button title={t('compose-message.discard')} color="light" onClick={this.closeModal}>
+                {t("compose-message.send")}
+              </Button>{" "}
+              <Button
+                title={t("compose-message.discard")}
+                color="light"
+                onClick={this.closeModal}
+              >
                 <FontAwesomeIcon icon={faTrash} />
               </Button>
-                        
-            </ModalFooter> 
-                    <div className="ImagePreviewContainer">
-                        {
-                            this.state.uppyPreviews.map(
-                                item => {
-                                    return (                                       
-                                        <object className="FileList"
-                                            key={item.file.id}
-                                            type={item.file.type}
-                                            width="80px"
-                                            height="auto"
-                                            data={item.base64}                                            
-                                        >
-                                            {item.file.name}
-                                        </object>
-                                    );
-                                }
-                            )
-                        }
-                    </div>
-                    <ProgressBar
-                        uppy={this.uppy}
-                        hideAfterFinish={false}
-                    />
-                    <div id="Divfooter">                       
-                        <DragDrop
-                            uppy={this.uppy}
-                            width='100%'
-                            height='130px'
-                            min-height='130px'
-                     />
-                       
-                    </div>
-                     
+            </ModalFooter>
+            <div className="ImagePreviewContainer">
+              {this.state.uppyPreviews.map(item => {
+                return (
+                  <object
+                    className="FileList"
+                    key={item.file.id}
+                    type={item.file.type}
+                    width="80px"
+                    height="auto"
+                    data={item.base64}
+                  >
+                    {item.file.name}
+                  </object>
+                );
+              })}
+            </div>
+            <ProgressBar uppy={this.uppy} hideAfterFinish={false} />
+            <div id="Divfooter">
+              <DragDrop
+                uppy={this.uppy}
+                width="100%"
+                height="130px"
+                min-height="130px"
+              />
+            </div>
           </Modal>
         ) : null}
       </React.Fragment>

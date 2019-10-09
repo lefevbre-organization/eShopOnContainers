@@ -1,5 +1,5 @@
 import { MAX_RESULTS } from "../constants";
-import { getBody, isHTML, base64MimeType, base64Data } from './utils';
+import { getBody, isHTML, base64MimeType, base64Data } from "./utils";
 
 const getLabelDetailPromise = labelId => {
   return new Promise((resolve, reject) => {
@@ -40,11 +40,12 @@ export const getMessageList = ({ labelIds, maxResults, q, pageToken }) =>
       .then(getMessageHeaders)
       .then(messageResult =>
         flattenMessagesWithLabel(messageResult.messages, labelIds).then(
-          labelMessagesDetails => resolve({
-            ...messageResult,
-            messages: labelMessagesDetails.messages,
-            label: labelMessagesDetails.label
-          })
+          labelMessagesDetails =>
+            resolve({
+              ...messageResult,
+              messages: labelMessagesDetails.messages,
+              label: labelMessagesDetails.label
+            })
         )
       )
       .catch(err => {
@@ -54,7 +55,6 @@ export const getMessageList = ({ labelIds, maxResults, q, pageToken }) =>
 
 export const flattenMessagesWithLabel = (messages, labelIds) =>
   new Promise((resolve, reject) => {
-
     if (!labelIds) {
       resolve({
         messages,
@@ -87,7 +87,7 @@ const getMessageRawList = ({ labelIds, maxResults, pageToken, q = "" }) =>
         userId: "me",
         q,
         maxResults: maxResults || MAX_RESULTS,
-        ...(labelIds && {labelIds}),
+        ...(labelIds && { labelIds }),
         ...(pageToken && { pageToken })
       })
       .then(response => resolve(response))
@@ -131,7 +131,7 @@ const getMessageHeader = id => {
           "Reply-To",
           "From",
           "Subject",
-          "Return-Path",
+          "Return-Path"
           // See https://www.iana.org/assignments/message-headers/message-headers.xhtml
           // for more headers
         ]
@@ -139,7 +139,6 @@ const getMessageHeader = id => {
       .then(response => resolve(response.result));
   });
 };
-
 
 export const getMessage = messageId => {
   return new Promise((resolve, reject) => {
@@ -153,22 +152,33 @@ export const getMessage = messageId => {
         const { result } = response;
 
         let body = getBody(result.payload, "text/html");
-        let attach = result.payload.parts;   
-        
+        let attach = result.payload.parts;
+
         if (body === "") {
           body = getBody(result.payload, "text/plain");
-          body = body.replace(/(\r\n)+/g, '<br data-break="rn-1">').replace(/[\n\r]+/g, '<br data-break="nr">');
+          body = body
+            .replace(/(\r\n)+/g, '<br data-break="rn-1">')
+            .replace(/[\n\r]+/g, '<br data-break="nr">');
         }
 
         if (body !== "" && !isHTML(body)) {
-          body = body.replace(/(\r\n)+/g, '<div data-break="rn-1" style="margin-bottom:10px"></div>').replace(/[\n\r]+/g, '<br data-break="nr">');
+          body = body
+            .replace(
+              /(\r\n)+/g,
+              '<div data-break="rn-1" style="margin-bottom:10px"></div>'
+            )
+            .replace(/[\n\r]+/g, '<br data-break="nr">');
         }
-          
+
         resolve({
-            body,
-            attach,
+          body,
+          attach,
           headers: response.headers,
-          result: { ...result, messageHeaders: response.result.payload.headers, payload: undefined }
+          result: {
+            ...result,
+            messageHeaders: response.result.payload.headers,
+            payload: undefined
+          }
         });
       })
       .catch(error => {
@@ -177,91 +187,88 @@ export const getMessage = messageId => {
   });
 };
 
-
 // Insert file attachments from Google Drive
-function getAttachments_(ids) {
-    var att = [];
-    for (var i in ids) {
-        var file = ids;
-        att.push({
-            mimeType: file.type(),
-            fileName: file.name(),
-            //bytes: Utilities.base64Encode(file.getBlob().getBytes())
-        });
-    }
-    return att;
-}
-
-
-
+// function getAttachments_(ids) {
+//     var att = [];
+//     for (var i in ids) {
+//         var file = ids;
+//         att.push({
+//             mimeType: file.type(),
+//             fileName: file.name(),
+//             //bytes: Utilities.base64Encode(file.getBlob().getBytes())
+//         });
+//     }
+//     return att;
+// }
 
 export const sendMessage = ({ headers, body, attachments }) => {
+  let email = "";
 
-    let email = "";
+  const headersClone = { ...headers };
+  headersClone["MIME-Version"] = "1.0";
+  headersClone["Content-Type"] = "multipart/mixed; boundary=alternative";
 
-    const headersClone = { ...headers };
-    headersClone["MIME-Version"] = "1.0";    
-    headersClone["Content-Type"] = "multipart/mixed; boundary=" + "alternative";   
+  for (let header in headersClone) {
+    email += `${header}: ${headersClone[header]}\r\n`;
+  }
 
-    for (let header in headersClone) {
-        email += `${header}: ${headersClone[header]}\r\n`;
-    }
+  email += `\r\n`;
+  email += `--alternative\r\n`;
+  email += `Content-Type: multipart/alternative; boundary = "attached"\r\n`;
+  email += `\r\n`;
 
-    email += `\r\n`;
+  email += `--attached\r\n`;
+  email += `Content-Type: text/plain; charset = "iso-8859-1"\r\n`;
+  email += `Content-Transfer-Encoding: quoted-printable\r\n`;
+
+  //text plain
+  email += `\r\n`;
+  email += `${body}\r\n`;
+  email += `\r\n`;
+
+  email += `--attached\r\n`;
+  email += `Content-Type: text/html; charset = "iso-8859-1"\r\n`;
+  email += `Content-Transfer-Encoding: quoted-printable\r\n`;
+
+  //HTML
+  email += `\r\n`;
+  email += `\r\n<html><head></head><body>${body}</body></html>\r\n`;
+  email += `\r\n`;
+
+  email += `--attached--\r\n`;
+
+  for (var i = 0; i < headersClone.attachments.length; i++) {
+    var mimetype = base64MimeType(headersClone.attachments[i].base64);
+    var fileData = base64Data(headersClone.attachments[i].base64);
+    var fileName = headersClone.attachments[i].file.name;
+
+    console.log(mimetype); // "image/png"
+    console.log(fileData); // "ZXN0byBlcyB1bmEgcHJ1ZWJhIGJhc2ljYQ=="
+
     email += `--alternative\r\n`;
-    email += `Content-Type: multipart/alternative; boundary = "attached"\r\n`;
-    email += `\r\n`;
 
-    email += `--attached\r\n`;
-    email += `Content-Type: text/plain; charset = "iso-8859-1"\r\n`;
-    email += `Content-Transfer-Encoding: quoted-printable\r\n`;
+    email += `Content-Type: ${mimetype}\r\n`;
 
-    //text plain
-    email += `\r\n`;
-    email += `${body}\r\n`;
-    email += `\r\n`;
+    email += `Content-Transfer-Encoding: base64\r\n`;
 
-    email += `--attached\r\n`;
-    email += `Content-Type: text/html; charset = "iso-8859-1"\r\n`;
-    email += `Content-Transfer-Encoding: quoted-printable\r\n`;
+    email += `Content-Disposition: attachment; filename = "${fileName}"\r\n`;
 
-    //HTML
-    email += `\r\n`;
-    email += `\r\n<html><head></head><body>${body}</body></html>\r\n`;
-    email += `\r\n`;   
+    email += `${fileData}\r\n`;
+  }
 
-    email += `--attached--\r\n`; 
+  email += `--alternative--\r\n`;
 
-    for (var i = 0; i < headersClone.attachments.length; i++) {              
-                   
-        var mimetype = base64MimeType(headersClone.attachments[i].base64);  
-        var fileData = base64Data(headersClone.attachments[i].base64); 
-        var fileName = headersClone.attachments[i].file.name;
+  const encodedEmail = unescape(encodeURIComponent(email));
 
-        console.log(mimetype); // "image/png"
-        console.log(fileData); // "ZXN0byBlcyB1bmEgcHJ1ZWJhIGJhc2ljYQ=="
-
-        email += `--alternative\r\n`;                  
-
-        email += `Content-Type: ${mimetype}\r\n`;
-
-        email += `Content-Transfer-Encoding: base64\r\n`;
-                 
-        email += `Content-Disposition: attachment; filename = "${fileName}"\r\n`; 
-
-        email += `${fileData}\r\n`;  
-    } 
-   
-    email += `--alternative--\r\n`;
-
-    const encodedEmail = unescape(encodeURIComponent(email));
-
-    return window.gapi.client.gmail.users.messages.send({
-        userId: "me",
-        resource: {
-            raw: window.btoa(encodedEmail).replace(/\+/g, "-").replace(/\//g, "_")
-        }
-    });
+  return window.gapi.client.gmail.users.messages.send({
+    userId: "me",
+    resource: {
+      raw: window
+        .btoa(encodedEmail)
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+    }
+  });
 };
 
 //export const base64MimeType = ( encoded ) => {
@@ -287,7 +294,7 @@ export const sendMessage = ({ headers, body, attachments }) => {
 //        return result;
 //    }
 
-//    var data = encoded.split("base64,")[1];      
+//    var data = encoded.split("base64,")[1];
 
 //    return data;
 //}
@@ -300,18 +307,16 @@ export const sendMessage = ({ headers, body, attachments }) => {
 //    return encoded.split("base64,")[1];
 //}
 
-
-export const batchModify = ({ids, addLabelIds = [], removeLabelIds = []}) => new Promise((resolve, reject) => {
-  window.gapi.client.gmail.users.messages
-    .batchModify({
-      userId: "me",
-      ids,
-      addLabelIds,
-      removeLabelIds
-    })
-    .then(response =>
-      {
-        resolve(ids)
-      }
-    );
-});
+export const batchModify = ({ ids, addLabelIds = [], removeLabelIds = [] }) =>
+  new Promise((resolve, reject) => {
+    window.gapi.client.gmail.users.messages
+      .batchModify({
+        userId: "me",
+        ids,
+        addLabelIds,
+        removeLabelIds
+      })
+      .then(response => {
+        resolve(ids);
+      });
+  });

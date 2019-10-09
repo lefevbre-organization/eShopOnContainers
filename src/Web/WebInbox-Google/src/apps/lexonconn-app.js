@@ -1,5 +1,5 @@
 import * as singleSpa from "single-spa";
-import {matchingPathname, runScript} from "./utils";
+import { runScript } from "./utils";
 
 const loadReactApp = async () => {
     await runScript('http://localhost:3004/static/js/main.js');
