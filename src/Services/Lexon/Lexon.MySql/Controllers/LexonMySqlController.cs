@@ -24,9 +24,9 @@ namespace Lexon.MySql.Controllers
         // GET api/v1/[controller]/companies[?pageSize=3&pageIndex=10]
         [HttpGet]
         [Route("companies")]
-        [ProducesResponseType(typeof(IEnumerable<JosCompany>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(JosUserCompanies), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CompaniesAsync([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0, string idUser = null)
+        public async Task<IActionResult> CompaniesAsync([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0, string idUser = "E1621396")
 
         {
             //var companies = new List<LexonCompany> {
@@ -41,7 +41,7 @@ namespace Lexon.MySql.Controllers
             if (!string.IsNullOrEmpty(idUser))
             {
                 var itemsByUser = await _lexonService.GetCompaniesFromUserAsync(pageSize, pageIndex, idUser);
-                return !itemsByUser.Any()
+                return itemsByUser == null
                     ? (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment")
                     : Ok(itemsByUser);
             }

@@ -17,7 +17,7 @@ namespace Lexon.MySql.Infrastructure.Services
             _lexonRepository = lexonRepository ?? throw new ArgumentNullException(nameof(lexonRepository));
 
         }
-        public async Task<List<JosCompany>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser)
+        public async Task<JosUserCompanies> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser)
         {
             return await _lexonRepository.GetCompaniesListAsync(pageSize, pageIndex, idUser);
 

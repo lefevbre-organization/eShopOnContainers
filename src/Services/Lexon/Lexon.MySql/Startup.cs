@@ -31,9 +31,7 @@ namespace Lexon.MySql
             services.AddCustomMVC(Configuration);
             services.AddSwagger();
 
-            //services.AddDbContext<SakilaContext>(options => options.UseMySQL(Configuration.GetConnectionString("Sakila")));
-            services.AddDbContext<SakilaContext>(options => options.UseMySQL(Configuration.GetConnectionString("LexonPpal")));
-            //services.AddDbContext<SakilaContext>(options => options.UseMySQL(Configuration.GetConnectionString("Sakila")));
+            services.AddDbContext<LexonMySqlContext>(options => options.UseMySQL(Configuration.GetConnectionString("LexonPpal")));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
