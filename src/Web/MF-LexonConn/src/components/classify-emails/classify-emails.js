@@ -113,6 +113,9 @@ class ClassifyEmails extends Component {
       })
       .catch(error => {
         console.log("error ->", error);
+        this.setState({
+          listResultsByType: []
+        });
       });
   }
 
