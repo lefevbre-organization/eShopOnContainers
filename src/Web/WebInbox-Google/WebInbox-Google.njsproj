@@ -31,6 +31,7 @@
     <Content Include="package.json" />
     <Content Include="public\assets\css\modal.css" />
     <Content Include="public\assets\css\styles.css" />
+    <Content Include="public\assets\img\buttons.png" />
     <Content Include="public\assets\img\file-extensions\default.png" />
     <Content Include="public\assets\img\file-extensions\doc.png" />
     <Content Include="public\assets\img\file-extensions\jpg.png" />
@@ -57,6 +58,7 @@
     <Content Include="public\index.html" />
     <Content Include="src\App.css" />
     <Content Include="src\apps\calendar_content.js" />
+    <Content Include="src\apps\material_title_panel.css" />
     <Content Include="src\apps\material_title_panel.js" />
     <Content Include="src\apps\lexon_content.js" />
     <Content Include="src\components\aside\aside.scss" />
