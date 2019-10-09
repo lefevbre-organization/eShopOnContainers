@@ -40,6 +40,9 @@ namespace Lexon.API.Controllers
         public async Task<IActionResult> CompaniesAsync(string idUser = "E1621396")
 
         {
+            if (string.IsNullOrEmpty(idUser))
+                return (IActionResult)BadRequest("idUser need a correct value");
+
             //var companies = new List<LexonCompany> {
             //    new LexonCompany { IdCompany = 1, Name = "Abogados de Atocha, S.L." },
             //    new LexonCompany { IdCompany = 2, Name = "Servicios Jurídicos Arganzuela" },
@@ -48,15 +51,11 @@ namespace Lexon.API.Controllers
 
             //return Ok(companies);
 
-            if (!string.IsNullOrEmpty(idUser))
-            {
-                var itemsByUser = await _usersService.GetCompaniesFromUserAsync(10, 0, idUser);
-                return !itemsByUser.Any()
-                    ? (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment")
-                    : Ok(itemsByUser);
-            }
+            var itemsByUser = await _usersService.GetCompaniesFromUserAsync(10, 0, idUser);
+            if (!itemsByUser.Any())
+                Console.WriteLine("id value invalid. Must be a valid user code in the enviroment");
 
-            return BadRequest();
+            return Ok(itemsByUser);
         }
 
         //[HttpGet]
@@ -67,7 +66,6 @@ namespace Lexon.API.Controllers
         //public async Task<IActionResult> CompaniesWrongAsync([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0, string idUser = null)
 
         //{
-
         //    var t = Task.Run(async delegate
         //    {
         //        await Task.Delay(5000);
@@ -76,7 +74,6 @@ namespace Lexon.API.Controllers
         //    t.Wait();
         //    Console.WriteLine("Task t Status: {0}, Result: {1}",
         //                      t.Status, t.Result);
-
 
         //    return BadRequest("if the coupled service fails, all fail");
         //}
@@ -131,8 +128,6 @@ namespace Lexon.API.Controllers
             return !itemsByUser.Classifications.List.Any()
                 ? (IActionResult)BadRequest("The search don´t return any data")
                 : Ok(itemsByUser);
-
-
         }
 
         [HttpGet]

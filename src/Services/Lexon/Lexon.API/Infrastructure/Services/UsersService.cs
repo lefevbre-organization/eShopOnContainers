@@ -14,6 +14,7 @@ namespace Lexon.Infrastructure.Services
         public readonly IUsersRepository _usersRepository;
         private readonly IEventBus _eventBus;
         private readonly IHttpClientFactory _clientFactory;
+        private readonly HttpClient _client;
 
 
         public UsersService(
@@ -25,6 +26,10 @@ namespace Lexon.Infrastructure.Services
             _usersRepository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
+
+            _client = _clientFactory.CreateClient();
+            _client.BaseAddress = new Uri("https://localhost:44393/api/v1/LexonMySql");
+            _client.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
 
@@ -53,13 +58,10 @@ namespace Lexon.Infrastructure.Services
         {
         
             var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:44393/api/v1/LexonMySql/companies?pageSize={pageSize}&pageIndex={pageIndex}&idUser={idUser}");
-            request.Headers.Add("Accept", "text/plain");
-            request.Headers.Add("User-Agent", "HttpClientFactory-Sample");
-
-            var client = _clientFactory.CreateClient();
+           
             var companies = new List<LexonCompany>();
 
-            var response = await client.SendAsync(request);
+            var response = await _client.SendAsync(request);
 
             if (response.IsSuccessStatusCode)
             {
@@ -67,15 +69,14 @@ namespace Lexon.Infrastructure.Services
                 {
                     companies.Add(new LexonCompany() { Name=company.name, Conn= company.BBDD, IdCompany= company.IdCompany});
                 }
-                return companies;
-                //todo update collection
+                return companies;       //todo update collection
             }
             else
             {
                 Console.WriteLine("error al obtener datos");
             }
 
-            return await _usersRepository.GetCompaniesListAsync(pageSize, pageIndex, idUser);
+            return await _usersRepository.GetCompaniesListAsync(idUser);
         }
 
         public async Task<List<LexonFile>> GetFileListAsync(int pageSize, int pageIndex, string idUser, long idCompany, string search)

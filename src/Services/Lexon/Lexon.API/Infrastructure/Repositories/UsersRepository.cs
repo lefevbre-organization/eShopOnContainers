@@ -34,31 +34,35 @@ namespace Lexon.API.Infrastructure.Repositories
                 .FirstOrDefaultAsync();
         }
 
-        public async Task<List<LexonCompany>> GetCompaniesListAsync(int pageSize, int pageIndex, string idUser)
+        public async Task<List<LexonCompany>> GetCompaniesListAsync(string idUser)
         {
-            var filter = Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser);
+            var filter = GetFilterUser(idUser);
+
             var fields = Builders<LexonUser>.Projection
-                .Exclude("Companies.List.Clients")
-                .Exclude("Companies.List.Insurances")
-                .Exclude("Companies.List.Suppliers")
-                .Exclude("Companies.List.Courts")
-                .Exclude("Companies.List.Files")
-                .Exclude("Companies.List.Lawyers")
-                .Exclude("Companies.List.Solicitors")
-                .Exclude("Companies.List.Notaries")
-                .Exclude("Companies.List.Folders");
+                .Include("Companies.list.idCompany")
+                .Include("Companies.list.conn")
+                .Include("Companies.list.name");
 
             var user = await _context.LexonUsers
                         .Find(filter)
                         .Project<LexonUser>(fields)
-                        .SingleAsync();
+                        .FirstOrDefaultAsync();
 
-            return user.Companies.List.Take(pageSize).ToList();
+            var companies = user?.Companies?.List?.ToList();
+            return companies ?? new List<LexonCompany>(); 
+        }
+
+        private static FilterDefinition<LexonUser> GetFilterUser(string idUser)
+        {
+            return Builders<LexonUser>.Filter.Or(
+                Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser),
+                Builders<LexonUser>.Filter.Eq(u => u.IdNavision, idUser)
+                );
         }
 
         public async Task<List<LexonUser>> GetListAsync(int pageSize, int pageIndex, string idUser)
         {
-            var filter = Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser);
+            var filter = GetFilterUser(idUser);
 
             return await _context.LexonUsers
                 .Find(filter)
@@ -71,52 +75,11 @@ namespace Lexon.API.Infrastructure.Repositories
 
         private async Task CreateAndPublishIntegrationEventLogEntry(IClientSessionHandle session, IntegrationEvent eventAssoc)
         {
-            //TODO:revisar el guid para quitarlo
             var eventLogEntry = new IntegrationEventLogEntry(eventAssoc, Guid.NewGuid());
             await _context.IntegrationEventLogsTransaction(session).InsertOneAsync(eventLogEntry);
             await _context.PublishThroughEventBusAsync(eventAssoc, session);
         }
 
-        //public async Task<long> AddFileToListInDocumentAsync(string idUser, long idFile, string nameFile, string descriptionFile = "")
-        //{
-        //    var cancel = default(CancellationToken);
-        //    using (var session = await _context.StartSession(cancel))
-        //    {
-        //        //var transactionOptions = new TransactionOptions(ReadConcern.Snapshot, ReadPreference.Primary, WriteConcern.WMajority);
-        //        //session.StartTransaction(transactionOptions);
-        //        session.StartTransaction();
-        //        try
-        //        {
-        //            var filter = Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser);
-        //            var user = await _context.LexonUsers
-        //                .Find(filter)
-        //                .SingleAsync();
-
-        //            var builder = Builders<LexonUser>.Update;
-        //            var subitem = new LexonFile
-        //            {
-        //                IdFile = (int)idFile,
-        //                Name = nameFile,
-        //                Description = descriptionFile
-        //            };
-        //            var update = builder.Push("Files", subitem);
-
-        //            var result = await _context.LexonUsers.UpdateOneAsync(filter, update);
-
-        //            var eventAssoc = new AddFileToUserIntegrationEvent(idUser, idFile, nameFile, descriptionFile);
-        //            await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
-
-        //            await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
-        //            return result.ModifiedCount;
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            Console.WriteLine(e.Message);
-        //            session.AbortTransaction(cancel);
-        //            return 0;
-        //        }
-        //    }
-        //}
 
         public async Task<long> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "")
         {
@@ -130,7 +93,7 @@ namespace Lexon.API.Infrastructure.Repositories
                 session.StartTransaction();
                 try
                 {
-                    var filter = Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser);
+                    var filter = GetFilterUser(idUser);
                     var user = await _context.LexonUsers
                         .Find(filter)
                         .SingleAsync();
@@ -180,9 +143,10 @@ namespace Lexon.API.Infrastructure.Repositories
             //        Builders<LexonUser>.Filter.Regex("Companies.list.Files.list.Description", $"/*{search}*/i")
             //    );
             //}
+            var filterUser = GetFilterUser(idUser);
 
             var filter = Builders<LexonUser>.Filter.And(
-                Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser),
+                filterUser,
                 Builders<LexonUser>.Filter.Eq("Companies.list.idCompany", idCompany),
                 filterDocuments
                 );
@@ -224,13 +188,14 @@ namespace Lexon.API.Infrastructure.Repositories
             {
                 //var transactionOptions = new TransactionOptions(ReadConcern.Snapshot, ReadPreference.Primary, WriteConcern.WMajority);
                 //session.StartTransaction(transactionOptions);
+
                 session.StartTransaction();
                 try
                 {
                     if (raiseAssociateMailToFileEvent)
                     {
                         await _context.LexonUsersTransaction(session).UpdateOneAsync(
-                            u => u.IdUser == idUser, // && u.Companies.List[-1].IdCompany == idCompany,
+                            GetFilterUser(idUser),
                             Builders<LexonUser>.Update.AddToSet("Companies.list.$[i].Files.list.$[j].mails", idMail),
                             new UpdateOptions
                             {
@@ -285,7 +250,7 @@ namespace Lexon.API.Infrastructure.Repositories
                     if (raiseAssociateMailToFileEvent)
                     {
                         await _context.LexonUsersTransaction(session).UpdateOneAsync(
-                            u => u.IdUser == idUser, // && u.Companies.List[-1].IdCompany == idCompany,
+                            GetFilterUser(idUser),
                             Builders<LexonUser>.Update.Pull("Companies.list.$[i].Files.list.$[j].mails", idMail),
                             new UpdateOptions
                             {
@@ -326,7 +291,7 @@ namespace Lexon.API.Infrastructure.Repositories
         public async Task<bool> SelectCompanyAsync(string idUser, long idCompany)
         {
             await _context.LexonUsers.UpdateOneAsync(
-                u => u.IdUser == idUser,
+                GetFilterUser(idUser),
                 Builders<LexonUser>.Update.Set("Companies.list.$[i].selected", true),
                 new UpdateOptions
                 {
@@ -352,6 +317,9 @@ namespace Lexon.API.Infrastructure.Repositories
                 {
                     new BsonDocument("$match", new BsonDocument()
                         .Add("idUser", idUser)
+                        .Add("$or", new BsonDocument()
+                            .Add("idUser", idUser)
+                            .Add("idNavision", idUser))
                         .Add("Companies.list.idCompany", idCompany)
                     ),
                     new BsonDocument("$project", new BsonDocument()
