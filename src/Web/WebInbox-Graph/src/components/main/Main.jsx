@@ -21,14 +21,7 @@ import {
 import { selectLabel } from "../sidebar/sidebar.actions";
 import { signOut } from "../../api_graph/authentication";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faSpinner,
-  faWindowClose,
-  faClosedCaptioning,
-  faDoorClosed,
-  faTimes
-} from "@fortawesome/free-solid-svg-icons";
-import { start, registerApplication } from "single-spa";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import e from "../../event-bus";
 import * as singleSpa from "single-spa";
 import { registerLexonApp } from "../../apps/lexonconn-app";
@@ -134,9 +127,6 @@ export class Main extends Component {
   }
 
   onSetSidebarOpenLexon(open) {
-    let lexon = (
-      <img border="0" alt="Lefebvre" src="assets/img/lexon-fake.png"></img>
-    );
     this.setState({ sidebarComponent: <LexonComponent /> });
     this.setState({ sidebarDocked: open });
   }
@@ -352,10 +342,7 @@ export class Main extends Component {
   }
 
   renderInboxViewport() {
-    const { t } = this.props;
     const { leftSideBar } = this.state;
-
-    let imgUrl = "assets/img/settings-gears.svg";
 
     if (this.props.labelsResult.labels.length < 1) {
       return this.renderSpinner();
@@ -373,8 +360,7 @@ export class Main extends Component {
             zIndex: 100,
             overflowY: "hidden",
             WebkitTransition: "-webkit-transform 0s",
-            willChange: "transform",
-            overflowY: "hidden"
+            willChange: "transform"
           },
           content: {
             position: "absolute",

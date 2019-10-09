@@ -2,8 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import MaterialTitlePanel from "./material_title_panel";
 
-
-
 const styles = {
   sidebar: {
     width: 320,
@@ -31,9 +29,6 @@ const SidebarContent = props => {
   const style = props.style
     ? { ...styles.sidebar, ...props.style }
     : styles.sidebar;
-  
-
-  let imgUrl = 'assets/images/settings-gears.svg';
 
   return (
     <MaterialTitlePanel title="Calendario" style={style}>
@@ -46,7 +41,7 @@ const SidebarContent = props => {
         </a>
         <div style={styles.divider} />
         {links}*/}
-       <img border="0" alt="Lefebvre" src="assets/img/calendarfake.png"></img>
+        <img border="0" alt="Lefebvre" src="assets/img/calendarfake.png"></img>
       </div>
     </MaterialTitlePanel>
   );
