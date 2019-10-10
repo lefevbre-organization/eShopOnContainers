@@ -2,14 +2,12 @@
 
 namespace Lexon.API.Model
 {
-    public class LexonSolicitor : MongoModel, IOwn, IName
+    public class LexonSolicitor : MongoModel, IEntity
     {
-        [BsonElement("idSolicitor")]
-        public int IdSolicitor { get; set; }
+        public int idSolicitor { get; set; }
 
-        [BsonElement("Propio")]
-        public bool Own { get; set; }
+        public string description { get; set; }
 
-        public string Name { get; set; }
+        public string name { get; set; }
     }
 }

@@ -1,14 +1,12 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-
-namespace Lexon.API.Model
+﻿namespace Lexon.API.Model
 {
-    public class LexonClient : MongoModel, IName
+    public class LexonClient : MongoModel, IEntity
     {
-        [BsonElement("idClient")]
-        public int IdClient { get; set; }
+        public int idClient { get; set; }
 
-        public string Name { get; set; }
+        public string name { get; set; }
 
-        public string Tlf { get; set; }
+        public string tlf { get; set; }
+        public string description { get; set; }
     }
 }

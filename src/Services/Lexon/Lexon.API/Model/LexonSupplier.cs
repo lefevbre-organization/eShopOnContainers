@@ -3,11 +3,11 @@
 namespace Lexon.API.Model
 {
     [BsonIgnoreExtraElements]
-    public class LexonSupplier : MongoModel, IName
+    public class LexonSupplier : MongoModel, IEntity
     {
-        [BsonElement("idSupplier")]
-        public long IdSupplier { get; set; }
+        public long idSupplier { get; set; }
 
-        public string Name { get; set; }
+        public string name { get; set; }
+        public string description { get; set; }
     }
 }

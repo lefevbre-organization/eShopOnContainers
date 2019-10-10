@@ -6,9 +6,9 @@ namespace Lexon.API.Model
     public class LexonActuationMailList : MongoModel
     {
 
-        public string IdMail { get; set; }
+        public string idMail { get; set; }
 
-        public LexonActuationList Classifications { get; set; }
+        public LexonActuationList classifications { get; set; }
 
     }
 }

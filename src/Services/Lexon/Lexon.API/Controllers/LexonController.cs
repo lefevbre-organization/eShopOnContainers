@@ -125,7 +125,7 @@ namespace Lexon.API.Controllers
             //return Ok(classifications);
 
             var itemsByUser = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
-            return !itemsByUser.Classifications.List.Any()
+            return !itemsByUser.classifications.list.Any()
                 ? (IActionResult)BadRequest("The search don´t return any data")
                 : Ok(itemsByUser);
         }

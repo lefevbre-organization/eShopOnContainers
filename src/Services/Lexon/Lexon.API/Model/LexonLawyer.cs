@@ -1,15 +1,11 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-
-namespace Lexon.API.Model
+﻿namespace Lexon.API.Model
 {
-    public class LexonLawyer : MongoModel, IOwn, IName
+    public class LexonLawyer : MongoModel, IEntity
     {
-        [BsonElement("idLawyer")]
-        public int IdLawyer { get; set; }
+        public int idLawyer { get; set; }
 
-        [BsonElement("Propio")]
-        public bool Own { get; set; }
+        public string description { get; set; }
 
-        public string Name { get; set; }
+        public string name { get; set; }
     }
 }

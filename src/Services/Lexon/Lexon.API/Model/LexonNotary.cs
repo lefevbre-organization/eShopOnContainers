@@ -1,12 +1,10 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-
-namespace Lexon.API.Model
+﻿namespace Lexon.API.Model
 {
-    public class LexonNotary : MongoModel, IName
+    public class LexonNotary : MongoModel, IEntity
     {
-        [BsonElement("idNotary")]
-        public int IdNotary { get; set; }
+        public int idNotary { get; set; }
 
-        public string Name { get; set; }
+        public string name { get; set; }
+        public string description { get; set; }
     }
 }

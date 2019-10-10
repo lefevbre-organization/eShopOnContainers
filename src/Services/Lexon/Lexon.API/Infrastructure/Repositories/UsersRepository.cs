@@ -41,7 +41,7 @@ namespace Lexon.API.Infrastructure.Repositories
                         .Project<LexonUser>(fields)
                         .FirstOrDefaultAsync();
 
-            var companies = user?.Companies?.List?.ToList();
+            var companies = user?.companies?.list?.ToList();
             return companies ?? new List<LexonCompany>(); 
         }
 
@@ -90,14 +90,14 @@ namespace Lexon.API.Infrastructure.Repositories
                         .Find(filter)
                         .SingleAsync();
 
-                    var company = user.Companies.List.FirstOrDefault(x => x.IdCompany == idCompany);
+                    var company = user.companies.list.FirstOrDefault(x => x.IdCompany == idCompany);
 
                     var builder = Builders<LexonUser>.Update;
                     //var builder = Builders<LexonCompany>.Update;
                     var subitem = new LexonFile
                     {
                         IdFile = (int)idFile,
-                        Name = nameFile,
+                        name = nameFile,
                         Description = descriptionFile
                     };
                     var update = builder.Push("Files", subitem);
@@ -147,16 +147,16 @@ namespace Lexon.API.Infrastructure.Repositories
                 .Find(filter)
                 .SingleAsync();
 
-            var company = user.Companies.List.FirstOrDefault(x => x.IdCompany == idCompany);
+            var company = user.companies.list.FirstOrDefault(x => x.IdCompany == idCompany);
             if (!string.IsNullOrEmpty(search))
             {
-                var files = from s in company.Files.List
-                            where s.Description.Contains(search) || s.Name.Contains(search)
+                var files = from s in company.Files.list
+                            where s.Description.Contains(search) || s.name.Contains(search)
                             select s;
                 return files.ToList();
             }
 
-            var filesWithoutSearch = from s in company.Files.List
+            var filesWithoutSearch = from s in company.Files.list
                                      select s;
             return filesWithoutSearch.ToList();
         }
@@ -166,7 +166,7 @@ namespace Lexon.API.Infrastructure.Repositories
             var filter = Builders<LexonUser>.Filter.Gte(u => u.Version, 7);
             var user = await _context.LexonUsers
                 .Find(filter).FirstAsync();
-            return user.Masters.Entities.List.ToList();
+            return user.Masters.Entities.list.ToList();
         }
 
         public async Task<long> AddClassificationToListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType = 1)
@@ -441,7 +441,7 @@ namespace Lexon.API.Infrastructure.Repositories
             //    });
 
             var cla = new LexonActuationMailList();
-            cla.IdMail = idMail;
+            cla.idMail = idMail;
 
             //var company = user.Companies.List.FirstOrDefault(x => x.IdCompany == idCompany);
 
