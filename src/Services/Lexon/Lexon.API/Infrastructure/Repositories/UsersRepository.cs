@@ -32,9 +32,9 @@ namespace Lexon.API.Infrastructure.Repositories
             var filter = GetFilterUser(idUser);
 
             var fields = Builders<LexonUser>.Projection
-                .Include("Companies.list.idCompany")
-                .Include("Companies.list.conn")
-                .Include("Companies.list.name");
+                .Include("companies.list.idCompany")
+                .Include("companies.list.conn")
+                .Include("companies.list.name");
 
             var user = await _context.LexonUsers
                         .Find(filter)
@@ -48,8 +48,8 @@ namespace Lexon.API.Infrastructure.Repositories
         private static FilterDefinition<LexonUser> GetFilterUser(string idUser)
         {
             return Builders<LexonUser>.Filter.Or(
-                Builders<LexonUser>.Filter.Eq(u => u.IdUser, idUser),
-                Builders<LexonUser>.Filter.Eq(u => u.IdNavision, idUser)
+                Builders<LexonUser>.Filter.Eq(u => u.idUser, idUser),
+                Builders<LexonUser>.Filter.Eq(u => u.idNavision, idUser)
                 );
         }
 
@@ -90,17 +90,17 @@ namespace Lexon.API.Infrastructure.Repositories
                         .Find(filter)
                         .SingleAsync();
 
-                    var company = user.companies.list.FirstOrDefault(x => x.IdCompany == idCompany);
+                    var company = user.companies.list.FirstOrDefault(x => x.idCompany == idCompany);
 
                     var builder = Builders<LexonUser>.Update;
                     //var builder = Builders<LexonCompany>.Update;
                     var subitem = new LexonFile
                     {
-                        IdFile = (int)idFile,
+                        idFile = (int)idFile,
                         name = nameFile,
-                        Description = descriptionFile
+                        description = descriptionFile
                     };
-                    var update = builder.Push("Files", subitem);
+                    var update = builder.Push("files", subitem);
 
                     var result = await _context.LexonUsers.UpdateOneAsync(filter, update);
 
@@ -139,7 +139,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
             var filter = Builders<LexonUser>.Filter.And(
                 filterUser,
-                Builders<LexonUser>.Filter.Eq("Companies.list.idCompany", idCompany),
+                Builders<LexonUser>.Filter.Eq("companies.list.idCompany", idCompany),
                 filterDocuments
                 );
 
@@ -147,26 +147,27 @@ namespace Lexon.API.Infrastructure.Repositories
                 .Find(filter)
                 .SingleAsync();
 
-            var company = user.companies.list.FirstOrDefault(x => x.IdCompany == idCompany);
+            var company = user.companies.list.FirstOrDefault(x => x.idCompany == idCompany);
             if (!string.IsNullOrEmpty(search))
             {
-                var files = from s in company.Files.list
-                            where s.Description.Contains(search) || s.name.Contains(search)
+                var files = from s in company.files.list
+                            where s.description.Contains(search) || s.name.Contains(search)
                             select s;
                 return files.ToList();
             }
 
-            var filesWithoutSearch = from s in company.Files.list
+            var filesWithoutSearch = from s in company.files.list
                                      select s;
             return filesWithoutSearch.ToList();
         }
 
         public async Task<List<LexonEntity>> GetClassificationMasterListAsync()
         {
-            var filter = Builders<LexonUser>.Filter.Gte(u => u.Version, 7);
-            var user = await _context.LexonUsers
-                .Find(filter).FirstAsync();
-            return user.Masters.Entities.list.ToList();
+            var filter = Builders<LexonMaster>.Filter.And(Builders<LexonMaster>.Filter.Gte(u => u.version, 9), Builders<LexonMaster>.Filter.Eq(u => u.type, "Entities"));
+            var master = await _context.LexonMasters
+                .Find(filter).FirstOrDefaultAsync();
+            
+            return master?.list?.ToList();
         }
 
         public async Task<long> AddClassificationToListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType = 1)
@@ -243,7 +244,7 @@ namespace Lexon.API.Infrastructure.Repositories
                     {
                         await _context.LexonUsersTransaction(session).UpdateOneAsync(
                             GetFilterUser(idUser),
-                            Builders<LexonUser>.Update.Pull("Companies.list.$[i].Files.list.$[j].mails", idMail),
+                            Builders<LexonUser>.Update.Pull("companies.list.$[i].files.list.$[j].mails", idMail),
                             new UpdateOptions
                             {
                                 ArrayFilters = new List<ArrayFilterDefinition>
@@ -284,7 +285,7 @@ namespace Lexon.API.Infrastructure.Repositories
         {
             await _context.LexonUsers.UpdateOneAsync(
                 GetFilterUser(idUser),
-                Builders<LexonUser>.Update.Set("Companies.list.$[i].selected", true),
+                Builders<LexonUser>.Update.Set("companies.list.$[i].selected", true),
                 new UpdateOptions
                 {
                     ArrayFilters = new List<ArrayFilterDefinition>
@@ -311,109 +312,119 @@ namespace Lexon.API.Infrastructure.Repositories
                     new BsonDocument().Add("idNavision", idUser)
                 };
 
-                var arrayOfArrays = new BsonArray(new List<string>() { "$Companies.list.Files.list", "$Companies.list.Clients.list" });
-                 
+                var arrayOfArrays = new BsonArray(
+                    new List<string>() {
+                        "$companies.list.files.list",
+                        "$companies.list.clients.list",
+                        "$companies.list.opposites.list",
+                        "$companies.list.suppliers.list",
+                        "$companies.list.insurances.list",
+                        "$companies.list.courts.list",
+                        "$companies.list.lawyers.list",
+                        "$companies.list.opposingLawyers.list",
+                        "$companies.list.solicitors.list",
+                        "$companies.list.opposingSolicitors.list",
+                        "$companies.list.notaries.list"
+                    }
+                );
 
-                PipelineDefinition<LexonUser, BsonDocument> pipeline = new BsonDocument[]
+            PipelineDefinition<LexonUser, BsonDocument> pipeline = new BsonDocument[]
                 {
 
                     new BsonDocument("$match", new BsonDocument()
                         .Add("idUser", idUser)
                         .Add("$or", array)
-                        .Add("Companies.list.idCompany", idCompany)
+                        .Add("companies.list.idCompany", idCompany)
                     ),
                     new BsonDocument("$project", new BsonDocument()
                         .Add("_id", 0)
-                        .Add("Companies.list.idCompany",1)
-                        .Add("Companies.list.Files.list",1)
-                        .Add("Companies.list.Clients.list",1)
-                        .Add("Companies.list.Insurances.list",1)
-                        .Add("Companies.list.Suppliers.list",1)
-                        .Add("Companies.list.Courts.list",1)
-                        .Add("Companies.list.Lawyers.list",1)
-                        .Add("Companies.list.Solicitors.list",1)
-                        .Add("Companies.list.Notaries.list",1)
-                        //.Add("Companies.list.Folders.list",1)
-                        //.Add("Companies.list.Folders.list.Documents",0)
+                        .Add("companies.list.idCompany",1)
+                        .Add("companies.list.files.list",1)
+                        .Add("companies.list.clients.list",1)
+                        .Add("companies.list.opposites.list",1)
+                        .Add("companies.list.suppliers.list",1)
+                        .Add("companies.list.insurances.list",1)
+                        .Add("companies.list.courts.list",1)
+                        .Add("companies.list.lawyers.list",1)
+                        .Add("companies.list.opposingLawyers.list",1)
+                        .Add("companies.list.solicitors.list",1)
+                        .Add("companies.list.opposingSolicitors.list",1)
+                        .Add("companies.list.notaries.list",1)
                     ),
                     new BsonDocument("$addFields", new BsonDocument()
-                        .Add("Companies.list.Files.list.idType", 1)
-                        .Add("Companies.list.Files.list.Type", "Expedientes")
-                        .Add("Companies.list.Clients.list.idType", 2)
-                        .Add("Companies.list.Clients.list.Type", "Clients")
-                        .Add("Companies.list.Insurances.list.idType", 11)
-                        .Add("Companies.list.Insurances.list.Type", "Insurances")
-                        .Add("Companies.list.Suppliers.list.idType", 4)
-                        .Add("Companies.list.Suppliers.list.Type", "Suppliers")
-                        .Add("Companies.list.Courts.list.idType", 10)
-                        .Add("Companies.list.Courts.list.Type", "Courts")
-                        .Add("Companies.list.Lawyers.list.idType", 5)
-                        .Add("Companies.list.Lawyers.list.Type", "Lawyers")
-                        .Add("Companies.list.Solicitors.list.idType", 7)
-                        .Add("Companies.list.Solicitors.list.Type", "Solicitors")
-                        .Add("Companies.list.Notaries.list.idType", 9)
-                        .Add("Companies.list.Notaries.list.Type", "Notaries")
+                        .Add("companies.list.files.list.idType", 1)
+                        .Add("companies.list.files.list.type", "Expedientes")
+                        .Add("companies.list.clients.list.idType", 2)
+                        .Add("companies.list.clients.list.type", "Clients")
+                        .Add("companies.list.opposites.list.idType", 3)
+                        .Add("companies.list.opposites.list.type", "Opposites")
+                        .Add("companies.list.suppliers.list.idType", 4)
+                        .Add("companies.list.suppliers.list.type", "Suppliers")
+                        .Add("companies.list.lawyers.list.idType", 5)
+                        .Add("companies.list.lawyers.list.type", "Lawyers")
+                        .Add("companies.list.opposingLawyers.list.idType", 6)
+                        .Add("companies.list.opposingLawyers.list.type", "OpposingLawyers")
+                        .Add("companies.list.solicitors.list.idType", 7)
+                        .Add("companies.list.solicitors.list.type", "Solicitors")
+                        .Add("companies.list.opposingSolicitors.list.idType", 8)
+                        .Add("companies.list.opposingSolicitors.list.type", "OpposingSolicitors")
+                        .Add("companies.list.notaries.list.idType", 9)
+                        .Add("companies.list.notaries.list.type", "Notaries")
+                        .Add("companies.list.courts.list.idType", 10)
+                        .Add("companies.list.courts.list.type", "Courts")
+                        .Add("companies.list.insurances.list.idType", 11)
+                        .Add("companies.list.insurances.list.type", "Insurances")
                         ),
                     new BsonDocument("$unwind", new BsonDocument()
-                        .Add("path", "$Companies.list")
+                        .Add("path", "$companies.list")
                         .Add("preserveNullAndEmptyArrays", new BsonBoolean(true))),
                     new BsonDocument("$match", new BsonDocument()
-                        .Add("Companies.list.idCompany", idCompany)
+                        .Add("companies.list.idCompany", idCompany)
                     ),
                     new BsonDocument("$project", new BsonDocument()
                         .Add("Classifications", new BsonDocument()                  
                             .Add("$setUnion", arrayOfArrays))
                         ),
-                    //new BsonDocument("$unwind", new BsonDocument()
-                    //    .Add("path", "$Companies.list.Files.list")
-                    //    .Add("preserveNullAndEmptyArrays", new BsonBoolean(true))
-                    //    ),
-                    //new BsonDocument("$unwind", new BsonDocument()
-                    //    .Add("path", "$Companies.list.Files.list.mails")
-                    //    .Add("preserveNullAndEmptyArrays", new BsonBoolean(false))
-                    //    ),
-                    //new BsonDocument("$unwind", new BsonDocument()
-                    //    .Add("path", "$Companies.list.Clients.list")
-                    //    .Add("preserveNullAndEmptyArrays", new BsonBoolean(true))
-                    //    ),
-                    //new BsonDocument("$unwind", new BsonDocument()
-                    //    .Add("path", "$Companies.list.Clients.list.mails")
-                    //    .Add("preserveNullAndEmptyArrays", new BsonBoolean(true))
-                    //    ),
-                    //new BsonDocument("$project", new BsonDocument()
-                    //    .Add("idMail", "$Companies.list.Files.list.mails")
-                    //    .Add("name", "$Companies.list.Files.list.code")
-                    //    .Add("description", "$Companies.list.Files.list.description")
-                    //    .Add("idType", "$Companies.list.Files.list.idType")
-                    //    .Add("Type", "$Companies.list.Files.list.Type")
-                    //    //.Add("Clients.idMail", "$Companies.list.Files.list.mails")
-                    //    //.Add("Clients.name", "$Companies.list.Clients.list.code")
-                    //    //.Add("Clients.description", "$Companies.list.Clients.list.description")
-                    //    //.Add("Clients.idType", "$Companies.list.Clients.list.idType")
-                    //    //.Add("Clients.Type", "$Companies.list.Clients.list.Type")
-                    //    ),
+
                     //new BsonDocument("$match", new BsonDocument()
-                    //    .Add("idMail", idMail)
-                    //),
-                    //new BsonDocument("$group", new BsonDocument()
-                    //    //.Add("_id", "$idMail")
-                    //    .Add("_id", new BsonDocument()
-                    //        .Add("idMail", "$idMail")
-                    //        .Add("Type", "$Type")
-                    //    )
-                    //    //.Add("Classifications", new BsonDocument().Add("$push", "$$ROOT"))
                     //    .Add("Classifications", new BsonDocument()
-                    //        .Add("$push", new BsonDocument()
-                    //            .Add("name", "$name")
-                    //            .Add("description", "$description")
-                    //            .Add("idType", "$idType")
-                    //            .Add("Clients", "$Clients")
+                    //        .Add("$elemMatch", new BsonDocument()
+                    //            .Add("mails", idMail)
                     //            )
-                    //       )
-                    //    ),
-                    //new BsonDocument("$addFields", new BsonDocument()
-                    //    .Add("timestamp", DateTime.Now.Ticks)
-                    //    ),
+                    //        )
+                    //),
+                    new BsonDocument("$unwind", new BsonDocument()
+                        .Add("path", "$Classifications")
+                        .Add("preserveNullAndEmptyArrays", new BsonBoolean(true))
+                        ),
+                    new BsonDocument("$unwind", new BsonDocument()
+                        .Add("path", "$Classifications.mails")
+                        .Add("preserveNullAndEmptyArrays", new BsonBoolean(false))
+                        ),
+                    new BsonDocument("$match", new BsonDocument()
+                        .Add("Classifications.mails", idMail)
+                    ),
+                    new BsonDocument("$group", new BsonDocument()
+                        .Add("IdMail", "$mails")
+                        .Add("Classifications", new BsonDocument().Add("$push", "$$ROOT"))
+                        //.Add("Classifications", new BsonDocument()
+                        //    .Add("$push", new BsonDocument()
+                        //        .Add("name", "$name")
+                        //        .Add("description", "$description")
+                        //        .Add("idType", "$idType")
+                        //        .Add("Clients", "$Clients")
+                        //        )
+                        //   )
+                        ),
+                    new BsonDocument("$addFields", new BsonDocument()
+                        .Add("timestamp", DateTime.Now.Ticks)
+                        ),
+                    new BsonDocument("$project", new BsonDocument()
+                        .Add("IdMail", 1)
+                        .Add("timestamp", 1)
+                        .Add("Classifications", 1)
+                        .Add("Classifications.mails", 0)
+                        )
                 };
 
                 var resultado = await _context.LexonUsers.AggregateAsync(pipeline, options);

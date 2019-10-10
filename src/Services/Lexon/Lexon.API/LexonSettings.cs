@@ -5,6 +5,7 @@
         public string ConnectionString { get; set; }
         public string Database { get; set; }
         public string Collection { get; set; }
+        public string CollectionMasters { get; set; }
         public string CollectionEvents { get; set; }
         public string PicBaseUrl { get; set; }
 

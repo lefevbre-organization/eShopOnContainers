@@ -21,11 +21,9 @@ namespace Lexon.API.Model
         public LexonCourtsList courts { get; set; }
         public LexonFilesList files { get; set; }
         public LexonLawyersList lawyers { get; set; }
-        [BsonElement("opposing lawyers")]
         public LexonLawyersList opposingLawyers { get; set; }
         public LexonSolicitorList solicitors { get; set; }
-        [BsonElement("opposing solicitors")]
-        public LexonSolicitorList oppsingSolicitors { get; set; }
+        public LexonSolicitorList opposingSolicitors { get; set; }
         public LexonNotariesList notaries { get; set; }
         public LexonFoldersList folders { get; set; }
     }

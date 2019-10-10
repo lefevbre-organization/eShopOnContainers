@@ -67,7 +67,7 @@ namespace Lexon.Infrastructure.Services
             {
                 foreach (var company in (await response.Content.ReadAsAsync<JosUserCompanies>()).Companies)
                 {
-                    companies.Add(new LexonCompany() { name=company.name, Conn= company.BBDD, IdCompany= company.IdCompany});
+                    companies.Add(new LexonCompany() { name=company.name, bbdd= company.BBDD, idCompany= company.IdCompany});
                 }
                 return companies;       //todo update collection
             }
