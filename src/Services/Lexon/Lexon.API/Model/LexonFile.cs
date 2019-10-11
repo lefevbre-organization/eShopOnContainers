@@ -4,7 +4,7 @@ namespace Lexon.API.Model
 {
     public class LexonFile : MongoModel, IEntity, IActuation
     {
-        public long idFile { get; set; }
+        public long id { get; set; }
 
         public string name { get; set; }
 

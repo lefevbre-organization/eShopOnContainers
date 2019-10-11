@@ -2,7 +2,7 @@
 {
     public class LexonNotary : MongoModel, IEntity
     {
-        public int idNotary { get; set; }
+        public long id { get; set; }
 
         public string name { get; set; }
         public string description { get; set; }

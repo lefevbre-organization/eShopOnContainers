@@ -2,7 +2,7 @@
 {
     public class LexonLawyer : MongoModel, IEntity
     {
-        public int idLawyer { get; set; }
+        public long id { get; set; }
 
         public string description { get; set; }
 

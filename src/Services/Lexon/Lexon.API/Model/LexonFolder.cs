@@ -2,7 +2,7 @@
 {
     public class LexonFolder : MongoModel, IEntity
     {
-        public long idFolder { get; set; }
+        public long id { get; set; }
 
         public string name { get; set; }
 

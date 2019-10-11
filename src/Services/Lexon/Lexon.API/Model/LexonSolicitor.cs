@@ -4,7 +4,7 @@ namespace Lexon.API.Model
 {
     public class LexonSolicitor : MongoModel, IEntity
     {
-        public int idSolicitor { get; set; }
+        public long id { get; set; }
 
         public string description { get; set; }
 

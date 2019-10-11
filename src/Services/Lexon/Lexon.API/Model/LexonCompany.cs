@@ -2,7 +2,7 @@
 
 namespace Lexon.API.Model
 {
-    public class LexonCompany : MongoModel, IEntity, ICompany
+    public class LexonCompany : MongoModel, ICompany //,IEntity
     {
         public long idCompany { get; set; }
 

@@ -5,6 +5,7 @@ using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,6 @@ namespace Lexon.API.Infrastructure.Repositories
             _context = new LexonContext(settings, eventBus);
         }
 
-
         public async Task<List<LexonCompany>> GetCompaniesListAsync(string idUser)
         {
             var filter = GetFilterUser(idUser);
@@ -42,7 +42,7 @@ namespace Lexon.API.Infrastructure.Repositories
                         .FirstOrDefaultAsync();
 
             var companies = user?.companies?.list?.ToList();
-            return companies ?? new List<LexonCompany>(); 
+            return companies ?? new List<LexonCompany>();
         }
 
         private static FilterDefinition<LexonUser> GetFilterUser(string idUser)
@@ -73,7 +73,6 @@ namespace Lexon.API.Infrastructure.Repositories
             await _context.PublishThroughEventBusAsync(eventAssoc, session);
         }
 
-
         public async Task<long> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "")
         {
             //todo: hacer método para desclasificar mail
@@ -96,7 +95,7 @@ namespace Lexon.API.Infrastructure.Repositories
                     //var builder = Builders<LexonCompany>.Update;
                     var subitem = new LexonFile
                     {
-                        idFile = (int)idFile,
+                        id = (int)idFile,
                         name = nameFile,
                         description = descriptionFile
                     };
@@ -166,7 +165,7 @@ namespace Lexon.API.Infrastructure.Repositories
             var filter = Builders<LexonMaster>.Filter.And(Builders<LexonMaster>.Filter.Gte(u => u.version, 9), Builders<LexonMaster>.Filter.Eq(u => u.type, "Entities"));
             var master = await _context.LexonMasters
                 .Find(filter).FirstOrDefaultAsync();
-            
+
             return master?.list?.ToList();
         }
 
@@ -298,6 +297,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
         public async Task<LexonActuationMailList> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail)
         {
+            var listaActuaciones = new LexonActuationMailList { idMail = idMail, classifications = new LexonActuationList() };
             try
             {
                 var options = new AggregateOptions()
@@ -328,9 +328,8 @@ namespace Lexon.API.Infrastructure.Repositories
                     }
                 );
 
-            PipelineDefinition<LexonUser, BsonDocument> pipeline = new BsonDocument[]
-                {
-
+                PipelineDefinition<LexonUser, BsonDocument> pipeline = new BsonDocument[]
+                    {
                     new BsonDocument("$match", new BsonDocument()
                         .Add("idUser", idUser)
                         .Add("$or", array)
@@ -382,34 +381,25 @@ namespace Lexon.API.Infrastructure.Repositories
                         .Add("companies.list.idCompany", idCompany)
                     ),
                     new BsonDocument("$project", new BsonDocument()
-                        .Add("Classifications", new BsonDocument()                  
+                        .Add("Classifications", new BsonDocument()
                             .Add("$setUnion", arrayOfArrays))
-                        .Add("IdMail", idMail)                 
-                        .Add("timestamp", DateTime.Now.Ticks)                 
-                        //.Add("Classifications.$.idClassification", "Classifications.$.idFile")                 
                         ),
 
-                    //new BsonDocument("$match", new BsonDocument()
-                    //    .Add("Classifications", new BsonDocument()
-                    //        .Add("$elemMatch", new BsonDocument()
-                    //            .Add("mails", idMail)
-                    //            )
-                    //        )
-                    //),
-                    //new BsonDocument("$unwind", new BsonDocument()
-                    //    .Add("path", "$Classifications")
-                    //    .Add("preserveNullAndEmptyArrays", new BsonBoolean(true))
-                    //    ),
-                    //new BsonDocument("$unwind", new BsonDocument()
-                    //    .Add("path", "$Classifications.mails")
-                    //    .Add("preserveNullAndEmptyArrays", new BsonBoolean(false))
-                    //    ),
-                    //new BsonDocument("$match", new BsonDocument()
-                    //    .Add("Classifications.mails", idMail)
-                    //),
-                    //new BsonDocument("$group", new BsonDocument()
-                    //    .Add("IdMail", "$mails")
-                    //    .Add("Classifications", new BsonDocument().Add("$push", "$$ROOT"))
+                    new BsonDocument("$unwind", new BsonDocument()
+                        .Add("path", "$Classifications")
+                        .Add("preserveNullAndEmptyArrays", new BsonBoolean(true))
+                        ),
+                    new BsonDocument("$unwind", new BsonDocument()
+                        .Add("path", "$Classifications.mails")
+                        .Add("preserveNullAndEmptyArrays", new BsonBoolean(false))
+                        ),
+                    new BsonDocument("$match", new BsonDocument()
+                        .Add("Classifications.mails", idMail)
+                    ),
+
+                        //new BsonDocument("$group", new BsonDocument()
+                        //    .Add("IdMail", "$mails")
+                        //    .Add("Classifications", new BsonDocument().Add("$push", "$$ROOT"))
                         //.Add("Classifications", new BsonDocument()
                         //    .Add("$push", new BsonDocument()
                         //        .Add("name", "$name")
@@ -419,16 +409,16 @@ namespace Lexon.API.Infrastructure.Repositories
                         //        )
                         //   )
                         //),
-                    new BsonDocument("$addFields", new BsonDocument()
-                        .Add("timestamp", DateTime.Now.Ticks)
-                        ),
-                    //new BsonDocument("$project", new BsonDocument()
-                    //    .Add("IdMail", 1)
-                    //    .Add("timestamp", 1)
-                    //    .Add("Classifications", 1)
-                    //    .Add("Classifications.mails", 0)
-                    //    )
-                };
+                        //new BsonDocument("$addFields", new BsonDocument()
+                        //    .Add("timestamp", DateTime.Now.Ticks)
+                        //    ),
+                        //new BsonDocument("$project", new BsonDocument()
+                        //    .Add("IdMail", 1)
+                        //    .Add("timestamp", 1)
+                        //    .Add("Classifications", 1)
+                        //    .Add("Classifications.mails", 0)
+                        //    )
+                    };
 
                 var resultado = await _context.LexonUsers.AggregateAsync(pipeline, options);
 
@@ -436,32 +426,23 @@ namespace Lexon.API.Infrastructure.Repositories
                 {
                     while (await cursor.MoveNextAsync())
                     {
+                        listaActuaciones.classifications.timeStamp = DateTime.Now.Ticks;
                         var batch = cursor.Current;
                         foreach (BsonDocument document in batch)
                         {
+                            listaActuaciones.classifications.list.Append(BsonSerializer.Deserialize<LexonActuation>(document));
                             Console.WriteLine($"S/N: {document.ToString()}");
                         }
                     }
                 }
-                //return result;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                return new LexonActuationMailList();
             }
-            //var user = await _context.LexonUsers.Aggregate<LexonUser>(pipeline).ForEachAsync(
-            //    resultado =>
-            //    {
-            //        Console.WriteLine($"S/N: {resultado.ToString()}");
-            //    });
 
-            var cla = new LexonActuationMailList();
-            cla.idMail = idMail;
-
-            //var company = user.Companies.List.FirstOrDefault(x => x.IdCompany == idCompany);
-
-            //todo: hacer procedimiento para buscar los datos de clasificaciones en mongo
-            return new LexonActuationMailList();
+            return listaActuaciones;
         }
 
         #endregion PublishEvents
