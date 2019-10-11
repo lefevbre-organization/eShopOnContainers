@@ -105,8 +105,28 @@ namespace Lexon.API.Controllers
                             Description = "2018/000004 - Reclamación a seguros ACCIDENTE por ocaso múltiple",
                             IdClassification = 231,
                             IdType = 1
+                        },
+                        new LexonActuation
+                        {
+                            Name = "Actuación 4",
+                            Description = "2018/000005 - Reclamación a seguros ACCIDENTE por ocaso múltiple",
+                            IdClassification = 231,
+                            IdType = 1
+                        },
+                        new LexonActuation
+                        {
+                            Name = "Actuación 5",
+                            Description = "2018/000006 - Reclamación a seguros ACCIDENTE por ocaso múltiple",
+                            IdClassification = 231,
+                            IdType = 1
+                        },
+                        new LexonActuation
+                        {
+                            Name = "Actuación 6",
+                            Description = "2018/000007 - Reclamación a seguros ACCIDENTE por ocaso múltiple",
+                            IdClassification = 231,
+                            IdType = 1
                         }
-
                     }.ToArray()
                 }
             };

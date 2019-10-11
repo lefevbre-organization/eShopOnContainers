@@ -38,6 +38,9 @@
     "hide-search": "Hide search"
   },
   "tab-classify": {
-    "select-mail": "Select one or more emails"
+    "select-mail": "Select a message and rate it in Lex-on. The relationship established will be visible in this panel and also in the application."
+  },
+  "classificaction-list": {
+    "assigned-to": "Assigned to"
   }
 }

@@ -38,6 +38,9 @@
     "hide-search": "Ocultar buscador"
   },
   "tab-classify": {
-    "select-mail": "Selecciona uno o varios correos"
+    "select-mail": "Selecciona un mensaje y clasifícalo en Lex-on. La relación establecida será visible en este panel y también en la aplicación."
+  },
+  "classificaction-list": {
+    "assigned-to": "Asignado a"
   }
 }
