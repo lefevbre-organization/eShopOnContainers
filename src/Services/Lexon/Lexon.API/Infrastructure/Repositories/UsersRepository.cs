@@ -384,6 +384,9 @@ namespace Lexon.API.Infrastructure.Repositories
                     new BsonDocument("$project", new BsonDocument()
                         .Add("Classifications", new BsonDocument()                  
                             .Add("$setUnion", arrayOfArrays))
+                        .Add("IdMail", idMail)                 
+                        .Add("timestamp", DateTime.Now.Ticks)                 
+                        //.Add("Classifications.$.idClassification", "Classifications.$.idFile")                 
                         ),
 
                     //new BsonDocument("$match", new BsonDocument()
@@ -393,20 +396,20 @@ namespace Lexon.API.Infrastructure.Repositories
                     //            )
                     //        )
                     //),
-                    new BsonDocument("$unwind", new BsonDocument()
-                        .Add("path", "$Classifications")
-                        .Add("preserveNullAndEmptyArrays", new BsonBoolean(true))
-                        ),
-                    new BsonDocument("$unwind", new BsonDocument()
-                        .Add("path", "$Classifications.mails")
-                        .Add("preserveNullAndEmptyArrays", new BsonBoolean(false))
-                        ),
-                    new BsonDocument("$match", new BsonDocument()
-                        .Add("Classifications.mails", idMail)
-                    ),
-                    new BsonDocument("$group", new BsonDocument()
-                        .Add("IdMail", "$mails")
-                        .Add("Classifications", new BsonDocument().Add("$push", "$$ROOT"))
+                    //new BsonDocument("$unwind", new BsonDocument()
+                    //    .Add("path", "$Classifications")
+                    //    .Add("preserveNullAndEmptyArrays", new BsonBoolean(true))
+                    //    ),
+                    //new BsonDocument("$unwind", new BsonDocument()
+                    //    .Add("path", "$Classifications.mails")
+                    //    .Add("preserveNullAndEmptyArrays", new BsonBoolean(false))
+                    //    ),
+                    //new BsonDocument("$match", new BsonDocument()
+                    //    .Add("Classifications.mails", idMail)
+                    //),
+                    //new BsonDocument("$group", new BsonDocument()
+                    //    .Add("IdMail", "$mails")
+                    //    .Add("Classifications", new BsonDocument().Add("$push", "$$ROOT"))
                         //.Add("Classifications", new BsonDocument()
                         //    .Add("$push", new BsonDocument()
                         //        .Add("name", "$name")
@@ -415,19 +418,20 @@ namespace Lexon.API.Infrastructure.Repositories
                         //        .Add("Clients", "$Clients")
                         //        )
                         //   )
-                        ),
+                        //),
                     new BsonDocument("$addFields", new BsonDocument()
                         .Add("timestamp", DateTime.Now.Ticks)
                         ),
-                    new BsonDocument("$project", new BsonDocument()
-                        .Add("IdMail", 1)
-                        .Add("timestamp", 1)
-                        .Add("Classifications", 1)
-                        .Add("Classifications.mails", 0)
-                        )
+                    //new BsonDocument("$project", new BsonDocument()
+                    //    .Add("IdMail", 1)
+                    //    .Add("timestamp", 1)
+                    //    .Add("Classifications", 1)
+                    //    .Add("Classifications.mails", 0)
+                    //    )
                 };
 
                 var resultado = await _context.LexonUsers.AggregateAsync(pipeline, options);
+
                 using (var cursor = await _context.LexonUsers.AggregateAsync(pipeline, options))
                 {
                     while (await cursor.MoveNextAsync())
