@@ -50,6 +50,8 @@ header .tools-bar a:hover {
 }
 .form-selection-business p {
   padding-left: 20px;
+  font-family: MTTMilano-Medium, Lato, Arial, sans-serif;
+  font-size: 14px;
 }
 .form-selection-business ul {
   padding-left: 30px;
@@ -70,7 +72,15 @@ header .tools-bar a:hover {
 /* form-selection-business: EOC */
 
 /* Form components: BOC */
-input[type="checkbox"], input[type="radio"] {
+input[type="checkbox"] {
+	position: absolute !important;
+	/* width: 1px;
+	height: 1px; */
+	overflow: hidden;
+	/* clip: rect(1px, 1px, 1px, 1px); */
+	font-size: .1em;
+}
+input[type="radio"] {
 	position: absolute !important;
 	width: 1px;
 	height: 1px;

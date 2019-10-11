@@ -40,7 +40,7 @@
   "tab-classify": {
     "select-mail": "Selecciona un mensaje y clasifícalo en Lex-on. La relación establecida será visible en este panel y también en la aplicación."
   },
-  "classificaction-list": {
+  "classification-list": {
     "assigned-to": "Asignado a"
   }
 }

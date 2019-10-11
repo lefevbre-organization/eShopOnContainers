@@ -20,7 +20,7 @@ class ClassificationList extends Component {
       <div className="lexon-clasification-list-container">
         <div className="form-group">
           <label>
-            {i18n.t("classification-type.select")}<span className="requerido">*</span>
+            {i18n.t("classification-list.assigned-to")}<span className="requerido">*</span>
           </label>
         </div>
 

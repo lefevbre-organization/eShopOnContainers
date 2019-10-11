@@ -77,7 +77,7 @@ class ClssificationListSearch extends Component {
               onClick={this._handleOnclickSearch}
             ></span>
             <strong className="sr-only sr-only-focusable">
-              {i18n.t("classification-list-search.search-by")}
+              {i18n.t("classificaction-list-search.assigned-to")}
             </strong>
           </label>
           <input
