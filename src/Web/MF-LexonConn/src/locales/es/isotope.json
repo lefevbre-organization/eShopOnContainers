@@ -40,7 +40,12 @@
   "tab-classify": {
     "select-mail": "Selecciona un mensaje y clasifícalo en Lex-on. La relación establecida será visible en este panel y también en la aplicación."
   },
-  "classification-list": {
+  "classificaction-list": {
     "assigned-to": "Asignado a"
+  },
+  "confirm-remove-classification": {
+    "yes": "Si",
+    "no": "No",
+    "text-confirm-remove": "Si eliminas este vínculo dejarás de visualizar el correo en la clasificación correspondiente de Lex-on. ¿Quieres continuar?"
   }
 }

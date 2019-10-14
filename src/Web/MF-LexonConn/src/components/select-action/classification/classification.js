@@ -14,15 +14,15 @@ class Classification extends Component {
   }
 
   _handleOnclick(classification) {
-    this.removeClassification(classification);
+    const { toggleConfirmRemoveClassification } = this.props;
+
+    toggleConfirmRemoveClassification(classification);
   }
 
   removeClassification(classification) {
     const { user, mail, companySelected, updateClassifications } = this.props;
     const idType = 1;
     const idRelated = 2;
-
-    console.log("this.props ->", this.props);
 
     removeClassification(
       user,
@@ -69,7 +69,8 @@ Classification.propTypes = {
   user: PropTypes.string.isRequired,
   mail: PropTypes.string.isRequired,
   classification: PropTypes.object.isRequired,
-  updateClassifications: PropTypes.func.isRequired
+  updateClassifications: PropTypes.func.isRequired,
+  toggleConfirmRemoveClassification: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => {

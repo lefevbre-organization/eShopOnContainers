@@ -920,6 +920,7 @@ input[type="radio"]:checked + label:after {
   color: #ffffff;
   padding: 10px;
   min-width: 80px;
+  background-color: #001978;
 }
 .btn-primary-white:hover,
 .btn-outline-secondary-white:hover {

@@ -104,12 +104,7 @@ export const getTypes = () => {
   });
 };
 
-export const getResults = (
-  userId,
-  companyId,
-  typeId,
-  search
-) => {
+export const getResults = (userId, companyId, typeId, search) => {
   return new Promise((resolve, reject) => {
     const url = `${config.url.API_GATEWAY}/${config.api.RESULTS}?idUser=${userId}&idCompany=${companyId}&idType=${typeId}&search=${search}`;
     fetch(url, {
@@ -126,4 +121,3 @@ export const getResults = (
       });
   });
 };
-

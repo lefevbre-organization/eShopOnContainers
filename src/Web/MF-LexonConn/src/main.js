@@ -7,7 +7,6 @@ import "./main.css";
 // import Header from "./components/header/header";
 import Routing from "./components/routing/routing";
 import Spinner from "./components/spinner/spinner";
-import ClassifyEmails from "./components/classify-emails/classify-emails";
 
 import { getCompanies } from "./services/services-lexon";
 
@@ -18,8 +17,7 @@ class Main extends Component {
     this.state = {
       user: null,
       companies: [],
-      isLoading: true,
-      showClassifyEmails: false
+      isLoading: true
     };
 
     this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -27,7 +25,6 @@ class Main extends Component {
     this.handlePutUserFromLexonConnector = this.handlePutUserFromLexonConnector.bind(
       this
     );
-    this.toggleClassifyEmails = this.toggleClassifyEmails.bind(this);
   }
 
   componentDidMount() {
@@ -72,10 +69,10 @@ class Main extends Component {
 
   async handlePutUserFromLexonConnector(event) {
     const { user, selectedMessageId } = event.detail;
-    selectedMessageId.forEach((message) => {
+    selectedMessageId.forEach(message => {
       this.props.addMessage(message);
     });
-        
+
     getCompanies(user)
       .then(result => {
         this.setState({
@@ -89,14 +86,12 @@ class Main extends Component {
       });
   }
 
-  toggleClassifyEmails() {
-    this.setState(state => ({
-      showClassifyEmails: !state.showClassifyEmails
-    }));
-  }
-
   render() {
-    const { isLoading, user, companies, showClassifyEmails } = this.state;
+    const {
+      isLoading,
+      user,
+      companies
+    } = this.state;
 
     if (isLoading) {
       return <Spinner />;
@@ -104,13 +99,11 @@ class Main extends Component {
 
     return (
       <Fragment>
-        <ClassifyEmails
-          user={user}
-          initialModalState={showClassifyEmails}
-          toggleClassifyEmails={this.toggleClassifyEmails}
-        />
         {/* <Header title={"LEX-ON"} /> */}
-        <Routing user={user} companies={companies} toggleClassifyEmails={this.toggleClassifyEmails} />
+        <Routing
+          user={user}
+          companies={companies}
+        />
       </Fragment>
     );
   }

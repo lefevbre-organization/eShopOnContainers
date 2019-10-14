@@ -3,7 +3,7 @@ import "./list-classifications.css";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import 'react-perfect-scrollbar/dist/css/styles.css';
+import "react-perfect-scrollbar/dist/css/styles.css";
 import Classification from "../classification/classification";
 
 class ListClassifications extends Component {
@@ -12,7 +12,8 @@ class ListClassifications extends Component {
       user,
       selectedMessages,
       classifications,
-      updateClassifications
+      updateClassifications,
+      toggleConfirmRemoveClassification
     } = this.props;
     const mail = selectedMessages[0];
 
@@ -29,6 +30,9 @@ class ListClassifications extends Component {
                   user={user}
                   mail={mail}
                   updateClassifications={updateClassifications}
+                  toggleConfirmRemoveClassification={
+                    toggleConfirmRemoveClassification
+                  }
                 />
               );
             })}
@@ -40,7 +44,8 @@ class ListClassifications extends Component {
 }
 
 ListClassifications.propTypes = {
-  user: PropTypes.string.isRequired
+  user: PropTypes.string.isRequired,
+  toggleConfirmRemoveClassification: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => {
