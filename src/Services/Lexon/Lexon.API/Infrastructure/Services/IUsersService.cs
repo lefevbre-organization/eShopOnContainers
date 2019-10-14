@@ -13,7 +13,7 @@ namespace Lexon.Infrastructure.Services
 
         Task<bool> SelectCompanyAsync(string idUser, long idCompany);
 
-        Task<LexonActuationMailList> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail);
+        Task<List<LexonActuation>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail);
 
         Task<List<LexonFile>> GetFileListAsync(int pageSize, int pageIndex, string idUser, long idCompany, string search);
 

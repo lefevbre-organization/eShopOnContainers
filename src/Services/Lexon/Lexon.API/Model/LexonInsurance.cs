@@ -3,11 +3,11 @@
 namespace Lexon.API.Model
 {
     [BsonIgnoreExtraElements]
-    public class LexonInsurance : MongoModel, IName
+    public class LexonInsurance : MongoModel, IEntity
     {
-        [BsonElement("idInsurance")]
-        public long IdInsurance { get; set; }
+        public long id { get; set; }
 
-        public string Name { get; set; }
+        public string name { get; set; }
+        public string description { get; set; }
     }
 }

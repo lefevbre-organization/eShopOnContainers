@@ -4,7 +4,7 @@ namespace Lexon.API.Model
 {
     internal interface ILexonList<T>
     {
-        long TimeStamp { get; set; }
-        T[] List { get; set; }
+        long timeStamp { get; set; }
+        T[] list { get; set; }
     }
 }

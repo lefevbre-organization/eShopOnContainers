@@ -2,18 +2,14 @@
 
 namespace Lexon.API.Model
 {
-    public class LexonFile : MongoModel, IDoc, IName, ILexonFile
+    public class LexonFile : MongoModel, IEntity, IActuation
     {
-        [BsonElement("idFile")]
-        public long IdFile { get; set; }
+        public long id { get; set; }
 
-        [BsonElement("code")]
-        public string Name { get; set; }
+        public string name { get; set; }
 
-        [BsonElement("description")]
-        public string Description { get; set; }
+        public string description { get; set; }
 
-        [BsonElement("mails")]
-        public string[] Mails { get; set; }
+        public string[] mails { get; set; }
     }
 }

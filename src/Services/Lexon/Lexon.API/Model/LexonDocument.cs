@@ -3,15 +3,11 @@
 namespace Lexon.API.Model
 {
     [BsonIgnoreExtraElements]
-    public class LexonDocument : MongoModel, IName, IDoc
+    public class LexonDocument : MongoModel, IEntity
     {
-        [BsonElement("idDocument")]
-        public long IdDocument { get; set; }
+        public long id { get; set; }
 
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public string name { get; set; }
+        public string description { get; set; }
     }
-
-
-
 }

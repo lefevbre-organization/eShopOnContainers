@@ -3,11 +3,11 @@
 namespace Lexon.API.Model
 {
     [BsonIgnoreExtraElements]
-    public class LexonCourt : MongoModel, IName
+    public class LexonCourt : MongoModel, IEntity
     {
-        [BsonElement("idCourt")]
-        public long IdCourt { get; set; }
+        public long id { get; set; }
 
-        public string Name { get; set; }
+        public string name { get; set; }
+        public string description { get; set; }
     }
 }

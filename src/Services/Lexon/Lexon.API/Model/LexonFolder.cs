@@ -1,16 +1,14 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-
-namespace Lexon.API.Model
+﻿namespace Lexon.API.Model
 {
-    public class LexonFolder : MongoModel, IName
+    public class LexonFolder : MongoModel, IEntity
     {
-        [BsonElement("idFolder")]
-        public long IdFolder { get; set; }
+        public long id { get; set; }
 
-        public string Name { get; set; }
+        public string name { get; set; }
 
-        public string Path { get; set; }
+        public string path { get; set; }
 
-        public LexonDocumentsList Documents { get; set; }
+        public LexonDocumentsList documents { get; set; }
+        public string description { get; set; }
     }
 }

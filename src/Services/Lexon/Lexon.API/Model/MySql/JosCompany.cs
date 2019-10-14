@@ -1,5 +1,5 @@
 ﻿
-namespace Lexon.MySql.Model
+namespace Lexon.API.Model
 {
     public class JosCompany 
     {

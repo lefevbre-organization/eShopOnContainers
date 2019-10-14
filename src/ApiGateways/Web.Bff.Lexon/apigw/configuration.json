@@ -21,6 +21,22 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
+          "Host": "lexon.mysql.api",
+          "Port": 80
+        },
+        {
+          "Host": "localhost",
+          "Port": 44393
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/mysql/{everything}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/{version}/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
           "Host": "emailuser.api",
           "Port": 80
         },
@@ -32,7 +48,7 @@
       "UpstreamPathTemplate": "/api/{version}/accounts/{everything}",
       "UpstreamHttpMethod": []
     }
-   
+
   ],
     "GlobalConfiguration": {
       "RequestIdKey": "OcRequestId",

@@ -8,6 +8,6 @@ namespace Lexon.MySql.Infrastructure.Services
     public interface ILexonMySqlService
     {
 
-        Task<List<JosCompany>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser);
+        Task<JosUserCompanies> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser);
     }
 }

@@ -1,13 +1,8 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-
-namespace Lexon.API.Model
+﻿namespace Lexon.API.Model
 {
     public class LexonNotariesList : MongoModel, ILexonList<LexonNotary>
     {
-        [BsonElement("timestamp")]
-        public long TimeStamp { get; set; }
-        [BsonElement("list")]
-        public LexonNotary[] List { get; set; }
+        public long timeStamp { get; set; }
+        public LexonNotary[] list { get; set; }
     }
 }

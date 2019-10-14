@@ -82,6 +82,16 @@ namespace Lexon.API.Infrastructure
             return session.Client.GetDatabase(_settings.Value.Database).GetCollection<LexonUser>(_settings.Value.Collection);
         }
 
+        public IMongoCollection<LexonMaster> LexonMasters
+        {
+            get { return Database.GetCollection<LexonMaster>(_settings.Value.CollectionMasters); }
+        }
+
+        public IMongoCollection<LexonMaster> LexonMastersTransaction(IClientSessionHandle session)
+        {
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<LexonMaster>(_settings.Value.CollectionMasters);
+        }
+
         public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogs
         {
             get { return Database.GetCollection<IntegrationEventLogEntry>(_settings.Value.CollectionEvents); }
