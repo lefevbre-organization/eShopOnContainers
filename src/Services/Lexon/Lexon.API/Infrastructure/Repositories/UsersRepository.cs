@@ -295,9 +295,9 @@ namespace Lexon.API.Infrastructure.Repositories
             return true;
         }
 
-        public async Task<LexonActuationMailList> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail)
+        public async Task<List<LexonActuation>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail)
         {
-            var listaActuaciones = new LexonActuationMailList { idMail = idMail, classifications = new LexonActuationList() };
+            var listaActuaciones = new List<LexonActuation>();
             try
             {
                 var options = new AggregateOptions()
@@ -384,7 +384,6 @@ namespace Lexon.API.Infrastructure.Repositories
                         .Add("Classifications", new BsonDocument()
                             .Add("$setUnion", arrayOfArrays))
                         ),
-
                     new BsonDocument("$unwind", new BsonDocument()
                         .Add("path", "$Classifications")
                         .Add("preserveNullAndEmptyArrays", new BsonBoolean(true))
@@ -396,28 +395,14 @@ namespace Lexon.API.Infrastructure.Repositories
                     new BsonDocument("$match", new BsonDocument()
                         .Add("Classifications.mails", idMail)
                     ),
-
-                        //new BsonDocument("$group", new BsonDocument()
-                        //    .Add("IdMail", "$mails")
-                        //    .Add("Classifications", new BsonDocument().Add("$push", "$$ROOT"))
-                        //.Add("Classifications", new BsonDocument()
-                        //    .Add("$push", new BsonDocument()
-                        //        .Add("name", "$name")
-                        //        .Add("description", "$description")
-                        //        .Add("idType", "$idType")
-                        //        .Add("Clients", "$Clients")
-                        //        )
-                        //   )
-                        //),
-                        //new BsonDocument("$addFields", new BsonDocument()
-                        //    .Add("timestamp", DateTime.Now.Ticks)
-                        //    ),
-                        //new BsonDocument("$project", new BsonDocument()
-                        //    .Add("IdMail", 1)
-                        //    .Add("timestamp", 1)
-                        //    .Add("Classifications", 1)
-                        //    .Add("Classifications.mails", 0)
-                        //    )
+                    new BsonDocument("$project", new BsonDocument()
+                        .Add("idMail", idMail)
+                        .Add("idRelated", "$Classifications.id")
+                        .Add("name", "$Classifications.name")
+                        .Add("description", "$Classifications.description")
+                        .Add("entityIdType", "$Classifications.idType")
+                        .Add("entityType", "$Classifications.type")
+                        )
                     };
 
                 var resultado = await _context.LexonUsers.AggregateAsync(pipeline, options);
@@ -426,12 +411,11 @@ namespace Lexon.API.Infrastructure.Repositories
                 {
                     while (await cursor.MoveNextAsync())
                     {
-                        listaActuaciones.classifications.timeStamp = DateTime.Now.Ticks;
                         var batch = cursor.Current;
                         foreach (BsonDocument document in batch)
                         {
-                            listaActuaciones.classifications.list.Append(BsonSerializer.Deserialize<LexonActuation>(document));
-                            Console.WriteLine($"S/N: {document.ToString()}");
+                            var actuation = BsonSerializer.Deserialize<LexonActuation>(document);
+                            listaActuaciones.Add(actuation);
                         }
                     }
                 }
@@ -439,7 +423,6 @@ namespace Lexon.API.Infrastructure.Repositories
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                return new LexonActuationMailList();
             }
 
             return listaActuaciones;

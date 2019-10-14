@@ -80,7 +80,7 @@ namespace Lexon.API.Controllers
 
         [HttpGet]
         [Route("classifications")]
-        [ProducesResponseType(typeof(LexonActuationMailList), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<LexonActuation>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ClassificationsAsync([FromQuery]string idUser, [FromQuery]long idCompany, [FromQuery]string idMail, [FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)
 
@@ -125,9 +125,9 @@ namespace Lexon.API.Controllers
             //return Ok(classifications);
 
             var itemsByUser = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
-            return !itemsByUser.classifications.list.Any()
-                ? (IActionResult)BadRequest("The search don´t return any data")
-                : Ok(itemsByUser);
+            return itemsByUser != null && itemsByUser.Count > 0
+                ? Ok(itemsByUser)
+                : (IActionResult)BadRequest("The search don´t return any data");
         }
 
         [HttpGet]

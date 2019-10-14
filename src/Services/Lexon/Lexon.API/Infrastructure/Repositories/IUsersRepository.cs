@@ -11,7 +11,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
         Task<List<LexonCompany>> GetCompaniesListAsync(string idUser);
 
-        Task<LexonActuationMailList> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail);
+        Task<List<LexonActuation>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail);
 
         Task<List<LexonFile>> GetFileListAsync(int pageSize, int pageIndex, string idUser, long idCompany, string search);
         
