@@ -8,14 +8,12 @@ using System.Threading.Tasks;
 
 namespace Lexon.Infrastructure.Services
 {
-
     public class UsersService : IUsersService
     {
         public readonly IUsersRepository _usersRepository;
         private readonly IEventBus _eventBus;
         private readonly IHttpClientFactory _clientFactory;
         private readonly HttpClient _client;
-
 
         public UsersService(
                     IUsersRepository usersRepository
@@ -32,12 +30,10 @@ namespace Lexon.Infrastructure.Services
             _client.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
-
         public async Task<long> AddClassificationToListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType = 1)
         {
             return await _usersRepository.AddClassificationToListAsync(idUser, idCompany, idMail, idRelated, idClassificationType);
         }
-
 
         public async Task<long> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "")
         {
@@ -56,24 +52,30 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<List<LexonCompany>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser)
         {
-        
-            var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:44393/api/v1/LexonMySql/companies?pageSize={pageSize}&pageIndex={pageIndex}&idUser={idUser}");
-           
-            var companies = new List<LexonCompany>();
-
-            var response = await _client.SendAsync(request);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                foreach (var company in (await response.Content.ReadAsAsync<JosUserCompanies>()).Companies)
+                var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:44393/api/v1/LexonMySql/companies?pageSize={pageSize}&pageIndex={pageIndex}&idUser={idUser}");
+
+                var companies = new List<LexonCompany>();
+
+                var response = await _client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    companies.Add(new LexonCompany() { name=company.name, bbdd= company.BBDD, idCompany= company.IdCompany});
+                    foreach (var company in (await response.Content.ReadAsAsync<JosUserCompanies>()).Companies)
+                    {
+                        companies.Add(new LexonCompany() { name = company.name, bbdd = company.BBDD, idCompany = company.IdCompany });
+                    }
+                    return companies;       //todo update collection
                 }
-                return companies;       //todo update collection
+                else
+                {
+                    Console.WriteLine("el servicio devuelve un codigo de error");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine("error al obtener datos");
+                Console.WriteLine($"error al obtener datos {ex.Message}");
             }
 
             return await _usersRepository.GetCompaniesListAsync(idUser);
@@ -89,7 +91,6 @@ namespace Lexon.Infrastructure.Services
             return await _usersRepository.GetListAsync(pageSize, pageIndex, idUser);
         }
 
-
         public async Task<LexonUser> GetUserAsync(string idUser)
         {
             return await _usersRepository.GetAsync(idUser);
@@ -104,7 +105,5 @@ namespace Lexon.Infrastructure.Services
         {
             return await _usersRepository.SelectCompanyAsync(idUser, idCompany);
         }
-
-
     }
 }
