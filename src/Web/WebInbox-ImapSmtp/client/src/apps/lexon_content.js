@@ -33,7 +33,9 @@ const lexonContent = props => {
     ? { ...styles.sidebar, ...props.style }
     : styles.sidebar;
 
-  let el = document.getElementById("lexon-app");
+  const sidebarDocked = props.sidebarDocked;
+
+  const el = document.getElementById("lexon-app");
   if (!el) {
     try {
       //const activityFunction = location => location.pathname.startsWith('/');
@@ -48,10 +50,8 @@ const lexonContent = props => {
     }
   }
 
-  let imgUrl = "assets/images/settings-gears.svg";
-
   return (
-    <MaterialTitlePanel title="LEX-ON" style={style}>
+    <MaterialTitlePanel title="LEX-ON" style={style} sidebarDocked={sidebarDocked}>
       <div style={styles.content}>
         {/*<a href="index.html" style={styles.sidebarLink}>
           Home

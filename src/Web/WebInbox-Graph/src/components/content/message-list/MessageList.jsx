@@ -1,6 +1,6 @@
 import React, { PureComponent } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import { withTranslation } from 'react-i18next';
+import { withTranslation } from "react-i18next";
 import { bindActionCreators, compose } from "redux";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
@@ -14,8 +14,6 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import ListToolbar from "./list-toolbar/ListToolbar";
 import ListFooter from "./list-footer/ListFooter";
 import "./messageList.scss";
-import { map } from "rsvp";
-import e from '../../../event-bus'
 
 const ViewMode = {
   LIST: 1,
@@ -46,10 +44,11 @@ export class MessageList extends PureComponent {
       this.props.addInitialPageToken(token);
     }
 
-    const labelIds = this.props.searchQuery === "" ? [this.props.parentLabel.id] : undefined;
+    const labelIds =
+      this.props.searchQuery === "" ? [this.props.parentLabel.id] : undefined;
 
     this.props.getLabelMessages({
-      ...labelIds && {labelIds},
+      ...(labelIds && { labelIds }),
       pageToken: token
     });
   }
@@ -57,30 +56,33 @@ export class MessageList extends PureComponent {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.location.search !== this.props.location.search) {
       const searchParam = this.props.location.search;
-      const token = searchParam.indexOf("?") === 0 ? searchParam.slice(1) : null;
+      const token =
+        searchParam.indexOf("?") === 0 ? searchParam.slice(1) : null;
 
-      const labelIds = this.props.searchQuery === "" ? [this.props.parentLabel.id] : undefined;
+      const labelIds =
+        this.props.searchQuery === "" ? [this.props.parentLabel.id] : undefined;
 
       this.props.getLabelMessages({
-        ...labelIds && {labelIds},
+        ...(labelIds && { labelIds }),
         pageToken: token
       });
     }
   }
 
   onSelectionChange(selected, msgId) {
-      this.props.toggleSelected([msgId], selected);
-      //e.emit('received', { text: "Id: " + msgId + " selected: " + selected })
-      window.dispatchEvent(new CustomEvent("Checkclick", {
-          detail: {
-              name: msgId,
-              chkselected: selected
-          }
-      }));
+    this.props.toggleSelected([msgId], selected);
+    //e.emit('received', { text: "Id: " + msgId + " selected: " + selected })
+    window.dispatchEvent(
+      new CustomEvent("Checkclick", {
+        detail: {
+          name: msgId,
+          chkselected: selected
+        }
+      })
+    );
 
-      selected ? this.props.addMessage(msgId) : this.props.deleteMessage(msgId);
+    selected ? this.props.addMessage(msgId) : this.props.deleteMessage(msgId);
   }
-  
 
   renderSpinner() {
     return (
@@ -97,9 +99,7 @@ export class MessageList extends PureComponent {
       return this.renderSpinner();
     } else if (this.props.messagesResult.messages.length === 0) {
       return (
-        <div className="p-4 text-center">
-          {t('message-list.no-message')}
-        </div>
+        <div className="p-4 text-center">{t("message-list.no-message")}</div>
       );
     }
 
@@ -123,7 +123,6 @@ export class MessageList extends PureComponent {
     const { viewMode } = this.state;
 
     switch (viewMode) {
-
       case ViewMode.EDIT:
         return this.renderEditView();
 
@@ -133,35 +132,37 @@ export class MessageList extends PureComponent {
   }
 
   getPageTokens() {
-        if (this.props.messagesResult.loading) {
-            return { nextToken: null, prevToken: null }
-        }        
-        let prevToken;
-        let nextToken;
-        if (this.props.messagesResult.pageTokens[0] != null) {
-            nextToken = true;
-            if (this.props.messagesResult.pageTokens[0].split("skip=")[1] > 20)
-                prevToken = true;
-      } 
-      return { nextToken, prevToken };
-  }  
+    if (this.props.messagesResult.loading) {
+      return { nextToken: null, prevToken: null };
+    }
+    let prevToken;
+    let nextToken;
+    if (this.props.messagesResult.pageTokens[0] != null) {
+      nextToken = true;
+      if (this.props.messagesResult.pageTokens[0].split("skip=")[1] > 20)
+        prevToken = true;
+    }
+    return { nextToken, prevToken };
+  }
 
-    render() {
-
+  render() {
     const collapsed = this.props.sideBarCollapsed;
     const { messagesResult } = this.props;
-    const messagesTotal = messagesResult.label ? messagesResult.label.result.messagesTotal : 0;
-    const { nextToken, prevToken } = this.getPageTokens();        
+    const messagesTotal = messagesResult.label
+      ? messagesResult.label.result.messagesTotal
+      : 0;
+    const { nextToken, prevToken } = this.getPageTokens();
 
     return (
-      <React.Fragment>       
-         <ListToolbar
-          sideBarCollapsed={collapsed} sideBarToggle={this.props.sideBarToggle}
+      <React.Fragment>
+        <ListToolbar
+          sideBarCollapsed={collapsed}
+          sideBarToggle={this.props.sideBarToggle}
           nextToken={nextToken}
           prevToken={prevToken}
           navigateToNextPage={this.props.navigateToNextPage}
           navigateToPrevPage={this.props.navigateToPrevPage}
-          getLabelMessages={this.props.getLabelMessages} 
+          getLabelMessages={this.props.getLabelMessages}
         />
         <PerfectScrollbar className="container-fluid no-gutters px-0 message-list-container">
           {this.renderView()}
@@ -169,14 +170,14 @@ export class MessageList extends PureComponent {
         <ListFooter messagesTotal={messagesTotal} />
       </React.Fragment>
     );
-  }  
+  }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
-      selectedMessages: state.messageList.selectedMessages
-  }    
-};  
+    selectedMessages: state.messageList.selectedMessages
+  };
+};
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
@@ -185,14 +186,13 @@ const mapDispatchToProps = dispatch =>
       deleteMessage
     },
     dispatch
-);
+  );
 
 export default compose(
   withRouter,
   withTranslation(),
   connect(
-      mapStateToProps,
-      mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
   )
 )(MessageList);
-

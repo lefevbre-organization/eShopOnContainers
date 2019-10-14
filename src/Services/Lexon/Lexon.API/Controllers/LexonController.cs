@@ -66,30 +66,8 @@ namespace Lexon.API.Controllers
         }
 
         [HttpGet]
-        [Route("companies/wrong")]
-        [ProducesResponseType(typeof(PaginatedItemsViewModel<LexonCompany>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(IEnumerable<LexonCompany>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CompaniesWrongAsync([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0, string idUser = null)
-
-        {
-
-            var t = Task.Run(async delegate
-            {
-                await Task.Delay(5000);
-                return BadRequest("if the coupled service fails, all fail");
-            });
-            t.Wait();
-            Console.WriteLine("Task t Status: {0}, Result: {1}",
-                              t.Status, t.Result);
-
-
-            return BadRequest("if the coupled service fails, all fail");
-        }
-
-        [HttpGet]
         [Route("classifications")]
-        [ProducesResponseType(typeof(LexonActuationMailList), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IEnumerable<LexonActuation>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ClassificationsAsync([FromQuery]string idUser, [FromQuery]long idCompany, [FromQuery]string idMail, [FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)
 
@@ -191,47 +169,47 @@ namespace Lexon.API.Controllers
         {
             //var listLexonClassificationType = new List<LexonEntity>
             //{
-            //    new LexonEntity {
-            //        idEntity = 1, name = "Expedientes"
+            //    new LexonClassificationType {
+            //        id = 1, name = "Expedientes"
             //    },
-            //    new LexonEntity {
-            //        idEntity = 2, name = "Clientes"
+            //    new LexonClassificationType {
+            //        id = 2, name = "Clientes"
             //    },
-            //    new LexonEntity {
-            //        idEntity = 3, name = "Contrarios"
+            //    new LexonClassificationType {
+            //        id = 3, name = "Contrarios"
             //    },
-            //    new LexonEntity {
-            //        idEntity = 4, name = "Proveedores"
+            //    new LexonClassificationType {
+            //        id = 4, name = "Proveedores"
             //    },
-            //    new LexonEntity {
-            //        idEntity = 5, name = "Abogados propios"
+            //    new LexonClassificationType {
+            //        id = 5, name = "Abogados propios"
             //    },
-            //    new LexonEntity {
-            //        idEntity = 6, name = "Abogados contrarios"
+            //    new LexonClassificationType {
+            //        id = 6, name = "Abogados contrarios"
             //    },
-            //    new LexonEntity {
-            //        idEntity = 7, name = "Procuradores propios"
+            //    new LexonClassificationType {
+            //        id = 7, name = "Procuradores propios"
             //    },
-            //    new LexonEntity {
-            //        idEntity = 8, name = "Procuradores contrarios"
+            //    new LexonClassificationType {
+            //        id = 8, name = "Procuradores contrarios"
             //    },
-            //    new LexonEntity {
-            //        idEntity = 9, name = "Notarios"
+            //    new LexonClassificationType {
+            //        id = 9, name = "Notarios"
             //    },
-            //    new LexonEntity {
-            //        idEntity = 10, name = "Juzgados"
+            //    new LexonClassificationType {
+            //        id = 10, name = "Juzgados"
             //    },
-            //    new LexonEntity {
-            //        idEntity = 11, name = "Aseguradoras"
+            //    new LexonClassificationType {
+            //        id = 11, name = "Aseguradoras"
             //    },
-            //    new LexonEntity {
-            //        idEntity = 12, name = "Otros"
+            //    new LexonClassificationType {
+            //        id = 12, name = "Otros"
             //    },
-            //    new LexonEntity {
-            //        idEntity = 13, name = "Carpetas"
+            //    new LexonClassificationType {
+            //        id = 13, name = "Carpetas"
             //    },
-            //    new LexonEntity {
-            //        idEntity = 14, name = "Documentos"
+            //    new LexonClassificationType {
+            //        id = 14, name = "Documentos"
             //    },
             //};
 

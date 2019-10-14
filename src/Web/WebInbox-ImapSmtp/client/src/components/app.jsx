@@ -75,18 +75,28 @@ class App extends Component {
   }
 
   onSetSidebarOpenCalendar(open) {
-    this.setState({ sidebarComponent: <CalendarComponent /> });
+    this.setState({
+      sidebarComponent: (
+        <CalendarComponent sidebarDocked={this.onSetSidebarDocked} />
+      )
+    });
     this.setState({ sidebarDocked: open });
   }
 
   onSetSidebarOpenLexon(open) {
-    this.setState({ sidebarComponent: <LexonComponent /> });
+    this.setState({
+      sidebarComponent: <LexonComponent sidebarDocked={this.onSetSidebarDocked} />
+    });
     this.setState({ sidebarDocked: open });
     this.setState({ actualSidebarComponent: 1 });
   }
 
   onSetSidebarOpenQMemento(open) {
-    this.setState({ sidebarComponent: <DataBaseComponent /> });
+    this.setState({
+      sidebarComponent: (
+        <DataBaseComponent sidebarDocked={this.onSetSidebarDocked} />
+      )
+    });
     this.setState({ sidebarDocked: open });
   }
 
@@ -119,20 +129,24 @@ class App extends Component {
   }
 
   sendMessagePutUser(user) {
-    const { selectedMessage } = this.props.application;
-    console.log('selectedMessage ->', selectedMessage);
-
+    const { selectedMessageId } = this.props.messages;
     window.dispatchEvent(
       new CustomEvent("PutUserFromLexonConnector", {
         detail: {
-          user
+          user,
+          selectedMessageId
         }
       })
     );
   }
 
   handleGetUserFromLexonConnector() {
-    const { userId } = this.props.lexon;
+    // const { userId } = this.props.lexon;
+
+    // Comentar esto (es para pruebas)
+    const userId = 120;
+    // Comentar esto (es para pruebas)
+
     if (userId) {
       this.sendMessagePutUser(userId);
     }

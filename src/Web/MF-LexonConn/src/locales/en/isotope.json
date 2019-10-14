@@ -38,6 +38,14 @@
     "hide-search": "Hide search"
   },
   "tab-classify": {
-    "select-mail": "Select one or more emails"
+    "select-mail": "Select a message and rate it in Lex-on. The relationship established will be visible in this panel and also in the application."
+  },
+  "classificaction-list": {
+    "assigned-to": "Assigned to"
+  },
+  "confirm-remove-classification": {
+    "yes": "Yes",
+    "no": "No",
+    "text-confirm-remove": "If you delete this link, you will stop viewing the email in the corresponding Lex-on classification. Do you want to continue?"
   }
 }

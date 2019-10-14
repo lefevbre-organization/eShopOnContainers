@@ -22,19 +22,7 @@ import {
 import { selectLabel } from "../sidebar/sidebar.actions";
 import { signOut } from "../../api/authentication";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faSpinner,
-  faWindowClose,
-  faClosedCaptioning,
-  faDoorClosed,
-  faTimes,
-  faTimesCircle
-} from "@fortawesome/free-solid-svg-icons";
-import PerfectScrollbar from "react-perfect-scrollbar";
-import { ReflexContainer, ReflexSplitter, ReflexElement } from "react-reflex";
-import { start, registerApplication } from "single-spa";
-import * as singleSpa from "single-spa";
-import { registerLexonApp } from "../../apps/lexonconn-app";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import SidebarCnn from "react-sidebar";
 import LexonComponent from "../../apps/lexon_content";
 import CalendarComponent from "../../apps/calendar_content";
@@ -85,7 +73,9 @@ export class Main extends Component {
       this
     );
     this.onSetSidebarOpenDatabase = this.onSetSidebarOpenDatabase.bind(this);
-    //this.handleShowLeftSidebarClick = this.handleShowLeftSidebarClick.bind(this);
+    this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
+      this
+    );
 
     this.toggleSideBar = this.toggleSideBar.bind(this);
   }
@@ -105,13 +95,41 @@ export class Main extends Component {
   //    })
   //}
 
+  sendMessagePutUser(user) {
+    const { selectedMessages } = this.props;
+    const listMessages = selectedMessages.map(
+      selectedMessage => selectedMessage.id
+    );
+
+    window.dispatchEvent(
+      new CustomEvent("PutUserFromLexonConnector", {
+        detail: {
+          user,
+          selectedMessageId: listMessages
+        }
+      })
+    );
+  }
+
+  handleGetUserFromLexonConnector() {
+    // const { userId } = this.props.lexon;
+
+    // Comentar esto (es para pruebas)
+    const userId = 120;
+    // Comentar esto (es para pruebas)
+
+    if (userId) {
+      this.sendMessagePutUser(userId);
+    }
+  }
+
   onSetSidebarOpenCalendar(open) {
-    this.setState({ sidebarComponent: <CalendarComponent /> });
+    this.setState({ sidebarComponent: <CalendarComponent sidebarDocked={this.onSetSidebarDocked} /> });
     this.setState({ sidebarDocked: open });
   }
 
   onSetSidebarOpenLexon(open) {
-    this.setState({ sidebarComponent: <LexonComponent /> });
+    this.setState({ sidebarComponent: <LexonComponent sidebarDocked={this.onSetSidebarDocked} /> });
     this.setState({ sidebarDocked: open });
   }
 
@@ -153,6 +171,10 @@ export class Main extends Component {
     window.addEventListener("toggleClock", function(event) {
       alert(event.detail.name);
     });
+    window.addEventListener(
+      "GetUserFromLexonConnector",
+      this.handleGetUserFromLexonConnector
+    );
 
     const { userId } = this.props.lexon;
     const { googleUser } = this.props;
@@ -168,6 +190,13 @@ export class Main extends Component {
         this.props.history.push("/inbox");
       });
     }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener(
+      "GetUserFromLexonConnector",
+      this.handleGetUserFromLexonConnector
+    );
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -298,10 +327,8 @@ export class Main extends Component {
   }
 
   renderInboxViewport() {
-    const { t } = this.props;
     const { leftSideBar } = this.state;
 
-    let imgUrl = "assets/img/settings-gears.svg";
     if (this.props.labelsResult.labels.length < 1) {
       return this.renderSpinner();
     }
@@ -318,8 +345,7 @@ export class Main extends Component {
             zIndex: 100,
             overflowY: "hidden",
             WebkitTransition: "-webkit-transform 0s",
-            willChange: "transform",
-            overflowY: "hidden"
+            willChange: "transform"
           },
           content: {
             position: "absolute",
@@ -470,7 +496,8 @@ const mapStateToProps = state => ({
   messagesResult: state.messagesResult,
   pageTokens: state.pageTokens,
   searchQuery: state.searchQuery,
-  lexon: state.lexon
+  lexon: state.lexon,
+  selectedMessages: state.messageList.selectedMessages
 });
 
 const mapDispatchToProps = dispatch =>

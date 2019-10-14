@@ -7,7 +7,7 @@ import lexon from './lexon';
 
 export const INITIAL_STATE = {
   application: {
-    title: 'Mail',
+    title: 'Lefebvre - Imap Client',
     user: {},
     newMessage: null,
     selectedFolderId: {},
@@ -36,6 +36,7 @@ export const INITIAL_STATE = {
   messages: {
     cache: {},
     selected: [],
+    selectedMessageId: [],
     locked: [],
     activeRequests: 0
   },

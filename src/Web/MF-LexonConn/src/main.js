@@ -7,7 +7,6 @@ import "./main.css";
 // import Header from "./components/header/header";
 import Routing from "./components/routing/routing";
 import Spinner from "./components/spinner/spinner";
-import ClassifyEmails from "./components/classify-emails/classify-emails";
 
 import { getCompanies } from "./services/services-lexon";
 
@@ -18,28 +17,19 @@ class Main extends Component {
     this.state = {
       user: null,
       companies: [],
-      isLoading: true,
-      showClassifyEmails: false
+      isLoading: true
     };
 
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleCheckAllclick = this.handleCheckAllclick.bind(this);
-    this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
-      this
-    );
     this.handlePutUserFromLexonConnector = this.handlePutUserFromLexonConnector.bind(
       this
     );
-    this.toggleClassifyEmails = this.toggleClassifyEmails.bind(this);
   }
 
   componentDidMount() {
     window.addEventListener("Checkclick", this.handleKeyPress);
     window.addEventListener("CheckAllclick", this.handleCheckAllclick);
-    window.addEventListener(
-      "GetUserFromLexonConnector",
-      this.handleGetUserFromLexonConnector
-    );
     window.addEventListener(
       "PutUserFromLexonConnector",
       this.handlePutUserFromLexonConnector
@@ -51,10 +41,6 @@ class Main extends Component {
   componentWillUnmount() {
     window.removeEventListener("Checkclick", this.handleKeyPress);
     window.removeEventListener("CheckAllclick", this.handleCheckAllclick);
-    window.removeEventListener(
-      "GetUserFromLexonConnector",
-      this.handleGetUserFromLexonConnector
-    );
     window.removeEventListener(
       "PutUserFromLexonConnector",
       this.handlePutUserFromLexonConnector
@@ -73,30 +59,20 @@ class Main extends Component {
       : this.props.deleteListMessages(event.detail.listMessages);
   }
 
-  async getCompanies(user) {
-    getCompanies(user);
-  }
-
   sendMessageGetUser() {
     window.dispatchEvent(new CustomEvent("GetUserFromLexonConnector"));
   }
 
-  sendMessagePutUser(user) {
-    window.dispatchEvent(
-      new CustomEvent("PutUserFromLexonConnector", {
-        detail: {
-          user
-        }
-      })
-    );
-  }
-
-  handleGetUserFromLexonConnector(event) {
-    this.sendMessagePutUser("120");
+  async getCompanies(user) {
+    getCompanies(user);
   }
 
   async handlePutUserFromLexonConnector(event) {
-    const user = event.detail.user;
+    const { user, selectedMessageId } = event.detail;
+    selectedMessageId.forEach(message => {
+      this.props.addMessage(message);
+    });
+
     getCompanies(user)
       .then(result => {
         this.setState({
@@ -110,14 +86,12 @@ class Main extends Component {
       });
   }
 
-  toggleClassifyEmails() {
-    this.setState(state => ({
-      showClassifyEmails: !state.showClassifyEmails
-    }));
-  }
-
   render() {
-    const { isLoading, user, companies, showClassifyEmails } = this.state;
+    const {
+      isLoading,
+      user,
+      companies
+    } = this.state;
 
     if (isLoading) {
       return <Spinner />;
@@ -125,13 +99,11 @@ class Main extends Component {
 
     return (
       <Fragment>
-        <ClassifyEmails
-          user={user}
-          initialModalState={showClassifyEmails}
-          toggleClassifyEmails={this.toggleClassifyEmails}
-        />
         {/* <Header title={"LEX-ON"} /> */}
-        <Routing user={user} companies={companies} toggleClassifyEmails={this.toggleClassifyEmails} />
+        <Routing
+          user={user}
+          companies={companies}
+        />
       </Fragment>
     );
   }

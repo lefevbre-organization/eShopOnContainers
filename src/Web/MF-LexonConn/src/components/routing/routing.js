@@ -21,7 +21,7 @@ class Routing extends Component {
 
   render() {
     const { actualPage } = this.state;
-    const { user, companies, toggleClassifyEmails } = this.props;
+    const { user, companies } = this.props;
 
     switch (actualPage) {
       case PAGE_SELECT_COMPANY:
@@ -37,7 +37,6 @@ class Routing extends Component {
           <SelectAction
             user={user}
             companies={companies}
-            toggleClassifyEmails={toggleClassifyEmails}
             changePage={this.changePage}
           />
         );
@@ -50,8 +49,7 @@ class Routing extends Component {
 
 Routing.propTypes = {
   user: PropTypes.string.isRequired,
-  companies: PropTypes.array.isRequired,
-  toggleClassifyEmails: PropTypes.func.isRequired
+  companies: PropTypes.array.isRequired
 };
 
 export default Routing;

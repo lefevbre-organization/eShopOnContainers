@@ -90,8 +90,10 @@ const messages = (state = INITIAL_STATE.messages, action = {}) => {
     case ActionTypes.MESSAGES_SET_SELECTED: {
       const newUpdateState = {...state};
       newUpdateState.selected = [...state.selected];
+      newUpdateState.selectedMessageId = [...state.selectedMessageId];
       action.payload.messages.forEach(message => {
         const indexOfMessage = newUpdateState.selected.indexOf(message.uid);
+        const indexOfMessageId = newUpdateState.selectedMessageId.indexOf(message.messageId);
         if (action.payload.selected && indexOfMessage < 0) {
           // Select Message
           newUpdateState.selected.push(message.uid);
@@ -99,11 +101,19 @@ const messages = (state = INITIAL_STATE.messages, action = {}) => {
           // Unselect message
           newUpdateState.selected = newUpdateState.selected.filter(uid => uid !== message.uid);
         }
+        
+        if (action.payload.selected && indexOfMessageId < 0) {
+          // Select Message
+          newUpdateState.selectedMessageId.push(message.messageId);
+        } else if (!action.payload.selected) {
+          // Unselect message
+          newUpdateState.selectedMessageId = newUpdateState.selectedMessageId.filter(messageId => messageId !== message.messageId);
+        }                
       });
       return newUpdateState;
     }
     case ActionTypes.MESSAGES_CLEAR_SELECTED: {
-      const newUpdateState = {...state, selected: []};
+      const newUpdateState = {...state, selected: [], selectedMessageId: []};
       return newUpdateState;
     }
     case ActionTypes.MESSAGES_LOCK_ADD: {

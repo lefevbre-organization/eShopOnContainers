@@ -12,11 +12,11 @@ const styles = {
     backgroundColor: "#001978",
     color: "white",
     padding: "16px",
-    fontSize: "1em",   
+    paddingTop: "19px",
+    fontSize: "1em",
     height: "65px",
-    marginLeft: "1px"    
-    }
-  
+    marginLeft: "1px"
+  }
 };
 
 const MaterialTitlePanel = props => {
@@ -24,9 +24,21 @@ const MaterialTitlePanel = props => {
     ? { ...styles.root, ...props.style }
     : styles.root;
 
+  const _handleOnClick = () => {
+    props.sidebarDocked();
+  };
+
   return (
     <div style={rootStyle}>
-          <div style={styles.header}><span>{props.title}</span><img className={`${mainCss["headerButtons"]}`} border="0" src="assets/images/buttons.png"></img></div>
+      <div style={styles.header}>
+        <span>{props.title}</span>
+        <img
+          className={`${mainCss.headerButtons}`}
+          border="0"
+          src="assets/images/buttons.png"
+          onClick={() => _handleOnClick()}
+        ></img>
+      </div>
       {props.children}
     </div>
   );
@@ -35,7 +47,8 @@ const MaterialTitlePanel = props => {
 MaterialTitlePanel.propTypes = {
   style: PropTypes.object,
   title: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-  children: PropTypes.object
+  children: PropTypes.object,
+  sidebarDocked: PropTypes.func.isRequired
 };
 
 export default MaterialTitlePanel;

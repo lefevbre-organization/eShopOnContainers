@@ -5,6 +5,8 @@ import { getClassifications } from "../../../services/services-lexon";
 import i18n from "i18next";
 import { connect } from "react-redux";
 
+import ClassifyEmails from "../../classify-emails/classify-emails";
+import ConfirmRemoveClassification from "../../confirm-remove-classification/confirm-remove-classification";
 import NewClassification from "../new-classification/new-classification";
 import ListClassifications from "../list-classifications/list-classifications";
 
@@ -15,8 +17,16 @@ class TabClassify extends Component {
     this.state = {
       classifications: [],
       showNewClassification: false,
-      showClassifications: false
+      showClassifications: false,
+      showClassifyEmails: false,
+      showConfirmRemoveClassification: false,
+      classificationToRemove: null
     };
+
+    this.toggleClassifyEmails = this.toggleClassifyEmails.bind(this);
+    this.toggleConfirmRemoveClassification = this.toggleConfirmRemoveClassification.bind(
+      this
+    );
 
     this.getClassifications = this.getClassifications.bind(this);
   }
@@ -50,6 +60,7 @@ class TabClassify extends Component {
       } else {
         this.setState({ classifications: [], showClassifications: false });
       }
+      this.setState({ classificationToRemove: null });
     }
   }
 
@@ -68,15 +79,28 @@ class TabClassify extends Component {
       });
   }
 
+  toggleClassifyEmails() {
+    this.setState(state => ({
+      showClassifyEmails: !state.showClassifyEmails
+    }));
+  }
+
+  toggleConfirmRemoveClassification(classification) {
+    this.setState(state => ({
+      showConfirmRemoveClassification: !state.showConfirmRemoveClassification,
+      classificationToRemove: classification
+    }));
+  }
+
   renderShowNewClassification() {
     const { showNewClassification } = this.state;
-    const { user, toggleClassifyEmails } = this.props;
+    const { user } = this.props;
 
     if (showNewClassification) {
       return (
         <NewClassification
           user={user}
-          toggleClassifyEmails={toggleClassifyEmails}
+          toggleClassifyEmails={this.toggleClassifyEmails}
         />
       );
     } else {
@@ -94,6 +118,9 @@ class TabClassify extends Component {
           user={user}
           updateClassifications={getClassifications}
           classifications={classifications}
+          toggleConfirmRemoveClassification={
+            this.toggleConfirmRemoveClassification
+          }
         />
       );
     } else {
@@ -102,8 +129,30 @@ class TabClassify extends Component {
   }
 
   render() {
+    const {
+      showClassifyEmails,
+      showConfirmRemoveClassification,
+      classificationToRemove
+    } = this.state;
+    const { user } = this.props;
     return (
       <Fragment>
+        <ClassifyEmails
+          user={user}
+          initialModalState={showClassifyEmails}
+          toggleClassifyEmails={this.toggleClassifyEmails}
+        />
+
+        <ConfirmRemoveClassification
+          user={user}
+          initialModalState={showConfirmRemoveClassification}
+          toggleConfirmRemoveClassification={
+            this.toggleConfirmRemoveClassification
+          }
+          classification={classificationToRemove}
+          updateClassifications={this.getClassifications}
+        />
+
         {this.renderShowNewClassification()}
         {this.renderShowClassifications()}
       </Fragment>
@@ -112,8 +161,7 @@ class TabClassify extends Component {
 }
 
 TabClassify.propTypes = {
-  user: PropTypes.string.isRequired,
-  toggleClassifyEmails: PropTypes.func.isRequired
+  user: PropTypes.string.isRequired
 };
 
 const mapStateToProps = state => {

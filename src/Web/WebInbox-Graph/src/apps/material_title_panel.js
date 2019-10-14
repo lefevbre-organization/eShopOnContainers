@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import "./material_title_panel.css";
 
 const styles = {
   root: {
@@ -11,7 +12,7 @@ const styles = {
     backgroundColor: "#001978",
     color: "white",
     padding: "16px",
-    fontSize: "1em",   
+    fontSize: "16px",
     height: "65px",
     marginLeft: "1px"
   }
@@ -22,9 +23,22 @@ const MaterialTitlePanel = props => {
     ? { ...styles.root, ...props.style }
     : styles.root;
 
+  const _handleOnClick = () => {
+    props.sidebarDocked();
+  };
+
   return (
     <div style={rootStyle}>
-      <div style={styles.header}>{props.title}</div>
+      <div style={styles.header}>
+        <span>{props.title}</span>
+        <img
+          className="headerButtons"
+          alt={props.title}
+          border="0"
+          src="assets/img/buttons.png"
+          onClick={() => _handleOnClick()}
+        ></img>
+      </div>
       {props.children}
     </div>
   );

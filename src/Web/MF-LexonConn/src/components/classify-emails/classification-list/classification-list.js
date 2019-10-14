@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import "./classification-list.css";
-// import PerfectScrollbar from "react-perfect-scrollbar";
+import PerfectScrollbar from "react-perfect-scrollbar";
 import ClassificationListSearch from "../classification-list-search/classification-list-search";
 import PropTypes from "prop-types";
 import ResultsSearch from "../results-search/results-search";
+import i18n from "i18next";
 
 class ClassificationList extends Component {
   render() {
@@ -19,7 +20,7 @@ class ClassificationList extends Component {
       <div className="lexon-clasification-list-container">
         <div className="form-group">
           <label>
-            Asignar a<span className="requerido">*</span>
+            {i18n.t("classification-list.assigned-to")}<span className="requerido">*</span>
           </label>
         </div>
 
@@ -38,7 +39,7 @@ class ClassificationList extends Component {
           </thead>
 
           <tbody>
-            {/* <PerfectScrollbar> */}
+            <PerfectScrollbar>
             {listResultsByType.map(result => {
               return (
                 <ResultsSearch
@@ -51,7 +52,7 @@ class ClassificationList extends Component {
                 />
               );
             })}
-            {/* </PerfectScrollbar> */}
+            </PerfectScrollbar>
           </tbody>
         </table>
       </div>

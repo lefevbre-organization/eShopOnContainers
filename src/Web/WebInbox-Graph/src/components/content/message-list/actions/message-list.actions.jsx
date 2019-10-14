@@ -5,7 +5,7 @@ import { selectLabel } from "../../../sidebar/sidebar.actions";
 
 export const GET_MESSAGES = "GET_MESSAGES";
 export const GET_MESSAGES_LOAD_IN_PROGRESS = "GET_MESSAGES_LOAD_IN_PROGRESS";
-export const GET_MESSAGES_FAILED = 'GET_MESSAGES_FAILED';
+export const GET_MESSAGES_FAILED = "GET_MESSAGES_FAILED";
 export const TOGGLE_SELECTED = "TOGGLE_SELECTED";
 export const MESSAGE_LOAD_IN_PROGRESS = "MESSAGE_LOAD_IN_PROGRESS";
 export const MESSAGE_LOAD_SUCCESS = "MESSAGE_LOAD_SUCCESS";
@@ -22,57 +22,59 @@ export const DELETE_MESSAGE = "DELETE_MESSAGE";
 export const DELETE_LIST_MESSAGES = "DELETE_LIST_MESSAGES";
 export const ADD_LIST_MESSAGES = "ADD_LIST_MESSAGES";
 
-export const getLabelMessages = ({
-  labelIds,
-  q = "",
-  pageToken
-}) => (dispatch, getState) => {
+export const getLabelMessages = ({ labelIds, q = "", pageToken }) => (
+  dispatch,
+  getState
+) => {
   dispatch(setMessageListLoadInProgress());
 
   const state = getState();
-  const { searchQuery } = state;    
+  const { searchQuery } = state;
 
   if (searchQuery !== "") {
     dispatch(selectLabel("-1"));
   }
 
-    //Set PageToken to call api getMessageList  
+  //Set PageToken to call api getMessageList
   if (state.messagesResult.paginatioDirectionSelected != null) {
-        // = prev
-        if (state.messagesResult.paginatioDirectionSelected == "prev") {
-            var skipValue = state.messagesResult["@odata.nextLink"].split("skip=")[1];
-            pageToken = state.messagesResult["@odata.nextLink"].split("skip=")[0] + "skip=" + (skipValue - 40);
-        }
-        // = next
-        else {
-            pageToken = state.messagesResult["@odata.nextLink"];
-        }
-                   
+    // = prev
+    if (state.messagesResult.paginatioDirectionSelected === "prev") {
+      var skipValue = state.messagesResult["@odata.nextLink"].split("skip=")[1];
+      pageToken =
+        state.messagesResult["@odata.nextLink"].split("skip=")[0] +
+        "skip=" +
+        (skipValue - 40);
+    }
+    // = next
+    else {
+      pageToken = state.messagesResult["@odata.nextLink"];
+    }
   }
 
   // reset the state before reloading the object
-  delete state.messagesResult ;
+  delete state.messagesResult;
 
-  getMessageList({ labelIds, maxResults: 20, q: searchQuery, pageToken }).then(response => {
-    dispatch({
-      type: GET_MESSAGES,
-      payload: response
-    });
+  getMessageList({ labelIds, maxResults: 20, q: searchQuery, pageToken })
+    .then(response => {
+      dispatch({
+        type: GET_MESSAGES,
+        payload: response
+      });
 
-    dispatch(setPageTokens());
-    
-  }).catch(err => {
-    dispatch({
-      type: GET_MESSAGES_FAILED,
-      payload: err
+      dispatch(setPageTokens());
     })
-  });
-    };
+    .catch(err => {
+      dispatch({
+        type: GET_MESSAGES_FAILED,
+        payload: err
+      });
+    });
+};
 
 export const setSearchQuery = q => ({
   type: SET_SEARCH_QUERY,
   payload: q
-})
+});
 
 export const setPageTokens = tokens => ({
   type: SET_PAGE_TOKENS,
@@ -119,61 +121,65 @@ const setMessageListLoadInProgress = () => ({
 export const addInitialPageToken = token => ({
   type: ADD_INITIAL_PAGE_TOKEN,
   payload: token
-})
+});
 
 export const clearPageTokens = () => ({
   type: CLEAR_PAGE_TOKENS
-})
+});
 
-export const modifyMessages = ({ids, addLabelIds = [], removeLabelIds = []}) => dispatch => {
-  batchModify({ids, addLabelIds, removeLabelIds})
+export const modifyMessages = ({
+  ids,
+  addLabelIds = [],
+  removeLabelIds = []
+}) => dispatch => {
+  batchModify({ ids, addLabelIds, removeLabelIds })
     .then(modifiedIds => {
       dispatch({
-       type: MODIFY_MESSAGES_SUCCESS,
-       payload: {modifiedIds, addLabelIds, removeLabelIds}
-      })
+        type: MODIFY_MESSAGES_SUCCESS,
+        payload: { modifiedIds, addLabelIds, removeLabelIds }
+      });
     })
     .catch(error => {
       dispatch({
-       type: MODIFY_MESSAGES_FAILED
-      })
-    })
-}
+        type: MODIFY_MESSAGES_FAILED
+      });
+    });
+};
 
-export const addMessage = (messageId) => dispatch => {
+export const addMessage = messageId => dispatch => {
   const data = {
-      id: messageId,
-      content: messageId
+    id: messageId,
+    content: messageId
   };
 
   dispatch({
-      type: ADD_MESSAGE,
-      data
+    type: ADD_MESSAGE,
+    data
   });
 };
 
-export const deleteMessage = (messageId) => dispatch => {
+export const deleteMessage = messageId => dispatch => {
   const data = {
-      id: messageId,
-      content: messageId
+    id: messageId,
+    content: messageId
   };
 
   dispatch({
-      type: DELETE_MESSAGE,
-      data     
+    type: DELETE_MESSAGE,
+    data
   });
 };
 
-export const deleteListMessages = (listMessages) => dispatch => {
+export const deleteListMessages = listMessages => dispatch => {
   dispatch({
-      type: DELETE_LIST_MESSAGES,
-      listMessages
-  });    
+    type: DELETE_LIST_MESSAGES,
+    listMessages
+  });
 };
 
-export const addListMessages = (listMessages) => dispatch => {
+export const addListMessages = listMessages => dispatch => {
   dispatch({
-      type: ADD_LIST_MESSAGES,
-      listMessages
-  });    
+    type: ADD_LIST_MESSAGES,
+    listMessages
+  });
 };

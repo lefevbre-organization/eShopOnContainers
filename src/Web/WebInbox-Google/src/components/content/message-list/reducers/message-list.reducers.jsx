@@ -114,7 +114,6 @@ export const emailMessageResult = (
     case MESSAGE_LOAD_IN_PROGRESS:
       return { ...state, body: "", loading: true, failed: false };
     case MESSAGE_LOAD_SUCCESS:
-      const {body, ...rest} = action.payload;
       return {
         ...state,
         ...action.payload,
