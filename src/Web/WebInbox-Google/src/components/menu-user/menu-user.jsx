@@ -12,7 +12,6 @@ import {
   DropdownToggle
 } from "reactstrap";
 import { config, RESULT_OK, PROVIDER } from "../../constants";
-import AccountUser from "./account-user/account-user";
 
 class MenuUser extends Component {
   constructor(props) {
@@ -25,6 +24,9 @@ class MenuUser extends Component {
 
     this.toggle = this.toggle.bind(this);
     this._handleOnClick = this._handleOnClick.bind(this);
+    this._handleOnClickChangeAccount = this._handleOnClickChangeAccount.bind(
+      this
+    );
   }
 
   componentDidMount() {
@@ -69,6 +71,25 @@ class MenuUser extends Component {
     }
   }
 
+  _handleOnClickChangeAccount(email) {
+    alert(email);
+  }
+
+  renderAccounts() {
+    const { accounts } = this.state;
+
+    accounts.map(account => {
+      return (
+        <DropdownItem
+          onClick={() => this._handleOnClickChangeAccount(account.email)}
+        >
+          <i className="fa fa-lock"></i>
+          {account.email} Hola!!
+        </DropdownItem>
+      );
+    });
+  }
+
   render() {
     const { dropdownOpen, accounts } = this.state;
     const { picUrl, email, fullName, onSignout } = this.props;
@@ -100,8 +121,20 @@ class MenuUser extends Component {
               <DropdownItem divider />
 
               {accounts.map(account => {
-                return <AccountUser account={account} key={account.email} />;
+                return (
+                  <DropdownItem
+                    key={account.email}
+                    onClick={() =>
+                      this._handleOnClickChangeAccount(account.email)
+                    }
+                  >
+                    <i className="fa fa-lock"></i>
+                    {account.email}
+                  </DropdownItem>
+                );
               })}
+
+              {/* {this.renderAccounts()} */}
 
               <DropdownItem divider />
               <DropdownItem onClick={onSignout}>
