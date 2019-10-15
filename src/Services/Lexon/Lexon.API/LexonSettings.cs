@@ -9,6 +9,8 @@
         public string CollectionEvents { get; set; }
         public string PicBaseUrl { get; set; }
 
+        public string LexonMySqlUrl { get; set; }
+
         public string EventBusConnection { get; set; }
 
         public bool UseCustomizationData { get; set; }

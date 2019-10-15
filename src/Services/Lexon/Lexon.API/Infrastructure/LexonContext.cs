@@ -70,6 +70,7 @@ namespace Lexon.API.Infrastructure
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(IntegrationEventLogEntry))) { BsonClassMap.RegisterClassMap<IntegrationEventLogEntry>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(LexonUser))) { BsonClassMap.RegisterClassMap<LexonUser>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(LexonMaster))) { BsonClassMap.RegisterClassMap<LexonMaster>(); }
         }
 
         public IMongoCollection<LexonUser> LexonUsers

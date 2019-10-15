@@ -92,29 +92,29 @@ namespace Lexon.MySql.Extensions
             return services;
         }
 
-        //public static IServiceCollection AddCustomOptions(this IServiceCollection services, IConfiguration configuration)
-        //{
-        //    services.Configure<LexonSettings>(configuration);
-        //    services.Configure<ApiBehaviorOptions>(options =>
-        //    {
-        //        options.InvalidModelStateResponseFactory = context =>
-        //        {
-        //            var problemDetails = new ValidationProblemDetails(context.ModelState)
-        //            {
-        //                Instance = context.HttpContext.Request.Path,
-        //                Status = StatusCodes.Status400BadRequest,
-        //                Detail = "Please refer to the errors property for additional details."
-        //            };
+        public static IServiceCollection AddCustomOptions(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<LexonSettings>(configuration);
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = context =>
+                {
+                    var problemDetails = new ValidationProblemDetails(context.ModelState)
+                    {
+                        Instance = context.HttpContext.Request.Path,
+                        Status = StatusCodes.Status400BadRequest,
+                        Detail = "Please refer to the errors property for additional details."
+                    };
 
-        //            return new BadRequestObjectResult(problemDetails)
-        //            {
-        //                ContentTypes = { "application/problem+json", "application/problem+xml" }
-        //            };
-        //        };
-        //    });
+                    return new BadRequestObjectResult(problemDetails)
+                    {
+                        ContentTypes = { "application/problem+json", "application/problem+xml" }
+                    };
+                };
+            });
 
-        //    return services;
-        //}
+            return services;
+        }
 
         public static IServiceCollection AddSwagger(this IServiceCollection services)
         {

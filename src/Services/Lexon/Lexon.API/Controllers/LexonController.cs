@@ -58,26 +58,6 @@ namespace Lexon.API.Controllers
             return Ok(itemsByUser);
         }
 
-        //[HttpGet]
-        //[Route("companies/wrong")]
-        //[ProducesResponseType(typeof(PaginatedItemsViewModel<LexonCompany>), (int)HttpStatusCode.OK)]
-        //[ProducesResponseType(typeof(IEnumerable<LexonCompany>), (int)HttpStatusCode.OK)]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        //public async Task<IActionResult> CompaniesWrongAsync([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0, string idUser = null)
-
-        //{
-        //    var t = Task.Run(async delegate
-        //    {
-        //        await Task.Delay(5000);
-        //        return BadRequest("if the coupled service fails, all fail");
-        //    });
-        //    t.Wait();
-        //    Console.WriteLine("Task t Status: {0}, Result: {1}",
-        //                      t.Status, t.Result);
-
-        //    return BadRequest("if the coupled service fails, all fail");
-        //}
-
         [HttpGet]
         [Route("classifications")]
         [ProducesResponseType(typeof(IEnumerable<LexonActuation>), (int)HttpStatusCode.OK)]
@@ -226,10 +206,12 @@ namespace Lexon.API.Controllers
 
             //return Ok(listLexonClassificationType);
 
+
             var itemsByUser = await _usersService.GetClassificationMasterListAsync();
-            return !itemsByUser.Any()
-                ? (IActionResult)BadRequest("error getting types of entities")
-                : Ok(itemsByUser);
+            if (!itemsByUser.Any())
+                Console.WriteLine("error getting types of entities");
+
+            return Ok(itemsByUser);
         }
 
         [HttpGet]
