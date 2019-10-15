@@ -30,8 +30,14 @@ const SidebarContent = props => {
     ? { ...styles.sidebar, ...props.style }
     : styles.sidebar;
 
+  const { sidebarDocked } = props;
+
   return (
-    <MaterialTitlePanel title="Calendario" style={style}>
+    <MaterialTitlePanel
+      title="CALENDARIO"
+      style={style}
+      sidebarDocked={sidebarDocked}
+    >
       <div style={styles.content}>
         {/*<a href="index.html" style={styles.sidebarLink}>
           Home

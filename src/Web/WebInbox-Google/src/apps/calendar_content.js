@@ -2,8 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import MaterialTitlePanel from "./material_title_panel";
 
-
-
 const styles = {
   sidebar: {
     width: 319,
@@ -30,20 +28,22 @@ const styles = {
 const calendarContent = props => {
   const style = props.style
     ? { ...styles.sidebar, ...props.style }
-    : styles.sidebar;   
-  
-   
+    : styles.sidebar;
+
+  const { sidebarDocked } = props;
+
   return (
-    <MaterialTitlePanel title="CALENDARIO" style={style}>
-      <div style={styles.content}>       
-              <img  border="0" alt="Lefebvre" src="assets/img/calendar-fake.png"></img> 
+    <MaterialTitlePanel
+      title="CALENDARIO"
+      style={style}
+      sidebarDocked={sidebarDocked}
+    >
+      <div style={styles.content}>
+        <img border="0" alt="Lefebvre" src="assets/img/calendar-fake.png"></img>
       </div>
     </MaterialTitlePanel>
   );
 };
-
-
-
 
 calendarContent.propTypes = {
   style: PropTypes.object

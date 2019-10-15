@@ -29,9 +29,24 @@ class GoTo extends Component {
           <div className="row">
             <div className="col d-flex justify-content-center">
               <div className="col form-box w-100">
+
                 <div className="row logo text-center p-md-5 p-3">
                   <div className="col">
                     <span className="naming">{i18n.t("page-goto.mail")}</span>
+                  </div>
+                </div>
+
+                <Accounts
+                  userId={userId}
+                  accounts={this.props.accounts}
+                  removeAccount={this.props.removeAccount}
+                  toggleConfirmRemoveAccount={
+                    this.props.toggleConfirmRemoveAccount
+                  }
+                />
+
+                <div className="row logo text-center p-md-5 p-3">
+                  <div className="col">                
                     <span className="">
                       {i18n.t("page-goto.add-account-mail")}
                     </span>
@@ -60,12 +75,14 @@ class GoTo extends Component {
                   </div>
                 </div>
 
-                <Accounts
+                {/* <Accounts
                   userId={userId}
                   accounts={this.props.accounts}
                   removeAccount={this.props.removeAccount}
-                  toggleConfirmRemoveAccount={this.props.toggleConfirmRemoveAccount}
-                />
+                  toggleConfirmRemoveAccount={
+                    this.props.toggleConfirmRemoveAccount
+                  }
+                /> */}
               </div>
             </div>
           </div>

@@ -33,7 +33,7 @@ const lexonContent = props => {
     ? { ...styles.sidebar, ...props.style }
     : styles.sidebar;
 
-  const sidebarDocked = props.sidebarDocked;
+  const { sidebarDocked } = props;
 
   let el = document.getElementById("lexon-app");
   if (!el) {
@@ -51,7 +51,11 @@ const lexonContent = props => {
   }
 
   return (
-    <MaterialTitlePanel title="LEX-ON" style={style} sidebarDocked={sidebarDocked}>
+    <MaterialTitlePanel
+      title="LEX-ON"
+      style={style}
+      sidebarDocked={sidebarDocked}
+    >
       <div style={styles.content}>
         {/*<a href="index.html" style={styles.sidebarLink}>
           Home

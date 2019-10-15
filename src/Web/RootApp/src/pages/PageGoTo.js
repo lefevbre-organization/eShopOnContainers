@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import Spinner from "react-bootstrap/Spinner";
+// import Spinner from "react-bootstrap/Spinner";
 import "./PageGoTo.css";
 
 import GoTo from "../components/GoTo";
 import Footer from "../components/footer/Footer";
 import ConfirmRemoveAccount from "../components/confirm-remove-account/ConfirmRemoveAccount";
 import { UserNotFound } from "../components/user-not-found/UserNotFound";
+import Spinner from "../components/spinner/spinner";
 
 import {
   getAccounts,
@@ -121,11 +122,10 @@ export class PageGoTo extends Component {
     const { loading } = this.state;
 
     if (loading) {
-      return (
-        <Spinner animation="border" role="status" className="center">
-          <span className="sr-only">Loading...</span>
-        </Spinner>
-      );
+      return <Spinner />;
+      // <Spinner animation="border" role="status" className="center">
+      //   <span className="sr-only">Loading...</span>
+      // </Spinner>
     }
   }
 

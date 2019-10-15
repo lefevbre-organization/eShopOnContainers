@@ -93,11 +93,6 @@ export class Main extends Component {
     });
   }
 
-  onSetSidebarOpenCalendar(open) {
-    this.setState({ sidebarComponent: <SidebarComponent /> });
-    this.setState({ sidebarDocked: open });
-  }
-
   sendMessagePutUser(user) {
     const { selectedMessages } = this.props;
     const listMessages = selectedMessages.map(
@@ -128,6 +123,11 @@ export class Main extends Component {
 
   onSetSidebarOpenLexon(open) {
     this.setState({ sidebarComponent: <LexonComponent sidebarDocked={this.onSetSidebarDocked} /> });
+    this.setState({ sidebarDocked: open });
+  }
+
+  onSetSidebarOpenCalendar(open) {
+    this.setState({ sidebarComponent: <SidebarComponent sidebarDocked={this.onSetSidebarDocked} /> });
     this.setState({ sidebarDocked: open });
   }
 
@@ -479,7 +479,7 @@ export class Main extends Component {
                   ></img>
                 </div>
               </span>
-              <span className="productsbutton">
+              {/* <span className="productsbutton">
                 <button
                   onClick={() => this.onSetSidebarDocked(false)}
                   className="btn compose-btn"
@@ -491,7 +491,7 @@ export class Main extends Component {
                     src="assets/img/icon-close-empty.png"
                   ></img>
                 </button>
-              </span>
+              </span> */}
 
               <span className="spaceproduct"></span>
             </div>

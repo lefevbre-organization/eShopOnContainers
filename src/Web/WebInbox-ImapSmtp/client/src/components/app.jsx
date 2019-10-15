@@ -300,7 +300,7 @@ class App extends Component {
                 </IconButton>
                 <div className={styles.btnselect}></div>
               </span>
-              <span
+              {/* <span
                 className={styles.productsbutton}
                 isotip={t("sideBar.hide")}
                 isotip-position="bottom-end"
@@ -310,7 +310,7 @@ class App extends Component {
                   close
                 </IconButton>
                 <div className={styles.btnselect}></div>
-              </span>
+              </span> */}
 
               <span className={styles.spaceproduct}></span>
             </div>

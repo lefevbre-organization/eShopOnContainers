@@ -465,7 +465,7 @@ export class Main extends Component {
                   ></img>
                 </div>
               </span>
-              <span className="productsbutton">
+              {/* <span className="productsbutton">
                 <button
                   onClick={() => this.onSetSidebarDocked(false)}
                   className="btn compose-btn"
@@ -477,7 +477,7 @@ export class Main extends Component {
                     src="assets/img/icon-close-empty.png"
                   ></img>
                 </button>
-              </span>
+              </span> */}
               <span className="spaceproduct"></span>
             </div>
           </section>
