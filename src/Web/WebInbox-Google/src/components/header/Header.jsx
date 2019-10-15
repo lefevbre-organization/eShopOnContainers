@@ -14,6 +14,7 @@ import { Nav, NavItem, NavLink } from "reactstrap";
 import { connect } from "react-redux";
 
 import { config } from "../../constants";
+import MenuUser from "../menu-user/menu-user";
 
 export class Header extends PureComponent {
   constructor(props) {
@@ -40,7 +41,7 @@ export class Header extends PureComponent {
         method: "GET"
       }).then(result => {
         const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-        window.open(urlRedirect, "_self");    
+        window.open(urlRedirect, "_self");
       });
     }
   }
@@ -122,43 +123,13 @@ export class Header extends PureComponent {
                         <Link to="/inbox"><img className="logo-ext" border="0" alt="otulook" src="assets/img/gmail.png"></img></Link>                       
                     </div>*/}
 
-          <div className="menu-user">
-            <Nav className="ml-auto" navbar>
-              <NavItem className="d-md-down-none">
-                <NavLink href="#">
-                  <i className="icon-location-pin"></i>
-                </NavLink>
-              </NavItem>
-              <Dropdown
-                nav
-                isOpen={this.state.dropdownOpen}
-                toggle={this.toggle}
-              >
-                <DropdownToggle nav>
-                  <img
-                    className="mx-2 profile-pic img-circle"
-                    src={picUrl}
-                    alt=""
-                  />
-                </DropdownToggle>
-                <DropdownMenu right>
-                  <DropdownItem header tag="div" className="text-center">
-                    <strong title={email}>{fullName}</strong>
-                  </DropdownItem>
-                  <DropdownItem divider />
-                  {/* <DropdownItem><i className="fa fa-shield"></i> Add Account</DropdownItem>                                    
-                                    <DropdownItem><i className="fa fa-shield"></i> Create Account</DropdownItem> */}
-                  <DropdownItem onClick={this._handleOnClick}>
-                    <i className="fa fa-shield"></i> Settings
-                  </DropdownItem>
-                  <DropdownItem divider />
-                  <DropdownItem onClick={this.props.onSignout}>
-                    <i className="fa fa-lock"></i> Logout
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            </Nav>
-          </div>
+          <MenuUser 
+            picUrl={picUrl} 
+            email={email} 
+            fullName={fullName}
+            onSignout={this.props.onSignout}
+          />
+
           <div>
             <Nav className="ml-auto" navbar>
               <NavItem className="d-md-down-none">
