@@ -54,10 +54,34 @@ namespace Lexon.MySql.Controllers
         public async Task<IActionResult> EntitiesAsync()
 
         {
-            var items = await _lexonService.GetMasterEntities();
+            var items = await _lexonService.GetMasterEntitiesAsync();
             return items == null
                 ? (IActionResult)BadRequest("it´s impossible return the master´s entities")
                 : Ok(items);
+        }
+
+        [HttpGet]
+        [Route("files")]
+        [ProducesResponseType(typeof(JosEntitiesList), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> FilesAsync([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0, string bbdd = "lexon_pre_shl_02", string idUser = "520", string search = "" )
+
+        {
+
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) )
+                return (IActionResult)BadRequest("values invalid. Must be a valid user  and bbdd to search the files");
+
+            short idTypeFile = 1;
+
+            if (!string.IsNullOrEmpty(idUser))
+            {
+                var items = await _lexonService.GetEntitiesAsync(pageSize, pageIndex, idTypeFile, bbdd, idUser, search);
+                return items == null
+                    ? (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment")
+                    : Ok(items);
+            }
+
+            return BadRequest("Error");
         }
     }
 }

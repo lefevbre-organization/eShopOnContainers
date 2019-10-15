@@ -10,7 +10,8 @@
     public class StoreProcedures
     {
         public string GetCompanies { get; set; }
-        public string GetEntities { get; set; }
+        public string GetMasterEntities { get; set; }
+        public string SearchEntities { get; set; }
 
     }
 }

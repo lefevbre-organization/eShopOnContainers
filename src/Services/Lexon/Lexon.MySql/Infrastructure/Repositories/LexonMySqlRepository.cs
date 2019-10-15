@@ -56,7 +56,40 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return companies;
         }
 
-        public async Task<JosEntitiesList> GetMasterEntities()
+        public async Task<JosFilesList> SearchEntitiesAsync(int pageSize, int pageIndex, short idType, string bbdd, string idUser, string search)
+        {
+            var files = new JosFilesList();
+            var filtroDescription = !string.IsNullOrEmpty(search) ? $", \"Description\":{search}" : string.Empty;
+            var filtro = $"{{\"BBDD\":\"{bbdd}\",\"IdEntityType\":{idType},\"IdUser\":{idUser}{filtroDescription}}}";
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.SearchEntities, conn))
+                    {
+                        command.Parameters.Add(new MySqlParameter("P_FILTER", MySqlDbType.String) { Value = filtro });
+                        command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
+                        command.CommandType = CommandType.StoredProcedure;
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                files = JsonConvert.DeserializeObject<JosFilesList>(reader.GetValue(0).ToString());
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.Write(ex.Message);
+                }
+            }
+
+            return files;
+        }
+
+        public async Task<JosEntitiesList> GetMasterEntitiesAsync()
         {
             var companies = new JosEntitiesList();
 
@@ -65,7 +98,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 try
                 {
                     conn.Open();
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetEntities, conn))
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetMasterEntities, conn))
                     {
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
                         command.CommandType = CommandType.StoredProcedure;
@@ -86,5 +119,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
             return companies;
         }
+
     }
 }
