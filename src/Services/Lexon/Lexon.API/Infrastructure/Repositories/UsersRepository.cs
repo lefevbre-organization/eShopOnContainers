@@ -162,11 +162,14 @@ namespace Lexon.API.Infrastructure.Repositories
 
         public async Task<List<LexonEntity>> GetClassificationMasterListAsync()
         {
+            var lexonEntities = new List<LexonEntity>();
             var filter = Builders<LexonMaster>.Filter.And(Builders<LexonMaster>.Filter.Gte(u => u.version, 9), Builders<LexonMaster>.Filter.Eq(u => u.type, "Entities"));
             var master = await _context.LexonMasters
-                .Find(filter).FirstOrDefaultAsync();
+                .Find(filter)
+                .FirstOrDefaultAsync();
 
-            return master?.list?.ToList();
+            lexonEntities = master?.list?.ToList();
+            return lexonEntities;
         }
 
         public async Task<long> AddClassificationToListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType = 1)

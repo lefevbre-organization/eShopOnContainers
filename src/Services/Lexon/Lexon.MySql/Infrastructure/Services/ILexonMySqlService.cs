@@ -9,5 +9,6 @@ namespace Lexon.MySql.Infrastructure.Services
     {
 
         Task<JosUserCompanies> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser);
+        Task<JosEntitiesList>  GetMasterEntities();
     }
 }

@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using Lexon.MySql.Infrastructure.Services;
+﻿using Lexon.MySql.Infrastructure.Services;
 using Lexon.MySql.Model;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace Lexon.MySql.Controllers
 {
@@ -14,9 +12,10 @@ namespace Lexon.MySql.Controllers
     public class LexonMySqlController : ControllerBase
     {
         private ILexonMySqlService _lexonService;
-            public LexonMySqlController(
-                ILexonMySqlService lexonService
-                )
+
+        public LexonMySqlController(
+            ILexonMySqlService lexonService
+            )
         {
             _lexonService = lexonService ?? throw new ArgumentNullException(nameof(lexonService));
         }
@@ -46,6 +45,19 @@ namespace Lexon.MySql.Controllers
             }
 
             return BadRequest("Error");
+        }
+
+        [HttpGet]
+        [Route("entities")]
+        [ProducesResponseType(typeof(JosEntitiesList), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> EntitiesAsync()
+
+        {
+            var items = await _lexonService.GetMasterEntities();
+            return items == null
+                ? (IActionResult)BadRequest("it´s impossible return the master´s entities")
+                : Ok(items);
         }
     }
 }

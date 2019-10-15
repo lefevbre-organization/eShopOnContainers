@@ -1,6 +1,8 @@
-﻿using Lexon.API.Infrastructure.Repositories;
+﻿using Lexon.API;
+using Lexon.API.Infrastructure.Repositories;
 using Lexon.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -14,19 +16,22 @@ namespace Lexon.Infrastructure.Services
         private readonly IEventBus _eventBus;
         private readonly IHttpClientFactory _clientFactory;
         private readonly HttpClient _client;
+        private readonly IOptions<LexonSettings> _settings;
 
         public UsersService(
-                    IUsersRepository usersRepository
-                    , IEventBus eventBus
-                    , IHttpClientFactory clientFactory
+                IOptions<LexonSettings> settings
+                , IUsersRepository usersRepository
+                , IEventBus eventBus
+                , IHttpClientFactory clientFactory
             )
         {
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _usersRepository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
 
             _client = _clientFactory.CreateClient();
-            _client.BaseAddress = new Uri("https://localhost:44393/api/v1/LexonMySql");
+            _client.BaseAddress = new Uri(_settings.Value.LexonMySqlUrl);
             _client.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
@@ -47,6 +52,33 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<List<LexonEntity>> GetClassificationMasterListAsync()
         {
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/entities");
+
+                var entities = new List<LexonEntity>();
+
+                using (var response = await _client.SendAsync(request))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        foreach (var entity in (await response.Content.ReadAsAsync<JosEntitiesList>()).Entities)
+                        {
+                            entities.Add(new LexonEntity() { name = entity.name, idEntity = entity.idEntity });
+                        }
+                        return entities;       //todo update collection
+                    }
+                    else
+                    {
+                        Console.WriteLine("el servicio devuelve un codigo de error");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"error al obtener datos {ex.Message}");
+            }
+
             return await _usersRepository.GetClassificationMasterListAsync();
         }
 
@@ -54,23 +86,24 @@ namespace Lexon.Infrastructure.Services
         {
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:44393/api/v1/LexonMySql/companies?pageSize={pageSize}&pageIndex={pageIndex}&idUser={idUser}");
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/companies?pageSize={pageSize}&pageIndex={pageIndex}&idUser={idUser}");
 
                 var companies = new List<LexonCompany>();
 
-                var response = await _client.SendAsync(request);
-
-                if (response.IsSuccessStatusCode)
+                using (var response = await _client.SendAsync(request))
                 {
-                    foreach (var company in (await response.Content.ReadAsAsync<JosUserCompanies>()).Companies)
+                    if (response.IsSuccessStatusCode)
                     {
-                        companies.Add(new LexonCompany() { name = company.name, bbdd = company.BBDD, idCompany = company.IdCompany });
+                        foreach (var company in (await response.Content.ReadAsAsync<JosUserCompanies>()).Companies)
+                        {
+                            companies.Add(new LexonCompany() { name = company.name, bbdd = company.BBDD, idCompany = company.IdCompany });
+                        }
+                        return companies;       //todo update collection
                     }
-                    return companies;       //todo update collection
-                }
-                else
-                {
-                    Console.WriteLine("el servicio devuelve un codigo de error");
+                    else
+                    {
+                        Console.WriteLine("el servicio devuelve un codigo de error");
+                    }
                 }
             }
             catch (Exception ex)
