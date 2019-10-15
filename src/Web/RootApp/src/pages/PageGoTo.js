@@ -25,7 +25,9 @@ export class PageGoTo extends Component {
       showConfirmRemoveAccount: false,
       emailRemoved: null
     };
-    this.toggleConfirmRemoveAccount = this.toggleConfirmRemoveAccount.bind(this);
+    this.toggleConfirmRemoveAccount = this.toggleConfirmRemoveAccount.bind(
+      this
+    );
   }
 
   componentDidMount() {
@@ -159,7 +161,11 @@ export class PageGoTo extends Component {
 
     return (
       <React.Fragment>
-        <ConfirmRemoveAccount initialModalState={showConfirmRemoveAccount} toggleConfirmRemoveAccount={this.toggleConfirmRemoveAccount} email={emailRemoved} />
+        <ConfirmRemoveAccount
+          initialModalState={showConfirmRemoveAccount}
+          toggleConfirmRemoveAccount={this.toggleConfirmRemoveAccount}
+          email={emailRemoved}
+        />
         <div>
           {this.renderSpinner()}
           <div className="container-fluid d-flex h-100 flex-column" id="borrar">

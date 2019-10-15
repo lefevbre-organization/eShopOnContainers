@@ -10,7 +10,11 @@ class Footer extends Component {
         <div className="container">
           <div className="row">
             <div className="col-xs-12 col-md-6 footer-logo">
-              <a rel="nofollow" href="https://lefebvre.es" target="_blank">
+              <a 
+                rel="noopener noreferrer" 
+                href="https://lefebvre.es" 
+                target="_blank" 
+              >
                 <img
                   alt="LEFEBVRE"
                   src="https://assets.lefebvre.es/media/logos/web/comunes/lefebvre-ij-bl-160x57.png"
@@ -20,6 +24,7 @@ class Footer extends Component {
             <ul className="col-xs-12 col-md-6 social-squares">
               <li>
                 <a
+                  rel="noopener noreferrer"
                   href="https://www.facebook.com/lefebvreelderecho"
                   target="_blank"
                   title="Facebook"
@@ -29,6 +34,7 @@ class Footer extends Component {
               </li>
               <li>
                 <a
+                  rel="noopener noreferrer"
                   href="https://www.linkedin.com/company/lefebvre-elderecho"
                   target="_blank"
                   title="Linkedin"
@@ -38,6 +44,7 @@ class Footer extends Component {
               </li>
               <li>
                 <a
+                  rel="noopener noreferrer"
                   href="https://www.youtube.com/channel/UCAxbOiNpUotcbZIRL3IxEDg"
                   target="_blank"
                   title="Youtube"
@@ -47,6 +54,7 @@ class Footer extends Component {
               </li>
               <li>
                 <a
+                  rel="noopener noreferrer"
                   href="https://twitter.com/edicionesfl"
                   target="_blank"
                   title="Twitter"
@@ -61,6 +69,7 @@ class Footer extends Component {
               ©2019 Lefebvre. {i18n.t("footer.all-reserved-right")}
               <span>
                 <a
+                  rel="noopener noreferrer"
                   href="https://lefebvre.es/aviso-legal"
                   target="_blank"
                   title={i18n.t("footer.legal-warning")}
@@ -69,6 +78,7 @@ class Footer extends Component {
                 </a>{" "}
                 &nbsp;|&nbsp;
                 <a
+                  rel="noopener noreferrer"
                   href="https://lefebvre.es/politica-privacidad"
                   target="_blank"
                   title={i18n.t("footer.privacy-policy")}
@@ -77,6 +87,7 @@ class Footer extends Component {
                 </a>{" "}
                 &nbsp;|&nbsp;
                 <a
+                  rel="noopener noreferrer"
                   href="https://lefebvre.es/politica-cookies"
                   target="_blank"
                   title={i18n.t("footer.cookies-policy")}

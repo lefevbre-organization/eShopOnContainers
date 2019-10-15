@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, Modal, Container, Col, Row } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import i18n from "i18next";
 
 import "./ConfirmRemoveAccout.css";

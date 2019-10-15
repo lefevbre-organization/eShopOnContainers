@@ -3,11 +3,11 @@ import ProviderInbox from "./ProviderInbox";
 import i18n from "i18next";
 
 class Accounts extends Component {
-  renderWithOutAccounts() {
-    if (this.props.accounts == null || this.props.accounts.length === 0) {
-      return <span>{i18n.t("accounts.nothing-user-email-added")}</span>;
-    }
-  }
+  // renderWithOutAccounts() {
+  //   if (this.props.accounts == null || this.props.accounts.length === 0) {
+  //     return <span>{i18n.t("accounts.nothing-user-email-added")}</span>;
+  //   }
+  // }
 
   render() {
     const { userId, accounts } = this.props;
@@ -31,7 +31,9 @@ class Accounts extends Component {
                     provider={el.provider}
                     email={el.email}
                     removeAccount={this.props.removeAccount}
-                    toggleConfirmRemoveAccount={this.props.toggleConfirmRemoveAccount}
+                    toggleConfirmRemoveAccount={
+                      this.props.toggleConfirmRemoveAccount
+                    }
                   />
                 </li>
               );

@@ -14,7 +14,7 @@ const dev = {
       "http://localhost:60980/api/v1/accounts/emailuseraccount/resetdefaultaccountbyuser",
     URL_DELETE_ACCOUNT:
       "http://localhost:60980/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider",
-    URL_SELECT_ACCOUNT: "http://localhost:3000"
+    URL_SELECT_ACCOUNT: "http://localhost:3010"
   }
 };
 

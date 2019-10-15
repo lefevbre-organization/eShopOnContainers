@@ -40,12 +40,16 @@ class ProviderInbox extends Component {
     }
   }
 
-  getTrash(provider) {    
+  getTrash(provider) {
     const { email } = this.props;
     if (email != null && email !== undefined) {
       return (
         <React.Fragment>
-          <a href="#" className="trash" onClick={() => this._handleOnClick(provider, email)}>
+          <a
+            href="#/"
+            className="trash"
+            onClick={() => this._handleOnClick(provider, email)}
+          >
             <span className="icon lf-icon-trash"></span>
           </a>
         </React.Fragment>
