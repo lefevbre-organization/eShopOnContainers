@@ -68,7 +68,7 @@ Lefebvre Google inbox app CI is bassed on DevOps Azure pipeline.
 ## Docker:
 
 to create image:
-$ docker build . -t react-google-docker
+$ docker build . -t google.docker
 
 To check that run:
 $ docker images
@@ -86,13 +86,16 @@ $ docker login --username=avalverdelefebvre
 Password: Alberto1971.-
 
 to add tag:
-$ docker tag xxxxxxxxxx yourhubusername/react-google-docker:firsttry
+$ docker tag xxxxxxxxxx elefebvreoncontainers/google.client:latest
 
 To upload to docker hub:
-$ docker push avalverdelefebvre/react-google-docker
+$ docker push elefebvreoncontainers/google.client
 
 to dowload local:
-$ docker pull avalverdelefebvre/react-google-docker:firsttry
+$ docker pull elefebvreoncontainers/google.client:latest
+
+To remove all images
+docker system prune -a
 
 ## Azure Deployment
 

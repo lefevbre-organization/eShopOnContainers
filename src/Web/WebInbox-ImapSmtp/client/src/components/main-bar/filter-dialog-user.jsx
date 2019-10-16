@@ -1,5 +1,5 @@
 // import React from 'react';
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 // import { translate } from "react-i18next";
 // import { setMessageFilterKey } from "../../actions/application";
@@ -9,18 +9,42 @@ import mainCss from "../../styles/main.scss";
 import { removeState } from "../../services/state";
 // import { logout } from '../login/login';
 
-import { config } from "../../constants";
+import { config, RESULT_OK, PROVIDER } from "../../constants";
+import AccountUser from "../account-user/account-user";
 
 class FilterDialogUser extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+
+    this.state = {
+      accounts: []
+    };
+
     this.routeChange = this.routeChange.bind(this);
   }
 
-  //   routeChange(path) {
-  //     this.props.history.push(path);
-  //   }
+  componentDidMount() {
+    const { lexon } = this.props;
+    const _this = this;
+    if (lexon.userId) {
+      const url = `${config.url.URL_GET_ACCOUNTS}/${lexon.userId}`;
+      fetch(url, {
+        method: "GET"
+      })
+        .then(data => data.json())
+        .then(result => {
+          if (result.status === RESULT_OK) {
+            _this.setState({
+              accounts: result.result.filter(
+                account => account.provider !== PROVIDER
+              )
+            });
+          } else {
+            console.log("error ->", result.despcription);
+          }
+        });
+    }
+  }
 
   routeChange() {
     const { userId } = this.props.lexon;
@@ -33,7 +57,7 @@ class FilterDialogUser extends Component {
       });
     }
 
-    const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;oji
+    const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
     window.open(urlRedirect, "_self");
   }
 
@@ -62,28 +86,34 @@ class FilterDialogUser extends Component {
   }
 
   renderSettings() {
+    const { accounts } = this.state;
     const { userId } = this.props.lexon;
     const displaySettings = userId === null ? false : true;
 
     if (displaySettings) {
       return (
-        <li
-          key="1"
-          className={`${styles["filter-dialog__item"]} ${
-            mainCss["mdc-list-item"]
-          }`}
-          // onClick={() => this.routeChange(`settings`)}
-          onClick={() => this.routeChange()}
-        >
-          <i
-            className={`${styles.check} ${
-              styles["check--active"]
-            } material-icons`}
+        <Fragment>
+          <li
+            key="1"
+            className={`${styles["filter-dialog__item"]} ${
+              mainCss["mdc-list-item"]
+            }`}
+            // onClick={() => this.routeChange(`settings`)}
+            onClick={() => this.routeChange()}
           >
-            build
-          </i>
-          Settings
-        </li>
+            <i
+              className={`${styles.check} ${
+                styles["check--active"]
+              } material-icons`}
+            ></i>
+            Settings
+          </li>
+
+          {accounts.map(account => {
+            return <AccountUser account={account} key={account.email} />;
+          })}
+
+        </Fragment>
       );
     }
     return null;
@@ -100,23 +130,6 @@ class FilterDialogUser extends Component {
       >
         <ul className={`${mainCss["mdc-list"]} ${mainCss["mdc-list--dense"]}`}>
           {this.renderSettings()}
-          {/* <li
-            key="1"
-            className={`${styles["filter-dialog__item"]} ${
-              mainCss["mdc-list-item"]
-            }`}
-            // onClick={() => this.routeChange(`settings`)}
-            onClick={() => this.routeChange()}
-          >
-            <i
-              className={`${styles.check} ${
-                styles["check--active"]
-              } material-icons`}
-            >
-              build
-            </i>
-            Settings
-          </li> */}
 
           <li
             key="2"
@@ -137,23 +150,6 @@ class FilterDialogUser extends Component {
         </ul>
       </div>
     );
-
-    // return (
-    //    <div className="app flex-row align-items-center">
-
-    //                <div xs="6">
-    //            <button color="primary" className="px-4"
-    //                        onClick={this.routeChange}
-    //                    >
-    //                        Login
-    //        </button>
-    //                </div>
-    //                <div xs="6" className="text-right">
-    //                    <button color="link" className="px-0">Forgot password?</button>
-    //                </div>
-
-    //    </div>
-    // );
   }
 }
 
@@ -162,65 +158,3 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps)(FilterDialogUser);
-
-// const mapStateToProps = state => ({
-//   activeMessageFilter: getFromKey(state.application.messageFilterKey)
-// });
-
-// const mapDispatchToProps = dispatch => ({
-//   setMessageFilter: messageFilter =>
-//     dispatch(setMessageFilterKey(messageFilter.key))
-// });
-
-// export default withRouter(FilterDialogUser);
-
-// export const FilterDialog = ({t, visible, activeMessageFilter, setMessageFilter}) =>
-//  <div
-//    className={`${styles['filter-dialog']} ${mainCss['mdc-menu']} ${mainCss['mdc-menu-surface']}
-//    ${visible ? mainCss['mdc-menu-surface--open'] : ''}`}
-//    aria-hidden={!visible}
-//  >
-//    <ul className={`${mainCss['mdc-list']} ${mainCss['mdc-list--dense']}`} >
-//            <li
-//                key='1'
-//                className={`${styles['filter-dialog__item']} ${mainCss['mdc-list-item']}`}
-//                onClick={() => setRedirect()}
-//            >
-//                <i className={`${styles.check} ${styles['check--active']} material-icons`}>
-//                    build
-//            </i>
-//                Settings
-//            </li>
-
-//            <li
-//                key='2'
-//                className={`${styles['filter-dialog__item']} ${mainCss['mdc-list-item']}`}
-//                onClick={() => routeChange()}
-//            >
-//                <i className={`${styles.check} ${styles['check--active']} material-icons`}>
-//                    exit_to_app
-//            </i>
-//                Log out
-//            </li>
-
-//    </ul>
-//    </div>;
-
-//const setRedirect = () => {
-//    return <Redirect to='/settings' />
-//};
-
-//const routeChange = () => {
-//    let path = `newPath`;
-//    this.props.history.push(path);
-//};
-
-//const mapStateToProps = state => ({
-//  activeMessageFilter: getFromKey(state.application.messageFilterKey)
-//});
-
-//const mapDispatchToProps = dispatch => ({
-//  setMessageFilter: messageFilter => dispatch(setMessageFilterKey(messageFilter.key))
-//});
-
-//export default connect(mapStateToProps, mapDispatchToProps)(translate()(FilterDialog));

@@ -186,7 +186,6 @@ export class Main extends Component {
       fetch(url, {
         method: "GET"
       }).then(result => {
-        console.log(result);
         this.props.history.push("/inbox");
       });
     }
@@ -317,7 +316,6 @@ export class Main extends Component {
       method: "GET"
     })
       .then(result => {
-        console.log(result);
         signOut();
       })
       .then(_ => {

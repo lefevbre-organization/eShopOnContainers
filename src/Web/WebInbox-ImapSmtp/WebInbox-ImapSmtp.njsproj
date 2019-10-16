@@ -43,12 +43,17 @@
     <Content Include="client\assets\images\lexon-2.png" />
     <Content Include="client\assets\images\lexon-fake-null.png" />
     <Content Include="client\assets\images\lexon-fake.png" />
+    <Content Include="client\assets\images\logoGoogle.png" />
+    <Content Include="client\assets\images\logoImap.png" />
     <Content Include="client\assets\images\LogoLefebvre.png" />
+    <Content Include="client\assets\images\logoMicrosoft.png" />
     <Content Include="client\assets\images\settings-gears.svg" />
     <Content Include="client\src\apps\database_content.js" />
     <Content Include="client\src\apps\material_title_panel.scss" />
     <Content Include="client\src\apps\calendar_content.js" />
     <Content Include="client\src\apps\lexon_content.js" />
+    <Content Include="client\src\components\account-user\account-user.css" />
+    <Content Include="client\src\components\account-user\account-user.jsx" />
     <Content Include="client\src\components\app.scss" />
     <Content Include="client\src\components\attachment\attachment-card.scss" />
     <Content Include="client\src\components\dialog\single-input-dialog.scss" />
@@ -323,6 +328,7 @@
     <Folder Include="client\assets\locales\es" />
     <Folder Include="client\src" />
     <Folder Include="client\src\apps\" />
+    <Folder Include="client\src\components\account-user\" />
     <Folder Include="client\src\components\main-bar\" />
     <Folder Include="client\src\components\main-bar\__tests__\" />
     <Folder Include="client\src\components\settings\" />

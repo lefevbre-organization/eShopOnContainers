@@ -54,13 +54,7 @@ class UserLexon extends Component {
   }
 
   onSignout() {
-    signOut()
-      .then(_ => {
-        console.log("signOut");
-      })
-      .catch(error => {
-        console.log("Error ->", error);
-      });
+    signOut();
   }
 
   render() {

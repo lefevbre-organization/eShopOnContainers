@@ -3,8 +3,6 @@ const dev = {
     URL_INBOX_GOOGLE: "http://localhost:3001",
     URL_INBOX_OUTLOOK: "http://localhost:3002",
     URL_INBOX_IMAP: "http://localhost:9000",
-    // API_ACCOUNTS: 'https://lefebvre-multichannel-apinode.azurewebsites.net/api/accounts'
-    // API_ACCOUNTS: 'http://localhost:3500/api/accounts'
     API_ACCOUNTS: "http://localhost:60980"
   },
   login: {
@@ -31,11 +29,11 @@ const dev = {
 const prod = {
   url: {
     URL_INBOX_GOOGLE:
-      "https://lefebvre-multichannel-inbox-google.azurewebsites.net",
+      "https://elefebvreoncontainers:8083",
     URL_INBOX_OUTLOOK:
-      "https://lefebvre-multichannel-inbox-graph.azurewebsites.net",
-    URL_INBOX_IMAP: "http://lefebvre.eastus.cloudapp.azure.com",
-    API_ACCOUNTS: "https://lefebvre-multichannel-apinode.azurewebsites.net"
+      "https://lefebvre-multichannel-office365.azurewebsites.net/user",
+    URL_INBOX_IMAP: "https://elefebvreoncontainers:8081",
+    API_ACCOUNTS: "https://elefebvreoncontainers:8086"
   },
   login: {
     URL_ENCRYPTED_USER:
