@@ -64,8 +64,6 @@ namespace Lexon.API.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        #region PublishEvents
-
         private async Task CreateAndPublishIntegrationEventLogEntry(IClientSessionHandle session, IntegrationEvent eventAssoc)
         {
             var eventLogEntry = new IntegrationEventLogEntry(eventAssoc, Guid.NewGuid());
@@ -93,7 +91,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
                     var builder = Builders<LexonUser>.Update;
                     //var builder = Builders<LexonCompany>.Update;
-                    var subitem = new LexonFile
+                    var subitem = new LexonEntityBase
                     {
                         id = (int)idFile,
                         name = nameFile,
@@ -124,7 +122,7 @@ namespace Lexon.API.Infrastructure.Repositories
             return await _context.LexonUsers.Find(filter).SingleAsync();
         }
 
-        public async Task<List<LexonFile>> GetFileListAsync(int pageSize, int pageIndex, string idUser, long idCompany, string search)
+        public async Task<List<LexonEntityBase>> GetEntitiesListAsync(int pageSize, int pageIndex, int idType, string idUser, long idCompany, string search)
         {
             var filterDocuments = FilterDefinition<LexonUser>.Empty;
             //if (!string.IsNullOrEmpty(search))
@@ -160,9 +158,9 @@ namespace Lexon.API.Infrastructure.Repositories
             return filesWithoutSearch.ToList();
         }
 
-        public async Task<List<LexonEntity>> GetClassificationMasterListAsync()
+        public async Task<List<LexonEntityType>> GetClassificationMasterListAsync()
         {
-            var lexonEntities = new List<LexonEntity>();
+            var lexonEntities = new List<LexonEntityType>();
             var filter = Builders<LexonMaster>.Filter.And(Builders<LexonMaster>.Filter.Gte(u => u.version, 9), Builders<LexonMaster>.Filter.Eq(u => u.type, "Entities"));
             var master = await _context.LexonMasters
                 .Find(filter)
@@ -303,39 +301,17 @@ namespace Lexon.API.Infrastructure.Repositories
             var listaActuaciones = new List<LexonActuation>();
             try
             {
-                var options = new AggregateOptions()
-                {
-                    AllowDiskUse = true,
-                    UseCursor = false
-                };
-
-                var array = new BsonArray
-                {
-                    new BsonDocument().Add("idUser", idUser),
-                    new BsonDocument().Add("idNavision", idUser)
-                };
-
-                var arrayOfArrays = new BsonArray(
-                    new List<string>() {
-                        "$companies.list.files.list",
-                        "$companies.list.clients.list",
-                        "$companies.list.opposites.list",
-                        "$companies.list.suppliers.list",
-                        "$companies.list.insurances.list",
-                        "$companies.list.courts.list",
-                        "$companies.list.lawyers.list",
-                        "$companies.list.opposingLawyers.list",
-                        "$companies.list.solicitors.list",
-                        "$companies.list.opposingSolicitors.list",
-                        "$companies.list.notaries.list"
-                    }
-                );
+                var options = new AggregateOptions() { AllowDiskUse = true, UseCursor = false };
 
                 PipelineDefinition<LexonUser, BsonDocument> pipeline = new BsonDocument[]
                     {
                     new BsonDocument("$match", new BsonDocument()
-                        .Add("idUser", idUser)
-                        .Add("$or", array)
+                        //.Add("idUser", idUser)
+                        .Add("$or", new BsonArray
+                                {
+                                    new BsonDocument().Add("idUser", idUser),
+                                    new BsonDocument().Add("idNavision", idUser)
+                                })
                         .Add("companies.list.idCompany", idCompany)
                     ),
                     new BsonDocument("$project", new BsonDocument()
@@ -376,25 +352,40 @@ namespace Lexon.API.Infrastructure.Repositories
                         .Add("companies.list.courts.list.type", "Courts")
                         .Add("companies.list.insurances.list.idType", 11)
                         .Add("companies.list.insurances.list.type", "Insurances")
-                        ),
+                    ),
                     new BsonDocument("$unwind", new BsonDocument()
                         .Add("path", "$companies.list")
-                        .Add("preserveNullAndEmptyArrays", new BsonBoolean(true))),
+                        .Add("preserveNullAndEmptyArrays", new BsonBoolean(true))
+                    ),
                     new BsonDocument("$match", new BsonDocument()
                         .Add("companies.list.idCompany", idCompany)
                     ),
                     new BsonDocument("$project", new BsonDocument()
                         .Add("Classifications", new BsonDocument()
-                            .Add("$setUnion", arrayOfArrays))
-                        ),
+                            .Add("$setUnion", new BsonArray(
+                                    new List<string>() {
+                                        "$companies.list.files.list",
+                                        "$companies.list.clients.list",
+                                        "$companies.list.opposites.list",
+                                        "$companies.list.suppliers.list",
+                                        "$companies.list.insurances.list",
+                                        "$companies.list.courts.list",
+                                        "$companies.list.lawyers.list",
+                                        "$companies.list.opposingLawyers.list",
+                                        "$companies.list.solicitors.list",
+                                        "$companies.list.opposingSolicitors.list",
+                                        "$companies.list.notaries.list"
+                                    }
+                                )))
+                    ),
                     new BsonDocument("$unwind", new BsonDocument()
                         .Add("path", "$Classifications")
                         .Add("preserveNullAndEmptyArrays", new BsonBoolean(true))
-                        ),
+                    ),
                     new BsonDocument("$unwind", new BsonDocument()
                         .Add("path", "$Classifications.mails")
                         .Add("preserveNullAndEmptyArrays", new BsonBoolean(false))
-                        ),
+                    ),
                     new BsonDocument("$match", new BsonDocument()
                         .Add("Classifications.mails", idMail)
                     ),
@@ -405,8 +396,8 @@ namespace Lexon.API.Infrastructure.Repositories
                         .Add("description", "$Classifications.description")
                         .Add("entityIdType", "$Classifications.idType")
                         .Add("entityType", "$Classifications.type")
-                        )
-                    };
+                    )
+                };
 
                 var resultado = await _context.LexonUsers.AggregateAsync(pipeline, options);
 
@@ -430,7 +421,5 @@ namespace Lexon.API.Infrastructure.Repositories
 
             return listaActuaciones;
         }
-
-        #endregion PublishEvents
     }
 }

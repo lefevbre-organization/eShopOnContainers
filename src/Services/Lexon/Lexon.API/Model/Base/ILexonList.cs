@@ -1,6 +1,4 @@
-﻿using MongoDB.Bson;
-
-namespace Lexon.API.Model
+﻿namespace Lexon.API.Model
 {
     internal interface ILexonList<T>
     {

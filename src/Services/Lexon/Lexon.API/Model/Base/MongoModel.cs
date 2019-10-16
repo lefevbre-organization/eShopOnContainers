@@ -3,7 +3,6 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Lexon.API.Model
 {
-
     public abstract class MongoModel
     {
         [BsonExtraElements]
