@@ -1,9 +1,7 @@
-﻿
-namespace Lexon.API.Model
+﻿namespace Lexon.MySql.Model
 {
-    public class JosEntitiesList
+    public class JosEntityList
     {
-
         public JosEntity[] Entities { get; set; }
     }
 }

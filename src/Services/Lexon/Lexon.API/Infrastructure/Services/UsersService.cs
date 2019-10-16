@@ -37,7 +37,33 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<long> AddClassificationToListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType = 1)
         {
-            return await _usersRepository.AddClassificationToListAsync(idUser, idCompany, idMail, idRelated, idClassificationType);
+            long result = 0;
+            try
+            {
+                GetInfoUser(idUser, out string bbdd, out int codeUser);
+                //https://localhost:44393/api/v1/LexonMySql/classifications/add?idType=1&bbdd=lexon_pre_shl_02&idUser=520&idMail=asdasdasdasd&idRelated=111
+                var request = new HttpRequestMessage(HttpMethod.Get,
+                    $"{_settings.Value.LexonMySqlUrl}/classifications/add?idType={idClassificationType}&bbdd={bbdd}&idUser={codeUser}&idMail={idMail}&idRelated={idRelated}");
+
+                using (var response = await _client.SendAsync(request))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        result = await response.Content.ReadAsAsync<int>();
+                        //return result;       //todo update collection
+                        var okMongo = await _usersRepository.AddClassificationToListAsync(idUser, idCompany, idMail, idRelated, idClassificationType);
+                    }
+                    else
+                    {
+                        Console.WriteLine("el servicio devuelve un codigo de error");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"error al obtener datos {ex.Message}");
+            }
+            return result;
         }
 
         //public async Task<long> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "")
@@ -54,7 +80,7 @@ namespace Lexon.Infrastructure.Services
         {
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/entities");
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/entities/masters");
 
                 var entities = new List<LexonEntityType>();
 
@@ -62,7 +88,7 @@ namespace Lexon.Infrastructure.Services
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        foreach (var entity in (await response.Content.ReadAsAsync<JosEntitiesList>()).Entities)
+                        foreach (var entity in (await response.Content.ReadAsAsync<JosEntityTypeList>()).Entities)
                         {
                             entities.Add(new LexonEntityType() { name = entity.name, idEntity = entity.idEntity });
                         }
@@ -114,21 +140,28 @@ namespace Lexon.Infrastructure.Services
             return await _usersRepository.GetCompaniesListAsync(idUser);
         }
 
-        public async Task<List<LexonEntityBase>> GetEntitiesListAsync(int pageSize, int pageIndex, short idType, string idUser, string bbdd, long idCompany, string search)
+        public async Task<List<LexonEntityBase>> GetEntitiesListAsync(int pageSize, int pageIndex, short idType, string idUser, long idCompany, string search)
         {
             try
             {
-                //https://localhost:44393/api/v1/LexonMySql/entities/search?pageSize=10&pageIndex=0&idType=1&bbdd=lexon_pre_shl_02&idUser=520
-                var request = new HttpRequestMessage(HttpMethod.Get, 
-                    $"{_settings.Value.LexonMySqlUrl}/entities/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={idType}&bbdd={bbdd}&idUser={idUser}");
+                GetInfoUser(idUser, out string bbdd, out int codeUser);
 
+                //https://localhost:44393/api/v1/LexonMySql/entities/search?pageSize=10&pageIndex=0&idType=1&bbdd=lexon_pre_shl_02&idUser=520
+                var request = new HttpRequestMessage(HttpMethod.Get,
+                    $"{_settings.Value.LexonMySqlUrl}/entities/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={idType}&bbdd={bbdd}&idUser={codeUser}");
+
+                var entities = new List<LexonEntityBase>();
 
                 using (var response = await _client.SendAsync(request))
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        if(idType == 1)
-                            return await GetFiles(response);
+                        var entityList = await response.Content.ReadAsAsync<JosEntityList>();
+                        foreach (var entity in (entityList.Entities))
+                        {
+                            entities.Add(new LexonEntityBase() { name = entity.code, description = entity.Description, id = entity.idRelated });
+                        }
+                        return entities;       //todo update collection
                     }
                     else
                     {
@@ -143,16 +176,12 @@ namespace Lexon.Infrastructure.Services
             return await _usersRepository.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, idCompany, search);
         }
 
-        private static async Task<List<LexonEntityBase>> GetFiles( HttpResponseMessage response)
+        private void GetInfoUser(string idUser, out string bbdd, out int codeUser)
         {
-            var files = new List<LexonEntityBase>();
-            foreach (var entity in (await response.Content.ReadAsAsync<JosFilesList>()).Entities)
-            {
-                files.Add(new LexonEntityBase() { name = entity.code,  description = entity.Description, id = entity.idFile });
-            }
-            return files;       //todo update collection
+            //todo get bbdd and code from user
+            bbdd = "lexon_pre_shl_02";
+            codeUser = 520;
         }
-
 
         public async Task<List<LexonUser>> GetListUsersAsync(int pageSize, int pageIndex, string idUser)
         {
@@ -173,7 +202,5 @@ namespace Lexon.Infrastructure.Services
         {
             return await _usersRepository.SelectCompanyAsync(idUser, idCompany);
         }
-
-
     }
 }

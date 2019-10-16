@@ -1,10 +1,10 @@
-﻿
-namespace Lexon.API.Model
+﻿namespace Lexon.API.Model
 {
     public class JosEntity
     {
-        public string name { get; set; }
-        public short idEntity { get; set; }
-
+        public string code { get; set; }
+        public string mails { get; set; }
+        public string Description { get; set; }
+        public int idRelated { get; set; }
     }
 }

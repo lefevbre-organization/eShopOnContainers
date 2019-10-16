@@ -38,7 +38,7 @@ namespace Lexon.MySql.Controllers
 
         [HttpGet]
         [Route("entities/masters")]
-        [ProducesResponseType(typeof(JosEntitiesList), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(JosEntityTypeList), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetMasterEntitiesAsync()
 
@@ -51,7 +51,7 @@ namespace Lexon.MySql.Controllers
 
         [HttpGet]
         [Route("entities/search")]
-        [ProducesResponseType(typeof(JosEntitiesList), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(JosEntityList), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> EntitiesAsync([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0, short idType = 1, string bbdd = "lexon_pre_shl_02", string idUser = "520", string search = "")
 
@@ -66,7 +66,7 @@ namespace Lexon.MySql.Controllers
         }
 
         [HttpGet]
-        [Route("classification/add")]
+        [Route("classifications/add")]
         [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddRelationMailAsync(short idType = 1, string bbdd = "lexon_pre_shl_02", string idUser = "520", string idMail = "asdasdasdasd", long idRelated = 111)

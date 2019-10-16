@@ -15,7 +15,7 @@ namespace Lexon.Infrastructure.Services
 
         Task<List<LexonActuation>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail);
 
-        Task<List<LexonEntityBase>> GetEntitiesListAsync(int pageSize, int pageIndex, short idType, string idUser, string bbdd, long idCompany, string search);
+        Task<List<LexonEntityBase>> GetEntitiesListAsync(int pageSize, int pageIndex, short idType, string idUser, long idCompany, string search);
 
         Task<List<LexonEntityType>> GetClassificationMasterListAsync();
 

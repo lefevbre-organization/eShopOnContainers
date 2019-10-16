@@ -1,14 +1,13 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-
-namespace Lexon.API.Model
+﻿namespace Lexon.API.Model
 {
-    public class LexonCompany : MongoModel, ICompany //,IEntity
+    public class LexonCompany : MongoModel
     {
         public long idCompany { get; set; }
 
         public string name { get; set; }
 
         public string description { get; set; }
+
         public string bbdd { get; set; }
 
         public bool selected { get; set; }
@@ -17,7 +16,6 @@ namespace Lexon.API.Model
         public LexonEntityBaseList opposites { get; set; }
         public LexonEntityBaseList insurances { get; set; }
         public LexonEntityBaseList suppliers { get; set; }
-
         public LexonEntityBaseList courts { get; set; }
         public LexonEntityBaseList files { get; set; }
         public LexonEntityBaseList lawyers { get; set; }
@@ -25,6 +23,7 @@ namespace Lexon.API.Model
         public LexonEntityBaseList solicitors { get; set; }
         public LexonEntityBaseList opposingSolicitors { get; set; }
         public LexonEntityBaseList notaries { get; set; }
+
         public LexonFoldersList folders { get; set; }
     }
 }

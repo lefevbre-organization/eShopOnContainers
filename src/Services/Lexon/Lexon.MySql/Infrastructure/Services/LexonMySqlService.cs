@@ -30,12 +30,12 @@ namespace Lexon.MySql.Infrastructure.Services
             return await _lexonRepository.GetCompaniesListAsync(pageSize, pageIndex, idUser);
         }
 
-        public async Task<JosFilesList> GetEntitiesAsync(int pageSize, int pageIndex, short idType, string bbdd, string idUser, string search)
+        public async Task<JosEntityList> GetEntitiesAsync(int pageSize, int pageIndex, short idType, string bbdd, string idUser, string search)
         {
             return await _lexonRepository.SearchEntitiesAsync(pageSize, pageIndex, idType, bbdd, idUser, search);
         }
 
-        public async Task<JosEntitiesList> GetMasterEntitiesAsync()
+        public async Task<JosEntityTypeList> GetMasterEntitiesAsync()
         {
             return await _lexonRepository.GetMasterEntitiesAsync();
         }
