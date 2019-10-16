@@ -15,7 +15,11 @@ const dev = {
     URL_DELETE_ACCOUNT:
       "http://localhost:60980/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider",
     URL_SELECT_ACCOUNT: "http://localhost:3010",
-    URL_GET_ACCOUNTS: "http://localhost:60980/api/v1/accounts/emailuseraccount/getbyuser"
+    URL_GET_ACCOUNTS:
+      "http://localhost:60980/api/v1/accounts/emailuseraccount/getbyuser",
+    URL_MF_GOOGLE: "http://localhost:3001/user",
+    URL_MF_OUTLOOK: "http://localhost:3002/user",
+    URL_MF_IMAP: "http://localhost:9000/user"
   }
 };
 
@@ -29,7 +33,10 @@ const prod = {
       "https://useraccounts.azurewebsites.net/api/accounts/emailuseraccount/deleteaccountbyuserandprovider",
     URL_SELECT_ACCOUNT: "https://lefebvre-approot.azurewebsites.net",
     URL_GET_ACCOUNTS:
-      "https://useraccounts.azurewebsites.net/api/accounts/emailuseraccount"
+      "https://useraccounts.azurewebsites.net/api/accounts/emailuseraccount",
+    URL_MF_GOOGLE: "http://localhost:3001/user",
+    URL_MF_OUTLOOK: "http://localhost:3002/user",
+    URL_MF_IMAP: "http://localhost:9000/user"
   }
 };
 

@@ -43,6 +43,9 @@
     <Content Include="public\assets\img\lefebvre-logo.png" />
     <Content Include="public\assets\img\logo-elderecho.png" />
     <Content Include="public\assets\img\logoGoogle-mini.png" />
+    <Content Include="public\assets\img\logoGoogle.png" />
+    <Content Include="public\assets\img\logoImap.png" />
+    <Content Include="public\assets\img\logoMicrosoft.png" />
     <Content Include="public\assets\img\menu.png" />
     <Content Include="public\assets\img\microservices.png" />
     <Content Include="public\assets\img\react-template.png" />
@@ -72,6 +75,8 @@
     <Content Include="src\components\header\header.scss" />
     <Content Include="src\components\main\main-docks\main_bot.scss" />
     <Content Include="src\components\main\main.scss" />
+    <Content Include="src\components\menu-user\account-user\account-user.css" />
+    <Content Include="src\components\menu-user\account-user\account-user.jsx" />
     <Content Include="src\components\menu-user\menu-user.css" />
     <Content Include="src\components\menu-user\menu-user.jsx" />
     <Content Include="src\components\sidebar\sidebar.scss" />
@@ -148,6 +153,7 @@
     <Folder Include="src\components\main" />
     <Folder Include="src\components\main\main-docks\" />
     <Folder Include="src\components\menu-user\" />
+    <Folder Include="src\components\menu-user\account-user\" />
     <Folder Include="src\components\not-found" />
     <Folder Include="src\components\sidebar" />
     <Folder Include="src\components\signout" />
