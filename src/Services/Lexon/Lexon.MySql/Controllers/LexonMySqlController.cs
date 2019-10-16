@@ -72,7 +72,7 @@ namespace Lexon.MySql.Controllers
 
             var items = await _lexonService.GetEntitiesAsync(pageSize, pageIndex, idType, bbdd, idUser, search);
             return items == null
-                ? (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment")
+                ? (IActionResult)BadRequest("it´s impossible search entities")
                 : Ok(items);
 
         }
@@ -88,8 +88,8 @@ namespace Lexon.MySql.Controllers
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated and bbdd to create an actuation with the mail");
 
             var result = await _lexonService.AddRelationMailAsync(idType, bbdd, idUser, idMail, idRelated);
-            return  result < 1
-                ? (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment")
+            return  result < 0
+                ? (IActionResult)BadRequest("it´s impossible search entities")
                 : Ok(result);
 
         }

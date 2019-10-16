@@ -69,6 +69,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.SearchEntities, conn))
                     {
                         command.Parameters.Add(new MySqlParameter("P_FILTER", MySqlDbType.String) { Value = filtro });
+                        command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
                         command.CommandType = CommandType.StoredProcedure;
                         using (var reader = await command.ExecuteReaderAsync())
@@ -138,9 +139,11 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     {
                         command.Parameters.Add(new MySqlParameter("P_JSON", MySqlDbType.String) { Value = filtro });
                         command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = _settings.Value.UserApp });
+                        command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
                         command.CommandType = CommandType.StoredProcedure;
                         result = await command.ExecuteNonQueryAsync();
+                        result = (int)command.Parameters["P_IDERROR"].Value;
 
                     }
                 }
@@ -150,7 +153,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 }
             }
 
-            return files;
+            return result;
         }
     }
 }

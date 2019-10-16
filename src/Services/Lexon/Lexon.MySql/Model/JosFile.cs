@@ -6,6 +6,6 @@ namespace Lexon.MySql.Model
         public string code { get; set; }
         public string mails { get; set; }
         public string Description { get; set; }
-        public long idFile { get; set; }
+        public int idFile { get; set; }
     }
 }
