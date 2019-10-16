@@ -150,10 +150,9 @@ namespace Lexon.API.Controllers
             return Ok(result);
         }
 
-        // GET api/v1/[controller]/classifications[?pageSize=3&pageIndex=10]
         [HttpGet]
-        [Route("classifications/types")]
-        [ProducesResponseType(typeof(IEnumerable<LexonEntity>), (int)HttpStatusCode.OK)]
+        [Route("entities/types")]
+        [ProducesResponseType(typeof(IEnumerable<LexonEntityType>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ClassificationsTypesAsync()
 
@@ -235,59 +234,48 @@ namespace Lexon.API.Controllers
         }
 
         [HttpGet]
-        [Route("files")]
-        [ProducesResponseType(typeof(PaginatedItemsViewModel<LexonFile>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(IEnumerable<LexonFile>), (int)HttpStatusCode.OK)]
+        [Route("entities")]
+        [ProducesResponseType(typeof(PaginatedItemsViewModel<LexonEntityBase>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IEnumerable<LexonEntityBase>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> FilesAsync([FromQuery]string idUser, [FromQuery]long idCompany, string search = null, [FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)
+        public async Task<IActionResult> EntitiesAsync([FromQuery]string idUser, [FromQuery]long idCompany, string bbdd = "lexon_pre_shl_02", [FromQuery] short idType = 1, string search = null, [FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)
 
         {
-            //var listLexonFiles = new List<LexonFile>
-            //{
-            //    new LexonFile { IdFile = 345556, Name = "EXP-345556", Description = "Expediente 345556" },
-            //    new LexonFile { IdFile = 345557, Name = "EXP-345557", Description = "Expediente 345557" },
-            //    new LexonFile { IdFile = 345558, Name = "EXP-345558", Description = "Expediente 345558" },
-            //    new LexonFile { IdFile = 345559, Name = "EXP-345559", Description = "Expediente 345559" },
-            //    new LexonFile { IdFile = 345560, Name = "EXP-345560", Description = "Expediente 345560" }
-            //};
-
-            //var listLexonFilesJson = JsonConvert.SerializeObject(listLexonFiles);
-            //return Ok(listLexonFilesJson);
 
             if (!string.IsNullOrEmpty(idUser) || idCompany <= 0)
             {
-                var itemsByUser = await _usersService.GetFileListAsync(pageSize, pageIndex, idUser, idCompany, search);
+                var itemsByUser = await _usersService.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, bbdd, idCompany, search);
                 return !itemsByUser.Any()
                     ? (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment")
                     : Ok(itemsByUser);
             }
 
-            var itemsOnPage = await _usersService.GetFileListAsync(pageSize, pageIndex, idUser, idCompany, search);
+            var itemsOnPage = await _usersService.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, bbdd, idCompany, search);
             var totalItems = itemsOnPage.Count;
 
-            var model = new PaginatedItemsViewModel<LexonFile>(pageIndex, pageSize, totalItems, itemsOnPage);
+            var model = new PaginatedItemsViewModel<LexonEntityBase>(pageIndex, pageSize, totalItems, itemsOnPage);
             return Ok(model);
         }
 
-        [HttpGet]
-        [Route("files/add")]
-        [ProducesResponseType(typeof(long), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddFilesAsync([FromQuery]string idUser, [FromQuery]long idCompany, [FromQuery]long idFile, [FromQuery]string nameFile, [FromQuery]string descriptionFile = "")
+        //[HttpGet]
+        //[Route("files/add")]
+        //[ProducesResponseType(typeof(long), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        //public async Task<IActionResult> AddFilesAsync([FromQuery]string idUser, [FromQuery]long idCompany, [FromQuery]long idFile, [FromQuery]string nameFile, [FromQuery]string descriptionFile = "")
 
-        {
-            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(nameFile))
-                return (IActionResult)BadRequest("values invalid. Must be a valid user, idFile, and name for create the file");
+        //{
+        //    if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(nameFile))
+        //        return (IActionResult)BadRequest("values invalid. Must be a valid user, idFile, and name for create the file");
 
-            var result = await _usersService.AddFileToListAsync(idUser, idCompany, idFile, nameFile, descriptionFile);
+        //    var result = await _usersService.AddFileToListAsync(idUser, idCompany, idFile, nameFile, descriptionFile);
 
-            if (result != 1)
-            {
-                return BadRequest();
-            }
+        //    if (result != 1)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            return Ok(result);
-        }
+        //    return Ok(result);
+        //}
 
         [HttpGet]
         [Route("items")]

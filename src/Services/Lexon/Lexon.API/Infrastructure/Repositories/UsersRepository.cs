@@ -64,7 +64,6 @@ namespace Lexon.API.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        #region PublishEvents
 
         private async Task CreateAndPublishIntegrationEventLogEntry(IClientSessionHandle session, IntegrationEvent eventAssoc)
         {
@@ -93,7 +92,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
                     var builder = Builders<LexonUser>.Update;
                     //var builder = Builders<LexonCompany>.Update;
-                    var subitem = new LexonFile
+                    var subitem = new LexonEntityBase
                     {
                         id = (int)idFile,
                         name = nameFile,
@@ -124,7 +123,7 @@ namespace Lexon.API.Infrastructure.Repositories
             return await _context.LexonUsers.Find(filter).SingleAsync();
         }
 
-        public async Task<List<LexonFile>> GetFileListAsync(int pageSize, int pageIndex, string idUser, long idCompany, string search)
+        public async Task<List<LexonEntityBase>> GetEntitiesListAsync(int pageSize, int pageIndex, int idType, string idUser, long idCompany, string search)
         {
             var filterDocuments = FilterDefinition<LexonUser>.Empty;
             //if (!string.IsNullOrEmpty(search))
@@ -160,9 +159,9 @@ namespace Lexon.API.Infrastructure.Repositories
             return filesWithoutSearch.ToList();
         }
 
-        public async Task<List<LexonEntity>> GetClassificationMasterListAsync()
+        public async Task<List<LexonEntityType>> GetClassificationMasterListAsync()
         {
-            var lexonEntities = new List<LexonEntity>();
+            var lexonEntities = new List<LexonEntityType>();
             var filter = Builders<LexonMaster>.Filter.And(Builders<LexonMaster>.Filter.Gte(u => u.version, 9), Builders<LexonMaster>.Filter.Eq(u => u.type, "Entities"));
             var master = await _context.LexonMasters
                 .Find(filter)
@@ -431,6 +430,5 @@ namespace Lexon.API.Infrastructure.Repositories
             return listaActuaciones;
         }
 
-        #endregion PublishEvents
     }
 }

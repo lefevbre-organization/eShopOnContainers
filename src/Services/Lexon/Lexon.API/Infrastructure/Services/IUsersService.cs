@@ -15,14 +15,14 @@ namespace Lexon.Infrastructure.Services
 
         Task<List<LexonActuation>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail);
 
-        Task<List<LexonFile>> GetFileListAsync(int pageSize, int pageIndex, string idUser, long idCompany, string search);
+        Task<List<LexonEntityBase>> GetEntitiesListAsync(int pageSize, int pageIndex, short idType, string idUser, string bbdd, long idCompany, string search);
 
-        Task<List<LexonEntity>> GetClassificationMasterListAsync();
+        Task<List<LexonEntityType>> GetClassificationMasterListAsync();
 
         Task<long> AddClassificationToListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType = 1);
         Task<long> RemoveClassificationFromListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType = 1);
 
-        Task<long> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "");
+        //Task<long> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "");
 
     }
 }

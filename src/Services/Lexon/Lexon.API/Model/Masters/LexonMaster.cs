@@ -4,7 +4,7 @@ using MongoDB.Bson.Serialization.Attributes;
 namespace Lexon.API.Model
 {
     [BsonIgnoreExtraElements]
-    public class LexonMaster: MongoModel, ILexonList<LexonEntity>
+    public class LexonMaster: MongoModel, ILexonList<LexonEntityType>
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -13,6 +13,6 @@ namespace Lexon.API.Model
         public short version { get; set; }
 
         public long timeStamp { get; set; }
-        public LexonEntity[] list { get; set; }
+        public LexonEntityType[] list { get; set; }
     }
 }

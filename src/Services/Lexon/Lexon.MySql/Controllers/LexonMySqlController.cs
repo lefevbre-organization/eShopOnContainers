@@ -27,31 +27,20 @@ namespace Lexon.MySql.Controllers
         public async Task<IActionResult> CompaniesAsync([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0, string idUser = "E1621396")
 
         {
-            //var companies = new List<LexonCompany> {
-            //    new LexonCompany { IdCompany = 1, Name = "Abogados de Atocha, S.L." },
-            //    new LexonCompany { IdCompany = 2, Name = "Servicios Jurídicos Arganzuela" },
-            //    new LexonCompany { IdCompany = 3, Name = "Barconsa Asesores" }
-            //};
+            if (string.IsNullOrEmpty(idUser))
+                return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
-            //var companiesJson = JsonConvert.SerializeObject(companies);
-            //return Ok(companiesJson);
-
-            if (!string.IsNullOrEmpty(idUser))
-            {
-                var itemsByUser = await _lexonService.GetCompaniesFromUserAsync(pageSize, pageIndex, idUser);
-                return itemsByUser == null
-                    ? (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment")
-                    : Ok(itemsByUser);
-            }
-
-            return BadRequest("Error");
+            var itemsByUser = await _lexonService.GetCompaniesFromUserAsync(pageSize, pageIndex, idUser);
+            return itemsByUser == null
+                ? (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment")
+                : Ok(itemsByUser);
         }
 
         [HttpGet]
-        [Route("entities")]
+        [Route("entities/masters")]
         [ProducesResponseType(typeof(JosEntitiesList), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> EntitiesAsync()
+        public async Task<IActionResult> GetMasterEntitiesAsync()
 
         {
             var items = await _lexonService.GetMasterEntitiesAsync();
@@ -61,7 +50,7 @@ namespace Lexon.MySql.Controllers
         }
 
         [HttpGet]
-        [Route("files")]
+        [Route("entities/search")]
         [ProducesResponseType(typeof(JosEntitiesList), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> EntitiesAsync([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0, short idType = 1, string bbdd = "lexon_pre_shl_02", string idUser = "520", string search = "")
@@ -74,7 +63,6 @@ namespace Lexon.MySql.Controllers
             return items == null
                 ? (IActionResult)BadRequest("it´s impossible search entities")
                 : Ok(items);
-
         }
 
         [HttpGet]
@@ -88,10 +76,9 @@ namespace Lexon.MySql.Controllers
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated and bbdd to create an actuation with the mail");
 
             var result = await _lexonService.AddRelationMailAsync(idType, bbdd, idUser, idMail, idRelated);
-            return  result < 0
+            return result < 0
                 ? (IActionResult)BadRequest("it´s impossible search entities")
                 : Ok(result);
-
         }
     }
 }

@@ -40,23 +40,23 @@ namespace Lexon.Infrastructure.Services
             return await _usersRepository.AddClassificationToListAsync(idUser, idCompany, idMail, idRelated, idClassificationType);
         }
 
-        public async Task<long> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "")
-        {
-            return await _usersRepository.AddFileToListAsync(idUser, idCompany, idFile, nameFile, descriptionFile);
-        }
+        //public async Task<long> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "")
+        //{
+        //    return await _usersRepository.AddFileToListAsync(idUser, idCompany, idFile, nameFile, descriptionFile);
+        //}
 
         public async Task<List<LexonActuation>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail)
         {
             return await _usersRepository.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
         }
 
-        public async Task<List<LexonEntity>> GetClassificationMasterListAsync()
+        public async Task<List<LexonEntityType>> GetClassificationMasterListAsync()
         {
             try
             {
                 var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/entities");
 
-                var entities = new List<LexonEntity>();
+                var entities = new List<LexonEntityType>();
 
                 using (var response = await _client.SendAsync(request))
                 {
@@ -64,7 +64,7 @@ namespace Lexon.Infrastructure.Services
                     {
                         foreach (var entity in (await response.Content.ReadAsAsync<JosEntitiesList>()).Entities)
                         {
-                            entities.Add(new LexonEntity() { name = entity.name, idEntity = entity.idEntity });
+                            entities.Add(new LexonEntityType() { name = entity.name, idEntity = entity.idEntity });
                         }
                         return entities;       //todo update collection
                     }
@@ -114,10 +114,45 @@ namespace Lexon.Infrastructure.Services
             return await _usersRepository.GetCompaniesListAsync(idUser);
         }
 
-        public async Task<List<LexonFile>> GetFileListAsync(int pageSize, int pageIndex, string idUser, long idCompany, string search)
+        public async Task<List<LexonEntityBase>> GetEntitiesListAsync(int pageSize, int pageIndex, short idType, string idUser, string bbdd, long idCompany, string search)
         {
-            return await _usersRepository.GetFileListAsync(pageSize, pageIndex, idUser, idCompany, search);
+            try
+            {
+                //https://localhost:44393/api/v1/LexonMySql/entities/search?pageSize=10&pageIndex=0&idType=1&bbdd=lexon_pre_shl_02&idUser=520
+                var request = new HttpRequestMessage(HttpMethod.Get, 
+                    $"{_settings.Value.LexonMySqlUrl}/entities/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={idType}&bbdd={bbdd}&idUser={idUser}");
+
+
+                using (var response = await _client.SendAsync(request))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        if(idType == 1)
+                            return await GetFiles(response);
+                    }
+                    else
+                    {
+                        Console.WriteLine("el servicio devuelve un codigo de error");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"error al obtener datos {ex.Message}");
+            }
+            return await _usersRepository.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, idCompany, search);
         }
+
+        private static async Task<List<LexonEntityBase>> GetFiles( HttpResponseMessage response)
+        {
+            var files = new List<LexonEntityBase>();
+            foreach (var entity in (await response.Content.ReadAsAsync<JosFilesList>()).Entities)
+            {
+                files.Add(new LexonEntityBase() { name = entity.code,  description = entity.Description, id = entity.idFile });
+            }
+            return files;       //todo update collection
+        }
+
 
         public async Task<List<LexonUser>> GetListUsersAsync(int pageSize, int pageIndex, string idUser)
         {
@@ -138,5 +173,7 @@ namespace Lexon.Infrastructure.Services
         {
             return await _usersRepository.SelectCompanyAsync(idUser, idCompany);
         }
+
+
     }
 }
