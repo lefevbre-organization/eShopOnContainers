@@ -20,6 +20,11 @@ namespace Lexon.MySql.Infrastructure.Services
             _lexonRepository = lexonRepository ?? throw new ArgumentNullException(nameof(lexonRepository));
         }
 
+        public async Task<int> AddRelationMailAsync(short idType, string bbdd, string idUser, string idMail, long idRelated)
+        {
+            return await _lexonRepository.AddRelationMailAsync(idType, bbdd, idUser, idMail, idRelated);
+        }
+
         public async Task<JosUserCompanies> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser)
         {
             return await _lexonRepository.GetCompaniesListAsync(pageSize, pageIndex, idUser);

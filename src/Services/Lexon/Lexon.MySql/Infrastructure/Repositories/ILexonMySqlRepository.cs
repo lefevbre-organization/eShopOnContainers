@@ -9,5 +9,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
         Task<JosEntitiesList> GetMasterEntitiesAsync();
 
         Task<JosFilesList> SearchEntitiesAsync(int pageSize, int pageIndex, short idType, string bbdd, string idUser, string search);
+        Task<int> AddRelationMailAsync(short idType, string bbdd, string idUser, string idMail, long idRelated);
     }
 }

@@ -120,5 +120,37 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return companies;
         }
 
+        public async Task<int> AddRelationMailAsync(short idType, string bbdd, string idUser, string idMail, long idRelated)
+        {
+            int result = 0;
+            var filtro = 
+                $"{{\"BBDD\":\"{bbdd}\",\"Date\":\"2019-10-10\"," +
+                $"\"Subject\":\"Test asociacion actuacion email CONECTA\"," +
+                $" \"Body\":\"descripcion nueva actuacion\", \"Uid\":\"{idMail}\"," +
+                $"\"IdUser\":\"{_settings.Value.UserApp}\", \"IdActionRelationType\":{idType},\"IdRelation\":{idRelated}}}"; 
+
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddRelation, conn))
+                    {
+                        command.Parameters.Add(new MySqlParameter("P_JSON", MySqlDbType.String) { Value = filtro });
+                        command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = _settings.Value.UserApp });
+                        command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
+                        command.CommandType = CommandType.StoredProcedure;
+                        result = await command.ExecuteNonQueryAsync();
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.Write(ex.Message);
+                }
+            }
+
+            return files;
+        }
     }
 }
