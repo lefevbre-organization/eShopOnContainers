@@ -73,20 +73,20 @@ header .tools-bar a:hover {
 
 /* Form components: BOC */
 input[type="checkbox"] {
-	position: absolute !important;
-	/* width: 1px;
+  position: absolute !important;
+  /* width: 1px;
 	height: 1px; */
-	overflow: hidden;
-	/* clip: rect(1px, 1px, 1px, 1px); */
-	font-size: .1em;
+  overflow: hidden;
+  /* clip: rect(1px, 1px, 1px, 1px); */
+  font-size: 0.1em;
 }
 input[type="radio"] {
-	position: absolute !important;
-	width: 1px;
-	height: 1px;
-	overflow: hidden;
-	clip: rect(1px, 1px, 1px, 1px);
-	font-size: .1em;
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  font-size: 0.1em;
 }
 input[type="checkbox"] + label,
 input[type="radio"] + label {
@@ -1229,4 +1229,16 @@ input[type="radio"]:checked + label:after {
 
 .type-name {
   margin-left: 10px;
+}
+
+.lidropdownitem {
+  padding: 10px;
+}
+
+.dropdownitem {
+  padding: 10px;
+}
+
+.email {
+  padding: 10px;
 }

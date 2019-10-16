@@ -12,7 +12,6 @@ import {
 } from "reactstrap";
 import { Nav, NavItem, NavLink } from "reactstrap";
 import { connect } from "react-redux";
-
 import { config } from "../../constants";
 import MenuUser from "../menu-user/menu-user";
 
@@ -123,9 +122,9 @@ export class Header extends PureComponent {
                         <Link to="/inbox"><img className="logo-ext" border="0" alt="otulook" src="assets/img/gmail.png"></img></Link>                       
                     </div>*/}
 
-          <MenuUser 
-            picUrl={picUrl} 
-            email={email} 
+          <MenuUser
+            picUrl={picUrl}
+            email={email}
             fullName={fullName}
             onSignout={this.props.onSignout}
           />
