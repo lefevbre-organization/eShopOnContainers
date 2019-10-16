@@ -71,7 +71,7 @@ class MenuUser extends Component {
 
   render() {
     const { dropdownOpen, accounts } = this.state;
-    const { picUrl, email, fullName } = this.props;
+    const { picUrl, email, fullName, onSignout } = this.props;
 
     return (
       <div className="menu-user">
@@ -83,24 +83,28 @@ class MenuUser extends Component {
           </NavItem>
           <Dropdown nav isOpen={dropdownOpen} toggle={this.toggle}>
             <DropdownToggle nav>
-              <img className="mx-2 profile-pic" src={picUrl} alt="" />
+              <img
+                className="mx-2 profile-pic img-circle"
+                src={picUrl}
+                alt=""
+              />
             </DropdownToggle>
             <DropdownMenu right>
               <DropdownItem header tag="div" className="text-center">
                 <strong title={email}>{fullName}</strong>
               </DropdownItem>
               <DropdownItem divider />
-
               <DropdownItem onClick={this._handleOnClick}>
                 <i className="fa fa-shield"></i> Settings
               </DropdownItem>
+              <DropdownItem divider />
 
               {accounts.map(account => {
                 return <AccountUser account={account} key={account.email} />;
               })}
 
               <DropdownItem divider />
-              <DropdownItem onClick={this.props.onSignout}>
+              <DropdownItem onClick={onSignout}>
                 <i className="fa fa-lock"></i> Logout
               </DropdownItem>
             </DropdownMenu>
