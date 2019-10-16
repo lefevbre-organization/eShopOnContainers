@@ -1,0 +1,63 @@
+version: '3'
+
+services:
+  reverse-proxy:
+    image: traefik:1.7.13
+    command: --api --docker
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  isotope-server:
+    image: elefebvreoncontainers/imapsmtp.client:server-latest
+    ports:
+      - "9010:9010"
+    labels:
+      - traefik.backend=lefebvre-imap-smtp-server
+      - "traefik.frontend.rule=PathPrefixStrip:/api/"
+
+  isotope-client:
+    image: elefebvreoncontainers/imapsmtp.client:client-latest
+    ports:
+      - "8081:80"
+    labels:
+      - traefik.backend=lefebvre-imap-smtp-client
+      - "traefik.frontend.rule=PathPrefixStrip:/"
+      
+  Portal-client:
+    image: elefebvreoncontainers/portal.client:latest
+    ports:
+      - "8082:80"      
+    labels:
+      - Lefebvre-Portal-client    
+      
+  Google-client:
+    image: elefebvreoncontainers/google.client:latest
+    ports:
+      - "8083:80"     
+    labels:
+      - Lefebvre-Google-client
+      
+  Office365-client:
+    image: elefebvreoncontainers/office365.client:latest
+    ports:
+      - "8084:80"      
+    labels:
+      - Lefebvre-Office365-client    
+      
+  Portal-client:
+    image: elefebvreoncontainers/account.client:latest
+    ports:
+      - "8085:80"      
+    labels:
+      - Lefebvre-Account-client   
+      
+  LexOn-client:
+    image: elefebvreoncontainers/lexon.client:latest
+    ports:
+      - "8086:80"      
+    labels:
+      - Lefebvre-lexon-client    
