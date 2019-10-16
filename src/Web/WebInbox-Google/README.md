@@ -68,17 +68,17 @@ Lefebvre Google inbox app CI is bassed on DevOps Azure pipeline.
 ## Docker:
 
 to create image:
-$ docker build . -t google.docker
+$ docker build . -t google.client
 
 To check that run:
 $ docker images
 
 Container run:
-$ docker run -p 8001:80 react-google-docker and navigate to http://localhost:8001
+$ docker run -p 8001:80 google.client and navigate to http://localhost:8001
 
 or
 
-$ docker run -p 80:80 react-google-docker and navigate to 192.168.99.100 or domain name
+$ docker run -p 80:80 google.client and navigate to 192.168.99.100 or domain name
 
 ## Docker Publish:
 
