@@ -10,7 +10,7 @@
         },
         {
           "Host": "localhost",
-          "Port": 62799
+          "Port": 4000
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/lex/{everything}",
@@ -26,7 +26,7 @@
         },
         {
           "Host": "localhost",
-          "Port": 44393
+          "Port": 4001
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/mysql/{everything}",
@@ -37,12 +37,12 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "emailuser.api",
+          "Host": "account.api",
           "Port": 80
         },
         {
           "Host": "localhost",
-          "Port": 64755
+          "Port": 4002
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/accounts/{everything}",

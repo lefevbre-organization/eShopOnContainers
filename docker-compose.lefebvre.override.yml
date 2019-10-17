@@ -13,31 +13,36 @@ services:
     ports:
       - "5340:80"
 
-  nosql.data:
+#  nosql.data:
+#    ports:
+#      - "27017:27017"  # Important: In a production environment your should remove the external port
+#
+#  mongo-seed: 
+#    build: ./mongo-seed
+#    network_mode: host
+#    restart: on-failure
+#    depends_on:
+#      - nosql.data
+
+#  rabbitmq:
+#    ports:
+#      - "15672:15672"  # Important: In a production environment your should remove the external port
+#      - "5672:5672"    # Important: In a production environment your should remove the external port
+
+  lexon.mysql.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_URLS=http://0.0.0.0:80
     ports:
-      - "27017:27017"  # Important: In a production environment your should remove the external port
+      - "4000:80"   # Important: In a production environment your should remove the external port . kept here for microservice debugging purposes. 
+                    # The API Gateway redirects and access through the internal port (80). 
 
-  mongo-seed: 
-    build: ./mongo-seed
-    network_mode: host
-    restart: on-failure
-    depends_on:
-      - nosql.data
-
-  rabbitmq:
-    ports:
-      - "15672:15672"  # Important: In a production environment your should remove the external port
-      - "5672:5672"    # Important: In a production environment your should remove the external port
-
-#  lexon.api:
-#    environment:
-#      - ASPNETCORE_ENVIRONMENT=Development
-#      - ASPNETCORE_URLS=http://0.0.0.0:80
+  lexon.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_URLS=http://0.0.0.0:80
 #      - ConnectionString=${ESHOP_AZURE_NOSQL_DB}
 #      - Database=LexonApiDB
-#      - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
-#      - EventBusUserName=${ESHOP_SERVICE_BUS_PASSWORD}
-#      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD}
 #      - EventBus__username=${ESHOP_SERVICE_BUS_USERNAME}      
 #      - EventBus__password=${ESHOP_SERVICE_BUS_PASSWORD}      
 #      - EventBus__hostname=${ESHOP_SERVICE_BUS_HOSTNAME}      
@@ -48,19 +53,17 @@ services:
 #      - OrchestratorType=${ORCHESTRATOR_TYPE}
 #      - UseLoadTest=${USE_LOADTEST}
 #
-#    ports:
-#      - "5301:80"   # Important: In a production environment your should remove the external port (5203) kept here for microservice debugging purposes. 
-#                    # The API Gateway redirects and access through the internal port (80). 
-#
-#  emailuser.api:
-#    environment:
-#      - ASPNETCORE_ENVIRONMENT=Development
-#      - ASPNETCORE_URLS=http://0.0.0.0:80
+    ports:
+      - "4001:80"   # Important: In a production environment your should remove the external port . kept here for microservice debugging purposes. 
+                    # The API Gateway redirects and access through the internal port (80). 
+
+
+  account.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_URLS=http://0.0.0.0:80
 #      - ConnectionString=${ESHOP_AZURE_NOSQL_DB}
 #      - Database=users-accounts
-#      - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
-#      - EventBusUserName=${ESHOP_SERVICE_BUS_PASSWORD}
-#      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD}
 #      - EventBus__username=${ESHOP_SERVICE_BUS_USERNAME}      
 #      - EventBus__password=${ESHOP_SERVICE_BUS_PASSWORD}      
 #      - EventBus__hostname=${ESHOP_SERVICE_BUS_HOSTNAME}      
@@ -71,30 +74,30 @@ services:
 #      - OrchestratorType=${ORCHESTRATOR_TYPE}
 #      - UseLoadTest=${USE_LOADTEST}
 #
-#    ports:
-#      - "5302:80"   # Important: In a production environment your should remove the external port (5203) kept here for microservice debugging purposes. 
-#                    # The API Gateway redirects and access through the internal port (80).
+    ports:
+      - "4002:80"   # Important: In a production environment your should remove the external port kept here for microservice debugging purposes. 
+                    # The API Gateway redirects and access through the internal port (80).
 
-#  lexonapigw:
-#    environment:
-#      - ASPNETCORE_ENVIRONMENT=Development
-#      - LexonUrlHC=http://lexon.api/hc
-#      - EmailUserUrlHC=http://emailuser.api/hc
-#
-#    ports:
-#      - "5401:80"   
-#    volumes:
-#      - ./src/ApiGateways/Web.Bff.Lexon/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
-#
-#  emailuserapigw:
-#    environment:
-#      - ASPNETCORE_ENVIRONMENT=Development
-#      - LexonUrlHC=http://lexon.api/hc
-#      - EmailUserUrlHC=http://emailuser.api/hc
-#    ports:
-#      - "5402:80"   
-#    volumes:
-#      - ./src/ApiGateways/Web.Bff.EmailUser/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
+  lexonapigw:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - LexonUrlHC=http://lexon.api/hc
+      - EmailUserUrlHC=http://emailuser.api/hc
+
+    ports:
+      - "4003:80"   
+    volumes:
+      - ./src/ApiGateways/Web.Bff.Lexon/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
+
+  accountgw:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - LexonUrlHC=http://lexon.api/hc
+      - EmailUserUrlHC=http://emailuser.api/hc
+    ports:
+      - "4004:80"   
+    volumes:
+      - ./src/ApiGateways/Web.Bff.Account/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
 
 #  webstatus:
 #    environment:

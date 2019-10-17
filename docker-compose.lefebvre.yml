@@ -5,49 +5,42 @@ services:
   seq:
     image: datalust/seq:latest
 
-  nosql.data:
-    image: mongo
+  lexon.mysql.api:
+    image: ${REGISTRY:-elefebvreoncontainers}/lexon.mysql.api:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Services/Lexon/Lexon.MySql/Dockerfile    
 
-  rabbitmq:
-    image: rabbitmq:3-management-alpine
 
-#  lexon.api:
-#    image: ${REGISTRY:-paconaf}/lexon.api:${PLATFORM:-linux}-${TAG:-latest}
-#    build:
-#      context: .
-#      dockerfile: src/Services/Lexon/Lexon.API/Dockerfile    
-#    depends_on:
-#      - nosql.data
-#      - rabbitmq
-#
-#  emailuser.api:
-#    image: ${REGISTRY:-paconaf}/emailuser.api:${PLATFORM:-linux}-${TAG:-latest}
-#    build:
-#      context: .
-#      dockerfile: src/Services/Account/Account.API/Dockerfile
-#    depends_on:
-#      - nosql.data
-#      - rabbitmq
+  lexon.api:
+    image: ${REGISTRY:-elefebvreoncontainers}/lexon.api:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Services/Lexon/Lexon.API/Dockerfile    
+    depends_on:
+      - lexon.mysql.api
 
-#  lexonapigw:
-#    image: ${REGISTRY:-paconaf}/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
-#    build:
-#      context: .
-#      dockerfile: src/ApiGateways/ApiGw-Lefebvre/Dockerfile
-#    depends_on:
-#      - nosql.data
-#      - rabbitmq
-#      - lexon.api
-#
-#  emailuserapigw:
-#    image: ${REGISTRY:-paconaf}/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
-#    build:
-#      context: .
-#      dockerfile: src/ApiGateways/ApiGw-Lefebvre/Dockerfile
-#    depends_on:
-#      - nosql.data
-#      - rabbitmq
-#      - emailuser.api
+  account.api:
+    image: ${REGISTRY:-elefebvreoncontainers}/account.api:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Services/Account/Account.API/Dockerfile
+
+  lexonapigw:
+    image: ${REGISTRY:-elefebvreoncontainers}/lefebvre.gw:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/ApiGateways/ApiGw-Lefebvre/Dockerfile
+    depends_on:
+      - lexon.api
+
+  accountgw:
+    image: ${REGISTRY:-elefebvreoncontainers}/lefebvre.gw:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/ApiGateways/ApiGw-Lefebvre/Dockerfile
+    depends_on:
+      - account.api
 
 #  webstatus:
 #    image: ${REGISTRY:-paconaf}/webstatus:${PLATFORM:-linux}-${TAG:-latest}

@@ -71,9 +71,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web.Bff.Lexon", "Web.Bff.Le
 		src\ApiGateways\Web.Bff.Lexon\apigw\configuration.json = src\ApiGateways\Web.Bff.Lexon\apigw\configuration.json
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web.Bff.EmailUser", "Web.Bff.EmailUser", "{C3F52A18-4960-4DE1-B7CF-2DFE1EBA5438}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web.Bff.Account", "Web.Bff.Account", "{C3F52A18-4960-4DE1-B7CF-2DFE1EBA5438}"
 	ProjectSection(SolutionItems) = preProject
-		src\ApiGateways\Web.Bff.EmailUser\apigw\configuration.json = src\ApiGateways\Web.Bff.EmailUser\apigw\configuration.json
+		src\ApiGateways\Web.Bff.Account\apigw\configuration.json = src\ApiGateways\Web.Bff.Account\apigw\configuration.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApiGw-Lefebvre", "src\ApiGateways\ApiGw-Lefebvre\ApiGw-Lefebvre.csproj", "{65EB4CC1-E628-4DED-8F9C-9A496DFC88A9}"
