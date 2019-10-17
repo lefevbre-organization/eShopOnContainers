@@ -9,8 +9,8 @@
           "Port": 80
         },
         {
-          "Host": "localhost",
-          "Port": 4002
+          "Host": "104.42.118.112",
+          "Port": 8088
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/accounts/{everything}",

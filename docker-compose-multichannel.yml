@@ -48,7 +48,7 @@ services:
       - "8088:80"      
 
   lexonapigw:
-    image: ${REGISTRY:-elefebvreoncontainers}/lefebvre.gw:${TAG:-latest}
+    image: ${REGISTRY:-elefebvreoncontainers}/ocelot.gateway:${TAG:-latest}
     build:
       context: .
       dockerfile: src/ApiGateways/ApiGw-Lefebvre/Dockerfile
@@ -61,10 +61,10 @@ services:
     ports:
       - "8089:80"   
     volumes:
-      - ./src/ApiGateways/Web.Bff.Lexon/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
+      - ./src/ApiGateways/Web.Bff.Lexon/apigw:/app/configuration
       
   accountgw:
-    image: ${REGISTRY:-elefebvreoncontainers}/lefebvre.gw:${TAG:-latest}
+    image: ${REGISTRY:-elefebvreoncontainers}/ocelot.gateway:${TAG:-latest}
     build:
       context: .
       dockerfile: src/ApiGateways/ApiGw-Lefebvre/Dockerfile
@@ -77,7 +77,7 @@ services:
     ports:
       - "8090:80"   
     volumes:
-      - ./src/ApiGateways/Web.Bff.Account/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}      
+      - ./src/ApiGateways/Web.Bff.Account/apigw:/app/configuration    
 
 
 #  isotope-server:
