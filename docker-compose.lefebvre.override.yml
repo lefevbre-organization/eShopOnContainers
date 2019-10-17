@@ -34,7 +34,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Staging
       - ASPNETCORE_URLS=http://0.0.0.0:80
     ports:
-      - "4000:80"   # Important: In a production environment your should remove the external port . kept here for microservice debugging purposes. 
+      - "8086:80"   # Important: In a production environment your should remove the external port . kept here for microservice debugging purposes. 
                     # The API Gateway redirects and access through the internal port (80). 
 
   lexon.api:
@@ -54,7 +54,7 @@ services:
 #      - UseLoadTest=${USE_LOADTEST}
 #
     ports:
-      - "4001:80"   # Important: In a production environment your should remove the external port . kept here for microservice debugging purposes. 
+      - "8087:80"   # Important: In a production environment your should remove the external port . kept here for microservice debugging purposes. 
                     # The API Gateway redirects and access through the internal port (80). 
 
 
@@ -75,7 +75,7 @@ services:
 #      - UseLoadTest=${USE_LOADTEST}
 #
     ports:
-      - "4002:80"   # Important: In a production environment your should remove the external port kept here for microservice debugging purposes. 
+      - "8088:80"   # Important: In a production environment your should remove the external port kept here for microservice debugging purposes. 
                     # The API Gateway redirects and access through the internal port (80).
 
   lexonapigw:
@@ -85,7 +85,7 @@ services:
       - EmailUserUrlHC=http://emailuser.api/hc
 
     ports:
-      - "4003:80"   
+      - "8089:80"   
     volumes:
       - ./src/ApiGateways/Web.Bff.Lexon/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
 
@@ -95,7 +95,7 @@ services:
       - LexonUrlHC=http://lexon.api/hc
       - EmailUserUrlHC=http://emailuser.api/hc
     ports:
-      - "4004:80"   
+      - "8090:80"   
     volumes:
       - ./src/ApiGateways/Web.Bff.Account/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
 
