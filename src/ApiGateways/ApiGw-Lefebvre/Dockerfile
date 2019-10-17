@@ -10,8 +10,7 @@ COPY eLefebvreOnContainers-Main.sln .
 COPY docker-compose.dcproj /src/
 COPY src/ApiGateways/ApiGw-Lefebvre/ApiGw-Lefebvre.csproj src/ApiGateways/ApiGw-Lefebvre/
 COPY src/ApiGateways/ApiGw-Base/OcelotApiGw.csproj src/ApiGateways/ApiGw-Base/
-COPY src/ApiGateways/ApiGw-EmailUserAccount/ApiGw-EmailUserAccount.csproj src/ApiGateways/ApiGw-EmailUserAccount/
-COPY src/ApiGateways/ApiGw-Lexon/ApiGw-Lexon.csproj src/ApiGateways/ApiGw-Lexon/
+#COPY src/ApiGateways/ApiGw-Lexon/ApiGw-Lexon.csproj src/ApiGateways/ApiGw-Lexon/
 COPY src/BuildingBlocks/Devspaces.Support/Devspaces.Support.csproj src/BuildingBlocks/Devspaces.Support/
 COPY src/BuildingBlocks/EventBus/EventBus/EventBus.csproj src/BuildingBlocks/EventBus/EventBus/
 #COPY src/BuildingBlocks/EventBus/EventBus.Tests/EventBus.Tests.csproj src/BuildingBlocks/EventBus/EventBus.Tests/
@@ -21,8 +20,9 @@ COPY src/BuildingBlocks/EventBus/EventBusServiceBus/EventBusServiceBus.csproj sr
 COPY src/BuildingBlocks/EventBus/IntegrationEventLogMongoDB/IntegrationEventLogMongoDB.csproj src/BuildingBlocks/EventBus/IntegrationEventLogMongoDB/
 COPY src/BuildingBlocks/WebHostCustomization/WebHost.Customization/WebHost.Customization.csproj src/BuildingBlocks/WebHostCustomization/WebHost.Customization/
 COPY src/Services/Lexon/Lexon.API/Lexon.API.csproj src/Services/Lexon/Lexon.API/
+COPY src/Services/Lexon/Lexon.MySql/Lexon.MySql.csproj src/Services/Lexon/Lexon.MySql/
 COPY src/Services/Lexon/Lexon.FunctionalTests/Lexon.FunctionalTests.csproj src/Services/Lexon/Lexon.FunctionalTests/
-COPY src/Services/EmailUserAccount/EmailUserAccount.API/EmailUserAccount.API.csproj src/Services/EmailUserAccount/EmailUserAccount.API/
+COPY src/Services/Account/Account.API/Account.API.csproj src/Services/Account/Account.API/
 COPY src/Web/WebStatusLefebvre/WebStatusLefebvre.csproj src/Web/WebStatusLefebvre/
 COPY src/Web/RootApp/RootApp.njsproj src/Web/RootApp/
 COPY src/Web/WebInbox-Google/WebInbox-Google.njsproj src/Web/WebInbox-Google/
