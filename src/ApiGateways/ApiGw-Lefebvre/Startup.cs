@@ -29,8 +29,9 @@ namespace ApiGw_Lefebvre
 
             services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
-                .AddUrlGroup(new Uri(_cfg["LexonUrlHC"]), name: "lexonapi-check", tags: new string[] { "lexongapi" })
-                .AddUrlGroup(new Uri(_cfg["EmailUserUrlHC"]), name: "emailuserapi-check", tags: new string[] { "emailuserapi" });
+                .AddUrlGroup(new Uri(_cfg["LexonUrlHC"]), name: "lexonapi-check", tags: new string[] { "lexonapi" })
+                .AddUrlGroup(new Uri(_cfg["LexonMySqlUrlHC"]), name: "lexonmysqlapi-check", tags: new string[] { "lexonmysqlapi" })
+                .AddUrlGroup(new Uri(_cfg["AccountsUrlHC"]), name: "accountapi-check", tags: new string[] { "accountapi" });
 
             services.AddCors(options =>
             {

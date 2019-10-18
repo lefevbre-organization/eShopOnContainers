@@ -38,18 +38,12 @@ COPY src/Web/MF-LexonConn/MF-LexonConn.njsproj src/Web/MF-LexonConn/
 RUN dotnet restore eLefebvreOnContainers-Main.sln
 
 COPY . .
-WORKDIR /src/src/Services/Lexon/Lexon.MySql
+WORKDIR /src/src/ApiGateways/OcelotApiGw-Lexon/
 RUN dotnet publish --no-restore -c Release -o /app
-
-#FROM build as unittest
-#WORKDIR /src/src/Services/Lexon/Lexon.UnitTests
-
-FROM build as functionaltest
-WORKDIR /src/src/Services/Lexon/Lexon.FunctionalTests
 
 FROM build AS publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "Lexon.MySql.dll"]
+ENTRYPOINT ["dotnet", "OcelotApiGw-Lexon.dll"]

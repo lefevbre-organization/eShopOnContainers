@@ -1,0 +1,22 @@
+{
+  "ReRoutes": [
+    {
+      "DownstreamPathTemplate": "/api/{version}/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "lefebvre.westeurope.cloudapp.azure.com",
+          "Port": 8082
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/accounts/{everything}",
+      "UpstreamHttpMethod": [ "GET" ]
+    }
+
+  ],
+  "GlobalConfiguration": {
+    "RequestIdKey": "OcRequestId",
+    "AdministrationPath": "/administration"
+  }
+}
+  

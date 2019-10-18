@@ -10,7 +10,10 @@ COPY eLefebvreOnContainers-Main.sln .
 COPY docker-compose.dcproj /src/
 COPY src/ApiGateways/ApiGw-Lefebvre/ApiGw-Lefebvre.csproj src/ApiGateways/ApiGw-Lefebvre/
 COPY src/ApiGateways/ApiGw-Base/OcelotApiGw.csproj src/ApiGateways/ApiGw-Base/
-#COPY src/ApiGateways/ApiGw-Lexon/ApiGw-Lexon.csproj src/ApiGateways/ApiGw-Lexon/
+# temporal >>>>>>>>>>>>>>
+COPY src/ApiGateways/OcelotApiGw-Account/OcelotApiGw-Account.csproj src/ApiGateways/OcelotApiGw-Account/
+COPY src/ApiGateways/OcelotApiGw-Lexon/OcelotApiGw-Lexon.csproj src/ApiGateways/OcelotApiGw-Lexon/
+# <<<<<<<<<<<<<<<< temporal
 COPY src/BuildingBlocks/Devspaces.Support/Devspaces.Support.csproj src/BuildingBlocks/Devspaces.Support/
 COPY src/BuildingBlocks/EventBus/EventBus/EventBus.csproj src/BuildingBlocks/EventBus/EventBus/
 #COPY src/BuildingBlocks/EventBus/EventBus.Tests/EventBus.Tests.csproj src/BuildingBlocks/EventBus/EventBus.Tests/
