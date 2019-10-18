@@ -29,11 +29,11 @@ const dev = {
 const prod = {
   url: {
     URL_INBOX_GOOGLE:
-      "http://elefebvreoncontainers:8088",
+      "http://lefebvre.westeurope.cloudapp.azure.com:8088",
     URL_INBOX_OUTLOOK:
       "https://lefebvre-multichannel-office365.azurewebsites.net",
-    URL_INBOX_IMAP: "http://elefebvreoncontainers:8080",
-    API_ACCOUNTS: "http://elefebvreoncontainers:8083"
+    URL_INBOX_IMAP: "http://lefebvre.westeurope.cloudapp.azure.com:8080",
+    API_ACCOUNTS: "http://lefebvre.westeurope.cloudapp.azure.com:8083"
   },
   login: {
     URL_ENCRYPTED_USER:

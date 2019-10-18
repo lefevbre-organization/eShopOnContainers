@@ -21,19 +21,19 @@ const dev = {
 const prod = {
     url: {
         URL_UPDATE_DEFAULTACCOUNT:
-            "http://elefebvreoncontainers:8083/api/accounts/emailuseraccount/updatedefaultaccount",
+            "http://lefebvre.westeurope.cloudapp.azure.com:8083/api/accounts/emailuseraccount/updatedefaultaccount",
         URL_RESET_DEFAULTACCOUNT:
-            "http://elefebvreoncontainers:8083/api/accounts/emailuseraccount/resetdefaultaccountbyuser",
+            "http://lefebvre.westeurope.cloudapp.azure.com:8083/api/accounts/emailuseraccount/resetdefaultaccountbyuser",
         URL_DELETE_ACCOUNT:
-            "http://elefebvreoncontainers:8083/api/accounts/emailuseraccount/deleteaccountbyuserandprovider",
-        URL_SELECT_ACCOUNT: "https://elefebvreoncontainers:8087",
+            "http://lefebvre.westeurope.cloudapp.azure.com:8083/api/accounts/emailuseraccount/deleteaccountbyuserandprovider",
+        URL_SELECT_ACCOUNT: "http://lefebvre.westeurope.cloudapp.azure.com:8087",
         URL_GET_ACCOUNTS:
-            "http://elefebvreoncontainers:8083/api/accounts/emailuseraccount",
-        URL_MF_GOOGLE: "http://elefebvreoncontainers:8088/user",
+            "http://lefebvre.westeurope.cloudapp.azure.com:8083/api/accounts/emailuseraccount",
+        URL_MF_GOOGLE: "http://lefebvre.westeurope.cloudapp.azure.com:8088/user",
         URL_MF_OUTLOOK:
             "https://lefebvre-multichannel-office365.azurewebsites.net/user",
-        URL_MF_IMAP: "http://elefebvreoncontainers:8080/user",
-        URL_MF_LEXON: "http://elefebvreoncontainers:8090/static/js/main.js"
+        URL_MF_IMAP: "http://lefebvre.westeurope.cloudapp.azure.com:8080/user",
+        URL_MF_LEXON: "http://lefebvre.westeurope.cloudapp.azure.com:8090/static/js/main.js"
     }
 };
 

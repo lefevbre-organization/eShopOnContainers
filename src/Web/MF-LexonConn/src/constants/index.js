@@ -14,7 +14,7 @@ const dev = {
 
 const prod = {
   url: {
-    API_GATEWAY: "http://elefebvreoncontainers"
+        API_GATEWAY: "http://lefebvre.westeurope.cloudapp.azure.com"
   },
   api: {
     COMPANIES: "api/v1/lex/lexon/companies",
