@@ -14,7 +14,7 @@ const dev = {
 
 const prod = {
   url: {
-    API_GATEWAY: "http://localhost:60970"
+    API_GATEWAY: "http://elefebvreoncontainers"
   },
   api: {
     COMPANIES: "api/v1/lex/lexon/companies",
