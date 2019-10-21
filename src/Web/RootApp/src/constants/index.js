@@ -38,7 +38,7 @@ const prod = {
       "http://lefebvre.westeurope.cloudapp.azure.com:8088",
     URL_INBOX_OUTLOOK:
       "https://lefebvre-multichannel-office365.azurewebsites.net",
-    URL_INBOX_IMAP: "http://lefebvre.westeurope.cloudapp.azure.com:8080",
+    URL_INBOX_IMAP: "http://lefebvre.westeurope.cloudapp.azure.com",
     API_ACCOUNTS: "http://lefebvre.westeurope.cloudapp.azure.com:8083"
   },
   login: {
