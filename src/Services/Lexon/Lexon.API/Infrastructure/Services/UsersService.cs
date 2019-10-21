@@ -39,9 +39,9 @@ namespace Lexon.Infrastructure.Services
             _client.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
-        public async Task<long> AddClassificationToListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType = 1)
+        public async Task<int> AddClassificationToListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType = 1)
         {
-            long result = 0;
+            int result = 0;
             try
             {
 
@@ -58,8 +58,9 @@ namespace Lexon.Infrastructure.Services
                     if (response.IsSuccessStatusCode)
                     {
                         result = await response.Content.ReadAsAsync<int>();
-                        //return result;       //todo update collection
+                        //todo update collection
                         var okMongo = await _usersRepository.AddClassificationToListAsync(idUser, idCompany, idMail, idRelated, idClassificationType);
+                        _log.LogDebug($"AddClassification -> result={result} - okMongo={okMongo}");
                     }
                     else
                     {
@@ -197,7 +198,7 @@ namespace Lexon.Infrastructure.Services
         {
             //todo get bbdd and code from user
             //bbdd = "lexon_pre_shl_02";
-            bbdd = "lexon_conecta";
+            bbdd = "lexon_admin_02";
             codeUser = 520;
         }
 

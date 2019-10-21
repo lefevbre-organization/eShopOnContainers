@@ -80,7 +80,7 @@ namespace Lexon.API.Controllers
 
             var result = await _usersService.AddClassificationToListAsync(idUser, idCompany, idMail, idRelated, idType);
 
-            if (result != 1)
+            if (result < 0)
             {
                 return BadRequest();
             }

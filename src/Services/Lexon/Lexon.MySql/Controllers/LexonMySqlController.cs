@@ -53,7 +53,7 @@ namespace Lexon.MySql.Controllers
         [Route("entities/search")]
         [ProducesResponseType(typeof(JosEntityList), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> EntitiesAsync([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0, short idType = 1, string bbdd = "lexon_pre_shl_02", string idUser = "520", string search = "")
+        public async Task<IActionResult> EntitiesAsync([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0, short idType = 1, string bbdd = "lexon_admin_02", string idUser = "520", string search = "")
 
         {
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || idType < 1)
@@ -69,7 +69,7 @@ namespace Lexon.MySql.Controllers
         [Route("classifications/add")]
         [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddRelationMailAsync(short idType = 1, string bbdd = "lexon_pre_shl_02", string idUser = "520", string idMail = "asdasdasdasd", long idRelated = 111)
+        public async Task<IActionResult> AddRelationMailAsync(short idType = 1, string bbdd = "lexon_admin_02", string idUser = "520", string idMail = "asdasdasdasd", long idRelated = 111)
 
         {
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || string.IsNullOrEmpty(idMail) || idType < 1 || idRelated < 1)
