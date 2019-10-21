@@ -61,9 +61,11 @@ namespace Lexon.API.Controllers
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, company and email in 0rder to search the classifications");
 
             var itemsByUser = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
-            return itemsByUser != null && itemsByUser.Count > 0
-                ? Ok(itemsByUser)
-                : (IActionResult)BadRequest("The search don´t return any data");
+            if (!itemsByUser.Any())
+                Console.WriteLine("The search don´t return any data");
+
+            return Ok(itemsByUser);
+
         }
 
         [HttpGet]
@@ -149,9 +151,10 @@ namespace Lexon.API.Controllers
             if (pageIndex == 0 && pageSize == 0)
             {
                 var itemsByUser = await _usersService.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, idCompany, search);
-                return !itemsByUser.Any()
-                    ? (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment")
-                    : Ok(itemsByUser);
+                if (!itemsByUser.Any())
+                    Console.WriteLine("error getting entities");
+
+                return Ok(itemsByUser);
             }
 
             var itemsOnPage = await _usersService.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, idCompany, search);
