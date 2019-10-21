@@ -39,7 +39,8 @@ const dev = {
     URL_MF_GOOGLE: "http://localhost:3001/user",
     URL_MF_OUTLOOK: "http://localhost:3002/user",
     URL_MF_IMAP: "http://localhost:9000/user",
-    URL_MF_LEXON: "http://localhost:3004/static/js/main.js"
+    URL_MF_LEXON: "http://lefebvre.westeurope.cloudapp.azure.com:8090/static/js/main.js"
+    // URL_MF_LEXON: "http://localhost:3004/static/js/main.js"
   }
 };
 
@@ -59,7 +60,7 @@ const prod = {
       "https://lefebvre-multichannel-office365.azurewebsites.net/user",
     URL_MF_IMAP: "http://lefebvre.westeurope.cloudapp.azure.com:8080/user",
     URL_MF_LEXON:
-      "https://lefebvre-multichannel-lex-on.azurewebsites.net"
+      "https://lefebvre-multichannel-lex-on.azurewebsites.net/static/js/main.js"
   }
 };
 
