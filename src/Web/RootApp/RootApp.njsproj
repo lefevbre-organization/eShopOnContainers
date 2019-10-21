@@ -60,7 +60,6 @@
   <ItemGroup>
     <Content Include=".gitignore" />
     <Content Include="dockerfile" />
-    <Content Include="package-lock.json" />
     <Content Include="package.json" />
     <Content Include="public\assets\css\bootstrap.min.css" />
     <Content Include="public\assets\css\customBootstrap.css" />
