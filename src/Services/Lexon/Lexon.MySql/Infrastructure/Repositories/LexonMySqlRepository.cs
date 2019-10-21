@@ -27,7 +27,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _conn = _settings.Value.ConnectionString;
             _log = logger ?? throw new ArgumentNullException(nameof(logger));
-
         }
 
         public async Task<JosUserCompanies> GetCompaniesListAsync(int pageSize, int pageIndex, string idUser)
@@ -35,12 +34,11 @@ namespace Lexon.MySql.Infrastructure.Repositories
             var companies = new JosUserCompanies();
             var filtro = $"{{\"NavisionId\":\"{idUser}\"}}";
 
+            _log.LogDebug($"GetCompaniesListAsync -> conn:{_conn} - SP:{_settings.Value.SP.GetCompanies} - P_FILTER:{filtro} - P_UC:{_settings.Value.UserApp}");
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
                 try
                 {
-                    _log.LogDebug($"GetCompaniesListAsync -> conn:{_conn} - SP:{_settings.Value.SP.GetCompanies} - P_FILTER:{filtro} - P_UC:{_settings.Value.UserApp}");
-
                     conn.Open();
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetCompanies, conn))
                     {
@@ -56,7 +54,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
                             }
                         }
                         _log.LogDebug($"GetCompaniesListAsync -> P_ERROR:{command.Parameters["P_ERROR"].Value.ToString()}");
-
                     }
                 }
                 catch (Exception ex)
@@ -74,12 +71,11 @@ namespace Lexon.MySql.Infrastructure.Repositories
             var filtroDescription = !string.IsNullOrEmpty(search) ? $", \"Description\":{search}" : string.Empty;
             var filtro = $"{{\"BBDD\":\"{bbdd}\",\"IdEntityType\":{idType},\"IdUser\":{idUser}{filtroDescription}}}";
 
+            _log.LogDebug($"SearchEntitiesAsync -> conn:{_conn} - SP:{_settings.Value.SP.SearchEntities} - P_FILTER:{filtro} - P_UC:{_settings.Value.UserApp}");
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
                 try
                 {
-                    _log.LogDebug($"SearchEntitiesAsync -> conn:{_conn} - SP:{_settings.Value.SP.SearchEntities} - P_FILTER:{filtro} - P_UC:{_settings.Value.UserApp}");
-
                     conn.Open();
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.SearchEntities, conn))
                     {
@@ -96,7 +92,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
                             }
                         }
                         _log.LogDebug($"SearchEntitiesAsync -> P_IDERROR:{command.Parameters["P_IDERROR"].Value.ToString()} - P_ERROR:{command.Parameters["P_ERROR"].Value.ToString()}");
-
                     }
                 }
                 catch (Exception ex)
@@ -112,12 +107,11 @@ namespace Lexon.MySql.Infrastructure.Repositories
         {
             var companies = new JosEntityTypeList();
 
+            _log.LogDebug($"GetMasterEntitiesAsync -> conn:{_conn} - SP:{_settings.Value.SP.GetMasterEntities} - P_UC:{_settings.Value.UserApp}");
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
                 try
                 {
-                    _log.LogDebug($"GetMasterEntitiesAsync -> conn:{_conn} - SP:{_settings.Value.SP.GetMasterEntities} - P_UC:{_settings.Value.UserApp}");
-
                     conn.Open();
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetMasterEntities, conn))
                     {
@@ -152,12 +146,11 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 $" \"Body\":\"descripcion nueva actuacion\", \"Uid\":\"{idMail}\"," +
                 $"\"IdUser\":\"{_settings.Value.UserApp}\", \"IdActionRelationType\":{idType},\"IdRelation\":{idRelated}}}";
 
+            _log.LogDebug($"AddRelationMailAsync -> conn:{_conn} - SP:{_settings.Value.SP.AddRelation}  - P_FILTER:{filtro} - P_UC:{_settings.Value.UserApp}");
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
                 try
                 {
-                    _log.LogDebug($"AddRelationMailAsync -> conn:{_conn} - SP:{_settings.Value.SP.AddRelation}  - P_FILTER:{filtro} - P_UC:{_settings.Value.UserApp}");
-
                     conn.Open();
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddRelation, conn))
                     {
@@ -168,11 +161,10 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
                         command.CommandType = CommandType.StoredProcedure;
                         result = await command.ExecuteNonQueryAsync();
-                        result = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString()) 
-                            ? -1 
+                        result = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString())
+                            ? -1
                             : (int)command.Parameters["P_ID"].Value;
                         _log.LogDebug($"AddRelationMailAsync -> P_ID:{command.Parameters["P_ID"].Value.ToString()} - P_IDERROR:{command.Parameters["P_IDERROR"].Value.ToString()} - P_ERROR:{command.Parameters["P_ERROR"].Value.ToString()}");
-
                     }
                 }
                 catch (Exception ex)

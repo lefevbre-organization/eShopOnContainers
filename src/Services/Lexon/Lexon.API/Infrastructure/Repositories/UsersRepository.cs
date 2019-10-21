@@ -165,6 +165,13 @@ namespace Lexon.API.Infrastructure.Repositories
 
             var filesWithoutSearch = from s in company.files.list
                                      select s;
+            long idFile = 1;
+            foreach (var f in filesWithoutSearch)
+            {
+                idFile += 1;
+                f.id = idFile;
+            }
+
             return filesWithoutSearch.ToList();
         }
 
