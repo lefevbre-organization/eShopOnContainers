@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import "./classification-list.css";
-import PerfectScrollbar from "react-perfect-scrollbar";
 import ClassificationListSearch from "../classification-list-search/classification-list-search";
 import PropTypes from "prop-types";
 import ResultsSearch from "../results-search/results-search";
@@ -20,7 +19,8 @@ class ClassificationList extends Component {
       <div className="lexon-clasification-list-container">
         <div className="form-group">
           <label>
-            {i18n.t("classification-list.assigned-to")}<span className="requerido">*</span>
+            {i18n.t("classification-list.assigned-to")}
+            <span className="requerido">*</span>
           </label>
         </div>
 
@@ -39,7 +39,6 @@ class ClassificationList extends Component {
           </thead>
 
           <tbody>
-            <PerfectScrollbar>
             {listResultsByType.map(result => {
               return (
                 <ResultsSearch
@@ -52,7 +51,6 @@ class ClassificationList extends Component {
                 />
               );
             })}
-            </PerfectScrollbar>
           </tbody>
         </table>
       </div>
