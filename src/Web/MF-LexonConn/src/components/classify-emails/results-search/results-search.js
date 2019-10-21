@@ -17,9 +17,9 @@ class ResultsSearch extends Component {
 
   classSelected() {
     const { resultsSelected } = this.props;
-    const { idFile } = this.props.result;
+    const { id } = this.props.result;
 
-    if (resultsSelected.map(e => e.idFile).indexOf(idFile) !== -1) {
+    if (resultsSelected.map(e => e.id).indexOf(id) !== -1) {
       return "selected";
     } else {
       return "";

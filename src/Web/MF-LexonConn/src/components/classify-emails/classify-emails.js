@@ -71,7 +71,7 @@ class ClassifyEmails extends Component {
             user,
             companySelected.idCompany,
             selectedMessages[indexSelectedMessages],
-            resultsSelected[indexResultsSelected].idFile,
+            resultsSelected[indexResultsSelected].id,
             type
           )
             .then(
@@ -143,7 +143,7 @@ class ClassifyEmails extends Component {
   updateResultsSelected(item) {
     const { resultsSelected } = { ...this.state };
 
-    var findElement = resultsSelected.map(e => e.idFile).indexOf(item.idFile);
+    var findElement = resultsSelected.map(e => e.id).indexOf(item.id);
     if (findElement === -1) {
       resultsSelected.push(item);
     } else {
