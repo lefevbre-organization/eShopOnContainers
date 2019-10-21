@@ -45,6 +45,10 @@ export class Header extends PureComponent {
     }
   }
 
+  _handleOnclickReturnToLexon() {
+    window.open("https://www.lex-on.es/", "_self");
+  }
+
   toggle() {
     this.setState({
       dropdownOpen: !this.state.dropdownOpen
@@ -145,7 +149,7 @@ export class Header extends PureComponent {
                   <img src="assets/img/icon-products.png" alt="" />
                 </DropdownToggle>
                 <DropdownMenu right>
-                  <DropdownItem>
+                  {/* <DropdownItem>
                     <i className="fa fa-shield"></i> Calendar
                   </DropdownItem>
                   <DropdownItem>
@@ -158,9 +162,12 @@ export class Header extends PureComponent {
                       Configure New Account
                     </span>
                   </DropdownItem>
-                  <DropdownItem divider />
+                  <DropdownItem divider /> */}
                   <DropdownItem>
-                    <i className="fa fa-lock"></i> Return to Lex-on
+                    <i className="fa fa-lock"></i>
+                    <span onClick={() => this._handleOnclickReturnToLexon()}>
+                      Return to Lex-on
+                    </span>
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
