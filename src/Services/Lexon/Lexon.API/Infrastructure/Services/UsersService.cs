@@ -2,6 +2,7 @@
 using Lexon.API.Infrastructure.Repositories;
 using Lexon.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -17,18 +18,21 @@ namespace Lexon.Infrastructure.Services
         private readonly IHttpClientFactory _clientFactory;
         private readonly HttpClient _client;
         private readonly IOptions<LexonSettings> _settings;
+        private readonly ILogger<UsersService> _log;
 
         public UsersService(
                 IOptions<LexonSettings> settings
                 , IUsersRepository usersRepository
                 , IEventBus eventBus
                 , IHttpClientFactory clientFactory
+                , ILogger<UsersService> logger
             )
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _usersRepository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
+            _log = logger ?? throw new ArgumentNullException(nameof(logger));
 
             _client = _clientFactory.CreateClient();
             _client.BaseAddress = new Uri(_settings.Value.LexonMySqlUrl);
@@ -40,10 +44,14 @@ namespace Lexon.Infrastructure.Services
             long result = 0;
             try
             {
+
                 GetInfoUser(idUser, out string bbdd, out int codeUser);
-                //https://localhost:44393/api/v1/LexonMySql/classifications/add?idType=1&bbdd=lexon_pre_shl_02&idUser=520&idMail=asdasdasdasd&idRelated=111
+                _log.LogDebug($"AddClassification -> iduser={idUser}&idType={idClassificationType}&bbdd={bbdd}&idUser={codeUser}&idMail={idMail}&idRelated={idRelated}");
+
                 var request = new HttpRequestMessage(HttpMethod.Get,
                     $"{_settings.Value.LexonMySqlUrl}/classifications/add?idType={idClassificationType}&bbdd={bbdd}&idUser={codeUser}&idMail={idMail}&idRelated={idRelated}");
+
+                _log.LogDebug($"AddClassification -> request={request}");
 
                 using (var response = await _client.SendAsync(request))
                 {
@@ -66,10 +74,6 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        //public async Task<long> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "")
-        //{
-        //    return await _usersRepository.AddFileToListAsync(idUser, idCompany, idFile, nameFile, descriptionFile);
-        //}
 
         public async Task<List<LexonActuation>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail)
         {
@@ -80,7 +84,10 @@ namespace Lexon.Infrastructure.Services
         {
             try
             {
+
                 var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/entities/masters");
+                
+                _log.LogDebug($"GetClassificationMaster -> request={request}");
 
                 var entities = new List<LexonEntityType>();
 
@@ -105,6 +112,7 @@ namespace Lexon.Infrastructure.Services
                 Console.WriteLine($"error al obtener datos {ex.Message}");
             }
 
+            _log.LogDebug($"GetClassificationMaster -> return data from mongo");
             return await _usersRepository.GetClassificationMasterListAsync();
         }
 
@@ -113,6 +121,8 @@ namespace Lexon.Infrastructure.Services
             try
             {
                 var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/companies?pageSize={pageSize}&pageIndex={pageIndex}&idUser={idUser}");
+
+                _log.LogDebug($"GetCompaniesFromUserAsync -> request={request}");
 
                 var companies = new List<LexonCompany>();
 
@@ -123,6 +133,8 @@ namespace Lexon.Infrastructure.Services
                         foreach (var company in (await response.Content.ReadAsAsync<JosUserCompanies>()).Companies)
                         {
                             companies.Add(new LexonCompany() { name = company.name, bbdd = company.BBDD, idCompany = company.IdCompany });
+                            _log.LogDebug($"GetClassificationMaster -> companie add {company.name}");
+
                         }
                         return companies;       //todo update collection
                     }
@@ -137,6 +149,8 @@ namespace Lexon.Infrastructure.Services
                 Console.WriteLine($"error al obtener datos {ex.Message}");
             }
 
+            _log.LogDebug($"GetCompaniesFromUserAsync -> return data from mongo");
+
             return await _usersRepository.GetCompaniesListAsync(idUser);
         }
 
@@ -145,10 +159,11 @@ namespace Lexon.Infrastructure.Services
             try
             {
                 GetInfoUser(idUser, out string bbdd, out int codeUser);
+                _log.LogDebug($"GetEntitiesListAsync -> iduser={idUser}&idCompany={idCompany}&bbdd={bbdd}&idUser={codeUser}&search={search}");
 
-                //https://localhost:44393/api/v1/LexonMySql/entities/search?pageSize=10&pageIndex=0&idType=1&bbdd=lexon_pre_shl_02&idUser=520
                 var request = new HttpRequestMessage(HttpMethod.Get,
                     $"{_settings.Value.LexonMySqlUrl}/entities/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={idType}&bbdd={bbdd}&idUser={codeUser}");
+                _log.LogDebug($"GetEntitiesListAsync -> request={request}");
 
                 var entities = new List<LexonEntityBase>();
 
@@ -173,13 +188,16 @@ namespace Lexon.Infrastructure.Services
             {
                 Console.WriteLine($"error al obtener datos {ex.Message}");
             }
+
+            _log.LogDebug($"GetEntitiesListAsync -> return data from mongo");
             return await _usersRepository.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, idCompany, search);
         }
 
         private void GetInfoUser(string idUser, out string bbdd, out int codeUser)
         {
             //todo get bbdd and code from user
-            bbdd = "lexon_pre_shl_02";
+            //bbdd = "lexon_pre_shl_02";
+            bbdd = "lexon_conecta";
             codeUser = 520;
         }
 

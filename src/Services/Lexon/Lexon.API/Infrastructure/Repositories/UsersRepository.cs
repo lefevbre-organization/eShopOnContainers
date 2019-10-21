@@ -3,6 +3,7 @@ using Lexon.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
@@ -18,13 +19,17 @@ namespace Lexon.API.Infrastructure.Repositories
     public class UsersRepository : IUsersRepository
     {
         private readonly LexonContext _context;
+        private readonly ILogger<UsersRepository> _log;
 
         public UsersRepository(
-            IOptions<LexonSettings> settings,
-            IEventBus eventBus
+            IOptions<LexonSettings> settings
+            ,IEventBus eventBus
+            , ILogger<UsersRepository> logger
+
             )
         {
             _context = new LexonContext(settings, eventBus);
+            _log = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<List<LexonCompany>> GetCompaniesListAsync(string idUser)
@@ -41,6 +46,7 @@ namespace Lexon.API.Infrastructure.Repositories
                         .Project<LexonUser>(fields)
                         .FirstOrDefaultAsync();
 
+            _log.LogDebug($"GetCompaniesListAsync -> fields:{fields.ToString()} - filter:{filter.ToString()}");
             var companies = user?.companies?.list?.ToList();
             return companies ?? new List<LexonCompany>();
         }
@@ -56,6 +62,8 @@ namespace Lexon.API.Infrastructure.Repositories
         public async Task<List<LexonUser>> GetListAsync(int pageSize, int pageIndex, string idUser)
         {
             var filter = GetFilterUser(idUser);
+
+            _log.LogDebug($"GetUsersAsync -> filter:{filter.ToString()}");
 
             return await _context.LexonUsers
                 .Find(filter)
@@ -140,6 +148,8 @@ namespace Lexon.API.Infrastructure.Repositories
                 filterDocuments
                 );
 
+            _log.LogDebug($"GetEntitiesListAsync -> filter:{filter.ToString()}");
+
             var user = await _context.LexonUsers
                 .Find(filter)
                 .SingleAsync();
@@ -165,6 +175,7 @@ namespace Lexon.API.Infrastructure.Repositories
             var master = await _context.LexonMasters
                 .Find(filter)
                 .FirstOrDefaultAsync();
+            _log.LogDebug($"GetClassificationsMasterListAsync -> filter:{filter.ToString()}");
 
             lexonEntities = master?.list?.ToList();
             return lexonEntities;
@@ -399,6 +410,8 @@ namespace Lexon.API.Infrastructure.Repositories
                     )
                 };
 
+                _log.LogDebug($"GetCompaniesListAsync -> pipeline:{pipeline.ToString()} - options:{options.ToString()}");
+
                 var resultado = await _context.LexonUsers.AggregateAsync(pipeline, options);
 
                 using (var cursor = await _context.LexonUsers.AggregateAsync(pipeline, options))
@@ -409,6 +422,8 @@ namespace Lexon.API.Infrastructure.Repositories
                         foreach (BsonDocument document in batch)
                         {
                             var actuation = BsonSerializer.Deserialize<LexonActuation>(document);
+                            _log.LogDebug($"GetCompaniesListAsync -> Actuation:{actuation.name}");
+
                             listaActuaciones.Add(actuation);
                         }
                     }
