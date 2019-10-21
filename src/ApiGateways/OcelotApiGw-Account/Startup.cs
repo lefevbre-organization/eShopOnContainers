@@ -31,7 +31,7 @@ namespace OcelotApiGw_Account
                 .AddCheck("self", () => HealthCheckResult.Healthy())
                 .AddUrlGroup(new Uri(_cfg["LexonUrlHC"]), name: "lexonapi-check", tags: new string[] { "lexonapi" })
                 .AddUrlGroup(new Uri(_cfg["LexonMySqlUrlHC"]), name: "lexonmysqlapi-check", tags: new string[] { "lexonmysqlapi" })
-                .AddUrlGroup(new Uri(_cfg["AccountsUrlHC"]), name: "accountapi-check", tags: new string[] { "accountapi" });
+                .AddUrlGroup(new Uri(_cfg["AccountsUrlHC"]), name: "accountsapi-check", tags: new string[] { "accountsapi" });
 
             services.AddCors(options =>
             {
