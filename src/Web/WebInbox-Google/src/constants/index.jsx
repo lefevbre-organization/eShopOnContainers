@@ -59,7 +59,7 @@ const prod = {
       "https://lefebvre-multichannel-office365.azurewebsites.net/user",
     URL_MF_IMAP: "http://lefebvre.westeurope.cloudapp.azure.com:8080/user",
     URL_MF_LEXON:
-      "http://lefebvre.westeurope.cloudapp.azure.com:8090/static/js/main.js"
+      "https://lefebvre-multichannel-lex-on.azurewebsites.net"
   }
 };
 
