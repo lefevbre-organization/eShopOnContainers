@@ -27,6 +27,7 @@
   <ItemGroup>
     <Content Include=".dockerignore" />
     <Content Include=".env" />
+    <Content Include="docker\nginx\default.conf" />
     <Content Include="package.json" />
     <Content Include="public\assets\css\modal.css" />
     <Content Include="public\assets\css\styles.css" />
@@ -122,6 +123,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="docker\" />
+    <Folder Include="docker\nginx\" />
     <Folder Include="public" />
     <Folder Include="public\assets\" />
     <Folder Include="public\assets\css\" />
