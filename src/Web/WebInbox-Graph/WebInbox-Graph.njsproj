@@ -121,6 +121,7 @@
     <Content Include="yarn.lock" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="docker\" />
     <Folder Include="public" />
     <Folder Include="public\assets\" />
     <Folder Include="public\assets\css\" />
