@@ -6,6 +6,10 @@ class ResultsSearch extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      classSelected: ''
+    };
+
     this._handleOnClick = this._handleOnClick.bind(this);
   }
 
@@ -13,27 +17,25 @@ class ResultsSearch extends Component {
     const { updateResultsSelected, result } = this.props;
 
     updateResultsSelected(result);
+    this.setState( { classSelected: this.classSelected() } );
   }
 
   classSelected() {
     const { resultsSelected } = this.props;
-    const { idFile } = this.props.result;
+    const { id } = this.props.result;
 
-    if (resultsSelected.map(e => e.idFile).indexOf(idFile) !== -1) {
-      return "selected";
-    } else {
-      return "";
-    }
+    return resultsSelected.indexOf(id) !== -1 ? "selected" : "";
   }
 
   render() {
-    const { idFile, name, description } = this.props.result;
+    const { id, name, description } = this.props.result;
+    const classSelected = this.classSelected();
 
     return (
-      <tr onClick={this._handleOnClick} className={this.classSelected()}>
+      <tr onClick={() => this._handleOnClick()} className={classSelected}>
         <td>
           <span className="lf-icon-check"></span>
-          {idFile}
+          {id}
         </td>
         <td>{name}</td>
         <td>{description}</td>

@@ -7,6 +7,7 @@ import "./main.css";
 // import Header from "./components/header/header";
 import Routing from "./components/routing/routing";
 import Spinner from "./components/spinner/spinner";
+import Notification from "./components/notification/notification";
 
 import { getCompanies } from "./services/services-lexon";
 
@@ -17,7 +18,9 @@ class Main extends Component {
     this.state = {
       user: null,
       companies: [],
-      isLoading: true
+      isLoading: true,
+      showNotification: false,
+      messageNotification: null
     };
 
     this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -25,6 +28,8 @@ class Main extends Component {
     this.handlePutUserFromLexonConnector = this.handlePutUserFromLexonConnector.bind(
       this
     );
+
+    this.toggleNotification = this.toggleNotification.bind(this);
   }
 
   componentDidMount() {
@@ -86,11 +91,20 @@ class Main extends Component {
       });
   }
 
+  toggleNotification(message) {
+    this.setState(state => ({
+      showNotification: !state.showNotification,
+      messageNotification: message
+    }));
+  }
+
   render() {
     const {
       isLoading,
       user,
-      companies
+      companies,
+      showNotification,
+      messageNotification
     } = this.state;
 
     if (isLoading) {
@@ -100,9 +114,15 @@ class Main extends Component {
     return (
       <Fragment>
         {/* <Header title={"LEX-ON"} /> */}
+        <Notification
+          initialModalState={showNotification}
+          toggleNotification={this.toggleNotification}
+          message={messageNotification}
+        />
         <Routing
           user={user}
           companies={companies}
+          toggleNotification={this.toggleNotification}
         />
       </Fragment>
     );

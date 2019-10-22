@@ -27,17 +27,23 @@ class ConfirmRemoveClassification extends Component {
   }
 
   removeClassification(classification) {
-    const { user, companySelected, updateClassifications } = this.props;
+    const {
+      user,
+      companySelected,
+      updateClassifications,
+      toggleNotification
+    } = this.props;
     const { IdClassification, IdMail, IdType } = classification;
     removeClassification(
       user,
       companySelected.idCompany,
-      2, //   IdMail,
-      1, // IdType,
+      IdMail,
+      IdType,
       IdClassification
     )
       .then(updateClassifications(IdMail))
       .catch(error => {
+        toggleNotification(`ERROR -> ${error}`);
         console.log("error ->", error);
       });
   }
@@ -103,7 +109,8 @@ ConfirmRemoveClassification.propTypes = {
   initialModalState: PropTypes.bool.isRequired,
   toggleConfirmRemoveClassification: PropTypes.func.isRequired,
   classification: PropTypes.object,
-  updateClassifications: PropTypes.func.isRequired
+  updateClassifications: PropTypes.func.isRequired,
+  toggleNotification: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => {
