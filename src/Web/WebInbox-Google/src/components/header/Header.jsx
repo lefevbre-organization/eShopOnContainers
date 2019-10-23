@@ -145,7 +145,7 @@ export class Header extends PureComponent {
                   <img src="assets/img/icon-products.png" alt="" />
                 </DropdownToggle>
                 <DropdownMenu right>
-                  <DropdownItem>
+                  {/* <DropdownItem>
                     <i className="fa fa-shield"></i> Calendar
                   </DropdownItem>
                   <DropdownItem>
@@ -158,9 +158,11 @@ export class Header extends PureComponent {
                       Configure New Account
                     </span>
                   </DropdownItem>
-                  <DropdownItem divider />
+                  <DropdownItem divider /> */}
                   <DropdownItem>
-                    <i className="fa fa-lock"></i> Return to Lex-on
+                    <span onClick={() => window.open("https://www.lex-on.es/", "_self")}>
+                      <i className="fa fa-lock"></i> Return to Lex-on
+                    </span>
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>

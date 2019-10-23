@@ -55,6 +55,8 @@ class ClassifyEmails extends Component {
       toggleNotification
     } = this.props;
 
+    toggleClassifyEmails();
+
     if (fromSave === true) {
       for (
         let indexSelectedMessages = 0;
@@ -85,8 +87,6 @@ class ClassifyEmails extends Component {
             });
         }
       }
-    } else {
-      toggleClassifyEmails();
     }
   }
 
