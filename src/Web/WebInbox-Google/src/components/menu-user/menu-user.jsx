@@ -62,10 +62,16 @@ class MenuUser extends Component {
       const url = `${config.url.URL_RESET_DEFAULTACCOUNT}/${userId}`;
       fetch(url, {
         method: "GET"
-      }).then(result => {
-        const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-        window.open(urlRedirect, "_self");
-      });
+      })
+        .then(result => {
+          console.log("result =>", result);
+        })
+        .catch(error => {
+          console.log("error =>", error);
+        });
+
+      const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+      window.open(urlRedirect, "_self");
     }
   }
 
