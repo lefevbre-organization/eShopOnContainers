@@ -75,7 +75,8 @@ services:
       - ConnectionString="database=lexon_conecta;server=mysqldevlexon.lefebvre.es;port=3315;user id=led-app-conecta-azure;password=FDSk2q3+asd5;sslmode=none"
       - ASPNETCORE_URLS=http://0.0.0.0:80
     ports:
-      - "8084:80" 
+      - "8084:80"
+      - "3315:3315"
 
   lexon.api:
     image: ${REGISTRY:-elefebvreoncontainers}/lexon.api:${TAG:-latest}
