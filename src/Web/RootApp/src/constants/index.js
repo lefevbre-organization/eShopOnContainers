@@ -3,7 +3,8 @@ const dev = {
     URL_INBOX_GOOGLE: "http://localhost:3001",
     URL_INBOX_OUTLOOK: "http://localhost:3002",
     URL_INBOX_IMAP: "http://localhost:9000",
-    API_ACCOUNTS: "http://localhost:60980"
+    //API_ACCOUNTS: "http://localhost:60980"
+    API_ACCOUNTS: "http://lefebvre.westeurope.cloudapp.azure.com:8083"
   },
   login: {
     URL_ENCRYPTED_USER:
