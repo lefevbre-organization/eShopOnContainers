@@ -39,7 +39,6 @@ class ClassifyEmails extends Component {
       this.props.initialModalState === false
     ) {
       this.setState({ listResultsByType: [], resultsSelected: [] });
-      this.showMessageInTitle();
     }
   }
 
@@ -87,14 +86,6 @@ class ClassifyEmails extends Component {
             });
         }
       }
-    }
-  }
-
-  showMessageInTitle(title) {
-    if (title) {
-      this.setState({ onlyHeader: true, titleInHeader: title });
-    } else {
-      this.setState({ onlyHeader: false, titleInHeader: "" });
     }
   }
 
