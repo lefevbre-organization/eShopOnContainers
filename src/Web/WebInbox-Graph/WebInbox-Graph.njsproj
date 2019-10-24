@@ -87,6 +87,7 @@
     <Content Include="src\index.css" />
     <Content Include="src\App.js" />
     <Content Include="src\index.js" />
+    <Content Include="src\localstorage.jsx" />
     <Content Include="src\serviceWorker.js" />
     <Content Include="src\store.jsx" />
     <Content Include="src\constants\index.jsx" />

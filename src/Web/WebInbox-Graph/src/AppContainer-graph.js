@@ -2,7 +2,6 @@
 import { UserAgentApplication } from "msal";
 import React, { Component } from "react";
 import { getUserDetails } from "./GraphService";
-// import "bootstrap/dist/css/bootstrap.css";
 import { connect } from "react-redux";
 import Main from "./components/main/Main";
 import Login from "./components/login/Login";
@@ -13,8 +12,10 @@ import {
   SIGNED_OUT,
   AUTH_SUCCESS,
   AUTH_FAIL,
-  AUTH_IN_PROGRESS,
+  AUTH_IN_PROGRESS
 } from "./constants";
+import { getStateStorage } from "./localstorage";
+import ACTIONS from "./actions/lexon";
 
 class AppContainerGraph extends Component {
   constructor(props) {
@@ -44,6 +45,14 @@ class AppContainerGraph extends Component {
   }
 
   componentDidMount() {
+    const user = this.props.match.params.id;
+    if (!user) {
+      const userLexon = getStateStorage().lexon;
+      if (userLexon && userLexon.user) {
+        this.props.setUser(userLexon.user);
+      }
+    }
+
     const { isNewAccount } = this.props.lexon;
     if (!isNewAccount) {
       mountScripts().then(this.init);
@@ -140,7 +149,7 @@ class AppContainerGraph extends Component {
 
       if (accessToken) {
         // Get the user's profile from Graph
-        var user = await getUserDetails(accessToken);        
+        var user = await getUserDetails(accessToken);
         this.setState({
           isAuthenticated: true,
           user: {
@@ -149,7 +158,7 @@ class AppContainerGraph extends Component {
           },
           error: null
         });
-        
+
         this.onSignInSuccess();
       }
       return true;
@@ -181,6 +190,11 @@ const mapStateToProps = state => ({
   lexon: state.lexon
 });
 
-export default connect(mapStateToProps)(AppContainerGraph);
+const mapDispatchToProps = dispatch => ({
+  setUser: user => dispatch(ACTIONS.setUser(user))
+});
 
-//export default withRouter(AppContainerGraph);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AppContainerGraph);

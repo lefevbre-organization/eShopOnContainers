@@ -12,6 +12,8 @@ import {
   AUTH_FAIL,
   AUTH_IN_PROGRESS
 } from "./constants";
+import { getStateStorage } from "./localstorage";
+import ACTIONS from "./actions/lexon";
 
 class AppContainer extends Component {
   constructor(props) {
@@ -30,6 +32,14 @@ class AppContainer extends Component {
   }
 
   componentDidMount() {
+    const user = this.props.match.params.id;
+    if (!user) {
+      const userLexon = getStateStorage().lexon;
+      if (userLexon && userLexon.user) {
+        this.props.setUser(userLexon.user);
+      }
+    }
+
     const { isNewAccount } = this.props.lexon;
     if (!isNewAccount) {
       mountScripts().then(this.init);
@@ -88,6 +98,11 @@ const mapStateToProps = state => ({
   lexon: state.lexon
 });
 
-export default connect(mapStateToProps)(AppContainer);
+const mapDispatchToProps = dispatch => ({
+  setUser: user => dispatch(ACTIONS.setUser(user))
+});
 
-// export default withRouter(AppContainer);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AppContainer);
