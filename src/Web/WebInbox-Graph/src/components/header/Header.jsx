@@ -39,11 +39,14 @@ export class Header extends PureComponent {
       const url = `${config.url.URL_RESET_DEFAULTACCOUNT}/${userId}`;
       fetch(url, {
         method: "GET"
-      }).then(result => {
-        console.log(result);
-        const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-        window.open(urlRedirect, "_self");
-      });
+      })
+        .then(() => {
+          const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+          window.open(urlRedirect, "_self");
+        })
+        .catch(error => {
+          console.log("error =>", error);
+        });
     }
   }
 
@@ -151,7 +154,7 @@ export class Header extends PureComponent {
                   />
                 </DropdownToggle>
                 <DropdownMenu right>
-                  <DropdownItem>
+                  {/* <DropdownItem>
                     <i className="fa fa-shield"></i> Calendar
                   </DropdownItem>
                   <DropdownItem>
@@ -164,9 +167,15 @@ export class Header extends PureComponent {
                       Configure New Account
                     </span>
                   </DropdownItem>
-                  <DropdownItem divider />
+                  <DropdownItem divider /> */}
                   <DropdownItem>
-                    <i className="fa fa-lock"></i> Return to Lex-on
+                    <span
+                      onClick={() =>
+                        window.open("https://www.lex-on.es/", "_self")
+                      }
+                    >
+                      <i className="fa fa-lock"></i> Return to Lex-on
+                    </span>
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>

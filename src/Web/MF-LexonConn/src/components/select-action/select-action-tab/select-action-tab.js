@@ -8,7 +8,7 @@ import TabKeepRecord from "../tab-keeprecord/tab-keeprecord";
 
 class SelectActionTab extends Component {
   render() {
-    const { user } = this.props;
+    const { user, toggleNotification } = this.props;
 
     return (
       <Tabs
@@ -17,7 +17,10 @@ class SelectActionTab extends Component {
         bsPrefix="menu-lexon-actions"
       >
         <Tab eventKey="classify" title="Clasificar">
-          <TabClassify user={user} />
+          <TabClassify 
+            user={user}
+            toggleNotification={toggleNotification}
+          />
         </Tab>
         <Tab eventKey="keeprecord" title="Documentar">
           <TabKeepRecord user={user} />
@@ -28,7 +31,8 @@ class SelectActionTab extends Component {
 }
 
 SelectActionTab.propTypes = {
-  user: PropTypes.string.isRequired
+  user: PropTypes.string.isRequired,
+  toggleNotification: PropTypes.func.isRequired
 };
 
 export default SelectActionTab;

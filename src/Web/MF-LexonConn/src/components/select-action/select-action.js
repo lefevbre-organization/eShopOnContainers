@@ -18,14 +18,17 @@ class SelectAction extends Component {
   }
 
   render() {
-    const { user, companies } = this.props;
+    const { user, companies,toggleNotification } = this.props;
     return (
       <div className="container-fluid">
         <SelectActionHeader
           companies={companies}
           changePage={this.props.changePage}
         />
-        <SelectActionTab user={user} />
+        <SelectActionTab 
+          user={user}
+          toggleNotification={toggleNotification} 
+        />
       </div>
     );
   }
@@ -34,7 +37,8 @@ class SelectAction extends Component {
 SelectAction.propTypes = {
   user: PropTypes.string.isRequired,
   companies: PropTypes.array.isRequired,
-  changePage: PropTypes.func.isRequired
+  changePage: PropTypes.func.isRequired,
+  toggleNotification: PropTypes.func.isRequired
 };
 
 export default SelectAction;

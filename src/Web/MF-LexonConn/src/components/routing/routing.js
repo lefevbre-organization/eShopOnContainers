@@ -21,7 +21,7 @@ class Routing extends Component {
 
   render() {
     const { actualPage } = this.state;
-    const { user, companies } = this.props;
+    const { user, companies, toggleNotification } = this.props;
 
     switch (actualPage) {
       case PAGE_SELECT_COMPANY:
@@ -38,6 +38,7 @@ class Routing extends Component {
             user={user}
             companies={companies}
             changePage={this.changePage}
+            toggleNotification={toggleNotification}
           />
         );
 
@@ -49,7 +50,8 @@ class Routing extends Component {
 
 Routing.propTypes = {
   user: PropTypes.string.isRequired,
-  companies: PropTypes.array.isRequired
+  companies: PropTypes.array.isRequired,
+  toggleNotification: PropTypes.func.isRequired
 };
 
 export default Routing;

@@ -1,10 +1,14 @@
-import { createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
-import rootReducer from './reducers/rootReducer';
+import { createStore, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
+import rootReducer from "./reducers/rootReducer";
+import { setStateStorage } from "./localstorage";
 
-export default function configureStore(initialState={}) {
- return createStore(
-  rootReducer,
-   applyMiddleware(thunk)
- );
-}
+const configureStore = createStore(rootReducer, applyMiddleware(thunk));
+
+configureStore.subscribe(() => {
+  setStateStorage({
+    lexon: configureStore.getState().lexon
+  });
+});
+
+export default configureStore;

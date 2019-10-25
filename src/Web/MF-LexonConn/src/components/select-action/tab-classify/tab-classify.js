@@ -70,7 +70,7 @@ class TabClassify extends Component {
     getClassifications(user, companySelected.idCompany, mailId)
       .then(result => {
         this.setState({
-          classifications: result.classifications.Classifications.List,
+          classifications: result.classifications,
           showClassifications: true
         });
       })
@@ -134,13 +134,15 @@ class TabClassify extends Component {
       showConfirmRemoveClassification,
       classificationToRemove
     } = this.state;
-    const { user } = this.props;
+    const { user, toggleNotification } = this.props;
     return (
       <Fragment>
         <ClassifyEmails
           user={user}
           initialModalState={showClassifyEmails}
           toggleClassifyEmails={this.toggleClassifyEmails}
+          updateClassifications={this.getClassifications}
+          toggleNotification={toggleNotification}
         />
 
         <ConfirmRemoveClassification
@@ -150,7 +152,8 @@ class TabClassify extends Component {
             this.toggleConfirmRemoveClassification
           }
           classification={classificationToRemove}
-          updateClassifications={this.getClassifications}
+          updateClassifications={this.getClassifications}      
+          toggleNotification={toggleNotification}
         />
 
         {this.renderShowNewClassification()}
@@ -161,13 +164,14 @@ class TabClassify extends Component {
 }
 
 TabClassify.propTypes = {
-  user: PropTypes.string.isRequired
+  user: PropTypes.string.isRequired,
+  toggleNotification: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => {
   return {
     selectedMessages: state.email.selectedMessages,
-    companySelected: state.selections.companySelected
+    companySelected: state.selections.companySelected  
   };
 };
 

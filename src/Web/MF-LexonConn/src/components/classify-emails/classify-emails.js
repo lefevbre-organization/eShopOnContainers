@@ -18,8 +18,6 @@ class ClassifyEmails extends Component {
       resultsSelected: [],
       type: null,
       search: "",
-      onlyHeader: false,
-      titleInHeader: "",
       forceUpdate: null
     };
 
@@ -41,7 +39,6 @@ class ClassifyEmails extends Component {
       this.props.initialModalState === false
     ) {
       this.setState({ listResultsByType: [], resultsSelected: [] });
-      this.showMessageInTitle();
     }
   }
 
@@ -53,8 +50,11 @@ class ClassifyEmails extends Component {
       user,
       companySelected,
       toggleClassifyEmails,
-      selectedMessages
+      selectedMessages,
+      toggleNotification
     } = this.props;
+
+    toggleClassifyEmails();
 
     if (fromSave === true) {
       for (
@@ -71,29 +71,21 @@ class ClassifyEmails extends Component {
             user,
             companySelected.idCompany,
             selectedMessages[indexSelectedMessages],
-            resultsSelected[indexResultsSelected].idFile,
+            resultsSelected[indexResultsSelected],
             type
           )
-            .then(
-              _this.showMessageInTitle(
-                i18n.t("classify-emails.classification-saved-ok")
-              )
-            )
+            .then(() => {
+              if (selectedMessages.length === 1) {
+                _this.updateResultsSelected(selectedMessages[0]);
+              }              
+              toggleNotification(i18n.t("classify-emails.classification-saved-ok"));
+            })
             .catch(error => {
+              toggleNotification(i18n.t("classify-emails.classification-saved-ko"));
               console.log("error ->", error);
             });
         }
       }
-    } else {
-      toggleClassifyEmails();
-    }
-  }
-
-  showMessageInTitle(title) {
-    if (title) {
-      this.setState({ onlyHeader: true, titleInHeader: title });
-    } else {
-      this.setState({ onlyHeader: false, titleInHeader: "" });
     }
   }
 
@@ -143,7 +135,7 @@ class ClassifyEmails extends Component {
   updateResultsSelected(item) {
     const { resultsSelected } = { ...this.state };
 
-    var findElement = resultsSelected.map(e => e.idFile).indexOf(item.idFile);
+    var findElement = resultsSelected.indexOf(item);
     if (findElement === -1) {
       resultsSelected.push(item);
     } else {
@@ -153,45 +145,9 @@ class ClassifyEmails extends Component {
     this.setState({ resultsSelected: resultsSelected });
   }
 
-  renderOnlyHeader() {
-    const { titleInHeader } = this.state;
-    const { initialModalState, toggleClassifyEmails } = this.props;
-
-    return (
-      <div>
-        <Modal
-          show={initialModalState}
-          onHide={toggleClassifyEmails}
-          size="lg"
-          aria-labelledby="contained-modal-title-vcenter"
-          centered
-          dialogClassName="modal"
-        >
-          <Modal.Header className="align-items-center" closeButton>
-            <Modal.Title>
-              <div className="modal-title h4">
-                <h5
-                  className="modal-title d-flex align-items-center"
-                  id="clasificarNuevaclasificacionLabel"
-                >
-                  <span className="lf-icon-bookmarks"></span>
-                  {titleInHeader}
-                </h5>
-              </div>
-            </Modal.Title>
-          </Modal.Header>
-        </Modal>
-      </div>
-    );
-  }
-
   render() {
-    const { listResultsByType, resultsSelected, onlyHeader } = this.state;
+    const { listResultsByType, resultsSelected } = this.state;
     const { initialModalState, toggleClassifyEmails } = this.props;
-
-    if (onlyHeader) {
-      return this.renderOnlyHeader();
-    }
 
     return (
       <div>
@@ -261,7 +217,9 @@ class ClassifyEmails extends Component {
 ClassifyEmails.propTypes = {
   user: PropTypes.string.isRequired,
   initialModalState: PropTypes.bool.isRequired,
-  toggleClassifyEmails: PropTypes.func.isRequired
+  toggleClassifyEmails: PropTypes.func.isRequired,
+  updateClassifications: PropTypes.func.isRequired,
+  toggleNotification: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => {
