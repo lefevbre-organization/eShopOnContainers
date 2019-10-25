@@ -50,6 +50,9 @@ WORKDIR /src/src/Services/Lexon/Lexon.FunctionalTests
 FROM build AS publish
 
 FROM base AS final
+ENV ASPNETCORE_URLS="https://+"
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path="./lexonmysql_server.pfx"
 WORKDIR /app
 COPY --from=publish /app .
+COPY /lexonmysql_server.pfx .
 ENTRYPOINT ["dotnet", "Lexon.MySql.dll"]
