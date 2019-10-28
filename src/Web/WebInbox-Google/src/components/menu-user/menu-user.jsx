@@ -13,6 +13,7 @@ import {
 } from "reactstrap";
 import { config, RESULT_OK, PROVIDER } from "../../constants";
 import AccountUser from "./account-user/account-user";
+import PerfectScrollbar from "react-perfect-scrollbar";
 
 class MenuUser extends Component {
   constructor(props) {
@@ -96,18 +97,102 @@ class MenuUser extends Component {
               />
             </DropdownToggle>
             <DropdownMenu right>
-              <DropdownItem header tag="div" className="text-center">
-                <strong title={email}>{fullName}</strong>
-              </DropdownItem>
-              <DropdownItem divider />
-              <DropdownItem onClick={this._handleOnClick}>
-                <i className="fa fa-shield"></i> Settings
-              </DropdownItem>
-              <DropdownItem divider />
+              <DropdownItem
+                header
+                tag="div"
+                className="user-image-and-name text-center"
+              >
+                <span className="dropdown-menu-arrow"></span>
+                <a
+                  href="#/"
+                  className="text-right d-block pr-3 pt-3"
+                  id="userInfo"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <span className="lf-icon-close"></span>
+                </a>
 
-              {accounts.map(account => {
-                return <AccountUser account={account} key={account.email} />;
-              })}
+                <div className="menu-title mb-5">
+                  <span>{email}</span>
+                </div>
+                <div className="user-options">
+                  <ul className="p-0">
+                    <li>
+                      <a
+                        href="#/"
+                        className="d-flex align-items-center"
+                        data-toggle="modal"
+                        data-target="#basicData"
+                      >
+                        <span className="lf-icon-lead"></span>{" "}
+                        <span>Editar datos básicos</span>
+                      </a>
+                    </li>
+                    <li>
+                      <a
+                        href="#/"
+                        className="d-flex align-items-center"
+                        data-toggle="modal"
+                        data-target="#resetPassword"
+                      >
+                        <span className="lf-icon-lock"></span>{" "}
+                        <span>Resetear contraseña</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="user-image">
+                  <a href="#/">
+                    <img alt={email} src={picUrl} />
+                  </a>
+                </div>
+                <span className="user-name">{fullName}</span>
+                <span className="company-name">Lefebvre-El Derecho, S.A.</span>
+
+                <a href="#/" className="d-flex align-items-center add-more">
+                  <span className="lf-icon-add-round"></span>
+                  <strong>Añadir otra cuenta</strong>
+                </a>
+
+                {/* <strong title={email}>{fullName}</strong> */}
+              </DropdownItem>
+              {/* <DropdownItem divider />
+              <DropdownItem onClick={this._handleOnClick}>
+                <a href="#/" className="d-flex align-items-center add-more">
+                  <span class="lf-icon-add-round"></span>
+                  <strong>Añadir otra cuenta</strong>
+                </a>
+                <i className="fa fa-shield"></i> Settings
+              </DropdownItem> */}
+              {/* <DropdownItem divider /> */}
+
+              <PerfectScrollbar>
+                <div>
+                  {accounts.map(account => {
+                    return (
+                      <AccountUser account={account} key={account.email} />
+                    );
+                  })}
+                  {accounts.map(account => {
+                    return (
+                      <AccountUser account={account} key={account.email} />
+                    );
+                  })}
+                  {accounts.map(account => {
+                    return (
+                      <AccountUser account={account} key={account.email} />
+                    );
+                  })}
+                  {accounts.map(account => {
+                    return (
+                      <AccountUser account={account} key={account.email} />
+                    );
+                  })}
+                </div>
+              </PerfectScrollbar>
 
               <DropdownItem divider />
               <DropdownItem onClick={onSignout}>

@@ -71,13 +71,14 @@ header .tools-bar a:hover {
 /* form-selection-business: EOC */
 
 /* Form components: BOC */
-input[type="checkbox"], input[type="radio"] {
-	position: absolute !important;
-	width: 1px;
-	height: 1px;
-	overflow: hidden;
-	clip: rect(1px, 1px, 1px, 1px);
-	font-size: .1em;
+input[type="checkbox"],
+input[type="radio"] {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  font-size: 0.1em;
 }
 input[type="checkbox"] + label,
 input[type="radio"] + label {
@@ -609,7 +610,7 @@ input[type="radio"]:checked + label:after {
 }
 .add-more-container {
   padding-bottom: 1rem;
-  padding-top: 20px;
+  /* padding-top: 20px; */
 }
 .add-more {
   color: #001978;
@@ -699,7 +700,106 @@ input[type="radio"]:checked + label:after {
 
 .form-box ul {
   padding: 0;
+  border-bottom: 1px solid #ccd1e4;
 }
+
+.form-box .bg-grey li {
+  list-style: none;
+  border-top: none;
+  padding: 15px;
+  height: 60px;
+}
+
+.form-box .bg-grey li:last-of-type {
+  border-bottom: 0;
+}
+
+.form-box .bg-grey .asociadas {
+  color: #001978;
+  font-size: 18px;
+  font-family: MTTMilano, Lato, Arial, sans-serif;
+  padding: 18px;
+}
+
+.form-box .bg-grey a {
+  padding: 0;
+}
+
+.form-box .bg-grey .trash {
+  position: relative;
+  top: -26px;
+  left: 88%;
+  font-size: 20px;
+  text-align: right;
+  width: 50px;
+}
+
+/* LISTADO DE CUENTAS ASOCIADAS: BOC */
+.associated-accounts {
+  background-color: #f5f5f5;
+  margin-bottom: 30px;
+}
+.associated-accounts strong {
+  color: #001978;
+  font-size: 12px;
+  padding-left: 10px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+.associated-accounts ul {
+  list-style: none;
+  max-height: 135px;
+  overflow: auto;
+  margin-bottom: 0;
+  display: block;
+  border-bottom: none;
+}
+.associated-accounts ul li {
+  border-top: none;
+  height: 40px;
+  position: relative;
+}
+.associated-accounts ul li:hover {
+  background-color: transparent;
+}
+.associated-accounts ul li a.account-text {
+  display: block;
+  padding: 15px 45px 15px 10px;
+}
+.associated-accounts ul li:hover a {
+  color: #001978 !important;
+}
+.associated-accounts ul li a.trash {
+  position: absolute;
+  right: 10px;
+  top: 13px;
+  height: 34px;
+  width: 34px;
+  padding: 7px;
+  display: none;
+}
+.associated-accounts ul li:hover a.trash {
+  display: block;
+}
+.associated-accounts ul li a.trash:hover {
+  background-color: #e5e8f1;
+  border-radius: 50%;
+}
+.associated-accounts ul li a.trash .icon {
+  font-size: 18px;
+}
+strong.add-accounts {
+  color: #001978;
+  font-size: 12px;
+  padding-left: 10px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-transform: uppercase;
+  display: inline-block;
+  padding-bottom: 15px;
+}
+/* LISTADO DE CUENTAS ASOCIADAS: EOC */
 
 .form-box li {
   list-style: none;
@@ -849,6 +949,77 @@ input[type="radio"]:checked + label:after {
   font-family: MTTMilano-Bold, Lato, Arial, sans-serif;
   text-transform: uppercase;
 }
+
+/* LISTADO DE CUENTAS ASOCIADAS: BOC */
+.other-accounts {
+  list-style: none;
+  border-top: solid 1px #ccd1e4;
+  border-bottom: solid 1px #ccd1e4;
+  padding: 0;
+  text-align: left;
+  font-size: 14px;
+  max-height: 105px;
+  overflow: auto;
+  margin-bottom: 0;
+  display: block;
+}
+.other-accounts li a {
+  display: block;
+  padding: 5px 35px 5px 15px;
+  background-color: #f2f3f8;
+  position: relative;
+}
+.other-accounts li a:hover span {
+  color: #001978 !important;
+}
+.other-accounts li a span {
+  display: inline;
+}
+.other-accounts li img {
+  width: 20px;
+  height: 20px;
+  margin-right: 14px;
+}
+.other-accounts li .lf-icon-arrow-exchange {
+  position: absolute;
+  right: 10px;
+  top: 3px;
+  font-size: 17px;
+  display: block;
+  width: 30px;
+  height: 30px;
+  padding: 7px;
+  transition: background-color 0.3ms;
+  border-radius: 50%;
+}
+.other-accounts li a:hover .lf-icon-arrow-exchange {
+  background-color: #e5e8f1;
+}
+.other-accounts + .add-more {
+  color: #001978;
+  border-bottom: solid 1px #ccd1e4;
+  padding: 5px 10px 0 5px;
+  background-color: transparent;
+  font-size: 12px;
+}
+.other-accounts + .add-more span {
+  color: #001978 !important;
+  font-size: 30px;
+  width: 40px;
+  height: 40px;
+  padding: 5px;
+  transition: background-color 0.3ms;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+.other-accounts + .add-more:hover span {
+  background-color: #e5e8f1;
+}
+.other-accounts + .add-more strong {
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+/* LISTADO DE CUENTAS ASOCIADAS: EOC */
 
 .btn-primary,
 .btn-primary:hover {
