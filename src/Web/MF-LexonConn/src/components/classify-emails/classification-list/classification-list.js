@@ -4,6 +4,7 @@ import ClassificationListSearch from "../classification-list-search/classificati
 import PropTypes from "prop-types";
 import ResultsSearch from "../results-search/results-search";
 import i18n from "i18next";
+import PerfectScrollbar from "react-perfect-scrollbar";
 
 class ClassificationList extends Component {
   render() {
@@ -37,22 +38,25 @@ class ClassificationList extends Component {
               <th>Descripción</th>
             </tr>
           </thead>
-
-          <tbody>
-            {listResultsByType.map(result => {
-              return (
-                <ResultsSearch
-                  key={result.id}
-                  result={result}
-                  resultsSelected={resultsSelected}
-                  updateResultsSelected={item => {
-                    updateResultsSelected(item.id);
-                  }}
-                />
-              );
-            })}
-          </tbody>
         </table>
+        <PerfectScrollbar style={{ height: "250px" }}>
+          <table className="lexon-clasification-list">
+            <tbody>
+              {listResultsByType.map(result => {
+                return (
+                  <ResultsSearch
+                    key={result.id}
+                    result={result}
+                    resultsSelected={resultsSelected}
+                    updateResultsSelected={item => {
+                      updateResultsSelected(item.id);
+                    }}
+                  />
+                );
+              })}
+            </tbody>
+          </table>
+        </PerfectScrollbar>
       </div>
     );
   }

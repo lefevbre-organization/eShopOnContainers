@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { Tabs, Tab } from "react-bootstrap";
 
 import TabClassify from "../tab-classify/tab-classify";
-import TabKeepRecord from "../tab-keeprecord/tab-keeprecord";
+import TabDocument from "../tab-document/tab-document";
 
 class SelectActionTab extends Component {
   render() {
@@ -22,8 +22,8 @@ class SelectActionTab extends Component {
             toggleNotification={toggleNotification}
           />
         </Tab>
-        <Tab eventKey="keeprecord" title="Documentar">
-          <TabKeepRecord user={user} />
+        <Tab eventKey="document" title="Documentar">
+          <TabDocument user={user} />
         </Tab>
       </Tabs>
     );
