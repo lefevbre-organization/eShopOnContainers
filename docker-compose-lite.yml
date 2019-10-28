@@ -3,8 +3,8 @@ version: '3'
 services:
        
   lexon.mysql.api:
-#    image: ${REGISTRY:-elefebvreoncontainers}/lexon.mysql.api:${TAG:-latest}
-    image: lexon.mysql.test1
+    image: ${REGISTRY:-elefebvreoncontainers}/lexon.mysql:${TAGTEST:-prueba}
+#    image: lexon.mysql.test1
 #    build:
 #      context: .
 #      dockerfile: src/Services/Lexon/Lexon.MySql/Dockerfile
@@ -18,7 +18,7 @@ services:
       - "3315:3315"
 
   lexon.api:
-#    image: ${REGISTRY:-elefebvreoncontainers}/lexon.api:${TAG:-latest}
+    image: ${REGISTRY:-elefebvreoncontainers}/lexon.api:${TAGTEST:-prueba}
     image: lexon.api.test1
 #    build:
 #      context: .
@@ -27,8 +27,8 @@ services:
       - lexon.mysql.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Staging
-      - LexonMySqlUrl=https://localhost:8184/api/v1/LexonMySql
-#      - LexonMySqlUrl=http://lefebvre.westeurope.cloudapp.azure.com:8084/api/v1/LexonMySql
+#      - LexonMySqlUrl=https://localhost:8184/api/v1/LexonMySql
+      - LexonMySqlUrl=http://lefebvre.westeurope.cloudapp.azure.com:8084/api/v1/LexonMySql
 #      - LexonMySqlUrl=https://lefebvre-mysql-service.azurewebsites.net/api/v1/LexonMySql   
       - ASPNETCORE_URLS=http://0.0.0.0:80
     ports:
@@ -63,7 +63,5 @@ services:
     ports:
       - "8086:80"  
   
-                  
-#rabbitmq console: 15672 
-#rabbitmq tcp: 5672
+
         

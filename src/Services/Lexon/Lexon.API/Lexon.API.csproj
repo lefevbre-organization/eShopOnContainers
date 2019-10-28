@@ -39,7 +39,7 @@
 
 
   <ItemGroup>
-    <None Update="lexon_server.pfx">
+    <None Update="lexon.pfx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -18,10 +18,10 @@
     </None>
   </ItemGroup>
   <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
-    <Copy SourceFiles="lexonmysql_server.pfx" DestinationFolder="$(OutDir)" />
+    <Copy SourceFiles="lexon.pfx" DestinationFolder="$(OutDir)" />
   </Target>
   <Target Name="CopyCustomContentOnPublish" AfterTargets="Publish">
-    <Copy SourceFiles="lexonmysql_server.pfx" DestinationFolder="$(PublishDir)" />
+    <Copy SourceFiles="lexon.pfx" DestinationFolder="$(PublishDir)" />
   </Target>
 
 </Project>

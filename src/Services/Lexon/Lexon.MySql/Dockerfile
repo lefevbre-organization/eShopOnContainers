@@ -52,11 +52,11 @@ FROM build AS publish
 
 FROM base AS final
 ENV ASPNETCORE_URLS="https://+"
-ENV ASPNETCORE_Kestrel__Certificates__Default__Path="./lexonmysql_server.pfx"
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path="./lexon.pfx"
 ENV ASPNETCORE_Kestrel__Certificates__Default__Password="lefebvre"
 WORKDIR /app
 COPY --from=publish /app .
-COPY --from=publish /app/lexonmysql_server.pfx .
+#COPY --from=publish /app/lexonmysql_server.pfx .
 RUN ls -lha /app
 
 ENTRYPOINT ["dotnet", "Lexon.MySql.dll"]
