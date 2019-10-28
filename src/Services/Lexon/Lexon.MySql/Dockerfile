@@ -52,7 +52,7 @@ FROM build AS publish
 
 FROM base AS final
 ENV ASPNETCORE_URLS="https://+"
-ENV ASPNETCORE_Kestrel__Certificates__Default__Path="./lexon.pfx"
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path="./lexon_mysql.pfx"
 ENV ASPNETCORE_Kestrel__Certificates__Default__Password="lefebvre"
 WORKDIR /app
 COPY --from=publish /app .

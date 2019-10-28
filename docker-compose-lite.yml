@@ -3,7 +3,7 @@ version: '3'
 services:
        
   lexon.mysql.api:
-    image: ${REGISTRY:-elefebvreoncontainers}/lexon.mysql:${TAGTEST:-prueba}
+    image: ${REGISTRY:-elefebvreoncontainers}/lexon.mysql:${TAGTEST:-pruebas}
 #    image: lexon.mysql.test1
 #    build:
 #      context: .
@@ -18,8 +18,8 @@ services:
       - "3315:3315"
 
   lexon.api:
-    image: ${REGISTRY:-elefebvreoncontainers}/lexon.api:${TAGTEST:-prueba}
-    image: lexon.api.test1
+    image: ${REGISTRY:-elefebvreoncontainers}/lexon.api:${TAGTEST:-pruebas}
+#    image: lexon.api.test1
 #    build:
 #      context: .
 #      dockerfile: src/Services/Lexon/Lexon.API/Dockerfile    
