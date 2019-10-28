@@ -9,7 +9,7 @@
           "Port": 80
         },
         {
-          "Host": "104.42.118.112",
+          "Host": "localhost",
           "Port": 8086
         }
       ],
@@ -25,7 +25,7 @@
           "Port": 80
         },
         {
-          "Host": "104.42.118.112",
+          "Host": "localhost",
           "Port": 8087
         }
       ],
@@ -37,11 +37,11 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "account.api",
+          "Host": "localhost",
           "Port": 80
         },
         {
-          "Host": "104.42.118.112",
+          "Host": "localhost",
           "Port": 8088
         }
       ],
