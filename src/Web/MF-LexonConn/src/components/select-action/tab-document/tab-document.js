@@ -1,15 +1,15 @@
 import React, { Component } from "react";
-import "./tab-keeprecord.css";
+import "./tab-document.css";
 import PropTypes from "prop-types";
 
-class TabKeepRecord extends Component {
+class TabDocument extends Component {
   render() {
     return <div>Documentar</div>;
   }
 }
 
-TabKeepRecord.propTypes = {
+TabDocument.propTypes = {
   user: PropTypes.string.isRequired
 };
 
-export default TabKeepRecord;
+export default TabDocument;
