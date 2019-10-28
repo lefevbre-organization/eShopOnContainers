@@ -1,0 +1,67 @@
+version: '3'
+
+services:
+       
+  lexon.mysql.api:
+    image: ${REGISTRY:-elefebvreoncontainers}/lexon.mysql:${TAGTEST:-prueba}
+#    image: lexon.mysql.test1
+#    build:
+#      context: .
+#      dockerfile: src/Services/Lexon/Lexon.MySql/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ConnectionString="database=lexon_conecta;server=mysqldevlexon.lefebvre.es;port=3315;user id=led-app-conecta-azure;password=FDSk2q3+asd5;sslmode=none"
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+    ports:
+      - "8084:80"
+      - "8184:443"
+      - "3315:3315"
+
+  lexon.api:
+    image: ${REGISTRY:-elefebvreoncontainers}/lexon.api:${TAGTEST:-prueba}
+    image: lexon.api.test1
+#    build:
+#      context: .
+#      dockerfile: src/Services/Lexon/Lexon.API/Dockerfile    
+    depends_on:
+      - lexon.mysql.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+#      - LexonMySqlUrl=https://localhost:8184/api/v1/LexonMySql
+      - LexonMySqlUrl=http://lefebvre.westeurope.cloudapp.azure.com:8084/api/v1/LexonMySql
+#      - LexonMySqlUrl=https://lefebvre-mysql-service.azurewebsites.net/api/v1/LexonMySql   
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+    ports:
+      - "8085:80"
+      - "8185:443"
+
+  lexongw:
+    image: ${REGISTRY:-elefebvreoncontainers}/ocelot.gateway:${TAG:-latest}
+#    build:
+#      context: .
+#      dockerfile: src/ApiGateways/ApiGw-Lefebvre/Dockerfile
+    depends_on:
+      - lexon.mysql.api
+      - lexon.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - LexonUrlHC=http://lexon.api/hc
+      - LexonMySqlUrlHC=http://lexon.mysql.api/hc
+      - AccountsUrlHC=http://accounts.api/hc
+    ports:
+      - "8096:80"   
+    volumes:
+      - ./src/ApiGateways/Web.Bff.Lexon/apigw:/app/configuration
+      
+  lexongw.fake:
+    image: ${REGISTRY:-elefebvreoncontainers}/ocelot.lexon.gateway:${TAG:-latest}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - LexonUrlHC=http://lexon.api/hc
+      - LexonMySqlUrlHC=http://lexon.mysql.api/hc
+      - AccountsUrlHC=http://accounts.api/hc
+    ports:
+      - "8086:80"  
+  
+
+        

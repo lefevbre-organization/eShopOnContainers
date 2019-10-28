@@ -5,8 +5,8 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "lefebvre.westeurope.cloudapp.azure.com",
-          "Port": 8085
+          "Host": "lefebvre-lexon-service.azurewebsites.net",
+          "Port": 80
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/lex/{everything}",

@@ -84,27 +84,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Account", "Account", "{E80F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexon.MySql", "src\Services\Lexon\Lexon.MySql\Lexon.MySql.csproj", "{B899D5BF-6C2A-4774-A864-85C9CEDC3638}"
 EndProject
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "WebNetwork", "src\Web\WebNetwork\", "{40900227-55F0-4BFB-B797-7718CD98C62E}"
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_53593"
-		Debug.AspNetCompiler.PhysicalPath = "src\Web\WebNetwork\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_53593\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_53593"
-		Release.AspNetCompiler.PhysicalPath = "src\Web\WebNetwork\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_53593\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "53593"
-		SlnRelativePath = "src\Web\WebNetwork\"
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OcelotApiGw-Lexon", "src\ApiGateways\OcelotApiGw-Lexon\OcelotApiGw-Lexon.csproj", "{BAF1246D-0C3A-4349-96F9-FDF8564E8440}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OcelotApiGw-Account", "src\ApiGateways\OcelotApiGw-Account\OcelotApiGw-Account.csproj", "{225066A5-A359-4A52-B416-DAA61E066780}"
@@ -1229,7 +1208,6 @@ Global
 		{621F0860-B843-42A4-A54E-4BC0534D5243} = {E279BF0F-7F66-4F3A-A3AB-2CDA66C1CD04}
 		{E80F8460-4B66-4A66-A8F8-D62A695BB2CD} = {91CF7717-08AB-4E65-B10E-0B426F01E2E8}
 		{B899D5BF-6C2A-4774-A864-85C9CEDC3638} = {3F68DD1B-D7B0-4053-924E-FD297ECAD0B2}
-		{40900227-55F0-4BFB-B797-7718CD98C62E} = {E279BF0F-7F66-4F3A-A3AB-2CDA66C1CD04}
 		{BAF1246D-0C3A-4349-96F9-FDF8564E8440} = {EC91ADE9-3D66-4AB2-9FB4-2B585E1F3531}
 		{225066A5-A359-4A52-B416-DAA61E066780} = {EC91ADE9-3D66-4AB2-9FB4-2B585E1F3531}
 	EndGlobalSection
