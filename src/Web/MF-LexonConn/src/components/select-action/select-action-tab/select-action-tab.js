@@ -22,7 +22,7 @@ class SelectActionTab extends Component {
             toggleNotification={toggleNotification}
           />
         </Tab>
-        <Tab eventKey="keeprecord" title="Documentar">
+        <Tab eventKey="document" title="Documentar">
           <TabDocument user={user} />
         </Tab>
       </Tabs>

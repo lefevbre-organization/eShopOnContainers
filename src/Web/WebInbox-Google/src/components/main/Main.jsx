@@ -112,10 +112,10 @@ export class Main extends Component {
   }
 
   handleGetUserFromLexonConnector() {
-    // const { userId } = this.props.lexon;
+    const { userId } = this.props.lexon;
 
     // Comentar esto (es para pruebas)
-    const userId = 120;
+    // const userId = 120;
     // Comentar esto (es para pruebas)
 
     if (userId) {
