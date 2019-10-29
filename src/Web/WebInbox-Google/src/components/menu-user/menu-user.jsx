@@ -166,7 +166,7 @@ class MenuUser extends Component {
                 <span className="user-name">{fullName}</span>
                 <span className="company-name">Lefebvre-El Derecho, S.A.</span>
 
-                <a href="#/" className="d-flex align-items-center add-more">
+                <a href="#/" className="d-flex align-items-center add-more" onClick={this._handleOnClick}>
                   <span className="lf-icon-add-round"></span>
                   <strong>Añadir otra cuenta</strong>
                 </a>
