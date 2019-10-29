@@ -1,12 +1,13 @@
-import { persistState, recoverState } from './indexed-db';
-import { INITIAL_STATE } from '../reducers';
-import { processFolders } from './folder';
+import { persistState, recoverState } from "./indexed-db";
+import { INITIAL_STATE } from "../reducers";
+import { processFolders } from "./folder";
 
-export const KEY_USER_ID = 'KEY_USER_ID';
-export const KEY_HASH = 'KEY_HASH';
+export const KEY_USER_ID = "KEY_USER_ID";
+export const KEY_HASH = "KEY_HASH";
+export const LEXON = "LEXON";
 
 function emptyState() {
-    return JSON.parse(JSON.stringify(INITIAL_STATE));
+  return JSON.parse(JSON.stringify(INITIAL_STATE));
 }
 
 /**
@@ -19,24 +20,28 @@ function emptyState() {
  * @returns {Promise<*>}
  */
 export async function loadState() {
-
-    const state = emptyState();
-    //const userId = sessionStorage.getItem(KEY_USER_ID);
-    //const hash = sessionStorage.getItem(KEY_HASH);
-    const userId = localStorage.getItem(KEY_USER_ID);
-    const hash = localStorage.getItem(KEY_HASH);
-    if (userId !== null && hash !== null) {
-        const dbState = await recoverState(userId, hash);
-        if (dbState && dbState.application && dbState.folders && dbState.messages) {
-            state.application = { ...dbState.application };
-            state.folders.items = [...dbState.folders.items];
-            state.folders.explodedItems = { ...dbState.folders.explodedItems };
-            processFolders(Object.values(state.folders.explodedItems));
-            state.login = { ...dbState.login };
-            state.messages.cache = { ...dbState.messages.cache };
-        }
+  const state = emptyState();
+  //const userId = sessionStorage.getItem(KEY_USER_ID);
+  //const hash = sessionStorage.getItem(KEY_HASH);
+  const userId = localStorage.getItem(KEY_USER_ID);
+  const hash = localStorage.getItem(KEY_HASH);
+  if (userId !== null && hash !== null) {
+    const dbState = await recoverState(userId, hash);
+    if (dbState && dbState.application && dbState.folders && dbState.messages) {
+      state.application = { ...dbState.application };
+      state.folders.items = [...dbState.folders.items];
+      state.folders.explodedItems = { ...dbState.folders.explodedItems };
+      processFolders(Object.values(state.folders.explodedItems));
+      state.login = { ...dbState.login };
+      state.messages.cache = { ...dbState.messages.cache };
     }
-    return state;
+  }
+  const lexon = localStorage.getItem(LEXON);
+  if (lexon !== null && lexon.user !== null) {
+    state.lexon = JSON.parse(lexon);
+  }
+
+  return state;
 }
 
 /**
@@ -49,20 +54,21 @@ export async function loadState() {
  * @param state
  */
 export function saveState(dispatch, state) {
-    //sessionStorage.setItem(KEY_USER_ID, state.application.user.id);
-    //sessionStorage.setItem(KEY_HASH, state.application.user.hash);
+  //sessionStorage.setItem(KEY_USER_ID, state.application.user.id);
+  //sessionStorage.setItem(KEY_HASH, state.application.user.hash);
 
-    localStorage.setItem(KEY_USER_ID, state.application.user.id);
-    localStorage.setItem(KEY_HASH, state.application.user.hash);
+  localStorage.setItem(KEY_USER_ID, state.application.user.id);
+  localStorage.setItem(KEY_HASH, state.application.user.hash);
+  localStorage.setItem(LEXON, JSON.stringify(state.lexon));
 
-    persistState(dispatch, state);
+  persistState(dispatch, state);
 }
 
 export function removeState() {
-    //sessionStorage.removeItem(KEY_USER_ID);
-    //sessionStorage.removeItem(KEY_HASH); 
-    localStorage.removeItem(KEY_USER_ID);
-    localStorage.removeItem(KEY_HASH);
-    sessionStorage.clear();
+  //sessionStorage.removeItem(KEY_USER_ID);
+  //sessionStorage.removeItem(KEY_HASH);
+  localStorage.removeItem(KEY_USER_ID);
+  localStorage.removeItem(KEY_HASH);
+  localStorage.removeItem(LEXON);
+  sessionStorage.clear();
 }
-

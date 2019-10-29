@@ -90,11 +90,25 @@ class MenuUser extends Component {
           </NavItem>
           <Dropdown nav isOpen={dropdownOpen} toggle={this.toggle}>
             <DropdownToggle nav>
-              <img
+              {/* <img
                 className="mx-2 profile-pic img-circle"
                 src={picUrl}
                 alt=""
-              />
+              /> */}
+              <a
+                href="#/"
+                className="d-flex align-items-center header-user-image"
+                id="userInfo"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                data-display="static"
+              >
+                <span className="lf-icon-user"></span>
+                <span className="pl-2 d-none d-md-block user-name">
+                  {fullName}
+                </span>
+              </a>
             </DropdownToggle>
             <DropdownMenu right>
               <DropdownItem
@@ -115,7 +129,7 @@ class MenuUser extends Component {
                 </a>
 
                 <div className="menu-title mb-5">
-                  <span>{email}</span>
+                  <span className="d-flex align-items-left">{email}</span>
                 </div>
                 <div className="user-options">
                   <ul className="p-0">
