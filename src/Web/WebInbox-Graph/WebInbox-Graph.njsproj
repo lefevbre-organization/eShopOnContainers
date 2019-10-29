@@ -27,6 +27,32 @@
   <ItemGroup>
     <Content Include=".dockerignore" />
     <Content Include=".env" />
+    <Content Include="calendar-demo\calendar-outlook\.env" />
+    <Content Include="calendar-demo\calendar-outlook\.gitattributes" />
+    <Content Include="calendar-demo\calendar-outlook\.gitignore" />
+    <Content Include="calendar-demo\calendar-outlook\app.js" />
+    <Content Include="calendar-demo\calendar-outlook\bin\www" />
+    <Content Include="calendar-demo\calendar-outlook\helpers\auth.js" />
+    <Content Include="calendar-demo\calendar-outlook\LICENSE.TXT" />
+    <Content Include="calendar-demo\calendar-outlook\package-lock.json" />
+    <Content Include="calendar-demo\calendar-outlook\package.json" />
+    <Content Include="calendar-demo\calendar-outlook\public\stylesheets\style.css" />
+    <Content Include="calendar-demo\calendar-outlook\readme-images\new-password.PNG" />
+    <Content Include="calendar-demo\calendar-outlook\readme-images\node-tutorial.PNG" />
+    <Content Include="calendar-demo\calendar-outlook\README.md" />
+    <Content Include="calendar-demo\calendar-outlook\routes\authorize.js" />
+    <Content Include="calendar-demo\calendar-outlook\routes\calendar.js" />
+    <Content Include="calendar-demo\calendar-outlook\routes\contacts.js" />
+    <Content Include="calendar-demo\calendar-outlook\routes\index.js" />
+    <Content Include="calendar-demo\calendar-outlook\routes\mail.js" />
+    <Content Include="calendar-demo\calendar-outlook\sample.env" />
+    <Content Include="calendar-demo\calendar-outlook\views\calendar.hbs" />
+    <Content Include="calendar-demo\calendar-outlook\views\contacts.hbs" />
+    <Content Include="calendar-demo\calendar-outlook\views\error.hbs" />
+    <Content Include="calendar-demo\calendar-outlook\views\index.hbs" />
+    <Content Include="calendar-demo\calendar-outlook\views\layout.hbs" />
+    <Content Include="calendar-demo\calendar-outlook\views\mail.hbs" />
+    <Content Include="calendar-demo\calendar.md" />
     <Content Include="docker\nginx\default.conf" />
     <Content Include="package.json" />
     <Content Include="public\assets\css\modal.css" />
@@ -123,8 +149,17 @@
     <Content Include="yarn.lock" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="calendar-demo\calendar-outlook\" />
+    <Folder Include="calendar-demo\calendar-outlook\bin\" />
+    <Folder Include="calendar-demo\calendar-outlook\helpers\" />
+    <Folder Include="calendar-demo\calendar-outlook\public\" />
+    <Folder Include="calendar-demo\calendar-outlook\public\stylesheets\" />
+    <Folder Include="calendar-demo\calendar-outlook\readme-images\" />
+    <Folder Include="calendar-demo\calendar-outlook\routes\" />
+    <Folder Include="calendar-demo\calendar-outlook\views\" />
     <Folder Include="docker\" />
     <Folder Include="docker\nginx\" />
+    <Folder Include="calendar-demo\" />
     <Folder Include="public" />
     <Folder Include="public\assets\" />
     <Folder Include="public\assets\css\" />
