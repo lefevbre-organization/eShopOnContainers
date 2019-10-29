@@ -10,8 +10,9 @@ services:
 #      dockerfile: src/Services/Lexon/Lexon.MySql/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Staging
-      - ConnectionString="database=lexon_conecta;server=mysqldevlexon.lefebvre.es;port=3315;user id=led-app-conecta-azure;password=FDSk2q3+asd5;sslmode=none"
-      - ASPNETCORE_URLS=http://0.0.0.0:80
+#      - ConnectionString="database=lexon_conecta;server=mysqldevlexon.lefebvre.es;port=3315;user id=led-app-conecta-azure;password=FDSk2q3+asd5;sslmode=none"
+      - ConnectionString="database=lexon_conecta;server=ES006-PPDDB003;port=3315;user id=led-ext-freyes;password=DSFkds4+46DSF"
+      - ASPNETCORE_URLS=http://0.0.0.0:443;http://0.0.0.0:80
     ports:
       - "8084:80"
       - "8184:443"
@@ -27,10 +28,10 @@ services:
       - lexon.mysql.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Staging
-#      - LexonMySqlUrl=https://localhost:8184/api/v1/LexonMySql
-      - LexonMySqlUrl=http://lefebvre.westeurope.cloudapp.azure.com:8084/api/v1/LexonMySql
+      - LexonMySqlUrl=https://localhost:8184/api/v1/LexonMySql
+#      - LexonMySqlUrl=http://lefebvre.westeurope.cloudapp.azure.com:8084/api/v1/LexonMySql
 #      - LexonMySqlUrl=https://lefebvre-mysql-service.azurewebsites.net/api/v1/LexonMySql   
-      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ASPNETCORE_URLS=http://0.0.0.0:443
     ports:
       - "8085:80"
       - "8185:443"

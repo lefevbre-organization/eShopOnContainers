@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+       
+  lexon.mysql.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ConnectionString="database=lexon_conecta;server=mysqldevlexon.lefebvre.es;port=3315;user id=led-app-conecta-azure;password=FDSk2q3+asd5;sslmode=none"
+      - ASPNETCORE_URLS=https://+
+      - ASPNETCORE_HTTPS_PORT=8084
+    ports:
+      - "8084:443"
+      - "3315:3315"
+
+  lexon.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - LexonMySqlUrl=http://lexon.mysql.api/api/v1/LexonMySql
+#      - LexonMySqlUrl=http://lefebvre.westeurope.cloudapp.azure.com:8084/api/v1/LexonMySql
+#      - LexonMySqlUrl=https://lefebvre-mysql-service.azurewebsites.net/api/v1/LexonMySql   
+      - ASPNETCORE_URLS=https://+
+      - ASPNETCORE_HTTPS_PORT=8085
+    ports:
+      - "8085:443"
+
+#  lexongw:
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Staging
+#      - LexonUrlHC=http://lexon.api/hc
+#      - LexonMySqlUrlHC=http://lexon.mysql.api/hc
+#      - AccountsUrlHC=http://accounts.api/hc
+#    ports:
+#      - "8096:80"   
+#      
+#  lexongw.fake:
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Staging
+#      - LexonUrlHC=http://lexon.api/hc
+#      - LexonMySqlUrlHC=http://lexon.mysql.api/hc
+#    ports:
+#      - "8086:80"  
+#  
+        

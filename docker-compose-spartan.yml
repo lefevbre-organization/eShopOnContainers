@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+       
+  lexon.mysql.api:
+    image: ${REGISTRY:-elefebvreoncontainers}/lexon.mysql:${TAGTEST:-pruebas}
+#    image: lexon.mysql:${TAGTEST:-pruebas}
+    networks:
+      - backend
+
+  lexon.api:
+    image: ${REGISTRY:-elefebvreoncontainers}/lexon.api:${TAGTEST:-pruebas}
+#    image: lexon.api:${TAGTEST:-pruebas}
+    depends_on:
+      - lexon.mysql.api
+    networks:
+      - backend
+
+#  lexongw:
+#    image: ${REGISTRY:-elefebvreoncontainers}/ocelot.gateway:${TAG:-latest}
+#    networks:
+#      - backend
+#    depends_on:
+#      - lexon.mysql.api
+#      - lexon.api
+#    volumes:
+#      - ./src/ApiGateways/Web.Bff.Lexon/apigw:/app/configuration
+#      
+#  lexongw.fake:
+#    image: ${REGISTRY:-elefebvreoncontainers}/ocelot.lexon.gateway:${TAG:-latest}
+#    depends_on:
+#      - lexon.mysql.api
+#      - lexon.api
+#    networks:
+#      - backend
+#  
+networks:
+
+  backend:
+    driver: bridge       

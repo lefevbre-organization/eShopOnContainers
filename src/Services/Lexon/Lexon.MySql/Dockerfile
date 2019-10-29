@@ -1,6 +1,7 @@
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS base
 WORKDIR /app
 EXPOSE 80
+EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 WORKDIR /src
@@ -54,6 +55,7 @@ FROM base AS final
 ENV ASPNETCORE_URLS="https://+"
 ENV ASPNETCORE_Kestrel__Certificates__Default__Path="./lexon_mysql.pfx"
 ENV ASPNETCORE_Kestrel__Certificates__Default__Password="lefebvre"
+ENV ASPNETCORE_Kestrel__Certificates__Default__AllowInvalid=true
 WORKDIR /app
 COPY --from=publish /app .
 #COPY --from=publish /app/lexonmysql_server.pfx .
