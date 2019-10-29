@@ -320,7 +320,7 @@ input[type="radio"]:checked + label:after {
 }
 .lexon-clasification-list-container table tbody {
   height: 340px;
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
   display: block;
   width: 99%;
   margin: 5px;
