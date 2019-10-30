@@ -32,5 +32,12 @@
     "message-toolbar": {
         "move-to-trash": "Mover a la Papelera",
         "reply": "Responder"
+    },
+    "menu-user": {
+        "user": "Usuario",
+        "edit-basic-data": "EDITAR DATOS BÁSICOS",
+        "reset-pwd": "RESETEAR CONTRASEÑA",
+        "add-other-account": "AÑADIR OTRA CUENTA",
+        "close-session": "CERRAR SESIÓN"
     }
 }
