@@ -47,5 +47,17 @@
     "yes": "Yes",
     "no": "No",
     "text-confirm-remove": "If you delete this link, you will stop viewing the email in the corresponding Lex-on classification. Do you want to continue?"
+  },
+  "tab-document": {
+    "select-mail": "Select one or more messages and save them as a separate copy in the Lex-on documentation."
+  },
+  "save-copy": {
+    "save-copy": "Save copy"
+  },
+  "list-classifications": {
+    "classifications" :"CLASSIFICATIONS:"
+  },
+  "list-documents": {
+    "documented-copies" :"DOCUMENTED COPIES:"
   }
 }

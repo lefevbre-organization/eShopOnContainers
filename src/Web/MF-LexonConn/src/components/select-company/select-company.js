@@ -57,8 +57,8 @@ class SelectCompany extends Component {
 
     if (showMessageSelectCompany) {
       return (
-        <p class="d-flex align-items-center business-alert-warning">
-          <span class="lf-icon-close-round-full"></span>
+        <p className="d-flex align-items-center business-alert-warning">
+          <span className="lf-icon-close-round-full"></span>
           <strong>{i18n.t("select-company.must-select-company")}</strong>
         </p>
       );
