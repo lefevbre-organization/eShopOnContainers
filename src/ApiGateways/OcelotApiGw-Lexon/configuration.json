@@ -1,6 +1,7 @@
 ﻿{
   "ReRoutes": [
     {
+      "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamPathTemplate": "/api/{version}/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -13,6 +14,7 @@
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
+      "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamPathTemplate": "/api/{version}/{everything}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -25,9 +27,10 @@
       "UpstreamHttpMethod": [ "GET" ]
     }
   ],
-    "GlobalConfiguration": {
-      "RequestIdKey": "OcRequestId",
-      "AdministrationPath": "/administration"
-    }
+  "GlobalConfiguration": {
+    "RequestIdKey": "OcRequestId",
+    "AdministrationPath": "/administration",
+    "SkipSslValidation": true
+  }
   }
   

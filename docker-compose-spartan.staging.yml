@@ -15,7 +15,7 @@ services:
   lexon.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Staging
-      - LexonMySqlUrl=http://lexon.mysql.api/api/v1/LexonMySql
+      - LexonMySqlUrl=https://lexon.mysql.api/api/v1/LexonMySql
 #      - LexonMySqlUrl=http://lefebvre.westeurope.cloudapp.azure.com:8084/api/v1/LexonMySql
 #      - LexonMySqlUrl=https://lefebvre-mysql-service.azurewebsites.net/api/v1/LexonMySql   
       - ASPNETCORE_URLS=https://+
@@ -26,18 +26,21 @@ services:
 #  lexongw:
 #    environment:
 #      - ASPNETCORE_ENVIRONMENT=Staging
-#      - LexonUrlHC=http://lexon.api/hc
-#      - LexonMySqlUrlHC=http://lexon.mysql.api/hc
-#      - AccountsUrlHC=http://accounts.api/hc
+#      - LexonUrlHC=https://lexon.api/hc
+#      - LexonMySqlUrlHC=https://lexon.mysql.api/hc
+#      - AccountsUrlHC=https://accounts.api/hc
 #    ports:
 #      - "8096:80"   
 #      
-#  lexongw.fake:
-#    environment:
-#      - ASPNETCORE_ENVIRONMENT=Staging
-#      - LexonUrlHC=http://lexon.api/hc
-#      - LexonMySqlUrlHC=http://lexon.mysql.api/hc
-#    ports:
-#      - "8086:80"  
-#  
+  lexongw.fake:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_URLS=https://+
+      - ASPNETCORE_HTTPS_PORT=8086
+      - LexonUrlHC=https://lexon.api/hc
+      - LexonMySqlUrlHC=https://lexon.mysql.api/hc
+      - AccountsUrlHC=https://accounts.api/hc
+    ports:
+      - "8086:443"  
+  
         

@@ -4,23 +4,23 @@ services:
        
   lexon.mysql.api:
     environment:
-      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionString="database=lexon_conecta;server=ES006-PPDDB003;port=3315;user id=led-ext-freyes;password=DSFkds4+46DSF"
-      - ASPNETCORE_URLS=http://0.0.0.0:443;http://0.0.0.0:80
+      - ASPNETCORE_URLS=https://+
+      - ASPNETCORE_HTTPS_PORT=8084
     ports:
-      - "8084:80"
-      - "8184:443"
+      - "8084:443"
       - "3315:3315"
 
   lexon.api:
     environment:
-      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_ENVIRONMENT=Development
       - LexonMySqlUrl=https://lexon.mysql.api/api/v1/LexonMySql
 #      - LexonMySqlUrl=https://localhost:8184/api/v1/LexonMySql
-      - ASPNETCORE_URLS=http://0.0.0.0:443;http://0.0.0.0:80
+      - ASPNETCORE_URLS=https://+
+      - ASPNETCORE_HTTPS_PORT=8085
     ports:
-      - "8085:80"
-      - "8185:443"
+      - "8085:443"
 
 #  lexongw:
 #    environment:
@@ -30,12 +30,14 @@ services:
 #    ports:
 #      - "8096:80"   
 #      
-#  lexongw.fake:
-#    environment:
-#      - ASPNETCORE_ENVIRONMENT=Staging
-#      - LexonUrlHC=http://lexon.api/hc
-#      - LexonMySqlUrlHC=http://lexon.mysql.api/hc
-#    ports:
-#      - "8086:80"  
-#  
+  lexongw.fake:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_URLS=https://+
+      - ASPNETCORE_HTTPS_PORT=8086
+      - LexonUrlHC=http://lexon.api/hc
+      - LexonMySqlUrlHC=http://lexon.mysql.api/hc
+    ports:
+      - "8086:80"  
+  
         
