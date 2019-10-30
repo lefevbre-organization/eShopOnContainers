@@ -5,7 +5,7 @@ import SaveDocument from "../save-document/save-document";
 import ListDocuments from "../list-documents/list-documents";
 import i18n from "i18next";
 import { connect } from "react-redux";
-import DocumentsEmails from "../../documents-emails/documents-emails";
+import ModalDocumentsEmails from "../../modal-documents-emails/modal-documents-emails";
 
 class TabDocument extends Component {
   constructor(props) {
@@ -83,7 +83,7 @@ class TabDocument extends Component {
   render() {
     return (
       <Fragment>
-        <DocumentsEmails />
+        <ModalDocumentsEmails />
         {this.renderShowSaveDocument()}
         {this.renderShowDocuments()}
       </Fragment>
