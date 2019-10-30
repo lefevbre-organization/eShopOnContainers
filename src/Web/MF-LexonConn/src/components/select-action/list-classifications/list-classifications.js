@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import Classification from "../classification/classification";
+import i18n from "i18next";
 
 class ListClassifications extends Component {
   render() {
@@ -19,7 +20,7 @@ class ListClassifications extends Component {
 
     return (
       <Fragment>
-        <h2 className="lexon-title-list">Clasificaciones:</h2>
+        <h2 className="lexon-title-list">{i18n.t("list-classifications.classifications")}</h2>
         <PerfectScrollbar>
           <ul className="row lexon-document-list">
             {classifications.map(classification => {
