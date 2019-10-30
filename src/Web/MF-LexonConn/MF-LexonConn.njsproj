@@ -62,10 +62,10 @@
     <Content Include="src\components\company\company.js" />
     <Content Include="src\components\confirm-remove-classification\confirm-remove-classification.css" />
     <Content Include="src\components\confirm-remove-classification\confirm-remove-classification.js" />
-    <Content Include="src\components\documents-emails\documents-emails.css" />
-    <Content Include="src\components\documents-emails\documents-emails.js" />
     <Content Include="src\components\header\header.css" />
     <Content Include="src\components\header\header.js" />
+    <Content Include="src\components\modal-documents-emails\modal-documents-emails.css" />
+    <Content Include="src\components\modal-documents-emails\modal-documents-emails.js" />
     <Content Include="src\components\notification\notification.css" />
     <Content Include="src\components\notification\notification.js" />
     <Content Include="src\components\routing\routing.js" />
@@ -136,8 +136,8 @@
     <Folder Include="src\components\classify-emails\results-search\" />
     <Folder Include="src\components\company\" />
     <Folder Include="src\components\confirm-remove-classification\" />
-    <Folder Include="src\components\documents-emails\" />
     <Folder Include="src\components\header\" />
+    <Folder Include="src\components\modal-documents-emails\" />
     <Folder Include="src\components\notification\" />
     <Folder Include="src\components\routing\" />
     <Folder Include="src\components\select-action\" />

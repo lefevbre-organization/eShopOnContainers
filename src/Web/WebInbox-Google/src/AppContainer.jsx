@@ -33,8 +33,9 @@ class AppContainer extends Component {
 
   componentDidMount() {
     const user = this.props.match.params.id;
-    if (!user) {
-      const userLexon = getStateStorage().lexon;
+    const stateStorageLexon = getStateStorage();
+    if (!user && stateStorageLexon) {
+      const userLexon = stateStorageLexon.lexon;
       if (userLexon && userLexon.user) {
         this.props.setUser(userLexon.user);
       }

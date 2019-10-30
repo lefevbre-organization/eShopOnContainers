@@ -90,25 +90,11 @@ class MenuUser extends Component {
           </NavItem>
           <Dropdown nav isOpen={dropdownOpen} toggle={this.toggle}>
             <DropdownToggle nav>
-              {/* <img
-                className="mx-2 profile-pic img-circle"
-                src={picUrl}
-                alt=""
-              /> */}
-              <a
-                href="#/"
-                className="d-flex align-items-center header-user-image"
-                id="userInfo"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-                data-display="static"
-              >
-                <span className="lf-icon-user"></span>
-                <span className="pl-2 d-none d-md-block user-name">
-                  {fullName}
-                </span>
-              </a>
+              <img
+                className="mx-2 profile-pic"
+                src="assets/img/icon-user.png"
+                alt={fullName}
+              />
             </DropdownToggle>
             <DropdownMenu right>
               <DropdownItem
@@ -166,7 +152,11 @@ class MenuUser extends Component {
                 <span className="user-name">{fullName}</span>
                 <span className="company-name">Lefebvre-El Derecho, S.A.</span>
 
-                <a href="#/" className="d-flex align-items-center add-more" onClick={this._handleOnClick}>
+                <a
+                  href="#/"
+                  className="d-flex align-items-center add-more"
+                  onClick={this._handleOnClick}
+                >
                   <span className="lf-icon-add-round"></span>
                   <strong>Añadir otra cuenta</strong>
                 </a>
