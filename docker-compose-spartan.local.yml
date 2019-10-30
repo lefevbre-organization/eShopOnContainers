@@ -40,4 +40,20 @@ services:
     ports:
       - "8086:80"  
   
-        
+  account.api:
+    environment:
+      - ASPNETCORE_URLS=https://+
+      - ASPNETCORE_HTTPS_PORT=8082
+    ports:
+      - "8082:443"
+
+  accountgw.fake:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_URLS=https://+
+      - ASPNETCORE_HTTPS_PORT=8083
+      - LexonUrlHC=https://lexon.api/hc
+      - LexonMySqlUrlHC=https://lexon.mysql.api/hc
+      - AccountsUrlHC=https://accounts.api/hc
+    ports:
+      - "8083:443"          

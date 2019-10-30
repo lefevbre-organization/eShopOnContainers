@@ -37,7 +37,23 @@ services:
       - lexon.api
     networks:
       - backend
-  
+
+  account.api:
+    image: ${REGISTRY:-elefebvreoncontainers}/account.api:${TAGTEST:-pruebas}
+#    image: account.api:${TAGTEST:-pruebas}
+    container_name: account.api
+    networks:
+      - backend
+
+  accountgw.fake:
+    image: ${REGISTRY:-elefebvreoncontainers}/ocelot.account.gateway:${TAGTEST:-pruebas}
+#    image: ocelot.account.gateway:${TAGTEST:-pruebas}
+    container_name: accountgw
+    depends_on:
+      - account.api
+    networks:
+      - backend
+      
 networks:
 
   backend:
