@@ -29,8 +29,8 @@ services:
 #      - ./src/ApiGateways/Web.Bff.Lexon/apigw:/app/configuration
 #      
   lexongw.fake:
-#    image: ${REGISTRY:-elefebvreoncontainers}/ocelot.lexon.gateway:${TAG:-pruebas}
-    image: ocelot.lexon.gateway:${TAG:-pruebas}
+    image: ${REGISTRY:-elefebvreoncontainers}/ocelot.lexon.gateway:${TAGTEST:-pruebas}
+#    image: ocelot.lexon.gateway:${TAGTEST:-pruebas}
     container_name: lexongw
     depends_on:
       - lexon.mysql.api
