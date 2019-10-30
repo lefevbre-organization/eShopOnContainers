@@ -78,7 +78,7 @@ a {
 .associated-accounts ul {
   list-style: none;
   max-height: 135px;
-  overflow: auto;
+  /* overflow: auto; */
   margin-bottom: 0;
   display: block;
   border-bottom: none;

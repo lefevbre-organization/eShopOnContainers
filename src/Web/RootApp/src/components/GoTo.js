@@ -3,6 +3,7 @@ import i18n from "i18next";
 import ProviderInbox from "./ProviderInbox";
 import Accounts from "./Accounts";
 import PerfectScrollbar from "react-perfect-scrollbar";
+import "react-perfect-scrollbar/dist/css/styles.css";
 import { INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP } from "../constants";
 
 class GoTo extends Component {

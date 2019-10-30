@@ -694,8 +694,12 @@ input[type="radio"]:checked + label:after {
   padding: 0 15px;
 }
 
+.form-box .bg-grey {
+  background-color: #f5f5f5;
+}
+
 .form-box .content {
-  padding-bottom: 120px;
+  padding-bottom: 30px;
 }
 
 .form-box ul {
@@ -735,69 +739,75 @@ input[type="radio"]:checked + label:after {
 }
 
 /* LISTADO DE CUENTAS ASOCIADAS: BOC */
-.associated-accounts {
-  background-color: #f5f5f5;
-  margin-bottom: 30px;
-}
-.associated-accounts strong {
-  color: #001978;
-  font-size: 12px;
-  padding-left: 10px;
-  font-weight: 700;
-  line-height: 1.4;
-  text-transform: uppercase;
-}
-.associated-accounts ul {
+.other-accounts {
   list-style: none;
-  max-height: 135px;
-  overflow: auto;
+  padding: 0;
+  text-align: left;
+  font-size: 14px;
+  max-height: 170px;
+  /* overflow: auto; */
   margin-bottom: 0;
   display: block;
-  border-bottom: none;
 }
-.associated-accounts ul li {
-  border-top: none;
-  height: 40px;
+.other-accounts li a {
+  display: block;
+  padding: 4px 35px 4px 15px;
+  background-color: #f2f3f8;
   position: relative;
 }
-.associated-accounts ul li:hover {
-  background-color: transparent;
-}
-.associated-accounts ul li a.account-text {
-  display: block;
-  padding: 15px 45px 15px 10px;
-}
-.associated-accounts ul li:hover a {
+.other-accounts li a:hover span {
   color: #001978 !important;
 }
-.associated-accounts ul li a.trash {
+.other-accounts li a span {
+  display: inline;
+}
+.other-accounts li img {
+  width: 20px;
+  height: 20px;
+  margin-right: 14px;
+}
+.other-accounts li .lf-icon-arrow-exchange {
   position: absolute;
   right: 10px;
-  top: 13px;
-  height: 34px;
-  width: 34px;
-  padding: 7px;
-  display: none;
-}
-.associated-accounts ul li:hover a.trash {
+  top: 3px;
+  font-size: 17px;
   display: block;
-}
-.associated-accounts ul li a.trash:hover {
-  background-color: #e5e8f1;
+  width: 30px;
+  height: 30px;
+  padding: 7px;
+  transition: background-color 0.3ms;
   border-radius: 50%;
 }
-.associated-accounts ul li a.trash .icon {
-  font-size: 18px;
+.other-accounts li a:hover .lf-icon-arrow-exchange {
+  background-color: #e5e8f1;
 }
-strong.add-accounts {
+.add-more-accounts {
   color: #001978;
+  border-bottom: solid 1px #ccd1e4;
+  padding: 5px 10px 0 5px;
+  background-color: transparent;
   font-size: 12px;
-  padding-left: 10px;
-  font-weight: 700;
+}
+.add-more-accounts strong {
+  font-size: 12px;
+  font-weight: bolder;
+}
+.add-more-accounts span {
+  color: #001978 !important;
+  font-size: 30px;
+  width: 40px;
+  height: 40px;
+  padding: 5px;
+  transition: background-color 0.3ms;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+.add-more-accounts:hover span {
+  background-color: #e5e8f1;
+}
+.add-more-accounts strong {
   line-height: 1.4;
   text-transform: uppercase;
-  display: inline-block;
-  padding-bottom: 15px;
 }
 /* LISTADO DE CUENTAS ASOCIADAS: EOC */
 
@@ -918,22 +928,34 @@ strong.add-accounts {
 
 .user-image-and-name .user-image img {
   border-radius: 50%;
-  width: 140px;
-  height: 140px;
+  width: 100px;
+  height: 100px;
   margin-bottom: 20px;
+}
+.user-image-and-name .user-image strong {
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 20px;
+  background-color: #001978;
+  color: #ccd1e4;
+  font-size: 50px;
+  text-align: center;
+  display: inline-block;
+  padding-top: 35px;
 }
 
 .user-image-and-name .user-image::before {
   font-family: "lf-font";
   content: "\e952";
   position: relative;
-  top: 56px;
-  left: 140px;
+  bottom: -35px;
+  left: 125px;
   font-size: 22px;
-  margin-left: -2rem;
 }
 
-.user-image-and-name span {
+.user-image-and-name span,
+.user-image-and-name .other-accounts span {
   display: block;
   margin-bottom: 5px;
   color: #7c868c !important;
@@ -942,84 +964,21 @@ strong.add-accounts {
 .user-image-and-name .user-name {
   font-size: 16px;
   font-family: MTTMilano, Lato, Arial, sans-serif;
+  color: #7c868c !important;
 }
 
 .user-image-and-name .company-name {
   font-size: 12px;
   font-family: MTTMilano-Bold, Lato, Arial, sans-serif;
   text-transform: uppercase;
+  color: #7c868c !important;
 }
 
-/* LISTADO DE CUENTAS ASOCIADAS: BOC */
-.other-accounts {
-  list-style: none;
+.user-image-and-name .scrollbar-container {
   border-top: solid 1px #ccd1e4;
   border-bottom: solid 1px #ccd1e4;
-  padding: 0;
-  text-align: left;
-  font-size: 14px;
-  max-height: 105px;
-  overflow: auto;
-  margin-bottom: 0;
-  display: block;
+  width: 300px;
 }
-.other-accounts li a {
-  display: block;
-  padding: 5px 35px 5px 15px;
-  background-color: #f2f3f8;
-  position: relative;
-}
-.other-accounts li a:hover span {
-  color: #001978 !important;
-}
-.other-accounts li a span {
-  display: inline;
-}
-.other-accounts li img {
-  width: 20px;
-  height: 20px;
-  margin-right: 14px;
-}
-.other-accounts li .lf-icon-arrow-exchange {
-  position: absolute;
-  right: 10px;
-  top: 3px;
-  font-size: 17px;
-  display: block;
-  width: 30px;
-  height: 30px;
-  padding: 7px;
-  transition: background-color 0.3ms;
-  border-radius: 50%;
-}
-.other-accounts li a:hover .lf-icon-arrow-exchange {
-  background-color: #e5e8f1;
-}
-.other-accounts + .add-more {
-  color: #001978;
-  border-bottom: solid 1px #ccd1e4;
-  padding: 5px 10px 0 5px;
-  background-color: transparent;
-  font-size: 12px;
-}
-.other-accounts + .add-more span {
-  color: #001978 !important;
-  font-size: 30px;
-  width: 40px;
-  height: 40px;
-  padding: 5px;
-  transition: background-color 0.3ms;
-  border-radius: 50%;
-  margin-right: 10px;
-}
-.other-accounts + .add-more:hover span {
-  background-color: #e5e8f1;
-}
-.other-accounts + .add-more strong {
-  line-height: 1.4;
-  text-transform: uppercase;
-}
-/* LISTADO DE CUENTAS ASOCIADAS: EOC */
 
 .btn-primary,
 .btn-primary:hover {
@@ -1253,7 +1212,7 @@ strong.add-accounts {
 .dropdown-menu a:hover,
 .dropdown-menu span {
   text-decoration: none;
-  color: #001978;
+  color: #001978 !important;
 }
 
 .dropdown-menu [class^="lf-icon-close"] {

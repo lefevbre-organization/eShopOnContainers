@@ -13,6 +13,9 @@ import {
 } from "reactstrap";
 import { config, RESULT_OK, PROVIDER } from "../../constants";
 import AccountUser from "./account-user/account-user";
+import PerfectScrollbar from "react-perfect-scrollbar";
+import "react-perfect-scrollbar/dist/css/styles.css";
+import i18n from "i18next";
 
 class MenuUser extends Component {
   constructor(props) {
@@ -62,20 +65,34 @@ class MenuUser extends Component {
       const url = `${config.url.URL_RESET_DEFAULTACCOUNT}/${userId}`;
       fetch(url, {
         method: "GET"
-      }).then(() => {
-        const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-        window.open(urlRedirect, "_self");
-      }).catch((error) => {
-        console.log("error =>", error);
-        const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-        window.open(urlRedirect, "_self");
-      });
+      })
+        .then(result => {
+          console.log("result =>", result);
+        })
+        .catch(error => {
+          console.log("error =>", error);
+        });
+
+      const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+      window.open(urlRedirect, "_self");
     }
   }
 
   render() {
     const { dropdownOpen, accounts } = this.state;
-    const { picUrl, email, fullName } = this.props;
+    const { picUrl, email, fullName, onSignout } = this.props;
+    
+    let acronym = undefined;
+    if (!picUrl) {
+      if (fullName) {
+        acronym = fullName
+          .split(/\s/)
+          .reduce((response, word) => (response += word.slice(0, 1)), "")
+          .substring(0, 2);
+      } else {
+        acronym = " ";
+      }
+    }
 
     return (
       <div className="menu-user">
@@ -87,25 +104,203 @@ class MenuUser extends Component {
           </NavItem>
           <Dropdown nav isOpen={dropdownOpen} toggle={this.toggle}>
             <DropdownToggle nav>
-              <img className="mx-2 profile-pic" src={picUrl} alt="" />
+              <img
+                className="mx-2 profile-pic"
+                src="assets/img/icon-user.png"
+                alt={fullName}
+              />
             </DropdownToggle>
             <DropdownMenu right>
-              <DropdownItem header tag="div" className="text-center">
-                <strong title={email}>{fullName}</strong>
-              </DropdownItem>
-              <DropdownItem divider />
+              <DropdownItem header tag="div" className="user-image-and-name">
+                <span className="dropdown-menu-arrow"></span>
+                <a
+                  href="#/"
+                  className="text-right d-block pr-3 pt-3"
+                  id="userInfo"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <span className="lf-icon-close" onClick={() => this.toggle()}></span>
+                </a>
+                <div className="content">
+                  <div className="menu-title mb-5">
+                    <span>{i18n.t("menu-user.user")}</span>
+                  </div>
+                  <div className="user-options">
+                    <ul className="p-0">
+                      <li>
+                        <a
+                          href="#/"
+                          className="d-flex align-items-center"
+                          data-toggle="modal"
+                          data-target="#basicData"
+                        >
+                          <span className="lf-icon-lead"></span>{" "}
+                          <span>{i18n.t("menu-user.edit-basic-data")}</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="#/"
+                          className="d-flex align-items-center"
+                          data-toggle="modal"
+                          data-target="#resetPassword"
+                        >
+                          <span className="lf-icon-lock"></span>{" "}
+                          <span>{i18n.t("menu-user.reset-pwd")}</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="user-image-and-name text-center">
+                    <div className="user-image">
+                      <a href="#/">
+                        {acronym === undefined ? (
+                          <img src={picUrl} alt={fullName} />
+                        ) : (
+                          <strong>{acronym}</strong>
+                        )}
+                      </a>
+                    </div>
+                    <span className="user-name">{fullName}</span>
+                    <span className="company-name">
+                      Lefebvre-El Derecho, S.A.
+                    </span>
 
-              <DropdownItem onClick={this._handleOnClick}>
-                <i className="fa fa-shield"></i> Settings
-              </DropdownItem>
+                    <PerfectScrollbar>
+                      <ul className="other-accounts">
+                        <li>
+                          <a
+                            href="#/"
+                            className="d-flex align-items-center account-text"
+                          >
+                            <span>
+                              <img
+                                src="/assets/img/logoGoogle.png"
+                                alt="Google"
+                              />
+                            </span>
+                            <span>abogados-atocha@gmail.com</span>
+                            <span className="lf-icon-arrow-exchange"></span>
+                          </a>
+                        </li>
 
-              {accounts.map(account => {
-                return <AccountUser account={account} key={account.email} />;
-              })}
+                        <li>
+                          <a
+                            href="#/"
+                            className="d-flex align-items-center account-text"
+                          >
+                            <span>
+                              <img
+                                src="/assets/img/logoMicrosoft.png"
+                                alt="Microsoft"
+                              />
+                            </span>
+                            <span>otracuentaoutlook@lefebvre.es</span>
+                            <span className="lf-icon-arrow-exchange"></span>
+                          </a>
+                        </li>
 
-              <DropdownItem divider />
-              <DropdownItem onClick={this.props.onSignout}>
-                <i className="fa fa-lock"></i> Logout
+                        <li>
+                          <a
+                            href="#/"
+                            className="d-flex align-items-center account-text"
+                          >
+                            <span>
+                              <img
+                                src="/assets/img/logoGoogle.png"
+                                alt="Google"
+                              />
+                            </span>
+                            <span>abogados-vallecas@gmail.com</span>
+                            <span className="lf-icon-arrow-exchange"></span>
+                          </a>
+                        </li>
+
+                        <li>
+                          <a
+                            href="#/"
+                            className="d-flex align-items-center account-text"
+                          >
+                            <span>
+                              <img
+                                src="/assets/img/logoMicrosoft.png"
+                                alt="Microsoft"
+                              />
+                            </span>
+                            <span>otracuentaoutlookmas@lefebvre.es</span>
+                            <span className="lf-icon-arrow-exchange"></span>
+                          </a>
+                        </li>
+
+                        <li>
+                          <a
+                            href="#/"
+                            className="d-flex align-items-center account-text"
+                          >
+                            <span>
+                              <img
+                                src="/assets/img/logoGoogle.png"
+                                alt="Google"
+                              />
+                            </span>
+                            <span>abogados-torrejon@gmail.com</span>
+                            <span className="lf-icon-arrow-exchange"></span>
+                          </a>
+                        </li>
+
+                        <li>
+                          <a
+                            href="#/"
+                            className="d-flex align-items-center account-text"
+                          >
+                            <span>
+                              <img
+                                src="/assets/img/logoGoogle.png"
+                                alt="Google"
+                              />
+                            </span>
+                            <span>abogados-velilla@gmail.com</span>
+                            <span className="lf-icon-arrow-exchange"></span>
+                          </a>
+                        </li>
+
+                        <li>
+                          <a
+                            href="#/"
+                            className="d-flex align-items-center account-text"
+                          >
+                            <span>
+                              <img
+                                src="/assets/img/logoGoogle.png"
+                                alt="Google"
+                              />
+                            </span>
+                            <span>abogados-sanfernandodehenares@gmail.com</span>
+                            <span className="lf-icon-arrow-exchange"></span>
+                          </a>
+                        </li>
+                      </ul>
+                    </PerfectScrollbar>
+
+                    <a
+                      href="#/"
+                      className="d-flex align-items-center add-more-accounts"
+                      onClick={this._handleOnClick}
+                    >
+                      <span className="lf-icon-add-round"></span>
+                      <strong>{i18n.t("menu-user.add-other-account")}</strong>
+                    </a>
+                    <button
+                      type="button"
+                      className="col-6 btn btn-primary mt-3 mb-3"
+                      onClick={() => onSignout}
+                    >
+                      {i18n.t("menu-user.close-session")}
+                    </button>
+                  </div>
+                </div>
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
