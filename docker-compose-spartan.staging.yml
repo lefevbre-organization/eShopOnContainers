@@ -45,6 +45,7 @@ services:
          
   account.api:
     environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
       - ASPNETCORE_URLS=https://+
       - ASPNETCORE_HTTPS_PORT=8082
     ports:
