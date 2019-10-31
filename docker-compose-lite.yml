@@ -1,68 +1,84 @@
 version: '3'
 
 services:
-       
+
+  reverse-proxy:
+    container_name: traefik
+    image: traefik:1.7.13
+    command: --api --docker
+    networks:
+      - backend
+
+  imap-server:
+    container_name: imap-server
+    image: ${REGISTRY:-elefebvreoncontainers}/imap-smtp.server:${TAG:-latest}
+    networks:
+      - backend
+
+  imap-client:
+    container_name: imap-client
+    image: ${REGISTRY:-elefebvreoncontainers}/imap-smtp.client:${TAG:-latest}
+    networks:
+      - backend
+      
   lexon.mysql.api:
     image: ${REGISTRY:-elefebvreoncontainers}/lexon.mysql:${TAGTEST:-pruebas}
-#    image: lexon.mysql.test1
-#    build:
-#      context: .
-#      dockerfile: src/Services/Lexon/Lexon.MySql/Dockerfile
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Staging
-#      - ConnectionString="database=lexon_conecta;server=mysqldevlexon.lefebvre.es;port=3315;user id=led-app-conecta-azure;password=FDSk2q3+asd5;sslmode=none"
-      - ConnectionString="database=lexon_conecta;server=ES006-PPDDB003;port=3315;user id=led-ext-freyes;password=DSFkds4+46DSF"
-      - ASPNETCORE_URLS=http://0.0.0.0:443;http://0.0.0.0:80
-    ports:
-      - "8084:80"
-      - "8184:443"
-      - "3315:3315"
+    container_name: lexon.mysql.api
+    networks:
+      - backend
 
   lexon.api:
     image: ${REGISTRY:-elefebvreoncontainers}/lexon.api:${TAGTEST:-pruebas}
-#    image: lexon.api.test1
-#    build:
-#      context: .
-#      dockerfile: src/Services/Lexon/Lexon.API/Dockerfile    
+    container_name: lexon.api
     depends_on:
       - lexon.mysql.api
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Staging
-      - LexonMySqlUrl=https://localhost:8184/api/v1/LexonMySql
-#      - LexonMySqlUrl=http://lefebvre.westeurope.cloudapp.azure.com:8084/api/v1/LexonMySql
-#      - LexonMySqlUrl=https://lefebvre-mysql-service.azurewebsites.net/api/v1/LexonMySql   
-      - ASPNETCORE_URLS=http://0.0.0.0:443
-    ports:
-      - "8085:80"
-      - "8185:443"
+    networks:
+      - backend
 
-  lexongw:
-    image: ${REGISTRY:-elefebvreoncontainers}/ocelot.gateway:${TAG:-latest}
-#    build:
-#      context: .
-#      dockerfile: src/ApiGateways/ApiGw-Lefebvre/Dockerfile
+  lexongw.fake:
+    image: ${REGISTRY:-elefebvreoncontainers}/ocelot.lexon.gateway:${TAGTEST:-pruebas}
+    container_name: lexongw
     depends_on:
       - lexon.mysql.api
       - lexon.api
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Staging
-      - LexonUrlHC=http://lexon.api/hc
-      - LexonMySqlUrlHC=http://lexon.mysql.api/hc
-      - AccountsUrlHC=http://accounts.api/hc
-    ports:
-      - "8096:80"   
-    volumes:
-      - ./src/ApiGateways/Web.Bff.Lexon/apigw:/app/configuration
+    networks:
+      - backend
+
+  account.api:
+    image: ${REGISTRY:-elefebvreoncontainers}/account.api:${TAGTEST:-pruebas}
+    container_name: account.api
+    networks:
+      - backend
+
+  accountgw.fake:
+    image: ${REGISTRY:-elefebvreoncontainers}/ocelot.account.gateway:${TAGTEST:-pruebas}
+    container_name: accountgw
+    depends_on:
+      - account.api
+    networks:
+      - backend
+
+  portal-client:
+    container_name: portal
+    image: ${REGISTRY:-elefebvreoncontainers}/portal.client:${TAG:-latest}
+    networks:
+      - backend
       
-  lexongw.fake:
-    image: ${REGISTRY:-elefebvreoncontainers}/ocelot.lexon.gateway:${TAG:-latest}
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Staging
-      - LexonUrlHC=http://lexon.api/hc
-      - LexonMySqlUrlHC=http://lexon.mysql.api/hc
-      - AccountsUrlHC=http://accounts.api/hc
-    ports:
-      - "8086:80"  
-  
+  google-client:
+    container_name: google
+    image: ${REGISTRY:-elefebvreoncontainers}/google.client:${TAG:-latest}
+    networks:
+      - backend
+      
+  lexon-client:
+    container_name: lexon-client
+    image: ${REGISTRY:-elefebvreoncontainers}/lexonconnector.client:${TAG:-latest}
+    networks:
+      - backend
+      
+networks:
+
+  backend:
+    driver: bridge       
 
         
