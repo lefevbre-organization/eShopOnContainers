@@ -13,16 +13,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="lexonmysql_server.pfx">
+    <None Update="lexon_mysql.pfx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
+  <!--<Target Name="CopyCustomContent" AfterTargets="AfterBuild">
     <Copy SourceFiles="lexon.pfx" DestinationFolder="$(OutDir)" />
   </Target>
   <Target Name="CopyCustomContentOnPublish" AfterTargets="Publish">
     <Copy SourceFiles="lexon.pfx" DestinationFolder="$(PublishDir)" />
-  </Target>
+  </Target> -->
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

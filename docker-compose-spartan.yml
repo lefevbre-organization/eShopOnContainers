@@ -1,42 +1,36 @@
 version: '3'
 
 services:
-
-  reverse-proxy:
-    container_name: traefik
-    image: traefik:1.7.13
-    command: --api --docker
-    networks:
-      - backend
-
-  imap-server:
-    container_name: imap-server
-    image: ${REGISTRY:-elefebvreoncontainers}/imap-smtp.server:${TAG:-latest}
-    networks:
-      - backend
-
-  imap-client:
-    container_name: imap-client
-    image: ${REGISTRY:-elefebvreoncontainers}/imap-smtp.client:${TAG:-latest}
-    networks:
-      - backend
-      
+       
   lexon.mysql.api:
     image: ${REGISTRY:-elefebvreoncontainers}/lexon.mysql:${TAGTEST:-pruebas}
+#    image: lexon.mysql:${TAGTEST:-pruebas}
     container_name: lexon.mysql.api
     networks:
       - backend
 
   lexon.api:
     image: ${REGISTRY:-elefebvreoncontainers}/lexon.api:${TAGTEST:-pruebas}
+#    image: lexon.api:${TAGTEST:-pruebas}
     container_name: lexon.api
     depends_on:
       - lexon.mysql.api
     networks:
       - backend
 
+#  lexongw:
+#    image: ${REGISTRY:-elefebvreoncontainers}/ocelot.gateway:${TAG:-latest}
+#    networks:
+#      - backend
+#    depends_on:
+#      - lexon.mysql.api
+#      - lexon.api
+#    volumes:
+#      - ./src/ApiGateways/Web.Bff.Lexon/apigw:/app/configuration
+#      
   lexongw.fake:
     image: ${REGISTRY:-elefebvreoncontainers}/ocelot.lexon.gateway:${TAGTEST:-pruebas}
+#    image: ocelot.lexon.gateway:${TAGTEST:-pruebas}
     container_name: lexongw
     depends_on:
       - lexon.mysql.api
@@ -46,33 +40,17 @@ services:
 
   account.api:
     image: ${REGISTRY:-elefebvreoncontainers}/account.api:${TAGTEST:-pruebas}
+#    image: account.api:${TAGTEST:-pruebas}
     container_name: account.api
     networks:
       - backend
 
   accountgw.fake:
     image: ${REGISTRY:-elefebvreoncontainers}/ocelot.account.gateway:${TAGTEST:-pruebas}
+#    image: ocelot.account.gateway:${TAGTEST:-pruebas}
     container_name: accountgw
     depends_on:
       - account.api
-    networks:
-      - backend
-
-  portal-client:
-    container_name: portal
-    image: ${REGISTRY:-elefebvreoncontainers}/portal.client:${TAG:-latest}
-    networks:
-      - backend
-      
-  google-client:
-    container_name: google
-    image: ${REGISTRY:-elefebvreoncontainers}/google.client:${TAG:-latest}
-    networks:
-      - backend
-      
-  lexon-client:
-    container_name: lexon-client
-    image: ${REGISTRY:-elefebvreoncontainers}/lexonconnector.client:${TAG:-latest}
     networks:
       - backend
       
@@ -80,5 +58,3 @@ networks:
 
   backend:
     driver: bridge       
-
-        
