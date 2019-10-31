@@ -1,5 +1,5 @@
 import { config, PROXY_CORS, RESULT_OK } from "../constants";
-import data from "../data.json";
+// import data from "../data.json";
 
 export const getAccounts = (userId, encrypt) => {
   if (encrypt === "1") {
@@ -21,8 +21,8 @@ export const getAccounts = (userId, encrypt) => {
       })
       .catch(error => {
         console.log("error ->", error);
-        resolve(data.accounts);
-        // reject(error);
+        // resolve(data.accounts);
+        reject(error);
       });
   });
 };
@@ -93,11 +93,11 @@ export const getAccountsWithUserNoEncrypt = userId => {
         }
       })
       .catch(error => {
-        // reject(error);
-        resolve({
-          user: { ID_ENTRADA: userId },
-          accounts: data.accounts
-        });
+        reject(error);
+        // resolve({
+        //   user: { ID_ENTRADA: userId },
+        //   accounts: data.accounts
+        // });
       });
   });
 };

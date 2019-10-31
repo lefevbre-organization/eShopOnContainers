@@ -55,9 +55,12 @@
     "save-copy": "Save copy"
   },
   "list-classifications": {
-    "classifications" :"CLASSIFICATIONS:"
+    "classifications": "CLASSIFICATIONS:"
   },
   "list-documents": {
-    "documented-copies" :"DOCUMENTED COPIES:"
+    "documented-copies": "DOCUMENTED COPIES:"
+  },
+  "modal-documents-emails": {
+    "save-copy": "Save copy in Documentation"
   }
 }

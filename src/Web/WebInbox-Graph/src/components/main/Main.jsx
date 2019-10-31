@@ -176,8 +176,7 @@ export class Main extends Component {
       const url = `${config.url.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${PROVIDER}/${email}`;
       fetch(url, {
         method: "GET"
-      }).then(result => {
-        console.log(result);
+      }).then(() => {
         this.props.history.push(`/${labelFake}`);
       });
     }

@@ -27,14 +27,14 @@ export const PROVIDER = "GOOGLE";
 const dev = {
   url: {
     URL_UPDATE_DEFAULTACCOUNT:
-      "http://lefebvre.westeurope.cloudapp.azure.com:8083/api/v1/accounts/emailuseraccount/updatedefaultaccount",
+      "https://lefebvre.westeurope.cloudapp.azure.com:8083/api/v1/accounts/emailuseraccount/updatedefaultaccount",
     URL_RESET_DEFAULTACCOUNT:
-      "http://lefebvre.westeurope.cloudapp.azure.com:8083/api/v1/accounts/emailuseraccount/resetdefaultaccountbyuser",
+      "https://lefebvre.westeurope.cloudapp.azure.com:8083/api/v1/accounts/emailuseraccount/resetdefaultaccountbyuser",
     URL_DELETE_ACCOUNT:
-      "http://lefebvre.westeurope.cloudapp.azure.com:8083/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider",
-    URL_SELECT_ACCOUNT: "http://localhost:3010",
+      "https://lefebvre.westeurope.cloudapp.azure.com:8083/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider",
+      URL_SELECT_ACCOUNT: "http://localhost:3010",
     URL_GET_ACCOUNTS:
-      "http://lefebvre.westeurope.cloudapp.azure.com:8083/api/v1/accounts/emailuseraccount/getbyuser",
+      "https://lefebvre.westeurope.cloudapp.azure.com:8083/api/v1/accounts/emailuseraccount/getbyuser",
     URL_MF_GOOGLE: "http://localhost:3001/user",
     URL_MF_OUTLOOK: "http://localhost:3002/user",
     URL_MF_IMAP: "http://localhost:9000/user",
