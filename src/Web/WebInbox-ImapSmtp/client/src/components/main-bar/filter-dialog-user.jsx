@@ -8,9 +8,9 @@ import styles from "./filter-dialog.scss";
 import mainCss from "../../styles/main.scss";
 import { removeState } from "../../services/state";
 // import { logout } from '../login/login';
-
+import "react-perfect-scrollbar/dist/css/styles.css";
 import { config, RESULT_OK, PROVIDER } from "../../constants";
-import AccountUser from "../account-user/account-user";
+import AccountUser from "../menu-user/account-user/account-user";
 
 class FilterDialogUser extends Component {
   constructor(props) {
@@ -77,7 +77,7 @@ class FilterDialogUser extends Component {
           console.log(result);
           removeState();
         })
-        .then(_ => {
+        .then(() => {
           const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
           window.open(urlRedirect, "_self");
         });
@@ -126,7 +126,9 @@ class FilterDialogUser extends Component {
         className={`${styles["filter-dialog"]} ${mainCss["mdc-menu"]} ${
           mainCss["mdc-menu-surface"]
         }
-                ${this.props.visible ? mainCss["mdc-menu-surface--open"] : ""}`}
+                  ${
+                    this.props.visible ? mainCss["mdc-menu-surface--open"] : ""
+                  }`}
         aria-hidden={!this.props.visible}
       >
         <ul className={`${mainCss["mdc-list"]} ${mainCss["mdc-list--dense"]}`}>

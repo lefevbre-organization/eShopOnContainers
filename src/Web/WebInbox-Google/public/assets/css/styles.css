@@ -51,6 +51,8 @@ header .tools-bar a:hover {
 }
 .form-selection-business p {
   padding-left: 20px;
+  font-family: MTTMilano-Medium, Lato, Arial, sans-serif;
+  font-size: 14px;
 }
 .form-selection-business ul {
   padding-left: 30px;

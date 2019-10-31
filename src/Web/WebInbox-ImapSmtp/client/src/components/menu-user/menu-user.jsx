@@ -16,6 +16,7 @@ import AccountUser from "./account-user/account-user";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import i18n from "i18next";
+import { removeState } from "../../services/state";
 
 class MenuUser extends Component {
   constructor(props) {
@@ -76,20 +77,39 @@ class MenuUser extends Component {
     }
   }
 
+  routeLogout() {
+    const { userId } = this.props.lexon;
+    if (userId !== null) {
+      const url = `${config.url.URL_RESET_DEFAULTACCOUNT}/${userId}`;
+      fetch(url, {
+        method: "GET"
+      })
+        .then(result => {
+          console.log(result);
+          removeState();
+        })
+        .then(() => {
+          const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+          window.open(urlRedirect, "_self");
+        });
+    } else {
+      removeState();
+      window.location.reload();
+    }
+  }
+
   render() {
     const { dropdownOpen, accounts } = this.state;
-    const { picUrl, fullName, onSignout } = this.props;
+    const { fullName } = this.props;
 
     let acronym;
-    if (!picUrl) {
-      if (fullName) {
-        acronym = fullName
-          .split(/\s/)
-          .reduce((response, word) => (response += word.slice(0, 1)), "")
-          .substring(0, 2);
-      } else {
-        acronym = " ";
-      }
+    if (fullName) {
+      acronym = fullName
+        .split(/\s/)
+        .reduce((response, word) => (response += word.slice(0, 1)), "")
+        .substring(0, 2);
+    } else {
+      acronym = " ";
     }
 
     return (
@@ -104,7 +124,7 @@ class MenuUser extends Component {
             <DropdownToggle nav>
               <img
                 className="mx-2 profile-pic"
-                src="assets/img/icon-user.png"
+                src="assets/images/icon-user.png"
                 alt={fullName}
               />
             </DropdownToggle>
@@ -157,11 +177,7 @@ class MenuUser extends Component {
                   <div className="user-image-and-name text-center">
                     <div className="user-image">
                       <a href="#/">
-                        {acronym === undefined ? (
-                          <img src={picUrl} alt={fullName} />
-                        ) : (
-                          <strong>{acronym}</strong>
-                        )}
+                        <strong>{acronym}</strong>
                       </a>
                     </div>
                     <span className="user-name">{fullName}</span>
@@ -171,9 +187,9 @@ class MenuUser extends Component {
 
                     <PerfectScrollbar>
                       <ul className="other-accounts">
-                        {accounts.map(account => (
-                          <AccountUser key={account.id} account={account} />
-                        ))}
+                        {
+                          accounts.map(account => (<AccountUser key={account.id} account={account} />))
+                        }
                       </ul>
                     </PerfectScrollbar>
 
@@ -188,7 +204,7 @@ class MenuUser extends Component {
                     <button
                       type="button"
                       className="col-6 btn btn-primary mt-3 mb-3"
-                      onClick={onSignout}
+                      onClick={() => this.routeLogout()}
                     >
                       {i18n.t("menu-user.close-session")}
                     </button>
@@ -204,9 +220,7 @@ class MenuUser extends Component {
 }
 
 MenuUser.propTypes = {
-  email: PropTypes.string.isRequired,
-  fullName: PropTypes.string.isRequired,
-  onSignout: PropTypes.func.isRequired
+  fullName: PropTypes.string.isRequired
 };
 
 const mapStateToProps = state => ({

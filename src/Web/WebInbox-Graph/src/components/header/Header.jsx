@@ -86,7 +86,6 @@ export class Header extends PureComponent {
     const email = userInfo.email;
     const fullName = userInfo.displayName;
     // const picUrl = "assets/img/icon-user.png";
-    const picUrl = undefined;
 
     return (
       <header className="d-flex p-3 align-content-center align-items-center header ">
@@ -129,7 +128,6 @@ export class Header extends PureComponent {
                     </div>*/}
 
           <MenuUser
-            picUrl={picUrl}
             email={email}
             fullName={fullName}
             onSignout={this.props.onSignout}

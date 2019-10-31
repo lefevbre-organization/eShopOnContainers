@@ -59,28 +59,26 @@ class MenuUser extends Component {
     });
   }
 
-  _handleOnClick(e) {
+  _handleOnClick() {
     const { userId } = this.props.lexon;
     if (userId !== null) {
       const url = `${config.url.URL_RESET_DEFAULTACCOUNT}/${userId}`;
       fetch(url, {
         method: "GET"
       })
-        .then(result => {
-          console.log("result =>", result);
+        .then( () => {
+          const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+          window.open(urlRedirect, "_self");    
         })
         .catch(error => {
           console.log("error =>", error);
         });
-
-      const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-      window.open(urlRedirect, "_self");
     }
   }
 
   render() {
     const { dropdownOpen, accounts } = this.state;
-    const { picUrl, email, fullName, onSignout } = this.props;
+    const { picUrl, fullName, onSignout } = this.props;
     
     let acronym = undefined;
     if (!picUrl) {
@@ -169,118 +167,10 @@ class MenuUser extends Component {
                     </span>
 
                     <PerfectScrollbar>
-                      <ul className="other-accounts">
-                        <li>
-                          <a
-                            href="#/"
-                            className="d-flex align-items-center account-text"
-                          >
-                            <span>
-                              <img
-                                src="/assets/img/logoGoogle.png"
-                                alt="Google"
-                              />
-                            </span>
-                            <span>abogados-atocha@gmail.com</span>
-                            <span className="lf-icon-arrow-exchange"></span>
-                          </a>
-                        </li>
-
-                        <li>
-                          <a
-                            href="#/"
-                            className="d-flex align-items-center account-text"
-                          >
-                            <span>
-                              <img
-                                src="/assets/img/logoMicrosoft.png"
-                                alt="Microsoft"
-                              />
-                            </span>
-                            <span>otracuentaoutlook@lefebvre.es</span>
-                            <span className="lf-icon-arrow-exchange"></span>
-                          </a>
-                        </li>
-
-                        <li>
-                          <a
-                            href="#/"
-                            className="d-flex align-items-center account-text"
-                          >
-                            <span>
-                              <img
-                                src="/assets/img/logoGoogle.png"
-                                alt="Google"
-                              />
-                            </span>
-                            <span>abogados-vallecas@gmail.com</span>
-                            <span className="lf-icon-arrow-exchange"></span>
-                          </a>
-                        </li>
-
-                        <li>
-                          <a
-                            href="#/"
-                            className="d-flex align-items-center account-text"
-                          >
-                            <span>
-                              <img
-                                src="/assets/img/logoMicrosoft.png"
-                                alt="Microsoft"
-                              />
-                            </span>
-                            <span>otracuentaoutlookmas@lefebvre.es</span>
-                            <span className="lf-icon-arrow-exchange"></span>
-                          </a>
-                        </li>
-
-                        <li>
-                          <a
-                            href="#/"
-                            className="d-flex align-items-center account-text"
-                          >
-                            <span>
-                              <img
-                                src="/assets/img/logoGoogle.png"
-                                alt="Google"
-                              />
-                            </span>
-                            <span>abogados-torrejon@gmail.com</span>
-                            <span className="lf-icon-arrow-exchange"></span>
-                          </a>
-                        </li>
-
-                        <li>
-                          <a
-                            href="#/"
-                            className="d-flex align-items-center account-text"
-                          >
-                            <span>
-                              <img
-                                src="/assets/img/logoGoogle.png"
-                                alt="Google"
-                              />
-                            </span>
-                            <span>abogados-velilla@gmail.com</span>
-                            <span className="lf-icon-arrow-exchange"></span>
-                          </a>
-                        </li>
-
-                        <li>
-                          <a
-                            href="#/"
-                            className="d-flex align-items-center account-text"
-                          >
-                            <span>
-                              <img
-                                src="/assets/img/logoGoogle.png"
-                                alt="Google"
-                              />
-                            </span>
-                            <span>abogados-sanfernandodehenares@gmail.com</span>
-                            <span className="lf-icon-arrow-exchange"></span>
-                          </a>
-                        </li>
+                    <ul className="other-accounts">
+                        {
+                          accounts.map(account => (<AccountUser key={account.id} account={account} />))
+                        }
                       </ul>
                     </PerfectScrollbar>
 
@@ -295,7 +185,7 @@ class MenuUser extends Component {
                     <button
                       type="button"
                       className="col-6 btn btn-primary mt-3 mb-3"
-                      onClick={() => onSignout}
+                      onClick={onSignout}
                     >
                       {i18n.t("menu-user.close-session")}
                     </button>

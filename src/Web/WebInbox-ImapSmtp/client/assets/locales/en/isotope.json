@@ -50,7 +50,7 @@
     "lexon": "LEX-ON",
     "database": "Data Base",
     "compliance": "Compliance",
-    "calendar": "Calendar",
+    "calendar": "Calendar"
   },
   "messageList": {
     "emptyFolder": "Empty folder",
@@ -120,5 +120,12 @@
   },
   "notifications": {
     "newMail": "New messages received"
+  },
+  "menu-user": {
+    "user": "User",
+    "edit-basic-data": "EDIT BASIC DATA",
+    "reset-pwd": "RESET PASSWORD",
+    "add-other-account": "ADD OTHER ACCOUNT",
+    "close-session": "CLOSE SESSION"
   }
 }

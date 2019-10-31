@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import "./account-user.css";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { config } from "../../constants";
+import { config } from "../../../constants";
 
 class AccountUser extends Component {
   constructor(props) {
@@ -47,15 +47,16 @@ class AccountUser extends Component {
     const { account } = this.props;
 
     return (
-      <li
-        className="lidropdownitem"
-        onClick={() => this._handleOnClick(account.provider)}
-      >
-        <a href="#/" className="dropdownitem">
+      <li>
+        <a href="#/" className="d-flex align-items-center account-text">
           <span>
             <img src={this.getImage(account.provider)} alt={account.provider} />
           </span>
-          <span className="email">{account.email}</span>
+          <span>{account.email}</span>
+          <span
+            className="lf-icon-arrow-exchange"
+            onClick={() => this._handleOnClick(account.provider)}
+          ></span>
         </a>
       </li>
     );

@@ -120,5 +120,12 @@
   },
   "notifications": {
     "newMail": "New messages received"
+  },
+  "menu-user": {
+    "user": "Usuario",
+    "edit-basic-data": "EDITAR DATOS BÁSICOS",
+    "reset-pwd": "RESETEAR CONTRASEÑA",
+    "add-other-account": "AÑADIR OTRA CUENTA",
+    "close-session": "CERRAR SESIÓN"
   }
 }
