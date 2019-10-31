@@ -72,7 +72,7 @@ services:
       
   lexon-client:
     container_name: lexon-client
-    image: ${REGISTRY:-elefebvreoncontainers}/lexonconnector.client:${TAG:-latest}
+    image: ${REGISTRY:-elefebvreoncontainers}/lexon.client:${TAG:-latest}
     networks:
       - backend
       
