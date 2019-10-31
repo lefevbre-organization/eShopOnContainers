@@ -1,6 +1,7 @@
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS base
 WORKDIR /app
 EXPOSE 80
+EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 WORKDIR /src
@@ -40,6 +41,7 @@ RUN dotnet restore eLefebvreOnContainers-Main.sln
 COPY . .
 WORKDIR /src/src/Services/Lexon/Lexon.MySql
 RUN dotnet publish --no-restore -c Release -o /app
+RUN ls -lha /app
 
 #FROM build as unittest
 #WORKDIR /src/src/Services/Lexon/Lexon.UnitTests
@@ -50,6 +52,13 @@ WORKDIR /src/src/Services/Lexon/Lexon.FunctionalTests
 FROM build AS publish
 
 FROM base AS final
+ENV ASPNETCORE_URLS="https://+"
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path="./lexon_mysql.pfx"
+ENV ASPNETCORE_Kestrel__Certificates__Default__Password="lefebvre"
+ENV ASPNETCORE_Kestrel__Certificates__Default__AllowInvalid=true
 WORKDIR /app
 COPY --from=publish /app .
+#COPY --from=publish /app/lexonmysql_server.pfx .
+RUN ls -lha /app
+
 ENTRYPOINT ["dotnet", "Lexon.MySql.dll"]

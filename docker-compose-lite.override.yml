@@ -1,0 +1,85 @@
+version: '3'
+
+services:
+
+  reverse-proxy:
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock  
+      
+  imap-server:
+    ports:
+      - "9010:9010"
+    labels:
+      - traefik.backend=lefebvre-imap-smtp-server
+      - "traefik.frontend.rule=PathPrefixStrip:/api/"
+
+  imap-client:
+    ports:
+      - "8081:80"
+    labels:
+      - traefik.backend=lefebvre-imap-smtp-client
+      - "traefik.frontend.rule=PathPrefixStrip:/" 
+      
+  lexon.mysql.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ConnectionString="database=lexon_conecta;server=mysqldevlexon.lefebvre.es;port=3315;user id=led-app-conecta-azure;password=FDSk2q3+asd5;sslmode=none"
+      - ASPNETCORE_URLS=https://+
+      - ASPNETCORE_HTTPS_PORT=8084
+    ports:
+      - "8084:443"
+      - "3315:3315"
+
+  lexon.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - LexonMySqlUrl=https://lexon.mysql.api/api/v1/LexonMySql
+      - ASPNETCORE_URLS=https://+
+      - ASPNETCORE_HTTPS_PORT=8085
+    ports:
+      - "8085:443"
+    
+  lexongw.fake:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_URLS=https://+
+      - ASPNETCORE_HTTPS_PORT=8086
+      - LexonUrlHC=https://lexon.api/hc
+      - LexonMySqlUrlHC=https://lexon.mysql.api/hc
+      - AccountsUrlHC=https://accounts.api/hc
+    ports:
+      - "8086:443"  
+         
+  account.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_URLS=https://+
+      - ASPNETCORE_HTTPS_PORT=8082
+    ports:
+      - "8082:443"
+
+  accountgw.fake:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Staging
+      - ASPNETCORE_URLS=https://+
+      - ASPNETCORE_HTTPS_PORT=8083
+      - LexonUrlHC=https://lexon.api/hc
+      - LexonMySqlUrlHC=https://lexon.mysql.api/hc
+      - AccountsUrlHC=https://accounts.api/hc
+    ports:
+      - "8083:443"  
+
+  portal-client:
+    ports:
+      - "8087:80"  
+      
+  google-client:
+    ports:
+      - "8088:80"
+      
+  lexon-client:
+    ports:
+      - "8090:80"       

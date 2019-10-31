@@ -50,7 +50,7 @@ namespace Lexon.MySql
             }
 
             app.UseHttpsRedirection();
-            app.UseMvcWithDefaultRoute();
+            //app.UseMvcWithDefaultRoute();
             app.UseSwagger()
               .UseSwaggerUI(c =>
               {
