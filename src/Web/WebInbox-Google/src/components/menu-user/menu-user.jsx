@@ -66,9 +66,9 @@ class MenuUser extends Component {
       fetch(url, {
         method: "GET"
       })
-        .then( () => {
+        .then(() => {
           const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-          window.open(urlRedirect, "_self");    
+          window.open(urlRedirect, "_self");
         })
         .catch(error => {
           console.log("error =>", error);
@@ -79,7 +79,7 @@ class MenuUser extends Component {
   render() {
     const { dropdownOpen, accounts } = this.state;
     const { picUrl, fullName, onSignout } = this.props;
-    
+
     let acronym = undefined;
     if (!picUrl) {
       if (fullName) {
@@ -119,7 +119,10 @@ class MenuUser extends Component {
                   aria-haspopup="true"
                   aria-expanded="false"
                 >
-                  <span className="lf-icon-close" onClick={() => this.toggle()}></span>
+                  <span
+                    className="lf-icon-close"
+                    onClick={() => this.toggle()}
+                  ></span>
                 </a>
                 <div className="content">
                   <div className="menu-title mb-5">
@@ -167,10 +170,10 @@ class MenuUser extends Component {
                     </span>
 
                     <PerfectScrollbar>
-                    <ul className="other-accounts">
-                        {
-                          accounts.map(account => (<AccountUser key={account.id} account={account} />))
-                        }
+                      <ul className="other-accounts">
+                        {accounts.map(account => (
+                          <AccountUser key={account.id} account={account} />
+                        ))}
                       </ul>
                     </PerfectScrollbar>
 
