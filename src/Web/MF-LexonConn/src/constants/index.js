@@ -1,7 +1,7 @@
 const dev = {
   url: {
     //API_GATEWAY: "http://localhost:60970"
-    API_GATEWAY: "http://lefebvre.westeurope.cloudapp.azure.com:8086"
+    API_GATEWAY: "https://lefebvre.westeurope.cloudapp.azure.com:8086"
   },
   api: {
     COMPANIES: "api/v1/lex/Lexon/companies",
@@ -15,7 +15,7 @@ const dev = {
 
 const prod = {
   url: {
-    API_GATEWAY: "http://lefebvre.westeurope.cloudapp.azure.com:8086"
+    API_GATEWAY: "https://lefebvre.westeurope.cloudapp.azure.com:8086"
   },
   api: {
     COMPANIES: "api/v1/lex/Lexon/companies",

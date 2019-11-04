@@ -1,11 +1,12 @@
 import React from "react";
 import { connect } from "react-redux";
 import { translate } from "react-i18next";
-import TopBarUserButton from "./top-bar-user-button";
-import FilterDialogUser from "./filter-dialog-user";
+// import TopBarUserButton from "./top-bar-user-button";
+// import FilterDialogUser from "./filter-dialog-user";
 import MessageFilters, { getFromKey } from "../../services/message-filters";
 import mainCss from "../../styles/main.scss";
 import styles from "./button-user.scss";
+import MenuUser from "../menu-user/menu-user";
 
 export class ButtonFilter extends React.Component {
   constructor(props) {
@@ -18,9 +19,10 @@ export class ButtonFilter extends React.Component {
   }
 
   render() {
-    const { t, activeMessageFilter } = this.props;
+    const { t, activeMessageFilter, application } = this.props;
     const { dialogVisible } = this.state;
     const active = activeMessageFilter.key !== MessageFilters.ALL.key;
+
     return (
       <span
         className={`${styles["button-filter"]} ${styles["icon-user-space"]} ${
@@ -31,10 +33,13 @@ export class ButtonFilter extends React.Component {
         isotip-size="small"
         isotip-hidden={dialogVisible.toString()}
       >
-        <TopBarUserButton onClick={this.handleOnToggleDialog}>
+        {/* <TopBarUserButton onClick={this.handleOnToggleDialog}>
           person
-        </TopBarUserButton>
-        <FilterDialogUser visible={dialogVisible} />
+        </TopBarUserButton> */}
+        {/* <FilterDialogUser visible={dialogVisible} /> */}
+
+        <MenuUser fullName={application.user.credentials.name} />
+
       </span>
     );
   }
@@ -58,7 +63,8 @@ export class ButtonFilter extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  activeMessageFilter: getFromKey(state.application.messageFilterKey)
+  activeMessageFilter: getFromKey(state.application.messageFilterKey),
+  application: state.application
 });
 
 export default connect(mapStateToProps)(translate()(ButtonFilter));

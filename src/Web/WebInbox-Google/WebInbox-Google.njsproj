@@ -47,7 +47,6 @@
     <Content Include="public\assets\img\logoGoogle.png" />
     <Content Include="public\assets\img\logoImap.png" />
     <Content Include="public\assets\img\logoMicrosoft.png" />
-    <Content Include="public\assets\img\menu.png" />
     <Content Include="public\assets\img\microservices.png" />
     <Content Include="public\assets\img\react-template.png" />
     <Content Include="public\assets\img\settings-gears.svg" />

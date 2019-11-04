@@ -40,6 +40,7 @@
     <Content Include="scripts\http-server.js" />
     <Content Include="scripts\start.js" />
     <Content Include="scripts\test.js" />
+    <Content Include="src\actions\documentsAction.jsx" />
     <Content Include="src\actions\email.jsx" />
     <Content Include="src\actions\selections.jsx" />
     <Content Include="src\App.css" />
@@ -63,6 +64,8 @@
     <Content Include="src\components\confirm-remove-classification\confirm-remove-classification.js" />
     <Content Include="src\components\header\header.css" />
     <Content Include="src\components\header\header.js" />
+    <Content Include="src\components\modal-documents-emails\modal-documents-emails.css" />
+    <Content Include="src\components\modal-documents-emails\modal-documents-emails.js" />
     <Content Include="src\components\notification\notification.css" />
     <Content Include="src\components\notification\notification.js" />
     <Content Include="src\components\routing\routing.js" />
@@ -70,8 +73,12 @@
     <Content Include="src\components\select-action\classification\classification.js" />
     <Content Include="src\components\select-action\list-classifications\list-classifications.css" />
     <Content Include="src\components\select-action\list-classifications\list-classifications.js" />
+    <Content Include="src\components\select-action\list-documents\list-documents.css" />
+    <Content Include="src\components\select-action\list-documents\list-documents.jsx" />
     <Content Include="src\components\select-action\new-classification\new-classification.css" />
     <Content Include="src\components\select-action\new-classification\new-classification.js" />
+    <Content Include="src\components\select-action\save-document\save-document.css" />
+    <Content Include="src\components\select-action\save-document\save-document.jsx" />
     <Content Include="src\components\select-action\select-action-header\select-action-header.css" />
     <Content Include="src\components\select-action\select-action-header\select-action-header.js" />
     <Content Include="src\components\select-action\select-action-tab\select-action-tab.css" />
@@ -80,10 +87,11 @@
     <Content Include="src\components\select-action\select-action.js" />
     <Content Include="src\components\select-action\tab-classify\tab-classify.css" />
     <Content Include="src\components\select-action\tab-classify\tab-classify.js" />
-    <Content Include="src\components\select-action\tab-keeprecord\tab-keeprecord.css" />
-    <Content Include="src\components\select-action\tab-keeprecord\tab-keeprecord.js" />
+    <Content Include="src\components\select-action\tab-document\tab-document.css" />
+    <Content Include="src\components\select-action\tab-document\tab-document.js" />
     <Content Include="src\components\select-company\select-company.css" />
     <Content Include="src\components\select-company\select-company.js" />
+    <Content Include="src\components\send-message\SendMessage.js" />
     <Content Include="src\components\spinner\spinner.css" />
     <Content Include="src\components\spinner\spinner.js" />
     <Content Include="src\constants\index.js" />
@@ -95,6 +103,7 @@
     <Content Include="src\App.test.js" />
     <Content Include="src\main.js" />
     <Content Include="src\index.js" />
+    <Content Include="src\reducers\documentsReducer.jsx" />
     <Content Include="src\reducers\email.jsx" />
     <Content Include="src\reducers\index.jsx" />
     <Content Include="src\reducers\selections.jsx" />
@@ -128,17 +137,21 @@
     <Folder Include="src\components\company\" />
     <Folder Include="src\components\confirm-remove-classification\" />
     <Folder Include="src\components\header\" />
+    <Folder Include="src\components\modal-documents-emails\" />
     <Folder Include="src\components\notification\" />
     <Folder Include="src\components\routing\" />
     <Folder Include="src\components\select-action\" />
     <Folder Include="src\components\select-action\classification\" />
     <Folder Include="src\components\select-action\list-classifications\" />
+    <Folder Include="src\components\select-action\list-documents\" />
     <Folder Include="src\components\select-action\new-classification\" />
+    <Folder Include="src\components\select-action\save-document\" />
     <Folder Include="src\components\select-action\select-action-header\" />
     <Folder Include="src\components\select-action\select-action-tab\" />
     <Folder Include="src\components\select-action\tab-classify\" />
-    <Folder Include="src\components\select-action\tab-keeprecord\" />
+    <Folder Include="src\components\select-action\tab-document\" />
     <Folder Include="src\components\select-company\" />
+    <Folder Include="src\components\send-message\" />
     <Folder Include="src\components\spinner\" />
     <Folder Include="src\constants\" />
     <Folder Include="src\locales\" />
@@ -152,7 +165,6 @@
     <Folder Include="src\styles\fonts" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\actions\lex-on_message-list.actions.jsx" />
     <Compile Include="src\store\store.jsx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />

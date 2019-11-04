@@ -47,5 +47,20 @@
     "yes": "Si",
     "no": "No",
     "text-confirm-remove": "Si eliminas este vínculo dejarás de visualizar el correo en la clasificación correspondiente de Lex-on. ¿Quieres continuar?"
+  },
+  "tab-document": {
+    "select-mail": "Selecciona uno o más mensajes y guárdalos como copia independiente en la documentación de Lex-on."
+  },
+  "save-copy": {
+    "save-copy": "Guardar copia"
+  },
+  "list-classifications": {
+    "classifications": "CLASIFICACIONES:"
+  },
+  "list-documents": {
+    "documented-copies": "COPIAS DOCUMENTADAS:"
+  },
+  "modal-documents-emails": {
+    "save-copy": "Guardar copia en Documentación"
   }
 }

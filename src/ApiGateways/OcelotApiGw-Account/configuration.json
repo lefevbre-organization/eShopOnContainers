@@ -1,12 +1,13 @@
 {
   "ReRoutes": [
     {
+      "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamPathTemplate": "/api/{version}/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
-          "Host": "lefebvre.westeurope.cloudapp.azure.com",
-          "Port": 8082
+          "Host": "account.api",
+          "Port": 443
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/accounts/{everything}",
@@ -16,7 +17,8 @@
   ],
   "GlobalConfiguration": {
     "RequestIdKey": "OcRequestId",
-    "AdministrationPath": "/administration"
+    "AdministrationPath": "/administration",
+    "SkipSslValidation": true
   }
 }
   

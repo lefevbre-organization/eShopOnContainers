@@ -67,10 +67,8 @@
     <Content Include="package.json" />
     <Content Include="public\assets\css\bootstrap.min.css" />
     <Content Include="public\assets\css\customBootstrap.css" />
-    <Content Include="public\assets\css\fonts-mttmilano.css" />
     <Content Include="public\assets\css\footer.css" />
     <Content Include="public\assets\css\header.css" />
-    <Content Include="public\assets\css\OverlayScrollbars.min.css" />
     <Content Include="public\assets\css\styles.css" />
     <Content Include="public\assets\data\test.json" />
     <Content Include="public\assets\imgs\icon-mail.png" />

@@ -406,9 +406,8 @@ class App extends Component {
       fetch(url, {
         method: "GET"
       })
-        // .then(r => r.json())
-        .then(result => {
-          console.log(result);
+        .catch(error => {
+          console.log("error =>", error);
         });
     }
 

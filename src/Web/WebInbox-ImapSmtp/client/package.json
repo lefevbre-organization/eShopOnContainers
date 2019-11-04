@@ -45,6 +45,7 @@
     "react-split-pane": "^0.1.87",
     "react-style-tag": "^2.0.1",
     "react-virtualized": "^9.20.1",
+    "reactstrap": "^8.1.1",
     "redux": "^3.0.0",
     "single-spa": "^4.3.0",
     "single-spa-react": "^2.10.0",

@@ -51,6 +51,8 @@ header .tools-bar a:hover {
 }
 .form-selection-business p {
   padding-left: 20px;
+  font-family: MTTMilano-Medium, Lato, Arial, sans-serif;
+  font-size: 14px;
 }
 .form-selection-business ul {
   padding-left: 30px;
@@ -71,13 +73,14 @@ header .tools-bar a:hover {
 /* form-selection-business: EOC */
 
 /* Form components: BOC */
-input[type="checkbox"], input[type="radio"] {
-	position: absolute !important;
-	width: 1px;
-	height: 1px;
-	overflow: hidden;
-	clip: rect(1px, 1px, 1px, 1px);
-	font-size: .1em;
+input[type="checkbox"],
+input[type="radio"] {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  font-size: 0.1em;
 }
 input[type="checkbox"] + label,
 input[type="radio"] + label {
@@ -319,7 +322,7 @@ input[type="radio"]:checked + label:after {
 }
 .lexon-clasification-list-container table tbody {
   height: 340px;
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
   display: block;
   width: 99%;
   margin: 5px;
@@ -609,7 +612,7 @@ input[type="radio"]:checked + label:after {
 }
 .add-more-container {
   padding-bottom: 1rem;
-  padding-top: 20px;
+  /* padding-top: 20px; */
 }
 .add-more {
   color: #001978;
@@ -693,13 +696,122 @@ input[type="radio"]:checked + label:after {
   padding: 0 15px;
 }
 
+.form-box .bg-grey {
+  background-color: #f5f5f5;
+}
+
 .form-box .content {
-  padding-bottom: 120px;
+  padding-bottom: 30px;
 }
 
 .form-box ul {
   padding: 0;
+  border-bottom: 1px solid #ccd1e4;
 }
+
+.form-box .bg-grey li {
+  list-style: none;
+  border-top: none;
+  padding: 15px;
+  height: 60px;
+}
+
+.form-box .bg-grey li:last-of-type {
+  border-bottom: 0;
+}
+
+.form-box .bg-grey .asociadas {
+  color: #001978;
+  font-size: 18px;
+  font-family: MTTMilano, Lato, Arial, sans-serif;
+  padding: 18px;
+}
+
+.form-box .bg-grey a {
+  padding: 0;
+}
+
+.form-box .bg-grey .trash {
+  position: relative;
+  top: -26px;
+  left: 88%;
+  font-size: 20px;
+  text-align: right;
+  width: 50px;
+}
+
+/* LISTADO DE CUENTAS ASOCIADAS: BOC */
+.other-accounts {
+  list-style: none;
+  padding: 0;
+  text-align: left;
+  font-size: 14px;
+  max-height: 170px;
+  /* overflow: auto; */
+  margin-bottom: 0;
+  display: block;
+}
+.other-accounts li a {
+  display: block;
+  padding: 4px 35px 4px 15px;
+  background-color: #f2f3f8;
+  position: relative;
+}
+.other-accounts li a:hover span {
+  color: #001978 !important;
+}
+.other-accounts li a span {
+  display: inline;
+}
+.other-accounts li img {
+  width: 20px;
+  height: 20px;
+  margin-right: 14px;
+}
+.other-accounts li .lf-icon-arrow-exchange {
+  position: absolute;
+  right: 10px;
+  top: 3px;
+  font-size: 17px;
+  display: block;
+  width: 30px;
+  height: 30px;
+  padding: 7px;
+  transition: background-color 0.3ms;
+  border-radius: 50%;
+}
+.other-accounts li a:hover .lf-icon-arrow-exchange {
+  background-color: #e5e8f1;
+}
+.add-more-accounts {
+  color: #001978;
+  border-bottom: solid 1px #ccd1e4;
+  padding: 5px 10px 0 5px;
+  background-color: transparent;
+  font-size: 12px;
+}
+.add-more-accounts strong {
+  font-size: 12px;
+  font-weight: bolder;
+}
+.add-more-accounts span {
+  color: #001978 !important;
+  font-size: 30px;
+  width: 40px;
+  height: 40px;
+  padding: 5px;
+  transition: background-color 0.3ms;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+.add-more-accounts:hover span {
+  background-color: #e5e8f1;
+}
+.add-more-accounts strong {
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+/* LISTADO DE CUENTAS ASOCIADAS: EOC */
 
 .form-box li {
   list-style: none;
@@ -818,22 +930,34 @@ input[type="radio"]:checked + label:after {
 
 .user-image-and-name .user-image img {
   border-radius: 50%;
-  width: 140px;
-  height: 140px;
+  width: 100px;
+  height: 100px;
   margin-bottom: 20px;
+}
+.user-image-and-name .user-image strong {
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 20px;
+  background-color: #001978;
+  color: #ccd1e4;
+  font-size: 50px;
+  text-align: center;
+  display: inline-block;
+  padding-top: 35px;
 }
 
 .user-image-and-name .user-image::before {
   font-family: "lf-font";
   content: "\e952";
   position: relative;
-  top: 56px;
-  left: 140px;
+  bottom: -35px;
+  left: 125px;
   font-size: 22px;
-  margin-left: -2rem;
 }
 
-.user-image-and-name span {
+.user-image-and-name span,
+.user-image-and-name .other-accounts span {
   display: block;
   margin-bottom: 5px;
   color: #7c868c !important;
@@ -842,12 +966,20 @@ input[type="radio"]:checked + label:after {
 .user-image-and-name .user-name {
   font-size: 16px;
   font-family: MTTMilano, Lato, Arial, sans-serif;
+  color: #7c868c !important;
 }
 
 .user-image-and-name .company-name {
   font-size: 12px;
   font-family: MTTMilano-Bold, Lato, Arial, sans-serif;
   text-transform: uppercase;
+  color: #7c868c !important;
+}
+
+.user-image-and-name .scrollbar-container {
+  border-top: solid 1px #ccd1e4;
+  border-bottom: solid 1px #ccd1e4;
+  width: 300px;
 }
 
 .btn-primary,
@@ -1082,7 +1214,7 @@ input[type="radio"]:checked + label:after {
 .dropdown-menu a:hover,
 .dropdown-menu span {
   text-decoration: none;
-  color: #001978;
+  color: #001978 !important;
 }
 
 .dropdown-menu [class^="lf-icon-close"] {
