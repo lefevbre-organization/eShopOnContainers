@@ -48,6 +48,10 @@
     <Content Include="client\assets\images\LogoLefebvre.png" />
     <Content Include="client\assets\images\logoMicrosoft.png" />
     <Content Include="client\assets\images\settings-gears.svg" />
+    <Content Include="client\dist\imap_client.pem" />
+    <Content Include="client\dist\imap_client.pfx" />
+    <Content Include="client\dist\imap_client_key.pem" />
+    <Content Include="client\dist\imap_client_key_pass.txt" />
     <Content Include="client\src\apps\database_content.js" />
     <Content Include="client\src\apps\material_title_panel.scss" />
     <Content Include="client\src\apps\calendar_content.js" />
@@ -99,6 +103,10 @@
     <Content Include="dockerfile" />
     <Content Include="docker\nginx\default.conf" />
     <o Include="docker\traefik\docker-compose.yml" />
+    <Content Include="imap_client.pem" />
+    <Content Include="imap_client.pfx" />
+    <Content Include="imap_client_key.pem" />
+    <Content Include="imap_client_key_pass.txt" />
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="client\package.json" />
@@ -326,6 +334,7 @@
     <Folder Include="client\assets\locales" />
     <Folder Include="client\assets\locales\en" />
     <Folder Include="client\assets\locales\es" />
+    <Folder Include="client\dist\" />
     <Folder Include="client\src" />
     <Folder Include="client\src\apps\" />
     <Folder Include="client\src\components\account-user\" />

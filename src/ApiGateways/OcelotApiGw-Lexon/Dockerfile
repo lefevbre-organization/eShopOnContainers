@@ -33,6 +33,7 @@ COPY src/Web/WebInbox-Google/WebInbox-Google.njsproj src/Web/WebInbox-Google/
 COPY src/Web/WebInbox-ImapSmtp/WebInbox-ImapSmtp.njsproj src/Web/WebInbox-ImapSmtp/
 COPY src/Web/WebInbox-Graph/WebInbox-Graph.njsproj src/Web/WebInbox-Graph/
 COPY src/Web/MF-LexonConn/MF-LexonConn.njsproj src/Web/MF-LexonConn/
+COPY src/Web/WebMSNetwork/WebMSNetwork.njsproj src/Web/WebMSNetwork/
 #COPY test/ServicesTests/Application.FunctionalTests/Application.FunctionalTests.csproj test/ServicesTests/Application.FunctionalTests/
 #COPY test/ServicesTests/LoadTest/LoadTest.csproj test/ServicesTests/LoadTest/
 

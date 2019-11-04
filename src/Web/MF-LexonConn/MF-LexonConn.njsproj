@@ -25,6 +25,11 @@
   <ItemGroup>
     <Content Include=".dockerignore" />
     <Content Include="dockerfile" />
+    <Content Include="docker\nginx\default.conf" />
+    <Content Include="lexon_client.pem" />
+    <Content Include="lexon_client.pfx" />
+    <Content Include="lexon_client_key.pem" />
+    <Content Include="lexon_client_key_pass.txt" />
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="config\env.js" />
@@ -122,6 +127,8 @@
   <ItemGroup>
     <Folder Include="config" />
     <Folder Include="config\jest" />
+    <Folder Include="docker\" />
+    <Folder Include="docker\nginx\" />
     <Folder Include="public" />
     <Folder Include="scripts" />
     <Folder Include="src" />
