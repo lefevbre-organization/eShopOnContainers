@@ -2,12 +2,12 @@ version: '3'
 
 services:
 
-  reverse-proxy:
-    container_name: traefik
-    image: traefik:1.7.13
-    command: --api --docker
-    networks:
-      - backend
+#  reverse-proxy:
+#    container_name: traefik
+#    image: traefik:1.7.13
+#    command: --api --docker
+#    networks:
+#      - backend
 
   imap-server:
     container_name: imap-server

@@ -29,6 +29,10 @@
     <Content Include=".dockerignore" />
     <Content Include=".env" />
     <Content Include="docker\nginx\default.conf" />
+    <Content Include="google_client.pem" />
+    <Content Include="google_client.pfx" />
+    <Content Include="google_client_key.pem" />
+    <Content Include="google_client_key_pass.txt" />
     <Content Include="package.json" />
     <Content Include="public\assets\css\modal.css" />
     <Content Include="public\assets\css\styles.css" />

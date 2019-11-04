@@ -2,12 +2,12 @@ version: '3'
 
 services:
 
-  reverse-proxy:
-    ports:
-      - "80:80"
-      - "8080:8080"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock  
+#  reverse-proxy:
+#    ports:
+#      - "80:80"
+#      - "8080:8080"
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock  
       
   imap-server:
     ports:
@@ -39,6 +39,9 @@ services:
       - LexonMySqlUrl=https://lexon.mysql.api/api/v1/LexonMySql
       - ASPNETCORE_URLS=https://+
       - ASPNETCORE_HTTPS_PORT=8085
+      - EventBus__username=test
+      - EventBus__password=test
+      - EventBus__hostname="lefebvre.westeurope.cloudapp.azure.com"
     ports:
       - "8085:443"
     
@@ -58,6 +61,9 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+
       - ASPNETCORE_HTTPS_PORT=8082
+      - EventBus__username=test
+      - EventBus__password=test
+      - EventBus__hostname="lefebvre.westeurope.cloudapp.azure.com"
     ports:
       - "8082:443"
 
