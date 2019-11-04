@@ -54,6 +54,10 @@
     <Content Include="calendar-demo\calendar-outlook\views\mail.hbs" />
     <Content Include="calendar-demo\calendar.md" />
     <Content Include="docker\nginx\default.conf" />
+    <Content Include="graph_client.pem" />
+    <Content Include="graph_client.pfx" />
+    <Content Include="graph_client_key.pem" />
+    <Content Include="graph_client_key_pass.txt" />
     <Content Include="package.json" />
     <Content Include="public\assets\css\modal.css" />
     <Content Include="public\assets\css\styles.css" />

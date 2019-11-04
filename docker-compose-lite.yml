@@ -17,7 +17,7 @@ services:
 
   imap-client:
     container_name: imap-client
-    image: ${REGISTRY:-elefebvreoncontainers}/imap-smtp.client:${TAG:-latest}
+    image: ${REGISTRY:-elefebvreoncontainers}/imap-smtp.client:${TAGTEST:-pruebas}
     networks:
       - backend
       
@@ -60,22 +60,28 @@ services:
 
   portal-client:
     container_name: portal
-    image: ${REGISTRY:-elefebvreoncontainers}/portal.client:${TAG:-latest}
+    image: ${REGISTRY:-elefebvreoncontainers}/portal.client:${TAGTEST:-pruebas}
     networks:
       - backend
       
   google-client:
     container_name: google
-    image: ${REGISTRY:-elefebvreoncontainers}/google.client:${TAG:-latest}
+    image: ${REGISTRY:-elefebvreoncontainers}/google.client:${TAGTEST:-pruebas}
     networks:
       - backend
       
   lexon-client:
     container_name: lexon-client
-    image: ${REGISTRY:-elefebvreoncontainers}/lexon.client:${TAG:-latest}
+    image: ${REGISTRY:-elefebvreoncontainers}/lexon.client:${TAGTEST:-pruebas}
     networks:
       - backend
-      
+ 
+   outlook-client:
+    container_name: outlook-client
+    image: ${REGISTRY:-elefebvreoncontainers}/outlook.client:${TAGTEST:-pruebas}
+    networks:
+      - backend
+
 networks:
 
   backend:

@@ -34,6 +34,9 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="docker\" />
+    <Folder Include="docker\nginx\" />
+    <Folder Include="NewFolder1\" />
     <Folder Include="public\" />
     <Folder Include="public\assets\" />
     <Folder Include="public\assets\css\" />
@@ -60,6 +63,7 @@
   <ItemGroup>
     <Content Include=".gitignore" />
     <Content Include="dockerfile" />
+    <Content Include="docker\nginx\default.conf" />
     <Content Include="package-lock.json" />
     <Content Include="package.json" />
     <Content Include="public\assets\css\bootstrap.min.css" />
@@ -97,6 +101,10 @@
     <Content Include="public\manifest.json" />
     <Content Include="public\web.config" />
     <Content Include="README.md" />
+    <Content Include="root_client.pem" />
+    <Content Include="root_client.pfx" />
+    <Content Include="root_client_key.pem" />
+    <Content Include="root_client_key_pass.txt" />
     <Content Include="src\App.css" />
     <Content Include="src\components\confirm-remove-account\ConfirmRemoveAccout.css" />
     <Content Include="src\components\footer\Footer.css" />
