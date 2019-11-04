@@ -124,12 +124,20 @@ export class Main extends Component {
   }
 
   onSetSidebarOpenCalendar(open) {
-    this.setState({ sidebarComponent: <CalendarComponent sidebarDocked={this.onSetSidebarDocked} /> });
+    this.setState({
+      sidebarComponent: (
+        <CalendarComponent sidebarDocked={this.onSetSidebarDocked} />
+      )
+    });
     this.setState({ sidebarDocked: open });
   }
 
   onSetSidebarOpenLexon(open) {
-    this.setState({ sidebarComponent: <LexonComponent sidebarDocked={this.onSetSidebarDocked} /> });
+    this.setState({
+      sidebarComponent: (
+        <LexonComponent sidebarDocked={this.onSetSidebarDocked} />
+      )
+    });
     this.setState({ sidebarDocked: open });
   }
 
@@ -327,6 +335,7 @@ export class Main extends Component {
 
   renderInboxViewport() {
     const { leftSideBar } = this.state;
+    const { lexon } = this.props;
 
     if (this.props.labelsResult.labels.length < 1) {
       return this.renderSpinner();
@@ -427,7 +436,7 @@ export class Main extends Component {
               <span className="productsbutton">
                 <div onClick={() => this.onSetSidebarOpenLexon(true)}>
                   <img
-                    className="imgproduct"
+                    className={lexon.user ? "imgproduct" : "imgproductdisable"}
                     border="0"
                     alt="Lex-On"
                     src="assets/img/icon-lexon.png"

@@ -104,7 +104,7 @@ class TabClassify extends Component {
         />
       );
     } else {
-      return <strong>{i18n.t("tab-classify.select-mail")}</strong>;
+      return <p className="lexon-description"><strong>{i18n.t("tab-classify.select-mail")}</strong></p>;
     }
   }
 

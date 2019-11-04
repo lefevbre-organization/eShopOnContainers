@@ -131,6 +131,7 @@ export class Header extends PureComponent {
             email={email}
             fullName={fullName}
             onSignout={this.props.onSignout}
+            picUrl={undefined}
           />
 
           <div>

@@ -100,7 +100,7 @@ class MenuUser extends Component {
 
   render() {
     const { dropdownOpen, accounts } = this.state;
-    const { fullName } = this.props;
+    const { fullName, lexon } = this.props;
 
     let acronym;
     if (fullName) {
@@ -128,7 +128,7 @@ class MenuUser extends Component {
                 alt={fullName}
               />
             </DropdownToggle>
-            <DropdownMenu right>
+            <DropdownMenu right id="user-box">
               <DropdownItem header tag="div" className="user-image-and-name">
                 <span className="dropdown-menu-arrow"></span>
                 <a
@@ -187,20 +187,21 @@ class MenuUser extends Component {
 
                     <PerfectScrollbar>
                       <ul className="other-accounts">
-                        {
-                          accounts.map(account => (<AccountUser key={account.id} account={account} />))
-                        }
+                        {accounts.map(account => (
+                          <AccountUser key={account.id} account={account} />
+                        ))}
                       </ul>
                     </PerfectScrollbar>
-
-                    <a
-                      href="#/"
-                      className="d-flex align-items-center add-more-accounts"
-                      onClick={this._handleOnClick}
-                    >
-                      <span className="lf-icon-add-round"></span>
-                      <strong>{i18n.t("menu-user.add-other-account")}</strong>
-                    </a>
+                    {lexon.user ? (
+                      <a
+                        href="#/"
+                        className="d-flex align-items-center add-more-accounts"
+                        onClick={this._handleOnClick}
+                      >
+                        <span className="lf-icon-add-round"></span>
+                        <strong>{i18n.t("menu-user.add-other-account")}</strong>
+                      </a>
+                    ) : null}
                     <button
                       type="button"
                       className="col-6 btn btn-primary mt-3 mb-3"

@@ -85,7 +85,9 @@ class App extends Component {
 
   onSetSidebarOpenLexon(open) {
     this.setState({
-      sidebarComponent: <LexonComponent sidebarDocked={this.onSetSidebarDocked} />
+      sidebarComponent: (
+        <LexonComponent sidebarDocked={this.onSetSidebarDocked} />
+      )
     });
     this.setState({ sidebarDocked: open });
     this.setState({ actualSidebarComponent: 1 });
@@ -153,7 +155,7 @@ class App extends Component {
   }
 
   render() {
-    const { t } = this.props;
+    const { t, lexon } = this.props;
     const { sideBar } = this.state;
 
     return (
@@ -243,13 +245,25 @@ class App extends Component {
                 isotip-position="bottom-end"
                 isotip-size="small"
               >
-                <IconButton onClick={() => this.onSetSidebarOpenLexon(true)}>
-                  <img
-                    border="0"
-                    alt="Lex-On"
-                    src="assets/images/icon-lexon.png"
-                  ></img>
-                </IconButton>
+                {lexon.user ? (
+                  <IconButton onClick={() => this.onSetSidebarOpenLexon(true)}>
+                    <img
+                      border="0"
+                      alt="Lex-On"
+                      src="assets/images/icon-lexon.png"
+                    ></img>
+                  </IconButton>
+                ) : (
+                  <IconButton>
+                    <img
+                      disabled
+                      border="0"
+                      alt="Lex-On"
+                      src="assets/images/icon-lexon.png"
+                      className="disabledimg"
+                    ></img>
+                  </IconButton>
+                )}
                 <div className={styles.btnselect}></div>
               </span>
               <span
@@ -405,10 +419,9 @@ class App extends Component {
       const url = `${config.url.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${PROVIDER}/${email}`;
       fetch(url, {
         method: "GET"
-      })
-        .catch(error => {
-          console.log("error =>", error);
-        });
+      }).catch(error => {
+        console.log("error =>", error);
+      });
     }
 
     window.addEventListener(

@@ -41,11 +41,14 @@ header .tools-bar a:hover {
   background-color: #e5e8f1;
   color: #001978;
 }
+.menu-user .navbar-nav {
+  flex-direction: initial;
+}
 /* Header: EOC */
 
 /* form-selection-business: BOC */
 .form-selection-business {
-  padding-top: 80px;
+  padding-top: 84px;
   font-family: MTTMilano-Medium, Lato, Arial, sans-serif;
   font-size: 14px;
 }
@@ -542,8 +545,9 @@ input[type="radio"]:checked + label:after {
   font-size: 14px;
   position: relative;
   line-height: 21px;
-  margin-bottom: 30px;
+  margin-bottom: 32px;
   font-family: MTTMilano, Lato, Arial, sans-serif;
+  margin-top: -4px;
 }
 
 .company-id:before {
@@ -577,6 +581,10 @@ input[type="radio"]:checked + label:after {
 .company-id a:hover {
   background-color: #e5e8f1;
 }
+.lexon-description {
+  line-height: 25px;
+}
+
 .menu-lexon-actions {
   border-bottom: 2px solid #001978;
   margin-bottom: 25px;
@@ -1217,7 +1225,7 @@ input[type="radio"]:checked + label:after {
 .dropdown-menu a:hover,
 .dropdown-menu span {
   text-decoration: none;
-  color: #001978;
+  color: #001978 !important;
 }
 
 .dropdown-menu [class^="lf-icon-close"] {
@@ -1368,4 +1376,9 @@ input[type="radio"]:checked + label:after {
 
 .email {
   padding: 10px;
+}
+
+#user-box {
+  top: -5px !important;
+  transform: translate3d(-335px, 45px, 0px) !important;
 }
