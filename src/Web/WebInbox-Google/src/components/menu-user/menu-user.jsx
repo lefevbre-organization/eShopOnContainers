@@ -128,7 +128,7 @@ class MenuUser extends Component {
                   <div className="menu-title mb-5">
                     <span>{i18n.t("menu-user.user")}</span>
                   </div>
-                  <div className="user-options">
+                  {/* <div className="user-options">
                     <ul className="p-0">
                       <li>
                         <a
@@ -153,7 +153,7 @@ class MenuUser extends Component {
                         </a>
                       </li>
                     </ul>
-                  </div>
+                  </div> */}
                   <div className="user-image-and-name text-center">
                     <div className="user-image">
                       <a href="#/">
