@@ -23,16 +23,16 @@ services:
       - traefik.backend=lefebvre-imap-smtp-client
       - "traefik.frontend.rule=PathPrefixStrip:/" 
       
-  lexon.mysql.api:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Staging
-      - ConnectionString="database=lexon_conecta;server=mysqldevlexon.lefebvre.es;port=3315;user id=led-app-conecta-azure;password=FDSk2q3+asd5;sslmode=none"
-      - ASPNETCORE_URLS=https://+
-      - ASPNETCORE_HTTPS_PORT=8084
-    ports:
-      - "8084:443"
-      - "3315:3315"
-
+#  lexon.mysql.api:
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Staging
+#      - ConnectionString="database=lexon_conecta;server=mysqldevlexon.lefebvre.es;port=3315;user id=led-app-conecta-azure;password=FDSk2q3+asd5;sslmode=none"
+#      - ASPNETCORE_URLS=https://+
+#      - ASPNETCORE_HTTPS_PORT=8084
+#    ports:
+#      - "8084:443"
+#      - "3315:3315"
+#
   lexon.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Staging

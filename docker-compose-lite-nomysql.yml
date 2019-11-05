@@ -1,0 +1,90 @@
+version: '3'
+
+services:
+
+  reverse-proxy:
+    container_name: traefik
+    image: traefik:1.7.13
+    command: --api --docker
+    networks:
+      - backend
+
+  imap-server:
+    container_name: imap-server
+    image: ${REGISTRY:-elefebvreoncontainers}/imap-smtp.server:${TAG:-latest}
+    networks:
+      - backend
+
+  imap-client:
+    container_name: imap-client
+    image: ${REGISTRY:-elefebvreoncontainers}/imap-smtp.client:${TAGTEST:-pruebas}
+    networks:
+      - backend
+      
+#  lexon.mysql.api:
+#    image: ${REGISTRY:-elefebvreoncontainers}/lexon.mysql:${TAGTEST:-pruebas}
+#    container_name: lexon.mysql.api
+#    networks:
+#      - backend
+#
+  lexon.api:
+    image: ${REGISTRY:-elefebvreoncontainers}/lexon.api:${TAGTEST:-pruebas}
+    container_name: lexon.api
+    depends_on:
+      - lexon.mysql.api
+    networks:
+      - backend
+
+  lexongw.fake:
+    image: ${REGISTRY:-elefebvreoncontainers}/ocelot.lexon.gateway:${TAGTEST:-pruebas}
+    container_name: lexongw
+    depends_on:
+      - lexon.mysql.api
+      - lexon.api
+    networks:
+      - backend
+
+  account.api:
+    image: ${REGISTRY:-elefebvreoncontainers}/account.api:${TAGTEST:-pruebas}
+    container_name: account.api
+    networks:
+      - backend
+
+  accountgw.fake:
+    image: ${REGISTRY:-elefebvreoncontainers}/ocelot.account.gateway:${TAGTEST:-pruebas}
+    container_name: accountgw
+    depends_on:
+      - account.api
+    networks:
+      - backend
+
+  portal-client:
+    container_name: portal
+    image: ${REGISTRY:-elefebvreoncontainers}/portal.client:${TAGTEST:-latest}
+    networks:
+      - backend
+      
+  google-client:
+    container_name: google
+    image: ${REGISTRY:-elefebvreoncontainers}/google.client:${TAGTEST:-latest}
+    networks:
+      - backend
+      
+  lexon-client:
+    container_name: lexon-client
+    image: ${REGISTRY:-elefebvreoncontainers}/lexon.client:${TAGTEST:-latest}
+    networks:
+      - backend
+ 
+  outlook-client:
+    container_name: outlook-client
+    image: ${REGISTRY:-elefebvreoncontainers}/outlook.client:${TAGTEST:-latest}
+    networks:
+      - backend
+
+networks:
+
+  backend:
+    driver: bridge       
+
+        
