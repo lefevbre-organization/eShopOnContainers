@@ -428,6 +428,8 @@ class App extends Component {
       "GetUserFromLexonConnector",
       this.handleGetUserFromLexonConnector
     );
+
+    console.log("this.props ->", this.props);
   }
 
   componentDidUpdate() {
