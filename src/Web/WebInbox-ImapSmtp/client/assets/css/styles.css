@@ -957,7 +957,7 @@ input[type="radio"]:checked + label:after {
   padding-top: 10px;
 }
 
-.user-image-and-name .user-image::before {
+/* .user-image-and-name .user-image::before {
   font-family: "lf-font";
   content: "\e952";
   position: relative;
@@ -965,7 +965,7 @@ input[type="radio"]:checked + label:after {
   left: 140px;
   font-size: 22px;
   margin-left: -2rem;
-}
+} */
 
 .user-image-and-name span,
 .user-image-and-name .other-accounts span {

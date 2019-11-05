@@ -968,14 +968,14 @@ input[type="radio"]:checked + label:after {
   padding-top: 35px;
 }
 
-.user-image-and-name .user-image::before {
+/* .user-image-and-name .user-image::before {
   font-family: "lf-font";
   content: "\e952";
   position: relative;
   bottom: -35px;
   left: 125px;
   font-size: 22px;
-}
+} */
 
 .user-image-and-name span,
 .user-image-and-name .other-accounts span {
