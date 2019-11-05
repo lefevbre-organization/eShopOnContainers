@@ -283,10 +283,6 @@ export class Main extends Component {
 
   getLabelList() {
     this.props.getLabels();
-
-    //alberto to-do first load in default folder
-    var elementos = document.getElementsByClassName("py-2");
-    if (elementos.length > 0) elementos[0].click();
   }
 
   getLabelMessages(labelIds, q, pageToken) {
