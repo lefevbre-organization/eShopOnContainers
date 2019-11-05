@@ -48,15 +48,16 @@ class AccountUser extends Component {
 
     return (
       <li>
-        <a href="#/" className="d-flex align-items-center account-text">
+        <a
+          href="#/"
+          className="d-flex align-items-center account-text"
+          onClick={() => this._handleOnClick(account.provider)}
+        >
           <span>
             <img src={this.getImage(account.provider)} alt={account.provider} />
           </span>
           <span>{account.email}</span>
-          <span
-            className="lf-icon-arrow-exchange"
-            onClick={() => this._handleOnClick(account.provider)}
-          ></span>
+          <span className="lf-icon-arrow-exchange"></span>
         </a>
       </li>
     );
