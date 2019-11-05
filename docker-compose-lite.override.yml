@@ -74,12 +74,16 @@ services:
 
   portal-client:
     ports:
-      - "8087:80"  
+      - "8087:443"  
       
   google-client:
     ports:
-      - "8088:80"
+      - "8088:443"
+  
+  outlook-client:
+    ports:
+      - "8089:443"  
       
   lexon-client:
     ports:
-      - "8090:80"       
+      - "8090:443"       

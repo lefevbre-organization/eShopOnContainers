@@ -48,11 +48,10 @@ const prod = {
     URL_GET_ACCOUNTS:
       "https://lefebvre.westeurope.cloudapp.azure.com:8083/api/v1/accounts/emailuseraccount/getbyuser",
     URL_MF_GOOGLE: "https://lefebvre.westeurope.cloudapp.azure.com:8088/user",
-    URL_MF_OUTLOOK:
-      "https://lefebvre-multichannel-office365.azurewebsites.net/user",
-    URL_MF_IMAP: "https://lefebvre.westeurope.cloudapp.azure.com/user",
+    URL_MF_OUTLOOK: "https://lefebvre.westeurope.cloudapp.azure.com:8089/user",
+    URL_MF_IMAP: "http://lefebvre.westeurope.cloudapp.azure.com/user",
     URL_MF_LEXON:
-      "https://lefebvre-multichannel-lex-on.azurewebsites.net/static/js/main.js"
+      "https://lefebvre.westeurope.cloudapp.azure.com:8090/static/js/main.js"
   }
 };
 

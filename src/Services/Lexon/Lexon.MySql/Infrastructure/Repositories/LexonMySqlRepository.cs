@@ -14,8 +14,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
         private readonly IOptions<LexonSettings> _settings;
         private readonly ILogger<LexonMySqlRepository> _log;
 
-        //"database=lexon_pre_shl_01;server=ES006-PPDDB003;port=3315;user id=led-app-conecta;password=DSlkjmfw+34d";
-        //private string _conn = "database=lexon_pre_shl_02;server=ES006-PPDDB003;port=3315;user id=led-ext-freyes;password=DSFkds4+46DSF";
         private string _conn;
 
         public LexonMySqlRepository(
@@ -137,14 +135,14 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return companies;
         }
 
-        public async Task<int> AddRelationMailAsync(short idType, string bbdd, string idUser, string idMail, long idRelated)
+        public async Task<int> AddRelationMailAsync(short idType, string bbdd, string idUser, string[] listaMails, long idRelated)
         {
             int result = 0;
             var filtro =
                 $"{{\"BBDD\":\"{bbdd}\",\"Date\":\"2019-10-10\"," +
                 $"\"Subject\":\"Test asociacion actuacion email CONECTA\"," +
-                $" \"Body\":\"descripcion nueva actuacion\", \"Uid\":\"{idMail}\"," +
-                $"\"IdUser\":\"{_settings.Value.UserApp}\", \"IdActionRelationType\":{idType},\"IdRelation\":{idRelated}}}";
+                $" \"Body\":\"descripcion nueva actuacion\", \"Uid\":\"{JsonConvert.SerializeObject(listaMails)}\"," +
+                $"\"IdUser\":\"{idUser}\", \"IdActionRelationType\":{idType},\"IdRelation\":{idRelated}}}";
 
             _log.LogDebug($"AddRelationMailAsync -> conn:{_conn} - SP:{_settings.Value.SP.AddRelation}  - P_FILTER:{filtro} - P_UC:{_settings.Value.UserApp}");
             using (MySqlConnection conn = new MySqlConnection(_conn))
@@ -165,6 +163,44 @@ namespace Lexon.MySql.Infrastructure.Repositories
                             ? -1
                             : (int)command.Parameters["P_ID"].Value;
                         _log.LogDebug($"AddRelationMailAsync -> P_ID:{command.Parameters["P_ID"].Value.ToString()} - P_IDERROR:{command.Parameters["P_IDERROR"].Value.ToString()} - P_ERROR:{command.Parameters["P_ERROR"].Value.ToString()}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.Error.Write(ex.Message);
+                }
+            }
+
+            return result;
+        }
+
+        public async Task<int> RemoveRelationMailAsync(short idType, string bbdd, string idUser, string idMail, long idRelated)
+        {
+            int result = 0;
+            var filtro =
+                $"{{\"BBDD\":\"{bbdd}\"," +
+                $" \"Uid\":\"{idMail}\"," +
+                $" \"IdUser\":\"{idUser}\", \"IdActionRelationType\":{idType},\"IdRelation\":{idRelated}}}";
+
+            _log.LogDebug($"RemoveRelationMailAsync -> conn:{_conn} - SP:{_settings.Value.SP.RemoveRelation}  - P_FILTER:{filtro} - P_UC:{_settings.Value.UserApp}");
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddRelation, conn))
+                    {
+                        command.Parameters.Add(new MySqlParameter("P_JSON", MySqlDbType.String) { Value = filtro });
+                        command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = _settings.Value.UserApp });
+                        command.Parameters.Add(new MySqlParameter("P_ID", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
+                        command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
+                        command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
+                        command.CommandType = CommandType.StoredProcedure;
+                        result = await command.ExecuteNonQueryAsync();
+                        result = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString())
+                            ? -1
+                            : (int)command.Parameters["P_ID"].Value;
+                        _log.LogDebug($"RemoveRelationMailAsync -> P_ID:{command.Parameters["P_ID"].Value.ToString()} - P_IDERROR:{command.Parameters["P_IDERROR"].Value.ToString()} - P_ERROR:{command.Parameters["P_ERROR"].Value.ToString()}");
                     }
                 }
                 catch (Exception ex)
