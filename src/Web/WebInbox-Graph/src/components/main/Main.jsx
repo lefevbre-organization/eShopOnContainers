@@ -32,9 +32,6 @@ import ComposeMessage from "../compose-message/ComposeMessage-fixed";
 import "react-reflex/styles.css";
 import { config, PROVIDER } from "../../constants";
 
-const labelFake =
-  "aamkadq2otc1owewltziztatngfhoc1hyjq1ltllztbim2m0mjjimwauaaaaaadqpxgwbokltpsmu5zpeutsaqbsqrn2szbhqz3t3raakff9aaaaaafoaaa=";
-
 export class Main extends Component {
   constructor(props) {
     super(props);
@@ -61,7 +58,8 @@ export class Main extends Component {
       ),
       leftSideBar: {
         collapsed: false
-      }
+      },
+      loadFolders: false
     };
 
     e.on("message", function(data) {
@@ -171,7 +169,7 @@ export class Main extends Component {
     /* Label list is fetched from here 
     so that we can declare Routes by labelId 
     before rendering anything else */
-    this.getLabelList();
+    this.getLabelList();    
 
     window.addEventListener(
       "GetUserFromLexonConnector",
@@ -184,8 +182,8 @@ export class Main extends Component {
       const url = `${config.url.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${PROVIDER}/${email}`;
       fetch(url, {
         method: "GET"
-      }).then(() => {
-        this.props.history.push(`/${labelFake}`);
+      }).catch(error => {
+        console.error("error ->", error);
       });
     }
   }
@@ -224,6 +222,13 @@ export class Main extends Component {
       if (labelPathMatch && selectedLabel.id !== labelPathMatch.id) {
         this.props.selectLabel(labelPathMatch.id);
       }
+    }
+
+    if (!this.state.loadFolders && prevProps.labelsResult.labels !== this.props.labelsResult.labels) {
+      this.setState( { loadFolders: true } );
+      if (this.props.labelsResult && this.props.labelsResult.labels.length > 0 ) {
+        this.props.history.push(`/${this.props.labelsResult.labels[0].id}`);
+      }      
     }
   }
 
