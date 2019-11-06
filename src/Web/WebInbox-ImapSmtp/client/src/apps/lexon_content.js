@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import MaterialTitlePanel from "./material_title_panel";
 import * as singleSpa from "single-spa";
@@ -28,61 +28,53 @@ const styles = {
   }
 };
 
-const lexonContent = props => {
-  const style = props.style
-    ? { ...styles.sidebar, ...props.style }
-    : styles.sidebar;
+export class LexonComponent extends Component {
+  constructor(props) {
+    super(props);
 
-  const sidebarDocked = props.sidebarDocked;
+    this.state = {
+      style: this.props.style
+        ? { ...styles.sidebar, ...this.props.style }
+        : styles.sidebar
+    };
+  }
 
-  const el = document.getElementById("lexon-app");
-  if (!el) {
+  componentDidMount() {
     try {
-      //const activityFunction = location => location.pathname.startsWith('/');
-      //registerApplication('lex-on-connector', () => import('../../lex-on_connector/index.js'), activityFunction);
-      //start();
-
-      registerLexonApp();
-      singleSpa.start();
+      const status = singleSpa.getAppStatus("lexon-app");
+      if (status === "MOUNTED") {
+        singleSpa.unloadApplication("lexon-app", false);
+        singleSpa.start();
+      } else {
+        registerLexonApp();
+        singleSpa.start();
+      }
     } catch (error) {
       singleSpa.unloadApplication("lexon-app", false);
       console.error(error);
     }
   }
 
-  return (
-    <MaterialTitlePanel title="LEX-ON" style={style} sidebarDocked={sidebarDocked}>
-      <div style={styles.content}>
-        {/*<a href="index.html" style={styles.sidebarLink}>
-          Home
-        </a>
-        <a href="responsive_example.html" style={styles.sidebarLink}>
-          Responsive Example
-        </a>
-        <div style={styles.divider} />
-        {links}*/}
-        {/* <img
-          id="myImg1"
-          onClick={addImg}
-          border="0"
-          alt="Lefebvre"
-          src="assets/images/lexon-1.png"
-        ></img> */}
+  render() {
+    const { sidebarDocked } = this.props;
+    const { style } = this.state;
 
-        <div id="lexon-app"></div>
-      </div>
-    </MaterialTitlePanel>
-  );
-};
+    return (
+      <MaterialTitlePanel
+        title="LEX-ON"
+        style={style}
+        sidebarDocked={sidebarDocked}
+      >
+        <div style={styles.content}>
+          <div id="lexon-app"></div>
+        </div>
+      </MaterialTitlePanel>
+    );
+  }
+}
 
-const addImg = value => {
-  document.getElementById("myImg1").src = "assets/images/lexon-2.png";
-
-  //document.getElementById("myImg").src = "assets/img/lexon-3.png";
-};
-
-lexonContent.propTypes = {
+LexonComponent.propTypes = {
   style: PropTypes.object
 };
 
-export default lexonContent;
+export default LexonComponent;

@@ -7,7 +7,8 @@ const reactLifecycles = singleSpaReact({
     React,
     ReactDOM,
     rootComponent,
-    domElementGetter: () => document.getElementById('lexon-app')
+    domElementGetter: () => document.getElementById('lexon-app'),
+    suppressComponentDidCatchWarning: true
 });
 
 export const bootstrap = [

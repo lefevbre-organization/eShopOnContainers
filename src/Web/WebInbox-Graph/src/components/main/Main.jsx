@@ -23,8 +23,6 @@ import { signOut } from "../../api_graph/authentication";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import e from "../../event-bus";
-import * as singleSpa from "single-spa";
-import { registerLexonApp } from "../../apps/lexonconn-app";
 import SidebarCnn from "react-sidebar";
 import LexonComponent from "../../apps/lexon_content";
 import SidebarComponent from "../../apps/sidebar_content";
@@ -169,7 +167,7 @@ export class Main extends Component {
     /* Label list is fetched from here 
     so that we can declare Routes by labelId 
     before rendering anything else */
-    this.getLabelList();    
+    this.getLabelList();
 
     window.addEventListener(
       "GetUserFromLexonConnector",
@@ -224,26 +222,16 @@ export class Main extends Component {
       }
     }
 
-    if (!this.state.loadFolders && prevProps.labelsResult.labels !== this.props.labelsResult.labels) {
-      this.setState( { loadFolders: true } );
-      if (this.props.labelsResult && this.props.labelsResult.labels.length > 0 ) {
+    if (
+      !this.state.loadFolders &&
+      prevProps.labelsResult.labels !== this.props.labelsResult.labels
+    ) {
+      this.setState({ loadFolders: true });
+      if (
+        this.props.labelsResult &&
+        this.props.labelsResult.labels.length > 0
+      ) {
         this.props.history.push(`/${this.props.labelsResult.labels[0].id}`);
-      }      
-    }
-  }
-
-  registerConnectorApp() {
-    let el = document.getElementById("main-lexon-connector");
-    if (!el) {
-      try {
-        //const activityFunction = location => location.pathname.startsWith('/');
-        //registerApplication('lex-on-connector', () => import('../../lex-on_connector/index.js'), activityFunction);
-        //start();
-
-        registerLexonApp();
-        singleSpa.start();
-      } catch (error) {
-        console.error(error);
       }
     }
   }
@@ -288,7 +276,6 @@ export class Main extends Component {
   getLabelMessages(labelIds, q, pageToken) {
     this.props.emptyLabelMessages();
     this.props.getLabelMessages(labelIds, q, pageToken);
-    //this.registerConnectorApp();
   }
 
   addInitialPageToken(token) {

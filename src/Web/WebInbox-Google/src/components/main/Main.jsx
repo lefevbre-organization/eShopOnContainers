@@ -45,10 +45,6 @@ export class Main extends Component {
 
     //this.leftSidebarOpen = leftSidebarOpen;
 
-    //registerReactApp();
-
-    //singleSpa.start();
-
     this.state = {
       isVisible: true,
       fluid: true,

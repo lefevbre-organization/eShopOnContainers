@@ -285,7 +285,7 @@ export class Compose extends PureComponent {
                 {t("compose-message.send")}
               </Button>{" "}
               <Button
-                className="marleft"
+                className="mr-left font-weight-bold btn-outline-primary"
                 title={t("compose-message.discard")}
                 color="secondary"
                 onClick={this.goBack}
