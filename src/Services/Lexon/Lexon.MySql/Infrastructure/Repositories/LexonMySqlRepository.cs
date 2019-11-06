@@ -30,7 +30,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
             var result = new Result<JosUserCompanies>  {  errors = new List<ErrorInfo>() };
             var filtro = $"{{\"NavisionId\":\"{idUser}\"}}";
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.GetCompanies}", $"P_FILTER:{filtro}", $"P_UC:{_settings.Value.UserApp}" });
-            //log.LogDebug($"GetCompaniesListAsync -> conn:{_conn} - SP:{_settings.Value.SP.GetCompanies} - P_FILTER:{filtro} - P_UC:{_settings.Value.UserApp}");
+
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
                 try
@@ -40,6 +40,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     {
                         command.Parameters.Add(new MySqlParameter("P_FILTER", MySqlDbType.String) { Value = filtro });
                         command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = _settings.Value.UserApp });
+                        command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
                         command.CommandType = CommandType.StoredProcedure;
                         using (var reader = await command.ExecuteReaderAsync())
@@ -48,10 +49,8 @@ namespace Lexon.MySql.Infrastructure.Repositories
                             {
                                 result.data = JsonConvert.DeserializeObject<JosUserCompanies>(reader.GetValue(0).ToString());
                             }
-                            TraceMessage(result.errors, command.Parameters["P_ERROR"].Value.ToString(), (int)command.Parameters["P_IDERROR"].Value);
-
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
                         }
-                        //_log.LogDebug($"GetCompaniesListAsync -> P_ERROR:{command.Parameters["P_ERROR"].Value.ToString()}");
                     }
                 }
                 catch (Exception ex)
@@ -63,10 +62,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return result;
         }
 
-        private void TraceMessage(List<ErrorInfo> errors, string v, int value)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<Result<JosEntityList>> SearchEntitiesAsync(int pageSize, int pageIndex, short idType, string bbdd, string idUser, string search)
         {
@@ -74,7 +69,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
             var filtroDescription = !string.IsNullOrEmpty(search) ? $", \"Description\":{search}" : string.Empty;
             var filtro = $"{{\"BBDD\":\"{bbdd}\",\"IdEntityType\":{idType},\"IdUser\":{idUser}{filtroDescription}}}";
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.SearchEntities}", $"P_FILTER:{filtro}", $"P_UC:{_settings.Value.UserApp}" });
-            //_log.LogDebug($"SearchEntitiesAsync -> conn:{_conn} - SP:{_settings.Value.SP.SearchEntities} - P_FILTER:{filtro} - P_UC:{_settings.Value.UserApp}");
+
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
                 try
@@ -93,10 +88,9 @@ namespace Lexon.MySql.Infrastructure.Repositories
                             {
                                 result.data = JsonConvert.DeserializeObject<JosEntityList>(reader.GetValue(0).ToString());
                             }
-                            TraceMessage(result.errors, command.Parameters["P_ERROR"].Value.ToString(),(int)command.Parameters["P_IDERROR"].Value);
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value,command.Parameters["P_IDERROR"].Value);
                         } 
       
-                        //_log.LogDebug($"SearchEntitiesAsync -> P_IDERROR:{command.Parameters["P_IDERROR"].Value.ToString()} - P_ERROR:{command.Parameters["P_ERROR"].Value.ToString()}");
                     }
                 }
                 catch (Exception ex)
@@ -114,7 +108,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
         {
             var result = new Result<JosEntityTypeList> { errors = new List<ErrorInfo>() };
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.GetMasterEntities}", $"P_UC:{_settings.Value.UserApp}" });
-            //_log.LogDebug($"GetMasterEntitiesAsync -> conn:{_conn} - SP:{_settings.Value.SP.GetMasterEntities} - P_UC:{_settings.Value.UserApp}");
+
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
                 try
@@ -123,6 +117,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetMasterEntities, conn))
                     {
                         command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = _settings.Value.UserApp });
+                        command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
                         command.CommandType = CommandType.StoredProcedure;
                         using (var reader = await command.ExecuteReaderAsync())
@@ -131,8 +126,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                             {
                                 result.data = JsonConvert.DeserializeObject<JosEntityTypeList>(reader.GetValue(0).ToString());
                             }
-                            TraceMessage(result.errors, command.Parameters["P_ERROR"].Value.ToString(), (int)command.Parameters["P_IDERROR"].Value);
-
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
                         }
                     }
                 }
@@ -153,12 +147,12 @@ namespace Lexon.MySql.Infrastructure.Repositories
             var filtro =
                 $"{{\"BBDD\":\"{bbdd}\",\"Date\":\"2019-10-10\"," +
                 $"\"Subject\":\"Test asociacion actuacion email CONECTA\"," +
-                $" \"Body\":\"descripcion nueva actuacion\", \"Uid\":\"{JsonConvert.SerializeObject(listaMails)}\"," +
+                $" \"Body\":\"descripcion nueva actuacion\", \"Uid\":{JsonConvert.SerializeObject(listaMails)}," +
                 $"\"IdUser\":\"{idUser}\", \"IdActionRelationType\":{idType},\"IdRelation\":{idRelated}}}";
+
 
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.AddRelation}", $"P_FILTER:{filtro}", $"P_UC:{_settings.Value.UserApp}" });
 
-            //_log.LogDebug($"AddRelationMailAsync -> conn:{_conn} - SP:{_settings.Value.SP.AddRelation}  - P_FILTER:{filtro} - P_UC:{_settings.Value.UserApp}");
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
                 try
@@ -177,9 +171,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                             ? -1
                             : (int)command.Parameters["P_ID"].Value;
                         TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_ID"].Value}"});
-                        TraceMessage(result.errors, command.Parameters["P_ERROR"].Value.ToString(), (int)command.Parameters["P_IDERROR"].Value);
-
-                        //_log.LogDebug($"AddRelationMailAsync -> P_ID:{command.Parameters["P_ID"].Value.ToString()} - P_IDERROR:{command.Parameters["P_IDERROR"].Value.ToString()} - P_ERROR:{command.Parameters["P_ERROR"].Value.ToString()}");
+                        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
                     }
                 }
                 catch (Exception ex)
@@ -200,8 +192,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 $" \"IdUser\":\"{idUser}\", \"IdActionRelationType\":{idType},\"IdRelation\":{idRelated}}}";
 
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.RemoveRelation}", $"P_FILTER:{filtro}", $"P_UC:{_settings.Value.UserApp}" });
-
-            //_log.LogDebug($"RemoveRelationMailAsync -> conn:{_conn} - SP:{_settings.Value.SP.RemoveRelation}  - P_FILTER:{filtro} - P_UC:{_settings.Value.UserApp}");
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
                 try
@@ -211,17 +201,16 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     {
                         command.Parameters.Add(new MySqlParameter("P_JSON", MySqlDbType.String) { Value = filtro });
                         command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = _settings.Value.UserApp });
-                        command.Parameters.Add(new MySqlParameter("P_ID", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
+                        //command.Parameters.Add(new MySqlParameter("P_ID", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
                         command.CommandType = CommandType.StoredProcedure;
                         await command.ExecuteNonQueryAsync();
-                        result.data = !string.IsNullOrEmpty(command.Parameters["P_ID"].Value.ToString())
+                        result.data = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString())
                             ? -1
                             : (int)command.Parameters["P_ID"].Value;
-                        TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_ID"].Value}" });
-                        TraceMessage(result.errors, command.Parameters["P_ERROR"].Value.ToString(), (int)command.Parameters["P_IDERROR"].Value);
-                        //_log.LogDebug($"RemoveRelationMailAsync -> P_ID:{command.Parameters["P_ID"].Value.ToString()} - P_IDERROR:{command.Parameters["P_IDERROR"].Value.ToString()} - P_ERROR:{command.Parameters["P_ERROR"].Value.ToString()}");
+                        TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
+                        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
                     }
                 }
                 catch (Exception ex)

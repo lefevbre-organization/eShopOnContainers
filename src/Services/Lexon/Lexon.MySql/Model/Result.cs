@@ -6,6 +6,6 @@ namespace Lexon.MySql.Model
     {
         public List<ErrorInfo> errors { get; set; }
 
-        public T data { get; set }
+        public T data { get; set; }
     }
 }

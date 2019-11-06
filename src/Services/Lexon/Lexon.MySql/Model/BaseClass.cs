@@ -38,12 +38,18 @@ namespace Lexon.MySql.Model
             errors.Add(errorInfo);
         }
 
-        private static void WriteError(ErrorInfo errorInfo)
+        private void WriteError(ErrorInfo errorInfo)
         {
-            System.Diagnostics.Trace.WriteLine("message: " + errorInfo.message);
-            System.Diagnostics.Trace.WriteLine("member name: " + errorInfo.member);
-            System.Diagnostics.Trace.WriteLine("source file path: " + errorInfo.source);
-            System.Diagnostics.Trace.WriteLine("source line number: " + errorInfo.line);
+            WriteLine("member name: " + errorInfo.member);
+            WriteLine("member name: " + errorInfo.member);
+            WriteLine("source file path: " + errorInfo.source);
+            WriteLine("source line number: " + errorInfo.line);
+        }
+
+        private void WriteLine(string msg)
+        {
+            log.LogDebug(msg);
+            System.Diagnostics.Trace.WriteLine(msg);
         }
 
         public void TraceLog(
@@ -52,29 +58,28 @@ namespace Lexon.MySql.Model
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
              params string[] parameters)
         {
-            var traza = $"FILE[{sourceFilePath}]-PROC[{memberName}] : ";
+            WriteLine($"FILE[{sourceFilePath}]//PROC[{memberName}] : ");
             foreach (var item in parameters)
             {
-                traza += item;
+               WriteLine(item);
             }
-            System.Diagnostics.Trace.WriteLine(traza);
-            log.LogDebug(traza);
         }
 
-        public void TraceMessage(
+        public void TraceOutputMessage(
             List<ErrorInfo> errors,
-            string ex,
-            int codeError = 1000,
+            object exMessage,
+            object codeError = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "")
         {
-            if (codeError == 0) return;
+            if (codeError == null || !(codeError is int) || (int)codeError == 0 || exMessage == null || !(exMessage is string))
+                return;
 
             var errorInfo = new ErrorInfo
             {
-                code = codeError,
-                message = ex,
+                code = (int)codeError,
+                message = (string)exMessage,
                 member = memberName,
                 source = sourceFilePath,
                 line = sourceLineNumber,
@@ -82,6 +87,11 @@ namespace Lexon.MySql.Model
 
             WriteError(errorInfo);
             errors.Add(errorInfo);
+        }
+
+        private void TraceMessage(List<ErrorInfo> errors, string v, int value)
+        {
+            throw new NotImplementedException();
         }
     }
 }
