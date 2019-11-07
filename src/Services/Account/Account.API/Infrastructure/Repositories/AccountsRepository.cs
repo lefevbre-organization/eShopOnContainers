@@ -12,6 +12,7 @@
     using System.Threading.Tasks;
     using Account.API.Model;
     using IntegrationEvents.Events;
+    using Microsoft.Extensions.Logging;
 
     #endregion
 
@@ -19,13 +20,16 @@
     {
         private readonly AccountContext _context;
         private readonly IEventBus _eventBus;
+        private readonly ILogger<AccountsRepository> _log;
 
         public AccountsRepository(
             IOptions<AccountSettings> settings,
-            IEventBus eventBus)
+            IEventBus eventBus,
+            ILogger<AccountsRepository> logger)
         {
             _context = new AccountContext(settings, eventBus);
             _eventBus = eventBus;
+            _log = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<List<Account>> Get()
