@@ -24,51 +24,47 @@
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
         }
 
-        public async Task<List<Account>> Get()
+        public async Task<Result<AccountList>> Get()
         {
             return await _accountsRepository.Get();
         }
 
-        public async Task<Account> Get(string id)
+        public async Task<Result<Account>> Get(string id)
         {
             return await _accountsRepository.Get(id);
         }
 
-        public async Task Create(Account account)
+        public async Task<Result<Account>> Create(Account account)
         {
-            await _accountsRepository.Create(account);
+            return await _accountsRepository.Create(account);
         }
 
-        public async Task Remove(string id)
+        public async Task<Result<long>> Remove(string id)
         {
-            await _accountsRepository.Remove(id);
+            return await _accountsRepository.Remove(id);
         }
 
-        public async Task Update(string id, Account account)
+        public async Task<Result<long>> Update(string id, Account account)
         {
-            await _accountsRepository.Update(id, account);
+            return await _accountsRepository.Update(id, account);
         }
 
-        public async Task<List<Account>> GetByUser(string user)
+        public async Task<Result<AccountList>> GetByUser(string user)
         {
             return await _accountsRepository.GetByUser(user);
         }
 
-        public async Task UpdateDefaultAccount(string user, string provider, string email)
+        public async Task<Result<long>> UpdateDefaultAccount(string user, string email, string provider = null)
         {
-            await _accountsRepository.UpdateDefaultAccount(user, provider, email);
+            return await _accountsRepository.UpdateDefaultAccount(user, email, provider);
         }
 
-        public async Task<bool> DeleteAccountByUserAndProvider(string user, string provider)
-        {
-            return await _accountsRepository.DeleteAccountByUserAndProvider(user, provider);
-        }
-        public async Task<bool> DeleteAccountByUserAndEmail(string user, string email)
+        public async Task<Result<long>> DeleteAccountByUserAndEmail(string user, string email)
         {
             return await _accountsRepository.DeleteAccountByUserAndEmail(user, email);
         }
 
-        public async Task<bool> ResetDefaultAccountByUser(string user)
+        public async Task<Result<long>> ResetDefaultAccountByUser(string user)
         {
            return  await _accountsRepository.ResetDefaultAccountByUser(user);
         }

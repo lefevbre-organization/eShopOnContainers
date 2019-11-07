@@ -13,10 +13,11 @@
     using Account.API.Model;
     using IntegrationEvents.Events;
     using Microsoft.Extensions.Logging;
+    using Newtonsoft.Json;
 
     #endregion
 
-    public class AccountsRepository : IAccountsRepository
+    public class AccountsRepository : BaseClass<AccountsRepository>, IAccountsRepository
     {
         private readonly AccountContext _context;
         private readonly IEventBus _eventBus;
@@ -25,138 +26,219 @@
         public AccountsRepository(
             IOptions<AccountSettings> settings,
             IEventBus eventBus,
-            ILogger<AccountsRepository> logger)
+            ILogger<AccountsRepository> logger) : base(logger)
         {
             _context = new AccountContext(settings, eventBus);
             _eventBus = eventBus;
-            _log = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<List<Account>> Get()
+        public async Task<Result<AccountList>> Get()
         {
-            return await _context.Accounts.Find(account => true).ToListAsync();
-        }
-
-        public async Task<Account> Get(string id)
-        {
-            var accounts = _context.Accounts.Find(x => x.Id == id);
-            if (!accounts.Any())
-                return null;
-
-            return await accounts.FirstOrDefaultAsync();
-        }
-
-        public async Task Create(Account account)
-        {
-            await _context.Accounts.InsertOneAsync(account);
-
-            var eventAssoc = new AddOperationAccountIntegrationEvent(account.User, account.Provider, account.Email, account.DefaultAccount, EnTypeOperation.Create);
-            _eventBus.Publish(eventAssoc);
-        }
-
-        public async Task Remove(string id)
-        {
-            var accountRemove = await _context.Accounts.Find(x => x.Id == id).FirstOrDefaultAsync();
-
-            await _context.Accounts.DeleteOneAsync(account => account.Id == id);
-            
-            var eventAssoc = new AddOperationAccountIntegrationEvent(accountRemove.User, accountRemove.Provider, accountRemove.Email, accountRemove.DefaultAccount, EnTypeOperation.Remove);
-            _eventBus.Publish(eventAssoc);
-        }
-
-        public async Task Update(string id, Account accountIn)
-        {
-            var accountUpdate = await _context.Accounts.Find(x => x.Id == id).FirstOrDefaultAsync();
-
-            await _context.Accounts.ReplaceOneAsync(account => account.Id == id, accountIn);
-
-            var eventAssoc = new AddOperationAccountIntegrationEvent(accountUpdate.User, accountUpdate.Provider, accountUpdate.Email, accountUpdate.DefaultAccount, EnTypeOperation.Update);
-            _eventBus.Publish(eventAssoc);
-        }
-
-        public async Task<List<Account>> GetByUser(string user)
-        {
-            if (string.IsNullOrEmpty(user))
-                return await _context.Accounts.Find(account => true).ToListAsync();
-
-            return await _context.Accounts.Find(account => account.User == user).ToListAsync();
-        }
-
-        public async Task UpdateDefaultAccount(string user, string provider, string email)
-        {
-            var accounts = await _context.Accounts.Find(x => x.User == user && x.Provider == provider).ToListAsync();
-            if (accounts?.Count == 0)
+            var result = new Result<AccountList> { errors = new List<ErrorInfo>() };
+            try 
             {
-                await _context.Accounts.InsertOneAsync(new Account
+                var accounts = await _context.Accounts.Find(account => true).ToListAsync();
+                result.data = new AccountList { Accounts = accounts.ToArray() };
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
+
+        public async Task<Result<Account>> Get(string id)
+        {
+            var result = new Result<Account> { errors = new List<ErrorInfo>() };
+            try 
+            {
+                var accounts = _context.Accounts.Find(x => x.Id == id);
+                if (!accounts.Any())
+                    return result;
+
+                result.data = await accounts.FirstOrDefaultAsync();                
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
+
+        public async Task<Result<Account>> Create(Account account)
+        {
+            var result = new Result<Account> { errors = new List<ErrorInfo>() };
+            try
+            {
+                await _context.Accounts.InsertOneAsync(account);
+                result.data = account;
+
+                var eventAssoc = new AddOperationAccountIntegrationEvent(account.User, account.Provider, account.Email, account.DefaultAccount, EnTypeOperation.Create);
+                _eventBus.Publish(eventAssoc);
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
+
+        public async Task<Result<long>> Remove(string id)
+        {
+            var result = new Result<long> { errors = new List<ErrorInfo>() };
+            try 
+            {
+                var accountRemove = await _context.Accounts.Find(x => x.Id == id).FirstOrDefaultAsync();
+                var resultRemove = await _context.Accounts.DeleteOneAsync(account => account.Id == id);
+                result.data = resultRemove.DeletedCount;
+
+                if (accountRemove != null) 
+                { 
+                    var eventAssoc = new AddOperationAccountIntegrationEvent(accountRemove.User, accountRemove.Provider, accountRemove.Email, accountRemove.DefaultAccount, EnTypeOperation.Remove);
+                    _eventBus.Publish(eventAssoc);
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
+
+        public async Task<Result<long>> Update(string id, Account accountIn)
+        {
+            var result = new Result<long> { errors = new List<ErrorInfo>() };
+            try
+            {
+                var accountUpdate = await _context.Accounts.Find(x => x.Id == id).FirstOrDefaultAsync();
+                var resultUpdate = await _context.Accounts.ReplaceOneAsync(account => account.Id == id, accountIn);
+                result.data = resultUpdate.ModifiedCount;
+
+                if (accountUpdate != null)
                 {
-                    User = user,
-                    Provider = provider,
-                    Email = email,
-                    DefaultAccount = true
-                });
+                    var eventAssoc = new AddOperationAccountIntegrationEvent(accountUpdate.User, accountUpdate.Provider, accountUpdate.Email, accountUpdate.DefaultAccount, EnTypeOperation.Update);
+                    _eventBus.Publish(eventAssoc);
+                }               
             }
-            else
+            catch (Exception ex)
             {
-                await _context.Accounts.UpdateManyAsync(account => account.User == user && account.Provider != provider, Builders<Account>.Update.Set(x => x.DefaultAccount, false));
-                await _context.Accounts.UpdateManyAsync(account => account.User == user && account.Provider == provider, Builders<Account>.Update.Set(x => x.DefaultAccount, true).Set(x => x.Email, email));
+                TraceMessage(result.errors, ex);
             }
-
-            var eventAssoc = new AddOperationAccountIntegrationEvent(user, provider, email, true, EnTypeOperation.UpdateDefaultAccount);
-            _eventBus.Publish(eventAssoc);
+            return result;
         }
 
-        public async Task<bool> DeleteAccountByUserAndProvider(string user, string provider)
+        public async Task<Result<AccountList>> GetByUser(string user)
         {
-            var account = await _context.Accounts.Find(x => x.User == user && x.Provider == provider).FirstOrDefaultAsync();
-            if (account != null)
+            var result = new Result<AccountList> { errors = new List<ErrorInfo>() };
+            try
             {
-                await _context.Accounts.DeleteOneAsync(accountDelete => accountDelete.Id == account.Id);
+                var accounts = string.IsNullOrEmpty(user) ?
+                    await _context.Accounts.Find(account => true).SortByDescending(x => x.DefaultAccount).ToListAsync() :
+                    await _context.Accounts.Find(account => account.User == user).SortByDescending(x => x.DefaultAccount).ToListAsync();
 
-                var eventAssoc = new AddOperationAccountIntegrationEvent(account.User, account.Provider, account.Email, account.DefaultAccount, EnTypeOperation.Remove);
-                _eventBus.Publish(eventAssoc);
-
-                return true;
+                result.data = new AccountList { Accounts = accounts.ToArray() };
             }
-            else
+            catch (Exception ex)
             {
-                return false;
+                TraceMessage(result.errors, ex);
             }
+            return result;
         }
 
-        public async Task<bool> DeleteAccountByUserAndEmail(string user, string email)
+        public async Task<Result<long>> UpdateDefaultAccount(string user, string email, string provider = null)
         {
-            var account = await _context.Accounts.Find(x => x.User == user && x.Email == email).FirstOrDefaultAsync();
-            if (account != null)
+            var result = new Result<long> { errors = new List<ErrorInfo>() };
+            try
             {
-                await _context.Accounts.DeleteOneAsync(accountDelete => accountDelete.Id == account.Id);
-
-                var eventAssoc = new AddOperationAccountIntegrationEvent(account.User, account.Provider, account.Email, account.DefaultAccount, EnTypeOperation.Remove);
+                // I need to know if user exists in Lexon!!!!!!!
+                var accounts = await _context.Accounts.Find(x => x.User == user).ToListAsync();
+                if (accounts?.Count == 0)
+                {
+                    await _context.Accounts.InsertOneAsync(new Account
+                    {
+                        User = user,
+                        Provider = provider,
+                        Email = email,
+                        DefaultAccount = true
+                    });
+                    result.data = 1;
+                }
+                else
+                {
+                    accounts = await _context.Accounts.Find(x => x.User == user && x.Email == email).ToListAsync();
+                    if (accounts?.Count > 0)
+                    {
+                        var resultUpdate = await _context.Accounts.UpdateManyAsync(account => account.User == user && account.Email != email, Builders<Account>.Update.Set(x => x.DefaultAccount, false));
+                        result.data = resultUpdate.ModifiedCount;
+                        resultUpdate = await _context.Accounts.UpdateManyAsync(account => account.User == user && account.Email == email, Builders<Account>.Update.Set(x => x.DefaultAccount, true).Set(x => x.Email, email));
+                        result.data += resultUpdate.ModifiedCount;
+                    }
+                    else
+                    {
+                        var resultUpdate = await _context.Accounts.UpdateManyAsync(account => account.User == user && account.Email != email, Builders<Account>.Update.Set(x => x.DefaultAccount, false));
+                        result.data = resultUpdate.ModifiedCount;
+                        await _context.Accounts.InsertOneAsync(new Account
+                        {
+                            User = user,
+                            Provider = provider,
+                            Email = email,
+                            DefaultAccount = true
+                        });
+                        result.data ++;
+                    }
+                }
+ 
+                var eventAssoc = new AddOperationAccountIntegrationEvent(user, provider, email, true, EnTypeOperation.UpdateDefaultAccount);
                 _eventBus.Publish(eventAssoc);
-
-                return true;
             }
-            else
+            catch (Exception ex)
             {
-                return false;
+                TraceMessage(result.errors, ex);
             }
+            return result;
         }
 
-        public async Task<bool> ResetDefaultAccountByUser(string user)
+        public async Task<Result<long>> DeleteAccountByUserAndEmail(string user, string email)
         {
-            var accountFind = await _context.Accounts.Find(x => x.User == user).FirstOrDefaultAsync();
-            if (accountFind != null)
+            var result = new Result<long> { errors = new List<ErrorInfo>() };
+            try
             {
-                await _context.Accounts.UpdateManyAsync(account => account.User == user, Builders<Account>.Update.Set(x => x.DefaultAccount, false));
-
-                var eventAssoc = new AddOperationAccountIntegrationEvent(user, string.Empty, string.Empty, false, EnTypeOperation.Update);
-                _eventBus.Publish(eventAssoc);
-
-                return true;
+                var accountRemove = await _context.Accounts.Find(x => x.User == user && x.Email == email).FirstOrDefaultAsync();    
+                if (accountRemove != null)
+                {
+                    var resultRemove = await _context.Accounts.DeleteOneAsync(account => account.Id == accountRemove.Id);
+                    result.data = resultRemove.DeletedCount;
+                    var eventAssoc = new AddOperationAccountIntegrationEvent(accountRemove.User, accountRemove.Provider, accountRemove.Email, accountRemove.DefaultAccount, EnTypeOperation.Remove);
+                    _eventBus.Publish(eventAssoc);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return false;
+                TraceMessage(result.errors, ex);
             }
+            return result;
+        }
+
+        public async Task<Result<long>> ResetDefaultAccountByUser(string user)
+        {
+            var result = new Result<long> { errors = new List<ErrorInfo>() };
+            try
+            {
+                var resultUpdate = await _context.Accounts.UpdateManyAsync(account => account.User == user, Builders<Account>.Update.Set(x => x.DefaultAccount, false));
+                result.data = resultUpdate.ModifiedCount;
+
+                var accountFind = await _context.Accounts.Find(x => x.User == user).FirstOrDefaultAsync();
+                if (accountFind != null)
+                {
+                    var eventAssoc = new AddOperationAccountIntegrationEvent(user, string.Empty, string.Empty, false, EnTypeOperation.Update);
+                    _eventBus.Publish(eventAssoc);
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
         }
 
         #region PublishEvents
