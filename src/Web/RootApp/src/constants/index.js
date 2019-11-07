@@ -4,7 +4,8 @@ const dev = {
     URL_INBOX_OUTLOOK: "http://localhost:3002",
     URL_INBOX_IMAP: "http://localhost:9000",
     //API_ACCOUNTS: "http://localhost:60980"
-    API_ACCOUNTS: "https://lefebvre.westeurope.cloudapp.azure.com:8083"
+    API_ACCOUNTS: "https://localhost:44305"
+    //API_ACCOUNTS: "https://lefebvre.westeurope.cloudapp.azure.com:8083"
   },
   login: {
     URL_ENCRYPTED_USER:
@@ -15,9 +16,10 @@ const dev = {
     PWD: "22lcqsp11lsw"
   },
   api: {
-    ACCOUNTS: "api/v1/accounts/emailuseraccount/getbyuser",
-    DELETACCOUNTBYUSERANDPROVIDER: 'api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider',
-    DELETACCOUNTBYUSERANDEMAIL: 'api/v1/accounts/emailuseraccount/deleteaccountbyuserandemail'
+    // ACCOUNTS: "api/v1/accounts/emailuseraccount/getbyuser",
+    ACCOUNTS: "api/v1/emailuseraccount/getbyuser",
+    // DELETACCOUNTBYUSERANDEMAIL: 'api/v1/accounts/emailuseraccount/deleteaccountbyuserandemail'
+    DELETACCOUNTBYUSERANDEMAIL: 'api/v1/emailuseraccount/deleteaccountbyuserandemail'
   }
   // login: {
   //     URL_ENCRYPTED_USER: 'http://herculesppd.lefebvre.es/webclient46/ws/encriptarEntrada.do?nEntrada=',
@@ -46,7 +48,6 @@ const prod = {
   },
   api: {
     ACCOUNTS: "api/v1/accounts/emailuseraccount/getbyuser",
-    DELETACCOUNTBYUSERANDPROVIDER: 'api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider',
     DELETACCOUNTBYUSERANDEMAIL: 'api/v1/accounts/emailuseraccount/deleteaccountbyuserandemail'
   }
 };

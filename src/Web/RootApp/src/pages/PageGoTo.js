@@ -1,12 +1,12 @@
 import React, { Component } from "react";
-// import Spinner from "react-bootstrap/Spinner";
 import "./PageGoTo.css";
-
 import GoTo from "../components/GoTo";
 import Footer from "../components/footer/Footer";
 import ConfirmRemoveAccount from "../components/confirm-remove-account/ConfirmRemoveAccount";
 import { UserNotFound } from "../components/user-not-found/UserNotFound";
 import Spinner from "../components/spinner/spinner";
+import ReactNotification, { store } from 'react-notifications-component';
+import 'react-notifications-component/dist/theme.css';
 
 import {
   getAccounts,
@@ -46,7 +46,6 @@ export class PageGoTo extends Component {
         if (data.user === undefined || data.user === null) {
           this.setState({ redirect: true });
         } else {
-          console.log("data ->", data);
           this.setState({ userId: data.user.ID_ENTRADA });
           this.setState({ accounts: data.accounts });
           this.setState({ redirect: false });
@@ -84,6 +83,18 @@ export class PageGoTo extends Component {
       })
       .catch(error => {
         console.log(error);
+        store.addNotification({
+          message: error,
+          type: "danger",
+          container: "bottom-center",
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: {
+            duration: 5000,
+            showIcon: true
+          },
+          width: 600
+        });
       });
   }
 
@@ -93,14 +104,40 @@ export class PageGoTo extends Component {
 
     deleteAccountByUserAndEmail(encrypt, userId, email)
       .then(result => {
-        if (result === "OK") {
+        if (result.data > 0) {
           this.getAccounts();
         } else {
-          const error = `Ha ocurrido un error cuando se borraba: userId -> ${userId}, provider -> ${email}`;
+          const error = `Ha ocurrido un error cuando se borraba: userId -> ${userId}, email -> ${email}`;
+          store.addNotification({
+            message: error,
+            type: "warning",
+            container: "bottom-center",
+            animationIn: ["animated", "fadeIn"],
+            animationOut: ["animated", "fadeOut"],
+            dismiss: {
+              duration: 5000,
+              showIcon: true
+            },
+            width: 600
+          });
+          
           console.log(error);
         }
       })
       .catch(error => {
+        store.addNotification({
+          message: error,
+          type: "danger",
+          container: "bottom-center",
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: {
+            duration: 5000,
+            showIcon: true
+          },
+          width: 600
+        });
+
         console.log("error =>", error);
       });
   };
@@ -110,8 +147,6 @@ export class PageGoTo extends Component {
       showConfirmRemoveAccount: !state.showConfirmRemoveAccount,
       emailRemoved: email
     }));
-
-    // console.log(`remove -> ${remove}, email -> ${email}`);
 
     if (remove === true && email !== undefined) {
       this.removeAccount(email);
@@ -123,9 +158,6 @@ export class PageGoTo extends Component {
 
     if (loading) {
       return <Spinner />;
-      // <Spinner animation="border" role="status" className="center">
-      //   <span className="sr-only">Loading...</span>
-      // </Spinner>
     }
   }
 
@@ -161,6 +193,7 @@ export class PageGoTo extends Component {
 
     return (
       <React.Fragment>
+        <ReactNotification />
         <ConfirmRemoveAccount
           initialModalState={showConfirmRemoveAccount}
           toggleConfirmRemoveAccount={this.toggleConfirmRemoveAccount}

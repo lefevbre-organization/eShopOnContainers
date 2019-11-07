@@ -11,16 +11,15 @@
 
     public interface IAccountsRepository
     {
-        Task<List<Account>> Get();
-        Task<Account> Get(string id);        
-        Task Create(Account account);
-        Task Remove(string id);
-        Task Update(string id, Account accountIn);
-        Task<List<Account>> GetByUser(string user);
-        Task UpdateDefaultAccount(string user, string provider, string email);
-        Task<bool> DeleteAccountByUserAndProvider(string user, string provider);
-        Task<bool> DeleteAccountByUserAndEmail(string user, string email);
-        Task<bool> ResetDefaultAccountByUser(string user);
+        Task<Result<AccountList>> Get();
+        Task<Result<Account>> Get(string id);
+        Task<Result<Account>> Create(Account account);
+        Task<Result<long>> Remove(string id);
+        Task<Result<long>> Update(string id, Account accountIn);
+        Task<Result<AccountList>> GetByUser(string user);
+        Task<Result<long>> UpdateDefaultAccount(string user, string email, string provider = null);
+        Task<Result<long>> DeleteAccountByUserAndEmail(string user, string email);
+        Task<Result<long>> ResetDefaultAccountByUser(string user);
 
         Task<long> AddOperationAsync(string user, string provider, string mail, bool defaultAccount, EnTypeOperation typeOperation);
     }
