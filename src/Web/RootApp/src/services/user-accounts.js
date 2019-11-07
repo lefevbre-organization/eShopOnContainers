@@ -1,4 +1,4 @@
-import { config, PROXY_CORS, RESULT_OK } from "../constants";
+import { config, PROXY_CORS } from "../constants";
 // import data from "../data.json";
 
 export const getAccounts = (userId, encrypt) => {
@@ -20,8 +20,6 @@ export const getAccounts = (userId, encrypt) => {
         resolve(data);
       })
       .catch(error => {
-        console.log("error ->", error);
-        // resolve(data.accounts);
         reject(error);
       });
   });
@@ -40,24 +38,24 @@ export const getAccountsWithUserEncrypt = userId => {
           fetch(url, {
             method: "GET"
           })
-            .then(data => data.json())
-            .then(result => {
-              if (result.status === RESULT_OK) {
-                resolve({
-                  user: user,
-                  accounts: result.result
-                });
-              } else {
-                console.log("Error ->", result.description);
-                resolve({
-                  user: user,
-                  accounts: []
-                });
-              }
-            })
-            .catch(error => {
-              reject(error);
-            });
+          .then(data => data.json())
+          .then(result => {
+            if (result.errors.length === 0) {
+              resolve({
+                user: { ID_ENTRADA: userId },
+                accounts: result.data.accounts
+              });
+            } else {
+              let errors;
+              result.errors.forEach(function(error) {
+                errors = `${error} `
+              });
+              reject(errors);
+            }
+          })
+          .catch(error => {
+            reject(`${error.message} [${url}]`);
+          });
         } else {
           resolve({
             user: null,
@@ -79,25 +77,21 @@ export const getAccountsWithUserNoEncrypt = userId => {
     })
       .then(data => data.json())
       .then(result => {
-        if (result.status === RESULT_OK) {
+        if (result.errors.length === 0) {
           resolve({
             user: { ID_ENTRADA: userId },
-            accounts: result.result
+            accounts: result.data.accounts
           });
         } else {
-          console.log("Error ->", result.description);
-          resolve({
-            user: { ID_ENTRADA: userId },
-            accounts: []
+          let errors;
+          result.errors.forEach(function(error) {
+            errors = `${error} `
           });
+          reject(errors);
         }
       })
       .catch(error => {
-        reject(error);
-        // resolve({
-        //   user: { ID_ENTRADA: userId },
-        //   accounts: data.accounts
-        // });
+        reject(`${error.message} [${url}]`);
       });
   });
 };
@@ -128,52 +122,6 @@ const getUser = userId => {
   });
 };
 
-export const deleteAccountByUserAndProvider = (encrypt, userId, provider) => {
-  return new Promise((resolve, reject) => {
-    if (encrypt === "1") {
-      getUser(userId).then(user => {
-        if (user.ID_ENTRADA != null) {
-          const url = `${config.url.API_ACCOUNTS}/${config.api.DELETACCOUNTBYUSERANDPROVIDER}/${user.ID_ENTRADA}/${provider}`;
-          fetch(url, {
-            method: "GET"
-          })
-            .then(data => data.json())
-            .then(result => {
-              if (result.status === RESULT_OK) {
-                resolve("OK");
-              } else {
-                console.log("Error ->", result.description);
-                resolve("Error ->", result.description);
-              }
-            })
-            .catch(error => {
-              reject(error);
-            });
-        } else {
-          resolve("Error ->");
-        }
-      });
-    } else {
-      const url = `${config.url.API_ACCOUNTS}/${config.api.DELETACCOUNTBYUSERANDPROVIDER}/${userId}/${provider}`;
-      fetch(url, {
-        method: "GET"
-      })
-        .then(data => data.json())
-        .then(result => {
-          if (result.status === RESULT_OK) {
-            resolve("OK");
-          } else {
-            console.log("Error ->", result.description);
-            resolve("Error ->", result.description);
-          }
-        })
-        .catch(error => {
-          reject(error);
-        });
-    }
-  });
-};
-
 export const deleteAccountByUserAndEmail = (encrypt, userId, email) => {
   return new Promise((resolve, reject) => {
     if (encrypt === "1") {
@@ -185,11 +133,16 @@ export const deleteAccountByUserAndEmail = (encrypt, userId, email) => {
           })
             .then(data => data.json())
             .then(result => {
-              if (result.status === RESULT_OK) {
-                resolve("OK");
+              if (result.errors.length === 0) {
+                resolve({
+                  data: result.data
+                });
               } else {
-                console.log("Error ->", result.description);
-                resolve("Error ->", result.description);
+                let errors;
+                result.errors.forEach(function(error) {
+                  errors = `${error} `
+                });
+                reject(errors);
               }
             })
             .catch(error => {
@@ -206,11 +159,16 @@ export const deleteAccountByUserAndEmail = (encrypt, userId, email) => {
       })
         .then(data => data.json())
         .then(result => {
-          if (result.status === RESULT_OK) {
-            resolve("OK");
+          if (result.errors.length === 0) {
+            resolve({
+              data: result.data
+            });
           } else {
-            console.log("Error ->", result.description);
-            resolve("Error ->", result.description);
+            let errors;
+            result.errors.forEach(function(error) {
+              errors = `${error} `
+            });
+            reject(errors);
           }
         })
         .catch(error => {
