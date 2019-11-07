@@ -63,11 +63,10 @@ namespace Lexon.MySql.Infrastructure.Repositories
         }
 
 
-        public async Task<Result<JosEntityList>> SearchEntitiesAsync(int pageSize, int pageIndex, short idType, string bbdd, string idUser, string search)
+        public async Task<Result<JosEntityList>> SearchEntitiesAsync(int pageSize, int pageIndex, short idType, string bbdd, string idUser, string search, long idFilter)
         {
             var result = new Result<JosEntityList> { errors = new List<ErrorInfo>() };
-            var filtroDescription = !string.IsNullOrEmpty(search) ? $", \"Description\":{search}" : string.Empty;
-            var filtro = $"{{\"BBDD\":\"{bbdd}\",\"IdEntityType\":{idType},\"IdUser\":{idUser}{filtroDescription}}}";
+            string filtro = GiveMeFilter(idType, bbdd, idUser, search, idFilter);
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.SearchEntities}", $"P_FILTER:{filtro}", $"P_UC:{_settings.Value.UserApp}" });
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
@@ -88,9 +87,9 @@ namespace Lexon.MySql.Infrastructure.Repositories
                             {
                                 result.data = JsonConvert.DeserializeObject<JosEntityList>(reader.GetValue(0).ToString());
                             }
-                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value,command.Parameters["P_IDERROR"].Value);
-                        } 
-      
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                        }
+
                     }
                 }
                 catch (Exception ex)
@@ -102,7 +101,21 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return result;
         }
 
- 
+        private string GiveMeFilter(short idType, string bbdd, string idUser, string search, long idFilter)
+        {
+            var filtroDescription = !string.IsNullOrEmpty(search) ? $", \"Description\":{search}" : string.Empty;
+
+            var filter = $"\"BBDD\":\"{bbdd}\",\"IdEntityType\":{idType},\"IdUser\":{idUser}{filtroDescription}";
+
+            if (idType == (short)LexonAssociationType.MailToDocumentsEvent && idFilter > 0)
+                filter = $"{{ {filter},\"IdParent\":{idFilter} }}";
+            else if (idType == (short)LexonAssociationType.MailToFilesEvent)
+                filter = $"{{ {filter},\"IdFolder\":{idFilter} }}";
+            else
+                filter = $"{{ {filter} }}";
+            return filter;
+        }
+
 
         public async Task<Result<JosEntityTypeList>> GetMasterEntitiesAsync()
         {
