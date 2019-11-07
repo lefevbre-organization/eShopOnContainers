@@ -16,24 +16,24 @@ using System.Threading.Tasks;
 
 namespace Lexon.API.Infrastructure.Repositories
 {
-    public class UsersRepository : IUsersRepository
+    public class UsersRepository : BaseClass<UsersRepository>, IUsersRepository
     {
         private readonly LexonContext _context;
-        private readonly ILogger<UsersRepository> _log;
 
         public UsersRepository(
-            IOptions<LexonSettings> settings
-            ,IEventBus eventBus
+              IOptions<LexonSettings> settings
+            , IEventBus eventBus
             , ILogger<UsersRepository> logger
 
-            )
+            ) : base(logger)
         {
             _context = new LexonContext(settings, eventBus);
-            _log = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<List<LexonCompany>> GetCompaniesListAsync(string idUser)
+        public async Task<Result<List<LexonCompany>>> GetCompaniesListAsync(string idUser)
         {
+            var result = new Result<List<LexonCompany>> { data = new List<LexonCompany>(), errors = new List<ErrorInfo>() };
+
             var filter = GetFilterUser(idUser);
 
             var fields = Builders<LexonUser>.Projection
@@ -41,14 +41,24 @@ namespace Lexon.API.Infrastructure.Repositories
                 .Include("companies.list.conn")
                 .Include("companies.list.name");
 
-            var user = await _context.LexonUsers
-                        .Find(filter)
-                        .Project<LexonUser>(fields)
-                        .FirstOrDefaultAsync();
+            TraceLog(parameters: new string[] { $"fields:{fields.ToString()}", $"filter:{filter.ToString()}" });
 
-            _log.LogDebug($"GetCompaniesListAsync -> fields:{fields.ToString()} - filter:{filter.ToString()}");
-            var companies = user?.companies?.list?.ToList();
-            return companies ?? new List<LexonCompany>();
+            try
+            {
+                var user = await _context.LexonUsers
+                            .Find(filter)
+                            .Project<LexonUser>(fields)
+                            .FirstOrDefaultAsync();
+
+                var companies = user?.companies?.list?.ToList();
+                result.data = companies ?? new List<LexonCompany>();
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+
+            return result;
         }
 
         private static FilterDefinition<LexonUser> GetFilterUser(string idUser)
@@ -59,17 +69,27 @@ namespace Lexon.API.Infrastructure.Repositories
                 );
         }
 
-        public async Task<List<LexonUser>> GetListAsync(int pageSize, int pageIndex, string idUser)
+        public async Task<Result<List<LexonUser>>> GetListAsync(int pageSize, int pageIndex, string idUser)
         {
+            var result = new Result<List<LexonUser>> { data = new List<LexonUser>(), errors = new List<ErrorInfo>() };
             var filter = GetFilterUser(idUser);
 
-            _log.LogDebug($"GetUsersAsync -> filter:{filter.ToString()}");
+            TraceLog(parameters: new string[] { $"filter:{filter.ToString()}" });
 
-            return await _context.LexonUsers
-                .Find(filter)
-                .Skip(pageIndex * pageSize)
-                .Limit(pageSize)
-                .ToListAsync();
+            try
+            {
+                result.data = await _context.LexonUsers
+                    .Find(filter)
+                    .Skip(pageIndex * pageSize)
+                    .Limit(pageSize)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+
+            return result;
         }
 
         private async Task CreateAndPublishIntegrationEventLogEntry(IClientSessionHandle session, IntegrationEvent eventAssoc)
@@ -79,9 +99,9 @@ namespace Lexon.API.Infrastructure.Repositories
             await _context.PublishThroughEventBusAsync(eventAssoc, session);
         }
 
-        public async Task<long> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "")
+        public async Task<Result<long>> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "")
         {
-            //todo: hacer método para desclasificar mail
+            var result = new Result<long> { errors = new List<ErrorInfo>() };
             var cancel = default(CancellationToken);
             using (var session = await _context.StartSession(cancel))
             {
@@ -91,6 +111,8 @@ namespace Lexon.API.Infrastructure.Repositories
                 try
                 {
                     var filter = GetFilterUser(idUser);
+                    TraceLog(parameters: new string[] { $"filter:{filter.ToString()}" });
+
                     var user = await _context.LexonUsers
                         .Find(filter)
                         .SingleAsync();
@@ -107,31 +129,45 @@ namespace Lexon.API.Infrastructure.Repositories
                     };
                     var update = builder.Push("files", subitem);
 
-                    var result = await _context.LexonUsers.UpdateOneAsync(filter, update);
+                    var resultMongo = await _context.LexonUsers.UpdateOneAsync(filter, update);
 
                     var eventAssoc = new AddFileToUserIntegrationEvent(idUser, idCompany, idFile, nameFile, descriptionFile);
                     await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
 
                     await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
-                    return result.ModifiedCount;
+
+                    if (resultMongo.IsAcknowledged)
+                        result.data = resultMongo.ModifiedCount;
+                    else
+                        TraceOutputMessage(result.errors, "Error in Insert MongoDB", 1002);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Console.WriteLine(e.Message);
+                    TraceMessage(result.errors, ex);
                     session.AbortTransaction(cancel);
-                    return 0;
                 }
             }
+            return result;
         }
 
-        public async Task<LexonUser> GetAsync(string idUser)
+        public async Task<Result<LexonUser>> GetAsync(string idUser)
         {
+            var result = new Result<LexonUser> { errors = new List<ErrorInfo>() };
             var filter = GetFilterUser(idUser);
-            return await _context.LexonUsers.Find(filter).SingleAsync();
+            try
+            {
+                result.data = await _context.LexonUsers.Find(filter).SingleAsync();
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
         }
 
-        public async Task<List<LexonEntityBase>> GetEntitiesListAsync(int pageSize, int pageIndex, int idType, string idUser, long idCompany, string search)
+        public async Task<Result<List<LexonEntityBase>>> GetEntitiesListAsync(int pageSize, int pageIndex, int idType, string idUser, long idCompany, string search)
         {
+            var result = new Result<List<LexonEntityBase>> { data = new List<LexonEntityBase>(), errors = new List<ErrorInfo>() };
             var filterDocuments = FilterDefinition<LexonUser>.Empty;
             //if (!string.IsNullOrEmpty(search))
             //{
@@ -148,52 +184,67 @@ namespace Lexon.API.Infrastructure.Repositories
                 filterDocuments
                 );
 
-            _log.LogDebug($"GetEntitiesListAsync -> filter:{filter.ToString()}");
+            TraceLog(parameters: new string[] { $"filter:{filter.ToString()}" });
 
-            var user = await _context.LexonUsers
-                .Find(filter)
-                .SingleAsync();
-
-            var company = user.companies.list.FirstOrDefault(x => x.idCompany == idCompany);
-            if (!string.IsNullOrEmpty(search))
+            try
             {
-                var files = from s in company.files.list
-                            where s.description.Contains(search) || s.name.Contains(search)
-                            select s;
-                return files.ToList();
-            }
+                var user = await _context.LexonUsers
+                    .Find(filter)
+                    .SingleAsync();
 
-            var filesWithoutSearch = from s in company.files.list
-                                     select s;
-            long idFile = 1;
-            foreach (var f in filesWithoutSearch)
+                var company = user.companies.list.FirstOrDefault(x => x.idCompany == idCompany);
+                if (!string.IsNullOrEmpty(search))
+                {
+                    var files = from s in company.files.list
+                                where s.description.Contains(search) || s.name.Contains(search)
+                                select s;
+                    result.data = files.ToList();
+                }
+
+                var filesWithoutSearch = from s in company.files.list
+                                         select s;
+                long idFile = 1;
+                foreach (var f in filesWithoutSearch)
+                {
+                    idFile += 1;
+                    f.id = idFile;
+                }
+
+                result.data = filesWithoutSearch.ToList();
+            }
+            catch (Exception ex)
             {
-                idFile += 1;
-                f.id = idFile;
+                TraceMessage(result.errors, ex);
             }
-
-            return filesWithoutSearch.ToList();
+            return result;
         }
 
-        public async Task<List<LexonEntityType>> GetClassificationMasterListAsync()
+        public async Task<Result<List<LexonEntityType>>> GetClassificationMasterListAsync()
         {
-            var lexonEntities = new List<LexonEntityType>();
+            var result = new Result<List<LexonEntityType>> { data = new List<LexonEntityType>(), errors = new List<ErrorInfo>() };
             var filter = Builders<LexonMaster>.Filter.And(Builders<LexonMaster>.Filter.Gte(u => u.version, 9), Builders<LexonMaster>.Filter.Eq(u => u.type, "Entities"));
-            var master = await _context.LexonMasters
-                .Find(filter)
-                .FirstOrDefaultAsync();
-            _log.LogDebug($"GetClassificationsMasterListAsync -> filter:{filter.ToString()}");
+            TraceLog(parameters: new string[] { $"filter:{filter.ToString()}" });
 
-            lexonEntities = master?.list?.ToList();
-            return lexonEntities;
+            try
+            {
+                var master = await _context.LexonMasters
+                    .Find(filter)
+                    .FirstOrDefaultAsync();
+
+                result.data = master?.list?.ToList();
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
         }
 
-        public async Task<long> AddClassificationToListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType = 1)
+        public async Task<Result<long>> AddClassificationToListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType = 1)
         {
+            var result = new Result<long> { errors = new List<ErrorInfo>() };
             var cancel = default(CancellationToken);
-            var raiseAssociateMailToFileEvent = idClassificationType == 1; // type == "File";
-            var raiseAssociateMailToClientEvent = idClassificationType == 2; //type == "Client";
-            var raiseAssociateMailToDocumentEvent = idClassificationType == 3; //type == "Document";
+            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany:{idCompany}", $"idMail:{idMail}", $"idRelated:{idRelated}", $"idClassificationType:{idClassificationType}" });
 
             using (var session = await _context.StartSession(cancel))
             {
@@ -203,119 +254,231 @@ namespace Lexon.API.Infrastructure.Repositories
                 session.StartTransaction();
                 try
                 {
-                    if (raiseAssociateMailToFileEvent)
+                    switch (idClassificationType)
                     {
-                        await _context.LexonUsersTransaction(session).UpdateOneAsync(
-                            GetFilterUser(idUser),
-                            Builders<LexonUser>.Update.AddToSet("Companies.list.$[i].Files.list.$[j].mails", idMail),
-                            new UpdateOptions
-                            {
-                                ArrayFilters = new List<ArrayFilterDefinition>
-                                {
-                                    new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.idCompany", idCompany)),
-                                    new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("j.idFile", idRelated))
-                                }
-                            });
+                        case (short)LexonAssociationType.MailToFilesEvent:
+                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "files", session);
+                            break;
 
-                        var eventAssoc = new AssociateMailToFileIntegrationEvent(idUser, idRelated, idMail);
-                        await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
-                    }
-                    else if (raiseAssociateMailToClientEvent)
-                    {
-                        var eventAssoc = new AssociateMailToClientIntegrationEvent(idUser, idRelated, idMail);
-                        await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
-                    }
-                    else if (raiseAssociateMailToDocumentEvent)
-                    {
-                        var eventAssoc = new AssociateMailToDocumentIntegrationEvent(idUser, idRelated, idMail);
-                        await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
-                    }
+                        case (short)LexonAssociationType.MailToClientsEvent:
+                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "clients", session);
+                            break;
 
-                    await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
-                    return 1;
-                }
-                catch (Exception e)
+                        case (short)LexonAssociationType.MailToOppositesEvent:
+                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "opposites", session);
+                            break;
 
-                {
-                    Console.WriteLine(e.Message);
-                    session.AbortTransaction();
-                    return 0;
-                }
-            }
-        }
+                        case (short)LexonAssociationType.MailToSuppliersEvent:
+                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "suppliers", session);
+                            break;
 
-        public async Task<long> RemoveClassificationFromListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType)
-        {
-            var cancel = default(CancellationToken);
-            var raiseAssociateMailToFileEvent = idClassificationType == 1; // type == "File";
-            var raiseAssociateMailToClientEvent = idClassificationType == 2; //type == "Client";
-            var raiseAssociateMailToDocumentEvent = idClassificationType == 3; //type == "Document";
+                        case (short)LexonAssociationType.MailToLawyersEvent:
+                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "lawyers", session);
+                            break;
 
-            using (var session = await _context.StartSession(cancel))
-            {
-                //var transactionOptions = new TransactionOptions(ReadConcern.Snapshot, ReadPreference.Primary, WriteConcern.WMajority);
-                //session.StartTransaction(transactionOptions);
-                session.StartTransaction();
-                try
-                {
-                    if (raiseAssociateMailToFileEvent)
-                    {
-                        await _context.LexonUsersTransaction(session).UpdateOneAsync(
-                            GetFilterUser(idUser),
-                            Builders<LexonUser>.Update.Pull("companies.list.$[i].files.list.$[j].mails", idMail),
-                            new UpdateOptions
-                            {
-                                ArrayFilters = new List<ArrayFilterDefinition>
-                                {
-                                    new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.idCompany", idCompany)),
-                                    new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("j.idFile", idRelated))
-                                }
-                            });
+                        case (short)LexonAssociationType.MailToOpposingLawyersEvent:
+                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "opposingLawyers", session);
+                            break;
 
-                        var eventAssoc = new AssociateMailToFileIntegrationEvent(idUser, idRelated, idMail);
-                        await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
-                    }
-                    else if (raiseAssociateMailToClientEvent)
-                    {
-                        var eventAssoc = new AssociateMailToClientIntegrationEvent(idUser, idRelated, idMail);
-                        await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
-                    }
-                    else if (raiseAssociateMailToDocumentEvent)
-                    {
-                        var eventAssoc = new AssociateMailToDocumentIntegrationEvent(idUser, idRelated, idMail);
-                        await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
+                        case (short)LexonAssociationType.MailToSolicitorsEvent:
+                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "solicitors", session);
+                            break;
+
+                        case (short)LexonAssociationType.MailToOpposingSolicitorsEvent:
+                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "opposingSolicitors", session);
+                            break;
+
+                        case (short)LexonAssociationType.MailToNotariesEvent:
+                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "notaries", session);
+                            break;
+
+                        case (short)LexonAssociationType.MailToCourtsEvent:
+                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "courts", session);
+                            break;
+
+                        case (short)LexonAssociationType.MailToInsurancesEvent:
+                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "insurances", session);
+                            break;
+
+                        case (short)LexonAssociationType.MailToOthersEvent:
+                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "others", session);
+                            break;
+
+                        case (short)LexonAssociationType.MailToFoldersEvent:
+                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "folders", session);
+                            break;
                     }
 
                     await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
-                    return 1;
+                    result.data = idClassificationType;
                 }
-                catch (Exception e)
-
+                catch (Exception ex)
                 {
-                    Console.WriteLine(e.Message);
+                    TraceMessage(result.errors, ex);
                     session.AbortTransaction();
-                    return 0;
                 }
             }
+            return result;
         }
 
-        public async Task<bool> SelectCompanyAsync(string idUser, long idCompany)
+        private async Task AddAndPublish(string idUser, long idCompany, string idMail, long idRelated, string typeCollection, IClientSessionHandle session)
         {
-            await _context.LexonUsers.UpdateOneAsync(
+            TraceLog(parameters: new string[] { $"typeCollection:{typeCollection}" });
+
+            await _context.LexonUsersTransaction(session).UpdateOneAsync(
                 GetFilterUser(idUser),
-                Builders<LexonUser>.Update.Set("companies.list.$[i].selected", true),
+                Builders<LexonUser>.Update.AddToSet($"companies.list.$[i].{typeCollection}.list.$[j].mails", idMail),
                 new UpdateOptions
                 {
                     ArrayFilters = new List<ArrayFilterDefinition>
-                    {
-                         new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.idCompany", idCompany))
-                    }
-                });
-            return true;
+                        {
+                            new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.idCompany", idCompany)),
+                            new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("j.id", idRelated))
+                        }
+                }
+            );
+
+            var eventAssoc = new AssociateMailToFileIntegrationEvent(idUser, idRelated, idMail);
+            await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
         }
 
-        public async Task<List<LexonActuation>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail)
+        private async Task RemoveAndPublish(string idUser, long idCompany, string idMail, long idRelated, string typeCollection, IClientSessionHandle session)
         {
+            TraceLog(parameters: new string[] { $"typeCollection:{typeCollection}" });
+
+            await _context.LexonUsersTransaction(session).UpdateOneAsync(
+                GetFilterUser(idUser),
+                Builders<LexonUser>.Update.Pull($"companies.list.$[i].{typeCollection}.list.$[j].mails", idMail),
+                new UpdateOptions
+                {
+                    ArrayFilters = new List<ArrayFilterDefinition>
+                        {
+                            new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.idCompany", idCompany)),
+                            new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("j.id", idRelated))
+                        }
+                }
+            );
+
+            var eventAssoc = new AssociateMailToFileIntegrationEvent(idUser, idRelated, idMail);
+            await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
+        }
+
+        public async Task<Result<long>> RemoveClassificationFromListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType)
+        {
+            var result = new Result<long> { errors = new List<ErrorInfo>() };
+            var cancel = default(CancellationToken);
+            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany:{idCompany}", $"idMail:{idMail}", $"idRelated:{idRelated}", $"idClassificationType:{idClassificationType}" });
+
+            using (var session = await _context.StartSession(cancel))
+            {
+                //var transactionOptions = new TransactionOptions(ReadConcern.Snapshot, ReadPreference.Primary, WriteConcern.WMajority);
+                //session.StartTransaction(transactionOptions);
+
+                session.StartTransaction();
+                try
+                {
+                    switch (idClassificationType)
+                    {
+                        case (short)LexonAssociationType.MailToFilesEvent:
+                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "files", session);
+                            break;
+
+                        case (short)LexonAssociationType.MailToClientsEvent:
+                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "clients", session);
+                            break;
+
+                        case (short)LexonAssociationType.MailToOppositesEvent:
+                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "opposites", session);
+                            break;
+
+                        case (short)LexonAssociationType.MailToSuppliersEvent:
+                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "suppliers", session);
+                            break;
+
+                        case (short)LexonAssociationType.MailToLawyersEvent:
+                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "lawyers", session);
+                            break;
+
+                        case (short)LexonAssociationType.MailToOpposingLawyersEvent:
+                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "opposingLawyers", session);
+                            break;
+
+                        case (short)LexonAssociationType.MailToSolicitorsEvent:
+                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "solicitors", session);
+                            break;
+
+                        case (short)LexonAssociationType.MailToOpposingSolicitorsEvent:
+                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "opposingSolicitors", session);
+                            break;
+
+                        case (short)LexonAssociationType.MailToNotariesEvent:
+                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "notaries", session);
+                            break;
+
+                        case (short)LexonAssociationType.MailToCourtsEvent:
+                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "courts", session);
+                            break;
+
+                        case (short)LexonAssociationType.MailToInsurancesEvent:
+                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "insurances", session);
+                            break;
+
+                        case (short)LexonAssociationType.MailToOthersEvent:
+                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "others", session);
+                            break;
+
+                        case (short)LexonAssociationType.MailToFoldersEvent:
+                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "folders", session);
+                            break;
+                    }
+
+                    await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
+                    result.data = idClassificationType;
+                }
+                catch (Exception ex)
+                {
+                    TraceMessage(result.errors, ex);
+                    session.AbortTransaction();
+                }
+            }
+            return result;
+        }
+
+        public async Task<Result<long>> SelectCompanyAsync(string idUser, long idCompany)
+        {
+            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany:{idCompany}" });
+
+            var result = new Result<long> { errors = new List<ErrorInfo>() };
+
+            try
+            {
+                var resultMongo = await _context.LexonUsers.UpdateOneAsync(
+                   GetFilterUser(idUser),
+                   Builders<LexonUser>.Update.Set("companies.list.$[i].selected", true),
+                   new UpdateOptions
+                   {
+                       ArrayFilters = new List<ArrayFilterDefinition>
+                       {
+                    new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.idCompany", idCompany))
+                       }
+                   }
+                );
+                if (resultMongo.IsAcknowledged)
+                    result.data = resultMongo.ModifiedCount;
+                else
+                    TraceOutputMessage(result.errors, "Error in Update MongoDB", 1001);
+
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
+
+        public async Task<Result<List<LexonActuation>>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail)
+        {
+            var result = new Result<List<LexonActuation>> { data = new List<LexonActuation>(), errors = new List<ErrorInfo>() };
             var listaActuaciones = new List<LexonActuation>();
             try
             {
@@ -417,7 +580,7 @@ namespace Lexon.API.Infrastructure.Repositories
                     )
                 };
 
-                _log.LogDebug($"GetCompaniesListAsync -> pipeline:{pipeline.ToString()} - options:{options.ToString()}");
+                TraceLog(parameters: new string[] { $"pipeline:{pipeline.ToString()}", $"options:{options.ToString()}" });
 
                 var resultado = await _context.LexonUsers.AggregateAsync(pipeline, options);
 
@@ -429,19 +592,18 @@ namespace Lexon.API.Infrastructure.Repositories
                         foreach (BsonDocument document in batch)
                         {
                             var actuation = BsonSerializer.Deserialize<LexonActuation>(document);
-                            _log.LogDebug($"GetCompaniesListAsync -> Actuation:{actuation.name}");
-
+                            TraceLog(parameters: new string[] { $"id:{actuation.idRelated}", $"Actuation:{actuation.name}" });
                             listaActuaciones.Add(actuation);
                         }
                     }
                 }
+                result.data = listaActuaciones;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.Message);
+                TraceMessage(result.errors, ex);
             }
-
-            return listaActuaciones;
+            return result;
         }
     }
 }
