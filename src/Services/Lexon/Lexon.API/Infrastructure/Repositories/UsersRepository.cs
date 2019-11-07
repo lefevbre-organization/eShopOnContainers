@@ -120,7 +120,7 @@ namespace Lexon.API.Infrastructure.Repositories
                     var company = user.companies.list.FirstOrDefault(x => x.idCompany == idCompany);
 
                     var builder = Builders<LexonUser>.Update;
-                    //var builder = Builders<LexonCompany>.Update;
+
                     var subitem = new LexonEntityBase
                     {
                         id = (int)idFile,
@@ -240,11 +240,11 @@ namespace Lexon.API.Infrastructure.Repositories
             return result;
         }
 
-        public async Task<Result<long>> AddClassificationToListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType = 1)
+        public async Task<Result<long>> AddClassificationToListAsync(string idUser, long idCompany, string[] listaMails, long idRelated, short idClassificationType = 1)
         {
             var result = new Result<long> { errors = new List<ErrorInfo>() };
             var cancel = default(CancellationToken);
-            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany:{idCompany}", $"idMail:{idMail}", $"idRelated:{idRelated}", $"idClassificationType:{idClassificationType}" });
+            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany:{idCompany}", $"idMail:{listaMails}", $"idRelated:{idRelated}", $"idClassificationType:{idClassificationType}" });
 
             using (var session = await _context.StartSession(cancel))
             {
@@ -257,55 +257,55 @@ namespace Lexon.API.Infrastructure.Repositories
                     switch (idClassificationType)
                     {
                         case (short)LexonAssociationType.MailToFilesEvent:
-                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "files", session);
+                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "files", session);
                             break;
 
                         case (short)LexonAssociationType.MailToClientsEvent:
-                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "clients", session);
+                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "clients", session);
                             break;
 
                         case (short)LexonAssociationType.MailToOppositesEvent:
-                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "opposites", session);
+                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "opposites", session);
                             break;
 
                         case (short)LexonAssociationType.MailToSuppliersEvent:
-                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "suppliers", session);
+                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "suppliers", session);
                             break;
 
                         case (short)LexonAssociationType.MailToLawyersEvent:
-                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "lawyers", session);
+                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "lawyers", session);
                             break;
 
                         case (short)LexonAssociationType.MailToOpposingLawyersEvent:
-                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "opposingLawyers", session);
+                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "opposingLawyers", session);
                             break;
 
                         case (short)LexonAssociationType.MailToSolicitorsEvent:
-                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "solicitors", session);
+                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "solicitors", session);
                             break;
 
                         case (short)LexonAssociationType.MailToOpposingSolicitorsEvent:
-                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "opposingSolicitors", session);
+                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "opposingSolicitors", session);
                             break;
 
                         case (short)LexonAssociationType.MailToNotariesEvent:
-                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "notaries", session);
+                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "notaries", session);
                             break;
 
                         case (short)LexonAssociationType.MailToCourtsEvent:
-                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "courts", session);
+                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "courts", session);
                             break;
 
                         case (short)LexonAssociationType.MailToInsurancesEvent:
-                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "insurances", session);
+                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "insurances", session);
                             break;
 
                         case (short)LexonAssociationType.MailToOthersEvent:
-                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "others", session);
+                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "others", session);
                             break;
 
                         case (short)LexonAssociationType.MailToFoldersEvent:
-                            await AddAndPublish(idUser, idCompany, idMail, idRelated, "folders", session);
+                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "folders", session);
                             break;
                     }
 
@@ -321,25 +321,29 @@ namespace Lexon.API.Infrastructure.Repositories
             return result;
         }
 
-        private async Task AddAndPublish(string idUser, long idCompany, string idMail, long idRelated, string typeCollection, IClientSessionHandle session)
+        private async Task AddAndPublish(string idUser, long idCompany, string [] listaMails, long idRelated, string typeCollection, IClientSessionHandle session)
         {
             TraceLog(parameters: new string[] { $"typeCollection:{typeCollection}" });
 
-            await _context.LexonUsersTransaction(session).UpdateOneAsync(
-                GetFilterUser(idUser),
-                Builders<LexonUser>.Update.AddToSet($"companies.list.$[i].{typeCollection}.list.$[j].mails", idMail),
-                new UpdateOptions
-                {
-                    ArrayFilters = new List<ArrayFilterDefinition>
-                        {
-                            new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.idCompany", idCompany)),
-                            new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("j.id", idRelated))
-                        }
-                }
-            );
+            foreach (var idMail in listaMails)
+            {
+                await _context.LexonUsersTransaction(session).UpdateOneAsync(
+                    GetFilterUser(idUser),
+                    Builders<LexonUser>.Update.AddToSet($"companies.list.$[i].{typeCollection}.list.$[j].mails", idMail),
+                    new UpdateOptions
+                    {
+                        ArrayFilters = new List<ArrayFilterDefinition>
+                            {
+                                new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.idCompany", idCompany)),
+                                new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("j.id", idRelated))
+                            }
+                    }
+                );
 
-            var eventAssoc = new AssociateMailToFileIntegrationEvent(idUser, idRelated, idMail);
-            await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
+                var eventAssoc = new AssociateMailToFileIntegrationEvent(idUser, idRelated, idMail);
+                await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
+            }
+
         }
 
         private async Task RemoveAndPublish(string idUser, long idCompany, string idMail, long idRelated, string typeCollection, IClientSessionHandle session)

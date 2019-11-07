@@ -79,18 +79,12 @@ namespace Lexon.MySql.Controllers
         [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddRelationMailAsync(
-            short idType = 1
-            , string bbdd = "lexon_admin_02"
-            , string idUser = "449"
-            , string[] listaMails = null
-            , long idRelated = 111)
-
+        public async Task<IActionResult> AddRelationMailAsync([FromBody]ClassificationAddView classification)
         {
-            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || listaMails?.Length < 1 || idType < 1 || idRelated < 1)
+            if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.bbdd) || classification?.listaMails?.Length < 1 || classification?.idType < 1 || classification?.idRelated < 1)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated and bbdd to create an actuation with the mail");
 
-            var result = await _lexonService.AddRelationMailAsync(idType, bbdd, idUser, listaMails, idRelated);
+            var result = await _lexonService.AddRelationMailAsync(classification.idType, classification.bbdd, classification.idUser, classification.listaMails, classification.idRelated);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
@@ -99,18 +93,12 @@ namespace Lexon.MySql.Controllers
         [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(int), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> RemoveRelationMailAsync(
-            short idType = 1
-            , string bbdd = "lexon_admin_02"
-            , string idUser = "449"
-            , string idMail = null
-            , long idRelated = 111)
-
+        public async Task<IActionResult> RemoveRelationMailAsync([FromBody]ClassificationRemoveView classification)
         {
-            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || string.IsNullOrEmpty(idMail) || idType < 1 || idRelated < 1)
+            if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.bbdd) || string.IsNullOrEmpty(classification?.idMail) || classification?.idType < 1 || classification?.idRelated < 1)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated and bbdd to remove an actuation");
 
-            var result = await _lexonService.RemoveRelationMailAsync(idType, bbdd, idUser, idMail, idRelated);
+            var result = await _lexonService.RemoveRelationMailAsync(classification.idType, classification.bbdd, classification.idUser, classification.idMail, classification.idRelated);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
     }

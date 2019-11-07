@@ -18,7 +18,7 @@ namespace Lexon.API.Infrastructure.Repositories
         Task<Result<long>> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "");
 
         Task<Result<List<LexonEntityType>>> GetClassificationMasterListAsync();
-        Task<Result<long>> AddClassificationToListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType = 1);
+        Task<Result<long>> AddClassificationToListAsync(string idUser, long idCompany, string[] listaMails, long idRelated, short idClassificationType = 1);
         Task<Result<long>> RemoveClassificationFromListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType);
         Task<Result<long>> SelectCompanyAsync(string idUser, long idCompany);
 
