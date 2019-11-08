@@ -157,6 +157,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web.Bff.Account", "Web.Bff.
 		src\ApiGateways\Web.Bff.Account\apigw\configuration.json = src\ApiGateways\Web.Bff.Account\apigw\configuration.json
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Account", "Account", "{011031F3-B19E-4BA0-A0A9-4B5EBB1E6B9C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU
@@ -1919,6 +1921,7 @@ Global
 		{29CB1E08-5C08-4827-97D0-907CAC05E291} = {E279BF0F-7F66-4F3A-A3AB-2CDA66C1CD04}
 		{EF7408BF-956E-42D1-B98C-7B6DE9D6B4C8} = {E279BF0F-7F66-4F3A-A3AB-2CDA66C1CD04}
 		{492CEDD0-FEBD-4CE2-AFEA-4A6437043846} = {77849D35-37D4-4802-81DC-9477B2775A40}
+		{011031F3-B19E-4BA0-A0A9-4B5EBB1E6B9C} = {91CF7717-08AB-4E65-B10E-0B426F01E2E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {25728519-5F0F-4973-8A64-0A81EB4EA8D9}
