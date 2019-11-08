@@ -64,13 +64,14 @@ namespace Lexon.MySql.Controllers
             , short idType = 1
             , string bbdd = "lexon_admin_02"
             , string idUser = "449"
-            , string search = "")
+            , string search = ""
+            , long idFilter = 0)
 
         {
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || idType < 1)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
 
-            var result = await _lexonService.GetEntitiesAsync(pageSize, pageIndex, idType, bbdd, idUser, search);
+            var result = await _lexonService.GetEntitiesAsync(pageSize, pageIndex, idType, bbdd, idUser, search, idFilter);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 

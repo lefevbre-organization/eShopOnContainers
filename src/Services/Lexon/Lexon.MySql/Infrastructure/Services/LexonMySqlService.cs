@@ -37,7 +37,7 @@ namespace Lexon.MySql.Infrastructure.Services
 
         public async Task<Result<JosEntityList>> GetEntitiesAsync(int pageSize, int pageIndex, short idType, string bbdd, string idUser, string search, long idFilter)
         {
-            return await _lexonRepository.SearchEntitiesAsync(pageSize, pageIndex, idType, bbdd, idUser, search, long idFilter);
+            return await _lexonRepository.SearchEntitiesAsync(pageSize, pageIndex, idType, bbdd, idUser, search, idFilter);
         }
 
         public async Task<Result<JosEntityTypeList>> GetMasterEntitiesAsync()
