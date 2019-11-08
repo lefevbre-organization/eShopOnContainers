@@ -280,3 +280,5 @@ pub/
 src/**/app.yaml
 src/**/inf.yaml
 
+/src/Web/MF-LexonConn/build
+/src/Web/WebInbox-ImapSmtp/client/dist
