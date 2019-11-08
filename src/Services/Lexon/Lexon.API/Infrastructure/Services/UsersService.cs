@@ -195,15 +195,15 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        public async Task<Result<List<LexonEntityBase>>> GetEntitiesListAsync(int pageSize, int pageIndex, short idType, string idUser, long idCompany, string search)
+        public async Task<Result<List<LexonEntityBase>>> GetEntitiesListAsync(int pageSize, int pageIndex, short idType, string idUser, long idCompany, string search, long idFilter)
         {
             var result = new Result<List<LexonEntityBase>> { errors = new List<ErrorInfo>() };
 
             GetInfoUser(idUser, idCompany, out string bbdd, out int codeUser);
             var request = new HttpRequestMessage(HttpMethod.Get,
-                $"{_settings.Value.LexonMySqlUrl}/entities/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={idType}&bbdd={bbdd}&idUser={codeUser}");
+                $"{_settings.Value.LexonMySqlUrl}/entities/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={idType}&bbdd={bbdd}&idUser={codeUser}&idFilter={idFilter}");
 
-            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany={idCompany}", $"bbdd:{bbdd}", $"idType:{idType}", $"search={search}" });
+            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany={idCompany}", $"bbdd:{bbdd}", $"idType:{idType}", $"search={search}", , $"idFilter={idFilter}" });
             TraceLog(parameters: new string[] { $"request={request}" });
 
             try
@@ -224,7 +224,7 @@ namespace Lexon.Infrastructure.Services
                             TraceOutputMessage(result.errors, "Mysql don´t recover the entities", 2001);
                         else
                             return result;
-
+                        //todo idFilter tiene que implementarse en mongo
                         var resultMongo = await _usersRepository.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, idCompany, search);
 
                         if (resultMongo.errors.Count > 0)

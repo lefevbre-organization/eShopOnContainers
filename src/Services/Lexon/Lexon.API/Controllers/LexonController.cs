@@ -120,7 +120,14 @@ namespace Lexon.API.Controllers
         [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityBase>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>),(int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> EntitiesAsync([FromQuery]string idUser = "E1621396", [FromQuery]long idCompany = 14, [FromQuery] short idType = 1, string search = null, [FromQuery]int pageSize = 0, [FromQuery]int pageIndex = 0)
+        public async Task<IActionResult> EntitiesAsync(
+            [FromQuery]string idUser = "E1621396"
+            , [FromQuery]long idCompany = 14
+            , [FromQuery] short idType = 1
+            , string search = null
+            , [FromQuery] int idFilter = 1
+            , [FromQuery]int pageSize = 0
+            , [FromQuery]int pageIndex = 0)
 
         {
             if (string.IsNullOrEmpty(idUser) || idCompany <= 0 || idType <= 0)
@@ -128,7 +135,7 @@ namespace Lexon.API.Controllers
 
             if (pageIndex == 0 && pageSize == 0)
             {
-                var result = await _usersService.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, idCompany, search);
+                var result = await _usersService.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, idCompany, search, idFilter);
                 return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
             }
 
