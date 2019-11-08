@@ -221,6 +221,15 @@ services:
 #      - webshoppingapigw
 #      - webmarketingapigw
 
+  webgoogleclient:
+    image: ${REGISTRY:-eshop}/webgoogleclient:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Web/WebGoogleClient/Dockerfile    
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
+
+
   webmvc:
     image: ${REGISTRY:-eshop}/webmvc:${PLATFORM:-linux}-${TAG:-latest}
     build:

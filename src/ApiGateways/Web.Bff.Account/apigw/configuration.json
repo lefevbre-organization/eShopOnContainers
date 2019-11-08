@@ -1,0 +1,26 @@
+﻿{
+  "ReRoutes": [
+    {
+      "DownstreamPathTemplate": "/api/{version}/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "account.api",
+          "Port": 80
+        },
+        {
+          "Host": "104.42.118.112",
+          "Port": 8088
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/accounts/{everything}",
+      "UpstreamHttpMethod": [ "GET" ]
+    }
+   
+  ],
+    "GlobalConfiguration": {
+      "RequestIdKey": "OcRequestId",
+      "AdministrationPath": "/administration"
+    }
+  }
+  
