@@ -203,7 +203,7 @@ namespace Lexon.Infrastructure.Services
             var request = new HttpRequestMessage(HttpMethod.Get,
                 $"{_settings.Value.LexonMySqlUrl}/entities/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={idType}&bbdd={bbdd}&idUser={codeUser}&idFilter={idFilter}");
 
-            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany={idCompany}", $"bbdd:{bbdd}", $"idType:{idType}", $"search={search}", , $"idFilter={idFilter}" });
+            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany={idCompany}", $"bbdd:{bbdd}", $"idType:{idType}", $"search={search}", $"idFilter={idFilter}" });
             TraceLog(parameters: new string[] { $"request={request}" });
 
             try

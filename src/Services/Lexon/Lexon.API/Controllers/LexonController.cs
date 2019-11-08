@@ -139,7 +139,7 @@ namespace Lexon.API.Controllers
                 return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
             }
 
-            var resultPaginated = await _usersService.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, idCompany, search);
+            var resultPaginated = await _usersService.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, idCompany, search, idFilter);
             var totalItems = resultPaginated.data.Count;
 
             var resultPaginatedFinal = new Result<PaginatedItemsViewModel<LexonEntityBase>>() {
