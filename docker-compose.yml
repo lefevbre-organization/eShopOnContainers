@@ -250,6 +250,17 @@ services:
         NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
 
 
+  account.api:
+    image: ${REGISTRY:-eshop}/account.api:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Services/Account/Account.API/Dockerfile    
+    depends_on:
+      - sql.data
+      - nosql.data
+      - identity.api
+      - rabbitmq
+
   webaccountapigw:
     image: ${REGISTRY:-eshop}/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
     build:
@@ -264,3 +275,5 @@ services:
       - marketing.api
       - catalog.api
       - basket.api
+      - account.api
+
