@@ -17,16 +17,13 @@ namespace Lexon.API.Controllers
     public class LexonController : ControllerBase
     {
         private readonly IUsersService _usersService;
-
         private readonly LexonSettings _settings;
         private readonly IEventBus _eventBus;
 
         public LexonController(
-
             IUsersService usersService
             , IOptionsSnapshot<LexonSettings> lexonSettings
-            , IEventBus eventBus
-            )
+            , IEventBus eventBus )
         {
             _usersService = usersService ?? throw new ArgumentNullException(nameof(usersService));
             _settings = lexonSettings.Value;
@@ -35,97 +32,78 @@ namespace Lexon.API.Controllers
 
         [HttpGet]
         [Route("companies")]
-        [ProducesResponseType(typeof(IEnumerable<LexonCompany>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexonCompany>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexonCompany>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CompaniesAsync(string idUser = "E1621396")
 
         {
             if (string.IsNullOrEmpty(idUser))
                 return (IActionResult)BadRequest("idUser need a correct value");
 
-            var itemsByUser = await _usersService.GetCompaniesFromUserAsync(10, 0, idUser);
-            if (!itemsByUser.Any())
-                Console.WriteLine("id value invalid. Must be a valid user code in the enviroment");
-
-            return Ok(itemsByUser);
+            var result = await _usersService.GetCompaniesFromUserAsync(10, 0, idUser);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpGet]
         [Route("classifications")]
-        [ProducesResponseType(typeof(IEnumerable<LexonActuation>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ClassificationsAsync([FromQuery]string idUser = "E1621396", [FromQuery]long idCompany = 14, [FromQuery]string idMail = "email_nuevo_1", [FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)
 
         {
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(idMail) || idCompany <= 0)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, company and email in 0rder to search the classifications");
 
-            var itemsByUser = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
-            if (!itemsByUser.Any())
-                Console.WriteLine("The search don´t return any data");
-
-            return Ok(itemsByUser);
+            var result = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
 
         }
 
         [HttpGet]
         [Route("classifications/add")]
-        [ProducesResponseType(typeof(long), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddClassificationAsync([FromQuery]string idUser = "E1621396", [FromQuery]long idCompany = 14, [FromQuery]string idMail = "email_nuevo_1", [FromQuery]short idType = 1, [FromQuery]long idRelated = 111)
+        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddClassificationAsync(
+            [FromBody]ClassificationAddView classification)
+            //[FromQuery]string idUser = "E1621396", [FromQuery]long idCompany = 14, [FromQuery]string idMail = "email_nuevo_1", [FromQuery]short idType = 1, [FromQuery]long idRelated = 111)
 
         {
-            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(idMail) || idCompany <= 0 || idRelated <= 0 || idType <= 0)
+            if (string.IsNullOrEmpty(classification?.idUser) || (classification?.listaMails?.Count() > 0) || classification?.idCompany <= 0 || classification?.idRelated <= 0 || classification?.idType <= 0)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, company, email, related and type for create the classification");
 
-            var result = await _usersService.AddClassificationToListAsync(idUser, idCompany, idMail, idRelated, idType);
-
-            if (result < 0)
-            {
-                return BadRequest();
-            }
-
-            return Ok(result);
+            var result = await _usersService.AddClassificationToListAsync(classification.idUser, classification.idCompany, classification.listaMails, classification.idRelated, classification.idType);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpGet]
         [Route("classifications/remove")]
-        [ProducesResponseType(typeof(long), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> RemoveClassificationAsync([FromQuery]string idUser = "E1621396", [FromQuery]long idCompany = 14, [FromQuery]string idMail = "email_nuevo_1", [FromQuery]short idType = 1, [FromQuery]long idRelated = 111)
-
+        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> RemoveClassificationAsync(
+            [FromBody]ClassificationRemoveView classification)
+            //[FromQuery]string idUser = "E1621396", [FromQuery]long idCompany = 14, [FromQuery]string idMail = "email_nuevo_1", [FromQuery]short idType = 1, [FromQuery]long idRelated = 111)
         {
-            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(idMail) || idCompany <= 0 || idRelated <= 0 || idType <= 0)
+            if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.idMail) || classification?.idCompany <= 0 || classification?.idRelated <= 0 || classification?.idType <= 0)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, company, email, related and type for remove the classification");
 
-            var result = await _usersService.RemoveClassificationFromListAsync(idUser, idCompany, idMail, idRelated, idType);
-
-            if (result != 1)
-            {
-                return BadRequest();
-            }
-
-            return Ok(result);
+            var result = await _usersService.RemoveClassificationFromListAsync(classification.idUser, classification.idCompany, classification.idMail, classification.idRelated, classification.idType);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpGet]
         [Route("entities/types")]
-        [ProducesResponseType(typeof(IEnumerable<LexonEntityType>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityType>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityType>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ClassificationsTypesAsync()
-
         {
-            var itemsByUser = await _usersService.GetClassificationMasterListAsync();
-            if (!itemsByUser.Any())
-                Console.WriteLine("error getting types of entities");
-
-            return Ok(itemsByUser);
+            var result = await _usersService.GetClassificationMasterListAsync();
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpGet]
         [Route("companies/select")]
-        [ProducesResponseType(typeof(LexonCompany), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<LexonCompany>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexonCompany>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> SelectCompanyAsync([FromQuery]string idUser, [FromQuery]long idCompany)
 
         {
@@ -133,16 +111,23 @@ namespace Lexon.API.Controllers
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, email, related and type for create the classification");
 
             var result = await _usersService.SelectCompanyAsync(idUser, idCompany);
-
-            return result ? BadRequest() : (IActionResult)Ok(result);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpGet]
         [Route("entities")]
-        [ProducesResponseType(typeof(PaginatedItemsViewModel<LexonEntityBase>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(IEnumerable<LexonEntityBase>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> EntitiesAsync([FromQuery]string idUser = "E1621396", [FromQuery]long idCompany = 14, [FromQuery] short idType = 1, string search = null, [FromQuery]int pageSize = 0, [FromQuery]int pageIndex = 0)
+        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityBase>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>),(int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> EntitiesAsync(
+            [FromQuery]string idUser = "E1621396"
+            , [FromQuery]long idCompany = 14
+            , [FromQuery] short idType = 1
+            , string search = null
+            , [FromQuery] int idFilter = 1
+            , [FromQuery]int pageSize = 0
+            , [FromQuery]int pageIndex = 0)
 
         {
             if (string.IsNullOrEmpty(idUser) || idCompany <= 0 || idType <= 0)
@@ -150,61 +135,44 @@ namespace Lexon.API.Controllers
 
             if (pageIndex == 0 && pageSize == 0)
             {
-                var itemsByUser = await _usersService.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, idCompany, search);
-                if (!itemsByUser.Any())
-                    Console.WriteLine("error getting entities");
-
-                return Ok(itemsByUser);
+                var result = await _usersService.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, idCompany, search, idFilter);
+                return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
             }
 
-            var itemsOnPage = await _usersService.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, idCompany, search);
-            var totalItems = itemsOnPage.Count;
+            var resultPaginated = await _usersService.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, idCompany, search, idFilter);
+            var totalItems = resultPaginated.data.Count;
 
-            var model = new PaginatedItemsViewModel<LexonEntityBase>(pageIndex, pageSize, totalItems, itemsOnPage);
-            return Ok(model);
+            var resultPaginatedFinal = new Result<PaginatedItemsViewModel<LexonEntityBase>>() {
+                errors = resultPaginated.errors,
+                data = new PaginatedItemsViewModel<LexonEntityBase>(pageIndex, pageSize, totalItems, resultPaginated.data)
+            };
+            return (resultPaginatedFinal.errors.Count > 0) ? (IActionResult)BadRequest(resultPaginatedFinal) : Ok(resultPaginatedFinal);
         }
-
-        //[HttpGet]
-        //[Route("files/add")]
-        //[ProducesResponseType(typeof(long), (int)HttpStatusCode.OK)]
-        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        //public async Task<IActionResult> AddFilesAsync([FromQuery]string idUser, [FromQuery]long idCompany, [FromQuery]long idFile, [FromQuery]string nameFile, [FromQuery]string descriptionFile = "")
-
-        //{
-        //    if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(nameFile))
-        //        return (IActionResult)BadRequest("values invalid. Must be a valid user, idFile, and name for create the file");
-
-        //    var result = await _usersService.AddFileToListAsync(idUser, idCompany, idFile, nameFile, descriptionFile);
-
-        //    if (result != 1)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    return Ok(result);
-        //}
 
         [HttpGet]
         [Route("items")]
-        [ProducesResponseType(typeof(PaginatedItemsViewModel<LexonUser>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(IEnumerable<LexonUser>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonUser>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexonUser>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonUser>>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexonUser>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UsersAsync([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0, string idUser = null)
 
         {
-            if (!string.IsNullOrEmpty(idUser))
+            if (pageIndex == 0 && pageSize == 0)
             {
-                var itemsByUser = await _usersService.GetListUsersAsync(pageSize, pageIndex, idUser);
-                return !itemsByUser.Any()
-                    ? (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment")
-                    : Ok(itemsByUser);
+                var result = await _usersService.GetListUsersAsync(pageSize, pageIndex, idUser);
+                return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
             }
 
-            var itemsOnPage = await _usersService.GetListUsersAsync(pageSize, pageIndex, idUser);
-            var totalItems = itemsOnPage.Count;
+            var resultPaginated = await _usersService.GetListUsersAsync(pageSize, pageIndex, idUser);
+            var totalItems = resultPaginated.data.Count;
 
-            var model = new PaginatedItemsViewModel<LexonUser>(pageIndex, pageSize, totalItems, itemsOnPage);
-            return Ok(model);
+            var resultPaginatedFinal = new Result<PaginatedItemsViewModel<LexonUser>>()
+            {
+                errors = resultPaginated.errors,
+                data = new PaginatedItemsViewModel<LexonUser>(pageIndex, pageSize, totalItems, resultPaginated.data)
+            };
+            return (resultPaginatedFinal.errors.Count > 0) ? (IActionResult)BadRequest(resultPaginatedFinal) : Ok(resultPaginatedFinal);
         }
     }
 }
