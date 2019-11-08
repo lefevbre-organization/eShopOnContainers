@@ -221,13 +221,6 @@ services:
 #      - webshoppingapigw
 #      - webmarketingapigw
 
-  webgoogleclient:
-    image: ${REGISTRY:-eshop}/webgoogleclient:${PLATFORM:-linux}-${TAG:-latest}
-    build:
-      context: .
-      dockerfile: src/Web/WebGoogleClient/Dockerfile    
-      args:
-        NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
 
 
   webmvc:
@@ -247,3 +240,27 @@ services:
       dockerfile: src/Web/WebhookClient/Dockerfile
     depends_on:
       - webhooks.api    
+
+  webgoogleclient:
+    image: ${REGISTRY:-eshop}/webgoogleclient:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Web/WebGoogleClient/Dockerfile    
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
+
+
+  webaccountapigw:
+    image: ${REGISTRY:-eshop}/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/ApiGateways/ApiGw-Base/Dockerfile
+    depends_on:
+      - nosql.data
+      - sql.data
+      - identity.api
+      - rabbitmq
+      - ordering.api
+      - marketing.api
+      - catalog.api
+      - basket.api

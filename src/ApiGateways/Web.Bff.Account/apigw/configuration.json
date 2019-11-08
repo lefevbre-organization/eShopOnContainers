@@ -7,10 +7,6 @@
         {
           "Host": "account.api",
           "Port": 80
-        },
-        {
-          "Host": "104.42.118.112",
-          "Port": 8088
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/accounts/{everything}",
