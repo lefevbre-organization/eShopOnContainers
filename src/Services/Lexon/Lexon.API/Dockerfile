@@ -1,0 +1,62 @@
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
+WORKDIR /src
+
+# Keep the project list and command dotnet restore identical in all Dockfiles to maximize image cache utilization
+COPY eLefebvreOnContainers-Main.sln .
+COPY docker-compose.dcproj /src/
+COPY src/ApiGateways/ApiGw-Lefebvre/ApiGw-Lefebvre.csproj src/ApiGateways/ApiGw-Lefebvre/
+COPY src/ApiGateways/ApiGw-Base/OcelotApiGw.csproj src/ApiGateways/ApiGw-Base/
+# temporal >>>>>>>>>>>>>>
+COPY src/ApiGateways/OcelotApiGw-Account/OcelotApiGw-Account.csproj src/ApiGateways/OcelotApiGw-Account/
+COPY src/ApiGateways/OcelotApiGw-Lexon/OcelotApiGw-Lexon.csproj src/ApiGateways/OcelotApiGw-Lexon/
+# <<<<<<<<<<<<<<<< temporal
+COPY src/BuildingBlocks/Devspaces.Support/Devspaces.Support.csproj src/BuildingBlocks/Devspaces.Support/
+COPY src/BuildingBlocks/EventBus/EventBus/EventBus.csproj src/BuildingBlocks/EventBus/EventBus/
+#COPY src/BuildingBlocks/EventBus/EventBus.Tests/EventBus.Tests.csproj src/BuildingBlocks/EventBus/EventBus.Tests/
+COPY src/BuildingBlocks/EventBus/EventBusRabbitMQ/EventBusRabbitMQ.csproj src/BuildingBlocks/EventBus/EventBusRabbitMQ/
+COPY src/BuildingBlocks/EventBus/EventBusServiceBus/EventBusServiceBus.csproj src/BuildingBlocks/EventBus/EventBusServiceBus/
+#COPY src/BuildingBlocks/EventBus/IntegrationEventLogEF/IntegrationEventLogEF.csproj src/BuildingBlocks/EventBus/IntegrationEventLogEF/
+COPY src/BuildingBlocks/EventBus/IntegrationEventLogMongoDB/IntegrationEventLogMongoDB.csproj src/BuildingBlocks/EventBus/IntegrationEventLogMongoDB/
+COPY src/BuildingBlocks/WebHostCustomization/WebHost.Customization/WebHost.Customization.csproj src/BuildingBlocks/WebHostCustomization/WebHost.Customization/
+COPY src/Services/Lexon/Lexon.API/Lexon.API.csproj src/Services/Lexon/Lexon.API/
+COPY src/Services/Lexon/Lexon.MySql/Lexon.MySql.csproj src/Services/Lexon/Lexon.MySql/
+COPY src/Services/Lexon/Lexon.FunctionalTests/Lexon.FunctionalTests.csproj src/Services/Lexon/Lexon.FunctionalTests/
+COPY src/Services/Account/Account.API/Account.API.csproj src/Services/Account/Account.API/
+COPY src/Web/WebStatusLefebvre/WebStatusLefebvre.csproj src/Web/WebStatusLefebvre/
+COPY src/Web/RootApp/RootApp.njsproj src/Web/RootApp/
+COPY src/Web/WebInbox-Google/WebInbox-Google.njsproj src/Web/WebInbox-Google/
+COPY src/Web/WebInbox-ImapSmtp/WebInbox-ImapSmtp.njsproj src/Web/WebInbox-ImapSmtp/
+COPY src/Web/WebInbox-Graph/WebInbox-Graph.njsproj src/Web/WebInbox-Graph/
+COPY src/Web/MF-LexonConn/MF-LexonConn.njsproj src/Web/MF-LexonConn/
+COPY src/Web/WebMSNetwork/WebMSNetwork.njsproj src/Web/WebMSNetwork/
+#COPY test/ServicesTests/Application.FunctionalTests/Application.FunctionalTests.csproj test/ServicesTests/Application.FunctionalTests/
+#COPY test/ServicesTests/LoadTest/LoadTest.csproj test/ServicesTests/LoadTest/
+
+RUN dotnet restore eLefebvreOnContainers-Main.sln
+
+COPY . .
+WORKDIR /src/src/Services/Lexon/Lexon.API
+RUN dotnet publish --no-restore -c Release -o /app
+
+#FROM build as unittest
+#WORKDIR /src/src/Services/Lexon/Lexon.UnitTests
+
+FROM build as functionaltest
+WORKDIR /src/src/Services/Lexon/Lexon.FunctionalTests
+
+FROM build AS publish
+
+FROM base AS final
+ENV ASPNETCORE_URLS="https://+"
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path="./lexon_api.pfx"
+ENV ASPNETCORE_Kestrel__Certificates__Default__Password="lefebvre"
+ENV ASPNETCORE_Kestrel__Certificates__Default__AllowInvalid=true
+WORKDIR /app
+COPY --from=publish /app .
+RUN ls -lha /app
+ENTRYPOINT ["dotnet", "Lexon.API.dll"]
