@@ -152,6 +152,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSPA", "src\Web\WebSPA\We
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebGoogleClient", "src\Web\WebGoogleClient\WebGoogleClient.csproj", "{EF7408BF-956E-42D1-B98C-7B6DE9D6B4C8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web.Bff.Account", "Web.Bff.Account", "{492CEDD0-FEBD-4CE2-AFEA-4A6437043846}"
+	ProjectSection(SolutionItems) = preProject
+		src\ApiGateways\Web.Bff.Account\apigw\configuration.json = src\ApiGateways\Web.Bff.Account\apigw\configuration.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU
@@ -1913,6 +1918,7 @@ Global
 		{56C2EF0B-6BF2-41D9-BE07-6E6D08D06B35} = {68F5041D-51F2-4630-94B6-B49789F5E51A}
 		{29CB1E08-5C08-4827-97D0-907CAC05E291} = {E279BF0F-7F66-4F3A-A3AB-2CDA66C1CD04}
 		{EF7408BF-956E-42D1-B98C-7B6DE9D6B4C8} = {E279BF0F-7F66-4F3A-A3AB-2CDA66C1CD04}
+		{492CEDD0-FEBD-4CE2-AFEA-4A6437043846} = {77849D35-37D4-4802-81DC-9477B2775A40}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {25728519-5F0F-4973-8A64-0A81EB4EA8D9}
