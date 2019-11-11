@@ -176,7 +176,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexon.API", "src\Services\L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lexon.MySql", "src\Services\Lexon\Lexon.MySql\Lexon.MySql.csproj", "{F4377F60-1F62-4708-A71A-ED91BE9777E7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBusMongo", "src\BuildingBlocks\EventBus\EventBusMongo\EventBusMongo.csproj", "{8C21F26B-5BF7-4265-A759-75BB41DFFEE2}"
+
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebPortalClient", "src\Web\WebPortalClient\WebPortalClient.csproj", "{A1466DE6-6705-44BB-B78C-188EE8774DFF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebOffice365Client", "src\Web\WebOffice365Client\WebOffice365Client.csproj", "{C30D5F8D-1F40-4F5E-B40D-7089D9377608}"
 EndProject
