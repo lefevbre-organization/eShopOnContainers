@@ -239,13 +239,29 @@ services:
       context: .
       dockerfile: src/Web/WebhookClient/Dockerfile
     depends_on:
-      - webhooks.api    
+      - webhooks.api   
+      
+  webportalclient:
+    image: ${REGISTRY:-eshop}/webofficeclient:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Web/WebPortalClient/Dockerfile    
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
 
   webgoogleclient:
     image: ${REGISTRY:-eshop}/webgoogleclient:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Web/WebGoogleClient/Dockerfile    
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
+
+  webofficeclient:
+    image: ${REGISTRY:-eshop}/webofficeclient:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Web/WebOffice365Client/Dockerfile    
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
 
