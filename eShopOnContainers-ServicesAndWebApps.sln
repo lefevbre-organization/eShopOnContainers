@@ -180,8 +180,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBusMongo", "src\Buildi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebPortalClient", "src\Web\WebPortalClient\WebPortalClient.csproj", "{A1466DE6-6705-44BB-B78C-188EE8774DFF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebOffice365Client", "src\Web\WebOffice365Client\WebOffice365Client.csproj", "{63E793F6-E77C-4E4D-9668-7FE969A02AEC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU
