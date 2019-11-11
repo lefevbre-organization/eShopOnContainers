@@ -289,10 +289,10 @@ services:
       - rabbitmq
 
   lexon.mysql.api:
-    image: ${REGISTRY:-eshop}/lexon.api:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-eshop}/lexon.mysql.api:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
-      dockerfile: src/Services/Lexon/Lexon.API/Dockerfile    
+      dockerfile: src/Services/Lexon/Lexon.MySql/Dockerfile    
     depends_on:
       - sql.data
       - nosql.data
