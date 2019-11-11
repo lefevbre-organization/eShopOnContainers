@@ -553,3 +553,5 @@ services:
       - "8086:80"   
     volumes:
       - ./src/ApiGateways/Web.Bff.Lexon/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
+
+    
