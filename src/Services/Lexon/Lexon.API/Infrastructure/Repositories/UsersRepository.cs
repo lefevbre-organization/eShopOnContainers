@@ -32,7 +32,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
         public async Task<Result<List<LexonCompany>>> GetCompaniesListAsync(string idUser)
         {
-            var result = new Result<List<LexonCompany>> { data = new List<LexonCompany>(), errors = new List<ErrorInfo>() };
+            var result = new Result<List<LexonCompany>> (new List<LexonCompany>());
 
             var filter = GetFilterUser(idUser);
 
@@ -71,7 +71,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
         public async Task<Result<List<LexonUser>>> GetListAsync(int pageSize, int pageIndex, string idUser)
         {
-            var result = new Result<List<LexonUser>> { data = new List<LexonUser>(), errors = new List<ErrorInfo>() };
+            var result = new Result<List<LexonUser>>(new List<LexonUser>());
             var filter = GetFilterUser(idUser);
 
             TraceLog(parameters: new string[] { $"filter:{filter.ToString()}" });
@@ -101,7 +101,8 @@ namespace Lexon.API.Infrastructure.Repositories
 
         public async Task<Result<long>> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "")
         {
-            var result = new Result<long> { errors = new List<ErrorInfo>() };
+            long a = 0;
+            var result = new Result<long> (a);
             var cancel = default(CancellationToken);
             using (var session = await _context.StartSession(cancel))
             {
@@ -152,7 +153,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
         public async Task<Result<LexonUser>> GetAsync(string idUser)
         {
-            var result = new Result<LexonUser> { errors = new List<ErrorInfo>() };
+            var result = new Result<LexonUser> (new LexonUser() );
             var filter = GetFilterUser(idUser);
             try
             {
@@ -167,7 +168,8 @@ namespace Lexon.API.Infrastructure.Repositories
 
         public async Task<Result<List<LexonEntityBase>>> GetEntitiesListAsync(int pageSize, int pageIndex, int idType, string idUser, long idCompany, string search)
         {
-            var result = new Result<List<LexonEntityBase>> { data = new List<LexonEntityBase>(), errors = new List<ErrorInfo>() };
+            var result = new Result<List<LexonEntityBase>>(new List<LexonEntityBase>());
+
             var filterDocuments = FilterDefinition<LexonUser>.Empty;
             //if (!string.IsNullOrEmpty(search))
             //{
@@ -221,7 +223,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
         public async Task<Result<List<LexonEntityType>>> GetClassificationMasterListAsync()
         {
-            var result = new Result<List<LexonEntityType>> { data = new List<LexonEntityType>(), errors = new List<ErrorInfo>() };
+            var result = new Result<List<LexonEntityType>>(new List<LexonEntityType>());
             var filter = Builders<LexonMaster>.Filter.And(Builders<LexonMaster>.Filter.Gte(u => u.version, 9), Builders<LexonMaster>.Filter.Eq(u => u.type, "Entities"));
             TraceLog(parameters: new string[] { $"filter:{filter.ToString()}" });
 
@@ -242,7 +244,8 @@ namespace Lexon.API.Infrastructure.Repositories
 
         public async Task<Result<long>> AddClassificationToListAsync(string idUser, long idCompany, string[] listaMails, long idRelated, short idClassificationType = 1)
         {
-            var result = new Result<long> { errors = new List<ErrorInfo>() };
+            long a = 0;
+            var result = new Result<long> (a);
             var cancel = default(CancellationToken);
             TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany:{idCompany}", $"idMail:{listaMails}", $"idRelated:{idRelated}", $"idClassificationType:{idClassificationType}" });
 
@@ -369,7 +372,8 @@ namespace Lexon.API.Infrastructure.Repositories
 
         public async Task<Result<long>> RemoveClassificationFromListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType)
         {
-            var result = new Result<long> { errors = new List<ErrorInfo>() };
+            long a = 0;
+            var result = new Result<long>(a);
             var cancel = default(CancellationToken);
             TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany:{idCompany}", $"idMail:{idMail}", $"idRelated:{idRelated}", $"idClassificationType:{idClassificationType}" });
 
@@ -451,8 +455,8 @@ namespace Lexon.API.Infrastructure.Repositories
         public async Task<Result<long>> SelectCompanyAsync(string idUser, long idCompany)
         {
             TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany:{idCompany}" });
-
-            var result = new Result<long> { errors = new List<ErrorInfo>() };
+            long a = 0;
+            var result = new Result<long>(a);
 
             try
             {
@@ -482,7 +486,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
         public async Task<Result<List<LexonActuation>>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail)
         {
-            var result = new Result<List<LexonActuation>> { data = new List<LexonActuation>(), errors = new List<ErrorInfo>() };
+            var result = new Result<List<LexonActuation>>(new List<LexonActuation>());
             var listaActuaciones = new List<LexonActuation>();
             try
             {

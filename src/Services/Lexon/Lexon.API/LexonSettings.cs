@@ -13,11 +13,15 @@
         public string LexonMySqlUrl { get; set; }
 
         public string EventBusConnection { get; set; }
+        public string EventBusUserName { get; set; }
+        public string EventBusPassword { get; set; }
+        public int EventBusPort { get; set; }
+        public short EventBusRetryCount { get; set; }
 
         public bool UseCustomizationData { get; set; }
 
         public bool AzureStorageEnabled { get; set; }
 
-        public EventBusSettings EventBus { get; set; }
+       // public EventBusSettings EventBus { get; set; }
     }
 }

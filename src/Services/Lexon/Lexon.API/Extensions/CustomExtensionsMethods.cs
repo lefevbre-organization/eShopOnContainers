@@ -170,7 +170,7 @@ namespace Lexon.API.Extensions
                     //if (!string.IsNullOrEmpty(settings.EventBus.VirtualHost))
                     //    factory.VirtualHost = settings.EventBus.VirtualHost;
 
-                    var retryCount = settings.EventBus.RetryCount != 0 ? settings.EventBus.RetryCount : 5;
+                    var retryCount = settings.EventBusRetryCount != 0 ? settings.EventBusRetryCount : 5;
 
                     return new DefaultRabbitMQPersistentConnection(factory, logger, retryCount);
                 });

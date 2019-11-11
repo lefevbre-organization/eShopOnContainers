@@ -41,7 +41,8 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<Result<long>> AddClassificationToListAsync(string idUser, long idCompany, string[] listaMails, long idRelated, short idClassificationType = 1)
         {
-            var result = new Result<long> { errors = new List<ErrorInfo>() };
+            long a = 0;
+            var result = new Result<long>(a);
 
             GetInfoUser(idUser, idCompany, out string bbdd, out int codeUser);
             var url = $"{_settings.Value.LexonMySqlUrl}/classifications/add";
@@ -106,7 +107,7 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<Result<List<LexonEntityType>>> GetClassificationMasterListAsync()
         {
-            var result = new Result<List<LexonEntityType>> { errors = new List<ErrorInfo>() };
+            var result = new Result<List<LexonEntityType>> ( new List<LexonEntityType>());
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/entities/masters");
             TraceLog(parameters: new string[] { $"request:{request}" });
@@ -117,7 +118,7 @@ namespace Lexon.Infrastructure.Services
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        foreach (var entity in (await response.Content.ReadAsAsync<JosEntityTypeList>()).Entities)
+                        foreach (var entity in (await response.Content.ReadAsAsync<Result<JosEntityTypeList>>()).data.Entities)
                         {
                             result.data.Add(new LexonEntityType() { name = entity.name, idEntity = entity.idEntity });
                             TraceLog(parameters: new string[] { $"add {entity.name}" });
@@ -152,7 +153,7 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<Result<List<LexonCompany>>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser)
         {
-            var result = new Result<List<LexonCompany>> { errors = new List<ErrorInfo>() };
+            var result = new Result<List<LexonCompany>>( new List<LexonCompany>() );
             var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/companies?pageSize={pageSize}&pageIndex={pageIndex}&idUser={idUser}");
             TraceLog(parameters: new string[] { $"request:{request}" });
 
@@ -162,7 +163,7 @@ namespace Lexon.Infrastructure.Services
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        foreach (var company in (await response.Content.ReadAsAsync<JosUserCompanies>()).Companies)
+                        foreach (var company in (await response.Content.ReadAsAsync<Result<JosUserCompanies>>()).data.Companies)
                         {
                             result.data.Add(new LexonCompany() { name = company.name, bbdd = company.BBDD, idCompany = company.IdCompany });
                             TraceLog(parameters: new string[] { $"add {company.name}" });
@@ -197,7 +198,7 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<Result<List<LexonEntityBase>>> GetEntitiesListAsync(int pageSize, int pageIndex, short idType, string idUser, long idCompany, string search, long idFilter)
         {
-            var result = new Result<List<LexonEntityBase>> { errors = new List<ErrorInfo>() };
+            var result = new Result<List<LexonEntityBase>>(new List<LexonEntityBase>());
 
             GetInfoUser(idUser, idCompany, out string bbdd, out int codeUser);
             var request = new HttpRequestMessage(HttpMethod.Get,
@@ -214,8 +215,8 @@ namespace Lexon.Infrastructure.Services
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        var entityList = await response.Content.ReadAsAsync<JosEntityList>();
-                        foreach (var entity in (entityList.Entities))
+                        var entityList = await response.Content.ReadAsAsync<Result<JosEntityList>>();
+                        foreach (var entity in (entityList.data.Entities))
                         {
                             result.data.Add(new LexonEntityBase() { name = entity.code, description = entity.Description, id = entity.idRelated });
                             TraceLog(parameters: new string[] { $"code {entity.code}" });
@@ -271,7 +272,8 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<Result<long>> RemoveClassificationFromListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType = 1)
         {
-            var result = new Result<long> { errors = new List<ErrorInfo>() };
+            long a = 0;
+            var result = new Result<long>(a);
 
             GetInfoUser(idUser, idCompany, out string bbdd, out int codeUser);
             var url = $"{_settings.Value.LexonMySqlUrl}/classifications/delete";

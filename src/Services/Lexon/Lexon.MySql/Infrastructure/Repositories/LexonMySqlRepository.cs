@@ -27,7 +27,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         public async Task<Result<JosUserCompanies>> GetCompaniesListAsync(int pageSize, int pageIndex, string idUser)
         {
-            var result = new Result<JosUserCompanies>  {  errors = new List<ErrorInfo>() };
+            var result = new Result<JosUserCompanies> (new JosUserCompanies());
             var filtro = $"{{\"NavisionId\":\"{idUser}\"}}";
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.GetCompanies}", $"P_FILTER:{filtro}", $"P_UC:{_settings.Value.UserApp}" });
 
@@ -65,7 +65,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         public async Task<Result<JosEntityList>> SearchEntitiesAsync(int pageSize, int pageIndex, short idType, string bbdd, string idUser, string search, long idFilter)
         {
-            var result = new Result<JosEntityList> { errors = new List<ErrorInfo>() };
+            var result = new Result<JosEntityList>(new JosEntityList());
             string filtro = GiveMeFilter(idType, bbdd, idUser, search, idFilter);
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.SearchEntities}", $"P_FILTER:{filtro}", $"P_UC:{_settings.Value.UserApp}" });
 
@@ -119,7 +119,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         public async Task<Result<JosEntityTypeList>> GetMasterEntitiesAsync()
         {
-            var result = new Result<JosEntityTypeList> { errors = new List<ErrorInfo>() };
+            var result = new Result<JosEntityTypeList> (  new JosEntityTypeList() );
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.GetMasterEntities}", $"P_UC:{_settings.Value.UserApp}" });
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
@@ -154,9 +154,9 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         public async Task<Result<int>> AddRelationMailAsync(short idType, string bbdd, string idUser, string[] listaMails, long idRelated)
         {
-            var result = new Result<int> { errors = new List<ErrorInfo>() };
+            int a= 0;
+            var result = new Result<int> (a);
 
-        
             var filtro =
                 $"{{\"BBDD\":\"{bbdd}\",\"Date\":\"2019-10-10\"," +
                 $"\"Subject\":\"Test asociacion actuacion email CONECTA\"," +
@@ -198,7 +198,9 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         public async Task<Result<int>> RemoveRelationMailAsync(short idType, string bbdd, string idUser, string idMail, long idRelated)
         {
-            var result = new Result<int> { errors = new List<ErrorInfo>() };
+
+            int a = 0;
+            var result = new Result<int> (a);
             var filtro =
                 $"{{\"BBDD\":\"{bbdd}\"," +
                 $" \"Uid\":\"{idMail}\"," +

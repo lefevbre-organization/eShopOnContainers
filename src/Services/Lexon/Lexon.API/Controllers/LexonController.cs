@@ -142,10 +142,9 @@ namespace Lexon.API.Controllers
             var resultPaginated = await _usersService.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, idCompany, search, idFilter);
             var totalItems = resultPaginated.data.Count;
 
-            var resultPaginatedFinal = new Result<PaginatedItemsViewModel<LexonEntityBase>>() {
-                errors = resultPaginated.errors,
-                data = new PaginatedItemsViewModel<LexonEntityBase>(pageIndex, pageSize, totalItems, resultPaginated.data)
-            };
+            var resultPaginatedFinal =
+                new Result<PaginatedItemsViewModel<LexonEntityBase>>(new PaginatedItemsViewModel<LexonEntityBase>(pageIndex, pageSize, totalItems, resultPaginated.data), resultPaginated.errors);
+
             return (resultPaginatedFinal.errors.Count > 0) ? (IActionResult)BadRequest(resultPaginatedFinal) : Ok(resultPaginatedFinal);
         }
 
@@ -167,11 +166,9 @@ namespace Lexon.API.Controllers
             var resultPaginated = await _usersService.GetListUsersAsync(pageSize, pageIndex, idUser);
             var totalItems = resultPaginated.data.Count;
 
-            var resultPaginatedFinal = new Result<PaginatedItemsViewModel<LexonUser>>()
-            {
-                errors = resultPaginated.errors,
-                data = new PaginatedItemsViewModel<LexonUser>(pageIndex, pageSize, totalItems, resultPaginated.data)
-            };
+            var resultPaginatedFinal = 
+                new Result<PaginatedItemsViewModel<LexonUser>>(new PaginatedItemsViewModel<LexonUser>(pageIndex, pageSize, totalItems, resultPaginated.data), resultPaginated.errors);
+
             return (resultPaginatedFinal.errors.Count > 0) ? (IActionResult)BadRequest(resultPaginatedFinal) : Ok(resultPaginatedFinal);
         }
     }
