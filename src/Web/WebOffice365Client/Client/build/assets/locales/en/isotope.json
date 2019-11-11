@@ -1,0 +1,43 @@
+{
+    "sidebar": {
+      "folders": "Office 365",
+      "inbox": "Inbox",
+      "sent": "Sent",
+      "trash": "Trash",
+      "spam": "Spam",
+      "compose": "Compose",
+      "labels": "LABELS"
+    },
+      "message-list": {
+          "no-message": "There are no messages with this label.",
+          "move-to-trash": "Move to Trash"
+      },
+      "pager-buttons": {
+          "previous-page": "Previous Page",
+          "next-page": "Next Page"
+      },
+      "compose-message": {
+          "compose-message": "Compose Message",
+          "to": "To:",
+          "subject": "Subject:",
+          "comma-separated": "comma-separated email list",
+          "send-message": "Send message",
+          "send": "Send",
+          "discard": "Discard",
+          "drag-and-drop": "Drag and Drop",
+          "add-attachments": "add attachments",
+          "browse": "browse",
+          "or":  "or"
+      },
+      "message-toolbar": {
+          "move-to-trash": "Move to Trash",
+          "reply": "Reply"
+      },
+      "menu-user": {
+          "user": "User",
+          "edit-basic-data": "EDIT BASIC DATA",
+          "reset-pwd": "RESET PASSWORD",
+          "add-other-account": "ADD OTHER ACCOUNT",
+          "close-session": "CLOSE SESSION"
+      }
+  }

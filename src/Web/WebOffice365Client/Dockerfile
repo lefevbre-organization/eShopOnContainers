@@ -5,7 +5,7 @@ EXPOSE 80
 
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
-COPY src/Web/WebGoogleClient/Client .
+COPY src/Web/WebOffice365Client/Client .
 RUN npm install
 RUN npm run build
 
@@ -45,12 +45,12 @@ COPY src/Services/Ordering/Ordering.SignalrHub/Ordering.SignalrHub.csproj src/Se
 COPY src/Services/Ordering/Ordering.UnitTests/Ordering.UnitTests.csproj src/Services/Ordering/Ordering.UnitTests/
 COPY src/Services/Payment/Payment.API/Payment.API.csproj src/Services/Payment/Payment.API/
 COPY src/Services/Webhooks/Webhooks.API/Webhooks.API.csproj src/Services/Webhooks/Webhooks.API/
-COPY src/Web/WebGoogleClient/WebGoogleClient.csproj src/Web/WebGoogleClient/
-COPY src/Web/WebGoogleClient/WebOffice365Client.csproj src/Web/WebOffice365Client/
-COPY src/Web/WebGoogleClient/WebPortalClient.csproj src/Web/WebPortalClient/
+COPY src/Web/WebhookClient/WebhookClient.csproj src/Web/WebhookClient/
 COPY src/Web/WebMVC/WebMVC.csproj src/Web/WebMVC/
 COPY src/Web/WebSPA/WebSPA.csproj src/Web/WebSPA/
 COPY src/Web/WebGoogleClient/WebGoogleClient.csproj src/Web/WebGoogleClient/
+COPY src/Web/WebGoogleClient/WebOffice365Client.csproj src/Web/WebOffice365Client/
+COPY src/Web/WebGoogleClient/WebPortalClient.csproj src/Web/WebPortalClient/
 COPY src/Web/WebStatus/WebStatus.csproj src/Web/WebStatus/
 COPY test/ServicesTests/Application.FunctionalTests/Application.FunctionalTests.csproj test/ServicesTests/Application.FunctionalTests/
 COPY test/ServicesTests/LoadTest/LoadTest.csproj test/ServicesTests/LoadTest/
@@ -58,8 +58,8 @@ COPY test/ServicesTests/LoadTest/LoadTest.csproj test/ServicesTests/LoadTest/
 RUN dotnet restore eShopOnContainers-ServicesAndWebApps.sln
 
 COPY . .
-COPY --from=node-build /web/wwwroot /src/src/Web/WebGoogleClient/wwwroot/
-WORKDIR /src/src/Web/WebGoogleClient
+COPY --from=node-build /web/wwwroot /src/src/Web/WebOffice365Client/wwwroot/
+WORKDIR /src/src/Web/WebOffice365Client
 RUN dotnet publish --no-restore -c Release -o /app
 
 FROM build AS publish
@@ -67,4 +67,4 @@ FROM build AS publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "WebGoogleClient.dll"]
+ENTRYPOINT ["dotnet", "WebOffice365Client.dll"]
