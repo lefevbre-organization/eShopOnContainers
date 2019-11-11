@@ -45,6 +45,8 @@ COPY src/Web/WebStatus/WebStatus.csproj src/Web/WebStatus/
 COPY test/ServicesTests/Application.FunctionalTests/Application.FunctionalTests.csproj test/ServicesTests/Application.FunctionalTests/
 COPY test/ServicesTests/LoadTest/LoadTest.csproj test/ServicesTests/LoadTest/
 COPY src/Services/Account/Account.API/Account.API.csproj src/Services/Account/Account.API/
+COPY src/Services/Lexon/Lexon.API/Lexon.API.csproj src/Services/Lexon/Lexon.API/
+COPY src/Services/Lexon/Lexon.MySql/Lexon.MySql.csproj src/Services/Lexon/Lexon.MySql/
 
 RUN dotnet restore eShopOnContainers-ServicesAndWebApps.sln
 
