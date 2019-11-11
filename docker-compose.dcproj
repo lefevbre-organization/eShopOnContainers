@@ -3,8 +3,8 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>fea0c318-ffed-4d39-8781-265718ca43dd</ProjectGuid>
     <DockerLaunchBrowser>True</DockerLaunchBrowser>
-    <DockerServiceUrl>http://localhost:3000</DockerServiceUrl>
-    <DockerServiceName>webgoogleclient</DockerServiceName>
+    <DockerServiceUrl>http://localhost:3003/user/E1621396/encrypt/0</DockerServiceUrl>
+    <DockerServiceName>webportalclient</DockerServiceName>
     <DockerTargetOS>Linux</DockerTargetOS>
     <ProjectVersion>2.1</ProjectVersion>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
