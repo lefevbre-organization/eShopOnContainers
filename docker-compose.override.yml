@@ -441,7 +441,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - ConnectionString=${ESHOP_MONGO_LEXON_DB:-mongodb://nosql.data}
+      - ConnectionString=${ESHOP_MONGO_DB:-mongodb://nosql.data}
 #      - MongoConnectionString=${ESHOP_AZURE_COSMOSDB:-mongodb://nosql.data}
       - MongoDatabase=MarketingDb
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
@@ -486,9 +486,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - ConnectionString=${ESHOP_MONGO_LEXON_DB:-mongodb://nosql.data}
-#      - ConnectionString=${ESHOP_AZURE_LEXON_DB:-Server=sql.data;Database=Microsoft.eShopOnContainers.Services.MarketingDb;User Id=sa;Password=Pass@word}
-#      - MongoConnectionString=${ESHOP_AZURE_COSMOSDB:-mongodb://nosql.data}
+      - ConnectionString=${ESHOP_MONGO_DB:-mongodb://nosql.data}
       - MongoDatabase=LexonApiDB
       - LexonMySqlUrl=http://lexon.mysql.api/api/v1/LexonMySql
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
@@ -515,8 +513,6 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionString=${ESHOP_MYSQL_LEXONMYSQL_DB:-database=lexon_conecta;server=ES006-PPDDB003;port=3315;user id=led-ext-freyes;password=DSFkds4+46DSF}
 #      - ConnectionString=${ESHOP_AZURE_LEXONMYSQL_DB:-Server=sql.data;Database=Microsoft.eShopOnContainers.Services.MarketingDb;User Id=sa;Password=Pass@word}
-#      - MongoConnectionString=${ESHOP_AZURE_COSMOSDB:-mongodb://nosql.data}
-#      - MongoDatabase=LexonApiDB
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME}
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD}          

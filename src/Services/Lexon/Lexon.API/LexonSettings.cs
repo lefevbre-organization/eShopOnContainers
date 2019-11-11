@@ -22,6 +22,5 @@
 
         public bool AzureStorageEnabled { get; set; }
 
-       // public EventBusSettings EventBus { get; set; }
     }
 }

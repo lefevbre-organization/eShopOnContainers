@@ -25,6 +25,6 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events
         /// Changue setter for MongoDb Event 
         /// </summary>
         [JsonProperty]
-        public DateTime CreationDate { get; set; }
+        public DateTime CreationDate { get; private set; }
     }
 }
