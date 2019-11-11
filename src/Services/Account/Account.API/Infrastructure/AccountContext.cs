@@ -16,6 +16,7 @@
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.Extensions.Configuration;
 
     #endregion
 
@@ -35,11 +36,12 @@
 
         public AccountContext(
             IOptions<AccountSettings> settings,
-            IEventBus eventBus)
+            IEventBus eventBus,
+            IConfiguration configuration)
         {
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _settings = settings;
-            _client = new MongoClient(settings.Value.ConnectionString);
+            _client = new MongoClient(configuration["ConnectionString"]);
             if (_client != null)
                 Database = _client.GetDatabase(settings.Value.Database);
 

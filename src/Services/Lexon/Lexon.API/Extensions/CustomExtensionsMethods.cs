@@ -155,15 +155,14 @@ namespace Lexon.API.Extensions
                     var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
                     var factory = new ConnectionFactory
                     {
-                        HostName = settings.EventBus.HostName,
-                        DispatchConsumersAsync = true
+                        HostName = configuration["EventBusConnection"],
                     };
 
-                    if (!string.IsNullOrEmpty(settings.EventBus.Username))
-                        factory.UserName = settings.EventBus.Username;
+                    if (!string.IsNullOrEmpty(configuration["EventBusUserName"]))
+                        factory.UserName = configuration["EventBusUserName"];
 
-                    if (!string.IsNullOrEmpty(settings.EventBus.Password))
-                        factory.Password = settings.EventBus.Password;
+                    if (!string.IsNullOrEmpty(configuration["EventBusPassword"]))
+                        factory.Password = configuration["EventBusPassword"];
 
                     //if (settings.EventBus.Port != 0)
                     //    factory.Port = settings.EventBus.Port;

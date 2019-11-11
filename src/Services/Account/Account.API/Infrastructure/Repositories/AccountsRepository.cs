@@ -14,6 +14,7 @@
     using IntegrationEvents.Events;
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
+    using Microsoft.Extensions.Configuration;
 
     #endregion
 
@@ -26,9 +27,10 @@
         public AccountsRepository(
             IOptions<AccountSettings> settings,
             IEventBus eventBus,
-            ILogger<AccountsRepository> logger) : base(logger)
+            ILogger<AccountsRepository> logger,
+            IConfiguration configuration) : base(logger)
         {
-            _context = new AccountContext(settings, eventBus);
+            _context = new AccountContext(settings, eventBus, configuration );
             _eventBus = eventBus;
         }
 
