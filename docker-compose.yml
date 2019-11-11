@@ -249,6 +249,13 @@ services:
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
 
+  webofficeclient:
+    image: ${REGISTRY:-eshop}/webofficeclient:${PLATFORM:-linux}-${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Web/WebOffice365Client/Dockerfile    
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
 
   account.api:
     image: ${REGISTRY:-eshop}/account.api:${PLATFORM:-linux}-${TAG:-latest}
