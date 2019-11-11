@@ -242,12 +242,14 @@ services:
       - webhooks.api   
       
   webportalclient:
-    image: ${REGISTRY:-eshop}/webofficeclient:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-eshop}/webportalclient:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Web/WebPortalClient/Dockerfile    
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
+    depends_on:
+      - rabbitmq
 
   webgoogleclient:
     image: ${REGISTRY:-eshop}/webgoogleclient:${PLATFORM:-linux}-${TAG:-latest}
@@ -256,6 +258,8 @@ services:
       dockerfile: src/Web/WebGoogleClient/Dockerfile    
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
+    depends_on:
+      - rabbitmq
 
   webofficeclient:
     image: ${REGISTRY:-eshop}/webofficeclient:${PLATFORM:-linux}-${TAG:-latest}
@@ -264,7 +268,8 @@ services:
       dockerfile: src/Web/WebOffice365Client/Dockerfile    
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
-
+    depends_on:
+      - rabbitmq
 
   account.api:
     image: ${REGISTRY:-eshop}/account.api:${PLATFORM:-linux}-${TAG:-latest}
