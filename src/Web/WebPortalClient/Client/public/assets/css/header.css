@@ -1,0 +1,94 @@
+/* Start: barra Superior */
+
+header{
+	background-color: #001978;
+}
+
+.basic-header{
+	background-color: #001978;
+	height: 60px;
+}
+
+.mail-header{
+	height: 60px;
+	background-color: #001978
+}
+
+.mail-header span{
+	color: #FFF;
+}
+
+.mail-header span[class^="lf-icon"]{
+	font-size: 20px;
+	color: #FFF!important;
+}
+
+.brand span{
+	margin-right: 5px;
+	font-size: 34px;
+	font-family: MTTMilano-Bold, Lato, Arial, sans-serif;
+	text-transform: uppercase;
+}
+
+.mail-header a, .mail-header a:hover{
+	text-decoration: none;
+}
+
+
+
+
+@media (max-width: 767px) {
+	header{
+		background-color: transparent;
+	}	
+	.basic-header{
+		background-color: #FFF;		
+	}
+	[class^="lf-icon"] {
+		font-size: 20px;
+		color: #001978 !important;
+	}
+	.basic-header span, .basic-header a, .basic-header a:hover{
+		color: #001978;
+		text-decoration: none;
+	}
+}
+
+
+.basic-header span, .basic-header a, .basic-header a:hover{
+	color: #FFF;
+	text-decoration: none;
+}
+
+.header-item{
+	position: relative;
+}
+
+.blue-top-bar{
+    background-color: #001978;    	
+}
+.blue-top-bar span, .blue-top-bar a, .blue-top-bar a:hover{
+		color: #FFF;
+		text-decoration: none;
+}
+
+header [class^="lf-icon"] {
+	font-size: 20px;
+	color: #FFF;
+}
+
+h1{
+	margin: 0;
+}
+
+.blue-top-bar .container{
+	height: 60px;
+}
+
+#userInfo .user-name{
+	font-size: 12px;	
+	font-family: MTTMilano-Bold;
+	text-transform: uppercase;	
+}
+
+/* End: barra Superior */
