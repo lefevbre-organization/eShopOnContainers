@@ -1,0 +1,96 @@
+.input-group-append {
+  /*height: 29px;*/  
+}
+.input-group {
+    /*height: 26px;*/
+}
+.search {
+  max-width: 450px;
+}
+.img-menu{
+  /*padding-top:5px*/
+}
+.logo-ext {
+  /*height: 29px;*/
+}
+.header {
+border-bottom: 1px solid #d9dfe2;
+background-color: #001978;
+height:65px;
+color: #000;
+.header-logo {
+  display: flex;
+  flex: 1 1;
+  font-weight: 600;
+  a {
+    color: #FFF;
+    text-decoration: none;
+  }
+}
+
+.header-search {
+  display: flex;
+  flex: 5 1;
+  .user-name {
+    cursor: default;
+    user-select: none;
+  }
+  .profile-pic {
+    /*height: 28px;
+    width: auto;*/
+  }
+}
+}
+
+.menu-user {
+    padding-right: 5%;
+}
+
+.img-circle {
+  border-radius: 50%;
+}
+.btn-search {
+ border-color: #ced4da
+}
+
+.navbar-nav {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+}
+
+.nav-item {
+  position: relative;
+  min-width: 35px;
+  margin: 0;
+  text-align: center;
+
+  button {
+      margin: 0 auto;
+      cursor: pointer;
+  }
+
+  .nav-link {
+      padding-top: 0;
+      padding-bottom: 0;
+      background: 0;
+      border: 0;
+
+
+      .badge {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          margin-top: -16px;
+          margin-left: 0;
+      }
+
+      > .img-avatar {
+          margin: 0 10px;
+      }
+  }
+}
