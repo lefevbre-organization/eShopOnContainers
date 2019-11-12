@@ -36,7 +36,7 @@ const prod = {
     URL_INBOX_OUTLOOK:
       "http://localhost:3001",
     URL_INBOX_IMAP: "http://localhost:3005",
-    API_ACCOUNTS: "http://localhost:3003"
+    API_ACCOUNTS: "http://localhost:8083"
   },
   login: {
     URL_ENCRYPTED_USER:
