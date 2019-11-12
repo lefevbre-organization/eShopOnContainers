@@ -12,7 +12,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Client\build\**" />
     <Compile Remove="node_modules\**\*;Client\**\*" />
+    <Content Remove="Client\build\**" />
+    <EmbeddedResource Remove="Client\build\**" />
+    <None Remove="Client\build\**" />
     <None Remove="Client\environments\environment.prod.ts" />
     <None Remove="Client\environments\environment.ts" />
     <None Remove="Client\guid.ts" />
