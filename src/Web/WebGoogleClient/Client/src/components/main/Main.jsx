@@ -186,7 +186,7 @@ export class Main extends Component {
     if (userId !== null && email !== null) {
       const { googleUser } = this.props;
       const email = googleUser.w3.U3;
-      const url = `${config.url.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${PROVIDER}/${email}`;
+      const url = `${config.url.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}`;
       fetch(url, {
         method: "GET"
       }).then(result => {

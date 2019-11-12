@@ -177,7 +177,7 @@ export class Main extends Component {
     const { userId } = this.props.lexon;
     const { email } = this.props.User;
     if (userId !== null && email !== null) {
-      const url = `${config.url.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${PROVIDER}/${email}`;
+      const url = `${config.url.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}`;
       fetch(url, {
         method: "GET"
       }).catch(error => {

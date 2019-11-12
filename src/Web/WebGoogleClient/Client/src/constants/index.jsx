@@ -27,14 +27,14 @@ export const PROVIDER = "GOOGLE";
 const dev = {
   url: {
     URL_UPDATE_DEFAULTACCOUNT:
-      "https://lefebvre.westeurope.cloudapp.azure.com:8083/api/v1/accounts/emailuseraccount/updatedefaultaccount",
+      "http://localhost:8083/api/v1/accounts/emailuseraccount/updatedefaultaccount",
     URL_RESET_DEFAULTACCOUNT:
-      "https://lefebvre.westeurope.cloudapp.azure.com:8083/api/v1/accounts/emailuseraccount/resetdefaultaccountbyuser",
+      "http://localhost:8083/api/v1/accounts/emailuseraccount/resetdefaultaccountbyuser",
     URL_DELETE_ACCOUNT:
-      "https://lefebvre.westeurope.cloudapp.azure.com:8083/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider",
+      "http://localhost:8083/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider",
     URL_SELECT_ACCOUNT: "http://localhost:3010",
     URL_GET_ACCOUNTS:
-      "https://lefebvre.westeurope.cloudapp.azure.com:8083/api/v1/accounts/emailuseraccount/getbyuser",
+      "http://localhost:8083/api/v1/accounts/emailuseraccount/getbyuser",
     URL_MF_GOOGLE: "http://localhost:3001/user",
     URL_MF_OUTLOOK: "http://localhost:3002/user",
     URL_MF_IMAP: "http://localhost:9000/user",
@@ -56,8 +56,7 @@ const prod = {
     URL_MF_GOOGLE: "http://localhost:3000/user",
     URL_MF_OUTLOOK: "http://localhost:3001/user",
     URL_MF_IMAP: "http://localhost:9000/user",
-    URL_MF_LEXON:
-      "http://localhost:3004/static/js/main.js"
+    URL_MF_LEXON: "http://localhost:3004/static/js/main.js"
   }
 };
 
