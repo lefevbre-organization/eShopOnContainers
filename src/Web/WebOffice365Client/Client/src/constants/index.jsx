@@ -50,14 +50,14 @@ const prod = {
       "http://loclahost:8083/api/v1/accounts/emailuseraccount/resetdefaultaccountbyuser",
     URL_DELETE_ACCOUNT:
       "http://loclahost:8083/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider",
-    URL_SELECT_ACCOUNT: "http://loclahost:8087",
+    URL_SELECT_ACCOUNT: "http://loclahost:3003",
     URL_GET_ACCOUNTS:
       "http://loclahost:8083/api/v1/accounts/emailuseraccount/getbyuser",
-    URL_MF_GOOGLE: "http://loclahost:8088/user",
-    URL_MF_OUTLOOK: "http://loclahost:8089/user",
+    URL_MF_GOOGLE: "http://loclahost:3000/user",
+    URL_MF_OUTLOOK: "http://loclahost:3001/user",
     URL_MF_IMAP: "http://loclahost:9000/user",
     URL_MF_LEXON:
-      "http://loclahost:8090/static/js/main.js"
+      "http://loclahost:3004/static/js/main.js"
   }
 };
 

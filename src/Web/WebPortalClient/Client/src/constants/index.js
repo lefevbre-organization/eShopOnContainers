@@ -32,11 +32,11 @@ const dev = {
 const prod = {
   url: {
     URL_INBOX_GOOGLE:
-      "http://localhost:8088",
+      "http://localhost:3000",
     URL_INBOX_OUTLOOK:
-      "http://localhost:8089",
-    URL_INBOX_IMAP: "http://lefebvre.westeurope.cloudapp.azure.com",
-    API_ACCOUNTS: "http://localhost:8083"
+      "http://localhost:3001",
+    URL_INBOX_IMAP: "http://localhost:3005",
+    API_ACCOUNTS: "http://localhost:3003"
   },
   login: {
     URL_ENCRYPTED_USER:
