@@ -45,19 +45,19 @@ const dev = {
 const prod = {
   url: {
     URL_UPDATE_DEFAULTACCOUNT:
-      "http://loclahost:8083/api/v1/accounts/emailuseraccount/updatedefaultaccount",
+      "http://localhost:8083/api/v1/accounts/emailuseraccount/updatedefaultaccount",
     URL_RESET_DEFAULTACCOUNT:
-      "http://loclahost:8083/api/v1/accounts/emailuseraccount/resetdefaultaccountbyuser",
+      "http://localhost:8083/api/v1/accounts/emailuseraccount/resetdefaultaccountbyuser",
     URL_DELETE_ACCOUNT:
-      "http://loclahost:8083/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider",
+      "http://localhost:8083/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider",
     URL_SELECT_ACCOUNT: "http://loclahost:3003",
     URL_GET_ACCOUNTS:
-      "http://loclahost:8083/api/v1/accounts/emailuseraccount/getbyuser",
+      "http://localhost:8083/api/v1/accounts/emailuseraccount/getbyuser",
     URL_MF_GOOGLE: "http://localhost:3000/user",
     URL_MF_OUTLOOK: "http://localhost:3001/user",
     URL_MF_IMAP: "http://localhost:9000/user",
     URL_MF_LEXON:
-      "http://loclahost:3004/static/js/main.js"
+      "http://localhost:3004/static/js/main.js"
   }
 };
 
