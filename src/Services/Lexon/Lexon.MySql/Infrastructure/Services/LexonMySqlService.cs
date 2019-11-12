@@ -44,5 +44,11 @@ namespace Lexon.MySql.Infrastructure.Services
         {
             return await _lexonRepository.GetMasterEntitiesAsync();
         }
+
+        public async Task<Result<JosUser>> GetUserAsync(string idUser)
+        {
+            return await _lexonRepository.GetUserAsync(idUser);
+
+        }
     }
 }

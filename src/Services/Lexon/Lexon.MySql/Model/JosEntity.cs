@@ -7,4 +7,6 @@
         public string Description { get; set; }
         public int idRelated { get; set; }
     }
+
+
 }

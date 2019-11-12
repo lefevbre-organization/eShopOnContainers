@@ -1,12 +1,7 @@
-﻿
-namespace Lexon.MySql.Model
+﻿namespace Lexon.MySql.Model
 {
-    public class JosUserCompanies
+    public class JosUserCompanies : JosUser
     {
-        public string Name { get; set; }
-        public long IdUser { get; set; }
-
         public JosCompany[] Companies { get; set; }
-
     }
 }
