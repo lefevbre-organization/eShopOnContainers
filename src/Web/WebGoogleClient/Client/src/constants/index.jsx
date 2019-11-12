@@ -53,9 +53,9 @@ const prod = {
     URL_SELECT_ACCOUNT: "http://loclahost:3003",
     URL_GET_ACCOUNTS:
       "http://loclahost:8083/api/v1/accounts/emailuseraccount/getbyuser",
-    URL_MF_GOOGLE: "http://loclahost:3000/user",
-    URL_MF_OUTLOOK: "http://loclahost:3001/user",
-    URL_MF_IMAP: "http://loclahost:9000/user",
+    URL_MF_GOOGLE: "http://localhost:3000/user",
+    URL_MF_OUTLOOK: "http://localhost:3001/user",
+    URL_MF_IMAP: "http://localhost:9000/user",
     URL_MF_LEXON:
       "http://loclahost:3004/static/js/main.js"
   }
