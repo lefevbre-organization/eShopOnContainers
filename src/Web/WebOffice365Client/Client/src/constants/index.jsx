@@ -45,19 +45,19 @@ const dev = {
 const prod = {
   url: {
     URL_UPDATE_DEFAULTACCOUNT:
-      "https://lefebvre.westeurope.cloudapp.azure.com:8083/api/v1/accounts/emailuseraccount/updatedefaultaccount",
+      "http://loclahost:8083/api/v1/accounts/emailuseraccount/updatedefaultaccount",
     URL_RESET_DEFAULTACCOUNT:
-      "https://lefebvre.westeurope.cloudapp.azure.com:8083/api/v1/accounts/emailuseraccount/resetdefaultaccountbyuser",
+      "http://loclahost:8083/api/v1/accounts/emailuseraccount/resetdefaultaccountbyuser",
     URL_DELETE_ACCOUNT:
-      "https://lefebvre.westeurope.cloudapp.azure.com:8083/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider",
-    URL_SELECT_ACCOUNT: "https://lefebvre.westeurope.cloudapp.azure.com:8087",
+      "http://loclahost:8083/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider",
+    URL_SELECT_ACCOUNT: "http://loclahost:8087",
     URL_GET_ACCOUNTS:
-      "https://lefebvre.westeurope.cloudapp.azure.com:8083/api/v1/accounts/emailuseraccount/getbyuser",
-    URL_MF_GOOGLE: "https://lefebvre.westeurope.cloudapp.azure.com:8088/user",
-    URL_MF_OUTLOOK: "https://lefebvre.westeurope.cloudapp.azure.com:8089/user",
-    URL_MF_IMAP: "http://lefebvre.westeurope.cloudapp.azure.com/user",
+      "http://loclahost:8083/api/v1/accounts/emailuseraccount/getbyuser",
+    URL_MF_GOOGLE: "http://loclahost:8088/user",
+    URL_MF_OUTLOOK: "http://loclahost:8089/user",
+    URL_MF_IMAP: "http://loclahost:9000/user",
     URL_MF_LEXON:
-      "https://lefebvre.westeurope.cloudapp.azure.com:8090/static/js/main.js"
+      "http://loclahost:8090/static/js/main.js"
   }
 };
 
