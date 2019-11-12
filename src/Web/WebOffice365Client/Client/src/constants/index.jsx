@@ -50,7 +50,7 @@ const prod = {
       "http://localhost:8083/api/v1/accounts/emailuseraccount/resetdefaultaccountbyuser",
     URL_DELETE_ACCOUNT:
       "http://localhost:8083/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider",
-    URL_SELECT_ACCOUNT: "http://loclahost:3003",
+    URL_SELECT_ACCOUNT: "http://localhost:3003",
     URL_GET_ACCOUNTS:
       "http://localhost:8083/api/v1/accounts/emailuseraccount/getbyuser",
     URL_MF_GOOGLE: "http://localhost:3000/user",

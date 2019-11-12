@@ -52,7 +52,7 @@ const prod = {
       "http://localhost:8083/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider",
     URL_SELECT_ACCOUNT: "http://localhost:3003",
     URL_GET_ACCOUNTS:
-      "http://localahost:8083/api/v1/accounts/emailuseraccount/getbyuser",
+      "http://localhost:8083/api/v1/accounts/emailuseraccount/getbyuser",
     URL_MF_GOOGLE: "http://localhost:3000/user",
     URL_MF_OUTLOOK: "http://localhost:3001/user",
     URL_MF_IMAP: "http://localhost:9000/user",
