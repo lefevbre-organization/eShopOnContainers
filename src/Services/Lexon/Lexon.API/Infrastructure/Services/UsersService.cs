@@ -297,7 +297,7 @@ namespace Lexon.Infrastructure.Services
         {
             //todo get bbdd and code from user
             bbdd = "lexon_admin_02";
-            codeUser = 520;
+            codeUser = 449;
             TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany={idCompany}", $"bbdd:{bbdd}", $"codeUser:{codeUser}" });
         }
 
