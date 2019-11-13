@@ -50,40 +50,30 @@ namespace Lexon.Infrastructure.Services
             TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idType:{idClassificationType}", $"bbdd:{bbdd}", $"idUser:{idUser}", $"idMail:{listaMails}", $"idRelated:{idRelated}" });
             TraceLog(parameters: new string[] { $"url={url}" });
 
+            var classificationAdd = new ClassificationAddView
+            {
+                idType = idClassificationType,
+                bbdd = bbdd,
+                idRelated = idRelated,
+                idUser = idUser,
+                listaMails = listaMails
+            };
+
+            var json = JsonConvert.SerializeObject(classificationAdd);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
             try
             {
-                //curl -X POST "https://localhost:44393/api/v1/LexonMySql/classifications/add" -H  "accept: text/plain" -H  "Content-Type: application/json-patch+json"
-                //-d "{  \"listaMails\": [    \"uff\",\"ddd\"  ],  \"idType\": 1,  \"bbdd\": \"lexon_admin_02\",  \"idUser\": \"449\",  \"idRelated\": 111}"
-
-                var classificationAdd = new ClassificationAddView
-                {
-                    idType = idClassificationType,
-                    bbdd = bbdd,
-                    idRelated = idRelated,
-                    idUser = idUser,
-                    listaMails = listaMails
-                };
-
-                var json = JsonConvert.SerializeObject(classificationAdd);
-                var data = new StringContent(json, Encoding.UTF8, "application/json");
-
                 using (var response = await _client.PostAsync(url, data))
                 {
                     if (response.IsSuccessStatusCode)
                     {
                         result = await response.Content.ReadAsAsync<Result<long>>();
-                        
+
                         if (result.data == 0)
                             TraceOutputMessage(result.errors, "Mysql don´t create the classification", 2001);
-
-                        var resultMongo = await _usersRepository.AddClassificationToListAsync(idUser, idCompany, listaMails, idRelated, idClassificationType);
-
-                        if (resultMongo.errors.Count > 0)
-                            result.errors.AddRange(resultMongo.errors);
-                        else if (resultMongo.data == 0)
-                            TraceOutputMessage(result.errors, "MongoDb don´t create the classification", 2002);
-                        else
-                            result.data = resultMongo.data;
+                        //else
+                        //    return result;
+                        //todo: deberia gestionarse el error y tomar decision se seguir o no, mandar un evento...
                     }
                     else
                     {
@@ -95,7 +85,27 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceMessage(result.errors, ex);
             }
+            await AddClassificationToListMongoAsync(idUser, idCompany, listaMails, idRelated, idClassificationType, result);
             return result;
+        }
+
+        private async Task AddClassificationToListMongoAsync(string idUser, long idCompany, string[] listaMails, long idRelated, short idClassificationType, Result<long> result)
+        {
+            try
+            {
+                var resultMongo = await _usersRepository.AddClassificationToListAsync(idUser, idCompany, listaMails, idRelated, idClassificationType);
+
+                if (resultMongo.errors.Count > 0)
+                    result.errors.AddRange(resultMongo.errors);
+                else if (resultMongo.data == 0)
+                    TraceOutputMessage(result.errors, "MongoDb don´t create the classification", 2002);
+                else
+                    result.data = resultMongo.data;
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
         }
 
         public async Task<Result<List<LexonActuation>>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail)
@@ -107,7 +117,7 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<Result<List<LexonEntityType>>> GetClassificationMasterListAsync()
         {
-            var result = new Result<List<LexonEntityType>> ( new List<LexonEntityType>());
+            var result = new Result<List<LexonEntityType>>(new List<LexonEntityType>());
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/entities/masters");
             TraceLog(parameters: new string[] { $"request:{request}" });
@@ -128,15 +138,6 @@ namespace Lexon.Infrastructure.Services
                             TraceOutputMessage(result.errors, "Mysql don´t recover the master´s entities", 2001);
                         else
                             return result;
-
-                        var resultMongo = await _usersRepository.GetClassificationMasterListAsync();
-
-                        if (resultMongo.errors.Count > 0)
-                            result.errors.AddRange(resultMongo.errors);
-                        else if (resultMongo.data.Count == 0)
-                            TraceOutputMessage(result.errors, "MongoDb don´t recover the master´s entities", 2002);
-                        else
-                            result.data = resultMongo.data;
                     }
                     else
                     {
@@ -148,12 +149,32 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceMessage(result.errors, ex);
             }
+            await GetClassificationsMasterMongosync(result);
             return result;
+        }
+
+        private async Task GetClassificationsMasterMongosync(Result<List<LexonEntityType>> result)
+        {
+            try
+            {
+                var resultMongo = await _usersRepository.GetClassificationMasterListAsync();
+
+                if (resultMongo.errors.Count > 0)
+                    result.errors.AddRange(resultMongo.errors);
+                else if (resultMongo.data.Count == 0)
+                    TraceOutputMessage(result.errors, "MongoDb don´t recover the master´s entities", 2002);
+                else
+                    result.data = resultMongo.data;
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
         }
 
         public async Task<Result<List<LexonCompany>>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser)
         {
-            var result = new Result<List<LexonCompany>>( new List<LexonCompany>() );
+            var result = new Result<List<LexonCompany>>(new List<LexonCompany>());
             var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/companies?pageSize={pageSize}&pageIndex={pageIndex}&idUser={idUser}");
             TraceLog(parameters: new string[] { $"request:{request}" });
 
@@ -173,15 +194,6 @@ namespace Lexon.Infrastructure.Services
                             TraceOutputMessage(result.errors, "Mysql don´t recover the companies", 2001);
                         else
                             return result;
-
-                        var resultMongo = await _usersRepository.GetCompaniesListAsync(idUser);
-
-                        if (resultMongo.errors.Count > 0)
-                            result.errors.AddRange(resultMongo.errors);
-                        else if (resultMongo.data.Count == 0)
-                            TraceOutputMessage(result.errors, "MongoDb don´t recover the companies", 2002);
-                        else
-                            result.data = resultMongo.data;
                     }
                     else
                     {
@@ -193,7 +205,27 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceMessage(result.errors, ex);
             }
+            await GetCompaniesFromUserMongoAsync(idUser, result);
             return result;
+        }
+
+        private async Task GetCompaniesFromUserMongoAsync(string idUser, Result<List<LexonCompany>> result)
+        {
+            try
+            {
+                var resultMongo = await _usersRepository.GetCompaniesListAsync(idUser);
+
+                if (resultMongo.errors.Count > 0)
+                    result.errors.AddRange(resultMongo.errors);
+                else if (resultMongo.data.Count == 0)
+                    TraceOutputMessage(result.errors, "MongoDb don´t recover the companies", 2002);
+                else
+                    result.data = resultMongo.data;
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
         }
 
         public async Task<Result<List<LexonEntityBase>>> GetEntitiesListAsync(int pageSize, int pageIndex, short idType, string idUser, long idCompany, string search, long idFilter)
@@ -221,19 +253,11 @@ namespace Lexon.Infrastructure.Services
                             result.data.Add(new LexonEntityBase() { name = entity.code, description = entity.Description, id = entity.idRelated });
                             TraceLog(parameters: new string[] { $"code {entity.code}" });
                         }
+
                         if (result.data.Count == 0)
                             TraceOutputMessage(result.errors, "Mysql don´t recover the entities", 2001);
                         else
                             return result;
-                        //todo idFilter tiene que implementarse en mongo
-                        var resultMongo = await _usersRepository.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, idCompany, search);
-
-                        if (resultMongo.errors.Count > 0)
-                            result.errors.AddRange(resultMongo.errors);
-                        else if (resultMongo.data.Count == 0)
-                            TraceOutputMessage(result.errors, "MongoDb don´t recover the entities", 2002);
-                        else
-                            result.data = resultMongo.data;
                     }
                     else
                     {
@@ -245,12 +269,32 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceMessage(result.errors, ex);
             }
+            await GetEntitiesListMongoAsync(pageSize, pageIndex, idType, idUser, idCompany, search, result);
             return result;
+        }
+
+        private async Task GetEntitiesListMongoAsync(int pageSize, int pageIndex, short idType, string idUser, long idCompany, string search, Result<List<LexonEntityBase>> result)
+        {
+            try
+            {
+                //todo idFilter tiene que implementarse en mongo
+                var resultMongo = await _usersRepository.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, idCompany, search);
+
+                if (resultMongo.errors.Count > 0)
+                    result.errors.AddRange(resultMongo.errors);
+                else if (resultMongo.data.Count == 0)
+                    TraceOutputMessage(result.errors, "MongoDb don´t recover the entities", 2002);
+                else
+                    result.data = resultMongo.data;
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
         }
 
         private void GetInfoUser(string idUser, long idCompany, out string bbdd, out int codeUser)
         {
-
             //todo get bbdd and code from user
             bbdd = "lexon_admin_02";
             codeUser = 520;
@@ -283,7 +327,6 @@ namespace Lexon.Infrastructure.Services
 
             try
             {
-                
                 var classificationRemove = new ClassificationRemoveView
                 {
                     idType = idClassificationType,
@@ -304,15 +347,9 @@ namespace Lexon.Infrastructure.Services
 
                         if (result.data == 0)
                             TraceOutputMessage(result.errors, "Mysql don´t remove the classification", 2001);
-
-                        var resultMongo = await _usersRepository.RemoveClassificationFromListAsync(idUser, idCompany, idMail, idRelated, idClassificationType);
-
-                        if (resultMongo.errors.Count > 0)
-                            result.errors.AddRange(resultMongo.errors);
-                        else if (resultMongo.data == 0)
-                            TraceOutputMessage(result.errors, "MongoDb don´t remove the classification", 2002);
-                        else
-                            result.data = resultMongo.data;
+                        //else
+                        //    return result;
+                        //todo: deberia gestionarse el error y tomar decision se seguir o no, mandar un evento...
                     }
                     else
                     {
@@ -324,12 +361,32 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceMessage(result.errors, ex);
             }
+            await RemoveClassificationFromListMongoAsync(idUser, idCompany, idMail, idRelated, idClassificationType, result);
             return result;
+        }
+
+        private async Task RemoveClassificationFromListMongoAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType, Result<long> result)
+        {
+            try
+            {
+                var resultMongo = await _usersRepository.RemoveClassificationFromListAsync(idUser, idCompany, idMail, idRelated, idClassificationType);
+
+                if (resultMongo.errors.Count > 0)
+                    result.errors.AddRange(resultMongo.errors);
+                else if (resultMongo.data == 0)
+                    TraceOutputMessage(result.errors, "MongoDb don´t remove the classification", 2002);
+                else
+                    result.data = resultMongo.data;
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
         }
 
         public async Task<Result<long>> SelectCompanyAsync(string idUser, long idCompany)
         {
-            TraceLog(parameters: new string[] { $"idUser={idUser}" , $"idCompany={idCompany}" });
+            TraceLog(parameters: new string[] { $"idUser={idUser}", $"idCompany={idCompany}" });
             return await _usersRepository.SelectCompanyAsync(idUser, idCompany);
         }
     }

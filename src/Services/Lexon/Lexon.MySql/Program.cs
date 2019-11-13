@@ -19,6 +19,7 @@ namespace Lexon.MySql
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                //.UseUrls("http://localhost:64745;http://localhost:44306;https://localhost:66667;https://lefebvre.westeurope.cloudapp.azure.com:8084")
                 .UseStartup<Startup>();
     }
 }
