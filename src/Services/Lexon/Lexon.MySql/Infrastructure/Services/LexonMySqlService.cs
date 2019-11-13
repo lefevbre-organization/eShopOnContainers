@@ -50,5 +50,10 @@ namespace Lexon.MySql.Infrastructure.Services
             return await _lexonRepository.GetUserAsync(idUser);
 
         }
+
+        public async Task<Result<JosRelationsList>> GetRelationsAsync(int pageSize, int pageIndex, short idType, string bbdd, string idUser, string idMail)
+        {
+            return await _lexonRepository.SearchRelationsAsync(pageSize, pageIndex, idType, bbdd, idUser, idMail);
+        }
     }
 }

@@ -13,5 +13,6 @@ namespace Lexon.MySql.Infrastructure.Services
         Task<Result<int>> RemoveRelationMailAsync(short idType, string bbdd, string idUser, string idMail, long idRelated);
         Task<Result<int>> AddRelationMailAsync(short idType, string bbdd, string idUser, string[] listaMails, long idRelated);
         Task<Result<JosUser>> GetUserAsync(string idUser);
+        Task<Result<JosRelationsList>> GetRelationsAsync(int pageSize, int pageIndex, short idType, string bbdd, string idUser, string idMail);
     }
 }

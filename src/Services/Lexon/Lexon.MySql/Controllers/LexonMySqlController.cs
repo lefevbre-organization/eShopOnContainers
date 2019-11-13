@@ -44,8 +44,8 @@ namespace Lexon.MySql.Controllers
         [ProducesResponseType(typeof(Result<JosUserCompanies>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<JosUserCompanies>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CompaniesAsync(
-            [FromQuery]int pageSize = 10
-            , [FromQuery]int pageIndex = 0
+            [FromQuery]int pageSize = 0
+            , [FromQuery]int pageIndex = 1
             , string idUser = "E1621396")
 
         {
@@ -73,8 +73,8 @@ namespace Lexon.MySql.Controllers
         [ProducesResponseType(typeof(Result<JosEntityList>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> EntitiesAsync(
-            [FromQuery]int pageSize = 10
-            , [FromQuery]int pageIndex = 0
+            [FromQuery]int pageSize = 0
+            , [FromQuery]int pageIndex = 1
             , short idType = 1
             , string bbdd = "lexon_admin_02"
             , string idUser = "449"
@@ -114,6 +114,28 @@ namespace Lexon.MySql.Controllers
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated and bbdd to remove an actuation");
 
             var result = await _lexonService.RemoveRelationMailAsync(classification.idType, classification.bbdd, classification.idUser, classification.idMail, classification.idRelated);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+
+        [HttpGet]
+        [Route("classifications/search")]
+        [ProducesResponseType(typeof(Result<JosRelationsList>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<JosRelationsList>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> RelationsAsync(
+            [FromQuery]int pageSize = 0
+            , [FromQuery]int pageIndex = 1
+            , short idType = 1
+            , string bbdd = "lexon_admin_02"
+            , string idUser = "449"
+            , string idMail = ""
+            )
+        {
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || idType < 1)
+                return (IActionResult)BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
+
+            var result = await _lexonService.GetRelationsAsync(pageSize, pageIndex, idType, bbdd, idUser, idMail);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
     }
