@@ -4,7 +4,7 @@
 coverage/**/**
 
 /doc
-client/**/*.js.map
+
 npm-debug.log*
 # User-specific files
 *.suo
