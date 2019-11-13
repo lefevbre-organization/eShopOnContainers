@@ -87,10 +87,15 @@ class Main extends Component {
           companies: result.companies
         });
       })
-      .catch(error => {
-        console.log("error ->", error);
-        this.setState({ error: error, isLoading: false });
-      });
+        .catch(error => {
+            const errors = error.message;
+            console.log("error ->", errors);
+            this.setState({
+                isLoading: false,
+                user: user,
+                error: errors
+            });
+        });
   }
 
   toggleNotification(message) {
@@ -117,7 +122,7 @@ class Main extends Component {
     if (!isLoading && error !== "") {
       return (
         <div className="d-flex w-100 h-100 flex-column justify-content-center align-items-center vertical-center">
-          <div className="h1">{i18n.t("main.error_connection")}</div>
+          <div className="h3">{i18n.t("main.error_connection")}</div>
           <div>[{error}]</div>
         </div>
       );
