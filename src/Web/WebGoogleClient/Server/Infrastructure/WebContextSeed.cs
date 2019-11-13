@@ -21,6 +21,8 @@ namespace WebSPA.Infrastructure
                 .ApplicationServices.GetRequiredService<IOptions<AppSettings>>().Value;
 
             var useCustomizationData = settings.UseCustomizationData;
+            log.LogInformation(env.ContentRootPath);
+            log.LogInformation(env.WebRootPath);
             var contentRootPath = env.ContentRootPath;
             var webroot = env.WebRootPath;
 

@@ -6,6 +6,7 @@ EXPOSE 80
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
 COPY src/Web/WebLexonClient/Client .
+RUN ls -lha /app
 RUN npm install
 RUN npm run build
 
@@ -69,8 +70,9 @@ COPY src/Web/WebPortalClient/WebPortalClient.csproj src/Web/WebPortalClient/
 RUN dotnet restore eShopOnContainers-ServicesAndWebApps.sln
 
 COPY . .
-COPY --from=node-build /web/wwwroot /src/src/Web/WebLexonClient/wwwroot/
+COPY --from=node-build /web/wwwroot /src/src/Web/WebLexonClient/client/build
 WORKDIR /src/src/Web/WebLexonClient
+RUN ls -lha /app
 RUN dotnet publish --no-restore -c Release -o /app
 
 FROM build AS publish

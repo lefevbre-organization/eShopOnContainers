@@ -68,7 +68,7 @@ COPY src/Web/WebPortalClient/WebPortalClient.csproj src/Web/WebPortalClient/
 RUN dotnet restore eShopOnContainers-ServicesAndWebApps.sln
 
 COPY . .
-COPY --from=node-build /web/wwwroot /src/src/Web/WebOffice365Client/wwwroot/
+COPY --from=node-build /web/wwwroot /src/src/Web/WebOffice365Client/client/build
 WORKDIR /src/src/Web/WebOffice365Client
 RUN dotnet publish --no-restore -c Release -o /app
 
