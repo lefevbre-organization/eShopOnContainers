@@ -122,7 +122,7 @@ class Main extends Component {
     if (!isLoading && error !== "") {
       return (
         <div className="d-flex w-100 h-100 flex-column justify-content-center align-items-center vertical-center">
-          <div className="h3">{i18n.t("main.error_connection")}</div>
+          <div className="h3 mt-5">{i18n.t("main.error_connection")}</div>
           <div>[{error}]</div>
         </div>
       );
