@@ -71,8 +71,9 @@ namespace Lexon.Infrastructure.Services
 
                         if (result.data == 0)
                             TraceOutputMessage(result.errors, "Mysql don´t create the classification", 2001);
-                        else
-                            return result;
+                        //else
+                        //    return result;
+                        //todo: deberia gestionarse el error y tomar decision se seguir o no, mandar un evento...
                     }
                     else
                     {
@@ -193,8 +194,6 @@ namespace Lexon.Infrastructure.Services
                             TraceOutputMessage(result.errors, "Mysql don´t recover the companies", 2001);
                         else
                             return result;
-
-                        await GetCompaniesFromUserMongoAsync(idUser, result);
                     }
                     else
                     {
@@ -206,6 +205,7 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceMessage(result.errors, ex);
             }
+            await GetCompaniesFromUserMongoAsync(idUser, result);
             return result;
         }
 
@@ -347,8 +347,9 @@ namespace Lexon.Infrastructure.Services
 
                         if (result.data == 0)
                             TraceOutputMessage(result.errors, "Mysql don´t remove the classification", 2001);
-                        else
-                            return result;
+                        //else
+                        //    return result;
+                        //todo: deberia gestionarse el error y tomar decision se seguir o no, mandar un evento...
                     }
                     else
                     {

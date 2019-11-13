@@ -40,7 +40,7 @@ namespace Lexon.API.Controllers
             if (string.IsNullOrEmpty(idUser))
                 return (IActionResult)BadRequest("idUser need a correct value");
 
-            var result = await _usersService.GetCompaniesFromUserAsync(10, 0, idUser);
+            var result = await _usersService.GetCompaniesFromUserAsync(0, 1, idUser);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
@@ -48,7 +48,7 @@ namespace Lexon.API.Controllers
         [Route("classifications")]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> ClassificationsAsync([FromQuery]string idUser = "E1621396", [FromQuery]long idCompany = 14, [FromQuery]string idMail = "email_nuevo_1", [FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0)
+        public async Task<IActionResult> ClassificationsAsync([FromQuery]string idUser = "E1621396", [FromQuery]long idCompany = 14, [FromQuery]string idMail = "email_nuevo_1", [FromQuery]int pageSize = 0, [FromQuery]int pageIndex = 1)
 
         {
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(idMail) || idCompany <= 0)
@@ -75,7 +75,7 @@ namespace Lexon.API.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpGet]
+        [HttpPut]
         [Route("classifications/remove")]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
@@ -127,7 +127,7 @@ namespace Lexon.API.Controllers
             , string search = null
             , [FromQuery] int idFilter = 1
             , [FromQuery]int pageSize = 0
-            , [FromQuery]int pageIndex = 0)
+            , [FromQuery]int pageIndex = 1)
 
         {
             if (string.IsNullOrEmpty(idUser) || idCompany <= 0 || idType <= 0)
@@ -149,12 +149,12 @@ namespace Lexon.API.Controllers
         }
 
         [HttpGet]
-        [Route("items")]
+        [Route("user")]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonUser>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonUser>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonUser>>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonUser>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UsersAsync([FromQuery]int pageSize = 10, [FromQuery]int pageIndex = 0, string idUser = null)
+        public async Task<IActionResult> UsersAsync([FromQuery]int pageSize = 0, [FromQuery]int pageIndex = 1, string idUser = null)
 
         {
             if (pageIndex == 0 && pageSize == 0)
