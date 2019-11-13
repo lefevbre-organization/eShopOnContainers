@@ -40,7 +40,6 @@ class MenuUser extends Component {
       })
         .then(data => data.json())
         .then(result => {
-          console.log("result ->", result);
           if (result.errors.length === 0) {
             _this.setState({
               accounts: result.data.accounts.filter(
