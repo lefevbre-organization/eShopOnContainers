@@ -59,7 +59,7 @@ namespace Lexon.API.Controllers
 
         }
 
-        [HttpGet]
+        [HttpPut]
         [Route("classifications/add")]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
@@ -68,7 +68,7 @@ namespace Lexon.API.Controllers
             //[FromQuery]string idUser = "E1621396", [FromQuery]long idCompany = 14, [FromQuery]string idMail = "email_nuevo_1", [FromQuery]short idType = 1, [FromQuery]long idRelated = 111)
 
         {
-            if (string.IsNullOrEmpty(classification?.idUser) || (classification?.listaMails?.Count() > 0) || classification?.idCompany <= 0 || classification?.idRelated <= 0 || classification?.idType <= 0)
+            if (string.IsNullOrEmpty(classification?.idUser) || (classification?.listaMails?.Count() <= 0) || classification?.idCompany <= 0 || classification?.idRelated <= 0 || classification?.idType <= 0)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, company, email, related and type for create the classification");
 
             var result = await _usersService.AddClassificationToListAsync(classification.idUser, classification.idCompany, classification.listaMails, classification.idRelated, classification.idType);
