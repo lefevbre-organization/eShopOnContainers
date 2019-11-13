@@ -3,7 +3,7 @@
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamPathTemplate": "/api/{version}/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "lexon.api",
@@ -16,7 +16,7 @@
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamPathTemplate": "/api/{version}/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "lexon.mysql.api",
