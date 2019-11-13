@@ -58,8 +58,8 @@ COPY test/ServicesTests/LoadTest/LoadTest.csproj test/ServicesTests/LoadTest/
 RUN dotnet restore eShopOnContainers-ServicesAndWebApps.sln
 
 COPY . .
-COPY --from=node-build /web/wwwroot /src/src/Web/WebGoogleClient/wwwroot/
-WORKDIR /src/src/Web/WebGoogleClient
+COPY --from=node-build /web/wwwroot src/Web/WebGoogleClient/client/build
+WORKDIR /src/Web/WebGoogleClient
 RUN dotnet publish --no-restore -c Release -o /app
 
 FROM build AS publish

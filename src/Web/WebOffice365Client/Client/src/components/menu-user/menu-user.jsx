@@ -40,15 +40,21 @@ class MenuUser extends Component {
       })
         .then(data => data.json())
         .then(result => {
-          if (result.status === RESULT_OK) {
+          if (result.errors.length === 0) {
             _this.setState({
-              accounts: result.result.filter(
+              accounts: result.data.accounts.filter(
                 account => account.provider !== PROVIDER
-              )
-            });
+              )});
           } else {
-            console.log("error ->", result.despcription);
+            let errors;
+            result.errors.forEach(function(error) {
+              errors = `${error} `
+            });
+            console.log("error ->", errors);
           }
+        })
+        .catch(error => {
+          console.log("error ->", error);
         });
     }
   }

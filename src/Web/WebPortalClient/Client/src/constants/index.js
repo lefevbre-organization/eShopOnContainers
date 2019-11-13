@@ -1,7 +1,7 @@
 const dev = {
   url: {
-    URL_INBOX_GOOGLE: "http://localhost:3001",
-    URL_INBOX_OUTLOOK: "http://localhost:3002",
+    URL_INBOX_GOOGLE: "http://localhost:3000",
+    URL_INBOX_OUTLOOK: "http://localhost:3001",
     URL_INBOX_IMAP: "http://localhost:9000",
     //API_ACCOUNTS: "http://localhost:60980"
     API_ACCOUNTS: "https://localhost:44305"
@@ -32,11 +32,11 @@ const dev = {
 const prod = {
   url: {
     URL_INBOX_GOOGLE:
-      "https://lefebvre.westeurope.cloudapp.azure.com:8088",
+      "http://localhost:3000",
     URL_INBOX_OUTLOOK:
-      "https://lefebvre.westeurope.cloudapp.azure.com:8089",
-    URL_INBOX_IMAP: "http://lefebvre.westeurope.cloudapp.azure.com",
-    API_ACCOUNTS: "https://lefebvre.westeurope.cloudapp.azure.com:8083"
+      "http://localhost:3001",
+    URL_INBOX_IMAP: "http://localhost:3005",
+    API_ACCOUNTS: "http://localhost:8083"
   },
   login: {
     URL_ENCRYPTED_USER:

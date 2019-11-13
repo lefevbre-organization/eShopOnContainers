@@ -104,8 +104,8 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        // GET api/v1/emailuseraccount/updatedefaultaccount/12456567/GOOGLE/test@gmail.com
-        [HttpGet("updatedefaultaccount/{email}/{user}")]
+        // GET api/v1/emailuseraccount/updatedefaultaccount/12456567/test@gmail.com/GOOGLE
+        [HttpGet("updatedefaultaccount/{user}/{email}/{provider}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> UpdateDefaultAccount(string user, string email, string provider = null)
         {
