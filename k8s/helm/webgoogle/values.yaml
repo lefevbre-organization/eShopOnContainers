@@ -3,7 +3,7 @@ clusterName: eshop-aks
 pathBase: /
 
 image:
-  repository: elefebvreoncontainers/google.client
+  repository: eshop/webgoogleclient
   tag: latest
   pullPolicy: IfNotPresent
 
