@@ -1,0 +1,66 @@
+{
+  "select-company": {
+    "select-company": "Selecciona una empresa:",
+    "enter": "ENTRAR",
+    "open-all-window": "Abrir en pantalla completa",
+    "hide-column": "Ocultar columna",
+    "must-select-company": "Debes seleccionar una empresa."
+  },
+  "select-action-header": {
+    "messages-selected": "MENSAJES SELECCIONADOS:",
+    "company-selected": "Empresa identificada:",
+    "change-company": "Cambiar de empresa",
+    "select-another-company": "Seleccionar otra empresa diferente"
+  },
+  "new-classification": {
+    "new-classification": "Nueva clasificación"
+  },
+  "classification": {
+    "type": "Tipo: ",
+    "assigned": "Asignado a: ",
+    "remove-document": "Eliminar documento de la clasificación"
+  },
+  "classify-emails": {
+    "cancel": "CANCELAR",
+    "save": "GUARDAR",
+    "title": "Nueva clasificación",
+    "body": "Selecciona tipo de clasificación para cargar el listado correspondiente y asigna los mensajes a uno de los elementos de la lista.",
+    "classification-saved-ok": "La clasificación se ha guardado correctamente"
+  },
+  "classification-type": {
+    "type": "Tipo",
+    "select": "--Seleccionar--"
+  },
+  "classification-list-search": {
+    "results-total": "TOTAL RESULTADOS: ",
+    "show-search": "Mostrar buscador",
+    "search-by": "Buscar por:",
+    "hide-search": "Ocultar buscador"
+  },
+  "tab-classify": {
+    "select-mail": "Selecciona un mensaje y clasifícalo en Lex-on. La relación establecida será visible en este panel y también en la aplicación."
+  },
+  "classification-list": {
+    "assigned-to": "Asignado a"
+  },
+  "confirm-remove-classification": {
+    "yes": "Si",
+    "no": "No",
+    "text-confirm-remove": "Si eliminas este vínculo dejarás de visualizar el correo en la clasificación correspondiente de Lex-on. ¿Quieres continuar?"
+  },
+  "tab-document": {
+    "select-mail": "Selecciona uno o más mensajes y guárdalos como copia independiente en la documentación de Lex-on."
+  },
+  "save-copy": {
+    "save-copy": "Guardar copia"
+  },
+  "list-classifications": {
+    "classifications": "CLASIFICACIONES:"
+  },
+  "list-documents": {
+    "documented-copies": "COPIAS DOCUMENTADAS:"
+  },
+  "modal-documents-emails": {
+    "save-copy": "Guardar copia en Documentación"
+  }
+}
