@@ -1,4 +1,7 @@
 {
+  "main": {
+    "error_connection": "ERROR connecting with Lexon"
+  },
   "select-company": {
     "select-company": "Select company:",
     "enter": "ENTER",

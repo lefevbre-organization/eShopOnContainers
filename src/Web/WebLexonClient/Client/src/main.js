@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
-
 import ACTIONS from "./actions/email";
 import "./main.css";
 
@@ -8,6 +7,7 @@ import "./main.css";
 import Routing from "./components/routing/routing";
 import Spinner from "./components/spinner/spinner";
 import Notification from "./components/notification/notification";
+import i18n from "i18next";
 
 import { getCompanies } from "./services/services-lexon";
 
@@ -20,7 +20,8 @@ class Main extends Component {
       companies: [],
       isLoading: true,
       showNotification: false,
-      messageNotification: null
+      messageNotification: null,
+      error: ""
     };
 
     this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -88,6 +89,7 @@ class Main extends Component {
       })
       .catch(error => {
         console.log("error ->", error);
+        this.setState({ error: error, isLoading: false });
       });
   }
 
@@ -104,11 +106,21 @@ class Main extends Component {
       user,
       companies,
       showNotification,
-      messageNotification
+      messageNotification,
+      error
     } = this.state;
 
     if (isLoading) {
       return <Spinner />;
+    }
+
+    if (!isLoading && error !== "") {
+      return (
+        <div className="d-flex w-100 h-100 flex-column justify-content-center align-items-center vertical-center">
+          <div className="h1">{i18n.t("main.error_connection")}</div>
+          <div>[{error}]</div>
+        </div>
+      );
     }
 
     return (
@@ -144,7 +156,4 @@ const mapDispatchToProps = dispatch => ({
     dispatch(ACTIONS.deleteListMessages(listMessages))
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Main);
+export default connect(mapStateToProps, mapDispatchToProps)(Main);
