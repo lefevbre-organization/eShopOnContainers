@@ -1,0 +1,69 @@
+{
+  "main": {
+    "error_connection": "ERROR connecting with Lexon"
+  },
+  "select-company": {
+    "select-company": "Select company:",
+    "enter": "ENTER",
+    "open-all-window": "Open in all window",
+    "hide-column": "Hide column",
+    "must-select-company": "You must select a company."
+  },
+  "select-action-header": {
+    "messages-selected": "SELECTED MESSAGES:",
+    "company-selected": "Company identified:",
+    "change-company": "Change company",
+    "select-another-company": "Select another company"
+  },
+  "new-classification": {
+    "new-classification": "New classification"
+  },
+  "classification": {
+    "type": "Type: ",
+    "assigned": "Assigned to: ",
+    "remove-document": "Remove docucment of the classification"
+  },
+  "classify-emails": {
+    "cancel": "CANCEL",
+    "save": "SAVE",
+    "title": "New classification",
+    "body": "Select classification type to load the corresponding list and assign the messages to one of the items in the list.",
+    "classification-saved-ok": "The classification saved correctly"
+  },
+  "classification-type": {
+    "type": "Type",
+    "select": "--Select--"
+  },
+  "classification-list-search": {
+    "results-total": "TOTAL RESULTS: ",
+    "show-search": "Show search",
+    "search-by": "Search by:",
+    "hide-search": "Hide search"
+  },
+  "tab-classify": {
+    "select-mail": "Select a message and rate it in Lex-on. The relationship established will be visible in this panel and also in the application."
+  },
+  "classification-list": {
+    "assigned-to": "Assigned to"
+  },
+  "confirm-remove-classification": {
+    "yes": "Yes",
+    "no": "No",
+    "text-confirm-remove": "If you delete this link, you will stop viewing the email in the corresponding Lex-on classification. Do you want to continue?"
+  },
+  "tab-document": {
+    "select-mail": "Select one or more messages and save them as a separate copy in the Lex-on documentation."
+  },
+  "save-copy": {
+    "save-copy": "Save copy"
+  },
+  "list-classifications": {
+    "classifications": "CLASSIFICATIONS:"
+  },
+  "list-documents": {
+    "documented-copies": "DOCUMENTED COPIES:"
+  },
+  "modal-documents-emails": {
+    "save-copy": "Save copy in Documentation"
+  }
+}

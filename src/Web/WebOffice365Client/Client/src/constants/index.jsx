@@ -38,7 +38,7 @@ const dev = {
         URL_MF_GOOGLE: "http://localhost:3001/user",
         URL_MF_OUTLOOK: "http://localhost:3002/user",
         URL_MF_IMAP: "http://localhost:9000/user",
-        URL_MF_LEXON: "http://localhost:3004/static/js/main.js"
+        URL_MF_LEXON: "http://localhost:3005/static/js/main.js"
     }
 };
 
@@ -57,7 +57,7 @@ const prod = {
     URL_MF_OUTLOOK: "http://localhost:3001/user",
     URL_MF_IMAP: "http://localhost:9000/user",
     URL_MF_LEXON:
-      "http://localhost:3004/static/js/main.js"
+      "http://localhost:3005/static/js/main.js"
   }
 };
 
