@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 
@@ -47,11 +48,11 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         command.CommandType = CommandType.StoredProcedure;
                         using (var reader = await command.ExecuteReaderAsync())
                         {
-                            while (reader.Read())
-                            {
-                                result.data = JsonConvert.DeserializeObject<JosUserCompanies>(reader.GetValue(0).ToString());
-                            }
-                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                            if (EvaluateErrorCommand(result.errors, command) == 0)
+                                while (reader.Read())
+                                {
+                                    result.data = JsonConvert.DeserializeObject<JosUserCompanies>(reader.GetValue(0).ToString());
+                                }
                         }
                     }
                 }
@@ -62,6 +63,18 @@ namespace Lexon.MySql.Infrastructure.Repositories
             }
 
             return result;
+        }
+
+        private int EvaluateErrorCommand(List<ErrorInfo> errors, MySqlCommand command)
+        {
+            int idError = 0;
+            if (command.Parameters["P_IDERROR"].Value is int)
+            {
+                int.TryParse(command.Parameters["P_IDERROR"].Value.ToString(), out idError);
+                TraceOutputMessage(errors, command.Parameters["P_ERROR"].Value, idError);
+            }
+
+            return idError;
         }
 
         public async Task<Result<JosEntityList>> SearchEntitiesAsync(int pageSize, int pageIndex, short idType, string bbdd, string idUser, string search, long idFilter)
@@ -87,11 +100,8 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         command.CommandType = CommandType.StoredProcedure;
                         using (var reader = await command.ExecuteReaderAsync())
                         {
-                            while (reader.Read())
-                            {
-                                result.data = JsonConvert.DeserializeObject<JosEntityList>(reader.GetValue(0).ToString());
-                            }
-                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                            if (EvaluateErrorCommand(result.errors, command) == 0)
+                                while (reader.Read())  {  result.data = JsonConvert.DeserializeObject<JosEntityList>(reader.GetValue(0).ToString());   }
                         }
                     }
                 }
@@ -144,11 +154,11 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         command.CommandType = CommandType.StoredProcedure;
                         using (var reader = await command.ExecuteReaderAsync())
                         {
-                            while (reader.Read())
-                            {
-                                result.data = JsonConvert.DeserializeObject<JosEntityTypeList>(reader.GetValue(0).ToString());
-                            }
-                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                            if (EvaluateErrorCommand(result.errors, command) == 0)
+                                while (reader.Read())
+                                {
+                                    result.data = JsonConvert.DeserializeObject<JosEntityTypeList>(reader.GetValue(0).ToString());
+                                }
                         }
                     }
                 }
@@ -184,11 +194,11 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         command.CommandType = CommandType.StoredProcedure;
                         using (var reader = await command.ExecuteReaderAsync())
                         {
-                            while (reader.Read())
-                            {
-                                result.data = JsonConvert.DeserializeObject<JosRelationsList>(reader.GetValue(0).ToString());
-                            }
-                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                            if (EvaluateErrorCommand(result.errors, command) == 0)
+                                while (reader.Read())
+                                {
+                                    result.data = JsonConvert.DeserializeObject<JosRelationsList>(reader.GetValue(0).ToString());
+                                }
                         }
                     }
                 }
@@ -304,11 +314,11 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         command.CommandType = CommandType.StoredProcedure;
                         using (var reader = await command.ExecuteReaderAsync())
                         {
-                            while (reader.Read())
-                            {
-                                result.data = JsonConvert.DeserializeObject<JosUser>(reader.GetValue(0).ToString());
-                            }
-                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                            if (EvaluateErrorCommand(result.errors, command) == 0)
+                                while (reader.Read())
+                                {
+                                    result.data = JsonConvert.DeserializeObject<JosUser>(reader.GetValue(0).ToString());
+                                }
                         }
                     }
                 }
