@@ -49,10 +49,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         using (var reader = await command.ExecuteReaderAsync())
                         {
                             if (EvaluateErrorCommand(result.errors, command) == 0)
-                                while (reader.Read())
-                                {
-                                    result.data = JsonConvert.DeserializeObject<JosUserCompanies>(reader.GetValue(0).ToString());
-                                }
+                                while (reader.Read())  {  result.data = JsonConvert.DeserializeObject<JosUserCompanies>(reader.GetValue(0).ToString());  }
                         }
                     }
                 }
@@ -155,10 +152,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         using (var reader = await command.ExecuteReaderAsync())
                         {
                             if (EvaluateErrorCommand(result.errors, command) == 0)
-                                while (reader.Read())
-                                {
-                                    result.data = JsonConvert.DeserializeObject<JosEntityTypeList>(reader.GetValue(0).ToString());
-                                }
+                                while (reader.Read())  {  result.data = JsonConvert.DeserializeObject<JosEntityTypeList>(reader.GetValue(0).ToString());  }
                         }
                     }
                 }
@@ -195,10 +189,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         using (var reader = await command.ExecuteReaderAsync())
                         {
                             if (EvaluateErrorCommand(result.errors, command) == 0)
-                                while (reader.Read())
-                                {
-                                    result.data = JsonConvert.DeserializeObject<JosRelationsList>(reader.GetValue(0).ToString());
-                                }
+                                while (reader.Read())   {   result.data = JsonConvert.DeserializeObject<JosRelationsList>(reader.GetValue(0).ToString());  }
                         }
                     }
                 }
@@ -315,10 +306,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         using (var reader = await command.ExecuteReaderAsync())
                         {
                             if (EvaluateErrorCommand(result.errors, command) == 0)
-                                while (reader.Read())
-                                {
-                                    result.data = JsonConvert.DeserializeObject<JosUser>(reader.GetValue(0).ToString());
-                                }
+                                while (reader.Read())  {  result.data = JsonConvert.DeserializeObject<JosUser>(reader.GetValue(0).ToString());   }
                         }
                     }
                 }
