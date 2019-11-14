@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: google-client
+spec:
+  type: NodePort
+  selector:
+    app: webmvc
+  ports:
+    - port: 80
+      nodePort: 30000
+      name: rabbitmq-port
