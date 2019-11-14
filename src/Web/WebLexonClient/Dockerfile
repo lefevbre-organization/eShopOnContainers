@@ -6,9 +6,10 @@ EXPOSE 80
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
 COPY src/Web/WebLexonClient/Client .
-RUN ls -lha /app
 RUN npm install
 RUN npm run build
+# RUN ls -lha /web
+# RUN ls -lha /web/build
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 WORKDIR /src
@@ -49,10 +50,6 @@ COPY src/Services/Webhooks/Webhooks.API/Webhooks.API.csproj src/Services/Webhook
 COPY src/Web/WebhookClient/WebhookClient.csproj src/Web/WebhookClient/
 COPY src/Web/WebMVC/WebMVC.csproj src/Web/WebMVC/
 COPY src/Web/WebSPA/WebSPA.csproj src/Web/WebSPA/
-COPY src/Web/WebGoogleClient/WebGoogleClient.csproj src/Web/WebGoogleClient/
-COPY src/Web/WebOffice365Client/WebOffice365Client.csproj src/Web/WebOffice365Client/
-COPY src/Web/WebPortalClient/WebPortalClient.csproj src/Web/WebPortalClient/
-COPY src/Web/WebLexonClient/WebLexonClient.csproj src/Web/WebLexonClient/
 COPY src/Web/WebStatus/WebStatus.csproj src/Web/WebStatus/
 COPY test/ServicesTests/Application.FunctionalTests/Application.FunctionalTests.csproj test/ServicesTests/Application.FunctionalTests/
 COPY test/ServicesTests/LoadTest/LoadTest.csproj test/ServicesTests/LoadTest/
@@ -70,9 +67,9 @@ COPY src/Web/WebPortalClient/WebPortalClient.csproj src/Web/WebPortalClient/
 RUN dotnet restore eShopOnContainers-ServicesAndWebApps.sln
 
 COPY . .
-COPY --from=node-build /web/wwwroot /src/src/Web/WebLexonClient/client/build
+COPY --from=node-build /web/build /src/src/Web/WebLexonClient/wwwroot
 WORKDIR /src/src/Web/WebLexonClient
-RUN ls -lha /app
+#RUN ls -lha /src/src/Web/WebLexonClient/wwwroot
 RUN dotnet publish --no-restore -c Release -o /app
 
 FROM build AS publish

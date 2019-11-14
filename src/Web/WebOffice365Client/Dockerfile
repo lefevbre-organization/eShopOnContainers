@@ -8,6 +8,8 @@ WORKDIR /web
 COPY src/Web/WebOffice365Client/Client .
 RUN npm install
 RUN npm run build
+# RUN ls -lha /web
+# RUN ls -lha /web/build
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 WORKDIR /src
@@ -48,9 +50,6 @@ COPY src/Services/Webhooks/Webhooks.API/Webhooks.API.csproj src/Services/Webhook
 COPY src/Web/WebhookClient/WebhookClient.csproj src/Web/WebhookClient/
 COPY src/Web/WebMVC/WebMVC.csproj src/Web/WebMVC/
 COPY src/Web/WebSPA/WebSPA.csproj src/Web/WebSPA/
-COPY src/Web/WebGoogleClient/WebGoogleClient.csproj src/Web/WebGoogleClient/
-COPY src/Web/WebGoogleClient/WebOffice365Client.csproj src/Web/WebOffice365Client/
-COPY src/Web/WebGoogleClient/WebPortalClient.csproj src/Web/WebPortalClient/
 COPY src/Web/WebStatus/WebStatus.csproj src/Web/WebStatus/
 COPY test/ServicesTests/Application.FunctionalTests/Application.FunctionalTests.csproj test/ServicesTests/Application.FunctionalTests/
 COPY test/ServicesTests/LoadTest/LoadTest.csproj test/ServicesTests/LoadTest/
@@ -68,8 +67,9 @@ COPY src/Web/WebPortalClient/WebPortalClient.csproj src/Web/WebPortalClient/
 RUN dotnet restore eShopOnContainers-ServicesAndWebApps.sln
 
 COPY . .
-COPY --from=node-build /web/wwwroot /src/src/Web/WebOffice365Client/client/build
+COPY --from=node-build /web/build /src/src/Web/WebOffice365Client/wwwroot
 WORKDIR /src/src/Web/WebOffice365Client
+#RUN ls -lha /src/src/Web/WebOffice365Client/wwwroot
 RUN dotnet publish --no-restore -c Release -o /app
 
 FROM build AS publish

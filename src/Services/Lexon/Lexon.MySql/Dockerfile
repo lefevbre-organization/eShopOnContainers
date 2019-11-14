@@ -78,6 +78,6 @@ FROM base AS final
 #ENV ASPNETCORE_Kestrel__Certificates__Default__AllowInvalid=true
 WORKDIR /app
 COPY --from=publish /app .
-RUN ls -lha /app
+#RUN ls -lha /app
 
 ENTRYPOINT ["dotnet", "Lexon.MySql.dll"]
