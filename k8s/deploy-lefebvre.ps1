@@ -81,7 +81,7 @@ if ($pushImages) {
                   
     }
 
-    Write-Host "All images pushied  to $registry/$dockerOrg..." -ForegroundColor Green
+    Write-Host "All images pushed  in $registry/$dockerOrg" -ForegroundColor Green
 
 }
 
@@ -219,3 +219,5 @@ if ($deployKubernetes){
 
     Write-Host "WebSPA is exposed at http://$externalDns, WebMVC at http://$externalDns/webmvc, WebStatus at http://$externalDns/webstatus" -ForegroundColor Yellow
 }
+
+Write-Host "-------------------END PROCESS-------------" -ForegroundColor Green
