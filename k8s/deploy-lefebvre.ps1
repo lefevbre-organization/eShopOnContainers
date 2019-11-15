@@ -5,10 +5,11 @@ Param(
     [parameter(Mandatory=$false)][string]$execPath,
     [parameter(Mandatory=$false)][string]$kubeconfigPath,
     [parameter(Mandatory=$false)][string]$configFile,
+    [parameter(Mandatory=$false)][string]$imageTagPlatform="linux",
     [parameter(Mandatory=$false)][string]$imageTag="dev",
     [parameter(Mandatory=$false)][bool]$deployCI=$false,
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
-    [parameter(Mandatory=$false)][bool]$buildImages=$true,
+    [parameter(Mandatory=$false)][bool]$buildImages=$false,
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
     [parameter(Mandatory=$false)][string]$dockerOrg="elefebvreoncontainers"
@@ -75,13 +76,16 @@ if ($pushImages) {
 
     foreach ($service in $services) {
         $imageFqdn = if ($useDockerHub)  {"$dockerOrg/${service}"} else {"$registry/$dockerOrg/${service}"}
-        docker tag eshop/${service}:$imageTag ${imageFqdn}:$imageTag
-        docker push ${imageFqdn}:$imageTag  
-        Write-Host "Push image to ${imageFqdn}:$imageTag" -ForegroundColor Magenta
+        $tagComplete = "$imageTagPlatform-$imageTag"
+        docker tag eshop/${service}:$tagComplete ${imageFqdn}:$tagComplete
+        Write-Host "imagen -> eshop/${service}:$tagComplete con tag ${imageFqdn}:$tagComplete" -ForegroundColor Blue
+
+        docker push ${imageFqdn}:$tagComplete  
+        Write-Host "Push image to ${imageFqdn}:$tagComplete" -ForegroundColor Magenta
                   
     }
 
-    Write-Host "All images pushed  in $registry/$dockerOrg" -ForegroundColor Green
+    Write-Host "All images pushed  to $registry/$dockerOrg" -ForegroundColor Green
 
 }
 
