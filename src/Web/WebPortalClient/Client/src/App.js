@@ -7,6 +7,10 @@ import { NotFound } from "./components/not-found/NotFound";
 import { PageGoTo } from "./pages/PageGoTo";
 
 class App extends Component {
+  componentDidMount() {
+    console.log("ENVIRONMENT ->", window.REACT_APP_ENVIRONMENT);
+  }
+
   render() {
     return (
       <Switch>
