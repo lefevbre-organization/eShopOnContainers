@@ -1,4 +1,4 @@
-import { config, PROXY_CORS } from "../constants";
+import { config, PROXY_CORS, PARAMS_ACCOUNTS, PARAMS_DELETACCOUNTBYUSERANDEMAIL } from "../constants";
 // import data from "../data.json";
 
 export const getAccounts = (userId, encrypt) => {
@@ -34,7 +34,7 @@ export const getAccountsWithUserEncrypt = userId => {
           : console.log(`User [${userId}] NOT exists`);
 
         if (user.ID_ENTRADA != null) {
-          const url = `${config.url.API_ACCOUNTS}/${config.api.ACCOUNTS}/${user.ID_ENTRADA}`;
+          const url = `${window.API_ACCOUNTS}/${PARAMS_ACCOUNTS}/${user.ID_ENTRADA}`;
           fetch(url, {
             method: "GET"
           })
@@ -71,7 +71,7 @@ export const getAccountsWithUserEncrypt = userId => {
 
 export const getAccountsWithUserNoEncrypt = userId => {
   return new Promise((resolve, reject) => {
-    const url = `${config.url.API_ACCOUNTS}/${config.api.ACCOUNTS}/${userId}`;
+    const url = `${window.API_ACCOUNTS}/${PARAMS_ACCOUNTS}/${userId}`;
     fetch(url, {
       method: "GET"
     })
@@ -127,7 +127,7 @@ export const deleteAccountByUserAndEmail = (encrypt, userId, email) => {
     if (encrypt === "1") {
       getUser(userId).then(user => {
         if (user.ID_ENTRADA != null) {
-          const url = `${config.url.API_ACCOUNTS}/${config.api.DELETACCOUNTBYUSERANDEMAIL}/${user.ID_ENTRADA}/${email}`;
+          const url = `${window.API_ACCOUNTS}/${PARAMS_DELETACCOUNTBYUSERANDEMAIL}/${user.ID_ENTRADA}/${email}`;
           fetch(url, {
             method: "GET"
           })
@@ -153,7 +153,7 @@ export const deleteAccountByUserAndEmail = (encrypt, userId, email) => {
         }
       });
     } else {
-      const url = `${config.url.API_ACCOUNTS}/${config.api.DELETACCOUNTBYUSERANDEMAIL}/${userId}/${email}`;
+      const url = `${window.API_ACCOUNTS}/${PARAMS_DELETACCOUNTBYUSERANDEMAIL}/${userId}/${email}`;
       fetch(url, {
         method: "GET"
       })
