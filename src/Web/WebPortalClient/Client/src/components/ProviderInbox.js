@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import i18n from "i18next";
 
-import { config, INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP } from "../constants";
+import { INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP } from "../constants";
 
 class ProviderInbox extends Component {
   constructor(props) {
@@ -73,7 +73,7 @@ class ProviderInbox extends Component {
         return (
           <React.Fragment>
             <a
-              href={config.url.URL_INBOX_GOOGLE + "/user/" + user}
+              href={window.URL_INBOX_GOOGLE + "/user/" + user}
               className="d-flex align-items-center"
             >
               <span>
@@ -92,7 +92,7 @@ class ProviderInbox extends Component {
         return (
           <React.Fragment>
             <a
-              href={config.url.URL_INBOX_OUTLOOK + "/user/" + user}
+              href={window.URL_INBOX_OUTLOOK + "/user/" + user}
               className="d-flex align-items-center"
             >
               <span>
@@ -111,7 +111,7 @@ class ProviderInbox extends Component {
         return (
           <React.Fragment>
             <a
-              href={config.url.URL_INBOX_IMAP + "/user/" + user}
+              href={window.URL_INBOX_IMAP + "/user/" + user}
               className="d-flex align-items-center"
             >
               <span className="lf-icon-mail"></span>
