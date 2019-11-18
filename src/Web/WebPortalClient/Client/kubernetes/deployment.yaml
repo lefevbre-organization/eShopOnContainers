@@ -17,13 +17,13 @@ spec:
     spec:
       containers:
         - name: webportalclient
-          image: elefebvreoncontainers/webportalclient
+          image: elefebvreoncontainers/webportalclient:linux-dev
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
           volumeMounts:
             - name:  webportalclient-config-volume
-              mountPath: /usr/share/nginx/html/config.js
+              mountPath: app/wwwroot/config.js
               subPath: config.js
               readOnly: true
       volumes:
