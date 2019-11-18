@@ -1,9 +1,9 @@
 replicaCount: 1
 clusterName: eshop-aks
-pathBase: /webgoogle
+pathBase: /webgraph
 
 image:
-  repository: elefebvreoncontainers/webgoogleclient
+  repository: elefebvreoncontainers/webofficeclient
   tag: latest
   pullPolicy: IfNotPresent
 

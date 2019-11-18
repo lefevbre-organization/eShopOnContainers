@@ -1,25 +1,25 @@
-{{- $name := include "webgoogle.fullname" . -}}
+{{- $name := include "webportal.fullname" . -}}
 {{- $cfgname := printf "%s-%s" "cfg" $name -}}
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ template "webgoogle.fullname" . }}
+  name: {{ template "webportal.fullname" . }}
   labels:
     ufo: {{ $cfgname}}
-    app: {{ template "webgoogle.name" . }}
-    chart: {{ template "webgoogle.chart" . }}
+    app: {{ template "webportal.name" . }}
+    chart: {{ template "webportal.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ template "webgoogle.name" . }}
+      app: {{ template "webportal.name" . }}
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ template "webgoogle.name" . }}
+        app: {{ template "webportal.name" . }}
         release: {{ .Release.Name }}
     spec:
       {{ if .Values.inf.registry -}}
