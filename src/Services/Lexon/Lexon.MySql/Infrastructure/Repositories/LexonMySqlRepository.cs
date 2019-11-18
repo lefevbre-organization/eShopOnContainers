@@ -265,7 +265,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 try
                 {
                     conn.Open();
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddRelation, conn))
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.RemoveRelation, conn))
                     {
                         command.Parameters.Add(new MySqlParameter("P_JSON", MySqlDbType.String) { Value = filtro });
                         command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = idUser });

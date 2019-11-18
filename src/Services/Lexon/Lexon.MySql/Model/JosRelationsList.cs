@@ -2,9 +2,9 @@
 {
     public class JosRelationsList
     {
-        public string uid { get; set; }
+        public string Uid { get; set; }
 
-        public JosActuation Actuaciones { get; set; }
+        public JosActuation[] Actuaciones { get; set; }
 
     }
 }
