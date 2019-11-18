@@ -142,6 +142,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     conn.Open();
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetMasterEntities, conn))
                     {
+                        command.Parameters.Add(new MySqlParameter("P_FILTER", MySqlDbType.String) { Value = string.Empty });
                         command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = _settings.Value.UserApp });
                         command.Parameters.Add(new MySqlParameter("P_PAGE_SIZE", MySqlDbType.Int32) { Value = pageSize });
                         command.Parameters.Add(new MySqlParameter("P_PAGE_NUMBER", MySqlDbType.Int32) { Value = pageIndex });
@@ -224,7 +225,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     {
                         command.Parameters.Add(new MySqlParameter("P_JSON", MySqlDbType.String) { Value = filtro });
                         command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = _settings.Value.UserApp });
-                        command.Parameters.Add(new MySqlParameter("P_ID", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
                         command.CommandType = CommandType.StoredProcedure;
@@ -264,7 +264,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     {
                         command.Parameters.Add(new MySqlParameter("P_JSON", MySqlDbType.String) { Value = filtro });
                         command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = _settings.Value.UserApp });
-                        //command.Parameters.Add(new MySqlParameter("P_ID", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
                         command.CommandType = CommandType.StoredProcedure;
@@ -287,6 +286,8 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         public async Task<Result<JosUser>> GetUserAsync(string idUser)
         {
+            var pageSize = 0;
+            var pageIndex = 1;
             var result = new Result<JosUser>(new JosUser());
             var filtro = $"{{\"NavisionId\":\"{idUser}\"}}";
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.GetUserDetails}", $"P_FILTER:{filtro}", $"P_UC:{_settings.Value.UserApp}" });
@@ -300,8 +301,12 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     {
                         command.Parameters.Add(new MySqlParameter("P_FILTER", MySqlDbType.String) { Value = filtro });
                         command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = _settings.Value.UserApp });
+                        command.Parameters.Add(new MySqlParameter("P_PAGE_SIZE", MySqlDbType.Int32) { Value = pageSize });
+                        command.Parameters.Add(new MySqlParameter("P_PAGE_NUMBER", MySqlDbType.Int32) { Value = pageIndex });
                         command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
+                        command.Parameters.Add(new MySqlParameter("P_TOTAL_REG", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
+
                         command.CommandType = CommandType.StoredProcedure;
                         using (var reader = await command.ExecuteReaderAsync())
                         {
