@@ -124,13 +124,13 @@ namespace Lexon.MySql.Infrastructure.Repositories
             var filter = $"\"BBDD\":\"{bbdd}\",\"IdEntityType\":{idType},\"IdUser\":{idUser}{filtroDescription}";
 
             if (idType == (short)LexonAssociationType.MailToDocumentsEvent && idFilter > 0)
-                filter = $"{{ {filter},\"IdFolder\":{idFilter} }}";
+                filter = $"{{{filter},\"IdFolder\":{idFilter}}}";
             else if (idType == (short)LexonAssociationType.MailToFoldersEvent && idFilter > 0)
-                filter = $"{{ {filter},\"IdParent\":{idFilter} }}";
+                filter = $"{{{filter},\"IdParent\":{idFilter}}}";
             else if (idType == (short)LexonAssociationType.MailToFilesEvent && !string.IsNullOrEmpty(idMail))
-                filter = $"{{ {filter},\"Uid\":\"{idMail}\" }}";
+                filter = $"{{{filter},\"Uid\":\"{idMail}\"}}";
             else
-                filter = $"{{ {filter} }}";
+                filter = $"{{{filter}}}";
             return filter;
         }
 
@@ -218,8 +218,8 @@ namespace Lexon.MySql.Infrastructure.Repositories
             var filtro =
                 $"{{\"BBDD\":\"{bbdd}\",\"Date\":\"2019-10-10\"," +
                 $"\"Subject\":\"Test asociacion actuacion email CONECTA\"," +
-                $" \"Body\":\"descripcion nueva actuacion\", \"Uid\":{JsonConvert.SerializeObject(listaMails)}," +
-                $"\"IdUser\":\"{idUser}\", \"IdActionRelationType\":{idType},\"IdRelation\":{idRelated}}}";
+                $"\"Body\":\"descripcion nueva actuacion\",\"Uid\":{JsonConvert.SerializeObject(listaMails)}," +
+                $"\"IdUser\":\"{idUser}\",\"IdActionRelationType\":{idType},\"IdRelation\":{idRelated}}}";
 
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.AddRelation}", $"P_FILTER:{filtro}", $"P_UC:{idUser}" });
 
@@ -256,8 +256,8 @@ namespace Lexon.MySql.Infrastructure.Repositories
             var result = new Result<int>(a);
             var filtro =
                 $"{{\"BBDD\":\"{bbdd}\"," +
-                $" \"Uid\":\"{idMail}\"," +
-                $" \"IdUser\":\"{idUser}\", \"IdActionRelationType\":{idType},\"IdRelation\":{idRelated}}}";
+                $"\"Uid\":\"{idMail}\"," +
+                $"\"IdUser\":\"{idUser}\",\"IdActionRelationType\":{idType},\"IdRelation\":{idRelated}}}";
 
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.RemoveRelation}", $"P_FILTER:{filtro}", $"P_UC:{idUser}" });
             using (MySqlConnection conn = new MySqlConnection(_conn))
