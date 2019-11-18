@@ -4,10 +4,10 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "webgoogle.fullname" . }}
+  name: {{ template "webgraph.fullname" . }}
   labels:
-    app: {{ template "webgoogle.name" . }}
-    chart: {{ template "webgoogle.chart" . }}
+    app: {{ template "webgraph.name" . }}
+    chart: {{ template "webgraph.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- with .Values.ingress.annotations }}

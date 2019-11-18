@@ -3,7 +3,7 @@ Param(
     [parameter(Mandatory=$false)][string]$dockerUser,
     [parameter(Mandatory=$false)][string]$dockerPassword,
     [parameter(Mandatory=$false)][string]$externalDns,
-    [parameter(Mandatory=$false)][string]$appName="eshop",
+    [parameter(Mandatory=$false)][string]$appName="elefebvre",
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$true,
     [parameter(Mandatory=$false)][bool]$deployCharts=$true,
     [parameter(Mandatory=$false)][bool]$clean=$true,
@@ -52,7 +52,7 @@ if ([string]::IsNullOrEmpty($dns)) {
 
 if ($clean) {
     Write-Host "Cleaning previous helm releases..." -ForegroundColor Green
-    helm delete --purge $(helm ls -q eshop) 
+    helm delete --purge $(helm ls -q elefebvre) 
     Write-Host "Previous releases deleted" -ForegroundColor Green
 }
 
@@ -69,7 +69,7 @@ if (-not [string]::IsNullOrEmpty($registry)) {
 Write-Host "Begin eShopOnContainers installation using Helm" -ForegroundColor Green
 
 $infras = ("sql-data", "nosql-data", "rabbitmq", "keystore-data", "basket-data")
-$charts = ("eshop-common", "webgoogle")
+$charts = ( "webportal", "webgoogle", "webgraph", "weblexon")
 
 if ($deployInfrastructure) {
     foreach ($infra in $infras) {

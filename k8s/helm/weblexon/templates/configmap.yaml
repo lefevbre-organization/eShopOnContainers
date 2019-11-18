@@ -1,4 +1,4 @@
-{{- $name := include "webgoogle.fullname" . -}}
+{{- $name := include "weblexon.fullname" . -}}
 {{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
 {{- $webshoppingapigw := include "url-of" (list .Values.app.ingress.entries.webshoppingapigw .) -}}
 {{- $mvc := include "url-of" (list .Values.app.ingress.entries.mvc .) -}}
@@ -9,8 +9,8 @@ kind: ConfigMap
 metadata:
   name: "cfg-{{ $name }}"
   labels:
-    app: {{ template "webgoogle.name" . }}
-    chart: {{ template "webgoogle.chart" .}}
+    app: {{ template "weblexon.name" . }}
+    chart: {{ template "weblexon.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:

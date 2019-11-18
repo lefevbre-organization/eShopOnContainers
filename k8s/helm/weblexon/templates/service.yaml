@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.app.svc.google }}
+  name: {{ .Values.app.svc.lexon }}
   labels:
-    app: {{ template "webgoogle.name" . }}
-    chart: {{ template "webgoogle.chart" . }}
+    app: {{ template "weblexon.name" . }}
+    chart: {{ template "weblexon.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
@@ -15,5 +15,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app: {{ template "webgoogle.name" . }}
+    app: {{ template "weblexon.name" . }}
     release: {{ .Release.Name }}

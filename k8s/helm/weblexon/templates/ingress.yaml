@@ -1,13 +1,13 @@
 {{- if .Values.ingress.enabled -}}
 {{- $ingressPath := include "pathBase" . -}}
-{{- $serviceName := .Values.app.svc.google -}}
+{{- $serviceName := .Values.app.svc.lexon -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "webgoogle.fullname" . }}
+  name: {{ template "weblexon.fullname" . }}
   labels:
-    app: {{ template "webgoogle.name" . }}
-    chart: {{ template "webgoogle.chart" . }}
+    app: {{ template "weblexon.name" . }}
+    chart: {{ template "weblexon.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- with .Values.ingress.annotations }}

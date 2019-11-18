@@ -3,7 +3,7 @@ clusterName: eshop-aks
 pathBase: /webmvc
 
 image:
-  repository: eshop/webmvc
+  repository: elefebvreoncontainers/google.client
   tag: latest
   pullPolicy: IfNotPresent
 

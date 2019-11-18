@@ -1,9 +1,9 @@
 replicaCount: 1
 clusterName: eshop-aks
-pathBase: /webgoogle
+pathBase: /weblexon
 
 image:
-  repository: elefebvreoncontainers/webgoogleclient
+  repository: elefebvreoncontainers/weblexonclient
   tag: latest
   pullPolicy: IfNotPresent
 
