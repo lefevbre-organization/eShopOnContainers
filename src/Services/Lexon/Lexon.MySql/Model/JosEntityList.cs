@@ -4,4 +4,9 @@
     {
         public JosEntity[] Entities { get; set; }
     }
+
+    public class JosEntityDocumentList
+    {
+        public JosEntityDocument[] Entities { get; set; }
+    }
 }

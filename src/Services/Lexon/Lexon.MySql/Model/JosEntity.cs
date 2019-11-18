@@ -2,9 +2,9 @@
 {
     public class JosEntity
     {
-        public string code { get; set; }
-        public string mails { get; set; }
+        public string Code { get; set; }
+        public string Mails { get; set; }
         public string Description { get; set; }
-        public int idRelated { get; set; }
+        public int IdRelated { get; set; }
     }
 }

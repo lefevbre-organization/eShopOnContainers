@@ -11,7 +11,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
         Task<Result<JosEntityList>> SearchEntitiesAsync(int pageSize, int pageIndex, short idType, string bbdd, string idUser, string search, long idFilter);
         Task<Result<int>> RemoveRelationMailAsync(short idType, string bbdd, string idUser, string idMail, long idRelated);
         Task<Result<int>> AddRelationMailAsync(short idType, string bbdd, string idUser, string[] listaMails, long idRelated);
-        Task<Result<JosUser>> GetUserAsync(string idUser);
+        Task<Result<JosUser>> GetUserAsync(string idNavisionUser);
         Task<Result<JosRelationsList>> SearchRelationsAsync(int pageSize, int pageIndex, short idType, string bbdd, string idUser, string idMail);
     }
 }
