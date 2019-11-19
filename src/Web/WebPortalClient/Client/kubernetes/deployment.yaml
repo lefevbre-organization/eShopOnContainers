@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: service
+  name: webportalclient
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webportalclient
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: service
+        app: webportalclient
+    spec:
+      containers:
+        - name: webportalclient
+          image: elefebvreoncontainers/webportalclient:linux-dev
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name:  webportalclient-config-volume
+              mountPath: app/wwwroot/config.js
+              subPath: config.js
+              readOnly: true
+      volumes:
+        - name: webportalclient-config-volume
+          configMap:
+            name: webportalclient-config

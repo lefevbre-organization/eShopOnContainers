@@ -56,19 +56,19 @@ export class PageGoTo extends Component {
               switch (account.provider) {
                 case INBOX_GOOGLE:
                   window.open(
-                    `${config.url.URL_INBOX_GOOGLE}/user/GO0${this.state.userId}`,
+                    `${window.URL_INBOX_GOOGLE}/user/GO0${this.state.userId}`,
                     "_self"
                   );
                   break;
                 case INBOX_OUTLOOK:
                   window.open(
-                    `${config.url.URL_INBOX_OUTLOOK}/user/OU0${this.state.userId}`,
+                    `${window.URL_INBOX_OUTLOOK}/user/OU0${this.state.userId}`,
                     "_self"
                   );
                   break;
                 case INBOX_IMAP:
                   window.open(
-                    `${config.url.URL_INBOX_IMAP}/user/IM0${this.state.userId}`,
+                    `${window.URL_INBOX_IMAP}/user/IM0${this.state.userId}`,
                     "_self"
                   );
                   break;

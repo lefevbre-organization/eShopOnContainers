@@ -2,8 +2,8 @@
 {
     public class JosEntityDocument: JosEntity
     {
-        public int idFolder { get; set; }
-        public string initialFile { get; set; }
+        public int IdFolder { get; set; }
+        public string InitialFile { get; set; }
 
     }
 
