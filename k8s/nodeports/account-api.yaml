@@ -1,12 +1,12 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: weblexon
+  name: account-api
 spec:
   type: NodePort
   selector:
-    app: weblexon
+    app: account-api
   ports:
     - port: 80
-      nodePort: 30002
-      name: weblexon-port
+      nodePort: 30009
+      name: account-api-port

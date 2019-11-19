@@ -29,6 +29,8 @@ app:                                                  # app global settings
       graph: webgraph
       portal: webportal
       lexon: weblexon
+      webaccountapigw: webaccountapigw
+      account: account-api
   svc:
       basket: basket                                    # service name for basket api
       catalog: catalog                                  # service name for catalog api
@@ -54,5 +56,7 @@ app:                                                  # app global settings
       google: webgoogle
       graph: webgraph
       lexon: weblexon
+      webaccountapigw: webaccountapigw
+      account: account-api
      
       
