@@ -36,7 +36,10 @@ env:
       key: all__EventBusConnection
     - name: AzureServiceBusEnabled
       key: all__UseAzureServiceBus
-    
+    - name: ConnectionString
+      key: locations__ConnectionString
+    - name: Database
+      key: locations__Database
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
