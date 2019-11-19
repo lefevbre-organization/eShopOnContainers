@@ -28,7 +28,7 @@ import LexonComponent from "../../apps/lexon_content";
 import CalendarComponent from "../../apps/calendar_content";
 import "react-reflex/styles.css";
 
-import { config, PROVIDER } from "../../constants";
+import { PROVIDER } from "../../constants";
 
 export class Main extends Component {
   constructor(props) {
@@ -186,7 +186,7 @@ export class Main extends Component {
     if (userId !== null && email !== null) {
       const { googleUser } = this.props;
       const email = googleUser.w3.U3;
-      const url = `${config.url.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}`;
+      const url = `${window.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}`;
       fetch(url, {
         method: "GET"
       }).then(result => {
@@ -316,7 +316,7 @@ export class Main extends Component {
   onSignout() {
     console.log("IN ... onSignout");
     const { userId } = this.props.lexon;
-    const url = `${config.url.URL_RESET_DEFAULTACCOUNT}/${userId}`;
+    const url = `${window.URL_RESET_DEFAULTACCOUNT}/${userId}`;
     fetch(url, {
       method: "GET"
     })
@@ -324,7 +324,7 @@ export class Main extends Component {
         signOut();
       })
       .then(_ => {
-        const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+        const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
         window.open(urlRedirect, "_self");
       });
   }

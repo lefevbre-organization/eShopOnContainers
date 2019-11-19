@@ -6,6 +6,10 @@ import UserLexon from "./components/user-lexon/UserLexon";
 import "./App.css";
 
 class App extends Component {
+  componentDidMount() {
+    console.log("ENVIRONMENT ->", window.REACT_APP_ENVIRONMENT);
+  }
+  
   render() {
     return (
       <Router>
