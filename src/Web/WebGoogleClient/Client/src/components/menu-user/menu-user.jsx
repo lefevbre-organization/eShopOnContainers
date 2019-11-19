@@ -11,7 +11,7 @@ import {
   DropdownMenu,
   DropdownToggle
 } from "reactstrap";
-import { config, RESULT_OK, PROVIDER } from "../../constants";
+import { PROVIDER } from "../../constants";
 import AccountUser from "./account-user/account-user";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
@@ -34,7 +34,7 @@ class MenuUser extends Component {
     const { lexon } = this.props;
     const _this = this;
     if (lexon.userId) {
-      const url = `${config.url.URL_GET_ACCOUNTS}/${lexon.userId}`;
+      const url = `${window.URL_GET_ACCOUNTS}/${lexon.userId}`;
       fetch(url, {
         method: "GET"
       })
@@ -68,12 +68,12 @@ class MenuUser extends Component {
   _handleOnClick() {
     const { userId } = this.props.lexon;
     if (userId !== null) {
-      const url = `${config.url.URL_RESET_DEFAULTACCOUNT}/${userId}`;
+      const url = `${window.URL_RESET_DEFAULTACCOUNT}/${userId}`;
       fetch(url, {
         method: "GET"
       })
         .then(() => {
-          const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+          const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
           window.open(urlRedirect, "_self");
         })
         .catch(error => {

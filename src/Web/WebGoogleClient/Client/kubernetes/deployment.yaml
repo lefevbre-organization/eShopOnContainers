@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: service
+  name: webgoogleclient
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webgoogleclient
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: service
+        app: webgoogleclient
+    spec:
+      containers:
+        - name: webgoogleclient
+          image: elefebvreoncontainers/webgoogleclient:linux-dev
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name:  webgoogleclient-config-volume
+              mountPath: app/wwwroot/config.js
+              subPath: config.js
+              readOnly: true
+      volumes:
+        - name: webgoogleclient-config-volume
+          configMap:
+            name: webgoogleclient-config

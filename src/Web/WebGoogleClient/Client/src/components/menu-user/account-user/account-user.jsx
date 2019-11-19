@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import "./account-user.css";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { config } from "../../../constants";
 
 class AccountUser extends Component {
   constructor(props) {
@@ -16,16 +15,16 @@ class AccountUser extends Component {
 
     switch (provider) {
       case "GOOGLE":
-        window.open(`${config.url.URL_MF_GOOGLE}/GO0${userId}`, "_self");
+        window.open(`${window.URL_MF_GOOGLE}/GO0${userId}`, "_self");
 
         break;
       case "OUTLOOK":
-        window.open(`${config.url.URL_MF_OUTLOOK}/OU0${userId}`, "_self");
+        window.open(`${window.URL_MF_OUTLOOK}/OU0${userId}`, "_self");
 
         break;
 
       default:
-        window.open(`${config.url.URL_MF_IMAP}/IM0${userId}`, "_self");
+        window.open(`${window.URL_MF_IMAP}/IM0${userId}`, "_self");
 
         break;
     }

@@ -12,7 +12,6 @@ import {
 } from "reactstrap";
 import { Nav, NavItem, NavLink } from "reactstrap";
 import { connect } from "react-redux";
-import { config } from "../../constants";
 import MenuUser from "../menu-user/menu-user";
 
 export class Header extends PureComponent {
@@ -35,12 +34,12 @@ export class Header extends PureComponent {
   _handleOnClick(e) {
     const { userId } = this.props.lexon;
     if (userId !== null) {
-      const url = `${config.url.URL_RESET_DEFAULTACCOUNT}/${userId}`;
+      const url = `${window.URL_RESET_DEFAULTACCOUNT}/${userId}`;
       fetch(url, {
         method: "GET"
       })
         .then(() => {
-          const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+          const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
           window.open(urlRedirect, "_self");
         })
         .catch(error => {
