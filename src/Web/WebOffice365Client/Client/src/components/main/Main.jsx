@@ -28,7 +28,7 @@ import LexonComponent from "../../apps/lexon_content";
 import SidebarComponent from "../../apps/sidebar_content";
 import ComposeMessage from "../compose-message/ComposeMessage-fixed";
 import "react-reflex/styles.css";
-import { config, PROVIDER } from "../../constants";
+import { PROVIDER } from "../../constants";
 
 export class Main extends Component {
   constructor(props) {
@@ -177,7 +177,7 @@ export class Main extends Component {
     const { userId } = this.props.lexon;
     const { email } = this.props.User;
     if (userId !== null && email !== null) {
-      const url = `${config.url.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}`;
+      const url = `${window.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}`;
       fetch(url, {
         method: "GET"
       }).catch(error => {
@@ -325,12 +325,12 @@ export class Main extends Component {
   onSignout() {
     const { userId } = this.props.lexon;
     if (userId !== null) {
-      const url = `${config.url.URL_RESET_DEFAULTACCOUNT}/${userId}`;
+      const url = `${window.URL_RESET_DEFAULTACCOUNT}/${userId}`;
       fetch(url, {
         method: "GET"
       }).then(result => {
         console.log(result);
-        const urlRedirect = `${config.url.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+        const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
         signOut(urlRedirect);
       });
     }

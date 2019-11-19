@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: service
+  name: webofficeclient
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webofficeclient
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: service
+        app: webofficeclient
+    spec:
+      containers:
+        - name: webgoogleclient
+          image: elefebvreoncontainers/webofficeclient:linux-dev
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name:  webofficeclient-config-volume
+              mountPath: app/wwwroot/config.js
+              subPath: config.js
+              readOnly: true
+      volumes:
+        - name: webofficeclient-config-volume
+          configMap:
+            name: webofficeclient-config

@@ -5,7 +5,6 @@ import { UserAgentApplication } from "msal";
 
 import ACTIONS from "../../actions/lexon";
 import { signOut } from "../../api_graph/authentication";
-import { config } from "../../constants";
 import configAuth from "../../Config";
 
 class UserLexon extends Component {
@@ -51,7 +50,7 @@ class UserLexon extends Component {
 
   onSignout() {
     const user = this.props.match.params.id;
-    const urlRedirect = `${config.url.URL_MF_OUTLOOK}/user/${user}`;
+    const urlRedirect = `${window.URL_MF_OUTLOOK}/user/${user}`;
     signOut(urlRedirect);
   }
 

@@ -1,8 +1,15 @@
-import { config } from "../constants";
+import {
+  COMPANIES,
+  CLASSIFICATIONS,
+  CLASSIFICATIONS_ADD,
+  CLASSIFICATIONS_REMOVE,
+  TYPES,
+  RESULTS
+} from "../constants";
 
 export const getCompanies = userId => {
   return new Promise((resolve, reject) => {
-    const url = `${config.url.API_GATEWAY}/${config.api.COMPANIES}?idUser=${userId}`;
+    const url = `${window.API_GATEWAY}/${COMPANIES}?idUser=${userId}`;
     fetch(url, {
       method: "GET"
     })
@@ -20,7 +27,7 @@ export const getCompanies = userId => {
 
 export const getClassifications = (userId, companyId, mailId) => {
   return new Promise((resolve, reject) => {
-    const url = `${config.url.API_GATEWAY}/${config.api.CLASSIFICATIONS}?idUser=${userId}&idCompany=${companyId}&idMail=${mailId}`;
+    const url = `${window.API_GATEWAY}/${CLASSIFICATIONS}?idUser=${userId}&idCompany=${companyId}&idMail=${mailId}`;
     fetch(url, {
       method: "GET"
     })
@@ -45,7 +52,7 @@ export const addClassification = (
   typeId
 ) => {
   return new Promise((resolve, reject) => {
-    const url = `${config.url.API_GATEWAY}/${config.api.CLASSIFICATIONS_ADD}?idUser=${userId}&idCompany=${companyId}&idMail=${mailId}&idRelated=${relatedId}&idType=${typeId}`;
+    const url = `${window.API_GATEWAY}/${CLASSIFICATIONS_ADD}?idUser=${userId}&idCompany=${companyId}&idMail=${mailId}&idRelated=${relatedId}&idType=${typeId}`;
     fetch(url, {
       method: "GET"
     })
@@ -70,7 +77,7 @@ export const removeClassification = (
   typeId
 ) => {
   return new Promise((resolve, reject) => {
-    const url = `${config.url.API_GATEWAY}/${config.api.CLASSIFICATIONS_REMOVE}?idUser=${userId}&idCompany=${companyId}&idMail=${mailId}&idRelated=${relatedId}&idType=${typeId}`;
+    const url = `${window.API_GATEWAY}/${CLASSIFICATIONS_REMOVE}?idUser=${userId}&idCompany=${companyId}&idMail=${mailId}&idRelated=${relatedId}&idType=${typeId}`;
     fetch(url, {
       method: "GET"
     })
@@ -88,7 +95,7 @@ export const removeClassification = (
 
 export const getTypes = () => {
   return new Promise((resolve, reject) => {
-    const url = `${config.url.API_GATEWAY}/${config.api.TYPES}`;
+    const url = `${window.API_GATEWAY}/${TYPES}`;
     fetch(url, {
       method: "GET"
     })
@@ -106,7 +113,7 @@ export const getTypes = () => {
 
 export const getResults = (userId, companyId, typeId, search) => {
   return new Promise((resolve, reject) => {
-    const url = `${config.url.API_GATEWAY}/${config.api.RESULTS}?idUser=${userId}&idCompany=${companyId}&idType=${typeId}&search=${search}`;
+    const url = `${window.API_GATEWAY}/${RESULTS}?idUser=${userId}&idCompany=${companyId}&idType=${typeId}&search=${search}`;
     fetch(url, {
       method: "GET"
     })
