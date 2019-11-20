@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.app.svc.portal }}
+  name: {{ template "sql-name" . }}
   labels:
-    app: {{ template "webportal.name" . }}
-    chart: {{ template "webportal.chart" . }}
+    app: {{ template "sql-data.name" . }}
+    chart: {{ template "sql-data.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
@@ -15,6 +15,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app: {{ template "webportal.name" . }}
+    app: {{ template "sql-data.name" . }}
     release: {{ .Release.Name }}
-

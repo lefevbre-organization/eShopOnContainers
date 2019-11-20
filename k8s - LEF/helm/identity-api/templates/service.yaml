@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.app.svc.portal }}
+  name: {{ .Values.app.svc.identity }}
   labels:
-    app: {{ template "webportal.name" . }}
-    chart: {{ template "webportal.chart" . }}
+    app: {{ template "identity-api.name" . }}
+    chart: {{ template "identity-api.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
@@ -15,6 +15,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app: {{ template "webportal.name" . }}
+    app: {{ template "identity-api.name" . }}
     release: {{ .Release.Name }}
-
