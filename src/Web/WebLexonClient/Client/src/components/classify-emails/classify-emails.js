@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Fragment, Component } from "react";
 import { Button, Modal, Container } from "react-bootstrap";
 import i18n from "i18next";
 import "./classify-emails.css";
@@ -7,6 +7,8 @@ import ClassificationList from "./classification-list/classification-list";
 import PropTypes from "prop-types";
 import { getResults, addClassification } from "../../services/services-lexon";
 import { connect } from "react-redux";
+import APPLICATION_ACTIONS from "../../actions/applicationAction";
+import Spinner from "../../components/spinner/spinner";
 
 class ClassifyEmails extends Component {
   constructor(props) {
@@ -18,7 +20,8 @@ class ClassifyEmails extends Component {
       resultsSelected: [],
       type: null,
       search: "",
-      forceUpdate: null
+      forceUpdate: null,
+      loading: false
     };
 
     this._handleOnClick = this._handleOnClick.bind(this);
@@ -57,35 +60,23 @@ class ClassifyEmails extends Component {
     toggleClassifyEmails();
 
     if (fromSave === true) {
-      for (
-        let indexSelectedMessages = 0;
-        indexSelectedMessages < selectedMessages.length;
-        indexSelectedMessages++
-      ) {
-        for (
-          let indexResultsSelected = 0;
-          indexResultsSelected < resultsSelected.length;
-          indexResultsSelected++
-        ) {
-          addClassification(
-            user,
-            companySelected.idCompany,
-            selectedMessages[indexSelectedMessages],
-            resultsSelected[indexResultsSelected],
-            type
-          )
-            .then(() => {
-              if (selectedMessages.length === 1) {
-                _this.updateResultsSelected(selectedMessages[0]);
-              }              
-              toggleNotification(i18n.t("classify-emails.classification-saved-ok"));
-            })
-            .catch(error => {
-              toggleNotification(i18n.t("classify-emails.classification-saved-ko"));
-              console.log("error ->", error);
-            });
-        }
-      }
+      addClassification(
+        user,
+        companySelected,
+        selectedMessages,
+        resultsSelected[0],
+        type
+      )
+        .then(() => {
+          if (selectedMessages.length === 1) {
+            _this.updateResultsSelected(selectedMessages[0]);
+          }
+          toggleNotification(i18n.t("classify-emails.classification-saved-ok"));
+        })
+        .catch(error => {
+          toggleNotification(i18n.t("classify-emails.classification-saved-ko"));
+          console.log("error ->", error);
+        });
     }
   }
 
@@ -97,17 +88,31 @@ class ClassifyEmails extends Component {
       return;
     }
 
+    this.setState({ loading: true });
     getResults(user, companySelected.idCompany, type, search)
       .then(result => {
         this.setState({
-          listResultsByType: result.results
+          listResultsByType: result.results.data
         });
+
+        if (result.errors !== undefined && Array.isArray(result.errors)) {
+          result.errors.forEach(error =>
+            this.props.addError(JSON.stringify(error))
+          );
+        }
+        this.setState({ loading: false });
       })
-      .catch(error => {
-        console.log("error ->", error);
+      .catch(errors => {
+        if (Array.isArray(errors)) {
+          errors.forEach(error => this.props.addError(JSON.stringify(error)));
+        } else {
+          this.props.addError(JSON.stringify(errors));
+        }
+        console.log("error ->", errors);
         this.setState({
           listResultsByType: []
         });
+        this.setState({ loading: false });
       });
   }
 
@@ -133,16 +138,28 @@ class ClassifyEmails extends Component {
   }
 
   updateResultsSelected(item) {
-    const { resultsSelected } = { ...this.state };
+    // const { resultsSelected } = { ...this.state };
 
-    var findElement = resultsSelected.indexOf(item);
-    if (findElement === -1) {
-      resultsSelected.push(item);
-    } else {
-      resultsSelected.splice(findElement, 1);
-    }
+    // var findElement = resultsSelected.indexOf(item);
+    // if (findElement === -1) {
+    //   resultsSelected.push(item);
+    // } else {
+    //   resultsSelected.splice(findElement, 1);
+    // }
+
+    // this.setState({ resultsSelected: resultsSelected });
+
+    let resultsSelected = [];
+    resultsSelected.push(item);
 
     this.setState({ resultsSelected: resultsSelected });
+  }
+
+  renderSpinner() {
+    const { loading } = this.state;
+    if (loading) {
+      return <Spinner />;
+    }
   }
 
   render() {
@@ -150,66 +167,69 @@ class ClassifyEmails extends Component {
     const { initialModalState, toggleClassifyEmails } = this.props;
 
     return (
-      <div>
-        <Modal
-          show={initialModalState}
-          onHide={toggleClassifyEmails}
-          size="lg"
-          aria-labelledby="contained-modal-title-vcenter"
-          centered
-          dialogClassName="modal"
-        >
-          <Modal.Header className="align-items-center" closeButton>
-            <Modal.Title>
-              <div className="modal-title h4">
-                <h5
-                  className="modal-title d-flex align-items-center"
-                  id="clasificarNuevaclasificacionLabel"
-                >
-                  <span className="lf-icon-bookmarks"></span>
-                  {i18n.t("classify-emails.title")}
-                </h5>
-              </div>
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Container>
-              <p>
-                <strong>{i18n.t("classify-emails.body")}</strong>
-              </p>
-              <ClassificationType
-                searchResultsByType={(type, search) => {
-                  this.searchResultsByType(type, search);
-                }}
-              />
-              <ClassificationList
-                resultsSelected={resultsSelected}
-                listResultsByType={listResultsByType}
-                searchResultsByType={(type, search) => {
-                  this.searchResultsByType(type, search);
-                }}
-                updateResultsSelected={item => {
-                  this.updateResultsSelected(item);
-                }}
-              />
-            </Container>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              bsPrefix="btn btn-outline-primary"
-              onClick={() => this._handleOnClick(false)}
-            >
-              {i18n.t("classify-emails.cancel")}
-            </Button>
-            <Button
-              bsPrefix="btn btn-primary"
-              onClick={() => this._handleOnClick(true)}
-            >
-              {i18n.t("classify-emails.save")}
-            </Button>
-          </Modal.Footer>
-        </Modal>
-      </div>
+      <Fragment>
+        <div>
+          <Modal
+            show={initialModalState}
+            onHide={toggleClassifyEmails}
+            size="lg"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+            dialogClassName="modal"
+          >
+            <Modal.Header className="align-items-center" closeButton>
+              <Modal.Title>
+                <div className="modal-title h4">
+                  <h5
+                    className="modal-title d-flex align-items-center"
+                    id="clasificarNuevaclasificacionLabel"
+                  >
+                    <span className="lf-icon-bookmarks"></span>
+                    {i18n.t("classify-emails.title")}
+                  </h5>
+                </div>
+              </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {this.renderSpinner()}
+              <Container>
+                <p>
+                  <strong>{i18n.t("classify-emails.body")}</strong>
+                </p>
+                <ClassificationType
+                  searchResultsByType={(type, search) => {
+                    this.searchResultsByType(type, search);
+                  }}
+                />
+                <ClassificationList
+                  resultsSelected={resultsSelected}
+                  listResultsByType={listResultsByType}
+                  searchResultsByType={(type, search) => {
+                    this.searchResultsByType(type, search);
+                  }}
+                  updateResultsSelected={item => {
+                    this.updateResultsSelected(item);
+                  }}
+                />
+              </Container>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                bsPrefix="btn btn-outline-primary"
+                onClick={() => this._handleOnClick(false)}
+              >
+                {i18n.t("classify-emails.cancel")}
+              </Button>
+              <Button
+                bsPrefix="btn btn-primary"
+                onClick={() => this._handleOnClick(true)}
+              >
+                {i18n.t("classify-emails.save")}
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </div>
+      </Fragment>
     );
   }
 }
@@ -229,4 +249,8 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(ClassifyEmails);
+const mapDispatchToProps = dispatch => ({
+  addError: error => dispatch(APPLICATION_ACTIONS.addError(error))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ClassifyEmails);

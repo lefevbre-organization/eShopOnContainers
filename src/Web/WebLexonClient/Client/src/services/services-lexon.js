@@ -16,7 +16,8 @@ export const getCompanies = userId => {
       .then(data => data.json())
       .then(result => {
         resolve({
-          companies: result.data
+          companies: result.data,
+          errors: result.errors
         });
       })
       .catch(error => {
@@ -46,15 +47,31 @@ export const getClassifications = (userId, companyId, mailId) => {
 // idUser, idCompany, idMail, idRelated, idType
 export const addClassification = (
   userId,
-  companyId,
-  mailId,
+  company,
+  listMails,
   relatedId,
   typeId
 ) => {
   return new Promise((resolve, reject) => {
-    const url = `${window.API_GATEWAY}/${CLASSIFICATIONS_ADD}?idUser=${userId}&idCompany=${companyId}&idMail=${mailId}&idRelated=${relatedId}&idType=${typeId}`;
+    const url = `${window.API_GATEWAY}/${CLASSIFICATIONS_ADD}`;
+    const classification = {
+      listaMails: ["listMails"],
+      idType: typeId,
+      //idUser: userId,
+      idUser: "449",
+      idRelated: relatedId,
+      idCompany: company.idCompany,
+      bbdd: company.bbdd
+    };
+
+
     fetch(url, {
-      method: "GET"
+      headers: {
+        Accept: "text/plain",
+        "Content-Type": "application/json"
+      },
+      method: "POST",
+      body: JSON.stringify(classification)
     })
       .then(data => data.json())
       .then(result => {
@@ -63,6 +80,7 @@ export const addClassification = (
         });
       })
       .catch(error => {
+        console.log("Error ->", error);
         reject(error);
       });
   });
@@ -113,7 +131,8 @@ export const getTypes = () => {
 
 export const getResults = (userId, companyId, typeId, search) => {
   return new Promise((resolve, reject) => {
-    const url = `${window.API_GATEWAY}/${RESULTS}?idUser=${userId}&idCompany=${companyId}&idType=${typeId}&search=${search}`;
+    // const url = `${window.API_GATEWAY}/${RESULTS}?pageSize=100&pageIndex=1&search=${search}&idUser=${userId}&idCompany=${companyId}&idType=${typeId}`;
+    const url = `${window.API_GATEWAY}/${RESULTS}?pageSize=100&pageIndex=1&search=${search}&idUser=449&idCompany=${companyId}&idType=${typeId}`;
     fetch(url, {
       method: "GET"
     })

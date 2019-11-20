@@ -1,6 +1,6 @@
 {
   "main": {
-    "error_connection": "ERROR connecting with Lexon"
+    "error_connection": "Error connecting to Lexon. The data is not updated."
   },
   "select-company": {
     "select-company": "Select company:",
@@ -28,7 +28,8 @@
     "save": "SAVE",
     "title": "New classification",
     "body": "Select classification type to load the corresponding list and assign the messages to one of the items in the list.",
-    "classification-saved-ok": "The classification saved correctly"
+    "classification-saved-ok": "The classification saved correctly",
+    "classification-saved-ko": "There was an error saving the classification"
   },
   "classification-type": {
     "type": "Type",

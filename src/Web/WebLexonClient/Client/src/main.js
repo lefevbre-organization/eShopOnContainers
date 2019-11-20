@@ -1,14 +1,15 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
-import ACTIONS from "./actions/email";
-import "./main.css";
 
-// import Header from "./components/header/header";
+import ACTIONS from "./actions/email";
+import APPLICATION_ACTIONS from "./actions/applicationAction";
+import "./main.css";
+import i18n from "i18next";
+
+import Header from "./components/header/header";
 import Routing from "./components/routing/routing";
 import Spinner from "./components/spinner/spinner";
 import Notification from "./components/notification/notification";
-import i18n from "i18next";
-
 import { getCompanies } from "./services/services-lexon";
 
 class Main extends Component {
@@ -20,8 +21,7 @@ class Main extends Component {
       companies: [],
       isLoading: true,
       showNotification: false,
-      messageNotification: null,
-      error: ""
+      messageNotification: null
     };
 
     this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -42,6 +42,17 @@ class Main extends Component {
     );
 
     this.sendMessageGetUser();
+  }
+
+  componentDidUpdate(prevProps) {
+    // if (prevProps.hasError !== this.props.hasError) {
+    //   this.setState( { showError: this.props.hasError });
+    // }
+
+    if (prevProps.errors !== this.props.errors) {
+      const hasError = this.props.errors.length > 0 ? true : false;
+      this.setState({ showError: hasError });
+    }
   }
 
   componentWillUnmount() {
@@ -75,6 +86,7 @@ class Main extends Component {
 
   async handlePutUserFromLexonConnector(event) {
     const { user, selectedMessageId } = event.detail;
+
     selectedMessageId.forEach(message => {
       this.props.addMessage(message);
     });
@@ -86,16 +98,26 @@ class Main extends Component {
           user: user,
           companies: result.companies
         });
+        if (Array.isArray(result.errors)) {
+          result.errors.forEach(error =>
+            this.props.addError(JSON.stringify(error))
+          );
+        } else {
+          this.props.addError(JSON.stringify(result.errors));
+        }
       })
-        .catch(error => {
-            const errors = error.message;
-            console.log("error ->", errors);
-            this.setState({
-                isLoading: false,
-                user: user,
-                error: errors
-            });
+      .catch(errors => {
+        this.setState({
+          isLoading: false,
+          user: user
         });
+        if (Array.isArray(errors)) {
+          errors.forEach(error => this.props.addError(JSON.stringify(error)));
+        } else {
+          this.props.addError(JSON.stringify(errors));
+        }
+        console.log("errors ->", this.props.errors);
+      });
   }
 
   toggleNotification(message) {
@@ -105,32 +127,35 @@ class Main extends Component {
     }));
   }
 
+  renderErrors() {
+    const { errors } = this.props;
+    if (errors.length > 0) {
+      return (
+        <p className="connexion-status connexion-status-ko">
+          {i18n.t("main.error_connection")}
+          <span className="lf-icon-warning"></span>
+        </p>
+      );
+    }
+  }
+
   render() {
     const {
       isLoading,
       user,
       companies,
       showNotification,
-      messageNotification,
-      error
+      messageNotification
     } = this.state;
 
     if (isLoading) {
       return <Spinner />;
     }
 
-    if (!isLoading && error !== "") {
-      return (
-        <div className="d-flex w-100 h-100 flex-column justify-content-center align-items-center vertical-center">
-          <div className="h3 mt-5">{i18n.t("main.error_connection")}</div>
-          <div>[{error}]</div>
-        </div>
-      );
-    }
-
     return (
       <Fragment>
-        {/* <Header title={"LEX-ON"} /> */}
+        <Header title={"LEX-ON"} />
+        {this.renderErrors()}
         <Notification
           initialModalState={showNotification}
           toggleNotification={this.toggleNotification}
@@ -148,7 +173,8 @@ class Main extends Component {
 
 const mapStateToProps = state => {
   return {
-    selectedMessages: state.email.selectedMessages
+    selectedMessages: state.email.selectedMessages,
+    errors: state.applicationReducer.errors
   };
 };
 
@@ -158,7 +184,8 @@ const mapDispatchToProps = dispatch => ({
   addListMessages: listMessages =>
     dispatch(ACTIONS.addListMessages(listMessages)),
   deleteListMessages: listMessages =>
-    dispatch(ACTIONS.deleteListMessages(listMessages))
+    dispatch(ACTIONS.deleteListMessages(listMessages)),
+  addError: error => dispatch(APPLICATION_ACTIONS.addError(error))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

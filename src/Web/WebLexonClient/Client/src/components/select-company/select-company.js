@@ -67,6 +67,7 @@ class SelectCompany extends Component {
 
   renderCompany(company) {
     const { companySelected } = this.props;
+
     if (
       companySelected == null ||
       companySelected.idCompany !== Number(company.idCompany)
@@ -93,6 +94,7 @@ class SelectCompany extends Component {
 
   render() {
     const _this = this;
+
     return (
       <div className="container">
         <div className="row">
@@ -127,7 +129,8 @@ SelectCompany.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    companySelected: state.selections.companySelected
+    companySelected: state.selections.companySelected,
+    errors: state.applicationReducer.errors
   };
 };
 
@@ -135,7 +138,4 @@ const mapDispatchToProps = dispatch => ({
   setCompanySelected: item => dispatch(ACTIONS.setCompanySelected(item))
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SelectCompany);
+export default connect(mapStateToProps, mapDispatchToProps)(SelectCompany);
