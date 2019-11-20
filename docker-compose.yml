@@ -241,7 +241,7 @@ services:
       - webhooks.api   
       
   webportalclient:
-    image: ${REGISTRY_LEF:-elefebvreoncontainers}/webportalclient:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-eshop}/webportalclient:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Web/WebPortalClient/Dockerfile    
@@ -251,7 +251,7 @@ services:
       - rabbitmq
 
   webgoogleclient:
-    image: ${REGISTRY_LEF:-elefebvreoncontainers}/webgoogleclient:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-eshop}/webgoogleclient:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Web/WebGoogleClient/Dockerfile    
@@ -261,7 +261,7 @@ services:
       - rabbitmq
 
   webofficeclient:
-    image: ${REGISTRY_LEF:-elefebvreoncontainers}/webofficeclient:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-eshop}/webofficeclient:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Web/WebOffice365Client/Dockerfile    
@@ -271,7 +271,7 @@ services:
       - rabbitmq
       
   weblexonclient:
-    image: ${REGISTRY_LEF:-elefebvreoncontainers}/weblexonclient:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-eshop}/weblexonclient:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Web/WebLexonClient/Dockerfile    
@@ -281,7 +281,7 @@ services:
       - rabbitmq      
 
   account.api:
-    image: ${REGISTRY_LEF:-elefebvreoncontainers}/account.api:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-eshop}/account.api:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Services/Account/Account.API/Dockerfile    
@@ -292,7 +292,7 @@ services:
       - rabbitmq
 
   webaccountapigw:
-    image: ${REGISTRY_LEF:-elefebvreoncontainers}/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-eshop}/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/ApiGateways/ApiGw-Base/Dockerfile
@@ -304,7 +304,7 @@ services:
       - account.api
 
   lexon.api:
-    image: ${REGISTRY_LEF:-elefebvreoncontainers}/lexon.api:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-eshop}/lexon.api:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Services/Lexon/Lexon.API/Dockerfile    
@@ -315,7 +315,7 @@ services:
       - rabbitmq
 
   lexon.mysql.api:
-    image: ${REGISTRY_LEF:-elefebvreoncontainers}/lexon.mysql.api:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-eshop}/lexon.mysql.api:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Services/Lexon/Lexon.MySql/Dockerfile    
@@ -327,7 +327,7 @@ services:
       - lexon.api
 
   weblexonapigw:
-    image: ${REGISTRY_LEF:-elefebvreoncontainers}/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
+    image: ${REGISTRY:-eshop}/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/ApiGateways/ApiGw-Base/Dockerfile

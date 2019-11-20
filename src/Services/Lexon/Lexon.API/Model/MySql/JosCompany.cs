@@ -5,7 +5,7 @@ namespace Lexon.API.Model
     {
         public long IdCompany { get; set; }
 
-        public string name { get; set; }
+        public string Name { get; set; }
 
         public string BBDD { get; set; }
 

@@ -108,11 +108,64 @@ namespace Lexon.Infrastructure.Services
             }
         }
 
-        public async Task<Result<List<LexonActuation>>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail)
+        public async Task<Result<List<LexonActuation>>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, string bbdd, string idMail)
         {
-            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany:{idCompany}", $"idMail:{idMail}" });
-            //todo: implementar procedure of mysql
-            return await _usersRepository.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
+
+            var result = new Result<List<LexonActuation>>(new List<LexonActuation>());
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/classifications/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={1}&bbdd={bbdd}&idUser={idUser}&idMail={idMail}");
+            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"bbdd:{bbdd}", $"idMail:{idMail}" });
+
+            try
+            {
+                using (var response = await _client.SendAsync(request))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        foreach (var entity in (await response.Content.ReadAsAsync<Result<JosRelationsList>>()).data.Actuaciones)
+                        {
+                            
+                            result.data.Add(new LexonActuation() { name = entity.Nombre, description = entity.Asunto, entityType = "Mail", idMail= idMail, idRelated= entity.IdRelacion });
+                            TraceLog(parameters: new string[] { $"add Name {entity.Nombre}", $"desc {entity.Asunto}", $"tipo Mail", $"idrelated {entity.IdRelacion}", $"idmail {idMail}" });
+                        }
+
+                        if (result.data.Count == 0)
+                            TraceOutputMessage(result.errors, "Mysql don´t recover the mails actuations", 2001);
+                        else
+                            return result;
+                    }
+                    else
+                    {
+                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            await GetClassificationsFromMailMongoAsync(result, pageSize, pageIndex, idUser, 14, idMail);
+            return result;
+
+        }
+
+        private async Task GetClassificationsFromMailMongoAsync(Result<List<LexonActuation>> result, int pageSize, int pageIndex, string idUser, long idCompany, string idMail)
+        {
+            try
+            {
+                var resultMongo = await _usersRepository.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
+
+                if (resultMongo.errors.Count > 0)
+                    result.errors.AddRange(resultMongo.errors);
+                else if (resultMongo.data.Count == 0)
+                    TraceOutputMessage(result.errors, "MongoDb don´t recover relations of mails", 2002);
+                else
+                    result.data = resultMongo.data;
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
         }
 
         public async Task<Result<List<LexonEntityType>>> GetClassificationMasterListAsync()
@@ -130,8 +183,8 @@ namespace Lexon.Infrastructure.Services
                     {
                         foreach (var entity in (await response.Content.ReadAsAsync<Result<JosEntityTypeList>>()).data.Entities)
                         {
-                            result.data.Add(new LexonEntityType() { name = entity.name, idEntity = entity.idEntity });
-                            TraceLog(parameters: new string[] { $"add {entity.name}" });
+                            result.data.Add(new LexonEntityType() { name = entity.Name, idEntity = entity.IdEntity });
+                            TraceLog(parameters: new string[] { $"add {entity.Name}" });
                         }
 
                         if (result.data.Count == 0)
@@ -186,8 +239,8 @@ namespace Lexon.Infrastructure.Services
                     {
                         foreach (var company in (await response.Content.ReadAsAsync<Result<JosUserCompanies>>()).data.Companies)
                         {
-                            result.data.Add(new LexonCompany() { name = company.name, bbdd = company.BBDD, idCompany = company.IdCompany });
-                            TraceLog(parameters: new string[] { $"add {company.name}" });
+                            result.data.Add(new LexonCompany() { name = company.Name, bbdd = company.BBDD, idCompany = company.IdCompany });
+                            TraceLog(parameters: new string[] { $"add {company.Name}" });
                         }
 
                         if (result.data.Count == 0)
@@ -250,8 +303,8 @@ namespace Lexon.Infrastructure.Services
                         var entityList = await response.Content.ReadAsAsync<Result<JosEntityList>>();
                         foreach (var entity in (entityList.data.Entities))
                         {
-                            result.data.Add(new LexonEntityBase() { name = entity.code, description = entity.Description, id = entity.idRelated });
-                            TraceLog(parameters: new string[] { $"code {entity.code}" });
+                            result.data.Add(new LexonEntityBase() { name = entity.Code, description = entity.Description, id = entity.IdRelated });
+                            TraceLog(parameters: new string[] { $"code {entity.Code}" });
                         }
 
                         if (result.data.Count == 0)

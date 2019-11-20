@@ -48,13 +48,19 @@ namespace Lexon.API.Controllers
         [Route("classifications")]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> ClassificationsAsync([FromQuery]string idUser = "E1621396", [FromQuery]long idCompany = 14, [FromQuery]string idMail = "email_nuevo_1", [FromQuery]int pageSize = 0, [FromQuery]int pageIndex = 1)
+        public async Task<IActionResult> ClassificationsAsync(
+            [FromQuery]string idUser = "449",
+            [FromQuery]long idCompany = 14,
+            [FromQuery]string bbdd = "lexon_admin_02",
+            [FromQuery]string idMail = "email_nuevo_1",
+            [FromQuery]int pageSize = 0,
+            [FromQuery]int pageIndex = 1)
 
         {
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(idMail) || idCompany <= 0)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, company and email in 0rder to search the classifications");
 
-            var result = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
+            var result = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, bbdd, idMail);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
 
         }
