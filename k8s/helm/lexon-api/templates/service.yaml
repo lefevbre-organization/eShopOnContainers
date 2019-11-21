@@ -1,0 +1,19 @@
+lexon: v1
+kind: Service
+metadata:
+  name: {{ .Values.app.svc.lexonapi }}
+  labels:
+    app: {{ template "lexon-api.name" . }}
+    chart: {{ template "lexon-api.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ template "lexon-api.name" . }}
+    release: {{ .Release.Name }}
