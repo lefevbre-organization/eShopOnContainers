@@ -49,12 +49,12 @@ namespace Lexon.API.Controllers
         [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ClassificationsAsync(
-            [FromQuery]string idUser = "449",
-            [FromQuery]long idCompany = 14,
-            [FromQuery]string bbdd = "lexon_admin_02",
-            [FromQuery]string idMail = "email_nuevo_1",
-            [FromQuery]int pageSize = 0,
-            [FromQuery]int pageIndex = 1)
+            [FromQuery]string idUser = "449"
+            , [FromQuery]long idCompany = 14
+            , [FromQuery]string bbdd = "lexon_admin_02"
+            , [FromQuery]string idMail = "email_nuevo_1"
+            , [FromQuery]int pageSize = 0
+            , [FromQuery]int pageIndex = 1)
 
         {
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(idMail) || idCompany <= 0)
@@ -69,10 +69,7 @@ namespace Lexon.API.Controllers
         [Route("classifications/add")]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddClassificationAsync(
-            [FromBody]ClassificationAddView classification)
-            //[FromQuery]string idUser = "E1621396", [FromQuery]long idCompany = 14, [FromQuery]string idMail = "email_nuevo_1", [FromQuery]short idType = 1, [FromQuery]long idRelated = 111)
-
+        public async Task<IActionResult> AddClassificationAsync([FromBody]ClassificationAddView classification)  
         {
             if (string.IsNullOrEmpty(classification?.idUser) || (classification?.listaMails?.Count() <= 0) || classification?.idCompany <= 0 || classification?.idRelated <= 0 || classification?.idType <= 0)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, company, email, related and type for create the classification");
@@ -85,9 +82,7 @@ namespace Lexon.API.Controllers
         [Route("classifications/remove")]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> RemoveClassificationAsync(
-            [FromBody]ClassificationRemoveView classification)
-            //[FromQuery]string idUser = "E1621396", [FromQuery]long idCompany = 14, [FromQuery]string idMail = "email_nuevo_1", [FromQuery]short idType = 1, [FromQuery]long idRelated = 111)
+        public async Task<IActionResult> RemoveClassificationAsync([FromBody]ClassificationRemoveView classification)
         {
             if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.idMail) || classification?.idCompany <= 0 || classification?.idRelated <= 0 || classification?.idType <= 0)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, company, email, related and type for remove the classification");
@@ -110,8 +105,9 @@ namespace Lexon.API.Controllers
         [Route("companies/select")]
         [ProducesResponseType(typeof(Result<LexonCompany>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexonCompany>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> SelectCompanyAsync([FromQuery]string idUser, [FromQuery]long idCompany)
-
+        public async Task<IActionResult> SelectCompanyAsync(
+            [FromQuery]string idUser
+            , [FromQuery]long idCompany)
         {
             if (string.IsNullOrEmpty(idUser) || idCompany <= 0)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, email, related and type for create the classification");
@@ -134,7 +130,6 @@ namespace Lexon.API.Controllers
             , [FromQuery] int idFilter = 1
             , [FromQuery]int pageSize = 0
             , [FromQuery]int pageIndex = 1)
-
         {
             if (string.IsNullOrEmpty(idUser) || idCompany <= 0 || idType <= 0)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
@@ -160,7 +155,10 @@ namespace Lexon.API.Controllers
         [ProducesResponseType(typeof(Result<IEnumerable<LexonUser>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonUser>>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonUser>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UsersAsync([FromQuery]int pageSize = 0, [FromQuery]int pageIndex = 1, string idUser = null)
+        public async Task<IActionResult> UsersAsync(
+            [FromQuery]int pageSize = 0
+            , [FromQuery]int pageIndex = 1
+            , string idUser = null)
 
         {
             if (pageIndex == 0 && pageSize == 0)

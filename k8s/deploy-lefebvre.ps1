@@ -5,10 +5,15 @@ Param(
     [parameter(Mandatory=$false)][string]$execPath,
     [parameter(Mandatory=$false)][string]$kubeconfigPath,
     [parameter(Mandatory=$false)][string]$configFile,
+    # [parameter(Mandatory=$false)][string[]]$composeFiles=("docker-compose-lef.yml","docker-compose-lef.override.yml"),
+    [parameter(Mandatory=$false)][string[]]$composeFiles=@(),
+    # [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "account.api", "lexon.api","lexon.mysql.api", "ocelotapigw"),
+    [parameter(Mandatory=$false)][string[]]$servicesToPush=("lexon.mysql.api"),
     [parameter(Mandatory=$false)][string]$imageTagPlatform="linux",
     [parameter(Mandatory=$false)][string]$imageTag="dev",
     [parameter(Mandatory=$false)][bool]$deployCI=$false,
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
+    [parameter(Mandatory=$false)][bool]$cleanDocker=$false,
     [parameter(Mandatory=$false)][bool]$buildImages=$false,
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
@@ -27,14 +32,26 @@ function ExecKube($cmd) {
     }
 }
 
+
+
 # Initialization
+$expNode = "-p .."
+if($composeFiles.Count -gt 0){
+    foreach ($file in $composeFiles) {
+        $expNode = $expNode +  " -f ../$file"
+    }
+}else{
+    $expNode = $expNode + " -f ../docker-compose.yml"
+}
+$expNode = $expNode + " build"
+
 $debugMode = $PSCmdlet.MyInvocation.BoundParameters["Debug"].IsPresent
 $useDockerHub = [string]::IsNullOrEmpty($registry)
 
 if ($deployKubernetes){
     $externalDns = & ExecKube -cmd 'get svc ingress-nginx -n ingress-nginx -o=jsonpath="{.status.loadBalancer.ingress[0].ip}"'
     Write-Host "Ingress ip detected: $externalDns" -ForegroundColor Yellow 
-
+    
     if (-not [bool]($externalDns -as [ipaddress])) {
         Write-Host "Must install ingress first" -ForegroundColor Red
         Write-Host "Run deploy-ingress.ps1 and  deploy-ingress-azure.ps1" -ForegroundColor Red
@@ -44,8 +61,8 @@ if ($deployKubernetes){
 
 # Check required commands (only if not in CI environment)
 if(-not $deployCI) {
-        $requiredCommands = ("docker", "docker-compose") #, "kubectl")
-        foreach ($command in $requiredCommands) {
+    $requiredCommands = ("docker", "docker-compose", "kubectl")
+    foreach ($command in $requiredCommands) {
         if ((Get-Command $command -ErrorAction SilentlyContinue) -eq $null) {
             Write-Host "$command must be on path" -ForegroundColor Red
             exit
@@ -60,33 +77,49 @@ else {
 if ([string]::IsNullOrEmpty($imageTag)) {
     $imageTag = $(git rev-parse --abbrev-ref HEAD)
 }
-Write-Host "Docker image Tag: $imageTag" -ForegroundColor Yellow
+
+Write-Host "=====================================" -ForegroundColor DarkCyan
+Write-Host "Docker image Tag: $imageTag" -ForegroundColor DarkCyan
+Write-Host "Compose files: $expNode" -ForegroundColor DarkCyan 
+Write-Host "Se usa DockeHub: $useDockerHub" -ForegroundColor DarkCyan 
+Write-Host "Deploy Kubernetes: $deployKubernetes" -ForegroundColor DarkCyan 
+Write-Host "Docker: Build $buildImages and Clean $cleanDocker" -ForegroundColor DarkCyan 
+Write-Host "Kubernetes: $deployKubernetes with Infraestructure $cleanDocker" -ForegroundColor DarkCyan 
+Write-Host "=====================================" -ForegroundColor DarkCyan
 
 # building  docker images if needed
 if ($buildImages) {
-    Write-Host "Building Docker images tagged with '$imageTag'" -ForegroundColor Yellow
+    if($cleanDocker){
+        Write-Host "remove all containers" -ForegroundColor DarkBlue
+        docker rm -f $(docker ps -a -q)
+        Write-Host "remove all images" -ForegroundColor DarkBlue
+        docker rmi -f $(docker images -a -q)
+    }
+    Write-Host "Building Docker images tagged with '$imageTag'" -ForegroundColor DarkBlue
     $env:TAG=$imageTag
-    docker-compose -p .. -f ../docker-compose.yml build    
+    # docker-compose -p .. -f ../docker-compose.yml build    
+    # Invoke-Command "$expNode"
+    docker-compose $ArrayArguments
+    docker-compose $expNode    
 }
 
 if ($pushImages) {
-    Write-Host "Pushing images to $registry/$dockerOrg..." -ForegroundColor Yellow
-    $services = ("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "account.api", "lexon.api","lexon.mysql.api", "ocelotapigw")
+    Write-Host "Pushing images to $registry/$dockerOrg..." -ForegroundColor Magenta
+    # $services = ("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "account.api", "lexon.api","lexon.mysql.api", "ocelotapigw")
     docker login -u $dockerUser -p $dockerPassword
 
-    foreach ($service in $services) {
+    foreach ($service in $servicesToPush) {
         $imageFqdn = if ($useDockerHub)  {"$dockerOrg/${service}"} else {"$registry/$dockerOrg/${service}"}
         $tagComplete = "$imageTagPlatform-$imageTag"
         docker tag eshop/${service}:$tagComplete ${imageFqdn}:$tagComplete
-        Write-Host "imagen -> eshop/${service}:$tagComplete con tag ${imageFqdn}:$tagComplete" -ForegroundColor Blue
+        Write-Host "imagen -> eshop/${service}:$tagComplete con tag ${imageFqdn}:$tagComplete" -ForegroundColor Magenta
 
         docker push ${imageFqdn}:$tagComplete  
         Write-Host "Push image to ${imageFqdn}:$tagComplete" -ForegroundColor Magenta
                   
     }
 
-    Write-Host "All images pushed  to $registry/$dockerOrg" -ForegroundColor Green
-
+    Write-Host "All images pushed  to $registry/$dockerOrg" -ForegroundColor Magenta
 }
 
 if ($deployKubernetes){

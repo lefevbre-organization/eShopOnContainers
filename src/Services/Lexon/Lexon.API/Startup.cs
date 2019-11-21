@@ -63,8 +63,6 @@ namespace Lexon.API
             });
 
             app.UseCors("CorsPolicy");
-            //app.UseMvcWithDefaultRoute();
-
 
             if (env.IsDevelopment())
             {
