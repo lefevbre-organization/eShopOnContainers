@@ -1,12 +1,12 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: apigwacc
+  name: lexon-api
 spec:
   type: NodePort
   selector:
-    app: apigwacc
+    app: lexon-api
   ports:
     - port: 80
-      nodePort: 30010
-      name: apigwacc-port
+      nodePort: 30009
+      name: lexon-api-port

@@ -5,7 +5,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "account.api",
+          "Host": "account",
           "Port": 80
         }
       ],

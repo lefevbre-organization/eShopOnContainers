@@ -5,4 +5,7 @@ kubectl apply -f .\nodeports\weblexon.yaml
 kubectl apply -f .\nodeports\webportal.yaml
 kubectl apply -f .\nodeports\apigwacc.yaml
 kubectl apply -f .\nodeports\account-api.yaml
+kubectl apply -f .\nodeports\apigwlex.yaml
+kubectl apply -f .\nodeports\lexon-api.yaml
+kubectl apply -f .\nodeports\lexon-mysql-api.yaml
 kubectl apply -f .\nodeports\sql-services.yaml
