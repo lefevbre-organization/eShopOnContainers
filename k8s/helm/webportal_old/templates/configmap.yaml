@@ -1,4 +1,3 @@
-
 {{- $name := include "webportal.fullname" . -}}
 {{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
 {{- $webshoppingapigw := include "url-of" (list .Values.app.ingress.entries.webshoppingapigw .) -}}
@@ -26,5 +25,4 @@ data:
   internalurls__apigwwm__hc: http://{{ .Values.app.svc.webmarketingapigw }}/hc
   urls__apigwws: http://{{ $webshoppingapigw }}
   urls__mvc: http://{{ $mvc }}
-  urls__IdentityUrl: http://{{ $identity }}  
-  config.js: {{ toYaml .Values.configValues | indent 4 }}
+  urls__IdentityUrl: http://{{ $identity }}
