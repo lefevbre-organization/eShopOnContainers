@@ -1,5 +1,5 @@
-{{- $name := include "account-api.fullname" . -}}
-
+{{- $name := include "lexon-api.fullname" . -}}
+{{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
 {{- $mongo := include "mongo-name" . -}}
 
 apiVersion: v1
@@ -7,13 +7,13 @@ kind: ConfigMap
 metadata:
   name: "cfg-{{ $name }}"
   labels:
-    app: {{ template "account-api.name" . }}
-    chart: {{ template "account-api.chart" .}}
+    app: {{ template "lexon-api.name" . }}
+    chart: {{ template "lexon-api.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:
   basket__ConnectionString: {{ .Values.inf.redis.basket.constr }}
- 
+  urls__IdentityUrl: http://{{ $identity }}
   basket__EnableLoadTest: "{{ .Values.inf.misc.useLoadTest }}"
   all__EventBusConnection: {{ .Values.inf.eventbus.constr }}
   all__InstrumentationKey: "{{ .Values.inf.appinsights.key }}"

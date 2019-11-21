@@ -31,6 +31,9 @@ app:                                                  # app global settings
       lexon: weblexon
       webaccountapigw: webaccountapigw
       account: account-api
+      weblexonapigw: weblexonapigw
+      lexonapi: lexon-api
+      lexonmysqlapi: lexon-mysql-api
   svc:
       basket: basket                                    # service name for basket api
       catalog: catalog                                  # service name for catalog api
@@ -58,5 +61,8 @@ app:                                                  # app global settings
       lexon: weblexon
       webaccountapigw: webaccountapigw
       account: account-api
+      weblexonapigw: weblexonapigw
+      lexonapi: lexon-api
+      lexonmysqlapi: lexon-mysql-api
      
       

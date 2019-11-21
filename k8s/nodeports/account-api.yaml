@@ -8,5 +8,5 @@ spec:
     app: account-api
   ports:
     - port: 80
-      nodePort: 30009
+      nodePort: 30008
       name: account-api-port
