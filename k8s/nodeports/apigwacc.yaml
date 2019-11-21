@@ -8,5 +8,5 @@ spec:
     app: apigwacc
   ports:
     - port: 80
-      nodePort: 30008
+      nodePort: 30010
       name: apigwacc-port

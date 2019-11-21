@@ -69,8 +69,8 @@ if (-not [string]::IsNullOrEmpty($registry)) {
 Write-Host "Begin eShopOnContainers installation using Helm" -ForegroundColor Green
 
 $infras = ("sql-data", "nosql-data", "rabbitmq", "keystore-data", "basket-data")
-$charts = ( "apigwacc", "account-api", "webportal", "webgoogle", "webgraph", "weblexon" )
-#"webportal", "webgoogle", "webgraph", "weblexon"
+$charts = ("apigwlex", "lexon-api", "lexon-mysql-api", "apigwacc", "account-api", "webportal", "webgoogle", "webgraph", "weblexon")
+#"apigwacc", "account-api", "webportal", "webgoogle", "webgraph", "weblexon" 
 if ($deployInfrastructure) {
     foreach ($infra in $infras) {
         Write-Host "Installing infrastructure: $infra" -ForegroundColor Green

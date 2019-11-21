@@ -1,0 +1,36 @@
+{
+  "ReRoutes": [
+    {
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamPathTemplate": "/api/{version}/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "lexonapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/lex/{everything}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamPathTemplate": "/api/{version}/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "lexonmysqlapi",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/mysql/{everything}",
+      "UpstreamHttpMethod": [ "GET" ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "RequestIdKey": "OcRequestId",
+    "AdministrationPath": "/administration",
+    "SkipSslValidation": true
+  }
+  }
+  
