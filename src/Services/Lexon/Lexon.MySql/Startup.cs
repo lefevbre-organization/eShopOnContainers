@@ -1,12 +1,15 @@
-﻿using Lexon.MySql.Extensions;
+﻿using HealthChecks.UI.Client;
+using Lexon.MySql.Extensions;
 using Lexon.MySql.Infrastructure;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Lexon.MySql
 {
@@ -28,17 +31,40 @@ namespace Lexon.MySql
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-            services.AddCustomMVC(Configuration)
+            services.AddAppInsight(Configuration)
+                .AddCustomMVC(Configuration)
+                .AddCustomDbContext(Configuration)
                 .AddCustomOptions(Configuration)
                 .AddSwagger()
-                .AddDbContext<LexonMySqlContext>(options => options.UseMySQL(Configuration.GetConnectionString("LexonPpal")));
+                .AddHttpClient()
+                .AddCustomHealthCheck(Configuration);
+            //.AddDbContext<LexonMySqlContext>(options => options.UseMySQL(Configuration.GetConnectionString("LexonPpal")));
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             var pathBase = Configuration["PATH_BASE"];
+            if (!string.IsNullOrEmpty(pathBase))
+            {
+                loggerFactory.CreateLogger<Startup>().LogDebug("Using PATH BASE '{pathBase}'", pathBase);
+                app.UsePathBase(pathBase);
+            }
+
+            app.UseHealthChecks("/hc", new HealthCheckOptions()
+            {
+                Predicate = _ => true,
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
+
+            app.UseHealthChecks("/liveness", new HealthCheckOptions
+            {
+                Predicate = r => r.Name.Contains("self")
+            });
+
+            app.UseCors("CorsPolicy");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -50,7 +76,7 @@ namespace Lexon.MySql
             }
 
             app.UseHttpsRedirection();
-            //app.UseMvcWithDefaultRoute();
+
             app.UseSwagger()
               .UseSwaggerUI(c =>
               {
