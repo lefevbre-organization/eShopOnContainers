@@ -80,7 +80,6 @@ namespace Lexon.MySql.Controllers
             , string idUser = "449"
             , string search = ""
             , long idFilter = 0)
-
         {
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || idType < 1)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
@@ -129,8 +128,7 @@ namespace Lexon.MySql.Controllers
             , short idType = 1
             , string bbdd = "lexon_admin_02"
             , string idUser = "449"
-            , string idMail = ""
-            )
+            , string idMail = "" )
         {
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || idType < 1)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");

@@ -43,8 +43,6 @@ namespace Lexon.API.Extensions
                     .AllowCredentials());
             });
 
-            //TODO: implement of services
-            //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IUsersService, UsersService>();
             services.AddTransient<IUsersRepository, UsersRepository>();
             return services;

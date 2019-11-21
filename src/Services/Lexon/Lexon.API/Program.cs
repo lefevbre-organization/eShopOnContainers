@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Serilog;
+using System;
+using System.IO;
 
 namespace Lexon.API
 {
@@ -31,7 +27,7 @@ namespace Lexon.API
                 //host.MigrateDbContext<CatalogContext>((context, services) =>
                 //{
                 //    var env = services.GetService<IHostingEnvironment>();
-                //    var settings = services.GetService<IOptions<CatalogSettings>>();
+                //    var settings = services.GetService<IOptions<LexonSettings>>();
                 //    var logger = services.GetService<ILogger<CatalogContextSeed>>();
 
                 //    new CatalogContextSeed()
@@ -54,8 +50,6 @@ namespace Lexon.API
             {
                 Log.CloseAndFlush();
             }
-
-
         }
 
         private static Serilog.ILogger CreateSerilogLogger(IConfiguration configuration)
@@ -94,7 +88,6 @@ namespace Lexon.API
             return builder.Build();
         }
 
-
         private static IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .CaptureStartupErrors(false)
@@ -105,6 +98,5 @@ namespace Lexon.API
                 .UseConfiguration(configuration)
                 .UseSerilog()
                 .Build();
-
     }
 }
