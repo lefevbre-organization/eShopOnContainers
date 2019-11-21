@@ -8,7 +8,6 @@ import "./App.css";
 class App extends Component {
   componentDidMount() {
     console.log("ENVIRONMENT ->", window.REACT_APP_ENVIRONMENT);
-    console.log("URL_MF_LEXON ->", window.URL_MF_LEXON);
   }
   
   render() {
