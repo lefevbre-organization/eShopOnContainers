@@ -5,16 +5,14 @@ Param(
     [parameter(Mandatory=$false)][string]$execPath,
     [parameter(Mandatory=$false)][string]$kubeconfigPath,
     [parameter(Mandatory=$false)][string]$configFile,
-    # [parameter(Mandatory=$false)][string[]]$composeFiles=("docker-compose-lef.yml","docker-compose-lef.override.yml"),
-    [parameter(Mandatory=$false)][string[]]$composeFiles=@(),
-    # [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "account.api", "lexon.api","lexon.mysql.api", "ocelotapigw"),
-    [parameter(Mandatory=$false)][string[]]$servicesToPush=("lexon.mysql.api"),
+    [parameter(Mandatory=$false)][string[]]$composeFiles=("docker-compose-lef.yml","docker-compose-lef.override.yml"),
+    [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "account.api", "lexon.api","lexon.mysql.api", "ocelotapigw"),
     [parameter(Mandatory=$false)][string]$imageTagPlatform="linux",
     [parameter(Mandatory=$false)][string]$imageTag="dev",
     [parameter(Mandatory=$false)][bool]$deployCI=$false,
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
     [parameter(Mandatory=$false)][bool]$cleanDocker=$false,
-    [parameter(Mandatory=$false)][bool]$buildImages=$false,
+    [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
     [parameter(Mandatory=$false)][string]$dockerOrg="elefebvreoncontainers"
@@ -38,11 +36,12 @@ function ExecKube($cmd) {
 $expNode = "-p .."
 if($composeFiles.Count -gt 0){
     foreach ($file in $composeFiles) {
-        $expNode = $expNode +  " -f ../$file"
+        $expNode = $expNode + " -f '../" + $file + "'"
     }
 }else{
     $expNode = $expNode + " -f ../docker-compose.yml"
 }
+
 $expNode = $expNode + " build"
 
 $debugMode = $PSCmdlet.MyInvocation.BoundParameters["Debug"].IsPresent
@@ -99,7 +98,6 @@ if ($buildImages) {
     $env:TAG=$imageTag
     # docker-compose -p .. -f ../docker-compose.yml build    
     # Invoke-Command "$expNode"
-    docker-compose $ArrayArguments
     docker-compose $expNode    
 }
 
