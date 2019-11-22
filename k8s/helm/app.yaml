@@ -29,11 +29,11 @@ app:                                                  # app global settings
       portal: webportal
       lexon: weblexon
       webaccountapigw: webaccountapigw
-      account: account-api
-      weblexonapigw: weblexonapigw
+      accountapi: account-api
+      lexonapigw: lexonapigw
       lexonapi: lexon-api
-      lexonmysqlapi: lexon-mysql-api
-      lexdosapigw: lexdosapigw
+      lexonmysqlapi: lexonmysqlapi
+      
   svc:
       basket: basket                                    # service name for basket api
       catalog: catalog                                  # service name for catalog api
@@ -60,9 +60,8 @@ app:                                                  # app global settings
       graph: webgraph
       lexon: weblexon
       webaccountapigw: webaccountapigw
-      account: account-api
-      weblexonapigw: weblexonapigw
+      accountapi: account-api
+      lexonapigw: lexonapigw
       lexonapi: lexon-api
-      lexonmysqlapi: lexon-mysql-api
-      lexdosapigw: lexdosapigw
+      lexonmysqlapi: lexonmysqlapi
       
