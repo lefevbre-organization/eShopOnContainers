@@ -1,6 +1,6 @@
 {{- if .Values.ingress.enabled -}}
 {{- $ingressPath := include "pathBase" . -}}
-{{- $serviceName := .Values.app.svc.mobilemarketingapigw -}}
+{{- $serviceName := .Values.app.svc.weblexonapigw -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:

@@ -1,6 +1,6 @@
 {{- if .Values.ingress.enabled -}}
 {{- $ingressPath := include "pathBase" . -}}
-{{- $serviceName := .Values.app.svc.lexon }}
+{{- $serviceName := .Values.app.svc.lexonapi }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
