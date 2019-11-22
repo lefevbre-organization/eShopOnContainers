@@ -11,7 +11,7 @@ const reduxStore = configureStore(window.REDUX_INITIAL_DATA);
 
 class App extends Component {
   componentDidMount() {
-    console.log("ENVIRONMENT ->", window.REACT_APP_ENVIRONMENT);
+    console.log("ENVIRONMENT LEXON ->", window.REACT_APP_ENVIRONMENT);
   }
   
   render() {
