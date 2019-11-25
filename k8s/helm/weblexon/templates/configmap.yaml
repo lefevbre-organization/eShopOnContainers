@@ -26,3 +26,4 @@ data:
   urls__apigwws: http://{{ $webshoppingapigw }}
   urls__mvc: http://{{ $mvc }}
   urls__IdentityUrl: http://{{ $identity }}
+  config.js: {{ toYaml .Values.configValues | indent 4 }}
