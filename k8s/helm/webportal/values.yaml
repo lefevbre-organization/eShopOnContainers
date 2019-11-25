@@ -65,7 +65,7 @@ env:
       
 configValues: |
   window.REACT_APP_ENVIRONMENT='PRODUCTION'
-  window.API_ACCOUNTS='http://localhost/accountapigw'
-  window.URL_INBOX_GOOGLE= 'http://localhost:30000'
-  window.URL_INBOX_OUTLOOK= 'http://localhost:30001'
-  window.URL_INBOX_IMAP= 'http://localhost:30002'
+  window.API_ACCOUNTS='http://now-apigwacc.lefebvre.es'
+  window.URL_INBOX_GOOGLE= 'http://now-webgoogle.lefebvre.es'
+  window.URL_INBOX_OUTLOOK= 'http://now-webgraph.lefebvre.es'
+  window.URL_INBOX_IMAP= 'http://now-webimap.lefebvre.es'

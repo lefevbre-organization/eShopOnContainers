@@ -64,4 +64,4 @@ env:
       value: 'True'
 configValues: |
  window.REACT_APP_ENVIRONMENT='PRODUCTION'
- window.API_GATEWAY='http://localhost/lexonapigw'
+ window.API_GATEWAY='http://now-apigwlex.lefebvre.es'
