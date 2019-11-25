@@ -10,7 +10,7 @@
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/accounts/{everything}",
-      "UpstreamHttpMethod": [ "GET" ]
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ]
     }
    
   ],

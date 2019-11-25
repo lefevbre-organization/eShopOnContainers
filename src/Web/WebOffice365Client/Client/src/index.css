@@ -529,6 +529,32 @@ input[type="radio"]:checked + label:after {
 /* Form components: EOC */
 
 /* Items list: BOC */
+.connexion-status {
+    font-size: 13px;
+    color: #ffffff;
+    font-weight: 300;
+    padding: 11px 40px 15px 20px;
+    position: relative;
+    margin-left: 1px;
+    font-family: MTTMilano, Lato, Arial, sans-serif;
+    line-height: 22px;
+}
+
+    .connexion-status span {
+        font-size: 20px;
+        position: absolute;
+        right: 20px;
+        top: 20px;
+    }
+
+.connexion-status-ko {
+    background-color: #c43741;
+}
+
+.connexion-status-ok {
+    background-color: #417505;
+}
+
 .selected-messages {
   color: #7f8cbb;
   font-size: 12px;

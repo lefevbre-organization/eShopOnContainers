@@ -1,2 +1,2 @@
-eShop API Gateway for Account services installed
+eShop API Gateway for LEX-ON services installed
 ----------------------------------------------------------

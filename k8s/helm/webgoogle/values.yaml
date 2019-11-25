@@ -62,4 +62,15 @@ env:
       value: 'K8S'
     - name: IsClusterEnv
       value: 'True'
-
+configValues: |
+  window.REACT_APP_ENVIRONMENT='PRODUCTION'
+  window.URL_UPDATE_DEFAULTACCOUNT='http://localhost/accountapigw/api/v1/accounts/emailuseraccount/updatedefaultaccount'
+  window.URL_RESET_DEFAULTACCOUNT='http://localhost/accountapigw/api/v1/accounts/emailuseraccount/resetdefaultaccountbyuser'
+  window.URL_DELETE_ACCOUNT='http://localhost/accountapigw/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider'
+  window.URL_SELECT_ACCOUNT='http://localhost:30005'
+  window.URL_GET_ACCOUNTS='http://localhost/accountapigw/api/v1/accounts/emailuseraccount/getbyuser'
+  window.URL_MF_GOOGLE='http://localhost:30000/user'
+  window.URL_MF_OUTLOOK='http://localhost:30001/user'
+  window.URL_MF_IMAP='http://localhost:30003/user'
+  window.URL_MF_LEXON='http://localhost:30002/static/js/main.js'
+  window.URL_GATEWAY='http://localhost:lexonapigw'

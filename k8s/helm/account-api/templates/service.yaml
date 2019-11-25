@@ -1,10 +1,10 @@
-account: v1
+apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.app.svc.account }}
+  name: {{ .Values.app.svc.accountapi }}
   labels:
-    app: {{ template "account-api.name" . }}
-    chart: {{ template "account-api.chart" . }}
+    app: {{ template "webhooks-api.name" . }}
+    chart: {{ template "webhooks-api.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
@@ -15,5 +15,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app: {{ template "account-api.name" . }}
+    app: {{ template "webhooks-api.name" . }}
     release: {{ .Release.Name }}
