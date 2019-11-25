@@ -1,0 +1,60 @@
+@import '../../styles/partials/variables';
+
+.attachment {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  background-color: darken($base-background-color, 3%);
+  margin: 0 6px 6px 0;
+  padding: 6px;
+  max-width: 200px;
+
+  cursor: pointer;
+
+  &:hover {
+    background-color: darken($base-background-color, 10%);
+  }
+
+  &.downloading {
+    cursor: initial;
+  }
+
+  .spinner {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(darken($base-background-color, 20%), 0.6);
+
+    .canvas {
+      height: 22px;
+    }
+  }
+
+  .icon {
+    margin-right: 6px;
+  }
+
+  .fileInfo {
+    overflow: hidden;
+
+    .fileName {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      font-size: 0.90 * $font-size-body;
+      color: lighten($base-color, 5%);
+    }
+
+    .size {
+      display: block;
+      font-size: 0.70 * $font-size-body;
+
+      color: lighten($base-color, 15%);
+    }
+  }
+}

@@ -5,10 +5,7 @@ Param(
     [parameter(Mandatory=$false)][string]$execPath,
     [parameter(Mandatory=$false)][string]$kubeconfigPath,
     [parameter(Mandatory=$false)][string]$configFile,
-    # [parameter(Mandatory=$false)][string[]]$composeFiles=("docker-compose-lef.yml","docker-compose-lef.override.yml"),
-    [parameter(Mandatory=$false)][string[]]$composeFiles=@(),
-    # [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "account.api", "lexon.api","lexon.mysql.api", "ocelotapigw"),
-    [parameter(Mandatory=$false)][string[]]$servicesToPush=("lexon.mysql.api"),
+    [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "account.api", "lexon.api","lexon.mysql.api", "ocelotapigw"),
     [parameter(Mandatory=$false)][string]$imageTagPlatform="linux",
     [parameter(Mandatory=$false)][string]$imageTag="dev",
     [parameter(Mandatory=$false)][bool]$deployCI=$false,
@@ -32,18 +29,7 @@ function ExecKube($cmd) {
     }
 }
 
-
-
 # Initialization
-$expNode = "-p .."
-if($composeFiles.Count -gt 0){
-    foreach ($file in $composeFiles) {
-        $expNode = $expNode +  " -f ../$file"
-    }
-}else{
-    $expNode = $expNode + " -f ../docker-compose.yml"
-}
-$expNode = $expNode + " build"
 
 $debugMode = $PSCmdlet.MyInvocation.BoundParameters["Debug"].IsPresent
 $useDockerHub = [string]::IsNullOrEmpty($registry)
@@ -80,7 +66,6 @@ if ([string]::IsNullOrEmpty($imageTag)) {
 
 Write-Host "=====================================" -ForegroundColor DarkCyan
 Write-Host "Docker image Tag: $imageTag" -ForegroundColor DarkCyan
-Write-Host "Compose files: $expNode" -ForegroundColor DarkCyan 
 Write-Host "Se usa DockeHub: $useDockerHub" -ForegroundColor DarkCyan 
 Write-Host "Deploy Kubernetes: $deployKubernetes" -ForegroundColor DarkCyan 
 Write-Host "Docker: Build $buildImages and Clean $cleanDocker" -ForegroundColor DarkCyan 
@@ -97,22 +82,19 @@ if ($buildImages) {
     }
     Write-Host "Building Docker images tagged with '$imageTag'" -ForegroundColor DarkBlue
     $env:TAG=$imageTag
-    # docker-compose -p .. -f ../docker-compose.yml build    
-    # Invoke-Command "$expNode"
-    docker-compose $ArrayArguments
-    docker-compose $expNode    
+    docker-compose -p .. -f ../docker-compose.yml build      
 }
 
 if ($pushImages) {
     Write-Host "Pushing images to $registry/$dockerOrg..." -ForegroundColor Magenta
-    # $services = ("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "account.api", "lexon.api","lexon.mysql.api", "ocelotapigw")
     docker login -u $dockerUser -p $dockerPassword
 
     foreach ($service in $servicesToPush) {
         $imageFqdn = if ($useDockerHub)  {"$dockerOrg/${service}"} else {"$registry/$dockerOrg/${service}"}
         $tagComplete = "$imageTagPlatform-$imageTag"
-        docker tag eshop/${service}:$tagComplete ${imageFqdn}:$tagComplete
-        Write-Host "imagen -> eshop/${service}:$tagComplete con tag ${imageFqdn}:$tagComplete" -ForegroundColor Magenta
+        # docker tag eshop/${service}:$tagComplete ${imageFqdn}:$tagComplete
+        docker tag $dockerOrg/${service}:$tagComplete ${imageFqdn}:$tagComplete
+        Write-Host "imagen -> $dockerOrg/${service}:$tagComplete con tag ${imageFqdn}:$tagComplete" -ForegroundColor Magenta
 
         docker push ${imageFqdn}:$tagComplete  
         Write-Host "Push image to ${imageFqdn}:$tagComplete" -ForegroundColor Magenta
