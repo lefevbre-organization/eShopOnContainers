@@ -6,7 +6,7 @@ import APPLICATION_ACTIONS from "./actions/applicationAction";
 import "./main.css";
 import i18n from "i18next";
 
-import Header from "./components/header/header";
+// import Header from "./components/header/header";
 import Routing from "./components/routing/routing";
 import Spinner from "./components/spinner/spinner";
 import Notification from "./components/notification/notification";
@@ -41,19 +41,19 @@ class Main extends Component {
       this.handlePutUserFromLexonConnector
     );
 
-    this.sendMessageGetUser();
+    this.sendMessageGetUser();   
   }
 
-  componentDidUpdate(prevProps) {
-    // if (prevProps.hasError !== this.props.hasError) {
-    //   this.setState( { showError: this.props.hasError });
-    // }
+  // componentDidUpdate(prevProps) {
+  //   // if (prevProps.hasError !== this.props.hasError) {
+  //   //   this.setState( { showError: this.props.hasError });
+  //   // }
 
-    if (prevProps.errors !== this.props.errors) {
-      const hasError = this.props.errors.length > 0 ? true : false;
-      this.setState({ showError: hasError });
-    }
-  }
+  //   if (prevProps.errors !== this.props.errors) {
+  //     const hasError = this.props.errors.length > 0 ? true : false;
+  //     this.setState({ showError: hasError });
+  //   }
+  // }
 
   componentWillUnmount() {
     window.removeEventListener("Checkclick", this.handleKeyPress);
@@ -154,7 +154,7 @@ class Main extends Component {
 
     return (
       <Fragment>
-        <Header title={"LEX-ON"} />
+        {/* <Header title={"LEX-ON"} /> */}
         {this.renderErrors()}
         <Notification
           initialModalState={showNotification}
