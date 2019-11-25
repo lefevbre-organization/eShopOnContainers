@@ -285,3 +285,4 @@ src/**/inf.yaml
 /src/Web/WebInbox-Google/build
 /src/Web/WebGoogleClient/Client/build
 /src/Web/WebLexonClient/Client/build
+/src/Web/WebImapClient/Client/client/dist
