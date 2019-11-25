@@ -62,4 +62,6 @@ env:
       value: 'K8S'
     - name: IsClusterEnv
       value: 'True'
-
+configValues: |
+ window.REACT_APP_ENVIRONMENT='PRODUCTION'
+ window.API_GATEWAY='http://localhost/lexonapigw'
