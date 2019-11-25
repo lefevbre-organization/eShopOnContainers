@@ -64,8 +64,8 @@ env:
       value: 'True'
       
 configValues: |
-  window.REACT_APP_ENVIRONMENT='PROD'
-  window.API_ACCOUNTS='http://localhost/account-api'
+  window.REACT_APP_ENVIRONMENT='PRODUCTION'
+  window.API_ACCOUNTS='http://localhost/accountapigw'
   window.URL_INBOX_GOOGLE= 'http://localhost/webgoogle'
   window.URL_INBOX_OUTLOOK= 'http://localhost/webgraph'
   window.URL_INBOX_IMAP= 'http://localhost:3005'

@@ -1,13 +1,13 @@
 {{- if .Values.ingress.enabled -}}
 {{- $ingressPath := include "pathBase" . -}}
-{{- $serviceName := .Values.app.svc.lexonapigw -}}
+{{- $serviceName := .Values.app.svc.accountapi }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "apigwmm.fullname" . }}
+  name: {{ template "webhooks-api.fullname" . }}
   labels:
-    app: {{ template "apigwmm.name" . }}
-    chart: {{ template "apigwmm.chart" . }}
+    app: {{ template "webhooks-api.name" . }}
+    chart: {{ template "webhooks-api.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- with .Values.ingress.annotations }}
