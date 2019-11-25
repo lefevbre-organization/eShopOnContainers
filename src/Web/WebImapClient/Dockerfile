@@ -5,7 +5,7 @@ EXPOSE 80
 
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
-COPY src/Web/WebGoogleClient/Client .
+COPY src/Web/WebImapClient/Client/client .
 RUN npm install
 RUN npm run build
 # RUN ls -lha /web
@@ -35,13 +35,14 @@ COPY src/Web/WebGoogleClient/WebGoogleClient.csproj src/Web/WebGoogleClient/
 COPY src/Web/WebLexonClient/WebLexonClient.csproj src/Web/WebLexonClient/
 COPY src/Web/WebOffice365Client/WebOffice365Client.csproj src/Web/WebOffice365Client/
 COPY src/Web/WebPortalClient/WebPortalClient.csproj src/Web/WebPortalClient/
+COPY src/Web/WebImapClient/WebImapClient.csproj src/Web/WebImapClient/
 
 RUN dotnet restore eLefebvreOnContainers-ServicesAndWebApps.sln
 
 COPY . .
-COPY --from=node-build /web/build src/Web/WebGoogleClient/wwwroot
-WORKDIR /src/src/Web/WebGoogleClient
-#RUN ls -lha /src/src/Web/WebGoogleClient/wwwroot
+COPY --from=node-build /web/build src/Web/WebImapClient/wwwroot
+WORKDIR /src/src/Web/WebImapClient
+#RUN ls -lha /src/src/Web/WebImapClient/wwwroot
 RUN dotnet publish --no-restore -c Release -o /app
 
 FROM build AS publish
@@ -49,4 +50,4 @@ FROM build AS publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "WebGoogleClient.dll"]
+ENTRYPOINT ["dotnet", "WebImapClient.dll"]
