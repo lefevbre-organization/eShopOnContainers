@@ -33,7 +33,6 @@
 {{- end -}}
 
 
-
 {{- define "pathBase" -}}
 {{- if .Values.inf.k8s.suffix -}}
 {{- $suffix := include "suffix-name" . -}}

@@ -12,8 +12,10 @@ service:
   port: 80
 
 ingress:
-  enabled: false
+  enabled: true
   annotations: {}
+  hosts:
+    - chart-example.local
   tls: []
 
 resources: {}
@@ -30,12 +32,18 @@ env:
   urls:
   # configmap declares variables which value is taken from the config map defined in template configmap.yaml (name is name of var and key the key in configmap).
   configmap:
+    - name: ConnectionString
+      key: webhooks__ConnectionString
     - name: ApplicationInsights__InstrumentationKey
       key: all__InstrumentationKey
     - name: EventBusConnection
       key: all__EventBusConnection
     - name: AzureServiceBusEnabled
       key: all__UseAzureServiceBus
+    - name: IdentityUrl
+      key: urls__IdentityUrl
+    - name: IdentityUrlExternal
+      key: urls__IdentityUrlExternal
     - name: ConnectionString
       key: locations__ConnectionString
     - name: Database

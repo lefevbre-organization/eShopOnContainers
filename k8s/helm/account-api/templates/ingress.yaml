@@ -1,13 +1,13 @@
 {{- if .Values.ingress.enabled -}}
 {{- $ingressPath := include "pathBase" . -}}
-{{- $serviceName := .Values.app.svc.account }}
+{{- $serviceName := .Values.app.svc.accountapi }}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "account-api.fullname" . }}
+  name: {{ template "webhooks-api.fullname" . }}
   labels:
-    app: {{ template "account-api.name" . }}
-    chart: {{ template "account-api.chart" . }}
+    app: {{ template "webhooks-api.name" . }}
+    chart: {{ template "webhooks-api.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- with .Values.ingress.annotations }}

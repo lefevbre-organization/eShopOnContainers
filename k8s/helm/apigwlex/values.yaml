@@ -1,6 +1,6 @@
 replicaCount: 1
 clusterName: eshop-aks
-pathBase: /weblexonapigw
+pathBase: /lexonapigw
 
 image:
   repository: elefebvreoncontainers/ocelotapigw

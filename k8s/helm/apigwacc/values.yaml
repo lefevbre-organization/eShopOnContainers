@@ -1,6 +1,6 @@
 replicaCount: 1
 clusterName: eshop-aks
-pathBase: /webaccountapigw
+pathBase: /accountapigw
 
 image:
   repository: elefebvreoncontainers/ocelotapigw
