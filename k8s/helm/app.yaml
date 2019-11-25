@@ -28,7 +28,7 @@ app:                                                  # app global settings
       graph: webgraph
       portal: webportal
       lexon: weblexon
-      webaccountapigw: webaccountapigw
+      accountapigw: accountapigw
       accountapi: account-api
       lexonapigw: lexonapigw
       lexonapi: lexon-api
@@ -59,7 +59,7 @@ app:                                                  # app global settings
       google: webgoogle
       graph: webgraph
       lexon: weblexon
-      webaccountapigw: webaccountapigw
+      accountapigw: accountapigw
       accountapi: account-api
       lexonapigw: lexonapigw
       lexonapi: lexon-api
