@@ -3,7 +3,7 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ template "webgoogle.fullname" . }}
+  name: {{ include "webgoogle.fullname" . }}
   labels:
     ufo: {{ $cfgname}}
     app: {{ template "webgoogle.name" . }}
@@ -28,44 +28,40 @@ spec:
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
-          image: "{{ template "fqdn-image" . }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          env:
-            - name: PATH_BASE
-              value: {{ include "pathBase" . }}
-            - name: k8sname
-              value: {{ .Values.clusterName }}
-          {{- if .Values.env.values -}}
-          {{- range .Values.env.values }}
-            - name: {{ .name }}
-              value: {{ .value | quote }}
-          {{- end -}}
-          {{- end -}}
-          {{- if .Values.env.configmap -}}
-          {{- range .Values.env.configmap }}
-            - name: {{ .name }}
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ $cfgname }}
-                  key: {{ .key }}
-          {{- end -}}
-          {{- end }}
           ports:
             - name: http
               containerPort: 80
               protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          volumeMounts:
+            - name:  webgoogle-config-volume
+              mountPath: /app/wwwroot/config.js
+              subPath: config.js
+              readOnly: true
           resources:
-{{ toYaml .Values.resources | indent 12 }}
-    {{- with .Values.nodeSelector }}
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name:  webgoogle-config-volume
+          configMap:
+            name: cfg-elefebvre-webgoogle
+      {{- with .Values.nodeSelector }}
       nodeSelector:
-{{ toYaml . | indent 8 }}
-    {{- end }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     {{- with .Values.affinity }}
       affinity:
-{{ toYaml . | indent 8 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}
     {{- with .Values.tolerations }}
       tolerations:
-{{ toYaml . | indent 8 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}
-
