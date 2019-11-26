@@ -25,14 +25,15 @@ namespace Lexon.MySql.Infrastructure.Repositories
             _conn = _settings.Value.ConnectionString;
         }
 
-        public async Task<Result<JosUserCompanies>> GetCompaniesListAsync(int pageSize, int pageIndex, string idNavisionUser)
+        public async Task<Result<JosUserCompanies>> GetCompaniesListAsync(int pageSize, int pageIndex, string idUser)
         {
             var result = new Result<JosUserCompanies>(new JosUserCompanies());
-            var resultUser = await GetUserAsync(idNavisionUser);
-            if (resultUser.errors.Count > 0)
-                return result;
-            var filtro = $"{{\"NavisionId\":\"{idNavisionUser}\"}}";
-            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.GetCompanies}", $"P_FILTER:{filtro}", $"P_UC:{resultUser.data.IdUser}", $"pageSize:{pageSize}", $"pageIndex:{pageIndex}" });
+            //var resultUser = await GetUserAsync(idUser);
+            //if (resultUser.errors.Count > 0)
+            //    return result;
+            //var filtro = $"{{\"NavisionId\":\"{idNavisionUser}\"}}";
+            var filtro = $"{{\"IdUser\":\"{idUser}\"}}";
+            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.GetCompanies}", $"P_FILTER:{filtro}", $"P_UC:{idUser}", $"pageSize:{pageSize}", $"pageIndex:{pageIndex}" });
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -42,7 +43,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetCompanies, conn))
                     {
                         command.Parameters.Add(new MySqlParameter("P_FILTER", MySqlDbType.String) { Value = filtro });
-                        command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = resultUser.data.IdUser });
+                        command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = idUser });
                         command.Parameters.Add(new MySqlParameter("P_PAGE_SIZE", MySqlDbType.Int32) { Value = pageSize });
                         command.Parameters.Add(new MySqlParameter("P_PAGE_NUMBER", MySqlDbType.Int32) { Value = pageIndex });
                         command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
