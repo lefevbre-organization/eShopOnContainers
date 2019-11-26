@@ -39,15 +39,15 @@ namespace Lexon.Infrastructure.Services
             _client.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
-        public async Task<Result<long>> AddClassificationToListAsync(string idUser, long idCompany, string[] listaMails, long idRelated, short idClassificationType = 1)
+        public async Task<Result<long>> AddClassificationToListAsync(string idUser, long idCompany, string bbdd, string[] listaMails, long idRelated, short idClassificationType = 1)
         {
             long a = 0;
             var result = new Result<long>(a);
 
-            GetInfoUser(idUser, idCompany, out string bbdd, out int codeUser);
+            //GetInfoUser(idUser, idCompany, out string bbdd, out int codeUser);
             var url = $"{_settings.Value.LexonMySqlUrl}/classifications/add";
 
-            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idType:{idClassificationType}", $"bbdd:{bbdd}", $"idUser:{idUser}", $"idMail:{listaMails}", $"idRelated:{idRelated}" });
+            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idType:{idClassificationType}", $"bbdd:{bbdd}", $"idMail:{listaMails}", $"idRelated:{idRelated}" });
             TraceLog(parameters: new string[] { $"url={url}" });
 
             var classificationAdd = new ClassificationAddView
@@ -281,13 +281,13 @@ namespace Lexon.Infrastructure.Services
             }
         }
 
-        public async Task<Result<List<LexonEntityBase>>> GetEntitiesListAsync(int pageSize, int pageIndex, short idType, string idUser, long idCompany, string search, long idFilter)
+        public async Task<Result<List<LexonEntityBase>>> GetEntitiesListAsync(int pageSize, int pageIndex, short idType, string idUser, long idCompany, string bbdd, string search, long idFilter)
         {
             var result = new Result<List<LexonEntityBase>>(new List<LexonEntityBase>());
 
-            GetInfoUser(idUser, idCompany, out string bbdd, out int codeUser);
+            //GetInfoUser(idUser, idCompany, out string bbdd, out int codeUser);
             var request = new HttpRequestMessage(HttpMethod.Get,
-                $"{_settings.Value.LexonMySqlUrl}/entities/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={idType}&bbdd={bbdd}&idUser={codeUser}&idFilter={idFilter}");
+                $"{_settings.Value.LexonMySqlUrl}/entities/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={idType}&bbdd={bbdd}&idUser={idUser}&idFilter={idFilter}");
 
             TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany={idCompany}", $"bbdd:{bbdd}", $"idType:{idType}", $"search={search}", $"idFilter={idFilter}" });
             TraceLog(parameters: new string[] { $"request={request}" });
@@ -346,13 +346,13 @@ namespace Lexon.Infrastructure.Services
             }
         }
 
-        private void GetInfoUser(string idUser, long idCompany, out string bbdd, out int codeUser)
-        {
-            //todo get bbdd and code from user
-            bbdd = "lexon_admin_02";
-            codeUser = 449;
-            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany={idCompany}", $"bbdd:{bbdd}", $"codeUser:{codeUser}" });
-        }
+        //private void GetInfoUser(string idUser, long idCompany, out string bbdd, out int codeUser)
+        //{
+        //    //todo get bbdd and code from user
+        //    bbdd = "lexon_admin_02";
+        //    codeUser = 449;
+        //    TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany={idCompany}", $"bbdd:{bbdd}", $"codeUser:{codeUser}" });
+        //}
 
         public async Task<Result<List<LexonUser>>> GetListUsersAsync(int pageSize, int pageIndex, string idUser)
         {
@@ -363,16 +363,69 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<Result<LexonUser>> GetUserAsync(string idUser)
         {
-            TraceLog(parameters: new string[] { $"idUser:{idUser}" });
-            return await _usersRepository.GetAsync(idUser);
+            var result = new Result<LexonUser>(new LexonUser ());
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/user?idUser={idUser}");
+            TraceLog(parameters: new string[] { $"request:{request}" });
+
+            try
+            {
+                using (var response = await _client.SendAsync(request))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var resultMysql = await response.Content.ReadAsAsync<Result<JosUser>>();
+                        result.errors = resultMysql.errors;
+
+                        if (string.IsNullOrEmpty(resultMysql.data.Name))
+                            TraceOutputMessage(result.errors, "Mysql don´t recover the user", 2001);
+                        else
+                        {
+                            result.data = new LexonUser() { Name = resultMysql.data.Name, idUser = resultMysql.data.Name, idNavision  = idUser };
+                            TraceLog(parameters: new string[] { $"iduser {result.data.idUser}" });
+                            return result;
+                        }
+                    }
+                    else
+                    {
+                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            await GetUserForMongoAsync(idUser, result);
+            return result;
+
         }
 
-        public async Task<Result<long>> RemoveClassificationFromListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType = 1)
+        private async Task GetUserForMongoAsync(string idUser, Result<LexonUser> result)
+        {
+            try
+            {
+                var resultMongo = await _usersRepository.GetAsync(idUser);
+
+                if (resultMongo.errors.Count > 0)
+                    result.errors.AddRange(resultMongo.errors);
+                else if ((string.IsNullOrEmpty(resultMongo.data.Name)))
+                    TraceOutputMessage(result.errors, "MongoDb don´t recover the user", 2002);
+                else
+                    result.data = resultMongo.data;
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+        }
+
+        public async Task<Result<long>> RemoveClassificationFromListAsync(string idUser, long idCompany, string bbdd, string idMail, long idRelated, short idClassificationType = 1)
         {
             long a = 0;
             var result = new Result<long>(a);
 
-            GetInfoUser(idUser, idCompany, out string bbdd, out int codeUser);
+            //GetInfoUser(idUser, idCompany, out string bbdd, out int codeUser);
             var url = $"{_settings.Value.LexonMySqlUrl}/classifications/delete";
 
             TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idType:{idClassificationType}", $"bbdd:{bbdd}", $"idUser:{idUser}", $"idMail:{idMail}", $"idRelated:{idRelated}" });
