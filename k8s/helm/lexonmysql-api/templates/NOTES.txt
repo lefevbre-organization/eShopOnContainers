@@ -1,4 +1,4 @@
-eShop Account API installed.
+eShop Lexon MYSQL API installed.
 -----------------------------
 
 This API is not directly exposed outside cluster. If need to access it use:
