@@ -287,7 +287,7 @@ namespace Lexon.Infrastructure.Services
             var result = new Result<List<LexonEntityBase>>(new List<LexonEntityBase>());
 
             var request = new HttpRequestMessage(HttpMethod.Get,
-                $"{_settings.Value.LexonMySqlUrl}/entities/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={idType}&bbdd={bbdd}&search={search}&idUser={idUser}&idFilter={idFilter}");
+                $"{_settings.Value.LexonMySqlUrl}/entities/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={idType}&bbdd={bbdd}&idUser={idUser}&idFilter={idFilter}");
 
             TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany={idCompany}", $"bbdd:{bbdd}", $"idType:{idType}", $"search={search}", $"idFilter={idFilter}" });
             TraceLog(parameters: new string[] { $"request={request}" });
