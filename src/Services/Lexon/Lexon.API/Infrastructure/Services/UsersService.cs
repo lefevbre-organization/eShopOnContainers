@@ -122,9 +122,10 @@ namespace Lexon.Infrastructure.Services
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        foreach (var entity in (await response.Content.ReadAsAsync<Result<JosRelationsList>>()).data.Actuaciones)
+                        var resultMysql = await response.Content.ReadAsAsync<Result<JosRelationsList>>();
+                        foreach (var entity in resultMysql.data.Actuaciones)
                         {
-                            
+                           
                             result.data.Add(new LexonActuation() { name = entity.Nombre, description = entity.Asunto, entityType = "Mail", idMail= idMail, idRelated= entity.IdRelacion });
                             TraceLog(parameters: new string[] { $"add Name {entity.Nombre}", $"desc {entity.Asunto}", $"tipo Mail", $"idrelated {entity.IdRelacion}", $"idmail {idMail}" });
                         }
@@ -381,7 +382,7 @@ namespace Lexon.Infrastructure.Services
                             TraceOutputMessage(result.errors, "Mysql don´t recover the user", 2001);
                         else
                         {
-                            result.data = new LexonUser() { Name = resultMysql.data.Name, idUser = resultMysql.data.Name, idNavision  = idUser };
+                            result.data = new LexonUser() { Name = resultMysql.data.Name, idUser = resultMysql.data.IdUser.ToString(), idNavision  = idUser };
                             TraceLog(parameters: new string[] { $"iduser {result.data.idUser}" });
                             return result;
                         }

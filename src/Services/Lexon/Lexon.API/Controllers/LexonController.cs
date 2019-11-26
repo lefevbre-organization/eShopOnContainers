@@ -144,7 +144,7 @@ namespace Lexon.API.Controllers
             , [FromQuery] short idType = 1
             , string search = null
             , [FromQuery] int idFilter = 1
-            , [FromQuery]int pageSize = 0
+            , [FromQuery]int pageSize = 20
             , [FromQuery]int pageIndex = 1)
         {
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || idType <= 0)
