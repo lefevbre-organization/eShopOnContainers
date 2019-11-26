@@ -10,8 +10,7 @@ import {
 
 export const getCompanies = user => {
   return new Promise((resolve, reject) => {
-    // CAMBIAR!!!!!!!!
-    const url = `${window.API_GATEWAY}/${COMPANIES}?idUser=${user.idNavision}`;
+    const url = `${window.API_GATEWAY}/${COMPANIES}?idUser=${user.idUser}`;
     // CAMBIAR!!!!!!!!
 
     fetch(url, {
@@ -153,9 +152,9 @@ export const getTypes = () => {
   });
 };
 
-export const getResults = (user, companyId, typeId, search) => {
+export const getResults = (user, company, typeId, search) => {
   return new Promise((resolve, reject) => {
-    const url = `${window.API_GATEWAY}/${RESULTS}?pageSize=100&pageIndex=1&search=${search}&idUser=${user.idUser}&idCompany=${companyId}&idType=${typeId}`;
+    const url = `${window.API_GATEWAY}/${RESULTS}?pageSize=100&pageIndex=1&search=${search}&idUser=${user.idUser}&idCompany=${company.idCompany}&bbdd=${company.bbdd}&idType=${typeId}`;
     //const url = `${window.API_GATEWAY}/${RESULTS}?pageSize=100&pageIndex=1&search=${search}&idUser=449&idCompany=${companyId}&idType=${typeId}`;
     fetch(url, {
       method: "GET"
