@@ -89,7 +89,7 @@ class ClassifyEmails extends Component {
     }
 
     this.setState({ loading: true });
-    getResults(user, companySelected.idCompany, type, search)
+    getResults(user, companySelected, type, search)
       .then(result => {
         this.setState({
           listResultsByType: result.results.data
