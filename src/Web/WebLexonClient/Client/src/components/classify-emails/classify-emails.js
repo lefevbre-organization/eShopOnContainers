@@ -149,10 +149,12 @@ class ClassifyEmails extends Component {
 
     // this.setState({ resultsSelected: resultsSelected });
 
+    const { updateClassifications } = this.props;
     let resultsSelected = [];
     resultsSelected.push(item);
 
     this.setState({ resultsSelected: resultsSelected });
+    updateClassifications(item);
   }
 
   renderSpinner() {
