@@ -8,7 +8,7 @@ WORKDIR /web
 COPY src/Web/WebImapClient/Client/client .
 RUN npm install
 RUN npm run build
-# RUN ls -lha /web
+RUN ls -lha /web
 # RUN ls -lha /web/build
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
@@ -40,9 +40,9 @@ COPY src/Web/WebImapClient/WebImapClient.csproj src/Web/WebImapClient/
 RUN dotnet restore eLefebvreOnContainers-ServicesAndWebApps.sln
 
 COPY . .
-COPY --from=node-build /web/build src/Web/WebImapClient/wwwroot
+COPY --from=node-build /web/dist src/Web/WebImapClient/wwwroot
 WORKDIR /src/src/Web/WebImapClient
-#RUN ls -lha /src/src/Web/WebImapClient/wwwroot
+RUN ls -lha /src/src/Web/WebImapClient/wwwroot
 RUN dotnet publish --no-restore -c Release -o /app
 
 FROM build AS publish

@@ -6,7 +6,9 @@ Param(
     [parameter(Mandatory=$false)][string]$kubeconfigPath,
     [parameter(Mandatory=$false)][string]$configFile,
     # [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "account.api", "lexon.api","lexon.mysql.api", "ocelotapigw"),
-    [parameter(Mandatory=$false)][string[]]$servicesToPush=("lexon.api","lexon.mysql.api"),
+    [parameter(Mandatory=$false)][string[]]$servicesToPush=( "weblexonclient"),
+    [parameter(Mandatory=$false)][string[]]$servicesToBuild=@(),
+    # [parameter(Mandatory=$false)][string[]]$servicesToBuild=("lexon.api","lexon.mysql.api", "weblexonclient",),
     [parameter(Mandatory=$false)][string]$imageTagPlatform="linux",
     [parameter(Mandatory=$false)][string]$imageTag="dev",
     [parameter(Mandatory=$false)][bool]$deployCI=$false,
@@ -83,7 +85,14 @@ if ($buildImages) {
     }
     Write-Host "Building Docker images tagged with '$imageTag'" -ForegroundColor DarkBlue
     $env:TAG=$imageTag
-    docker-compose -p .. -f ../docker-compose.yml build      
+    if($servicesToBuild.Count -gt 0){
+        foreach ($service in $servicesToBuild) {
+            Write-Host "TODO Building Docker images of $service tagged with '$imageTag'" -ForegroundColor DarkBlue
+        }
+    }else{
+
+        docker-compose -p .. -f ../docker-compose.yml build      
+    }
 }
 
 if ($pushImages) {
