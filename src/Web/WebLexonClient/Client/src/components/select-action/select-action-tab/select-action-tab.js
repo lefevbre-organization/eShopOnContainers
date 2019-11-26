@@ -17,13 +17,13 @@ class SelectActionTab extends Component {
         bsPrefix="menu-lexon-actions"
       >
         <Tab eventKey="classify" title="Clasificar">
-          <TabClassify 
+          <TabClassify
             user={user}
             toggleNotification={toggleNotification}
           />
         </Tab>
         <Tab eventKey="document" title="Documentar">
-          <TabDocument user={user} />
+          <TabDocument userNavision={user} />
         </Tab>
       </Tabs>
     );

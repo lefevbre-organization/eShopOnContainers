@@ -11,5 +11,5 @@ window.URL_GET_ACCOUNTS =
 window.URL_MF_GOOGLE = "http://localhost:3000/user";
 window.URL_MF_OUTLOOK = "http://localhost:3001/user";
 window.URL_MF_IMAP = "http://localhost:9000/user";
-window.URL_MF_LEXON = "http://localhost:3005/static/js/main.js";
+window.URL_MF_LEXON = "http://localhost:3004/static/js/main.js";
 window.URL_SERVER_API = "http://localhost:9010";

@@ -18,6 +18,8 @@ class ListClassifications extends Component {
     } = this.props;
     const mail = selectedMessages[0];
 
+    const uuidv1 = require("uuid/v1");
+
     return (
       <Fragment>
         <h2 className="lexon-title-list">{i18n.t("list-classifications.classifications")}</h2>
@@ -27,7 +29,7 @@ class ListClassifications extends Component {
               return (
                 <Classification
                   classification={classification}
-                  key={classification.Name}
+                  key={uuidv1()}
                   user={user}
                   mail={mail}
                   updateClassifications={updateClassifications}

@@ -33,17 +33,23 @@ class ConfirmRemoveClassification extends Component {
       updateClassifications,
       toggleNotification
     } = this.props;
-    const { IdClassification, IdMail, IdType } = classification;
+    const { idMail, entityIdType, idRelated } = classification;
     removeClassification(
+      idMail,
+      entityIdType,
+      companySelected.bbdd,
       user,
+      idRelated,
       companySelected.idCompany,
-      IdMail,
-      IdType,
-      IdClassification
     )
-      .then(updateClassifications(IdMail))
+      .then(data => {
+        if (data.results >= 1) {
+          toggleNotification(i18n.t("classify-emails.classification-removed-ok"));
+          updateClassifications(idMail);
+        }
+      })
       .catch(error => {
-        toggleNotification(`ERROR -> ${error}`);
+        toggleNotification(i18n.t("classify-emails.classification-removed-ok"));
         console.log("error ->", error);
       });
   }

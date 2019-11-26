@@ -29,7 +29,9 @@
     "title": "New classification",
     "body": "Select classification type to load the corresponding list and assign the messages to one of the items in the list.",
     "classification-saved-ok": "The classification saved correctly",
-    "classification-saved-ko": "There was an error saving the classification"
+    "classification-saved-ko": "There was an error saving the classification",
+    "classification-removed-ok": "The classification removed correctly",
+    "classification-removed-ko": "There was an error removing the classification"
   },
   "classification-type": {
     "type": "Type",

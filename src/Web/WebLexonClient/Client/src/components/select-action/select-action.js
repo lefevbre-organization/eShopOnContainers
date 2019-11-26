@@ -18,16 +18,16 @@ class SelectAction extends Component {
   }
 
   render() {
-    const { user, companies,toggleNotification } = this.props;
+    const { user, companies, toggleNotification } = this.props;
     return (
       <div className="container-fluid">
         <SelectActionHeader
           companies={companies}
           changePage={this.props.changePage}
         />
-        <SelectActionTab 
+        <SelectActionTab
           user={user}
-          toggleNotification={toggleNotification} 
+          toggleNotification={toggleNotification}
         />
       </div>
     );

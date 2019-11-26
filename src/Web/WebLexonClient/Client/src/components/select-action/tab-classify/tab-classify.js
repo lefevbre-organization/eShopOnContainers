@@ -67,7 +67,7 @@ class TabClassify extends Component {
   getClassifications(mailId) {
     const { user, companySelected } = this.props;
 
-    getClassifications(user, companySelected.idCompany, mailId)
+    getClassifications(user, companySelected.idCompany, companySelected.bbdd, mailId)
       .then(result => {
         this.setState({
           classifications: result.classifications,

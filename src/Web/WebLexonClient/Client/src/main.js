@@ -10,7 +10,7 @@ import i18n from "i18next";
 import Routing from "./components/routing/routing";
 import Spinner from "./components/spinner/spinner";
 import Notification from "./components/notification/notification";
-import { getCompanies } from "./services/services-lexon";
+import { getCompanies, getUser } from "./services/services-lexon";
 
 class Main extends Component {
   constructor(props) {
@@ -91,26 +91,37 @@ class Main extends Component {
       this.props.addMessage(message);
     });
 
-    getCompanies(user)
+    getUser(user)
       .then(result => {
-        this.setState({
-          isLoading: false,
-          user: user,
-          companies: result.companies
-        });
-        if (Array.isArray(result.errors)) {
-          result.errors.forEach(error =>
-            this.props.addError(JSON.stringify(error))
-          );
-        } else {
-          this.props.addError(JSON.stringify(result.errors));
-        }
+        this.setState({ user: result.user });
+        getCompanies(this.state.user)
+          .then(result => {
+            this.setState({
+              isLoading: false,
+              companies: result.companies
+            });
+            if (Array.isArray(result.errors)) {
+              result.errors.forEach(error =>
+                this.props.addError(JSON.stringify(error))
+              );
+            } else {
+              this.props.addError(JSON.stringify(result.errors));
+            }
+          })
+          .catch(errors => {
+            this.setState({ isLoading: false });
+            if (Array.isArray(errors)) {
+              errors.forEach(error =>
+                this.props.addError(JSON.stringify(error))
+              );
+            } else {
+              this.props.addError(JSON.stringify(errors));
+            }
+            console.log("errors ->", this.props.errors);
+          });
       })
       .catch(errors => {
-        this.setState({
-          isLoading: false,
-          user: user
-        });
+        this.setState({ isLoading: false });
         if (Array.isArray(errors)) {
           errors.forEach(error => this.props.addError(JSON.stringify(error)));
         } else {
