@@ -286,9 +286,8 @@ namespace Lexon.Infrastructure.Services
         {
             var result = new Result<List<LexonEntityBase>>(new List<LexonEntityBase>());
 
-            //GetInfoUser(idUser, idCompany, out string bbdd, out int codeUser);
             var request = new HttpRequestMessage(HttpMethod.Get,
-                $"{_settings.Value.LexonMySqlUrl}/entities/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={idType}&bbdd={bbdd}&idUser={idUser}&idFilter={idFilter}");
+                $"{_settings.Value.LexonMySqlUrl}/entities/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={idType}&bbdd={bbdd}&search={search}&idUser={idUser}&idFilter={idFilter}");
 
             TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany={idCompany}", $"bbdd:{bbdd}", $"idType:{idType}", $"search={search}", $"idFilter={idFilter}" });
             TraceLog(parameters: new string[] { $"request={request}" });
@@ -347,14 +346,6 @@ namespace Lexon.Infrastructure.Services
             }
         }
 
-        //private void GetInfoUser(string idUser, long idCompany, out string bbdd, out int codeUser)
-        //{
-        //    //todo get bbdd and code from user
-        //    bbdd = "lexon_admin_02";
-        //    codeUser = 449;
-        //    TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany={idCompany}", $"bbdd:{bbdd}", $"codeUser:{codeUser}" });
-        //}
-
         public async Task<Result<List<LexonUser>>> GetListUsersAsync(int pageSize, int pageIndex, string idUser)
         {
             TraceLog(parameters: new string[] { $"idUser:{idUser}" });
@@ -366,7 +357,7 @@ namespace Lexon.Infrastructure.Services
         {
             var result = new Result<LexonUser>(new LexonUser ());
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/user?idUser={idUser}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/user?idNavisionUser={idUser}");
             TraceLog(parameters: new string[] { $"request:{request}" });
 
             try
@@ -426,7 +417,6 @@ namespace Lexon.Infrastructure.Services
             long a = 0;
             var result = new Result<long>(a);
 
-            //GetInfoUser(idUser, idCompany, out string bbdd, out int codeUser);
             var url = $"{_settings.Value.LexonMySqlUrl}/classifications/delete";
 
             TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idType:{idClassificationType}", $"bbdd:{bbdd}", $"idUser:{idUser}", $"idMail:{idMail}", $"idRelated:{idRelated}" });

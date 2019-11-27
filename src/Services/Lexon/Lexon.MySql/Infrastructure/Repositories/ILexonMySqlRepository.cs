@@ -5,7 +5,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
 {
     public interface ILexonMySqlRepository
     {
-        Task<Result<JosUserCompanies>> GetCompaniesListAsync(int pageSize, int pageIndex, string idNavisionUser);
+        Task<Result<JosUserCompanies>> GetCompaniesListAsync(int pageSize, int pageIndex, string idUser);
         Task<Result<JosEntityTypeList>> GetMasterEntitiesAsync();
 
         Task<Result<JosEntityList>> SearchEntitiesAsync(int pageSize, int pageIndex, short idType, string bbdd, string idUser, string search, long idFilter);

@@ -29,7 +29,9 @@
     "title": "Nueva clasificación",
     "body": "Selecciona tipo de clasificación para cargar el listado correspondiente y asigna los mensajes a uno de los elementos de la lista.",
     "classification-saved-ok": "La clasificación se ha guardado correctamente",
-    "classification-saved-ko": "Ha habido un error guardando la clasificación"
+    "classification-saved-ko": "Ha habido un error guardando la clasificación",
+    "classification-removed-ok": "La clasificación se ha borrado correctamente",
+    "classification-removed-ko": "Ha habido un error borrando la clasificación"
   },
   "classification-type": {
     "type": "Tipo",

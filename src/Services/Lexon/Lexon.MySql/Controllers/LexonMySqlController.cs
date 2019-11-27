@@ -29,12 +29,12 @@ namespace Lexon.MySql.Controllers
         [Route("user")]
         [ProducesResponseType(typeof(Result<JosUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<JosUser>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UserAsync(string idUser = "E1621396")
+        public async Task<IActionResult> UserAsync(string idNavisionUser = "E1621396")
         {
-            if (string.IsNullOrEmpty(idUser))
+            if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
-            var result = await _lexonService.GetUserAsync(idUser);
+            var result = await _lexonService.GetUserAsync(idNavisionUser);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
@@ -46,7 +46,7 @@ namespace Lexon.MySql.Controllers
         public async Task<IActionResult> CompaniesAsync(
             [FromQuery]int pageSize = 0
             , [FromQuery]int pageIndex = 1
-            , string idUser = "E1621396")
+            , string idUser = "449")
 
         {
             if (string.IsNullOrEmpty(idUser))

@@ -7,7 +7,7 @@
  * @type {{LOGIN: string, FOLDERS: string}}
  */
 export const URLS = {
-  LOGIN: `${window.URL_SERVER_API}/api/v1/application/login`,
-  FOLDERS: `${window.URL_SERVER_API}/api/v1/folders`,
-  SMTP: `${window.URL_SERVER_API}/api/v1/smtp`
+  LOGIN: `/api/v1/application/login`,
+  FOLDERS: `/api/v1/folders`,
+  SMTP: `/api/v1/smtp`
 };

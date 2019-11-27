@@ -21,15 +21,14 @@ class Classification extends Component {
 
   removeClassification(classification) {
     const { user, mail, companySelected, updateClassifications } = this.props;
-    const idType = 1;
-    const idRelated = 2;
 
     removeClassification(
-      user,
-      companySelected.idCompany,
       mail,
-      idType,
-      idRelated
+      classification.idMail,
+      classification.bbdd,
+      user,
+      classification.idRelated,
+      companySelected.companyId
     )
       .then(updateClassifications(mail))
       .catch(error => {
@@ -38,15 +37,15 @@ class Classification extends Component {
   }
 
   render() {
-    const { Description, Type } = this.props.classification;
+    const { description, entityType } = this.props.classification;
 
     return (
       <li className="col-xl-12 lexon-item">
         <p>
-          <strong>{i18n.t("classification.type")}</strong> {Type}
+          <strong>{i18n.t("classification.type")}</strong> {entityType}
         </p>
         <p>
-          <strong>{i18n.t("classification.assigned")}</strong> {Description}
+          <strong>{i18n.t("classification.assigned")}</strong> {description}
         </p>
         <p className="text-right tools-bar">
           <a
