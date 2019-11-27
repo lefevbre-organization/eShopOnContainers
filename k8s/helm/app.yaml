@@ -24,16 +24,6 @@ app:                                                  # app global settings
       marketing: marketing-api                        # ingress entry for marketing api
       webhooks: webhooks-api                          # ingress entry for webhooks api
       webhooksweb: webhooks-web                       # ingress entry for webhooks web demo client
-      google: webgoogle
-      graph: webgraph
-      portal: webportal
-      lexon: weblexon
-      accountapigw: accountapigw
-      accountapi: account-api
-      lexonapigw: lexonapigw
-      lexonapi: lexon-api
-      lexonmysqlapi: lexonmysql-api
-      
   svc:
       basket: basket                                    # service name for basket api
       catalog: catalog                                  # service name for catalog api
@@ -55,13 +45,3 @@ app:                                                  # app global settings
       marketing: marketing                              # service name for marketing ap
       webhooks: webhooks                                # service name for webhooks api
       webhooksweb: webhooksweb                          # service name for webhooks web
-      portal: webportal
-      google: webgoogle
-      graph: webgraph
-      lexon: weblexon
-      accountapigw: accountapigw
-      accountapi: account-api
-      lexonapigw: lexonapigw
-      lexonapi: lexon-api
-      lexonmysqlapi: lexonmysql-api
-      

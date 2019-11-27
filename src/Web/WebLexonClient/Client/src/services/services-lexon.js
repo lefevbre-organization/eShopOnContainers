@@ -11,7 +11,6 @@ import {
 export const getCompanies = user => {
   return new Promise((resolve, reject) => {
     const url = `${window.API_GATEWAY}/${COMPANIES}?idUser=${user.idUser}`;
-    // CAMBIAR!!!!!!!!
 
     fetch(url, {
       method: "GET"

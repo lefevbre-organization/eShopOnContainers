@@ -1,9 +1,9 @@
 replicaCount: 1
 clusterName: eshop-aks
-pathBase: /lexonmysql-api
+pathBase: /webimapserver
 
 image:
-  repository: elefebvreoncontainers/lexon.mysql.api
+  repository: elefebvreoncontainers/webimapserver
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -51,9 +51,9 @@ env:
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
-      value: Staging
-    - name: ConnectionString
-      value: 'database=lexon_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-azure;password=FDSk2q3+asd5;sslmode=none'
+      value: Development
+    - name: LexonMySqlUrl
+      value: 'http://lexonmysql-api/api/v1/LexonMySql'
     - name: OrchestratorType
       value: 'K8S'
 

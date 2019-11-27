@@ -4,8 +4,8 @@ import PropTypes from "prop-types";
 import i18n from "i18next";
 import { connect } from "react-redux";
 import ACTIONS from "../../actions/selections";
-import PerfectScrollbar from "react-perfect-scrollbar";
-import "react-perfect-scrollbar/dist/css/styles.css";
+// import PerfectScrollbar from "react-perfect-scrollbar";
+// import "react-perfect-scrollbar/dist/css/styles.css";
 
 import Company from "../company/company";
 import { PAGE_SELECT_ACTION } from "../../constants";
@@ -102,13 +102,13 @@ class SelectCompany extends Component {
         <div className="row">
           <form className="col-12 form-selection-business">
             <p>{i18n.t("select-company.select-company")}</p>
-            <PerfectScrollbar style={{ height: "50vh" }}>
+            {/* <PerfectScrollbar style={{ height: "50vh" }}> */}
               <ul className="list-unstyled">
                 {this.props.companies.map(company => {
                   return _this.renderCompany(company);
                 })}
               </ul>
-            </PerfectScrollbar>
+            {/* </PerfectScrollbar> */}
             {this.renderShowMessageSelectCompany()}
             <div className="d-flex justify-content-center mt-5">
               <button
