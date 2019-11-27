@@ -28,6 +28,8 @@ app:                                                  # app global settings
       graph: webgraph
       portal: webportal
       lexon: weblexon
+      imap: webimap
+      imapserver: webimapserver
       accountapigw: accountapigw
       accountapi: account-api
       lexonapigw: lexonapigw
@@ -59,6 +61,8 @@ app:                                                  # app global settings
       google: webgoogle
       graph: webgraph
       lexon: weblexon
+      imap: webimap
+      imapserver: webimapserver
       accountapigw: accountapigw
       accountapi: account-api
       lexonapigw: lexonapigw

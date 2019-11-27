@@ -26,7 +26,7 @@ if ($useLocalk8s -eq $true) {
 $pullPolicy = "Always"
 
 if ($useLocalImages -eq $true) {
-  $pullPolicy = "IfNotPresent"
+  $pullPolicy = "Always"
 }
 
 if ($externalDns -eq "aks") {
@@ -70,7 +70,7 @@ Write-Host "Begin eShopOnContainers installation using Helm" -ForegroundColor Gr
 
 
 $infras = ( "nosql-data", "rabbitmq")
-$charts = ( "apigwlex", "lexon-api", "lexonmysql-api", "apigwacc", "account-api" , "webgoogle", "webgraph", "weblexon", "webportal")
+$charts = ( "apigwlex", "lexon-api", "lexonmysql-api", "apigwacc", "account-api" , "webgoogle", "webgraph", "weblexon", "webportal", "webimap", "webimapserver")
 
 if ($deployInfrastructure) {
     foreach ($infra in $infras) {
