@@ -52,7 +52,7 @@ spec:
           {{- end }}
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 9010
               protocol: TCP
           resources:
 {{ toYaml .Values.resources | indent 12 }}

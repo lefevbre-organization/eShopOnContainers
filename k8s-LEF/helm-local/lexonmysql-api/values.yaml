@@ -32,8 +32,6 @@ env:
   urls:
   # configmap declares variables which value is taken from the config map defined in template configmap.yaml (name is name of var and key the key in configmap).
   configmap:
-    - name: ConnectionString
-      key: webhooks__ConnectionString
     - name: ApplicationInsights__InstrumentationKey
       key: all__InstrumentationKey
     - name: EventBusConnection
@@ -44,16 +42,13 @@ env:
       key: urls__IdentityUrl
     - name: IdentityUrlExternal
       key: urls__IdentityUrlExternal
-    - name: ConnectionString
-      key: locations__ConnectionString
-    - name: Database
-      key: locations__Database
+    
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Staging
     - name: ConnectionString
-      value: 'database=lexon_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-azure;password=FDSk2q3+asd5;sslmode=none'
+      value: 'database=lexon_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5'
     - name: OrchestratorType
       value: 'K8S'
 
