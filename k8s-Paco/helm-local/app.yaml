@@ -1,0 +1,69 @@
+# This helm values file defines app-based settings
+# Charts use those values, so this file **MUST** be included in all chart releases
+
+
+app:                                                  # app global settings
+  name: "my-eshop"                                    # Override for custom app name
+  ingress:                                            # ingress related settings
+    entries:
+      basket: basket-api                              # ingress entry for basket api
+      catalog: catalog-api                            # ingress entry for catalog api
+      ordering: ordering-api                          # ingress entry for ordering api
+      identity: identity                              # ingress entry for identity api
+      mvc: webmvc                                     # ingress entry for web mvc
+      spa: ""                                         # ingress entry for web spa
+      status: webstatus                               # ingress entry for web status
+      webshoppingapigw: webshoppingapigw              # ingress entry for web shopping Agw
+      webmarketingapigw: webmarketingapigw            # ingress entry for web mkg Agw
+      mobilemarketingapigw: mobilemarketingapigw      # ingress entry for mobile mkg Agw
+      mobileshoppingapigw: mobileshoppingapigw        # ingress entry for mobile shopping Agw
+      webshoppingagg: webshoppingagg                  # ingress entry for web shopping aggregator
+      mobileshoppingagg: mobileshoppingagg            # ingress entry for mobile shopping aggregator
+      payment: payment-api                            # ingress entry for payment api
+      locations: locations-api                        # ingress entry for locations api
+      marketing: marketing-api                        # ingress entry for marketing api
+      webhooks: webhooks-api                          # ingress entry for webhooks api
+      webhooksweb: webhooks-web                       # ingress entry for webhooks web demo client
+      portal: webportal
+      google: webgoogle
+      graph: webgraph
+      lexon: weblexon
+      imap: webimap
+      imapserver: webimapserver
+      accountapigw: accountapigw
+      accountapi: account-api
+      lexonapigw: lexonapigw
+      lexonapi: lexon-api
+      lexonmysqlapi: lexonmysql-api
+      
+  svc:
+      basket: basket-api                              # ingress entry for basket api
+      catalog: catalog-api                            # ingress entry for catalog api
+      ordering: ordering-api                          # ingress entry for ordering api
+      identity: identity                              # ingress entry for identity api
+      mvc: webmvc                                     # ingress entry for web mvc
+      spa: ""                                         # ingress entry for web spa
+      status: webstatus                               # ingress entry for web status
+      webshoppingapigw: webshoppingapigw              # ingress entry for web shopping Agw
+      webmarketingapigw: webmarketingapigw            # ingress entry for web mkg Agw
+      mobilemarketingapigw: mobilemarketingapigw      # ingress entry for mobile mkg Agw
+      mobileshoppingapigw: mobileshoppingapigw        # ingress entry for mobile shopping Agw
+      webshoppingagg: webshoppingagg                  # ingress entry for web shopping aggregator
+      mobileshoppingagg: mobileshoppingagg            # ingress entry for mobile shopping aggregator
+      payment: payment-api                            # ingress entry for payment api
+      locations: locations-api                        # ingress entry for locations api
+      marketing: marketing-api                        # ingress entry for marketing api
+      webhooks: webhooks-api                          # ingress entry for webhooks api
+      webhooksweb: webhooks-web                       # ingress entry for webhooks web demo client
+      portal: webportal
+      google: webgoogle
+      graph: webgraph
+      lexon: weblexon
+      imap: webimap
+      imapserver: webimapserver
+      accountapigw: accountapigw
+      accountapi: account-api
+      lexonapigw: lexonapigw
+      lexonapi: lexon-api
+      lexonmysqlapi: lexonmysql-api
+      
