@@ -272,11 +272,13 @@ class App extends Component {
                 isotip-position="bottom-end"
                 isotip-size="small"
               >
-                <IconButton onClick={() => this.onSetSidebarOpenQMemento(true)}>
+                {/* <IconButton onClick={() => this.onSetSidebarOpenQMemento(true)}> */}
+                <IconButton>
                   <img
                     border="0"
                     alt="Calendar"
                     src="assets/images/icon-qmemento.png"
+                    className="disabledimg"
                   ></img>
                 </IconButton>
                 <div className={styles.btnselect}></div>
@@ -286,10 +288,11 @@ class App extends Component {
                 isotip-position="bottom-end"
                 isotip-size="small"
               >
-                <IconButton
+                {/* <IconButton
                   disabled
                   onClick={() => this.onSetSidebarOpenCompliance(true)}
-                >
+                > */}
+                <IconButton>
                   <img
                     border="0"
                     alt="Calendar"
@@ -305,11 +308,13 @@ class App extends Component {
                 isotip-position="bottom-end"
                 isotip-size="small"
               >
-                <IconButton onClick={() => this.onSetSidebarOpenCalendar(true)}>
+                {/* <IconButton onClick={() => this.onSetSidebarOpenCalendar(true)}> */}
+                <IconButton>
                   <img
                     border="0"
                     alt="Calendar"
                     src="assets/images/icon-calendar.png"
+                    className="disabledimg"
                   ></img>
                 </IconButton>
                 <div className={styles.btnselect}></div>
@@ -374,9 +379,7 @@ class App extends Component {
         <div className={styles["fab-container"]}>
           {outbox === null ? (
             <button
-              className={`${mainCss["mdc-fab"]} ${
-                mainCss["mdc-button--raised"]
-              }`}
+              className={`${mainCss["mdc-fab"]} ${mainCss["mdc-button--raised"]}`}
             >
               <span className={`material-icons ${mainCss["mdc-fab__icon"]}`}>
                 chat_bubble_outline

@@ -446,9 +446,10 @@ export class Main extends Component {
                 </div>
               </span>
               <span className="productsbutton">
-                <div onClick={() => this.onSetSidebarOpenQMemento(true)}>
+                {/* <div onClick={() => this.onSetSidebarOpenQMemento(true)}> */}
+                <div>
                   <img
-                    className="imgproduct"
+                    className="imgproductdisable"
                     border="0"
                     alt="Calendar"
                     src="assets/img/icon-qmemento.png"
@@ -456,9 +457,10 @@ export class Main extends Component {
                 </div>
               </span>
               <span className="productsbutton">
-                <div onClick={() => this.onSetSidebarOpenCompliance(true)}>
+                {/* <div onClick={() => this.onSetSidebarOpenCompliance(true)}> */}
+                <div>
                   <img
-                    className="imgproduct"
+                    className="imgproductdisable"
                     border="0"
                     alt="Calendar"
                     src="assets/img/icon-compliance.png"
@@ -466,9 +468,10 @@ export class Main extends Component {
                 </div>
               </span>
               <span className="productsbutton">
-                <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
+                {/* <div onClick={() => this.onSetSidebarOpenCalendar(true)}> */}
+                <div>
                   <img
-                    className="imgproduct"
+                    className="imgproductdisable"
                     border="0"
                     alt="Calendar"
                     src="assets/img/icon-calendar.png"
