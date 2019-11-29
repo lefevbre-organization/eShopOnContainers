@@ -1,9 +1,9 @@
-replicaCount: 3
+replicaCount: 1
 clusterName: eshop-aks
-pathBase: /account-api
+pathBase: /weblexon
 
 image:
-  repository: elefebvreoncontainers/account.api
+  repository: elefebvreoncontainers/weblexonclient
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -14,8 +14,6 @@ service:
 ingress:
   enabled: true
   annotations: {}
-  hosts:
-    - chart-example.local
   tls: []
 
 resources: {}
@@ -32,26 +30,38 @@ env:
   urls:
   # configmap declares variables which value is taken from the config map defined in template configmap.yaml (name is name of var and key the key in configmap).
   configmap:
-    - name: ConnectionString
-      key: webhooks__ConnectionString
     - name: ApplicationInsights__InstrumentationKey
       key: all__InstrumentationKey
-    - name: EventBusConnection
-      key: all__EventBusConnection
-    - name: AzureServiceBusEnabled
-      key: all__UseAzureServiceBus
+    - name: UseLoadTest
+      key: all_EnableLoadTest
+    - name: DPConnectionString
+      key: webmvc__keystore
+    - name: PurchaseUrl
+      key: internalurls__apigwws
+    - name: ExternalPurchaseUrl
+      key: urls__apigwws
+    - name: CallBackUrl
+      key: urls__mvc
     - name: IdentityUrl
       key: urls__IdentityUrl
-    - name: IdentityUrlExternal
-      key: urls__IdentityUrlExternal
-    - name: ConnectionString
-      key: locations__ConnectionString
-    - name: Database
-      key: locations__Database
+    - name: MarketingUrl
+      key: internalurls__apigwwm
+    - name: PurchaseUrlHC
+      key: internalurls__apigwws__hc
+    - name: IdentityUrlHC
+      key: internalurls__identity__hc      
+    - name: MarketingUrlHC
+      key: internalurls__apigwwm__hc    
+    - name: SignalrHubUrl
+      key: urls__apigwws
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
     - name: OrchestratorType
       value: 'K8S'
-
+    - name: IsClusterEnv
+      value: 'True'
+configValues: |
+ window.REACT_APP_ENVIRONMENT='PRODUCTION'
+ window.API_GATEWAY='http://now-apigwlex.lefebvre.es'

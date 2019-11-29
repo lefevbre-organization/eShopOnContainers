@@ -1,0 +1,16 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: webportal-traefik-rules
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - host: now.lefebvre-dev.es
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: webportal
+              servicePort: http

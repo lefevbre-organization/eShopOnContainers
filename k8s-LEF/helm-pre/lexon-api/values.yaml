@@ -1,9 +1,9 @@
-replicaCount: 3
+replicaCount: 1
 clusterName: eshop-aks
-pathBase: /account-api
+pathBase: /lexon-api
 
 image:
-  repository: elefebvreoncontainers/account.api
+  repository: elefebvreoncontainers/lexon.api
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -52,6 +52,8 @@ env:
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
+    - name: LexonMySqlUrl
+      value: 'http://lexonmysql-api/api/v1/LexonMySql'
     - name: OrchestratorType
       value: 'K8S'
 
