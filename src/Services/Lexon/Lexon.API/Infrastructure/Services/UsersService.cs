@@ -486,5 +486,12 @@ namespace Lexon.Infrastructure.Services
             TraceLog(parameters: new string[] { $"idUser={idUser}", $"idCompany={idCompany}" });
             return await _usersRepository.SelectCompanyAsync(idUser, idCompany);
         }
+
+        public async Task<Result<long>> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "")
+        {
+            TraceLog(parameters: new string[] { $"idUser={idUser}", $"idCompany={idCompany}", $"idCompany={idFile}", $"idCompany={nameFile}", $"idCompany={descriptionFile}" });
+
+            return await _usersRepository.AddFileToListAsync(idUser, idCompany, idFile, nameFile, descriptionFile);
+        }
     }
 }
