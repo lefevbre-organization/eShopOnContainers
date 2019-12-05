@@ -16,7 +16,8 @@ class App extends Component {
     return (
       <Router>
         <Switch>
-          <Route exact path="/user/:id" component={UserLexon} />
+          <Route exact path="/user/:idUser/casefile/:idCaseFile" component={UserLexon} />
+          <Route exact path="/user/:idUser" component={UserLexon} />
           <Route path="/" component={AppContainer} />
           {/* <AppContainer /> */}
         </Switch>

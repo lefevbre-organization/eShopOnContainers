@@ -21,7 +21,8 @@ class Main extends Component {
       companies: [],
       isLoading: true,
       showNotification: false,
-      messageNotification: null
+      messageNotification: null,
+      idCaseFile: null
     };
 
     this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -41,7 +42,7 @@ class Main extends Component {
       this.handlePutUserFromLexonConnector
     );
 
-    this.sendMessageGetUser();   
+    this.sendMessageGetUser();
   }
 
   // componentDidUpdate(prevProps) {
@@ -85,7 +86,10 @@ class Main extends Component {
   }
 
   async handlePutUserFromLexonConnector(event) {
-    const { user, selectedMessageId } = event.detail;
+    const { user, selectedMessageId, idCaseFile } = event.detail;
+    if (idCaseFile != null && idCaseFile !== undefined) {
+      this.setState({ idCaseFile: idCaseFile });
+    }
 
     selectedMessageId.forEach(message => {
       this.props.addMessage(message);
@@ -156,7 +160,8 @@ class Main extends Component {
       user,
       companies,
       showNotification,
-      messageNotification
+      messageNotification,
+      idCaseFile
     } = this.state;
 
     if (isLoading) {
@@ -176,6 +181,7 @@ class Main extends Component {
           user={user}
           companies={companies}
           toggleNotification={this.toggleNotification}
+          casefile={idCaseFile}
         />
       </Fragment>
     );
