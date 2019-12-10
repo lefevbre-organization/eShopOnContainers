@@ -1,5 +1,4 @@
 import React, { PureComponent } from "react";
-import { withTranslation } from "react-i18next";
 import { sendMessage } from "../../api_graph";
 import { getValidEmails } from "../../utils";
 import i18n from "i18next";
@@ -107,9 +106,6 @@ export class Compose extends PureComponent {
     if (this.props.casefile != null && this.props.casefile !== undefined) {
       window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
       this.props.setCaseFile();
-
-      const userLexon = localStorage.getItem("lexon");
-      console.log("userLexon ->", userLexon);
     }
     this.props.history.goBack();
   }

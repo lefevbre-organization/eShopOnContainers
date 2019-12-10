@@ -4,15 +4,16 @@ const defaultLexon = {
   user: null,
   userId: null,
   provider: null,
-  isNewAccount: false  
+  isNewAccount: false,
+  idCaseFile: null
 };
 
 export const lexon = (state = defaultLexon, action = {}) => {
-  switch (action.type) {    
+  switch (action.type) {
     case ActionTypes.LEXON_USER:
       const user = action.payload;
       const provider = user.slice(0, 2);
-      const isNewAccount = user.slice(2, 3) === '1' ? true : false;
+      const isNewAccount = user.slice(2, 3) === "1" ? true : false;
       const userId = user.slice(3);
       return {
         ...state,
@@ -22,8 +23,13 @@ export const lexon = (state = defaultLexon, action = {}) => {
         userId: userId
       };
 
+    case ActionTypes.LEXON_CASEFILE:
+      return {
+        ...state,
+        idCaseFile: action.payload
+      };
+
     default:
       return state;
   }
 };
-

@@ -75,7 +75,6 @@ Routing.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    // idCaseFile: state.applicationReducer.idCaseFile,
     errors: state.applicationReducer.errors
   };
 };

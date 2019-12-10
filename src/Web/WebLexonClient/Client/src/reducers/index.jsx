@@ -13,7 +13,8 @@ export const INITIAL_STATE = {
     selectedMessages: []
   },
   selections: {
-    companySelected: null
+    companySelected: null,
+    typeSelected: null
   },
   documents: {
     showModalDocuments: false

@@ -1,18 +1,15 @@
 import React, { PureComponent } from "react";
-import { withTranslation } from "react-i18next";
-
 import { sendMessage } from "../../api";
 import { getValidEmails } from "../../utils";
-
+import i18n from "i18next";
 import { Button, InputGroup, InputGroupAddon, Input } from "reactstrap";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
-
 import ReactQuill from "react-quill";
 import "../../../node_modules/react-quill/dist/quill.snow.css";
-
 import "./composeMessage.scss";
+import ACTIONS from "../../actions/lexon";
+import { connect } from "react-redux";
 
 const Uppy = require("@uppy/core");
 const Tus = require("@uppy/tus");
@@ -23,11 +20,26 @@ export class ComposeMessage extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      to: props.history.location.state.composeProps.to || "",
-      cc: props.history.location.state.composeProps.cc || "",
-      bcc: props.history.location.state.composeProps.bcc || "",
-      subject: props.history.location.state.composeProps.subject || "",
-      content: props.history.location.state.composeProps.content || "",
+      to:
+        (props.history.location.state &&
+          props.history.location.state.composeProps.to) ||
+        "",
+      cc:
+        (props.history.location.state &&
+          props.history.location.state.composeProps.cc) ||
+        "",
+      bcc:
+        (props.history.location.state &&
+          props.history.location.state.composeProps.bcc) ||
+        "",
+      subject:
+        (props.history.location.state &&
+          props.history.location.state.composeProps.subject) ||
+        "",
+      content:
+        (props.history.location.state &&
+          props.history.location.state.composeProps.content) ||
+        "",
       showInlineDashboard: false,
       open: false,
       uppyPreviews: []
@@ -67,6 +79,11 @@ export class ComposeMessage extends PureComponent {
   }
 
   goBack() {
+    if (this.props.casefile != null && this.props.casefile !== undefined) {
+      window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
+      this.props.setCaseFile();
+    }
+
     this.props.history.goBack();
   }
 
@@ -184,12 +201,12 @@ export class ComposeMessage extends PureComponent {
               <div className="message-fields">
                 <InputGroup>
                   <InputGroupAddon addonType="prepend">
-                    {t("compose-message.to")}
+                    {i18n.t("compose-message.to")}
                   </InputGroupAddon>
                   <Input
                     tabIndex={1}
                     value={this.state.to}
-                    placeholder={t("compose-message.comma-separated")}
+                    placeholder={i18n.t("compose-message.comma-separated")}
                     invalid={this.isInvalid("to")}
                     onChange={this.setField("to")}
                   />
@@ -199,7 +216,7 @@ export class ComposeMessage extends PureComponent {
                   <Input
                     tabIndex={2}
                     value={this.state.cc}
-                    placeholder={t("compose-message.comma-separated")}
+                    placeholder={i18n.t("compose-message.comma-separated")}
                     invalid={this.isInvalid("cc")}
                     onChange={this.setField("cc")}
                   />
@@ -208,14 +225,14 @@ export class ComposeMessage extends PureComponent {
                   <InputGroupAddon addonType="prepend">Bcc:</InputGroupAddon>
                   <Input
                     tabIndex={3}
-                    placeholder={t("compose-message.comma-separated")}
+                    placeholder={i18n.t("compose-message.comma-separated")}
                     invalid={this.isInvalid("bcc")}
                     onChange={this.setField("bcc")}
                   />
                 </InputGroup>
                 <InputGroup>
                   <InputGroupAddon addonType="prepend">
-                    {t("compose-message.subject")}
+                    {i18n.t("compose-message.subject")}
                   </InputGroupAddon>
                   <Input
                     tabIndex={4}
@@ -259,15 +276,15 @@ export class ComposeMessage extends PureComponent {
                 width="100%"
                 height="130px"
                 min-height="130px"
-                note={t("compose-message.add-attachments")}
+                note={i18n.t("compose-message.add-attachments")}
                 locale={{
                   strings: {
                     dropHereOr:
-                      t("compose-message.drag-and-drop") +
+                      i18n.t("compose-message.drag-and-drop") +
                       " " +
-                      t("compose-message.or") +
+                      i18n.t("compose-message.or") +
                       " %{browse}",
-                    browse: t("compose-message.browse")
+                    browse: i18n.t("compose-message.browse")
                   }
                 }}
               />
@@ -277,17 +294,17 @@ export class ComposeMessage extends PureComponent {
                 className="mr-auto font-weight-bold"
                 color="primary"
                 onClick={this.sendEmail}
-                title={t("compose-message.send-message")}
+                title={i18n.t("compose-message.send-message")}
               >
-                {t("compose-message.send")}
+                {i18n.t("compose-message.send")}
               </Button>{" "}
               <Button
                 className="mr-left font-weight-bold btn-outline-primary"
-                title={t("compose-message.discard")}
+                title={i18n.t("compose-message.discard")}
                 color="secondary"
                 onClick={this.closeModal}
               >
-                {t("compose-message.discard")}
+                {i18n.t("compose-message.discard")}
               </Button>
             </div>
           </div>
@@ -297,4 +314,12 @@ export class ComposeMessage extends PureComponent {
   }
 }
 
-export default withTranslation()(ComposeMessage);
+const mapStateToProps = state => ({
+  lexon: state.lexon
+});
+
+const mapDispatchToProps = dispatch => ({
+  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ComposeMessage);
