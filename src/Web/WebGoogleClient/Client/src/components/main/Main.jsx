@@ -101,7 +101,8 @@ export class Main extends Component {
       new CustomEvent("PutUserFromLexonConnector", {
         detail: {
           user,
-          selectedMessageId: listMessages
+          selectedMessageId: listMessages,
+          idCaseFile: this.props.lexon.idCaseFile
         }
       })
     );
@@ -180,7 +181,7 @@ export class Main extends Component {
       this.handleGetUserFromLexonConnector
     );
 
-    const { userId } = this.props.lexon;
+    const { userId, idCaseFile } = this.props.lexon;
     const { googleUser } = this.props;
     const email = googleUser.w3.U3;
     if (userId !== null && email !== null) {
@@ -190,7 +191,12 @@ export class Main extends Component {
       fetch(url, {
         method: "GET"
       }).then(result => {
-        this.props.history.push("/inbox");
+        if (idCaseFile != null && idCaseFile !== undefined) {
+          this.props.history.push("/compose");
+          this.onSetSidebarOpenLexon(true);
+        } else {
+          this.props.history.push("/inbox");
+        }        
       });
     }
   }
@@ -411,6 +417,7 @@ export class Main extends Component {
                       history={this.props.history}
                       sideBarCollapsed={leftSideBar.collapsed}
                       sideBarToggle={this.toggleSideBar}
+                      casefile={lexon.idCaseFile}
                     />
                   )}
                 />

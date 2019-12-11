@@ -16,6 +16,13 @@ const applicationReducer = (state = INITIAL_STATE.application, action) => {
       };
     }
 
+    case ACTIONS.Types.SET_CASEFILE: {
+      return {
+        ...state,
+        idCaseFile: action.payload
+      };
+    }
+
     default:
       return state;
   }

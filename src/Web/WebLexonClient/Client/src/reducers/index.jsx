@@ -6,13 +6,15 @@ import applicationReducer from "./applicationReducer";
 
 export const INITIAL_STATE = {
   application: {
-    errors: []
+    errors: [],
+    idCaseFile: null
   },
   email: {
     selectedMessages: []
   },
   selections: {
-    companySelected: null
+    companySelected: null,
+    typeSelected: null
   },
   documents: {
     showModalDocuments: false

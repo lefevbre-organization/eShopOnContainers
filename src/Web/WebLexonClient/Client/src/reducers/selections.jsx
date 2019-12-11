@@ -10,6 +10,13 @@ const selections = (state = INITIAL_STATE.selections, action) => {
       };
     }
 
+    case ACTIONS.Types.SET_TYPE_SELECTED: {
+      return {
+        ...state,
+        typeSelected: action.payload
+      };
+    }
+
     default:
       return state;
   }

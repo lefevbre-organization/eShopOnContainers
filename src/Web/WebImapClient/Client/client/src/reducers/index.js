@@ -44,7 +44,8 @@ export const INITIAL_STATE = {
     user: null,
     userId: null,
     provider: null,
-    isNewAccount: false
+    isNewAccount: false,
+    idCaseFile: null
   }
 };
 
