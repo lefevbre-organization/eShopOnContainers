@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import ResultsSearch from "../results-search/results-search";
 import i18n from "i18next";
 import PerfectScrollbar from "react-perfect-scrollbar";
+import { connect } from "react-redux";
 
 class ClassificationList extends Component {
   render() {
@@ -12,7 +13,8 @@ class ClassificationList extends Component {
       listResultsByType,
       searchResultsByType,
       resultsSelected,
-      updateResultsSelected
+      updateResultsSelected,
+      selections
     } = this.props;
     const countResults = listResultsByType.length;
 
@@ -34,7 +36,8 @@ class ClassificationList extends Component {
           <thead>
             <tr>
               <th>Código</th>
-              <th>Nombre</th>
+              {selections.typeSelected === 1 ? <th>Nombre</th> : null}
+              {/* <th>Nombre</th> */}
               <th>Descripción</th>
             </tr>
           </thead>
@@ -67,4 +70,8 @@ ClassificationList.propTypes = {
   searchResultsByType: PropTypes.func.isRequired
 };
 
-export default ClassificationList;
+const mapStateToProps = state => ({
+  selections: state.selections
+});
+
+export default connect(mapStateToProps)(ClassificationList);
