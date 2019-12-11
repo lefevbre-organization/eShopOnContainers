@@ -84,7 +84,7 @@ export class ComposeMessage extends PureComponent {
       this.props.setCaseFile();
     }
 
-    this.props.history.goBack();
+    this.props.history.push("/inbox");
   }
 
   addFileToState({ file, base64 }) {
@@ -302,7 +302,8 @@ export class ComposeMessage extends PureComponent {
                 className="mr-left font-weight-bold btn-outline-primary"
                 title={i18n.t("compose-message.discard")}
                 color="secondary"
-                onClick={this.closeModal}
+                // onClick={this.closeModal}
+                onClick={this.goBack}
               >
                 {i18n.t("compose-message.discard")}
               </Button>

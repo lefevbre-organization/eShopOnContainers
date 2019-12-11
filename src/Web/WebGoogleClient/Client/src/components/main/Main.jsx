@@ -101,7 +101,8 @@ export class Main extends Component {
       new CustomEvent("PutUserFromLexonConnector", {
         detail: {
           user,
-          selectedMessageId: listMessages
+          selectedMessageId: listMessages,
+          idCaseFile: this.props.lexon.idCaseFile
         }
       })
     );
@@ -416,6 +417,7 @@ export class Main extends Component {
                       history={this.props.history}
                       sideBarCollapsed={leftSideBar.collapsed}
                       sideBarToggle={this.toggleSideBar}
+                      casefile={lexon.idCaseFile}
                     />
                   )}
                 />
