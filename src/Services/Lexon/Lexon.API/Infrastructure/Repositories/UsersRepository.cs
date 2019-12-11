@@ -38,7 +38,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
             var fields = Builders<LexonUser>.Projection
                 .Include("companies.list.idCompany")
-                .Include("companies.list.conn")
+                .Include("companies.list.bbdd")
                 .Include("companies.list.name");
 
             TraceLog(parameters: new string[] { $"fields:{fields.ToString()}", $"filter:{filter.ToString()}" });

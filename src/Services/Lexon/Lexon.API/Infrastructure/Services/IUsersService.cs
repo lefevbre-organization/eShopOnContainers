@@ -22,7 +22,7 @@ namespace Lexon.Infrastructure.Services
         Task<Result<long>> AddClassificationToListAsync(string idUser, long idCompany, string bbdd, string[] listaMails, long idRelated, short idClassificationType = 1);
         Task<Result<long>> RemoveClassificationFromListAsync(string idUser, long idCompany, string idMail, string idMail1, long idRelated, short idClassificationType = 1);
 
-        //Task<long> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "");
+        Task<Result<long>> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "");
 
     }
 }
