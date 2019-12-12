@@ -87,7 +87,9 @@ export class ComposeMessage extends PureComponent {
 
   handleChange(value) {
     this.setState({ content: value });
-  }
+    }
+
+
 
   sendEmail() {
     const validTo = getValidEmails(this.state.to);
@@ -100,11 +102,13 @@ export class ComposeMessage extends PureComponent {
       return;
     }
 
+
     const headers = {
       To: validTo.join(", "),
-      Subject: this.state.subject,
+       // Subject: this.state.subject,
+        Subject: '=?UTF-8?B?' + window.btoa(this.state.subject) + '?=',
       attachments: this.state.uppyPreviews
-    };
+      };
 
     const validCc = getValidEmails(this.state.cc);
     if (validCc.length) {
