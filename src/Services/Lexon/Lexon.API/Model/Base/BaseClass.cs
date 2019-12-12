@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Lexon.API.Model
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model
 {
     public class BaseClass<T>
     {
@@ -61,7 +61,7 @@ namespace Lexon.API.Model
             WriteLine($"FILE[{sourceFilePath}]//PROC[{memberName}] : ");
             foreach (var item in parameters)
             {
-               WriteLine(item);
+                WriteLine(item);
             }
         }
 

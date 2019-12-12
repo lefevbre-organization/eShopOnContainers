@@ -1,32 +1,38 @@
-﻿using Lexon.API.Model;
-using Lexon.Infrastructure.Services;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Lexon.API.Controllers
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
 {
     [Route("api/v1/[controller]")]
+    [Authorize]
     [ApiController]
     public class LexonController : ControllerBase
     {
         private readonly IUsersService _usersService;
         private readonly LexonSettings _settings;
         private readonly IEventBus _eventBus;
+        private readonly IIdentityService _identityService;
 
         public LexonController(
             IUsersService usersService
+            , IIdentityService identityService
             , IOptionsSnapshot<LexonSettings> lexonSettings
-            , IEventBus eventBus )
+            , IEventBus eventBus)
         {
             _usersService = usersService ?? throw new ArgumentNullException(nameof(usersService));
             _settings = lexonSettings.Value;
+            _identityService = identityService;
             _eventBus = eventBus;
         }
 
@@ -77,15 +83,18 @@ namespace Lexon.API.Controllers
 
             var result = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, bbdd, idMail);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-
         }
 
         [HttpPut]
         [Route("classifications/add")]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddClassificationAsync([FromBody]ClassificationAddView classification)  
+        public async Task<IActionResult> AddClassificationAsync([FromBody]ClassificationAddView classification, [FromHeader(Name = "x-requestid")] string requestId)
+
         {
+            var userId = _identityService.GetUserIdentity();
+            var userName = this.HttpContext.User.FindFirst(x => x.Type == ClaimTypes.Name).Value;
+            //basketCheckout.RequestId = (Guid.TryParse(requestId, out Guid guid) && guid != Guid.Empty) ?  guid : basketCheckout.RequestId;
             if (string.IsNullOrEmpty(classification?.idUser) || (classification?.listaMails?.Count() <= 0) || string.IsNullOrEmpty(classification?.bbdd) || classification?.idRelated <= 0 || classification?.idType <= 0)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, bbdd, email, related and type for create the classification");
 
@@ -135,7 +144,7 @@ namespace Lexon.API.Controllers
         [Route("entities")]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityBase>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>),(int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> EntitiesAsync(
             [FromQuery] string idUser = "449"
@@ -165,7 +174,6 @@ namespace Lexon.API.Controllers
             return (resultPaginatedFinal.errors.Count > 0) ? (IActionResult)BadRequest(resultPaginatedFinal) : Ok(resultPaginatedFinal);
         }
 
-
         [HttpGet]
         [Route("files/add")]
         [ProducesResponseType(typeof(long), (int)HttpStatusCode.OK)]
@@ -183,7 +191,6 @@ namespace Lexon.API.Controllers
 
             var result = await _usersService.AddFileToListAsync(idUser, idCompany, idFile, nameFile, descriptionFile);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-
         }
     }
 }

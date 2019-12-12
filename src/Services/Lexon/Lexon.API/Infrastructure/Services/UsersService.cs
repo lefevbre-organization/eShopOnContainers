@@ -1,6 +1,6 @@
-﻿using Lexon.API;
-using Lexon.API.Infrastructure.Repositories;
-using Lexon.API.Model;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repositories;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -11,7 +11,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lexon.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services
 {
     public class UsersService : BaseClass<UsersService>, IUsersService
     {
@@ -110,7 +110,6 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<Result<List<LexonActuation>>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, string bbdd, string idMail)
         {
-
             var result = new Result<List<LexonActuation>>(new List<LexonActuation>());
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/classifications/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={1}&bbdd={bbdd}&idUser={idUser}&idMail={idMail}");
@@ -125,8 +124,7 @@ namespace Lexon.Infrastructure.Services
                         var resultMysql = await response.Content.ReadAsAsync<Result<JosRelationsList>>();
                         foreach (var entity in resultMysql.data.Actuaciones)
                         {
-                           
-                            result.data.Add(new LexonActuation() { name = entity.Nombre, description = entity.Asunto, entityType = "Mail", idMail= idMail, idRelated= entity.IdRelacion });
+                            result.data.Add(new LexonActuation() { name = entity.Nombre, description = entity.Asunto, entityType = "Mail", idMail = idMail, idRelated = entity.IdRelacion });
                             TraceLog(parameters: new string[] { $"add Name {entity.Nombre}", $"desc {entity.Asunto}", $"tipo Mail", $"idrelated {entity.IdRelacion}", $"idmail {idMail}" });
                         }
 
@@ -147,7 +145,6 @@ namespace Lexon.Infrastructure.Services
             }
             await GetClassificationsFromMailMongoAsync(result, pageSize, pageIndex, idUser, 14, idMail);
             return result;
-
         }
 
         private async Task GetClassificationsFromMailMongoAsync(Result<List<LexonActuation>> result, int pageSize, int pageIndex, string idUser, long idCompany, string idMail)
@@ -355,7 +352,7 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<Result<LexonUser>> GetUserAsync(string idUser)
         {
-            var result = new Result<LexonUser>(new LexonUser ());
+            var result = new Result<LexonUser>(new LexonUser());
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/user?idNavisionUser={idUser}");
             TraceLog(parameters: new string[] { $"request:{request}" });
@@ -373,7 +370,7 @@ namespace Lexon.Infrastructure.Services
                             TraceOutputMessage(result.errors, "Mysql don´t recover the user", 2001);
                         else
                         {
-                            result.data = new LexonUser() { Name = resultMysql.data.Name, idUser = resultMysql.data.IdUser.ToString(), idNavision  = idUser };
+                            result.data = new LexonUser() { Name = resultMysql.data.Name, idUser = resultMysql.data.IdUser.ToString(), idNavision = idUser };
                             TraceLog(parameters: new string[] { $"iduser {result.data.idUser}" });
                             return result;
                         }
@@ -390,7 +387,6 @@ namespace Lexon.Infrastructure.Services
             }
             await GetUserForMongoAsync(idUser, result);
             return result;
-
         }
 
         private async Task GetUserForMongoAsync(string idUser, Result<LexonUser> result)

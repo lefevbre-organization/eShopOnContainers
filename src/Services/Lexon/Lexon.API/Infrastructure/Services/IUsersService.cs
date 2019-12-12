@@ -1,12 +1,13 @@
-﻿using Lexon.API.Model;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Lexon.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services
 {
     public interface IUsersService
     {
         Task<Result<List<LexonUser>>> GetListUsersAsync(int pageSize, int pageIndex, string idUser);
+
         Task<Result<LexonUser>> GetUserAsync(string idUser);
 
         Task<Result<List<LexonCompany>>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser);
@@ -20,9 +21,9 @@ namespace Lexon.Infrastructure.Services
         Task<Result<List<LexonEntityType>>> GetClassificationMasterListAsync();
 
         Task<Result<long>> AddClassificationToListAsync(string idUser, long idCompany, string bbdd, string[] listaMails, long idRelated, short idClassificationType = 1);
+
         Task<Result<long>> RemoveClassificationFromListAsync(string idUser, long idCompany, string idMail, string idMail1, long idRelated, short idClassificationType = 1);
 
         Task<Result<long>> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "");
-
     }
 }

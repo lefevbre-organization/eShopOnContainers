@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB
+namespace Lefebvre.eLefebvreOnContainers.BuildingBlocks.IntegrationEventLogMongoDB
 {
     public interface IMongoDbContext
     {

@@ -10,7 +10,8 @@ https://github.com/dotnet/eShopOnContainers/wiki
 ## Sincronization with upstream
 
 - [X] version 20190821
-- [ ] version 20190910 (iteration 5)
+- [X] version 20190910 (iteration 5)
+- [ ] version 20191212 (iteration 11) - asp core 3 
 
 
 ## Implementation differences

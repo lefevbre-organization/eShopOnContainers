@@ -1,20 +1,20 @@
-﻿using Lexon.API.Infrastructure.ActionResults;
-using Lexon.API.Infrastructure.Exceptions;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.ActionResults;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Net;
 
-namespace Lexon.API.Infrastructure.Filters
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Filters
 {
-    public class HttpGlobalExceptionFilter : IExceptionFilter
+    public partial class HttpGlobalExceptionFilter : IExceptionFilter
     {
-        private readonly IHostingEnvironment env;
+        private readonly IWebHostEnvironment env;
         private readonly ILogger<HttpGlobalExceptionFilter> logger;
 
-        public HttpGlobalExceptionFilter(IHostingEnvironment env, ILogger<HttpGlobalExceptionFilter> logger)
+        public HttpGlobalExceptionFilter(IWebHostEnvironment env, ILogger<HttpGlobalExceptionFilter> logger)
         {
             this.env = env;
             this.logger = logger;
@@ -28,23 +28,19 @@ namespace Lexon.API.Infrastructure.Filters
 
             if (context.Exception.GetType() == typeof(LexonDomainException))
             {
-                var problemDetails = new ValidationProblemDetails()
+                var json = new JsonErrorResponse
                 {
-                    Instance = context.HttpContext.Request.Path,
-                    Status = StatusCodes.Status400BadRequest,
-                    Detail = "Please refer to the errors property for additional details."
+                    Messages = new[] { context.Exception.Message }
                 };
 
-                problemDetails.Errors.Add("DomainValidations", new string[] { context.Exception.Message.ToString() });
-
-                context.Result = new BadRequestObjectResult(problemDetails);
+                context.Result = new BadRequestObjectResult(json);
                 context.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             }
             else
             {
                 var json = new JsonErrorResponse
                 {
-                    Messages = new[] { "An error ocurred." }
+                    Messages = new[] { "An error occurred. Try it again." }
                 };
 
                 if (env.IsDevelopment())
@@ -56,13 +52,6 @@ namespace Lexon.API.Infrastructure.Filters
                 context.HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             }
             context.ExceptionHandled = true;
-        }
-
-        private class JsonErrorResponse
-        {
-            public string[] Messages { get; set; }
-
-            public object DeveloperMessage { get; set; }
         }
     }
 }

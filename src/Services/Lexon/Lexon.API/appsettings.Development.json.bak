@@ -1,0 +1,25 @@
+{
+
+ "Serilog": {
+    "MinimumLevel": {
+      "Default": "Debug",
+      "Override": {
+        "Microsoft": "Warning",
+        "Microsoft.eShopOnContainers": "Debug",
+		"Lefebvre.eLefebvreOnContainers": "Debug",
+        "System": "Warning"
+      }
+    }
+  },
+  "ConnectionString": "mongodb://localhost",
+  "LexonMySqlUrl": "https://localhost:44393/api/v1/LexonMySql",
+  "IdentityUrlExternal": "http://localhost:5105",
+  "IdentityUrl": "http://localhost:5105",
+  "ConnectionString": "127.0.0.1",
+  "AzureServiceBusEnabled": false,
+  "EventBusConnection": "localhost"
+ 
+  "EventBusUserName": "guest",
+  "EventBusPassword": "guest",
+
+}

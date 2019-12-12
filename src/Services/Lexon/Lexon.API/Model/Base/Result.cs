@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Lexon.API.Model
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model
 {
     public class Result<T>
     {

@@ -1,6 +1,5 @@
-﻿namespace Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.ViewModel
 {
-    using global::Lexon.API.Model;
     using System.Collections.Generic;
 
 

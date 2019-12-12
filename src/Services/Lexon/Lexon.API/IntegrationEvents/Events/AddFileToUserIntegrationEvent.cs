@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Lexon.API.IntegrationsEvents.Events
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.IntegrationsEvents.Events
 {
     public class AddFileToUserIntegrationEvent: IntegrationEvent
     {

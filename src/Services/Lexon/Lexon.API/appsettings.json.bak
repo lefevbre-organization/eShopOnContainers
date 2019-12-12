@@ -1,0 +1,41 @@
+{
+  "Serilog": {
+    "SeqServerUrl": null,
+    "LogstashgUrl": null,
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Warning",
+        "Microsoft.eShopOnContainers": "Information",
+        "Lefebvre.eLefebvreOnContainers": "Information",
+        "System": "Warning"
+      }
+    }
+  },
+  "Kestrel": {
+    "EndpointDefaults": {
+      "Protocols": "Http2"
+    }
+  },
+  "SubscriptionClientName": "Lexon",
+  "ApplicationInsights": {
+    "InstrumentationKey": ""
+  },
+  "EventBusRetryCount": 5,
+  //"EventBusConnection": "",
+  //"EventBusUserName": "",
+  //"EventBusPassword": "",
+  "UseVault": false,
+  "Vault": {
+    "Name": "eshop",
+    "ClientId": "your-clien-id",
+    "ClientSecret": "your-client-secret"
+  },
+  //"AllowedHosts": "*",
+  "Database": "LexonApiDB",
+  "Collection": "Users",
+  "CollectionMasters": "Masters",
+  "CollectionEvents": "IntegrationEventLog",
+
+  //"UseCustomizationData": false,
+}

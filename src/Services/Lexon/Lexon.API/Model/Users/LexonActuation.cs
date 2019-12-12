@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 
-namespace Lexon.API.Model
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model
 {
     [BsonIgnoreExtraElements]
     public class LexonActuation : MongoModel //, IEntity

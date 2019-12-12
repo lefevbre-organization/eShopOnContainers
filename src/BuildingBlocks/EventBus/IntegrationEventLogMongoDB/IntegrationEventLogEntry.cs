@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Linq;
 
-namespace Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB
+namespace Lefebvre.eLefebvreOnContainers.BuildingBlocks.IntegrationEventLogMongoDB
 {
     public class IntegrationEventLogEntry
     {

@@ -1,8 +1,9 @@
-﻿using Lexon.API.IntegrationsEvents.Events;
-using Lexon.API.Model;
+﻿using Lefebvre.eLefebvreOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.IntegrationsEvents.Events;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model;
+
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
@@ -14,7 +15,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Lexon.API.Infrastructure.Repositories
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repositories
 {
     public class UsersRepository : BaseClass<UsersRepository>, IUsersRepository
     {
@@ -32,7 +33,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
         public async Task<Result<List<LexonCompany>>> GetCompaniesListAsync(string idUser)
         {
-            var result = new Result<List<LexonCompany>> (new List<LexonCompany>());
+            var result = new Result<List<LexonCompany>>(new List<LexonCompany>());
 
             var filter = GetFilterUser(idUser);
 
@@ -102,7 +103,7 @@ namespace Lexon.API.Infrastructure.Repositories
         public async Task<Result<long>> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "")
         {
             long a = 0;
-            var result = new Result<long> (a);
+            var result = new Result<long>(a);
             var cancel = default(CancellationToken);
             using (var session = await _context.StartSession(cancel))
             {
@@ -153,7 +154,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
         public async Task<Result<LexonUser>> GetAsync(string idUser)
         {
-            var result = new Result<LexonUser> (new LexonUser() );
+            var result = new Result<LexonUser>(new LexonUser());
             var filter = GetFilterUser(idUser);
             try
             {
@@ -245,7 +246,7 @@ namespace Lexon.API.Infrastructure.Repositories
         public async Task<Result<long>> AddClassificationToListAsync(string idUser, long idCompany, string[] listaMails, long idRelated, short idClassificationType = 1)
         {
             long a = 0;
-            var result = new Result<long> (a);
+            var result = new Result<long>(a);
             var cancel = default(CancellationToken);
             TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany:{idCompany}", $"idMail:{listaMails}", $"idRelated:{idRelated}", $"idClassificationType:{idClassificationType}" });
 
@@ -324,7 +325,7 @@ namespace Lexon.API.Infrastructure.Repositories
             return result;
         }
 
-        private async Task AddAndPublish(string idUser, long idCompany, string [] listaMails, long idRelated, string typeCollection, IClientSessionHandle session)
+        private async Task AddAndPublish(string idUser, long idCompany, string[] listaMails, long idRelated, string typeCollection, IClientSessionHandle session)
         {
             TraceLog(parameters: new string[] { $"typeCollection:{typeCollection}" });
 
@@ -346,7 +347,6 @@ namespace Lexon.API.Infrastructure.Repositories
                 var eventAssoc = new AssociateMailToFileIntegrationEvent(idUser, idRelated, idMail);
                 await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
             }
-
         }
 
         private async Task RemoveAndPublish(string idUser, long idCompany, string idMail, long idRelated, string typeCollection, IClientSessionHandle session)
@@ -475,7 +475,6 @@ namespace Lexon.API.Infrastructure.Repositories
                     result.data = resultMongo.ModifiedCount;
                 else
                     TraceOutputMessage(result.errors, "Error in Update MongoDB", 1001);
-
             }
             catch (Exception ex)
             {

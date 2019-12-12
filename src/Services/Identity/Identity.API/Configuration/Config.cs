@@ -302,7 +302,22 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API.Configuration
                     {
                         "webhooks"
                     }
-                }
+                },
+                new Client
+                {
+                    ClientId = "lexonswaggerui",
+                    ClientName = "Lexon Swagger UI",
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowAccessTokensViaBrowser = true,
+
+                    RedirectUris = { $"{clientsUrl["LexonApi"]}/swagger/oauth2-redirect.html" },
+                    PostLogoutRedirectUris = { $"{clientsUrl["LexonApi"]}/swagger/" },
+
+                    AllowedScopes =
+                    {
+                        "basket"
+                    }
+                },
             };
         }
     }

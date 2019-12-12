@@ -1,7 +1,7 @@
-﻿using Lexon.API.Model;
+﻿using Lefebvre.eLefebvreOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -12,7 +12,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Lexon.API.Infrastructure
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure
 {
     //TODO: https://www.mongodb.com/blog/post/working-with-mongodb-transactions-with-c-and-the-net-framework
     //TODO: create replica set from settings and from docker
@@ -161,7 +161,6 @@ namespace Lexon.API.Infrastructure
                 .Sort(sort)
                 .ToListAsync();
         }
-
 
         public Task MarkEventAsInProgressAsync(Guid eventId, IClientSessionHandle transaction)
         {

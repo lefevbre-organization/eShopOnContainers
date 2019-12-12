@@ -1,4 +1,4 @@
-﻿namespace Lexon.API
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
 {
     public class LexonSettings
     {
