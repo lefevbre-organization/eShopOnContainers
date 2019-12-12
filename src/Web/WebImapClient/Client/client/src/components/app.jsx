@@ -136,7 +136,8 @@ class App extends Component {
       new CustomEvent("PutUserFromLexonConnector", {
         detail: {
           user,
-          selectedMessageId
+          selectedMessageId,
+          idCaseFile: this.props.lexon.idCaseFile
         }
       })
     );
@@ -224,6 +225,7 @@ class App extends Component {
             <SideBar
               collapsed={sideBar.collapsed}
               sideBarToggle={this.toggleSideBar}
+              casefile={lexon.idCaseFile}
             />
             <div id="mainnav-app" />
 
@@ -416,7 +418,7 @@ class App extends Component {
     //setTimeout(function () { this.registerConnectorApp(); }, 2200);
     this.registerConnectorApp();
 
-    const { userId } = this.props.lexon;
+    const { userId, idCaseFile } = this.props.lexon;
     const { email } = this.props;
     if (userId !== null && email !== null) {
       const url = `${window.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}`;
@@ -425,6 +427,10 @@ class App extends Component {
       }).catch(error => {
         console.log("error =>", error);
       });
+      if (idCaseFile !== null && idCaseFile !== undefined) {
+        this.props.newMessage();
+        this.onSetSidebarOpenLexon(true);
+      }
     }
 
     window.addEventListener(

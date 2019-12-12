@@ -1,0 +1,40 @@
+# This helm values file defines app-based settings
+# Charts use those values, so this file **MUST** be included in all chart releases
+
+
+app:                                                  # app global settings
+  name: "lexon-now"                                   # Nombre customizado de la aplicación
+  ingress:                                            # ingress configuración
+    entries:
+      identity: identity                              # ingress entry for identity api
+      status: webstatus                               # ingress entry for web status
+
+      portal: webportal                               # ingress entry for web portal
+      google: webgoogle                               # ingress entry for microfontral google
+      graph: webgraph                                 # ingress entry for microfontral outlook
+      lexon: weblexon                                 # ingress entry for web lexon
+      imap: webimap
+      imapserver: webimapserver
+
+      accountapigw: accountapigw                      # ingress entry for account gateway
+      accountapi: account-api                         # ingress entry for account api
+      lexonapigw: lexonapigw                          # ingress entry for lexon gateway
+      lexonapi: lexon-api                             # ingress entry for lexon api
+      lexonmysqlapi: lexonmysql-api                   # ingress entry for lexon mysql api
+      
+  svc:
+      identity: identity                              # service name for identity api
+      status: webstatus                               # service name for web status
+
+      portal: webportal                               # service name for web portal
+      google: webgoogle                               # service name for mf google
+      graph: webgraph                                 # service name for mf outlook
+      lexon: weblexon                                 # service name for mf lexon
+      imap: webimap
+      imapserver: webimapserver
+
+      accountapigw: accountapigw                      # service name for account gateway
+      accountapi: account-api                         # service name for account api
+      lexonapigw: lexonapigw                          # service name for lexon gateway
+      lexonapi: lexon-api                             # service name for lexon api
+      lexonmysqlapi: lexonmysql-api                   # service name for mexon mysql api

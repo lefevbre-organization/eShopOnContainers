@@ -1,15 +1,26 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { PAGE_SELECT_COMPANY, PAGE_SELECT_ACTION } from "../../constants";
+import {
+  PAGE_SELECT_COMPANY,
+  PAGE_SELECT_ACTION,
+  PAGE_CASEFILE
+} from "../../constants";
 import SelectCompany from "../select-company/select-company";
+import CaseFile from "../case-file/case-file";
 import SelectAction from "../select-action/select-action";
+import { connect } from "react-redux";
 
 class Routing extends Component {
   constructor(props) {
     super(props);
 
+    let actualPage = PAGE_SELECT_COMPANY;
+    if (props.casefile != null && props.casefile !== undefined) {
+      actualPage = PAGE_CASEFILE;
+    }
+
     this.state = {
-      actualPage: PAGE_SELECT_COMPANY
+      actualPage: actualPage
     };
 
     this.changePage = this.changePage.bind(this);
@@ -21,7 +32,7 @@ class Routing extends Component {
 
   render() {
     const { actualPage } = this.state;
-    const { user, companies, toggleNotification } = this.props;
+    const { user, companies, toggleNotification, casefile } = this.props;
 
     switch (actualPage) {
       case PAGE_SELECT_COMPANY:
@@ -30,6 +41,14 @@ class Routing extends Component {
             user={user}
             companies={companies}
             changePage={this.changePage}
+          />
+        );
+      case PAGE_CASEFILE:
+        return (
+          <CaseFile
+            user={user}
+            changePage={this.changePage}
+            idCaseFile={casefile}
           />
         );
       case PAGE_SELECT_ACTION:
@@ -54,4 +73,10 @@ Routing.propTypes = {
   toggleNotification: PropTypes.func.isRequired
 };
 
-export default Routing;
+const mapStateToProps = state => {
+  return {
+    errors: state.applicationReducer.errors
+  };
+};
+
+export default connect(mapStateToProps)(Routing);

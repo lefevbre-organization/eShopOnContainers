@@ -138,14 +138,14 @@ namespace Lexon.API.Controllers
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>),(int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> EntitiesAsync(
-            [FromQuery]string idUser = "449"
-            , [FromQuery]long idCompany = 14
-            , [FromQuery]string bbdd = "lexon_admin_02"
+            [FromQuery] string idUser = "449"
+            , [FromQuery] long idCompany = 14
+            , [FromQuery] string bbdd = "lexon_admin_02"
             , [FromQuery] short idType = 1
-            , string search = null
+            , [FromQuery] string search = null
             , [FromQuery] int idFilter = 1
-            , [FromQuery]int pageSize = 20
-            , [FromQuery]int pageIndex = 1)
+            , [FromQuery] int pageSize = 20
+            , [FromQuery] int pageIndex = 1)
         {
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || idType <= 0)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
@@ -165,5 +165,25 @@ namespace Lexon.API.Controllers
             return (resultPaginatedFinal.errors.Count > 0) ? (IActionResult)BadRequest(resultPaginatedFinal) : Ok(resultPaginatedFinal);
         }
 
+
+        [HttpGet]
+        [Route("files/add")]
+        [ProducesResponseType(typeof(long), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddFilesAsync(
+            [FromQuery]string idUser
+            , [FromQuery]long idCompany
+            , [FromQuery]long idFile
+            , [FromQuery]string nameFile
+            , [FromQuery]string descriptionFile = "")
+
+        {
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(nameFile))
+                return (IActionResult)BadRequest("values invalid. Must be a valid user, idFile, and name for create the file");
+
+            var result = await _usersService.AddFileToListAsync(idUser, idCompany, idFile, nameFile, descriptionFile);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+
+        }
     }
 }

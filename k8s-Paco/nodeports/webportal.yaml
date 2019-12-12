@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: webportal
+spec:
+  type: NodePort
+  selector:
+    app: webportal
+  ports:
+    - port: 80
+      nodePort: 30005
+      name: webgoogle-port

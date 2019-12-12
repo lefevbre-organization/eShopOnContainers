@@ -120,7 +120,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         private string GiveMeFilter(short idType, string bbdd, string idUser, string search, long idFilter, string idMail = "")
         {
-            var filtroDescription = !string.IsNullOrEmpty(search) ? $", \"Description\":{search}" : string.Empty;
+            var filtroDescription = !string.IsNullOrEmpty(search) ? $", \"Description\":\"{search}\"" : string.Empty;
 
             var filter = $"\"BBDD\":\"{bbdd}\",\"IdEntityType\":{idType},\"IdUser\":{idUser}{filtroDescription}";
 

@@ -32,12 +32,13 @@ class AppContainer extends Component {
   }
 
   componentDidMount() {
-    const user = this.props.match.params.id;
+    const user = this.props.match.params.idUser;
     const stateStorageLexon = getStateStorage();
     if (!user && stateStorageLexon) {
       const userLexon = stateStorageLexon.lexon;
       if (userLexon && userLexon.user) {
         this.props.setUser(userLexon.user);
+        this.props.setCaseFile(userLexon.idCaseFile);
       }
     }
 
@@ -100,7 +101,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setUser: user => dispatch(ACTIONS.setUser(user))
+  setUser: user => dispatch(ACTIONS.setUser(user)),
+  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile))
 });
 
 export default connect(

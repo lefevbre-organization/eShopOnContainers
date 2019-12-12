@@ -90,7 +90,7 @@ export class Main extends Component {
   }
 
   sendMessagePutUser(user) {
-    const { selectedMessages } = this.props;
+    const { selectedMessages } = this.props;    
     const listMessages = selectedMessages.map(
       selectedMessage => selectedMessage.id
     );
@@ -99,7 +99,8 @@ export class Main extends Component {
       new CustomEvent("PutUserFromLexonConnector", {
         detail: {
           user,
-          selectedMessageId: listMessages
+          selectedMessageId: listMessages,
+          idCaseFile: this.props.lexon.idCaseFile
         }
       })
     );
@@ -107,10 +108,6 @@ export class Main extends Component {
 
   handleGetUserFromLexonConnector() {
     const { userId } = this.props.lexon;
-
-    // Comentar esto (es para pruebas)
-    // const userId = 120;
-    // Comentar esto (es para pruebas)
 
     if (userId) {
       this.sendMessagePutUser(userId);
@@ -174,7 +171,7 @@ export class Main extends Component {
       this.handleGetUserFromLexonConnector
     );
 
-    const { userId } = this.props.lexon;
+    const { userId, idCaseFile } = this.props.lexon;
     const { email } = this.props.User;
     if (userId !== null && email !== null) {
       const url = `${window.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}`;
@@ -183,6 +180,10 @@ export class Main extends Component {
       }).catch(error => {
         console.error("error ->", error);
       });
+      if (idCaseFile != null && idCaseFile !== undefined) {
+        this.props.history.push("/compose");
+        this.onSetSidebarOpenLexon(true);
+      }
     }
   }
 
@@ -229,7 +230,9 @@ export class Main extends Component {
       this.setState({ loadFolders: true });
       if (
         this.props.labelsResult &&
-        this.props.labelsResult.labels.length > 0
+        this.props.labelsResult.labels.length > 0 &&
+        (this.props.lexon.idCaseFile == null ||
+          this.props.lexon.idCaseFile === undefined)
       ) {
         this.props.history.push(`/${this.props.labelsResult.labels[0].id}`);
       }
@@ -417,6 +420,7 @@ export class Main extends Component {
                       history={this.props.history}
                       sideBarCollapsed={leftSideBar.collapsed}
                       sideBarToggle={this.toggleSideBar}
+                      casefile={lexon.idCaseFile}
                     />
                   )}
                 />
@@ -532,8 +536,5 @@ const mapDispatchToProps = dispatch =>
 
 export default compose(
   withRouter,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )
+  connect(mapStateToProps, mapDispatchToProps)
 )(Main);
