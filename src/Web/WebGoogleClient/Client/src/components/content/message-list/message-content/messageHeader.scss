@@ -3,27 +3,6 @@ $font-size-body: 1rem;
 $font-weight-normal: 400;
 $base-color: #333333;
 
-.div-attach {
-  background-color: #f4f4f4;
-  white-space: nowrap;
-  height: 50px;
-  width: 260px;
-}
-
-.message-content {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 64px;
-  bottom: 10px;
-
-  > iframe {
-    width: 98%;
-    height: 98%;
-    border: 0;
-  }
-}
-
 .messageViewer {
   position: relative;
   padding: $default-spacing;
@@ -32,17 +11,25 @@ $base-color: #333333;
 
   .header {
     width: 100%;
+    background-color: white;
 
     h1.subject {
       margin-top: 0;
-      font-size: 1.25 * $font-size-body;
+      font-size: 20px;
       font-weight: $font-weight-normal * 1.25;
+      display: flex;
 
       .folder {
         margin-left: $default-spacing;
         height: 15px;
         line-height: 15px;
         font-size: 11px;
+        margin-top: 7px;
+        background: grey;
+        border-radius: 50%;
+        padding-left: 10px;
+        padding-right: 10px;
+        cursor: pointer;
       }
     }
 

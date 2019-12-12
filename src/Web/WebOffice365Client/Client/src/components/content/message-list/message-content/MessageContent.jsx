@@ -9,8 +9,8 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import MessageToolbar from "../message-toolbar/MessageToolbar";
-
 import "./messageContent.scss";
+import MessageHeader from "./messageHeader";
 
 //BEGIN functions for attachment functionality
 
@@ -223,7 +223,12 @@ export class MessageContent extends Component {
           messageResult={this.props.emailMessageResult}
         />
 
-        <div className="d-flex justify-content-center align-items-center message-content">
+        <MessageHeader />
+
+        <div
+          className="d-flex justify-content-center align-items-center message-content"
+          style={{ top: 160 }}
+        >
           {this.props.emailMessageResult.loading ? this.renderSpinner() : null}
           {this.state.errorMessage ? (
             this.renderErrorModal()
@@ -260,8 +265,5 @@ const mapDispatchToProps = dispatch =>
 
 export default compose(
   withRouter,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )
+  connect(mapStateToProps, mapDispatchToProps)
 )(MessageContent);

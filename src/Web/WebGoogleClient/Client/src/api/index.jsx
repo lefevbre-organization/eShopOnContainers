@@ -113,7 +113,7 @@ const getMessageHeaders = response => {
   });
 };
 
-const getMessageHeader = id => {
+export const getMessageHeader = id => {
   return new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.messages
       .get({
