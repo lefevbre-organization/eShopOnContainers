@@ -11,17 +11,14 @@ services:
   nosql.data:
     image: mongo
 
+  basket.data:
+    image: redis:alpine
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
-
-  webstatus:
-    image: ${REGISTRY:-eshop}/webstatuslef:${PLATFORM:-linux}-${TAG:-dev}
-    build:
-      context: .
-      dockerfile: src/Web/WebStatusLef/Dockerfile
       
   webportalclient:
-    image: ${REGISTRY:-elefebvreoncontainers}/webportalclient:${PLATFORM:-linux}-${TAG:-dev}
+    image: ${REGISTRY:-eshop}/webportalclient:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Web/WebPortalClient/Dockerfile    
@@ -31,7 +28,7 @@ services:
       - rabbitmq
 
   webgoogleclient:
-    image: ${REGISTRY:-elefebvreoncontainers}/webgoogleclient:${PLATFORM:-linux}-${TAG:-dev}
+    image: ${REGISTRY:-eshop}/webgoogleclient:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Web/WebGoogleClient/Dockerfile    
@@ -41,7 +38,7 @@ services:
       - rabbitmq
 
   webofficeclient:
-    image: ${REGISTRY:-elefebvreoncontainers}/webofficeclient:${PLATFORM:-linux}-${TAG:-dev}
+    image: ${REGISTRY:-eshop}/webofficeclient:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Web/WebOffice365Client/Dockerfile    
@@ -49,19 +46,9 @@ services:
         NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
     depends_on:
       - rabbitmq
-
-  webimapclient:
-    image: ${REGISTRY:-elefebvreoncontainers}/webimapclient:${PLATFORM:-linux}-${TAG:-dev}
-    build:
-      context: .
-      dockerfile: src/Web/WebImapClient/Dockerfile    
-      args:
-        NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
-    depends_on:
-      - rabbitmq
       
   weblexonclient:
-    image: ${REGISTRY:-elefebvreoncontainers}/weblexonclient:${PLATFORM:-linux}-${TAG:-dev}
+    image: ${REGISTRY:-eshop}/weblexonclient:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Web/WebLexonClient/Dockerfile    
@@ -71,50 +58,65 @@ services:
       - rabbitmq      
 
   account.api:
-    image: ${REGISTRY:-elefebvreoncontainers}/account.api:${PLATFORM:-linux}-${TAG:-dev}
+    image: ${REGISTRY:-eshop}/account.api:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Services/Account/Account.API/Dockerfile    
     depends_on:
+      - sql.data
       - nosql.data
+      - identity.api
       - rabbitmq
 
   webaccountapigw:
-    image: ${REGISTRY:-elefebvreoncontainers}/ocelotapigw:${PLATFORM:-linux}-${TAG:-dev}
+    image: ${REGISTRY:-eshop}/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/ApiGateways/ApiGw-Base/Dockerfile
     depends_on:
       - nosql.data
+      - sql.data
+      - identity.api
       - rabbitmq
       - account.api
 
   lexon.api:
-    image: ${REGISTRY:-elefebvreoncontainers}/lexon.api:${PLATFORM:-linux}-${TAG:-dev}
+    image: ${REGISTRY:-eshop}/lexon.api:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Services/Lexon/Lexon.API/Dockerfile    
     depends_on:
+      - sql.data
       - nosql.data
+      - identity.api
       - rabbitmq
 
   lexon.mysql.api:
-    image: ${REGISTRY:-elefebvreoncontainers}/lexon.mysql.api:${PLATFORM:-linux}-${TAG:-dev}
+    image: ${REGISTRY:-eshop}/lexon.mysql.api:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/Services/Lexon/Lexon.MySql/Dockerfile    
     depends_on:
+      - sql.data
       - nosql.data
+      - identity.api
       - rabbitmq
       - lexon.api
 
   weblexonapigw:
-    image: ${REGISTRY:-elefebvreoncontainers}/ocelotapigw:${PLATFORM:-linux}-${TAG:-dev}
+    image: ${REGISTRY:-eshop}/ocelotapigw:${PLATFORM:-linux}-${TAG:-latest}
     build:
       context: .
       dockerfile: src/ApiGateways/ApiGw-Base/Dockerfile
     depends_on:
       - nosql.data
+      - sql.data
+      - identity.api
       - rabbitmq
+#      - ordering.api
+#     - marketing.api
+#     - catalog.api
+#     - basket.api
+#     - account.api
       - lexon.api
       - lexon.mysql.api
