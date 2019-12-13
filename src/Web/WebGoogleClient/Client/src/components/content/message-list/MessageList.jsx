@@ -1,15 +1,11 @@
 import React, { PureComponent } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { withTranslation } from 'react-i18next';
-
 import { bindActionCreators, compose } from "redux";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
-
 import MessageRow from "./message-row/MessageRow";
-
 import { addMessage, deleteMessage } from "./actions/message-list.actions";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import ListToolbar from "./list-toolbar/ListToolbar";

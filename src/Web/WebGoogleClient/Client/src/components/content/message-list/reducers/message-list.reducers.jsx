@@ -5,6 +5,9 @@ import {
   MESSAGE_LOAD_IN_PROGRESS,
   MESSAGE_LOAD_SUCCESS,
   MESSAGE_LOAD_FAIL,
+  MESSAGE_HEADER_LOAD_IN_PROGRESS,
+  MESSAGE_HEADER_LOAD_SUCCESS,
+  MESSAGE_HEADER_LOAD_FAIL, 
   GET_MESSAGES_LOAD_IN_PROGRESS,
   EMPTY_MESSAGES,
   SET_PAGE_TOKENS,
@@ -123,6 +126,39 @@ export const emailMessageResult = (
     case MESSAGE_LOAD_FAIL:
       return {
         ...state,
+        loading: false,
+        failed: true,
+        error: action.payload
+      }
+    default:
+      return state;
+  }
+};
+
+const defaultEmailHeaderMessageResult = {
+  headers: null,
+  loading: false,
+  failed: false
+};
+
+export const emailHeaderMessageResult = (
+  state = defaultEmailHeaderMessageResult,
+  action
+) => {
+  switch (action.type) {
+    case MESSAGE_HEADER_LOAD_IN_PROGRESS:
+      return { ...state, headers: null, loading: true, failed: false };
+    case MESSAGE_HEADER_LOAD_SUCCESS:
+      return {
+        ...state,
+        headers: action.payload.payload.headers,
+        loading: false,
+        failed: false
+      };
+    case MESSAGE_HEADER_LOAD_FAIL:
+      return {
+        ...state,
+        headers: null,
         loading: false,
         failed: true,
         error: action.payload

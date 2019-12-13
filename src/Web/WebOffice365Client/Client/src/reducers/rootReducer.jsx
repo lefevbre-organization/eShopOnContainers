@@ -4,7 +4,14 @@ import { signInStatusResult } from "./gapi.reducers";
 import { lexon } from "./lexon";
 
 import { labelsResult } from "../components/sidebar/sidebar.reducers";
-import { messagesResult, emailMessageResult, pageTokens, searchQuery, messageList } from "../components/content/message-list/reducers/message-list.reducers";
+import {
+  messagesResult,
+  emailMessageResult,
+  emailHeaderMessageResult,
+  pageTokens,
+  searchQuery,
+  messageList
+} from "../components/content/message-list/reducers/message-list.reducers";
 
 export default combineReducers({
   signedOutReducer,
@@ -13,6 +20,7 @@ export default combineReducers({
   labelsResult,
   messagesResult,
   emailMessageResult,
+  emailHeaderMessageResult,
   pageTokens,
   searchQuery,
   messageList
