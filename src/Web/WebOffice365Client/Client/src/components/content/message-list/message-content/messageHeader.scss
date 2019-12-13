@@ -12,6 +12,7 @@ $base-color: #333333;
   .header {
     width: 100%;
     background-color: white;
+    border-bottom: none;
 
     h1.subject {
       margin-top: 0;
@@ -25,11 +26,12 @@ $base-color: #333333;
         line-height: 15px;
         font-size: 11px;
         margin-top: 7px;
-        background: grey;
-        border-radius: 50%;
+        background: #D8D8D8;
+        border-radius: 1.25rem;
         padding-left: 10px;
         padding-right: 10px;
         cursor: pointer;
+        color: rgba(0, 0, 0, 0.87);
       }
     }
 

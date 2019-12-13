@@ -4,6 +4,7 @@ import { withRouter } from "react-router-dom";
 import { bindActionCreators, compose } from "redux";
 import { getEmailHeaderMessage } from "../actions/message-list.actions";
 import "./messageHeader.scss";
+import i18n from "i18next";
 
 class MessageHeader extends Component {
   constructor(props) {
@@ -53,6 +54,22 @@ class MessageHeader extends Component {
     return null;
   }
 
+  getTraductionLabel(label) {
+    switch (label) {
+      case "INBOX":
+        return i18n.t("sidebar.inbox");
+      case "SENT":
+        return i18n.t("sidebar.sent");
+      case "TRASH":
+        return i18n.t("sidebar.trash");
+      case "SPAM":
+        return i18n.t("sidebar.spam");
+
+      default:
+        return label;
+    }
+  }
+
   render() {
     return (
       <div className="messageViewer">
@@ -63,7 +80,7 @@ class MessageHeader extends Component {
               className="folder"
               onClick={() => this.onFolderClick("folder")}
             >
-              <div> {this.getLabelSelected()} </div>
+              <div> {this.getTraductionLabel(this.getLabelSelected())} </div>
             </div>
           </h1>
           <div className="fromDate">
