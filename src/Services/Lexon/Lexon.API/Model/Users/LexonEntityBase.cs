@@ -3,7 +3,7 @@
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model
 {
     [BsonIgnoreExtraElements]
-    public class LexonEntityBase: MongoModel
+    public class LexonEntityBase //: MongoModel
     {
         public long id { get; set; }
 

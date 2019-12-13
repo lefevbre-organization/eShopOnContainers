@@ -4,9 +4,10 @@ using MongoDB.Bson.Serialization.Attributes;
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model
 {
     [BsonIgnoreExtraElements]
-    public class LexonUser : MongoModel
+    public class LexonUser //: MongoModel
     {
         [BsonId]
+        [BsonIgnoreIfDefault]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 

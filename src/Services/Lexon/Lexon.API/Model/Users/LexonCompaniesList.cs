@@ -1,6 +1,9 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model
+﻿using MongoDB.Bson.Serialization.Attributes;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model
 {
-    public class LexonCompaniesList : MongoModel, ILexonList<LexonCompany>
+    [BsonIgnoreExtraElements]
+    public class LexonCompaniesList : ILexonList<LexonCompany>// MongoModel, ILexonList<LexonCompany>
     {
         public long timeStamp { get; set; }
         public LexonCompany[] list { get; set; }

@@ -1,6 +1,9 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model
+﻿using MongoDB.Bson.Serialization.Attributes;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model
 {
-    public class LexonCompany : MongoModel
+    [BsonIgnoreExtraElements]
+    public class LexonCompany // : MongoModel
     {
         public long idCompany { get; set; }
 
@@ -24,6 +27,7 @@
         public LexonEntityBaseList opposingSolicitors { get; set; }
         public LexonEntityBaseList notaries { get; set; }
 
-        public LexonFoldersList folders { get; set; }
+        //TODO: poner folder
+       // public LexonFoldersList folders { get; set; }
     }
 }

@@ -37,6 +37,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
         }
 
         [HttpGet]
+        [Route("test")]
+        [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(int), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> TestAsync(string idUserNavision = "E1621396")
+
+        {
+            return Ok(1);
+
+        }
+
+        [HttpGet]
         [Route("user")]
         [ProducesResponseType(typeof(Result<LexonUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexonUser>), (int)HttpStatusCode.BadRequest)]

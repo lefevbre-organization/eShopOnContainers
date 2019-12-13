@@ -3,11 +3,10 @@
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model
 {
     [BsonIgnoreExtraElements]
-    public class LexonActuation : MongoModel //, IEntity
+    public class LexonActuation //: MongoModel //, IEntity
     {
         public string idMail { get; set; }
 
-        //public long id { get; set; }
         public long idRelated { get; set; }
 
         public string name { get; set; }

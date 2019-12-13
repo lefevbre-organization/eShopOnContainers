@@ -26,6 +26,7 @@ namespace Lefebvre.eLefebvreOnContainers.BuildingBlocks.IntegrationEventLogMongo
 
         [BsonId]
         [BsonElement("_id")]
+        [BsonIgnoreIfDefault]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; private set; }
 
@@ -44,10 +45,10 @@ namespace Lefebvre.eLefebvreOnContainers.BuildingBlocks.IntegrationEventLogMongo
         public string Content { get; private set; }
         public string TransactionId { get; private set; }
 
-        public IntegrationEventLogEntry DeserializeJsonContent(Type type)
-        {
-            IntegrationEvent = JsonConvert.DeserializeObject(Content, type) as IntegrationEvent;
-            return this;
-        }
+        //public IntegrationEventLogEntry DeserializeJsonContent(Type type)
+        //{
+        //    IntegrationEvent = JsonConvert.DeserializeObject(Content, type) as IntegrationEvent;
+        //    return this;
+        //}
     }
 }

@@ -2,11 +2,13 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using HealthChecks.UI.Client;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Filters;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Middlewares;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repositories;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.IntegrationsEvents.EventHandling;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -20,13 +22,20 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 using StackExchange.Redis;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
 
 //using Microsoft.eShopOnContainers.BuildingBlocks.EventBusServiceBus;
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
@@ -162,6 +171,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
             });
 
             ConfigureEventBus(app);
+            var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
+            LexonContextSeed.SeedAsync(app, loggerFactory, eventBus)
+                .Wait();
         }
 
         private void RegisterAppInsights(IServiceCollection services)
@@ -349,4 +361,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
             return services;
         }
     }
+
+
 }
