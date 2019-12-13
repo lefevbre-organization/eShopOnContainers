@@ -22,7 +22,9 @@ class Main extends Component {
       isLoading: true,
       showNotification: false,
       messageNotification: null,
-      idCaseFile: null
+      idCaseFile: null,
+      bbdd: null,
+      idCompany: null
     };
 
     this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -86,9 +88,9 @@ class Main extends Component {
   }
 
   async handlePutUserFromLexonConnector(event) {
-    const { user, selectedMessageId, idCaseFile } = event.detail;
+    const { user, selectedMessageId, idCaseFile, bbdd, idCompany } = event.detail;
     if (idCaseFile != null && idCaseFile !== undefined) {
-      this.setState({ idCaseFile: idCaseFile });
+      this.setState({ idCaseFile: idCaseFile, bbdd: bbdd, idCompany: idCompany });
     }
 
     selectedMessageId.forEach(message => {
@@ -161,7 +163,9 @@ class Main extends Component {
       companies,
       showNotification,
       messageNotification,
-      idCaseFile
+      idCaseFile,
+      bbdd,
+      idCompany
     } = this.state;
 
     if (isLoading) {
@@ -177,11 +181,23 @@ class Main extends Component {
           toggleNotification={this.toggleNotification}
           message={messageNotification}
         />
+        
+        <div className="lex-on-configuration">
+          <a href="#/" className="lex-on-configuration-trigger">
+            <strong className="sr-only sr-only-focusable">
+              Opciones de configuración
+            </strong>
+            <span className="lf-icon-configuration"></span>
+          </a>
+        </div>
+
         <Routing
           user={user}
           companies={companies}
           toggleNotification={this.toggleNotification}
           casefile={idCaseFile}
+          bbdd={bbdd}
+          company={idCompany}
         />
       </Fragment>
     );
