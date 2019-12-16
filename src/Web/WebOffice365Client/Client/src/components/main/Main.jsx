@@ -449,8 +449,8 @@ export class Main extends Component {
                   ></img>
                 </div>
               </span>
-              <span className="productsbutton">
-                {/* <div onClick={() => this.onSetSidebarOpenQMemento(true)}> */}
+                        {/* <span className="productsbutton">
+                 <div onClick={() => this.onSetSidebarOpenQMemento(true)}> 
                 <div>
                   <img
                     className="imgproductdisable"
@@ -461,7 +461,7 @@ export class Main extends Component {
                 </div>
               </span>
               <span className="productsbutton">
-                {/* <div onClick={() => this.onSetSidebarOpenCompliance(true)}> */}
+                 <div onClick={() => this.onSetSidebarOpenCompliance(true)}> 
                 <div>
                   <img
                     className="imgproductdisable"
@@ -472,7 +472,7 @@ export class Main extends Component {
                 </div>
               </span>
               <span className="productsbutton">
-                {/* <div onClick={() => this.onSetSidebarOpenCalendar(true)}> */}
+                <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
                 <div>
                   <img
                     className="imgproductdisable"
@@ -494,9 +494,9 @@ export class Main extends Component {
                     src="assets/img/icon-close-empty.png"
                   ></img>
                 </button>
-              </span> */}
+              </span> 
 
-              <span className="spaceproduct"></span>
+              <span className="spaceproduct"></span>*/}
             </div>
           </section>
         </Fragment>
