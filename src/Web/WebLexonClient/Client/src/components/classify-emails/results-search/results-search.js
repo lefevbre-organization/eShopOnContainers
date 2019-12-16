@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./results-search.css";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
 class ResultsSearch extends Component {
   constructor(props) {
@@ -30,14 +31,17 @@ class ResultsSearch extends Component {
   render() {
     const { id, name, description } = this.props.result;
     const classSelected = this.classSelected();
-
+    
     return (
       <tr onClick={() => this._handleOnClick()} className={classSelected}>
         <td>
           <span className="lf-icon-check"></span>
           {id}
         </td>
-        <td>{name}</td>
+        {
+         (this.props.selections.typeSelected === 1) ? <td>{name}</td> : null
+        }
+        {/* <td>{name}</td> */}
         <td>{description}</td>
       </tr>
     );
@@ -50,4 +54,9 @@ ResultsSearch.propTypes = {
   updateResultsSelected: PropTypes.func.isRequired
 };
 
-export default ResultsSearch;
+const mapStateToProps = state => ({
+  selections: state.selections
+});
+
+export default connect(mapStateToProps)(ResultsSearch);
+

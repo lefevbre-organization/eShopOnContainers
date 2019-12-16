@@ -286,3 +286,7 @@ src/**/inf.yaml
 /src/Web/WebGoogleClient/Client/build
 /src/Web/WebLexonClient/Client/build
 /src/Web/WebImapClient/Client/client/dist
+/src/Web/WebOffice365Client/node_modules_
+/src/Web/WebImapClient/node_modules_
+/src/Web/WebPortalClient/node_modules_/@angular/compiler-cli/src/ngtsc/typecheck/src/context.d.ts
+/src/Web/WebPortalClient/node_modules_

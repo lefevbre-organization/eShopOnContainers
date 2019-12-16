@@ -17,8 +17,10 @@ class UserLexon extends Component {
   }
 
   componentDidMount() {
-    const user = this.props.match.params.id;
+    const user = this.props.match.params.idUser;
     this.props.setUser(user);
+    const casefile = this.props.match.params.idCaseFile;
+    this.props.setCaseFile(casefile);
 
     const isNewAccount = user.slice(2, 3) === "1" ? true : false;
     this.checkIsAuthenticated();
@@ -69,7 +71,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setUser: user => dispatch(ACTIONS.setUser(user))
+  setUser: user => dispatch(ACTIONS.setUser(user)),
+  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile))
 });
 
 export default connect(

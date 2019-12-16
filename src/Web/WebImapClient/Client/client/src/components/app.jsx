@@ -136,7 +136,8 @@ class App extends Component {
       new CustomEvent("PutUserFromLexonConnector", {
         detail: {
           user,
-          selectedMessageId
+          selectedMessageId,
+          idCaseFile: this.props.lexon.idCaseFile
         }
       })
     );
@@ -224,6 +225,7 @@ class App extends Component {
             <SideBar
               collapsed={sideBar.collapsed}
               sideBarToggle={this.toggleSideBar}
+              casefile={lexon.idCaseFile}
             />
             <div id="mainnav-app" />
 
@@ -271,11 +273,13 @@ class App extends Component {
                 isotip-position="bottom-end"
                 isotip-size="small"
               >
-                <IconButton onClick={() => this.onSetSidebarOpenQMemento(true)}>
+                {/* <IconButton onClick={() => this.onSetSidebarOpenQMemento(true)}> */}
+                <IconButton>
                   <img
                     border="0"
                     alt="Calendar"
                     src="assets/images/icon-qmemento.png"
+                    className="disabledimg"
                   ></img>
                 </IconButton>
                 <div className={styles.btnselect}></div>
@@ -285,10 +289,11 @@ class App extends Component {
                 isotip-position="bottom-end"
                 isotip-size="small"
               >
-                <IconButton
+                {/* <IconButton
                   disabled
                   onClick={() => this.onSetSidebarOpenCompliance(true)}
-                >
+                > */}
+                <IconButton>
                   <img
                     border="0"
                     alt="Calendar"
@@ -304,11 +309,13 @@ class App extends Component {
                 isotip-position="bottom-end"
                 isotip-size="small"
               >
-                <IconButton onClick={() => this.onSetSidebarOpenCalendar(true)}>
+                {/* <IconButton onClick={() => this.onSetSidebarOpenCalendar(true)}> */}
+                <IconButton>
                   <img
                     border="0"
                     alt="Calendar"
                     src="assets/images/icon-calendar.png"
+                    className="disabledimg"
                   ></img>
                 </IconButton>
                 <div className={styles.btnselect}></div>
@@ -373,9 +380,7 @@ class App extends Component {
         <div className={styles["fab-container"]}>
           {outbox === null ? (
             <button
-              className={`${mainCss["mdc-fab"]} ${
-                mainCss["mdc-button--raised"]
-              }`}
+              className={`${mainCss["mdc-fab"]} ${mainCss["mdc-button--raised"]}`}
             >
               <span className={`material-icons ${mainCss["mdc-fab__icon"]}`}>
                 chat_bubble_outline
@@ -412,7 +417,7 @@ class App extends Component {
     //setTimeout(function () { this.registerConnectorApp(); }, 2200);
     this.registerConnectorApp();
 
-    const { userId } = this.props.lexon;
+    const { userId, idCaseFile } = this.props.lexon;
     const { email } = this.props;
     if (userId !== null && email !== null) {
       const url = `${window.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}`;
@@ -421,6 +426,10 @@ class App extends Component {
       }).catch(error => {
         console.log("error =>", error);
       });
+      if (idCaseFile !== null && idCaseFile !== undefined) {
+        this.props.newMessage();
+        this.onSetSidebarOpenLexon(true);
+      }
     }
 
     window.addEventListener(

@@ -19,6 +19,11 @@ spec:
         app: {{ template "rabbitmq.name" . }}
         release: {{ .Release.Name }}
     spec:
+      volumes:
+# Asociamos elefebvre-vol-rabbitmq-claim con volumen nuevo llamado rabbitmq-now-data
+        - name: rabbitmq-now-data
+          persistentVolumeClaim:
+            claimName: elefebvre-vol-rabbitmq-claim
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -29,6 +34,10 @@ spec:
               protocol: TCP
           resources:
 {{ toYaml .Values.resources | indent 12 }}
+# Montamos rabbitmq-now-data en /var/lib/rabbitmq (donde rabbit guarda las colas por defecto)
+          volumeMounts:
+           - mountPath: /var/lib/rabbitmq
+             name: rabbitmq-now-data
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}

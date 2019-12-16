@@ -1,5 +1,6 @@
 import { getMessageList } from "../../../../api";
 import { getMessage } from "../../../../api";
+import { getMessageHeader } from "../../../../api";
 import { batchModify } from "../../../../api";
 import { selectLabel } from "../../../sidebar/sidebar.actions";
 
@@ -9,6 +10,9 @@ export const GET_MESSAGES_FAILED = 'GET_MESSAGES_FAILED';
 export const TOGGLE_SELECTED = "TOGGLE_SELECTED";
 export const MESSAGE_LOAD_IN_PROGRESS = "MESSAGE_LOAD_IN_PROGRESS";
 export const MESSAGE_LOAD_SUCCESS = "MESSAGE_LOAD_SUCCESS";
+export const MESSAGE_HEADER_LOAD_FAIL = "MESSAGE_HEADER_LOAD_FAIL";
+export const MESSAGE_HEADER_LOAD_IN_PROGRESS = "MESSAGE_HEADER_LOAD_IN_PROGRESS";
+export const MESSAGE_HEADER_LOAD_SUCCESS = "MESSAGE_HEADER_LOAD_SUCCESS";
 export const MESSAGE_LOAD_FAIL = "MESSAGE_LOAD_FAIL";
 export const EMPTY_MESSAGES = "EMPTY_MESSAGES";
 export const SET_PAGE_TOKENS = "SET_PAGE_TOKENS";
@@ -93,8 +97,29 @@ export const getEmailMessage = messageId => dispatch => {
     });
 };
 
+export const getEmailHeaderMessage = messageId => dispatch => {
+  dispatch(setMessageHeaderLoadInProgress());
+  getMessageHeader(messageId)
+    .then(response => {
+      dispatch({
+        type: MESSAGE_HEADER_LOAD_SUCCESS,
+        payload: response
+      });
+    })
+    .catch(error => {
+      dispatch({
+        type: MESSAGE_HEADER_LOAD_FAIL,
+        payload: error
+      });
+    });
+};
+
 const setMessageLoadInProgress = () => ({
   type: MESSAGE_LOAD_IN_PROGRESS
+});
+
+const setMessageHeaderLoadInProgress = () => ({
+  type: MESSAGE_HEADER_LOAD_IN_PROGRESS
 });
 
 const setMessageListLoadInProgress = () => ({

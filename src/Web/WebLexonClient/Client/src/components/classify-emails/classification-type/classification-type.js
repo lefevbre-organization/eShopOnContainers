@@ -4,6 +4,8 @@ import i18n from "i18next";
 import { getTypes } from "../../../services/services-lexon";
 import Entity from "../entity/entity";
 import PropTypes from "prop-types";
+import ACTIONS from "../../../actions/selections";
+import { connect } from "react-redux";
 
 class ClassificationType extends Component {
   constructor(props) {
@@ -52,6 +54,7 @@ class ClassificationType extends Component {
     if (type) {
       const { searchResultsByType } = this.props;
       searchResultsByType(type.idEntity, null);
+      this.props.setTypeSelected(type.idEntity);
     }
   }
 
@@ -102,4 +105,12 @@ ClassificationType.propTypes = {
   searchResultsByType: PropTypes.func.isRequired
 };
 
-export default ClassificationType;
+const mapStateToProps = state => ({
+  application: state.application
+});
+
+const mapDispatchToProps = dispatch => ({
+  setTypeSelected: type => dispatch(ACTIONS.setTypeSelected(type))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ClassificationType);

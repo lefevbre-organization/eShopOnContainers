@@ -1,21 +1,115 @@
+$default-spacing: 16px;
+$font-size-body: 1rem;
+$font-weight-normal: 400;
+$base-color: #333333;
+
 .div-attach {
-    background-color: #f4f4f4;
-    white-space: nowrap;
-    height: 50px;
-    width: 260px;
+  background-color: #f4f4f4;
+  white-space: nowrap;
+  height: 50px;
+  width: 260px;
 }
 
 .message-content {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 64px;
-    bottom: 10px;   
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 64px;
+  bottom: 10px;
 
-    > iframe {
-        width: 98%;
-        height: 98%;
-        border: 0;
-    }
+  > iframe {
+    width: 98%;
+    height: 98%;
+    border: 0;
+  }
 }
 
+.messageViewer {
+  position: relative;
+  padding: $default-spacing;
+  display: flex;
+  flex-direction: column;
+
+  .header {
+    width: 100%;
+
+    h1.subject {
+      margin-top: 0;
+      font-size: 1.25 * $font-size-body;
+      font-weight: $font-weight-normal * 1.25;
+
+      .folder {
+        margin-left: $default-spacing;
+        height: 15px;
+        line-height: 15px;
+        font-size: 11px;
+      }
+    }
+
+    .fromDate {
+      display: flex;
+      flex-flow: row nowrap;
+      min-width: 0;
+
+      .from {
+        display: inline-block;
+        flex-grow: 1;
+        min-width: 0;
+        width: 1px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        .fromName {
+          font-size: 1.15 * $font-size-body;
+          margin-right: $default-spacing / 2;
+        }
+
+        .email {
+          color: lighten($base-color, 45%);
+          font-style: italic;
+        }
+      }
+
+      .date {
+        display: inline-block;
+        white-space: nowrap;
+      }
+    }
+
+    .to {
+      color: lighten($base-color, 45%);
+
+      .name {
+        margin-right: $default-spacing / 2;
+        color: lighten($base-color, 25%);
+      }
+    }
+  }
+
+  .body {
+    flex: 1;
+    height: 0px;
+    margin-top: $default-spacing;
+    max-width: 100%;
+    width: 100%;
+    display: inline-block;
+    position: relative;
+    overflow: auto;
+
+    .attachments {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      margin-bottom: $default-spacing;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    p {
+      margin: 0 auto;
+    }
+  }
+}

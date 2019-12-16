@@ -71,6 +71,6 @@ configValues: |
   window.URL_GET_ACCOUNTS='https://now-apigwacc.lefebvre.es/api/v1/accounts/emailuseraccount/getbyuser'
   window.URL_MF_GOOGLE='https://now-webgoogle.lefebvre.es/user'
   window.URL_MF_OUTLOOK='https://now-webgraph.lefebvre.es/user'
-  window.URL_MF_IMAP='https://now-webimap.lefebvre.es/user'
+  window.URL_MF_IMAP='https://now-webimap.lefebvre.es//user'
   window.URL_MF_LEXON='https://now-weblexon.lefebvre.es/static/js/main.js'
   window.API_GATEWAY='https://now-apigwlex.lefebvre.es'

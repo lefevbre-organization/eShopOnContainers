@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: mongo
-  tag: 3.6.5-jessie
+  tag: 4.0.13-xenial
   pullPolicy: IfNotPresent
 
 service:

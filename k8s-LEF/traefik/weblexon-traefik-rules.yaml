@@ -1,0 +1,16 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: weblexon-traefik-rules
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - host: now-weblexon.lefebvre.es
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: weblexon
+              servicePort: http

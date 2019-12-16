@@ -13,6 +13,12 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
+
+  webstatus:
+    image: ${REGISTRY:-eshop}/webstatuslef:${PLATFORM:-linux}-${TAG:-dev}
+    build:
+      context: .
+      dockerfile: src/Web/WebStatusLef/Dockerfile
       
   webportalclient:
     image: ${REGISTRY:-elefebvreoncontainers}/webportalclient:${PLATFORM:-linux}-${TAG:-dev}

@@ -113,7 +113,7 @@ const getMessageHeaders = response => {
   });
 };
 
-const getMessageHeader = id => {
+export const getMessageHeader = id => {
   return new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.messages
       .get({
@@ -206,7 +206,7 @@ export const sendMessage = ({ headers, body, attachments }) => {
 
   const headersClone = { ...headers };
   headersClone["MIME-Version"] = "1.0";
-  headersClone["Content-Type"] = "multipart/mixed; boundary=alternative";
+  headersClone["Content-Type"] = `multipart/mixed; boundary=alternative`;
 
   for (let header in headersClone) {
     email += `${header}: ${headersClone[header]}\r\n`;
@@ -218,7 +218,7 @@ export const sendMessage = ({ headers, body, attachments }) => {
   email += `\r\n`;
 
   email += `--attached\r\n`;
-  email += `Content-Type: text/plain; charset = "iso-8859-1"\r\n`;
+  email += `Content-Type: text/plain; charset = "UTF-8"\r\n`;
   email += `Content-Transfer-Encoding: quoted-printable\r\n`;
 
   //text plain
@@ -227,7 +227,7 @@ export const sendMessage = ({ headers, body, attachments }) => {
   email += `\r\n`;
 
   email += `--attached\r\n`;
-  email += `Content-Type: text/html; charset = "iso-8859-1"\r\n`;
+  email += `Content-Type: text/html; charset = "UTF-8"\r\n`;
   email += `Content-Transfer-Encoding: quoted-printable\r\n`;
 
   //HTML

@@ -253,7 +253,7 @@ const getMessageRawList = ({ labelIds, maxResults, pageToken, q = "" }) =>
 //      });
 //  });
 
-const getMessageHeaders = response => {
+export const getMessageHeaders = response => {
   //const messageResult = response.result;
   const messageResult = response;
 
@@ -272,7 +272,7 @@ const getMessageHeaders = response => {
   });
 };
 
-const getMessageHeader = id => {
+export const getMessageHeader = id => {
   return new Promise((resolve, reject) => {
     var accessToken = window.msal.acquireTokenSilent(config.scopes);
     const client = getAuthenticatedClient(accessToken);

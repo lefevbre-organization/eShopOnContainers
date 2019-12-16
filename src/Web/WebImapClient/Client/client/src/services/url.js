@@ -8,7 +8,6 @@
  */
 export const URLS = {
   LOGIN: `/api/v1/application/login`,
-  // LOGIN: `https://cors-anywhere.herokuapp.com/${window.URL_SERVER_API}/api/v1/application/login`,
   FOLDERS: `/api/v1/folders`,
   SMTP: `/api/v1/smtp`
 };
