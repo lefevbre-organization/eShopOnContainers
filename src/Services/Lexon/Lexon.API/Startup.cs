@@ -170,8 +170,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
                 });
             });
 
-            ConfigureEventBus(app);
-            var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
+            ConfigureEventBus(app, out IEventBus eventBus);
+            //var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
+
             LexonContextSeed.SeedAsync(app, loggerFactory, eventBus)
                 .Wait();
         }
@@ -212,10 +213,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
             app.UseAuthorization();
         }
 
-        private void ConfigureEventBus(IApplicationBuilder app)
+        private void ConfigureEventBus(IApplicationBuilder app, out IEventBus eventBus)
         {
             //TODO: implementar si se necesita suscribirse a eventos
-            //var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
+            eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
 
             //eventBus.Subscribe<ProductPriceChangedIntegrationEvent, ProductPriceChangedIntegrationEventHandler>();
             //eventBus.Subscribe<OrderStartedIntegrationEvent, OrderStartedIntegrationEventHandler>();

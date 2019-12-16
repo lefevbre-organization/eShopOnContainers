@@ -13,14 +13,48 @@ services:
     ports:
       - "5340:80"
 
-  nosql.data:
+  sqldata:
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+    ports:
+      - "5433:1433"
+    volumes:
+      - eshop-sqldata:/var/opt/mssql
+
+  nosqldata:
     ports:
       - "27017:27017"  # Important: In a production environment your should remove the external port
+    volumes:
+      - eshop-nosqldata:/data/db
 
   rabbitmq:
     ports:
       - "15672:15672"  # Important: In a production environment your should remove the external port
-      - "5672:5672"   
+      - "5672:5672"
+      
+  identity-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - SpaClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5104
+      - XamarinCallback=http://${ESHOP_PROD_EXTERNAL_DNS_NAME_OR_IP}:5105/xamarincallback
+      - ConnectionString=${ESHOP_AZURE_IDENTITY_DB:-Server=sqldata;Database=Microsoft.eShopOnContainers.Service.IdentityDb;User Id=sa;Password=Pass@word}
+      - MvcClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5100
+      - LocationApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5109
+      - MarketingApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5110
+      - BasketApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5103
+      - OrderingApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5102
+#      - MobileShoppingAggClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5120
+      - LexonApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5120
+      - WebShoppingAggClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5121
+      - WebhooksApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5113
+      - WebhooksWebClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5114
+      - UseCustomizationData=True
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+    ports:
+      - "5105:80"
 
   webstatus:
     environment:
@@ -46,10 +80,25 @@ services:
       - HealthChecksUI__HealthChecks__8__Uri=http://lexon.api/hc
       - HealthChecksUI__HealthChecks__9__Name=Lexon MySql HTTP Check
       - HealthChecksUI__HealthChecks__9__Uri=http://lexon.mysql.api/hc
+      - HealthChecksUI__HealthChecks__10__Name=Identity HTTP Check
+      - HealthChecksUI__HealthChecks__10__Uri=http://identity-api/hc
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
     ports:
       - "5107:80"
+
+  webhooks-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionString=${ESHOP_AZURE_WEBHOOKS_DB:-Server=sqldata;Database=Microsoft.eShopOnContainers.Services.WebhooksDb;User Id=sa;Password=Pass@word}
+      - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
+      - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME}
+      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD}
+      - IdentityUrl=http://identity-api
+      - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+    ports:
+      - "5113:80"
 
   webportalclient:
     environment:
@@ -132,7 +181,7 @@ services:
     ports:
       - "3005:80"
 
-  account.api:
+  account-api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
@@ -153,9 +202,9 @@ services:
     ports:
       - "8083:80"   
     volumes:
-      - ./src/ApiGateways/Web.Bff.Account/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
+      - ./ApiGateways/Web.Bff.Account/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
 
-  lexon.api:
+  lexon-api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
@@ -173,7 +222,7 @@ services:
       - "8084:80"   # Important: In a production environment your should remove the external port (5110) kept here for microservice debugging purposes. 
                     # The API Gateway redirects and access through the internal port (80).
 
-  lexon.mysql.api:
+  lexonmysql-api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
@@ -196,6 +245,12 @@ services:
     ports:
       - "8086:80"   
     volumes:
-      - ./src/ApiGateways/Web.Bff.Lexon/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
+      - ./ApiGateways/Web.Bff.Lexon/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
+
+volumes:
+  eshop-sqldata:
+    external: false
+  eshop-nosqldata:
+    external: false
 
     
