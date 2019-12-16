@@ -259,14 +259,13 @@ class App extends Component {
                       disabled
                       border="0"
                       alt="Lex-On"
-                      src="assets/images/icon-lexon.png"
-                      className="disabledimg"
+                      src="assets/images/icon-lexon.png"                      
                     ></img>
                   </IconButton>
                 )}
                 <div className={styles.btnselect}></div>
               </span>
-              <span
+                        {/* <span
                 className={styles.productsbutton}
                 isotip={t("productBar.database")}
                 isotip-position="bottom-end"

@@ -439,7 +439,7 @@ export class Main extends Component {
                   ></img>
                 </div>
               </span>
-              <span className="productsbutton">
+                        {/* <span className="productsbutton">
                 <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
                   <img
                     className="imgproduct"

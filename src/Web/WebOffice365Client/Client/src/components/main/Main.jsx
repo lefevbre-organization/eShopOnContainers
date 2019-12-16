@@ -445,7 +445,7 @@ export class Main extends Component {
                   ></img>
                 </div>
               </span>
-              <span className="productsbutton">
+                        {/* <span className="productsbutton">
                 <div onClick={() => this.onSetSidebarOpenQMemento(true)}>
                   <img
                     className="imgproduct"
