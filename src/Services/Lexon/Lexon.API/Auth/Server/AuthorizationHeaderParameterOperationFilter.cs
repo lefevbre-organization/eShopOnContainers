@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +18,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Auth.Server
             {
                 if (operation.Parameters == null)
                     operation.Parameters = new List<OpenApiParameter>();
-
 
                 operation.Parameters.Add(new OpenApiParameter
                 {

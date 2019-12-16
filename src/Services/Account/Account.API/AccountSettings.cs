@@ -1,4 +1,4 @@
-﻿namespace Account.API
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API
 {
     public class AccountSettings
     {
@@ -16,6 +16,6 @@
 
         public bool AzureStorageEnabled { get; set; }
 
-        public EventBusSettings EventBus { get; set; }
+       // public EventBusSettings EventBus { get; set; }
     }
 }

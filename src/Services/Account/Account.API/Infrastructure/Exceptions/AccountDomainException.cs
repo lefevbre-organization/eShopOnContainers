@@ -1,11 +1,7 @@
-﻿namespace Account.API.Infrastructure.Exceptions
+﻿using System;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Exceptions
 {
-    #region Using
-
-    using System;
-
-    #endregion
-
     /// <summary>
     /// Exception type for app exceptions
     /// </summary>

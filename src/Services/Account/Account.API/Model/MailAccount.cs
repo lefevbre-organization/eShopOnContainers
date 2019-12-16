@@ -1,17 +1,14 @@
-﻿namespace Account.API.Model
+﻿using Lefebvre.eLefebvreOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Model
 {
-    #region Using
-
-    using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
-    using MongoDB.Bson;
-    using MongoDB.Bson.Serialization.Attributes;
-
-    #endregion
-
     [BsonIgnoreExtraElements]
-    public class Account: MongoModel
+    public class MailAccount //: MongoModel
     {
         [BsonId]
+        [BsonIgnoreIfDefault]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 

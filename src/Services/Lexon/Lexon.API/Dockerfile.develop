@@ -13,7 +13,7 @@ COPY ["Services/Lexon/Lexon.API/Lexon.API.csproj", Services/Lexon/Lexon.API/"]
 
 RUN dotnet restore Services/Lexon/Lexon.API/Lexon.API.csproj -nowarn:msb3202,nu1503
 COPY . .
-WORKDIR "/src/src/Services/Lexon/Lexon.API"
+WORKDIR "/src/Services/Lexon/Lexon.API"
 RUN dotnet build  --no-restore -c $BUILD_CONFIGURATION
 
 ENTRYPOINT ["dotnet", "run", "--no-build", "--no-launch-profile", "-c", "$BUILD_CONFIGURATION", "--"]

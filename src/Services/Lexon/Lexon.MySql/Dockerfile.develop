@@ -13,6 +13,6 @@ COPY ["Services/Lexon/Lexon.MySql/Lexon.MySql.csproj", Services/Lexon/Lexon.MySq
 
 RUN dotnet restore Services/Lexon/Lexon.MySql/Lexon.MySql.csproj -nowarn:msb3202,nu1503
 COPY . .
-WORKDIR "/src/src/Services/Lexon/Lexon.API"
+WORKDIR "/src/Services/Lexon/Lexon.API"
 RUN dotnet build  --no-restore -c $BUILD_CONFIGURATION
 ENTRYPOINT ["dotnet", "run", "--no-build", "--no-launch-profile", "-c", "$BUILD_CONFIGURATION", "--"]

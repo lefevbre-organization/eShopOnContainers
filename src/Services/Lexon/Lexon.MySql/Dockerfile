@@ -93,10 +93,10 @@ RUN dotnet publish --no-restore -c Release -o /app
 RUN ls -lha /app
 
 #FROM build as unittest
-#WORKDIR /src/src/Services/Lexon/Lexon.UnitTests
+#WORKDIR /src/Services/Lexon/Lexon.UnitTests
 
 #FROM build as functionaltest
-#WORKDIR /src/src/Services/Lexon/Lexon.FunctionalTests
+#WORKDIR /src/Services/Lexon/Lexon.FunctionalTests
 
 FROM build AS publish
 

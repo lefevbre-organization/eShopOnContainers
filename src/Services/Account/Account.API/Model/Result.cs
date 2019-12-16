@@ -1,11 +1,7 @@
-﻿namespace Account.API.Model
+﻿using System.Collections.Generic;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Model
 {
-    #region Using
-
-    using System.Collections.Generic;
-
-    #endregion
-
     public class Result<T>
     {
         public List<ErrorInfo> errors { get; set; }

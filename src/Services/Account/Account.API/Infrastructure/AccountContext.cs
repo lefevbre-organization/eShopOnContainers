@@ -1,22 +1,21 @@
-﻿namespace Account.API.Infrastructure
+﻿using Lefebvre.eLefebvreOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
+using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using MongoDB.Bson.Serialization;
+using MongoDB.Driver;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
+using Lefebvre.eLefebvreOnContainers.Services.Account.API.Model;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure
 {
     #region
-
-    using Model;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-    //using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF;
-    using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
-    using Microsoft.Extensions.Options;
-    using MongoDB.Bson.Serialization;
-    using MongoDB.Driver;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Microsoft.Extensions.Configuration;
 
     #endregion
 
@@ -56,14 +55,14 @@
         private static void ClassMapping()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(IntegrationEventLogEntry))) { BsonClassMap.RegisterClassMap<IntegrationEventLogEntry>(); }
-            if (!BsonClassMap.IsClassMapRegistered(typeof(Account))) { BsonClassMap.RegisterClassMap<Account>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(MailAccount))) { BsonClassMap.RegisterClassMap<MailAccount>(); }
         }
 
-        public IMongoCollection<Account> Accounts => Database.GetCollection<Account>("accounts");
+        public IMongoCollection<MailAccount> Accounts => Database.GetCollection<MailAccount>("accounts");
 
-        public IMongoCollection<Account> AccountsTransaction(IClientSessionHandle session)
+        public IMongoCollection<MailAccount> AccountsTransaction(IClientSessionHandle session)
         {
-            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<Account>("accounts");
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<MailAccount>("accounts");
         }
 
         public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogs
@@ -134,7 +133,6 @@
                 .Sort(sort)
                 .ToListAsync();
         }
-
 
         public Task MarkEventAsInProgressAsync(Guid eventId, IClientSessionHandle transaction)
         {

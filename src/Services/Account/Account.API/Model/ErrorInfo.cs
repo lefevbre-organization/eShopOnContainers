@@ -1,4 +1,4 @@
-﻿namespace Account.API.Model
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Model
 {
     public class ErrorInfo
     {

@@ -1,7 +1,7 @@
-﻿namespace Account.API.Model
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Model
 {
     public class AccountList
     {
-        public Account[] Accounts { get; set; }
+        public MailAccount[] Accounts { get; set; }
     }
 }

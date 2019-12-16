@@ -1,4 +1,4 @@
-﻿namespace Account.API.Infrastructure.Services
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Services
 {
     #region Using
 
@@ -29,12 +29,12 @@
             return await _accountsRepository.Get();
         }
 
-        public async Task<Result<Account>> Get(string id)
+        public async Task<Result<MailAccount>> Get(string id)
         {
             return await _accountsRepository.Get(id);
         }
 
-        public async Task<Result<Account>> Create(Account account)
+        public async Task<Result<MailAccount>> Create(MailAccount account)
         {
             return await _accountsRepository.Create(account);
         }
@@ -44,7 +44,7 @@
             return await _accountsRepository.Remove(id);
         }
 
-        public async Task<Result<long>> Update(string id, Account account)
+        public async Task<Result<long>> Update(string id, MailAccount account)
         {
             return await _accountsRepository.Update(id, account);
         }

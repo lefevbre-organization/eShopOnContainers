@@ -1,10 +1,10 @@
-﻿namespace Account.API.Infrastructure.Repositories
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Repositories
 {
     #region Using
 
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-    using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
+    using Lefebvre.eLefebvreOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
     using Microsoft.Extensions.Options;
     using MongoDB.Driver;
     using System;
@@ -49,9 +49,9 @@
             return result;
         }
 
-        public async Task<Result<Account>> Get(string id)
+        public async Task<Result<MailAccount>> Get(string id)
         {
-            var result = new Result<Account> { errors = new List<ErrorInfo>() };
+            var result = new Result<MailAccount> { errors = new List<ErrorInfo>() };
             try 
             {
                 var accounts = _context.Accounts.Find(x => x.Id == id);
@@ -67,9 +67,9 @@
             return result;
         }
 
-        public async Task<Result<Account>> Create(Account account)
+        public async Task<Result<MailAccount>> Create(MailAccount account)
         {
-            var result = new Result<Account> { errors = new List<ErrorInfo>() };
+            var result = new Result<MailAccount> { errors = new List<ErrorInfo>() };
             try
             {
                 await _context.Accounts.InsertOneAsync(account);
@@ -107,7 +107,7 @@
             return result;
         }
 
-        public async Task<Result<long>> Update(string id, Account accountIn)
+        public async Task<Result<long>> Update(string id, MailAccount accountIn)
         {
             var result = new Result<long> { errors = new List<ErrorInfo>() };
             try
@@ -156,7 +156,7 @@
                 var accounts = await _context.Accounts.Find(x => x.User == user).ToListAsync();
                 if (accounts?.Count == 0)
                 {
-                    await _context.Accounts.InsertOneAsync(new Account
+                    await _context.Accounts.InsertOneAsync(new MailAccount
                     {
                         User = user,
                         Provider = provider,
@@ -170,16 +170,16 @@
                     accounts = await _context.Accounts.Find(x => x.User == user && x.Email == email).ToListAsync();
                     if (accounts?.Count > 0)
                     {
-                        var resultUpdate = await _context.Accounts.UpdateManyAsync(account => account.User == user && account.Email != email, Builders<Account>.Update.Set(x => x.DefaultAccount, false));
+                        var resultUpdate = await _context.Accounts.UpdateManyAsync(account => account.User == user && account.Email != email, Builders<MailAccount>.Update.Set(x => x.DefaultAccount, false));
                         result.data = resultUpdate.ModifiedCount;
-                        resultUpdate = await _context.Accounts.UpdateManyAsync(account => account.User == user && account.Email == email, Builders<Account>.Update.Set(x => x.DefaultAccount, true).Set(x => x.Email, email));
+                        resultUpdate = await _context.Accounts.UpdateManyAsync(account => account.User == user && account.Email == email, Builders<MailAccount>.Update.Set(x => x.DefaultAccount, true).Set(x => x.Email, email));
                         result.data += resultUpdate.ModifiedCount;
                     }
                     else
                     {
-                        var resultUpdate = await _context.Accounts.UpdateManyAsync(account => account.User == user && account.Email != email, Builders<Account>.Update.Set(x => x.DefaultAccount, false));
+                        var resultUpdate = await _context.Accounts.UpdateManyAsync(account => account.User == user && account.Email != email, Builders<MailAccount>.Update.Set(x => x.DefaultAccount, false));
                         result.data = resultUpdate.ModifiedCount;
-                        await _context.Accounts.InsertOneAsync(new Account
+                        await _context.Accounts.InsertOneAsync(new MailAccount
                         {
                             User = user,
                             Provider = provider,
@@ -226,7 +226,7 @@
             var result = new Result<long> { errors = new List<ErrorInfo>() };
             try
             {
-                var resultUpdate = await _context.Accounts.UpdateManyAsync(account => account.User == user, Builders<Account>.Update.Set(x => x.DefaultAccount, false));
+                var resultUpdate = await _context.Accounts.UpdateManyAsync(account => account.User == user, Builders<MailAccount>.Update.Set(x => x.DefaultAccount, false));
                 result.data = resultUpdate.ModifiedCount;
 
                 var accountFind = await _context.Accounts.Find(x => x.User == user).FirstOrDefaultAsync();

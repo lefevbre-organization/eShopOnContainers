@@ -1,11 +1,7 @@
-﻿namespace Account.API.ViewModel
+﻿using System.Collections.Generic;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.ViewModel
 {
-    #region Using
-
-    using System.Collections.Generic;
-
-    #endregion
-
     public class PaginatedItemsViewModel<TEntity> where TEntity : class
     {
         public int PageIndex { get; private set; }

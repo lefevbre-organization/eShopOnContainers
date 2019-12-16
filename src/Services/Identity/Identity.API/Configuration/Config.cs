@@ -21,6 +21,7 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API.Configuration
                 new ApiResource("webhooks", "Webhooks registration Service"),
                 new ApiResource("lexon", "Lexon Service"),
                 new ApiResource("lexonmysql", "Lexon MySql Service"),
+                new ApiResource("account", "Account regsitration Service"),
             };
         }
 
@@ -335,6 +336,21 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API.Configuration
                         "lexonmysql"
                     }
                 },
+                new Client
+                {
+                    ClientId = "accountswaggerui",
+                    ClientName = "Account Swagger UI",
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowAccessTokensViaBrowser = true,
+
+                    RedirectUris = { $"{clientsUrl["AccountApi"]}/swagger/oauth2-redirect.html" },
+                    PostLogoutRedirectUris = { $"{clientsUrl["AccountApi"]}/swagger/" },
+
+                    AllowedScopes =
+                    {
+                        "account"
+                    }
+                }
             };
         }
     }

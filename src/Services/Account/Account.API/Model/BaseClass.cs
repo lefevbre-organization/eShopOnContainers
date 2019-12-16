@@ -1,13 +1,9 @@
-﻿namespace Account.API.Model
+﻿using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Model
 {
-    #region Using
-
-    using Microsoft.Extensions.Logging;
-    using System;
-    using System.Collections.Generic;
-
-    #endregion
-
     public class BaseClass<T>
     {
         internal readonly ILogger<T> log;
@@ -65,7 +61,7 @@
             WriteLine($"FILE[{sourceFilePath}]//PROC[{memberName}] : ");
             foreach (var item in parameters)
             {
-               WriteLine(item);
+                WriteLine(item);
             }
         }
 
