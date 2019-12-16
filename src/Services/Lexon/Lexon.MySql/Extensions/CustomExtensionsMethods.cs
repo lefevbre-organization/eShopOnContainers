@@ -1,13 +1,8 @@
-﻿using Lexon.MySql.Infrastructure.Filters;
-using Lexon.MySql.Infrastructure.Repositories;
-using Lexon.MySql.Infrastructure.Services;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Lexon.MySql.Extensions
 {
@@ -18,119 +13,119 @@ namespace Lexon.MySql.Extensions
             return services;
         }
 
-        public static IServiceCollection AddCustomMVC(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddMvc(options =>
-            {
-                options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-            })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddControllersAsServices();
+        //public static IServiceCollection AddCustomMVC(this IServiceCollection services, IConfiguration configuration)
+        //{
+        //    services.AddMvc(options =>
+        //    {
+        //        options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+        //    })
+        //        .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+        //        .AddControllersAsServices();
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder
-                    .SetIsOriginAllowed((host) => true)
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
-            });
+        //    services.AddCors(options =>
+        //    {
+        //        options.AddPolicy("CorsPolicy",
+        //            builder => builder
+        //            .SetIsOriginAllowed((host) => true)
+        //            .AllowAnyMethod()
+        //            .AllowAnyHeader()
+        //            .AllowCredentials());
+        //    });
 
-            services.AddTransient<ILexonMySqlService, LexonMySqlService>();
-            services.AddTransient<ILexonMySqlRepository, LexonMySqlRepository>();
-            return services;
-        }
+        //    services.AddTransient<ILexonMySqlService, LexonMySqlService>();
+        //    services.AddTransient<ILexonMySqlRepository, LexonMySqlRepository>();
+        //    return services;
+        //}
 
-        public static IServiceCollection AddCustomHealthCheck(this IServiceCollection services, IConfiguration configuration)
-        {
-            var accountName = configuration.GetValue<string>("AzureStorageAccountName");
-            var accountKey = configuration.GetValue<string>("AzureStorageAccountKey");
+        //public static IServiceCollection AddCustomHealthCheck(this IServiceCollection services, IConfiguration configuration)
+        //{
+        //    var accountName = configuration.GetValue<string>("AzureStorageAccountName");
+        //    var accountKey = configuration.GetValue<string>("AzureStorageAccountKey");
 
-            var hcBuilder = services.AddHealthChecks();
+        //    var hcBuilder = services.AddHealthChecks();
 
-            hcBuilder
-                .AddCheck("self", () => HealthCheckResult.Healthy())
-                .AddMongoDb(
-                    configuration["ConnectionStringHc"],
-                    name: "lexon-mysql-mongodb-check",
-                    tags: new string[] { "mongodb" });
+        //    hcBuilder
+        //        .AddCheck("self", () => HealthCheckResult.Healthy())
+        //        .AddMongoDb(
+        //            configuration["ConnectionStringHc"],
+        //            name: "lexon-mysql-mongodb-check",
+        //            tags: new string[] { "mongodb" });
 
-            if (!string.IsNullOrEmpty(accountName) && !string.IsNullOrEmpty(accountKey))
-            {
-                hcBuilder
-                    .AddAzureBlobStorage(
-                        $"DefaultEndpointsProtocol=https;AccountName={accountName};AccountKey={accountKey};EndpointSuffix=core.windows.net",
-                        name: "catalog-storage-check",
-                        tags: new string[] { "lexonmysqlstorage" });
-            }
+        //    if (!string.IsNullOrEmpty(accountName) && !string.IsNullOrEmpty(accountKey))
+        //    {
+        //        hcBuilder
+        //            .AddAzureBlobStorage(
+        //                $"DefaultEndpointsProtocol=https;AccountName={accountName};AccountKey={accountKey};EndpointSuffix=core.windows.net",
+        //                name: "catalog-storage-check",
+        //                tags: new string[] { "lexonmysqlstorage" });
+        //    }
 
-            if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
-            {
-                hcBuilder
-                    .AddAzureServiceBusTopic(
-                        configuration["EventBusConnection"],
-                        topicName: "lexon_mysql_event_bus",
-                        name: "lexon-mysql-servicebus-check",
-                        tags: new string[] { "servicebus" });
-            }
-            else
-            {
-                hcBuilder
-                    .AddRabbitMQ(
-                        $"amqp://{configuration["EventBusConnection"]}",
-                        name: "lexon-mysql-rabbitmqbus-check",
-                        tags: new string[] { "rabbitmqbus" });
-            }
+        //    if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
+        //    {
+        //        hcBuilder
+        //            .AddAzureServiceBusTopic(
+        //                configuration["EventBusConnection"],
+        //                topicName: "lexon_mysql_event_bus",
+        //                name: "lexon-mysql-servicebus-check",
+        //                tags: new string[] { "servicebus" });
+        //    }
+        //    else
+        //    {
+        //        hcBuilder
+        //            .AddRabbitMQ(
+        //                $"amqp://{configuration["EventBusConnection"]}",
+        //                name: "lexon-mysql-rabbitmqbus-check",
+        //                tags: new string[] { "rabbitmqbus" });
+        //    }
 
-            return services;
-        }
+        //    return services;
+        //}
 
         public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
         {
             return services;
         }
 
-        public static IServiceCollection AddCustomOptions(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.Configure<LexonSettings>(configuration);
-            services.Configure<ApiBehaviorOptions>(options =>
-            {
-                options.InvalidModelStateResponseFactory = context =>
-                {
-                    var problemDetails = new ValidationProblemDetails(context.ModelState)
-                    {
-                        Instance = context.HttpContext.Request.Path,
-                        Status = StatusCodes.Status400BadRequest,
-                        Detail = "Please refer to the errors property for additional details."
-                    };
+        //public static IServiceCollection AddCustomOptions(this IServiceCollection services, IConfiguration configuration)
+        //{
+        //    services.Configure<LexonSettings>(configuration);
+        //    services.Configure<ApiBehaviorOptions>(options =>
+        //    {
+        //        options.InvalidModelStateResponseFactory = context =>
+        //        {
+        //            var problemDetails = new ValidationProblemDetails(context.ModelState)
+        //            {
+        //                Instance = context.HttpContext.Request.Path,
+        //                Status = StatusCodes.Status400BadRequest,
+        //                Detail = "Please refer to the errors property for additional details."
+        //            };
 
-                    return new BadRequestObjectResult(problemDetails)
-                    {
-                        ContentTypes = { "application/problem+json", "application/problem+xml" }
-                    };
-                };
-            });
+        //            return new BadRequestObjectResult(problemDetails)
+        //            {
+        //                ContentTypes = { "application/problem+json", "application/problem+xml" }
+        //            };
+        //        };
+        //    });
 
-            return services;
-        }
+        //    return services;
+        //}
 
-        public static IServiceCollection AddSwagger(this IServiceCollection services)
-        {
-            services.AddSwaggerGen(options =>
-            {
-                options.DescribeAllEnumsAsStrings();
-                options.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info
-                {
-                    Title = "Lefebvre Now - Lexon MySql",
-                    Version = "v1",
-                    Description = "This is direct search in mysql databases, created only by preview job in develop",
-                    TermsOfService = "Terms Of Service"
-                });
-            });
+        //public static IServiceCollection AddSwagger(this IServiceCollection services)
+        //{
+        //    services.AddSwaggerGen(options =>
+        //    {
+        //        options.DescribeAllEnumsAsStrings();
+        //        options.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info
+        //        {
+        //            Title = "Lefebvre Now - Lexon MySql",
+        //            Version = "v1",
+        //            Description = "This is direct search in mysql databases, created only by preview job in develop",
+        //            TermsOfService = "Terms Of Service"
+        //        });
+        //    });
 
-            return services;
-        }
+        //    return services;
+        //}
 
         //public static IServiceCollection AddIntegrationServices(this IServiceCollection services, IConfiguration configuration)
         //{

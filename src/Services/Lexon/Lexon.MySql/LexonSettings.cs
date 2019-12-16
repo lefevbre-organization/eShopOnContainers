@@ -1,4 +1,4 @@
-﻿namespace Lexon.MySql
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql
 {
     public class LexonSettings
     {

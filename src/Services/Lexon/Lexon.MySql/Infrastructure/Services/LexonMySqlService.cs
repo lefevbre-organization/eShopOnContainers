@@ -1,10 +1,12 @@
-﻿using Lexon.MySql.Infrastructure.Repositories;
-using Lexon.MySql.Model;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Repositories;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Model;
+//using Lexon.MySql.Model;
+
 using Microsoft.Extensions.Options;
 using System;
 using System.Threading.Tasks;
 
-namespace Lexon.MySql.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Services
 {
     public class LexonMySqlService : ILexonMySqlService
     {
@@ -48,7 +50,6 @@ namespace Lexon.MySql.Infrastructure.Services
         public async Task<Result<JosUser>> GetUserAsync(string idUser)
         {
             return await _lexonRepository.GetUserAsync(idUser);
-
         }
 
         public async Task<Result<JosRelationsList>> GetRelationsAsync(int pageSize, int pageIndex, short idType, string bbdd, string idUser, string idMail)

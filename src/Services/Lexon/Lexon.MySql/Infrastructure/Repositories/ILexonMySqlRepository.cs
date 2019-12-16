@@ -1,7 +1,7 @@
-﻿using Lexon.MySql.Model;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Model;
 using System.Threading.Tasks;
 
-namespace Lexon.MySql.Infrastructure.Repositories
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Repositories
 {
     public interface ILexonMySqlRepository
     {

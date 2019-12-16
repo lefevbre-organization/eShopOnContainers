@@ -1,5 +1,5 @@
 ﻿
-namespace Lexon.MySql.Model
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Model
 {
     public class JosCompany 
     {

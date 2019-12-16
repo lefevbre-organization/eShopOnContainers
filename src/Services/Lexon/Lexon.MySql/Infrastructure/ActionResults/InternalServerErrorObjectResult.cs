@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Lexon.MySql.Infrastructure.ActionResults
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.ActionResults
 {
     public class InternalServerErrorObjectResult : ObjectResult
     {

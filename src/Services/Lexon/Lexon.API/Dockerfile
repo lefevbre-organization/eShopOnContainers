@@ -88,7 +88,7 @@ COPY "NuGet.config" "NuGet.config"
 RUN dotnet restore "eLefebvreOnContainers-ServicesAndWebApps.sln"
 
 COPY . .
-WORKDIR /src/src/Services/Lexon/Lexon.API
+WORKDIR /src/Services/Lexon/Lexon.API
 RUN dotnet publish --no-restore -c Release -o /app
 
 #FROM build as unittest
@@ -102,5 +102,7 @@ FROM build AS publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
+COPY --from=build /src/Services/Lexon/Lexon.API/Proto /app/Proto
+COPY --from=build /src/Services/Lexon/Lexon.API/eshop.pfx .
 #RUN ls -lha /app
 ENTRYPOINT ["dotnet", "Lexon.API.dll"]

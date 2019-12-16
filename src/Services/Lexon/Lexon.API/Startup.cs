@@ -8,7 +8,6 @@ using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Middlewar
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repositories;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.IntegrationsEvents.EventHandling;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -22,22 +21,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
 using RabbitMQ.Client;
 using StackExchange.Redis;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Serialization;
 
-//using Microsoft.eShopOnContainers.BuildingBlocks.EventBusServiceBus;
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
 {
     public class Startup
@@ -60,10 +51,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
             RegisterAppInsights(services);
 
             services.AddControllers(options =>
-                {
-                    options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-                    options.Filters.Add(typeof(ValidateModelStateFilter));
-                }) // Added for functional tests
+            {
+                options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+                options.Filters.Add(typeof(ValidateModelStateFilter));
+            }) // Added for functional tests
                 .AddApplicationPart(typeof(LexonController).Assembly)
                 .AddNewtonsoftJson();
 
@@ -75,21 +66,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
 
             services.Configure<LexonSettings>(Configuration);
 
-            //By connecting here we are making sure that our service
-            //cannot start until redis is ready. This might slow down startup,
-            //but given that there is a delay on resolving the ip address
-            //and then creating the connection it seems reasonable to move
-            //that cost to startup instead of having the first request pay the
-            //penalty.
-            services.AddSingleton<ConnectionMultiplexer>(sp =>
-            {
-                var settings = sp.GetRequiredService<IOptions<LexonSettings>>().Value;
-                var configuration = ConfigurationOptions.Parse(settings.ConnectionString, true);
-
-                configuration.ResolveDns = true;
-
-                return ConnectionMultiplexer.Connect(configuration);
-            });
+            services.AddRedis();
 
             services.AddIntegrationServices(Configuration);
 
@@ -107,6 +84,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IUsersRepository, UsersRepository>();
+            services.AddTransient<IUsersService, UsersService>();
             services.AddTransient<IIdentityService, IdentityService>();
 
             services.AddOptions();
@@ -120,7 +98,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             var pathBase = Configuration["PATH_BASE"];
-
             if (!string.IsNullOrEmpty(pathBase))
             {
                 app.UsePathBase(pathBase);
@@ -225,6 +202,25 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
 
     public static class CustomExtensionMethods
     {
+        public static IServiceCollection AddRedis(this IServiceCollection services)
+        {
+            //By connecting here we are making sure that our service
+            //cannot start until redis is ready. This might slow down startup,
+            //but given that there is a delay on resolving the ip address
+            //and then creating the connection it seems reasonable to move
+            //that cost to startup instead of having the first request pay the
+            //penalty.
+            services.AddSingleton<ConnectionMultiplexer>(sp =>
+            {
+                var settings = sp.GetRequiredService<IOptions<LexonSettings>>().Value;
+                var configuration = ConfigurationOptions.Parse(settings.ConnectionString, true);
+
+                configuration.ResolveDns = true;
+
+                return ConnectionMultiplexer.Connect(configuration);
+            });
+            return services;
+        }
         public static IServiceCollection RegisterEventBus(this IServiceCollection services, IConfiguration configuration)
         {
             var subscriptionClientName = configuration["SubscriptionClientName"];
@@ -255,7 +251,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
 
             return services;
         }
-
 
         public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration)
         {
@@ -301,7 +296,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
             {
                 services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
                 {
-
                     var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
                     var factory = new ConnectionFactory
                     {
@@ -336,10 +330,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
                     configuration["ConnectionString"],
                     name: "lexon-mongodb-check",
                     tags: new string[] { "mongodb" });
-            //    .AddRedis(
-            //        configuration["ConnectionString"],
-            //        name: "redis-check",
-            //        tags: new string[] { "redis" });
 
             if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
             {
@@ -362,6 +352,4 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
             return services;
         }
     }
-
-
 }

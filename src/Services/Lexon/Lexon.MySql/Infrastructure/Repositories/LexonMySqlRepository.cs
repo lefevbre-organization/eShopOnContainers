@@ -1,14 +1,15 @@
-﻿using Lexon.MySql.Model;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Model;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using MySql.Data.MySqlClient;
+using Pomelo.EntityFrameworkCore.MySql;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using MySql.Data.MySqlClient;
 
-namespace Lexon.MySql.Infrastructure.Repositories
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Repositories
 {
     public class LexonMySqlRepository : BaseClass<LexonMySqlRepository>, ILexonMySqlRepository
     {
@@ -28,10 +29,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
         public async Task<Result<JosUserCompanies>> GetCompaniesListAsync(int pageSize, int pageIndex, string idUser)
         {
             var result = new Result<JosUserCompanies>(new JosUserCompanies());
-            //var resultUser = await GetUserAsync(idUser);
-            //if (resultUser.errors.Count > 0)
-            //    return result;
-            //var filtro = $"{{\"NavisionId\":\"{idNavisionUser}\"}}";
             var filtro = $"{{\"IdUser\":\"{idUser}\"}}";
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.GetCompanies}", $"P_FILTER:{filtro}", $"P_UC:{idUser}", $"pageSize:{pageSize}", $"pageIndex:{pageIndex}" });
 
@@ -53,7 +50,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         using (var reader = await command.ExecuteReaderAsync())
                         {
                             if (EvaluateErrorCommand(result.errors, command) == 0)
-                                while (reader.Read())  {  result.data = JsonConvert.DeserializeObject<JosUserCompanies>(reader.GetValue(0).ToString());  }
+                                while (reader.Read()) { result.data = JsonConvert.DeserializeObject<JosUserCompanies>(reader.GetValue(0).ToString()); }
                         }
                     }
                 }
@@ -105,7 +102,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         using (var reader = await command.ExecuteReaderAsync())
                         {
                             if (EvaluateErrorCommand(result.errors, command) == 0)
-                                while (reader.Read())  {  result.data = JsonConvert.DeserializeObject<JosEntityList>(reader.GetValue(0).ToString(), jsonSerializerSettings);   }
+                                while (reader.Read()) { result.data = JsonConvert.DeserializeObject<JosEntityList>(reader.GetValue(0).ToString(), jsonSerializerSettings); }
                         }
                     }
                 }
@@ -161,7 +158,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         using (var reader = await command.ExecuteReaderAsync())
                         {
                             if (EvaluateErrorCommand(result.errors, command) == 0)
-                                while (reader.Read())  {  result.data = JsonConvert.DeserializeObject<JosEntityTypeList>(reader.GetValue(0).ToString());  }
+                                while (reader.Read()) { result.data = JsonConvert.DeserializeObject<JosEntityTypeList>(reader.GetValue(0).ToString()); }
                         }
                     }
                 }
@@ -198,7 +195,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         using (var reader = await command.ExecuteReaderAsync())
                         {
                             if (EvaluateErrorCommand(result.errors, command) == 0)
-                                while (reader.Read())   {   result.data = JsonConvert.DeserializeObject<JosRelationsList>(reader.GetValue(0).ToString());  }
+                                while (reader.Read()) { result.data = JsonConvert.DeserializeObject<JosRelationsList>(reader.GetValue(0).ToString()); }
                         }
                     }
                 }
@@ -237,7 +234,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
                         command.CommandType = CommandType.StoredProcedure;
                         await command.ExecuteNonQueryAsync();
-                        result.data = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString()) ? -1: 1;
+                        result.data = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString()) ? -1 : 1;
                         TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
                         TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
                     }
@@ -315,7 +312,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         using (var reader = await command.ExecuteReaderAsync())
                         {
                             if (EvaluateErrorCommand(result.errors, command) == 0)
-                                while (reader.Read())  {  result.data = JsonConvert.DeserializeObject<JosUser>(reader.GetValue(0).ToString());   }
+                                while (reader.Read()) { result.data = JsonConvert.DeserializeObject<JosUser>(reader.GetValue(0).ToString()); }
                         }
                     }
                 }

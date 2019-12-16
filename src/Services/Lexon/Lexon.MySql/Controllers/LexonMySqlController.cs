@@ -1,15 +1,18 @@
-﻿using Lexon.MySql.Infrastructure.Services;
-using Lexon.MySql.Model;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Services;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Model;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Lexon.MySql.Controllers
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
+    [Authorize]
     public class LexonMySqlController : ControllerBase
     {
         private ILexonMySqlService _lexonService;

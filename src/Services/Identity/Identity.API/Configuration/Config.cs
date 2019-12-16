@@ -19,6 +19,8 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API.Configuration
                 new ApiResource("webshoppingagg", "Web Shopping Aggregator"),
                 new ApiResource("orders.signalrhub", "Ordering Signalr Hub"),
                 new ApiResource("webhooks", "Webhooks registration Service"),
+                new ApiResource("lexon", "Lexon Service"),
+                new ApiResource("lexonmysql", "Lexon MySql Service"),
             };
         }
 
@@ -315,7 +317,22 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API.Configuration
 
                     AllowedScopes =
                     {
-                        "basket"
+                        "lexon"
+                    }
+                },
+                new Client
+                {
+                    ClientId = "lexonmysqlswaggerui",
+                    ClientName = "Lexon MySql Swagger UI",
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowAccessTokensViaBrowser = true,
+
+                    RedirectUris = { $"{clientsUrl["LexonMySql"]}/swagger/oauth2-redirect.html" },
+                    PostLogoutRedirectUris = { $"{clientsUrl["LexonMySql"]}/swagger/" },
+
+                    AllowedScopes =
+                    {
+                        "lexonmysql"
                     }
                 },
             };

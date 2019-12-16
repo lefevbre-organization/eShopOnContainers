@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Lexon.MySql.Infrastructure.Exceptions
+namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Exceptions
 {
     /// <summary>
     /// Exception type for app exceptions

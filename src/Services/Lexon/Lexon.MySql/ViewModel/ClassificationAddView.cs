@@ -1,4 +1,4 @@
-﻿namespace Lexon.MySql.Model
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.ViewModel
 {
     public class ClassificationAddView: ClassificationView
     {
