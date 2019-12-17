@@ -31,11 +31,23 @@
     width: 62px;
     text-align: center;   
     padding-right: 5px;
-    padding-top: 10px;    
+    padding-top: 15px;    
+}
+
+.spaceproduct {
+    border-top: 1px solid #dadce0;
+    content: '';
+    display: block;
+    -webkit-box-flex: 1 0 auto;
+    -webkit-flex: 1 0 auto;
+    flex: 1 0 auto;
+    margin: 0 auto;
+    padding-bottom: 16px;
+    width: 20px;
 }
 
 .productsbutton {
-    padding-bottom: 33px;
+    padding-bottom: 20px;
 }
 
 .imgproduct {

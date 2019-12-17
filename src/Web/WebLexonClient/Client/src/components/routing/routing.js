@@ -32,7 +32,7 @@ class Routing extends Component {
 
   render() {
     const { actualPage } = this.state;
-    const { user, companies, toggleNotification, casefile } = this.props;
+    const { user, companies, toggleNotification, casefile, bbdd, company } = this.props;
 
     switch (actualPage) {
       case PAGE_SELECT_COMPANY:
@@ -49,6 +49,8 @@ class Routing extends Component {
             user={user}
             changePage={this.changePage}
             idCaseFile={casefile}
+            bbdd={bbdd}
+            idCompany={company}
           />
         );
       case PAGE_SELECT_ACTION:

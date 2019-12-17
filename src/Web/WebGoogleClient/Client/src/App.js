@@ -16,7 +16,7 @@ class App extends Component {
         <Switch>
           <Route
             exact
-            path="/user/:idUser/casefile/:idCaseFile"
+            path="/user/:idUser/casefile/:idCaseFile/bbdd/:bbdd/company/:idCompany"
             component={UserLexon}
           />
           <Route exact path="/user/:idUser" component={UserLexon} />

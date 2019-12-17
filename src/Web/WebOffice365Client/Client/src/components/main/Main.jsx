@@ -8,7 +8,7 @@ import "./main.scss";
 import MessageList from "../content/message-list/MessageList";
 import MessageContent from "../content/message-list/message-content/MessageContent";
 import { Route, Switch, withRouter } from "react-router-dom";
-import { getLabels } from "../sidebar/sidebar.actions";
+import { getLabels, getInbox } from "../sidebar/sidebar.actions";
 import {
   getLabelMessages,
   emptyLabelMessages,
@@ -57,7 +57,8 @@ export class Main extends Component {
       leftSideBar: {
         collapsed: false
       },
-      loadFolders: false
+      loadFolders: false,
+      retry: false
     };
 
     e.on("message", function(data) {
@@ -90,7 +91,7 @@ export class Main extends Component {
   }
 
   sendMessagePutUser(user) {
-    const { selectedMessages } = this.props;    
+    const { selectedMessages } = this.props;
     const listMessages = selectedMessages.map(
       selectedMessage => selectedMessage.id
     );
@@ -100,7 +101,9 @@ export class Main extends Component {
         detail: {
           user,
           selectedMessageId: listMessages,
-          idCaseFile: this.props.lexon.idCaseFile
+          idCaseFile: this.props.lexon.idCaseFile,
+          bbdd: this.props.lexon.bbdd,
+          idCompany: this.props.lexon.idCompany
         }
       })
     );
@@ -161,10 +164,8 @@ export class Main extends Component {
   }
 
   componentDidMount() {
-    /* Label list is fetched from here 
-    so that we can declare Routes by labelId 
-    before rendering anything else */
     this.getLabelList();
+    this.getLabelInbox();
 
     window.addEventListener(
       "GetUserFromLexonConnector",
@@ -234,8 +235,25 @@ export class Main extends Component {
         (this.props.lexon.idCaseFile == null ||
           this.props.lexon.idCaseFile === undefined)
       ) {
-        this.props.history.push(`/${this.props.labelsResult.labels[0].id}`);
+        if (
+          this.props.labelsResult.labelInbox !== null &&
+          this.props.labelsResult.labelInbox !== undefined
+        ) {
+          this.loadLabelMessages(this.props.labelsResult.labelInbox);
+          this.setState({ retry: false });
+        } else {
+          this.setState({ retry: true });
+        }
       }
+    }
+
+    if (
+      this.state.retry &&
+      this.props.labelsResult.labelInbox !== null &&
+      this.props.labelsResult.labelInbox !== undefined
+    ) {
+      this.setState({ retry: false });
+      this.loadLabelMessages(this.props.labelsResult.labelInbox);
     }
   }
 
@@ -274,6 +292,10 @@ export class Main extends Component {
 
   getLabelList() {
     this.props.getLabels();
+  }
+
+  getLabelInbox() {
+    this.props.getInbox();
   }
 
   getLabelMessages(labelIds, q, pageToken) {
@@ -408,6 +430,7 @@ export class Main extends Component {
               pathname={this.props.location.pathname}
               labelsResult={this.props.labelsResult}
               onLabelClick={this.loadLabelMessages}
+              selectedLabel={this.props.labelsResult.labelInbox}
             />
             <article className="d-flex flex-column position-relative">
               <Switch>
@@ -440,17 +463,28 @@ export class Main extends Component {
 
             <div className="productpanel">
               <span className="productsbutton">
-                <div onClick={() => this.onSetSidebarOpenLexon(true)}>
-                  <img
-                    className={lexon.user ? "imgproduct" : "imgproductdisable"}
-                    border="0"
-                    alt="Lex-On"
-                    src="assets/img/icon-lexon.png"
-                  ></img>
-                </div>
+                {lexon.user ? (
+                  <div onClick={() => this.onSetSidebarOpenLexon(true)}>
+                    <img
+                      className="imgproduct"
+                      border="0"
+                      alt="Lex-On"
+                      src="assets/img/icon-lexon.png"
+                    ></img>
+                  </div>
+                ) : (
+                  <div>
+                    <img
+                      className="imgproductdisable"
+                      border="0"
+                      alt="Lex-On"
+                      src="assets/img/icon-lexon.png"
+                    ></img>
+                  </div>
+                )}
               </span>
-              <span className="productsbutton">
-                {/* <div onClick={() => this.onSetSidebarOpenQMemento(true)}> */}
+                        {/* <span className="productsbutton">
+                 <div onClick={() => this.onSetSidebarOpenQMemento(true)}> 
                 <div>
                   <img
                     className="imgproductdisable"
@@ -461,7 +495,7 @@ export class Main extends Component {
                 </div>
               </span>
               <span className="productsbutton">
-                {/* <div onClick={() => this.onSetSidebarOpenCompliance(true)}> */}
+                 <div onClick={() => this.onSetSidebarOpenCompliance(true)}> 
                 <div>
                   <img
                     className="imgproductdisable"
@@ -472,7 +506,7 @@ export class Main extends Component {
                 </div>
               </span>
               <span className="productsbutton">
-                {/* <div onClick={() => this.onSetSidebarOpenCalendar(true)}> */}
+                <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
                 <div>
                   <img
                     className="imgproductdisable"
@@ -494,9 +528,9 @@ export class Main extends Component {
                     src="assets/img/icon-close-empty.png"
                   ></img>
                 </button>
-              </span> */}
+              </span> 
 
-              <span className="spaceproduct"></span>
+              <span className="spaceproduct"></span>*/}
             </div>
           </section>
         </Fragment>
@@ -522,6 +556,7 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
       getLabels,
+      getInbox,
       getLabelMessages,
       emptyLabelMessages,
       toggleSelected,

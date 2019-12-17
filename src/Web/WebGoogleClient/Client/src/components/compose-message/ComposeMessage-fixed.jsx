@@ -3,6 +3,7 @@ import { sendMessage } from "../../api";
 import { getValidEmails } from "../../utils";
 import i18n from "i18next";
 import { Button, InputGroup, InputGroupAddon, Input } from "reactstrap";
+// import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import ReactQuill from "react-quill";
@@ -81,7 +82,11 @@ export class ComposeMessage extends PureComponent {
   goBack() {
     if (this.props.casefile != null && this.props.casefile !== undefined) {
       window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
-      this.props.setCaseFile();
+      this.props.setCaseFile({
+        casefile: null,
+        bbdd: null,
+        company: null
+      });
     }
 
     this.props.history.push("/inbox");
@@ -119,7 +124,8 @@ export class ComposeMessage extends PureComponent {
 
     const headers = {
       To: validTo.join(", "),
-      Subject: this.state.subject,
+      // Subject: this.state.subject,
+      Subject: "=?UTF-8?B?" + window.btoa(this.state.subject) + "?=",
       attachments: this.state.uppyPreviews
     };
 
@@ -171,7 +177,6 @@ export class ComposeMessage extends PureComponent {
 
   render() {
     const collapsed = this.props.sideBarCollapsed;
-    const { t } = this.props;
 
     return (
       <React.Fragment>
@@ -297,13 +302,13 @@ export class ComposeMessage extends PureComponent {
                 title={i18n.t("compose-message.send-message")}
               >
                 {i18n.t("compose-message.send")}
-              </Button>{" "}
+              </Button>
+              &nbsp;
               <Button
                 className="mr-left font-weight-bold btn-outline-primary"
                 title={i18n.t("compose-message.discard")}
                 color="secondary"
-                // onClick={this.closeModal}
-                onClick={this.goBack}
+                onClick={() => {this.goBack()}}
               >
                 {i18n.t("compose-message.discard")}
               </Button>

@@ -63,6 +63,86 @@ header .tools-bar a:hover {
 }
 /* Header: EOC */
 
+/* Configuration box: BOC */
+.lex-on-configuration {
+	position: relative;
+	height: 1px;
+	z-index: 1;
+}
+.lex-on-configuration .lex-on-configuration-trigger {
+	position: absolute;
+	color: #001978;
+	right: 17px;
+	top: 5px;
+}
+.lex-on-configuration .lex-on-configuration-trigger span {
+	color: #001978;
+	font-size: 20px;
+	width: 34px;
+	height: 34px;
+	padding: 7px;
+	transition: background-color 0.3ms;
+	border-radius: 50%;
+}
+.lex-on-configuration .lex-on-configuration-trigger:hover span {
+	background-color: #E5E8F1;
+}
+.lex-on-configuration-title {
+	font-size: 12px;
+	color: #7F8CBB;
+	text-transform: uppercase;
+	border-bottom: solid 2px #001978;
+	padding-bottom: 5px;
+	margin-bottom: 35px;
+}
+.lex-on-configuration-title [class^="lf-icon"],
+.lex-on-configuration-title [class*=" lf-icon"] {
+	font-size: 20px;
+	color: #001978;
+	margin-right: 15px;
+}
+.lex-on-configuration-options {
+	padding: 0;
+}
+.lex-on-configuration-options li {
+	padding-left: 35px;
+	position: relative;
+}
+.lex-on-configuration-options label {
+	color: #001978;
+	font-family: MTTMilano-Medium, Lato, Arial, sans-serif;
+	font-size: 14px;
+}
+/* Configuration box: EOC */
+
+/* Expediente relacionado: BOC */
+.lex-on-related-file-title {
+	font-size: 12px;
+	color: #7F8CBB;
+	text-transform: uppercase;
+	border-bottom: dotted 1px #001978;
+	padding: 20px 0 5px 0;
+}
+.lex-on-related-file-title [class^="lf-icon"],
+.lex-on-related-file-title [class*=" lf-icon"] {
+	font-size: 20px;
+	color: #001978;
+	margin-right: 10px;
+}
+.lex-on-related-file-details {
+	padding: 15px 0;
+  border-bottom: dotted 1px #001978;
+  font-family: MTTMilano-Medium, Lato, Arial, sans-serif;
+  font-size: 14px;
+}
+.lex-on-related-file-details li {
+	margin-bottom: 10px;
+}
+.lex-on-related-file-details strong {
+	color: #001978;
+}
+/* Expediente relacionado: EOC */
+
 /* form-selection-business: BOC */
 .form-selection-business {
   padding-top: 80px;

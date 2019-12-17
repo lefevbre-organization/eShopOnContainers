@@ -60,7 +60,11 @@ class MessageEditor extends Component {
 
     if (lexon.idCaseFile !== null && lexon.idCaseFile !== undefined) {
       window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
-      this.props.setCaseFile();
+      this.props.setCaseFile({
+        casefile: null,
+        bbdd: null,
+        company: null
+      });
     }
 
     close(aplication);

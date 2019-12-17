@@ -102,7 +102,9 @@ export class Main extends Component {
         detail: {
           user,
           selectedMessageId: listMessages,
-          idCaseFile: this.props.lexon.idCaseFile
+          idCaseFile: this.props.lexon.idCaseFile,
+          bbdd: this.props.lexon.bbdd,
+          idCompany: this.props.lexon.idCompany
         }
       })
     );
@@ -196,7 +198,7 @@ export class Main extends Component {
           this.onSetSidebarOpenLexon(true);
         } else {
           this.props.history.push("/inbox");
-        }        
+        }
       });
     }
   }
@@ -437,17 +439,28 @@ export class Main extends Component {
 
             <div className="productpanel">
               <span className="productsbutton">
-                <div onClick={() => this.onSetSidebarOpenLexon(true)}>
-                  <img
-                    className={lexon.user ? "imgproduct" : "imgproductdisable"}
-                    border="0"
-                    alt="Lex-On"
-                    src="assets/img/icon-lexon.png"
-                  ></img>
-                </div>
+                {lexon.user ? (
+                  <div onClick={() => this.onSetSidebarOpenLexon(true)}>
+                    <img
+                      className="imgproduct"
+                      border="0"
+                      alt="Lex-On"
+                      src="assets/img/icon-lexon.png"
+                    ></img>
+                  </div>
+                ) : (
+                  <div>
+                    <img
+                      className="imgproductdisable"
+                      border="0"
+                      alt="Lex-On"
+                      src="assets/img/icon-lexon.png"
+                    ></img>
+                  </div>
+                )}
               </span>
-              <span className="productsbutton">
-                {/* <div onClick={() => this.onSetSidebarOpenCalendar(true)}> */}
+              {/* <span className="productsbutton">
+                 <div onClick={() => this.onSetSidebarOpenCalendar(true)}> 
                 <div>
                   <img
                     className="imgproductdisable"
@@ -458,7 +471,7 @@ export class Main extends Component {
                 </div>
               </span>
               <span className="productsbutton">
-                {/* <div onClick={() => this.onSetSidebarOpenQMemento(true)}> */}
+                 <div onClick={() => this.onSetSidebarOpenQMemento(true)}> 
                 <div>
                   <img
                     className="imgproductdisable"
@@ -469,7 +482,7 @@ export class Main extends Component {
                 </div>
               </span>
               <span className="productsbutton">
-                {/* <div onClick={() => this.onSetSidebarOpenCompliance(true)}> */}
+                <div onClick={() => this.onSetSidebarOpenCompliance(true)}> 
                 <div>
                   <img
                     className="imgproductdisable"
@@ -479,7 +492,7 @@ export class Main extends Component {
                   ></img>
                 </div>
               </span>
-              {/* <span className="productsbutton">
+              <span className="productsbutton">
                 <button
                   onClick={() => this.onSetSidebarDocked(false)}
                   className="btn compose-btn"
@@ -491,8 +504,8 @@ export class Main extends Component {
                     src="assets/img/icon-close-empty.png"
                   ></img>
                 </button>
-              </span> */}
-              <span className="spaceproduct"></span>
+              </span> 
+                        <span className="spaceproduct"></span>*/}
             </div>
           </section>
         </Fragment>
@@ -532,8 +545,5 @@ const mapDispatchToProps = dispatch =>
 
 export default compose(
   withRouter,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )
+  connect(mapStateToProps, mapDispatchToProps)
 )(Main);

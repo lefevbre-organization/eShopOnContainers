@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { UserAgentApplication } from "msal";
-
 import ACTIONS from "../../actions/lexon";
 import { signOut } from "../../api_graph/authentication";
 import configAuth from "../../Config";
@@ -19,8 +18,11 @@ class UserLexon extends Component {
   componentDidMount() {
     const user = this.props.match.params.idUser;
     this.props.setUser(user);
+
     const casefile = this.props.match.params.idCaseFile;
-    this.props.setCaseFile(casefile);
+    const bbdd = this.props.match.params.bbdd;
+    const company = this.props.match.params.idCompany;
+    this.props.setCaseFile({casefile: casefile, bbdd: bbdd, company: company});
 
     const isNewAccount = user.slice(2, 3) === "1" ? true : false;
     this.checkIsAuthenticated();

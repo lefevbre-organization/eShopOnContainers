@@ -19,7 +19,9 @@ const lexon = (state = INITIAL_STATE.lexon, action = {}) => {
     case ActionTypes.LEXON_CASEFILE:
       return {
         ...state,
-        idCaseFile: action.payload
+        idCaseFile: action.payload.casefile,
+        bbdd: action.payload.bbdd,
+        idCompany: action.payload.company
       };
 
     default:

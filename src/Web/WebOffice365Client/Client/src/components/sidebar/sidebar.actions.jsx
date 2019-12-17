@@ -1,7 +1,8 @@
-import { getLabelList } from "../../api_graph";
+import { getLabelList, getLabelInbox } from "../../api_graph";
 
 export const GET_LABELS = "GET_LABELS";
 export const SELECT_LABEL = "SELECT_LABEL";
+export const INBOX_LABEL = "INBOX_LABEL";
 
 export const getLabels = () => dispatch => {
   getLabelList().then(labelList => {
@@ -19,3 +20,13 @@ export const selectLabel = labelId => dispatch => {
     payload: labelId
   });
 };
+
+export const getInbox = () => dispatch => {
+  getLabelInbox().then(labelInbox => {
+    dispatch({
+      type: INBOX_LABEL,
+      payload: labelInbox
+    });
+  });
+};
+

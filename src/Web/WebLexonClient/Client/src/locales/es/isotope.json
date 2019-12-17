@@ -61,12 +61,19 @@
     "save-copy": "Guardar copia"
   },
   "list-classifications": {
-    "classifications": "CLASIFICACIONES:"
+    "classifications": "CLASIFICACIONES:",
+    "no-classifications": "No exsiten clasificaciones asociadas a este correo"
   },
   "list-documents": {
     "documented-copies": "COPIAS DOCUMENTADAS:"
   },
   "modal-documents-emails": {
     "save-copy": "Guardar copia en Documentación"
+  },
+  "case-file": {
+    "casefile-related": "Expediente relacionado",
+    "identifier": "Identificador",
+    "description": "Descripción:",
+    "client": "Cliente:"
   }
 }

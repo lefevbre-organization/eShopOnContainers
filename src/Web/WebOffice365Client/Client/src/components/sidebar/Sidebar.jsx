@@ -1,5 +1,6 @@
 import React, { PureComponent } from "react";
 import { withTranslation } from "react-i18next";
+import i18n from "i18next";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import sortBy from "lodash/sortBy";
 import { faFolderOpen, faChevronLeft } from "@fortawesome/free-solid-svg-icons";
@@ -7,7 +8,8 @@ import LabelItem from "./LabelItem";
 import { Link } from "react-router-dom";
 import { Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
+import { bindActionCreators, compose } from "redux";
+import { connect } from "react-redux";
 import "./sidebar.scss";
 
 export class Sidebar extends PureComponent {
@@ -23,12 +25,6 @@ export class Sidebar extends PureComponent {
     //this.renderLabels = this.renderLabels.bind(this);
     this.navigateToList = this.navigateToList.bind(this);
     this.sidebarAction = this.sidebarAction.bind(this);
-  }
-
-  componentDidMount() {
-    //this.props.getLabelList(); //.then(labels => {});
-    /*  */
-    //this.props.getLabelMessages();
   }
 
   navigateToList(evt, labelId) {
@@ -131,8 +127,11 @@ export class Sidebar extends PureComponent {
   //}
 
   renderLabels(labels) {
-    const { t } = this.props;
-    let folder = this.state.selectedFolder;
+    if (this.props.selectedLabel === null) {
+      return null;
+    }
+
+    let folder = this.props.selectedLabel.id;
 
     return (
       <React.Fragment>
@@ -143,7 +142,7 @@ export class Sidebar extends PureComponent {
             alt="otulook"
             src="assets/img/office365.png"
           ></img>
-          {t("sidebar.folders")}
+          {i18n.t("sidebar.folders")}
         </li>
         {labels.map(el => {
           const iconProps = {
@@ -172,7 +171,6 @@ export class Sidebar extends PureComponent {
 
   render() {
     const collapsed = this.props.sideBarCollapsed;
-    const { t } = this.props;
 
     const composeProps = {
       subject: "",
@@ -206,7 +204,7 @@ export class Sidebar extends PureComponent {
                   alt="otulook"
                   src="assets/img/plus.png"
                 ></img>
-                {t("sidebar.compose")}
+                {i18n.t("sidebar.compose")}
               </Link>
               <Button
                 onClick={this.props.sideBarToggle}
@@ -228,4 +226,10 @@ export class Sidebar extends PureComponent {
   }
 }
 
-export default withTranslation()(Sidebar);
+const mapStateToProps = state => ({
+  labelsResult: state.labelsResult,
+});
+
+export default connect(mapStateToProps)(Sidebar);
+
+//export default withTranslation()(Sidebar);

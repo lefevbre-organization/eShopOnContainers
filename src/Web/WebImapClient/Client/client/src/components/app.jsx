@@ -137,7 +137,9 @@ class App extends Component {
         detail: {
           user,
           selectedMessageId,
-          idCaseFile: this.props.lexon.idCaseFile
+          idCaseFile: this.props.lexon.idCaseFile,
+          bbdd: this.props.lexon.bbdd,
+          idCompany: this.props.lexon.idCompany
         }
       })
     );
@@ -261,20 +263,19 @@ class App extends Component {
                       disabled
                       border="0"
                       alt="Lex-On"
-                      src="assets/images/icon-lexon.png"
-                      className="disabledimg"
+                      src="assets/images/icon-lexon.png"                      
                     ></img>
                   </IconButton>
                 )}
                 <div className={styles.btnselect}></div>
               </span>
-              <span
+                        {/* <span
                 className={styles.productsbutton}
                 isotip={t("productBar.database")}
                 isotip-position="bottom-end"
                 isotip-size="small"
               >
-                {/* <IconButton onClick={() => this.onSetSidebarOpenQMemento(true)}> */}
+                 <IconButton onClick={() => this.onSetSidebarOpenQMemento(true)}> 
                 <IconButton>
                   <img
                     border="0"
@@ -293,7 +294,7 @@ class App extends Component {
                 {/* <IconButton
                   disabled
                   onClick={() => this.onSetSidebarOpenCompliance(true)}
-                > */}
+                > 
                 <IconButton>
                   <img
                     border="0"
@@ -310,7 +311,7 @@ class App extends Component {
                 isotip-position="bottom-end"
                 isotip-size="small"
               >
-                {/* <IconButton onClick={() => this.onSetSidebarOpenCalendar(true)}> */}
+                <IconButton onClick={() => this.onSetSidebarOpenCalendar(true)}> 
                 <IconButton>
                   <img
                     border="0"
@@ -331,9 +332,9 @@ class App extends Component {
                   close
                 </IconButton>
                 <div className={styles.btnselect}></div>
-              </span> */}
+              </span>
 
-              <span className={styles.spaceproduct}></span>
+              <span className={styles.spaceproduct}></span>*/}
             </div>
 
             <MessageSnackbar />
