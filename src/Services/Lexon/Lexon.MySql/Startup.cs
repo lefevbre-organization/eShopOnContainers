@@ -15,12 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-//using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
-using RabbitMQ.Client;
-
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -253,7 +248,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql
 
             return services;
         }
-
 
         public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration)
         {
