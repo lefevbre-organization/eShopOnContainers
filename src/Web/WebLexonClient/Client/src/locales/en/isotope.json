@@ -61,12 +61,19 @@
     "save-copy": "Save copy"
   },
   "list-classifications": {
-    "classifications": "CLASSIFICATIONS:"
+    "classifications": "CLASSIFICATIONS:",
+    "no-classifications": "There are no classifications associated with this email"
   },
   "list-documents": {
     "documented-copies": "DOCUMENTED COPIES:"
   },
   "modal-documents-emails": {
     "save-copy": "Save copy in Documentation"
+  },
+  "case-file": {
+    "casefile-related": "Related Casefile",
+    "identifier": "Identifier",
+    "description": "Description:",
+    "client": "Client:"
   }
 }

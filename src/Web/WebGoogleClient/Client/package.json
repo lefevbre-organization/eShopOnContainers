@@ -27,6 +27,7 @@
     "moment": "^2.22.2",
     "node-sass": "^4.12.0",
     "react": "^16.5.2",
+    "react-bootstrap": "^1.0.0-beta.16",
     "react-dock": "^0.2.4",
     "react-dom": "^16.5.2",
     "react-google-button": "^0.5.3",

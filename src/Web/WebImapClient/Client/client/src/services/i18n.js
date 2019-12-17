@@ -9,7 +9,7 @@ i18n.use(XHR).init({
   ns: ["isotope"],
   defaultNS: "isotope",
   backend: {
-    loadPath: "../../../assets/locales/{{lng}}/{{ns}}.json"
+    loadPath: "../../../../../../../assets/locales/{{lng}}/{{ns}}.json"
   },
   interpolation: {
     escapeValue: false

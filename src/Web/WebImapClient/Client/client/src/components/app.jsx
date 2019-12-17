@@ -137,7 +137,9 @@ class App extends Component {
         detail: {
           user,
           selectedMessageId,
-          idCaseFile: this.props.lexon.idCaseFile
+          idCaseFile: this.props.lexon.idCaseFile,
+          bbdd: this.props.lexon.bbdd,
+          idCompany: this.props.lexon.idCompany
         }
       })
     );

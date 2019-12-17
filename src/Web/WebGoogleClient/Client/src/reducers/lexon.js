@@ -30,7 +30,7 @@ export const lexon = (state = defaultLexon, action = {}) => {
         ...state,
         idCaseFile: action.payload.casefile,
         bbdd: action.payload.bbdd,
-        idCompany: action.payload.company,
+        idCompany: action.payload.company
       };
 
     default:

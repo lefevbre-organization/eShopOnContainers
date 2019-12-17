@@ -38,7 +38,11 @@ class AppContainer extends Component {
       const userLexon = stateStorageLexon.lexon;
       if (userLexon && userLexon.user) {
         this.props.setUser(userLexon.user);
-        this.props.setCaseFile({casefile: userLexon.idCaseFile, bbdd: userLexon.bbdd, company: userLexon.idCompany});
+        this.props.setCaseFile({
+          casefile: userLexon.idCaseFile,
+          bbdd: userLexon.bbdd,
+          company: userLexon.idCompany
+        });
       }
     }
 
@@ -105,7 +109,4 @@ const mapDispatchToProps = dispatch => ({
   setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile))
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(AppContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);

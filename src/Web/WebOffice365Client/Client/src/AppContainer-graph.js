@@ -51,7 +51,11 @@ class AppContainerGraph extends Component {
       const userLexon = stateStorageLexon.lexon;
       if (userLexon && userLexon.user) {
         this.props.setUser(userLexon.user);
-        this.props.setCaseFile(userLexon.idCaseFile);
+        this.props.setCaseFile({
+          casefile: userLexon.idCaseFile,
+          bbdd: userLexon.bbdd,
+          company: userLexon.idCompany
+        });
       }
     }
 

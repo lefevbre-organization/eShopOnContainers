@@ -98,14 +98,18 @@ export class Compose extends PureComponent {
     });
   }
 
-  closeModal() {
+  closeModal() {    
     this.props.history.push("/inbox");
   }
 
   goBack() {
     if (this.props.casefile != null && this.props.casefile !== undefined) {
       window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
-      this.props.setCaseFile();
+      this.props.setCaseFile({
+        casefile: null,
+        bbdd: null,
+        company: null
+      });
     }
     this.props.history.goBack();
   }
@@ -147,6 +151,8 @@ export class Compose extends PureComponent {
       data: this.state,
       attachments: Fileattached
     }).then(response => {
+      console.log("response ->", response);
+      console.log("this.props.history ->", this.props.history);
       this.closeModal();
       this.resetFields();
     });

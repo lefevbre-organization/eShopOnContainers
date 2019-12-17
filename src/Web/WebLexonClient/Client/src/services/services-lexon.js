@@ -170,6 +170,30 @@ export const getResults = (user, company, typeId, search) => {
   });
 };
 
+export const getCasefile = (user, bbdd, company, typeId, search) => {
+  return new Promise((resolve, reject) => {
+    const url = `${window.API_GATEWAY}/${RESULTS}?search=${search}&idUser=${user}&idCompany=${company}&bbdd=${bbdd}&idType=${typeId}`;
+    fetch(url, {
+      method: "GET"
+    })
+      .then(data => data.json())
+      .then(result => {
+        resolve({
+          results:
+            result.data !== null &&
+            result.data.data !== null &&
+            Array.isArray(result.data.data) &&
+            result.data.data.length > 0
+              ? result.data.data[0]
+              : null
+        });
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+};
+
 export const getUser = userNavision => {
   return new Promise((resolve, reject) => {
     const url = `${window.API_GATEWAY}/${USER}/?idUserNavision=${userNavision}`;

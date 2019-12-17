@@ -1,7 +1,8 @@
-import { GET_LABELS, SELECT_LABEL } from "./sidebar.actions";
+import { GET_LABELS, SELECT_LABEL, INBOX_LABEL } from "./sidebar.actions";
 
 const defaultLabelState = {
-  labels: []
+  labels: [],
+  labelInbox: null
 };
 
 export const labelsResult = (state = defaultLabelState, action) => {
@@ -27,6 +28,12 @@ export const labelsResult = (state = defaultLabelState, action) => {
           };
         })
       };
+    case INBOX_LABEL:
+      return {
+        ...state,
+        labelInbox: action.payload
+      };
+
     default:
       return state;
   }

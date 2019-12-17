@@ -66,6 +66,18 @@ export const getLabelList = () =>
       });
   });
 
+  export const getLabelInbox = () =>
+  new Promise((resolve, reject) => {
+    var accessToken = window.msal.acquireTokenSilent(config.scopes);
+    const client = getAuthenticatedClient(accessToken);
+    client
+      .api("/me/mailFolders/inbox")
+      .get()
+      .then(response => {
+        resolve(response);
+      });
+  });
+
 //export const getMessageListPagination = ({ page }) =>
 //    new Promise((resolve, reject) => {
 //        getMessagePaginationList(page)

@@ -198,7 +198,7 @@ export class Main extends Component {
           this.onSetSidebarOpenLexon(true);
         } else {
           this.props.history.push("/inbox");
-        }        
+        }
       });
     }
   }
@@ -439,14 +439,25 @@ export class Main extends Component {
 
             <div className="productpanel">
               <span className="productsbutton">
-                <div onClick={() => this.onSetSidebarOpenLexon(true)}>
-                  <img
-                    className={lexon.user ? "imgproduct" : "imgproductdisable"}
-                    border="0"
-                    alt="Lex-On"
-                    src="assets/img/icon-lexon.png"
-                  ></img>
-                </div>
+                {lexon.user ? (
+                  <div onClick={() => this.onSetSidebarOpenLexon(true)}>
+                    <img
+                      className="imgproduct"
+                      border="0"
+                      alt="Lex-On"
+                      src="assets/img/icon-lexon.png"
+                    ></img>
+                  </div>
+                ) : (
+                  <div>
+                    <img
+                      className="imgproductdisable"
+                      border="0"
+                      alt="Lex-On"
+                      src="assets/img/icon-lexon.png"
+                    ></img>
+                  </div>
+                )}
               </span>
               {/* <span className="productsbutton">
                  <div onClick={() => this.onSetSidebarOpenCalendar(true)}> 
@@ -534,8 +545,5 @@ const mapDispatchToProps = dispatch =>
 
 export default compose(
   withRouter,
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )
+  connect(mapStateToProps, mapDispatchToProps)
 )(Main);

@@ -8,6 +8,26 @@ import Classification from "../classification/classification";
 import i18n from "i18next";
 
 class ListClassifications extends Component {
+  constructor(props) {
+    super(props);
+    
+    this.renderNoClassifications = this.renderNoClassifications.bind(this);
+  }
+
+  renderNoClassifications() {
+    const { classifications } = this.props;
+
+    if (Array.isArray(classifications) && classifications.length === 0) {
+      return (
+        <div>
+          <strong>
+            <strong>{i18n.t("list-classifications.no-classifications")}</strong>
+          </strong>
+        </div>
+      );
+    }
+  }
+
   render() {
     const {
       user,
@@ -22,7 +42,12 @@ class ListClassifications extends Component {
 
     return (
       <Fragment>
-        <h2 className="lexon-title-list">{i18n.t("list-classifications.classifications")}</h2>
+        <h2 className="lexon-title-list">
+          {i18n.t("list-classifications.classifications")}
+        </h2>
+
+        {this.renderNoClassifications()}
+
         <PerfectScrollbar>
           <ul className="row lexon-document-list">
             {classifications.map(classification => {
