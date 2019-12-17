@@ -3,9 +3,8 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using eShopOnContainers.WebSPA;
 
-namespace eShopConContainers.WebSPA.Server.Controllers
+namespace Lefebvre.eLefebvreOnContainers.Clients.WebGoogleClient.Server.Controllers
 {
     public class HomeController : Controller
     {
@@ -17,9 +16,10 @@ namespace eShopConContainers.WebSPA.Server.Controllers
             _env = env;
             _settings = settings;
         }
+
         public IActionResult Configuration()
         {
             return Json(_settings.Value);
-        } 
+        }
     }
 }

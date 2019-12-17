@@ -1,5 +1,5 @@
 ARG NODE_IMAGE=node:8.11
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.0-buster-slim AS base
 WORKDIR /app
 EXPOSE 80
 
@@ -12,7 +12,7 @@ COPY Web/WebImapClient/Client/client .
 RUN ls -lha /web
 RUN npm run build
 
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
 
 COPY "eLefebvreOnContainers-ServicesAndWebApps.sln" "eLefebvreOnContainers-ServicesAndWebApps.sln"

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 
-namespace Lefebvre.eLefebvreOnContainers.Clients.WebLexonClient
+namespace eShopConContainers.WebSPA
 {
     public class Program
     {
