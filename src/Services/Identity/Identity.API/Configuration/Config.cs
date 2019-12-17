@@ -324,12 +324,12 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API.Configuration
                 new Client
                 {
                     ClientId = "lexonmysqlswaggerui",
-                    ClientName = "Lexon MySql Swagger UI",
+                    ClientName = "Lexon MySQL Swagger UI",
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowAccessTokensViaBrowser = true,
 
-                    RedirectUris = { $"{clientsUrl["LexonMySql"]}/swagger/oauth2-redirect.html" },
-                    PostLogoutRedirectUris = { $"{clientsUrl["LexonMySql"]}/swagger/" },
+                    RedirectUris = { $"{clientsUrl["LexonMySqlApi"]}/swagger/oauth2-redirect.html" },
+                    PostLogoutRedirectUris = { $"{clientsUrl["LexonMySqlApi"]}/swagger/" },
 
                     AllowedScopes =
                     {

@@ -145,3 +145,12 @@ services:
 #     - account-api
       - lexon-api
       - lexonmysql-api
+  
+  locations-api:
+    image: ${REGISTRY:-elefebvreoncontainers}/locations.api:${PLATFORM:-linux}-${TAG:-newcore}
+    build:
+      context: .
+      dockerfile: Services/Location/Locations.API/Dockerfile
+    depends_on:
+      - nosqldata
+      - rabbitmq

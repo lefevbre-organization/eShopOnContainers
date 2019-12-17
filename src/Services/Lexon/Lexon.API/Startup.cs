@@ -150,8 +150,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
             ConfigureEventBus(app, out IEventBus eventBus);
             //var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
 
-            LexonContextSeed.SeedAsync(app, loggerFactory, eventBus)
-                .Wait();
+            //LexonContextSeed.SeedAsync(app, loggerFactory, eventBus)
+            //    .Wait();
         }
 
         private void RegisterAppInsights(IServiceCollection services)

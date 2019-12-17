@@ -198,8 +198,8 @@ services:
       - IdentityUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105              #Local: You need to open your local dev-machine firewall at range 5100-5105.  at range 5100-5105.
       - ConnectionString=${ESHOP_MONGO_DB:-mongodb://nosql.data}
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
-      - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-test}
-      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-test}         
+      - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
+      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}         
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
@@ -211,6 +211,12 @@ services:
   webaccountapigw:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - LexonApiUrlHC=http://lexon.api/hc
+      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
+      - AccountApiUrlHC=http://account.api/hc
+      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+      - IdentityUrlHC=http://identity.api/hc
     ports:
       - "8083:80"   
     volumes:
@@ -226,8 +232,8 @@ services:
       - MongoDatabase=LexonApiDB
       - LexonMySqlUrl=http://lexon.mysql.api/api/v1/LexonMySql
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
-      - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-test}
-      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-test}        
+      - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
+      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}        
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
@@ -245,8 +251,8 @@ services:
 #      - ConnectionString=${ESHOP_MYSQL_LEXONMYSQL_DB:-database=lexon_conecta;server=ES006-PPDDB003;port=3315;user id=led-ext-freyes;password=DSFkds4+46DSF}
       - IdentityUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105              #Local: You need to open your local dev-machine firewall at range 5100-5105.  at range 5100-5105.
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
-      - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-test}
-      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-test}          
+      - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
+      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}          
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
@@ -258,10 +264,35 @@ services:
   weblexonapigw:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - LexonApiUrlHC=http://lexon.api/hc
+      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
+      - AccountApiUrlHC=http://account.api/hc
+      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+      - IdentityUrlHC=http://identity.api/hc
     ports:
       - "8086:80"   
     volumes:
       - ./ApiGateways/Web.Bff.Lexon/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
+  
+  locations-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionString=${ESHOP_AZURE_COSMOSDB:-mongodb://nosqldata}
+      - Database=LocationsDb
+      - identityUrl=http://identity-api
+      - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+      - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
+      - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME}
+      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD}
+      - AzureServiceBusEnabled=False
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - UseLoadTest=${USE_LOADTEST:-False}
+      - PATH_BASE=/locations-api
+    ports:
+      - "5109:80"
 
 volumes:
   eshop-sqldata:
