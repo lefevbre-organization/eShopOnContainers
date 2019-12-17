@@ -31,6 +31,8 @@ namespace Microsoft.eShopOnContainers.Services.Identity.API.Data
             clientUrls.Add("WebhooksApi", configuration.GetValue<string>("WebhooksApiClient"));
             clientUrls.Add("WebhooksWeb", configuration.GetValue<string>("WebhooksWebClient"));
             clientUrls.Add("LexonApi", configuration.GetValue<string>("LexonApiClient"));
+            clientUrls.Add("LexonMySqlApi", configuration.GetValue<string>("LexonMySqlApiClient"));
+            clientUrls.Add("AccountApi", configuration.GetValue<string>("AccountApiClient"));
 
 
             if (!context.Clients.Any())

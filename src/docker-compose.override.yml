@@ -48,8 +48,10 @@ services:
 #      - MobileShoppingAggClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5120
       - LexonApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5120
       - WebShoppingAggClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5121
-      - WebhooksApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5113
-      - WebhooksWebClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5114
+#      - WebhooksApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5113
+      - AccountApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5113
+#      - WebhooksWebClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5114
+      - LexonMySqlApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5114
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
@@ -105,6 +107,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - UseCustomizationData=True
+      - IdentityUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105              #Local: You need to open your local dev-machine firewall at range 5100-5105.  at range 5100-5105.
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
@@ -113,6 +116,7 @@ services:
       - AccountApiUrlHC=http://account.api/hc
       - LexonApiGatewayUrlHC=http://weblexonapigw/hc
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+      - IdentityUrlHC=http://identity.api/hc
     ports:
       - "3003:80"
 
@@ -124,11 +128,13 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
+      - IdentityUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105              #Local: You need to open your local dev-machine firewall at range 5100-5105.  at range 5100-5105.
       - LexonApiUrlHC=http://lexon.api/hc
       - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
       - AccountApiUrlHC=http://account.api/hc
       - LexonApiGatewayUrlHC=http://weblexonapigw/hc
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+      - IdentityUrlHC=http://identity.api/hc
     ports:
       - "3000:80"
 
@@ -140,11 +146,13 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
+      - IdentityUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105              #Local: You need to open your local dev-machine firewall at range 5100-5105.  at range 5100-5105.
       - LexonApiUrlHC=http://lexon.api/hc
       - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
       - AccountApiUrlHC=http://account.api/hc
       - LexonApiGatewayUrlHC=http://weblexonapigw/hc
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+      - IdentityUrlHC=http://identity.api/hc
 
     ports:
       - "3001:80"
@@ -157,6 +165,7 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
+      - IdentityUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105              #Local: You need to open your local dev-machine firewall at range 5100-5105.  at range 5100-5105.
       - LexonApiUrlHC=http://lexon.api/hc
       - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
       - AccountApiUrlHC=http://account.api/hc
@@ -173,6 +182,7 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
+      - IdentityUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105              #Local: You need to open your local dev-machine firewall at range 5100-5105.  at range 5100-5105.
       - LexonApiUrlHC=http://lexon.api/hc
       - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
       - AccountApiUrlHC=http://account.api/hc
@@ -185,6 +195,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
+      - IdentityUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105              #Local: You need to open your local dev-machine firewall at range 5100-5105.  at range 5100-5105.
       - ConnectionString=${ESHOP_MONGO_DB:-mongodb://nosql.data}
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-test}
@@ -192,6 +203,7 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
+      - IdentityUrlHC=http://identity.api/hc
     ports:
       - "8082:80"   # Important: In a production environment your should remove the external port (5110) kept here for microservice debugging purposes. 
                     # The API Gateway redirects and access through the internal port (80).
@@ -208,6 +220,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
+      - IdentityUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105              #Local: You need to open your local dev-machine firewall at range 5100-5105.  at range 5100-5105.
       - ConnectionStringHc=${ESHOP_MONGO_DB:-mongodb://nosql.data}
       - ConnectionString=${ESHOP_MONGO_DB:-mongodb://nosql.data}
       - MongoDatabase=LexonApiDB
@@ -218,6 +231,7 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
+      - IdentityUrlHC=http://identity.api/hc
     ports:
       - "8084:80"   # Important: In a production environment your should remove the external port (5110) kept here for microservice debugging purposes. 
                     # The API Gateway redirects and access through the internal port (80).
@@ -229,12 +243,14 @@ services:
       - ConnectionStringHc=${ESHOP_MONGO_DB:-mongodb://nosql.data}
       - ConnectionString=${ESHOP_MYSQL_LEXONMYSQL_DB:-database=lexon_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5}
 #      - ConnectionString=${ESHOP_MYSQL_LEXONMYSQL_DB:-database=lexon_conecta;server=ES006-PPDDB003;port=3315;user id=led-ext-freyes;password=DSFkds4+46DSF}
+      - IdentityUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105              #Local: You need to open your local dev-machine firewall at range 5100-5105.  at range 5100-5105.
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-test}
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-test}          
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
+      - IdentityUrlHC=http://identity.api/hc
     ports:
       - "8085:80"   # Important: In a production environment your should remove the external port (5110) kept here for microservice debugging purposes. 
                     # The API Gateway redirects and access through the internal port (80).
