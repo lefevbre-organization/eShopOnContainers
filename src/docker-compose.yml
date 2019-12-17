@@ -40,7 +40,7 @@ services:
     image: ${REGISTRY:-elefebvreoncontainers}/webportalclient:${PLATFORM:-linux}-${TAG:-newcore}
     build:
       context: .
-      dockerfile: src/Web/WebPortalClient/Dockerfile    
+      dockerfile: Web/WebPortalClient/Dockerfile    
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
     depends_on:
@@ -50,7 +50,7 @@ services:
     image: ${REGISTRY:-elefebvreoncontainers}/webgoogleclient:${PLATFORM:-linux}-${TAG:-newcore}
     build:
       context: .
-      dockerfile: src/Web/WebGoogleClient/Dockerfile    
+      dockerfile: Web/WebGoogleClient/Dockerfile    
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
     depends_on:
@@ -60,7 +60,7 @@ services:
     image: ${REGISTRY:-elefebvreoncontainers}/webofficeclient:${PLATFORM:-linux}-${TAG:-newcore}
     build:
       context: .
-      dockerfile: src/Web/WebOffice365Client/Dockerfile    
+      dockerfile: Web/WebOffice365Client/Dockerfile    
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
     depends_on:
@@ -70,7 +70,7 @@ services:
     image: ${REGISTRY:-elefebvreoncontainers}/webimapclient:${PLATFORM:-linux}-${TAG:-newcore}
     build:
       context: .
-      dockerfile: src/Web/WebImapClient/Dockerfile    
+      dockerfile: Web/WebImapClient/Dockerfile    
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
     depends_on:
@@ -80,7 +80,7 @@ services:
     image: ${REGISTRY:-elefebvreoncontainers}/weblexonclient:${PLATFORM:-linux}-${TAG:-newcore}
     build:
       context: .
-      dockerfile: src/Web/WebLexonClient/Dockerfile    
+      dockerfile: Web/WebLexonClient/Dockerfile    
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
     depends_on:
@@ -90,7 +90,7 @@ services:
     image: ${REGISTRY:-elefebvreoncontainers}/account.api:${PLATFORM:-linux}-${TAG:-newcore}
     build:
       context: .
-      dockerfile: src/Services/Account/Account.API/Dockerfile    
+      dockerfile: Services/Account/Account.API/Dockerfile    
     depends_on:
       - sqldata
       - nosqldata
@@ -101,7 +101,7 @@ services:
     image: ${REGISTRY:-elefebvreoncontainers}/ocelotapigw:${PLATFORM:-linux}-${TAG:-newcore}
     build:
       context: .
-      dockerfile: src/ApiGateways/ApiGw-Base/Dockerfile
+      dockerfile: ApiGateways/ApiGw-Base/Dockerfile
     depends_on:
       - nosqldata
       - sqldata
@@ -113,7 +113,7 @@ services:
     image: ${REGISTRY:-elefebvreoncontainers}/lexon.api:${PLATFORM:-linux}-${TAG:-newcore}
     build:
       context: .
-      dockerfile: src/Services/Lexon/Lexon.API/Dockerfile    
+      dockerfile: Services/Lexon/Lexon.API/Dockerfile    
     depends_on:
       - sqldata
       - nosqldata
@@ -124,7 +124,7 @@ services:
     image: ${REGISTRY:-elefebvreoncontainers}/lexon.mysql.api:${PLATFORM:-linux}-${TAG:-newcore}
     build:
       context: .
-      dockerfile: src/Services/Lexon/Lexon.MySql/Dockerfile    
+      dockerfile: Services/Lexon/Lexon.MySql/Dockerfile    
     depends_on:
       - sqldata
       - nosqldata
@@ -136,7 +136,7 @@ services:
     image: ${REGISTRY:-elefebvreoncontainers}/ocelotapigw:${PLATFORM:-linux}-${TAG:-newcore}
     build:
       context: .
-      dockerfile: src/ApiGateways/ApiGw-Base/Dockerfile
+      dockerfile: ApiGateways/ApiGw-Base/Dockerfile
     depends_on:
       - nosqldata
       - sqldata
