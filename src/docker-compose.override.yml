@@ -54,6 +54,7 @@ services:
       - LexonMySqlApiClient=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:8085
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - UseLoadTest=${USE_LOADTEST:-False}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
     ports:
       - "5105:80"
@@ -99,6 +100,7 @@ services:
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD}
       - IdentityUrl=http://identity-api
       - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+      - UseLoadTest=${USE_LOADTEST:-False}
     ports:
       - "5113:80"
 
@@ -115,9 +117,10 @@ services:
       - LexonApiUrlHC=http://lexon-api/hc
       - LexonMySqlApiUrlHC=http://lexonmysql-api/hc
       - AccountApiUrlHC=http://account-api/hc
+      - IdentityUrlHC=http://identity-api/hc
       - LexonApiGatewayUrlHC=http://weblexonapigw/hc
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-      - IdentityUrlHC=http://identity-api/hc
+      - UseLoadTest=${USE_LOADTEST:-False}
     ports:
       - "3003:80"
 
@@ -134,9 +137,9 @@ services:
       - LexonApiUrlHC=http://lexon-api/hc
       - LexonMySqlApiUrlHC=http://lexonmysql-api/hc
       - AccountApiUrlHC=http://account-api/hc
+      - IdentityUrlHC=http://identity-api/hc
       - LexonApiGatewayUrlHC=http://weblexonapigw/hc
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-      - IdentityUrlHC=http://identity-api/hc
     ports:
       - "3000:80"
 
@@ -153,10 +156,10 @@ services:
       - LexonApiUrlHC=http://lexon-api/hc
       - LexonMySqlApiUrlHC=http://lexonmysql-api/hc
       - AccountApiUrlHC=http://account-api/hc
+      - IdentityUrlHC=http://identity-api/hc
       - LexonApiGatewayUrlHC=http://weblexonapigw/hc
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-      - IdentityUrlHC=http://identity-api/hc
-
+      - UseLoadTest=${USE_LOADTEST:-False}
     ports:
       - "3001:80"
 
@@ -171,10 +174,12 @@ services:
       - identityUrl=http://identity-api
       - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
       - LexonApiUrlHC=http://lexon-api/hc
-      - LexonMySqlApiUrlHC=http://lexonmysql.api/hc
+      - LexonMySqlApiUrlHC=http://lexonmysql-api/hc
       - AccountApiUrlHC=http://account-api/hc
+      - IdentityUrlHC=http://identity-api/hc
       - LexonApiGatewayUrlHC=http://weblexonapigw/hc
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+      - UseLoadTest=${USE_LOADTEST:-False}
     ports:
       - "9000:80"
 
@@ -193,6 +198,7 @@ services:
       - AccountApiUrlHC=http://account-api/hc
       - LexonApiGatewayUrlHC=http://weblexonapigw/hc
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+      - UseLoadTest=${USE_LOADTEST:-False}
     ports:
       - "3005:80"
 
@@ -223,9 +229,10 @@ services:
       - LexonApiUrlHC=http://lexon-api/hc
       - LexonMySqlApiUrlHC=http://lexonmysql-api/hc
       - AccountApiUrlHC=http://account-api/hc
-      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
-      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
       - IdentityUrlHC=http://identity-api/hc
+#      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+#      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+      - UseLoadTest=${USE_LOADTEST:-False}
     ports:
       - "8083:80"   
     volumes:
@@ -247,6 +254,7 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
+      - LexonMySqlApiUrlHC=http://lexonmysql-api/hc
       - IdentityUrlHC=http://identity-api/hc
     ports:
       - "8084:80"   # Important: In a production environment your should remove the external port (5110) kept here for microservice debugging purposes. 
@@ -280,9 +288,10 @@ services:
       - LexonApiUrlHC=http://lexon-api/hc
       - LexonMySqlApiUrlHC=http://lexonmysql-api/hc
       - AccountApiUrlHC=http://account-api/hc
-      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
-      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
       - IdentityUrlHC=http://identity-api/hc
+#      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+#      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+      - UseLoadTest=${USE_LOADTEST:-False}
     ports:
       - "8086:80"   
     volumes:
