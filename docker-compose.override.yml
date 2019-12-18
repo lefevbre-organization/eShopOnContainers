@@ -100,22 +100,6 @@ services:
     ports:
       - "3001:80"
 
-  webimapclient:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://0.0.0.0:80
-      - UseCustomizationData=True
-      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
-      - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
-      - LexonApiUrlHC=http://lexon.api/hc
-      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
-      - AccountApiUrlHC=http://account.api/hc
-      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
-      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-    ports:
-      - "9000:80"
-
   weblexonclient:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -197,5 +181,20 @@ services:
       - "8086:80"   
     volumes:
       - ./src/ApiGateways/Web.Bff.Lexon/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
-
+      
+  webimapclient:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - UseCustomizationData=True
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
+      - LexonApiUrlHC=http://lexon.api/hc
+      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
+      - AccountApiUrlHC=http://account.api/hc
+      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+    ports:
+      - "9000:80"
     
