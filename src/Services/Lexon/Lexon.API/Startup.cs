@@ -174,8 +174,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
             }).AddJwtBearer(options =>
            {
                options.Authority = identityUrl;
-               options.RequireHttpsMetadata = false;
                options.Audience = "lexon";
+               options.RequireHttpsMetadata = false;
            });
         }
 
