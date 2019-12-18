@@ -145,7 +145,10 @@ export class Compose extends PureComponent {
       headers.Bcc = validBcc.join(", ");
     }
 
-    const Fileattached = this.state.uppyPreviews;
+      const Fileattached = this.state.uppyPreviews;
+
+      this.state.subject = '=?UTF-8?B?' + window.btoa(this.state.subject) + '?=';
+     //this.state.content = '=?UTF-8?B?' + window.btoa(this.state.content) + '?=';
 
     sendMessage({
       data: this.state,

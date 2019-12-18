@@ -58,7 +58,8 @@ export const getLabelList = () =>
   new Promise((resolve, reject) => {
     var accessToken = window.msal.acquireTokenSilent(config.scopes);
     const client = getAuthenticatedClient(accessToken);
-    client
+      client
+      
       .api("/me/mailFolders")
       .get()
       .then(response => {
@@ -374,7 +375,19 @@ export const emailEnd = () => {
 
 export const emailBody = data => {
   const subject = data.subject;
-  const bodyContent = data.content;
+
+  var myJSONString = JSON.stringify(data.content);
+  var myEscapedJSONString = myJSONString.replace(/\\n/g, "\\n")
+        .replace(/\\'/g, "\\'")
+        .replace(/\\"/g, '\\"')
+        .replace(/\\&/g, "\\&")
+        .replace(/\\r/g, "\\r")
+        .replace(/\\t/g, "\\t")
+        .replace(/\\b/g, "\\b")
+        .replace(/\\f/g, "\\f");
+    
+  const bodyContent = myEscapedJSONString.slice(1, -1);
+
   var email = `{
                   "Message": {
                     "Subject": "${subject}",
@@ -382,6 +395,8 @@ export const emailBody = data => {
                       "ContentType": "html",
                       "Content": "${bodyContent}"
                     },\r\n`;
+
+
   return email;
 };
 
@@ -474,11 +489,13 @@ export const sendMessage = ({ data, attachments }) => {
     var accessToken = window.msal.acquireTokenSilent(config.scopes);
     const client = getAuthenticatedClient(accessToken);
 
+      
+
     return client
       .api("/me/sendmail")
       .header("Authorization", "Bearer " + accessToken)
-      .header("Content-Type", "application/json")
-      .post(email, (err, response) => {
+      .header("Content-Type", "application/json; charset=utf-8")
+        .post(email, (err, response) => {
         resolve(response);
       });
   });
