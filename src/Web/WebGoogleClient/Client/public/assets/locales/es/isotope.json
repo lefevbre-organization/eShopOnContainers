@@ -1,43 +1,46 @@
 {
-    "sidebar": {
-        "folders": "Gmail",
-        "inbox": "Bandeja de entrada",
-        "sent": "Enviados",
-        "trash": "Papelera",
-        "spam": "Spam",
-        "compose": "Nuevo correo",
-        "labels": "ETIQUETAS"
-    },
-    "message-list": {
-        "no-message": "No hay mensajes para esta etiqueta.",
-        "move-to-trash": "Mover a la Papelera"
-    },
-    "pager-buttons": {
-        "previous-page": "Página Anterior",
-        "next-page": "Página Siguiente"
-    },
-    "compose-message": {
-        "compose-message": "Componer Mensaje",
-        "to": "Para:",
-        "subject": "Asunto:",
-        "comma-separated": "lista de emails separados por coma",
-        "send-message": "Enviar mensaje",
-        "send": "Enviar",
-        "discard": "Descartar",
-        "drag-and-drop": "Arrastrar y Soltar",
-        "add-attachments": "Añadir archivos adjuntos",
-        "browse": "Seleccionar",
-        "or": "o"
-    },
-    "message-toolbar": {
-        "move-to-trash": "Mover a la Papelera",
-        "reply": "Responder"
-    },
-    "menu-user": {
-        "user": "Usuario",
-        "edit-basic-data": "EDITAR DATOS BÁSICOS",
-        "reset-pwd": "RESETEAR CONTRASEÑA",
-        "add-other-account": "AÑADIR OTRA CUENTA",
-        "close-session": "CERRAR SESIÓN"
-    }
+  "sidebar": {
+    "folders": "Gmail",
+    "inbox": "Bandeja de entrada",
+    "sent": "Enviados",
+    "trash": "Papelera",
+    "spam": "Spam",
+    "compose": "Nuevo correo",
+    "labels": "ETIQUETAS"
+  },
+  "message-list": {
+    "no-message": "No hay mensajes para esta etiqueta.",
+    "move-to-trash": "Mover a la Papelera"
+  },
+  "pager-buttons": {
+    "previous-page": "Página Anterior",
+    "next-page": "Página Siguiente"
+  },
+  "compose-message": {
+    "compose-message": "Componer Mensaje",
+    "to": "Para:",
+    "subject": "Asunto:",
+    "comma-separated": "lista de emails separados por coma",
+    "send-message": "Enviar mensaje",
+    "send": "Enviar",
+    "discard": "Descartar",
+    "drag-and-drop": "Arrastrar y Soltar",
+    "add-attachments": "Añadir archivos adjuntos",
+    "browse": "Seleccionar",
+    "or": "o"
+  },
+  "message-toolbar": {
+    "move-to-trash": "Mover a la Papelera",
+    "reply": "Responder"
+  },
+  "menu-user": {
+    "user": "Usuario",
+    "edit-basic-data": "EDITAR DATOS BÁSICOS",
+    "reset-pwd": "RESETEAR CONTRASEÑA",
+    "add-other-account": "AÑADIR OTRA CUENTA",
+    "close-session": "CERRAR SESIÓN"
+  },
+  "header": {
+    "search": "Buscar"
+  }
 }

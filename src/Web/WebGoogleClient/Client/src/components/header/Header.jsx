@@ -13,6 +13,7 @@ import {
 import { Nav, NavItem, NavLink } from "reactstrap";
 import { connect } from "react-redux";
 import MenuUser from "../menu-user/menu-user";
+import i18n from "i18next";
 
 export class Header extends PureComponent {
   constructor(props) {
@@ -105,7 +106,7 @@ export class Header extends PureComponent {
             <input
               type="search"
               className="form-control search"
-              placeholder="Search mail"
+              placeholder={i18n.t("header.search")}
               value={this.props.searchQuery}
               onChange={this.handleInputChange}
             />
