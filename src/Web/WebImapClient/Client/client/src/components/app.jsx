@@ -377,9 +377,9 @@ class App extends Component {
       return <MessageViewer className={styles["message-viewer"]} />;
     }
     return (
-      <Fragment>
+       <Fragment>
         <MessageList className={styles["message-grid"]} />
-        <div className={styles["fab-container"]}>
+            {/*<div className={styles["fab-container"]}>
           {outbox === null ? (
             <button
               className={`${mainCss["mdc-fab"]} ${mainCss["mdc-button--raised"]}`}
@@ -389,7 +389,7 @@ class App extends Component {
               </span>
             </button>
           ) : null}
-        </div>
+        </div>*/}
       </Fragment>
     );
   }
