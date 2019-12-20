@@ -16,6 +16,7 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import i18n from "i18next";
 import { removeState } from "../../services/state";
+import { clearUserCredentials } from "../../actions/application";
 
 class MenuUser extends Component {
   constructor(props) {
@@ -32,7 +33,6 @@ class MenuUser extends Component {
 
   componentDidMount() {
     const { lexon } = this.props;
-    const _this = this;
     if (lexon.userId) {
       const url = `${window.URL_GET_ACCOUNTS}/${lexon.userId}`;
       fetch(url, {
@@ -41,7 +41,7 @@ class MenuUser extends Component {
         .then(data => data.json())
         .then(result => {
           if (result.errors.length === 0) {
-            _this.setState({
+            this.setState({
               accounts: result.data.accounts.filter(
                 account => account.defaultAccount !== true
               )
@@ -234,4 +234,11 @@ const mapStateToProps = state => ({
   lexon: state.lexon
 });
 
-export default connect(mapStateToProps)(MenuUser);
+const mapDispatchToProps = dispatch => ({
+  logout: () => {
+    dispatch(clearUserCredentials());
+    history.push("/login");
+  }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(MenuUser);

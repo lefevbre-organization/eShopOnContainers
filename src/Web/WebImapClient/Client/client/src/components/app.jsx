@@ -17,7 +17,6 @@ import { editNewMessage } from "../services/application";
 import { getFolders } from "../services/folder";
 import { resetFolderMessagesCache } from "../services/message";
 // import SplitPane from "react-split-pane";
-import mainCss from "../styles/main.scss";
 import styles from "./app.scss";
 import IconButton from "./buttons/icon-button";
 import { translate } from "react-i18next";
@@ -57,7 +56,8 @@ class App extends Component {
       sidebarComponent: (
         <img border="0" alt="Lefebvre" src="assets/images/lexon-fake.png"></img>
       ),
-      actualSidebarComponent: 0
+      actualSidebarComponent: 0,
+      isUpdatedDefaultAccount: false
     };
 
     this.toggleSideBar = this.toggleSideBar.bind(this);
@@ -159,7 +159,11 @@ class App extends Component {
 
   render() {
     const { t, lexon } = this.props;
-    const { sideBar } = this.state;
+    const { sideBar, isUpdatedDefaultAccount } = this.state;
+
+    if (!isUpdatedDefaultAccount) {
+      return null;
+    }
 
     return (
       <Sidebar
@@ -263,13 +267,13 @@ class App extends Component {
                       disabled
                       border="0"
                       alt="Lex-On"
-                      src="assets/images/icon-lexon.png"                      
+                      src="assets/images/icon-lexon.png"
                     ></img>
                   </IconButton>
                 )}
                 <div className={styles.btnselect}></div>
               </span>
-                        {/* <span
+              {/* <span
                 className={styles.productsbutton}
                 isotip={t("productBar.database")}
                 isotip-position="bottom-end"
@@ -364,7 +368,7 @@ class App extends Component {
   }
 
   renderContent() {
-    const { application, outbox } = this.props;
+    const { application } = this.props;
     if (
       application.newMessage &&
       Object.keys(application.newMessage).length > 0
@@ -377,9 +381,9 @@ class App extends Component {
       return <MessageViewer className={styles["message-viewer"]} />;
     }
     return (
-       <Fragment>
+      <Fragment>
         <MessageList className={styles["message-grid"]} />
-            {/*<div className={styles["fab-container"]}>
+        {/*<div className={styles["fab-container"]}>
           {outbox === null ? (
             <button
               className={`${mainCss["mdc-fab"]} ${mainCss["mdc-button--raised"]}`}
@@ -425,13 +429,19 @@ class App extends Component {
       const url = `${window.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}`;
       fetch(url, {
         method: "GET"
-      }).catch(error => {
+      })
+      .then(() => {
+        this.setState({ isUpdatedDefaultAccount: true });
+      })
+      .catch(error => {
         console.log("error =>", error);
       });
       if (idCaseFile !== null && idCaseFile !== undefined) {
         this.props.newMessage();
         this.onSetSidebarOpenLexon(true);
       }
+    } else {
+      this.setState({ isUpdatedDefaultAccount: true });
     }
 
     window.addEventListener(
