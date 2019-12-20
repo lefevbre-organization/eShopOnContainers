@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
-
 import ACTIONS from "../../actions/lexon";
 import { clearUserCredentials } from "../../actions/application";
 import history from "../../routes/history";
+import { PROVIDER } from "../../constants";
+import { removeState } from "../../services/state";
 
 class UserLexon extends Component {
   constructor(props) {
@@ -14,6 +15,8 @@ class UserLexon extends Component {
       readyToRedirect: false,
       isNewAccount: false
     };
+
+    this.isUniqueAccountByProvider = this.isUniqueAccountByProvider.bind(this);
   }
 
   componentDidMount() {
@@ -25,17 +28,51 @@ class UserLexon extends Component {
     const company = this.props.match.params.idCompany;
     this.props.setCaseFile({casefile: casefile, bbdd: bbdd, company: company});
 
-    const isNewAccount = user.slice(2, 3) === "1" ? true : false;
-    if (!isNewAccount) {
-      this.setState({
-        readyToRedirect: true
-      });
-    } else {
-      this.setState({
-        isNewAccount: true
-      });
+    // const isNewAccount = user.slice(2, 3) === "1" ? true : false;
+    // if (!isNewAccount) {
+    //   this.setState({
+    //     readyToRedirect: true
+    //   });
+    // } else {
+    //   this.setState({
+    //     isNewAccount: true
+    //   });
+    // }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.lexon !== this.props.lexon) {
+      if (this.props.lexon.isNewAccount) {
+        removeState();
+      } else {
+        this.isUniqueAccountByProvider();
+      }
     }
   }
+
+  async isUniqueAccountByProvider() {
+    const { lexon } = this.props;
+    const url = `${window.URL_GET_ACCOUNTS}/${lexon.userId}`;
+
+    const response = await fetch(url, { method: "GET" });
+    const result = await response.json();
+
+    if (result.errors.length === 0) {
+      const accountsByProvider = result.data.accounts.filter(
+        account => account.provider === PROVIDER
+      );
+      if (accountsByProvider.length > 1) {
+        removeState();
+        this.setState({
+          readyToRedirect: true
+        });
+      } else {
+        this.setState({
+          readyToRedirect: true
+        });
+      }
+    }
+  };
 
   render() {
     const { readyToRedirect, isNewAccount } = this.state;

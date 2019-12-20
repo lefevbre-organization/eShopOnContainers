@@ -10,7 +10,7 @@ import i18n from "i18next";
 class ListClassifications extends Component {
   constructor(props) {
     super(props);
-    
+
     this.renderNoClassifications = this.renderNoClassifications.bind(this);
   }
 
@@ -25,6 +25,8 @@ class ListClassifications extends Component {
           </strong>
         </div>
       );
+    } else {
+      return null;
     }
   }
 

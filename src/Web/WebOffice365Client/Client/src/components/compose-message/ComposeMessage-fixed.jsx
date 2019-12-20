@@ -98,8 +98,12 @@ export class Compose extends PureComponent {
     });
   }
 
-  closeModal() {    
-    this.props.history.push("/inbox");
+  closeModal() {   
+    if (this.props.lexon.idCaseFile === null || this.props.lexon.idCaseFile === undefined) {
+      this.props.history.goBack();
+    } else {
+      this.props.loadLabelMessages(this.props.labelsResult.labelInbox);
+    }
   }
 
   goBack() {
@@ -109,9 +113,10 @@ export class Compose extends PureComponent {
         casefile: null,
         bbdd: null,
         company: null
-      });
-    }
-    this.props.history.goBack();
+      });      
+    } else {
+      this.props.history.goBack();
+    }    
   }
 
   handleChange(value) {
@@ -159,6 +164,7 @@ export class Compose extends PureComponent {
       this.closeModal();
       this.resetFields();
     });
+    this.closeModal();
   }
 
   resetFields() {
@@ -328,7 +334,8 @@ export class Compose extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-  lexon: state.lexon
+  lexon: state.lexon,
+  labelsResult: state.labelsResult
 });
 
 const mapDispatchToProps = dispatch => ({

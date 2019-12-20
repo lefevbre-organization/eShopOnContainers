@@ -11,7 +11,6 @@ import {
   DropdownMenu,
   DropdownToggle
 } from "reactstrap";
-import { PROVIDER } from "../../constants";
 import AccountUser from "./account-user/account-user";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
@@ -44,7 +43,7 @@ class MenuUser extends Component {
           if (result.errors.length === 0) {
             _this.setState({
               accounts: result.data.accounts.filter(
-                account => account.provider !== PROVIDER
+                account => account.defaultAccount !== true
               )
             });
           } else {

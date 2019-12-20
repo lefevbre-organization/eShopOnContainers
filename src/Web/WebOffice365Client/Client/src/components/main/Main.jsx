@@ -444,6 +444,7 @@ export class Main extends Component {
                       sideBarCollapsed={leftSideBar.collapsed}
                       sideBarToggle={this.toggleSideBar}
                       casefile={lexon.idCaseFile}
+                      loadLabelMessages={this.loadLabelMessages}
                     />
                   )}
                 />

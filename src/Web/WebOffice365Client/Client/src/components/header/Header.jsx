@@ -14,6 +14,7 @@ import {
 import { Nav, NavItem, NavLink } from "reactstrap";
 import { connect } from "react-redux";
 import MenuUser from "../menu-user/menu-user";
+import i18n from "i18next";
 
 export class Header extends PureComponent {
   constructor(props) {

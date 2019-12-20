@@ -43,12 +43,13 @@ class MenuUser extends Component {
           if (result.errors.length === 0) {
             _this.setState({
               accounts: result.data.accounts.filter(
-                account => account.provider !== PROVIDER
-              )});
+                account => account.defaultAccount !== true
+              )
+            });
           } else {
             let errors;
             result.errors.forEach(function(error) {
-              errors = `${error} `
+              errors = `${error} `;
             });
             console.log("error ->", errors);
           }
@@ -72,7 +73,7 @@ class MenuUser extends Component {
       fetch(url, {
         method: "GET"
       })
-        .then(() => {
+        .then(result => {
           const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
           window.open(urlRedirect, "_self");
         })
