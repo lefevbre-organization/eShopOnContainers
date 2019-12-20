@@ -1,5 +1,4 @@
-import React, { PureComponent } from "react";
-import { withTranslation } from "react-i18next";
+import React, { Component } from "react";
 import i18n from "i18next";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import sortBy from "lodash/sortBy";
@@ -8,11 +7,10 @@ import LabelItem from "./LabelItem";
 import { Link } from "react-router-dom";
 import { Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { bindActionCreators, compose } from "redux";
 import { connect } from "react-redux";
 import "./sidebar.scss";
 
-export class Sidebar extends PureComponent {
+export class Sidebar extends Component {
   constructor(props) {
     super(props);
 
@@ -25,6 +23,15 @@ export class Sidebar extends PureComponent {
     //this.renderLabels = this.renderLabels.bind(this);
     this.navigateToList = this.navigateToList.bind(this);
     this.sidebarAction = this.sidebarAction.bind(this);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      prevProps.selectedLabel !== this.props.selectedLabel &&
+      this.props.selectedLabel !== null
+    ) {
+      this.setState({ selectedFolder: this.props.selectedLabel.id });
+    }
   }
 
   navigateToList(evt, labelId) {
@@ -127,11 +134,12 @@ export class Sidebar extends PureComponent {
   //}
 
   renderLabels(labels) {
-    if (this.props.selectedLabel === null) {
-      return null;
-    }
+    // if (this.props.selectedLabel === null) {
+    //   return null;
+    // }
 
-    let folder = this.props.selectedLabel.id;
+    // let folder = this.props.selectedLabel.id;
+    let folder = this.state.selectedFolder;
 
     return (
       <React.Fragment>
@@ -227,7 +235,7 @@ export class Sidebar extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-  labelsResult: state.labelsResult,
+  labelsResult: state.labelsResult
 });
 
 export default connect(mapStateToProps)(Sidebar);

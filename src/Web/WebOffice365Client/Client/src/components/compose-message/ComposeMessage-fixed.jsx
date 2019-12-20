@@ -113,9 +113,10 @@ export class Compose extends PureComponent {
         casefile: null,
         bbdd: null,
         company: null
-      });
-    }
-    this.props.history.goBack();
+      });      
+    } else {
+      this.props.history.goBack();
+    }    
   }
 
   handleChange(value) {
@@ -158,9 +159,12 @@ export class Compose extends PureComponent {
       data: this.state,
       attachments: Fileattached
     }).then(response => {
+      console.log("response ->", response);
+      console.log("this.props.history ->", this.props.history);
       this.closeModal();
       this.resetFields();
     });
+    this.closeModal();
   }
 
   resetFields() {
