@@ -15,12 +15,6 @@ class MessageHeader extends Component {
   componentDidMount() {
     const messageId = this.props.match.params.id;
     this.props.getEmailHeaderMessage(messageId);
-
-    console.log(
-      "emailHeaderMessageResult.headers ->",
-      this.props.emailHeaderMessageResult.headers
-    );
-    console.log("labelsResult ->", this.props.labelsResult);
   }
 
   onFolderClick(folder) {

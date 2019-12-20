@@ -98,8 +98,12 @@ export class Compose extends PureComponent {
     });
   }
 
-  closeModal() {    
-    this.props.history.push("/inbox");
+  closeModal() {   
+    if (this.props.lexon.idCaseFile === null || this.props.lexon.idCaseFile === undefined) {
+      this.props.history.goBack();
+    } else {
+      this.props.loadLabelMessages(this.props.labelsResult.labelInbox);
+    }
   }
 
   goBack() {
@@ -154,8 +158,6 @@ export class Compose extends PureComponent {
       data: this.state,
       attachments: Fileattached
     }).then(response => {
-      console.log("response ->", response);
-      console.log("this.props.history ->", this.props.history);
       this.closeModal();
       this.resetFields();
     });
@@ -328,7 +330,8 @@ export class Compose extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-  lexon: state.lexon
+  lexon: state.lexon,
+  labelsResult: state.labelsResult
 });
 
 const mapDispatchToProps = dispatch => ({
