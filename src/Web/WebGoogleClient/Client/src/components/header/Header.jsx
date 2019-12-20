@@ -106,7 +106,7 @@ export class Header extends PureComponent {
             <input
               type="search"
               className="form-control search"
-              placeholder={i18n.t("header.search")}
+              placeholder={i18n.t("head.search")}
               value={this.props.searchQuery}
               onChange={this.handleInputChange}
             />
