@@ -61,6 +61,9 @@ export class Compose extends PureComponent {
     this.uploadFile = this.uploadFile.bind(this);
     this.addFileToState = this.addFileToState.bind(this);
 
+    this.removeFile = this.removeFile.bind(this);
+    this.showAttachActions = false;
+
     this.uppy.on("complete", result => {
       console.log(
         "Upload complete! We�ve uploaded these files:",
@@ -73,9 +76,23 @@ export class Compose extends PureComponent {
       this.reader.onload = readerEvt =>
         this.addFileToState({ file, base64: readerEvt.target.result });
       // Define this onload every time to get file and base64 every time
-      this.reader.readAsDataURL(file.data);
+        this.reader.readAsDataURL(file.data);
+        this.showAttachActions = true
     });
-  }
+    }
+
+    removeFile() {
+        //  console.log(this.uppy.getFiles());      
+        //this.uppy.getFiles().forEach(file => {   
+        //    console.log(file.id)
+        //    this.state.uppyPreviews.removeFile(file.id)
+        //});
+        this.uppy.reset();
+        this.showAttachActions = false
+        this.setState({
+            uppyPreviews: []
+        });
+    }
 
   addFileToState({ file, base64 }) {
     this.setState({
@@ -289,6 +306,7 @@ export class Compose extends PureComponent {
               })}
             </div>
             <ProgressBar uppy={this.uppy} hideAfterFinish={false} />
+            <button className={"button-remove-attach mr-left font-weight-bold  " + (this.showAttachActions ? 'show-btn' : 'hidden-btn')} onClick={this.removeFile}>Remove attachments</button>
             <div id="Divfooter" className="compose-droppanel">
               <DragDrop
                 uppy={this.uppy}
