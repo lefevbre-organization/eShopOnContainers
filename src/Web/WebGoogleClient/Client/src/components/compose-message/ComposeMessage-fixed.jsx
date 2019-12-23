@@ -52,8 +52,8 @@ export class ComposeMessage extends PureComponent {
     this.setField = this.setField.bind(this);
     this.uppy = new Uppy({ id: "uppy1", autoProceed: false, debug: true })
       .use(Tus, { endpoint: "https://master.tus.io/files/" })
-      .use(GoogleDrive, { serverUrl: "https://companion.uppy.io" });
-    this.reader = new FileReader();
+      //.use(GoogleDrive, { serverUrl: "https://companion.uppy.io" });
+   
 
     //this.uppy2 = new Uppy({ id: 'uppy2', autoProceed: false, debug: true })
     //    .use(Tus, { endpoint: 'https://master.tus.io/files/' })
@@ -70,12 +70,18 @@ export class ComposeMessage extends PureComponent {
       );
     });
     this.uppy.on("file-added", file => {
-      console.log("Added file", file);
-      this.reader.onload = readerEvt =>
-      this.addFileToState({ file, base64: readerEvt.target.result });
-      // Define this onload every time to get file and base64 every time
-      this.reader.readAsDataURL(file.data);
-      this.showAttachActions=true
+        console.log("Added file", file);
+        
+        // Define this onload every time to get file and base64 every time
+        this.reader = new FileReader();
+        //setTimeout(() => { this.reader.readAsDataURL(file.data); }, 4000);
+        this.reader.readAsDataURL(file.data);
+       
+        this.reader.onload = readerEvt =>
+            this.addFileToState({ file, base64: readerEvt.target.result });
+            this.showAttachActions = true
+
+     
     });
 
     }
