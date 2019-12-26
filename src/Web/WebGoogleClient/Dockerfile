@@ -5,14 +5,15 @@ EXPOSE 80
 
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
-COPY Web/WebGoogleClient/package.json .
-COPY Web/WebGoogleClient/package-lock.json .
+COPY Web/WebGoogleClient/Client/package.json .
+COPY Web/WebGoogleClient/Client/package-lock.json .
 RUN npm install
 COPY Web/WebGoogleClient/Client .
 RUN ls -lha /web
 RUN npm run build
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
+ENV BuildingDocker true
 WORKDIR /src
 
 COPY "eLefebvreOnContainers-ServicesAndWebApps.sln" "eLefebvreOnContainers-ServicesAndWebApps.sln"

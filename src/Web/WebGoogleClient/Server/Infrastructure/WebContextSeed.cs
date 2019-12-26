@@ -20,14 +20,15 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebGoogleClient.Infrastructure
                 .ApplicationServices.GetRequiredService<IOptions<AppSettings>>().Value;
 
             var useCustomizationData = settings.UseCustomizationData;
-            log.LogInformation(env.ContentRootPath);
-            log.LogInformation(env.WebRootPath);
             var contentRootPath = env.ContentRootPath;
             var webroot = env.WebRootPath;
 
+            log.LogInformation($"The ContentRoot is {env.ContentRootPath}, the root path is {env.WebRootPath} , use Custom Data :{useCustomizationData}");
+
             if (useCustomizationData)
             {
-                GetPreconfiguredImages(contentRootPath, webroot, log);
+                // don't use in react clients, uncomment if needed
+                // GetPreconfiguredImages(contentRootPath, webroot, log);
             }
         }
 

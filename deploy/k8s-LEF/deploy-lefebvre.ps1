@@ -2,17 +2,18 @@ Param(
     [parameter(Mandatory=$false)][string]$registry=$null,
     [parameter(Mandatory=$false)][string]$dockerUser="freyeslefebvre",
     [parameter(Mandatory=$false)][string]$dockerPassword="NetEb9221",
+    [parameter(Mandatory=$false)][string]$dockerProjectPath="c:/azure-devops/git/eShopOnContainers/src/docker-compose.yml",
     [parameter(Mandatory=$false)][string]$execPath,
     [parameter(Mandatory=$false)][string]$kubeconfigPath,
     [parameter(Mandatory=$false)][string]$configFile,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "account.api", "lexon.api","lexon.mysql.api", "ocelotapigw"),
     [parameter(Mandatory=$false)][string]$imageTagPlatform="linux",
-    [parameter(Mandatory=$false)][string]$imageTag="dev",
+    [parameter(Mandatory=$false)][string]$imageTag="newcore",
     [parameter(Mandatory=$false)][bool]$deployCI=$false,
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
-    [parameter(Mandatory=$false)][bool]$cleanDocker=$false,
-    [parameter(Mandatory=$false)][bool]$buildImages=$false,
-    [parameter(Mandatory=$false)][bool]$pushImages=$true,
+    [parameter(Mandatory=$false)][bool]$cleanDocker=$true,
+    [parameter(Mandatory=$false)][bool]$buildImages=$true,
+    [parameter(Mandatory=$false)][bool]$pushImages=$false,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
     [parameter(Mandatory=$false)][string]$dockerOrg="elefebvreoncontainers"
 )
@@ -82,7 +83,8 @@ if ($buildImages) {
     }
     Write-Host "Building Docker images tagged with '$imageTag'" -ForegroundColor DarkBlue
     $env:TAG=$imageTag
-    docker-compose -p .. -f ../docker-compose.yml build      
+    # docker-compose -p .. -f ../../docker-compose.yml build   $dockerProjectPath   
+    docker-compose -p .. -f $dockerProjectPath build   
 }
 
 if ($pushImages) {

@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 using System;
 using System.IO;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 
 namespace Lefebvre.eLefebvreOnContainers.Clients.WebGoogleClient
 {
@@ -63,6 +64,11 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebGoogleClient
                 {
                     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
                 });
+            
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "Client/build";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -97,22 +103,35 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebGoogleClient
                 app.UsePathBase(pathBase);
             }
 
-            app.Use(async (context, next) =>
-            {
-                await next();
+            //app.Use(async (context, next) =>
+            //{
+            //    await next();
 
-                // If there's no available file and the request doesn't contain an extension, we're probably trying to access a page.
-                // Rewrite request to use app root
-                if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value) && !context.Request.Path.Value.StartsWith("/api"))
+            //    // If there's no available file and the request doesn't contain an extension, we're probably trying to access a page.
+            //    // Rewrite request to use app root
+            //    if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value) && !context.Request.Path.Value.StartsWith("/api"))
+            //    {
+            //        context.Request.Path = "/index.html";
+            //        context.Response.StatusCode = 200; // Make sure we update the status code, otherwise it returns 404
+            //        await next();
+            //    }
+            //});
+
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "Client";
+
+                if (env.IsDevelopment())
                 {
-                    context.Request.Path = "/index.html";
-                    context.Response.StatusCode = 200; // Make sure we update the status code, otherwise it returns 404
-                    await next();
+                    spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
 
+
             app.UseDefaultFiles();
             app.UseStaticFiles();
+            app.UseSpaStaticFiles();
+
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
