@@ -154,3 +154,17 @@ services:
     depends_on:
       - nosqldata
       - rabbitmq
+
+  webhooks-client:
+    image: ${REGISTRY:-elefebvreoncontainers}/webhooks.client:${PLATFORM:-linux}-${TAG:-newcore}
+    build:
+      context: .
+      dockerfile: Web/WebhookClient/Dockerfile
+    depends_on:
+      - webhooks-api
+
+  envoylexonapigw:
+    image: envoyproxy/envoy:v1.11.1
+
+  envoyaccountapigw:
+    image: envoyproxy/envoy:v1.11.1

@@ -1,29 +1,29 @@
 ﻿syntax = "proto3";
 
-option csharp_namespace = "GrpcBasket";
+option csharp_namespace = "GrpcLexon";
 
-package BasketApi;
+package LexonApi;
 
-service Basket {
-	rpc GetBasketById(BasketRequest) returns (CustomerBasketResponse) {}
-	rpc UpdateBasket(CustomerBasketRequest) returns (CustomerBasketResponse) {}
+service Lexon {
+	rpc GetLexonById(LexonRequest) returns (LexonItemResponse) {}
+	rpc UpdateLexon(CustomerLexonRequest) returns (CustomerLexonResponse) {}
 }
 
-message BasketRequest {
+message LexonRequest {
 	string id = 1;
 }
 
-message CustomerBasketRequest {
+message CustomerLexonRequest {
 	string buyerid = 1;
-	repeated BasketItemResponse items = 2;
+	repeated LexonItemResponse items = 2;
 }
 
-message CustomerBasketResponse {
+message CustomerLexonResponse {
 	string buyerid = 1;
-	repeated BasketItemResponse items = 2;
+	repeated LexonItemResponse items = 2;
 }
 
-message BasketItemResponse {
+message LexonItemResponse {
 	string id = 1;
 	int32 productid = 2;
 	string productname = 3;

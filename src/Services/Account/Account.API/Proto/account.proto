@@ -1,29 +1,29 @@
 ﻿syntax = "proto3";
 
-option csharp_namespace = "GrpcBasket";
+option csharp_namespace = "GrpcAccount";
 
-package BasketApi;
+package AccountApi;
 
-service Basket {
-	rpc GetBasketById(BasketRequest) returns (CustomerBasketResponse) {}
-	rpc UpdateBasket(CustomerBasketRequest) returns (CustomerBasketResponse) {}
+service Account {
+	rpc GetAccountById(AccountRequest) returns (CustomerAccountResponse) {}
+	rpc UpdateAccount(CustomerAccountRequest) returns (CustomerAccountResponse) {}
 }
 
-message BasketRequest {
+message AccountRequest {
 	string id = 1;
 }
 
-message CustomerBasketRequest {
+message CustomerAccountRequest {
 	string buyerid = 1;
-	repeated BasketItemResponse items = 2;
+	repeated AccountItemResponse items = 2;
 }
 
-message CustomerBasketResponse {
+message CustomerAccountResponse {
 	string buyerid = 1;
-	repeated BasketItemResponse items = 2;
+	repeated AccountItemResponse items = 2;
 }
 
-message BasketItemResponse {
+message AccountItemResponse {
 	string id = 1;
 	int32 productid = 2;
 	string productname = 3;
