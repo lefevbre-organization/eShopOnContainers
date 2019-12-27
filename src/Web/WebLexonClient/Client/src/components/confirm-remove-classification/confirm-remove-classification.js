@@ -49,7 +49,7 @@ class ConfirmRemoveClassification extends Component {
         }
       })
       .catch(error => {
-        toggleNotification(i18n.t("classify-emails.classification-removed-ok"));
+        toggleNotification(i18n.t("classify-emails.classification-removed-ko"));
         console.log("error ->", error);
       });
   }

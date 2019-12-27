@@ -231,8 +231,9 @@ export function messageList(state = defaultMessageList, action) {
         );
         if (index === -1) {
           const data = {
-            id: action.listMessages[i],
-            content: action.listMessages[i]
+            id: action.listMessages[i].id,
+            subject: action.listMessages[i].subject,
+            sentDateTime: action.listMessages[i].sentDateTime
           };
           state.selectedMessages.push(data);
         }

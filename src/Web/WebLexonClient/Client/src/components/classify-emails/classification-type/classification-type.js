@@ -31,6 +31,7 @@ class ClassificationType extends Component {
   getTypes() {
     getTypes()
       .then(result => {
+        console.log("result ->", result);
         this.setState({
           types: result.types
         });

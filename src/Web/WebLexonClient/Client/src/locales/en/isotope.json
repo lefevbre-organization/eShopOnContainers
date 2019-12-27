@@ -47,7 +47,11 @@
     "select-mail": "Select a message and rate it in Lex-on. The relationship established will be visible in this panel and also in the application."
   },
   "classification-list": {
-    "assigned-to": "Assigned to"
+    "assigned-to": "Assigned to",
+    "code": "Code",
+    "name": "Name",
+    "description": "Description",
+    "client": "Client"
   },
   "confirm-remove-classification": {
     "yes": "Yes",

@@ -19,10 +19,6 @@ class Entity extends Component {
     const { idEntity, name } = this.props.type;
     const { selectedType } = this.props;
 
-    if (idEntity === 13 || idEntity === 14) {
-      return null;
-    }
-
     const classSelected = idEntity === selectedType.idEntity ? "selected" : "";
 
     return (

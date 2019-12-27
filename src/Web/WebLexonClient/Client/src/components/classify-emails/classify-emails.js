@@ -21,7 +21,7 @@ class ClassifyEmails extends Component {
       type: null,
       search: "",
       forceUpdate: null,
-      loading: false
+      isLoading: false
     };
 
     this._handleOnClick = this._handleOnClick.bind(this);
@@ -88,7 +88,7 @@ class ClassifyEmails extends Component {
       return;
     }
 
-    this.setState({ loading: true });
+    this.setState({ isLoading: true });
     getResults(user, companySelected, type, search)
       .then(result => {
         this.setState({
@@ -100,7 +100,7 @@ class ClassifyEmails extends Component {
             this.props.addError(JSON.stringify(error))
           );
         }
-        this.setState({ loading: false });
+        this.setState({ isLoading: false });
       })
       .catch(errors => {
         if (Array.isArray(errors)) {
@@ -112,7 +112,7 @@ class ClassifyEmails extends Component {
         this.setState({
           listResultsByType: []
         });
-        this.setState({ loading: false });
+        this.setState({ isLoading: false });
       });
   }
 
@@ -158,8 +158,8 @@ class ClassifyEmails extends Component {
   }
 
   renderSpinner() {
-    const { loading } = this.state;
-    if (loading) {
+    const { isLoading } = this.state;
+    if (isLoading) {
       return <Spinner />;
     }
   }
@@ -170,6 +170,7 @@ class ClassifyEmails extends Component {
 
     return (
       <Fragment>
+        {this.renderSpinner()}
         <div>
           <Modal
             show={initialModalState}
@@ -178,7 +179,7 @@ class ClassifyEmails extends Component {
             aria-labelledby="contained-modal-title-vcenter"
             centered
             dialogClassName="modal"
-          >
+          >           
             <Modal.Header className="align-items-center" closeButton>
               <Modal.Title>
                 <div className="modal-title h4">
@@ -193,7 +194,6 @@ class ClassifyEmails extends Component {
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              {this.renderSpinner()}
               <Container>
                 <p>
                   <strong>{i18n.t("classify-emails.body")}</strong>

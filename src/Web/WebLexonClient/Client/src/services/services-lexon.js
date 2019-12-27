@@ -63,7 +63,10 @@ export const addClassification = (
   return new Promise((resolve, reject) => {
     const url = `${window.API_GATEWAY}/${CLASSIFICATIONS_ADD}`;
     const classification = {
-      listaMails: listMails,
+      // listaMails: listMails,
+      listaMails: listMails.map(mail => {
+        return mail.id;
+      }),
       idType: typeId,
       idUser: user.idUser,
       idRelated: relatedId,
@@ -81,9 +84,19 @@ export const addClassification = (
     })
       .then(data => data.json())
       .then(result => {
-        resolve({
-          classifications: result.data
-        });
+        if (
+          result.errors.length > 0 ||
+          (result.errors !== null &&
+            result.errors !== undefined &&
+            (result.data === null ||
+            result.data === undefined))
+        ) {
+          reject(result.errors);
+        } else {
+          resolve({
+            classifications: result.data
+          });
+        }
       })
       .catch(error => {
         console.log("Error ->", error);
@@ -104,8 +117,7 @@ export const removeClassification = (
     const url = `${window.API_GATEWAY}/${CLASSIFICATIONS_REMOVE}`;
     const classification = {
       idMail: idMail,
-      idType: 1,
-      // idType: idType,
+      idType: idType,
       bbdd: bbdd,
       idUser: user.idUser,
       idRelated: idRelated,
@@ -122,9 +134,20 @@ export const removeClassification = (
     })
       .then(data => data.json())
       .then(result => {
-        resolve({
-          results: result.data
-        });
+        console.log("result ->", result);
+        if (
+          result.errors.length > 0 ||
+          (result.errors !== null &&
+            result.errors !== undefined &&
+            (result.data === null ||
+            result.data === undefined))
+        ) {
+          reject(result.errors);
+        } else {
+          resolve({
+            results: result.data
+          });
+        }
       })
       .catch(error => {
         console.log("Error ->", error);
@@ -134,6 +157,21 @@ export const removeClassification = (
 };
 
 export const getTypes = () => {
+  const typesHidden = [4, 10, 11, 13, 14];
+  // 0: {idEntity: 1, name: "Expedientes", extraElements: null}
+  // 1: {idEntity: 2, name: "Clientes", extraElements: null}
+  // 2: {idEntity: 3, name: "Contrarios", extraElements: null}
+  // 3: {idEntity: 4, name: "Proveedores", extraElements: null}
+  // 4: {idEntity: 5, name: "Abogados Propios", extraElements: null}
+  // 5: {idEntity: 6, name: "Abogados Contrarios", extraElements: null}
+  // 6: {idEntity: 7, name: "Procuradores Propios", extraElements: null}
+  // 7: {idEntity: 8, name: "Procuradores Contrarios", extraElements: null}
+  // 8: {idEntity: 9, name: "Notarios", extraElements: null}
+  // 9: {idEntity: 10, name: "Juzgados", extraElements: null}
+  // 10: {idEntity: 11, name: "Aseguradoras", extraElements: null}
+  // 11: {idEntity: 12, name: "Otros", extraElements: null}
+  // 12: {idEntity: 13, name: "Carpetas", extraElements: null}
+  // 13: {idEntity: 14, name: "Documentos", extraElements: null}
   return new Promise((resolve, reject) => {
     const url = `${window.API_GATEWAY}/${TYPES}`;
     fetch(url, {
@@ -142,7 +180,9 @@ export const getTypes = () => {
       .then(data => data.json())
       .then(result => {
         resolve({
-          types: result.data
+          types: result.data.filter(
+            entity => !typesHidden.includes(entity.idEntity)
+          )
         });
       })
       .catch(error => {

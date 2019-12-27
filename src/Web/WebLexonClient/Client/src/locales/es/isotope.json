@@ -47,7 +47,11 @@
     "select-mail": "Selecciona un mensaje y clasifícalo en Lex-on. La relación establecida será visible en este panel y también en la aplicación."
   },
   "classification-list": {
-    "assigned-to": "Asignado a"
+    "assigned-to": "Asignado a",
+    "code": "Código",
+    "name": "Nombre",
+    "description": "Descripción",
+    "client": "Cliente"
   },
   "confirm-remove-classification": {
     "yes": "Si",

@@ -4,16 +4,14 @@ import { withTranslation } from "react-i18next";
 import { bindActionCreators, compose } from "redux";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
-
 import MessageRow from "./message-row/MessageRow";
-
 import { addMessage, deleteMessage } from "./actions/message-list.actions";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import ListToolbar from "./list-toolbar/ListToolbar";
 import ListFooter from "./list-footer/ListFooter";
 import "./messageList.scss";
+import { getMessageHeader } from "../../../api_graph";
 
 const ViewMode = {
   LIST: 1,
@@ -72,16 +70,36 @@ export class MessageList extends PureComponent {
   onSelectionChange(selected, msgId) {
     this.props.toggleSelected([msgId], selected);
     //e.emit('received', { text: "Id: " + msgId + " selected: " + selected })
-    window.dispatchEvent(
-      new CustomEvent("Checkclick", {
-        detail: {
-          name: msgId,
-          chkselected: selected
-        }
-      })
-    );
 
-    selected ? this.props.addMessage(msgId) : this.props.deleteMessage(msgId);
+    getMessageHeader(msgId)
+      .then(response => {
+        const message = {
+          id: msgId,
+          subject: response.subject,
+          sentDateTime: response.sentDateTime,
+          chkselected: selected
+        };
+        window.dispatchEvent(
+          new CustomEvent("Checkclick", {
+            detail: message
+          })
+        );
+
+        selected
+          ? this.props.addMessage(message)
+          : this.props.deleteMessage(msgId);
+      })
+      .catch(error => {
+        console.log("error ->", error);
+        new CustomEvent("Checkclick", {
+          detail: {
+            name: msgId,
+            subject: "",
+            sentDateTime: "",
+            chkselected: selected
+          }
+        });
+      });
   }
 
   renderSpinner() {
@@ -191,8 +209,5 @@ const mapDispatchToProps = dispatch =>
 export default compose(
   withRouter,
   withTranslation(),
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )
+  connect(mapStateToProps, mapDispatchToProps)
 )(MessageList);
