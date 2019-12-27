@@ -168,3 +168,17 @@ services:
 
   envoyaccountapigw:
     image: envoyproxy/envoy:v1.11.1
+
+  weblexonagg:
+    image: ${REGISTRY:-elefebvreoncontainers}/weblexonagg:${PLATFORM:-linux}-${TAG:-newcore}
+    build:
+      context: .
+      dockerfile: ApiGateways/Web.Bff.Lexon/aggregator/Web.Lexon.HttpAggregator/Dockerfile
+    depends_on:
+      - nosqldata
+      - sqldata
+      - identity-api
+      - rabbitmq
+      - lexon-api
+      - lexonmysql-api
+      - account-api

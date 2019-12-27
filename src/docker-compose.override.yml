@@ -85,6 +85,12 @@ services:
       - HealthChecksUI__HealthChecks__9__Uri=http://lexonmysql-api/hc
       - HealthChecksUI__HealthChecks__10__Name=Identity HTTP Check
       - HealthChecksUI__HealthChecks__10__Uri=http://identity-api/hc
+      - HealthChecksUI__HealthChecks__11__Name=Lexon SignalRHub HTTP Check
+      - HealthChecksUI__HealthChecks__11__Uri=http://ordering-signalrhub/hc
+      - HealthChecksUI__HealthChecks__12__Name=Lexon HTTP Background Check
+      - HealthChecksUI__HealthChecks__12__Uri=http://ordering-backgroundtasks/hc
+      - HealthChecksUI__HealthChecks__13__Name=Lexon HTTP Aggregator GW HTTP Check
+      - HealthChecksUI__HealthChecks__13__Uri=http://weblexonagg/hc
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
     ports:
@@ -315,6 +321,50 @@ services:
       - PATH_BASE=/locations-api
     ports:
       - "5109:80"
+
+  weblexonagg:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - urls__basket=http://basket-api
+      - urls__catalog=http://catalog-api
+      - urls__orders=http://ordering-api
+      - urls__identity=http://identity-api
+      - urls__grpcBasket=http://basket-api:81
+      - urls__grpcCatalog=http://catalog-api:81
+      - urls__grpcOrdering=http://ordering-api:81
+      - urls__lexon=http://lexon-api
+      - urls__lexonmysql=http://lexonmysql-api
+      - urls__account=http://account-api
+      - urls__grpcLexon=http://lexon-api:81
+      - urls__grpcLexonMysql=http://lexonmysql-api:81
+      - urls__grpcAccount=http://account-api:81
+      - CatalogUrlHC=http://catalog-api/hc
+      - OrderingUrlHC=http://ordering-api/hc
+      - IdentityUrlHC=http://identity-api/hc
+      - BasketUrlHC=http://basket-api/hc
+      - MarketingUrlHC=http://marketing-api/hc
+      - LexonUrlHC=http://lexon-api/hc
+      - LexonMySqlUrlHC=http://lexonmysql-api/hc
+      - AccountUrlHC=http://account-api/hc
+      - PaymentUrlHC=http://payment-api/hc
+      - LocationUrlHC=http://locations-api/hc
+      - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
+    ports:
+      - "5121:80"
+
+  envoylexonapigw:
+    volumes:
+      - ./ApiGateways/Envoy/config/lexonapi:/etc/envoy
+    ports:
+    - "5202:80"
+    - "15202:8001"
+
+  envoyaccountapigw:
+    volumes:
+      - ./ApiGateways/Envoy/config/accountapi:/etc/envoy
+    ports:
+    - "5203:80"
+    - "15203:8001"
 
 volumes:
   eshop-sqldata:
