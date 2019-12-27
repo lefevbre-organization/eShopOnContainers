@@ -10,11 +10,8 @@
 
   <ItemGroup>
     <Compile Remove="Services\Location\**" />
-    <Compile Remove="Services\Marketing\**" />
     <EmbeddedResource Remove="Services\Location\**" />
-    <EmbeddedResource Remove="Services\Marketing\**" />
     <None Remove="Services\Location\**" />
-    <None Remove="Services\Marketing\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,11 +26,6 @@
   <ItemGroup>
     <Compile Include="Services\Location\LocationsScenariosBase.cs" />
     <Compile Include="Services\Location\LocationsTestsStartup.cs" />
-    <Compile Include="Services\Marketing\CampaignScenariosBase.cs" />
-    <Compile Include="Services\Marketing\UserLocationRoleScenariosBase.cs" />
-    <Compile Include="Services\Marketing\MarketingScenarios.cs" />
-    <Compile Include="Services\Marketing\MarketingScenariosBase.cs" />
-    <Compile Include="Services\Marketing\MarketingTestsStartup.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -58,9 +50,6 @@
     <Content Include="Services\Location\appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Services\Marketing\appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Services\Ordering\appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -80,7 +69,6 @@
     <ProjectReference Include="..\..\..\Services\Basket\Basket.API\Basket.API.csproj" />
     <ProjectReference Include="..\..\..\Services\Catalog\Catalog.API\Catalog.API.csproj" />
     <ProjectReference Include="..\..\..\Services\Location\Locations.API\Locations.API.csproj" />
-    <ProjectReference Include="..\..\..\Services\Marketing\Marketing.API\Marketing.API.csproj" />
     <ProjectReference Include="..\..\..\Services\Ordering\Ordering.API\Ordering.API.csproj" />
     <ProjectReference Include="..\..\..\Web\WebMVC\WebMVC.csproj" />
   </ItemGroup>
