@@ -1,0 +1,37 @@
+fichero correspondencias:
+-----------------------------
+ENVOY
+
+eshop_backend_route -> elef_backend_route
+eshop_backend -> elef_backend
+c-short -> l-short
+c-long -> l-long
+catalog-api -> lexon-api
+signalr-hub
+envoy.router
+
+                time: "%START_TIME%"
+                protocol: "%PROTOCOL%"
+                duration: "%DURATION%"
+                request_method: "%REQ(:METHOD)%"
+                request_host: "%REQ(HOST)%"
+                path: "%REQ(X-ENVOY-ORIGINAL-PATH?:PATH)%"
+                response_flags: "%RESPONSE_FLAGS%"
+                route_name: "%ROUTE_NAME%"
+                upstream_host: "%UPSTREAM_HOST%"
+                upstream_cluster: "%UPSTREAM_CLUSTER%"
+                upstream_local_address: "%UPSTREAM_LOCAL_ADDRESS%"
+ordering-signalrhub -> lexon-signalrhub
+shoppingagg -> lexonagg
+webshoppingagg -> weblexonagg
+
+------------------
+AGGREGATOR
+
+webshoppingaggswaggerui -> weblexonaggswaggerui
+CatalogUrlHC -> CatalogUrlHC
+catalogapi -> catalogapi
+BasketUrlHC -> BasketUrlHC
+basketapi -> basketapi
+MarketingUrlHC -> BasketUrlHC
+marketingapi -> basketapi
