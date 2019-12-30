@@ -509,8 +509,6 @@ export const sendMessage = ({ data, attachments }) => {
       .header("Authorization", "Bearer " + accessToken)
       .header("Content-Type", "application/json; charset=utf-8")
       .post(email, (err, response) => {
-        console.log("email ->", email);
-        console.log("response ->", response);
         resolve(response);
       });
   });
