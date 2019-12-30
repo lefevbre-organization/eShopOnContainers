@@ -7,6 +7,7 @@ import {
   modifyMessages
 } from "../actions/message-list.actions";
 import Pager from "../pager-buttons/PagerButtons";
+import Synkbutton from "../synk-buttons/SynkButtons";
 import ListActionButtons from "./ListActionButtons";
 
 import { deleteListMessages, addListMessages } from "../actions/message-list.actions";
@@ -110,6 +111,8 @@ export class MessageToolbar extends PureComponent {
             </div>
           </div>
 
+        
+
           <Pager
             nextToken={this.props.nextToken}
             prevToken={this.props.prevToken}
@@ -117,7 +120,9 @@ export class MessageToolbar extends PureComponent {
             navigateToNextPage={this.navigateToNextPage}
             getLabelMessages={this.getLabelMessages}
 
-          />         
+          />    
+                {/*
+          <Synkbutton />   */}  
         </div>
       </div>
     );

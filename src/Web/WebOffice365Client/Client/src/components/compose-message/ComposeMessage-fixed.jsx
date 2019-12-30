@@ -179,6 +179,9 @@ export class Compose extends PureComponent {
 
       this.state.subject = '=?UTF-8?B?' + window.btoa(this.state.subject) + '?=';
      //this.state.content = '=?UTF-8?B?' + window.btoa(this.state.content) + '?=';
+      this.setState({
+          subject: '=?UTF-8?B?' + window.btoa(this.state.subject) + '?=',
+      });
 
     sendMessage({
       data: this.state,

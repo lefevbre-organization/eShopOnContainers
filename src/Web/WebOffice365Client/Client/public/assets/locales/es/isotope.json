@@ -16,6 +16,9 @@
     "previous-page": "Página Anterior",
     "next-page": "Página Siguiente"
   },
+  "synk-button": {
+    "reresh": "Actializar"
+  },
   "compose-message": {
     "compose-message": "Componer Mensaje",
     "to": "Para:",
