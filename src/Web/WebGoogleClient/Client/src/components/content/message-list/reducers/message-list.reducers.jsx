@@ -7,7 +7,7 @@ import {
   MESSAGE_LOAD_FAIL,
   MESSAGE_HEADER_LOAD_IN_PROGRESS,
   MESSAGE_HEADER_LOAD_SUCCESS,
-  MESSAGE_HEADER_LOAD_FAIL, 
+  MESSAGE_HEADER_LOAD_FAIL,
   GET_MESSAGES_LOAD_IN_PROGRESS,
   EMPTY_MESSAGES,
   SET_PAGE_TOKENS,
@@ -30,7 +30,7 @@ const defaultMessagesState = {
 export const messagesResult = (state = defaultMessagesState, action) => {
   switch (action.type) {
     case GET_MESSAGES:
-      const stateClone = {...state};
+      const stateClone = { ...state };
       stateClone.nextPageToken = null;
       const pageTokens = [...stateClone.pageTokens];
       const nextPageToken = action.payload.nextPageToken;
@@ -49,17 +49,17 @@ export const messagesResult = (state = defaultMessagesState, action) => {
         loading: false,
         failed: true,
         error: action.payload
-      }
+      };
     }
     case EMPTY_MESSAGES:
-      return {...state, messages: []};
+      return { ...state, messages: [] };
     case GET_MESSAGES_LOAD_IN_PROGRESS:
       return {
         ...state,
         label: null,
         nextPageToken: null,
         loading: true
-      }
+      };
     case TOGGLE_SELECTED:
       return {
         ...state,
@@ -74,17 +74,19 @@ export const messagesResult = (state = defaultMessagesState, action) => {
       return {
         ...state,
         pageTokens: [action.payload]
-      }
+      };
     case CLEAR_PAGE_TOKENS:
       return {
         ...state,
         pageTokens: []
-      }
+      };
     case MODIFY_MESSAGES_SUCCESS:
       return {
         ...state,
-        messages: state.messages.filter(el => action.payload.modifiedIds.indexOf(el.id) === -1)
-      }
+        messages: state.messages.filter(
+          el => action.payload.modifiedIds.indexOf(el.id) === -1
+        )
+      };
     default:
       return state;
   }
@@ -96,7 +98,7 @@ export const pageTokens = (
 ) => {
   switch (action.type) {
     case SET_PAGE_TOKENS:
-      return {...state, ...action.payload};
+      return { ...state, ...action.payload };
     default:
       return state;
   }
@@ -129,7 +131,7 @@ export const emailMessageResult = (
         loading: false,
         failed: true,
         error: action.payload
-      }
+      };
     default:
       return state;
   }
@@ -162,71 +164,85 @@ export const emailHeaderMessageResult = (
         loading: false,
         failed: true,
         error: action.payload
-      }
+      };
     default:
       return state;
   }
 };
 
 export const searchQuery = (state = "", action) => {
-  switch(action.type) {
+  switch (action.type) {
     case SET_SEARCH_QUERY:
-      return action.payload
+      return action.payload;
     default:
       return state;
   }
-}
+};
 
 const defaultMessageList = {
   selectedMessages: []
 };
 
 export function messageList(state = defaultMessageList, action) {
-  switch(action.type) {
-      case ADD_MESSAGE: {
-          const index = state.selectedMessages.findIndex(message => message.id === action.data.id)
-          if (index === -1) {
-              return {
-                  ...state,
-                  selectedMessages: [...state.selectedMessages, action.data]                    
-              }
-          }
-          return state;     
+  switch (action.type) {
+    case ADD_MESSAGE: {
+      const index = state.selectedMessages.findIndex(
+        message => message.id === action.data.id
+      );
+      if (index === -1) {
+        return {
+          ...state,
+          selectedMessages: [...state.selectedMessages, action.data]
+        };
       }
+      return state;
+    }
 
-      case DELETE_MESSAGE: {
-          return {
-              ...state,
-              selectedMessages: state.selectedMessages.filter(message => message.id !== action.data.id)
-          }         
+    case DELETE_MESSAGE: {
+      return {
+        ...state,
+        selectedMessages: state.selectedMessages.filter(
+          message => message.id !== action.data.id
+        )
+      };
+    }
+
+    case DELETE_LIST_MESSAGES: {
+      for (let i = 0; i < action.listMessages.length; i++) {
+        const index = state.selectedMessages.findIndex(
+          message => message.id === action.listMessages[i]
+        );
+        if (index > -1) {
+          state.selectedMessages.splice(index, 1);
+        }
       }
+      return {
+        ...state,
+        selectedMessages: state.selectedMessages
+      };
+    }
 
-      case DELETE_LIST_MESSAGES: {
-          for (let i=0; i < action.listMessages.length; i++) {
-              const index = state.selectedMessages.findIndex(message => message.id === action.listMessages[i])
-              if (index > -1) {
-                  state.selectedMessages.splice(index, 1);
-              }    
-          }
-          return {
-              ...state,
-              selectedMessages: state.selectedMessages            }     
+    case ADD_LIST_MESSAGES: {
+      for (let i = 0; i < action.listMessages.length; i++) {
+        const index = state.selectedMessages.findIndex(
+          message => message.id === action.listMessages[i]
+        );
+        if (index === -1) {
+          const data = {
+            id: action.listMessages[i].id,
+            subject: action.listMessages[i].subject,
+            sentDateTime: action.listMessages[i].sentDateTime
+          };
+          state.selectedMessages.push(data);
+        }
       }
+      return {
+        ...state,
+        selectedMessages: state.selectedMessages
+      };
+    }
 
-      case ADD_LIST_MESSAGES: {
-          for (let i=0; i < action.listMessages.length; i++) {
-              const index = state.selectedMessages.findIndex(message => message.id === action.listMessages[i])
-              if (index === -1) {
-                  const data = {id: action.listMessages[i], content: action.listMessages[i]}
-                  state.selectedMessages.push(data);
-              }    
-          }
-          return {
-              ...state,
-              selectedMessages: state.selectedMessages
-          }     
-      }
-
-      default: return state;
+    default:
+      return state;
   }
 }

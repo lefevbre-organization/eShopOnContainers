@@ -131,12 +131,13 @@ class App extends Component {
   }
 
   sendMessagePutUser(user) {
-    const { selectedMessageId } = this.props.messages;
+    const { selectedMessages } = this.props.messages;
+    console.log("messages ->", this.props.messages);
     window.dispatchEvent(
       new CustomEvent("PutUserFromLexonConnector", {
         detail: {
           user,
-          selectedMessageId,
+          selectedMessages: selectedMessages,
           idCaseFile: this.props.lexon.idCaseFile,
           bbdd: this.props.lexon.bbdd,
           idCompany: this.props.lexon.idCompany

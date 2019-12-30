@@ -28,8 +28,7 @@ export class MessageToolbar extends PureComponent {
 
     this.state = {
       selectedMessageIds: [],
-      messages: [],
-      loadMessages: false
+      messages: []
     };
   }
 

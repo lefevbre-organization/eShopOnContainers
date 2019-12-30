@@ -11,7 +11,6 @@ import {
   DropdownMenu,
   DropdownToggle
 } from "reactstrap";
-import { PROVIDER } from "../../constants";
 import AccountUser from "./account-user/account-user";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";

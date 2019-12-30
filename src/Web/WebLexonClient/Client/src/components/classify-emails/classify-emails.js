@@ -69,7 +69,7 @@ class ClassifyEmails extends Component {
       )
         .then(() => {
           if (selectedMessages.length === 1) {
-            _this.updateResultsSelected(selectedMessages[0]);
+            _this.updateResultsSelected(selectedMessages[0].id);
           }
           toggleNotification(i18n.t("classify-emails.classification-saved-ok"));
         })
