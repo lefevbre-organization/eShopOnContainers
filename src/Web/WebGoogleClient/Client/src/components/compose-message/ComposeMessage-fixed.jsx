@@ -227,7 +227,9 @@ export class ComposeMessage extends PureComponent {
                   />
                 </InputGroup>
                 <InputGroup>
-                  <InputGroupAddon addonType="prepend">Bcc:</InputGroupAddon>
+                  <InputGroupAddon addonType="prepend">
+                    {i18n.t("compose-message.bcc")}
+                  </InputGroupAddon>
                   <Input
                     tabIndex={3}
                     placeholder={i18n.t("compose-message.comma-separated")}
@@ -308,7 +310,9 @@ export class ComposeMessage extends PureComponent {
                 className="mr-left font-weight-bold btn-outline-primary"
                 title={i18n.t("compose-message.discard")}
                 color="secondary"
-                onClick={() => {this.goBack()}}
+                onClick={() => {
+                  this.goBack();
+                }}
               >
                 {i18n.t("compose-message.discard")}
               </Button>

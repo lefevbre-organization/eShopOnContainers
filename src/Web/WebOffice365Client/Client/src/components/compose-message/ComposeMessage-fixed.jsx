@@ -98,8 +98,11 @@ export class Compose extends PureComponent {
     });
   }
 
-  closeModal() {   
-    if (this.props.lexon.idCaseFile === null || this.props.lexon.idCaseFile === undefined) {
+  closeModal() {
+    if (
+      this.props.lexon.idCaseFile === null ||
+      this.props.lexon.idCaseFile === undefined
+    ) {
       this.props.history.goBack();
     } else {
       this.props.loadLabelMessages(this.props.labelsResult.labelInbox);
@@ -113,10 +116,10 @@ export class Compose extends PureComponent {
         casefile: null,
         bbdd: null,
         company: null
-      });      
+      });
     } else {
       this.props.history.goBack();
-    }    
+    }
   }
 
   handleChange(value) {
@@ -150,10 +153,10 @@ export class Compose extends PureComponent {
       headers.Bcc = validBcc.join(", ");
     }
 
-      const Fileattached = this.state.uppyPreviews;
+    const Fileattached = this.state.uppyPreviews;
 
-      this.state.subject = '=?UTF-8?B?' + window.btoa(this.state.subject) + '?=';
-     //this.state.content = '=?UTF-8?B?' + window.btoa(this.state.content) + '?=';
+    this.state.subject = "=?UTF-8?B?" + window.btoa(this.state.subject) + "?=";
+    //this.state.content = '=?UTF-8?B?' + window.btoa(this.state.content) + '?=';
 
     sendMessage({
       data: this.state,
@@ -241,7 +244,9 @@ export class Compose extends PureComponent {
                   />
                 </InputGroup>
                 <InputGroup>
-                  <InputGroupAddon addonType="prepend">Bcc:</InputGroupAddon>
+                  <InputGroupAddon addonType="prepend">
+                    {i18n.t("compose-message.bcc")}
+                  </InputGroupAddon>
                   <Input
                     tabIndex={3}
                     placeholder={i18n.t("compose-message.comma-separated")}

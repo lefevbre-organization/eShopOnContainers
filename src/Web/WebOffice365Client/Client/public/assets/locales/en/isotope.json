@@ -27,7 +27,8 @@
     "drag-and-drop": "Drag and Drop",
     "add-attachments": "add attachments",
     "browse": "browse",
-    "or": "or"
+    "or": "or",
+    "bcc": "Bcc:"
   },
   "message-toolbar": {
     "move-to-trash": "Move to Trash",

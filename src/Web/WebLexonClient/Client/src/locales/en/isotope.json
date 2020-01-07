@@ -31,7 +31,8 @@
     "classification-saved-ok": "The classification saved correctly",
     "classification-saved-ko": "There was an error saving the classification",
     "classification-removed-ok": "The classification removed correctly",
-    "classification-removed-ko": "There was an error removing the classification"
+    "classification-removed-ko": "There was an error removing the classification",
+    "classification-selection-ko": "You must select a Type and Entity to qualify"
   },
   "classification-type": {
     "type": "Type",

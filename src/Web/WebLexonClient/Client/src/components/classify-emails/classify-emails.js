@@ -57,9 +57,16 @@ class ClassifyEmails extends Component {
       toggleNotification
     } = this.props;
 
-    toggleClassifyEmails();
-
     if (fromSave === true) {
+      if (type === null || resultsSelected.length === 0) {
+        toggleNotification(
+          i18n.t("classify-emails.classification-selection-ko")
+        );
+        return;
+      }
+
+      toggleClassifyEmails();
+
       addClassification(
         user,
         companySelected,
@@ -77,7 +84,11 @@ class ClassifyEmails extends Component {
           toggleNotification(i18n.t("classify-emails.classification-saved-ko"));
           console.log("error ->", error);
         });
+    } else {
+      toggleClassifyEmails();
     }
+
+    this.setState({ type: null, search: "" });
   }
 
   getListResultsByType() {
@@ -166,7 +177,7 @@ class ClassifyEmails extends Component {
 
   render() {
     const { listResultsByType, resultsSelected } = this.state;
-    const { initialModalState, toggleClassifyEmails } = this.props;
+    const { initialModalState } = this.props;
 
     return (
       <Fragment>
@@ -174,12 +185,14 @@ class ClassifyEmails extends Component {
         <div>
           <Modal
             show={initialModalState}
-            onHide={toggleClassifyEmails}
+            onHide={() => {
+              this._handleOnClick(false);
+            }}
             size="lg"
             aria-labelledby="contained-modal-title-vcenter"
             centered
             dialogClassName="modal"
-          >           
+          >
             <Modal.Header className="align-items-center" closeButton>
               <Modal.Title>
                 <div className="modal-title h4">
