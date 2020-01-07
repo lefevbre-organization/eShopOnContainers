@@ -1,5 +1,5 @@
 ﻿
-namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model
+namespace Lefebvre.eLefebvreOnContainers.Models
 {
     public class JosCompany 
     {

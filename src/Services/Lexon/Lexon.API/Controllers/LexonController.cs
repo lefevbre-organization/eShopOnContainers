@@ -1,4 +1,5 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services;
+﻿using Lefebvre.eLefebvreOnContainers.Models;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Services;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -44,7 +45,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
 
         {
             return Ok(1);
-
         }
 
         [HttpGet]

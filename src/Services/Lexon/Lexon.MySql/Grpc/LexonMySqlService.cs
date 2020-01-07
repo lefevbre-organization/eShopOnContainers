@@ -1,13 +1,4 @@
-﻿using Grpc.Core;
-using Microsoft.AspNetCore.Authorization;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Model;
-using Microsoft.Extensions.Logging;
-using System.Linq;
-using System.Threading.Tasks;
-using GrpcLexon;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Repositories;
-
-namespace GrpcLexon
+﻿namespace GrpcLexon
 {
     public class LexonMySqlService  //: Lexon.LexonBase
     {

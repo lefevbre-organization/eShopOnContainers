@@ -1,7 +1,5 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Repositories;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Model;
-//using Lexon.MySql.Model;
-
+﻿using Lefebvre.eLefebvreOnContainers.Models;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Repositories;
 using Microsoft.Extensions.Options;
 using System;
 using System.Threading.Tasks;

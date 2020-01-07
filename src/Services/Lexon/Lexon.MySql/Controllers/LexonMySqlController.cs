@@ -1,5 +1,5 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Services;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Model;
+﻿using Lefebvre.eLefebvreOnContainers.Models;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Services;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +40,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Controllers
             var result = await _lexonService.GetUserAsync(idNavisionUser);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
-
 
         [HttpGet]
         [Route("companies")]
@@ -119,7 +118,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-
         [HttpGet]
         [Route("classifications/search")]
         [ProducesResponseType(typeof(Result<JosRelationsList>), (int)HttpStatusCode.OK)]
@@ -131,7 +129,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Controllers
             , short idType = 1
             , string bbdd = "lexon_admin_02"
             , string idUser = "449"
-            , string idMail = "" )
+            , string idMail = "")
         {
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || idType < 1)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");

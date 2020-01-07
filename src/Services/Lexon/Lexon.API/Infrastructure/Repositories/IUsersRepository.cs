@@ -1,6 +1,7 @@
 ﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Lefebvre.eLefebvreOnContainers.Models;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repositories
 {

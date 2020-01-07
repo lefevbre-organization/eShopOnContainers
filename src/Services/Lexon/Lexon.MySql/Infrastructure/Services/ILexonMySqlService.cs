@@ -1,6 +1,4 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Model;
-
-//using Lexon.MySql.Model;
+﻿using Lefebvre.eLefebvreOnContainers.Models;
 using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Services

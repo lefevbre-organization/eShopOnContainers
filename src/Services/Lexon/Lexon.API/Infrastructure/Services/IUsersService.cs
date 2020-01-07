@@ -1,4 +1,5 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model;
+﻿using Lefebvre.eLefebvreOnContainers.Models;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

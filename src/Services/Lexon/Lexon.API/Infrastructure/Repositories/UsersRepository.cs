@@ -1,7 +1,7 @@
 ﻿using Lefebvre.eLefebvreOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
+using Lefebvre.eLefebvreOnContainers.Models;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.IntegrationsEvents.Events;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model;
-
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.Extensions.Logging;

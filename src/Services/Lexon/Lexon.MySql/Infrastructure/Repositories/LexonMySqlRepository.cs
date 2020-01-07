@@ -1,13 +1,12 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Model;
+﻿using Lefebvre.eLefebvreOnContainers.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Pomelo.EntityFrameworkCore.MySql;
+using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using MySql.Data.MySqlClient;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Repositories
 {

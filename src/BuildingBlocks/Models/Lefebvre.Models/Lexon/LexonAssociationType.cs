@@ -1,4 +1,4 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Model
+﻿namespace Lefebvre.eLefebvreOnContainers.Models
 {
     public enum LexonAssociationType
     {

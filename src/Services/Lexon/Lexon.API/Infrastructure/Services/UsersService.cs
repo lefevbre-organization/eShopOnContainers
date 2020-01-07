@@ -1,4 +1,5 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repositories;
+﻿using Lefebvre.eLefebvreOnContainers.Models;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repositories;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
