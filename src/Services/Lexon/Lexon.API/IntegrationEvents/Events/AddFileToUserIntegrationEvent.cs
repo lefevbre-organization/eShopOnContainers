@@ -10,7 +10,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.IntegrationsEvents.E
     {
         public string UserId { get; set; }
 
-        public long CompanyId { get; set; }
+        public string Bbdd { get; set; }
         public long FileId { get; set; }
 
         public string FileName { get; set; }
@@ -20,14 +20,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.IntegrationsEvents.E
 
         public AddFileToUserIntegrationEvent(
             string userId,
-            long companyId,
+            string bbdd,
             long fileId,
             string fileName,
             string fileDescription
             )
         {
             UserId = userId;
-            CompanyId = companyId;
+            Bbdd = bbdd;
             FileId = fileId;
             FileName = fileName;
             FileDescription = fileDescription;

@@ -40,20 +40,19 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             _client.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
-        public async Task<Result<long>> AddClassificationToListAsync(string idUser, long idCompany, string bbdd, string[] listaMails, long idRelated, short idClassificationType = 1)
+        public async Task<Result<long>> AddClassificationToListAsync(string idUser, string bbdd, string[] listaMails, long idRelated, short? idType = 1)
         {
             long a = 0;
             var result = new Result<long>(a);
 
-            //GetInfoUser(idUser, idCompany, out string bbdd, out int codeUser);
             var url = $"{_settings.Value.LexonMySqlUrl}/classifications/add";
 
-            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idType:{idClassificationType}", $"bbdd:{bbdd}", $"idMail:{listaMails}", $"idRelated:{idRelated}" });
+            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idType:{idType}", $"bbdd:{bbdd}", $"idMail:{listaMails}", $"idRelated:{idRelated}" });
             TraceLog(parameters: new string[] { $"url={url}" });
 
             var classificationAdd = new ClassificationAddView
             {
-                idType = idClassificationType,
+                idType = idType,
                 bbdd = bbdd,
                 idRelated = idRelated,
                 idUser = idUser,
@@ -86,15 +85,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             {
                 TraceMessage(result.errors, ex);
             }
-            await AddClassificationToListMongoAsync(idUser, idCompany, listaMails, idRelated, idClassificationType, result);
+            await AddClassificationToListMongoAsync(idUser, bbdd, listaMails, idRelated, idType, result);
             return result;
         }
 
-        private async Task AddClassificationToListMongoAsync(string idUser, long idCompany, string[] listaMails, long idRelated, short idClassificationType, Result<long> result)
+        private async Task AddClassificationToListMongoAsync(string idUser, string bbdd, string[] listaMails, long idRelated, short? idClassificationType, Result<long> result)
         {
             try
             {
-                var resultMongo = await _usersRepository.AddClassificationToListAsync(idUser, idCompany, listaMails, idRelated, idClassificationType);
+                var resultMongo = await _usersRepository.AddClassificationToListAsync(idUser, bbdd, listaMails, idRelated, idClassificationType);
 
                 if (resultMongo.errors.Count > 0)
                     result.errors.AddRange(resultMongo.errors);
@@ -109,11 +108,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             }
         }
 
-        public async Task<Result<List<LexonActuation>>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, string bbdd, string idMail)
+        public async Task<Result<List<LexonActuation>>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, string bbdd, string idMail, short? idType)
         {
             var result = new Result<List<LexonActuation>>(new List<LexonActuation>());
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/classifications/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={1}&bbdd={bbdd}&idUser={idUser}&idMail={idMail}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/classifications/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={idType}&bbdd={bbdd}&idUser={idUser}&idMail={idMail}");
             TraceLog(parameters: new string[] { $"idUser:{idUser}", $"bbdd:{bbdd}", $"idMail:{idMail}" });
 
             try
@@ -144,15 +143,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             {
                 TraceMessage(result.errors, ex);
             }
-            await GetClassificationsFromMailMongoAsync(result, pageSize, pageIndex, idUser, 14, idMail);
+            await GetClassificationsFromMailMongoAsync(result, pageSize, pageIndex, idUser, bbdd, idMail);
             return result;
         }
 
-        private async Task GetClassificationsFromMailMongoAsync(Result<List<LexonActuation>> result, int pageSize, int pageIndex, string idUser, long idCompany, string idMail)
+        private async Task GetClassificationsFromMailMongoAsync(Result<List<LexonActuation>> result, int pageSize, int pageIndex, string idUser, string bbdd, string idMail)
         {
             try
             {
-                var resultMongo = await _usersRepository.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, idCompany, idMail);
+                var resultMongo = await _usersRepository.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, bbdd, idMail);
 
                 if (resultMongo.errors.Count > 0)
                     result.errors.AddRange(resultMongo.errors);
@@ -280,14 +279,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             }
         }
 
-        public async Task<Result<List<LexonEntityBase>>> GetEntitiesListAsync(int pageSize, int pageIndex, short idType, string idUser, long idCompany, string bbdd, string search, long idFilter)
+        public async Task<Result<List<LexonEntityBase>>> GetEntitiesListAsync(int pageSize, int pageIndex, short? idType, string idUser, string bbdd, string searchFilter, long? idFilter)
         {
             var result = new Result<List<LexonEntityBase>>(new List<LexonEntityBase>());
 
             var request = new HttpRequestMessage(HttpMethod.Get,
-                $"{_settings.Value.LexonMySqlUrl}/entities/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={idType}&bbdd={bbdd}&search={search}&idUser={idUser}&idFilter={idFilter}");
+                $"{_settings.Value.LexonMySqlUrl}/entities/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={idType}&bbdd={bbdd}&search={searchFilter}&idUser={idUser}&idFilter={idFilter}");
 
-            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany={idCompany}", $"bbdd:{bbdd}", $"idType:{idType}", $"search={search}", $"idFilter={idFilter}" });
+            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"bbdd:{bbdd}", $"idType:{idType}", $"search={searchFilter}", $"idFilter={idFilter}" });
             TraceLog(parameters: new string[] { $"request={request}" });
 
             try
@@ -320,16 +319,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             {
                 TraceMessage(result.errors, ex);
             }
-            await GetEntitiesListMongoAsync(pageSize, pageIndex, idType, idUser, idCompany, search, result);
+            await GetEntitiesListMongoAsync(pageSize, pageIndex, idType, idUser, bbdd, searchFilter, result);
             return result;
         }
 
-        private async Task GetEntitiesListMongoAsync(int pageSize, int pageIndex, short idType, string idUser, long idCompany, string search, Result<List<LexonEntityBase>> result)
+        private async Task GetEntitiesListMongoAsync(int pageSize, int pageIndex, short? idType, string idUser, string bbdd, string search, Result<List<LexonEntityBase>> result)
         {
             try
             {
                 //todo idFilter tiene que implementarse en mongo
-                var resultMongo = await _usersRepository.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, idCompany, search);
+                var resultMongo = await _usersRepository.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, bbdd, search);
 
                 if (resultMongo.errors.Count > 0)
                     result.errors.AddRange(resultMongo.errors);
@@ -409,21 +408,21 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             }
         }
 
-        public async Task<Result<long>> RemoveClassificationFromListAsync(string idUser, long idCompany, string bbdd, string idMail, long idRelated, short idClassificationType = 1)
+        public async Task<Result<long>> RemoveClassificationFromListAsync(string idUser,  string bbdd, string idMail, long idRelated, short? idType = 1)
         {
             long a = 0;
             var result = new Result<long>(a);
 
             var url = $"{_settings.Value.LexonMySqlUrl}/classifications/delete";
 
-            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idType:{idClassificationType}", $"bbdd:{bbdd}", $"idUser:{idUser}", $"idMail:{idMail}", $"idRelated:{idRelated}" });
+            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idType:{idType}", $"bbdd:{bbdd}", $"idUser:{idUser}", $"idMail:{idMail}", $"idRelated:{idRelated}" });
             TraceLog(parameters: new string[] { $"url={url}" });
 
             try
             {
                 var classificationRemove = new ClassificationRemoveView
                 {
-                    idType = idClassificationType,
+                    idType = idType,
                     bbdd = bbdd,
                     idRelated = idRelated,
                     idUser = idUser,
@@ -455,15 +454,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             {
                 TraceMessage(result.errors, ex);
             }
-            await RemoveClassificationFromListMongoAsync(idUser, idCompany, idMail, idRelated, idClassificationType, result);
+            await RemoveClassificationFromListMongoAsync(idUser, bbdd, idMail, idRelated, idType, result);
             return result;
         }
 
-        private async Task RemoveClassificationFromListMongoAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType, Result<long> result)
+        private async Task RemoveClassificationFromListMongoAsync(string idUser, string bbdd, string idMail, long idRelated, short? idClassificationType, Result<long> result)
         {
             try
             {
-                var resultMongo = await _usersRepository.RemoveClassificationFromListAsync(idUser, idCompany, idMail, idRelated, idClassificationType);
+                var resultMongo = await _usersRepository.RemoveClassificationFromListAsync(idUser, bbdd, idMail, idRelated, idClassificationType);
 
                 if (resultMongo.errors.Count > 0)
                     result.errors.AddRange(resultMongo.errors);
@@ -478,17 +477,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
             }
         }
 
-        public async Task<Result<long>> SelectCompanyAsync(string idUser, long idCompany)
+        public async Task<Result<long>> SelectCompanyAsync(string idUser, string bbdd)
         {
-            TraceLog(parameters: new string[] { $"idUser={idUser}", $"idCompany={idCompany}" });
-            return await _usersRepository.SelectCompanyAsync(idUser, idCompany);
+            TraceLog(parameters: new string[] { $"idUser={idUser}", $"bbdd={bbdd}" });
+            return await _usersRepository.SelectCompanyAsync(idUser, bbdd);
         }
 
-        public async Task<Result<long>> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "")
+        public async Task<Result<long>> AddFileToListAsync(string idUser, string bbdd, long idFile, string nameFile, string descriptionFile = "")
         {
-            TraceLog(parameters: new string[] { $"idUser={idUser}", $"idCompany={idCompany}", $"idCompany={idFile}", $"idCompany={nameFile}", $"idCompany={descriptionFile}" });
+            TraceLog(parameters: new string[] { $"idUser={idUser}", $"bbdd={bbdd}", $"idFile={idFile}", $"nameFile={nameFile}", $"descriptionFile={descriptionFile}" });
 
-            return await _usersRepository.AddFileToListAsync(idUser, idCompany, idFile, nameFile, descriptionFile);
+            return await _usersRepository.AddFileToListAsync(idUser, bbdd, idFile, nameFile, descriptionFile);
         }
     }
 }

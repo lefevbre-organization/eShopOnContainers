@@ -1,5 +1,6 @@
 ﻿using Lefebvre.eLefebvreOnContainers.Models;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Repositories;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.ViewModel;
 using Microsoft.Extensions.Options;
 using System;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Ser
             _lexonRepository = lexonRepository ?? throw new ArgumentNullException(nameof(lexonRepository));
         }
 
-        public async Task<Result<int>> AddRelationMailAsync(short idType, string bbdd, string idUser, string[] listaMails, long idRelated)
+        public async Task<Result<int>> AddRelationMailAsync(short idType, string bbdd, string idUser, MailInfo[] listaMails, long idRelated)
         {
             return await _lexonRepository.AddRelationMailAsync(idType, bbdd, idUser, listaMails, idRelated);
         }
@@ -35,7 +36,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Ser
             return await _lexonRepository.GetCompaniesListAsync(pageSize, pageIndex, idUser);
         }
 
-        public async Task<Result<JosEntityList>> GetEntitiesAsync(int pageSize, int pageIndex, short idType, string bbdd, string idUser, string search, long idFilter)
+        public async Task<Result<JosEntityList>> GetEntitiesAsync(int pageSize, int pageIndex, short? idType, string bbdd, string idUser, string search, long? idFilter)
         {
             return await _lexonRepository.SearchEntitiesAsync(pageSize, pageIndex, idType, bbdd, idUser, search, idFilter);
         }
@@ -50,7 +51,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Ser
             return await _lexonRepository.GetUserAsync(idUser);
         }
 
-        public async Task<Result<JosRelationsList>> GetRelationsAsync(int pageSize, int pageIndex, short idType, string bbdd, string idUser, string idMail)
+        public async Task<Result<JosRelationsList>> GetRelationsAsync(int pageSize, int pageIndex, short? idType, string bbdd, string idUser, string idMail)
         {
             return await _lexonRepository.SearchRelationsAsync(pageSize, pageIndex, idType, bbdd, idUser, idMail);
         }

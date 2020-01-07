@@ -1,4 +1,5 @@
 ﻿using Lefebvre.eLefebvreOnContainers.Models;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.ViewModel;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
@@ -74,7 +75,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Rep
             return idError;
         }
 
-        public async Task<Result<JosEntityList>> SearchEntitiesAsync(int pageSize, int pageIndex, short idType, string bbdd, string idUser, string search, long idFilter)
+        public async Task<Result<JosEntityList>> SearchEntitiesAsync(int pageSize, int pageIndex, short? idType, string bbdd, string idUser, string search, long? idFilter)
         {
             var result = new Result<JosEntityList>(new JosEntityList());
             string filtro = GiveMeFilter(idType, bbdd, idUser, search, idFilter);
@@ -114,15 +115,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Rep
             return result;
         }
 
-        private string GiveMeFilter(short idType, string bbdd, string idUser, string search, long idFilter, string idMail = "")
+        private string GiveMeFilter(short? idType, string bbdd, string idUser, string search, long? idFilter, string idMail = "")
         {
             var filtroDescription = !string.IsNullOrEmpty(search) ? $", \"Description\":\"{search}\"" : string.Empty;
 
             var filter = $"\"BBDD\":\"{bbdd}\",\"IdEntityType\":{idType},\"IdUser\":{idUser}{filtroDescription}";
 
-            if (idType == (short)LexonAssociationType.MailToDocumentsEvent && idFilter > 0)
+            if (idType == (short)LexonAssociationType.MailToDocumentsEvent && idFilter != null)
                 filter = $"{{{filter},\"IdFolder\":{idFilter}}}";
-            else if (idType == (short)LexonAssociationType.MailToFoldersEvent && idFilter > 0)
+            else if (idType == (short)LexonAssociationType.MailToFoldersEvent && idFilter != null)
                 filter = $"{{{filter},\"IdParent\":{idFilter}}}";
             else if (idType == (short)LexonAssociationType.MailToFilesEvent && !string.IsNullOrEmpty(idMail))
                 filter = $"{{{filter},\"Uid\":\"{idMail}\"}}";
@@ -170,10 +171,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Rep
             return result;
         }
 
-        public async Task<Result<JosRelationsList>> SearchRelationsAsync(int pageSize, int pageIndex, short idType, string bbdd, string idUser, string idMail)
+        public async Task<Result<JosRelationsList>> SearchRelationsAsync(int pageSize, int pageIndex, short? idType, string bbdd, string idUser, string idMail)
         {
             var result = new Result<JosRelationsList>(new JosRelationsList());
-            var filtro = GiveMeFilter(idType, bbdd, idUser, null, 0, idMail);
+            var filtro = GiveMeFilter(idType, bbdd, idUser, null, null, idMail);
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.SearchRelations}", $"P_FILTER:{filtro}", $"P_UC:{idUser}", $"pageSize:{pageSize}", $"pageIndex:{pageIndex}" });
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
@@ -207,15 +208,19 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Rep
             return result;
         }
 
-        public async Task<Result<int>> AddRelationMailAsync(short idType, string bbdd, string idUser, string[] listaMails, long idRelated)
+        public async Task<Result<int>> AddRelationMailAsync(short idType, string bbdd, string idUser, MailInfo[] listaMails, long idRelated)
         {
             int a = 0;
             var result = new Result<int>(a);
 
+            //var filtro =
+            //    $"{{\"BBDD\":\"{bbdd}\",\"Date\":\"2019-10-10\"," +
+            //    $"\"Subject\":\"lista\"," +
+            //    $"\"Body\":\"descripcion nueva actuacion\",\"Uid\":{JsonConvert.SerializeObject(listaMails)}," +
+            //    $"\"IdUser\":\"{idUser}\",\"IdActionRelationType\":{idType},\"IdRelation\":{idRelated}}}";
+
             var filtro =
-                $"{{\"BBDD\":\"{bbdd}\",\"Date\":\"2019-10-10\"," +
-                $"\"Subject\":\"Test asociacion actuacion email CONECTA\"," +
-                $"\"Body\":\"descripcion nueva actuacion\",\"Uid\":{JsonConvert.SerializeObject(listaMails)}," +
+                $"{{\"BBDD\":\"{bbdd}\",\"ListaMails\":{JsonConvert.SerializeObject(listaMails)}," +
                 $"\"IdUser\":\"{idUser}\",\"IdActionRelationType\":{idType},\"IdRelation\":{idRelated}}}";
 
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.AddRelation}", $"P_FILTER:{filtro}", $"P_UC:{idUser}" });

@@ -69,6 +69,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        /// <summary>
+        /// Search entities
+        /// </summary>
+        /// <param name="pageSize">the page size, by default 0 = all</param>
+        /// <param name="pageIndex">the page size, by default 1</param>
+        /// <param name="idType">the code of type of entitie to search </param>
+        /// <param name="bbdd">the string conection of the user</param>
+        /// <param name="idUser">the id of the user</param>
+        /// <param name="search">thes string value to search</param>
+        /// <param name="idFilter">the id to filter (use in documents and folders)</param>
+        /// <returns></returns>
         [HttpGet]
         [Route("entities/search")]
         [ProducesResponseType(typeof(Result<JosEntityList>), (int)HttpStatusCode.OK)]
@@ -77,13 +88,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Controllers
         public async Task<IActionResult> EntitiesAsync(
             [FromQuery]int pageSize = 0
             , [FromQuery]int pageIndex = 1
-            , short idType = 1
+            , short? idType = 1
             , string bbdd = "lexon_admin_02"
             , string idUser = "449"
             , string search = ""
-            , long idFilter = 0)
+            , long? idFilter = 0)
         {
-            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || idType < 1)
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || idType == null || idType < 1)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
 
             var result = await _lexonService.GetEntitiesAsync(pageSize, pageIndex, idType, bbdd, idUser, search, idFilter);
@@ -97,7 +108,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddRelationMailAsync([FromBody]ClassificationAddView classification)
         {
-            if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.bbdd) || classification?.listaMails?.Length < 1 || classification?.idType < 1 || classification?.idRelated < 1)
+            if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.bbdd) || classification?.listaMails?.Length < 1 || classification?.idType == null || classification?.idType < 1 || classification?.idRelated < 1)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated and bbdd to create an actuation with the mail");
 
             var result = await _lexonService.AddRelationMailAsync(classification.idType, classification.bbdd, classification.idUser, classification.listaMails, classification.idRelated);
@@ -111,13 +122,23 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RemoveRelationMailAsync([FromBody]ClassificationRemoveView classification)
         {
-            if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.bbdd) || string.IsNullOrEmpty(classification?.idMail) || classification?.idType < 1 || classification?.idRelated < 1)
+            if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.bbdd) || string.IsNullOrEmpty(classification?.idMail) || classification?.idType == null||classification?.idType < 1 || classification?.idRelated < 1)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated and bbdd to remove an actuation");
 
             var result = await _lexonService.RemoveRelationMailAsync(classification.idType, classification.bbdd, classification.idUser, classification.idMail, classification.idRelated);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        /// <summary>
+        /// Search classifications of mail
+        /// </summary>
+        /// <param name="pageSize">the page size, by default 0 = all</param>
+        /// <param name="pageIndex">the page size, by default 1</param>
+        /// <param name="idType">the code of type of entitie to search , if null search all types of sntities</param>
+        /// <param name="bbdd">the string conection of the user</param>
+        /// <param name="idUser">the id of the user</param>
+        /// <param name="idMail">thes string code of the mail</param>
+        /// <returns></returns>
         [HttpGet]
         [Route("classifications/search")]
         [ProducesResponseType(typeof(Result<JosRelationsList>), (int)HttpStatusCode.OK)]
@@ -126,7 +147,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Controllers
         public async Task<IActionResult> RelationsAsync(
             [FromQuery]int pageSize = 0
             , [FromQuery]int pageIndex = 1
-            , short idType = 1
+            , short? idType = 1
             , string bbdd = "lexon_admin_02"
             , string idUser = "449"
             , string idMail = "")

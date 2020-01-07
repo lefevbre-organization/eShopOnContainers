@@ -100,7 +100,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
             await _context.PublishThroughEventBusAsync(eventAssoc, session);
         }
 
-        public async Task<Result<long>> AddFileToListAsync(string idUser, long idCompany, long idFile, string nameFile, string descriptionFile = "")
+        public async Task<Result<long>> AddFileToListAsync(string idUser, string bbdd, long idFile, string nameFile, string descriptionFile = "")
         {
             long a = 0;
             var result = new Result<long>(a);
@@ -119,7 +119,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
                         .Find(filter)
                         .SingleAsync();
 
-                    var company = user.companies.list.FirstOrDefault(x => x.idCompany == idCompany);
+                    var company = user.companies.list.FirstOrDefault(x => x.bbdd.Contains(bbdd));
 
                     var builder = Builders<LexonUser>.Update;
 
@@ -133,7 +133,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
 
                     var resultMongo = await _context.LexonUsers.UpdateOneAsync(filter, update);
 
-                    var eventAssoc = new AddFileToUserIntegrationEvent(idUser, idCompany, idFile, nameFile, descriptionFile);
+                    var eventAssoc = new AddFileToUserIntegrationEvent(idUser, bbdd, idFile, nameFile, descriptionFile);
                     await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
 
                     await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
@@ -167,7 +167,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
             return result;
         }
 
-        public async Task<Result<List<LexonEntityBase>>> GetEntitiesListAsync(int pageSize, int pageIndex, int idType, string idUser, long idCompany, string search)
+        public async Task<Result<List<LexonEntityBase>>> GetEntitiesListAsync(int pageSize, int pageIndex, short? idType, string idUser, string bbdd, string search)
         {
             var result = new Result<List<LexonEntityBase>>(new List<LexonEntityBase>());
 
@@ -183,7 +183,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
 
             var filter = Builders<LexonUser>.Filter.And(
                 filterUser,
-                Builders<LexonUser>.Filter.Eq("companies.list.idCompany", idCompany),
+                Builders<LexonUser>.Filter.Eq("companies.list.bbdd", bbdd),
                 filterDocuments
                 );
 
@@ -195,7 +195,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
                     .Find(filter)
                     .SingleAsync();
 
-                var company = user.companies.list.FirstOrDefault(x => x.idCompany == idCompany);
+                var company = user.companies.list.FirstOrDefault(x => x.bbdd.Contains(bbdd));
                 if (!string.IsNullOrEmpty(search))
                 {
                     var files = from s in company.files.list
@@ -243,12 +243,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
             return result;
         }
 
-        public async Task<Result<long>> AddClassificationToListAsync(string idUser, long idCompany, string[] listaMails, long idRelated, short idClassificationType = 1)
+        public async Task<Result<long>> AddClassificationToListAsync(string idUser, string bbdd, string[] listaMails, long idRelated, short? idClassificationType = 1)
         {
             long a = 0;
             var result = new Result<long>(a);
             var cancel = default(CancellationToken);
-            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany:{idCompany}", $"idMail:{listaMails}", $"idRelated:{idRelated}", $"idClassificationType:{idClassificationType}" });
+            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"bbdd:{bbdd}", $"idMail:{listaMails}", $"idRelated:{idRelated}", $"idClassificationType:{idClassificationType}" });
 
             using (var session = await _context.StartSession(cancel))
             {
@@ -261,60 +261,60 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
                     switch (idClassificationType)
                     {
                         case (short)LexonAssociationType.MailToFilesEvent:
-                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "files", session);
+                            await AddAndPublish(idUser, bbdd, listaMails, idRelated, "files", session);
                             break;
 
                         case (short)LexonAssociationType.MailToClientsEvent:
-                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "clients", session);
+                            await AddAndPublish(idUser, bbdd, listaMails, idRelated, "clients", session);
                             break;
 
                         case (short)LexonAssociationType.MailToOppositesEvent:
-                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "opposites", session);
+                            await AddAndPublish(idUser, bbdd, listaMails, idRelated, "opposites", session);
                             break;
 
                         case (short)LexonAssociationType.MailToSuppliersEvent:
-                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "suppliers", session);
+                            await AddAndPublish(idUser, bbdd, listaMails, idRelated, "suppliers", session);
                             break;
 
                         case (short)LexonAssociationType.MailToLawyersEvent:
-                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "lawyers", session);
+                            await AddAndPublish(idUser, bbdd, listaMails, idRelated, "lawyers", session);
                             break;
 
                         case (short)LexonAssociationType.MailToOpposingLawyersEvent:
-                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "opposingLawyers", session);
+                            await AddAndPublish(idUser, bbdd, listaMails, idRelated, "opposingLawyers", session);
                             break;
 
                         case (short)LexonAssociationType.MailToSolicitorsEvent:
-                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "solicitors", session);
+                            await AddAndPublish(idUser, bbdd, listaMails, idRelated, "solicitors", session);
                             break;
 
                         case (short)LexonAssociationType.MailToOpposingSolicitorsEvent:
-                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "opposingSolicitors", session);
+                            await AddAndPublish(idUser, bbdd, listaMails, idRelated, "opposingSolicitors", session);
                             break;
 
                         case (short)LexonAssociationType.MailToNotariesEvent:
-                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "notaries", session);
+                            await AddAndPublish(idUser, bbdd, listaMails, idRelated, "notaries", session);
                             break;
 
                         case (short)LexonAssociationType.MailToCourtsEvent:
-                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "courts", session);
+                            await AddAndPublish(idUser, bbdd, listaMails, idRelated, "courts", session);
                             break;
 
                         case (short)LexonAssociationType.MailToInsurancesEvent:
-                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "insurances", session);
+                            await AddAndPublish(idUser, bbdd, listaMails, idRelated, "insurances", session);
                             break;
 
                         case (short)LexonAssociationType.MailToOthersEvent:
-                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "others", session);
+                            await AddAndPublish(idUser, bbdd, listaMails, idRelated, "others", session);
                             break;
 
                         case (short)LexonAssociationType.MailToFoldersEvent:
-                            await AddAndPublish(idUser, idCompany, listaMails, idRelated, "folders", session);
+                            await AddAndPublish(idUser, bbdd, listaMails, idRelated, "folders", session);
                             break;
                     }
 
                     await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
-                    result.data = idClassificationType;
+                    result.data = (short)idClassificationType;
                 }
                 catch (Exception ex)
                 {
@@ -325,7 +325,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
             return result;
         }
 
-        private async Task AddAndPublish(string idUser, long idCompany, string[] listaMails, long idRelated, string typeCollection, IClientSessionHandle session)
+        private async Task AddAndPublish(string idUser, string bbdd, string[] listaMails, long idRelated, string typeCollection, IClientSessionHandle session)
         {
             TraceLog(parameters: new string[] { $"typeCollection:{typeCollection}" });
 
@@ -338,7 +338,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
                     {
                         ArrayFilters = new List<ArrayFilterDefinition>
                             {
-                                new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.idCompany", idCompany)),
+                                new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.bbdd", bbdd)),
                                 new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("j.id", idRelated))
                             }
                     }
@@ -349,7 +349,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
             }
         }
 
-        private async Task RemoveAndPublish(string idUser, long idCompany, string idMail, long idRelated, string typeCollection, IClientSessionHandle session)
+        private async Task RemoveAndPublish(string idUser, string bbdd, string idMail, long idRelated, string typeCollection, IClientSessionHandle session)
         {
             TraceLog(parameters: new string[] { $"typeCollection:{typeCollection}" });
 
@@ -360,7 +360,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
                 {
                     ArrayFilters = new List<ArrayFilterDefinition>
                         {
-                            new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.idCompany", idCompany)),
+                            new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.bbdd", bbdd)),
                             new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("j.id", idRelated))
                         }
                 }
@@ -370,12 +370,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
             await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
         }
 
-        public async Task<Result<long>> RemoveClassificationFromListAsync(string idUser, long idCompany, string idMail, long idRelated, short idClassificationType)
+        public async Task<Result<long>> RemoveClassificationFromListAsync(string idUser, string bbdd, string idMail, long idRelated, short? idClassificationType)
         {
             long a = 0;
             var result = new Result<long>(a);
             var cancel = default(CancellationToken);
-            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany:{idCompany}", $"idMail:{idMail}", $"idRelated:{idRelated}", $"idClassificationType:{idClassificationType}" });
+            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"bbdd:{bbdd}", $"idMail:{idMail}", $"idRelated:{idRelated}", $"idClassificationType:{idClassificationType}" });
 
             using (var session = await _context.StartSession(cancel))
             {
@@ -388,60 +388,60 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
                     switch (idClassificationType)
                     {
                         case (short)LexonAssociationType.MailToFilesEvent:
-                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "files", session);
+                            await RemoveAndPublish(idUser, bbdd, idMail, idRelated, "files", session);
                             break;
 
                         case (short)LexonAssociationType.MailToClientsEvent:
-                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "clients", session);
+                            await RemoveAndPublish(idUser, bbdd, idMail, idRelated, "clients", session);
                             break;
 
                         case (short)LexonAssociationType.MailToOppositesEvent:
-                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "opposites", session);
+                            await RemoveAndPublish(idUser, bbdd, idMail, idRelated, "opposites", session);
                             break;
 
                         case (short)LexonAssociationType.MailToSuppliersEvent:
-                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "suppliers", session);
+                            await RemoveAndPublish(idUser, bbdd, idMail, idRelated, "suppliers", session);
                             break;
 
                         case (short)LexonAssociationType.MailToLawyersEvent:
-                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "lawyers", session);
+                            await RemoveAndPublish(idUser, bbdd, idMail, idRelated, "lawyers", session);
                             break;
 
                         case (short)LexonAssociationType.MailToOpposingLawyersEvent:
-                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "opposingLawyers", session);
+                            await RemoveAndPublish(idUser, bbdd, idMail, idRelated, "opposingLawyers", session);
                             break;
 
                         case (short)LexonAssociationType.MailToSolicitorsEvent:
-                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "solicitors", session);
+                            await RemoveAndPublish(idUser, bbdd, idMail, idRelated, "solicitors", session);
                             break;
 
                         case (short)LexonAssociationType.MailToOpposingSolicitorsEvent:
-                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "opposingSolicitors", session);
+                            await RemoveAndPublish(idUser, bbdd, idMail, idRelated, "opposingSolicitors", session);
                             break;
 
                         case (short)LexonAssociationType.MailToNotariesEvent:
-                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "notaries", session);
+                            await RemoveAndPublish(idUser, bbdd, idMail, idRelated, "notaries", session);
                             break;
 
                         case (short)LexonAssociationType.MailToCourtsEvent:
-                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "courts", session);
+                            await RemoveAndPublish(idUser, bbdd, idMail, idRelated, "courts", session);
                             break;
 
                         case (short)LexonAssociationType.MailToInsurancesEvent:
-                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "insurances", session);
+                            await RemoveAndPublish(idUser, bbdd, idMail, idRelated, "insurances", session);
                             break;
 
                         case (short)LexonAssociationType.MailToOthersEvent:
-                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "others", session);
+                            await RemoveAndPublish(idUser, bbdd, idMail, idRelated, "others", session);
                             break;
 
                         case (short)LexonAssociationType.MailToFoldersEvent:
-                            await RemoveAndPublish(idUser, idCompany, idMail, idRelated, "folders", session);
+                            await RemoveAndPublish(idUser, bbdd, idMail, idRelated, "folders", session);
                             break;
                     }
 
                     await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
-                    result.data = idClassificationType;
+                    result.data = (short)idClassificationType;
                 }
                 catch (Exception ex)
                 {
@@ -452,9 +452,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
             return result;
         }
 
-        public async Task<Result<long>> SelectCompanyAsync(string idUser, long idCompany)
+        public async Task<Result<long>> SelectCompanyAsync(string idUser, string bbdd)
         {
-            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idCompany:{idCompany}" });
+            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"bbdd:{bbdd}" });
             long a = 0;
             var result = new Result<long>(a);
 
@@ -467,7 +467,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
                    {
                        ArrayFilters = new List<ArrayFilterDefinition>
                        {
-                    new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.idCompany", idCompany))
+                    new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.bbdd", bbdd))
                        }
                    }
                 );
@@ -483,7 +483,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
             return result;
         }
 
-        public async Task<Result<List<LexonActuation>>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, long idCompany, string idMail)
+        public async Task<Result<List<LexonActuation>>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, string bbdd, string idMail)
         {
             var result = new Result<List<LexonActuation>>(new List<LexonActuation>());
             var listaActuaciones = new List<LexonActuation>();
@@ -500,11 +500,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
                                     new BsonDocument().Add("idUser", idUser),
                                     new BsonDocument().Add("idNavision", idUser)
                                 })
-                        .Add("companies.list.idCompany", idCompany)
+                        .Add("companies.list.bbdd", bbdd)
                     ),
                     new BsonDocument("$project", new BsonDocument()
                         .Add("_id", 0)
-                        .Add("companies.list.idCompany",1)
+                        .Add("companies.list.bbdd",1)
                         .Add("companies.list.files.list",1)
                         .Add("companies.list.clients.list",1)
                         .Add("companies.list.opposites.list",1)
@@ -546,7 +546,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Repos
                         .Add("preserveNullAndEmptyArrays", new BsonBoolean(true))
                     ),
                     new BsonDocument("$match", new BsonDocument()
-                        .Add("companies.list.idCompany", idCompany)
+                        .Add("companies.list.bbdd", bbdd)
                     ),
                     new BsonDocument("$project", new BsonDocument()
                         .Add("Classifications", new BsonDocument()
