@@ -244,11 +244,14 @@ export class Main extends Component {
       }
     }
 
+    console.log("(0) this.props.labelsResult ->", this.props.labelsResult);
+    console.log("(0) this.state.retry ->", this.state.retry);
     if (
       this.state.retry &&
       this.props.labelsResult.labelInbox !== null &&
       this.props.labelsResult.labelInbox !== undefined
     ) {
+      console.log("(1) this.props.labelsResult ->", this.props.labelsResult);
       this.setState({ retry: false });
       this.loadLabelMessages(this.props.labelsResult.labelInbox);
     }

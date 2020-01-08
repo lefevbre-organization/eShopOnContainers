@@ -10,6 +10,8 @@ import {
 export default (props) => {
   const { t } = useTranslation();
 
+  console.log("prevToken ->", props.prevToken);
+  console.log("nextToken ->", props.nextToken);
   return (
     <div className="btn-group ml-auto">
       <button

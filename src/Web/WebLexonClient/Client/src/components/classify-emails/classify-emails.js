@@ -171,7 +171,8 @@ class ClassifyEmails extends Component {
   renderSpinner() {
     const { isLoading } = this.state;
     if (isLoading) {
-      return <Spinner />;
+      // return <Spinner />;
+      return null;
     }
   }
 
