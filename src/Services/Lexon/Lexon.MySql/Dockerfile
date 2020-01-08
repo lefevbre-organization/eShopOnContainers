@@ -56,6 +56,7 @@ COPY "Services/Catalog/Catalog.FunctionalTests/Catalog.FunctionalTests.csproj" "
 COPY "Services/Catalog/Catalog.UnitTests/Catalog.UnitTests.csproj" "Services/Catalog/Catalog.UnitTests/Catalog.UnitTests.csproj"
 COPY "Services/Identity/Identity.API/Identity.API.csproj" "Services/Identity/Identity.API/Identity.API.csproj"
 COPY "Services/Lexon/Lexon.API/Lexon.API.csproj" "Services/Lexon/Lexon.API/Lexon.API.csproj"
+COPY "Services/Lexon/Lexon.MySql.UnitTests/Lexon.MySql.UnitTests.csproj" "Services/Lexon/Lexon.MySql.UnitTests/Lexon.MySql.UnitTests.csproj"
 COPY "Services/Lexon/Lexon.MySql/Lexon.MySql.csproj" "Services/Lexon/Lexon.MySql/Lexon.MySql.csproj"
 COPY "Services/Location/Locations.API/Locations.API.csproj" "Services/Location/Locations.API/Locations.API.csproj"
 COPY "Services/Location/Locations.FunctionalTests/Locations.FunctionalTests.csproj" "Services/Location/Locations.FunctionalTests/Locations.FunctionalTests.csproj"
@@ -89,8 +90,8 @@ WORKDIR /src/Services/Lexon/Lexon.MySql
 RUN dotnet publish --no-restore -c Release -o /app
 RUN ls -lha /app
 
-#FROM build as unittest
-#WORKDIR /src/Services/Lexon/Lexon.UnitTests
+FROM build as unittest
+WORKDIR /src/Services/Lexon/Lexon.MySql.UnitTests
 
 #FROM build as functionaltest
 #WORKDIR /src/Services/Lexon/Lexon.FunctionalTests
