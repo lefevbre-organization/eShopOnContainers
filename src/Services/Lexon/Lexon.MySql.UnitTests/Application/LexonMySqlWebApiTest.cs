@@ -1,26 +1,18 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.IntegrationsEvents.Events;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model;
-using Microsoft.AspNetCore.Http;
+﻿using Lefebvre.eLefebvreOnContainers.Models;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Controllers;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Repositories;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
-//using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Moq;
 using System;
-using System.Collections.Generic;
-using System.Security.Claims;
+using System.IO;
 using System.Threading.Tasks;
 using Xunit;
 using ILexonMySqlIdentityService = Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Services.IIdentityService;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Repositories;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Controllers;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Services;
-using Lefebvre.eLefebvreOnContainers.Models;
-using Microsoft.Extensions.Options;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.API;
-using System.IO;
-using Microsoft.Extensions.Configuration;
-using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql;
 
 namespace UnitTest.Lexon.MySql.Application
 {
@@ -29,8 +21,10 @@ namespace UnitTest.Lexon.MySql.Application
         private readonly Mock<ILexonMySqlRepository> _lexonMysqlRepositoryMock;
         private readonly Mock<ILexonMySqlService> _lexonMysqlServiceMock;
         private readonly Mock<ILexonMySqlIdentityService> _identityServiceMock;
+
         //private readonly Mock<IEventBus> _serviceBusMock;
         private readonly Mock<ILogger<LexonMySqlController>> _loggerMock;
+
         private IOptions<LexonMySqlSettings> _lexonMySqlConfig;
 
         public LexonMySqlWebApiTest()
@@ -56,7 +50,7 @@ namespace UnitTest.Lexon.MySql.Application
             var fakeCustomerId = "1";
             var fakeRelationsMail = GetLexonRelationsFake(fakeIdMail);
 
-            _lexonMysqlRepositoryMock.Setup(x => x.SearchRelationsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<short?>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<string>()))
+            _lexonMysqlRepositoryMock.Setup(x => x.SearchRelationsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<short?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(fakeRelationsMail));
             _lexonMysqlServiceMock.Setup(x => x.GetRelationsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<short?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(Task.FromResult(fakeRelationsMail));
@@ -77,7 +71,6 @@ namespace UnitTest.Lexon.MySql.Application
             Assert.NotEmpty((((ObjectResult)actionResult).Value as Result<JosRelationsList>).data.Actuaciones);
             Assert.Empty((((ObjectResult)actionResult).Value as Result<JosRelationsList>).errors);
         }
-
 
         //[Fact]
         //public async Task Post_customer_basket_success()
@@ -182,16 +175,11 @@ namespace UnitTest.Lexon.MySql.Application
                 new JosActuation()
             };
             return resultado;
-
         }
-
-
-
     }
 
     public class TestLexonMySqlConfigOptions : IOptions<LexonMySqlSettings>
     {
-
         private static Lazy<LexonMySqlSettings> configuration { get; }
 
         static TestLexonMySqlConfigOptions()
@@ -222,7 +210,5 @@ namespace UnitTest.Lexon.MySql.Application
 
             return configuration;
         }
-
     }
-
 }
