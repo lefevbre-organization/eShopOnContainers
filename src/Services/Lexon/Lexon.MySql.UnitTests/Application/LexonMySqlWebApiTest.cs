@@ -16,6 +16,11 @@ using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Reposit
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Controllers;
 using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Services;
 using Lefebvre.eLefebvreOnContainers.Models;
+using Microsoft.Extensions.Options;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API;
+using System.IO;
+using Microsoft.Extensions.Configuration;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql;
 
 namespace UnitTest.Lexon.MySql.Application
 {
@@ -26,6 +31,7 @@ namespace UnitTest.Lexon.MySql.Application
         private readonly Mock<ILexonMySqlIdentityService> _identityServiceMock;
         //private readonly Mock<IEventBus> _serviceBusMock;
         private readonly Mock<ILogger<LexonMySqlController>> _loggerMock;
+        private IOptions<LexonMySqlSettings> _lexonMySqlConfig;
 
         public LexonMySqlWebApiTest()
         {
@@ -34,6 +40,7 @@ namespace UnitTest.Lexon.MySql.Application
             _identityServiceMock = new Mock<ILexonMySqlIdentityService>();
             //_serviceBusMock = new Mock<IEventBus>();
             _loggerMock = new Mock<ILogger<LexonMySqlController>>();
+            _lexonMySqlConfig = new TestLexonMySqlConfigOptions();
         }
 
         [Fact]
@@ -44,29 +51,31 @@ namespace UnitTest.Lexon.MySql.Application
             var pageIndex = 1;
             short? idType = 1;
             string bbdd = "lexon_admin_02";
-            string idUser = "449";
-            string idMail = "idMail_01";
+            string fakeIdUser = "449";
+            string fakeIdMail = "idMail_01";
             var fakeCustomerId = "1";
-            var fakeCustomerBasket = GetLexonRelationsFake(fakeCustomerId);
+            var fakeRelationsMail = GetLexonRelationsFake(fakeIdMail);
 
-            //_lexonMysqlRepositoryMock.Setup(x => x.SearchRelationsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<short?>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<string>()))
-            //    .Returns(Task.FromResult(fakeCustomerBasket));
-            //_identityServiceMock.Setup(x => x.GetUserIdentity()).Returns(fakeCustomerId);
+            _lexonMysqlRepositoryMock.Setup(x => x.SearchRelationsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<short?>(), It.IsAny<string>(), It.IsAny<string>(),It.IsAny<string>()))
+                .Returns(Task.FromResult(fakeRelationsMail));
+            _lexonMysqlServiceMock.Setup(x => x.GetRelationsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<short?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Returns(Task.FromResult(fakeRelationsMail));
+            _identityServiceMock.Setup(x => x.GetUserIdentity()).Returns(fakeCustomerId);
 
             //_serviceBusMock.Setup(x => x.Publish(It.IsAny<UserCheckoutAcceptedIntegrationEvent>()));
 
             //Act
-            //var basketController = new LexonMySqlController(
-            //    _loggerMock.Object,
-            //    _lexonMysqlRepositoryMock.Object,
-            //    _identityServiceMock.Object,
-            //    _serviceBusMock.Object);
+            var lexonController = new LexonMySqlController(
+                _lexonMysqlServiceMock.Object,
+                _lexonMySqlConfig);
 
-            //var actionResult = await basketController.GetBasketByIdAsync(fakeCustomerId);
+            var actionResult = await lexonController.RelationsAsync(pageSize, pageIndex, idType, bbdd, fakeIdUser, fakeIdMail);
 
             //Assert
-            //Assert.Equal((actionResult.Result as OkObjectResult).StatusCode, (int)System.Net.HttpStatusCode.OK);
-            //Assert.Equal((((ObjectResult)actionResult.Result).Value as CustomerBasket).BuyerId, fakeCustomerId);
+            Assert.Equal((actionResult as OkObjectResult).StatusCode, (int)System.Net.HttpStatusCode.OK);
+            Assert.Equal((((ObjectResult)actionResult).Value as Result<JosRelationsList>).data.Uid, fakeIdMail);
+            Assert.NotEmpty((((ObjectResult)actionResult).Value as Result<JosRelationsList>).data.Actuaciones);
+            Assert.Empty((((ObjectResult)actionResult).Value as Result<JosRelationsList>).errors);
         }
 
 
@@ -164,16 +173,56 @@ namespace UnitTest.Lexon.MySql.Application
         //    };
         //}
 
-        private Result<JosRelationsList> GetLexonRelationsFake(string fakeCustomerId)
+        private Result<JosRelationsList> GetLexonRelationsFake(string fakeIdMail)
         {
-            return new Result<JosRelationsList>();
-            //{
-            //    Items = new List<BasketItem>()
-            //        {
-            //            new BasketItem()
-            //        }
-            //};
+            var resultado = new Result<JosRelationsList>(new JosRelationsList());
+            resultado.data.Uid = fakeIdMail;
+            resultado.data.Actuaciones = new JosActuation[]
+            {
+                new JosActuation()
+            };
+            return resultado;
+
+        }
+
+
+
+    }
+
+    public class TestLexonMySqlConfigOptions : IOptions<LexonMySqlSettings>
+    {
+
+        private static Lazy<LexonMySqlSettings> configuration { get; }
+
+        static TestLexonMySqlConfigOptions()
+        {
+            configuration = new Lazy<LexonMySqlSettings>(GetConfiguration);
+        }
+
+        public LexonMySqlSettings Value
+        {
+            get { return configuration.Value; }
+        }
+
+        private static LexonMySqlSettings GetConfiguration()
+        {
+            var configuration = new LexonMySqlSettings();
+            //var path = Path.Combine("config", "appsettings.development.json");
+
+            //c:\azure-devops\git\eShopOnContainers\src\Services\Lexon\Lexon.MySql\
+            new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true)
+                .Build()
+                .Bind(configuration);
+
+            //.GetSection(nameof(LexonSettings))
+            //.Bind(configuration);
+
+            return configuration;
         }
 
     }
+
 }

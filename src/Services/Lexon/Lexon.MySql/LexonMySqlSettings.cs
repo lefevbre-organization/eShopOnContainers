@@ -1,6 +1,6 @@
 ﻿namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql
 {
-    public class LexonSettings
+    public class LexonMySqlSettings
     {
         public int UserApp { get; set; }
         public string ConnectionString { get; set; }

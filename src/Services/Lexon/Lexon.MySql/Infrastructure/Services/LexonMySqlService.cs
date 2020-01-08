@@ -10,10 +10,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Ser
     public class LexonMySqlService : ILexonMySqlService
     {
         public readonly ILexonMySqlRepository _lexonRepository;
-        private readonly IOptions<LexonSettings> _settings;
+        private readonly IOptions<LexonMySqlSettings> _settings;
 
         public LexonMySqlService(
-            IOptions<LexonSettings> settings
+            IOptions<LexonMySqlSettings> settings
             , ILexonMySqlRepository lexonRepository
             )
         {

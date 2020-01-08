@@ -57,7 +57,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql
 
             services.AddCustomHealthCheck(Configuration);
 
-            services.Configure<LexonSettings>(Configuration);
+            services.Configure<LexonMySqlSettings>(Configuration);
 
             services.AddRedis();
 

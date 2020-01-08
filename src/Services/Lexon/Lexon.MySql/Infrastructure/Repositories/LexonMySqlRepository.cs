@@ -13,11 +13,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Infrastructure.Rep
 {
     public class LexonMySqlRepository : BaseClass<LexonMySqlRepository>, ILexonMySqlRepository
     {
-        private readonly IOptions<LexonSettings> _settings;
+        private readonly IOptions<LexonMySqlSettings> _settings;
         private string _conn;
 
         public LexonMySqlRepository(
-               IOptions<LexonSettings> settings
+               IOptions<LexonMySqlSettings> settings
             , ILogger<LexonMySqlRepository> logger
 
             ) : base(logger)

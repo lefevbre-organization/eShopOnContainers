@@ -16,11 +16,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Controllers
     public class LexonMySqlController : ControllerBase
     {
         private ILexonMySqlService _lexonService;
-        private readonly IOptions<LexonSettings> _settings;
+        private readonly IOptions<LexonMySqlSettings> _settings;
 
         public LexonMySqlController(
             ILexonMySqlService lexonService
-            , IOptions<LexonSettings> settings
+            , IOptions<LexonMySqlSettings> settings
 
             )
         {
