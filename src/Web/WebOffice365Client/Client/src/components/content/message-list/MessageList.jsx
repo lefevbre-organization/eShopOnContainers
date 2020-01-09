@@ -34,6 +34,7 @@ export class MessageList extends PureComponent {
     this.onSelectionChange = this.onSelectionChange.bind(this);
     this.renderView = this.renderView.bind(this);
     this.renderMessages = this.renderMessages.bind(this);
+    
   }
 
   componentDidMount() {
@@ -163,6 +164,8 @@ export class MessageList extends PureComponent {
           navigateToNextPage={this.props.navigateToNextPage}
           navigateToPrevPage={this.props.navigateToPrevPage}
           getLabelMessages={this.props.getLabelMessages}
+          getPageTokens={this.props.getPageTokens}
+          loadLabelMessageSingle={this.props.loadLabelMessageSingle}
         />
         <PerfectScrollbar className="container-fluid no-gutters px-0 message-list-container">
           {this.renderView()}

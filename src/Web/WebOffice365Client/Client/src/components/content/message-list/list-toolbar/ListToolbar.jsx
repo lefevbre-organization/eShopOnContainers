@@ -24,6 +24,7 @@ export class MessageToolbar extends PureComponent {
     this.navigateToNextPage = this.navigateToNextPage.bind(this);
     this.navigateToPrevPage = this.navigateToPrevPage.bind(this);
     this.modifyMessages = this.modifyMessages.bind(this);
+    this.getLabelMessagesSynk = this.getLabelMessagesSynk.bind(this);
       
     this.state = {
       selectedMessageIds: []
@@ -52,6 +53,11 @@ export class MessageToolbar extends PureComponent {
     }));
 
     checked ? this.props.addListMessages(messageIds) : this.props.deleteListMessages(messageIds);
+    }
+
+  getLabelMessagesSynk() {
+      this.props.loadLabelMessageSingle()
+     
   }
 
   navigateToNextPage() {    
@@ -121,8 +127,10 @@ export class MessageToolbar extends PureComponent {
             getLabelMessages={this.getLabelMessages}
 
           />    
-                {/*
-          <Synkbutton />   */}  
+                
+         <Synkbutton
+            getLabelMessagesSynk={this.getLabelMessagesSynk}
+         />   
         </div>
       </div>
     );

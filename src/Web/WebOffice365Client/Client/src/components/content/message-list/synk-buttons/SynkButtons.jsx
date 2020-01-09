@@ -13,7 +13,7 @@ export default (props) => {
   return (
       <div className="btn-group ml-auto">
           <button
-            onClick={props.navigateToPrevPage}
+            onClick={props.getLabelMessagesSynk}
             disabled={false}
             className="btn btn-light bg-white border-1 border-dark px-3 btn-sm"
             title={t('pager-button.refresh')}
