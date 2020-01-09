@@ -1,32 +1,77 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Lefebvre.eLefebvreOnContainers.Models;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Lexon.MySql.UnitTests
 {
-    public static class LexonConfiguration
+    public static class Configuration
     {
-        public static IConfigurationRoot GetIConfigurationRoot(string outputPath)
+        public const string FakeIdentityUser = "449";
+        public const string FakeBbdd = "lexon_admin_02";
+
+        internal static Result<JosRelationsList> GetLexonRelationsFake(string fakeIdMail)
         {
-            return new ConfigurationBuilder()
-                .SetBasePath(outputPath)
-                .AddJsonFile("appsettings.json", optional: true)
-                .AddEnvironmentVariables()
-                .Build();
+            var resultado = new Result<JosRelationsList>(new JosRelationsList());
+            resultado.data.Uid = fakeIdMail;
+            resultado.data.Actuaciones = new JosActuation[]
+            {
+                new JosActuation()
+            };
+            return resultado;
         }
 
-        //public static LexonConfiguration GetApplicationConfiguration(string outputPath)
-        //{
-        //    var configuration = new KavaDocsConfiguration();
+        internal static Result<JosUser> GetLexonUserFake(string fakeIdUserNavision)
+        {
+            var resultado = new Result<JosUser>(new JosUser() { IdUser = 449, Name = "IVAN Fake" });
+            return resultado;
+        }
 
-        //    var iConfig = GetIConfigurationRoot(outputPath);
+        internal static Result<JosEntityTypeList> GetLexonMasterEntities()
+        {
+            var resultado = new Result<JosEntityTypeList>(new JosEntityTypeList());
+            resultado.data.Entities = new JosEntityType[]
+            {
+                new JosEntityType(){ IdEntity=1, Name="Expedientes"}
+            };
+            return resultado;
+        }
 
-        //    iConfig
-        //        .GetSection("KavaDocs")
-        //        .Bind(configuration);
+        internal static Result<JosEntityList> GetLexonEntitiesList()
+        {
+            var resultado = new Result<JosEntityList>(new JosEntityList());
+            resultado.data.Entities = new JosEntity[]
+            {
+                new JosEntity(){ Code="123123", Description= "desc", IdRelated=12}
+            };
+            return resultado;
+        }
 
-        //    return configuration;
-        //}
+        internal static Result<JosRelationsList> GetRelationsFakeFromMail(string fakeIdMail)
+        {
+            var resultado = new Result<JosRelationsList>(new JosRelationsList() { Uid=fakeIdMail});
+            resultado.data.Actuaciones = new JosActuation[]
+                {
+                    new JosActuation()
+                    {
+                         Fecha="2020-12-10 00:00:00.000000",
+                        Asunto= "s_12",
+                        Nombre= "",
+                        Actuacion= 847,
+                        IdRelacion= 1,
+                        TipoRelacion= 2,
+                        Interviniente= "Marina Palermo Calugar mod"
+                    },
+                     new JosActuation()
+                    {
+                         Fecha="2020-12-11 00:00:00.000000",
+                        Asunto= "s_13",
+                        Nombre= "chavalon expedientado",
+                        Actuacion= 849,
+                        IdRelacion= 1,
+                        TipoRelacion= 1,
+                        Interviniente= "Marina Kior Jorl"
+                    },
+                };
+            return resultado;
+        }
     }
 }

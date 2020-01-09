@@ -17,15 +17,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Controllers
     {
         private ILexonMySqlService _lexonService;
         private readonly IOptions<LexonMySqlSettings> _settings;
+        private readonly IIdentityService _identityService;
 
         public LexonMySqlController(
             ILexonMySqlService lexonService
             , IOptions<LexonMySqlSettings> settings
+            , IIdentityService identityService
 
             )
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _lexonService = lexonService ?? throw new ArgumentNullException(nameof(lexonService));
+            _identityService = identityService ?? throw new ArgumentNullException(nameof(identityService)); 
         }
 
         [HttpGet]
@@ -92,7 +95,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.MySql.Controllers
             , string bbdd = "lexon_admin_02"
             , string idUser = "449"
             , string search = ""
-            , long? idFilter = 0)
+            , long? idFilter = null)
         {
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || idType == null || idType < 1)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
