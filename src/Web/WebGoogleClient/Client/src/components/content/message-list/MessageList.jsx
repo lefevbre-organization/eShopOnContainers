@@ -173,7 +173,9 @@ export class MessageList extends PureComponent {
           nextToken={nextToken}
           prevToken={prevToken}
           navigateToNextPage={this.props.navigateToNextPage}
-          navigateToPrevPage={this.props.navigateToPrevPage}
+          getLabelMessages={this.props.getLabelMessages}
+          getPageTokens={this.props.getPageTokens}
+          loadLabelMessageSingle={this.props.loadLabelMessageSingle}
         />
         <PerfectScrollbar className="container-fluid no-gutters px-0 message-list-container">
           {this.renderView()}

@@ -42,6 +42,7 @@ export class Main extends Component {
     this.navigateToPrevPage = this.navigateToPrevPage.bind(this);
     this.addInitialPageToken = this.addInitialPageToken.bind(this);
     this.onSignout = this.onSignout.bind(this);
+    this.loadLabelMessageSingle = this.loadLabelMessageSingle.bind(this);
 
     //this.leftSidebarOpen = leftSidebarOpen;
 
@@ -234,6 +235,12 @@ export class Main extends Component {
     }
   }
 
+  loadLabelMessageSingle() {
+        const { labels } = this.props.labelsResult;
+        const selectedLabel = labels.find(el => el.selected);
+        this.getLabelMessages({ labelIds: [selectedLabel.id] });
+  }
+
   navigateToNextPage(token) {
     const searchParam = this.props.location.search;
     const currentToken =
@@ -306,6 +313,7 @@ export class Main extends Component {
                 el => el.id === props.match.path.slice(1)
               )}
               searchQuery={this.props.searchQuery}
+              loadLabelMessageSingle={this.loadLabelMessageSingle}
             />
           );
         }}

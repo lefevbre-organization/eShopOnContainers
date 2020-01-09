@@ -258,13 +258,11 @@ export class Main extends Component {
     }
   }
 
-  loadLabelMessageSingle() {
-    this.loadLabelMessagesSingle(this.props.labelsResult.labelInbox);
+ loadLabelMessageSingle() {
+        const { labels } = this.props.labelsResult;
+        const selectedLabel = labels.find(el => el.selected);
+        this.getLabelMessages({ labelIds: [selectedLabel.id] });
   }
-
-  loadLabelMessagesSingle(label) {
-    this.getLabelMessages({ labelIds: [label.id] });
-   }
 
   navigateToNextPage(token) {
     const searchParam = this.props.location.search;
