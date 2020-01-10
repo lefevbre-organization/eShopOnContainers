@@ -227,10 +227,29 @@ export class Compose extends PureComponent {
   isInvalid(field) {
     const fieldValue = this.state[field].trim();
     return fieldValue.length > 0 && !getValidEmails(fieldValue).length;
-  }
+    }
+
+    modules = {
+        toolbar: [
+            [{ 'header': [1, 2, false] }],
+            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+            ['link', 'image'],
+            ['clean']
+        ],
+    }
+
+    formats = [
+        'header',
+        'bold', 'italic', 'underline', 'strike', 'blockquote',
+        'list', 'bullet', 'indent',
+        'link', 'image'
+    ]
+
 
   render() {
     const collapsed = this.props.sideBarCollapsed;
+
 
     return (
       <React.Fragment>
@@ -307,6 +326,8 @@ export class Compose extends PureComponent {
                   value={this.state.content}
                   onChange={this.handleChange}
                   className="autoResizeHeight"
+                  modules={this.modules}
+                  formats={this.formats}
                 />
               </div>
             </div>

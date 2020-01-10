@@ -208,6 +208,23 @@ export class ComposeMessage extends PureComponent {
     return fieldValue.length > 0 && !getValidEmails(fieldValue).length;
   }
 
+    modules = {
+        toolbar: [
+            [{ 'header': [1, 2, false] }],
+            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+            ['link'],
+            ['clean']
+        ],
+    }
+
+    formats = [
+        'header',
+        'bold', 'italic', 'underline', 'strike', 'blockquote',
+        'list', 'bullet', 'indent',
+        'link'
+    ]
+
   render() {
     const collapsed = this.props.sideBarCollapsed;
 
@@ -287,6 +304,8 @@ export class ComposeMessage extends PureComponent {
                     value={this.state.content}
                     onChange={this.handleChange}
                     className="autoResizeHeight"
+                    modules={this.modules}
+                    formats={this.formats}
                   />
                 </div>
               </div>
