@@ -71,7 +71,7 @@ export class Compose extends PureComponent {
       );
     });
 
-      this.uppy.on("file-added", file => {
+    this.uppy.on("file-added", file => {
           console.log("Added file", file);
 
           // Define this onload every time to get file and base64 every time
@@ -80,11 +80,11 @@ export class Compose extends PureComponent {
           this.reader.readAsDataURL(file.data);
 
           this.reader.onload = readerEvt =>
-              this.addFileToState({ file, base64: readerEvt.target.result });
+          this.addFileToState({ file, base64: readerEvt.target.result });
           this.showAttachActions = true
 
 
-      });
+    });
 
   
     }
@@ -102,7 +102,17 @@ export class Compose extends PureComponent {
         });
     }
 
-  addFileToState({ file, base64 }) {
+    addFileToState({ file, base64 }) {
+
+        for (const prop in this.state.uppyPreviews) {
+            //console.log(`obj.${prop} = ${this.state.uppyPreviews[prop]}`);
+            //console.log(this.state.uppyPreviews[0].file["name"])
+            if (this.state.uppyPreviews[prop].file["id"] == file["id"])
+            {
+                file["id"] = file["id"] + prop
+            }
+
+        }
     this.setState({
       uppyPreviews: [{ file, base64 }, ...this.state.uppyPreviews]
     });

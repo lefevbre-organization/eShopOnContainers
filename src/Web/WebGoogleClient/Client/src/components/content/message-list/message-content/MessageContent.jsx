@@ -67,6 +67,7 @@ function addAttachmentElement(blobUrl, filename) {
 
 function addAttachmentContainer(mimeType) {
   var aDiv = document.createElement("span");
+  aDiv.className="attachelement"
   aDiv.style.whiteSpace = "nowrap";
   aDiv.style.backgroundColor = "#fafafa";
   aDiv.style.border = "solid 1px #aaa";
@@ -126,7 +127,8 @@ export class MessageContent extends Component {
     super(props);
 
     this.state = {
-      errorMessage: undefined
+        errorMessage: undefined,
+        attachment: true
     };
 
     this.iframeRef = React.createRef();
@@ -134,72 +136,63 @@ export class MessageContent extends Component {
   }
 
   componentDidMount(prevProps) {
-    const messageId = this.props.match.params.id;
-    this.props.getEmailMessage(messageId);
-    this.props.getEmailHeaderMessage(messageId);
+      const messageId = this.props.match.params.id;
+      this.props.getEmailHeaderMessage(messageId);
+      this.props.getEmailMessage(messageId);
+   
   }
 
-  componentDidUpdate(prevProps) {
-    const { emailMessageResult } = this.props;
-    if (!emailMessageResult.loading) {
-      if (!emailMessageResult.failed) {
-        if (this.iframeRef.current) {
-          const { body } = this.iframeRef.current.contentWindow.document;
-          body.style.margin = "0px";
-          body.style.fontFamily = "Arial, Helvetica, sans-serif";
-          body.style.fontSize = "13px";           
-          body.innerHTML = this.props.emailMessageResult.body;
+    componentDidUpdate(prevProps) {
+        const { emailMessageResult } = this.props;
+        if (!emailMessageResult.loading) {
+            if (!emailMessageResult.failed) {
+                if (this.state.attachment == true) {
+                    const { body } = this.iframeRef.current.contentWindow.document;
+                    body.style.margin = "0px";
+                    body.style.fontFamily = "Arial, Helvetica, sans-serif";
+                    body.style.fontSize = "13px";
+                    body.innerHTML = this.props.emailMessageResult.body;
 
-          //Adding attach files
-          var attach = emailMessageResult.attach;
-          if (typeof attach !== "undefined" && attach.length > 0) {
-            var iframe = document.getElementById("message-iframe");
-            var Divider = addDivDivider();
-            iframe.contentDocument.body.appendChild(Divider);
-            for (var i = 0; i < attach.length; i++) {
-              if (attach[i].filename && attach[i].filename.length > 0) {
-                getAttachments(emailMessageResult.id, attach[i], function(
-                  filename,
-                  mimeType,
-                  attachment
-                ) {
-                  //console.log('File Name is ' + filename);
-                  let dataBase64Rep = attachment.data
-                    .replace(/-/g, "+")
-                    .replace(/_/g, "/");
-                  let urlBlob = b64toBlob(
-                    dataBase64Rep,
-                    mimeType,
-                    attachment.size
-                  );
-                  //console.log(urlBlob);
-                  var blobUrl = URL.createObjectURL(urlBlob);
-                  var Attachment = addAttachmentElement(blobUrl, filename);
-                  var AttachmentDiv = addAttachmentContainer(mimeType);
-                  AttachmentDiv.appendChild(Attachment);
-                  iframe.contentDocument.body.appendChild(AttachmentDiv);
-                });
-              }
-            }            
-          }
+                    //Adding attach files
+
+                    var attach = emailMessageResult.attach;
+                    if (typeof attach !== "undefined" && attach.length > 0) {
+                        this.setState({ attachment: false });
+                        var iframe = document.getElementById("message-iframe");
+                        var Divider = addDivDivider();
+                        iframe.contentDocument.body.appendChild(Divider);
+
+                        for (var i = 0; i < attach.length; i++) {
+                            if (attach[i].filename && attach[i].filename.length > 0) {
+                                getAttachments(emailMessageResult.id, attach[i], function (
+                                    filename,
+                                    mimeType,
+                                    attachment
+                                ) {
+                                   
+                                    let dataBase64Rep = attachment.data
+                                        .replace(/-/g, "+")
+                                        .replace(/_/g, "/");
+                                    let urlBlob = b64toBlob(
+                                        dataBase64Rep,
+                                        mimeType,
+                                        attachment.size
+                                    );
+                                    //console.log(urlBlob);
+                                    var blobUrl = URL.createObjectURL(urlBlob);
+                                    var Attachment = addAttachmentElement(blobUrl, filename);
+                                    var AttachmentDiv = addAttachmentContainer(mimeType);
+                                    AttachmentDiv.appendChild(Attachment);
+                                    iframe.contentDocument.body.appendChild(AttachmentDiv);
+                                });
+                            }
+                        }
+
+                    }
+                }
+            }
         }
-
-        // const messageId = this.props.match.params.id;
-        // getMessageHeader(messageId).then(response => {
-        //   this.setState({ headerMessage: response });
-        //   iframe.contentDocument.body.appendChild(this.getHeader());
-        // });
-
-      } else {
-        if (!this.state.errorMessage) {
-          this.setState({
-            errorMessage: emailMessageResult.error.result.error.message,
-            modal: true
-          });
-        }
-      }
     }
-  }
 
   renderSpinner() {
     return (

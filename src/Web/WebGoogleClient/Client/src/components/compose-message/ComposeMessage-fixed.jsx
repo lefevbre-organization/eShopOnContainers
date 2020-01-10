@@ -117,6 +117,15 @@ export class ComposeMessage extends PureComponent {
   }
 
   addFileToState({ file, base64 }) {
+
+    for (const prop in this.state.uppyPreviews) {
+          //console.log(`obj.${prop} = ${this.state.uppyPreviews[prop]}`);
+          //console.log(this.state.uppyPreviews[0].file["name"])
+          if (this.state.uppyPreviews[prop].file["id"] == file["id"]) {
+              file["id"] = file["id"] + prop
+          }
+
+    }
     this.setState({
       uppyPreviews: [{ file, base64 }, ...this.state.uppyPreviews]
     });
