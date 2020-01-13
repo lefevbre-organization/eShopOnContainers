@@ -39,6 +39,7 @@ namespace Lexon.MySql.Controllers
         }
 
 
+
         [HttpGet]
         [Route("companies")]
         [ProducesResponseType(typeof(Result<JosUserCompanies>), (int)HttpStatusCode.OK)]

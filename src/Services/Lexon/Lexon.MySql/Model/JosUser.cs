@@ -5,5 +5,6 @@ namespace Lexon.MySql.Model
     {
         public string Name { get; set; }
         public long IdUser { get; set; }
+        public string Token { get; set; }
     }
 }
