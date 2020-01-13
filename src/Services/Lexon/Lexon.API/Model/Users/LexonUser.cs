@@ -12,6 +12,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model
         public string Id { get; set; }
 
         public string idUser { get; set; }
+        public string token { get; set; }
 
         public string idNavision { get; set; }
 

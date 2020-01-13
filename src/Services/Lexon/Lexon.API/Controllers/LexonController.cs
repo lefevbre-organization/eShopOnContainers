@@ -171,7 +171,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
             if (string.IsNullOrEmpty(classificationSearch.idUser) || string.IsNullOrEmpty(classificationSearch.bbdd) || classificationSearch.idType <= 0)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
 
-            if (classificationSearch.pageIndex == 0 && classificationSearch.pageSize == 0)
+            if (classificationSearch.pageIndex == 1 && classificationSearch.pageSize == 0)
             {
                 var result = await _usersService.GetEntitiesListAsync(classificationSearch.pageSize, classificationSearch.pageIndex, classificationSearch.idType, classificationSearch.idUser, classificationSearch.bbdd, classificationSearch.search, classificationSearch.idFilter);
                 return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);

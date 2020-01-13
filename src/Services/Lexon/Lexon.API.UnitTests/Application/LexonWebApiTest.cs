@@ -25,8 +25,8 @@ namespace UnitTest.Lexon.API.Application
 {
     public class LexonWebApiTest
     {
-        private readonly Mock<UsersRepository> _lexonAPIRepositoryMock;
-        private readonly Mock<UsersService> _lexonAPIServiceMock;
+        private readonly Mock<IUsersRepository> _lexonAPIRepositoryMock;
+        private readonly Mock<IUsersService> _lexonAPIServiceMock;
         private readonly Mock<ILexonAPIIdentityService> _identityServiceMock;
         private readonly Mock<IEventBus> _serviceBusMock;
         private readonly Mock<ILogger<LexonController>> _loggerMock;
@@ -34,8 +34,8 @@ namespace UnitTest.Lexon.API.Application
 
         public LexonWebApiTest()
         {
-            _lexonAPIRepositoryMock = new Mock<UsersRepository>();
-            _lexonAPIServiceMock = new Mock<UsersService>();
+            _lexonAPIRepositoryMock = new Mock<IUsersRepository>();
+            _lexonAPIServiceMock = new Mock<IUsersService>();
             _identityServiceMock = new Mock<ILexonAPIIdentityService>();
             _serviceBusMock = new Mock<IEventBus>();
             _loggerMock = new Mock<ILogger<LexonController>>();
@@ -153,7 +153,7 @@ namespace UnitTest.Lexon.API.Application
             var fakeClassificationSearch = new ClassificationSearch()
             {
                 pageIndex = Configuration.FakePageIndex,
-                pageSize = Configuration.FakePageSize,
+                pageSize = Configuration.FakePageSizeAll,
                 bbdd = Configuration.FakeBbdd,
                 idFilter = null,
                 idMail = null,
@@ -184,8 +184,8 @@ namespace UnitTest.Lexon.API.Application
 
             //Assert
             Assert.Equal((actionResult as OkObjectResult).StatusCode, (int)System.Net.HttpStatusCode.OK);
-            Assert.NotEmpty((((ObjectResult)actionResult).Value as Result<JosEntityList>).data.Entities);
-            Assert.Empty((((ObjectResult)actionResult).Value as Result<JosEntityList>).errors);
+            Assert.NotEmpty((((ObjectResult)actionResult).Value as Result<List<LexonEntityBase>>).data);
+            Assert.Empty((((ObjectResult)actionResult).Value as Result<List<LexonEntityBase>>).errors);
         }
 
         [Fact]
@@ -197,7 +197,7 @@ namespace UnitTest.Lexon.API.Application
             var fakeClassificationSearch = new ClassificationSearch()
             {
                 pageIndex = Configuration.FakePageIndex,
-                pageSize = Configuration.FakePageSize,
+                pageSize = Configuration.FakePageSizeAll,
                 bbdd = Configuration.FakeBbdd,
                 idFilter = null,
                 idMail = null,
@@ -231,6 +231,52 @@ namespace UnitTest.Lexon.API.Application
             Assert.Empty((((ObjectResult)actionResult).Value as Result<List<LexonEntityBase>>).errors);
         }
 
+        //[Fact]
+        //public async Task Get_entities_type_folder_paginated_search_success()
+        //{
+        //    //Arrange
+        //    short? idType = 13;
+        //    string search = "ROOT";
+        //    var fakeClassificationSearch = new ClassificationSearch()
+        //    {
+        //        pageIndex = Configuration.FakePageIndex,
+        //        pageSize = Configuration.FakePageSize,
+        //        bbdd = Configuration.FakeBbdd,
+        //        idFilter = null,
+        //        idMail = null,
+        //        idRelated = 1,
+        //        idType = idType,
+        //        idUser = Configuration.FakeIdentityUser,
+        //        search = search
+        //    };
+        //    Result<List<LexonEntityBase>> fakeEntities = Configuration.GetLexonEntitiesList();
+        //    var totalItems = fakeClassificationSearch.pageIndex * fakeClassificationSearch.pageSize;
+        //    Result<PaginatedItemsViewModel<LexonEntityBase>> fakeEntitiesPaginated = new Result<PaginatedItemsViewModel<LexonEntityBase>>(new PaginatedItemsViewModel<LexonEntityBase>(fakeClassificationSearch.pageIndex, fakeClassificationSearch.pageSize, totalItems, fakeEntities.data), fakeEntities.errors);
+
+
+        //    _lexonAPIRepositoryMock.Setup(x => x.GetEntitiesListAsync(Configuration.FakePageSize, Configuration.FakePageIndex, idType, Configuration.FakeIdentityUser, Configuration.FakeBbdd, search))
+        //        .Returns(Task.FromResult(fakeEntitiesPaginated));
+        //    _lexonAPIServiceMock.Setup(x => x.GetEntitiesListAsync(Configuration.FakePageSize, Configuration.FakePageIndex, idType, Configuration.FakeIdentityUser, Configuration.FakeBbdd, search, null))
+        //        .Returns(Task.FromResult(fakeEntitiesPaginated));
+        //    _identityServiceMock.Setup(x => x.GetUserIdentity()).Returns(Configuration.FakeIdentityUser);
+
+        //    //_serviceBusMock.Setup(x => x.Publish(It.IsAny<UserCheckoutAcceptedIntegrationEvent>()));
+
+        //    //Act
+        //    var lexonController = new LexonController(
+        //        _lexonAPIServiceMock.Object,
+        //        _identityServiceMock.Object,
+        //        _lexonAPIConfig,
+        //        _serviceBusMock.Object);
+
+        //    var actionResult = await lexonController.EntitiesAsync(fakeClassificationSearch);
+
+        //    //Assert
+        //    Assert.Equal((actionResult as OkObjectResult).StatusCode, (int)System.Net.HttpStatusCode.OK);
+        //    Assert.NotEmpty((((ObjectResult)actionResult).Value as Result<List<LexonEntityBase>>).data);
+        //    Assert.Empty((((ObjectResult)actionResult).Value as Result<List<LexonEntityBase>>).errors);
+        //}
+
         [Fact]
         public async Task Get_relations_email_success()
         {
@@ -244,7 +290,7 @@ namespace UnitTest.Lexon.API.Application
                 pageSize = Configuration.FakePageSize,
                 bbdd = Configuration.FakeBbdd,
                 idFilter = null,
-                idMail = null,
+                idMail = fakeIdMail,
                 idRelated = 1,
                 idType = idType,
                 idUser = Configuration.FakeIdentityUser,
@@ -282,13 +328,14 @@ namespace UnitTest.Lexon.API.Application
             };
 
             //Act
-         //   var result = await basketController.CheckoutAsync(new BasketCheckout(), Guid.NewGuid().ToString()) as AcceptedResult;
 
-            var actionResult = await lexonController.ClassificationsAsync(fakeClassificationSearch, Guid.NewGuid().ToString()) as AcceptedResult;
+            var actionResult = await lexonController.ClassificationsAsync(fakeClassificationSearch, Guid.NewGuid().ToString());
+
+            // var actionResult = await lexonController.ClassificationsAsync(fakeClassificationSearch, Guid.NewGuid().ToString()) as AcceptedResult;
 
             //Assert
-            Assert.NotNull(actionResult);
-            //Assert.Equal((actionResult as OkObjectResult).StatusCode, (int)System.Net.HttpStatusCode.OK);
+            // Assert.NotNull(actionResult);
+            Assert.Equal((actionResult as OkObjectResult).StatusCode, (int)System.Net.HttpStatusCode.OK);
             Assert.NotEmpty((((ObjectResult)actionResult).Value as Result<List<LexonActuation>>).data);
             Assert.Empty((((ObjectResult)actionResult).Value as Result<List<LexonActuation>>).errors);
         }

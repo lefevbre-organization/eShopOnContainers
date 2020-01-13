@@ -378,7 +378,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                             TraceOutputMessage(result.errors, "Mysql don´t recover the user", 2001);
                         else
                         {
-                            result.data = new LexonUser() { Name = resultMysql.data.Name, idUser = resultMysql.data.IdUser.ToString(), idNavision = idUser };
+                            result.data = new LexonUser() { Name = resultMysql.data.Name, idUser = resultMysql.data.IdUser.ToString(), idNavision = idUser, token = resultMysql.data.Token };
                             TraceLog(parameters: new string[] { $"iduser {result.data.idUser}" });
                             return result;
                         }

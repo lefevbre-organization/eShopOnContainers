@@ -6,6 +6,10 @@
         public string ConnectionString { get; set; }
 
         public StoreProcedures SP { get; set; }
+
+        public long TokenCaducity { get; set; }
+
+        public string TokenKey { get; set; }
     }
 
     public class StoreProcedures
