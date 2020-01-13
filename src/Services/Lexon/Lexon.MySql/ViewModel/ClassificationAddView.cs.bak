@@ -2,6 +2,6 @@
 {
     public class ClassificationAddView: ClassificationView
     {
-        public MailInfo[] listaMails { get; set; }
+        public string[] listaMails { get; set; }
     }
 }

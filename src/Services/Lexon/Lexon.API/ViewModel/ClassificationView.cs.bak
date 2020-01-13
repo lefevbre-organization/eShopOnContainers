@@ -1,4 +1,4 @@
-﻿namespace Lexon.MySql.Model
+﻿namespace Lexon.API.Model
 {
     public class ClassificationView
     {
@@ -6,6 +6,6 @@
         public string bbdd { get; set; }
         public string idUser { get; set; }
         public long idRelated { get; set; }
-
+        public long idCompany { get; set; }
     }
 }

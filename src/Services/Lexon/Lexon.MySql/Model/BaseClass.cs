@@ -11,7 +11,7 @@ namespace Lexon.MySql.Model
         public BaseClass(
             ILogger<T> logger)
         {
-            log = logger ?? throw new ArgumentNullException(nameof(logger)); ;
+            log = logger ?? throw new ArgumentNullException(nameof(logger)); 
         }
 
         public void TraceMessage(
