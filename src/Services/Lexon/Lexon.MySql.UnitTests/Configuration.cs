@@ -7,6 +7,9 @@ namespace Lexon.MySql.UnitTests
     {
         public const string FakeIdentityUser = "449";
         public const string FakeBbdd = "lexon_admin_02";
+        public const int FakePageIndex = 1;
+        public const int FakePageSizeAll = 0;
+        public const int FakePageSize = 20;
 
         internal static Result<JosRelationsList> GetLexonRelationsFake(string fakeIdMail)
         {

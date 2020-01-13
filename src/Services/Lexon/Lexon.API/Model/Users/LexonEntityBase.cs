@@ -6,6 +6,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model
     public class LexonEntityBase //: MongoModel
     {
         public long id { get; set; }
+        public short idType { get; set; }
 
         public string name { get; set; }
 

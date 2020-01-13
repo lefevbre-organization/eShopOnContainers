@@ -21,18 +21,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
     public class LexonController : ControllerBase
     {
         private readonly IUsersService _usersService;
-        private readonly LexonSettings _settings;
+        private readonly IOptions<LexonSettings> _settings;
         private readonly IEventBus _eventBus;
         private readonly IIdentityService _identityService;
 
         public LexonController(
             IUsersService usersService
             , IIdentityService identityService
-            , IOptionsSnapshot<LexonSettings> lexonSettings
+            , IOptions<LexonSettings> settings
             , IEventBus eventBus)
         {
             _usersService = usersService ?? throw new ArgumentNullException(nameof(usersService));
-            _settings = lexonSettings.Value;
+            _settings = settings;
             _identityService = identityService;
             _eventBus = eventBus;
         }
@@ -67,12 +67,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("classifications")]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ClassificationsAsync(
             [FromBody] ClassificationSearch classificationSearch
+            , [FromHeader(Name = "x-requestid")] string requestId
             //, [FromQuery]string idUser = "449"
             //, [FromQuery]long? idType = null
             //, [FromQuery]string bbdd = "lexon_admin_02"

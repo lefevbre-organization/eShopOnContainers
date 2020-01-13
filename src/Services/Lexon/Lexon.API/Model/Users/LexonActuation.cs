@@ -13,8 +13,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Model
 
         public string description { get; set; }
 
-        public string entityType { get; set; }
-
         public short entityIdType { get; set; }
+
+        public string date { get; set; }
+        public string intervening { get; set; }
     }
 }

@@ -124,8 +124,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                         var resultMysql = await response.Content.ReadAsAsync<Result<JosRelationsList>>();
                         foreach (var entity in resultMysql.data.Actuaciones)
                         {
-                            result.data.Add(new LexonActuation() { name = entity.Nombre, description = entity.Asunto, entityType = "Mail", idMail = idMail, idRelated = entity.IdRelacion });
-                            TraceLog(parameters: new string[] { $"add Name {entity.Nombre}", $"desc {entity.Asunto}", $"tipo Mail", $"idrelated {entity.IdRelacion}", $"idmail {idMail}" });
+                            result.data.Add(new LexonActuation() 
+                            { 
+                                name = entity.Nombre, 
+                                description = entity.Asunto, 
+                                idMail = idMail, 
+                                idRelated = entity.IdRelacion, 
+                                date = entity.Fecha, 
+                                entityIdType= entity.TipoRelacion 
+                            });
+                            TraceLog(parameters: new string[] { $"add Name {entity.Nombre}", $"desc {entity.Asunto}", $"tipo Mail", $"idrelated {entity.IdRelacion}", $"idmail {idMail}", $"date {entity.Fecha}", $"tipo {entity.TipoRelacion}" });
                         }
 
                         if (result.data.Count == 0)
@@ -300,7 +308,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Servi
                         var entityList = await response.Content.ReadAsAsync<Result<JosEntityList>>();
                         foreach (var entity in (entityList.data.Entities))
                         {
-                            result.data.Add(new LexonEntityBase() { name = entity.Code, description = entity.Description, id = entity.IdRelated });
+                            result.data.Add(new LexonEntityBase() { name = entity.Code, description = entity.Description, id = entity.IdRelated, idType= idType ?? 1 });
                             TraceLog(parameters: new string[] { $"code {entity.Code}" });
                         }
 
