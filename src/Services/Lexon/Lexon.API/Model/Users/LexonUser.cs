@@ -6,9 +6,11 @@ namespace Lexon.API.Model
     [BsonIgnoreExtraElements]
     public class LexonUser : MongoModel
     {
+
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
+        public string token { get; set; }
 
         public string idUser { get; set; }
 
