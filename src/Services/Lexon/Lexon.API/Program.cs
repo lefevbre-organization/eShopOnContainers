@@ -1,4 +1,5 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Middlewares;
+﻿using Autofac.Extensions.DependencyInjection;
+using Lefebvre.eLefebvreOnContainers.Services.Lexon.API.Infrastructure.Middlewares;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -45,6 +46,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
 
         private static IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                //.UseServiceProviderFactory(new AutofacServiceProviderFactory())
                 .CaptureStartupErrors(false)
                 .ConfigureKestrel(options =>
                 {
