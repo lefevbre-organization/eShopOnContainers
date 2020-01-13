@@ -88,6 +88,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Lexon.API
             services.AddTransient<IIdentityService, IdentityService>();
 
             services.AddOptions();
+            services.AddHttpClient();
 
             var container = new ContainerBuilder();
             container.Populate(services);
