@@ -118,13 +118,14 @@ namespace Lexon.MySql.Infrastructure.Repositories
         {
             var filtroDescription = !string.IsNullOrEmpty(search) ? $", \"Description\":\"{search}\"" : string.Empty;
 
-            var filter = $"\"BBDD\":\"{bbdd}\",\"IdEntityType\":{idType},\"IdUser\":{idUser}{filtroDescription}";
+            var textIdFilter = idType == null ? "null" : idType.ToString();
+            var filter = $"\"BBDD\":\"{bbdd}\",\"IdEntityType\":{textIdFilter},\"IdUser\":{idUser}{filtroDescription}";
 
             if (idType == (short)LexonAssociationType.MailToDocumentsEvent && idFilter != null)
                 filter = $"{{{filter},\"IdFolder\":{idFilter}}}";
             else if (idType == (short)LexonAssociationType.MailToFoldersEvent && idFilter != null)
                 filter = $"{{{filter},\"IdParent\":{idFilter}}}";
-            else if (idType == (short)LexonAssociationType.MailToFilesEvent && !string.IsNullOrEmpty(idMail))
+            else if (idType == null || idType == (short)LexonAssociationType.MailToFilesEvent && !string.IsNullOrEmpty(idMail))
                 filter = $"{{{filter},\"Uid\":\"{idMail}\"}}";
             else
                 filter = $"{{{filter}}}";
