@@ -146,13 +146,14 @@ namespace Lexon.MySql.Controllers
         public async Task<IActionResult> RelationsAsync(
             [FromQuery]int pageSize = 0
             , [FromQuery]int pageIndex = 1
-            , short? idType = 1
+            , short? idType = null
             , string bbdd = "lexon_admin_02"
             , string idUser = "449"
             , string idMail = "" )
         {
-            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || idType < 1)
-                return (IActionResult)BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
+            idType = idType <= 0 ? null : idType; 
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || string.IsNullOrEmpty(idMail))
+                return (IActionResult)BadRequest("values invalid. Must be a valid user, idMail and bbdd to search the entities");
 
             var result = await _lexonService.GetRelationsAsync(pageSize, pageIndex, idType, bbdd, idUser, idMail);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
