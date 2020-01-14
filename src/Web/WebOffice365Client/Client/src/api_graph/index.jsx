@@ -58,8 +58,8 @@ export const getLabelList = () =>
   new Promise((resolve, reject) => {
     var accessToken = window.msal.acquireTokenSilent(config.scopes);
     const client = getAuthenticatedClient(accessToken);
-      client
-      
+    client
+
       .api("/me/mailFolders")
       .get()
       .then(response => {
@@ -67,7 +67,7 @@ export const getLabelList = () =>
       });
   });
 
-  export const getLabelInbox = () =>
+export const getLabelInbox = () =>
   new Promise((resolve, reject) => {
     var accessToken = window.msal.acquireTokenSilent(config.scopes);
     const client = getAuthenticatedClient(accessToken);
@@ -276,12 +276,27 @@ export const getMessageHeaders = response => {
       return getMessageHeader(el.id);
     });
 
-    Promise.all(headerPromises).then(messages =>
+    Promise.all(headerPromises).then(messages => {
       resolve({
         ...messageResult,
         messages
-      })
-    );
+      });
+    });
+  });
+};
+
+export const getMessageHeadersFromId = messageIds => {
+  return new Promise((resolve, reject) => {
+    const headerPromises = (messageIds || []).map(messageId => {
+      return getMessageHeader(messageId);
+    });
+
+    Promise.all(headerPromises).then(messages => {
+      resolve({
+        ...messageIds,
+        messages
+      });
+    });
   });
 };
 
@@ -377,15 +392,16 @@ export const emailBody = data => {
   const subject = data.subject;
 
   var myJSONString = JSON.stringify(data.content);
-  var myEscapedJSONString = myJSONString.replace(/\\n/g, "\\n")
-        .replace(/\\'/g, "\\'")
-        .replace(/\\"/g, '\\"')
-        .replace(/\\&/g, "\\&")
-        .replace(/\\r/g, "\\r")
-        .replace(/\\t/g, "\\t")
-        .replace(/\\b/g, "\\b")
-        .replace(/\\f/g, "\\f");
-    
+  var myEscapedJSONString = myJSONString
+    .replace(/\\n/g, "\\n")
+    .replace(/\\'/g, "\\'")
+    .replace(/\\"/g, '\\"')
+    .replace(/\\&/g, "\\&")
+    .replace(/\\r/g, "\\r")
+    .replace(/\\t/g, "\\t")
+    .replace(/\\b/g, "\\b")
+    .replace(/\\f/g, "\\f");
+
   const bodyContent = myEscapedJSONString.slice(1, -1);
 
   var email = `{
@@ -395,7 +411,6 @@ export const emailBody = data => {
                       "ContentType": "html",
                       "Content": "${bodyContent}"
                     },\r\n`;
-
 
   return email;
 };
@@ -489,13 +504,11 @@ export const sendMessage = ({ data, attachments }) => {
     var accessToken = window.msal.acquireTokenSilent(config.scopes);
     const client = getAuthenticatedClient(accessToken);
 
-      
-
     return client
       .api("/me/sendmail")
       .header("Authorization", "Bearer " + accessToken)
       .header("Content-Type", "application/json; charset=utf-8")
-        .post(email, (err, response) => {
+      .post(email, (err, response) => {
         resolve(response);
       });
   });

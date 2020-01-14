@@ -46,9 +46,7 @@ class ConfirmRemoveAccount extends Component {
                       alt=""
                       src="/assets/imgs/icon-question.png"
                     ></img>
-                    Si eliminas este vínculo dejarás de visualizar el correo en
-                    la clasificación correspondiente de Lex-on. ¿Quieres
-                    continuar?
+                    {i18n.t("confirm-remove-accounts.body")}
                   </h5>
                 </div>
               </div>

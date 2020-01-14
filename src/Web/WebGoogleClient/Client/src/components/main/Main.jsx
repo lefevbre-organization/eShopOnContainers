@@ -27,7 +27,6 @@ import SidebarCnn from "react-sidebar";
 import LexonComponent from "../../apps/lexon_content";
 import CalendarComponent from "../../apps/calendar_content";
 import "react-reflex/styles.css";
-
 import { PROVIDER } from "../../constants";
 
 export class Main extends Component {
@@ -94,15 +93,12 @@ export class Main extends Component {
 
   sendMessagePutUser(user) {
     const { selectedMessages } = this.props;
-    const listMessages = selectedMessages.map(
-      selectedMessage => selectedMessage.id
-    );
 
     window.dispatchEvent(
       new CustomEvent("PutUserFromLexonConnector", {
         detail: {
           user,
-          selectedMessageId: listMessages,
+          selectedMessages: selectedMessages,
           idCaseFile: this.props.lexon.idCaseFile,
           bbdd: this.props.lexon.bbdd,
           idCompany: this.props.lexon.idCompany

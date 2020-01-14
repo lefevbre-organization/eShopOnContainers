@@ -93,15 +93,12 @@ export class Main extends Component {
 
   sendMessagePutUser(user) {
     const { selectedMessages } = this.props;
-    const listMessages = selectedMessages.map(
-      selectedMessage => selectedMessage.id
-    );
 
     window.dispatchEvent(
       new CustomEvent("PutUserFromLexonConnector", {
         detail: {
           user,
-          selectedMessageId: listMessages,
+          selectedMessages: selectedMessages,
           idCaseFile: this.props.lexon.idCaseFile,
           bbdd: this.props.lexon.bbdd,
           idCompany: this.props.lexon.idCompany
@@ -248,11 +245,14 @@ export class Main extends Component {
       }
     }
 
+    console.log("(0) this.props.labelsResult ->", this.props.labelsResult);
+    console.log("(0) this.state.retry ->", this.state.retry);
     if (
       this.state.retry &&
       this.props.labelsResult.labelInbox !== null &&
       this.props.labelsResult.labelInbox !== undefined
     ) {
+      console.log("(1) this.props.labelsResult ->", this.props.labelsResult);
       this.setState({ retry: false });
       this.loadLabelMessages(this.props.labelsResult.labelInbox);
     }

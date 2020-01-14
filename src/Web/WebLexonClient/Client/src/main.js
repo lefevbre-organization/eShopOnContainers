@@ -69,8 +69,12 @@ class Main extends Component {
 
   handleKeyPress(event) {
     event.detail.chkselected
-      ? this.props.addMessage(event.detail.name)
-      : this.props.deleteMessage(event.detail.name);
+      ? this.props.addMessage({
+          id: event.detail.id,
+          subject: event.detail.subject,
+          sentDateTime: event.detail.sentDateTime
+        })
+      : this.props.deleteMessage(event.detail.id);
   }
 
   handleCheckAllclick(event) {
@@ -88,12 +92,22 @@ class Main extends Component {
   }
 
   async handlePutUserFromLexonConnector(event) {
-    const { user, selectedMessageId, idCaseFile, bbdd, idCompany } = event.detail;
+    const {
+      user,
+      selectedMessages,
+      idCaseFile,
+      bbdd,
+      idCompany
+    } = event.detail;
     if (idCaseFile != null && idCaseFile !== undefined) {
-      this.setState({ idCaseFile: idCaseFile, bbdd: bbdd, idCompany: idCompany });
+      this.setState({
+        idCaseFile: idCaseFile,
+        bbdd: bbdd,
+        idCompany: idCompany
+      });
     }
 
-    selectedMessageId.forEach(message => {
+    selectedMessages.forEach(message => {
       this.props.addMessage(message);
     });
 
@@ -181,7 +195,7 @@ class Main extends Component {
           toggleNotification={this.toggleNotification}
           message={messageNotification}
         />
-        
+
         <div className="lex-on-configuration">
           <a href="#/" className="lex-on-configuration-trigger">
             <strong className="sr-only sr-only-focusable">

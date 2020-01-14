@@ -30,14 +30,26 @@ class Classification extends Component {
       classification.idRelated,
       companySelected.companyId
     )
-      .then(updateClassifications(mail))
+      .then(response => {
+        updateClassifications(mail);
+      })
       .catch(error => {
         console.log("error ->", error);
       });
   }
 
+  renderDescription() {
+    const { description } = this.props.classification;
+
+    return description === null ||
+      description === undefined ||
+      description.trim() === ""
+      ? null
+      : ` - ${description}`;
+  }
+
   render() {
-    const { description, entityType } = this.props.classification;
+    const { name, entityType } = this.props.classification;
 
     return (
       <li className="col-xl-12 lexon-item">
@@ -45,7 +57,8 @@ class Classification extends Component {
           <strong>{i18n.t("classification.type")}</strong> {entityType}
         </p>
         <p>
-          <strong>{i18n.t("classification.assigned")}</strong> {description}
+          <strong>{i18n.t("classification.assigned")}</strong> {name}
+          {this.renderDescription()}
         </p>
         <p className="text-right tools-bar">
           <a

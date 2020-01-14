@@ -30,7 +30,8 @@
     "drag-and-drop": "Arrastrar y Soltar",
     "add-attachments": "Añadir archivos adjuntos",
     "browse": "Seleccionar",
-    "or": "o"
+    "or": "o",
+    "bcc": "Cco:"
   },
   "message-toolbar": {
     "move-to-trash": "Mover a la Papelera",

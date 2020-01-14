@@ -31,7 +31,8 @@
     "classification-saved-ok": "The classification saved correctly",
     "classification-saved-ko": "There was an error saving the classification",
     "classification-removed-ok": "The classification removed correctly",
-    "classification-removed-ko": "There was an error removing the classification"
+    "classification-removed-ko": "There was an error removing the classification",
+    "classification-selection-ko": "You must select a Type and Entity to qualify"
   },
   "classification-type": {
     "type": "Type",
@@ -47,7 +48,11 @@
     "select-mail": "Select a message and rate it in Lex-on. The relationship established will be visible in this panel and also in the application."
   },
   "classification-list": {
-    "assigned-to": "Assigned to"
+    "assigned-to": "Assigned to",
+    "code": "Code",
+    "name": "Name",
+    "description": "Description",
+    "client": "Client"
   },
   "confirm-remove-classification": {
     "yes": "Yes",

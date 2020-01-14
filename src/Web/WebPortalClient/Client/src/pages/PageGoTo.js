@@ -13,7 +13,7 @@ import {
   deleteAccountByUserAndEmail
 } from "../services/user-accounts";
 
-import { config, INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP } from "../constants";
+import { INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP } from "../constants";
 
 export class PageGoTo extends Component {
   constructor(props) {

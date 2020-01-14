@@ -31,7 +31,8 @@
     "classification-saved-ok": "La clasificación se ha guardado correctamente",
     "classification-saved-ko": "Ha habido un error guardando la clasificación",
     "classification-removed-ok": "La clasificación se ha borrado correctamente",
-    "classification-removed-ko": "Ha habido un error borrando la clasificación"
+    "classification-removed-ko": "Ha habido un error borrando la clasificación",
+    "classification-selection-ko": "Debes seleccionar un Tipo y una Entidad para poder clasificar"
   },
   "classification-type": {
     "type": "Tipo",
@@ -47,7 +48,11 @@
     "select-mail": "Selecciona un mensaje y clasifícalo en Lex-on. La relación establecida será visible en este panel y también en la aplicación."
   },
   "classification-list": {
-    "assigned-to": "Asignado a"
+    "assigned-to": "Asignado a",
+    "code": "Código",
+    "name": "Nombre",
+    "description": "Descripción",
+    "client": "Cliente"
   },
   "confirm-remove-classification": {
     "yes": "Si",

@@ -172,10 +172,11 @@ export const modifyMessages = ({
     });
 };
 
-export const addMessage = messageId => dispatch => {
+export const addMessage = message => dispatch => {
   const data = {
-    id: messageId,
-    content: messageId
+    id: message.id,
+    subject: message.subject,
+    sentDateTime: message.sentDateTime
   };
 
   dispatch({
@@ -186,8 +187,7 @@ export const addMessage = messageId => dispatch => {
 
 export const deleteMessage = messageId => dispatch => {
   const data = {
-    id: messageId,
-    content: messageId
+    id: messageId
   };
 
   dispatch({

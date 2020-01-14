@@ -113,6 +113,21 @@ const getMessageHeaders = response => {
   });
 };
 
+export const getMessageHeadersFromId = messageIds => {
+  return new Promise((resolve, reject) => {
+    const headerPromises = (messageIds || []).map(messageId => {
+      return getMessageHeader(messageId);
+    });
+
+    Promise.all(headerPromises).then(messages => {
+      resolve({
+        ...messageIds,
+        messages
+      });
+    });
+  });
+};
+
 export const getMessageHeader = id => {
   return new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.messages
@@ -136,7 +151,10 @@ export const getMessageHeader = id => {
           // for more headers
         ]
       })
-      .then(response => resolve(response.result));
+      .then(response => {
+        // console.log("response.result.payload.headers ->", response.result.payload.headers);
+        resolve(response.result)
+      });
   });
 };
 
