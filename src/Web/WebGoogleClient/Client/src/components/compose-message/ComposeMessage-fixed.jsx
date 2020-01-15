@@ -147,12 +147,15 @@ export class ComposeMessage extends PureComponent {
   sendEmail() {
     const validTo = getValidEmails(this.state.to);
 
-    if (
-      !validTo.length ||
-      this.state.subject.trim() === "" ||
-      this.state.content === ""
-    ) {
+    if (!validTo.length){
+      window.alert("Este mensaje debe tener al menos un destinatario.")
       return;
+    }
+    else if (this.state.subject.trim() === ""){
+      const r = window.confirm("¿Desea enviar este mensaje sin asunto?"); 
+      if(r === false){ 
+        return;
+      }
     }
 
     const headers = {
