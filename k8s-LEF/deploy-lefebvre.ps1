@@ -10,9 +10,9 @@ Param(
     [parameter(Mandatory=$false)][string]$imageTag="dev",
     [parameter(Mandatory=$false)][bool]$deployCI=$false,
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
-    [parameter(Mandatory=$false)][bool]$cleanDocker=$false,
-    [parameter(Mandatory=$false)][bool]$buildImages=$false,
-    [parameter(Mandatory=$false)][bool]$pushImages=$true,
+    [parameter(Mandatory=$false)][bool]$cleanDocker=$true,
+    [parameter(Mandatory=$false)][bool]$buildImages=$true,
+    [parameter(Mandatory=$false)][bool]$pushImages=$false,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
     [parameter(Mandatory=$false)][string]$dockerOrg="elefebvreoncontainers"
 )
@@ -82,6 +82,9 @@ if ($buildImages) {
     }
     Write-Host "Building Docker images tagged with '$imageTag'" -ForegroundColor DarkBlue
     $env:TAG=$imageTag
+    foreach ($service in $servicesToPush) {
+        
+    }
     docker-compose -p .. -f ../docker-compose.yml build      
 }
 
