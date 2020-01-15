@@ -72,47 +72,42 @@ export class Compose extends PureComponent {
     });
 
     this.uppy.on("file-added", file => {
-          console.log("Added file", file);
+      console.log("Added file", file);
 
-          // Define this onload every time to get file and base64 every time
-          this.reader = new FileReader();
-          //setTimeout(() => { this.reader.readAsDataURL(file.data); }, 4000);
-          this.reader.readAsDataURL(file.data);
+      // Define this onload every time to get file and base64 every time
+      this.reader = new FileReader();
+      //setTimeout(() => { this.reader.readAsDataURL(file.data); }, 4000);
+      this.reader.readAsDataURL(file.data);
 
-          this.reader.onload = readerEvt =>
-          this.addFileToState({ file, base64: readerEvt.target.result });
-          this.showAttachActions = true
-
-
+      this.reader.onload = readerEvt =>
+      this.addFileToState({ file, base64: readerEvt.target.result });
+      this.showAttachActions = true
     });
+  }
 
-  
-    }
+  removeFile() {
+      //  console.log(this.uppy.getFiles());      
+      //this.uppy.getFiles().forEach(file => {   
+      //    console.log(file.id)
+      //    this.state.uppyPreviews.removeFile(file.id)
+      //});
+      this.uppy.reset();
+      this.showAttachActions = false
+      this.setState({
+          uppyPreviews: []
+      });
+  }
 
-    removeFile() {
-        //  console.log(this.uppy.getFiles());      
-        //this.uppy.getFiles().forEach(file => {   
-        //    console.log(file.id)
-        //    this.state.uppyPreviews.removeFile(file.id)
-        //});
-        this.uppy.reset();
-        this.showAttachActions = false
-        this.setState({
-            uppyPreviews: []
-        });
-    }
+  addFileToState({ file, base64 }) {
+      for (const prop in this.state.uppyPreviews) {
+          //console.log(`obj.${prop} = ${this.state.uppyPreviews[prop]}`);
+          //console.log(this.state.uppyPreviews[0].file["name"])
+          if (this.state.uppyPreviews[prop].file["id"] == file["id"])
+          {
+              file["id"] = file["id"] + prop
+          }
 
-    addFileToState({ file, base64 }) {
-
-        for (const prop in this.state.uppyPreviews) {
-            //console.log(`obj.${prop} = ${this.state.uppyPreviews[prop]}`);
-            //console.log(this.state.uppyPreviews[0].file["name"])
-            if (this.state.uppyPreviews[prop].file["id"] == file["id"])
-            {
-                file["id"] = file["id"] + prop
-            }
-
-        }
+      }
     this.setState({
       uppyPreviews: [{ file, base64 }, ...this.state.uppyPreviews]
     });
@@ -160,13 +155,15 @@ export class Compose extends PureComponent {
 
   sendEmail() {
     const validTo = getValidEmails(this.state.to);
-
-    if (
-      !validTo.length ||
-      this.state.subject.trim() === "" ||
-      this.state.content === ""
-    ) {
+    if (!validTo.length){
+      window.alert("Este mensaje debe tener al menos un destinatario.")
       return;
+    }
+    else if (this.state.subject.trim() === ""){
+      const r = window.confirm("¿Desea enviar este mensaje sin asunto?"); 
+      if(r === false){ 
+        return;
+      }
     }
 
     const headers = {
@@ -185,13 +182,11 @@ export class Compose extends PureComponent {
       headers.Bcc = validBcc.join(", ");
     }
 
-      const Fileattached = this.state.uppyPreviews;
+    const Fileattached = this.state.uppyPreviews;
 
-     this.state.subject = '=?UTF-8?B?' + window.btoa(this.state.subject) + '?=';
-     //this.state.content = '=?UTF-8?B?' + window.btoa(this.state.content) + '?=';
-      this.setState({
-          subject: '=?UTF-8?B?' + window.btoa(this.state.subject) + '?=',
-      });
+    this.setState({
+        subject: '=?UTF-8?B?' + window.btoa(this.state.subject) + '?='
+    });
 
     sendMessage({
       data: this.state,
@@ -227,24 +222,24 @@ export class Compose extends PureComponent {
   isInvalid(field) {
     const fieldValue = this.state[field].trim();
     return fieldValue.length > 0 && !getValidEmails(fieldValue).length;
-    }
+  }
 
-    modules = {
-        toolbar: [
-            [{ 'header': [1, 2, false] }],
-            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
-            ['link', 'image'],
-            ['clean']
-        ],
-    }
+  modules = {
+      toolbar: [
+          [{ 'header': [1, 2, false] }],
+          ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+          [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+          ['link', 'image'],
+          ['clean']
+      ],
+  }
 
-    formats = [
-        'header',
-        'bold', 'italic', 'underline', 'strike', 'blockquote',
-        'list', 'bullet', 'indent',
-        'link', 'image'
-    ]
+  formats = [
+      'header',
+      'bold', 'italic', 'underline', 'strike', 'blockquote',
+      'list', 'bullet', 'indent',
+      'link', 'image'
+  ]
 
 
   render() {
@@ -401,5 +396,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile))
 });
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(Compose);
