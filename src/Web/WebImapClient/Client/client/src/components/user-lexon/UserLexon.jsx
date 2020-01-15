@@ -13,6 +13,7 @@ class UserLexon extends Component {
 
     this.state = {
       readyToRedirect: false,
+      readyToRedirectToLogin: false,
       isNewAccount: false
     };
 
@@ -26,7 +27,13 @@ class UserLexon extends Component {
     const casefile = this.props.match.params.idCaseFile;
     const bbdd = this.props.match.params.bbdd;
     const company = this.props.match.params.idCompany;
-    this.props.setCaseFile({casefile: casefile, bbdd: bbdd, company: company});
+    this.props.setCaseFile({
+      casefile: casefile,
+      bbdd: bbdd,
+      company: company
+    });
+
+    this.setState({ isNewAccount: user.slice(2, 3) === "1" ? true : false });
 
     // const isNewAccount = user.slice(2, 3) === "1" ? true : false;
     // if (!isNewAccount) {
@@ -44,6 +51,9 @@ class UserLexon extends Component {
     if (prevProps.lexon !== this.props.lexon) {
       if (this.props.lexon.isNewAccount) {
         removeState();
+        this.setState({
+          readyToRedirect: true
+        });
       } else {
         this.isUniqueAccountByProvider();
       }
@@ -62,9 +72,8 @@ class UserLexon extends Component {
         account => account.provider === PROVIDER
       );
       if (accountsByProvider.length > 1) {
-        removeState();
         this.setState({
-          readyToRedirect: true
+          readyToRedirectToLogin: true
         });
       } else {
         this.setState({
@@ -72,15 +81,19 @@ class UserLexon extends Component {
         });
       }
     }
-  };
+  }
 
   render() {
-    const { readyToRedirect, isNewAccount } = this.state;
+    const {
+      readyToRedirect,
+      readyToRedirectToLogin,
+      isNewAccount
+    } = this.state;
     if (readyToRedirect) {
       return <Redirect to="/" />;
     }
 
-    if (isNewAccount) {
+    if (isNewAccount || readyToRedirectToLogin) {
       this.props.logout();
       return <Redirect to="/login" />;
     }
@@ -102,7 +115,4 @@ const mapDispatchToProps = dispatch => ({
   }
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(UserLexon);
+export default connect(mapStateToProps, mapDispatchToProps)(UserLexon);

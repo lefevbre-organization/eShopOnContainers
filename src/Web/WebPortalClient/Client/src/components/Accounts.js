@@ -13,7 +13,7 @@ class Accounts extends Component {
       <Fragment>
         {accounts.map(el => {
           return (
-            <li key={el.provider}>
+            <li key={el.email}>
               <ProviderInbox
                 userId={userId}
                 provider={el.provider}

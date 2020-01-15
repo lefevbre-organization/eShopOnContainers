@@ -9,12 +9,14 @@ import {
 import Pager from "../pager-buttons/PagerButtons";
 import Synkbutton from "../synk-buttons/SynkButtons";
 import ListActionButtons from "./ListActionButtons";
-
-import { deleteListMessages, addListMessages } from "../actions/message-list.actions";
-
+import {
+  deleteListMessages,
+  addListMessages
+} from "../actions/message-list.actions";
 import { Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { getMessageHeadersFromId } from "../../../../api_graph";
 
 export class MessageToolbar extends PureComponent {
   constructor(props) {
@@ -27,7 +29,8 @@ export class MessageToolbar extends PureComponent {
     this.getLabelMessagesSynk = this.getLabelMessagesSynk.bind(this);
       
     this.state = {
-      selectedMessageIds: []
+      selectedMessageIds: [],
+      messages: []
     };
   }
 
@@ -45,15 +48,29 @@ export class MessageToolbar extends PureComponent {
 
     this.props.toggleSelected(messageIds, checked);
 
-    window.dispatchEvent(new CustomEvent("CheckAllclick", {
-      detail: {
-          listMessages: messageIds,
-          chkselected : checked
-      }         
-    }));
+    getMessageHeadersFromId(messageIds).then(response => {
+      let messages = [];
+      response.messages.forEach(message => {
+        messages.push({
+          id: message.id,
+          subject: message.subject,
+          sentDateTime: message.sentDateTime
+        });
+      });
+      window.dispatchEvent(
+        new CustomEvent("CheckAllclick", {
+          detail: {
+            listMessages: messages,
+            chkselected: checked
+          }
+        })
+      );
 
-    checked ? this.props.addListMessages(messageIds) : this.props.deleteListMessages(messageIds);
-    }
+      checked
+        ? this.props.addListMessages(response.messages)
+        : this.props.deleteListMessages(messageIds);
+    });
+  }
 
   getLabelMessagesSynk() {
       this.props.loadLabelMessageSingle()
@@ -65,45 +82,57 @@ export class MessageToolbar extends PureComponent {
       this.props.getLabelMessages("", "", "")
   }
 
-  navigateToPrevPage() {    
-      this.props.messagesResult.paginatioDirectionSelected = "prev";
-      this.props.getLabelMessages("", "", "");
+  navigateToPrevPage() {
+    this.props.messagesResult.paginatioDirectionSelected = "prev";
+    this.props.getLabelMessages("", "", "");
   }
 
   modifyMessages(addLabelIds, removeLabelIds) {
-    const ids = this.props.messagesResult.messages.filter(el => el.selected).map(el => el.id);
+    const ids = this.props.messagesResult.messages
+      .filter(el => el.selected)
+      .map(el => el.id);
     const actionParams = {
-      ...addLabelIds && {addLabelIds},
-      ...removeLabelIds && {removeLabelIds}
+      ...(addLabelIds && { addLabelIds }),
+      ...(removeLabelIds && { removeLabelIds })
     };
-    this.props.modifyMessages({ ids, ...actionParams});
+    this.props.modifyMessages({ ids, ...actionParams });
   }
 
   render() {
-
     const collapsed = this.props.sideBarCollapsed;
 
     let checked = false;
     let selectedMessages = [];
 
     if (this.props.messagesResult) {
-      selectedMessages = this.props.messagesResult.messages.filter(el => el.selected);
-      checked = this.props.messagesResult.messages.length > 0 &&  selectedMessages.length === this.props.messagesResult.messages.length;
+      selectedMessages = this.props.messagesResult.messages.filter(
+        el => el.selected
+      );
+      checked =
+        this.props.messagesResult.messages.length > 0 &&
+        selectedMessages.length === this.props.messagesResult.messages.length;
     }
 
     return (
       <div className="msg-toolbar">
-         <div className={collapsed ? "pl-2 py-2 pr-4 d-flex align-items-center bd-highlight" : "pl-2 py-2 pr-4 d-flex align-items-center bd-highlight margin-top-5"}>
+        <div
+          className={
+            collapsed
+              ? "pl-2 py-2 pr-4 d-flex align-items-center bd-highlight"
+              : "pl-2 py-2 pr-4 d-flex align-items-center bd-highlight margin-top-5"
+          }
+        >
           <div className="d-flex align-content-center align-items-center">
-           <div className="padding-top-10">
-                <span className={collapsed ? "" : "with-side-bar"}>
-                   <Button
-                      onClick={this.props.sideBarToggle}
-                      className="btn-transparent margin-right-10 margin-bottom-10">
-                      <FontAwesomeIcon icon={faBars} size="1x" />
-                   </Button>
-                </span>
-                
+            <div className="padding-top-10">
+              <span className={collapsed ? "" : "with-side-bar"}>
+                <Button
+                  onClick={this.props.sideBarToggle}
+                  className="btn-transparent margin-right-10 margin-bottom-10"
+                >
+                  <FontAwesomeIcon icon={faBars} size="1x" />
+                </Button>
+              </span>
+
               <Checkbox checked={checked} onChange={this.onSelectionChange} />
             </div>
             <div />
@@ -151,9 +180,6 @@ const mapDispatchToProps = dispatch =>
       addListMessages
     },
     dispatch
-);
+  );
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(MessageToolbar);
+export default connect(mapStateToProps, mapDispatchToProps)(MessageToolbar);

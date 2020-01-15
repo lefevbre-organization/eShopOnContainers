@@ -8,7 +8,7 @@ class ResultsSearch extends Component {
     super(props);
 
     this.state = {
-      classSelected: ''
+      classSelected: ""
     };
 
     this._handleOnClick = this._handleOnClick.bind(this);
@@ -18,7 +18,7 @@ class ResultsSearch extends Component {
     const { updateResultsSelected, result } = this.props;
 
     updateResultsSelected(result);
-    this.setState( { classSelected: this.classSelected() } );
+    this.setState({ classSelected: this.classSelected() });
   }
 
   classSelected() {
@@ -29,18 +29,16 @@ class ResultsSearch extends Component {
   }
 
   render() {
-    const { id, name, description } = this.props.result;
+    const { name, description, client } = this.props.result;
     const classSelected = this.classSelected();
-    
+
     return (
       <tr onClick={() => this._handleOnClick()} className={classSelected}>
         <td>
           <span className="lf-icon-check"></span>
-          {id}
+          {name}
         </td>
-        {
-         (this.props.selections.typeSelected === 1) ? <td>{name}</td> : null
-        }
+        {this.props.selections.typeSelected === 1 ? <td>{client}</td> : null}
         {/* <td>{name}</td> */}
         <td>{description}</td>
       </tr>
@@ -59,4 +57,3 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps)(ResultsSearch);
-

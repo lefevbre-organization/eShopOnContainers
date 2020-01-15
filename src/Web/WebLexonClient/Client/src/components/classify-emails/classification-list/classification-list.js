@@ -35,10 +35,14 @@ class ClassificationList extends Component {
         <table className="lexon-clasification-list">
           <thead>
             <tr>
-              <th>Código</th>
-              {selections.typeSelected === 1 ? <th>Nombre</th> : null}
+              <th>{i18n.t("classification-list.name")}</th>
+              {selections.typeSelected === 1 ? (
+                <th>{i18n.t("classification-list.client")}</th>
+              ) : null}
               {/* <th>Nombre</th> */}
-              <th>Descripción</th>
+              {selections.typeSelected === 1 ? (
+                <th>{i18n.t("classification-list.description")}</th>
+              ) : null}
             </tr>
           </thead>
         </table>

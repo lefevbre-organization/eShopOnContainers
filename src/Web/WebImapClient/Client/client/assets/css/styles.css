@@ -323,7 +323,7 @@ input[type="radio"]:checked + label:after {
 .lexon-clasification-list-search .lexon-clasification-list-results {
   position: relative;
   height: 45px;
-  width: 175px;
+  width: 190px;
   float: left;
   padding-top: 5px;
 }

@@ -13,8 +13,7 @@ import {
   deleteAccountByUserAndEmail
 } from "../services/user-accounts";
 
-import { config, INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP } from "../constants";
-import { Alert } from "react-bootstrap";
+import { INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP } from "../constants";
 
 export class PageGoTo extends Component {
   constructor(props) {
@@ -36,39 +35,10 @@ export class PageGoTo extends Component {
     this.getAccounts();
   }
 
-  parseJwt (token) {
-    var base64Url = token.split('.')[1];
-    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-    //verifyTokenSignature --> to be implemented
-    console.log(JSON.parse(jsonPayload));
-    return JSON.parse(jsonPayload);
-  }
-
-  getUserIdJwt(token){
-    return(token.hasOwnProperty('idClienteNavision') ? token.idClienteNavision : (token.hasOwnProperty('idLexonUser')) ? token.idLexonUser : (token.hasOwnProperty('nameUser')) ? token.nameUser : "");
-  }
-
-  tokenExpired(token){
-    return (token.exp < Math.floor(Date.now() / 1000)) ? true : false;
-  }
-
   async getAccounts() {
-    var userId = this.props.match.params.userId;
+    const userId = this.props.match.params.userId;
     const encrypt = this.props.match.params.encrypt;
-    
-    if (!(/^E[0-9]*/g.test(userId)))
-    {
-      const token = this.parseJwt(this.props.match.params.userId);
-      if (this.tokenExpired(token))
-      {
-        console.log("TOKEN EXPIRADO -> SE RENUEVA TOKEN AUTOMÁTICAMENTE");
-      }
-      userId = this.getUserIdJwt(token);
-    }
-    
+
     getAccounts(userId, encrypt)
       .then(data => {
         this.setState({ loading: false });
@@ -82,7 +52,6 @@ export class PageGoTo extends Component {
 
           if (data.accounts.length !== 0) {
             const account = data.accounts[0];
-            /*
             if (account.defaultAccount) {
               switch (account.provider) {
                 case INBOX_GOOGLE:
@@ -108,7 +77,7 @@ export class PageGoTo extends Component {
                   console.log("Valor no válido");
                   break;
               }
-            }*/
+            }
           }
         }
       })

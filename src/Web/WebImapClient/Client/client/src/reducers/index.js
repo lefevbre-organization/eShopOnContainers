@@ -36,7 +36,7 @@ export const INITIAL_STATE = {
   messages: {
     cache: {},
     selected: [],
-    selectedMessageId: [],
+    selectedMessages: [],
     locked: [],
     activeRequests: 0
   },

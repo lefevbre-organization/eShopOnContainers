@@ -212,7 +212,9 @@ class MessageList extends Component {
       window.dispatchEvent(
         new CustomEvent("Checkclick", {
           detail: {
-            name: message.messageId,
+            id: message.messageId,
+            subject: message.subject,
+            sentDateTime: message.receivedDate,
             chkselected: checked
           }
         })

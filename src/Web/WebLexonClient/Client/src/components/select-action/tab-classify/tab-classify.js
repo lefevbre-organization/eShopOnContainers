@@ -41,7 +41,7 @@ class TabClassify extends Component {
     }
 
     if (selectedMessages.length === 1) {
-      this.getClassifications(this.props.selectedMessages[0]);
+      this.getClassifications(this.props.selectedMessages[0].id);
     } else {
       this.setState({ classifications: [], showClassifications: false });
     }
@@ -56,7 +56,7 @@ class TabClassify extends Component {
       }
 
       if (this.props.selectedMessages.length === 1) {
-        this.getClassifications(this.props.selectedMessages[0]);
+        this.getClassifications(this.props.selectedMessages[0].id);
       } else {
         this.setState({ classifications: [], showClassifications: false });
       }
