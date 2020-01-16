@@ -34,7 +34,7 @@ export const getAccountsWithUserEncrypt = userId => {
           : console.log(`User [${userId}] NOT exists`);
 
         if (user.ID_ENTRADA != null) {
-          const url = `${window.API_ACCOUNTS}/${PARAMS_ACCOUNTS}/${user.ID_ENTRADA}`;
+          const url = `${window.API_ACCOUNTS}/${PARAMS_ACCOUNTS}/${user.N_ENTRADA}`;
           fetch(url, {
             method: "GET"
           })
