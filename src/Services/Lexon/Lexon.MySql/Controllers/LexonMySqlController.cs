@@ -38,6 +38,24 @@ namespace Lexon.MySql.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        [HttpGet]
+        [Route("token")]
+        [ProducesResponseType(typeof(Result<JosUser>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<JosUser>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> TokenAsync(
+            string idNavisionUser = "E1621396"
+            , string bbdd = "lexon_admin_02"
+            , string idMail = null
+            , short? idEntityType = 1
+            , int? idEntity = null)
+        {
+            if (string.IsNullOrEmpty(idNavisionUser))
+                return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
+
+            var result = await _lexonService.GetUserAsync(idNavisionUser, bbdd, idMail, idEntityType, idEntity);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
 
 
         [HttpGet]

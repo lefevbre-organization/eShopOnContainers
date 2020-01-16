@@ -7,4 +7,9 @@ namespace Lexon.MySql.Model
         public long IdUser { get; set; }
         public string Token { get; set; }
     }
+
+    public class JosToken
+    {
+        public string Token { get; set; }
+    }
 }
