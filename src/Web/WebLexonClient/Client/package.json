@@ -61,6 +61,7 @@
   "scripts": {
     "start": "set PORT=3004 && node scripts/start.js",
     "serve": "node scripts/http-server.js build 3004",
+    "build:watch": "nodemon --exec \"npm run build && npm run serve\"  --watch src",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom"
   },
@@ -107,6 +108,7 @@
     "extends": "react-app"
   },
   "devDependencies": {
-    "express": "^4.16.3"
+    "express": "^4.16.3",
+    "nodemon": "^2.0.2"
   }
 }
