@@ -22,9 +22,9 @@ class SelectActionTab extends Component {
             toggleNotification={toggleNotification}
           />
         </Tab>
-        <Tab eventKey="document" title="Documentar">
+        {/* <Tab eventKey="document" title="Documentar">
           <TabDocument userNavision={user} />
-        </Tab>
+        </Tab> */}
       </Tabs>
     );
   }
