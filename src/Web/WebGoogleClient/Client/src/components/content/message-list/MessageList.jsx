@@ -204,6 +204,7 @@ export class MessageList extends PureComponent {
           nextToken={nextToken}
           prevToken={prevToken}
           navigateToNextPage={this.props.navigateToNextPage}
+          navigateToPrevPage={this.props.navigateToPrevPage}
           getLabelMessages={this.props.getLabelMessages}
           getPageTokens={this.props.getPageTokens}
           loadLabelMessageSingle={this.props.loadLabelMessageSingle}
