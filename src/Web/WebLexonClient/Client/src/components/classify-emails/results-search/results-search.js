@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import "./results-search.css";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -28,19 +28,37 @@ class ResultsSearch extends Component {
     return resultsSelected.indexOf(id) !== -1 ? "selected" : "";
   }
 
+  renderCasefile(name, description, client) {
+    return <Fragment>
+      <td>
+        <span className="lf-icon-check"></span>
+        {name}
+      </td>
+      <td>{client}</td>
+      <td>{description}</td>
+    </Fragment>
+  }
+
+  renderPerson(description, intervening) {
+    return <Fragment>
+       <td>
+          <span className="lf-icon-check"></span>
+          {description}
+        </td>
+         <td>
+          {intervening}
+         </td>
+    </Fragment>
+  }
+
   render() {
-    const { name, description, client } = this.props.result;
+    const { name, description, client, intervening = '' } = this.props.result;
     const classSelected = this.classSelected();
 
     return (
       <tr onClick={() => this._handleOnClick()} className={classSelected}>
-        <td>
-          <span className="lf-icon-check"></span>
-          {name}
-        </td>
-        {this.props.selections.typeSelected === 1 ? <td>{client}</td> : null}
-        {/* <td>{name}</td> */}
-        <td>{description}</td>
+        {this.props.selections.typeSelected === 1 && this.renderCasefile(name, description, client)}
+        {this.props.selections.typeSelected !== 1 && this.renderPerson(description, intervening)}
       </tr>
     );
   }
