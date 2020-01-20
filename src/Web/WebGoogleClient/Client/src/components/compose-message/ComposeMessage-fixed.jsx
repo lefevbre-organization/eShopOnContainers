@@ -5,17 +5,18 @@ import i18n from "i18next";
 import { Button, InputGroup, InputGroupAddon, Input } from "reactstrap";
 // import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faTrash } from "@fortawesome/free-solid-svg-icons";
 import ReactQuill from "react-quill";
 import "../../../node_modules/react-quill/dist/quill.snow.css";
 import "./composeMessage.scss";
 import ACTIONS from "../../actions/lexon";
 import { connect } from "react-redux";
+import { prettySize } from "../../utils/prettify";
 
 const Uppy = require("@uppy/core");
 const Tus = require("@uppy/tus");
 const GoogleDrive = require("@uppy/google-drive");
-const { DragDrop, ProgressBar } = require("@uppy/react");
+//const { DragDrop, ProgressBar } = require("@uppy/react");
 
 export class ComposeMessage extends PureComponent {
   constructor(props) {
@@ -43,7 +44,8 @@ export class ComposeMessage extends PureComponent {
         "",
       showInlineDashboard: false,
       open: false,
-      uppyPreviews: []
+      uppyPreviews: [],
+      dropZoneActive: false
     };
     this.handleChange = this.handleChange.bind(this);
     this.sendEmail = this.sendEmail.bind(this);
@@ -59,7 +61,7 @@ export class ComposeMessage extends PureComponent {
     //    .use(Tus, { endpoint: 'https://master.tus.io/files/' })
 
     this.uploadFile = this.uploadFile.bind(this);
-    this.addFileToState = this.addFileToState.bind(this);
+    //this.addFileToState = this.addFileToState.bind(this);
     this.removeFile = this.removeFile.bind(this);
     this.showAttachActions = false;
 
@@ -78,12 +80,17 @@ export class ComposeMessage extends PureComponent {
         this.reader.readAsDataURL(file.data);
        
         this.reader.onload = readerEvt =>
-            this.addFileToState({ file, base64: readerEvt.target.result });
+            //this.addFileToState({ file, base64: readerEvt.target.result });
+            this.addFilesToState();
             this.showAttachActions = true
-
-     
     });
 
+    }
+
+    componentDidMount() {
+      document.querySelector('.editor-wrapper').handleResize = entry => {
+        debugger
+      }
     }
 
   removeFile() {
@@ -97,6 +104,11 @@ export class ComposeMessage extends PureComponent {
       this.setState({          
           uppyPreviews: []
       });
+  }
+
+  removeAttachment(file) {
+    this.uppy.removeFile(file.id);
+    this.addFilesToState();
   }
 
   closeModal() {
@@ -116,8 +128,15 @@ export class ComposeMessage extends PureComponent {
     this.props.history.push("/inbox");
   }
 
-  addFileToState({ file, base64 }) {
+  addFilesToState() {
+    const fls = this.uppy.getFiles();
 
+    this.setState({
+      uppyPreviews: fls
+    });
+  }
+
+  addFileToState({ file, base64 }) {
     for (const prop in this.state.uppyPreviews) {
           //console.log(`obj.${prop} = ${this.state.uppyPreviews[prop]}`);
           //console.log(this.state.uppyPreviews[0].file["name"])
@@ -140,7 +159,7 @@ export class ComposeMessage extends PureComponent {
     this.uppy.close();
   }
 
-  handleChange(value) {
+  handleChange(value, delta, source, editor) {
     this.setState({ content: value });
   }
 
@@ -234,6 +253,49 @@ export class ComposeMessage extends PureComponent {
         'link'
     ]
 
+    /* Drag and drop events */
+    onDrop(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.setState({ dropZoneActive: false });
+      const uppy = this.uppy;
+      const addAttachment = (file, dataUrl) => {
+        const newAttachment = {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          source: 'Local',
+          isRemote: false,
+          data: file,
+          //content: dataUrl.currentTarget.result.replace(/^data:[^;]*;base64,/, "")
+        };
+       
+        uppy.addFile(newAttachment);
+      };
+      Array.from(event.dataTransfer.files).forEach(file => {
+        // const fileReader = new FileReader();
+        // fileReader.onload = addAttachment.bind(this, file);
+        // fileReader.readAsDataURL(file);
+        addAttachment(file);
+      });
+      return true;
+    }
+  
+    onDragOver(event) {
+      event.preventDefault();
+      if (
+        event.dataTransfer.types &&
+        Array.from(event.dataTransfer.types).includes("Files")
+      ) {
+        this.setState({ dropZoneActive: true });
+      }
+    }
+  
+    onDragLeave(event) {
+      event.preventDefault();
+      this.setState({ dropZoneActive: false });
+    }
+
   render() {
     const collapsed = this.props.sideBarCollapsed;
 
@@ -260,84 +322,98 @@ export class ComposeMessage extends PureComponent {
               </div>
             </div>
           </div>
-          <div className="container-panel">
-            <div className="compose-message">
-              <div className="message-fields">
-                <InputGroup>
-                  <InputGroupAddon addonType="prepend">
-                    {i18n.t("compose-message.to")}
-                  </InputGroupAddon>
-                  <Input
-                    tabIndex={1}
-                    value={this.state.to}
-                    placeholder={i18n.t("compose-message.comma-separated")}
-                    invalid={this.isInvalid("to")}
-                    onChange={this.setField("to")}
-                  />
-                </InputGroup>
-                <InputGroup>
-                  <InputGroupAddon addonType="prepend">Cc:</InputGroupAddon>
-                  <Input
-                    tabIndex={2}
-                    value={this.state.cc}
-                    placeholder={i18n.t("compose-message.comma-separated")}
-                    invalid={this.isInvalid("cc")}
-                    onChange={this.setField("cc")}
-                  />
-                </InputGroup>
-                <InputGroup>
-                  <InputGroupAddon addonType="prepend">
-                    {i18n.t("compose-message.bcc")}
-                  </InputGroupAddon>
-                  <Input
-                    tabIndex={3}
-                    placeholder={i18n.t("compose-message.comma-separated")}
-                    invalid={this.isInvalid("bcc")}
-                    onChange={this.setField("bcc")}
-                  />
-                </InputGroup>
-                <InputGroup>
-                  <InputGroupAddon addonType="prepend">
-                    {i18n.t("compose-message.subject")}
-                  </InputGroupAddon>
-                  <Input
-                    tabIndex={4}
-                    placeholder=""
-                    value={this.state.subject}
-                    onChange={this.setField("subject", false)}
-                  />
-                </InputGroup>
-              </div>
-              <div>
-                <div className="editor-wrapper">
-                  <ReactQuill
-                    tabIndex={5}
-                    value={this.state.content}
-                    onChange={this.handleChange}
-                    className="autoResizeHeight"
-                    modules={this.modules}
-                    formats={this.formats}
-                  />
+          <div className="container-panel"
+          onDrop={(event) => { this.onDrop(event)} }
+          onDragOver={(event) => { this.onDragOver(event)} }
+          onDragLeave={(event) => { this.onDragLeave(event)} }>
+             {this.state.dropZoneActive ? (
+                  <div className="dropZone">
+                    <div className="dropZoneMessage">
+                      <i className={"material-icons"}>attach_file</i>
+                      {i18n.t("messageEditor.dropZoneMessage")}
+                    </div>
+                  </div>
+                ) : null}
+            <div className="compose-message">                
+                <div className="message-fields">
+                  <InputGroup>
+                    <InputGroupAddon addonType="prepend">
+                      {i18n.t("compose-message.to")}
+                    </InputGroupAddon>
+                    <Input
+                      tabIndex={1}
+                      value={this.state.to}
+                      placeholder={i18n.t("compose-message.comma-separated")}
+                      invalid={this.isInvalid("to")}
+                      onChange={this.setField("to")}
+                    />
+                  </InputGroup>
+                  <InputGroup>
+                    <InputGroupAddon addonType="prepend">Cc:</InputGroupAddon>
+                    <Input
+                      tabIndex={2}
+                      value={this.state.cc}
+                      placeholder={i18n.t("compose-message.comma-separated")}
+                      invalid={this.isInvalid("cc")}
+                      onChange={this.setField("cc")}
+                    />
+                  </InputGroup>
+                  <InputGroup>
+                    <InputGroupAddon addonType="prepend">
+                      {i18n.t("compose-message.bcc")}
+                    </InputGroupAddon>
+                    <Input
+                      tabIndex={3}
+                      placeholder={i18n.t("compose-message.comma-separated")}
+                      invalid={this.isInvalid("bcc")}
+                      onChange={this.setField("bcc")}
+                    />
+                  </InputGroup>
+                  <InputGroup>
+                    <InputGroupAddon addonType="prepend">
+                      {i18n.t("compose-message.subject")}
+                    </InputGroupAddon>
+                    <Input
+                      tabIndex={4}
+                      placeholder=""
+                      value={this.state.subject}
+                      onChange={this.setField("subject", false)}
+                    />
+                  </InputGroup>
                 </div>
+                {/* <div> */}
+                  <div className="editor-wrapper">
+                    <ReactQuill
+                      tabIndex={5}
+                      value={this.state.content}
+                      onChange={this.handleChange}
+                      className=""
+                      modules={this.modules}
+                      formats={this.formats}
+                    />
+                    <div className="ImagePreviewContainer compose-dropcontainer attachments">
+                      {this.state.uppyPreviews.map(item => {
+                        return (
+                          <div key={item.id} className={"attachment"}>
+                          <span className={"fileName"}>{item.name}</span>
+                          <span className={"size"}>({prettySize(item.size, 0)})</span>
+                          <Button
+                          onClick={() => { this.removeAttachment(item)} }
+                          className={"delete"}
+                          >
+                            <FontAwesomeIcon icon={faTrash} size="1x" />
+                          </Button>
+
+                        </div> 
+                        );
+                      })}
+                    </div>
+                {/* </div> */}
               </div>
             </div>
            
-            <div className="ImagePreviewContainer compose-dropcontainer">
-              {this.state.uppyPreviews.map(item => {
-                return (
-                  <object
-                    className="FileList"
-                    key={item.file.id}
-                    type={item.file.type}
-                    width="80px"
-                    height="auto"
-                    data={item.base64}
-                  >
-                    {item.file.name}
-                  </object>
-                );
-              })}
-            </div>
+            
+{/*             
             <ProgressBar uppy={this.uppy} hideAfterFinish={false} />
                     
             <button className={"button-remove-attach mr-left font-weight-bold  " + (this.showAttachActions ? 'show-btn' : 'hidden-btn')} onClick={this.removeFile}>Remove attachments</button>
@@ -360,6 +436,7 @@ export class ComposeMessage extends PureComponent {
                 }}
               />
             </div>
+           */}
             <div className="footer compose-footer">
               <Button
                 className="mr-auto font-weight-bold"
