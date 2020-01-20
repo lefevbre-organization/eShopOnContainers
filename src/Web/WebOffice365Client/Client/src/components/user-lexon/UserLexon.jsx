@@ -88,7 +88,7 @@ class UserLexon extends Component {
       );
       if (accountsByProvider.length > 1) {
         if (this.checkIsAuthenticated()) {
-          this.onSignout();
+         // this.onSignout();
         }
       }
       this.setState({

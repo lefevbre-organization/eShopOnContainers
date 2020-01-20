@@ -27,6 +27,7 @@ class AppContainer extends Component {
     this.init = this.init.bind(this);
     this.initClient = this.initClient.bind(this);
     this.onSignout = this.onSignout.bind(this);
+    this.onSignoutDisconnect = this.onSignoutDisconnect.bind(this);
     this.onSignInSuccess = this.onSignInSuccess.bind(this);
     this.onSignIn = this.onSignIn.bind(this);
   }
@@ -70,6 +71,10 @@ class AppContainer extends Component {
 
   onSignout() {
     this.props.signOut();
+  }
+
+  onSignoutDisconnect() {
+    this.props.signOutDisconnect();
   }
 
   onSignIn() {

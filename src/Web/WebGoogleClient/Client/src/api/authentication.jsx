@@ -1,5 +1,5 @@
 export const signIn = () => {
-  return window.gapi.auth2.getAuthInstance().signIn();
+    return window.gapi.auth2.getAuthInstance().signIn({ "prompt": "select_account", "app_package_name": "Lefebvre.mail.com" });
 };
 
 export const initGmailClient = (apiKey, clientId) => {
@@ -60,6 +60,11 @@ export const updateSigninStatus = isSignedIn => {
   }
 };
 
-export const signOut = () => {
+export const signOut = (disconnect) => {
   return window.gapi.auth2.getAuthInstance().signOut();
+};
+
+export const signOutDisconnect = () => {
+   window.gapi.auth2.getAuthInstance().signOut();
+   return window.gapi.auth2.getAuthInstance().disconnect();
 };

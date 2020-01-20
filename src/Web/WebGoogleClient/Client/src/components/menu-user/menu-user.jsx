@@ -16,13 +16,15 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import i18n from "i18next";
 
+
 class MenuUser extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       dropdownOpen: false,
-      accounts: []
+      accounts: [],
+      disconnect: true
     };
 
     this.toggle = this.toggle.bind(this);
@@ -82,9 +84,11 @@ class MenuUser extends Component {
     }
   }
 
+  
+
   render() {
     const { dropdownOpen, accounts } = this.state;
-    const { picUrl, fullName, onSignout, lexon } = this.props;
+    const { picUrl, fullName, onSignout, onSignoutDisconnect, lexon } = this.props;
 
     let acronym = undefined;
     if (!picUrl) {
@@ -178,7 +182,10 @@ class MenuUser extends Component {
                     <PerfectScrollbar>
                       <ul className="other-accounts">
                         {accounts.map(account => (
-                          <AccountUser key={account.id} account={account} />
+                            <AccountUser
+                                key={account.id}
+                                account={account}
+                            />
                         ))}
                       </ul>
                     </PerfectScrollbar>
@@ -216,7 +223,8 @@ MenuUser.propTypes = {
   picUrl: PropTypes.string.isRequired,
   email: PropTypes.string.isRequired,
   fullName: PropTypes.string.isRequired,
-  onSignout: PropTypes.func.isRequired
+  onSignout: PropTypes.func.isRequired,
+  onSignoutDisconnect: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({

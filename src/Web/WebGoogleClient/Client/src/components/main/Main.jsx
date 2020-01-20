@@ -21,6 +21,7 @@ import {
 } from "../content/message-list/actions/message-list.actions";
 import { selectLabel } from "../sidebar/sidebar.actions";
 import { signOut } from "../../api/authentication";
+import { signOutDisconnect} from "../../api/authentication";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import SidebarCnn from "react-sidebar";
@@ -41,6 +42,7 @@ export class Main extends Component {
     this.navigateToPrevPage = this.navigateToPrevPage.bind(this);
     this.addInitialPageToken = this.addInitialPageToken.bind(this);
     this.onSignout = this.onSignout.bind(this);
+    this.onSignoutDisconnect = this.onSignoutDisconnect.bind(this);
     this.loadLabelMessageSingle = this.loadLabelMessageSingle.bind(this);
 
     //this.leftSidebarOpen = leftSidebarOpen;
@@ -332,14 +334,38 @@ export class Main extends Component {
     fetch(url, {
       method: "GET"
     })
-      .then(result => {
-        signOut();
+        .then(result => {
+            signOut()
       })
       .then(_ => {
         const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
         window.open(urlRedirect, "_self");
       });
-  }
+      
+      //sessionStorage.clear();
+      //localStorage.clear();
+    }
+
+    onSignoutDisconnect() {
+        console.log("IN ... onSignoutDisconnect");
+        const { userId } = this.props.lexon;
+        const url = `${window.URL_RESET_DEFAULTACCOUNT}/${userId}`;
+        fetch(url, {
+            method: "GET"
+        })
+            .then(result => {
+                signOutDisconnect()
+            })
+            .then(_ => {
+                const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+                window.open(urlRedirect, "_self");
+            });
+
+        //sessionStorage.clear();
+        //localStorage.clear();
+    }
+
+ 
 
   renderInboxViewport() {
     const { leftSideBar } = this.state;
@@ -398,6 +424,7 @@ export class Main extends Component {
           <Header
             googleUser={this.props.googleUser}
             onSignout={this.onSignout}
+            onSignoutDisconnect={this.onSignout}
             setSearchQuery={this.props.setSearchQuery}
             getLabelMessages={this.getLabelMessages}
             searchQuery={this.props.searchQuery}
