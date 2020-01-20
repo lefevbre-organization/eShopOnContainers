@@ -29,6 +29,7 @@ class MenuUser extends Component {
 
     this.toggle = this.toggle.bind(this);
     this._handleOnClick = this._handleOnClick.bind(this);
+    
   }
 
   componentDidMount() {
@@ -103,6 +104,8 @@ class MenuUser extends Component {
       window.location.reload();
     }
   }
+
+    
 
   render() {
     const { dropdownOpen, accounts } = this.state;
@@ -194,7 +197,7 @@ class MenuUser extends Component {
                     <PerfectScrollbar>
                       <ul className="other-accounts">
                         {accounts.map(account => (
-                          <AccountUser key={account.id} account={account} />
+                            <AccountUser key={account.id} account={account} />
                         ))}
                       </ul>
                     </PerfectScrollbar>

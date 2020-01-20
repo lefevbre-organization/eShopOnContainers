@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./account-user.css";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { removeStateExLexon } from "../../../services/state";
 
 class AccountUser extends Component {
   constructor(props) {
@@ -24,7 +25,12 @@ class AccountUser extends Component {
         break;
 
       default:
-        window.open(`${window.URL_MF_IMAP}/IM0${userId}`, "_self");
+            if (this.props.lexon.provider == this.props.account.provider.substring(0, 2)) {
+                removeStateExLexon();
+                window.location.reload();
+            }
+
+       // window.open(`${window.URL_MF_IMAP}/IM0${userId}`, "_self");
 
         break;
     }
