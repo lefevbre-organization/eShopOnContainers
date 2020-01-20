@@ -53,15 +53,7 @@ export class ComposeMessage extends PureComponent {
       maxFileSize:3145728
     } })
       .use(Tus, { endpoint: "https://master.tus.io/files/" })
-      //.use(GoogleDrive, { serverUrl: "https://companion.uppy.io" });
-   
-
-    //this.uppy2 = new Uppy({ id: 'uppy2', autoProceed: false, debug: true })
-    //    .use(Tus, { endpoint: 'https://master.tus.io/files/' })
-
     this.uploadFile = this.uploadFile.bind(this);
-    //this.addFileToState = this.addFileToState.bind(this);
-    this.removeFile = this.removeFile.bind(this);
     this.showAttachActions = false;
 
     this.uppy.on("complete", result => {
@@ -70,34 +62,18 @@ export class ComposeMessage extends PureComponent {
         result.successful
       );
     });
-    this.uppy.on("file-added", file => {
-        console.log("Added file", file);
+      this.uppy.on("file-added", file => {
+          console.log("Added file", file);
+          
+          // Define this onload every time to get file and base64 every time
+          this.reader = new FileReader();
+          this.reader.readAsDataURL(file.data);
         
-        // Define this onload every time to get file and base64 every time
-        this.reader = new FileReader();
-        //setTimeout(() => { this.reader.readAsDataURL(file.data); }, 4000);
-        this.reader.readAsDataURL(file.data);
-       
-        this.reader.onload = readerEvt =>
-            this.addFileToState({ file, base64: readerEvt.target.result });
-            //this.addFilesToState();
-            this.showAttachActions = true
-    });
-    }
-
-
-  removeFile() {
-      //  console.log(this.uppy.getFiles());      
-      //this.uppy.getFiles().forEach(file => {   
-      //    console.log(file.id)
-      //    this.state.uppyPreviews.removeFile(file.id)
-      //});
-      this.uppy.reset();
-      this.showAttachActions = false
-      this.setState({          
-          uppyPreviews: []
+          this.reader.onload = readerEvt =>
+              this.addFileToState({ file, base64: readerEvt.target.result });
+              this.showAttachActions = true
       });
-  }
+    }
 
   removeAttachment(file) {
     this.uppy.removeFile(file.id);
@@ -145,10 +121,8 @@ export class ComposeMessage extends PureComponent {
     });
   }
 
-
   uploadFile() {
     console.log(this.state.uppyPreviews);
-    // this.uppyOne.upload();
   }
 
   componentWillUnmount() {
@@ -329,8 +303,8 @@ export class ComposeMessage extends PureComponent {
              {this.state.dropZoneActive ? (
                   <div className="dropZone">
                     <div className="dropZoneMessage">
-                      <i className={"material-icons"}>attach_file</i>
-                      {i18n.t("messageEditor.dropZoneMessage")}
+                      <i className={"material-icons"}></i>
+                      {i18n.t("compose-message.drag-and-drop")}
                     </div>
                   </div>
                 ) : null}

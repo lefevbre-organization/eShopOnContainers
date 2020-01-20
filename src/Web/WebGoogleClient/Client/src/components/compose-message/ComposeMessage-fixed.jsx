@@ -51,15 +51,7 @@ export class ComposeMessage extends PureComponent {
     this.setField = this.setField.bind(this);
     this.uppy = new Uppy({ id: "uppy1", autoProceed: false, debug: true })
       .use(Tus, { endpoint: "https://master.tus.io/files/" })
-      //.use(GoogleDrive, { serverUrl: "https://companion.uppy.io" });
-   
-
-    //this.uppy2 = new Uppy({ id: 'uppy2', autoProceed: false, debug: true })
-    //    .use(Tus, { endpoint: 'https://master.tus.io/files/' })
-
     this.uploadFile = this.uploadFile.bind(this);
-    //this.addFileToState = this.addFileToState.bind(this);
-    this.removeFile = this.removeFile.bind(this);
     this.showAttachActions = false;
 
     this.uppy.on("complete", result => {
@@ -83,19 +75,18 @@ export class ComposeMessage extends PureComponent {
     });
     }
 
-
-  removeFile() {
-      //  console.log(this.uppy.getFiles());      
-      //this.uppy.getFiles().forEach(file => {   
-      //    console.log(file.id)
-      //    this.state.uppyPreviews.removeFile(file.id)
-      //});
-      this.uppy.reset();
-      this.showAttachActions = false
-      this.setState({          
-          uppyPreviews: []
-      });
-  }
+  // removeFile() {
+  //     //  console.log(this.uppy.getFiles());      
+  //     //this.uppy.getFiles().forEach(file => {   
+  //     //    console.log(file.id)
+  //     //    this.state.uppyPreviews.removeFile(file.id)
+  //     //});
+  //     this.uppy.reset();
+  //     this.showAttachActions = false
+  //     this.setState({          
+  //         uppyPreviews: []
+  //     });
+  // }
 
   removeAttachment(file) {
     this.uppy.removeFile(file.id);
@@ -188,8 +179,6 @@ export class ComposeMessage extends PureComponent {
       body: this.state.content,
       attachments: Fileattached
     }).then(_ => {
-      //this.resetFields();
-      //this.closeModal();
     });
     this.resetFields();
     this.closeModal();
@@ -319,7 +308,7 @@ export class ComposeMessage extends PureComponent {
                   <div className="dropZone">
                     <div className="dropZoneMessage">
                       <i className={"material-icons"}>attach_file</i>
-                      {i18n.t("messageEditor.dropZoneMessage")}
+                      {i18n.t("compose-message.drag-and-drop")}
                     </div>
                   </div>
                 ) : null}
