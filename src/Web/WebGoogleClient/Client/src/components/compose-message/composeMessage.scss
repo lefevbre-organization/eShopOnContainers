@@ -92,8 +92,8 @@
             overflow-y: scroll;
             background-color: red;
 
-            .quill {
-                height: 100%;
+            height: calc(100% - 60px);
+                .quill {
 
                 .ql-container.ql-snow {
                     border: 0;
@@ -214,7 +214,7 @@ $font-weight-bold: 700;
 }
 
 .editor-wrapper {
-    overflow-y: auto;
+    overflow-y: scroll;
     scrollbar-width: thin;
     min-height: 200px;
     // max-height: 300px;
@@ -229,7 +229,7 @@ $font-weight-bold: 700;
     border-left: none;
     border-right: none;
     z-index: 1;
-    width: calc(100% - 42px);
+    width: calc(100% - 58px);
 }
 
 .ql-editor {
@@ -239,4 +239,8 @@ $font-weight-bold: 700;
 
 .ql-container.ql-snow {
     border: none;
+}
+
+.quill {
+    height: calc(100% - 60px);
 }

@@ -3,7 +3,6 @@ import { sendMessage } from "../../api";
 import { getValidEmails } from "../../utils";
 import i18n from "i18next";
 import { Button, InputGroup, InputGroupAddon, Input } from "reactstrap";
-// import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faTrash } from "@fortawesome/free-solid-svg-icons";
 import ReactQuill from "react-quill";
@@ -15,8 +14,6 @@ import { prettySize } from "../../utils/prettify";
 
 const Uppy = require("@uppy/core");
 const Tus = require("@uppy/tus");
-const GoogleDrive = require("@uppy/google-drive");
-//const { DragDrop, ProgressBar } = require("@uppy/react");
 
 export class ComposeMessage extends PureComponent {
   constructor(props) {
@@ -67,7 +64,7 @@ export class ComposeMessage extends PureComponent {
 
     this.uppy.on("complete", result => {
       console.log(
-        "Upload complete! We�ve uploaded these files:",
+        "Upload complete! We've uploaded these files:",
         result.successful
       );
     });
@@ -80,18 +77,12 @@ export class ComposeMessage extends PureComponent {
         this.reader.readAsDataURL(file.data);
        
         this.reader.onload = readerEvt =>
-            //this.addFileToState({ file, base64: readerEvt.target.result });
-            this.addFilesToState();
+            this.addFileToState({ file, base64: readerEvt.target.result });
+            //this.addFilesToState();
             this.showAttachActions = true
     });
-
     }
 
-    componentDidMount() {
-      document.querySelector('.editor-wrapper').handleResize = entry => {
-        debugger
-      }
-    }
 
   removeFile() {
       //  console.log(this.uppy.getFiles());      
@@ -108,7 +99,7 @@ export class ComposeMessage extends PureComponent {
 
   removeAttachment(file) {
     this.uppy.removeFile(file.id);
-    this.addFilesToState();
+    this.addFileToState();
   }
 
   closeModal() {
@@ -128,27 +119,23 @@ export class ComposeMessage extends PureComponent {
     this.props.history.push("/inbox");
   }
 
-  addFilesToState() {
+  addFileToState(file) {
     const fls = this.uppy.getFiles();
+
+    if(file) {
+      for(let i = 0; i < fls.length; i++) {
+        if(fls[i].id === file.file.id) {
+          fls[i].content = file.base64;
+          break;
+        }
+      }  
+    }
 
     this.setState({
       uppyPreviews: fls
     });
   }
 
-  addFileToState({ file, base64 }) {
-    for (const prop in this.state.uppyPreviews) {
-          //console.log(`obj.${prop} = ${this.state.uppyPreviews[prop]}`);
-          //console.log(this.state.uppyPreviews[0].file["name"])
-          if (this.state.uppyPreviews[prop].file["id"] == file["id"]) {
-              file["id"] = file["id"] + prop
-          }
-
-    }
-    this.setState({
-      uppyPreviews: [{ file, base64 }, ...this.state.uppyPreviews]
-    });
-  }
 
   uploadFile() {
     console.log(this.state.uppyPreviews);
@@ -201,9 +188,11 @@ export class ComposeMessage extends PureComponent {
       body: this.state.content,
       attachments: Fileattached
     }).then(_ => {
-      this.resetFields();
-      this.closeModal();
+      //this.resetFields();
+      //this.closeModal();
     });
+    this.resetFields();
+    this.closeModal();
   }
 
   resetFields() {
@@ -273,9 +262,9 @@ export class ComposeMessage extends PureComponent {
         uppy.addFile(newAttachment);
       };
       Array.from(event.dataTransfer.files).forEach(file => {
-        // const fileReader = new FileReader();
-        // fileReader.onload = addAttachment.bind(this, file);
-        // fileReader.readAsDataURL(file);
+        //const fileReader = new FileReader();
+        //fileReader.onload = addAttachment.bind(this, file);
+        //fileReader.readAsDataURL(file);
         addAttachment(file);
       });
       return true;
@@ -381,7 +370,6 @@ export class ComposeMessage extends PureComponent {
                     />
                   </InputGroup>
                 </div>
-                {/* <div> */}
                   <div className="editor-wrapper">
                     <ReactQuill
                       tabIndex={5}
@@ -408,7 +396,6 @@ export class ComposeMessage extends PureComponent {
                         );
                       })}
                     </div>
-                {/* </div> */}
               </div>
             </div>
            
