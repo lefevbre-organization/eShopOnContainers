@@ -3,7 +3,7 @@ import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import ACTIONS from "../../actions/lexon";
 import { mountScripts } from "../../api/scripts";
-import { checkSignInStatus, signOut } from "../../api/authentication";
+import { checkSignInStatus, signOut, signOutDisconnect } from "../../api/authentication";
 import { PROVIDER } from "../../constants";
 
 class UserLexon extends Component {
@@ -71,7 +71,7 @@ class UserLexon extends Component {
   initClient() {
     checkSignInStatus()
       .then(_ => {
-        this.onSignout();
+          //this.onSignout();
         this.setState({
           readyToRedirect: true
         });
@@ -87,6 +87,10 @@ class UserLexon extends Component {
 
   onSignout() {
     signOut();
+    }
+
+  onSignoutDisconnect() {
+        signOutDisconnect();
   }
 
   render() {

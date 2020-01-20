@@ -2,12 +2,14 @@ import React, { Component } from "react";
 import "./account-user.css";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { signOut } from "../../../api/authentication";
 
 class AccountUser extends Component {
   constructor(props) {
     super(props);
 
-    this._handleOnClick = this._handleOnClick.bind(this);
+      this._handleOnClick = this._handleOnClick.bind(this);
+      
   }
 
   _handleOnClick(provider) {
@@ -15,17 +17,15 @@ class AccountUser extends Component {
 
     switch (provider) {
       case "GOOGLE":
+        signOut();
         window.open(`${window.URL_MF_GOOGLE}/GO0${userId}`, "_self");
-
         break;
       case "OUTLOOK":
         window.open(`${window.URL_MF_OUTLOOK}/OU0${userId}`, "_self");
-
         break;
 
       default:
         window.open(`${window.URL_MF_IMAP}/IM0${userId}`, "_self");
-
         break;
     }
   }
