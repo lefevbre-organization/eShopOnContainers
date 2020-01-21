@@ -14,6 +14,7 @@ import { prettySize } from "../../utils/prettify";
 
 const Uppy = require("@uppy/core");
 const Tus = require("@uppy/tus");
+const MAX_TOTAL_ATTACHMENTS_SIZE = 26214400;
 
 export class ComposeMessage extends PureComponent {
   constructor(props) {
@@ -49,7 +50,27 @@ export class ComposeMessage extends PureComponent {
     this.goBack = this.goBack.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.setField = this.setField.bind(this);
-    this.uppy = new Uppy({ id: "uppy1", autoProceed: false, debug: true })
+    this.uppy = new Uppy({ 
+      id: "uppy1", 
+      autoProceed: false, 
+      debug: true,
+      onBeforeFileAdded: (currentFile, files) => {
+        let totalSize = currentFile.size;
+
+        for (var file in files) {
+          if (Object.prototype.hasOwnProperty.call(files, file)) {
+            totalSize += files[file].size;
+          }
+        }
+
+        if (totalSize > MAX_TOTAL_ATTACHMENTS_SIZE) {
+          window.alert("El tamaño total de los ficheros adjuntos no puede ser superior a 25MB para este proveedor.")
+          return false;
+        } else {
+          return true;
+        }
+      }
+    })
       .use(Tus, { endpoint: "https://master.tus.io/files/" })
     this.uploadFile = this.uploadFile.bind(this);
     this.showAttachActions = false;
@@ -307,7 +328,6 @@ export class ComposeMessage extends PureComponent {
              {this.state.dropZoneActive ? (
                   <div className="dropZone">
                     <div className="dropZoneMessage">
-                      <i className={"material-icons"}>attach_file</i>
                       {i18n.t("compose-message.drag-and-drop")}
                     </div>
                   </div>
