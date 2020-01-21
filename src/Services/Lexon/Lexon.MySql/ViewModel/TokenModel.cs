@@ -10,6 +10,8 @@
         public string name { get; set; }
 
         public string idMail { get; set; }
+        public string provider { get; set; }
+        public string mailAccount { get; set; }
 
         public long? idLexonUser { get; set; }
 

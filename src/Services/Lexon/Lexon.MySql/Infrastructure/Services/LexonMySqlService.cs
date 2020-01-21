@@ -62,7 +62,7 @@ namespace Lexon.MySql.Infrastructure.Services
         /// <param name="idEntityType">opcionalmente el tipo de entidad si viene relacionado</param>
         /// <param name="idEntity">opcionalmente el id de entidad si viene relacionado</param>
         /// <returns></returns>
-        public async Task<Result<JosUser>> GetUserAsync(string idUser, string bbdd,  string idMail = null, short? idEntityType = null, int? idEntity = null )
+        public async Task<Result<JosUser>> GetUserAsync(string idUser, string bbdd, string provider = null, string mailAccount = null, string uidMail = null, short? idEntityType = null, int? idEntity = null )
         {
             var resultado = await _lexonRepository.GetUserAsync(idUser);
             resultado.data.Token = BuildTokenWithPayloadAsync(new TokenModel
@@ -71,7 +71,9 @@ namespace Lexon.MySql.Infrastructure.Services
                 name= resultado?.data?.Name,
                 idLexonUser= resultado?.data?.IdUser,
                 bbdd = bbdd,
-                idMail= idMail,
+                provider = provider,
+                mailAccount = mailAccount,
+                idMail= uidMail,
                 idEntityType= idEntityType,
                 idEntity = idEntity
             }).Result;
@@ -111,48 +113,43 @@ namespace Lexon.MySql.Infrastructure.Services
 
         private void AddValuesToPayload(JwtPayload payload, TokenModel modelo)
         {
-            if (modelo is TokenModel clienteModel) //TODO ver si necesito diferentes tokens
+            if (modelo is TokenModel clienteModel) 
             {
-                var idClienteNavision = clienteModel.idClienteNavision;
-                _logger.LogInformation("Modelo --> {0} con idClienteNavision {1}", nameof(TokenModel), idClienteNavision);
-                payload.Add(nameof(idClienteNavision), idClienteNavision);
+                AddClaimToPayload(payload, clienteModel.idClienteNavision, nameof(clienteModel.idClienteNavision));
+                AddClaimToPayload(payload, clienteModel.idLexonUser, nameof(clienteModel.idLexonUser));
+                AddClaimToPayload(payload, clienteModel.name, nameof(clienteModel.name));
+                AddClaimToPayload(payload, clienteModel.bbdd, nameof(clienteModel.bbdd));
+                AddClaimToPayload(payload, clienteModel.provider, nameof(clienteModel.provider));
+                AddClaimToPayload(payload, clienteModel.mailAccount, nameof(clienteModel.mailAccount));
+                AddClaimToPayload(payload, clienteModel.idMail, nameof(clienteModel.idMail));
+                AddClaimToPayload(payload, clienteModel.idEntityType, nameof(clienteModel.idEntityType));
+                AddClaimToPayload(payload, clienteModel.idEntity, nameof(clienteModel.idEntity));
 
-                var idLexonUser = clienteModel.idLexonUser;
-                _logger.LogInformation("Modelo --> {0} con idLexonUser {1}", nameof(TokenModel), idLexonUser);
-                payload.Add(nameof(idLexonUser), idLexonUser);
-
-                var nameUser = clienteModel.name;
-                _logger.LogInformation("Modelo --> {0} con name {1}", nameof(TokenModel), nameUser);
-                payload.Add(nameof(nameUser), nameUser);
-
-                if (modelo.bbdd != null)
-                {
-                    var bbdd = clienteModel.bbdd;
-                    _logger.LogInformation("Modelo --> {0} con name {1}", nameof(TokenModel), clienteModel.bbdd);
-                    payload.Add(nameof(bbdd), bbdd);
-                }
-
-                if (modelo.idMail != null)
-                {
-                    var idMail = clienteModel.idMail;
-                    _logger.LogInformation("Modelo --> {0} con name {1}", nameof(TokenModel), clienteModel.idMail);
-                    payload.Add(nameof(idMail), idMail);
-                }
-
-                if (modelo.idEntityType != null)
-                {
-                    var idEntityType = clienteModel.idEntityType;
-                    _logger.LogInformation("Modelo --> {0} con name {1}", nameof(TokenModel), clienteModel.idEntityType);
-                    payload.Add(nameof(idEntityType), idEntityType);
-                }
-
-                if (modelo.idEntity != null)
-                {
-                    var idEntity = clienteModel.idEntity;
-                    _logger.LogInformation("Modelo --> {0} con name {1}", nameof(TokenModel), clienteModel.idEntity);
-                    payload.Add(nameof(idEntity), idEntity);
-                }
             }
+        }
+
+        private void AddClaimNumberToPayload(JwtPayload payload, long? valorClaim, string nombreClaim)
+        {
+            if (valorClaim == null) return;
+
+            _logger.LogInformation("Claim númerico {0} --> {1}", nombreClaim, valorClaim);
+            payload.Add(nombreClaim, valorClaim);
+        }
+
+        //private void AddClaimToPayload(JwtPayload payload, string valorClaim, string nombreClaim)
+        //{
+        //    if (valorClaim == null) return;
+
+        //    _logger.LogInformation("Claim {0} --> {1}", nombreClaim, valorClaim);
+        //    payload.Add(nombreClaim, valorClaim);
+        //}
+
+        private void AddClaimToPayload(JwtPayload payload, object valorClaim, string nombreClaim)
+        {
+            if (valorClaim == null) return;
+
+            _logger.LogInformation("Claim {0} --> {1}", nombreClaim, valorClaim);
+            payload.Add(nombreClaim, valorClaim);
         }
 
         public async Task<Result<JosRelationsList>> GetRelationsAsync(int pageSize, int pageIndex, short? idType, string bbdd, string idUser, string idMail)

@@ -15,7 +15,7 @@ namespace Lexon.MySql.Infrastructure.Services
 
         Task<Result<int>> AddRelationMailAsync(short idType, string bbdd, string idUser, MailInfo[] listaMails, long idRelated);
 
-        Task<Result<JosUser>> GetUserAsync(string idUser, string bbdd = null, string idMail = null, short? idEntityType = null, int? idEntity = null);
+        Task<Result<JosUser>> GetUserAsync(string idUser, string bbdd = null, string provider = null, string mailAccount = null, string uidMail = null, short? idEntityType = null, int? idEntity = null);
 
         Task<Result<JosRelationsList>> GetRelationsAsync(int pageSize, int pageIndex, short? idType, string bbdd, string idUser, string idMail);
     }
