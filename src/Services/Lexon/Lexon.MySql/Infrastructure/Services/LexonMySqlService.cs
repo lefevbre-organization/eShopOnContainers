@@ -33,9 +33,9 @@ namespace Lexon.MySql.Infrastructure.Services
             return await _lexonRepository.AddRelationMailAsync(idType, bbdd, idUser, listaMails, idRelated);
         }
 
-        public async Task<Result<int>> RemoveRelationMailAsync(short idType, string bbdd, string idUser, string idMail, long idRelated)
+        public async Task<Result<int>> RemoveRelationMailAsync(short idType, string bbdd, string idUser, string provider, string mailAccount, string uidMail, long idRelated)
         {
-            return await _lexonRepository.RemoveRelationMailAsync(idType, bbdd, idUser, idMail, idRelated);
+            return await _lexonRepository.RemoveRelationMailAsync(idType, bbdd, idUser, provider, mailAccount, uidMail, idRelated);
         }
 
         public async Task<Result<JosUserCompanies>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser)

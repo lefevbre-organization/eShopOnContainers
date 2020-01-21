@@ -19,9 +19,10 @@ namespace Lexon.API.Infrastructure.Repositories
 
         Task<Result<List<LexonEntityType>>> GetClassificationMasterListAsync();
 
-        Task<Result<long>> AddClassificationToListAsync(string idUser, string bbdd, string[] listaMails, long idRelated, short? idClassificationType = 1);
+      //  Task<Result<long>> AddClassificationToListAsync(string idUser, string bbdd, string[] listaMails, long idRelated, short? idClassificationType = 1);
+        Task<Result<long>> AddClassificationToListAsync(string idUser, string bbdd, MailInfo[] listaMails, long idRelated, short? idClassificationType = 1);
 
-        Task<Result<long>> RemoveClassificationFromListAsync(string idUser, string bbdd, string idMail, long idRelated, short? idClassificationType);
+        Task<Result<long>> RemoveClassificationFromListAsync(string idUser, string bbdd, string provider, string mailAccount, string uidMail, long idRelated, short? idClassificationType);
 
         Task<Result<long>> SelectCompanyAsync(string idUser, string bbdd);
     }

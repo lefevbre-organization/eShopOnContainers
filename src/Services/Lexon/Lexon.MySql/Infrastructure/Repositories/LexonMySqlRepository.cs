@@ -213,12 +213,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
             int a = 0;
             var result = new Result<int>(a);
 
-            //var filtro =
-            //    $"{{\"BBDD\":\"{bbdd}\",\"Date\":\"2019-10-10\"," +
-            //    $"\"Subject\":\"lista\"," +
-            //    $"\"Body\":\"descripcion nueva actuacion\",\"Uid\":{JsonConvert.SerializeObject(listaMails)}," +
-            //    $"\"IdUser\":\"{idUser}\",\"IdActionRelationType\":{idType},\"IdRelation\":{idRelated}}}";
-
             var filtro =
                 $"{{\"BBDD\":\"{bbdd}\",\"ListaMails\":{JsonConvert.SerializeObject(listaMails)}," +
                 $"\"IdUser\":\"{idUser}\",\"IdActionRelationType\":{idType},\"IdRelation\":{idRelated}}}";
@@ -252,13 +246,13 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return result;
         }
 
-        public async Task<Result<int>> RemoveRelationMailAsync(short idType, string bbdd, string idUser, string idMail, long idRelated)
+        public async Task<Result<int>> RemoveRelationMailAsync(short idType, string bbdd, string idUser, string provider, string mailAccount, string uidMail, long idRelated)
         {
             int a = 0;
             var result = new Result<int>(a);
             var filtro =
                 $"{{\"BBDD\":\"{bbdd}\"," +
-                $"\"Uid\":\"{idMail}\"," +
+                $"\"Provider\":\"{provider}\",\"MailAccount\":\"{mailAccount}\",\"Uid\":\"{uidMail}\"," +
                 $"\"IdUser\":\"{idUser}\",\"IdActionRelationType\":{idType},\"IdRelation\":{idRelated}}}";
 
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.RemoveRelation}", $"P_FILTER:{filtro}", $"P_UC:{idUser}" });
