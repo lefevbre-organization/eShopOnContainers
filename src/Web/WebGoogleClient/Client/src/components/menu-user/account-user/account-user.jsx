@@ -17,6 +17,7 @@ class AccountUser extends Component {
 
     switch (provider) {
       case "GOOGLE":
+      
         signOut();
         window.open(`${window.URL_MF_GOOGLE}/GO0${userId}`, "_self");
         break;

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "./account-user.css";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { signOut } from "../../../api_graph/authentication";
 
 class AccountUser extends Component {
   constructor(props) {
@@ -16,16 +17,13 @@ class AccountUser extends Component {
     switch (provider) {
       case "GOOGLE":
         window.open(`${window.URL_MF_GOOGLE}/GO0${userId}`, "_self");
-
         break;
       case "OUTLOOK":
-        window.open(`${window.URL_MF_OUTLOOK}/OU0${userId}`, "_self");
-
+            signOut(`${window.URL_MF_OUTLOOK}/OU0${userId}`);
+       // window.open(`${window.URL_MF_OUTLOOK}/OU0${userId}`, "_self");
         break;
-
       default:
         window.open(`${window.URL_MF_IMAP}/IM0${userId}`, "_self");
-
         break;
     }
   }
