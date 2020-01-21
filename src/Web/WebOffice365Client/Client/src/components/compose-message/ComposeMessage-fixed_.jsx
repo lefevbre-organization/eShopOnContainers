@@ -4,21 +4,22 @@ import { getValidEmails } from "../../utils";
 import i18n from "i18next";
 import { Button, InputGroup, InputGroupAddon, Input } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faTrash } from "@fortawesome/free-solid-svg-icons";
 import ReactQuill from "react-quill";
 import "../../../node_modules/react-quill/dist/quill.snow.css";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 import "./composeMessage.scss";
 import ACTIONS from "../../actions/lexon";
 import { connect } from "react-redux";
-import { prettySize } from "../../utils/prettify";
 
 const Uppy = require("@uppy/core");
 const Tus = require("@uppy/tus");
-const MAX_TOTAL_ATTACHMENTS_SIZE = 3145728;
+const GoogleDrive = require("@uppy/google-drive");
+const { DragDrop, ProgressBar } = require("@uppy/react");
 
-export class ComposeMessage extends PureComponent {
+export class Compose extends PureComponent {
   constructor(props) {
     super(props);
+
     this.state = {
       to:
         (props.history.location.state &&
@@ -42,64 +43,88 @@ export class ComposeMessage extends PureComponent {
         "",
       showInlineDashboard: false,
       open: false,
-      uppyPreviews: [],
-      dropZoneActive: false
+      uppyPreviews: []
     };
-    this.handleChange = this.handleChange.bind(this);
-    this.sendEmail = this.sendEmail.bind(this);
+
     this.goBack = this.goBack.bind(this);
     this.closeModal = this.closeModal.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.sendEmail = this.sendEmail.bind(this);
     this.setField = this.setField.bind(this);
-    this.uppy = new Uppy({
-      id: "uppy1",
-      autoProceed: false,
-      debug: true,
-      // restrictions: {
-      //   maxFileSize:MAX_TOTAL_ATTACHMENTS_SIZE
-      // },
-      onBeforeFileAdded: (currentFile, files) => {
-        let totalSize = currentFile.size;
 
-        for (var file in files) {
-          if (Object.prototype.hasOwnProperty.call(files, file)) {
-            totalSize += files[file].size;
-          }
-        }
-
-        if (totalSize > MAX_TOTAL_ATTACHMENTS_SIZE) {
-          window.alert("El tamaño total de los ficheros adjuntos no puede ser superior a 3MB para este proveedor.")
-          return false;
-        } else {
-          return true;
-        }
-      }
-    })
+    this.uppy = new Uppy({ id: "uppy1", autoProceed: false, debug: true })
       .use(Tus, { endpoint: "https://master.tus.io/files/" })
+      .use(GoogleDrive, { serverUrl: "https://companion.uppy.io" });
+
+    this.reader = new FileReader();
+    this.handleModalClick = this.handleModalClick.bind(this);
     this.uploadFile = this.uploadFile.bind(this);
+    this.addFileToState = this.addFileToState.bind(this);
+
+    this.removeFile = this.removeFile.bind(this);
     this.showAttachActions = false;
 
     this.uppy.on("complete", result => {
       console.log(
-        "Upload complete! We've uploaded these files:",
+        "Upload complete! We�ve uploaded these files:",
         result.successful
       );
     });
+
     this.uppy.on("file-added", file => {
       console.log("Added file", file);
 
       // Define this onload every time to get file and base64 every time
       this.reader = new FileReader();
+      //setTimeout(() => { this.reader.readAsDataURL(file.data); }, 4000);
       this.reader.readAsDataURL(file.data);
 
       this.reader.onload = readerEvt =>
-        this.addFileToState({ file, base64: readerEvt.target.result });
+      this.addFileToState({ file, base64: readerEvt.target.result });
       this.showAttachActions = true
     });
   }
 
-  removeAttachment(file) {
-    this.uppy.removeFile(file.id);
-    this.addFileToState();
+  removeFile() {
+      //  console.log(this.uppy.getFiles());      
+      //this.uppy.getFiles().forEach(file => {   
+      //    console.log(file.id)
+      //    this.state.uppyPreviews.removeFile(file.id)
+      //});
+      this.uppy.reset();
+      this.showAttachActions = false
+      this.setState({
+          uppyPreviews: []
+      });
+  }
+
+  addFileToState({ file, base64 }) {
+      for (const prop in this.state.uppyPreviews) {
+          //console.log(`obj.${prop} = ${this.state.uppyPreviews[prop]}`);
+          //console.log(this.state.uppyPreviews[0].file["name"])
+          if (this.state.uppyPreviews[prop].file["id"] === file["id"])
+          {
+              file["id"] = file["id"] + prop
+          }
+      }
+    this.setState({
+      uppyPreviews: [{ file, base64 }, ...this.state.uppyPreviews]
+    });
+  }
+
+  uploadFile() {
+    console.log(this.state.uppyPreviews);
+    // this.uppyOne.upload();
+  }
+
+  componentWillUnmount() {
+    this.uppy.close();
+  }
+
+  handleModalClick() {
+    this.setState({
+      open: !this.state.open
+    });
   }
 
   closeModal() {
@@ -121,51 +146,24 @@ export class ComposeMessage extends PureComponent {
         bbdd: null,
         company: null
       });
+    } else {
+      this.props.history.goBack();
     }
-
-    this.props.history.push("/inbox");
   }
 
-  addFileToState(file) {
-    const fls = this.uppy.getFiles();
-
-    if (file) {
-      for (let i = 0; i < fls.length; i++) {
-        if (fls[i].id === file.file.id) {
-          fls[i].content = file.base64;
-          break;
-        }
-      }
-    }
-
-    this.setState({
-      uppyPreviews: fls
-    });
-  }
-
-  uploadFile() {
-    console.log(this.state.uppyPreviews);
-  }
-
-  componentWillUnmount() {
-    console.log("ComposeMessage. Unmount")
-    this.uppy.close();
-  }
-
-  handleChange(value, delta, source, editor) {
+  handleChange(value) {
     this.setState({ content: value });
   }
 
   sendEmail() {
     const validTo = getValidEmails(this.state.to);
-
-    if (!validTo.length) {
+    if (!validTo.length){
       window.alert("Este mensaje debe tener al menos un destinatario.")
       return;
     }
-    else if (this.state.subject.trim() === "") {
-      const r = window.confirm("¿Desea enviar este mensaje sin asunto?");
-      if (r === false) {
+    else if (this.state.subject.trim() === ""){
+      const r = window.confirm("¿Desea enviar este mensaje sin asunto?"); 
+      if(r === false){ 
         return;
       }
     }
@@ -188,16 +186,17 @@ export class ComposeMessage extends PureComponent {
 
     const Fileattached = this.state.uppyPreviews;
 
-    const email = Object.assign({}, this.state, { subject: '=?UTF-8?B?' + window.btoa(this.state.subject) + '?=' })
+    this.setState({
+        subject: '=?UTF-8?B?' + window.btoa(this.state.subject) + '?='
+    });
 
     sendMessage({
-      data: email,
+      data: this.state,
       attachments: Fileattached
-    }).then(_ => {
-    }).catch((err) => {
-      console.log(err)
-    })
-    this.resetFields();
+    }).then(response => {
+      this.closeModal();
+      this.resetFields();
+    });
     this.closeModal();
   }
 
@@ -225,75 +224,33 @@ export class ComposeMessage extends PureComponent {
     return fieldValue.length > 0 && !getValidEmails(fieldValue).length;
   }
 
-  modules = {
-    toolbar: [
-      [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
-      [{ size: [] }],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [{ 'list': 'ordered' }, { 'list': 'bullet' },
-      { 'indent': '-1' }, { 'indent': '+1' }],
-      ['link'],
-      ['clean']
-    ],
-    clipboard: {
-      // toggle to add extra line breaks when pasting HTML:
-      matchVisual: false,
+    modules = {
+        toolbar: [
+            [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
+            [{ size: [] }],
+            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' },
+            { 'indent': '-1' }, { 'indent': '+1' }],
+            ['link', 'image'],
+            ['clean']
+        ],
+        clipboard: {
+            // toggle to add extra line breaks when pasting HTML:
+            matchVisual: false,
+        }
     }
-  }
 
   formats = [
-    'header', 'font', 'size',
-    'bold', 'italic', 'underline', 'strike', 'blockquote',
-    'list', 'bullet', 'indent',
-    'link'
+      'header',
+      'bold', 'italic', 'underline', 'strike', 'blockquote',
+      'list', 'bullet', 'indent',
+      'link', 'image'
   ]
 
-  /* Drag and drop events */
-  onDrop(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.setState({ dropZoneActive: false });
-    const uppy = this.uppy;
-    const addAttachment = (file, dataUrl) => {
-      const newAttachment = {
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        source: 'Local',
-        isRemote: false,
-        data: file,
-      };
-
-      try {
-        uppy.addFile(newAttachment);
-      }
-      catch (err) {
-        window.alert("El tamaño de este archivo es superior al permitido por este proveedor.")
-      }
-    };
-    Array.from(event.dataTransfer.files).forEach(file => {
-      addAttachment(file);
-    });
-    return true;
-  }
-
-  onDragOver(event) {
-    event.preventDefault();
-    if (
-      event.dataTransfer.types &&
-      Array.from(event.dataTransfer.types).includes("Files")
-    ) {
-      this.setState({ dropZoneActive: true });
-    }
-  }
-
-  onDragLeave(event) {
-    event.preventDefault();
-    this.setState({ dropZoneActive: false });
-  }
 
   render() {
     const collapsed = this.props.sideBarCollapsed;
+
 
     return (
       <React.Fragment>
@@ -318,18 +275,7 @@ export class ComposeMessage extends PureComponent {
               </div>
             </div>
           </div>
-          <div className="container-panel"
-            onDrop={(event) => { this.onDrop(event) }}
-            onDragOver={(event) => { this.onDragOver(event) }}
-            onDragLeave={(event) => { this.onDragLeave(event) }}>
-            {this.state.dropZoneActive ? (
-              <div className="dropZone">
-                <div className="dropZoneMessage">
-                  <i className={"material-icons"}></i>
-                  {i18n.t("compose-message.drag-and-drop")}
-                </div>
-              </div>
-            ) : null}
+          <div className="container-panel">
             <div className="compose-message">
               <div className="message-fields">
                 <InputGroup>
@@ -382,34 +328,29 @@ export class ComposeMessage extends PureComponent {
                   tabIndex={5}
                   value={this.state.content}
                   onChange={this.handleChange}
-                  className=""
+                  className="autoResizeHeight"
                   modules={this.modules}
                   formats={this.formats}
                 />
-                <div className="ImagePreviewContainer compose-dropcontainer attachments">
-                  {this.state.uppyPreviews.map(item => {
-                    return (
-                      <div key={item.id} className={"attachment"}>
-                        <span className={"fileName"}>{item.name}</span>
-                        <span className={"size"}>({prettySize(item.size, 0)})</span>
-                        <Button
-                          onClick={() => { this.removeAttachment(item) }}
-                          className={"delete"}
-                        >
-                          <FontAwesomeIcon icon={faTrash} size="1x" />
-                        </Button>
-
-                      </div>
-                    );
-                  })}
-                </div>
               </div>
             </div>
-
-
-            {/*             
+            <div className="ImagePreviewContainer compose-dropcontainer">
+              {this.state.uppyPreviews.map(item => {
+                return (
+                  <object
+                    className="FileList"
+                    key={item.file.id}
+                    type={item.file.type}
+                    width="80px"
+                    height="auto"
+                    data={item.base64}
+                  >
+                    {item.file.name}
+                  </object>
+                );
+              })}
+            </div>
             <ProgressBar uppy={this.uppy} hideAfterFinish={false} />
-                    
             <button className={"button-remove-attach mr-left font-weight-bold  " + (this.showAttachActions ? 'show-btn' : 'hidden-btn')} onClick={this.removeFile}>Remove attachments</button>
             <div id="Divfooter" className="compose-droppanel">
               <DragDrop
@@ -430,7 +371,6 @@ export class ComposeMessage extends PureComponent {
                 }}
               />
             </div>
-           */}
             <div className="footer compose-footer">
               <Button
                 className="mr-auto font-weight-bold"
@@ -439,15 +379,12 @@ export class ComposeMessage extends PureComponent {
                 title={i18n.t("compose-message.send-message")}
               >
                 {i18n.t("compose-message.send")}
-              </Button>
-              &nbsp;
+              </Button>{" "}
               <Button
                 className="mr-left font-weight-bold btn-outline-primary"
                 title={i18n.t("compose-message.discard")}
                 color="secondary"
-                onClick={() => {
-                  this.goBack();
-                }}
+                onClick={this.goBack}
               >
                 {i18n.t("compose-message.discard")}
               </Button>
@@ -460,11 +397,13 @@ export class ComposeMessage extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-  lexon: state.lexon
+  lexon: state.lexon,
+  labelsResult: state.labelsResult
 });
 
 const mapDispatchToProps = dispatch => ({
   setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ComposeMessage);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Compose);

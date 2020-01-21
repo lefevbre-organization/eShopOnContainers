@@ -219,7 +219,7 @@ export const getMessage = messageId => {
 //     return att;
 // }
 
-export const sendMessage = ({ headers, body, attachments }) => {
+export const sendMessage = async ({ headers, body, attachments }) => {
   let email = "";
 
   const headersClone = { ...headers };
@@ -256,12 +256,9 @@ export const sendMessage = ({ headers, body, attachments }) => {
   email += `--attached--\r\n`;
 
   for (var i = 0; i < headersClone.attachments.length; i++) {
-    var mimetype = base64MimeType(headersClone.attachments[i].base64);
-    var fileData = base64Data(headersClone.attachments[i].base64);
-    var fileName = headersClone.attachments[i].file.name;
-
-    console.log(mimetype); // "image/png"
-    console.log(fileData); // "ZXN0byBlcyB1bmEgcHJ1ZWJhIGJhc2ljYQ=="
+    var mimetype = headersClone.attachments[i].type;
+    var fileData = base64Data(headersClone.attachments[i].content);
+    var fileName = headersClone.attachments[i].name;
 
     email += `--alternative\r\n`;
 
@@ -276,16 +273,13 @@ export const sendMessage = ({ headers, body, attachments }) => {
 
   email += `--alternative--\r\n`;
 
-  const encodedEmail = unescape(encodeURIComponent(email));
-
-  return window.gapi.client.gmail.users.messages.send({
-    userId: "me",
-    resource: {
-      raw: window
-        .btoa(encodedEmail)
-        .replace(/\+/g, "-")
-        .replace(/\//g, "_")
-    }
+  return fetch("https://www.googleapis.com/upload/gmail/v1/users/me/messages/send?uploadType=multipart", {
+    method: 'POST',
+    body: email,
+    headers:{
+      'Authorization': `Bearer ${window.gapi.auth.getToken().access_token}`,
+      'Content-Type': 'message/rfc822'
+    },
   });
 };
 
