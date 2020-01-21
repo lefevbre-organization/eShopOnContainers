@@ -79,6 +79,15 @@ export const getLabelInbox = () =>
       });
   });
 
+
+  export const getLabelSentItems = async () => {
+    var accessToken = window.msal.acquireTokenSilent(config.scopes);
+    const client = getAuthenticatedClient(accessToken);
+    const response = await client.api("/me/mailFolders/sentItems").get();
+
+    return response;
+  }
+
 //export const getMessageListPagination = ({ page }) =>
 //    new Promise((resolve, reject) => {
 //        getMessagePaginationList(page)

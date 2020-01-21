@@ -68,7 +68,12 @@ export class MessageItem extends PureComponent {
       //   this.props.data.from.emailAddress.name.toUpperCase() +
       //   " " +
       //   this.props.data.from.emailAddress.address;
-      fromName = this.props.data.from.emailAddress.name;
+      if(this.props.isSent === false) {
+        fromName = this.props.data.from.emailAddress.name;
+      } else {
+        fromName = this.props.data.toRecipients[0].emailAddress.name;
+      }
+
     } catch {
       // const fromHeader = "";
     }

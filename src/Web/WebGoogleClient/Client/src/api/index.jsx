@@ -34,6 +34,7 @@ export const getLabelList = () =>
       });
   });
 
+
 export const getMessageList = ({ labelIds, maxResults, q, pageToken }) =>
   new Promise((resolve, reject) => {
     getMessageRawList({ labelIds, maxResults, pageToken, q })

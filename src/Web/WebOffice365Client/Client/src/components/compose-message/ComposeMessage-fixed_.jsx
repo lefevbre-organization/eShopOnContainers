@@ -186,10 +186,6 @@ export class Compose extends PureComponent {
 
     const Fileattached = this.state.uppyPreviews;
 
-    this.setState({
-        subject: '=?UTF-8?B?' + window.btoa(this.state.subject) + '?='
-    });
-
     sendMessage({
       data: this.state,
       attachments: Fileattached
