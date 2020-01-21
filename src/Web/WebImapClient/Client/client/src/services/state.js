@@ -72,3 +72,9 @@ export function removeState() {
   localStorage.removeItem(LEXON);
   sessionStorage.clear();
 }
+
+export function removeStateExLexon() {    
+    localStorage.removeItem(KEY_USER_ID);
+    localStorage.removeItem(KEY_HASH);
+    sessionStorage.clear();
+}

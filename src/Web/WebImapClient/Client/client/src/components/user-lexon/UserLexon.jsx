@@ -93,12 +93,12 @@ class UserLexon extends Component {
       return <Redirect to="/" />;
     }
 
-    if (isNewAccount || readyToRedirectToLogin) {
-      this.props.logout();
-      return <Redirect to="/login" />;
-    }
-
-    return null;
+    //if (isNewAccount || readyToRedirectToLogin) {
+    //  //this.props.logout();
+    //  return <Redirect to="/login" />;
+    //}
+    return <Redirect to="/" />;
+    //return null;
   }
 }
 
