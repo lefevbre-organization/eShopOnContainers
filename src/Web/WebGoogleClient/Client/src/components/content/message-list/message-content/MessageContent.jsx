@@ -146,7 +146,7 @@ export class MessageContent extends Component {
         const { emailMessageResult } = this.props;
         if (!emailMessageResult.loading) {
             if (!emailMessageResult.failed) {
-                if (this.state.attachment == true) {
+                if (this.state.attachment === true) {
                     const { body } = this.iframeRef.current.contentWindow.document;
                     body.style.margin = "0px";
                     body.style.fontFamily = "Arial, Helvetica, sans-serif";

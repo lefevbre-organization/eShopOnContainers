@@ -11,7 +11,7 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import ListToolbar from "./list-toolbar/ListToolbar";
 import ListFooter from "./list-footer/ListFooter";
 import "./messageList.scss";
-import { getMessageHeader } from "../../../api";
+import { getMessageHeader, getLabelSentItems } from "../../../api";
 
 const ViewMode = {
   LIST: 1,
@@ -33,9 +33,10 @@ export class MessageList extends PureComponent {
     this.renderView = this.renderView.bind(this);
     this.renderMessages = this.renderMessages.bind(this);
     this.getContentByHeader = this.getContentByHeader.bind(this);
+    this.isSentFolder = false;
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const searchParam = this.props.location.search;
     const token = searchParam.indexOf("?") === 0 ? searchParam.slice(1) : null;
 
@@ -50,6 +51,8 @@ export class MessageList extends PureComponent {
       ...(labelIds && { labelIds }),
       pageToken: token
     });
+
+    this.isSentFolder = this.props.parentLabel.id === "SENT";
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -138,6 +141,7 @@ export class MessageList extends PureComponent {
       return (
         <MessageRow
           data={el}
+          isSent={this.isSentFolder}
           key={el.id}
           onSelectionChange={this.onSelectionChange}
           onClick={this.getMessage}

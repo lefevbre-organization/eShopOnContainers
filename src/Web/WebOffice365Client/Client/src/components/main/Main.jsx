@@ -194,12 +194,6 @@ export class Main extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    //if (prevProps.signedInUser !== this.props.signedInUser) {
-    //  this.setState({
-    //    signedInUser: this.props.signedInUser
-    //  });
-    //}
-
     if (prevProps.User !== this.props.User) {
       this.setState({
         signedInUser: this.props.User
@@ -305,7 +299,7 @@ export class Main extends Component {
     this.props.getInbox();
   }
 
-  getLabelMessages(labelIds, q, pageToken) {
+   getLabelMessages(labelIds, q, pageToken) {
     this.props.emptyLabelMessages();
     this.props.getLabelMessages(labelIds, q, pageToken);
   }

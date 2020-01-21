@@ -26,6 +26,17 @@ function parseFrom(from) {
   return formattedFrom !== null ? formattedFrom[1] : firstFrom;
 }
 
+function parseTo(recipients) {
+  let to = "";
+
+  if(recipients && recipients.length && recipients.length > 0) {
+    const rec = recipients[0];
+    to = rec.address || "";
+  }
+
+  return to;
+}
+
 function _dragImage(t, messages, x, y) {
   const imageNode = document.createElement("span");
   imageNode.draggable = true;
@@ -120,7 +131,8 @@ class MessageList extends Component {
           draggable={true}
           onDragStart={event => this.onDragStart(event, folder, message)}
         >
-          <span className={styles.from}>{parseFrom(message.from)}</span>
+          { folder.type.attribute !== '\\Sent' && <span className={styles.from}>{parseFrom(message.from)}</span>}
+          { folder.type.attribute === '\\Sent' && <span className={styles.from}>{parseTo(message.recipients)}</span>}
           <span
             className={`material-icons ${styles.flag} ${message.flagged &&
               styles.flagged}`}

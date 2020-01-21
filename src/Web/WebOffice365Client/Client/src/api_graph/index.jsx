@@ -79,6 +79,15 @@ export const getLabelInbox = () =>
       });
   });
 
+
+  export const getLabelSentItems = async () => {
+    var accessToken = window.msal.acquireTokenSilent(config.scopes);
+    const client = getAuthenticatedClient(accessToken);
+    const response = await client.api("/me/mailFolders/sentItems").get();
+
+    return response;
+  }
+
 //export const getMessageListPagination = ({ page }) =>
 //    new Promise((resolve, reject) => {
 //        getMessagePaginationList(page)
@@ -478,8 +487,8 @@ export const emailAttachments = data => {
 
   email = `"Attachments": [`;
   for (var i = 0; i < attachments.length; i++) {
-    var fileData = base64Data(attachments[i].base64);
-    var fileName = attachments[i].file.name;
+    var fileData = base64Data(attachments[i].content);
+    var fileName = attachments[i].data.name;
 
     email += `{
         "@odata.type": "#Microsoft.OutlookServices.FileAttachment",
@@ -509,7 +518,11 @@ export const sendMessage = ({ data, attachments }) => {
       .header("Authorization", "Bearer " + accessToken)
       .header("Content-Type", "application/json; charset=utf-8")
       .post(email, (err, response) => {
-        resolve(response);
+        if(err) {
+          reject(err);
+        } else {
+          resolve(response);
+        }
       });
   });
 };

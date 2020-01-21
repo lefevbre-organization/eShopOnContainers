@@ -59,7 +59,14 @@ export class MessageItem extends PureComponent {
     const subjectHeader = this.props.data.payload.headers.find(el => el.name.toUpperCase() === "SUBJECT");
     const subject = subjectHeader ? subjectHeader.value : "";
     const fromHeader = this.props.data.payload.headers.find(el => el.name.toUpperCase() === "FROM");
-    let fromName = fromHeader ? this.getFromName(fromHeader.value) : "undefined";
+    const toHeader = this.props.data.payload.headers.find(el => el.name.toUpperCase() === "TO");
+    let fromName = ""
+
+    if(this.props.isSent === false) {
+      fromName = fromHeader ? this.getFromName(fromHeader.value) : "undefined";
+    } else {
+      fromName = toHeader ? this.getFromName(toHeader.value) : "undefined";
+    }
 
     return (
       <div className={`d-flex table-row-wrapper${selected}`}>

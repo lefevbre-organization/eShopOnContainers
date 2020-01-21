@@ -1,0 +1,134 @@
+.compose-panel {
+    border-bottom: 1px solid #d9dfe2;
+    height: 64px;
+    background-color: #f4f4f4;
+
+    .compose-btn {
+        background-color: transparent;
+    }
+}
+
+.burguer-btn {
+    margin-top: 17px;
+}
+
+.margin-right-10 {
+    margin-right: 10px;
+}
+
+.container-panel {
+    height: 100%;
+    overflow-y: auto;
+}
+
+.compose-layout {
+    padding: 20px 20px 20px 20px;
+}
+
+.compose-droppanel {
+    padding: 0px 20px 20px 20px;
+}
+
+.compose-footer {
+    padding: 0px 20px 20px 20px;
+}
+
+.compose-message {
+    padding: 20px 20px 20px 20px;
+}
+
+.compose-dropcontainer {
+    padding: 30px 0px 0px 20px;
+}
+
+.compose-btn {
+    background-color: transparent;
+}
+
+.compose-btn {
+    background-color: transparent;
+}
+
+.alignright {
+    float: right;
+}
+
+.marleft {
+    margin-left: 5px;
+}
+
+.autoResizeHeight {
+    height: 200px !important;
+    /*height: calc(100% - 50px);*/
+}
+
+.button-remove-attach {
+    margin-bottom: 5px;
+    margin-left: 20px;
+    padding: 0px 5px 0px 5px !important;
+}
+
+.hidden-btn {
+    display: none;
+}
+
+.show-btn {
+    display: block;
+}
+
+.compose-dialog {
+    height: 100%;
+
+    > .modal-content {
+        height: 80%;
+
+        .editor-wrapper {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 142px;
+            bottom: 42px;
+
+            .quill {
+                height: 100%;
+
+                .ql-container.ql-snow {
+                    border: 0;
+                }
+            }
+        }
+    }
+
+    .message-fields {
+        .input-group {
+            margin-bottom: 2px;
+
+            .input-group-text {
+                min-width: 75px;
+                background-color: #f9f9f9;
+            }
+
+            .form-control {
+                border-left-width: 0;
+
+                &.is-invalid {
+                    border-color: red;
+                }
+
+                &:placeholder-shown {
+                    font-style: italic;
+                    font-size: 11px;
+                }
+
+                &:focus {
+                    outline: none;
+                    box-shadow: none;
+                }
+            }
+        }
+    }
+}
+
+.FileList {
+    max-height: 70px;
+}
