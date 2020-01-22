@@ -20,10 +20,6 @@ export const getUserApplication = () => {
     });
 
     userAgentApplication.handleRedirectCallback((error, response)=>{
-      alert("RedirectCallback")
-      console.log("handleRedirectCallback");
-      console.log(error);
-      console.log(response);
     });
   }
 
