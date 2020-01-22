@@ -149,32 +149,8 @@ namespace Lexon.Infrastructure.Services
                     if (response.IsSuccessStatusCode)
                     {
                         var resultMysql = await response.Content.ReadAsAsync<Result<JosRelationsList>>();
-                        //if (resultMysql?.data == null)
-                        //    TraceOutputMessage(result.errors, "The response of Mysql is empty", 2001);
-                        //else
-                        //{
                         if (GetClassificationsFromMailMySqlAsync(ref result, resultMysql, idMail))
                             return result;
-
-                        //foreach (var entity in resultMysql.data?.Actuaciones)
-                        //{
-                        //    result.data.Add(new LexonActuation()
-                        //    {
-                        //        name = entity.Nombre,
-                        //        description = entity.Asunto,
-                        //        idMail = idMail,
-                        //        idRelated = entity.IdRelacion,
-                        //        date = entity.Fecha,
-                        //        entityIdType= entity.TipoRelacion
-                        //    });
-                        //    TraceLog(parameters: new string[] { $"add Name {entity.Nombre}", $"desc {entity.Asunto}", $"tipo Mail", $"idrelated {entity.IdRelacion}", $"idmail {idMail}", $"date {entity.Fecha}", $"tipo {entity.TipoRelacion}" });
-                        //}
-
-                        //if (result.data.Count == 0)
-                        //    TraceOutputMessage(result.errors, "Mysql don´t recover the mails actuations", 2001);
-                        //else
-                        //    return result;
-                        //}
                     }
                     else
                     {
@@ -374,21 +350,6 @@ namespace Lexon.Infrastructure.Services
                         if( GetEntitiesListMySqlAsync(ref result, entityList, idType))
                             return result;
 
-                        //if (entityList?.data == null)
-                        //    TraceOutputMessage(result.errors, "The response fo Mysql is empty", 2001);
-                        //else
-                        //{
-                        //    foreach (var entity in (entityList.data?.Entities))
-                        //    {
-                        //        result.data.Add(new LexonEntityBase() { name = entity.Code, description = entity.Description, id = entity.IdRelated, idType = idType ?? 1 });
-                        //        TraceLog(parameters: new string[] { $"code {entity.Code}" });
-                        //    }
-
-                        //    if (result.data?.Count == 0)
-                        //        TraceOutputMessage(result.errors, "Mysql don´t recover the entities", 2001);
-                        //    else
-                        //        return result;
-                        //}
                     }
                     else
                     {
