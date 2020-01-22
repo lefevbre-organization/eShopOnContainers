@@ -39,7 +39,7 @@ namespace Lexon.Infrastructure.Services
             _client.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
-        public async Task<Result<long>> AddClassificationToListAsync(string idUser, string bbdd, string[] listaMails, long idRelated, short? idType = 1)
+        public async Task<Result<long>> AddClassificationToListAsync(string idUser, string bbdd, MailInfo[] listaMails, long idRelated, short? idType = 1)
         {
             long a = 0;
             var result = new Result<long>(a);
@@ -50,15 +50,23 @@ namespace Lexon.Infrastructure.Services
             TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idType:{idType}", $"bbdd:{bbdd}", $"idMail:{listaMails}", $"idRelated:{idRelated}" });
             TraceLog(parameters: new string[] { $"url={url}" });
 
-            MailInfo[] listaMailsCompleta = GiveMeDataFromArrayMails(listaMails);
+            //MailInfo[] listaMailsCompleta = GiveMeDataFromArrayMails(listaMails);
 
-            var classificationAdd = new ClassificationAddViewComplete
+            //var classificationAdd = new ClassificationAddViewComplete
+            //{
+            //    idType = idType,
+            //    bbdd = bbdd,
+            //    idRelated = idRelated,
+            //    idUser = idUser,
+            //    listaMails = listaMailsCompleta
+            //};
+            var classificationAdd = new ClassificationAddView
             {
                 idType = idType,
                 bbdd = bbdd,
                 idRelated = idRelated,
                 idUser = idUser,
-                listaMails = listaMailsCompleta
+                listaMails = listaMails
             };
 
             var json = JsonConvert.SerializeObject(classificationAdd);
@@ -91,22 +99,23 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        private MailInfo[] GiveMeDataFromArrayMails(string[] listaMails)
-        {
-            var listaMailsCompleta = new List<MailInfo>();
-            foreach (var mail in listaMails)
-            {
-                listaMailsCompleta.Add(new MailInfo() { Date = "2020-01-01", Subject = "De momento no", Uid = mail });
-            }
-            return listaMailsCompleta.ToArray();
-        }
+        //private MailInfo[] GiveMeDataFromArrayMails(string[] listaMails)
+        //{
+        //    var listaMailsCompleta = new List<MailInfo>();
+        //    foreach (var mail in listaMails)
+        //    {
+        //        listaMailsCompleta.Add(new MailInfo() { Date = "2020-01-01", Subject = "De momento no", Uid = mail });
+        //    }
+        //    return listaMailsCompleta.ToArray();
+        //}
 
         private MailInfo[] GiveMeDataFromArrayMails(MailInfo[] listaMails)
         {
             throw new NotImplementedException();
         }
 
-        private async Task AddClassificationToListMongoAsync(string idUser, string bbdd, string[] listaMails, long idRelated, short? idClassificationType, Result<long> result)
+        //private async Task AddClassificationToListMongoAsync(string idUser, string bbdd, string[] listaMails, long idRelated, short? idClassificationType, Result<long> result)
+        private async Task AddClassificationToListMongoAsync(string idUser, string bbdd, MailInfo[] listaMails, long idRelated, short? idClassificationType, Result<long> result)
         {
             try
             {
@@ -127,10 +136,9 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<Result<List<LexonActuation>>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, string bbdd, string idMail, short? idType)
         {
-
             var result = new Result<List<LexonActuation>>(new List<LexonActuation>());
             idType = idType != null ? idType : 0;
-            //pageSize = pageSize != null ? pageSize : 0;
+
             var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/classifications/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={idType}&bbdd={bbdd}&idUser={idUser}&idMail={idMail}");
             TraceLog(parameters: new string[] { $"idUser:{idUser}", $"bbdd:{bbdd}", $"idMail:{idMail}" });
 
@@ -141,23 +149,7 @@ namespace Lexon.Infrastructure.Services
                     if (response.IsSuccessStatusCode)
                     {
                         var resultMysql = await response.Content.ReadAsAsync<Result<JosRelationsList>>();
-                        foreach (var entity in resultMysql.data?.Actuaciones)
-                        {
-                            result.data.Add(new LexonActuation() 
-                            { 
-                                name = entity.Nombre, 
-                                description = entity.Asunto, 
-                                idMail = idMail, 
-                                idRelated = entity.IdRelacion, 
-                                date = entity.Fecha, 
-                                entityIdType= entity.TipoRelacion 
-                            });
-                            TraceLog(parameters: new string[] { $"add Name {entity.Nombre}", $"desc {entity.Asunto}", $"tipo Mail", $"idrelated {entity.IdRelacion}", $"idmail {idMail}", $"date {entity.Fecha}", $"tipo {entity.TipoRelacion}" });
-                        }
-
-                        if (result.data.Count == 0)
-                            TraceOutputMessage(result.errors, "Mysql don´t recover the mails actuations", 2001);
-                        else
+                        if (GetClassificationsFromMailMySqlAsync(ref result, resultMysql, idMail))
                             return result;
                     }
                     else
@@ -172,7 +164,36 @@ namespace Lexon.Infrastructure.Services
             }
             await GetClassificationsFromMailMongoAsync(result, pageSize, pageIndex, idUser, bbdd, idMail);
             return result;
+        }
 
+        private bool GetClassificationsFromMailMySqlAsync(ref Result<List<LexonActuation>> result, Result<JosRelationsList> resultMysql, string idMail)
+        {
+            if (resultMysql?.data == null)
+            {
+                TraceOutputMessage(result.errors, "The response of Mysql is empty", 2001);
+                return false;
+            }
+
+            foreach (var entity in resultMysql.data?.Actuaciones)
+            {
+                result.data.Add(new LexonActuation()
+                {
+                    name = entity.Nombre,
+                    description = entity.Asunto,
+                    idMail = idMail,
+                    idRelated = entity.IdRelacion,
+                    date = entity.Fecha,
+                    entityIdType = entity.TipoRelacion
+                });
+                TraceLog(parameters: new string[] { $"add Name {entity.Nombre}", $"desc {entity.Asunto}", $"tipo Mail", $"idrelated {entity.IdRelacion}", $"idmail {idMail}", $"date {entity.Fecha}", $"tipo {entity.TipoRelacion}" });
+            }
+
+            if (result.data.Count == 0)
+                TraceOutputMessage(result.errors, "Mysql don´t recover the mails actuations", 2001);
+            else
+                return true;
+
+            return false;
         }
 
         private async Task GetClassificationsFromMailMongoAsync(Result<List<LexonActuation>> result, int pageSize, int pageIndex, string idUser, string bbdd, string idMail)
@@ -326,16 +347,9 @@ namespace Lexon.Infrastructure.Services
                     if (response.IsSuccessStatusCode)
                     {
                         var entityList = await response.Content.ReadAsAsync<Result<JosEntityList>>();
-                        foreach (var entity in (entityList.data.Entities))
-                        {
-                            result.data.Add(new LexonEntityBase() { name = entity.Code, description = entity.Description, id = entity.IdRelated, idType= idType ?? 1 });
-                            TraceLog(parameters: new string[] { $"code {entity.Code}" });
-                        }
-
-                        if (result.data.Count == 0)
-                            TraceOutputMessage(result.errors, "Mysql don´t recover the entities", 2001);
-                        else
+                        if( GetEntitiesListMySqlAsync(ref result, entityList, idType))
                             return result;
+
                     }
                     else
                     {
@@ -349,6 +363,28 @@ namespace Lexon.Infrastructure.Services
             }
             await GetEntitiesListMongoAsync(pageSize, pageIndex, idType, idUser, bbdd, searchFilter, result);
             return result;
+        }
+
+        private bool GetEntitiesListMySqlAsync(ref Result<List<LexonEntityBase>> result, Result<JosEntityList> entityList, short? idType)
+        {
+            if (entityList?.data == null)
+            {
+                TraceOutputMessage(result.errors, "The response fo Mysql is empty", 2001);
+                return false;
+            }
+
+            foreach (var entity in (entityList.data?.Entities))
+            {
+                result.data.Add(new LexonEntityBase() { name = entity.Code, description = entity.Description, id = entity.IdRelated, idType = idType ?? 1 });
+                TraceLog(parameters: new string[] { $"code {entity.Code}" });
+            }
+
+            if (result.data?.Count == 0)
+                TraceOutputMessage(result.errors, "Mysql don´t recover the entities", 2001);
+            else
+                return true;
+
+            return false;
         }
 
         private async Task GetEntitiesListMongoAsync(int pageSize, int pageIndex, short? idType, string idUser, string bbdd, string search, Result<List<LexonEntityBase>> result)
@@ -380,7 +416,7 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<Result<LexonUser>> GetUserAsync(string idUser)
         {
-            var result = new Result<LexonUser>(new LexonUser ());
+            var result = new Result<LexonUser>(new LexonUser());
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/user?idNavisionUser={idUser}");
             TraceLog(parameters: new string[] { $"request:{request}" });
@@ -398,7 +434,7 @@ namespace Lexon.Infrastructure.Services
                             TraceOutputMessage(result.errors, "Mysql don´t recover the user", 2001);
                         else
                         {
-                            result.data = new LexonUser() { Name = resultMysql.data.Name, idUser = resultMysql.data.IdUser.ToString(), idNavision  = idUser , token = resultMysql.data.Token};
+                            result.data = new LexonUser() { Name = resultMysql.data.Name, idUser = resultMysql.data.IdUser.ToString(), idNavision = idUser, token = resultMysql.data.Token };
                             TraceLog(parameters: new string[] { $"iduser {result.data.idUser}" });
                             return result;
                         }
@@ -415,7 +451,6 @@ namespace Lexon.Infrastructure.Services
             }
             await GetUserForMongoAsync(idUser, result);
             return result;
-
         }
 
         private async Task GetUserForMongoAsync(string idUser, Result<LexonUser> result)
@@ -437,14 +472,14 @@ namespace Lexon.Infrastructure.Services
             }
         }
 
-        public async Task<Result<long>> RemoveClassificationFromListAsync(string idUser,  string bbdd, string idMail, long idRelated, short? idType = 1)
+        public async Task<Result<long>> RemoveClassificationFromListAsync(string idUser, string bbdd, string provider, string mailAccount, string uidMail, long idRelated, short? idType = 1)
         {
             long a = 0;
             var result = new Result<long>(a);
 
             var url = $"{_settings.Value.LexonMySqlUrl}/classifications/delete";
 
-            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idType:{idType}", $"bbdd:{bbdd}", $"idUser:{idUser}", $"idMail:{idMail}", $"idRelated:{idRelated}" });
+            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idType:{idType}", $"bbdd:{bbdd}", $"idUser:{idUser}", $"idMail:{uidMail}", $"idRelated:{idRelated}" });
             TraceLog(parameters: new string[] { $"url={url}" });
 
             try
@@ -455,7 +490,9 @@ namespace Lexon.Infrastructure.Services
                     bbdd = bbdd,
                     idRelated = idRelated,
                     idUser = idUser,
-                    idMail = idMail
+                    idMail = uidMail,
+                    Provider = provider,
+                    MailAccount = mailAccount
                 };
 
                 var json = JsonConvert.SerializeObject(classificationRemove);
@@ -483,15 +520,15 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceMessage(result.errors, ex);
             }
-            await RemoveClassificationFromListMongoAsync(idUser, bbdd, idMail, idRelated, idType, result);
+            await RemoveClassificationFromListMongoAsync(idUser, bbdd, provider, mailAccount, uidMail, idRelated, idType, result);
             return result;
         }
 
-        private async Task RemoveClassificationFromListMongoAsync(string idUser, string bbdd, string idMail, long idRelated, short? idClassificationType, Result<long> result)
+        private async Task RemoveClassificationFromListMongoAsync(string idUser, string bbdd, string provider, string mailAccount, string uidMail, long idRelated, short? idClassificationType, Result<long> result)
         {
             try
             {
-                var resultMongo = await _usersRepository.RemoveClassificationFromListAsync(idUser, bbdd, idMail, idRelated, idClassificationType);
+                var resultMongo = await _usersRepository.RemoveClassificationFromListAsync(idUser, bbdd, provider, mailAccount, uidMail, idRelated, idClassificationType);
 
                 if (resultMongo.errors.Count > 0)
                     result.errors.AddRange(resultMongo.errors);
@@ -512,11 +549,11 @@ namespace Lexon.Infrastructure.Services
             return await _usersRepository.SelectCompanyAsync(idUser, bbdd);
         }
 
-        public async Task<Result<long>> AddFileToListAsync(string idUser, string bbdd, long idFile, string nameFile, string descriptionFile = "")
-        {
-            TraceLog(parameters: new string[] { $"idUser={idUser}", $"bbdd={bbdd}", $"idFile={idFile}", $"nameFile={nameFile}", $"descriptionFile={descriptionFile}" });
+        //public async Task<Result<long>> AddFileToListAsync(string idUser, string bbdd, long idFile, string nameFile, string descriptionFile = "")
+        //{
+        //    TraceLog(parameters: new string[] { $"idUser={idUser}", $"bbdd={bbdd}", $"idFile={idFile}", $"nameFile={nameFile}", $"descriptionFile={descriptionFile}" });
 
-            return await _usersRepository.AddFileToListAsync(idUser, bbdd, idFile, nameFile, descriptionFile);
-        }
+        //    return await _usersRepository.AddFileToListAsync(idUser, bbdd, idFile, nameFile, descriptionFile);
+        //}
     }
 }

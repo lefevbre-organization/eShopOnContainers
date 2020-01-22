@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Lexon.MySql.Infrastructure.Services
 {
-    public class LexonMySqlService : ILexonMySqlService
+    public partial class LexonMySqlService : ILexonMySqlService
     {
         public readonly ILexonMySqlRepository _lexonRepository;
         private readonly IOptions<LexonSettings> _settings;
@@ -33,9 +33,9 @@ namespace Lexon.MySql.Infrastructure.Services
             return await _lexonRepository.AddRelationMailAsync(idType, bbdd, idUser, listaMails, idRelated);
         }
 
-        public async Task<Result<int>> RemoveRelationMailAsync(short idType, string bbdd, string idUser, string idMail, long idRelated)
+        public async Task<Result<int>> RemoveRelationMailAsync(short idType, string bbdd, string idUser, string provider, string mailAccount, string uidMail, long idRelated)
         {
-            return await _lexonRepository.RemoveRelationMailAsync(idType, bbdd, idUser, idMail, idRelated);
+            return await _lexonRepository.RemoveRelationMailAsync(idType, bbdd, idUser, provider, mailAccount, uidMail, idRelated);
         }
 
         public async Task<Result<JosUserCompanies>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser)
@@ -53,37 +53,33 @@ namespace Lexon.MySql.Infrastructure.Services
             return await _lexonRepository.GetMasterEntitiesAsync();
         }
 
-        public async Task<Result<JosUser>> GetUserAsync(string idUser)
+        /// <summary>
+        /// Obtener datos de usuario comprobando si se tiene acceso
+        /// </summary>
+        /// <param name="idUser">id del usuario navisión</param>
+        /// <param name="bbdd">opcionalmente la bbdd en la que trabaja en usuario</param>
+        /// <param name="idMail">id del enlace al correo, puede mandarse si se intenta aabrir un mail ya creado</param>
+        /// <param name="idEntityType">opcionalmente el tipo de entidad si viene relacionado</param>
+        /// <param name="idEntity">opcionalmente el id de entidad si viene relacionado</param>
+        /// <returns></returns>
+        public async Task<Result<JosUser>> GetUserAsync(string idUser, string bbdd, string provider = null, string mailAccount = null, string uidMail = null, short? idEntityType = null, int? idEntity = null )
         {
             var resultado = await _lexonRepository.GetUserAsync(idUser);
             resultado.data.Token = BuildTokenWithPayloadAsync(new TokenModel
             {
                 idClienteNavision = idUser,
                 name= resultado?.data?.Name,
-                idLexonUser= resultado?.data?.IdUser
+                idUserApp= resultado?.data?.IdUser,
+                bbdd = bbdd,
+                provider = provider,
+                mailAccount = mailAccount,
+                idMail= uidMail,
+                idEntityType= idEntityType,
+                idEntity = idEntity,
+                roles = GetRolesOfUser(idUser)
             }).Result;
             return resultado;
 
-        }
-
-        /// <summary>
-        /// Modelo de token para trbajar con entradas de usuario
-        /// </summary>
-        public class TokenModel 
-        {
-            public string name;
-
-            public long? idLexonUser;
-
-            /// <summary>
-            ///  Identificador de navision del cliente que se ha creado
-            /// </summary>
-            public string idClienteNavision { get; set; }
-
-            /// <summary>
-            ///   Fecha de espiración del token en UNIX TimeStamp. Normalmente ahora + 60 segundos. Cada token será valido durante 60 segundos desde su generación.
-            /// </summary>
-            public long exp { get; set; }
         }
 
         /// <summary>
@@ -106,6 +102,7 @@ namespace Lexon.MySql.Infrastructure.Services
                 var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_settings.Value.TokenKey));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+
                 var jwtToken = new JwtSecurityToken(new JwtHeader(creds), payload);
                 return new JwtSecurityTokenHandler().WriteToken(jwtToken);
             });
@@ -119,18 +116,49 @@ namespace Lexon.MySql.Infrastructure.Services
         {
             if (modelo is TokenModel clienteModel)
             {
-                var idClienteNavision = clienteModel.idClienteNavision;
-                _logger.LogInformation("Modelo --> {0} con idClienteNavision {1}", nameof(TokenModel), idClienteNavision);
-                payload.Add(nameof(idClienteNavision), idClienteNavision);
-
-                var idLexonUser = clienteModel.idLexonUser;
-                _logger.LogInformation("Modelo --> {0} con idLexonUser {1}", nameof(TokenModel), idLexonUser);
-                payload.Add(nameof(idLexonUser), idLexonUser);
-
-                var nameUser = clienteModel.name;
-                _logger.LogInformation("Modelo --> {0} con name {1}", nameof(TokenModel), nameUser);
-                payload.Add(nameof(nameUser), nameUser);
+               var roleOptions = GetRolesOfUser(clienteModel.idClienteNavision);
+                AddClaimToPayload(payload, clienteModel.idClienteNavision, nameof(clienteModel.idClienteNavision));
+                AddClaimToPayload(payload, clienteModel.idUserApp, nameof(clienteModel.idUserApp));
+                AddClaimToPayload(payload, clienteModel.name, nameof(clienteModel.name));
+                AddClaimToPayload(payload, clienteModel.bbdd, nameof(clienteModel.bbdd));
+                AddClaimToPayload(payload, clienteModel.provider, nameof(clienteModel.provider));
+                AddClaimToPayload(payload, clienteModel.mailAccount, nameof(clienteModel.mailAccount));
+                AddClaimToPayload(payload, clienteModel.idMail, nameof(clienteModel.idMail));
+                AddClaimToPayload(payload, clienteModel.idEntityType, nameof(clienteModel.idEntityType));
+                AddClaimToPayload(payload, clienteModel.idEntity, nameof(clienteModel.idEntity));
+                AddClaimToPayload(payload, clienteModel.roles, nameof(clienteModel.roles));
+               // payload.Add("roles", roleOptions);
             }
+        }
+
+        private static List<string> GetRolesOfUser(string idClienteNavision)
+        {
+            //TODO: connect to external service to obtain de data 
+            return new List<string>() { "lexonconnector", "centinelaconnector" };
+        }
+
+        private void AddClaimNumberToPayload(JwtPayload payload, long? valorClaim, string nombreClaim)
+        {
+            if (valorClaim == null) return;
+
+            _logger.LogInformation("Claim númerico {0} --> {1}", nombreClaim, valorClaim);
+            payload.Add(nombreClaim, valorClaim);
+        }
+
+        //private void AddClaimToPayload(JwtPayload payload, string valorClaim, string nombreClaim)
+        //{
+        //    if (valorClaim == null) return;
+
+        //    _logger.LogInformation("Claim {0} --> {1}", nombreClaim, valorClaim);
+        //    payload.Add(nombreClaim, valorClaim);
+        //}
+
+        private void AddClaimToPayload(JwtPayload payload, object valorClaim, string nombreClaim)
+        {
+            if (valorClaim == null) return;
+
+            _logger.LogInformation("Claim {0} --> {1}", nombreClaim, valorClaim);
+            payload.Add(nombreClaim, valorClaim);
         }
 
         public async Task<Result<JosRelationsList>> GetRelationsAsync(int pageSize, int pageIndex, short? idType, string bbdd, string idUser, string idMail)

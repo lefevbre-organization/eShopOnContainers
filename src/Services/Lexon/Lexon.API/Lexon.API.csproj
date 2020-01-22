@@ -34,11 +34,6 @@
 
 
   <ItemGroup>
-    <Folder Include="IntegrationEvents\" />
-  </ItemGroup>
-
-
-  <ItemGroup>
     <None Update="lexon_api.pfx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

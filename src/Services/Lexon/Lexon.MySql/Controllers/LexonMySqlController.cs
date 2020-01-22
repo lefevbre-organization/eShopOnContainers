@@ -38,6 +38,36 @@ namespace Lexon.MySql.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        /// <summary>
+        /// Permite obtener los token necesarios para operar con los microservicios de envio de correo
+        /// </summary>
+        /// <param name="idNavisionUser">entrada de usuario, probablemente cambiara directamente al id de lexon</param>
+        /// <param name="bbdd">cadena de conexión de la bbdd de la compañia</param>
+        /// <param name="provider">opcional, provedor de correo en caso de querer abrir un correo</param>
+        /// <param name="emailAccount">opcional, cuenta de correo desde la que se enviará el correo</param>
+        /// <param name="uidMail">opcional, uid del correo que se quiere abrir</param>
+        /// <param name="idEntityType">opcional, id del tipo d enetidad a relacionar</param>
+        /// <param name="idEntity">opcional, id de la entidad a relacionar</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("token")]
+        [ProducesResponseType(typeof(Result<JosUser>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<JosUser>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> TokenAsync(
+            string idNavisionUser = "E1621396"
+            , string bbdd = null // "lexon_admin_02"
+            , string provider = null
+            , string emailAccount = null
+            , string uidMail = null
+            , short? idEntityType = null
+            , int? idEntity = null)
+        {
+            if (string.IsNullOrEmpty(idNavisionUser))
+                return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
+
+            var result = await _lexonService.GetUserAsync(idNavisionUser, bbdd, provider, emailAccount, uidMail, idEntityType, idEntity);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
 
 
         [HttpGet]
@@ -107,7 +137,8 @@ namespace Lexon.MySql.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddRelationMailAsync([FromBody]ClassificationAddView classification)
         {
-            if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.bbdd) || classification?.listaMails?.Length < 1 || classification?.idType == null || classification?.idType < 1 || classification?.idRelated < 1)
+            if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.bbdd) ||
+                classification?.listaMails?.Length < 1 || classification?.idType == null || classification?.idType < 1 || classification?.idRelated < 1)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated and bbdd to create an actuation with the mail");
 
             var result = await _lexonService.AddRelationMailAsync(classification.idType, classification.bbdd, classification.idUser, classification.listaMails, classification.idRelated);
@@ -121,10 +152,15 @@ namespace Lexon.MySql.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RemoveRelationMailAsync([FromBody]ClassificationRemoveView classification)
         {
-            if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.bbdd) || string.IsNullOrEmpty(classification?.idMail) || classification?.idType == null||classification?.idType < 1 || classification?.idRelated < 1)
+            if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.bbdd) ||
+                string.IsNullOrEmpty(classification?.Provider) || string.IsNullOrEmpty(classification?.MailAccount) || string.IsNullOrEmpty(classification?.idMail) ||
+                classification?.idType == null||classification?.idType < 1 || classification?.idRelated < 1)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated and bbdd to remove an actuation");
 
-            var result = await _lexonService.RemoveRelationMailAsync(classification.idType, classification.bbdd, classification.idUser, classification.idMail, classification.idRelated);
+            var result = await _lexonService.RemoveRelationMailAsync(
+                classification.idType, classification.bbdd, classification.idUser,
+                classification.Provider, classification.MailAccount, classification.idMail, classification.idRelated);
+
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
