@@ -162,9 +162,9 @@ export class MessageList extends PureComponent {
     }
     let prevToken;
     let nextToken;
-    if (this.props.messagesResult.pageTokens[0] != null) {
+      if (this.props.messagesResult.pageTokens[0] != null) {
       nextToken = true;
-      if (this.props.messagesResult.pageTokens[0].split("skip=")[1] > 20)
+          if (this.props.messagesResult.pageTokens[0].split("skip=")[1] > 20)
         prevToken = true;
     }
     return { nextToken, prevToken };
@@ -173,8 +173,8 @@ export class MessageList extends PureComponent {
   render() {
     const collapsed = this.props.sideBarCollapsed;
     const { messagesResult } = this.props;
-    const messagesTotal = messagesResult.label
-      ? messagesResult.label.result.messagesTotal
+    const messagesTotal = this.props.totalmessages
+        ? this.props.totalmessages
       : 0;
     const { nextToken, prevToken } = this.getPageTokens();
 

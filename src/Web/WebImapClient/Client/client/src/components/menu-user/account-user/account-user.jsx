@@ -17,21 +17,15 @@ class AccountUser extends Component {
     switch (provider) {
       case "GOOGLE":
         window.open(`${window.URL_MF_GOOGLE}/GO0${userId}`, "_self");
-
         break;
+
       case "OUTLOOK":
         window.open(`${window.URL_MF_OUTLOOK}/OU0${userId}`, "_self");
-
         break;
 
-      default:
-            if (this.props.lexon.provider == this.props.account.provider.substring(0, 2)) {
-                removeStateExLexon();
-                window.location.reload();
-            }
-
-       // window.open(`${window.URL_MF_IMAP}/IM0${userId}`, "_self");
-
+      default:           
+          removeStateExLexon();
+          window.location.reload();           
         break;
     }
   }

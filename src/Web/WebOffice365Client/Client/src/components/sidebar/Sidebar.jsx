@@ -167,7 +167,7 @@ export class Sidebar extends Component {
               onClick={this.navigateToList}
               name={el.displayName}
               id={el.id}
-              messagesUnread={el.totalItemCount}
+              messagesUnread={el.unreadItemCount}
               iconProps={iconProps}
               selected={folder === el.id}
             />
