@@ -234,6 +234,8 @@ export class Main extends Component {
   }
 
   loadLabelMessageSingle() {
+        this.getLabelList();
+        this.renderLabelRoutes();
         const { labels } = this.props.labelsResult;
         const selectedLabel = labels.find(el => el.selected);
         this.getLabelMessages({ labelIds: [selectedLabel.id] });
