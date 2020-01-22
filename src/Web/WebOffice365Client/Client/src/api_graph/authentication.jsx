@@ -1,25 +1,10 @@
-import config from '../Config';
-import { UserAgentApplication } from 'msal';
+import { getUserApplication } from '../api_graph';
 
-
-export const signOut = (url) => {    
-    const params = {
-        auth: {
-            clientID: config.appId,
-            redirectUri: url,
-            //postLogoutRedirectUri: "your_app_logout_redirect_uri"
-        }
-    }
+export const signOut = (url) => {   
     
-    const userAgentApplication = new UserAgentApplication(params);
+    const userAgentApplication = getUserApplication();
     userAgentApplication.logout();
     
-
-    // var userAgentApplication = new UserAgentApplication(config.appId, null, null, {
-    //     postLogoutRedirectUri: url
-    // });
-
-    // userAgentApplication.logout();
     return true
 }
 

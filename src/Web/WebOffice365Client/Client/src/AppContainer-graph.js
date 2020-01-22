@@ -1,5 +1,4 @@
 ﻿import config from "./Config";
-import { UserAgentApplication } from "msal";
 import React, { Component } from "react";
 import { getUserDetails } from "./GraphService";
 import { connect } from "react-redux";
@@ -15,19 +14,15 @@ import {
   AUTH_IN_PROGRESS
 } from "./constants";
 import { getStateStorage } from "./localstorage";
+import { getUserApplication } from './api_graph';
 import ACTIONS from "./actions/lexon";
 
 class AppContainerGraph extends Component {
   constructor(props) {
     super(props);
 
-    this.userAgentApplication = new UserAgentApplication(
-      config.appId,
-      null,
-      null
-    );
-
-    var user = this.userAgentApplication.getUser();
+    this.userAgentApplication = getUserApplication();
+    var user = this.userAgentApplication.getAccount();
 
     this.state = {
       signInStatus: SIGNED_OUT,
@@ -39,9 +34,6 @@ class AppContainerGraph extends Component {
 
     this.init = this.init.bind(this);
     this.initClient = this.initClient.bind(this);
-    //this.onSignout = this.onSignout.bind(this);
-    // this.onSignInSuccess = this.onSignInSuccess.bind(this);
-    //this.onSignIn = this.onSignIn.bind(this);
   }
 
   componentDidMount() {
@@ -126,14 +118,32 @@ class AppContainerGraph extends Component {
 
   async login() {
     try {
-      await this.userAgentApplication.loginPopup(config.scopes);
+      await this.userAgentApplication.loginPopup(
+        {
+          scopes: config.scopes,
+          prompt: "select_account"
+      });
       await this.getUserProfile();
-    } catch (err) {
-      var errParts = err.split("|");
+    }
+    catch(err) {
+      var error = {};
+
+      if (typeof(err) === 'string') {
+        var errParts = err.split('|');
+        error = errParts.length > 1 ?
+          { message: errParts[1], debug: errParts[0] } :
+          { message: err };
+      } else {
+        error = {
+          message: err.message,
+          debug: JSON.stringify(err)
+        };
+      }
+
       this.setState({
         isAuthenticated: false,
         user: {},
-        error: { message: errParts[1], debug: errParts[0] }
+        error: error
       });
     }
   }
@@ -144,14 +154,14 @@ class AppContainerGraph extends Component {
 
   async getUserProfile() {
     try {
-      // Get the access token silently
+      // Get the access token silentlyx
       // If the cache contains a non-expired token, this function
       // will just return the cached token. Otherwise, it will
       // make a request to the Azure OAuth endpoint to get a token
 
-      var accessToken = await this.userAgentApplication.acquireTokenSilent(
-        config.scopes
-      );
+      var accessToken = await this.userAgentApplication.acquireTokenSilent({
+        scopes: config.scopes
+      });
 
       if (accessToken) {
         // Get the user's profile from Graph
@@ -164,18 +174,19 @@ class AppContainerGraph extends Component {
           },
           error: null
         });
-
         this.onSignInSuccess();
       }
       return true;
-    } catch (err) {
+
+    }
+    catch(err) {
+      console.log(err)
       var error = {};
-      if (typeof err === "string") {
-        var errParts = err.split("|");
-        error =
-          errParts.length > 1
-            ? { message: errParts[1], debug: errParts[0] }
-            : { message: err };
+      if (typeof(err) === 'string') {
+        var errParts = err.split('|');
+        error = errParts.length > 1 ?
+          { message: errParts[1], debug: errParts[0] } :
+          { message: err };
       } else {
         error = {
           message: err.message,

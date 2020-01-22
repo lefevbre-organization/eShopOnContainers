@@ -1,11 +1,10 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
-import { UserAgentApplication } from "msal";
 import ACTIONS from "../../actions/lexon";
 import { signOut } from "../../api_graph/authentication";
-import configAuth from "../../Config";
 import { PROVIDER } from "../../constants";
+import { getUserApplication } from '../../api_graph';
 
 class UserLexon extends Component {
   constructor(props) {
@@ -65,13 +64,8 @@ class UserLexon extends Component {
   }
 
   checkIsAuthenticated() {
-    var userAgentApplication = new UserAgentApplication(
-      configAuth.appId,
-      null,
-      null
-    );
-
-    var user = userAgentApplication.getUser();
+    this.userAgentApplication = getUserApplication();
+    const user = this.userAgentApplication.getAccount();
     return user === null ? false : true;
   }
 

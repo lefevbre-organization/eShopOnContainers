@@ -1,8 +1,34 @@
 /// <reference path="../components/sidebar/Sidebar.jsx" />
 import { base64Data } from "./utils";
 import config from "../Config";
+import { UserAgentApplication } from "msal";
 
 const graph = require("@microsoft/microsoft-graph-client");
+let userAgentApplication = null;
+
+export const getUserApplication = () => {
+  if (userAgentApplication === null) {
+    userAgentApplication = new UserAgentApplication({
+      auth: {
+        clientId: config.appId,
+        redirectUri: config.redirectUri
+      },
+      cache: {
+        cacheLocation: "localStorage",
+        storeAuthStateInCookie: true
+      }
+    });
+
+    userAgentApplication.handleRedirectCallback((error, response)=>{
+      alert("RedirectCallback")
+      console.log("handleRedirectCallback");
+      console.log(error);
+      console.log(response);
+    });
+  }
+
+  return userAgentApplication
+}
 
 function getAuthenticatedClient(accessToken) {
   // Initialize Graph client
@@ -10,7 +36,7 @@ function getAuthenticatedClient(accessToken) {
     // Use the provided access token to authenticate
     // requests
     authProvider: done => {
-      done(null, accessToken);
+      done(null, accessToken.accessToken);
     }
   });
 
@@ -54,22 +80,29 @@ function getAuthenticatedClient(accessToken) {
 
 //END IMPLEMENT RECURSIVE FOLDERS
 
-export const getLabelList = () =>
-  new Promise((resolve, reject) => {
-    var accessToken = window.msal.acquireTokenSilent(config.scopes);
-    const client = getAuthenticatedClient(accessToken);
-    client
+const getAccessTokenSilent = async () => {
+  console.log(config.scopes)
 
-      .api("/me/mailFolders")
-      .get()
-      .then(response => {
-        resolve(response.value);
-      });
-  });
+  return await window.msal.acquireTokenSilent({ scopes: config.scopes });
+}
+
+export const getLabelList = async () => {
+  const accessToken = await getAccessTokenSilent();
+  const client = await getAuthenticatedClient(accessToken);
+
+  try {
+    const folders = await client.api('/me/mailFolders').get();
+    return folders.value;
+  } catch (err) {
+    console.log(err)
+  }
+
+  return [];
+}
 
 export const getLabelInbox = () =>
-  new Promise((resolve, reject) => {
-    var accessToken = window.msal.acquireTokenSilent(config.scopes);
+  new Promise(async (resolve, reject) => {
+    const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
     client
       .api("/me/mailFolders/inbox")
@@ -80,31 +113,13 @@ export const getLabelInbox = () =>
   });
 
 
-  export const getLabelSentItems = async () => {
-    var accessToken = window.msal.acquireTokenSilent(config.scopes);
-    const client = getAuthenticatedClient(accessToken);
-    const response = await client.api("/me/mailFolders/sentItems").get();
+export const getLabelSentItems = async () => {
+  const accessToken = await getAccessTokenSilent();
+  const client = getAuthenticatedClient(accessToken);
+  const response = await client.api("/me/mailFolders/sentItems").get();
 
-    return response;
-  }
-
-//export const getMessageListPagination = ({ page }) =>
-//    new Promise((resolve, reject) => {
-//        getMessagePaginationList(page)
-//            .then(getMessageHeaders)
-//            .then(messageResult =>
-//                flattenMessagesWithLabel(messageResult.messages, "").then(
-//                    labelMessagesDetails => resolve({
-//                        ...messageResult,
-//                        messages: labelMessagesDetails.messages,
-//                        label: labelMessagesDetails.label
-//                    })
-//                )
-//            )
-//            .catch(err => {
-//                reject(err);
-//            });
-//    });
+  return response;
+}
 
 export const getMessageList = ({ labelIds, maxResults, q, pageToken }) =>
   new Promise((resolve, reject) => {
@@ -125,27 +140,8 @@ export const getMessageList = ({ labelIds, maxResults, q, pageToken }) =>
       });
   });
 
-//export const getMessageList = ({ labelIds, maxResults, q, pageToken }) =>
-//  new Promise((resolve, reject) => {
-//    getMessageRawList({ labelIds, maxResults, pageToken, q })
-//      .then(getMessageHeaders)
-//      .then(messageResult =>
-//        flattenMessagesWithLabel(messageResult.messages, labelIds).then(
-//          labelMessagesDetails => resolve({
-//            ...messageResult,
-//            messages: labelMessagesDetails.messages,
-//            label: labelMessagesDetails.label
-//          })
-//        )
-//      )
-//      .catch(err => {
-//        reject(err);
-//      });
-//  });
-
 export const flattenMessagesWithLabel = (messages, labelIds) =>
   new Promise((resolve, reject) => {
-    //if (!labelIds) {
     resolve({
       messages,
       label: {
@@ -155,72 +151,13 @@ export const flattenMessagesWithLabel = (messages, labelIds) =>
       }
     });
     return;
-    //}
 
-    //window.gapi.client.gmail.users.labels
-    //    .get({
-    //        userId: "me",
-    //        id: labelIds[0]
-    //    })
-    //    .then(response =>
-    //        resolve({
-    //            messages,
-    //            label: response
-    //        })
-    //    );
   });
 
-//export const flattenMessagesWithLabel = (messages, labelIds) =>
-//  new Promise((resolve, reject) => {
-
-//    if (!labelIds) {
-//      resolve({
-//        messages,
-//        label: {
-//          result: {
-//            messagesTotal: 0
-//          }
-//        }
-//      });
-//      return;
-//    }
-
-//    window.gapi.client.gmail.users.labels
-//      .get({
-//        userId: "me",
-//        id: labelIds[0]
-//      })
-//      .then(response =>
-//        resolve({
-//          messages,
-//          label: response
-//        })
-//      );
-//    });
-
-// const getMessagePaginationList = ({ query }) =>
-//   new Promise((resolve, reject) => {
-//     query = `https://graph.microsoft.com/v1.0/me/mailFolders/AAMkADYwN2U5OWZlLWUwZDktNDQ3Yi05MTQ2LTMxYmUyMGExMjcwNgAuAAAAAAABGTrist65R5XlVfmY3KAqAQAcnBiKLwlKQrviB8XkwxacAAAAAAEMAAA=/messages?$top=20&$skip=80`;
-//     var accessToken = window.msal.acquireTokenSilent(config.scopes);
-//     const client = getAuthenticatedClient(accessToken);
-//     client
-//       .api(`${query}`)
-
-//       .get()
-//       .then(response => {
-//         resolve(response);
-//       })
-//       .catch(err => {
-//         reject(err);
-//       });
-//   });
-
 const getMessageRawList = ({ labelIds, maxResults, pageToken, q = "" }) =>
-  new Promise((resolve, reject) => {
-    var accessToken = window.msal.acquireTokenSilent(config.scopes);
+  new Promise(async (resolve, reject) => {
+    const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
-    //if (pageToken == null)
-    //    pageToken = 0
     if (pageToken != null) {
       client
         .api(`${pageToken}`)
@@ -259,28 +196,10 @@ const getMessageRawList = ({ labelIds, maxResults, pageToken, q = "" }) =>
     }
   });
 
-//const getMessageRawList = ({ labelIds, maxResults, pageToken, q = "" }) =>
-//  new Promise((resolve, reject) => {
-//    window.gapi.client.gmail.users.messages
-//      .list({
-//        userId: "me",
-//        q,
-//        maxResults: maxResults || MAX_RESULTS,
-//        ...(labelIds && {labelIds}),
-//        ...(pageToken && { pageToken })
-//      })
-//      .then(response => resolve(response))
-//      .catch(err => {
-//        reject(err);
-//      });
-//  });
-
 export const getMessageHeaders = response => {
-  //const messageResult = response.result;
   const messageResult = response;
 
   return new Promise((resolve, reject) => {
-    //const headerPromises = (messageResult.messages || []).map(el => {
     const headerPromises = (messageResult.value || []).map(el => {
       return getMessageHeader(el.id);
     });
@@ -310,12 +229,11 @@ export const getMessageHeadersFromId = messageIds => {
 };
 
 export const getMessageHeader = id => {
-  return new Promise((resolve, reject) => {
-    var accessToken = window.msal.acquireTokenSilent(config.scopes);
+  return new Promise(async (resolve, reject) => {
+    const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
     client
       .api(`me/messages/${id}`)
-      //.select('id,parentFolderId,')
       .get()
       .then(response => resolve(response))
       .catch(err => {
@@ -341,8 +259,8 @@ export const getMessage = messageId =>
   });
 
 export const getAttachmentsList = messageId => {
-  return new Promise((resolve, reject) => {
-    var accessToken = window.msal.acquireTokenSilent(config.scopes);
+  return new Promise(async (resolve, reject) => {
+    const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
     client
       .api(`me/messages/${messageId}/attachments`)
@@ -354,41 +272,23 @@ export const getAttachmentsList = messageId => {
   });
 };
 
-export const getMessageDetail = messageId => {
-  return new Promise((resolve, reject) => {
-    var accessToken = window.msal.acquireTokenSilent(config.scopes);
+export const getMessageDetail = async messageId => {
+  try {
+    const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
-    client
-      .api(`me/messages/${messageId}`)
-      .get()
-      .then(response => {
-        const result = response;
-        let body = result.body;
-        resolve({
-          body,
-          headers: response.headers,
-          result: { ...result, messageHeaders: result, payload: undefined }
-        });
-      })
-      .catch(error => {
-        reject(error);
-      });
-  });
-};
 
-// Insert file attachments from Google Drive
-// function getAttachments_(ids) {
-//   var att = [];
-//   for (var i in ids) {
-//     var file = ids;
-//     att.push({
-//       mimeType: file.type(),
-//       fileName: file.name()
-//       //bytes: Utilities.base64Encode(file.getBlob().getBytes())
-//     });
-//   }
-//   return att;
-// }
+    const response = await client.api(`me/messages/${messageId}`).get()
+    const result = response;
+
+    return {
+      body: result.body,
+      headers: response.headers,
+      result: { ...result, messageHeaders: result, payload: undefined }
+    }
+  } catch (err) {
+    throw err;
+  }
+};
 
 export const emailEnd = () => {
   var email = `},
@@ -500,63 +400,42 @@ export const emailAttachments = data => {
   return email;
 };
 
-export const sendMessage = ({ data, attachments }) => {
-  return new Promise((resolve, reject) => {
-    let email = "";
-    email = emailBody(data);
-    email += emailToRecipients(data);
-    email += emailToCcRecipients(data);
-    email += emailToBccRecipients(data);
-    email += emailAttachments(data);
-    email += emailEnd();
+export const sendMessage = async ({ data, attachments }) => {
+  let email = "";
+  email = emailBody(data);
+  email += emailToRecipients(data);
+  email += emailToCcRecipients(data);
+  email += emailToBccRecipients(data);
+  email += emailAttachments(data);
+  email += emailEnd();
 
-    var accessToken = window.msal.acquireTokenSilent(config.scopes);
+  try {
+    const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
 
-    return client
-      .api("/me/sendmail")
-      .header("Authorization", "Bearer " + accessToken)
-      .header("Content-Type", "application/json; charset=utf-8")
-      .post(email, (err, response) => {
-        if(err) {
-          reject(err);
-        } else {
-          resolve(response);
-        }
-      });
-  });
+    return client.api("/me/sendmail").post(email);
+  } catch (err) {
+    throw err;
+  }
 };
 
-//export const batchModify = ({ids, addLabelIds = [], removeLabelIds = []}) => new Promise((resolve, reject) => {
-//  window.gapi.client.gmail.users.messages
-//    .batchModify({
-//      userId: "me",
-//      ids,
-//      addLabelIds,
-//      removeLabelIds
-//    })
-//    .then(response =>
-//      {
-//        resolve(ids)
-//      }
-//    );
-//});
-
-export const batchModify = ({ ids, addLabelIds = [], removeLabelIds = [] }) =>
-  new Promise((resolve, reject) => {
-    var accessToken = window.msal.acquireTokenSilent(config.scopes);
-    const client = getAuthenticatedClient(accessToken);
-
-    var deleteFolder = "deleteditems";
-
-    var DestinationId = `{
+export const batchModify = async ({ ids, addLabelIds = [], removeLabelIds = [] }) => {
+  const accessToken = await getAccessTokenSilent();
+  const client = getAuthenticatedClient(accessToken);
+  const deleteFolder = "deleteditems";
+  const DestinationId = `{
                      "destinationId": "${deleteFolder}"
                      }`;
-    return client
-      .api(`me/messages/${ids}/move`)
-      .header("Authorization", "Bearer " + accessToken)
-      .header("Content-Type", "application/json")
-      .post(DestinationId, (err, response) => {
-        resolve(ids);
-      });
-  });
+
+  let prs = [];
+  if (ids && ids.length) {
+    for (let i = 0; i < ids.length; i++) {
+      prs.push(client
+        .api(`me/messages/${ids[i]}/move`)
+        .post(DestinationId))
+    }
+  }
+
+  await Promise.all(prs);
+  return ids
+}

@@ -206,20 +206,6 @@ export const getMessage = messageId => {
   });
 };
 
-// Insert file attachments from Google Drive
-// function getAttachments_(ids) {
-//     var att = [];
-//     for (var i in ids) {
-//         var file = ids;
-//         att.push({
-//             mimeType: file.type(),
-//             fileName: file.name(),
-//             //bytes: Utilities.base64Encode(file.getBlob().getBytes())
-//         });
-//     }
-//     return att;
-// }
-
 export const sendMessage = async ({ headers, body, attachments }) => {
   let email = "";
 
@@ -262,13 +248,9 @@ export const sendMessage = async ({ headers, body, attachments }) => {
     var fileName = headersClone.attachments[i].name;
 
     email += `--alternative\r\n`;
-
     email += `Content-Type: ${mimetype}\r\n`;
-
     email += `Content-Transfer-Encoding: base64\r\n`;
-
     email += `Content-Disposition: attachment; filename = "${fileName}"\r\n`;
-
     email += `${fileData}\r\n`;
   }
 
@@ -283,42 +265,6 @@ export const sendMessage = async ({ headers, body, attachments }) => {
     },
   });
 };
-
-//export const base64MimeType = ( encoded ) => {
-//    var result = null;
-
-//    if (typeof encoded !== 'string') {
-//        return result;
-//    }
-
-//    var mime = encoded.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+).*,.*/);
-
-//    if (mime && mime.length) {
-//        result = mime[1];
-//    }
-
-//    return result;
-//}
-
-//export const base64Data = ( encoded ) => {
-//    var result = null;
-
-//    if (typeof encoded !== 'string') {
-//        return result;
-//    }
-
-//    var data = encoded.split("base64,")[1];
-
-//    return data;
-//}
-
-//export const base64Data = ({ encoded }) => {
-//    return encoded.split("base64,")[1];
-//}
-
-//function base64Data(encoded) {
-//    return encoded.split("base64,")[1];
-//}
 
 export const batchModify = ({ ids, addLabelIds = [], removeLabelIds = [] }) =>
   new Promise((resolve, reject) => {

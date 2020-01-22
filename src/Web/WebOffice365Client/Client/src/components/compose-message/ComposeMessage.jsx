@@ -151,6 +151,7 @@ export class Compose extends PureComponent {
       data: this.state,
       attachments: Fileattached
     }).then(response => {
+      debugger;
       this.closeModal();
       this.resetFields();
     });

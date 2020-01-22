@@ -157,19 +157,19 @@ export const modifyMessages = ({
   ids,
   addLabelIds = [],
   removeLabelIds = []
-}) => dispatch => {
-  batchModify({ ids, addLabelIds, removeLabelIds })
-    .then(modifiedIds => {
-      dispatch({
-        type: MODIFY_MESSAGES_SUCCESS,
-        payload: { modifiedIds, addLabelIds, removeLabelIds }
-      });
-    })
-    .catch(error => {
-      dispatch({
-        type: MODIFY_MESSAGES_FAILED
-      });
+}) => async (dispatch) => {
+  try {
+    const modifiedIds = await batchModify({ ids, addLabelIds, removeLabelIds });
+    console.log(modifiedIds)
+    dispatch({
+      type: MODIFY_MESSAGES_SUCCESS,
+      payload: { modifiedIds, addLabelIds, removeLabelIds }
     });
+  } catch(err) {
+    dispatch({
+      type: MODIFY_MESSAGES_FAILED
+    });
+  }
 };
 
 export const addMessage = message => dispatch => {

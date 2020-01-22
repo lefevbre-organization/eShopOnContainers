@@ -22,7 +22,7 @@
     "i18next-xhr-backend": "^3.0.0",
     "js-base64": "^2.5.1",
     "moment": "^2.22.2",
-    "msal": "^0.2.4",
+    "msal": "^1.2.1",
     "node-sass": "^4.9.4",
     "react": "^16.5.2",
     "react-dock": "^0.2.4",

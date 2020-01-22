@@ -357,6 +357,8 @@ export class Main extends Component {
         method: "GET"
       }).then(result => {
         console.log(result);
+        debugger
+
         const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
         signOut(urlRedirect);
       });
