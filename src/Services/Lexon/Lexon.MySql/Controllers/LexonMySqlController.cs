@@ -55,7 +55,7 @@ namespace Lexon.MySql.Controllers
         [ProducesResponseType(typeof(Result<JosUser>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> TokenAsync(
             string idNavisionUser = "E1621396"
-            , string bbdd = "lexon_admin_02"
+            , string bbdd = null // "lexon_admin_02"
             , string provider = null
             , string emailAccount = null
             , string uidMail = null

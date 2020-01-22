@@ -69,13 +69,14 @@ namespace Lexon.MySql.Infrastructure.Services
             {
                 idClienteNavision = idUser,
                 name= resultado?.data?.Name,
-                idLexonUser= resultado?.data?.IdUser,
+                idUserApp= resultado?.data?.IdUser,
                 bbdd = bbdd,
                 provider = provider,
                 mailAccount = mailAccount,
                 idMail= uidMail,
                 idEntityType= idEntityType,
-                idEntity = idEntity
+                idEntity = idEntity,
+                roles = GetRolesOfUser(idUser)
             }).Result;
             return resultado;
 
@@ -113,10 +114,11 @@ namespace Lexon.MySql.Infrastructure.Services
 
         private void AddValuesToPayload(JwtPayload payload, TokenModel modelo)
         {
-            if (modelo is TokenModel clienteModel) 
+            if (modelo is TokenModel clienteModel)
             {
+               var roleOptions = GetRolesOfUser(clienteModel.idClienteNavision);
                 AddClaimToPayload(payload, clienteModel.idClienteNavision, nameof(clienteModel.idClienteNavision));
-                AddClaimToPayload(payload, clienteModel.idLexonUser, nameof(clienteModel.idLexonUser));
+                AddClaimToPayload(payload, clienteModel.idUserApp, nameof(clienteModel.idUserApp));
                 AddClaimToPayload(payload, clienteModel.name, nameof(clienteModel.name));
                 AddClaimToPayload(payload, clienteModel.bbdd, nameof(clienteModel.bbdd));
                 AddClaimToPayload(payload, clienteModel.provider, nameof(clienteModel.provider));
@@ -124,8 +126,15 @@ namespace Lexon.MySql.Infrastructure.Services
                 AddClaimToPayload(payload, clienteModel.idMail, nameof(clienteModel.idMail));
                 AddClaimToPayload(payload, clienteModel.idEntityType, nameof(clienteModel.idEntityType));
                 AddClaimToPayload(payload, clienteModel.idEntity, nameof(clienteModel.idEntity));
-
+                AddClaimToPayload(payload, clienteModel.roles, nameof(clienteModel.roles));
+               // payload.Add("roles", roleOptions);
             }
+        }
+
+        private static List<string> GetRolesOfUser(string idClienteNavision)
+        {
+            //TODO: connect to external service to obtain de data 
+            return new List<string>() { "lexonconnector", "centinelaconnector" };
         }
 
         private void AddClaimNumberToPayload(JwtPayload payload, long? valorClaim, string nombreClaim)
