@@ -118,7 +118,7 @@ class AppContainerGraph extends Component {
 
   async login() {
     try {
-      await this.userAgentApplication.loginPopup(
+      await this.userAgentApplication.loginRedirect(
         {
           scopes: config.scopes,
           prompt: "select_account"
