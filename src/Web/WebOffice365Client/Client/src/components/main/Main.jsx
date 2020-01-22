@@ -252,10 +252,12 @@ export class Main extends Component {
     }
   }
 
- loadLabelMessageSingle() {
-        const { labels } = this.props.labelsResult;
-        const selectedLabel = labels.find(el => el.selected);
-        this.getLabelMessages({ labelIds: [selectedLabel.id] });
+  loadLabelMessageSingle() {
+    this.getLabelList();
+    this.renderLabelRoutes();
+    const { labels } = this.props.labelsResult;
+    const selectedLabel = labels.find(el => el.selected);
+    this.getLabelMessages({ labelIds: [selectedLabel.id] });        
   }
 
   navigateToNextPage(token) {
@@ -329,6 +331,7 @@ export class Main extends Component {
               navigateToPrevPage={this.navigateToPrevPage}
               pageTokens={this.props.pageTokens}
               addInitialPageToken={this.addInitialPageToken}
+              totalmessages={el.totalItemCount}
               parentLabel={that.props.labelsResult.labels.find(
                 el => el.id === props.match.path.slice(1)
               )}
