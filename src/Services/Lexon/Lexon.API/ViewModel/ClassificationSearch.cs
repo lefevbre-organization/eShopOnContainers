@@ -5,7 +5,9 @@
     /// </summary>
     public class ClassificationSearch: ClassificationView
     {
-       
+
+        /// <summary> string with the id of the mail to search</summary>
+        public string idMail { get; set; }
         /// <summary>quantity of records to return , by default 20,  all = 0</summary>
         public int pageSize { get; set; }
 
