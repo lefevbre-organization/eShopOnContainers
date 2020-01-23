@@ -66,7 +66,7 @@ export const getLabelMessages = ({ labelIds, q = "", pageToken }) => (
         payload: response
       });
 
-      dispatch(setPageTokens());
+      dispatch(setPageTokens(response["@odata.nextLink"]));
     })
     .catch(err => {
       dispatch({
@@ -81,10 +81,12 @@ export const setSearchQuery = q => ({
   payload: q
 });
 
-export const setPageTokens = tokens => ({
-  type: SET_PAGE_TOKENS,
-  payload: tokens
-});
+export const setPageTokens = token => {
+  return {
+    type: SET_PAGE_TOKENS,
+    payload: { nextPageToken: token }
+  };
+}
 
 export const emptyLabelMessages = () => ({
   type: EMPTY_MESSAGES
