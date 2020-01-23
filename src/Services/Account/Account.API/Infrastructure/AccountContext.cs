@@ -56,14 +56,14 @@
         private static void ClassMapping()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(IntegrationEventLogEntry))) { BsonClassMap.RegisterClassMap<IntegrationEventLogEntry>(); }
-            if (!BsonClassMap.IsClassMapRegistered(typeof(Account))) { BsonClassMap.RegisterClassMap<Account>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(UserMail))) { BsonClassMap.RegisterClassMap<UserMail>(); }
         }
 
-        public IMongoCollection<Account> Accounts => Database.GetCollection<Account>("accounts");
+        public IMongoCollection<UserMail> Accounts => Database.GetCollection<UserMail>("accounts");
 
-        public IMongoCollection<Account> AccountsTransaction(IClientSessionHandle session)
+        public IMongoCollection<UserMail> AccountsTransaction(IClientSessionHandle session)
         {
-            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<Account>("accounts");
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<UserMail>("accounts");
         }
 
         public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogs
@@ -134,7 +134,6 @@
                 .Sort(sort)
                 .ToListAsync();
         }
-
 
         public Task MarkEventAsInProgressAsync(Guid eventId, IClientSessionHandle transaction)
         {
