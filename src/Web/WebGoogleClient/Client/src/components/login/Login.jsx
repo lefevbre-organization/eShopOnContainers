@@ -7,8 +7,6 @@ import "./login.scss";
 
 export class Login extends Component {
 
-
-
 goBack() {
    if (typeof this.props.lexon !== 'undefined') {
       const { userId } = this.props.lexon;
@@ -47,7 +45,7 @@ goBack() {
                   this.goBack();
                 }}
               >
-               {i18n.t("login.cancel")}
+              {i18n.t("login.cancel")}
               </Button>
           </div>
         </div>

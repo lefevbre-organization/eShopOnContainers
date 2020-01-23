@@ -3,7 +3,7 @@ import i18n from "i18next";
 import { Button } from "reactstrap";
 import "./Login.scss";
 
-function MSAuthContent(props) {
+function MSAuthButton(props) {
   return (
     <a href="/#" className="login" onClick={props.authButtonMethod}>
       <img
@@ -43,7 +43,7 @@ export default class Login extends React.Component {
         <div className="mx-auto">
           <div className="form-box">
               <div>
-                <MSAuthContent
+                <MSAuthButton
                   isAuthenticated={this.props.isAuthenticated}
                   user={this.props.user}
                   authButtonMethod={this.props.authButtonMethod}
