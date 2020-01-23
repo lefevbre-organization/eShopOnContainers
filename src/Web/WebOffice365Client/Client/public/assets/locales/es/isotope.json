@@ -46,5 +46,9 @@
   },
   "header": {
     "search": "Buscar"
+  },
+  "login": {
+    "cancel": "Cancelar",
+    "button": "Inicia sesión con Microsoft"
   }
 }

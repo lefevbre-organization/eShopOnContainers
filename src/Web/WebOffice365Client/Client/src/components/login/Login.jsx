@@ -1,7 +1,9 @@
 import React from "react";
+import i18n from "i18next";
+import { Button } from "reactstrap";
 import "./Login.scss";
 
-function WelcomeContent(props) {
+function MSAuthContent(props) {
   return (
     <a href="/#" className="login" onClick={props.authButtonMethod}>
       <img
@@ -15,17 +17,49 @@ function WelcomeContent(props) {
 }
 
 export default class Login extends React.Component {
+
+  goBack() {
+     if (typeof this.props.lexon !== 'undefined') {
+         const { userId } = this.props.lexon;
+         if (userId !== null) {
+             const url = `${window.URL_RESET_DEFAULTACCOUNT}/${userId}`;
+             fetch(url, {
+                    method: "GET"
+             })
+                .then(result => {
+                        const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+                        window.open(urlRedirect, "_self");
+                })
+                .catch(error => {
+                        console.log("error =>", error);
+                });
+         }
+     }
+  }
+
   render() {
     return (
       <div className="d-flex align-content-center align-items-center w-100 h-100 text-center w3-btn">
         <div className="mx-auto">
-          <div>
-            <WelcomeContent
-              isAuthenticated={this.props.isAuthenticated}
-              user={this.props.user}
-              authButtonMethod={this.props.authButtonMethod}
-              logout={this.props.logout}
-            />
+          <div className="form-box">
+              <div>
+                <MSAuthContent
+                  isAuthenticated={this.props.isAuthenticated}
+                  user={this.props.user}
+                  authButtonMethod={this.props.authButtonMethod}
+                  logout={this.props.logout}
+                />
+                <Button
+                   className="mr-left font-weight-bold btn-outline-primary margin-top"
+                   title={i18n.t("login.cancel")}
+                   color="secondary"
+                   onClick={() => {
+                      this.goBack();
+                   }}
+                >
+                 {i18n.t("login.cancel")}
+                </Button>
+               </div>
           </div>
         </div>
       </div>

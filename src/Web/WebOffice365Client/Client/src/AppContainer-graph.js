@@ -101,6 +101,7 @@ class AppContainerGraph extends Component {
           user={this.state.user}
           authButtonMethod={this.login.bind(this)}
           logout={this.logout.bind(this)}
+          lexon={this.props.lexon}
         />
       );
     }

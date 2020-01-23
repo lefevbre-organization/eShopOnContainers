@@ -96,7 +96,7 @@ class AppContainer extends Component {
     } else if (signInStatus === AUTH_IN_PROGRESS) {
       return <Authenticating />;
     } else {
-      return <Login onSignIn={this.onSignIn} />;
+        return <Login lexon={this.props.lexon} onSignIn={this.onSignIn} />;
     }
   }
 

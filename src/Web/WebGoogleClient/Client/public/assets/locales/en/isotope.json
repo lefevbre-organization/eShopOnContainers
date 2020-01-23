@@ -43,6 +43,9 @@
   },
   "header": {
     "search": "Search"
+  },
+  "login": {
+    "cancel": "Cancel",
+    "button":  "Sign in with google"
   }
-
 }
