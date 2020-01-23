@@ -50,16 +50,6 @@ namespace Lexon.Infrastructure.Services
             TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idType:{idType}", $"bbdd:{bbdd}", $"idMail:{listaMails}", $"idRelated:{idRelated}" });
             TraceLog(parameters: new string[] { $"url={url}" });
 
-            //MailInfo[] listaMailsCompleta = GiveMeDataFromArrayMails(listaMails);
-
-            //var classificationAdd = new ClassificationAddViewComplete
-            //{
-            //    idType = idType,
-            //    bbdd = bbdd,
-            //    idRelated = idRelated,
-            //    idUser = idUser,
-            //    listaMails = listaMailsCompleta
-            //};
             var classificationAdd = new ClassificationAddView
             {
                 idType = idType,
@@ -99,22 +89,7 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        //private MailInfo[] GiveMeDataFromArrayMails(string[] listaMails)
-        //{
-        //    var listaMailsCompleta = new List<MailInfo>();
-        //    foreach (var mail in listaMails)
-        //    {
-        //        listaMailsCompleta.Add(new MailInfo() { Date = "2020-01-01", Subject = "De momento no", Uid = mail });
-        //    }
-        //    return listaMailsCompleta.ToArray();
-        //}
 
-        private MailInfo[] GiveMeDataFromArrayMails(MailInfo[] listaMails)
-        {
-            throw new NotImplementedException();
-        }
-
-        //private async Task AddClassificationToListMongoAsync(string idUser, string bbdd, string[] listaMails, long idRelated, short? idClassificationType, Result<long> result)
         private async Task AddClassificationToListMongoAsync(string idUser, string bbdd, MailInfo[] listaMails, long idRelated, short? idClassificationType, Result<long> result)
         {
             try
