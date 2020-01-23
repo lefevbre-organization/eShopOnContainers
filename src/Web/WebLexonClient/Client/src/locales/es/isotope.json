@@ -67,7 +67,7 @@
   },
   "list-classifications": {
     "classifications": "CLASIFICACIONES:",
-    "no-classifications": "No exsiten clasificaciones asociadas a este correo"
+    "no-classifications": "No existen clasificaciones asociadas a este correo"
   },
   "list-documents": {
     "documented-copies": "COPIAS DOCUMENTADAS:"

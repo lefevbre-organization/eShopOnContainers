@@ -95,7 +95,6 @@ export class Main extends Component {
 
   sendMessagePutUser(user) {
     const { selectedMessages } = this.props;
-
     window.dispatchEvent(
       new CustomEvent("PutUserFromLexonConnector", {
         detail: {

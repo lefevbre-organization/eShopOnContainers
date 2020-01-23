@@ -24,7 +24,9 @@ class Main extends Component {
       messageNotification: null,
       idCaseFile: null,
       bbdd: null,
-      idCompany: null
+      idCompany: null,
+      provider: null,
+      account: null
     };
 
     this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -97,13 +99,17 @@ class Main extends Component {
       selectedMessages,
       idCaseFile,
       bbdd,
-      idCompany
+      idCompany,
+      provider = 'GO',
+      account = 'juan@juan.com',
     } = event.detail;
     if (idCaseFile != null && idCaseFile !== undefined) {
       this.setState({
-        idCaseFile: idCaseFile,
-        bbdd: bbdd,
-        idCompany: idCompany
+        idCaseFile,
+        bbdd,
+        idCompany,
+        provider,
+        account
       });
     }
 
@@ -113,7 +119,8 @@ class Main extends Component {
 
     getUser(user)
       .then(result => {
-        this.setState({ user: result.user });
+        const newUser = Object.assign({}, result.user, { account, provider } );
+        this.setState({ user: newUser});
         getCompanies(this.state.user)
           .then(result => {
             this.setState({
