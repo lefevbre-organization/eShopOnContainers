@@ -159,17 +159,21 @@ export class MessageList extends PureComponent {
 
   getPageTokens() {
     if (this.props.messagesResult.loading) {
-      return { nextToken: null, prevToken: null };
+      return { nextToken: false, prevToken: false };
     }
-    
-    let prevToken;
-    let nextToken;
-    if (this.props.messagesResult.pageTokens[0] != null) {
+
+    let nextToken = false;
+    let prevToken = false;
+       
+  if(this.props.pageTokens.nextPageToken && this.props.pageTokens.nextPageToken.length > 0) {
       nextToken = true;
-      if (this.props.messagesResult.pageTokens[0].split("skip=")[1] > 20) {
-        prevToken = true;
-      }
     }
+
+    if(this.props.pageTokens.prevPageToken && this.props.pageTokens.prevPageToken.length > 0) {
+      prevToken = true;
+    }
+
+
     return { nextToken, prevToken };
   }
 

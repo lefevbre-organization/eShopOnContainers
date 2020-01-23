@@ -44,17 +44,15 @@ export const getLabelMessages = ({ labelIds, q = "", pageToken }) => (
   if (state.messagesResult.paginatioDirectionSelected != null) {
     // = prev
     if (state.messagesResult.paginatioDirectionSelected === "prev") {
-      var skipValue = state.messagesResult["@odata.nextLink"].split("skip=")[1];
-      pageToken =
-        state.messagesResult["@odata.nextLink"].split("skip=")[0] +
-        "skip=" +
-        (skipValue - 40);
+      pageToken = state.pageTokens.prevPageToken;
     }
     // = next
     else {
       pageToken = state.messagesResult["@odata.nextLink"];
     }
   }
+
+  //pageToken = state.pageTokens.nextPageToken;
 
   // reset the state before reloading the object
   delete state.messagesResult;
@@ -66,7 +64,7 @@ export const getLabelMessages = ({ labelIds, q = "", pageToken }) => (
         payload: response
       });
 
-      dispatch(setPageTokens(response["@odata.nextLink"]));
+      dispatch(setPageTokens(state.pageTokens, response["@odata.nextLink"]));
     })
     .catch(err => {
       dispatch({
@@ -81,10 +79,39 @@ export const setSearchQuery = q => ({
   payload: q
 });
 
-export const setPageTokens = token => {
+export const setPageTokens = (state, token) => {
+  let prevPageToken = undefined;
+  
+  
+  if(token && !state.prevPageToken) {
+    // The first page
+    let skipValue = token.split("skip=")[1];
+
+    if(skipValue > 20) {
+      prevPageToken = token.split("skip=")[0] +
+      "skip=" +
+      (skipValue - 40);  
+    }
+  } else if(!token && state.prevPageToken) {
+    // The last page
+    const splits = state.prevPageToken.split("skip=");
+    let skipValue = parseInt(splits[1]);
+
+      prevPageToken = state.prevPageToken.split("skip=")[0] +
+      "skip=" +
+      (skipValue + 20);  
+  } else {
+    let skipValue = token.split("skip=")[1];
+    if(skipValue > 20) {
+      prevPageToken = token.split("skip=")[0] +
+      "skip=" +
+      (skipValue - 40);  
+    }
+  }
+
   return {
     type: SET_PAGE_TOKENS,
-    payload: { nextPageToken: token }
+    payload: { nextPageToken: token, prevPageToken }
   };
 }
 
