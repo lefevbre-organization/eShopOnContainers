@@ -2,17 +2,15 @@
 {
     #region
 
+    using Infrastructure.Services;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+    using Microsoft.Extensions.Options;
+    using Model;
     using System;
     using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Microsoft.Extensions.Options;
-    using Account.API.ViewModel;
-    using Infrastructure.Services;
-    using Model;
-    using System.Linq;
 
     #endregion
 
@@ -32,7 +30,7 @@
         {
             _accountsService = accountsService ?? throw new ArgumentNullException(nameof(accountsService));
             _settings = emailUserAccountSettings.Value;
-            _eventBus = eventBus;
+            _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
         }
 
         #region Common
