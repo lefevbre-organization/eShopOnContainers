@@ -16,7 +16,7 @@ export default (props) => {
     <div className="btn-group ml-auto">
       <button
         onClick={props.navigateToPrevPage}
-        disabled={props.prevToken == null}
+        disabled={props.prevToken === false}
         className="btn btn-light bg-white border-1 border-dark px-3 btn-sm"
         title={t('pager-buttons.previous-page')}
       >
@@ -24,7 +24,7 @@ export default (props) => {
       </button>
       <button
         onClick={props.navigateToNextPage}
-        disabled={props.nextToken == null} 
+        disabled={props.nextToken === false} 
         className="btn btn-light bg-white border-1  border-dark px-3 btn-sm"
         title={t('pager-buttons.next-page')}
       >

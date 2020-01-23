@@ -1,3 +1,4 @@
+import * as moment from 'moment'
 import {
   COMPANIES,
   CLASSIFICATIONS,
@@ -7,6 +8,8 @@ import {
   RESULTS,
   USER
 } from "../constants";
+
+
 
 export const getCompanies = user => {
   return new Promise((resolve, reject) => {
@@ -28,7 +31,7 @@ export const getCompanies = user => {
   });
 };
 
-export const getClassifications = (
+export const getClassifications = async (
   user,
   companyId,
   bbdd,
@@ -36,36 +39,54 @@ export const getClassifications = (
   pageSize = 0,
   pageIndex = 1
 ) => {
-  return new Promise((resolve, reject) => {
-    const url = `${window.API_GATEWAY}/${CLASSIFICATIONS}?idUser=${user.idUser}&idCompany=${companyId}&bbdd=${bbdd}&idMail=${mailId}&pageSize=${pageSize}&pageIndex=${pageIndex}`;
-    fetch(url, {
-      method: "GET"
-    })
-      .then(data => data.json())
-      .then(result => {
-        resolve({
-          classifications: result.data
-        });
-      })
-      .catch(error => {
-        reject(error);
-      });
-  });
+    const url = `${window.API_GATEWAY}/${CLASSIFICATIONS}`;
+    const body = {
+      idMail: mailId,
+      pageSize,
+      pageIndex: 1,
+      bbdd,
+      idUser: user.idUser
+    }
+
+    try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    const result = await response.json();
+    return { classifications: result.data }
+  }
+  catch(err) {
+    throw err;
+  }
+
 };
 
-export const addClassification = (
+export const addClassification = async (
   user,
   company,
   listMails,
   relatedId,
   typeId
 ) => {
-  return new Promise((resolve, reject) => {
     const url = `${window.API_GATEWAY}/${CLASSIFICATIONS_ADD}`;
-    const classification = {
-      // listaMails: listMails,
+    console.log(listMails)
+    const body = {
       listaMails: listMails.map(mail => {
-        return mail.id;
+        const m = moment(mail.sentDateTime).format('YYYY-MM-DD HH:mm:ss');
+        console.log("addClassfication: " + m)
+        return {
+          provider: user.provider,
+          mailAccount: user.account,
+          uid: mail.id,
+          subject: mail.subject,
+          date: m
+        }
       }),
       idType: typeId,
       idUser: user.idUser,
@@ -74,38 +95,35 @@ export const addClassification = (
       bbdd: company.bbdd
     };
 
-    fetch(url, {
-      headers: {
-        Accept: "text/plain",
-        "Content-Type": "application/json"
-      },
-      method: "PUT",
-      body: JSON.stringify(classification)
-    })
-      .then(data => data.json())
-      .then(result => {
-        if (
-          result.errors.length > 0 ||
-          (result.errors !== null &&
-            result.errors !== undefined &&
-            (result.data === null ||
-            result.data === undefined))
-        ) {
-          reject(result.errors);
-        } else {
-          resolve({
-            classifications: result.data
-          });
-        }
-      })
-      .catch(error => {
-        console.log("Error ->", error);
-        reject(error);
+    try {
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
       });
-  });
+  
+      const result = await response.json();
+      if (
+        result.errors.length > 0 ||
+        (result.errors !== null &&
+          result.errors !== undefined &&
+          (result.data === null ||
+            result.data === undefined))
+      ) {
+        throw new Error(result.errors)
+      } else {
+        return { classifications: result.data }
+      }
+    }
+    catch(err) {
+      throw err;
+    }
 };
 
-export const removeClassification = (
+export const removeClassification = async (
   idMail,
   idType,
   bbdd,
@@ -113,47 +131,44 @@ export const removeClassification = (
   idRelated,
   idCompany
 ) => {
-  return new Promise((resolve, reject) => {
     const url = `${window.API_GATEWAY}/${CLASSIFICATIONS_REMOVE}`;
-    const classification = {
+    const body = {
       idMail: idMail,
       idType: idType,
       bbdd: bbdd,
       idUser: user.idUser,
       idRelated: idRelated,
-      idCompany: idCompany
+      idCompany: idCompany,
+      provider: user.provider,
+      mailAccount: user.account
     };
 
-    fetch(url, {
-      headers: {
-        Accept: "text/plain",
-        "Content-Type": "application/json"
-      },
-      method: "PUT",
-      body: JSON.stringify(classification)
-    })
-      .then(data => data.json())
-      .then(result => {
-        console.log("result ->", result);
-        if (
-          result.errors.length > 0 ||
-          (result.errors !== null &&
-            result.errors !== undefined &&
-            (result.data === null ||
-            result.data === undefined))
-        ) {
-          reject(result.errors);
-        } else {
-          resolve({
-            results: result.data
-          });
-        }
-      })
-      .catch(error => {
-        console.log("Error ->", error);
-        reject(error);
+    try {
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
       });
-  });
+  
+      const result = await response.json();
+      if (
+        result.errors.length > 0 ||
+        (result.errors !== null &&
+          result.errors !== undefined &&
+          (result.data === null ||
+            result.data === undefined))
+      ) {
+        throw new Error(result.errors)
+      } else {
+        return { results: result.data }
+      }
+    }
+    catch(err) {
+      throw err;
+    }
 };
 
 export const getTypes = () => {
@@ -191,27 +206,38 @@ export const getTypes = () => {
   });
 };
 
-export const getResults = (user, company, typeId, search) => {
-  return new Promise((resolve, reject) => {
+export const getResults = async (user, company, typeId, search) => {
     const url = `${window.API_GATEWAY}/${RESULTS}?pageSize=100&pageIndex=1&search=${search}&idUser=${user.idUser}&idCompany=${company.idCompany}&bbdd=${company.bbdd}&idType=${typeId}`;
-    //const url = `${window.API_GATEWAY}/${RESULTS}?pageSize=100&pageIndex=1&search=${search}&idUser=449&idCompany=${companyId}&idType=${typeId}`;
-    fetch(url, {
-      method: "GET"
-    })
-      .then(data => data.json())
-      .then(result => {
-        resolve({
-          results: result.data
-        });
-      })
-      .catch(error => {
-        reject(error);
+    const body = {
+      pageSize: 100,
+      pageIndex: 1,
+      search,
+      idUser: user.idUser,
+      bbdd: company.bbdd,
+      idType: typeId
+    }
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
       });
-  });
+  
+      const result = await response.json();
+      return { results: result.data }
+    }
+    catch(err) {
+      throw err;
+    }
 };
 
 export const getCasefile = (user, bbdd, company, typeId, search) => {
   return new Promise((resolve, reject) => {
+    debugger;
     const url = `${window.API_GATEWAY}/${RESULTS}?search=${search}&idUser=${user}&idCompany=${company}&bbdd=${bbdd}&idType=${typeId}`;
     fetch(url, {
       method: "GET"
@@ -221,9 +247,9 @@ export const getCasefile = (user, bbdd, company, typeId, search) => {
         resolve({
           results:
             result.data !== null &&
-            result.data.data !== null &&
-            Array.isArray(result.data.data) &&
-            result.data.data.length > 0
+              result.data.data !== null &&
+              Array.isArray(result.data.data) &&
+              result.data.data.length > 0
               ? result.data.data[0]
               : null
         });
