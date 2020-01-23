@@ -77,7 +77,7 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpGet("{user}/account/delete/{email}")]
+        [HttpDelete("{user}/account/delete/{email}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> DeleteAccountByUserAndEmail(

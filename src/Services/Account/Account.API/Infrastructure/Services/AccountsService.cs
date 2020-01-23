@@ -39,10 +39,10 @@
             return await _accountsRepository.Create(account);
         }
 
-        public async Task<Result<long>> Remove(string id)
-        {
-            return await _accountsRepository.Remove(id);
-        }
+        //public async Task<Result<long>> Remove(string id)
+        //{
+        //    return await _accountsRepository.Remove(id);
+        //}
 
         //public async Task<Result<long>> Update(string id, UserMail account)
         //{

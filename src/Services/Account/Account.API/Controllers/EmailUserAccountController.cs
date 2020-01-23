@@ -33,7 +33,7 @@
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
         }
 
-        #region Common
+
 
         //// GET api/v1/emailuseraccount
         //[HttpGet]
@@ -85,20 +85,19 @@
         //}
 
         // DELETE api/v1/emailuseraccount
-        [HttpDelete]
-        [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (string.IsNullOrEmpty(id))
-                return BadRequest("id invalid. Must be a valid id to delete the userMail");
+        //[HttpDelete]
+        //[ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType((int)HttpStatusCode.NotFound)]
+        //public async Task<IActionResult> Delete(string id)
+        //{
+        //    if (string.IsNullOrEmpty(id))
+        //        return BadRequest("id invalid. Must be a valid id to delete the userMail");
 
-            var result = await _accountsService.Remove(id);
+        //    var result = await _accountsService.Remove(id);
 
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-        }
+        //    return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        //}
 
-        #endregion
 
         // GET api/v1/emailuseraccount/getbyuser/5d678a39c4bf563678267305
         // GET api/v1/emailuseraccount/getbyuser/
