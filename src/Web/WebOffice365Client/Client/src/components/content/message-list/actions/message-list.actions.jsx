@@ -101,11 +101,13 @@ export const setPageTokens = (state, token) => {
       "skip=" +
       (skipValue + 20);  
   } else {
-    let skipValue = token.split("skip=")[1];
-    if(skipValue > 20) {
-      prevPageToken = token.split("skip=")[0] +
-      "skip=" +
-      (skipValue - 40);  
+    if(token) {
+      let skipValue = token.split("skip=")[1];
+      if(skipValue > 20) {
+        prevPageToken = token.split("skip=")[0] +
+        "skip=" +
+        (skipValue - 40);  
+      }
     }
   }
 

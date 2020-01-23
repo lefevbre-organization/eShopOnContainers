@@ -26,11 +26,16 @@ export class Sidebar extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (
-      prevProps.selectedLabel !== this.props.selectedLabel &&
-      this.props.selectedLabel !== null
-    ) {
-      this.setState({ selectedFolder: this.props.selectedLabel.id });
+
+    if(this.state.selectedFolder === "") {
+      this.navigateToList(null, this.props.selectedLabel.id);
+    } else {
+      if (
+        prevProps.selectedLabel !== this.props.selectedLabel &&
+        this.props.selectedLabel !== null
+      ) {
+        this.setState({ selectedFolder: this.props.selectedLabel.id });
+      }  
     }
   }
 
