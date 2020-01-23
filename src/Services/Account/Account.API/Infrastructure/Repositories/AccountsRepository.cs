@@ -13,6 +13,7 @@
     using MongoDB.Driver;
     using System;
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
 
     #endregion Using
@@ -146,6 +147,36 @@
             return result;
         }
 
+        public async Task<Result<UserMail>> GetUser(string user)
+        {
+            var result = new Result<UserMail> { errors = new List<ErrorInfo>() };
+            try
+            {
+                result.data = await _context.Accounts.Find(account => account.User == user).SingleAsync();
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
+
+        public async Task<Result<Account>> GetAccount(string user, string mail)
+        {
+            var result = new Result<Account> { errors = new List<ErrorInfo>() };
+            try
+            {
+                var usuario = await _context.Accounts.Find(account => account.User == user).SortByDescending(x => x.DefaultAccount).SingleAsync();
+                var correoPorDefecto = usuario.Accounts.Find(x => x.defaultAccount = true && x.email.ToUpperInvariant().Equals(mail.ToUpperInvariant()));
+                result.data = correoPorDefecto;
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
+
         public async Task<Result<long>> UpdateDefaultAccount(string user, string email, string provider, string guid)
         {
             var result = new Result<long> { errors = new List<ErrorInfo>() };
@@ -241,9 +272,36 @@
             }
             return result;
         }
-        public Task<Result<long>> UpSertAccount(string user, Account accountIn)
+
+        public async Task<Result<long>> UpSertAccount(string user, Account accountIn)
         {
-            throw new NotImplementedException();
+            var result = new Result<long> { errors = new List<ErrorInfo>() };
+            var cancel = default(CancellationToken);
+            using (var session = await _context.StartSession(cancel))
+            {
+
+                session.StartTransaction();
+                try
+                {
+                    var resultado = await _context.AccountsTransaction(session).UpdateOneAsync(
+                            GetFilterUser(user),
+                            Builders<UserMail>.Update.AddToSet($"Accounts", accountIn)
+                        );
+                    result.data = resultado.ModifiedCount;
+                }
+                catch (Exception ex)
+                {
+                    TraceMessage(result.errors, ex);
+                    session.AbortTransaction();
+                }
+            }
+            return result;
+
+        }
+
+        private static FilterDefinition<UserMail> GetFilterUser(string idUser)
+        {
+            return Builders<UserMail>.Filter.Eq(u => u.User, idUser);
         }
 
         #region PublishEvents

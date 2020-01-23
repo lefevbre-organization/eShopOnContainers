@@ -22,5 +22,6 @@
 
         //Task<long> AddOperationAsync(string user, string provider, string mail, bool defaultAccount, EnTypeOperation typeOperation);
         Task<Result<long>> UpSertAccount(string user, Account accountIn);
+        Task<Result<Account>> GetAccount(string user, string mail);
     }
 }

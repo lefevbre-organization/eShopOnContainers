@@ -32,11 +32,8 @@
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
         }
 
-        // GET api/v1/emailuseraccount/getbyuser/5d678a39c4bf563678267305
-        // GET api/v1/emailuseraccount/getbyuser/
         [HttpGet("/{user}")]
         [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(IEnumerable<UserMail>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetByUser(
             [FromRoute]string user)
         {
@@ -58,6 +55,20 @@
                 return BadRequest("values invalid. Must be a valid user, email, provider and guid to insert the userMail");
 
             var result = await _accountsService.Create(accountIn);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpGet("/{user}/account/{mail}")]
+        [ProducesResponseType(typeof(Account), (int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetAccountByMail(
+            [FromRoute]string user
+            , [FromRoute]string mail)
+        {
+            if (string.IsNullOrEmpty(user))
+                return BadRequest("user invalid. Must be a valid user to search the userMail");
+
+            var result = await _accountsService.GetAccount(user, mail);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }

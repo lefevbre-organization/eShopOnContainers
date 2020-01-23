@@ -73,5 +73,10 @@
         {
             return await _accountsRepository.UpSertAccount(user, accountIn);
         }
+
+        public async Task<Result<Account>> GetAccount(string user, string mail)
+        {
+            return await _accountsRepository.GetAccount(user, mail);
+        }
     }
 }

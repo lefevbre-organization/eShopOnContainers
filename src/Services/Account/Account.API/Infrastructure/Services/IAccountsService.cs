@@ -21,5 +21,6 @@
         Task<Result<long>> DeleteAccountByUserAndEmail(string user, string email);
         Task<Result<long>> ResetDefaultAccountByUser(string user);
         Task<Result<long>> UpSertAccount(string user, Account accountIn);
+        Task<Result<Account>> GetAccount(string user, string mail);
     }
 }
