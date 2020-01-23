@@ -12,6 +12,7 @@ Param(
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
     [parameter(Mandatory=$false)][bool]$cleanDocker=$true,
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
+    [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][bool]$pushImages=$false,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
     [parameter(Mandatory=$false)][string]$dockerOrg="elefebvreoncontainers"
@@ -68,7 +69,7 @@ Write-Host "=====================================" -ForegroundColor DarkCyan
 Write-Host "Docker image Tag: $imageTag" -ForegroundColor DarkCyan
 Write-Host "Se usa DockeHub: $useDockerHub" -ForegroundColor DarkCyan 
 Write-Host "Deploy Kubernetes: $deployKubernetes" -ForegroundColor DarkCyan 
-Write-Host "Docker: Build $buildImages and Clean $cleanDocker" -ForegroundColor DarkCyan 
+Write-Host "Docker: Build $buildImages all[$buildAll] and Clean $cleanDocker" -ForegroundColor DarkCyan 
 Write-Host "Kubernetes: $deployKubernetes with Infraestructure $cleanDocker" -ForegroundColor DarkCyan 
 Write-Host "=====================================" -ForegroundColor DarkCyan
 
@@ -76,16 +77,22 @@ Write-Host "=====================================" -ForegroundColor DarkCyan
 if ($buildImages) {
     if($cleanDocker){
         Write-Host "remove all containers" -ForegroundColor DarkBlue
-        docker rm -f $(docker ps -a -q)
+        docker containers rm -f $(docker ps -a -q)
         Write-Host "remove all images" -ForegroundColor DarkBlue
         docker rmi -f $(docker images -a -q)
     }
-    Write-Host "Building Docker images tagged with '$imageTag'" -ForegroundColor DarkBlue
+    
     $env:TAG=$imageTag
-    foreach ($service in $servicesToPush) {
-        
+    if($buildAll){
+        Write-Host "Building All Docker images tagged with '$imageTag'" -ForegroundColor DarkBlue
+        docker-compose -p .. -f ../docker-compose.yml build      
+    }else{
+
+        foreach ($service in $servicesToPush) {
+            Write-Host "Building Docker image '$service' tagged with '$imageTag'" -ForegroundColor DarkBlue
+            docker-compose -p .. -f ../docker-compose.yml build $service
+        }
     }
-    docker-compose -p .. -f ../docker-compose.yml build      
 }
 
 if ($pushImages) {
