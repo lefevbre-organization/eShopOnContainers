@@ -1,4 +1,7 @@
 # Node.js
+- task: PowerShell@2
+  inputs:
+    filePath: '$(System.DefaultWorkingDirectory)/k8s-LEF/deploy-lefebvre.ps1'
 # Build a general Node.js project with npm.
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
