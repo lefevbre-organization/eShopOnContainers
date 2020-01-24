@@ -5,8 +5,6 @@
     using Account.API.Model;
     using IntegrationEvents.Events;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-    using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
@@ -22,7 +20,7 @@
     {
         private readonly AccountContext _context;
         private readonly IEventBus _eventBus;
-        private readonly ILogger<AccountsRepository> _log;
+        //private readonly ILogger<AccountsRepository> _log;
 
         public AccountsRepository(
             IOptions<AccountSettings> settings,
@@ -49,31 +47,39 @@
             return result;
         }
 
-        public async Task<Result<UserMail>> Get(string id)
-        {
-            var result = new Result<UserMail> { errors = new List<ErrorInfo>() };
-            try
-            {
-                var accounts = _context.Accounts.Find(x => x.Id == id);
-                if (!accounts.Any())
-                    return result;
+        //public async Task<Result<UserMail>> Get(string id)
+        //{
+        //    var result = new Result<UserMail> { errors = new List<ErrorInfo>() };
+        //    try
+        //    {
+        //        var accounts = _context.Accounts.Find(x => x.Id == id);
+        //        if (!accounts.Any())
+        //            return result;
 
-                result.data = await accounts.FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
-            return result;
-        }
+        //        result.data = await accounts.FirstOrDefaultAsync();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TraceMessage(result.errors, ex);
+        //    }
+        //    return result;
+        //}
 
         public async Task<Result<UserMail>> Create(UserMail account)
         {
             var result = new Result<UserMail> { errors = new List<ErrorInfo>() };
             try
             {
-                await _context.Accounts.InsertOneAsync(account);
-                result.data = account;
+                var accountExists = _context.Accounts.Find(x => x.Provider.Equals(account.Provider) && x.Email.Equals(account.Email) && x.User.Equals(account.User));
+                if (!accountExists.Any())
+                {
+                    await _context.Accounts.InsertOneAsync(account);
+                    result.data = account;
+                }
+                else
+                {
+                    result.data = accountExists.First();
+                }
 
                 var eventAssoc = new AddOperationAccountIntegrationEvent(account.User, account.Provider, account.Email, account.DefaultAccount, EnTypeOperation.Create);
                 _eventBus.Publish(eventAssoc);
@@ -180,44 +186,50 @@
         public async Task<Result<long>> UpdateDefaultAccount(string user, string email, string provider, string guid)
         {
             var result = new Result<long> { errors = new List<ErrorInfo>() };
+            var updateOptions = new UpdateOptions { IsUpsert = false };
+            TraceLog(parameters: new string[] { $"usuario:{user}", $"email:{email}", $"provider:{provider}", $"guid:{guid}" });
             try
             {
-                // I need to know if user exists in Lexon!!!!!!!
-                var accounts = await _context.Accounts.Find(x => x.User == user).ToListAsync();
-                if (accounts?.Count == 0)
+                // 1. Si no existe, crea la cuenta TODO: esto no tiene sentido
+                var accounts = _context.Accounts.Find(x => x.User == user);
+                if (!accounts.Any())
                 {
+                    TraceLog(parameters: new string[] { $"se crea un nuevo usuario porque no existe ninguno con user:{user}" });
+
                     await _context.Accounts.InsertOneAsync(new UserMail
                     {
                         User = user,
                         Provider = provider,
                         Email = email,
-                        DefaultAccount = true
+                        DefaultAccount = true,
+                        guid = guid
                     });
                     result.data = 1;
                 }
                 else
+
                 {
-                    accounts = await _context.Accounts.Find(x => x.User == user && x.Email == email).ToListAsync();
-                    if (accounts?.Count > 0)
+                    //2. si encuentra cuentas con esos datos, los actualiza cambiando todo a no default y actualiza los datos
+
+                    var resultUpdate = await _context.Accounts.UpdateManyAsync(
+                        account => account.User == user,
+                        Builders<UserMail>.Update.Set(x => x.DefaultAccount, false)
+                        );
+
+                    TraceLog(parameters: new string[] { $"Se modifican {resultUpdate.ModifiedCount} cuentas con default a :{false}" });
+                    result.data = resultUpdate.ModifiedCount;
+
+                    resultUpdate = await _context.Accounts.UpdateOneAsync(
+                        account => account.User == user && account.Email == email && account.Provider == provider,
+                        Builders<UserMail>.Update.Set(x => x.DefaultAccount, true).Set(x => x.Email, email).Set(x => x.guid, guid),
+                        updateOptions);
+                    if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0)
                     {
-                        var resultUpdate = await _context.Accounts.UpdateManyAsync(account => account.User == user && account.Email != email, Builders<UserMail>.Update.Set(x => x.DefaultAccount, false));
-                        result.data = resultUpdate.ModifiedCount;
-                        resultUpdate = await _context.Accounts.UpdateManyAsync(account => account.User == user && account.Email == email, Builders<UserMail>.Update.Set(x => x.DefaultAccount, true).Set(x => x.Email, email));
+                        TraceLog(parameters: new string[] { $"Se modifican {resultUpdate.ModifiedCount} con el default {true} y/o insertan con id {resultUpdate.UpsertedId}" });
                         result.data += resultUpdate.ModifiedCount;
                     }
-                    else
-                    {
-                        var resultUpdate = await _context.Accounts.UpdateManyAsync(account => account.User == user && account.Email != email, Builders<UserMail>.Update.Set(x => x.DefaultAccount, false));
-                        result.data = resultUpdate.ModifiedCount;
-                        await _context.Accounts.InsertOneAsync(new UserMail
-                        {
-                            User = user,
-                            Provider = provider,
-                            Email = email,
-                            DefaultAccount = true
-                        });
-                        result.data++;
-                    }
+                    
+
                 }
 
                 var eventAssoc = new AddOperationAccountIntegrationEvent(user, provider, email, true, EnTypeOperation.UpdateDefaultAccount);
@@ -279,7 +291,6 @@
             var cancel = default(CancellationToken);
             using (var session = await _context.StartSession(cancel))
             {
-
                 session.StartTransaction();
                 try
                 {
@@ -296,7 +307,6 @@
                 }
             }
             return result;
-
         }
 
         private static FilterDefinition<UserMail> GetFilterUser(string idUser)
@@ -318,7 +328,6 @@
         //{
         //    throw new NotImplementedException();
         //}
-
 
         #endregion PublishEvents
     }
