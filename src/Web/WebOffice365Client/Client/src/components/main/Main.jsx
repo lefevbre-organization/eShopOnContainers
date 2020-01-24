@@ -26,7 +26,7 @@ import e from "../../event-bus";
 import SidebarCnn from "react-sidebar";
 import LexonComponent from "../../apps/lexon_content";
 import SidebarComponent from "../../apps/sidebar_content";
-import ComposeMessage from "../compose-message/ComposeMessage-fixed";
+import ComposeMessage from "../compose-message/ComposeMessage";
 import "react-reflex/styles.css";
 import { PROVIDER } from "../../constants";
 

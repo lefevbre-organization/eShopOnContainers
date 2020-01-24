@@ -9,7 +9,7 @@ import MessageList from "../content/message-list/MessageList";
 import MessageContent from "../content/message-list/message-content/MessageContent";
 import { Route, Switch, withRouter } from "react-router-dom";
 import { getLabels } from "../sidebar/sidebar.actions";
-import ComposeMessage from "../compose-message/ComposeMessage-fixed";
+import ComposeMessage from "../compose-message/ComposeMessage";
 import {
   getLabelMessages,
   emptyLabelMessages,
