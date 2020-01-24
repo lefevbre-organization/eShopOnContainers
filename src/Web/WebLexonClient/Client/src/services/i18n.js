@@ -19,7 +19,8 @@ const resources = {
 // initialize i18next with catalog and language to use
 i18n.init({
   resources,
-  lng: userLanguage()
+  lng: userLanguage(),
+  fallbackLng: ['es', 'en']
 });
 
 export default i18n;
