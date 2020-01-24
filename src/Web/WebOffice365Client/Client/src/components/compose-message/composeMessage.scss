@@ -244,3 +244,12 @@ $font-weight-bold: 700;
 .quill {
     height: calc(100% - 60px);
 }
+
+.btn-primary:focus {
+    background-color: #001978;
+}
+
+.btn-secondary:focus {
+    background-color: #fff;
+    border-color: #001978;
+}

@@ -28,7 +28,10 @@
     "add-attachments": "add attachments",
     "browse": "browse",
     "or": "or",
-    "bcc": "Bcc:"
+    "bcc": "Bcc:",
+    "max-file-size": "The total attachments size must be less than 3MB for this provider.",
+    "min-dest-alert": "This message must have at least one recipient.",
+    "no-subject-warning": "Do you want to send this message without subject?"
   },
   "message-toolbar": {
     "move-to-trash": "Move to Trash",
@@ -47,5 +50,9 @@
   "login": {
     "cancel": "Cancel",
     "button":  "Sign in with google"
+  },
+  "confirmation": {
+    "cancel": "Cancel",
+    "ok":"Accept"
   }
 }
