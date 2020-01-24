@@ -1,6 +1,6 @@
 {
   "login": {
-    "Login": "Configuración de correo",
+    "Login": "Configuración de correo",    
     "Host": "Servidor",
     "Port": "Puerto",
     "User": "Usuario",
@@ -10,7 +10,8 @@
     "SMTP": "SMTP",
     "SmtpSSL": "SMTP SSL",
     "actions": {
-      "Login": "Acceder"
+      "Login": "Acceder",
+      "Cancel": "Cancelar"
     },
     "errors": {
       "BLACKLISTED": "Servidor no autorizado",

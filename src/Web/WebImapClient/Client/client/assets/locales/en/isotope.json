@@ -1,6 +1,6 @@
 {
   "login": {
-    "Login": "Inbox configuration",
+    "Login": "Inbox configuration",   
     "Host": "Host",
     "Port": "Port",
     "User": "User",
@@ -10,7 +10,8 @@
     "SMTP": "SMTP",
     "SmtpSSL": "SMTP SSL",
     "actions": {
-      "Login": "Login"
+      "Login": "Login",
+      "Cancel": "Cancel"
     },
     "errors": {
       "BLACKLISTED": "Host is not whitelisted",

@@ -14,6 +14,7 @@ import LoginSnackbar from './login-snackbar';
 import Switch from '../form/switch/switch';
 import TextField from '../form/text-field/text-field';
 import Spinner from '../spinner/spinner';
+import UserLexon from "../user-lexon/UserLexon";
 import mainCss from '../../styles/main.scss';
 import styles from './login.scss';
 
@@ -41,6 +42,8 @@ const stateFromFormValues = formValues => ({
   values: {...formValues, password: ''}, advanced: false
 });
 
+
+
 export class Login extends Component {
   constructor(props) {
     super(props);
@@ -54,6 +57,27 @@ export class Login extends Component {
 
   componentDidMount() {
     console.log("IN ... Login ->", window.URL_SERVER_API);
+    }
+
+    goBack() {
+       
+        if (typeof this.props.lexon !== 'undefined') {
+            const { userId } = this.props.lexon;
+            if (userId !== null) {
+                const url = `${window.URL_RESET_DEFAULTACCOUNT}/${userId}`;
+                fetch(url, {
+                    method: "GET"
+                })
+                    .then(result => {
+                        const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+                        window.open(urlRedirect, "_self");
+                    })
+                    .catch(error => {
+                        console.log("error =>", error);
+                    });
+            }
+        }
+
   }
 
   render() {
@@ -117,6 +141,10 @@ export class Login extends Component {
               <Button type={'submit'}
                 className={`${styles.loginButton} ${mainCss['mdc-button--unelevated']} ${styles.fullWidth}`}
                 label={t('login.actions.Login')} />
+                <Button
+                onClick={() => {this.goBack();}}                        
+                className={`${styles.CancelButton} ${mainCss['mdc-button--unelevated']} ${styles.fullWidth}`}
+                label={t('login.actions.Cancel')} />
             </form>
           </div>
           <LoginSnackbar />
@@ -169,7 +197,8 @@ export class Login extends Component {
 
 const mapStateToProps = state => ({
   application: state.application,
-  formValues: state.login.formValues
+  formValues: state.login.formValues,
+  lexon: state.lexon
 });
 
 const mapDispatchToProps = dispatch => ({
