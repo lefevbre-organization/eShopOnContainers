@@ -50,7 +50,7 @@ class ListClassifications extends Component {
 
         {this.renderNoClassifications()}
 
-        <PerfectScrollbar options={{ suppressScrollX: false }}>
+        <PerfectScrollbar options={{ suppressScrollX: true }}>
           <ul className="row lexon-document-list">
             {classifications.map(classification => {
               return (
