@@ -7,10 +7,13 @@ namespace Lexon.API.Model
     {
         public long id { get; set; }
         public short idType { get; set; }
+        public string entityType { get; set; }
 
         public string name { get; set; }
 
         public string description { get; set; }
+
+        public string intervening { get; set; }
 
         public string[] mails { get; set; }
     }

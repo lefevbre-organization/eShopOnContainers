@@ -158,8 +158,9 @@ namespace Lexon.Infrastructure.Services
                     idMail = idMail,
                     idRelated = entity.IdRelacion,
                     date = entity.Fecha,
-                    entityIdType = entity.TipoRelacion
-                });
+                    entityIdType = entity.TipoRelacion,
+                    entityType = Enum.GetName(typeof(LexonAdjunctionType), entity.TipoRelacion) //TODO: poner cambio de dioma
+            });
                 TraceLog(parameters: new string[] { $"add Name {entity.Nombre}", $"desc {entity.Asunto}", $"tipo Mail", $"idrelated {entity.IdRelacion}", $"idmail {idMail}", $"date {entity.Fecha}", $"tipo {entity.TipoRelacion}" });
             }
 
@@ -350,7 +351,13 @@ namespace Lexon.Infrastructure.Services
 
             foreach (var entity in (entityList.data?.Entities))
             {
-                result.data.Add(new LexonEntityBase() { name = entity.Code, description = entity.Description, id = entity.IdRelated, idType = idType ?? 1 });
+                result.data.Add(new LexonEntityBase() { 
+                    name = entity.Code,
+                    description = entity.Description,
+                    id = entity.IdRelated,
+                    idType = idType ?? 1 ,
+                    entityType = Enum.GetName(typeof(LexonAdjunctionType), idType ?? 1),
+                    intervening = entity.Intervening });
                 TraceLog(parameters: new string[] { $"code {entity.Code}" });
             }
 
