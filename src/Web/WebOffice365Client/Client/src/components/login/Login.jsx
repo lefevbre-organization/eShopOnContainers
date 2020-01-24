@@ -1,5 +1,5 @@
 import React from "react";
-import i18n from "i18next";
+import { withTranslation } from "react-i18next";
 import { Button } from "reactstrap";
 import "./Login.scss";
 
@@ -16,7 +16,7 @@ function MSAuthButton(props) {
   );
 }
 
-export default class Login extends React.Component {
+export class Login extends React.Component {
 
   goBack() {
      if (typeof this.props.lexon !== 'undefined') {
@@ -37,7 +37,8 @@ export default class Login extends React.Component {
      }
   }
 
-  render() {
+    render() {
+        const { t } = this.props;
     return (
       <div className="d-flex align-content-center align-items-center w-100 h-100 text-center w3-btn">
         <div className="mx-auto">
@@ -51,13 +52,14 @@ export default class Login extends React.Component {
                 />
                 <Button
                    className="mr-left font-weight-bold btn-outline-primary margin-top"
-                   title={i18n.t("login.cancel")}
+                   title={t("login.cancel")}
                    color="secondary"
                    onClick={() => {
                       this.goBack();
                    }}
                 >
-                 {i18n.t("login.cancel")}
+                {t("login.cancel")}
+                           
                 </Button>
                </div>
           </div>
@@ -66,3 +68,4 @@ export default class Login extends React.Component {
     );
   }
 }
+export default withTranslation() (Login);
