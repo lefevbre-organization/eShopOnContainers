@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Cookies from 'js-cookie';
 import "./PageGoTo.css";
 import GoTo from "../components/GoTo";
 import Footer from "../components/footer/Footer";
@@ -35,6 +36,12 @@ export class PageGoTo extends Component {
     this.getAccounts();
   }
 
+  canRedirect(account) {
+    const { guid = '' } = account;   
+    const GUID = Cookies.get(`Lefebvre.DefaultAccount.${account.user}`)
+    return account.defaultAccount && GUID === guid;
+  }
+
   async getAccounts() {
     const userId = this.props.match.params.userId;
     const encrypt = this.props.match.params.encrypt;
@@ -44,41 +51,39 @@ export class PageGoTo extends Component {
         this.setState({ loading: false });
 
         if (data.user === undefined || data.user === null) {
-          this.setState({ redirect: true });
+          this.setState({ loading: false, redirect: true });
         } else {
-          this.setState({ userId: data.user.ID_ENTRADA });
-          this.setState({ accounts: data.accounts });
-          this.setState({ redirect: false });
-
-          if (data.accounts.length !== 0) {
-            const account = data.accounts[0];
-            if (account.defaultAccount) {
-              switch (account.provider) {
-                case INBOX_GOOGLE:
-                  window.open(
-                    `${window.URL_INBOX_GOOGLE}/user/GO0${this.state.userId}`,
-                    "_self"
-                  );
-                  break;
-                case INBOX_OUTLOOK:
-                  window.open(
-                    `${window.URL_INBOX_OUTLOOK}/user/OU0${this.state.userId}`,
-                    "_self"
-                  );
-                  break;
-                case INBOX_IMAP:
-                  window.open(
-                    `${window.URL_INBOX_IMAP}/user/IM0${this.state.userId}`,
-                    "_self"
-                  );
-                  break;
-
-                default:
-                  console.log("Valor no válido");
-                  break;
+          this.setState({ loading: false, userId: data.user.ID_ENTRADA, accounts: data.accounts, redirect: false }, ()=>{
+            if (data.accounts.length !== 0) {
+              const account = data.accounts[0];
+              if (this.canRedirect(account)) {
+                switch (account.provider) {
+                  case INBOX_GOOGLE:
+                    window.open(
+                      `${window.URL_INBOX_GOOGLE}/user/GO0${this.state.userId}`,
+                      "_self"
+                    );
+                    break;
+                  case INBOX_OUTLOOK:
+                    window.open(
+                      `${window.URL_INBOX_OUTLOOK}/user/OU0${this.state.userId}`,
+                      "_self"
+                    );
+                    break;
+                  case INBOX_IMAP:
+                    window.open(
+                      `${window.URL_INBOX_IMAP}/user/IM0${this.state.userId}`,
+                      "_self"
+                    );
+                    break;
+  
+                  default:
+                    console.log("Valor no válido");
+                    break;
+                }
               }
             }
-          }
+          });          
         }
       })
       .catch(error => {

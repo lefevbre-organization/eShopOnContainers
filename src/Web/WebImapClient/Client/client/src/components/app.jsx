@@ -2,6 +2,8 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import * as uuid from 'uuid/v4';
+import Cookies from 'js-cookie';
 import history from "../routes/history";
 import Spinner from "./spinner/spinner";
 import TopBar from "./top-bar/top-bar";
@@ -427,12 +429,14 @@ class App extends Component {
     const { userId, idCaseFile } = this.props.lexon;
     const { email } = this.props;
     if (userId !== null && email !== null) {
-      const url = `${window.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}`;
+      const GUID = uuid();
+      const url = `${window.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}/${GUID}`;
       fetch(url, {
         method: "GET"
       })
       .then(() => {
         this.setState({ isUpdatedDefaultAccount: true });
+        Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID)
       })
       .catch(error => {
         console.log("error =>", error);

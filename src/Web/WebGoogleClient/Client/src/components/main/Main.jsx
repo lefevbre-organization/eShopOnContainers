@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose } from "redux";
+import * as uuid from 'uuid/v4';
+import Cookies from 'js-cookie';
 import Header from "../header/Header";
 import Sidebar from "../sidebar/Sidebar";
 import NotFound from "../not-found/NotFound";
@@ -187,10 +189,12 @@ export class Main extends Component {
     if (userId !== null && email !== null) {
       const { googleUser } = this.props;
       const email = googleUser.w3.U3;
-      const url = `${window.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}`;
+      const GUID = uuid();
+      const url = `${window.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}/${GUID}`;
       fetch(url, {
         method: "GET"
       }).then(result => {
+        Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID)
         if (idCaseFile != null && idCaseFile !== undefined) {
           this.props.history.push("/compose");
           this.onSetSidebarOpenLexon(true);

@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose } from "redux";
+import * as uuid from 'uuid/v4';
+import Cookies from 'js-cookie';
 import Header from "../header/Header";
 import Sidebar from "../sidebar/Sidebar";
 import NotFound from "../not-found/NotFound";
@@ -173,10 +175,14 @@ export class Main extends Component {
     const { userId, idCaseFile } = this.props.lexon;
     const { email } = this.props.User;
     if (userId !== null && email !== null) {
-      const url = `${window.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}`;
+      const GUID = uuid();
+      const url = `${window.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}/${GUID}`;
       fetch(url, {
         method: "GET"
-      }).catch(error => {
+      }).then(()=>{
+        Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID)
+      })
+      .catch(error => {
         console.error("error ->", error);
       });
       if (idCaseFile != null && idCaseFile !== undefined) {
