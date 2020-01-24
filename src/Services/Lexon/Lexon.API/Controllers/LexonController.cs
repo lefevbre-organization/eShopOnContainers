@@ -59,7 +59,6 @@ namespace Lexon.API.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-       // [HttpGet]
         [HttpPost]
         [Route("classifications")]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.OK)]
@@ -67,23 +66,15 @@ namespace Lexon.API.Controllers
         public async Task<IActionResult> ClassificationsAsync(
             [FromBody] ClassificationSearch classificationSearch
             //, [FromHeader(Name = "x-requestid")] string requestId
-            //, [FromQuery]string idUser = "449"
-            //, [FromQuery]short? idType = null
-            ////, [FromQuery]long idCompany = 14
-            //, [FromQuery]string bbdd = "lexon_admin_02"
-            //, [FromQuery]string idMail = "mail_001"
-            //, [FromQuery]int pageSize = 0
-            //, [FromQuery]int pageIndex = 1
             )
 
         {
-            //if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(idMail) || string.IsNullOrEmpty(bbdd))
             if (string.IsNullOrEmpty(classificationSearch.idUser) || string.IsNullOrEmpty(classificationSearch.idMail) || string.IsNullOrEmpty(classificationSearch.bbdd))
-                return (IActionResult)BadRequest("values invalid. Must be a valid user, bbdd and email order to search the classifications");
+                return BadRequest("values invalid. Must be a valid user, bbdd and email order to search the classifications");
 
             var result = await _usersService.GetClassificationsFromMailAsync(
                 classificationSearch.pageSize, classificationSearch.pageIndex, classificationSearch.idUser, classificationSearch.bbdd, classificationSearch.idMail, classificationSearch.idType);
-            //var result = await _usersService.GetClassificationsFromMailAsync(pageSize, pageIndex, idUser, bbdd, idMail, idType);
+            
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
 
         }
@@ -96,9 +87,11 @@ namespace Lexon.API.Controllers
         {
             if (string.IsNullOrEmpty(classification?.idUser) || (classification?.listaMails?.Count() <= 0) ||
                 string.IsNullOrEmpty(classification?.bbdd) || classification?.idRelated <= 0 || classification?.idType <= 0)
-                return (IActionResult)BadRequest("values invalid. Must be a valid user, bbdd, email, related and type for create the classification");
+                return BadRequest("values invalid. Must be a valid user, bbdd, email, related and type for create the classification");
 
-            var result = await _usersService.AddClassificationToListAsync(classification.idUser, classification.bbdd, classification.listaMails, classification.idRelated, classification.idType);
+            var result = await _usersService.AddClassificationToListAsync(
+                classification.idUser, classification.bbdd, classification.listaMails, classification.idRelated, classification.idType);
+            
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
@@ -110,12 +103,13 @@ namespace Lexon.API.Controllers
         {
             if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.idMail) || 
                 string.IsNullOrEmpty(classification?.bbdd) || classification?.idRelated <= 0 || classification?.idType <= 0)
-                return (IActionResult)BadRequest("values invalid. Must be a valid user, bbdd, email, related and type for remove the classification");
+                return BadRequest("values invalid. Must be a valid user, bbdd, email, related and type for remove the classification");
 
             var result = await _usersService.RemoveClassificationFromListAsync(
                 classification.idUser, classification.bbdd,
                 classification.Provider, classification.MailAccount, classification.idMail,
                 classification.idRelated, classification.idType);
+            
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
@@ -138,14 +132,12 @@ namespace Lexon.API.Controllers
             , [FromQuery]string bbdd)
         {
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd))
-                return (IActionResult)BadRequest("values invalid. Must be a valid user and bbdd to select the company");
+                return BadRequest("values invalid. Must be a valid user and bbdd to select the company");
 
             var result = await _usersService.SelectCompanyAsync(idUser, bbdd);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-
-       // [HttpGet]
         [HttpPost]
         [Route("entities")]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.OK)]
@@ -154,24 +146,14 @@ namespace Lexon.API.Controllers
         [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> EntitiesAsync(
             [FromBody] EntitySearch entitySearch
-           //  [FromQuery] string idUser = "449"
-           //// , [FromQuery]long idCompany = 14
-           // , [FromQuery] string bbdd = "lexon_admin_02"
-           // , [FromQuery] short idType = 1
-           // , [FromQuery] string search = null
-           // , [FromQuery] long? idFilter = null
-           // , [FromQuery] int pageSize = 20
-           // , [FromQuery] int pageIndex = 1
             )
         {
-            //if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || idType <= 0)
             if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0)
-                return (IActionResult)BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
+                return BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
 
             //if (pageIndex == 1 && pageSize == 0)
             if (entitySearch.pageIndex == 0 && entitySearch.pageSize == 0)
             {
-                //var result = await _usersService.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, bbdd, search, idFilter);
                 var result = await _usersService.GetEntitiesListAsync(
                     entitySearch.pageSize, entitySearch.pageIndex, entitySearch.idType, entitySearch.idUser, entitySearch.bbdd, entitySearch.search, entitySearch.idFilter);
                 return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
@@ -179,13 +161,12 @@ namespace Lexon.API.Controllers
 
             var resultPaginated = await _usersService.GetEntitiesListAsync(
                 entitySearch.pageSize, entitySearch.pageIndex, entitySearch.idType, entitySearch.idUser, entitySearch.bbdd, entitySearch.search, entitySearch.idFilter);
-            //var resultPaginated = await _usersService.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, bbdd, search, idFilter);
+
             var totalItems = resultPaginated.data.Count;
 
             var resultPaginatedFinal =
                 new Result<PaginatedItemsViewModel<LexonEntityBase>>(
                     new PaginatedItemsViewModel<LexonEntityBase>(entitySearch.pageIndex, entitySearch.pageSize, totalItems, resultPaginated.data), resultPaginated.errors);
-            //new Result<PaginatedItemsViewModel<LexonEntityBase>>(new PaginatedItemsViewModel<LexonEntityBase>(pageIndex, pageSize, totalItems, resultPaginated.data), resultPaginated.errors);
 
             return (resultPaginatedFinal.errors.Count > 0) ? (IActionResult)BadRequest(resultPaginatedFinal) : Ok(resultPaginatedFinal);
         }

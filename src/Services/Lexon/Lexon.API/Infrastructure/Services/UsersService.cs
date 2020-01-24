@@ -50,16 +50,6 @@ namespace Lexon.Infrastructure.Services
             TraceLog(parameters: new string[] { $"idUser:{idUser}", $"idType:{idType}", $"bbdd:{bbdd}", $"idMail:{listaMails}", $"idRelated:{idRelated}" });
             TraceLog(parameters: new string[] { $"url={url}" });
 
-            //MailInfo[] listaMailsCompleta = GiveMeDataFromArrayMails(listaMails);
-
-            //var classificationAdd = new ClassificationAddViewComplete
-            //{
-            //    idType = idType,
-            //    bbdd = bbdd,
-            //    idRelated = idRelated,
-            //    idUser = idUser,
-            //    listaMails = listaMailsCompleta
-            //};
             var classificationAdd = new ClassificationAddView
             {
                 idType = idType,
@@ -99,22 +89,7 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        //private MailInfo[] GiveMeDataFromArrayMails(string[] listaMails)
-        //{
-        //    var listaMailsCompleta = new List<MailInfo>();
-        //    foreach (var mail in listaMails)
-        //    {
-        //        listaMailsCompleta.Add(new MailInfo() { Date = "2020-01-01", Subject = "De momento no", Uid = mail });
-        //    }
-        //    return listaMailsCompleta.ToArray();
-        //}
 
-        private MailInfo[] GiveMeDataFromArrayMails(MailInfo[] listaMails)
-        {
-            throw new NotImplementedException();
-        }
-
-        //private async Task AddClassificationToListMongoAsync(string idUser, string bbdd, string[] listaMails, long idRelated, short? idClassificationType, Result<long> result)
         private async Task AddClassificationToListMongoAsync(string idUser, string bbdd, MailInfo[] listaMails, long idRelated, short? idClassificationType, Result<long> result)
         {
             try
@@ -183,8 +158,9 @@ namespace Lexon.Infrastructure.Services
                     idMail = idMail,
                     idRelated = entity.IdRelacion,
                     date = entity.Fecha,
-                    entityIdType = entity.TipoRelacion
-                });
+                    entityIdType = entity.TipoRelacion,
+                    entityType = Enum.GetName(typeof(LexonAdjunctionType), entity.TipoRelacion) //TODO: poner cambio de dioma
+            });
                 TraceLog(parameters: new string[] { $"add Name {entity.Nombre}", $"desc {entity.Asunto}", $"tipo Mail", $"idrelated {entity.IdRelacion}", $"idmail {idMail}", $"date {entity.Fecha}", $"tipo {entity.TipoRelacion}" });
             }
 
@@ -375,7 +351,13 @@ namespace Lexon.Infrastructure.Services
 
             foreach (var entity in (entityList.data?.Entities))
             {
-                result.data.Add(new LexonEntityBase() { name = entity.Code, description = entity.Description, id = entity.IdRelated, idType = idType ?? 1 });
+                result.data.Add(new LexonEntityBase() { 
+                    name = entity.Code,
+                    description = entity.Description,
+                    id = entity.IdRelated,
+                    idType = idType ?? 1 ,
+                    entityType = Enum.GetName(typeof(LexonAdjunctionType), idType ?? 1),
+                    intervening = entity.Intervening });
                 TraceLog(parameters: new string[] { $"code {entity.Code}" });
             }
 

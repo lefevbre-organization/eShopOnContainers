@@ -14,10 +14,7 @@ using System.Threading.Tasks;
 
 namespace Lexon.API.Infrastructure
 {
-    //TODO: https://www.mongodb.com/blog/post/working-with-mongodb-transactions-with-c-and-the-net-framework
-    //TODO: create replica set from settings and from docker
-    //TODO: changue context to evaluate if hace a session and get collections from Session or database
-    //TODO: test senf reasilent transaction https://docs.mongodb.com/manual/reference/method/Session.startTransaction/
+    //mirar https://www.mongodb.com/blog/post/working-with-mongodb-transactions-with-c-and-the-net-framework
     public class LexonContext : IMongoDbContext, IIntegrationEventLogContextMongoDB
     {
         public IMongoDatabase Database { get; }
@@ -132,20 +129,20 @@ namespace Lexon.API.Infrastructure
             return IntegrationEventLogsTransaction(session).UpdateOneAsync(filter, update);
         }
 
-        private Task UpdateEventStatusInDocument(Guid eventId, EventStateEnum status, IClientSessionHandle session)
-        {
-            var filter = Builders<IntegrationEventLogEntry>.Filter.Eq(u => u.EventId, eventId);
+        //private Task UpdateEventStatusInDocument(Guid eventId, EventStateEnum status, IClientSessionHandle session)
+        //{
+        //    var filter = Builders<IntegrationEventLogEntry>.Filter.Eq(u => u.EventId, eventId);
 
-            var eventLogEntry = IntegrationEventLogsTransaction(session).Find(filter).Single();
+        //    var eventLogEntry = IntegrationEventLogsTransaction(session).Find(filter).Single();
 
-            var builder = Builders<IntegrationEventLogEntry>.Update;
-            var update = builder.Set(u => u.State, status);
+        //    var builder = Builders<IntegrationEventLogEntry>.Update;
+        //    var update = builder.Set(u => u.State, status);
 
-            if (status == EventStateEnum.InProgress)
-                eventLogEntry.TimesSent++;
+        //    if (status == EventStateEnum.InProgress)
+        //        eventLogEntry.TimesSent++;
 
-            return IntegrationEventLogsTransaction(session).UpdateOneAsync(filter, update);
-        }
+        //    return IntegrationEventLogsTransaction(session).UpdateOneAsync(filter, update);
+        //}
 
         public async Task<IEnumerable<IntegrationEventLogEntry>> RetrieveEventLogsPendingToPublishAsync(Guid transactionId)
         {
