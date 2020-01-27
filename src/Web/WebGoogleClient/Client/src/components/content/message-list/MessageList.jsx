@@ -136,6 +136,8 @@ export class MessageList extends PureComponent {
     return this.props.messagesResult.messages.map(el => {
       if (this.props.selectedMessages.find(x => x.id === el.id)) {
         el.selected = true;
+      } else {
+        el.selected = false;
       }
 
       return (
