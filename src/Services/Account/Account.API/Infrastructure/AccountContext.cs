@@ -5,7 +5,6 @@
     using Model;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-    //using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogEF;
     using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
     using Microsoft.Extensions.Options;
     using MongoDB.Bson.Serialization;
@@ -21,9 +20,6 @@
     #endregion
 
     //TODO: https://www.mongodb.com/blog/post/working-with-mongodb-transactions-with-c-and-the-net-framework
-    //TODO: create replica set from settings and from docker
-    //TODO: changue context to evaluate if hace a session and get collections from Session or database
-    //TODO: test senf reasilent transaction https://docs.mongodb.com/manual/reference/method/Session.startTransaction/
 
     public class AccountContext : IMongoDbContext, IIntegrationEventLogContextMongoDB
     {
@@ -41,7 +37,7 @@
         {
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _settings = settings;
-            _client = new MongoClient(configuration["ConnectionString"]);
+            _client = new MongoClient(settings.Value.ConnectionString);
             if (_client != null)
                 Database = _client.GetDatabase(settings.Value.Database);
 
@@ -56,24 +52,24 @@
         private static void ClassMapping()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(IntegrationEventLogEntry))) { BsonClassMap.RegisterClassMap<IntegrationEventLogEntry>(); }
-            if (!BsonClassMap.IsClassMapRegistered(typeof(Account))) { BsonClassMap.RegisterClassMap<Account>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(UserMail))) { BsonClassMap.RegisterClassMap<UserMail>(); }
         }
 
-        public IMongoCollection<Account> Accounts => Database.GetCollection<Account>("accounts");
+        public IMongoCollection<UserMail> Accounts => Database.GetCollection<UserMail>(_settings.Value.Collection);
 
-        public IMongoCollection<Account> AccountsTransaction(IClientSessionHandle session)
+        public IMongoCollection<UserMail> AccountsTransaction(IClientSessionHandle session)
         {
-            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<Account>("accounts");
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<UserMail>(_settings.Value.Collection);
         }
 
         public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogs
         {
-            get { return Database.GetCollection<IntegrationEventLogEntry>("IntegrationEventLog"); }
+            get { return Database.GetCollection<IntegrationEventLogEntry>(_settings.Value.CollectionEvents); }
         }
 
         public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogsTransaction(IClientSessionHandle session)
         {
-            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<IntegrationEventLogEntry>("IntegrationEventLog");
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<IntegrationEventLogEntry>(_settings.Value.CollectionEvents);
         }
 
         public async Task PublishThroughEventBusAsync(IntegrationEvent evt, IClientSessionHandle session)
@@ -105,20 +101,20 @@
             return IntegrationEventLogsTransaction(session).UpdateOneAsync(filter, update);
         }
 
-        private Task UpdateEventStatusInDocument(Guid eventId, EventStateEnum status, IClientSessionHandle session)
-        {
-            var filter = Builders<IntegrationEventLogEntry>.Filter.Eq(u => u.EventId, eventId);
+        //private Task UpdateEventStatusInDocument(Guid eventId, EventStateEnum status, IClientSessionHandle session)
+        //{
+        //    var filter = Builders<IntegrationEventLogEntry>.Filter.Eq(u => u.EventId, eventId);
 
-            var eventLogEntry = IntegrationEventLogsTransaction(session).Find(filter).Single();
+        //    var eventLogEntry = IntegrationEventLogsTransaction(session).Find(filter).Single();
 
-            var builder = Builders<IntegrationEventLogEntry>.Update;
-            var update = builder.Set(u => u.State, status);
+        //    var builder = Builders<IntegrationEventLogEntry>.Update;
+        //    var update = builder.Set(u => u.State, status);
 
-            if (status == EventStateEnum.InProgress)
-                eventLogEntry.TimesSent++;
+        //    if (status == EventStateEnum.InProgress)
+        //        eventLogEntry.TimesSent++;
 
-            return IntegrationEventLogsTransaction(session).UpdateOneAsync(filter, update);
-        }
+        //    return IntegrationEventLogsTransaction(session).UpdateOneAsync(filter, update);
+        //}
 
         public async Task<IEnumerable<IntegrationEventLogEntry>> RetrieveEventLogsPendingToPublishAsync(Guid transactionId)
         {
@@ -134,7 +130,6 @@
                 .Sort(sort)
                 .ToListAsync();
         }
-
 
         public Task MarkEventAsInProgressAsync(Guid eventId, IClientSessionHandle transaction)
         {

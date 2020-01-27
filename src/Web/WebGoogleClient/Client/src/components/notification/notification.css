@@ -1,3 +1,17 @@
 .ok-button {
     margin-right: 0 !important;
 }
+
+.modal-footer {
+    background-color: #001978;
+}
+
+.modal-footer .btn-primary {
+    background-color: #ffffff !important;
+    color: #001978;
+}
+
+.modal-footer .btn-secondary {
+    border-color: #ffffff !important;
+    color: #ffffff;
+}

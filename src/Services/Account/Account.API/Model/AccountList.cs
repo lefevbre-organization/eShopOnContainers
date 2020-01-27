@@ -2,6 +2,6 @@
 {
     public class AccountList
     {
-        public Account[] Accounts { get; set; }
+        public UserMail[] Accounts { get; set; }
     }
 }

@@ -52,7 +52,7 @@
     "button": "Inicia sesión con google"
   },
   "confirmation": {
-    "cancel": "Cancelar",
-    "ok":"Aceptar"
+    "cancel": "No",
+    "ok":"Si"
   }
 }
