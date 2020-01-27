@@ -128,7 +128,7 @@ export class MessageContent extends Component {
     this.state = {
       errorMessage: undefined
     };
-
+    this.refresh = false;
     this.iframeRef = React.createRef();
     this.modifyMessage = this.modifyMessage.bind(this);
   }
@@ -136,15 +136,20 @@ export class MessageContent extends Component {
   componentDidMount(prevProps) {
     const messageId = this.props.match.params.id;
     this.props.getEmailMessage(messageId);
+  }
 
-    // Mark email as read
-    setMessageAsRead(messageId);
+  componentWillUnmount() {
+    debugger
+    if(this.refresh && this.props.refresh) {
+      this.props.refresh();
+    }
   }
 
   componentDidUpdate(prevProps) {
     const { emailMessageResult } = this.props;
     if (!emailMessageResult.loading) {
       if (!emailMessageResult.failed) {
+        this.markEmailAsRead(emailMessageResult.result);
         if (this.iframeRef.current) {
           const { body } = this.iframeRef.current.contentWindow.document;
           body.style.margin = "0px";
@@ -196,6 +201,14 @@ export class MessageContent extends Component {
 
   renderInbox(){
     this.props.history.push("/");
+  }
+
+  markEmailAsRead(message) {
+    debugger
+    if(message.isRead === false) {
+      setMessageAsRead(message.id)
+      this.refresh = true;
+    }
   }
 
   renderSpinner() {

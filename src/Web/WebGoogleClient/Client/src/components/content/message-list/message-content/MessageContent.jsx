@@ -131,7 +131,7 @@ export class MessageContent extends Component {
         errorMessage: undefined,
         attachment: true
     };
-
+    this.refresh = false;
     this.iframeRef = React.createRef();
     this.modifyMessage = this.modifyMessage.bind(this);
   }
@@ -140,15 +140,20 @@ export class MessageContent extends Component {
     const messageId = this.props.match.params.id;
     this.props.getEmailHeaderMessage(messageId);
     this.props.getEmailMessage(messageId);
+  }
 
-    // Mark email as read
-    setMessageAsRead(messageId);
+  componentWillUnmount() {
+    debugger
+    if(this.refresh && this.props.refresh) {
+      this.props.refresh();
+    }
   }
 
     componentDidUpdate(prevProps) {
-        const { emailMessageResult } = this.props;
+      const { emailMessageResult } = this.props;
         if (!emailMessageResult.loading) {
             if (!emailMessageResult.failed) {
+                this.markEmailAsRead(emailMessageResult.result);
                 if (this.state.attachment === true) {
                     const { body } = this.iframeRef.current.contentWindow.document;
                     body.style.margin = "0px";
@@ -201,6 +206,14 @@ export class MessageContent extends Component {
             }
         }
     }
+
+  markEmailAsRead(message) {
+    const found = message.labelIds.find(elem => elem === 'UNREAD');
+    if(found) {
+      setMessageAsRead(message.id)
+      this.refresh = true;
+    }
+  }
 
   renderSpinner() {
     return (

@@ -248,6 +248,11 @@ export class Main extends Component {
     }
   }
 
+  
+  refreshLabels() {
+    this.getLabelList();
+  }
+
   loadLabelMessageSingle() {
         this.getLabelList();
         this.renderLabelRoutes();
@@ -479,6 +484,7 @@ export class Main extends Component {
                     <MessageContent
                       sideBarCollapsed={leftSideBar.collapsed}
                       sideBarToggle={this.toggleSideBar}
+                      refresh={()=> { this.refreshLabels(); }}
                     />
                   )}
                 />
