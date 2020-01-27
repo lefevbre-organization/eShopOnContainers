@@ -50,6 +50,7 @@ class ListClassifications extends Component {
 
         {this.renderNoClassifications()}
 
+        <div id="scrl-container">
         <PerfectScrollbar options={{ suppressScrollX: true }}>
           <ul className="row lexon-document-list">
             {classifications.map(classification => {
@@ -68,6 +69,14 @@ class ListClassifications extends Component {
             })}
           </ul>
         </PerfectScrollbar>
+        </div>
+        <style jsx>{`          
+            #scrl-container .scrollbar-container {
+            position: absolute !important;
+            top: 350px  !important;
+            bottom: 0  !important;
+            height: unset !important;
+        }`}</style>
       </Fragment>
     );
   }

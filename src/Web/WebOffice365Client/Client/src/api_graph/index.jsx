@@ -415,6 +415,20 @@ export const sendMessage = async ({ data, attachments }) => {
   }
 };
 
+export const setMessageAsRead = async messageId => {
+  try {
+    const accessToken = await getAccessTokenSilent();
+    const client = getAuthenticatedClient(accessToken);
+
+    await client.api(`me/messages/${messageId}`).patch({
+      isRead: true
+    })
+    return true;
+  } catch (err) {
+    throw err;
+  }
+};
+
 export const batchModify = async ({ ids, addLabelIds = [], removeLabelIds = [] }) => {
   const accessToken = await getAccessTokenSilent();
   const client = getAuthenticatedClient(accessToken);

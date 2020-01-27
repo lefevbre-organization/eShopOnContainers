@@ -266,6 +266,19 @@ export const sendMessage = async ({ headers, body, attachments }) => {
   });
 };
 
+export const setMessageAsRead = async messageId =>  new Promise((resolve, reject) => {
+  window.gapi.client.gmail.users.messages
+    .modify({
+      userId: "me",
+      id: messageId,
+      addLabelIds: [],
+      removeLabelIds: ['UNREAD']
+    })
+    .then(response => {
+      resolve(messageId);
+    });
+});
+
 export const batchModify = ({ ids, addLabelIds = [], removeLabelIds = [] }) =>
   new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.messages

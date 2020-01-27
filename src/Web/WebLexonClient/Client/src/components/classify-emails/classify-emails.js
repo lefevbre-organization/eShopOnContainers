@@ -227,7 +227,7 @@ class ClassifyEmails extends Component {
                 {i18n.t("classify-emails.cancel")}
               </Button>
               <Button
-                bsPrefix="btn btn-primary"
+                bsPrefix="btn btn-secundary"
                 onClick={() => this._handleOnClick(true)}
               >
                 {i18n.t("classify-emails.save")}
@@ -237,6 +237,20 @@ class ClassifyEmails extends Component {
         </div>
 
         <style jsx>{`
+          .btn-secundary {
+            min-width: 165px;
+            border-radius: 0;
+            border: 2px solid #001978;
+            background-color: #001978;
+            text-transform: uppercase;
+            font-size: 13px;
+            font-family: MTTMilano-Bold, Lato, Arial, sans-serif;
+            letter-spacing: 0.7px;
+            color: #ffff;
+            padding: 10px;
+        }   
+
+                  
           strong {
             font-weight: 500;
             font-family: MTTMilano-Medium, Lato, Arial, sans-serif;

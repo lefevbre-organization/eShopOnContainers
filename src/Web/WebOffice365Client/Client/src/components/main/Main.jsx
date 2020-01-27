@@ -270,6 +270,10 @@ export class Main extends Component {
     }
   }
 
+  refreshLabels() {
+    this.getLabelList();
+  }
+
   loadLabelMessageSingle() {
     this.getLabelList();
     this.renderLabelRoutes();
@@ -380,7 +384,6 @@ export class Main extends Component {
         method: "GET"
       }).then(result => {
         console.log(result);
-        debugger
 
         const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
         signOut(urlRedirect);
@@ -483,6 +486,7 @@ export class Main extends Component {
                     <MessageContent
                       sideBarCollapsed={leftSideBar.collapsed}
                       sideBarToggle={this.toggleSideBar}
+                      refresh={()=> { this.refreshLabels(); }}
                     />
                   )}
                 />

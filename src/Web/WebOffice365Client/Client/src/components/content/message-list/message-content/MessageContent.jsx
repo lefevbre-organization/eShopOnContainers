@@ -11,6 +11,7 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import MessageToolbar from "../message-toolbar/MessageToolbar";
 import "./messageContent.scss";
 import MessageHeader from "./messageHeader";
+import { setMessageAsRead } from '../../../../api_graph';
 
 //BEGIN functions for attachment functionality
 
@@ -127,7 +128,7 @@ export class MessageContent extends Component {
     this.state = {
       errorMessage: undefined
     };
-
+    this.refresh = false;
     this.iframeRef = React.createRef();
     this.modifyMessage = this.modifyMessage.bind(this);
   }
@@ -137,10 +138,17 @@ export class MessageContent extends Component {
     this.props.getEmailMessage(messageId);
   }
 
+  componentWillUnmount() {
+    if(this.refresh && this.props.refresh) {
+      this.props.refresh();
+    }
+  }
+
   componentDidUpdate(prevProps) {
     const { emailMessageResult } = this.props;
     if (!emailMessageResult.loading) {
       if (!emailMessageResult.failed) {
+        this.markEmailAsRead(emailMessageResult.result);
         if (this.iframeRef.current) {
           const { body } = this.iframeRef.current.contentWindow.document;
           body.style.margin = "0px";
@@ -192,6 +200,13 @@ export class MessageContent extends Component {
 
   renderInbox(){
     this.props.history.push("/");
+  }
+
+  markEmailAsRead(message) {
+    if(message.isRead === false) {
+      setMessageAsRead(message.id)
+      this.refresh = true;
+    }
   }
 
   renderSpinner() {
