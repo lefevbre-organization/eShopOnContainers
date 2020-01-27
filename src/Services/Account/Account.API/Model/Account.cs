@@ -12,6 +12,7 @@
     public class UserMail : MongoModel
     {
         [BsonId]
+        [BsonIgnoreIfDefault]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 

@@ -186,24 +186,19 @@
         public async Task<Result<long>> UpdateDefaultAccount(string user, string email, string provider, string guid)
         {
             var result = new Result<long> { errors = new List<ErrorInfo>() };
-            var updateOptions = new UpdateOptions { IsUpsert = false };
+            var updateOptions = new UpdateOptions { IsUpsert = true };
             TraceLog(parameters: new string[] { $"usuario:{user}", $"email:{email}", $"provider:{provider}", $"guid:{guid}" });
             try
             {
-                // 1. Si no existe, crea la cuenta TODO: esto no tiene sentido
+
+                // 1. Si no existe, crea la cuenta 
+                UserMail userMail = GetNewUserMail(user, email, provider, guid);
                 var accounts = _context.Accounts.Find(x => x.User == user);
+
                 if (!accounts.Any())
                 {
                     TraceLog(parameters: new string[] { $"se crea un nuevo usuario porque no existe ninguno con user:{user}" });
-
-                    await _context.Accounts.InsertOneAsync(new UserMail
-                    {
-                        User = user,
-                        Provider = provider,
-                        Email = email,
-                        DefaultAccount = true,
-                        guid = guid
-                    });
+                    await _context.Accounts.InsertOneAsync(userMail);
                     result.data = 1;
                 }
                 else
@@ -219,16 +214,16 @@
                     TraceLog(parameters: new string[] { $"Se modifican {resultUpdate.ModifiedCount} cuentas con default a :{false}" });
                     result.data = resultUpdate.ModifiedCount;
 
-                    resultUpdate = await _context.Accounts.UpdateOneAsync(
+                    var resultReplace = await _context.Accounts.ReplaceOneAsync(
                         account => account.User == user && account.Email == email && account.Provider == provider,
-                        Builders<UserMail>.Update.Set(x => x.DefaultAccount, true).Set(x => x.Email, email).Set(x => x.guid, guid),
-                        updateOptions);
-                    if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0)
+                        userMail, updateOptions);
+
+                    if (resultReplace.IsAcknowledged && resultReplace.MatchedCount > 0)
                     {
-                        TraceLog(parameters: new string[] { $"Se modifican {resultUpdate.ModifiedCount} con el default {true} y/o insertan con id {resultUpdate.UpsertedId}" });
-                        result.data += resultUpdate.ModifiedCount;
+                        TraceLog(parameters: new string[] { $"Se modifican {resultReplace.ModifiedCount} con el default {true} y/o insertan con id {resultReplace.UpsertedId}" });
+                        result.data += (resultReplace.ModifiedCount + (resultReplace.UpsertedId != null ? 1 : 0));
                     }
-                    
+
 
                 }
 
@@ -240,6 +235,21 @@
                 TraceMessage(result.errors, ex);
             }
             return result;
+        }
+
+        private static UserMail GetNewUserMail(string user, string email, string provider, string guid)
+        {
+            return new UserMail()
+            {
+                User = user,
+                Email = email,
+                guid = guid,
+                Provider = provider,
+                DefaultAccount = true,
+                Accounts = new List<Account>() {
+                            new Account() {defaultAccount = true, email= email, guid= guid, provider= provider }
+                        }
+            };
         }
 
         public async Task<Result<long>> DeleteAccountByUserAndEmail(string user, string email)
