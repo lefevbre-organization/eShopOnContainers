@@ -11,6 +11,7 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import MessageToolbar from "../message-toolbar/MessageToolbar";
 import "./messageContent.scss";
 import MessageHeader from "./messageHeader";
+import { setMessageAsRead } from '../../../../api_graph';
 
 //BEGIN functions for attachment functionality
 
@@ -137,7 +138,7 @@ export class MessageContent extends Component {
     this.props.getEmailMessage(messageId);
 
     // Mark email as read
-    //setMessageAsRead
+    setMessageAsRead(messageId);
   }
 
   componentDidUpdate(prevProps) {

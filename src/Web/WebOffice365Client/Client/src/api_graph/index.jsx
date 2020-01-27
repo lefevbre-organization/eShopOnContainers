@@ -420,17 +420,10 @@ export const setMessageAsRead = async messageId => {
     const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
 
-    const response = await client.api(`me/messages/${messageId}`).patch({
+    await client.api(`me/messages/${messageId}`).patch({
       isRead: true
     })
-    const result = response;
-
-debugger;
-    return {
-      body: result.body,
-      headers: response.headers,
-      result: { ...result, messageHeaders: result, payload: undefined }
-    }
+    return true;
   } catch (err) {
     throw err;
   }
