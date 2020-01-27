@@ -135,6 +135,9 @@ export class MessageContent extends Component {
   componentDidMount(prevProps) {
     const messageId = this.props.match.params.id;
     this.props.getEmailMessage(messageId);
+
+    // Mark email as read
+    //setMessageAsRead
   }
 
   componentDidUpdate(prevProps) {
