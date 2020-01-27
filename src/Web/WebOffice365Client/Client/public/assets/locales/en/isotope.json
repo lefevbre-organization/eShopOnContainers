@@ -55,7 +55,7 @@
     "button": "Sign in with Microsoft"
   },
   "confirmation": {
-    "cancel": "Cancel",
-    "ok":"Accept"
+    "cancel": "No",
+    "ok":"Yes"
   }
 }

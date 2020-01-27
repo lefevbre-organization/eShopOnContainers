@@ -55,7 +55,7 @@
     "button": "Inicia sesión con Microsoft"
   },
   "confirmation": {
-    "cancel": "Cancelar",
-    "ok":"Aceptar"
+    "cancel": "No",
+    "ok":"Si"
   }
 }

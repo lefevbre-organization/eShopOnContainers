@@ -1,0 +1,80 @@
+.modal-header {
+    background: #001978;
+    border-bottom: none;
+    min-height: none !important;
+    padding: 1rem !important;
+  }
+  
+  .close {
+    color: white;
+  }
+  
+  .modal-body {
+    background: #001978;
+    border-bottom: none;
+    color: white;
+    padding: 1rem !important;
+  }
+  
+  .modal-footer {
+    background: #001978;
+    border-top: none;
+  }
+
+  h5 {
+      font-size: 1.667rem;
+  }
+  
+  
+  .img-question {
+    border: "0";
+    padding-right: 20px;
+  }
+  
+  .modal-header .close span:first-child {
+    color: #001978;
+  }
+  
+  .modal-header .close span:first-child:before {
+    content: "\e938";
+    color: #fff;
+    font-family: 'lf-font' !important;
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  .modal-header .close{
+    font-family: MTTMilano, Lato, Arial, sans-serif;
+    opacity: 1;
+    color: #FFF;
+    font-size: 16px;        
+    text-shadow: 0 0 0;
+  }
+  
+  .modal-footer .modal-secondary {
+        background: white;
+        color: #001978 !important;
+        border-color: white;
+        border-radius: 0%;
+        height: 42px;
+        width: 80px;
+        border-width: 2px;
+        font-size: 1.35rem;
+  }
+
+  .modal-footer .modal-primary {
+    background: #001978;
+    color: white;
+    border-color: white;
+    border-radius: 0%;
+    height: 42px;
+    width: 80px;
+    border-width: 2px;
+    font-size: 1.35rem;
+}

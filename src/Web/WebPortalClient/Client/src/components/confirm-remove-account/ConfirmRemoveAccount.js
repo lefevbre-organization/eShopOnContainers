@@ -51,21 +51,6 @@ class ConfirmRemoveAccount extends Component {
                 </div>
               </div>
             </div>
-
-            {/* <Container>
-              <Row>
-                <Col xs={2} md={2}>
-                  <img
-                    className='img-question'
-                    alt=""
-                    src="/assets/imgs/icon-question.png"
-                  ></img>
-                </Col>
-                <Col xs={10} md={10}>
-                  {i18n.t("confirm-remove-accounts.body")}
-                </Col>
-              </Row>
-            </Container> */}
           </Modal.Body>
           <Modal.Footer>
             <Button
