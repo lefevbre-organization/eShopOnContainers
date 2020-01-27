@@ -3,7 +3,7 @@ import ProviderInbox from "./ProviderInbox";
 
 class Accounts extends Component {
   render() {
-    const { userId, accounts } = this.props;
+    const { userId, accounts, token } = this.props;
 
     if (!Array.isArray(accounts) || accounts.length === 0) {
       return null;
@@ -22,6 +22,7 @@ class Accounts extends Component {
                 toggleConfirmRemoveAccount={
                   this.props.toggleConfirmRemoveAccount
                 }
+                token={token}
               />
             </li>
           );

@@ -21,7 +21,8 @@ class AppContainer extends Component {
 
     this.state = {
       signInStatus: SIGNED_OUT,
-      googleUser: undefined
+      googleUser: undefined,
+      openEmail: undefined
     };
 
     this.init = this.init.bind(this);
@@ -52,7 +53,12 @@ class AppContainer extends Component {
       mountScripts().then(this.init);
     }
 
-    this.props.location.pathname = "/inbox";
+    if (this.props.match.params.idMail){
+      this.setState({openEmail: this.props.match.params.idMail});
+    }
+    else {
+      this.props.location.pathname = "/inbox";
+    }
   }
 
   init() {
@@ -84,15 +90,16 @@ class AppContainer extends Component {
   onSignInSuccess(googleUser) {
     this.setState({
       signInStatus: AUTH_SUCCESS,
-      googleUser
+      googleUser: googleUser,
+      openEmail: this.props.match.params.idMail
     });
   }
 
   renderView() {
-    const { signInStatus } = this.state;
+    const { signInStatus, openEmail } = this.state;
 
     if (signInStatus === AUTH_SUCCESS) {
-      return <Main googleUser={this.state.googleUser} />;
+      return <Main googleUser={this.state.googleUser} idEmail={openEmail} />;
     } else if (signInStatus === AUTH_IN_PROGRESS) {
       return <Authenticating />;
     } else {

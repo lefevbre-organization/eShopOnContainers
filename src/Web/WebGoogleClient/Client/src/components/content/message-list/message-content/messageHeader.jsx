@@ -76,12 +76,11 @@ class MessageHeader extends Component {
         <div className="header">
           <h1 className="subject">
             {this.getHeader("Subject")}
-            <div
-              className="folder"
-              onClick={() => this.onFolderClick("folder")}
-            >
-              <div> {this.getTraductionLabel(this.getLabelSelected())} </div>
-            </div>
+            {(this.getLabelSelected() !== null) ?
+                <div className="folder" onClick={() => this.onFolderClick("folder")}>
+                  <div> {this.getTraductionLabel(this.getLabelSelected())} </div>
+                </div> 
+              : ""}
           </h1>
           <div className="fromDate">
             <div className="from">

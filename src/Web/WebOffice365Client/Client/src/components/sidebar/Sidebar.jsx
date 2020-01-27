@@ -28,7 +28,9 @@ export class Sidebar extends Component {
   componentDidUpdate(prevProps, prevState) {
 
     if(this.state.selectedFolder === "") {
-      this.navigateToList(null, this.props.selectedLabel.id);
+      if (this.props.selectedLabel !== null) {
+        this.navigateToList(null, this.props.selectedLabel.id);
+      }
     } else {
       if (
         prevProps.selectedLabel !== this.props.selectedLabel &&

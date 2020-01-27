@@ -8,13 +8,8 @@ import { UserNotFound } from "../components/user-not-found/UserNotFound";
 import Spinner from "../components/spinner/spinner";
 import ReactNotification, { store } from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css';
-
-import {
-  getAccounts,
-  deleteAccountByUserAndEmail
-} from "../services/user-accounts";
-
-import { INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP } from "../constants";
+import { parseJwt, getUserId, buildClientUrl } from "../utils/jwt";
+import { getAccounts, deleteAccountByUserAndEmail} from "../services/user-accounts";
 
 export class PageGoTo extends Component {
   constructor(props) {
@@ -25,7 +20,9 @@ export class PageGoTo extends Component {
       userId: null,
       redirect: false,
       showConfirmRemoveAccount: false,
-      emailRemoved: null
+      emailRemoved: null,
+      token: props.match.params.token,
+      payload: parseJwt(props.match.params.token)
     };
     this.toggleConfirmRemoveAccount = this.toggleConfirmRemoveAccount.bind(
       this
@@ -43,47 +40,50 @@ export class PageGoTo extends Component {
   }
 
   async getAccounts() {
-    const userId = this.props.match.params.userId;
-    const encrypt = this.props.match.params.encrypt;
+    const payload = this.state.payload;
+    const userId = getUserId(payload);
+    const encrypt = 0;
 
     getAccounts(userId, encrypt)
       .then(data => {
-        this.setState({ loading: false });
+
+        var url = "";
 
         if (data.user === undefined || data.user === null) {
           this.setState({ loading: false, redirect: true });
         } else {
-          this.setState({ loading: false, userId: data.user.ID_ENTRADA, accounts: data.accounts, redirect: false }, ()=>{
-            if (data.accounts.length !== 0) {
-              const account = data.accounts[0];
-              if (this.canRedirect(account)) {
-                switch (account.provider) {
-                  case INBOX_GOOGLE:
-                    window.open(
-                      `${window.URL_INBOX_GOOGLE}/user/GO0${this.state.userId}`,
-                      "_self"
-                    );
-                    break;
-                  case INBOX_OUTLOOK:
-                    window.open(
-                      `${window.URL_INBOX_OUTLOOK}/user/OU0${this.state.userId}`,
-                      "_self"
-                    );
-                    break;
-                  case INBOX_IMAP:
-                    window.open(
-                      `${window.URL_INBOX_IMAP}/user/IM0${this.state.userId}`,
-                      "_self"
-                    );
-                    break;
-  
-                  default:
-                    console.log("Valor no válido");
-                    break;
+          this.setState({ loading: false, accounts: data.accounts, redirect: false, userId: userId });
+
+          if (data.accounts.length !== 0) {
+            const account = data.accounts[0];
+
+            if (payload.idMail !== undefined && payload.mailAccount !== undefined && payload.mailAccount !== null){
+              //Token trae info de un email para abrir
+              const found = data.accounts.some(account => account.email === payload.mailAccount)
+              if (!found){
+                alert("No tiene configurada la cuenta asociada al email que quiere visualizar. Configúrela y pruebe de nuevo");
+              }
+              else {
+                if (account.defaultAccount && (payload.mailAccount == account.email)) {
+                  url = buildClientUrl(account.provider, `${account.provider.substring(0,2)}0${userId}`, this.state.payload);
+                }
+                else {
+                  url = buildClientUrl(payload.provider.toUpperCase(), `${payload.provider.substring(0,2).toUpperCase()}0${userId}`, this.state.payload);
                 }
               }
             }
-          });          
+            else {
+              if (account.defaultAccount) {
+	      	if (this.canRedirect(account)) {
+                	url = buildClientUrl(account.provider, `${account.provider.substring(0,2)}0${userId}`, this.state.payload);
+		}
+              }
+            }
+            
+            if (url !== ""){
+              window.open(url, "_self");
+            }
+          }
         }
       })
       .catch(error => {
@@ -167,7 +167,7 @@ export class PageGoTo extends Component {
   }
 
   renderGoTo() {
-    const { loading, userId, accounts } = this.state;
+    const { loading, userId, accounts, token } = this.state;
 
     if (!loading) {
       return (
@@ -176,6 +176,7 @@ export class PageGoTo extends Component {
           accounts={accounts}
           removeAccount={this.removeAccount}
           toggleConfirmRemoveAccount={this.toggleConfirmRemoveAccount}
+          token={token}
         />
       );
     }

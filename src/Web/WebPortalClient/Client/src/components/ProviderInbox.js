@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import i18n from "i18next";
+import { parseJwt, buildClientUrl } from "../utils/jwt";
 
 import { INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP } from "../constants";
 
@@ -60,8 +61,11 @@ class ProviderInbox extends Component {
   }
 
   render() {
-    const { provider, email } = this.props;
+    const { provider, email, token } = this.props;
     const user = this.getUser();
+    const payload = (token) ? parseJwt(token) : "";
+    
+
 
     let title;
     switch (provider) {
@@ -73,7 +77,7 @@ class ProviderInbox extends Component {
         return (
           <React.Fragment>
             <a
-              href={window.URL_INBOX_GOOGLE + "/user/" + user}
+              href={buildClientUrl(provider, user, payload)}
               className="d-flex align-items-center"
             >
               <span>
@@ -92,7 +96,7 @@ class ProviderInbox extends Component {
         return (
           <React.Fragment>
             <a
-              href={window.URL_INBOX_OUTLOOK + "/user/" + user}
+              href={buildClientUrl(provider, user, payload)}
               className="d-flex align-items-center"
             >
               <span>

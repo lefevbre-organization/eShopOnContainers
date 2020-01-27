@@ -10,7 +10,7 @@ function MSAuthButton(props) {
         border="0"
         alt="Microsoft"
         className="w3-btn"
-        src="assets/img/singinms.png"
+        src="/assets/img/singinms.png"
       ></img>
     </a>
   );

@@ -8,12 +8,12 @@ import { INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP } from "../constants";
 
 class GoTo extends Component {
   renderAddAccount(provider) {
-    const { userId, accounts } = this.props;
+    const { userId, accounts, token } = this.props;
 
     if (!accounts.some(account => account.provider === provider)) {
       return (
         <li>
-          <ProviderInbox userId={userId} provider={provider} />
+          <ProviderInbox userId={userId} provider={provider} token={token} />
         </li>
       );
     } else {
@@ -54,6 +54,7 @@ class GoTo extends Component {
                         toggleConfirmRemoveAccount={
                           this.props.toggleConfirmRemoveAccount
                         }
+                        token={this.props.token}
                       />
                     </ul>
                   </PerfectScrollbar>

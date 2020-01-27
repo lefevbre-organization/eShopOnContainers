@@ -103,7 +103,9 @@ export class Main extends Component {
           selectedMessages: selectedMessages,
           idCaseFile: this.props.lexon.idCaseFile,
           bbdd: this.props.lexon.bbdd,
-          idCompany: this.props.lexon.idCompany
+          idCompany: this.props.lexon.idCompany,
+          provider: "OU",
+          account: this.props.User.email
         }
       })
     );
@@ -174,21 +176,31 @@ export class Main extends Component {
 
     const { userId, idCaseFile } = this.props.lexon;
     const { email } = this.props.User;
+    const idEmail = this.props.idEmail;
     if (userId !== null && email !== null) {
       const GUID = uuid();
       const url = `${window.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}/${GUID}`;
       fetch(url, {
         method: "GET"
-      }).then(()=>{
-        Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID)
-      })
-      .catch(error => {
+      }).then(result => {
+      		Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID)
+	      if (idEmail != null && idEmail !== undefined){
+	        if (idCaseFile !== null && idCaseFile !== undefined){
+	          this.onSetSidebarOpenLexon(true);
+	          this.props.history.push(`/${idEmail}`);
+	        } else {
+           const EncodeIdMessage = encodeURI(this.props.idEmail);
+           this.props.history.push(`/${EncodeIdMessage}`);
+	        }
+	      } else if (idCaseFile != null && idCaseFile !== undefined){
+          this.props.history.push("/compose");
+          this.onSetSidebarOpenLexon(true);
+	      } else {
+	        this.props.history.push("/inbox");
+	      }
+      }).catch(error => {
         console.error("error ->", error);
       });
-      if (idCaseFile != null && idCaseFile !== undefined) {
-        this.props.history.push("/compose");
-        this.onSetSidebarOpenLexon(true);
-      }
     }
   }
 
@@ -304,7 +316,9 @@ export class Main extends Component {
   }
 
   getLabelInbox() {
-    this.props.getInbox();
+    if (this.props.idEmail === undefined){
+      this.props.getInbox();
+    }
   }
 
    getLabelMessages(labelIds, q, pageToken) {

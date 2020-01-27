@@ -96,7 +96,8 @@ export class Main extends Component {
   //}
 
   sendMessagePutUser(user) {
-    const { selectedMessages } = this.props;
+    const { selectedMessages, googleUser } = this.props;
+
     window.dispatchEvent(
       new CustomEvent("PutUserFromLexonConnector", {
         detail: {
@@ -104,7 +105,9 @@ export class Main extends Component {
           selectedMessages: selectedMessages,
           idCaseFile: this.props.lexon.idCaseFile,
           bbdd: this.props.lexon.bbdd,
-          idCompany: this.props.lexon.idCompany
+          idCompany: this.props.lexon.idCompany,
+          provider: this.props.lexon.provider,
+          account: googleUser.w3.U3
         }
       })
     );
@@ -185,6 +188,7 @@ export class Main extends Component {
 
     const { userId, idCaseFile } = this.props.lexon;
     const { googleUser } = this.props;
+    const idEmail = this.props.idEmail;
     const email = googleUser.w3.U3;
     if (userId !== null && email !== null) {
       const { googleUser } = this.props;
@@ -194,8 +198,16 @@ export class Main extends Component {
       fetch(url, {
         method: "GET"
       }).then(result => {
-        Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID)
-        if (idCaseFile != null && idCaseFile !== undefined) {
+      	Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID)
+        if (idEmail != null && idEmail !== undefined){
+          if (idCaseFile != null && idCaseFile != undefined){
+            this.onSetSidebarOpenLexon(true);
+            this.props.history.push(`/${idEmail}`);
+          }
+          else {
+            this.props.history.push(`/${idEmail}`);
+          }
+        } else if (idCaseFile != null && idCaseFile !== undefined){
           this.props.history.push("/compose");
           this.onSetSidebarOpenLexon(true);
         } else {

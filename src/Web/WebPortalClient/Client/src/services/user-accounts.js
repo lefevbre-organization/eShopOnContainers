@@ -42,7 +42,7 @@ export const getAccountsWithUserEncrypt = userId => {
           .then(result => {
             if (result.errors.length === 0) {
               resolve({
-                user: { ID_ENTRADA: userId },
+                user: { ID_ENTRADA: user.N_ENTRADA },
                 accounts: result.data.accounts
               });
             } else {

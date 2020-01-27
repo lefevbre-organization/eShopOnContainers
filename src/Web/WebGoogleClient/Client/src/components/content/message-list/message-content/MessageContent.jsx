@@ -190,6 +190,11 @@ export class MessageContent extends Component {
 
                     }
                 }
+            } else {
+              if (emailMessageResult.error.status === 404){
+                alert('El mensaje que desea abrir no existe en el servidor');
+                this.renderInbox();
+              }
             }
         }
     }
@@ -204,6 +209,10 @@ export class MessageContent extends Component {
 
   renderErrorModal() {
     return <Redirect to="/notfound" />;
+  }
+
+  renderInbox(){
+    this.props.history.push("/inbox");
   }
 
   modifyMessage(addLabelIds, removeLabelIds) {

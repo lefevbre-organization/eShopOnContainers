@@ -173,7 +173,13 @@ export class MessageContent extends Component {
           }
         }
       } else {
-        if (!this.state.errorMessage) {
+        if (this.props.match.path == "/:id([a-zA-Z0-9!@#$%^&+=_-]+)" && this.props.match.url !== "/inbox"){
+          if (emailMessageResult.error.statusCode === 400 || emailMessageResult.error.statusCode === 404){
+            alert('El mensaje que desea abrir no existe en el servidor');
+            this.renderInbox();
+          }
+        }
+         if (!this.state.errorMessage) {
           this.setState({
             //errorMessage: emailMessageResult.error.result.error.message,
             errorMessage: "error",
@@ -182,6 +188,10 @@ export class MessageContent extends Component {
         }
       }
     }
+  }
+
+  renderInbox(){
+    this.props.history.push("/");
   }
 
   renderSpinner() {

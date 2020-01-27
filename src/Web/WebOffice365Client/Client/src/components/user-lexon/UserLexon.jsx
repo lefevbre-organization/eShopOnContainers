@@ -11,7 +11,8 @@ class UserLexon extends Component {
     super(props);
 
     this.state = {
-      readyToRedirect: false
+      readyToRedirect: false,
+      redirectToEmail: this.props.match.params.idMail,
     };
 
     this.isUniqueAccountByProvider = this.isUniqueAccountByProvider.bind(this);
@@ -98,9 +99,13 @@ class UserLexon extends Component {
   }
 
   render() {
-    const { readyToRedirect } = this.state;
+    const { readyToRedirect, redirectToEmail } = this.state;
     if (readyToRedirect) {
-      return <Redirect to="/" />;
+      if (redirectToEmail === undefined){
+        return <Redirect to="/" />;
+      }else{
+        return <Redirect to={`/viewMail/${this.props.match.params.idMail}`}/>;      
+      }
     }
 
     return null;

@@ -5,6 +5,7 @@ import "./App.css";
 
 import { NotFound } from "./components/not-found/NotFound";
 import { PageGoTo } from "./pages/PageGoTo";
+import { PageGoToLegacy } from "./pages/PageGoToLegacy";
 
 class App extends Component {
   componentDidMount() {
@@ -14,7 +15,9 @@ class App extends Component {
   render() {
     return (
       <Switch>
-        <Route path="/user/:userId?/encrypt/:encrypt?" component={PageGoTo} />
+        <Route path="/user/:userId?/encrypt/:encrypt?" component={PageGoToLegacy} />
+        <Route path="/user/:userId?/encrypt/:encrypt?/casefile/:idCaseFile/bbdd/:bbdd/company/:idCompany" component={PageGoToLegacy} />
+        <Route path="/access/:token" component={PageGoTo} />
         <Route path="/user/:userId?" component={PageGoTo} />
         <Route component={NotFound} />
       </Switch>

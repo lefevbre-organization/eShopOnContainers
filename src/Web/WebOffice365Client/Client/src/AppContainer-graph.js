@@ -29,7 +29,8 @@ class AppContainerGraph extends Component {
       isAuthenticated: user !== null,
       user: {},
       error: null,
-      readyToRedirect: false
+      readyToRedirect: false,
+      openEmail: undefined
     };
 
     this.init = this.init.bind(this);
@@ -54,6 +55,10 @@ class AppContainerGraph extends Component {
     const { isNewAccount } = this.props.lexon;
     if (!isNewAccount) {
       mountScripts().then(this.init);
+    }
+    
+    if (this.props.match.params.idMail){
+      this.setState({openEmail: this.props.match.params.idMail});
     }
   }
 
@@ -83,15 +88,16 @@ class AppContainerGraph extends Component {
   onSignInSuccess() {
     this.setState({
       signInStatus: AUTH_SUCCESS,
-      readyToRedirect: true
+      readyToRedirect: true,
+      openEmail: this.props.match.params.idMail
     });
   }
 
   renderView() {
-    const { signInStatus, readyToRedirect } = this.state;
+    const { signInStatus, openEmail, readyToRedirect } = this.state;
 
     if (signInStatus === AUTH_SUCCESS && readyToRedirect) {
-      return <Main User={this.state.user} />;
+      return <Main User={this.state.user} idEmail={openEmail} />;
     } else if (signInStatus === AUTH_IN_PROGRESS) {
       return <Authenticating />;
     } else {
