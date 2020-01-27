@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import "./select-action-header.css";
 import { connect } from "react-redux";
 import i18n from "i18next";
+import ACTIONS from "../../../actions/selections";
 
 import { PAGE_SELECT_COMPANY } from "../../../constants";
 
@@ -13,8 +14,18 @@ class SelectActionHeader extends Component {
     this._handelOnClick = this._handelOnClick.bind(this);
   }
 
+  componentDidUpdate(prevProps) {
+    if(this.props.initialBBDD === null && prevProps.initialBBDD !== null) {
+      this.props.changePage(PAGE_SELECT_COMPANY);
+    }
+  }
+
   _handelOnClick() {
-    this.props.changePage(PAGE_SELECT_COMPANY);
+    if(this.props.initialBBDD) {
+      this.props.clearInitialBBDD();
+    } else {
+      this.props.changePage(PAGE_SELECT_COMPANY);
+    }
   }
 
   renderArrowChangePage() {
@@ -67,8 +78,13 @@ SelectActionHeader.propTypes = {
 const mapStateToProps = state => {
   return {
     selectedMessages: state.email.selectedMessages,
+    initialBBDD: state.selections.initialBBDD,
     companySelected: state.selections.companySelected
   };
 };
 
-export default connect(mapStateToProps)(SelectActionHeader);
+const mapDispatchToProps = dispatch => ({
+  clearInitialBBDD: () => dispatch(ACTIONS.clearInitialBBDD())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SelectActionHeader);

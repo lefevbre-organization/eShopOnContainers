@@ -28,6 +28,14 @@ class SelectCompany extends Component {
       this.props.setCompanySelected(companies[0]);
       this.props.changePage(PAGE_SELECT_ACTION);
     }
+
+    for(let i = 0; i < companies.length; i++) {
+      if(companies[i].bbdd === this.props.initialBBDD) {
+        console.log("Selecting default BBDD")
+        this.props.setCompanySelected(companies[i]);
+        this.props.changePage(PAGE_SELECT_ACTION);
+      }
+    }  
   }
 
   _handleOnClick() {
@@ -128,13 +136,15 @@ class SelectCompany extends Component {
 
 SelectCompany.propTypes = {
   user: PropTypes.string.isRequired,
-  companies: PropTypes.array.isRequired
+  companies: PropTypes.array.isRequired,
+  initialBBDD: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => {
   return {
     companySelected: state.selections.companySelected,
-    errors: state.applicationReducer.errors
+    errors: state.applicationReducer.errors,
+    initialBBDD: state.selections.initialBBDD
   };
 };
 

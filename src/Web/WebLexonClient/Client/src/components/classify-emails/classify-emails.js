@@ -242,6 +242,10 @@ class ClassifyEmails extends Component {
             font-family: MTTMilano-Medium, Lato, Arial, sans-serif;
           }
           
+          table {
+            color: #7c868c;
+          }
+
           .modal-dialog {
             margin-top: 6rem;
           }

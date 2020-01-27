@@ -16,6 +16,18 @@ const selections = (state = INITIAL_STATE.selections, action) => {
         typeSelected: action.payload
       };
     }
+    case ACTIONS.Types.SET_INITIAL_BBDD: {
+      return {
+        ...state,
+        initialBBDD: action.payload
+      }
+    }
+    case ACTIONS.Types.CLEAR_INITIAL_BBDD: {
+      return {
+        ...state,
+        initialBBDD: null
+      }
+    }
 
     default:
       return state;

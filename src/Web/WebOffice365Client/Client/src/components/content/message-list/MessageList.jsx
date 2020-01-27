@@ -210,10 +210,8 @@ export class MessageList extends PureComponent {
 }
 
 const mapStateToProps = state => {
-  debugger
   return {
     selectedMessages: state.messageList.selectedMessages,
-    messagesResult: state.messagesResult || { loading: true }
   };
 };
 

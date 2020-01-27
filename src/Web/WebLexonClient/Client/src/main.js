@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 
 import ACTIONS from "./actions/email";
 import APPLICATION_ACTIONS from "./actions/applicationAction";
+import SELECTION_ACTIONS from "./actions/selections";
 import "./main.css";
 import i18n from "i18next";
 
@@ -100,8 +101,8 @@ class Main extends Component {
       idCaseFile,
       bbdd,
       idCompany,
-      provider = 'GO',
-      account = 'juan@juan.com',
+      provider,
+      account,
     } = event.detail;
     if (idCaseFile != null && idCaseFile !== undefined) {
       this.setState({
@@ -111,6 +112,10 @@ class Main extends Component {
         provider,
         account
       });
+    } 
+    
+    if(bbdd && bbdd !== '') {
+      this.props.setInitialBBDD(bbdd);
     }
 
     selectedMessages.forEach(message => {
@@ -193,6 +198,8 @@ class Main extends Component {
       return <Spinner />;
     }
 
+    console.log("Rendering initial DDBB: " + bbdd)
+
     return (
       <Fragment>
         {/* <Header title={"LEX-ON"} /> */}
@@ -206,7 +213,7 @@ class Main extends Component {
         <div className="lex-on-configuration">
           <a href="#/" className="lex-on-configuration-trigger">
             <strong className="sr-only sr-only-focusable">
-              Opciones de configuración
+              Opciones de configuración 
             </strong>
             <span className="lf-icon-configuration"></span>
           </a>
@@ -233,6 +240,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
+  setInitialBBDD: item => dispatch(SELECTION_ACTIONS.setInitialBBDD(item)),  
   addMessage: item => dispatch(ACTIONS.addMessage(item)),
   deleteMessage: id => dispatch(ACTIONS.deleteMessage(id)),
   addListMessages: listMessages =>
