@@ -131,6 +131,8 @@ export class MessageList extends PureComponent {
     return this.props.messagesResult.messages.map(el => {
       if (this.props.selectedMessages.find(x => x.id === el.id)) {
         el.selected = true;
+      } else {
+        el.selected = false;
       }
 
       return (
@@ -209,7 +211,7 @@ export class MessageList extends PureComponent {
 
 const mapStateToProps = state => {
   return {
-    selectedMessages: state.messageList.selectedMessages
+    selectedMessages: state.messageList.selectedMessages,
   };
 };
 

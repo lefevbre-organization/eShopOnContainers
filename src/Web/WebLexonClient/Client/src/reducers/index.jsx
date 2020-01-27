@@ -14,7 +14,8 @@ export const INITIAL_STATE = {
   },
   selections: {
     companySelected: null,
-    typeSelected: null
+    typeSelected: null,
+    initialBBDD: null
   },
   documents: {
     showModalDocuments: false

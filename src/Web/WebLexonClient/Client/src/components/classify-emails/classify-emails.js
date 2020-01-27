@@ -242,6 +242,10 @@ class ClassifyEmails extends Component {
             font-family: MTTMilano-Medium, Lato, Arial, sans-serif;
           }
           
+          table {
+            color: #7c868c;
+          }
+
           .modal-dialog {
             margin-top: 6rem;
           }
@@ -297,6 +301,9 @@ class ClassifyEmails extends Component {
             color: #001978;
             display: none;
           }
+          .modal-body {
+            background-color: #ffffff;
+          }
           
           .modal-body.info {
             background-color: #001978;
@@ -316,6 +323,7 @@ class ClassifyEmails extends Component {
             border: 0;
             border-radius: 0;
             justify-content: flex-end !important;
+            background-color: #ffffff;
           }
           .modal-footer.info {
             background-color: #001978;
