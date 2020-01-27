@@ -237,7 +237,6 @@ export const getResults = async (user, company, typeId, search) => {
 
 export const getCasefile = (user, bbdd, company, typeId, search) => {
   return new Promise((resolve, reject) => {
-    debugger;
     const url = `${window.API_GATEWAY}/${RESULTS}?search=${search}&idUser=${user}&idCompany=${company}&bbdd=${bbdd}&idType=${typeId}`;
     fetch(url, {
       method: "GET"

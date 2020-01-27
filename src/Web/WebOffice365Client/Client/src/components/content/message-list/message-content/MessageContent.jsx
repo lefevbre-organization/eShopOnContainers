@@ -139,7 +139,6 @@ export class MessageContent extends Component {
   }
 
   componentWillUnmount() {
-    debugger
     if(this.refresh && this.props.refresh) {
       this.props.refresh();
     }
@@ -204,7 +203,6 @@ export class MessageContent extends Component {
   }
 
   markEmailAsRead(message) {
-    debugger
     if(message.isRead === false) {
       setMessageAsRead(message.id)
       this.refresh = true;

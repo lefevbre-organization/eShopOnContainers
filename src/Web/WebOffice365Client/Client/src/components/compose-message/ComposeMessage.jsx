@@ -205,9 +205,7 @@ export class ComposeMessage extends PureComponent {
       data: email,
       attachments: Fileattached
     }).then(_ => {
-      debugger
     }).catch((err) => {
-      debugger
       console.log(err)
     })
     this.resetFields();
