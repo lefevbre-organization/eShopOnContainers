@@ -18,6 +18,7 @@ class App extends Component {
           <Route exact path="/user/:idUser/casefile/:idCaseFile/bbdd/:bbdd/company/:idCompany" component={UserLexon} />
           <Route exact path="/user/:idUser/editMail/:idMail" component={UserLexon} />
           <Route exact path="/user/:idUser/editMail/:idMail/casefile/:idCaseFile/bbdd/:bbdd/company/:idCompany" component={UserLexon} />
+          <Route exact path="/user/:idUser/bbdd/:bbdd" component={UserLexon} /> 
           <Route exact path="/user/:idUser" component={UserLexon} />
           <Route path="/" component={AppContainer} />
           {/* <AppContainer /> */}
