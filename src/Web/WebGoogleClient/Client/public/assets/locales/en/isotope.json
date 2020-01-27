@@ -52,7 +52,7 @@
     "button":  "Sign in with google"
   },
   "confirmation": {
-    "cancel": "Cancel",
-    "ok":"Accept"
+    "cancel": "No",
+    "ok":"Yes"
   }
 }

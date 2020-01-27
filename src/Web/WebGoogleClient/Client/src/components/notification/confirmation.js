@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "./notification.css";
+import "./confirmation.css";
 import i18n from "i18next";
 import PropTypes from "prop-types";
 import { Modal } from "react-bootstrap";
@@ -14,49 +14,53 @@ export class Confirmation extends Component {
         show={initialModalState}
         onAccept={onAccept}
         onCancel={onCancel}
+        onHide={onCancel}
         size="lg"
         aria-labelledby="contained-modal-title-vcenter"
         centered
         dialogClassName="modal"
-        animation={false}
-      >
-        <Modal.Header className="align-items-center">
-          <Modal.Title>
-            <div className="modal-title h4">
-              <h5
-                className="modal-title d-flex align-items-center"
-                id="clasificarNuevaclasificacionLabel"
-              >
-                <span className="lf-icon-bookmarks"></span>
-                {message}
-              </h5>
+        animation={false}>
+          <Modal.Header closeButton>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="container-fluid content">
+              <div className="row d-flex justify-content-center">
+                <div className="col col-12">
+                  <h5
+                    className="modal-title d-flex align-items-center"
+                    id="clasificarEliminarclasificacionLabel"
+                  >
+                    <img
+                      className="img-question"
+                      alt=""
+                      src="/assets/img/icon-question.png"
+                    ></img>
+                     {message}
+                  </h5>
+                </div>
+              </div>
             </div>
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Footer>
-        <Button
-                className="mr-left font-weight-bold ok-button"
-                color="primary"
-                onClick={() => {
-                  this.props.onAccept && this.props.onAccept();  
-                }}
-                title={i18n.t("confirmation.ok")}
-              >
-                {i18n.t("confirmation.ok")}
-              </Button>
-              <Button
-                className="mr-left font-weight-bold btn-outline-primary"
-                title={i18n.t("confirmation.cancel")}
-                color="secondary"
-                onClick={() => {
-                  this.props.onCancel && this.props.onCancel();  
-                }}
-              >
+          </Modal.Body>
+          <Modal.Footer>
+          <Button
+              className="modal-primary"
+              onClick={() => {
+                this.props.onCancel && this.props.onCancel();  
+              }}
+          >
                 {i18n.t("confirmation.cancel")}
-              </Button>
-
-        </Modal.Footer>
-      </Modal>
+            </Button>
+            <Button
+              className="modal-secondary"
+              onClick={() => {
+                this.props.onAccept && this.props.onAccept();  
+              }}
+          >
+                {i18n.t("confirmation.ok")}
+            </Button>
+            
+          </Modal.Footer>
+        </Modal>
     );
   }
 }
