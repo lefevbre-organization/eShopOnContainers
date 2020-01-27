@@ -88,7 +88,7 @@ $isotip-large-width: 250px !default;
   &[isotip-position="bottom-start"]::before,
   &[isotip-position="bottom-end"]::before {
     top: 100%;
-    margin-top: $isotip-margin;
+   // margin-top: $isotip-margin;
   }
 
   &[isotip-position="top-start"]::before,
