@@ -81,8 +81,7 @@ export const setSearchQuery = q => ({
 
 export const setPageTokens = (state, token) => {
   let prevPageToken = undefined;
-  
-  
+    
   if(token && !state.prevPageToken) {
     // The first page
     let skipValue = token.split("skip=")[1];
@@ -91,7 +90,7 @@ export const setPageTokens = (state, token) => {
       prevPageToken = token.split("skip=")[0] +
       "skip=" +
       (skipValue - 40);  
-    }
+    } 
   } else if(!token && state.prevPageToken) {
     // The last page
     const splits = state.prevPageToken.split("skip=");
@@ -107,7 +106,14 @@ export const setPageTokens = (state, token) => {
         prevPageToken = token.split("skip=")[0] +
         "skip=" +
         (skipValue - 40);  
-      }
+      } 
+    } else if(state.nextPageToken) {
+      let skipValue = state.nextPageToken.split("skip=")[1];
+      if(skipValue > 0) {
+        prevPageToken = state.nextPageToken.split("skip=")[0] +
+        "skip=" +
+        (skipValue - 20);  
+      } 
     }
   }
 
