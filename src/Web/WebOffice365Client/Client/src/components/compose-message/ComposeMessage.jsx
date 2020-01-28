@@ -1,5 +1,6 @@
 import React, { PureComponent } from "react";
-import { sendMessage } from "../../api_graph";
+import * as uuid from 'uuid/v4';
+import { sendMessage, getMessageByInternetMessageId } from "../../api_graph";
 import { getValidEmails } from "../../utils";
 import i18n from "i18next";
 import { Button, InputGroup, InputGroupAddon, Input } from "reactstrap";
@@ -122,6 +123,18 @@ export class ComposeMessage extends PureComponent {
     this.closeModal();
   }
 
+  sentEmail(email) {
+    window.dispatchEvent(
+      new CustomEvent("SentMessage", {
+        detail: {
+          idEmail: email.id,
+          subject: window.atob(email.subject.replace('=?UTF-8?B?','').replace('?=', '')),
+          date: email.sentDateTime 
+        }
+      })
+    );
+  }
+
   addFileToState(file) {
     const fls = this.uppy.getFiles();
 
@@ -199,12 +212,13 @@ export class ComposeMessage extends PureComponent {
 
     const Fileattached = this.state.uppyPreviews;
 
-    const email = Object.assign({}, this.state, { subject: '=?UTF-8?B?' + window.btoa(this.state.subject) + '?=' })
+    const email = Object.assign({}, this.state, { subject: '=?UTF-8?B?' + window.btoa(this.state.subject) + '?=', internetMessageId: uuid() + uuid() })
 
     sendMessage({
       data: email,
       attachments: Fileattached
     }).then(_ => {
+      getMessageByInternetMessageId(email.internetMessageId).then(_ => this.sentEmail(_));
     }).catch((err) => {
       console.log(err)
     })

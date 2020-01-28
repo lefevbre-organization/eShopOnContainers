@@ -286,6 +286,25 @@ export const getMessageDetail = async messageId => {
   }
 };
 
+export const getMessageByInternetMessageId = async internetMessageId => {
+  try {
+    const accessToken = await getAccessTokenSilent();
+    const client = getAuthenticatedClient(accessToken);
+
+    const response = await client.api(`me/messages?$filter=internetMessageId eq '${internetMessageId}'`).get()
+    const result = response.value[response.value.length-1];
+    console.log("hola response: " + result.id);
+
+    return {
+      id: result.id,
+      subject: result.subject,
+      sentDateTime: result.sentDateTime
+    }
+  } catch (err) {
+    throw err;
+  }
+};
+
 export const emailEnd = () => {
   var email = `},
                  "SaveToSentItems": "true"
@@ -295,6 +314,7 @@ export const emailEnd = () => {
 
 export const emailBody = data => {
   const subject = data.subject;
+  const guid = data.internetMessageId;
 
   var myJSONString = JSON.stringify(data.content);
   var myEscapedJSONString = myJSONString
@@ -312,6 +332,7 @@ export const emailBody = data => {
   var email = `{
                   "Message": {
                     "Subject": "${subject}",
+                    "internetMessageId": "${guid}",
                     "Body": {
                       "ContentType": "html",
                       "Content": "${bodyContent}"
