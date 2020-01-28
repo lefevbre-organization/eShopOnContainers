@@ -251,6 +251,7 @@ export class Main extends Component {
   
   refreshLabels() {
     this.getLabelList();
+    this.renderLabelRoutes();
   }
 
   loadLabelMessageSingle() {
@@ -328,6 +329,7 @@ export class Main extends Component {
               navigateToNextPage={this.navigateToNextPage}
               navigateToPrevPage={this.navigateToPrevPage}
               pageTokens={this.props.pageTokens}
+              refresh={()=>{ this.refreshLabels() }}
               addInitialPageToken={this.addInitialPageToken}
               parentLabel={that.props.labelsResult.labels.find(
                 el => el.id === props.match.path.slice(1)
