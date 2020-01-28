@@ -183,7 +183,7 @@ export class Main extends Component {
       fetch(url, {
         method: "GET"
       }).then(result => {
-      		Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID)
+      	Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, { domain: 'lefebvre.es' })
 	      if (idEmail != null && idEmail !== undefined){
 	        if (idCaseFile !== null && idCaseFile !== undefined){
 	          this.onSetSidebarOpenLexon(true);
