@@ -212,7 +212,7 @@ export class ComposeMessage extends PureComponent {
 
     const Fileattached = this.state.uppyPreviews;
 
-    const email = Object.assign({}, this.state, { subject: '=?UTF-8?B?' + window.btoa(this.state.subject) + '?=', internetMessageId: uuid() + uuid() })
+    const email = Object.assign({}, this.state, { subject: this.state.subject , internetMessageId: uuid() + uuid() })
 
     sendMessage({
       data: email,
@@ -269,7 +269,7 @@ export class ComposeMessage extends PureComponent {
   formats = [
     'header', 'font', 'size',
     'bold', 'italic', 'underline', 'strike', 'blockquote',
-    'list', 'bullet', 'indent',
+    'list', 'bullet', 'indent', 'image',
     'link'
   ]
 

@@ -8,10 +8,15 @@ let userAgentApplication = null;
 
 export const getUserApplication = () => {
   if (userAgentApplication === null) {
+
+    let redirectUri = config.redirectUri;
+    if(window.location.hostname === "localhost") {
+      redirectUri = window.location.origin;
+    }
     userAgentApplication = new UserAgentApplication({
       auth: {
         clientId: config.appId,
-        redirectUri: config.redirectUri
+        redirectUri: redirectUri
       },
       cache: {
         cacheLocation: "localStorage",
@@ -313,8 +318,9 @@ export const emailEnd = () => {
 };
 
 export const emailBody = data => {
-  const subject = data.subject;
+
   const guid = data.internetMessageId;
+  const subject = data.subject.replace(/\"/g, '\\"');
 
   var myJSONString = JSON.stringify(data.content);
   var myEscapedJSONString = myJSONString
@@ -430,6 +436,7 @@ export const sendMessage = async ({ data, attachments }) => {
     const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
 
+    debugger
     return client.api("/me/sendmail").post(email);
   } catch (err) {
     throw err;

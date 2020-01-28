@@ -198,7 +198,7 @@ export class Main extends Component {
       fetch(url, {
         method: "GET"
       }).then(result => {
-      	Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID)
+      	Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, { domain: 'lefebvre.es' })
         if (idEmail != null && idEmail !== undefined){
           if (idCaseFile != null && idCaseFile != undefined){
             this.onSetSidebarOpenLexon(true);
@@ -251,6 +251,7 @@ export class Main extends Component {
   
   refreshLabels() {
     this.getLabelList();
+    this.renderLabelRoutes();
   }
 
   loadLabelMessageSingle() {
@@ -328,6 +329,7 @@ export class Main extends Component {
               navigateToNextPage={this.navigateToNextPage}
               navigateToPrevPage={this.navigateToPrevPage}
               pageTokens={this.props.pageTokens}
+              refresh={()=>{ this.refreshLabels() }}
               addInitialPageToken={this.addInitialPageToken}
               parentLabel={that.props.labelsResult.labels.find(
                 el => el.id === props.match.path.slice(1)

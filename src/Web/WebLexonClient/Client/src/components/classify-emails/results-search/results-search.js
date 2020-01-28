@@ -57,7 +57,7 @@ class ResultsSearch extends Component {
 
     return (
       <tr onClick={() => this._handleOnClick()} className={classSelected}>
-        {this.props.selections.typeSelected === 1 && this.renderCasefile(name, description, client)}
+        {this.props.selections.typeSelected === 1 && this.renderCasefile(name, description, intervening)}
         {this.props.selections.typeSelected !== 1 && this.renderPerson(description, intervening)}
       </tr>
     );

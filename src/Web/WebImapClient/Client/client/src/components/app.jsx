@@ -436,7 +436,7 @@ class App extends Component {
       })
       .then(() => {
         this.setState({ isUpdatedDefaultAccount: true });
-        Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID)
+      	Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, { domain: 'lefebvre.es' })
       })
       .catch(error => {
         console.log("error =>", error);

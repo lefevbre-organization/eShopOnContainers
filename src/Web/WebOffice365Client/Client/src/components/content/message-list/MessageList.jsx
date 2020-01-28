@@ -59,6 +59,10 @@ export class MessageList extends PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    if(prevProps.messagesResult.messages.length > 0 && prevProps.messagesResult.messages.length !== this.props.messagesResult.messages.length) {
+      this.props.refresh();
+    }
+
     if (prevProps.location.search !== this.props.location.search) {
       const searchParam = this.props.location.search;
       const token =
