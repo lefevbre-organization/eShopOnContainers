@@ -62,7 +62,15 @@ namespace Lexon.MySql.Infrastructure.Services
         /// <param name="idEntityType">opcionalmente el tipo de entidad si viene relacionado</param>
         /// <param name="idEntity">opcionalmente el id de entidad si viene relacionado</param>
         /// <returns></returns>
-        public async Task<Result<JosUser>> GetUserAsync(string idUser, string bbdd, string provider = null, string mailAccount = null, string uidMail = null, short? idEntityType = null, int? idEntity = null )
+        public async Task<Result<JosUser>> GetUserAsync(
+            string idUser,
+            string bbdd,
+            string provider = null,
+            string mailAccount = null,
+            string uidMail = null,
+            short? idEntityType = null,
+            int? idEntity = null,
+            bool addTerminatorToToken = true)
         {
             var resultado = await _lexonRepository.GetUserAsync(idUser);
             resultado.data.Token = BuildTokenWithPayloadAsync(new TokenModel
@@ -78,6 +86,7 @@ namespace Lexon.MySql.Infrastructure.Services
                 idEntity = idEntity,
                 roles = GetRolesOfUser(idUser)
             }).Result;
+            resultado.data.Token += addTerminatorToToken ? "/" : "";
             return resultado;
 
         }
@@ -116,7 +125,7 @@ namespace Lexon.MySql.Infrastructure.Services
         {
             if (modelo is TokenModel clienteModel)
             {
-               var roleOptions = GetRolesOfUser(clienteModel.idClienteNavision);
+               //var roleOptions = GetRolesOfUser(clienteModel.idClienteNavision);
                 AddClaimToPayload(payload, clienteModel.idClienteNavision, nameof(clienteModel.idClienteNavision));
                 AddClaimToPayload(payload, clienteModel.idUserApp, nameof(clienteModel.idUserApp));
                 AddClaimToPayload(payload, clienteModel.name, nameof(clienteModel.name));
@@ -127,7 +136,6 @@ namespace Lexon.MySql.Infrastructure.Services
                 AddClaimToPayload(payload, clienteModel.idEntityType, nameof(clienteModel.idEntityType));
                 AddClaimToPayload(payload, clienteModel.idEntity, nameof(clienteModel.idEntity));
                 AddClaimToPayload(payload, clienteModel.roles, nameof(clienteModel.roles));
-               // payload.Add("roles", roleOptions);
             }
         }
 
@@ -145,13 +153,6 @@ namespace Lexon.MySql.Infrastructure.Services
             payload.Add(nombreClaim, valorClaim);
         }
 
-        //private void AddClaimToPayload(JwtPayload payload, string valorClaim, string nombreClaim)
-        //{
-        //    if (valorClaim == null) return;
-
-        //    _logger.LogInformation("Claim {0} --> {1}", nombreClaim, valorClaim);
-        //    payload.Add(nombreClaim, valorClaim);
-        //}
 
         private void AddClaimToPayload(JwtPayload payload, object valorClaim, string nombreClaim)
         {
