@@ -272,6 +272,10 @@ export class Main extends Component {
 
   refreshLabels() {
     this.getLabelList();
+    this.renderLabelRoutes();
+    // const { labels } = this.props.labelsResult;
+    // const selectedLabel = labels.find(el => el.selected);
+    // this.getLabelMessages({ labelIds: [selectedLabel.id] });        
   }
 
   loadLabelMessageSingle() {
@@ -356,6 +360,7 @@ export class Main extends Component {
               pageTokens={this.props.pageTokens}
               addInitialPageToken={this.addInitialPageToken}
               totalmessages={el.totalItemCount}
+              refresh={()=>{ this.refreshLabels() }}
               parentLabel={that.props.labelsResult.labels.find(
                 el => el.id === props.match.path.slice(1)
               )}

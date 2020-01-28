@@ -250,6 +250,12 @@ class ClassifyEmails extends Component {
             padding: 10px;
         }   
 
+        .btn-secundary:focus {
+          background-color: #001978 !important;
+          border: 2px solid #001978 !important;
+          color: #ffff !important;
+        }
+
                   
           strong {
             font-weight: 500;

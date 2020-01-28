@@ -42,7 +42,7 @@ class ClassificationList extends Component {
         <table className="lexon-clasification-list">
           <thead>
             <tr>
-              <th>{i18n.t("classification-list.name")}</th>
+              <th>{i18n.t("classification-list.code")}</th>
               {selections.typeSelected === 1 ? (
                 <th>{i18n.t("classification-list.client")}</th>
               ) : <th>{"Email"}</th>}
