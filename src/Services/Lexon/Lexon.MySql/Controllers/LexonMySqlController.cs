@@ -60,12 +60,13 @@ namespace Lexon.MySql.Controllers
             , string emailAccount = null
             , string uidMail = null
             , short? idEntityType = null
-            , int? idEntity = null)
+            , int? idEntity = null
+            , bool addTerminatorToToken = true)
         {
             if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
-            var result = await _lexonService.GetUserAsync(idNavisionUser, bbdd, provider, emailAccount, uidMail, idEntityType, idEntity);
+            var result = await _lexonService.GetUserAsync(idNavisionUser, bbdd, provider, emailAccount, uidMail, idEntityType, idEntity, addTerminatorToToken);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
