@@ -17,7 +17,7 @@ class App extends Component {
       <Switch>
         <Route path="/user/:userId?/encrypt/:encrypt?" component={PageGoToLegacy} />
         <Route path="/user/:userId?/encrypt/:encrypt?/casefile/:idCaseFile/bbdd/:bbdd/company/:idCompany" component={PageGoToLegacy} />
-        <Route path="/access/:token([a-zA-Z0-9!.@#$%^&+=_-]+)" component={PageGoTo} />
+        <Route path="/access/:token" component={PageGoTo} />
         <Route path="/user/:userId?" component={PageGoTo} />
         <Route component={NotFound} />
       </Switch>
