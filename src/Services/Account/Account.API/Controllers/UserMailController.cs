@@ -14,7 +14,7 @@
 
     #endregion
 
-    [Route("api/v1/usermail")]
+    [Route("api/v2/usermail")]
     [ApiController]
     public class UserMailController : Controller
     {
@@ -32,7 +32,7 @@
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
         }
 
-        [HttpGet("/{user}")]
+        [HttpGet("{user}")]
         [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetByUser(
             [FromRoute]string user)
@@ -40,7 +40,7 @@
             if (string.IsNullOrEmpty(user))
                 return BadRequest("user invalid. Must be a valid user to search the userMail");
 
-            var result = await _accountsService.GetByUser(user);
+            var result = await _accountsService.GetUser(user);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
@@ -59,16 +59,57 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpGet("/{user}/account/{mail}")]
+        [HttpPut("deactivate/{user}")]
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> Deactivate(
+            [FromRoute]string user
+            )
+        {
+            if (string.IsNullOrEmpty(user))
+                return BadRequest("values invalid. Must be a valid userto deactivate");
+
+            var result = await _accountsService.ChangueState(user, false);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpPut("activate/{user}")]
+        [ProducesResponseType(typeof(bool), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> Activate(
+            [FromRoute]string user
+    )
+        {
+            if (string.IsNullOrEmpty(user))
+                return BadRequest("values invalid. Must be a valid user to activate");
+
+            var result = await _accountsService.ChangueState(user, true);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpGet("{user}/account/{mail}")]
         [ProducesResponseType(typeof(Account), (int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAccountByMail(
             [FromRoute]string user
             , [FromRoute]string mail)
         {
-            if (string.IsNullOrEmpty(user))
-                return BadRequest("user invalid. Must be a valid user to search the userMail");
+            if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(mail))
+                return BadRequest("user or mail invalid. Must be a valid user and mail to search the account");
 
             var result = await _accountsService.GetAccount(user, mail);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpGet("{user}/account/default")]
+        [ProducesResponseType(typeof(Account), (int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> GetAccountDefault(
+            [FromRoute]string user)
+        {
+            if (string.IsNullOrEmpty(user))
+                return BadRequest("user invalid. Must be a valid user to search the default account");
+
+            var result = await _accountsService.GetDefaultAccount(user);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
@@ -98,7 +139,7 @@
             if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(email))
                 return BadRequest("values invalid. Must be a valid user and email to delete the defaultAccount of userMail");
 
-            var result = await _accountsService.DeleteAccountByUserAndEmail(user, email);
+            var result = await _accountsService.RemoveAccount(user, email);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
