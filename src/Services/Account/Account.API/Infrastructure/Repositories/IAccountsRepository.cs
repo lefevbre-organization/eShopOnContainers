@@ -13,7 +13,7 @@
 
         Task<Result<UserMail>> Create(UserMail account);
         Task<Result<long>> Remove(string id);
-        Task<Result<UserMail>> RemoveAccount(string user, string mail);
+        Task<Result<UserMail>> RemoveAccount(string user, string provider, string mail);
 
         Task<Result<AccountList>> GetByUser(string user);
 

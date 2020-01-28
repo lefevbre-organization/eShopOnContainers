@@ -68,9 +68,9 @@
             return await _accountsRepository.GetDefaultAccount(user);
         }
 
-        public async Task<Result<UserMail>> RemoveAccount(string user, string mail)
+        public async Task<Result<UserMail>> RemoveAccount(string user, string provider, string mail)
         {
-            return await _accountsRepository.RemoveAccount(user, mail);
+            return await _accountsRepository.RemoveAccount(user, provider, mail);
         }
 
         public async Task<Result<UserMail>> GetUser(string user)

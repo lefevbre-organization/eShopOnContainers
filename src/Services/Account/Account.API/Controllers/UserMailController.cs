@@ -129,17 +129,19 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpDelete("{user}/account/delete/{email}")]
+        [HttpDelete("{user}/account/delete/{provider}/{email}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> DeleteAccountByUserAndEmail(
             [FromRoute]string user
-            , [FromRoute]string email)
+            , [FromRoute]string provider
+            , [FromRoute]string email
+            )
         {
-            if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(email))
-                return BadRequest("values invalid. Must be a valid user and email to delete the defaultAccount of userMail");
+            if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(provider) || string.IsNullOrEmpty(email))
+                return BadRequest("values invalid. Must be a valid user, provider and email to delete the account of userMail");
 
-            var result = await _accountsService.RemoveAccount(user, email);
+            var result = await _accountsService.RemoveAccount(user, provider, email);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }

@@ -27,7 +27,7 @@
 
         Task<Result<Account>> GetDefaultAccount(string user);
 
-        Task<Result<UserMail>> RemoveAccount(string user, string mail);
+        Task<Result<UserMail>> RemoveAccount(string user, string provider, string mail);
         Task<Result<bool>> ChangueState(string user, bool state);
     }
 }
