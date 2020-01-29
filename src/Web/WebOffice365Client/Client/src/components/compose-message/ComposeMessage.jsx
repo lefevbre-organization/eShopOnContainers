@@ -128,7 +128,7 @@ export class ComposeMessage extends PureComponent {
       new CustomEvent("SentMessage", {
         detail: {
           idEmail: email.id,
-          subject: window.atob(email.subject.replace('=?UTF-8?B?','').replace('?=', '')),
+          subject: email.subject, // window.atob(email.subject.replace('=?UTF-8?B?','').replace('?=', '')),
           date: email.sentDateTime 
         }
       })

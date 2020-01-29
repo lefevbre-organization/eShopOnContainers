@@ -30,6 +30,7 @@ class Main extends Component {
       account: null
     };
 
+    this.handleSentMessage = this.handleSentMessage.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleCheckAllclick = this.handleCheckAllclick.bind(this);
     this.handlePutUserFromLexonConnector = this.handlePutUserFromLexonConnector.bind(
@@ -42,6 +43,7 @@ class Main extends Component {
   componentDidMount() {
     window.addEventListener("Checkclick", this.handleKeyPress);
     window.addEventListener("CheckAllclick", this.handleCheckAllclick);
+    window.addEventListener("SentMessage", this.handleSentMessage);
     window.addEventListener(
       "PutUserFromLexonConnector",
       this.handlePutUserFromLexonConnector
@@ -62,12 +64,23 @@ class Main extends Component {
   // }
 
   componentWillUnmount() {
+    window.removeEventListener("SentMessage", this.handleSentMessage);
     window.removeEventListener("Checkclick", this.handleKeyPress);
     window.removeEventListener("CheckAllclick", this.handleCheckAllclick);
     window.removeEventListener(
       "PutUserFromLexonConnector",
       this.handlePutUserFromLexonConnector
     );
+  }
+
+  handleSentMessage(event) {
+    const { idEmail, subject, date } = event
+    
+      this.props.addMessage({
+          id: idEmail,
+          subject: subject,
+          sentDateTime: date
+        });
   }
 
   handleKeyPress(event) {
