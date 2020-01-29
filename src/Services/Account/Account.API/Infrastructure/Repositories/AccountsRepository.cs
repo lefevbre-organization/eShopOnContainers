@@ -138,23 +138,24 @@
             return result;
         }
 
-        public async Task<Result<UserMail>> AddAccount(string user)
+        public async Task<Result<UpdateResult>> AddUser(string user)
         {
-            var data = Builders<UserMail>.Update.($"Accounts", accountIn)
-            var update = GetNewUserMail(user, "quitarluego@luego.es", "nop", "ups");
-            var result = new Result<UserMail> { errors = new List<ErrorInfo>() };
-            var options = GetUpsertOptions();
+            var result = new Result<UpdateResult> { errors = new List<ErrorInfo>() };
             var filter = GetFilterUser(user,false);
+            var update = Builders<UserMail>.Update
+                .Set($"user", user)
+                .Set($"state", true);
+            var options = GetUpsertOptions();
             try
             {
-                result.data = await _context.Accounts.UpdateOneAsync(filter, update, options); ;
+                result.data = await _context.Accounts.UpdateOneAsync(filter, update, options);
             }
             catch (Exception ex)
             {
                 TraceMessage(result.errors, ex);
             }
             return result;
-            var result = await collection.UpdateOneAsync(filter, update, options);
+
         }
 
         private static UpdateOptions GetUpsertOptions()

@@ -3,6 +3,7 @@
     #region Using
 
     using Model;
+    using MongoDB.Driver;
     using System.Threading.Tasks;
 
     #endregion Using
@@ -11,9 +12,10 @@
     {
         Task<Result<UserMail>> Create(UserMail account);
 
+        Task<Result<UpdateResult>> AddUser(string user);
+
         //Task<Result<long>> Remove(string id);
 
-        Task<Result<UserMail>> RemoveAccount(string user, string provider, string mail);
 
         Task<Result<AccountList>> GetByUser(string user);
 
@@ -24,6 +26,7 @@
         Task<Result<long>> DeleteAccountByUserAndEmail(string user, string email);
 
         Task<Result<long>> ResetDefaultAccountByUser(string user);
+        Task<Result<UserMail>> RemoveAccount(string user, string provider, string mail);
 
         Task<Result<long>> UpSertAccount(string user, Account accountIn);
 
