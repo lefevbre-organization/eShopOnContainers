@@ -114,6 +114,19 @@ export class ComposeMessage extends PureComponent {
     this.props.history.push("/inbox");
   }
 
+  sentEmail(id, subject) {
+    window.dispatchEvent(
+      new CustomEvent("SentMessage", {
+        detail: {
+          idEmail: id,
+          subject: window.atob(subject.replace('=?UTF-8?B?','').replace('?=', '')),
+          date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+        }
+      })
+    );
+    console.log("SentEmail output - Id: " + id + " Subject:" + window.atob(subject.replace('=?UTF-8?B?','').replace('?=', '')))
+  }
+
   addFileToState(file) {
     const fls = this.uppy.getFiles();
 
@@ -197,10 +210,14 @@ export class ComposeMessage extends PureComponent {
       headers,
       body: this.state.content,
       attachments: Fileattached
-    }).then(_ => {
-    });
+    }).then( 
+      function(response) {
+        return response.json();
+    }).then( email => {
+        this.sentEmail(email.id, headers.Subject);
+      });
     this.resetFields();
-    this.closeModal();
+    this.closeModal();  
   }
 
   resetFields() {
