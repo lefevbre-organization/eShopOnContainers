@@ -8,7 +8,6 @@
     using Microsoft.Extensions.Options;
     using Model;
     using System;
-    using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
 
@@ -118,7 +117,7 @@
         [ProducesResponseType(typeof(long), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Post(
             [FromRoute]string user
-            ,[FromBody]Account accountIn
+            , [FromBody]Account accountIn
             )
         {
             if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(accountIn.email) || string.IsNullOrEmpty(accountIn.provider) || string.IsNullOrEmpty(accountIn.guid))
@@ -159,7 +158,5 @@
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
-
-
     }
 }

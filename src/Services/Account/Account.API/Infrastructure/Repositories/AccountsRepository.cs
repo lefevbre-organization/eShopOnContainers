@@ -58,27 +58,27 @@
             return result;
         }
 
-        public async Task<Result<long>> Remove(string id)
-        {
-            var result = new Result<long> { errors = new List<ErrorInfo>() };
-            try
-            {
-                var accountRemove = await _context.Accounts.Find(x => x.Id == id).FirstOrDefaultAsync();
-                var resultRemove = await _context.Accounts.DeleteOneAsync(account => account.Id == id);
-                result.data = resultRemove.DeletedCount;
+        //public async Task<Result<long>> Remove(string id)
+        //{
+        //    var result = new Result<long> { errors = new List<ErrorInfo>() };
+        //    try
+        //    {
+        //        var accountRemove = await _context.Accounts.Find(x => x.Id == id).FirstOrDefaultAsync();
+        //        var resultRemove = await _context.Accounts.DeleteOneAsync(account => account.Id == id);
+        //        result.data = resultRemove.DeletedCount;
 
-                if (accountRemove != null)
-                {
-                    var eventAssoc = new AddOperationAccountIntegrationEvent(accountRemove.User, accountRemove.Provider, accountRemove.Email, accountRemove.DefaultAccount, EnTypeOperation.Remove);
-                    _eventBus.Publish(eventAssoc);
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
-            return result;
-        }
+        //        if (accountRemove != null)
+        //        {
+        //            var eventAssoc = new AddOperationAccountIntegrationEvent(accountRemove.User, accountRemove.Provider, accountRemove.Email, accountRemove.DefaultAccount, EnTypeOperation.Remove);
+        //            _eventBus.Publish(eventAssoc);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TraceMessage(result.errors, ex);
+        //    }
+        //    return result;
+        //}
 
         public async Task<Result<UserMail>> RemoveAccount(string user, string provider, string mail)
         {
@@ -138,6 +138,30 @@
             return result;
         }
 
+        public async Task<Result<UserMail>> AddAccount(string user)
+        {
+            var data = Builders<UserMail>.Update.($"Accounts", accountIn)
+            var update = GetNewUserMail(user, "quitarluego@luego.es", "nop", "ups");
+            var result = new Result<UserMail> { errors = new List<ErrorInfo>() };
+            var options = GetUpsertOptions();
+            var filter = GetFilterUser(user,false);
+            try
+            {
+                result.data = await _context.Accounts.UpdateOneAsync(filter, update, options); ;
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+            var result = await collection.UpdateOneAsync(filter, update, options);
+        }
+
+        private static UpdateOptions GetUpsertOptions()
+        {
+            return new UpdateOptions { IsUpsert = true };
+        }
+
         public async Task<Result<Account>> GetAccount(string user, string mail)
         {
             var result = new Result<Account> { errors = new List<ErrorInfo>() };
@@ -172,6 +196,7 @@
 
         public async Task<Result<long>> UpdateDefaultAccount(string user, string email, string provider, string guid)
         {
+            //TODO: Cambiar por método insertar usurio si no esiste en el upsert
             var result = new Result<long> { errors = new List<ErrorInfo>() };
             var updateOptions = new UpdateOptions { IsUpsert = true };
             TraceLog(parameters: new string[] { $"usuario:{user}", $"email:{email}", $"provider:{provider}", $"guid:{guid}" });
@@ -184,8 +209,8 @@
                 if (!accounts.Any())
                 {
                     TraceLog(parameters: new string[] { $"se crea un nuevo usuario porque no existe ninguno con user:{user}" });
-                    await _context.Accounts.InsertOneAsync(userMail);
                     result.data = 1;
+                    await _context.Accounts.InsertOneAsync(userMail);
                 }
                 else
 
@@ -251,8 +276,8 @@
                 Provider = provider,
                 DefaultAccount = true,
                 Accounts = new List<Account>() {
-                            new Account() {defaultAccount = true, email= email, guid= guid, provider= provider }
-                        }
+                        new Account() {defaultAccount = true, email= email, guid= guid, provider= provider }
+                    }
             };
         }
 
