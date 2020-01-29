@@ -11,7 +11,7 @@ import i18n from "i18next";
 import Routing from "./components/routing/routing";
 import Spinner from "./components/spinner/spinner";
 import Notification from "./components/notification/notification";
-import { getCompanies, getUser } from "./services/services-lexon";
+import { getCompanies, getUser, addClassification } from "./services/services-lexon";
 
 class Main extends Component {
   constructor(props) {
@@ -73,17 +73,26 @@ class Main extends Component {
     );
   }
 
-  handleSentMessage(event) {
-    const { idEmail, subject, date } = event
+  async handleSentMessage(event) {
+    const { user, idCaseFile, bbdd} = this.state;
+    const { idEmail, subject, date } = event.detail;
     
-      this.props.addMessage({
-          id: idEmail,
-          subject: subject,
-          sentDateTime: date
-        });
+    await addClassification(user, {bbdd}, [{
+      id: idEmail, subject, sentDateTime: date
+    }], idCaseFile, 1)    
+
+    window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
+    this.props.setCaseFile({
+      casefile: null,
+      bbdd: null,
+      company: null
+    });
+
   }
 
   handleKeyPress(event) {
+    console.log("HandleEvent Client -> Lexon - Checkclick");
+
     event.detail.chkselected
       ? this.props.addMessage({
           id: event.detail.id,
@@ -94,6 +103,8 @@ class Main extends Component {
   }
 
   handleCheckAllclick(event) {
+    console.log("HandleEvent Client -> Lexon - CheckAllclick");
+
     event.detail.chkselected
       ? this.props.addListMessages(event.detail.listMessages)
       : this.props.deleteListMessages(event.detail.listMessages);
@@ -108,6 +119,9 @@ class Main extends Component {
   }
 
   async handlePutUserFromLexonConnector(event) {
+    console.log("HandleEvent Client -> Lexon - PutUserFromLexonConnector");
+    console.log(event.detail);
+
     const {
       user,
       selectedMessages,

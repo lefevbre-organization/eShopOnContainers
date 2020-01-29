@@ -436,7 +436,6 @@ export const sendMessage = async ({ data, attachments }) => {
     const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
 
-    debugger
     return client.api("/me/sendmail").post(email);
   } catch (err) {
     throw err;
