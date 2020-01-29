@@ -56,21 +56,6 @@ class AppContainerGraph extends Component {
     if (!isNewAccount) {
       mountScripts().then(this.init);
     }
-    
-    if (this.props.match.params.idMail){
-      if (this.props.match.params.idMail.includes('internetMessageId:')){
-          getMessageByInternetMessageId(this.props.match.params.idMail.replace('internetMessageId:',''))
-          .then(res => {
-            this.setState({openEmail: res.id});
-          })
-          .catch(err => {
-            console.log(err);
-          })
-      }
-    }
-    else {
-      this.setState({openEmail: this.props.match.params.idMail});
-    }
   }
 
 
@@ -98,11 +83,38 @@ class AppContainerGraph extends Component {
   }
 
   onSignInSuccess() {
-    this.setState({
-      signInStatus: AUTH_SUCCESS,
-      readyToRedirect: true,
-      openEmail: this.props.match.params.idMail
-    });
+    var idMail = this.props.match.params.idMail
+
+    if (idMail){
+      if (idMail.includes('internetMessageId:')){
+          getMessageByInternetMessageId(idMail.replace('internetMessageId:',''))
+          .then(res => {
+            idMail = res.id;
+            
+            this.setState({
+              signInStatus: AUTH_SUCCESS,
+              readyToRedirect: true,
+              openEmail: res.id
+            });
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      } else {
+        this.setState({
+          signInStatus: AUTH_SUCCESS,
+          readyToRedirect: true,
+          openEmail: idMail
+        });       
+      }
+    }
+    else {
+      this.setState({
+        signInStatus: AUTH_SUCCESS,
+        readyToRedirect: true,
+        openEmail: idMail
+      });  
+    }    
   }
 
   renderView() {
