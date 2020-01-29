@@ -105,7 +105,9 @@ export class ComposeMessage extends PureComponent {
     ) {
       this.props.history.goBack();
     } else {
-      this.props.loadLabelMessages(this.props.labelsResult.labelInbox);
+      if(this.props.labelsResult) {
+        this.props.loadLabelMessages(this.props.labelsResult.labelInbox);
+      }
     }
   }
 
