@@ -103,7 +103,7 @@ export class ComposeMessage extends PureComponent {
       this.props.lexon.idCaseFile === null ||
       this.props.lexon.idCaseFile === undefined
     ) {
-      this.props.history.goBack();
+      this.props.history.push("/inbox");
     } else {
       if(this.props.labelsResult) {
         this.props.loadLabelMessages(this.props.labelsResult.labelInbox);
@@ -121,8 +121,7 @@ export class ComposeMessage extends PureComponent {
       });
     }
 
-    this.resetFields();
-    this.closeModal();
+    this.props.history.push("/inbox");
   }
 
   sentEmail(email) {
@@ -159,7 +158,7 @@ export class ComposeMessage extends PureComponent {
   }
 
   componentWillUnmount() {
-    console.log("ComposeMessage. Unmount")
+    window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
     this.uppy.close();
   }
 
