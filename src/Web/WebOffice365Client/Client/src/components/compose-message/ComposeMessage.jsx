@@ -127,12 +127,13 @@ export class ComposeMessage extends PureComponent {
     window.dispatchEvent(
       new CustomEvent("SentMessage", {
         detail: {
-          idEmail: email.id,
-          subject: window.atob(email.subject.replace('=?UTF-8?B?','').replace('?=', '')),
-          date: email.sentDateTime 
+          idEmail: `internetMessageId:${email.internetMessageId}`,
+          subject: email.subject,
+          date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') 
         }
       })
     );
+    console.log("sentEmail data - id:" + email.internetMessageId + " subject: " + email.subject);
   }
 
   addFileToState(file) {
@@ -218,12 +219,12 @@ export class ComposeMessage extends PureComponent {
       data: email,
       attachments: Fileattached
     }).then(_ => {
-      getMessageByInternetMessageId(email.internetMessageId).then(_ => this.sentEmail(_));
+      this.sentEmail(email);
     }).catch((err) => {
       console.log(err)
     })
     this.resetFields();
-    this.closeModal();
+    this.closeModal();      
   }
 
   resetFields() {

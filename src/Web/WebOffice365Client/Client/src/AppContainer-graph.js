@@ -14,7 +14,7 @@ import {
   AUTH_IN_PROGRESS
 } from "./constants";
 import { getStateStorage } from "./localstorage";
-import { getUserApplication } from './api_graph';
+import { getUserApplication, getMessageByInternetMessageId } from './api_graph';
 import ACTIONS from "./actions/lexon";
 
 class AppContainerGraph extends Component {
@@ -58,9 +58,21 @@ class AppContainerGraph extends Component {
     }
     
     if (this.props.match.params.idMail){
+      if (this.props.match.params.idMail.includes('internetMessageId:')){
+          getMessageByInternetMessageId(this.props.match.params.idMail.replace('internetMessageId:',''))
+          .then(res => {
+            this.setState({openEmail: res.id});
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      }
+    }
+    else {
       this.setState({openEmail: this.props.match.params.idMail});
     }
   }
+
 
   init() {
     this.initClient();
