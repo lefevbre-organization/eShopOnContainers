@@ -103,7 +103,7 @@ export class ComposeMessage extends PureComponent {
       this.props.lexon.idCaseFile === null ||
       this.props.lexon.idCaseFile === undefined
     ) {
-      this.props.history.push("/inbox");
+      this.props.history.goBack();
     } else {
       if(this.props.labelsResult) {
         this.props.loadLabelMessages(this.props.labelsResult.labelInbox);
@@ -121,7 +121,8 @@ export class ComposeMessage extends PureComponent {
       });
     }
 
-    this.props.history.push("/inbox");
+    this.resetFields();  
+    this.closeModal();
   }
 
   sentEmail(email) {
