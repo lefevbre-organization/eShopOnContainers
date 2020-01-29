@@ -91,7 +91,6 @@ export const addClassification = async (
       idType: typeId,
       idUser: user.idUser,
       idRelated: relatedId,
-      idCompany: company.idCompany,
       bbdd: company.bbdd
     };
 
@@ -235,28 +234,31 @@ export const getResults = async (user, company, typeId, search) => {
     }
 };
 
-export const getCasefile = (user, bbdd, company, typeId, search) => {
-  return new Promise((resolve, reject) => {
-    const url = `${window.API_GATEWAY}/${RESULTS}?search=${search}&idUser=${user}&idCompany=${company}&bbdd=${bbdd}&idType=${typeId}`;
-    fetch(url, {
-      method: "GET"
-    })
-      .then(data => data.json())
-      .then(result => {
-        resolve({
-          results:
-            result.data !== null &&
-              result.data.data !== null &&
-              Array.isArray(result.data.data) &&
-              result.data.data.length > 0
-              ? result.data.data[0]
-              : null
-        });
-      })
-      .catch(error => {
-        reject(error);
-      });
-  });
+export const getCasefile = async (user, bbdd, company, typeId, search) => {
+  const url = `${window.API_GATEWAY}/${RESULTS}`;
+  const body = {
+    search,
+    idUser: user,
+    bbdd: bbdd,
+    idType: typeId
+  }
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    const result = await response.json();
+    return { results: result.data }
+  }
+  catch(err) {
+    throw err;
+  }
 };
 
 export const getUser = userNavision => {

@@ -11,7 +11,7 @@ import i18n from "i18next";
 import Routing from "./components/routing/routing";
 import Spinner from "./components/spinner/spinner";
 import Notification from "./components/notification/notification";
-import { getCompanies, getUser } from "./services/services-lexon";
+import { getCompanies, getUser, addClassification } from "./services/services-lexon";
 
 class Main extends Component {
   constructor(props) {
@@ -30,6 +30,7 @@ class Main extends Component {
       account: null
     };
 
+    this.handleSentMessage = this.handleSentMessage.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleCheckAllclick = this.handleCheckAllclick.bind(this);
     this.handlePutUserFromLexonConnector = this.handlePutUserFromLexonConnector.bind(
@@ -42,6 +43,7 @@ class Main extends Component {
   componentDidMount() {
     window.addEventListener("Checkclick", this.handleKeyPress);
     window.addEventListener("CheckAllclick", this.handleCheckAllclick);
+    window.addEventListener("SentMessage", this.handleSentMessage);
     window.addEventListener(
       "PutUserFromLexonConnector",
       this.handlePutUserFromLexonConnector
@@ -62,6 +64,7 @@ class Main extends Component {
   // }
 
   componentWillUnmount() {
+    window.removeEventListener("SentMessage", this.handleSentMessage);
     window.removeEventListener("Checkclick", this.handleKeyPress);
     window.removeEventListener("CheckAllclick", this.handleCheckAllclick);
     window.removeEventListener(
@@ -70,7 +73,25 @@ class Main extends Component {
     );
   }
 
+  async handleSentMessage(event) {
+    const { user, idCaseFile, bbdd} = this.state;
+    const { idEmail, subject, date } = event.detail;
+    
+    await addClassification(user, {bbdd}, [{
+      id: idEmail, subject, sentDateTime: date
+    }], idCaseFile, 1)    
+
+    window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
+    // this.props.setCaseFile({
+    //   casefile: null,
+    //   bbdd: null,
+    //   company: null
+    // });
+  }
+
   handleKeyPress(event) {
+    console.log("HandleEvent Client -> Lexon - Checkclick");
+
     event.detail.chkselected
       ? this.props.addMessage({
           id: event.detail.id,
@@ -81,6 +102,8 @@ class Main extends Component {
   }
 
   handleCheckAllclick(event) {
+    console.log("HandleEvent Client -> Lexon - CheckAllclick");
+
     event.detail.chkselected
       ? this.props.addListMessages(event.detail.listMessages)
       : this.props.deleteListMessages(event.detail.listMessages);
@@ -95,6 +118,9 @@ class Main extends Component {
   }
 
   async handlePutUserFromLexonConnector(event) {
+    console.log("HandleEvent Client -> Lexon - PutUserFromLexonConnector");
+    console.log(event.detail);
+
     const {
       user,
       selectedMessages,

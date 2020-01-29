@@ -105,7 +105,9 @@ export class ComposeMessage extends PureComponent {
     ) {
       this.props.history.goBack();
     } else {
-      this.props.loadLabelMessages(this.props.labelsResult.labelInbox);
+      if(this.props.labelsResult) {
+        this.props.loadLabelMessages(this.props.labelsResult.labelInbox);
+      }
     }
   }
 
@@ -119,7 +121,7 @@ export class ComposeMessage extends PureComponent {
       });
     }
 
-    this.resetFields();
+    this.resetFields();  
     this.closeModal();
   }
 
@@ -158,7 +160,7 @@ export class ComposeMessage extends PureComponent {
   }
 
   componentWillUnmount() {
-    console.log("ComposeMessage. Unmount")
+    window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
     this.uppy.close();
   }
 

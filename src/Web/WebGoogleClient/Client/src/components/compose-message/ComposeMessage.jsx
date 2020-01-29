@@ -151,6 +151,7 @@ export class ComposeMessage extends PureComponent {
   }
 
   componentWillUnmount() {
+    window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
     this.uppy.close();
   }
 

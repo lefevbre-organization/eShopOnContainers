@@ -9,7 +9,8 @@ class CaseFile extends Component {
     super(props);
 
     this.state = {
-      caseFileSearch: null
+      caseFileSearch: null,
+      caseFile: null
     };
 
     this.handleRemoveCaseFile = this.handleRemoveCaseFile.bind(this);
@@ -29,7 +30,14 @@ class CaseFile extends Component {
       this.props.idCaseFile
     )
       .then(result => {
-        this.setState( { caseFileSearch: result.results } );
+        const icase = parseInt(this.props.idCaseFile);
+        for(let i = 0; i < result.results.length; i++) {
+          if(result.results[i].id === icase) {
+            cf = result.results[i].id;
+            break;
+          }
+        }
+        this.setState( { caseFileSearch: result.results, caseFile: cf } );
       })
       .catch(error => {
         console.log("error ->", error);
