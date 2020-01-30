@@ -24,7 +24,7 @@
 
         Task<Result<long>> UpSertAccount(string user, Account accountIn);
 
-        Task<Result<Account>> GetAccount(string user, string mail);
+        Task<Result<Account>> GetAccount(string user, string provider, string mail);
 
         Task<Result<Account>> GetDefaultAccount(string user);
 

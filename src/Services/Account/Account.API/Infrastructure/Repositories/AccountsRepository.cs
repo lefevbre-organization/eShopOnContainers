@@ -163,13 +163,15 @@
             return new UpdateOptions { IsUpsert = true };
         }
 
-        public async Task<Result<Account>> GetAccount(string user, string mail)
+        public async Task<Result<Account>> GetAccount(string user, string provider, string mail)
         {
             var result = new Result<Account> { errors = new List<ErrorInfo>() };
             try
             {
                 var usuario = await _context.Accounts.Find(GetFilterUser(user)).SingleAsync();
-                var cuenta = usuario.accounts?.Find(x => x.email.ToUpperInvariant().Equals(mail.ToUpperInvariant()));
+                var cuenta = usuario.accounts?.Find(
+                    x => x.email.ToUpperInvariant().Equals(mail.ToUpperInvariant())
+                        && x.provider.ToUpperInvariant().Equals(provider.ToUpperInvariant()));
                 result.data = cuenta;
             }
             catch (Exception ex)

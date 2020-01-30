@@ -12,7 +12,7 @@
         /// <summary>
         /// Indica si se realizan operaciones sincronicas de obtener contactos desde lexon
         /// </summary>
-        public bool getContacts { get; set; }
+        public bool? getContacts { get; set; }
 
         /// <summary>
         /// Indica la operativa por defecto del usuario cuando vaya a adjuntar un correo a lexon u otro programa

@@ -8,13 +8,13 @@
     public class ConfigImapAccount
     {
         public string imap { get; set; }
-        public short imapPort { get; set; }
+        public short? imapPort { get; set; }
         public string imapUser { get; set; }
         public string imapPass { get; set; }
-        public bool imapSsl { get; set; }
+        public bool? imapSsl { get; set; }
         public string smtp { get; set; }
-        public short smtpPort { get; set; }
-        public bool smtpSsl { get; set; }
+        public short? smtpPort { get; set; }
+        public bool? smtpSsl { get; set; }
 
     }
 }

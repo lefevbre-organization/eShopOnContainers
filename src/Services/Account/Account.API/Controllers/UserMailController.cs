@@ -53,7 +53,8 @@
             [FromBody] UserMail accountIn
             )
         {
-            if (string.IsNullOrEmpty(accountIn.User) || string.IsNullOrEmpty(accountIn.configUser?.defaultAdjunction) || string.IsNullOrEmpty(accountIn.configUser?.defaultEntity))
+            //if (string.IsNullOrEmpty(accountIn.User) || string.IsNullOrEmpty(accountIn.configUser?.defaultAdjunction) || string.IsNullOrEmpty(accountIn.configUser?.defaultEntity))
+            if (string.IsNullOrEmpty(accountIn.User) )
                 return BadRequest("values invalid. Must be a valid user and valid data to configuration");
 
             var result = await _accountsService.Create(accountIn);
@@ -138,7 +139,7 @@
             if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(provider) || string.IsNullOrEmpty(mail))
                 return BadRequest("user or mail/provider invalid. Must be a valid user and mail/provider to search the account");
 
-            var result = await _accountsService.GetAccount(user, mail);
+            var result = await _accountsService.GetAccount(user, provider, mail);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }

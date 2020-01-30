@@ -12,8 +12,8 @@
         public string uid { get; set; }
 
         public string app { get; set; }
-        public int idEntity { get; set; }
-        public short idType { get; set; }
+        public int? idEntity { get; set; }
+        public short? idType { get; set; }
 
     }
 }
