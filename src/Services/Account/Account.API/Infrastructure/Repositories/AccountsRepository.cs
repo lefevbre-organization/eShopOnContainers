@@ -169,7 +169,7 @@
             try
             {
                 var usuario = await _context.Accounts.Find(GetFilterUser(user)).SingleAsync();
-                var cuenta = usuario.Accounts.Find(x => x.email.ToUpperInvariant().Equals(mail.ToUpperInvariant()));
+                var cuenta = usuario.Accounts?.Find(x => x.email.ToUpperInvariant().Equals(mail.ToUpperInvariant()));
                 result.data = cuenta;
             }
             catch (Exception ex)
@@ -475,14 +475,38 @@
             return arrayFilters;
         }
 
-        public Task<Result<bool>> RemoveRelationMail(string user, string provider, string mail, MailRelation relation)
+        public async Task<Result<bool>> RemoveRelationMail(string user, string provider, string mail, MailRelation relation)
         {
-            throw new NotImplementedException();
+            var result = new Result<bool> { errors = new List<ErrorInfo>() };
+            var arrayFilters = GetFilterFromAccount(provider, mail);
+
+            try
+            {
+                var resultInsert = await _context.Accounts.UpdateOneAsync(
+                    GetFilterUser(user),
+                    Builders<UserMail>.Update.Pull($"accounts.$[i].mails", relation),
+                    new UpdateOptions { ArrayFilters = arrayFilters }
+                );
+
+                TraceLog(parameters: new string[] { $"Se añade relacion en provider/cuenta {provider}/{mail}/{relation.uid} con app/id {relation.app}/{relation.idEntity}" });
+                result.data = resultInsert.IsAcknowledged && resultInsert.ModifiedCount > 0;
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+
+            return result;
         }
 
-        public Task<Result<List<MailRelation>>> GetRelationsFromMail(string user, string provider, string mail, string uid)
+        public async Task<Result<List<MailRelation>>> GetRelationsFromMail(string user, string provider, string mail, string uid)
         {
-            throw new NotImplementedException();
+            var result = new Result<List<MailRelation>> { errors = new List<ErrorInfo>() };
+            var userMail = await GetUser(user);
+            var cuenta = userMail.data?.Accounts?.Find(x => x.email == mail && x.provider == provider);
+            result.data = cuenta.mails;
+
+            return result;
         }
 
         public async Task<Result<bool>> UpSertAccountConfig(string user, string provider, string mail, ConfigImapAccount config)
