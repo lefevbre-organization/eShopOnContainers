@@ -21,7 +21,21 @@
   "classification": {
     "type": "Tipo: ",
     "assigned": "Asignado a: ",
-    "remove-document": "Eliminar documento de la clasificación"
+    "remove-document": "Eliminar documento de la clasificación",
+    "1": "Expediente",
+    "2":"Clientes",
+    "3":"Contrarios",
+    "4":"Proveedores",
+    "5":"Abogados propios",
+    "6":"Abogados contrarios",
+    "7":"Procuradores propios",
+    "8":"Procuradores contrarios",
+    "9":"Notarios",
+    "10":"Juzgados",
+    "11":"Aseguradores",
+    "12":"Otros",
+    "13":"Carpetas",
+    "14":"Documentos"
   },
   "classify-emails": {
     "cancel": "CANCELAR",

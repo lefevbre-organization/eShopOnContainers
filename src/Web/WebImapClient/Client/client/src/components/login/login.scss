@@ -5,6 +5,11 @@ $card-max-width: 450px;
 $card-width-break: 480px;
 $port-field-width: 180px;
 
+body {
+    overflow-y: auto;
+}
+
+  
 .login--background {
     background: none;
 
@@ -42,7 +47,8 @@ $port-field-width: 180px;
             border-width: 1px;
             border-color: #001978;
             border-radius: initial;
-
+            margin-top: 10px;
+            margin-bottom: 10px;
 
 
             @media screen and (max-width: $card-width-break) {

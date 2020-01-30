@@ -16,6 +16,9 @@
     "previous-page": "Previous Page",
     "next-page": "Next Page"
   },
+  "synk-button": {
+    "refresh": "Refresh"
+  },
   "compose-message": {
     "compose-message": "Compose Message",
     "to": "To:",

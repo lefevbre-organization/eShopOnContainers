@@ -35,6 +35,11 @@
     height: 45px !important;
 }
 
-.msg-toolbar > div > div {
-    width: 50px;
+.msg-toolbar > div span {
+    margin-left: 10px;
+    text-transform: uppercase;
 }
+
+// .msg-toolbar > div > div {
+//     width: 50px;
+// }
