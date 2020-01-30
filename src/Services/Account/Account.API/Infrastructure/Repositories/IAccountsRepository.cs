@@ -43,5 +43,6 @@
         Task<Result<bool>> RemoveRelationMail(string user, string provider, string mail, MailRelation relation);
 
         Task<Result<List<MailRelation>>> GetRelationsFromMail(string user, string provider, string mail, string uid);
+        Task<Result<bool>> UpSertAccountConfig(string user, string provider, string mail, ConfigImapAccount config);
     }
 }

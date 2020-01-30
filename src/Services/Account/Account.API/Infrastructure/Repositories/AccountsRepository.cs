@@ -38,7 +38,7 @@
             try
             {
                 //var accountExists = _context.Accounts.Find(x => x.Provider.Equals(account.Provider) && x.Email.Equals(account.Email) && x.User.Equals(account.User));
-                var accountExists = _context.Accounts.Find(x =>  x.User.Equals(account.User));
+                var accountExists = _context.Accounts.Find(x => x.User.Equals(account.User));
                 if (!accountExists.Any())
                 {
                     await _context.Accounts.InsertOneAsync(account);
@@ -142,7 +142,7 @@
         public async Task<Result<UpdateResult>> AddUser(string user)
         {
             var result = new Result<UpdateResult> { errors = new List<ErrorInfo>() };
-            var filter = GetFilterUser(user,false);
+            var filter = GetFilterUser(user, false);
             var update = Builders<UserMail>.Update
                 .Set($"user", user)
                 .Set($"state", true);
@@ -156,7 +156,6 @@
                 TraceMessage(result.errors, ex);
             }
             return result;
-
         }
 
         private static UpdateOptions GetUpsertOptions()
@@ -273,7 +272,7 @@
             return new UserMail()
             {
                 User = user,
-                configUser = new ConfigUserLexon()   {  defaultAdjunction = "onlyAdjunction", defaultEntity="files", getContacts=false  },
+                configUser = new ConfigUserLexon() { defaultAdjunction = "onlyAdjunction", defaultEntity = "files", getContacts = false },
                 //Email = email,
                 //guid = guid,
                 //Provider = provider,
@@ -313,7 +312,7 @@
                 var resultUpdate = await _context.Accounts.UpdateManyAsync(
                     account => account.User == user,
                     Builders<UserMail>.Update
-                       // .Set(x => x.DefaultAccount, false)
+                        // .Set(x => x.DefaultAccount, false)
                         .Set("Accounts.$[i].defaultAccount", false),
                     new UpdateOptions
                     {
@@ -348,7 +347,7 @@
                     var resultUpdate = await _context.AccountsTransaction(session).UpdateManyAsync(
                         GetFilterUser(user),
                         Builders<UserMail>.Update
-                           // .Set(x => x.DefaultAccount, false)
+                            // .Set(x => x.DefaultAccount, false)
                             .Set("Accounts.$[i].defaultAccount", false),
                         new UpdateOptions
                         {
@@ -415,14 +414,65 @@
             return result;
         }
 
-        public Task<Result<bool>> UpSertUserConfig(string user, ConfigUserLexon config)
+        public async Task<Result<bool>> UpSertUserConfig(string user, ConfigUserLexon config)
         {
-            throw new NotImplementedException();
+            var result = new Result<bool> { errors = new List<ErrorInfo>() };
+
+            try
+            {
+                var resultInsert = await _context.Accounts.UpdateOneAsync(
+                    GetFilterUser(user),
+                    Builders<UserMail>.Update.Set($"configUser", config)
+                );
+
+                var insertado = resultInsert.IsAcknowledged ? resultInsert.ModifiedCount : 0;
+                TraceLog(parameters: new string[] { $"Se cambia o inserta configuracion  con  getContacts: {config.getContacts} defaultAdjunction: {config.defaultAdjunction} defaultEntity a {config.defaultEntity}" });
+                result.data = resultInsert.IsAcknowledged && resultInsert.ModifiedCount > 0;
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+
+            return result;
         }
 
-        public Task<Result<bool>> UpSertRelationMail(string user, string provider, string mail, MailRelation relation)
+        public async Task<Result<bool>> UpSertRelationMail(string user, string provider, string mail, MailRelation relation)
         {
-            throw new NotImplementedException();
+            var result = new Result<bool> { errors = new List<ErrorInfo>() };
+            var arrayFilters = GetFilterFromAccount(provider, mail);
+
+            try
+            {
+                var resultInsert = await _context.Accounts.UpdateOneAsync(
+                    GetFilterUser(user),
+                    Builders<UserMail>.Update.AddToSet($"accounts.$[i].mails", relation),
+                    new UpdateOptions { ArrayFilters = arrayFilters }
+                );
+
+                TraceLog(parameters: new string[] { $"Se añade relacion en provider/cuenta {provider}/{mail}/{relation.uid} con app/id {relation.app}/{relation.idEntity}" });
+                result.data = resultInsert.IsAcknowledged && resultInsert.ModifiedCount > 0;
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+
+            return result;
+        }
+
+        private static List<ArrayFilterDefinition> GetFilterFromAccount(string provider, string mail)
+        {
+            var arrayFilters = new List<ArrayFilterDefinition>();
+            var dictionary = new Dictionary<string, string>
+            {
+                { "i.provider", provider },
+                { "i.email", mail }
+            };
+            var doc = new BsonDocument(dictionary);
+            var docarrayFilter = new BsonDocumentArrayFilterDefinition<BsonDocument>(doc);
+            arrayFilters.Add(docarrayFilter);
+            return arrayFilters;
         }
 
         public Task<Result<bool>> RemoveRelationMail(string user, string provider, string mail, MailRelation relation)
@@ -433,6 +483,32 @@
         public Task<Result<List<MailRelation>>> GetRelationsFromMail(string user, string provider, string mail, string uid)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<Result<bool>> UpSertAccountConfig(string user, string provider, string mail, ConfigImapAccount config)
+        {
+            var result = new Result<bool> { errors = new List<ErrorInfo>() };
+
+            var arrayFilters = GetFilterFromAccount(provider, mail);
+
+            try
+            {
+                var resultInsert = await _context.Accounts.UpdateOneAsync(
+                    GetFilterUser(user),
+                    Builders<UserMail>.Update.Set($"accounts.$[i].configAccount", config),
+                    new UpdateOptions { ArrayFilters = arrayFilters }
+                );
+
+                var insertado = resultInsert.IsAcknowledged ? resultInsert.ModifiedCount : 0;
+                TraceLog(parameters: new string[] { $"Se cambia o inserta configuracion de cuenta imap: {config.imap} port: {config.imapPort} user a {config.imapUser}" });
+                result.data = resultInsert.IsAcknowledged && resultInsert.ModifiedCount > 0;
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+
+            return result;
         }
     }
 }

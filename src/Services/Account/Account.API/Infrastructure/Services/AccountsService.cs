@@ -1,10 +1,10 @@
 ﻿namespace Account.API.Infrastructure.Services
 {
     using Account.API.Model;
+
     #region Using
 
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
-    using Model;
     using Repositories;
     using System;
     using System.Collections.Generic;
@@ -102,6 +102,12 @@
         public async Task<Result<List<MailRelation>>> GetRelationsFromMail(string user, string provider, string mail, string uid)
         {
             return await _accountsRepository.GetRelationsFromMail(user, provider, mail, uid);
+        }
+
+        public async Task<Result<bool>> UpSertAccountConfig(string user, string provider, string mail, ConfigImapAccount config)
+        {
+            return await _accountsRepository.UpSertAccountConfig(user, provider, mail, config);
+
         }
     }
 }

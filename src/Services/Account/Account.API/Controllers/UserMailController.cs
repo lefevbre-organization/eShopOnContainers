@@ -95,17 +95,36 @@
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddConfig(
-            [FromRoute] string user,
-            [FromBody] ConfigUserLexon config
+            [FromRoute] string user
+            , [FromBody] ConfigUserLexon config
             )
-                {
-                    if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(config?.defaultAdjunction) || string.IsNullOrEmpty(config?.defaultEntity))
-                        return BadRequest("values invalid. Must be a valid user and valid data to configuration");
+        {
+            if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(config?.defaultAdjunction) || string.IsNullOrEmpty(config?.defaultEntity))
+                return BadRequest("values invalid. Must be a valid user and valid data to configuration");
 
-                    var result = await _accountsService.UpSertUserConfig(user, config);
+            var result = await _accountsService.UpSertUserConfig(user, config);
 
-                    return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-                }
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpPost("{user}/account/{provider}/{email}/config/addorupdate")]
+        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> AddConfigToAccount(
+              [FromRoute]string user
+            , [FromRoute]string provider
+            , [FromRoute]string mail
+            , [FromBody] ConfigImapAccount config
+            )
+        {
+            if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(provider) || string.IsNullOrEmpty(mail)
+                || string.IsNullOrEmpty(config?.imap) || string.IsNullOrEmpty(config?.imapUser) || string.IsNullOrEmpty(config?.imapPass) || config?.imapPort == 0)
+                return BadRequest("values invalid. Must be a valid user, email, provider and config account data to insert or update the configuration of imap account");
+
+            var result = await _accountsService.UpSertAccountConfig(user, provider, mail, config);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
 
         [HttpGet("{user}/account/{provider}/{mail}")]
         [ProducesResponseType(typeof(Result<Account>), (int)HttpStatusCode.BadRequest)]
