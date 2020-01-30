@@ -90,11 +90,19 @@ export class MessageList extends PureComponent {
           sentDateTime: response.sentDateTime,
           chkselected: selected
         };
+        const messageLexon = {
+          id: ((response.internetMessageId == "undefined") ? msgId : response.internetMessageId),
+          subject: response.subject,
+          sentDateTime: response.sentDateTime,
+          chkselected: selected         
+        }
         window.dispatchEvent(
           new CustomEvent("Checkclick", {
-            detail: message
+            detail: messageLexon
           })
         );
+
+        console.log("EVENTO ENVIADO A CONECTOR DE LEXON: Checkclick - " + messageLexon.id + " " + messageLexon.subject);
 
         selected
           ? this.props.addMessage(message)

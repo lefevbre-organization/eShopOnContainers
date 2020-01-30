@@ -50,9 +50,15 @@ export class MessageToolbar extends PureComponent {
 
     getMessageHeadersFromId(messageIds).then(response => {
       let messages = [];
+      let messagesLexon = [];
       response.messages.forEach(message => {
         messages.push({
           id: message.id,
+          subject: message.subject,
+          sentDateTime: message.sentDateTime
+        });
+        messagesLexon.push({
+          id: ((message.internetMessageId) == "undefined" ? message.id : message.internetMessageId),
           subject: message.subject,
           sentDateTime: message.sentDateTime
         });
@@ -60,11 +66,13 @@ export class MessageToolbar extends PureComponent {
       window.dispatchEvent(
         new CustomEvent("CheckAllclick", {
           detail: {
-            listMessages: messages,
+            listMessages: messagesLexon,
             chkselected: checked
           }
         })
       );
+
+      console.log("EVENTO ENVIADO A CONECTOR DE LEXON: Checkclick - " + messagesLexon + " " + messagesLexon.length + " " + messagesLexon[0].id + " " + messagesLexon[1].id);
 
       checked
         ? this.props.addListMessages(response.messages)

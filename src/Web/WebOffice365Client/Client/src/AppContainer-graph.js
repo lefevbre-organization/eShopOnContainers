@@ -86,8 +86,8 @@ class AppContainerGraph extends Component {
     var idMail = this.props.match.params.idMail
 
     if (idMail){
-      if (idMail.includes('internetMessageId:')){
-          getMessageByInternetMessageId(idMail.replace('internetMessageId:',''))
+        if (idMail.includes('@')){
+          getMessageByInternetMessageId(idMail)
           .then(res => {
             idMail = res.id;
             
