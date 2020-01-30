@@ -481,7 +481,6 @@ export const batchModify = async ({ ids, addLabelIds = [], removeLabelIds = [] }
   return ids
 }
 
-
 export const uploadFiles = async(emailId, attachments) => {
   for (var i = 0; i < attachments.length; i++) {
     if(attachments[i].data.size > 4194304) {
@@ -498,7 +497,6 @@ export const uploadFile = async(emailId, file, content) => {
 
   const data = content.split('base64,')[1];
 
-debugger
   const attachment = {
     "@odata.type": "#microsoft.graph.fileAttachment",
     name: file.name,
