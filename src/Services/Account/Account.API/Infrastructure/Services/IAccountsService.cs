@@ -3,6 +3,7 @@
     #region Using
 
     using Account.API.Model;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     #endregion Using
@@ -28,6 +29,15 @@
         Task<Result<Account>> GetDefaultAccount(string user);
 
         Task<Result<UserMail>> RemoveAccount(string user, string provider, string mail);
+
         Task<Result<bool>> ChangueState(string user, bool state);
+
+        Task<Result<bool>> UpSertUserConfig(string user, ConfigUserLexon config);
+
+        Task<Result<bool>> UpSertRelationMail(string user, string provider, string mail, MailRelation relation);
+
+        Task<Result<bool>> RemoveRelationMail(string user, string provider, string mail, MailRelation relation);
+
+        Task<Result<List<MailRelation>>> GetRelationsFromMail(string user, string provider, string mail, string uid);
     }
 }

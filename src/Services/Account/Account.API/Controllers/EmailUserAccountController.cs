@@ -37,7 +37,7 @@
         [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Post([FromBody]UserMail accountIn)
         {
-            if (string.IsNullOrEmpty(accountIn.User) || string.IsNullOrEmpty(accountIn.Email) || string.IsNullOrEmpty(accountIn.Provider) || string.IsNullOrEmpty(accountIn.guid))
+            if (string.IsNullOrEmpty(accountIn.User)) // || string.IsNullOrEmpty(accountIn.Email) || string.IsNullOrEmpty(accountIn.Provider) || string.IsNullOrEmpty(accountIn.guid))
                 return BadRequest("values invalid. Must be a valid user, email, provider and guid to insert the userMail");
             var result = await _accountsService.Create(accountIn);
 

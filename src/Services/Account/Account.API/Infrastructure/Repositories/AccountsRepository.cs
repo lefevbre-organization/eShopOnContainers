@@ -37,7 +37,8 @@
             var result = new Result<UserMail> { errors = new List<ErrorInfo>() };
             try
             {
-                var accountExists = _context.Accounts.Find(x => x.Provider.Equals(account.Provider) && x.Email.Equals(account.Email) && x.User.Equals(account.User));
+                //var accountExists = _context.Accounts.Find(x => x.Provider.Equals(account.Provider) && x.Email.Equals(account.Email) && x.User.Equals(account.User));
+                var accountExists = _context.Accounts.Find(x =>  x.User.Equals(account.User));
                 if (!accountExists.Any())
                 {
                     await _context.Accounts.InsertOneAsync(account);
@@ -48,8 +49,8 @@
                     result.data = accountExists.First();
                 }
 
-                var eventAssoc = new AddOperationAccountIntegrationEvent(account.User, account.Provider, account.Email, account.DefaultAccount, EnTypeOperation.Create);
-                _eventBus.Publish(eventAssoc);
+                //var eventAssoc = new AddOperationAccountIntegrationEvent(account.User, account.Provider, account.Email, account.DefaultAccount, EnTypeOperation.Create);
+                //_eventBus.Publish(eventAssoc);
             }
             catch (Exception ex)
             {
@@ -95,8 +96,8 @@
                 if (userUpdate != null)
                 {
                     result.data = userUpdate;
-                    var eventAssoc = new AddOperationAccountIntegrationEvent(userUpdate.User, userUpdate.Provider, userUpdate.Email, userUpdate.DefaultAccount, EnTypeOperation.Remove);
-                    _eventBus.Publish(eventAssoc);
+                    //var eventAssoc = new AddOperationAccountIntegrationEvent(userUpdate.User, userUpdate.Provider, userUpdate.Email, userUpdate.DefaultAccount, EnTypeOperation.Remove);
+                    //_eventBus.Publish(eventAssoc);
                 }
             }
             catch (Exception ex)
@@ -109,18 +110,18 @@
         public async Task<Result<AccountList>> GetByUser(string user)
         {
             var result = new Result<AccountList> { errors = new List<ErrorInfo>() };
-            try
-            {
-                var accounts = string.IsNullOrEmpty(user) ?
-                    await _context.Accounts.Find(account => true).SortByDescending(x => x.DefaultAccount).ToListAsync() :
-                    await _context.Accounts.Find(GetFilterUser(user)).SortByDescending(x => x.DefaultAccount).ToListAsync();
+            //try
+            //{
+            //    var accounts = string.IsNullOrEmpty(user) ?
+            //        await _context.Accounts.Find(account => true).SortByDescending(x => x.DefaultAccount).ToListAsync() :
+            //        await _context.Accounts.Find(GetFilterUser(user)).SortByDescending(x => x.DefaultAccount).ToListAsync();
 
-                result.data = new AccountList { Accounts = accounts.ToArray() };
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
+            //    result.data = new AccountList { Accounts = accounts.ToArray() };
+            //}
+            //catch (Exception ex)
+            //{
+            //    TraceMessage(result.errors, ex);
+            //}
             return result;
         }
 
@@ -228,7 +229,7 @@
                             result.data = resultadoReset.data;
 
                             var resultReplace = await _context.AccountsTransaction(session).ReplaceOneAsync(
-                                account => account.User == user && account.Email == email && account.Provider == provider,
+                                account => account.User == user, // && account.Email == email && account.Provider == provider,
                                 userMail, updateOptions);
 
                             if (resultReplace.IsAcknowledged && resultReplace.MatchedCount > 0)
@@ -272,10 +273,11 @@
             return new UserMail()
             {
                 User = user,
-                Email = email,
-                guid = guid,
-                Provider = provider,
-                DefaultAccount = true,
+                configUser = new ConfigUserLexon()   {  defaultAdjunction = "onlyAdjunction", defaultEntity="files", getContacts=false  },
+                //Email = email,
+                //guid = guid,
+                //Provider = provider,
+                //DefaultAccount = true,
                 Accounts = new List<Account>() {
                         new Account() {defaultAccount = true, email= email, guid= guid, provider= provider }
                     }
@@ -285,21 +287,21 @@
         public async Task<Result<long>> DeleteAccountByUserAndEmail(string user, string email)
         {
             var result = new Result<long> { errors = new List<ErrorInfo>() };
-            try
-            {
-                var accountRemove = await _context.Accounts.Find(x => x.User == user && x.Email == email).FirstOrDefaultAsync();
-                if (accountRemove != null)
-                {
-                    var resultRemove = await _context.Accounts.DeleteOneAsync(account => account.Id == accountRemove.Id);
-                    result.data = resultRemove.DeletedCount;
-                    var eventAssoc = new AddOperationAccountIntegrationEvent(accountRemove.User, accountRemove.Provider, accountRemove.Email, accountRemove.DefaultAccount, EnTypeOperation.Remove);
-                    _eventBus.Publish(eventAssoc);
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
+            //try
+            //{
+            //    var accountRemove = await _context.Accounts.Find(x => x.User == user && x.Email == email).FirstOrDefaultAsync();
+            //    if (accountRemove != null)
+            //    {
+            //        var resultRemove = await _context.Accounts.DeleteOneAsync(account => account.Id == accountRemove.Id);
+            //        result.data = resultRemove.DeletedCount;
+            //        var eventAssoc = new AddOperationAccountIntegrationEvent(accountRemove.User, accountRemove.Provider, accountRemove.Email, accountRemove.DefaultAccount, EnTypeOperation.Remove);
+            //        _eventBus.Publish(eventAssoc);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    TraceMessage(result.errors, ex);
+            //}
             return result;
         }
 
@@ -311,7 +313,7 @@
                 var resultUpdate = await _context.Accounts.UpdateManyAsync(
                     account => account.User == user,
                     Builders<UserMail>.Update
-                        .Set(x => x.DefaultAccount, false)
+                       // .Set(x => x.DefaultAccount, false)
                         .Set("Accounts.$[i].defaultAccount", false),
                     new UpdateOptions
                     {
@@ -346,7 +348,7 @@
                     var resultUpdate = await _context.AccountsTransaction(session).UpdateManyAsync(
                         GetFilterUser(user),
                         Builders<UserMail>.Update
-                            .Set(x => x.DefaultAccount, false)
+                           // .Set(x => x.DefaultAccount, false)
                             .Set("Accounts.$[i].defaultAccount", false),
                         new UpdateOptions
                         {
@@ -411,6 +413,26 @@
                 TraceMessage(result.errors, ex);
             }
             return result;
+        }
+
+        public Task<Result<bool>> UpSertUserConfig(string user, ConfigUserLexon config)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<bool>> UpSertRelationMail(string user, string provider, string mail, MailRelation relation)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<bool>> RemoveRelationMail(string user, string provider, string mail, MailRelation relation)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<List<MailRelation>>> GetRelationsFromMail(string user, string provider, string mail, string uid)
+        {
+            throw new NotImplementedException();
         }
     }
 }

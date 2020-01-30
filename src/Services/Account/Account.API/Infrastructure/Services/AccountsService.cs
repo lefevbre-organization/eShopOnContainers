@@ -7,6 +7,7 @@
     using Model;
     using Repositories;
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     #endregion Using
@@ -81,6 +82,26 @@
         public async Task<Result<bool>> ChangueState(string user, bool state)
         {
             return await _accountsRepository.ChangueState(user, state);
+        }
+
+        public async Task<Result<bool>> UpSertUserConfig(string user, ConfigUserLexon config)
+        {
+            return await _accountsRepository.UpSertUserConfig(user, config);
+        }
+
+        public async Task<Result<bool>> UpSertRelationMail(string user, string provider, string mail, MailRelation relation)
+        {
+            return await _accountsRepository.UpSertRelationMail(user, provider, mail, relation);
+        }
+
+        public async Task<Result<bool>> RemoveRelationMail(string user, string provider, string mail, MailRelation relation)
+        {
+            return await _accountsRepository.RemoveRelationMail(user, provider, mail, relation);
+        }
+
+        public async Task<Result<List<MailRelation>>> GetRelationsFromMail(string user, string provider, string mail, string uid)
+        {
+            return await _accountsRepository.GetRelationsFromMail(user, provider, mail, uid);
         }
     }
 }
