@@ -310,9 +310,7 @@ export const getMessageByInternetMessageId = async internetMessageId => {
 };
 
 export const emailEnd = () => {
-  var email = `},
-                 "SaveToSentItems": "true"
-                  }`;
+  var email = `}`;
   return email;
 };
 
@@ -335,7 +333,6 @@ export const emailBody = data => {
   const bodyContent = myEscapedJSONString.slice(1, -1);
 
   var email = `{
-                  "Message": {
                     "Subject": "${subject}",
                     "internetMessageId": "${guid}",
                     "Body": {
@@ -429,15 +426,20 @@ export const sendMessage = async ({ data, attachments }) => {
   email += emailToRecipients(data);
   email += emailToCcRecipients(data);
   email += emailToBccRecipients(data);
-  email += emailAttachments(data);
+  //email += emailAttachments(data);
   email += emailEnd();
 
   try {
     const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
+    let response = await client.api("/me/messages").version('beta').post(email);
 
-    return client.api("/me/sendmail").post(email);
+    await uploadFiles(response.id, data.uppyPreviews);
+    response = await client.api(`/me/messages/${response.id}/send`).version('beta').post({});
+    return response;
   } catch (err) {
+    console.log(err)
+    debugger
     throw err;
   }
 };
@@ -452,6 +454,8 @@ export const setMessageAsRead = async messageId => {
     })
     return true;
   } catch (err) {
+    console.log(err);
+    debugger
     throw err;
   }
 };
@@ -477,28 +481,80 @@ export const batchModify = async ({ ids, addLabelIds = [], removeLabelIds = [] }
   return ids
 }
 
+export const uploadFiles = async(emailId, attachments) => {
+  for (var i = 0; i < attachments.length; i++) {
+    if(attachments[i].data.size > 4194304) {
+      await uploadFileWithUploadSession(emailId, attachments[i].data, attachments[i].content);
+    } else {
+      await uploadFile(emailId, attachments[i].data, attachments[i].content);
+    }
+  }
+}
 
-export const uploadFile = async(emailId, file) => {
+export const uploadFileWithUploadSession = async(emailId, file, content) => {
   const accessToken = await getAccessTokenSilent();
   const client = await getAuthenticatedClient(accessToken);
-
   const uploadSession = {
-      AttachmentItem: {
-        attachmentType: "file",
-        name: file.name, 
-        size: file.size
-      }
-    };
+    AttachmentItem: {
+      attachmentType: "file",
+      name: file.name, 
+      size: file.size
+    }
+  };
 
-  try {
-      const uploadSession = await client.api('/me/messages/AAMkADI5MAAIT3drCAAA=/attachments/createUploadSession').version('beta').post(uploadSession);
-  
-      console.log(uploadSession)
+    try {   
+      const session = await client.api(`/me/messages/${emailId}/attachments/createUploadSession`).version('beta').post(uploadSession);
+      
+      console.log(content)
+      await fetch(session.uploadUrl,
+        {
+          method: 'PUT',
+          headers: {
+            "Content-Type": "application/octet-stream",
+            "Content-Length": `${file.size}`,
+            "Content-Range": `bytes 0-${file.size-1}/${file.size}`
+          },
+          body: content
+      });
 
+      sended = true;
     } catch (err) {
       console.log(err)
     }
   
-    return [];
+  return [];
+}
 
+export const uploadFileWithUploadSession = async(emailId, file, content) => {
+  const accessToken = await getAccessTokenSilent();
+  const client = await getAuthenticatedClient(accessToken);
+  const uploadSession = {
+    AttachmentItem: {
+      attachmentType: "file",
+      name: file.name, 
+      size: file.size
+    }
+  };
+
+    try {   
+      const session = await client.api(`/me/messages/${emailId}/attachments/createUploadSession`).version('beta').post(uploadSession);
+      
+      console.log(content)
+      await fetch(session.uploadUrl,
+        {
+          method: 'PUT',
+          headers: {
+            "Content-Type": "application/octet-stream",
+            "Content-Length": `${file.size}`,
+            "Content-Range": `bytes 0-${file.size-1}/${file.size}`
+          },
+          body: content
+      });
+
+      sended = true;
+    } catch (err) {
+      console.log(err)
+    }
+  
+  return [];
 }

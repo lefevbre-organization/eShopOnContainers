@@ -16,7 +16,7 @@ import { Notification, Confirmation } from '../notification/';
 
 const Uppy = require("@uppy/core");
 const Tus = require("@uppy/tus");
-const MAX_TOTAL_ATTACHMENTS_SIZE = 34603008;
+const MAX_TOTAL_ATTACHMENTS_SIZE = 26214400;
 
 export class ComposeMessage extends PureComponent {
   constructor(props) {
@@ -85,7 +85,12 @@ export class ComposeMessage extends PureComponent {
 
       // Define this onload every time to get file and base64 every time
       this.reader = new FileReader();
-      this.reader.readAsDataURL(file.data);
+      
+      if(file.data.size <= 3145728) {
+        this.reader.readAsDataURL(file.data);
+      } else {
+        this.reader.readAsArrayBuffer(file.data);
+      } 
 
       this.reader.onload = readerEvt =>
         this.addFileToState({ file, base64: readerEvt.target.result });
