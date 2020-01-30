@@ -87,7 +87,7 @@
             var options = new FindOneAndUpdateOptions<UserMail> { ReturnDocument = ReturnDocument.After };
             try
             {
-                var update = Builders<UserMail>.Update.PullFilter(p => p.Accounts,
+                var update = Builders<UserMail>.Update.PullFilter(p => p.accounts,
                                                 f => f.email.Equals(mail) && f.provider.Equals(provider));
                 var userUpdate = await _context.Accounts.FindOneAndUpdateAsync<UserMail>(
                     GetFilterUser(user),
@@ -169,7 +169,7 @@
             try
             {
                 var usuario = await _context.Accounts.Find(GetFilterUser(user)).SingleAsync();
-                var cuenta = usuario.Accounts?.Find(x => x.email.ToUpperInvariant().Equals(mail.ToUpperInvariant()));
+                var cuenta = usuario.accounts?.Find(x => x.email.ToUpperInvariant().Equals(mail.ToUpperInvariant()));
                 result.data = cuenta;
             }
             catch (Exception ex)
@@ -185,7 +185,7 @@
             try
             {
                 var usuario = await _context.Accounts.Find(GetFilterUser(user)).SingleOrDefaultAsync();
-                var cuenta = usuario?.Accounts.Find(x => x.defaultAccount = true);
+                var cuenta = usuario?.accounts.Find(x => x.defaultAccount = true);
                 result.data = cuenta;
             }
             catch (Exception ex)
@@ -239,7 +239,7 @@
 
                             var resultadoListado = await _context.AccountsTransaction(session).UpdateOneAsync(
                                     GetFilterUser(user),
-                                    Builders<UserMail>.Update.AddToSet($"Accounts", userMail.Accounts[0])
+                                    Builders<UserMail>.Update.AddToSet($"accounts", userMail.accounts[0])
                                 );
 
                             if (resultadoListado.IsAcknowledged && resultadoListado.MatchedCount > 0)
@@ -277,7 +277,7 @@
                 //guid = guid,
                 //Provider = provider,
                 //DefaultAccount = true,
-                Accounts = new List<Account>() {
+                accounts = new List<Account>() {
                         new Account() {defaultAccount = true, email= email, guid= guid, provider= provider }
                     }
             };
@@ -313,7 +313,7 @@
                     account => account.User == user,
                     Builders<UserMail>.Update
                         // .Set(x => x.DefaultAccount, false)
-                        .Set("Accounts.$[i].defaultAccount", false),
+                        .Set("accounts.$[i].defaultAccount", false),
                     new UpdateOptions
                     {
                         ArrayFilters = new List<ArrayFilterDefinition>
@@ -348,7 +348,7 @@
                         GetFilterUser(user),
                         Builders<UserMail>.Update
                             // .Set(x => x.DefaultAccount, false)
-                            .Set("Accounts.$[i].defaultAccount", false),
+                            .Set("accounts.$[i].defaultAccount", false),
                         new UpdateOptions
                         {
                             ArrayFilters = new List<ArrayFilterDefinition>
@@ -363,7 +363,7 @@
 
                     var resultInsert = await _context.AccountsTransaction(session).UpdateOneAsync(
                         GetFilterUser(user),
-                        Builders<UserMail>.Update.AddToSet($"Accounts", accountIn)
+                        Builders<UserMail>.Update.AddToSet($"accounts", accountIn)
                     );
 
                     var insertado = resultInsert.IsAcknowledged ? resultInsert.ModifiedCount : 0;
@@ -503,7 +503,7 @@
         {
             var result = new Result<List<MailRelation>> { errors = new List<ErrorInfo>() };
             var userMail = await GetUser(user);
-            var cuenta = userMail.data?.Accounts?.Find(x => x.email == mail && x.provider == provider);
+            var cuenta = userMail.data?.accounts?.Find(x => x.email == mail && x.provider == provider);
             result.data = cuenta.mails;
 
             return result;

@@ -47,7 +47,7 @@
         /// <summary>
         /// Lista de cuentas asociadas a un usuario
         /// </summary>
-        public List<Account> Accounts { get; set; }
+        public List<Account> accounts { get; set; }
         public bool state { get; set; }
     }
 }
