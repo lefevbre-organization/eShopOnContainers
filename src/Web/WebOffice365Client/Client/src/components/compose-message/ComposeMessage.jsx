@@ -16,7 +16,7 @@ import { Notification, Confirmation } from '../notification/';
 
 const Uppy = require("@uppy/core");
 const Tus = require("@uppy/tus");
-const MAX_TOTAL_ATTACHMENTS_SIZE = 3145728;
+const MAX_TOTAL_ATTACHMENTS_SIZE = 34603008;
 
 export class ComposeMessage extends PureComponent {
   constructor(props) {
@@ -103,7 +103,7 @@ export class ComposeMessage extends PureComponent {
       this.props.lexon.idCaseFile === null ||
       this.props.lexon.idCaseFile === undefined
     ) {
-      this.props.history.push("/inbox");
+      this.props.history.goBack();
     } else {
       if(this.props.labelsResult) {
         this.props.loadLabelMessages(this.props.labelsResult.labelInbox);
@@ -121,19 +121,21 @@ export class ComposeMessage extends PureComponent {
       });
     }
 
-    this.props.history.push("/inbox");
+    this.resetFields();  
+    this.closeModal();
   }
 
   sentEmail(email) {
     window.dispatchEvent(
       new CustomEvent("SentMessage", {
         detail: {
-          idEmail: email.id,
-          subject: email.subject, // window.atob(email.subject.replace('=?UTF-8?B?','').replace('?=', '')),
-          date: email.sentDateTime 
+          idEmail: email.internetMessageId,
+          subject: email.subject,
+          date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') 
         }
       })
     );
+    console.log("sentEmail data - id:" + email.internetMessageId + " subject: " + email.subject);
   }
 
   addFileToState(file) {
@@ -213,18 +215,18 @@ export class ComposeMessage extends PureComponent {
 
     const Fileattached = this.state.uppyPreviews;
 
-    const email = Object.assign({}, this.state, { subject: this.state.subject , internetMessageId: uuid() + uuid() })
+    const email = Object.assign({}, this.state, { subject: this.state.subject , internetMessageId: `${uuid()}-${uuid()}@lefebvre.es`})
 
     sendMessage({
       data: email,
       attachments: Fileattached
     }).then(_ => {
-      getMessageByInternetMessageId(email.internetMessageId).then(_ => this.sentEmail(_));
+      this.sentEmail(email);
     }).catch((err) => {
       console.log(err)
     })
     this.resetFields();
-    this.closeModal();
+    this.closeModal();      
   }
 
   resetFields() {

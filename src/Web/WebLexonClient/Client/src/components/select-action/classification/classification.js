@@ -49,12 +49,12 @@ class Classification extends Component {
   }
 
   render() {
-    const { name, entityType } = this.props.classification;
+    const { name, entityIdType } = this.props.classification;
 
     return (
       <li className="col-xl-12 lexon-item">
         <p>
-          <strong>{i18n.t("classification.type")}</strong> {entityType}
+          <strong>{i18n.t("classification.type")}</strong> {i18n.t(`classification.${entityIdType}`)}
         </p>
         <p>
           <strong>{i18n.t("classification.assigned")}</strong> {name}

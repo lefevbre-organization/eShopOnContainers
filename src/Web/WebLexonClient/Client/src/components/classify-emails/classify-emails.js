@@ -237,6 +237,10 @@ class ClassifyEmails extends Component {
         </div>
 
         <style jsx>{`
+          .container p {
+            color: #001978;
+          }
+
           .btn-secundary {
             min-width: 165px;
             border-radius: 0;

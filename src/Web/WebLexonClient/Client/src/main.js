@@ -82,12 +82,11 @@ class Main extends Component {
     }], idCaseFile, 1)    
 
     window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
-    this.props.setCaseFile({
-      casefile: null,
-      bbdd: null,
-      company: null
-    });
-
+    // this.props.setCaseFile({
+    //   casefile: null,
+    //   bbdd: null,
+    //   company: null
+    // });
   }
 
   handleKeyPress(event) {

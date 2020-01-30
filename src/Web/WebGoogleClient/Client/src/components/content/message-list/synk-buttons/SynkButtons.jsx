@@ -18,7 +18,10 @@ export default (props) => {
             className="btn btn-light bg-white border-1 border-dark px-3 btn-sm"
             title={t('pager-button.refresh')}
           >
+            <div>
               <FontAwesomeIcon icon={faSync} />
+              <span>{t('synk-button.refresh')}</span>
+            </div>
           </button>
       </div>
   );

@@ -21,7 +21,21 @@
   "classification": {
     "type": "Type: ",
     "assigned": "Assigned to: ",
-    "remove-document": "Remove docucment of the classification"
+    "remove-document": "Remove docucment of the classification",
+    "1":"Files",
+    "2":"Clients",
+    "3":"Opposites",
+    "4":"Suppliers",
+    "5":"Lawyers",
+    "6":"Opposing Lawyers",
+    "7":"Solicitors",
+    "8":"Opposing Solicitors",
+    "9":"Notaries",
+    "10":"Courts",
+    "11":"Insurances",
+    "12":"Others",
+    "13":"Folders",
+    "14":"Documents"
   },
   "classify-emails": {
     "cancel": "CANCEL",

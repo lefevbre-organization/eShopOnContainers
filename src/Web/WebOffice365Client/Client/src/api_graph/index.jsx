@@ -31,7 +31,7 @@ export const getUserApplication = () => {
   return userAgentApplication
 }
 
-function getAuthenticatedClient(accessToken) {
+export const getAuthenticatedClient = (accessToken) => {
   // Initialize Graph client
   const client = graph.Client.init({
     // Use the provided access token to authenticate
@@ -81,9 +81,8 @@ function getAuthenticatedClient(accessToken) {
 
 //END IMPLEMENT RECURSIVE FOLDERS
 
-const getAccessTokenSilent = async () => {
+export const getAccessTokenSilent = async () => {
   console.log(config.scopes)
-
   return await window.msal.acquireTokenSilent({ scopes: config.scopes });
 }
 
@@ -402,7 +401,6 @@ export const emailToBccRecipients = data => {
 };
 
 export const emailAttachments = data => {
-  //to BccRecipients
   var email = `"Attachments": [],`;
   var attachments = data.uppyPreviews;
 
@@ -410,14 +408,16 @@ export const emailAttachments = data => {
 
   email = `"Attachments": [`;
   for (var i = 0; i < attachments.length; i++) {
-    var fileData = base64Data(attachments[i].content);
-    var fileName = attachments[i].data.name;
+    if(attachments[i].data.size <= 3145728) {
+      var fileData = base64Data(attachments[i].content);
+      var fileName = attachments[i].data.name;
 
-    email += `{
-        "@odata.type": "#Microsoft.OutlookServices.FileAttachment",
-        "Name": "${fileName}",
-        "ContentBytes": "${fileData}"
-      },\r\n`;
+      email += `{
+          "@odata.type": "#Microsoft.OutlookServices.FileAttachment",
+          "Name": "${fileName}",
+          "ContentBytes": "${fileData}"
+        },\r\n`;
+    } 
   }
   email += `],\r\n`;
   return email;
@@ -475,4 +475,30 @@ export const batchModify = async ({ ids, addLabelIds = [], removeLabelIds = [] }
 
   await Promise.all(prs);
   return ids
+}
+
+
+export const uploadFile = async(emailId, file) => {
+  const accessToken = await getAccessTokenSilent();
+  const client = await getAuthenticatedClient(accessToken);
+
+  const uploadSession = {
+      AttachmentItem: {
+        attachmentType: "file",
+        name: file.name, 
+        size: file.size
+      }
+    };
+
+  try {
+      const uploadSession = await client.api('/me/messages/AAMkADI5MAAIT3drCAAA=/attachments/createUploadSession').version('beta').post(uploadSession);
+  
+      console.log(uploadSession)
+
+    } catch (err) {
+      console.log(err)
+    }
+  
+    return [];
+
 }
