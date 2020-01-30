@@ -16,7 +16,7 @@ import { Notification, Confirmation } from '../notification/';
 
 const Uppy = require("@uppy/core");
 const Tus = require("@uppy/tus");
-const MAX_TOTAL_ATTACHMENTS_SIZE = 3145728;
+const MAX_TOTAL_ATTACHMENTS_SIZE = 34603008;
 
 export class ComposeMessage extends PureComponent {
   constructor(props) {
