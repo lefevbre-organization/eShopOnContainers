@@ -4,14 +4,12 @@ $spinner-color: #333333;
 $card-max-width: 450px;
 $card-width-break: 480px;
 $port-field-width: 180px;
-
-body {
-    overflow-y: auto;
-}
-
-  
+ 
 .login--background {
     background: none;
+    position: absolute;
+    overflow-y: auto;
+    width: 100%;
 
     .login--container {
         background-color: #ffffff;
@@ -47,8 +45,11 @@ body {
             border-width: 1px;
             border-color: #001978;
             border-radius: initial;
-            margin-top: 10px;
-            margin-bottom: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            top: 20px;
+            position: absolute;
+
 
 
             @media screen and (max-width: $card-width-break) {
