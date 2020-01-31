@@ -27,7 +27,7 @@ export class MessageToolbar extends PureComponent {
     this.navigateToPrevPage = this.navigateToPrevPage.bind(this);
     this.modifyMessages = this.modifyMessages.bind(this);
     this.getLabelMessagesSynk = this.getLabelMessagesSynk.bind(this);
-      
+
     this.state = {
       selectedMessageIds: [],
       messages: []
@@ -81,13 +81,13 @@ export class MessageToolbar extends PureComponent {
   }
 
   getLabelMessagesSynk() {
-      this.props.loadLabelMessageSingle()
-     
+    this.props.loadLabelMessageSingle()
+
   }
 
-  navigateToNextPage() {    
-      this.props.messagesResult.paginatioDirectionSelected = "next";    
-      this.props.getLabelMessages("", "", "")
+  navigateToNextPage() {
+    this.props.messagesResult.paginatioDirectionSelected = "next";
+    this.props.getLabelMessages("", "", "")
   }
 
   navigateToPrevPage() {
@@ -154,20 +154,19 @@ export class MessageToolbar extends PureComponent {
             </div>
           </div>
 
-        
+          <div className="right-buttons">
+            <Pager
+              nextToken={this.props.nextToken}
+              prevToken={this.props.prevToken}
+              navigateToPrevPage={this.navigateToPrevPage}
+              navigateToNextPage={this.navigateToNextPage}
+              getLabelMessages={this.getLabelMessages}
 
-          <Pager
-            nextToken={this.props.nextToken}
-            prevToken={this.props.prevToken}
-            navigateToPrevPage={this.navigateToPrevPage}
-            navigateToNextPage={this.navigateToNextPage}
-            getLabelMessages={this.getLabelMessages}
-
-          />    
-                
-         <Synkbutton
-            getLabelMessagesSynk={this.getLabelMessagesSynk}
-         />   
+            />
+            <Synkbutton
+              getLabelMessagesSynk={this.getLabelMessagesSynk}
+            />
+          </div>
         </div>
       </div>
     );
