@@ -497,6 +497,7 @@ export const uploadFile = async(emailId, file, content) => {
 
   const data = content.split('base64,')[1];
 
+debugger
   const attachment = {
     "@odata.type": "#microsoft.graph.fileAttachment",
     name: file.name,
