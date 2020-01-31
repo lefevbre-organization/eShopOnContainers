@@ -15,9 +15,10 @@
   "pager-buttons": {
     "previous-page": "Previous Page",
     "next-page": "Next Page"
-  },
+    },
   "synk-button": {
-    "refresh": "Refresh"
+    "refresh": "Refresh",
+    "refresh-tooltip": "Refresh"
   },
   "compose-message": {
     "compose-message": "Compose Message",
