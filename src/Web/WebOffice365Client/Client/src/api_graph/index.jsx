@@ -9,7 +9,7 @@ let userAgentApplication = null;
 export const getUserApplication = () => {
   if (userAgentApplication === null) {
 
-    let redirectUri = window.location.origin
+    const redirectUri = window.location.origin
 
     userAgentApplication = new UserAgentApplication({
       auth: {
