@@ -17,7 +17,8 @@
     "next-page": "Página Siguiente"
   },
   "synk-button": {
-    "refresh": "Refresh"
+    "refresh": "Refrescar",
+    "refresh-tooltip": "Refrescar"
   },
   "compose-message": {
     "compose-message": "Componer Mensaje",

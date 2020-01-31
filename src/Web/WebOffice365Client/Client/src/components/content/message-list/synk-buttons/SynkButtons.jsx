@@ -16,7 +16,7 @@ export default (props) => {
             onClick={props.getLabelMessagesSynk}
             disabled={false}
             className="btn btn-light bg-white border-1 border-dark px-3 btn-sm"
-            title={t('pager-button.refresh')}
+            title={t('synk-button.refresh-tooltip')}
           >
             <div>
               <FontAwesomeIcon icon={faSync} />
