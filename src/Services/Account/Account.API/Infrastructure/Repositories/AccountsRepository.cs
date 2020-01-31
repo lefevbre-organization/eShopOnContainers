@@ -38,7 +38,7 @@
             try
             {
                 //var accountExists = _context.Accounts.Find(x => x.Provider.Equals(account.Provider) && x.Email.Equals(account.Email) && x.User.Equals(account.User));
-                var accountExists = _context.Accounts.Find(x => x.User.Equals(account.User));
+                var accountExists = _context.Accounts.Find(GetFilterUser(account.User, false));
                 if (!accountExists.Any())
                 {
                     await _context.Accounts.InsertOneAsync(account);
@@ -349,7 +349,6 @@
                     var resultUpdate = await _context.AccountsTransaction(session).UpdateManyAsync(
                         GetFilterUser(user),
                         Builders<UserMail>.Update
-                            // .Set(x => x.DefaultAccount, false)
                             .Set("accounts.$[i].defaultAccount", false),
                         new UpdateOptions
                         {
@@ -362,10 +361,11 @@
 
                     var modificados = resultUpdate.IsAcknowledged ? resultUpdate.ModifiedCount : 0;
                     TraceLog(parameters: new string[] { $"Se modifican {modificados} usuarios con default a :{false}" });
-
+                    var arrayFilters = GetFilterFromAccount(accountIn.provider, accountIn.email);
                     var resultInsert = await _context.AccountsTransaction(session).UpdateOneAsync(
                         GetFilterUser(user),
-                        Builders<UserMail>.Update.AddToSet($"accounts", accountIn)
+                        Builders<UserMail>.Update.Set($"accounts.$[i]", accountIn),
+                         new UpdateOptions { ArrayFilters = arrayFilters , IsUpsert = true}
                     );
 
                     var insertado = resultInsert.IsAcknowledged ? resultInsert.ModifiedCount : 0;
@@ -449,7 +449,7 @@
                 var resultInsert = await _context.Accounts.UpdateOneAsync(
                     GetFilterUser(user),
                     Builders<UserMail>.Update.AddToSet($"accounts.$[i].mails", relation),
-                    new UpdateOptions { ArrayFilters = arrayFilters }
+                    new UpdateOptions { ArrayFilters = arrayFilters, IsUpsert = true }
                 );
 
                 TraceLog(parameters: new string[] { $"Se añade relacion en provider/cuenta {provider}/{mail}/{relation.uid} con app/id {relation.app}/{relation.idEntity}" });
@@ -506,7 +506,7 @@
             var result = new Result<List<MailRelation>> { errors = new List<ErrorInfo>() };
             var userMail = await GetUser(user);
             var cuenta = userMail.data?.accounts?.Find(x => x.email == mail && x.provider == provider);
-            result.data = cuenta.mails;
+            result.data = cuenta?.mails?.FindAll(c => c.uid == uid);
 
             return result;
         }

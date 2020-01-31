@@ -108,7 +108,7 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost("{user}/account/{provider}/{email}/config/addorupdate")]
+        [HttpPost("{user}/account/{provider}/{mail}/config/addorupdate")]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> AddConfigToAccount(
@@ -174,7 +174,7 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost("{user}/account/{provider}/{email}/relation/addorupdate")]
+        [HttpPost("{user}/account/{provider}/{mail}/relation/addorupdate")]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> AddRelationToMail(
@@ -193,7 +193,7 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpDelete("{user}/account/{provider}/{email}/relation/delete")]
+        [HttpDelete("{user}/account/{provider}/{mail}/relation/delete")]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> RemoveRelationFromMail(
@@ -205,26 +205,26 @@
         {
             if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(provider) || string.IsNullOrEmpty(mail)
                 || string.IsNullOrEmpty(relation?.uid) || string.IsNullOrEmpty(relation?.app) || relation?.idEntity == 0)
-                return BadRequest("values invalid. Must be a valid user, email, provider and relations data to insert or update the relation");
+                return BadRequest("values invalid. Must be a valid user, email, provider and relations data to remove the relation");
 
             var result = await _accountsService.RemoveRelationMail(user, provider, mail, relation);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost("{user}/account/{provider}/{email}/{uid}/relations")]
+        [HttpPost("{user}/account/{provider}/{mail}/{uid}/relations")]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<List<MailRelation>>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetRelationsFromMail(
             [FromRoute] string user
             , [FromRoute] string provider
             , [FromRoute] string mail
-            , [FromBody] string uid
+            , [FromRoute] string uid
         )
         {
             if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(provider) || string.IsNullOrEmpty(mail)
                 || string.IsNullOrEmpty(uid))
-                return BadRequest("values invalid. Must be a valid user, email, provider and relations data to insert or update the relation");
+                return BadRequest("values invalid. Must be a valid user, email, provider and uid to get the relations");
 
             var result = await _accountsService.GetRelationsFromMail(user, provider, mail, uid);
 
