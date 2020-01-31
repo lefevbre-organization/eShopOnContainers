@@ -22,6 +22,13 @@ class UserLexon extends Component {
 
   componentDidMount() {
     const user = this.props.match.params.idUser;
+    const account = this.props.match.params.account;
+
+    if(account) {
+      // Get user account
+      alert(account)  
+    }
+
     this.props.setUser(user);
 
     const casefile = this.props.match.params.idCaseFile;

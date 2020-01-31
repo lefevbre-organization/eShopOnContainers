@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import i18n from "i18next";
 import { parseJwt, buildClientUrl } from "../utils/jwt";
-
+import * as base64 from 'base-64';
 import { INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP } from "../constants";
 
 class ProviderInbox extends Component {
@@ -65,8 +65,6 @@ class ProviderInbox extends Component {
     const user = this.getUser();
     const payload = (token) ? parseJwt(token) : "";
     
-
-
     let title;
     switch (provider) {
       case INBOX_GOOGLE:
@@ -112,10 +110,11 @@ class ProviderInbox extends Component {
           ? (title = email)
           : (title = i18n.t("page-goto.other-server-mail"));
 
+        const account64 = base64.encode(email)
         return (
           <React.Fragment>
             <a
-              href={window.URL_INBOX_IMAP + "/user/" + user}
+              href={`${window.URL_INBOX_IMAP}/user/${user}/account/${account64}`}
               className="d-flex align-items-center"
             >
               <span className="lf-icon-mail"></span>

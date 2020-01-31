@@ -13,7 +13,8 @@ class Routes extends Component {
     return (
       <Router basename="/" history={history}>
         <Switch>
-          <Route exact path="/user/:idUser" component={UserLexon} />
+        <Route exact path="/user/:idUser" component={UserLexon} />
+        <Route exact path="/user/:idUser/account/:account/" component={UserLexon} />
           <Route
             exact
             path="/user/:idUser/casefile/:idCaseFile/bbdd/:bbdd/company/:idCompany"
