@@ -24,6 +24,12 @@ const lexon = (state = INITIAL_STATE.lexon, action = {}) => {
         idCompany: action.payload.company
       };
 
+    case ActionTypes.LEXON_DATABASE:
+      return{
+        ...state,
+        bbdd: action.payload.bbdd      
+      }
+
     default:
       return state;
   }

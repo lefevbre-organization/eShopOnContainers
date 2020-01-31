@@ -27,11 +27,18 @@ class UserLexon extends Component {
     const casefile = this.props.match.params.idCaseFile;
     const bbdd = this.props.match.params.bbdd;
     const company = this.props.match.params.idCompany;
-    this.props.setCaseFile({
-      casefile: casefile,
-      bbdd: bbdd,
-      company: company
-    });
+    if (casefile){
+      this.props.setCaseFile({
+        casefile: casefile,
+        bbdd: bbdd,
+        company: company
+      });
+    } else if (bbdd){
+      this.props.setDataBase({
+        bbdd: bbdd
+      });
+    };
+    
 
     this.setState({ isNewAccount: user.slice(2, 3) === "1" ? true : false });
 
@@ -109,6 +116,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   setUser: user => dispatch(ACTIONS.setUser(user)),
   setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
+  setDataBase: dataBase => dispatch(ACTIONS.setDataBase(dataBase)),
   logout: () => {
     dispatch(clearUserCredentials());
     history.push("/login");
