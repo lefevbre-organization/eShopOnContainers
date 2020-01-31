@@ -143,7 +143,6 @@ export class MessageContent extends Component {
   }
 
   componentWillUnmount() {
-    debugger
     if(this.refresh && this.props.refresh) {
       this.props.refresh();
     }
