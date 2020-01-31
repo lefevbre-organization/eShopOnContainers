@@ -491,38 +491,31 @@ export const uploadFiles = async(emailId, attachments) => {
   }
 }
 
-export const uploadFileWithUploadSession = async(emailId, file, content) => {
+export const uploadFile = async(emailId, file, content) => {
   const accessToken = await getAccessTokenSilent();
   const client = await getAuthenticatedClient(accessToken);
-  const uploadSession = {
-    AttachmentItem: {
-      attachmentType: "file",
-      name: file.name, 
-      size: file.size
-    }
+
+  const data = content.split('base64,')[1];
+
+debugger
+  const attachment = {
+    "@odata.type": "#microsoft.graph.fileAttachment",
+    name: file.name,
+    contentBytes:data
   };
-
-    try {   
-      const session = await client.api(`/me/messages/${emailId}/attachments/createUploadSession`).version('beta').post(uploadSession);
-      
-      console.log(content)
-      await fetch(session.uploadUrl,
-        {
-          method: 'PUT',
-          headers: {
-            "Content-Type": "application/octet-stream",
-            "Content-Length": `${file.size}`,
-            "Content-Range": `bytes 0-${file.size-1}/${file.size}`
-          },
-          body: content
-      });
-
-      sended = true;
-    } catch (err) {
-      console.log(err)
-    }
   
-  return [];
+  try {
+  let res = await client.api(`/me/messages/${emailId}/attachments`)
+    .version('beta')
+    .post(attachment);
+
+    console.log(res);
+    debugger
+  } catch(err) {
+    console.log(err);
+    debugger;
+  }
+  
 }
 
 export const uploadFileWithUploadSession = async(emailId, file, content) => {
@@ -551,7 +544,6 @@ export const uploadFileWithUploadSession = async(emailId, file, content) => {
           body: content
       });
 
-      sended = true;
     } catch (err) {
       console.log(err)
     }

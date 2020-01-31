@@ -32,7 +32,7 @@
     "browse": "browse",
     "or": "or",
     "bcc": "Bcc:",
-    "max-file-size": "The total attachments size must be less than 3MB for this provider.",
+    "max-file-size": "The total attachments size must be less than 25MB for this provider.",
     "min-dest-alert": "This message must have at least one recipient.",
     "no-subject-warning": "Do you want to send this message without subject?"
   },
