@@ -1,4 +1,5 @@
 ﻿using Lexon.MySql.Model;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lexon.MySql.Infrastructure.Services
@@ -22,6 +23,7 @@ namespace Lexon.MySql.Infrastructure.Services
                                            string uidMail = null,
                                            short? idEntityType = null,
                                            int? idEntity = null,
+                                           List<string> mailContacts = null,
                                            bool addTerminatorToToken = true);
 
         Task<Result<JosRelationsList>> GetRelationsAsync(int pageSize, int pageIndex, short? idType, string bbdd, string idUser, string idMail);
