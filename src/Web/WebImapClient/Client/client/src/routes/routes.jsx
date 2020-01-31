@@ -14,11 +14,8 @@ class Routes extends Component {
       <Router basename="/" history={history}>
         <Switch>
           <Route exact path="/user/:idUser" component={UserLexon} />
-          <Route
-            exact
-            path="/user/:idUser/casefile/:idCaseFile/bbdd/:bbdd/company/:idCompany"
-            component={UserLexon}
-          />
+          <Route exact path="/user/:idUser/casefile/:idCaseFile/bbdd/:bbdd/company/:idCompany" component={UserLexon}/>
+          <Route exact path="/user/:idUser/bbdd/:bbdd" component={UserLexon} />
           <Route exact path="/login" render={() => <Login />} />
           <PrivateRoute exact path="/" component={App} />
           <PrivateRoute exact path="/settings" component={Settings} />

@@ -10,7 +10,14 @@ export const setCaseFile = casefile => ({
   payload: casefile
 });
 
+export const setDataBase = database => ({
+  type: ActionTypes.LEXON_DATABASE,
+  payload: database
+});
+
+
 export default {
   setUser,
-  setCaseFile
+  setCaseFile,
+  setDataBase
 };

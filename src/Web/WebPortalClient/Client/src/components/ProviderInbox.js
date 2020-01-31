@@ -115,7 +115,7 @@ class ProviderInbox extends Component {
         return (
           <React.Fragment>
             <a
-              href={window.URL_INBOX_IMAP + "/user/" + user}
+              href={buildClientUrl(provider, user, payload)}
               className="d-flex align-items-center"
             >
               <span className="lf-icon-mail"></span>

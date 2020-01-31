@@ -235,6 +235,7 @@ class App extends Component {
               collapsed={sideBar.collapsed}
               sideBarToggle={this.toggleSideBar}
               casefile={lexon.idCaseFile}
+              bbdd={lexon.bbdd}
             />
             <div id="mainnav-app" />
 
@@ -426,7 +427,7 @@ class App extends Component {
     //setTimeout(function () { this.registerConnectorApp(); }, 2200);
     this.registerConnectorApp();
 
-    const { userId, idCaseFile } = this.props.lexon;
+    const { userId, idCaseFile, bbdd } = this.props.lexon;
     const { email } = this.props;
     if (userId !== null && email !== null) {
       const GUID = uuid();
@@ -443,6 +444,10 @@ class App extends Component {
       });
       if (idCaseFile !== null && idCaseFile !== undefined) {
         this.props.newMessage();
+        this.onSetSidebarOpenLexon(true);
+      }
+      else if (bbdd){
+        //this.props.newMessage();
         this.onSetSidebarOpenLexon(true);
       }
     } else {
