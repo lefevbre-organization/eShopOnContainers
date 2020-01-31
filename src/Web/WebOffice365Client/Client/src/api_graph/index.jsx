@@ -9,10 +9,8 @@ let userAgentApplication = null;
 export const getUserApplication = () => {
   if (userAgentApplication === null) {
 
-    let redirectUri = config.redirectUri;
-    if(window.location.hostname === "localhost") {
-      redirectUri = window.location.origin;
-    }
+    const redirectUri = window.location.origin
+
     userAgentApplication = new UserAgentApplication({
       auth: {
         clientId: config.appId,

@@ -13,6 +13,12 @@
     margin-left: 5px;
 }
 
+.right-buttons {
+    width: 100%;
+    text-align: right;
+    margin-right: -20px;
+}
+
 .with-side-bar {
     display: none !important;
 }
@@ -45,3 +51,7 @@
 // .msg-toolbar > div > div {
 //     width: 50px;
 // }
+
+.btn-group {
+    margin-right: 10px;
+}
