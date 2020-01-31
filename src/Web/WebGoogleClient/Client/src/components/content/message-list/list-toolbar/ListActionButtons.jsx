@@ -14,7 +14,6 @@ export class ListActionButtons extends PureComponent {
 
   getClickHandler(action) {
     return evt => {
-      debugger
       this.props.onClick(action);
     };
   }

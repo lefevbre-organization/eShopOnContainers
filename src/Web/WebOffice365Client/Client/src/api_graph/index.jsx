@@ -439,7 +439,6 @@ export const sendMessage = async ({ data, attachments }) => {
     return response;
   } catch (err) {
     console.log(err)
-    debugger
     throw err;
   }
 };
@@ -455,7 +454,6 @@ export const setMessageAsRead = async messageId => {
     return true;
   } catch (err) {
     console.log(err);
-    debugger
     throw err;
   }
 };
@@ -497,7 +495,6 @@ export const uploadFile = async(emailId, file, content) => {
 
   const data = content.split('base64,')[1];
 
-debugger
   const attachment = {
     "@odata.type": "#microsoft.graph.fileAttachment",
     name: file.name,
@@ -510,10 +507,8 @@ debugger
     .post(attachment);
 
     console.log(res);
-    debugger
   } catch(err) {
     console.log(err);
-    debugger;
   }
   
 }
