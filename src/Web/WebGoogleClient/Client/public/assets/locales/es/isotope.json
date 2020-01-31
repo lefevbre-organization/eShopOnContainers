@@ -41,6 +41,9 @@
     "move-to-trash": "Mover a la Papelera",
     "reply": "Responder"
   },
+  "message-footer": {
+    "messages": "Mensajes"
+  },
   "menu-user": {
     "user": "Usuario",
     "edit-basic-data": "EDITAR DATOS BÁSICOS",
@@ -57,6 +60,6 @@
   },
   "confirmation": {
     "cancel": "No",
-    "ok":"Si"
+    "ok": "Si"
   }
 }

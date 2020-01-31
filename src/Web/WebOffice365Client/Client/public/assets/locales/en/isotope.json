@@ -15,7 +15,7 @@
   "pager-buttons": {
     "previous-page": "Previous Page",
     "next-page": "Next Page"
-    },
+  },
   "synk-button": {
     "refresh": "Refresh",
     "refresh-tooltip": "Refresh"
@@ -41,6 +41,9 @@
     "move-to-trash": "Move to Trash",
     "reply": "Reply"
   },
+  "message-footer": {
+    "messages": "Messages"
+  },
   "menu-user": {
     "user": "User",
     "edit-basic-data": "EDIT BASIC DATA",
@@ -57,6 +60,6 @@
   },
   "confirmation": {
     "cancel": "No",
-    "ok":"Yes"
+    "ok": "Yes"
   }
 }

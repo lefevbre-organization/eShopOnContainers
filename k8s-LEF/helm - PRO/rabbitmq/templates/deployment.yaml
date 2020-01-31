@@ -1,0 +1,52 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ template "rabbitmq.fullname" . }}
+  labels:
+    app: {{ template "rabbitmq.name" . }}
+    chart: {{ template "rabbitmq.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "rabbitmq.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "rabbitmq.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      volumes:
+# Asociamos elefebvre-vol-rabbitmq-claim con volumen nuevo llamado rabbitmq-now-data
+        - name: rabbitmq-now-data
+          persistentVolumeClaim:
+            claimName: elefebvre-vol-rabbitmq-claim
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 5672
+              protocol: TCP
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+# Montamos rabbitmq-now-data en /var/lib/rabbitmq (donde rabbit guarda las colas por defecto)
+          volumeMounts:
+           - mountPath: /var/lib/rabbitmq
+             name: rabbitmq-now-data
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

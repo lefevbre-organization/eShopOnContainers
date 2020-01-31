@@ -19,6 +19,11 @@ spec:
         app: {{ template "nosql-data.name" . }}
         release: {{ .Release.Name }}
     spec:
+# Asociamos elefebvre-vol-mongo-claim con volumen nuevo llamado mongo-now-data
+      volumes:
+        - name: mongodb-now-data
+          persistentVolumeClaim:
+            claimName: elefebvre-vol-mongo-claim
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -29,6 +34,10 @@ spec:
               protocol: TCP
           resources:
 {{ toYaml .Values.resources | indent 12 }}
+# Montamos mongo-now-data en /data/db (donde mongo suele guardar la bbdd por defecto)
+          volumeMounts:
+           - mountPath: /data/db
+             name: mongodb-now-data
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}

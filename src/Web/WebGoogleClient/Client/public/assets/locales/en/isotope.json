@@ -41,6 +41,9 @@
     "move-to-trash": "Move to Trash",
     "reply": "Reply"
   },
+  "message-footer": {
+    "messages":  "Messages"
+  },
   "menu-user": {
     "user": "User",
     "edit-basic-data": "EDIT BASIC DATA",
