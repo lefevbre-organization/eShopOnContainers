@@ -70,6 +70,7 @@ namespace Lexon.MySql.Infrastructure.Services
             string uidMail = null,
             short? idEntityType = null,
             int? idEntity = null,
+            List<string> mailContacts = null,
             bool addTerminatorToToken = true)
         {
             var resultado = await _lexonRepository.GetUserAsync(idUser);
@@ -84,6 +85,7 @@ namespace Lexon.MySql.Infrastructure.Services
                 idMail= uidMail,
                 idEntityType= idEntityType,
                 idEntity = idEntity,
+                mailContacts = mailContacts,
                 roles = GetRolesOfUser(idUser)
             }).Result;
             resultado.data.Token += addTerminatorToToken ? "/" : "";
@@ -136,6 +138,7 @@ namespace Lexon.MySql.Infrastructure.Services
                 AddClaimToPayload(payload, clienteModel.idEntityType, nameof(clienteModel.idEntityType));
                 AddClaimToPayload(payload, clienteModel.idEntity, nameof(clienteModel.idEntity));
                 AddClaimToPayload(payload, clienteModel.roles, nameof(clienteModel.roles));
+                AddClaimToPayload(payload, clienteModel.mailContacts, nameof(clienteModel.mailContacts));
             }
         }
 

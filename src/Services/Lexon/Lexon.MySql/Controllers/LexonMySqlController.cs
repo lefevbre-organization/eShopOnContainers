@@ -41,35 +41,26 @@ namespace Lexon.MySql.Controllers
         /// <summary>
         /// Permite obtener los token necesarios para operar con los microservicios de envio de correo
         /// </summary>
-        /// <param name="idNavisionUser">entrada de usuario, probablemente cambiara directamente al id de lexon</param>
-        /// <param name="bbdd">cadena de conexión de la bbdd de la compañia</param>
-        /// <param name="provider">opcional, provedor de correo en caso de querer abrir un correo</param>
-        /// <param name="emailAccount">opcional, cuenta de correo desde la que se enviará el correo</param>
-        /// <param name="uidMail">opcional, uid del correo que se quiere abrir</param>
-        /// <param name="idEntityType">opcional, id del tipo d enetidad a relacionar</param>
-        /// <param name="idEntity">opcional, id de la entidad a relacionar</param>
+        /// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPut]
         [Route("token")]
         [ProducesResponseType(typeof(Result<JosUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<JosUser>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> TokenAsync(
-            string idNavisionUser = "E1621396"
-            , string bbdd = null // "lexon_admin_02"
-            , string provider = null
-            , string emailAccount = null
-            , string uidMail = null
-            , short? idEntityType = null
-            , int? idEntity = null
-            , bool addTerminatorToToken = true)
+            [FromBody] TokenModelView tokenRequest
+            , bool addTerminatorToToken = true
+            )
         {
-            if (string.IsNullOrEmpty(idNavisionUser))
+            if (string.IsNullOrEmpty(tokenRequest.idClienteNavision))
                 return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
-            var result = await _lexonService.GetUserAsync(idNavisionUser, bbdd, provider, emailAccount, uidMail, idEntityType, idEntity, addTerminatorToToken);
+            var result = await _lexonService.GetUserAsync(
+                tokenRequest.idClienteNavision, tokenRequest.bbdd,
+                tokenRequest.provider, tokenRequest.mailAccount, tokenRequest.idMail, tokenRequest.idEntityType, tokenRequest.idEntity,
+                tokenRequest.mailContacts, addTerminatorToToken);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
-
 
         [HttpGet]
         [Route("companies")]
@@ -155,7 +146,7 @@ namespace Lexon.MySql.Controllers
         {
             if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.bbdd) ||
                 string.IsNullOrEmpty(classification?.Provider) || string.IsNullOrEmpty(classification?.MailAccount) || string.IsNullOrEmpty(classification?.idMail) ||
-                classification?.idType == null||classification?.idType < 1 || classification?.idRelated < 1)
+                classification?.idType == null || classification?.idType < 1 || classification?.idRelated < 1)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated and bbdd to remove an actuation");
 
             var result = await _lexonService.RemoveRelationMailAsync(
@@ -186,9 +177,9 @@ namespace Lexon.MySql.Controllers
             , short? idType = null
             , string bbdd = "lexon_admin_02"
             , string idUser = "449"
-            , string idMail = "" )
+            , string idMail = "")
         {
-            idType = idType <= 0 ? null : idType; 
+            idType = idType <= 0 ? null : idType;
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || string.IsNullOrEmpty(idMail))
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idMail and bbdd to search the entities");
 
