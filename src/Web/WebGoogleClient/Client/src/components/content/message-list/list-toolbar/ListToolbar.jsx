@@ -81,7 +81,7 @@ export class MessageToolbar extends PureComponent {
   }
 
   getLabelMessagesSynk() {
-        this.props.loadLabelMessageSingle()
+    this.props.loadLabelMessageSingle()
 
   }
   navigateToNextPage() {
@@ -145,15 +145,17 @@ export class MessageToolbar extends PureComponent {
             </div>
           </div>
 
-          <Pager
-            nextToken={this.props.nextToken}
-            prevToken={this.props.prevToken}
-            navigateToPrevPage={this.navigateToPrevPage}
-            navigateToNextPage={this.navigateToNextPage}
-           />  
-           <Synkbutton
-                    getLabelMessagesSynk={this.getLabelMessagesSynk}
-           />   
+          <div className="right-buttons">
+            <Pager
+              nextToken={this.props.nextToken}
+              prevToken={this.props.prevToken}
+              navigateToPrevPage={this.navigateToPrevPage}
+              navigateToNextPage={this.navigateToNextPage}
+            />
+            <Synkbutton
+              getLabelMessagesSynk={this.getLabelMessagesSynk}
+            />
+          </div>
         </div>
       </div>
     );
