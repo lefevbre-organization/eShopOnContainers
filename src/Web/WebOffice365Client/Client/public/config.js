@@ -13,3 +13,5 @@ window.URL_MF_OUTLOOK = "http://localhost:3002/user";
 window.URL_MF_IMAP = "http://localhost:9000/user";
 window.URL_MF_LEXON = "http://localhost:3004/static/js/main.js";
 window.API_GATEWAY = "https://now-apigwlex.lefebvre.es";
+window.URL_LOGIN_REDIRECT_URL='http://localhost:3002'
+window.URL_LOGOUT_REDIRECT_URL=''
