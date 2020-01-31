@@ -17,6 +17,7 @@ import { Notification, Confirmation } from '../notification/';
 const Uppy = require("@uppy/core");
 const Tus = require("@uppy/tus");
 const MAX_TOTAL_ATTACHMENTS_SIZE = 34603008;
+const FORBIDDEN_EXTENSIONS = ["ade", "adp", "apk", "appx", "appxbundle", "bat", "cab", "chm", "cmd", "com", "cpl", "dll", "dmg", "exe", "hta", "ins", "isp", "iso", "jar", "js", "jse", "lib", "lnk", "mde", "msc", "msi", "msix", "msixbundle", "msp", "mst", "nsh", "pif", "ps1", "scr", "sct", "shb", "sys", "vb", "vbe", "vbs", "vxd", "wsc", "wsf", "wsh"];
 
 export class ComposeMessage extends PureComponent {
   constructor(props) {
@@ -62,6 +63,13 @@ export class ComposeMessage extends PureComponent {
       onBeforeFileAdded: (currentFile, files) => {
         let totalSize = currentFile.size;
 
+        // Check file extension
+        if(this.typeAllowed(currentFile.data) === false) {
+          this.showNotification(i18n.t("compose-message.forbidden-extension"));
+          return false;
+        }
+
+        // Check total files size
         for (var file in files) {
           if (Object.prototype.hasOwnProperty.call(files, file)) {
             totalSize += files[file].size;
@@ -91,6 +99,18 @@ export class ComposeMessage extends PureComponent {
         this.addFileToState({ file, base64: readerEvt.target.result });
       this.showAttachActions = true
     });
+  }
+
+  typeAllowed(file) {
+    let res = true;
+    const re = /(?:\.([^.]+))?$/;
+    const ext = re.exec(file.name)[1];
+
+    if(ext && FORBIDDEN_EXTENSIONS.find(f => f === ext )) {
+      res = false;
+    }
+
+    return res;
   }
 
   removeAttachment(file) {

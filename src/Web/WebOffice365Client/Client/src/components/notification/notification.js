@@ -36,7 +36,11 @@ export class Notification extends Component {
       <style jsx>{`
         h5 {
           color: #ffffff !important;
-          font-size: 20px !important;
+          font-size: 22px !important;
+        }
+
+        h5 span {
+          margin-right: 15px;
         }
 
         .modal-header .close:before {
