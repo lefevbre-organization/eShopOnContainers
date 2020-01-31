@@ -64,7 +64,7 @@ env:
       value: 'True'
       
 configValues: |
-  window.REACT_APP_ENVIRONMENT='PRODUCTION'
+  window.REACT_APP_ENVIRONMENT='PRE'
   window.API_ACCOUNTS='https://now-apigwacc.lefebvre.es'
   window.URL_INBOX_GOOGLE= 'https://now-webgoogle.lefebvre.es'
   window.URL_INBOX_OUTLOOK= 'https://now-webgraph.lefebvre.es'

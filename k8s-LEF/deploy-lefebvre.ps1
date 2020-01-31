@@ -1,7 +1,7 @@
 Param(
     [parameter(Mandatory=$false)][string]$registry=$null,
-    [parameter(Mandatory=$false)][string]$dockerUser="freyeslefebvre",
-    [parameter(Mandatory=$false)][string]$dockerPassword="NetEb9221",
+    [parameter(Mandatory=$false)][string]$dockerUser="avalverdelefebvre",
+    [parameter(Mandatory=$false)][string]$dockerPassword="Alberto1971.-",
     [parameter(Mandatory=$false)][string]$execPath,
     [parameter(Mandatory=$false)][string]$kubeconfigPath,
     [parameter(Mandatory=$false)][string]$configFile,
@@ -13,7 +13,7 @@ Param(
     [parameter(Mandatory=$false)][bool]$cleanDocker=$true,
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$true,
-    [parameter(Mandatory=$false)][bool]$pushImages=$false,
+    [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
     [parameter(Mandatory=$false)][string]$dockerOrg="elefebvreoncontainers"
 )

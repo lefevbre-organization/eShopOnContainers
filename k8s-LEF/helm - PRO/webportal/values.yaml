@@ -64,7 +64,7 @@ env:
       value: 'True'
       
 configValues: |
-  window.REACT_APP_ENVIRONMENT='PRODUCTION'
+  window.REACT_APP_ENVIRONMENT='PRO'
   window.API_ACCOUNTS='https://lexbox-apigwacc.lefebvre.es'
   window.URL_INBOX_GOOGLE= 'https://lexbox-webgoogle.lefebvre.es'
   window.URL_INBOX_OUTLOOK= 'https://lexbox-webgraph.lefebvre.es'
