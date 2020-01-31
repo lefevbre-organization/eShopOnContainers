@@ -23,7 +23,7 @@ class AccountUser extends Component {
         window.open(`${window.URL_MF_OUTLOOK}/OU0${userId}`, "_self");
         break;
 
-      default:           
+        default: 
           removeStateExLexon();
           window.location.reload();           
         break;

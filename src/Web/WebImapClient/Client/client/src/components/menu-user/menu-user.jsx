@@ -75,6 +75,7 @@ class MenuUser extends Component {
         method: "GET"
       })
         .then(() => {
+          this.routeLogout()
           const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
           window.open(urlRedirect, "_self");
         })
