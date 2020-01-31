@@ -7,6 +7,7 @@ import history from "../../routes/history";
 import { PROVIDER } from "../../constants";
 import { getUser } from '../../services/accounts';
 import { removeState } from "../../services/state";
+import * as base64 from 'base-64';
 
 class UserLexon extends Component {
   constructor(props) {
@@ -23,11 +24,12 @@ class UserLexon extends Component {
 
   componentDidMount() {
     const user = this.props.match.params.idUser;
-    const account = this.props.match.params.account;
+    const account64 = this.props.match.params.account;
 
-    if(account) {
+
+    if(account64) {
       // Get user account
-      alert(account)  
+      const account = base64.decode(account64);
     }
 
     this.props.setUser(user);
