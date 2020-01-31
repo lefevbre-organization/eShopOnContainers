@@ -49,6 +49,11 @@ class MessageHeader extends Component {
 
   render() {
     const { headers } = this.props.emailHeaderMessageResult;
+    let from = { name: "", address: ""};
+    if(headers && headers.from && headers.from.emailAddress) {
+      from.name = headers.from.emailAddress.name;
+      from.address = headers.from.emailAddress.address;
+    }
 
     return (
       <div className="messageViewer">
@@ -64,8 +69,8 @@ class MessageHeader extends Component {
           </h1>
           <div className="fromDate">
             <div className="from">
-              <span className="fromName">{headers !== null ? headers.from.emailAddress.name : null}</span>
-              <span className="email">{headers !== null ? headers.from.emailAddress.address : null}</span>
+              <span className="fromName">{from.name}</span>
+              <span className="email">{from.address}</span>
             </div>
             <div className="date">
               {new Date((headers !== null ? headers.sentDateTime : null)).toLocaleString(

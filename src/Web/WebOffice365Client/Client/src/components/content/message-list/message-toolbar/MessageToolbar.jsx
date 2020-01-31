@@ -34,7 +34,7 @@ export class MessageToolbar extends PureComponent {
     let replyTo, cc, subject;
     subject = messageHeaders.subject;
 
-    replyTo = messageHeaders.from.emailAddress.address;
+    replyTo = messageHeaders.from?messageHeaders.from.emailAddress.address:"";
 
     for (let i = 0; i < messageHeaders.ccRecipients.length; i++) {
       cc = messageHeaders.ccRecipients[i].emailAddress.address;
@@ -48,13 +48,13 @@ export class MessageToolbar extends PureComponent {
         parseInt(this.props.messageResult.result.internalDate)
       );
     }
-    const replyHeader = `<p>On ${parsedDate.format(
+    const replyHeader = nameEmail?`<p>On ${parsedDate.format(
       "MMMM Do YYYY, h:mm:ss a"
-    )} < ${nameEmail.email} > wrote:</p>`;
+    )} < ${nameEmail.email} > wrote:</p>`:"";
 
     const composeProps = {
       subject: `Re: ${subject}`,
-      to: nameEmail.email,
+      to: nameEmail?nameEmail.email:"",
       content: `<p>&nbsp;</p>
           <p>&nbsp;</p>
           <p>&nbsp;</p>

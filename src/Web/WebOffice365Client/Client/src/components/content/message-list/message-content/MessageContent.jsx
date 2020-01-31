@@ -163,20 +163,22 @@ export class MessageContent extends Component {
             var Divider = addDivDivider();
             iframe.contentDocument.body.appendChild(Divider);
             for (var i = 0; i < attach.length; i++) {
-              let dataBase64Rep = attach[i].contentBytes
-                .replace(/-/g, "+")
-                .replace(/_/g, "/");
-              let urlBlob = b64toBlob(
-                dataBase64Rep,
-                attach[i].contentType,
-                attach[i].size
-              );
-              //console.log(urlBlob);
-              var blobUrl = URL.createObjectURL(urlBlob);
-              var Attachment = addAttachmentElement(blobUrl, attach[i].name);
-              var AttachmentDiv = addAttachmentContainer(attach[i].contentType);
-              AttachmentDiv.appendChild(Attachment);
-              iframe.contentDocument.body.appendChild(AttachmentDiv);
+              if(attach[i].contentBytes) {
+                let dataBase64Rep = attach[i].contentBytes
+                  .replace(/-/g, "+")
+                  .replace(/_/g, "/");
+                let urlBlob = b64toBlob(
+                  dataBase64Rep,
+                  attach[i].contentType,
+                  attach[i].size
+                );
+                //console.log(urlBlob);
+                var blobUrl = URL.createObjectURL(urlBlob);
+                var Attachment = addAttachmentElement(blobUrl, attach[i].name);
+                var AttachmentDiv = addAttachmentContainer(attach[i].contentType);
+                AttachmentDiv.appendChild(Attachment);
+                iframe.contentDocument.body.appendChild(AttachmentDiv);
+              }
             }
           }
         }
