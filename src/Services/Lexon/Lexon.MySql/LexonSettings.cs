@@ -22,6 +22,7 @@
         public string SearchRelations { get; set; }
         public string AddRelation { get; set; }
         public string RemoveRelation { get; set; }
+        public string AddContactRelations { get; set; }
 
     }
 }

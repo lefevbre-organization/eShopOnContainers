@@ -138,6 +138,23 @@ namespace Lexon.MySql.Controllers
         }
 
         [HttpPost]
+        [Route("classifications/contacts/add")]
+        [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(int), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddRelationContactsMailAsync([FromBody]ClassificationContactsView classification)
+        {
+            if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.bbdd) ||
+                string.IsNullOrEmpty(classification?.mail.Provider) || string.IsNullOrEmpty(classification?.mail.MailAccount) || string.IsNullOrEmpty(classification?.mail.Uid) ||
+                classification.ContactList == null || classification.ContactList.GetLength(0) > 0)
+                return (IActionResult)BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated, bbdd and some contacts to add in a actuation");
+
+            var result = await _lexonService.AddRelationContactsMailAsync(classification.bbdd, classification.idUser, classification.mail, classification.ContactList);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpPost]
         [Route("classifications/delete")]
         [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(int), (int)HttpStatusCode.BadRequest)]

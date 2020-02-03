@@ -28,9 +28,19 @@ namespace Lexon.MySql.Infrastructure.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+        #region Relations
+
         public async Task<Result<int>> AddRelationMailAsync(short idType, string bbdd, string idUser, MailInfo[] listaMails, long idRelated)
         {
             return await _lexonRepository.AddRelationMailAsync(idType, bbdd, idUser, listaMails, idRelated);
+        }
+
+        public async Task<Result<int>> AddRelationContactsMailAsync(string bbdd,
+                                                                    string idUser,
+                                                                    MailInfo mailInfo,
+                                                                    string[] contactList)
+        {
+            return await _lexonRepository.AddRelationContactsMailAsync(bbdd, idUser, mailInfo, contactList);
         }
 
         public async Task<Result<int>> RemoveRelationMailAsync(short idType, string bbdd, string idUser, string provider, string mailAccount, string uidMail, long idRelated)
@@ -38,10 +48,14 @@ namespace Lexon.MySql.Infrastructure.Services
             return await _lexonRepository.RemoveRelationMailAsync(idType, bbdd, idUser, provider, mailAccount, uidMail, idRelated);
         }
 
-        public async Task<Result<JosUserCompanies>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser)
+        public async Task<Result<JosRelationsList>> GetRelationsAsync(int pageSize, int pageIndex, short? idType, string bbdd, string idUser, string idMail)
         {
-            return await _lexonRepository.GetCompaniesListAsync(pageSize, pageIndex, idUser);
+            return await _lexonRepository.SearchRelationsAsync(pageSize, pageIndex, idType, bbdd, idUser, idMail);
         }
+
+        #endregion Relations
+
+        #region Entities
 
         public async Task<Result<JosEntityList>> GetEntitiesAsync(int pageSize, int pageIndex, short? idType, string bbdd, string idUser, string search, long? idFilter)
         {
@@ -52,6 +66,10 @@ namespace Lexon.MySql.Infrastructure.Services
         {
             return await _lexonRepository.GetMasterEntitiesAsync();
         }
+
+        #endregion Entities
+
+        #region User and tokens
 
         /// <summary>
         /// Obtener datos de usuario comprobando si se tiene acceso
@@ -77,20 +95,19 @@ namespace Lexon.MySql.Infrastructure.Services
             resultado.data.Token = BuildTokenWithPayloadAsync(new TokenModel
             {
                 idClienteNavision = idUser,
-                name= resultado?.data?.Name,
-                idUserApp= resultado?.data?.IdUser,
+                name = resultado?.data?.Name,
+                idUserApp = resultado?.data?.IdUser,
                 bbdd = bbdd,
                 provider = provider,
                 mailAccount = mailAccount,
-                idMail= uidMail,
-                idEntityType= idEntityType,
+                idMail = uidMail,
+                idEntityType = idEntityType,
                 idEntity = idEntity,
                 mailContacts = mailContacts,
                 roles = GetRolesOfUser(idUser)
             }).Result;
             resultado.data.Token += addTerminatorToToken ? "/" : "";
             return resultado;
-
         }
 
         /// <summary>
@@ -100,7 +117,6 @@ namespace Lexon.MySql.Infrastructure.Services
         /// <returns></returns>
         public async Task<string> BuildTokenWithPayloadAsync(TokenModel token)
         {
-
             var accion = await Task.Run(() =>
             {
                 _logger.LogInformation("START --> {0} con tiempo {1} y caducidad token {2}", nameof(BuildTokenWithPayloadAsync), DateTime.Now, DateTime.Now.AddSeconds(_settings.Value.TokenCaducity));
@@ -112,7 +128,6 @@ namespace Lexon.MySql.Infrastructure.Services
 
                 var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_settings.Value.TokenKey));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
 
                 var jwtToken = new JwtSecurityToken(new JwtHeader(creds), payload);
                 return new JwtSecurityTokenHandler().WriteToken(jwtToken);
@@ -127,7 +142,7 @@ namespace Lexon.MySql.Infrastructure.Services
         {
             if (modelo is TokenModel clienteModel)
             {
-               //var roleOptions = GetRolesOfUser(clienteModel.idClienteNavision);
+                //var roleOptions = GetRolesOfUser(clienteModel.idClienteNavision);
                 AddClaimToPayload(payload, clienteModel.idClienteNavision, nameof(clienteModel.idClienteNavision));
                 AddClaimToPayload(payload, clienteModel.idUserApp, nameof(clienteModel.idUserApp));
                 AddClaimToPayload(payload, clienteModel.name, nameof(clienteModel.name));
@@ -144,7 +159,7 @@ namespace Lexon.MySql.Infrastructure.Services
 
         private static List<string> GetRolesOfUser(string idClienteNavision)
         {
-            //TODO: connect to external service to obtain de data 
+            //TODO: connect to external service to obtain de data
             return new List<string>() { "lexonconnector", "centinelaconnector" };
         }
 
@@ -156,7 +171,6 @@ namespace Lexon.MySql.Infrastructure.Services
             payload.Add(nombreClaim, valorClaim);
         }
 
-
         private void AddClaimToPayload(JwtPayload payload, object valorClaim, string nombreClaim)
         {
             if (valorClaim == null) return;
@@ -165,9 +179,12 @@ namespace Lexon.MySql.Infrastructure.Services
             payload.Add(nombreClaim, valorClaim);
         }
 
-        public async Task<Result<JosRelationsList>> GetRelationsAsync(int pageSize, int pageIndex, short? idType, string bbdd, string idUser, string idMail)
+        #endregion User and tokens
+
+        public async Task<Result<JosUserCompanies>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser)
         {
-            return await _lexonRepository.SearchRelationsAsync(pageSize, pageIndex, idType, bbdd, idUser, idMail);
+            return await _lexonRepository.GetCompaniesListAsync(pageSize, pageIndex, idUser);
         }
+
     }
 }
