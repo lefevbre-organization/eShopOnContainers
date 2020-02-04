@@ -50,6 +50,7 @@ namespace Lexon.MySql.Infrastructure.Services
                                            string provider = null,
                                            string mailAccount = null,
                                            string uidMail = null,
+                                           string folder = null,
                                            short? idEntityType = null,
                                            int? idEntity = null,
                                            List<string> mailContacts = null,

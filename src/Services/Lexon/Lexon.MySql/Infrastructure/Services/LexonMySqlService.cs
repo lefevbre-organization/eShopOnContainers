@@ -92,6 +92,7 @@ namespace Lexon.MySql.Infrastructure.Services
             string provider = null,
             string mailAccount = null,
             string uidMail = null,
+            string folder = null,
             short? idEntityType = null,
             int? idEntity = null,
             List<string> mailContacts = null,
@@ -106,6 +107,7 @@ namespace Lexon.MySql.Infrastructure.Services
                 bbdd = bbdd,
                 provider = provider,
                 mailAccount = mailAccount,
+                folder = folder,
                 idMail = uidMail,
                 idEntityType = idEntityType,
                 idEntity = idEntity,
@@ -155,6 +157,7 @@ namespace Lexon.MySql.Infrastructure.Services
                 AddClaimToPayload(payload, clienteModel.bbdd, nameof(clienteModel.bbdd));
                 AddClaimToPayload(payload, clienteModel.provider, nameof(clienteModel.provider));
                 AddClaimToPayload(payload, clienteModel.mailAccount, nameof(clienteModel.mailAccount));
+                AddClaimToPayload(payload, clienteModel.folder, nameof(clienteModel.folder));
                 AddClaimToPayload(payload, clienteModel.idMail, nameof(clienteModel.idMail));
                 AddClaimToPayload(payload, clienteModel.idEntityType, nameof(clienteModel.idEntityType));
                 AddClaimToPayload(payload, clienteModel.idEntity, nameof(clienteModel.idEntity));

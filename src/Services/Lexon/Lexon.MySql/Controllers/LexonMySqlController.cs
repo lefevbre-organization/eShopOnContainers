@@ -58,7 +58,8 @@ namespace Lexon.MySql.Controllers
 
             var result = await _lexonService.GetUserAsync(
                 tokenRequest.idClienteNavision, tokenRequest.bbdd,
-                tokenRequest.provider, tokenRequest.mailAccount, tokenRequest.idMail, tokenRequest.idEntityType, tokenRequest.idEntity,
+                tokenRequest.provider, tokenRequest.mailAccount, tokenRequest.idMail, tokenRequest.folder, 
+                tokenRequest.idEntityType, tokenRequest.idEntity,
                 tokenRequest.mailContacts, addTerminatorToToken);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
