@@ -1,4 +1,4 @@
-﻿namespace Lexon.API.Model
+﻿namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
     public class JosActuation
     {
@@ -8,7 +8,6 @@
         public int Actuacion { get; set; }
         public int IdRelacion { get; set; }
         public short TipoRelacion { get; set; }
-        public string Interviniente { get; set; }
 
     }
 }

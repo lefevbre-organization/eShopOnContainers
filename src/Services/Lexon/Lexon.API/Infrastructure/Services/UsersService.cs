@@ -2,6 +2,7 @@
 using Lexon.API.Infrastructure.Repositories;
 using Lexon.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -89,7 +90,6 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-
         private async Task AddClassificationToListMongoAsync(string idUser, string bbdd, MailInfo[] listaMails, long idRelated, short? idClassificationType, Result<long> result)
         {
             try
@@ -160,7 +160,7 @@ namespace Lexon.Infrastructure.Services
                     date = entity.Fecha,
                     entityIdType = entity.TipoRelacion,
                     entityType = Enum.GetName(typeof(LexonAdjunctionType), entity.TipoRelacion) //TODO: poner cambio de dioma
-            });
+                });
                 TraceLog(parameters: new string[] { $"add Name {entity.Nombre}", $"desc {entity.Asunto}", $"tipo Mail", $"idrelated {entity.IdRelacion}", $"idmail {idMail}", $"date {entity.Fecha}", $"tipo {entity.TipoRelacion}" });
             }
 
@@ -323,9 +323,8 @@ namespace Lexon.Infrastructure.Services
                     if (response.IsSuccessStatusCode)
                     {
                         var entityList = await response.Content.ReadAsAsync<Result<JosEntityList>>();
-                        if( GetEntitiesListMySqlAsync(ref result, entityList, idType))
+                        if (GetEntitiesListMySqlAsync(ref result, entityList, idType))
                             return result;
-
                     }
                     else
                     {
@@ -351,13 +350,15 @@ namespace Lexon.Infrastructure.Services
 
             foreach (var entity in (entityList.data?.Entities))
             {
-                result.data.Add(new LexonEntityBase() { 
+                result.data.Add(new LexonEntityBase()
+                {
                     name = entity.Code,
                     description = entity.Description,
                     id = entity.IdRelated,
-                    idType = idType ?? 1 ,
+                    idType = idType ?? 1,
                     entityType = Enum.GetName(typeof(LexonAdjunctionType), idType ?? 1),
-                    intervening = entity.Intervening });
+                    intervening = entity.Intervening
+                });
                 TraceLog(parameters: new string[] { $"code {entity.Code}" });
             }
 

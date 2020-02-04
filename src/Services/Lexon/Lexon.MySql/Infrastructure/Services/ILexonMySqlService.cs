@@ -1,4 +1,5 @@
 ﻿using Lexon.MySql.Model;
+using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -26,7 +27,7 @@ namespace Lexon.MySql.Infrastructure.Services
             string uidMail,
             long idRelated);
 
-        Task<Result<int>> AddRelationContactsMailAsync( string bbdd,
+        Task<Result<int>> AddRelationContactsMailAsync(string bbdd,
                                                         string idUser,
                                                         MailInfo mailInfo,
                                                         string[] contactList);

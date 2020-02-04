@@ -2,6 +2,7 @@
 using Lexon.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.Extensions.Options;
 using System;
@@ -23,7 +24,7 @@ namespace Lexon.API.Controllers
         public LexonController(
             IUsersService usersService
             , IOptionsSnapshot<LexonSettings> lexonSettings
-            , IEventBus eventBus )
+            , IEventBus eventBus)
         {
             _usersService = usersService ?? throw new ArgumentNullException(nameof(usersService));
             _settings = lexonSettings.Value;
@@ -74,16 +75,15 @@ namespace Lexon.API.Controllers
 
             var result = await _usersService.GetClassificationsFromMailAsync(
                 classificationSearch.pageSize, classificationSearch.pageIndex, classificationSearch.idUser, classificationSearch.bbdd, classificationSearch.idMail, classificationSearch.idType);
-            
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
 
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpPut]
         [Route("classifications/add")]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddClassificationAsync([FromBody]ClassificationAddView classification)  
+        public async Task<IActionResult> AddClassificationAsync([FromBody]ClassificationAddView classification)
         {
             if (string.IsNullOrEmpty(classification?.idUser) || (classification?.listaMails?.Count() <= 0) ||
                 string.IsNullOrEmpty(classification?.bbdd) || classification?.idRelated <= 0 || classification?.idType <= 0)
@@ -91,7 +91,7 @@ namespace Lexon.API.Controllers
 
             var result = await _usersService.AddClassificationToListAsync(
                 classification.idUser, classification.bbdd, classification.listaMails, classification.idRelated, classification.idType);
-            
+
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
@@ -101,7 +101,7 @@ namespace Lexon.API.Controllers
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RemoveClassificationAsync([FromBody]ClassificationRemoveView classification)
         {
-            if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.idMail) || 
+            if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.idMail) ||
                 string.IsNullOrEmpty(classification?.bbdd) || classification?.idRelated <= 0 || classification?.idType <= 0)
                 return BadRequest("values invalid. Must be a valid user, bbdd, email, related and type for remove the classification");
 
@@ -109,7 +109,7 @@ namespace Lexon.API.Controllers
                 classification.idUser, classification.bbdd,
                 classification.Provider, classification.MailAccount, classification.idMail,
                 classification.idRelated, classification.idType);
-            
+
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
@@ -142,7 +142,7 @@ namespace Lexon.API.Controllers
         [Route("entities")]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityBase>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>),(int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> EntitiesAsync(
             [FromBody] EntitySearch entitySearch
@@ -170,6 +170,5 @@ namespace Lexon.API.Controllers
 
             return (resultPaginatedFinal.errors.Count > 0) ? (IActionResult)BadRequest(resultPaginatedFinal) : Ok(resultPaginatedFinal);
         }
-
     }
 }

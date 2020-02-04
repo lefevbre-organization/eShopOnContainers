@@ -3,6 +3,7 @@ using Lexon.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
+using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
@@ -20,6 +21,7 @@ namespace Lexon.API.Infrastructure.Repositories
     {
         private readonly LexonContext _context;
         private readonly IOptions<LexonSettings> _settings;
+
         public UsersRepository(
               IOptions<LexonSettings> settings
             , IEventBus eventBus
@@ -29,12 +31,11 @@ namespace Lexon.API.Infrastructure.Repositories
         {
             _settings = settings;
             _context = new LexonContext(settings, eventBus);
-
         }
 
         public async Task<Result<List<LexonCompany>>> GetCompaniesListAsync(string idUser)
         {
-            var result = new Result<List<LexonCompany>> (new List<LexonCompany>());
+            var result = new Result<List<LexonCompany>>(new List<LexonCompany>());
 
             var filter = GetFilterUser(idUser);
 
@@ -104,7 +105,7 @@ namespace Lexon.API.Infrastructure.Repositories
         public async Task<Result<long>> AddFileToListAsync(string idUser, string bbdd, long idFile, string nameFile, string descriptionFile = "")
         {
             long a = 0;
-            var result = new Result<long> (a);
+            var result = new Result<long>(a);
             var cancel = default(CancellationToken);
             using (var session = await _context.StartSession(cancel))
             {
@@ -134,8 +135,8 @@ namespace Lexon.API.Infrastructure.Repositories
 
                     var resultMongo = await _context.LexonUsers.UpdateOneAsync(filter, update);
 
-                   // var eventAssoc = new AddFileToUserIntegrationEvent(idUser, bbdd, idFile, nameFile, descriptionFile);
-                   // await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
+                    // var eventAssoc = new AddFileToUserIntegrationEvent(idUser, bbdd, idFile, nameFile, descriptionFile);
+                    // await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
 
                     await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
 
@@ -155,7 +156,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
         public async Task<Result<LexonUser>> GetAsync(string idUser)
         {
-            var result = new Result<LexonUser> (new LexonUser() );
+            var result = new Result<LexonUser>(new LexonUser());
             var filter = GetFilterUser(idUser);
             try
             {
@@ -244,11 +245,11 @@ namespace Lexon.API.Infrastructure.Repositories
             return result;
         }
 
-      //  public async Task<Result<long>> AddClassificationToListAsync(string idUser, string bbdd, string[] listaMails, long idRelated, short? idClassificationType = 1)
+        //  public async Task<Result<long>> AddClassificationToListAsync(string idUser, string bbdd, string[] listaMails, long idRelated, short? idClassificationType = 1)
         public async Task<Result<long>> AddClassificationToListAsync(string idUser, string bbdd, MailInfo[] listaMails, long idRelated, short? idClassificationType = 1)
         {
             long a = 0;
-            var result = new Result<long> (a);
+            var result = new Result<long>(a);
             var cancel = default(CancellationToken);
             TraceLog(parameters: new string[] { $"idUser:{idUser}", $"bbdd:{bbdd}", $"idMail:{listaMails}", $"idRelated:{idRelated}", $"idClassificationType:{idClassificationType}" });
 
@@ -283,7 +284,7 @@ namespace Lexon.API.Infrastructure.Repositories
             {
                 await _context.LexonUsersTransaction(session).UpdateOneAsync(
                     GetFilterUser(idUser),
-                    Builders<LexonUser>.Update.AddToSet($"companies.list.$[i].{typeCollection}.list.$[j].mails",mailData),
+                    Builders<LexonUser>.Update.AddToSet($"companies.list.$[i].{typeCollection}.list.$[j].mails", mailData),
                     new UpdateOptions
                     {
                         ArrayFilters = new List<ArrayFilterDefinition>
@@ -297,14 +298,12 @@ namespace Lexon.API.Infrastructure.Repositories
                 var eventAssoc = new AssociateMailToEntityIntegrationEvent(idAppNav, idUser, typeCollection, idRelated, mailData.Provider, mailData.MailAccount, mailData.Uid, mailData.Subject, mailData.Date);
                 await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
             }
-
         }
 
         private async Task RemoveAndPublish(long idAppNav, string idUser, string bbdd, string provider, string emailAccount, string uidMail, long idRelated, string typeCollection, IClientSessionHandle session)
         {
             TraceLog(parameters: new string[] { $"typeCollection:{typeCollection}" });
 
-            
             //TODO: corregir el eliminado de datos para que busque la correcta
             await _context.LexonUsersTransaction(session).UpdateOneAsync(
                 GetFilterUser(idUser),
@@ -376,7 +375,6 @@ namespace Lexon.API.Infrastructure.Repositories
                     result.data = resultMongo.ModifiedCount;
                 else
                     TraceOutputMessage(result.errors, "Error in Update MongoDB", 1001);
-
             }
             catch (Exception ex)
             {

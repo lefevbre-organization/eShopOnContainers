@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Lexon.API.Model
+namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
     public class Result<T>
     {
@@ -9,12 +9,12 @@ namespace Lexon.API.Model
             errors = new List<ErrorInfo>();
         }
 
-        public Result(T t):this()
+        public Result(T t) : this()
         {
             data = t;
         }
 
-        public Result(T t, List<ErrorInfo> errores):this(t)
+        public Result(T t, List<ErrorInfo> errores) : this(t)
         {
             errors = errores;
         }

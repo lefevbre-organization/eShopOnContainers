@@ -1,4 +1,5 @@
 ﻿using Lexon.MySql.Model;
+using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
@@ -172,7 +173,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                                 while (reader.Read()) { listaResultados = JsonConvert.DeserializeObject<JosEntityList>(reader.GetValue(0).ToString(), jsonSerializerSettings); }
                         }
                     }
-                    result.data = listaResultados?.Entities?.Length == 1 ? listaResultados?.Entities[0]: null;
+                    result.data = listaResultados?.Entities?.Length == 1 ? listaResultados?.Entities[0] : null;
                 }
                 catch (Exception ex)
                 {
@@ -497,6 +498,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
             var comma = withComma ? ", " : "";
             return !string.IsNullOrEmpty(value) ? $"{comma}\"{name}\":\"{value}\"" : string.Empty;
         }
+
         #endregion Common
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Lexon.API.Model;
+using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,6 +8,7 @@ namespace Lexon.Infrastructure.Services
     public interface IUsersService
     {
         Task<Result<List<LexonUser>>> GetListUsersAsync(int pageSize, int pageIndex, string idUser);
+
         Task<Result<LexonUser>> GetUserAsync(string idUser);
 
         Task<Result<List<LexonCompany>>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser);
@@ -19,7 +21,7 @@ namespace Lexon.Infrastructure.Services
 
         Task<Result<List<LexonEntityType>>> GetClassificationMasterListAsync();
 
-     //   Task<Result<long>> AddClassificationToListAsync(string idUser, string bbdd, string[] listaMails, long idRelated, short? idType = 1);
+        //   Task<Result<long>> AddClassificationToListAsync(string idUser, string bbdd, string[] listaMails, long idRelated, short? idType = 1);
         Task<Result<long>> AddClassificationToListAsync(string idUser, string bbdd, MailInfo[] listaMails, long idRelated, short? idType = 1);
 
         Task<Result<long>> RemoveClassificationFromListAsync(string idUser, string provider, string mailAccount, string uidMail, string bbdd, long idRelated, short? idType = 1);

@@ -1,5 +1,6 @@
 ﻿using Lexon.MySql.Model;
 using System.Threading.Tasks;
+using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 
 namespace Lexon.MySql.Infrastructure.Repositories
 {

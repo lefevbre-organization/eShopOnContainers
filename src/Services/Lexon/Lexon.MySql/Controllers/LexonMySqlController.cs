@@ -1,6 +1,7 @@
 ﻿using Lexon.MySql.Infrastructure.Services;
 using Lexon.MySql.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
 using System;
 using System.Net;
@@ -121,7 +122,6 @@ namespace Lexon.MySql.Controllers
             var result = await _lexonService.GetEntitiesAsync(pageSize, pageIndex, idType, bbdd, idUser, search, idFilter);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
-
 
         /// <summary>
         /// Search entities

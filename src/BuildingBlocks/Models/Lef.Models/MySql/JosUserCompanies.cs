@@ -1,5 +1,5 @@
 ﻿
-namespace Lexon.API.Model
+namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
     public class JosUserCompanies
     {
