@@ -122,6 +122,33 @@ namespace Lexon.MySql.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+
+        /// <summary>
+        /// Search entities
+        /// </summary>
+        /// <param name="bbdd">the string conection of the user</param>
+        /// <param name="idUser">the id of the user</param>
+        /// <param name="idType">the code of type of entity to search </param>
+        /// <param name="idEntity">the id of the entity</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("entities/getbyid")]
+        [ProducesResponseType(typeof(Result<JosEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<JosEntity>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> EntityByIdAsync(
+             [FromQuery] string bbdd = "lexon_admin_02"
+            , [FromQuery] string idUser = "449"
+            , [FromQuery] short idType = 1
+            , [FromQuery] long idEntity = 0)
+        {
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || idType <= 0 || idEntity <= 0)
+                return (IActionResult)BadRequest("values invalid. Must be a valid user, bbdd, idType and idEntity to get de Entity");
+
+            var result = await _lexonService.GetEntityAsync(bbdd, idUser, idType, idEntity);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
         [HttpPost]
         [Route("classifications/add")]
         [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]

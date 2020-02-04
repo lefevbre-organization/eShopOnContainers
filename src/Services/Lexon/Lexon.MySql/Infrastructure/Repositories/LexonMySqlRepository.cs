@@ -102,6 +102,8 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return result;
         }
 
+        #region Entities
+
         public async Task<Result<JosEntityList>> SearchEntitiesAsync(int pageSize, int pageIndex, short? idType, string bbdd, string idUser, string search, long? idFilter)
         {
             var result = new Result<JosEntityList>(new JosEntityList());
@@ -132,6 +134,45 @@ namespace Lexon.MySql.Infrastructure.Repositories
                                 while (reader.Read()) { result.data = JsonConvert.DeserializeObject<JosEntityList>(reader.GetValue(0).ToString(), jsonSerializerSettings); }
                         }
                     }
+                }
+                catch (Exception ex)
+                {
+                    TraceMessage(result.errors, ex);
+                }
+            }
+
+            return result;
+        }
+
+        public async Task<Result<JosEntity>> GetEntityAsync(string bbdd, string idUser, short idType, long idEntity)
+        {
+            var result = new Result<JosEntity>(new JosEntity());
+            string filtro = GiveMeEntityFilter(bbdd, idUser, idType, idEntity);
+            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.SearchEntities}", $"P_FILTER:{filtro}", $"P_UC:{idUser}" });
+
+            var jsonSerializerSettings = new JsonSerializerSettings();
+            jsonSerializerSettings.MissingMemberHandling = MissingMemberHandling.Ignore;
+
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    var listaResultados = new JosEntityList();
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetEntity, conn))
+                    {
+                        command.Parameters.Add(new MySqlParameter("P_FILTER", MySqlDbType.String) { Value = filtro });
+                        command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = idUser });
+                        command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
+                        command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
+                        command.CommandType = CommandType.StoredProcedure;
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            if (EvaluateErrorCommand(result.errors, command) == 0)
+                                while (reader.Read()) { listaResultados = JsonConvert.DeserializeObject<JosEntityList>(reader.GetValue(0).ToString(), jsonSerializerSettings); }
+                        }
+                    }
+                    result.data = listaResultados?.Entities?.Length == 1 ? listaResultados?.Entities[0]: null;
                 }
                 catch (Exception ex)
                 {
@@ -180,6 +221,8 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
             return result;
         }
+
+        #endregion Entities
 
         #region Relations
 
@@ -356,7 +399,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
         private string GetContactList(string name, string[] list, bool withComma = true)
         {
             var comma = withComma ? ", " : "";
-            return list != null ? $"{comma}\"{name}\":{JsonConvert.SerializeObject(list)}": string.Empty;
+            return list != null ? $"{comma}\"{name}\":{JsonConvert.SerializeObject(list)}" : string.Empty;
         }
 
         private string GiveMeRelationMultipleFilter(string bbdd, string idUser, MailInfo[] listaMails, short? idType, long? idRelated)
@@ -400,7 +443,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
         {
             return $"{{ " +
                     GetUserFilter(bbdd, idUser) +
-                    GetShortFilter("IdEntityType", idType) +
+                    GetShortFilter("IdActionRelationType", idType) +
                     GetTextFilter("Uid", idMail) +
                     $" }}";
         }
@@ -412,6 +455,15 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     GetShortFilter("IdEntityType", idType) +
                     GetTextFilter("Description", search) +
                     GetEntityFilter(idType, idFilter) +
+                    $" }}";
+        }
+
+        private string GiveMeEntityFilter(string bbdd, string idUser, short idType, long idEntity)
+        {
+            return $"{{ " +
+                    GetUserFilter(bbdd, idUser) +
+                    GetShortFilter("IdEntityType", idType) +
+                    GetLongFilter("IdRelation", idEntity) +
                     $" }}";
         }
 
@@ -437,7 +489,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
         {
             var comma = withComma ? ", " : "";
             var paramString = param == null ? "null" : param.ToString();
-            return param != null ? $"{comma}\"{name}\":{paramString}" : string.Empty;
+            return $"{comma}\"{name}\":{paramString}";
         }
 
         private string GetTextFilter(string name, string value, bool withComma = true)
@@ -445,7 +497,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
             var comma = withComma ? ", " : "";
             return !string.IsNullOrEmpty(value) ? $"{comma}\"{name}\":\"{value}\"" : string.Empty;
         }
-
         #endregion Common
     }
 }

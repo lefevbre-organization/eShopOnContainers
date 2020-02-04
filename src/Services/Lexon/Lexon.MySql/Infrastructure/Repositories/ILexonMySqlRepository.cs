@@ -44,5 +44,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
                                                         string idUser,
                                                         MailInfo mailInfo,
                                                         string[] contactList);
+        Task<Result<JosEntity>> GetEntityAsync(string bbdd, string idUser, short idType, long idEntity);
     }
 }

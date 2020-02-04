@@ -53,5 +53,7 @@ namespace Lexon.MySql.Infrastructure.Services
                                            int? idEntity = null,
                                            List<string> mailContacts = null,
                                            bool addTerminatorToToken = true);
+
+        Task<Result<JosEntity>> GetEntityAsync(string bbdd, string idUser, short idType, long idEntity);
     }
 }

@@ -62,6 +62,11 @@ namespace Lexon.MySql.Infrastructure.Services
             return await _lexonRepository.SearchEntitiesAsync(pageSize, pageIndex, idType, bbdd, idUser, search, idFilter);
         }
 
+        public async Task<Result<JosEntity>> GetEntityAsync(string bbdd, string idUser, short idType, long idEntity)
+        {
+            return await _lexonRepository.GetEntityAsync(bbdd, idUser, idType, idEntity);
+        }
+
         public async Task<Result<JosEntityTypeList>> GetMasterEntitiesAsync()
         {
             return await _lexonRepository.GetMasterEntitiesAsync();
@@ -185,6 +190,5 @@ namespace Lexon.MySql.Infrastructure.Services
         {
             return await _lexonRepository.GetCompaniesListAsync(pageSize, pageIndex, idUser);
         }
-
     }
 }
