@@ -174,7 +174,7 @@ namespace Lexon.MySql.Controllers
         {
             if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.bbdd) ||
                 string.IsNullOrEmpty(classification?.mail.Provider) || string.IsNullOrEmpty(classification?.mail.MailAccount) || string.IsNullOrEmpty(classification?.mail.Uid) ||
-                classification.ContactList == null || classification.ContactList.GetLength(0) > 0)
+                classification.ContactList == null || classification.ContactList.GetLength(0) <= 0)
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated, bbdd and some contacts to add in a actuation");
 
             var result = await _lexonService.AddRelationContactsMailAsync(classification.bbdd, classification.idUser, classification.mail, classification.ContactList);

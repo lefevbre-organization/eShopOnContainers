@@ -109,6 +109,46 @@ namespace Lexon.Infrastructure.Services
             }
         }
 
+        public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification)
+        {
+            int a = 0;
+            var result = new Result<int>(a);
+
+            var url = $"{_settings.Value.LexonMySqlUrl}/classifications/contacts/add";
+
+            TraceLog(parameters: new string[] { $"url={url}" });
+
+
+            var json = JsonConvert.SerializeObject(classification);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            try
+            {
+                using (var response = await _client.PostAsync(url, data))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        result = await response.Content.ReadAsAsync<Result<int>>();
+
+                        if (result.data == 0)
+                            TraceOutputMessage(result.errors, "Mysql don´t create the classification of contacts", 2001);
+                        //else
+                        //    return result;
+                        //todo: deberia gestionarse el error y tomar decision se seguir o no, mandar un evento...
+                    }
+                    else
+                    {
+                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+          //  await AddClassificationToListMongoAsync(idUser, bbdd, listaMails, idRelated, idType, result);
+            return result;
+        }
+
         public async Task<Result<long>> RemoveClassificationFromListAsync(string idUser, string bbdd, string provider, string mailAccount, string uidMail, long idRelated, short? idType = 1)
         {
             long a = 0;
@@ -600,6 +640,5 @@ namespace Lexon.Infrastructure.Services
             TraceLog(parameters: new string[] { $"idUser={idUser}", $"bbdd={bbdd}" });
             return await _usersRepository.SelectCompanyAsync(idUser, bbdd);
         }
-
     }
 }

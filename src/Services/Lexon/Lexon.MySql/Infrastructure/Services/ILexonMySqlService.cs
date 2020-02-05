@@ -57,5 +57,6 @@ namespace Lexon.MySql.Infrastructure.Services
                                            bool addTerminatorToToken = true);
 
         Task<Result<JosEntity>> GetEntityAsync(string bbdd, string idUser, short idType, long idEntity);
+      
     }
 }

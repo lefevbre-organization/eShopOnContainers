@@ -22,9 +22,11 @@ namespace Lexon.Infrastructure.Services
         Task<Result<List<LexonEntityType>>> GetMasterEntitiesAsync();
 
         Task<Result<long>> AddClassificationToListAsync(string idUser, string bbdd, MailInfo[] listaMails, long idRelated, short? idType = 1);
+        Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification);
 
         Task<Result<long>> RemoveClassificationFromListAsync(string idUser, string provider, string mailAccount, string uidMail, string bbdd, long idRelated, short? idType = 1);
 
         Task<Result<List<LexonActuation>>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, string bbdd, string idMail, short? idType);
+
     }
 }

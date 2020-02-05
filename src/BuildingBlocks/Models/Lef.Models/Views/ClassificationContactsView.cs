@@ -1,6 +1,4 @@
-﻿using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-
-namespace Lexon.MySql.Model
+﻿namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
     public class ClassificationContactsView
     {
