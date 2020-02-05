@@ -60,6 +60,21 @@ namespace Lexon.API.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        [HttpGet]
+        [Route("companies/select")]
+        [ProducesResponseType(typeof(Result<LexonCompany>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexonCompany>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> SelectCompanyAsync(
+            [FromQuery]string idUser
+            , [FromQuery]string bbdd)
+        {
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd))
+                return BadRequest("values invalid. Must be a valid user and bbdd to select the company");
+
+            var result = await _usersService.SelectCompanyAsync(idUser, bbdd);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
         [HttpPost]
         [Route("classifications")]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.OK)]
@@ -117,27 +132,11 @@ namespace Lexon.API.Controllers
         [Route("entities/types")]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityType>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityType>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> ClassificationsTypesAsync()
+        public async Task<IActionResult> EntitiesTypesAsync()
         {
             var result = await _usersService.GetMasterEntitiesAsync();
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
-
-        [HttpGet]
-        [Route("companies/select")]
-        [ProducesResponseType(typeof(Result<LexonCompany>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<LexonCompany>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> SelectCompanyAsync(
-            [FromQuery]string idUser
-            , [FromQuery]string bbdd)
-        {
-            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd))
-                return BadRequest("values invalid. Must be a valid user and bbdd to select the company");
-
-            var result = await _usersService.SelectCompanyAsync(idUser, bbdd);
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-        }
-
         [HttpPost]
         [Route("entities")]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.OK)]
