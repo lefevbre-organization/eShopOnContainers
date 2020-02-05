@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Lexon.API.Model
+namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
     public class BaseClass<T>
     {
@@ -11,7 +11,7 @@ namespace Lexon.API.Model
         public BaseClass(
             ILogger<T> logger)
         {
-            log = logger ?? throw new ArgumentNullException(nameof(logger)); ;
+            log = logger ?? throw new ArgumentNullException(nameof(logger)); 
         }
 
         public void TraceMessage(

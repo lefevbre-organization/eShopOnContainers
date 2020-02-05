@@ -1,6 +1,7 @@
 ﻿using Lexon.MySql.Infrastructure.Services;
 using Lexon.MySql.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
 using System;
 using System.Net;
@@ -57,7 +58,8 @@ namespace Lexon.MySql.Controllers
 
             var result = await _lexonService.GetUserAsync(
                 tokenRequest.idClienteNavision, tokenRequest.bbdd,
-                tokenRequest.provider, tokenRequest.mailAccount, tokenRequest.idMail, tokenRequest.idEntityType, tokenRequest.idEntity,
+                tokenRequest.provider, tokenRequest.mailAccount, tokenRequest.idMail, tokenRequest.folder, 
+                tokenRequest.idEntityType, tokenRequest.idEntity,
                 tokenRequest.mailContacts, addTerminatorToToken);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
@@ -122,6 +124,32 @@ namespace Lexon.MySql.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        /// <summary>
+        /// Search entities
+        /// </summary>
+        /// <param name="bbdd">the string conection of the user</param>
+        /// <param name="idUser">the id of the user</param>
+        /// <param name="idType">the code of type of entity to search </param>
+        /// <param name="idEntity">the id of the entity</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("entities/getbyid")]
+        [ProducesResponseType(typeof(Result<JosEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<JosEntity>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> EntityByIdAsync(
+             [FromQuery] string bbdd = "lexon_admin_02"
+            , [FromQuery] string idUser = "449"
+            , [FromQuery] short idType = 1
+            , [FromQuery] long idEntity = 0)
+        {
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || idType <= 0 || idEntity <= 0)
+                return (IActionResult)BadRequest("values invalid. Must be a valid user, bbdd, idType and idEntity to get de Entity");
+
+            var result = await _lexonService.GetEntityAsync(bbdd, idUser, idType, idEntity);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
         [HttpPost]
         [Route("classifications/add")]
         [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
@@ -134,6 +162,23 @@ namespace Lexon.MySql.Controllers
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated and bbdd to create an actuation with the mail");
 
             var result = await _lexonService.AddRelationMailAsync(classification.idType, classification.bbdd, classification.idUser, classification.listaMails, classification.idRelated);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpPost]
+        [Route("classifications/contacts/add")]
+        [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(int), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddRelationContactsMailAsync([FromBody]ClassificationContactsView classification)
+        {
+            if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.bbdd) ||
+                string.IsNullOrEmpty(classification?.mail.Provider) || string.IsNullOrEmpty(classification?.mail.MailAccount) || string.IsNullOrEmpty(classification?.mail.Uid) ||
+                classification.ContactList == null || classification.ContactList.GetLength(0) <= 0)
+                return (IActionResult)BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated, bbdd and some contacts to add in a actuation");
+
+            var result = await _lexonService.AddRelationContactsMailAsync(classification.bbdd, classification.idUser, classification.mail, classification.ContactList);
+
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 

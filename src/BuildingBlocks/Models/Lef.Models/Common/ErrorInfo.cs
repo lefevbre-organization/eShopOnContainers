@@ -1,4 +1,4 @@
-﻿namespace Lexon.MySql.Model
+﻿namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
     public class ErrorInfo
     {

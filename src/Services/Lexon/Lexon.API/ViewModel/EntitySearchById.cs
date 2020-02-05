@@ -1,11 +1,11 @@
 ﻿using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 
-namespace Lexon.MySql.Model
+namespace Lexon.API.Model
 {
-    public class ClassificationView :BaseView
+    public class EntitySearchById : BaseView
     {
         public short idType { get; set; }
-        public long idRelated { get; set; }
 
+        public long idEntity { get; set; }
     }
 }

@@ -53,7 +53,6 @@
             [FromBody] UserMail accountIn
             )
         {
-            //if (string.IsNullOrEmpty(accountIn.User) || string.IsNullOrEmpty(accountIn.configUser?.defaultAdjunction) || string.IsNullOrEmpty(accountIn.configUser?.defaultEntity))
             if (string.IsNullOrEmpty(accountIn.User) )
                 return BadRequest("values invalid. Must be a valid user and valid data to configuration");
 
