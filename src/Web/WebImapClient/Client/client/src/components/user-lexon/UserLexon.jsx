@@ -22,14 +22,25 @@ class UserLexon extends Component {
     this.isUniqueAccountByProvider = this.isUniqueAccountByProvider.bind(this);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const user = this.props.match.params.idUser;
     const account64 = this.props.match.params.account;
 
 
-    if(account64) {
+    if (account64) {
       // Get user account
       const account = base64.decode(account64);
+
+      if (account) {
+        const url = `${window.API_GATEWAY}/api/v2/useremail/${user}/account/imap/${account}`;
+
+        const response = await fetch(url, {
+          method: "GET"
+        });
+        const data = await response.json();
+
+        this.props.setAccount(account);
+      }
     }
 
     this.props.setUser(user);
@@ -161,6 +172,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   setUser: user => dispatch(ACTIONS.setUser(user)),
+  setAccount: account => dispatch(ACTIONS.setAccount(account)),
   setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
   setDataBase: dataBase => dispatch(ACTIONS.setDataBase(dataBase)),
   setIdEmail: emailInfo => dispatch(ACTIONS.setIdEmail(emailInfo)),

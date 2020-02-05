@@ -59,8 +59,7 @@ export class Login extends Component {
     console.log("IN ... Login ->", window.URL_SERVER_API);
     }
 
-    goBack() {
-       
+    goBack() { 
         if (typeof this.props.lexon !== 'undefined') {
             const { userId } = this.props.lexon;
             if (userId !== null) {
@@ -77,7 +76,6 @@ export class Login extends Component {
                     });
             }
         }
-
   }
 
   render() {

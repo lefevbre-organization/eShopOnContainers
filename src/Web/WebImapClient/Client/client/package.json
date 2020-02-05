@@ -6,6 +6,7 @@
   "scripts": {
     "build": "./node_modules/.bin/webpack -p --mode production",
     "start": "./node_modules/.bin/webpack-dev-server --config ./webpack.config.js --mode development",
+    "start:server": "java -jar ../server/build/libs/api-0.0.1-SNAPSHOT.jar",
     "test": "jest --coverage"
   },
   "keywords": [],

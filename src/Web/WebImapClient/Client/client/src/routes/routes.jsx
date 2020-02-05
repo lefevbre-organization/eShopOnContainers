@@ -9,6 +9,10 @@ import Settings from "../components/settings/settings";
 import "../styles/main.scss";
 
 class Routes extends Component {
+  componentDidMount() {
+    console.log("")
+  }
+
   render() {
     return (
       <Router basename="/" history={history}>

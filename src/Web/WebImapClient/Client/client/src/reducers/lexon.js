@@ -15,7 +15,12 @@ const lexon = (state = INITIAL_STATE.lexon, action = {}) => {
         isNewAccount: isNewAccount,
         userId: userId
       };
-
+      case ActionTypes.LEXON_ACCOUNT:
+        const account = action.payload;
+        return {
+          ...state,
+          account
+        };
     case ActionTypes.LEXON_CASEFILE:
       return {
         ...state,

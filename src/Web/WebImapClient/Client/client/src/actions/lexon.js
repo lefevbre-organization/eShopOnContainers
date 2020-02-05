@@ -5,6 +5,11 @@ export const setUser = user => ({
   payload: user
 });
 
+export const setAccount = account => ({
+  type: ActionTypes.LEXON_ACCOUNT,
+  payload: account
+});
+
 export const setCaseFile = casefile => ({
   type: ActionTypes.LEXON_CASEFILE,
   payload: casefile
@@ -27,8 +32,9 @@ export const setEmailShown = (flag) => ({
 
 export default {
   setUser,
-  setCaseFile,
   setDataBase,
   setIdEmail,
-  setEmailShown
+  setEmailShown,
+  setAccount,
+  setCaseFile
 };
