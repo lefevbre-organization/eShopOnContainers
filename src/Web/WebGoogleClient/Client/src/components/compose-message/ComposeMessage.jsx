@@ -12,6 +12,7 @@ import ACTIONS from "../../actions/lexon";
 import { connect } from "react-redux";
 import { prettySize } from "../../utils/prettify";
 import { Notification, Confirmation } from '../notification/';
+import HeaderAddress from "./header-address";
 
 const Uppy = require("@uppy/core");
 const Tus = require("@uppy/tus");
@@ -90,13 +91,19 @@ export class ComposeMessage extends PureComponent {
     this.uppy.on("file-added", file => {
       console.log("Added file", file);
 
-      // Define this onload every time to get file and base64 every time
-      this.reader = new FileReader();
-      this.reader.readAsDataURL(file.data);
+    // Define this onload every time to get file and base64 every time
+    this.reader = new FileReader();
+    this.reader.readAsDataURL(file.data);
 
-      this.reader.onload = readerEvt =>
-        this.addFileToState({ file, base64: readerEvt.target.result });
-      this.showAttachActions = true
+    this.reader.onload = readerEvt =>
+    this.addFileToState({ file, base64: readerEvt.target.result });
+    this.showAttachActions = true
+
+        // Header Address Events
+    this.handleAddAddress = this.addAddress.bind(this);
+    this.handleRemoveAddress = this.removeAddress.bind(this);
+    this.handleMoveAddress = this.moveAddress.bind(this);
+
     });
   }
 
@@ -338,11 +345,61 @@ export class ComposeMessage extends PureComponent {
   closeNotification() {
     const showNotification = !this.state.showNotification;
     this.setState({ showNotification: showNotification });
-  }
+    }
+
+    /**
+       * Adds an address to the list matching the id.
+       *
+       * @param id
+       * @param address
+       */
+    addAddress(id, address) {
+        if (address.length > 0) {
+            const updatedMessage = { ...this.props.editedMessage };
+            updatedMessage[id] = [...updatedMessage[id], address];
+            this.props.editMessage(updatedMessage);
+        }
+    }
+
+    /**
+     * Removes the address from the under the field matching the id.
+     *
+     * @param id
+     * @param address
+     */
+    removeAddress(id, address) {
+        const updatedMessage = { ...this.props.editedMessage };
+        updatedMessage[id] = [...updatedMessage[id]];
+        updatedMessage[id].splice(updatedMessage[id].indexOf(address), 1);
+        this.props.editMessage(updatedMessage);
+    }
+
+    /**
+     * Moves an address from the address list under the field matching the fromId to the address field
+     * matching the toId.
+     *
+     * @param fromId
+     * @param toId
+     * @param address
+     */
+    moveAddress(fromId, toId, address) {
+        const updatedMessage = { ...this.props.editedMessage };
+        // Remove
+        updatedMessage[fromId].splice(updatedMessage[fromId].indexOf(address), 1);
+        // Add
+        updatedMessage[toId] = [...updatedMessage[toId], address];
+        this.props.editMessage(updatedMessage);
+    }
 
   render() {
     const collapsed = this.props.sideBarCollapsed;
     const { showNotification, messageNotification, showEmptySubjectWarning } = this.state;
+
+    const {
+          to,
+          cc,
+          bcc          
+     } = this.props;
 
     return (
       <React.Fragment>
@@ -390,6 +447,50 @@ export class ComposeMessage extends PureComponent {
               </div>
             ) : null}
             <div className="compose-message">
+
+                        {/* TODO CONTACT SUGGESTION 
+                        <form ref={this.headerFormRef}>
+                            <HeaderAddress
+                                id={"to"}
+                                addresses={to}
+                                onAddressAdd={this.addAddress}
+                                onAddressRemove={this.handleRemoveAddress}
+                                onAddressMove={this.handleMoveAddress}
+                                className=""
+                                chipClassName=""
+                                autoSuggestClassName=""
+                                autoSuggestMenuClassName=""
+                                getAddresses={this.props.getAddresses}
+                                label={i18n.t("compose-message.to")}
+                            />
+                            <HeaderAddress
+                                id={"cc"}
+                                addresses={cc}
+                                onAddressAdd={this.handleAddAddress}
+                                onAddressRemove={this.handleRemoveAddress}
+                                onAddressMove={this.handleMoveAddress}
+                                className=""
+                                chipClassName=""
+                                autoSuggestClassName=""
+                                autoSuggestMenuClassName=""
+                                getAddresses={this.props.getAddresses}
+                                label="Cc:"
+                            />
+                            <HeaderAddress
+                                id={"bcc"}
+                                addresses={bcc}
+                                onAddressAdd={this.handleAddAddress}
+                                onAddressRemove={this.handleRemoveAddress}
+                                onAddressMove={this.handleMoveAddress}
+                                className=""
+                                chipClassName=""
+                                autoSuggestClassName=""
+                                autoSuggestMenuClassName=""
+                                getAddresses={this.props.getAddresses}
+                                label={i18n.t("compose-message.bcc")}
+                            />
+                            
+                        </form>*/}
               <div className="message-fields">
                 <InputGroup>
                   <InputGroupAddon addonType="prepend">

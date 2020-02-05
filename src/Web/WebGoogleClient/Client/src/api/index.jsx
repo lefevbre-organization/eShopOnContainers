@@ -97,6 +97,34 @@ const getMessageRawList = ({ labelIds, maxResults, pageToken, q = "" }) =>
       });
   });
 
+/**
+* Load Google People client library. List Contact requested info
+*/
+
+
+
+
+export const getContactList = () =>
+    
+    new Promise((resolve, reject) => {
+        window.gapi.client.people.people.connections.list({
+            'resourceName': 'people/me',
+            'pageSize': 100,
+            'personFields': 'names'
+        })
+            .then(response => {
+                let arr = response.result.connections;
+                let contacts = [];
+                arr.map(function (item) {
+                    contacts.push(item.names[0].givenName);
+                })
+                resolve(contacts);
+            });
+            
+    });
+
+
+
 const getMessageHeaders = response => {
   const messageResult = response.result;
 
