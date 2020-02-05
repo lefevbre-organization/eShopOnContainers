@@ -35,19 +35,13 @@
         public async Task<Result<UserMail>> Create(UserMail account)
         {
             var result = new Result<UserMail> { errors = new List<ErrorInfo>() };
+
             try
             {
-                //var accountExists = _context.Accounts.Find(x => x.Provider.Equals(account.Provider) && x.Email.Equals(account.Email) && x.User.Equals(account.User));
-                var accountExists = _context.Accounts.Find(GetFilterUser(account.User, false));
-                if (!accountExists.Any())
-                {
-                    await _context.Accounts.InsertOneAsync(account);
-                    result.data = account;
-                }
-                else
-                {
-                    result.data = accountExists.First();
-                }
+
+               var resultReplace =  await _context.Accounts.ReplaceOneAsync(GetFilterUser(account.User, false), account, GetUpsertOptions());
+                account.Id = resultReplace.IsAcknowledged ? resultReplace.UpsertedId?.ToString(): "0";
+                result.data = account;
 
                 //var eventAssoc = new AddOperationAccountIntegrationEvent(account.User, account.Provider, account.Email, account.DefaultAccount, EnTypeOperation.Create);
                 //_eventBus.Publish(eventAssoc);
@@ -110,18 +104,16 @@
         public async Task<Result<AccountList>> GetByUser(string user)
         {
             var result = new Result<AccountList> { errors = new List<ErrorInfo>() };
-            //try
-            //{
-            //    var accounts = string.IsNullOrEmpty(user) ?
-            //        await _context.Accounts.Find(account => true).SortByDescending(x => x.DefaultAccount).ToListAsync() :
-            //        await _context.Accounts.Find(GetFilterUser(user)).SortByDescending(x => x.DefaultAccount).ToListAsync();
+            try
+            {
+                var accounts =  await _context.Accounts.Find(GetFilterUser(user)).SortByDescending(x => x.Id).ToListAsync();
 
-            //    result.data = new AccountList { Accounts = accounts.ToArray() };
-            //}
-            //catch (Exception ex)
-            //{
-            //    TraceMessage(result.errors, ex);
-            //}
+                result.data = new AccountList { Accounts = accounts.ToArray() };
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
             return result;
         }
 
