@@ -544,4 +544,22 @@ export const uploadFileWithUploadSession = async(emailId, file, content) => {
   return [];
 }
 
+export const getContacts = () =>
+
+    new Promise(async (resolve, reject) => {
+        const accessToken = await getAccessTokenSilent();
+        const client = getAuthenticatedClient(accessToken);
+        client
+            .api(`me/contacts`)
+            .get()
+            .then(response => {
+                let arr = response.value;
+                let contacts = [];
+                arr.map(function (item) {
+                    contacts.push(item.emailAddresses[0].address);
+                })
+                resolve(contacts);
+            });
+
+    });
 

@@ -104,7 +104,7 @@ const getMessageRawList = ({ labelIds, maxResults, pageToken, q = "" }) =>
 
 
 
-export const getContact = () =>
+export const getContacts = () =>
     
     new Promise((resolve, reject) => {
         window.gapi.client.people.people.connections.list({
