@@ -511,6 +511,7 @@ export const uploadFile = async(emailId, file, content) => {
   
 }
 
+
 export const uploadFileWithUploadSession = async(emailId, file, content) => {
   const accessToken = await getAccessTokenSilent();
   const client = await getAuthenticatedClient(accessToken);
@@ -542,3 +543,5 @@ export const uploadFileWithUploadSession = async(emailId, file, content) => {
   
   return [];
 }
+
+

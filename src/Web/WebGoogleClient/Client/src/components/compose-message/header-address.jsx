@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Autosuggest from 'react-autosuggest';
 import {validateEmail} from '../../services/validation';
 import mainCss from './composeMessage.scss';
-import { getContactList } from "../../api/index";
+import { getContact } from "../../api/index";
 
 
 export class HeaderAddress extends Component {
@@ -97,7 +97,7 @@ export class HeaderAddress extends Component {
         })
   }
   async onSuggestionsFetchRequested({ value }) {
-        var contacts = await getContactList();
+        var contacts = await getContact();
         this.setState({ suggestions: this.filterItems(contacts, value) });
   }
 
