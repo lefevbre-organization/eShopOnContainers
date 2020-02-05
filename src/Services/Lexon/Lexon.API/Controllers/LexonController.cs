@@ -119,7 +119,7 @@ namespace Lexon.API.Controllers
         [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityType>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ClassificationsTypesAsync()
         {
-            var result = await _usersService.GetClassificationMasterListAsync();
+            var result = await _usersService.GetMasterEntitiesAsync();
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
@@ -170,5 +170,25 @@ namespace Lexon.API.Controllers
 
             return (resultPaginatedFinal.errors.Count > 0) ? (IActionResult)BadRequest(resultPaginatedFinal) : Ok(resultPaginatedFinal);
         }
+
+        [HttpPost]
+        [Route("entities/getbyid")]
+        [ProducesResponseType(typeof(Result<LexonEntityBase>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexonEntityBase>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> EntityByIdAsync(
+            [FromBody] EntitySearchById entitySearch
+            )
+        {
+            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0 || entitySearch.idEntity <= 0)
+                return BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
+
+
+                var result = await _usersService.GetEntityById(entitySearch.bbdd, entitySearch.idUser, entitySearch.idType,  entitySearch.idEntity);
+                return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+
+
+        }
+
+
     }
 }
