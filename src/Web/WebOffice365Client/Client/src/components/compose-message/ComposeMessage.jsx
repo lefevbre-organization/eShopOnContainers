@@ -28,14 +28,17 @@ export class ComposeMessage extends PureComponent {
         (props.history.location.state &&
           props.history.location.state.composeProps.to) ||
         "",
+      to2: [],
       cc:
         (props.history.location.state &&
           props.history.location.state.composeProps.cc) ||
         "",
+      cc2: [],
       bcc:
         (props.history.location.state &&
           props.history.location.state.composeProps.bcc) ||
         "",
+      bcc2: [],
       subject:
         (props.history.location.state &&
           props.history.location.state.composeProps.subject) ||
@@ -356,17 +359,30 @@ export class ComposeMessage extends PureComponent {
   }
 
     /**
-          * Adds an address to the list matching the id.
-          *
-          * @param id
-          * @param address
-          */
-    addAddress(id, address) {
-        if (address.length > 0) {
-            const updatedMessage = { ...this.props.editedMessage };
-            updatedMessage[id] = [...updatedMessage[id], address];
-            this.props.editMessage(updatedMessage);
+    * Adds an address to the list matching the id.
+    *
+    * @param id
+    * @param address
+    */
+    addAddress(id, address) {      
+      if (address.length > 0) {
+        if(id === 'to') {
+          const to2 = [...this.state.to2];
+          to2.push(address);
+          const to = to2.join(",");  
+          this.setState({to2, to})
+        } else if(id === 'cc') {
+          const cc2 = [...this.state.cc2];
+          cc2.push(address);
+          const cc = cc2.join(",");  
+          this.setState({cc2, cc})
+        } else if(id === 'bcc2') {
+          const bcc2 = [...this.state.bcc2];
+          bcc2.push(address);
+          const bcc = bcc2.join(",");  
+          this.setState({bcc2, bcc})
         }
+      }
     }
 
     /**
@@ -376,10 +392,15 @@ export class ComposeMessage extends PureComponent {
      * @param address
      */
     removeAddress(id, address) {
-        const updatedMessage = { ...this.props.editedMessage };
-        updatedMessage[id] = [...updatedMessage[id]];
-        updatedMessage[id].splice(updatedMessage[id].indexOf(address), 1);
-        this.props.editMessage(updatedMessage);
+        const to2 = [...this.state.to2];
+        to2.splice(to2.indexOf(address), 1);
+        const to = to2.join(",");
+        this.setState({to2, to})
+
+        // const updatedMessage = { ...this.props.editedMessage };
+        // updatedMessage[id] = [...updatedMessage[id]];
+        // updatedMessage[id].splice(updatedMessage[id].indexOf(address), 1);
+        // this.props.editMessage(updatedMessage);
     }
 
     /**
@@ -391,12 +412,12 @@ export class ComposeMessage extends PureComponent {
      * @param address
      */
     moveAddress(fromId, toId, address) {
-        const updatedMessage = { ...this.props.editedMessage };
-        // Remove
-        updatedMessage[fromId].splice(updatedMessage[fromId].indexOf(address), 1);
-        // Add
-        updatedMessage[toId] = [...updatedMessage[toId], address];
-        this.props.editMessage(updatedMessage);
+        // const updatedMessage = { ...this.props.editedMessage };
+        // // Remove
+        // updatedMessage[fromId].splice(updatedMessage[fromId].indexOf(address), 1);
+        // // Add
+        // updatedMessage[toId] = [...updatedMessage[toId], address];
+        // this.props.editMessage(updatedMessage);
     }
 
   render() {
@@ -408,6 +429,8 @@ export class ComposeMessage extends PureComponent {
        cc,
        bcc
     } = this.props;
+
+    const { to2, cc2, bcc2 } = this.state;
 
     return (
       <React.Fragment>
@@ -457,12 +480,12 @@ export class ComposeMessage extends PureComponent {
             ) : null}
             <div className="compose-message">
                         
-                        {/* TODO CONTACT SUGGESTION 
                           <form ref={this.headerFormRef}>
+                            {/*
                             <HeaderAddress
                                 id={"to"}
-                                addresses={to}
-                                onAddressAdd={this.addAddress}
+                                addresses={to2}
+                                onAddressAdd={this.handleAddAddress}
                                 onAddressRemove={this.handleRemoveAddress}
                                 onAddressMove={this.handleMoveAddress}
                                 className=""
@@ -497,44 +520,39 @@ export class ComposeMessage extends PureComponent {
                                 autoSuggestMenuClassName=""
                                 getAddresses={this.props.getAddresses}
                                 label={i18n.t("compose-message.bcc")}
-                            />
+                            />  */}
                             
-                        </form>*/}
+                        </form>
 
               <div className="message-fields">
-                <InputGroup>
-                  <InputGroupAddon addonType="prepend">
-                    {i18n.t("compose-message.to")}
-                  </InputGroupAddon>
-                  <Input
-                    tabIndex={1}
-                    value={this.state.to}
-                    placeholder={i18n.t("compose-message.comma-separated")}
-                    invalid={this.isInvalid("to")}
-                    onChange={this.setField("to")}
-                  />
-                </InputGroup>
-                <InputGroup>
-                  <InputGroupAddon addonType="prepend">Cc:</InputGroupAddon>
-                  <Input
-                    tabIndex={2}
-                    value={this.state.cc}
-                    placeholder={i18n.t("compose-message.comma-separated")}
-                    invalid={this.isInvalid("cc")}
-                    onChange={this.setField("cc")}
-                  />
-                </InputGroup>
-                <InputGroup>
-                  <InputGroupAddon addonType="prepend">
-                    {i18n.t("compose-message.bcc")}
-                  </InputGroupAddon>
-                  <Input
-                    tabIndex={3}
-                    placeholder={i18n.t("compose-message.comma-separated")}
-                    invalid={this.isInvalid("bcc")}
-                    onChange={this.setField("bcc")}
-                  />
-                </InputGroup>
+              <HeaderAddress
+                    id={"to"}
+                    addresses={to2}
+                    onAddressAdd={this.handleAddAddress}
+                    onAddressRemove={this.handleRemoveAddress}
+                    onAddressMove={this.handleMoveAddress}
+                    getAddresses={this.props.getAddresses}
+                    label={i18n.t("compose-message.to")}
+                />
+                <HeaderAddress
+                    id={"cc"}
+                    addresses={cc2}
+                    onAddressAdd={this.handleAddAddress}
+                    onAddressRemove={this.handleRemoveAddress}
+                    onAddressMove={this.handleMoveAddress}
+                    getAddresses={this.props.getAddresses}
+                    label={'Cc:'}
+                />                
+                <HeaderAddress
+                  id={"bcc2"}
+                  addresses={bcc2}
+                  onAddressAdd={this.handleAddAddress}
+                  onAddressRemove={this.handleRemoveAddress}
+                  onAddressMove={this.handleMoveAddress}
+                  getAddresses={this.props.getAddresses}
+                  label={i18n.t("compose-message.bcc")}
+              />
+                
                 <InputGroup>
                   <InputGroupAddon addonType="prepend">
                     {i18n.t("compose-message.subject")}
