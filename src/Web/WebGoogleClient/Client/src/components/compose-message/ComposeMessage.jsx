@@ -448,7 +448,6 @@ export class ComposeMessage extends PureComponent {
             ) : null}
             <div className="compose-message">
 
-                        {/* TODO CONTACT SUGGESTION 
                         <form ref={this.headerFormRef}>
                             <HeaderAddress
                                 id={"to"}
@@ -490,7 +489,7 @@ export class ComposeMessage extends PureComponent {
                                 label={i18n.t("compose-message.bcc")}
                             />
                             
-                        </form>*/}
+                        </form>
               <div className="message-fields">
                 <InputGroup>
                   <InputGroupAddon addonType="prepend">
