@@ -38,6 +38,10 @@
 
         //    try
         //    {
+<<<<<<< HEAD
+=======
+
+>>>>>>> add version mixta of accounts
         //       var resultReplace =  await _context.Accounts.ReplaceOneAsync(GetFilterUser(account.User, false), account, GetUpsertOptions());
         //        account.Id = resultReplace.IsAcknowledged ? resultReplace.UpsertedId?.ToString(): "0";
         //        result.data = account;
@@ -262,7 +266,7 @@
                         result.data++;
                     }
                 }
-
+            
                 var eventAssoc = new AddOperationAccountIntegrationEvent(user, provider, email, true, EnTypeOperation.UpdateDefaultAccount);
                 _eventBus.Publish(eventAssoc);
             }
@@ -405,13 +409,13 @@
 
         public async Task<Result<long>> ResetDefaultAccountByUser(string user)
         {
-            var result = new Result<long> { errors = new List<ErrorInfo>() };
+           var result = new Result<long> { errors = new List<ErrorInfo>() };
             try
             {
                 var resultUpdate = await _context.Accounts.UpdateManyAsync(
                     account => account.User == user,
                     Builders<UserMail>.Update
-                         .Set(x => x.DefaultAccount, false)
+                        .Set(x => x.DefaultAccount, false)
                     //    .Set("accounts.$[i].defaultAccount", false),
                     //new UpdateOptions
                     //{
@@ -421,10 +425,10 @@
                     //    }
                     //}
                     );
-
+            
                 var modificados = resultUpdate.IsAcknowledged ? resultUpdate.ModifiedCount : 0;
                 TraceLog(parameters: new string[] { $"Se modifican {modificados} usuarios con default a :{false}" });
-
+            
                 result.data = modificados;
             }
             catch (Exception ex)
@@ -432,6 +436,7 @@
                 TraceMessage(result.errors, ex);
             }
             return result;
+
         }
 
         public async Task<Result<long>> UpSertAccount(string user, Account accountIn)
