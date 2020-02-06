@@ -70,6 +70,8 @@ artifacts/
 *.pidb
 *.svclog
 *.scc
+
+# API Keys
 *.env
 config.jsx
 
