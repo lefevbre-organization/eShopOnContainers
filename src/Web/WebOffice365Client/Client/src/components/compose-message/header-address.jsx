@@ -80,13 +80,13 @@ export class HeaderAddress extends Component {
           }
 
           .header-address-container {
-            background-color: red;
             flex: 1;
           }
 
           .header-address-container > input {
             width: 100%;
             border: none;
+            padding-left: 4px;
           }
 
           .header-address-container > input:focus {

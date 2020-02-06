@@ -392,10 +392,22 @@ export class ComposeMessage extends PureComponent {
      * @param address
      */
     removeAddress(id, address) {
+      if(id === "to") {
         const to2 = [...this.state.to2];
         to2.splice(to2.indexOf(address), 1);
         const to = to2.join(",");
         this.setState({to2, to})
+      } else if (id === "cc") {
+        const cc2 = [...this.state.cc2];
+        cc2.splice(cc2.indexOf(address), 1);
+        const cc = cc2.join(",");
+        this.setState({cc2, cc})
+      } else if(id === "bcc2") {
+        const bcc2 = [...this.state.bcc2];
+        bcc2.splice(bcc2.indexOf(address), 1);
+        const bcc = bcc2.join(",");
+        this.setState({bcc2, bcc})
+      }
 
         // const updatedMessage = { ...this.props.editedMessage };
         // updatedMessage[id] = [...updatedMessage[id]];
@@ -478,52 +490,7 @@ export class ComposeMessage extends PureComponent {
                 </div>
               </div>
             ) : null}
-            <div className="compose-message">
-                        
-                          <form ref={this.headerFormRef}>
-                            {/*
-                            <HeaderAddress
-                                id={"to"}
-                                addresses={to2}
-                                onAddressAdd={this.handleAddAddress}
-                                onAddressRemove={this.handleRemoveAddress}
-                                onAddressMove={this.handleMoveAddress}
-                                className=""
-                                chipClassName=""
-                                autoSuggestClassName=""
-                                autoSuggestMenuClassName=""
-                                getAddresses={this.props.getAddresses}
-                                label={i18n.t("compose-message.to")}
-                            />
-                            <HeaderAddress
-                                id={"cc"}
-                                addresses={cc}
-                                onAddressAdd={this.handleAddAddress}
-                                onAddressRemove={this.handleRemoveAddress}
-                                onAddressMove={this.handleMoveAddress}
-                                className=""
-                                chipClassName=""
-                                autoSuggestClassName=""
-                                autoSuggestMenuClassName=""
-                                getAddresses={this.props.getAddresses}
-                                label="Cc:"
-                            />
-                            <HeaderAddress
-                                id={"bcc"}
-                                addresses={bcc}
-                                onAddressAdd={this.handleAddAddress}
-                                onAddressRemove={this.handleRemoveAddress}
-                                onAddressMove={this.handleMoveAddress}
-                                className=""
-                                chipClassName=""
-                                autoSuggestClassName=""
-                                autoSuggestMenuClassName=""
-                                getAddresses={this.props.getAddresses}
-                                label={i18n.t("compose-message.bcc")}
-                            />  */}
-                            
-                        </form>
-
+            <div className="compose-message">                        
               <div className="message-fields">
               <HeaderAddress
                     id={"to"}
