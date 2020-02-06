@@ -32,19 +32,47 @@
             _eventBus = eventBus;
         }
 
+        //public async Task<Result<UserMail>> Create(UserMail account)
+        //{
+        //    var result = new Result<UserMail> { errors = new List<ErrorInfo>() };
+
+        //    try
+        //    {
+        //       var resultReplace =  await _context.Accounts.ReplaceOneAsync(GetFilterUser(account.User, false), account, GetUpsertOptions());
+        //        account.Id = resultReplace.IsAcknowledged ? resultReplace.UpsertedId?.ToString(): "0";
+        //        result.data = account;
+
+        //        //var eventAssoc = new AddOperationAccountIntegrationEvent(account.User, account.Provider, account.Email, account.DefaultAccount, EnTypeOperation.Create);
+        //        //_eventBus.Publish(eventAssoc);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TraceMessage(result.errors, ex);
+        //    }
+        //    return result;
+        //}
+
         public async Task<Result<UserMail>> Create(UserMail account)
         {
             var result = new Result<UserMail> { errors = new List<ErrorInfo>() };
-
+            var finalUser = GetNewUserMail(account.User, account.Email, account.Provider, account.guid);
             try
             {
+                var resultadoReset = await ResetDefaultAccountByUser(finalUser.User);
 
-               var resultReplace =  await _context.Accounts.ReplaceOneAsync(GetFilterUser(account.User, false), account, GetUpsertOptions());
-                account.Id = resultReplace.IsAcknowledged ? resultReplace.UpsertedId?.ToString(): "0";
-                result.data = account;
+                var accountExists = _context.Accounts.Find(x => x.Provider.Equals(finalUser.Provider) && x.Email.Equals(finalUser.Email) && x.User.Equals(finalUser.User));
+                if (!accountExists.Any())
+                {
+                    await _context.Accounts.InsertOneAsync(finalUser);
+                    result.data = finalUser;
+                }
+                else
+                {
+                    result.data = accountExists.First();
+                }
 
-                //var eventAssoc = new AddOperationAccountIntegrationEvent(account.User, account.Provider, account.Email, account.DefaultAccount, EnTypeOperation.Create);
-                //_eventBus.Publish(eventAssoc);
+                var eventAssoc = new AddOperationAccountIntegrationEvent(finalUser.User, finalUser.Provider, finalUser.Email, finalUser.DefaultAccount, EnTypeOperation.Create);
+                _eventBus.Publish(eventAssoc);
             }
             catch (Exception ex)
             {
@@ -80,12 +108,30 @@
             return result;
         }
 
+        //public async Task<Result<AccountList>> GetByUser(string user)
+        //{
+        //    var result = new Result<AccountList> { errors = new List<ErrorInfo>() };
+        //    try
+        //    {
+        //        var accounts =  await _context.Accounts.Find(GetFilterUser(user)).SortByDescending(x => x.Id).ToListAsync();
+
+        //        result.data = new AccountList { Accounts = accounts.ToArray() };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TraceMessage(result.errors, ex);
+        //    }
+        //    return result;
+        //}
+
         public async Task<Result<AccountList>> GetByUser(string user)
         {
             var result = new Result<AccountList> { errors = new List<ErrorInfo>() };
             try
             {
-                var accounts =  await _context.Accounts.Find(GetFilterUser(user)).SortByDescending(x => x.Id).ToListAsync();
+                var accounts = string.IsNullOrEmpty(user) ?
+                    await _context.Accounts.Find(account => true).SortByDescending(x => x.DefaultAccount).ToListAsync() :
+                    await _context.Accounts.Find(GetFilterUser(user)).SortByDescending(x => x.DefaultAccount).ToListAsync();
 
                 result.data = new AccountList { Accounts = accounts.ToArray() };
             }
@@ -170,64 +216,51 @@
 
         public async Task<Result<long>> UpdateDefaultAccount(string user, string email, string provider, string guid)
         {
-            //TODO: Cambiar por método insertar usurio si no esiste en el upsert
             var result = new Result<long> { errors = new List<ErrorInfo>() };
-            var updateOptions = new UpdateOptions { IsUpsert = true };
-            TraceLog(parameters: new string[] { $"usuario:{user}", $"email:{email}", $"provider:{provider}", $"guid:{guid}" });
+            var arrayFilters = GetFilterFromAccount(provider, email);
             try
             {
-                // 1. Si no existe, crea la cuenta
+                // I need to know if user exists in Lexon!!!!!!!
                 UserMail userMail = GetNewUserMail(user, email, provider, guid);
-                var accounts = _context.Accounts.Find(GetFilterUser(user));
-
-                if (!accounts.Any())
+                var accounts = await _context.Accounts.Find(x => x.User == user).ToListAsync();
+                if (accounts?.Count == 0)
                 {
-                    TraceLog(parameters: new string[] { $"se crea un nuevo usuario porque no existe ninguno con user:{user}" });
-                    result.data = 1;
                     await _context.Accounts.InsertOneAsync(userMail);
+                    result.data = 1;
                 }
                 else
-
                 {
-                    //2. si encuentra cuentas con esos datos, los actualiza cambiando todo a no default y actualiza los datos
-
-                    var cancel = default(CancellationToken);
-                    using (var session = await _context.StartSession(cancel))
+                    accounts = await _context.Accounts.Find(x => x.User == user && x.Email == email).ToListAsync();
+                    if (accounts?.Count > 0)
                     {
-                        session.StartTransaction();
-                        try
-                        {
-                            var resultadoReset = await ResetDefaultAccountByUser(user);
-                            result.data = resultadoReset.data;
-
-                            var resultReplace = await _context.AccountsTransaction(session).ReplaceOneAsync(
-                                account => account.User == user, // && account.Email == email && account.Provider == provider,
-                                userMail, updateOptions);
-
-                            if (resultReplace.IsAcknowledged && resultReplace.MatchedCount > 0)
-                            {
-                                TraceLog(parameters: new string[] { $"Se modifican {resultReplace.ModifiedCount} con el default {true} y/o insertan con id {resultReplace.UpsertedId}" });
-                                result.data += (resultReplace.ModifiedCount + (resultReplace.UpsertedId != null ? 1 : 0));
-                            }
-
-                            var resultadoListado = await _context.AccountsTransaction(session).UpdateOneAsync(
-                                    GetFilterUser(user),
-                                    Builders<UserMail>.Update.AddToSet($"accounts", userMail.accounts[0])
+                        var resultUpdate = await _context.Accounts.UpdateManyAsync(
+                            account => account.User == user && account.Email != email, 
+                            Builders<UserMail>.Update
+                                .Set(x => x.DefaultAccount, false)
+                                .Set("accounts.$[i].defaultAccount", false),
+                                new UpdateOptions { ArrayFilters = arrayFilters }
                                 );
-
-                            if (resultadoListado.IsAcknowledged && resultadoListado.MatchedCount > 0)
-                            {
-                                TraceLog(parameters: new string[] { $"Se añade {resultadoListado.ModifiedCount} una cuentas con el default {true}" });
-                                result.data += resultReplace.ModifiedCount;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            TraceMessage(result.errors, ex);
-                            session.AbortTransaction();
-                        }
+                        result.data = resultUpdate.ModifiedCount;
+                        resultUpdate = await _context.Accounts.UpdateManyAsync(
+                            account => account.User == user && account.Email == email , 
+                            Builders<UserMail>.Update
+                            .Set(x => x.DefaultAccount, true)
+                            .Set(x => x.Email, email));
+                        result.data += resultUpdate.ModifiedCount;
                     }
-                    return result;
+                    else
+                    {
+                        var resultUpdate = await _context.Accounts.UpdateManyAsync(
+                            account => account.User == user && account.Email != email,
+                            Builders<UserMail>.Update
+                                .Set(x => x.DefaultAccount, false)
+                                .Set("accounts.$[i].defaultAccount", false),
+                                new UpdateOptions { ArrayFilters = arrayFilters }
+                            );
+                        result.data = resultUpdate.ModifiedCount;
+                        await _context.Accounts.InsertOneAsync(userMail);
+                        result.data++;
+                    }
                 }
 
                 var eventAssoc = new AddOperationAccountIntegrationEvent(user, provider, email, true, EnTypeOperation.UpdateDefaultAccount);
@@ -240,18 +273,91 @@
             return result;
         }
 
+        //public async Task<Result<long>> UpdateDefaultAccount(string user, string email, string provider, string guid)
+        //{
+        //    //TODO: Cambiar por método insertar usurio si no esiste en el upsert
+        //    var result = new Result<long> { errors = new List<ErrorInfo>() };
+        //    var updateOptions = new UpdateOptions { IsUpsert = true };
+        //    TraceLog(parameters: new string[] { $"usuario:{user}", $"email:{email}", $"provider:{provider}", $"guid:{guid}" });
+        //    try
+        //    {
+        //        // 1. Si no existe, crea la cuenta
+        //        UserMail userMail = GetNewUserMail(user, email, provider, guid);
+        //        var accounts = _context.Accounts.Find(GetFilterUser(user));
+
+        //        if (!accounts.Any())
+        //        {
+        //            TraceLog(parameters: new string[] { $"se crea un nuevo usuario porque no existe ninguno con user:{user}" });
+        //            result.data = 1;
+        //            await _context.Accounts.InsertOneAsync(userMail);
+        //        }
+        //        else
+
+        //        {
+        //            //2. si encuentra cuentas con esos datos, los actualiza cambiando todo a no default y actualiza los datos
+
+        //            var cancel = default(CancellationToken);
+        //            using (var session = await _context.StartSession(cancel))
+        //            {
+        //                session.StartTransaction();
+        //                try
+        //                {
+        //                    var resultadoReset = await ResetDefaultAccountByUser(user);
+        //                    result.data = resultadoReset.data;
+
+        //                    var resultReplace = await _context.AccountsTransaction(session).ReplaceOneAsync(
+        //                        account => account.User == user && account.Email == email && account.Provider == provider,
+        //                        userMail, updateOptions);
+
+        //                    if (resultReplace.IsAcknowledged && resultReplace.MatchedCount > 0)
+        //                    {
+        //                        TraceLog(parameters: new string[] { $"Se modifican {resultReplace.ModifiedCount} con el default {true} y/o insertan con id {resultReplace.UpsertedId}" });
+        //                        result.data += (resultReplace.ModifiedCount + (resultReplace.UpsertedId != null ? 1 : 0));
+        //                    }
+
+        //                    var resultadoListado = await _context.AccountsTransaction(session).UpdateOneAsync(
+        //                            GetFilterUser(user),
+        //                            Builders<UserMail>.Update.AddToSet($"accounts", userMail.accounts[0])
+        //                        );
+
+        //                    if (resultadoListado.IsAcknowledged && resultadoListado.MatchedCount > 0)
+        //                    {
+        //                        TraceLog(parameters: new string[] { $"Se añade {resultadoListado.ModifiedCount} una cuentas con el default {true}" });
+        //                        result.data += resultReplace.ModifiedCount;
+        //                    }
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    TraceMessage(result.errors, ex);
+        //                    session.AbortTransaction();
+        //                }
+        //            }
+        //            return result;
+        //        }
+
+        //        var eventAssoc = new AddOperationAccountIntegrationEvent(user, provider, email, true, EnTypeOperation.UpdateDefaultAccount);
+        //        _eventBus.Publish(eventAssoc);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TraceMessage(result.errors, ex);
+        //    }
+        //    return result;
+        //}
+
         private static UserMail GetNewUserMail(string user, string email, string provider, string guid)
         {
             return new UserMail()
             {
                 User = user,
                 configUser = new ConfigUserLexon() { defaultAdjunction = "onlyAdjunction", defaultEntity = "files", getContacts = false },
-                //Email = email,
-                //guid = guid,
-                //Provider = provider,
-                //DefaultAccount = true,
+                Email = email,
+                guid = guid,
+                Provider = provider,
+                state = true,
+                DefaultAccount = true,
                 accounts = new List<Account>() {
-                        new Account() {defaultAccount = true, email= email, guid= guid, provider= provider }
+                        new Account() {defaultAccount = true, email= email, guid= guid, provider= provider , mails = new List<MailRelation>()}
                     }
             };
         }
@@ -259,21 +365,21 @@
         public async Task<Result<long>> DeleteAccountByUserAndEmail(string user, string email)
         {
             var result = new Result<long> { errors = new List<ErrorInfo>() };
-            //try
-            //{
-            //    var accountRemove = await _context.Accounts.Find(x => x.User == user && x.Email == email).FirstOrDefaultAsync();
-            //    if (accountRemove != null)
-            //    {
-            //        var resultRemove = await _context.Accounts.DeleteOneAsync(account => account.Id == accountRemove.Id);
-            //        result.data = resultRemove.DeletedCount;
-            //        var eventAssoc = new AddOperationAccountIntegrationEvent(accountRemove.User, accountRemove.Provider, accountRemove.Email, accountRemove.DefaultAccount, EnTypeOperation.Remove);
-            //        _eventBus.Publish(eventAssoc);
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    TraceMessage(result.errors, ex);
-            //}
+            try
+            {
+                var accountRemove = await _context.Accounts.Find(x => x.User == user && x.Email == email).FirstOrDefaultAsync();
+                if (accountRemove != null)
+                {
+                    var resultRemove = await _context.Accounts.DeleteOneAsync(account => account.Id == accountRemove.Id);
+                    result.data = resultRemove.DeletedCount;
+                    var eventAssoc = new AddOperationAccountIntegrationEvent(accountRemove.User, accountRemove.Provider, accountRemove.Email, accountRemove.DefaultAccount, EnTypeOperation.Remove);
+                    _eventBus.Publish(eventAssoc);
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
             return result;
         }
 
@@ -285,7 +391,7 @@
                 var resultUpdate = await _context.Accounts.UpdateManyAsync(
                     account => account.User == user,
                     Builders<UserMail>.Update
-                        // .Set(x => x.DefaultAccount, false)
+                         .Set(x => x.DefaultAccount, false)
                         .Set("accounts.$[i].defaultAccount", false),
                     new UpdateOptions
                     {
@@ -299,7 +405,7 @@
                 var modificados = resultUpdate.IsAcknowledged ? resultUpdate.ModifiedCount : 0;
                 TraceLog(parameters: new string[] { $"Se modifican {modificados} usuarios con default a :{false}" });
 
-                result.data = resultUpdate.ModifiedCount;
+                result.data = modificados;
             }
             catch (Exception ex)
             {
@@ -321,6 +427,7 @@
                     var resultUpdate = await _context.AccountsTransaction(session).UpdateManyAsync(
                         GetFilterUser(user),
                         Builders<UserMail>.Update
+                            .Set(x => x.DefaultAccount, false)
                             .Set("accounts.$[i].defaultAccount", false),
                         new UpdateOptions
                         {
@@ -331,7 +438,7 @@
                         }
                     );
 
-                    if(accountIn.defaultAccount == false)
+                    if (accountIn.defaultAccount == false)
                     {
                         accountIn.defaultAccount = true;
                         TraceLog(parameters: new string[] { $"Se cambia a true el defaultAccount" });
@@ -340,12 +447,11 @@
                     var modificados = resultUpdate.IsAcknowledged ? resultUpdate.ModifiedCount : 0;
                     TraceLog(parameters: new string[] { $"Se modifican {modificados} usuarios con default a :{false}" });
 
-
                     var arrayFilters = GetFilterFromAccount(accountIn.provider, accountIn.email);
                     var resultInsert = await _context.AccountsTransaction(session).UpdateOneAsync(
                         GetFilterUser(user),
                         Builders<UserMail>.Update.Set($"accounts.$[i]", accountIn),
-                         new UpdateOptions { ArrayFilters = arrayFilters}
+                         new UpdateOptions { ArrayFilters = arrayFilters }
                     );
 
                     var modificado = resultInsert.IsAcknowledged ? resultInsert.ModifiedCount : 0;
@@ -367,8 +473,8 @@
                             Builders<UserMail>.Update.AddToSet($"accounts", accountIn)
                         );
 
-                         insertado = resultOther.IsAcknowledged ? resultOther.ModifiedCount : 0;
-                            TraceLog(parameters: new string[] { $"Se inserta {insertado} cuenta {accountIn.email} del proveedor {accountIn.provider} con default a {true}" });
+                        insertado = resultOther.IsAcknowledged ? resultOther.ModifiedCount : 0;
+                        TraceLog(parameters: new string[] { $"Se inserta {insertado} cuenta {accountIn.email} del proveedor {accountIn.provider} con default a {true}" });
 
                         result.data = insertado;
                     }
@@ -386,12 +492,12 @@
 
         private static FilterDefinition<UserMail> GetFilterUser(string idUser, bool onlyValid = true)
         {
-            if (onlyValid)
-            {
-                return Builders<UserMail>.Filter.And(
-                Builders<UserMail>.Filter.Eq(u => u.User, idUser),
-                Builders<UserMail>.Filter.Eq(u => u.state, true));
-            }
+            //if (onlyValid)
+            //{
+            //    return Builders<UserMail>.Filter.And(
+            //    Builders<UserMail>.Filter.Eq(u => u.User, idUser),
+            //    Builders<UserMail>.Filter.Eq(u => u.state, true));
+            //}
 
             return Builders<UserMail>.Filter.Eq(u => u.User, idUser);
         }
