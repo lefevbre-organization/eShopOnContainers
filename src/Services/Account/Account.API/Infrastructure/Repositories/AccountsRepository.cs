@@ -237,8 +237,8 @@
                             account => account.User == user && account.Email != email, 
                             Builders<UserMail>.Update
                                 .Set(x => x.DefaultAccount, false)
-                                .Set("accounts.$[i].defaultAccount", false),
-                                new UpdateOptions { ArrayFilters = arrayFilters }
+                                //.Set("accounts.$[i].defaultAccount", false),
+                                //new UpdateOptions { ArrayFilters = arrayFilters }
                                 );
                         result.data = resultUpdate.ModifiedCount;
                         resultUpdate = await _context.Accounts.UpdateManyAsync(
@@ -254,8 +254,8 @@
                             account => account.User == user && account.Email != email,
                             Builders<UserMail>.Update
                                 .Set(x => x.DefaultAccount, false)
-                                .Set("accounts.$[i].defaultAccount", false),
-                                new UpdateOptions { ArrayFilters = arrayFilters }
+                                //.Set("accounts.$[i].defaultAccount", false),
+                                //new UpdateOptions { ArrayFilters = arrayFilters }
                             );
                         result.data = resultUpdate.ModifiedCount;
                         await _context.Accounts.InsertOneAsync(userMail);
@@ -356,9 +356,10 @@
                 Provider = provider,
                 state = true,
                 DefaultAccount = true,
-                accounts = new List<Account>() {
-                        new Account() {defaultAccount = true, email= email, guid= guid, provider= provider , mails = new List<MailRelation>()}
-                    }
+                accounts = new List<Account>()
+                //accounts = new List<Account>() {
+                //        new Account() {defaultAccount = true, email= email, guid= guid, provider= provider , mails = new List<MailRelation>()}
+                //    }
             };
         }
 
@@ -392,14 +393,14 @@
                     account => account.User == user,
                     Builders<UserMail>.Update
                          .Set(x => x.DefaultAccount, false)
-                        .Set("accounts.$[i].defaultAccount", false),
-                    new UpdateOptions
-                    {
-                        ArrayFilters = new List<ArrayFilterDefinition>
-                        {
-                          new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.defaultAccount", true))
-                        }
-                    }
+                    //    .Set("accounts.$[i].defaultAccount", false),
+                    //new UpdateOptions
+                    //{
+                    //    ArrayFilters = new List<ArrayFilterDefinition>
+                    //    {
+                    //      new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.defaultAccount", true))
+                    //    }
+                    //}
                     );
 
                 var modificados = resultUpdate.IsAcknowledged ? resultUpdate.ModifiedCount : 0;
