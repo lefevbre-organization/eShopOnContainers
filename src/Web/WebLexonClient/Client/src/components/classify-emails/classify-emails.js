@@ -126,6 +126,8 @@ class ClassifyEmails extends Component {
   }
 
   searchResultsByType(type, search) {
+    this.clearResultsSelected();
+
     if (type) {
       if (this.state.type === type) {
         const uuidv1 = require("uuid/v1");
@@ -146,18 +148,14 @@ class ClassifyEmails extends Component {
     }
   }
 
+  clearResultsSelected() {
+    const { updateClassifications } = this.props;
+
+    this.setState({ resultsSelected: [] });
+    //updateClassifications([]);
+  }
+
   updateResultsSelected(item) {
-    // const { resultsSelected } = { ...this.state };
-
-    // var findElement = resultsSelected.indexOf(item);
-    // if (findElement === -1) {
-    //   resultsSelected.push(item);
-    // } else {
-    //   resultsSelected.splice(findElement, 1);
-    // }
-
-    // this.setState({ resultsSelected: resultsSelected });
-
     const { updateClassifications } = this.props;
     let resultsSelected = [];
     resultsSelected.push(item);
@@ -214,6 +212,7 @@ class ClassifyEmails extends Component {
                     this.searchResultsByType(type, search);
                   }}
                   updateResultsSelected={item => {
+                    debugger
                     this.updateResultsSelected(item);
                   }}
                 />
