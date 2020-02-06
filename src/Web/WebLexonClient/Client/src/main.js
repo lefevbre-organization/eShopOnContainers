@@ -236,15 +236,6 @@ class Main extends Component {
           message={messageNotification}
         />
 
-        <div className="lex-on-configuration">
-          <a href="#/" className="lex-on-configuration-trigger">
-            <strong className="sr-only sr-only-focusable">
-              Opciones de configuración 
-            </strong>
-            <span className="lf-icon-configuration"></span>
-          </a>
-        </div>
-
         <Routing
           user={user}
           companies={companies}

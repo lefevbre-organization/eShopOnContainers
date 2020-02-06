@@ -3,11 +3,13 @@ import PropTypes from "prop-types";
 import {
   PAGE_SELECT_COMPANY,
   PAGE_SELECT_ACTION,
-  PAGE_CASEFILE
+  PAGE_CASEFILE,
+  PAGE_CONFIGURATION
 } from "../../constants";
 import SelectCompany from "../select-company/select-company";
 import CaseFile from "../case-file/case-file";
 import SelectAction from "../select-action/select-action";
+import Configuration from "../configuration/configuration";
 import { connect } from "react-redux";
 
 class Routing extends Component {
@@ -30,7 +32,7 @@ class Routing extends Component {
     this.setState({ actualPage: page });
   }
 
-  render() {
+  renderPage() {
     const { actualPage } = this.state;
     const { user, companies, toggleNotification, casefile, bbdd, company } = this.props;
 
@@ -62,10 +64,35 @@ class Routing extends Component {
             toggleNotification={toggleNotification}
           />
         );
-
+        case PAGE_CONFIGURATION:
+          return (
+            <Configuration
+              user={user}
+              companies={companies}
+              changePage={this.changePage}
+              toggleNotification={toggleNotification}
+            />
+          );
       default:
         return <SelectCompany changePage={this.changePage} />;
     }
+  }
+
+  render() {
+    return (
+      <React.Fragment>
+        { this.state.actualPage === PAGE_SELECT_ACTION && 
+         <div className="lex-on-configuration" onClick={()=>{this.changePage(PAGE_CONFIGURATION)}}>
+          <a href="#/" className="lex-on-configuration-trigger">
+            <strong className="sr-only sr-only-focusable">
+              Opciones de configuración 
+            </strong>
+            <span className="lf-icon-configuration"></span>
+          </a>
+        </div> }
+        {this.renderPage()}
+      </React.Fragment>
+    )
   }
 }
 
