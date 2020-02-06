@@ -38,7 +38,6 @@
 
         //    try
         //    {
-
         //       var resultReplace =  await _context.Accounts.ReplaceOneAsync(GetFilterUser(account.User, false), account, GetUpsertOptions());
         //        account.Id = resultReplace.IsAcknowledged ? resultReplace.UpsertedId?.ToString(): "0";
         //        result.data = account;
@@ -59,7 +58,9 @@
             var finalUser = GetNewUserMail(account.User, account.Email, account.Provider, account.guid);
             try
             {
-                var accountExists = _context.Accounts.Find(x => x.Provider.Equals(account.Provider) && x.Email.Equals(account.Email) && x.User.Equals(account.User));
+                var resultadoReset = await ResetDefaultAccountByUser(finalUser.User);
+
+                var accountExists = _context.Accounts.Find(x => x.Provider.Equals(finalUser.Provider) && x.Email.Equals(finalUser.Email) && x.User.Equals(finalUser.User));
                 if (!accountExists.Any())
                 {
                     await _context.Accounts.InsertOneAsync(finalUser);
@@ -294,7 +295,7 @@
                 Email = email,
                 guid = guid,
                 Provider = provider,
-                state= true,
+                state = true,
                 DefaultAccount = true,
                 accounts = new List<Account>() {
                         new Account() {defaultAccount = true, email= email, guid= guid, provider= provider , mails = new List<MailRelation>()}
@@ -378,7 +379,7 @@
                         }
                     );
 
-                    if(accountIn.defaultAccount == false)
+                    if (accountIn.defaultAccount == false)
                     {
                         accountIn.defaultAccount = true;
                         TraceLog(parameters: new string[] { $"Se cambia a true el defaultAccount" });
@@ -387,12 +388,11 @@
                     var modificados = resultUpdate.IsAcknowledged ? resultUpdate.ModifiedCount : 0;
                     TraceLog(parameters: new string[] { $"Se modifican {modificados} usuarios con default a :{false}" });
 
-
                     var arrayFilters = GetFilterFromAccount(accountIn.provider, accountIn.email);
                     var resultInsert = await _context.AccountsTransaction(session).UpdateOneAsync(
                         GetFilterUser(user),
                         Builders<UserMail>.Update.Set($"accounts.$[i]", accountIn),
-                         new UpdateOptions { ArrayFilters = arrayFilters}
+                         new UpdateOptions { ArrayFilters = arrayFilters }
                     );
 
                     var modificado = resultInsert.IsAcknowledged ? resultInsert.ModifiedCount : 0;
@@ -414,8 +414,8 @@
                             Builders<UserMail>.Update.AddToSet($"accounts", accountIn)
                         );
 
-                         insertado = resultOther.IsAcknowledged ? resultOther.ModifiedCount : 0;
-                            TraceLog(parameters: new string[] { $"Se inserta {insertado} cuenta {accountIn.email} del proveedor {accountIn.provider} con default a {true}" });
+                        insertado = resultOther.IsAcknowledged ? resultOther.ModifiedCount : 0;
+                        TraceLog(parameters: new string[] { $"Se inserta {insertado} cuenta {accountIn.email} del proveedor {accountIn.provider} con default a {true}" });
 
                         result.data = insertado;
                     }
