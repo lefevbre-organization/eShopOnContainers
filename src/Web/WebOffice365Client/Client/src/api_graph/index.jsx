@@ -551,7 +551,7 @@ export const getContacts = () =>
          const accessToken = await getAccessTokenSilent();
          const client = getAuthenticatedClient(accessToken);
          client
-             .api(`me/contacts`)
+             .api(`me/contacts?top=250`)
              .get()
              .then(response => {
                  let arr = response.value;
