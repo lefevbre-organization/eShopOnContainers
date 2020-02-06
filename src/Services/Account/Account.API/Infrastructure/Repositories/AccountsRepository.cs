@@ -384,6 +384,25 @@
             return result;
         }
 
+        public async Task<Result<long>> DeleteAccountByUser(string user)
+        {
+            var result = new Result<long> { errors = new List<ErrorInfo>() };
+            try
+            {
+
+                    var resultRemove = await _context.Accounts.DeleteManyAsync(GetFilterUser(user));
+                    result.data = resultRemove.DeletedCount;
+                    //var eventAssoc = new AddOperationAccountIntegrationEvent(accountRemove.User, accountRemove.Provider, accountRemove.Email, accountRemove.DefaultAccount, EnTypeOperation.Remove);
+                    //_eventBus.Publish(eventAssoc);
+ 
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
+
         public async Task<Result<long>> ResetDefaultAccountByUser(string user)
         {
             var result = new Result<long> { errors = new List<ErrorInfo>() };

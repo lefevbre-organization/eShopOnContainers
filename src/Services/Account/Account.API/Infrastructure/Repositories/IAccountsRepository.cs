@@ -23,6 +23,7 @@
         Task<Result<long>> UpdateDefaultAccount(string user, string email, string provider, string guid);
 
         Task<Result<long>> DeleteAccountByUserAndEmail(string user, string email);
+        Task<Result<long>> DeleteAccountByUser(string user);
 
         Task<Result<long>> ResetDefaultAccountByUser(string user);
 
