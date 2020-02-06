@@ -5,6 +5,8 @@ import Autosuggest from 'react-autosuggest';
 import {validateEmail} from '../../services/validation';
 import mainCss from './composeMessage.scss';
 import { getContacts } from "../../api/index";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 
 
 export class HeaderAddress extends Component {
@@ -32,16 +34,15 @@ export class HeaderAddress extends Component {
     } = this.props;
     const {suggestions, value} = this.state;
     return (
-      <div className={`${className} ${mainCss['mdc-menu-surface--anchor']}`} onClick={() => this.fieldClick()}
+      <div className={`input-group`} onClick={() => this.fieldClick()}
         onDragOver={e => e.preventDefault()} onDrop={e => this.onDrop(e, id)}>
-        <label>{label}:</label>
+        <div className={'input-group-prepend'}><span className="input-group-text">{label}</span></div>
         {addresses.map((address, index) => (
-          <div key={index} className={`${chipClassName} ${mainCss['mdc-chip']}`}
+          <div key={index} className={`mdc-chip`}
             draggable={true}
             onDragStart={event => HeaderAddress.onAddressDragStart(event, id, address)}>
-            <div className={mainCss['mdc-chip__text']}>{address}</div>
-            <i onClick={() => onAddressRemove(id, address)} className={`material-icons ${mainCss['mdc-chip__icon']}
-               ${mainCss['mdc-chip__icon--trailing']}`}>cancel</i>
+            <div className={'mdc-chip__text'}>{address}</div>
+            <FontAwesomeIcon icon={faTimesCircle} size="1x" onClick={() => onAddressRemove(id, address)} className={'mdc-chip-icon'}/>
           </div>
         ))}
         <Autosuggest
@@ -62,14 +63,97 @@ export class HeaderAddress extends Component {
           onSuggestionsClearRequested={this.handleOnSuggestionsClearRequested}
           onSuggestionSelected={this.handleOnSuggestionSelected}
           theme={{
-            container: ` `,
-            suggestionsContainer: ``,
-            suggestionsContainerOpen: ``,
-            suggestionsList: ``,
-            suggestion: mainCss['mdc-list-item'],
-            suggestionHighlighted: mainCss['mdc-list-item--activated']
+            container: `header-address-container`,
+            suggestionsContainer: `header-address-suggestions-container`,
+            suggestionsContainerOpen: `header-address-suggestions-containerOpen`,
+            suggestionsList: `header-address-suggestions-list`,
+            suggestion: 'header-address-suggestion',
+            suggestionHighlighted:'header-address-suggestion-highlighted'
           }}
         />
+      <style jsx>{`
+          .header-address-suggestions-container {
+            position: absolute;
+            z-index: 2;
+            background-color: white;
+            box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+          }
+
+          .header-address-container {
+            flex: 1;
+          }
+
+          .header-address-container > input {
+            width: 100%;
+            border: none;
+            padding-left: 4px;
+          }
+
+          .header-address-container > input:focus {
+            outline: none;
+          }
+
+          .header-address-suggestions-list {
+            text-align: left;
+            padding: 0px;
+          }
+
+          .header-address-suggestion {
+            cursor: pointer;
+          }
+
+          .header-address-suggestions-list > li {
+            padding: 0 20px 0 10px;
+          }
+
+          .header-address-suggestion-highlighted {
+            background-color: rgba(0, 0, 0, 0.1);
+          }
+
+          .mdc-chip {
+            will-change: transform, opacity;
+            border-radius: 16px;
+            color: rgba(0, 0, 0, 0.87);
+            font-family: Roboto, sans-serif;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-font-smoothing: antialiased;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            font-weight: 400;
+            letter-spacing: 0.01786em;
+            text-decoration: inherit;
+            text-transform: inherit;
+            display: inline-flex;
+            position: relative;
+            align-items: center;
+            box-sizing: border-box;
+            outline: none;
+            cursor: pointer;
+            overflow: hidden;
+
+            background-color: white;
+            padding: 6px 11px;
+            border-width: 1px;
+            border-style: solid;
+            border-color: rgba(51, 51, 51, 0.25);
+            height: 21px;
+            margin: 6px 6px 2px 0;
+          }
+
+          .mdc-chip:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+          }
+          
+          .mdc-chip__text {
+            white-space: nowrap;
+            font-size: 12px;
+        }
+
+        .mdc-chip-icon {
+          margin: 0 -4px 0 4px;
+        }
+          
+      `}</style>
       </div>
     );
   }
