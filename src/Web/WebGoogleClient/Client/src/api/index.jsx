@@ -107,6 +107,7 @@ const getMessageRawList = ({ labelIds, maxResults, pageToken, q = "" }) =>
 export const getContacts = () =>
     
     new Promise((resolve, reject) => {
+<<<<<<< HEAD
        // resolve(["aaaa@aa.com", "bbbb@bb.com", "ccc@cc.com", "dddd@dd.com"])
          window.gapi.client.people.people.connections.list({
              'resourceName': 'people/me',
@@ -121,6 +122,22 @@ export const getContacts = () =>
                  })
                  resolve(contacts);
              });
+=======
+        resolve(["aaaa@aa.com", "bbbb@bb.com", "ccc@cc.com", "dddd@dd.com"])
+        // window.gapi.client.people.people.connections.list({
+        //     'resourceName': 'people/me',
+        //     'pageSize': 100,
+        //     'personFields': 'names'
+        // })
+        //     .then(response => {
+        //         let arr = response.result.connections;
+        //         let contacts = [];
+        //         arr.map(function (item) {
+        //             contacts.push(item.names[0].givenName);
+        //         })
+        //         resolve(contacts);
+        //     });
+>>>>>>> AB#380
             
     });
 
