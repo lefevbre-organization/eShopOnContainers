@@ -73,7 +73,6 @@ artifacts/
 
 # API Keys
 *.env
-config.jsx
 
 # API Keys
 *.env
