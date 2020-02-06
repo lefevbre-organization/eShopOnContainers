@@ -53,36 +53,15 @@
             return result;
         }
 
-        //public async Task<Result<long>> Remove(string id)
-        //{
-        //    var result = new Result<long> { errors = new List<ErrorInfo>() };
-        //    try
-        //    {
-        //        var accountRemove = await _context.Accounts.Find(x => x.Id == id).FirstOrDefaultAsync();
-        //        var resultRemove = await _context.Accounts.DeleteOneAsync(account => account.Id == id);
-        //        result.data = resultRemove.DeletedCount;
-
-        //        if (accountRemove != null)
-        //        {
-        //            var eventAssoc = new AddOperationAccountIntegrationEvent(accountRemove.User, accountRemove.Provider, accountRemove.Email, accountRemove.DefaultAccount, EnTypeOperation.Remove);
-        //            _eventBus.Publish(eventAssoc);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(result.errors, ex);
-        //    }
-        //    return result;
-        //}
-
         public async Task<Result<UserMail>> RemoveAccount(string user, string provider, string mail)
         {
             var result = new Result<UserMail> { errors = new List<ErrorInfo>() };
             var options = new FindOneAndUpdateOptions<UserMail> { ReturnDocument = ReturnDocument.After };
             try
             {
-                var update = Builders<UserMail>.Update.PullFilter(p => p.accounts,
-                                                f => f.email.Equals(mail) && f.provider.Equals(provider));
+                var update = Builders<UserMail>.Update.PullFilter(
+                    p => p.accounts,
+                    f => f.email.Equals(mail) && f.provider.Equals(provider));
                 var userUpdate = await _context.Accounts.FindOneAndUpdateAsync<UserMail>(
                     GetFilterUser(user),
                     update, options);
@@ -333,6 +312,7 @@
         {
             var result = new Result<long> { errors = new List<ErrorInfo>() };
             var cancel = default(CancellationToken);
+            long insertado = 0;
             using (var session = await _context.StartSession(cancel))
             {
                 session.StartTransaction();
@@ -351,24 +331,54 @@
                         }
                     );
 
+                    if(accountIn.defaultAccount == false)
+                    {
+                        accountIn.defaultAccount = true;
+                        TraceLog(parameters: new string[] { $"Se cambia a true el defaultAccount" });
+                    }
+
                     var modificados = resultUpdate.IsAcknowledged ? resultUpdate.ModifiedCount : 0;
                     TraceLog(parameters: new string[] { $"Se modifican {modificados} usuarios con default a :{false}" });
+
+
                     var arrayFilters = GetFilterFromAccount(accountIn.provider, accountIn.email);
                     var resultInsert = await _context.AccountsTransaction(session).UpdateOneAsync(
                         GetFilterUser(user),
                         Builders<UserMail>.Update.Set($"accounts.$[i]", accountIn),
-                         new UpdateOptions { ArrayFilters = arrayFilters , IsUpsert = true}
+                         new UpdateOptions { ArrayFilters = arrayFilters}
                     );
 
-                    var insertado = resultInsert.IsAcknowledged ? resultInsert.ModifiedCount : 0;
-                    TraceLog(parameters: new string[] { $"Se inserta {insertado} cuenta {accountIn.email} del proveedor {accountIn.provider} con default a {true}" });
-                    result.data = insertado;
+                    var modificado = resultInsert.IsAcknowledged ? resultInsert.ModifiedCount : 0;
+                    TraceLog(parameters: new string[] { $"Se modifica la cuenta {accountIn.email} del proveedor {accountIn.provider} con default a {true}" });
 
-                    result.data = resultUpdate.ModifiedCount;
+                    result.data = modificado;
+
+                    if (modificado == 0)
+                    {
+                        //var filter = Builders<UserMail>.Filter.And(
+                        //    Builders<UserMail>.Filter.Eq(u => u.User, user),
+                        //    Builders<UserMail>.Filter.Eq(u => u.state, true),
+                        //    Builders<UserMail>.Filter.ElemMatch(o => o.accounts, o => o.provider == accountIn.provider),
+                        //    Builders<UserMail>.Filter.ElemMatch(o => o.accounts, o => o.email == accountIn.email)
+                        //    );
+
+                        var resultOther = await _context.AccountsTransaction(session).UpdateOneAsync(
+                            GetFilterUser(user),
+                            Builders<UserMail>.Update.AddToSet($"accounts", accountIn)
+                        );
+
+                         insertado = resultOther.IsAcknowledged ? resultOther.ModifiedCount : 0;
+                            TraceLog(parameters: new string[] { $"Se inserta {insertado} cuenta {accountIn.email} del proveedor {accountIn.provider} con default a {true}" });
+
+                        result.data = insertado;
+                    }
+
+                    await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
                     TraceMessage(result.errors, ex);
+                    session.AbortTransaction(cancel);
                 }
             }
             return result;
