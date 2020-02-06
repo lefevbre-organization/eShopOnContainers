@@ -21,6 +21,7 @@ export class PageGoTo extends Component {
       redirect: false,
       showConfirmRemoveAccount: false,
       emailRemoved: null,
+      providedRemoved: null,
       token: props.match.params.token,
       payload: parseJwt(props.match.params.token)
     };
@@ -103,11 +104,11 @@ export class PageGoTo extends Component {
       });
   }
 
-  removeAccount = email => {
+  removeAccount = (email, provider) => {
     const userId = this.props.match.params.userId;
     const encrypt = this.props.match.params.encrypt;
-
-    deleteAccountByUserAndEmail(encrypt, userId, email)
+    
+    deleteAccountByUserAndEmail(encrypt, userId, provider, email)
       .then(result => {
         if (result.data > 0) {
           this.getAccounts();
@@ -147,14 +148,15 @@ export class PageGoTo extends Component {
       });
   };
 
-  toggleConfirmRemoveAccount(remove, email) {
+  toggleConfirmRemoveAccount(remove, email, provided) {
     this.setState(state => ({
       showConfirmRemoveAccount: !state.showConfirmRemoveAccount,
-      emailRemoved: email
+      emailRemoved: email,
+      providedRemoved: provided
     }));
 
     if (remove === true && email !== undefined) {
-      this.removeAccount(email);
+      this.removeAccount(email, provided);
     }
   }
 
@@ -191,7 +193,7 @@ export class PageGoTo extends Component {
   }
 
   render() {
-    const { redirect, showConfirmRemoveAccount, emailRemoved } = this.state;
+    const { redirect, showConfirmRemoveAccount, emailRemoved, providerRemoved } = this.state;
 
     if (redirect) {
       return <UserNotFound />;
@@ -204,6 +206,7 @@ export class PageGoTo extends Component {
           initialModalState={showConfirmRemoveAccount}
           toggleConfirmRemoveAccount={this.toggleConfirmRemoveAccount}
           email={emailRemoved}
+          provider={providerRemoved}
         />
         <div>
           {this.renderSpinner()}

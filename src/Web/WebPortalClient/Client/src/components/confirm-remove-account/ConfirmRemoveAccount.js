@@ -19,7 +19,7 @@ class ConfirmRemoveAccount extends Component {
   }
 
   render() {
-    const { initialModalState, toggleConfirmRemoveAccount, email } = this.props;
+    const { initialModalState, toggleConfirmRemoveAccount, email, provider } = this.props;
 
     return (
       <div>
@@ -55,13 +55,13 @@ class ConfirmRemoveAccount extends Component {
           <Modal.Footer>
             <Button
               className="btn-primary"
-              onClick={() => toggleConfirmRemoveAccount(false, email)}
+              onClick={() => toggleConfirmRemoveAccount(false, email, provider)}
             >
               {i18n.t("confirm-remove-accounts.no")}
             </Button>
             <Button
               className="btn-secondary"
-              onClick={() => toggleConfirmRemoveAccount(true, email)}
+              onClick={() => toggleConfirmRemoveAccount(true, email, provider)}
             >
               {i18n.t("confirm-remove-accounts.yes")}
             </Button>

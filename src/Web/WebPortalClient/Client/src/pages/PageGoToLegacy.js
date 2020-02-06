@@ -25,7 +25,8 @@ export class PageGoToLegacy extends Component {
             userId: null,
             redirect: false,
             showConfirmRemoveAccount: false,
-            emailRemoved: null
+            emailRemoved: null,
+            providedRemoved: null
         };
         this.toggleConfirmRemoveAccount = this.toggleConfirmRemoveAccount.bind(
             this
@@ -93,7 +94,7 @@ export class PageGoToLegacy extends Component {
             .catch(error => {
                 console.log(error);
                 store.addNotification({
-                    message: error,
+                    message: error || "Error",
                     type: "danger",
                     container: "bottom-center",
                     animationIn: ["animated", "fadeIn"],
@@ -107,11 +108,11 @@ export class PageGoToLegacy extends Component {
             });
     }
 
-    removeAccount = email => {
+    removeAccount = (email, provider) => {
         const userId = this.props.match.params.userId;
         const encrypt = this.props.match.params.encrypt;
 
-        deleteAccountByUserAndEmail(encrypt, userId, email)
+        deleteAccountByUserAndEmail(encrypt, userId, provider, email)
             .then(result => {
                 if (result.data > 0) {
                     this.getAccounts();
@@ -135,7 +136,7 @@ export class PageGoToLegacy extends Component {
             })
             .catch(error => {
                 store.addNotification({
-                    message: error,
+                    message: error.message,
                     type: "danger",
                     container: "bottom-center",
                     animationIn: ["animated", "fadeIn"],
@@ -151,14 +152,15 @@ export class PageGoToLegacy extends Component {
             });
     };
 
-    toggleConfirmRemoveAccount(remove, email) {
+    toggleConfirmRemoveAccount(remove, email, provider) {
         this.setState(state => ({
             showConfirmRemoveAccount: !state.showConfirmRemoveAccount,
-            emailRemoved: email
+            emailRemoved: email,
+            providerRemoved: provider
         }));
 
         if (remove === true && email !== undefined) {
-            this.removeAccount(email);
+            this.removeAccount(email, provider);
         }
     }
 
@@ -194,7 +196,7 @@ export class PageGoToLegacy extends Component {
     }
 
     render() {
-        const { redirect, showConfirmRemoveAccount, emailRemoved } = this.state;
+        const { redirect, showConfirmRemoveAccount, emailRemoved, providerRemoved } = this.state;
 
         if (redirect) {
             return <UserNotFound />;
@@ -207,6 +209,7 @@ export class PageGoToLegacy extends Component {
                     initialModalState={showConfirmRemoveAccount}
                     toggleConfirmRemoveAccount={this.toggleConfirmRemoveAccount}
                     email={emailRemoved}
+                    provider={providerRemoved}
                 />
                 <div>
                     {this.renderSpinner()}

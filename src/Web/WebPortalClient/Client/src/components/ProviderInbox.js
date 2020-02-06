@@ -14,7 +14,7 @@ class ProviderInbox extends Component {
   _handleOnClick(provider, email) {
     const { toggleConfirmRemoveAccount } = this.props;
 
-    toggleConfirmRemoveAccount(false, email);
+    toggleConfirmRemoveAccount(false, email, provider);
   }
 
   getUser() {
@@ -49,7 +49,7 @@ class ProviderInbox extends Component {
           <a
             href="#/"
             className="trash"
-            onClick={() => this._handleOnClick(provider, email)}
+            onClick={() => this._handleOnClick(provider, email, provider)}
           >
             <span className="icon lf-icon-trash"></span>
           </a>
