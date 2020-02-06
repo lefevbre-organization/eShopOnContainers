@@ -216,64 +216,51 @@
 
         public async Task<Result<long>> UpdateDefaultAccount(string user, string email, string provider, string guid)
         {
-            //TODO: Cambiar por método insertar usurio si no esiste en el upsert
             var result = new Result<long> { errors = new List<ErrorInfo>() };
-            var updateOptions = new UpdateOptions { IsUpsert = true };
-            TraceLog(parameters: new string[] { $"usuario:{user}", $"email:{email}", $"provider:{provider}", $"guid:{guid}" });
+            var arrayFilters = GetFilterFromAccount(provider, email);
             try
             {
-                // 1. Si no existe, crea la cuenta
+                // I need to know if user exists in Lexon!!!!!!!
                 UserMail userMail = GetNewUserMail(user, email, provider, guid);
-                var accounts = _context.Accounts.Find(GetFilterUser(user));
-
-                if (!accounts.Any())
+                var accounts = await _context.Accounts.Find(x => x.User == user).ToListAsync();
+                if (accounts?.Count == 0)
                 {
-                    TraceLog(parameters: new string[] { $"se crea un nuevo usuario porque no existe ninguno con user:{user}" });
-                    result.data = 1;
                     await _context.Accounts.InsertOneAsync(userMail);
+                    result.data = 1;
                 }
                 else
-
                 {
-                    //2. si encuentra cuentas con esos datos, los actualiza cambiando todo a no default y actualiza los datos
-
-                    var cancel = default(CancellationToken);
-                    using (var session = await _context.StartSession(cancel))
+                    accounts = await _context.Accounts.Find(x => x.User == user && x.Email == email).ToListAsync();
+                    if (accounts?.Count > 0)
                     {
-                        session.StartTransaction();
-                        try
-                        {
-                            var resultadoReset = await ResetDefaultAccountByUser(user);
-                            result.data = resultadoReset.data;
-
-                            var resultReplace = await _context.AccountsTransaction(session).ReplaceOneAsync(
-                                account => account.User == user && account.Email == email && account.Provider == provider,
-                                userMail, updateOptions);
-
-                            if (resultReplace.IsAcknowledged && resultReplace.MatchedCount > 0)
-                            {
-                                TraceLog(parameters: new string[] { $"Se modifican {resultReplace.ModifiedCount} con el default {true} y/o insertan con id {resultReplace.UpsertedId}" });
-                                result.data += (resultReplace.ModifiedCount + (resultReplace.UpsertedId != null ? 1 : 0));
-                            }
-
-                            var resultadoListado = await _context.AccountsTransaction(session).UpdateOneAsync(
-                                    GetFilterUser(user),
-                                    Builders<UserMail>.Update.AddToSet($"accounts", userMail.accounts[0])
+                        var resultUpdate = await _context.Accounts.UpdateManyAsync(
+                            account => account.User == user && account.Email != email, 
+                            Builders<UserMail>.Update
+                                .Set(x => x.DefaultAccount, false)
+                                .Set("accounts.$[i].defaultAccount", false),
+                                new UpdateOptions { ArrayFilters = arrayFilters }
                                 );
-
-                            if (resultadoListado.IsAcknowledged && resultadoListado.MatchedCount > 0)
-                            {
-                                TraceLog(parameters: new string[] { $"Se añade {resultadoListado.ModifiedCount} una cuentas con el default {true}" });
-                                result.data += resultReplace.ModifiedCount;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            TraceMessage(result.errors, ex);
-                            session.AbortTransaction();
-                        }
+                        result.data = resultUpdate.ModifiedCount;
+                        resultUpdate = await _context.Accounts.UpdateManyAsync(
+                            account => account.User == user && account.Email == email , 
+                            Builders<UserMail>.Update
+                            .Set(x => x.DefaultAccount, true)
+                            .Set(x => x.Email, email));
+                        result.data += resultUpdate.ModifiedCount;
                     }
-                    return result;
+                    else
+                    {
+                        var resultUpdate = await _context.Accounts.UpdateManyAsync(
+                            account => account.User == user && account.Email != email,
+                            Builders<UserMail>.Update
+                                .Set(x => x.DefaultAccount, false)
+                                .Set("accounts.$[i].defaultAccount", false),
+                                new UpdateOptions { ArrayFilters = arrayFilters }
+                            );
+                        result.data = resultUpdate.ModifiedCount;
+                        await _context.Accounts.InsertOneAsync(userMail);
+                        result.data++;
+                    }
                 }
 
                 var eventAssoc = new AddOperationAccountIntegrationEvent(user, provider, email, true, EnTypeOperation.UpdateDefaultAccount);
@@ -285,6 +272,78 @@
             }
             return result;
         }
+
+        //public async Task<Result<long>> UpdateDefaultAccount(string user, string email, string provider, string guid)
+        //{
+        //    //TODO: Cambiar por método insertar usurio si no esiste en el upsert
+        //    var result = new Result<long> { errors = new List<ErrorInfo>() };
+        //    var updateOptions = new UpdateOptions { IsUpsert = true };
+        //    TraceLog(parameters: new string[] { $"usuario:{user}", $"email:{email}", $"provider:{provider}", $"guid:{guid}" });
+        //    try
+        //    {
+        //        // 1. Si no existe, crea la cuenta
+        //        UserMail userMail = GetNewUserMail(user, email, provider, guid);
+        //        var accounts = _context.Accounts.Find(GetFilterUser(user));
+
+        //        if (!accounts.Any())
+        //        {
+        //            TraceLog(parameters: new string[] { $"se crea un nuevo usuario porque no existe ninguno con user:{user}" });
+        //            result.data = 1;
+        //            await _context.Accounts.InsertOneAsync(userMail);
+        //        }
+        //        else
+
+        //        {
+        //            //2. si encuentra cuentas con esos datos, los actualiza cambiando todo a no default y actualiza los datos
+
+        //            var cancel = default(CancellationToken);
+        //            using (var session = await _context.StartSession(cancel))
+        //            {
+        //                session.StartTransaction();
+        //                try
+        //                {
+        //                    var resultadoReset = await ResetDefaultAccountByUser(user);
+        //                    result.data = resultadoReset.data;
+
+        //                    var resultReplace = await _context.AccountsTransaction(session).ReplaceOneAsync(
+        //                        account => account.User == user && account.Email == email && account.Provider == provider,
+        //                        userMail, updateOptions);
+
+        //                    if (resultReplace.IsAcknowledged && resultReplace.MatchedCount > 0)
+        //                    {
+        //                        TraceLog(parameters: new string[] { $"Se modifican {resultReplace.ModifiedCount} con el default {true} y/o insertan con id {resultReplace.UpsertedId}" });
+        //                        result.data += (resultReplace.ModifiedCount + (resultReplace.UpsertedId != null ? 1 : 0));
+        //                    }
+
+        //                    var resultadoListado = await _context.AccountsTransaction(session).UpdateOneAsync(
+        //                            GetFilterUser(user),
+        //                            Builders<UserMail>.Update.AddToSet($"accounts", userMail.accounts[0])
+        //                        );
+
+        //                    if (resultadoListado.IsAcknowledged && resultadoListado.MatchedCount > 0)
+        //                    {
+        //                        TraceLog(parameters: new string[] { $"Se añade {resultadoListado.ModifiedCount} una cuentas con el default {true}" });
+        //                        result.data += resultReplace.ModifiedCount;
+        //                    }
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    TraceMessage(result.errors, ex);
+        //                    session.AbortTransaction();
+        //                }
+        //            }
+        //            return result;
+        //        }
+
+        //        var eventAssoc = new AddOperationAccountIntegrationEvent(user, provider, email, true, EnTypeOperation.UpdateDefaultAccount);
+        //        _eventBus.Publish(eventAssoc);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TraceMessage(result.errors, ex);
+        //    }
+        //    return result;
+        //}
 
         private static UserMail GetNewUserMail(string user, string email, string provider, string guid)
         {
@@ -433,12 +492,12 @@
 
         private static FilterDefinition<UserMail> GetFilterUser(string idUser, bool onlyValid = true)
         {
-            if (onlyValid)
-            {
-                return Builders<UserMail>.Filter.And(
-                Builders<UserMail>.Filter.Eq(u => u.User, idUser),
-                Builders<UserMail>.Filter.Eq(u => u.state, true));
-            }
+            //if (onlyValid)
+            //{
+            //    return Builders<UserMail>.Filter.And(
+            //    Builders<UserMail>.Filter.Eq(u => u.User, idUser),
+            //    Builders<UserMail>.Filter.Eq(u => u.state, true));
+            //}
 
             return Builders<UserMail>.Filter.Eq(u => u.User, idUser);
         }
