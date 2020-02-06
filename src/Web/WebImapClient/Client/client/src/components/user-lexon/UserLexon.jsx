@@ -31,14 +31,7 @@ class UserLexon extends Component {
       // Get user account
       const account = base64.decode(account64);
 
-      if (account) {
-        const url = `${window.API_GATEWAY}/api/v2/useremail/${user}/account/imap/${account}`;
-
-        const response = await fetch(url, {
-          method: "GET"
-        });
-        const data = await response.json();
-
+      if (account) {        
         this.props.setAccount(account);
       }
     }

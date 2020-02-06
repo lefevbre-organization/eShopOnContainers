@@ -42,11 +42,27 @@ const stateFromFormValues = formValues => ({
   values: {...formValues, password: ''}, advanced: false
 });
 
+const stateFromAccount = account => ({
+  values: {
+    serverHost: account.imap || '',
+    serverPort: account.imapPort || DEFAULT_IMAP_PORT,
+    user: account.imapUser || '',
+    password: account.imapPass|| '',
+    imapSsl: account.imapSsl || DEFAULT_IMAP_SSL,
+    smtpHost: account.smtp || '',
+    smtpPort: account.smtpPort || DEFAULT_SMTP_PORT,
+    smtpSsl: account.smtpSsl || DEFAULT_SMTP_SSL
+  },
+  advanced: false
+});
+
 
 
 export class Login extends Component {
   constructor(props) {
     super(props);
+
+
     this.state = stateFromParams(new URLSearchParams(this.props.location.search));
     if (this.props.formValues && Object.keys(this.props.formValues).length > 0) {
       this.state = stateFromFormValues(this.props.formValues);
@@ -55,9 +71,22 @@ export class Login extends Component {
     this.login = this.login.bind(this);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     console.log("IN ... Login ->", window.URL_SERVER_API);
-    }
+    const { account, user } = this.props.lexon;
+
+    const url = `${window.API_ACC_GATEWAY}/api/v2/accounts/usermail/${user}/account/imap/${account}`;
+
+    const response = await fetch(url, {
+      method: "GET"
+    });
+    const data = await response.json();
+
+    const newValues = stateFromAccount(data.data.configAccount)
+    this.setState({values: newValues.values}, ()=>{
+      this.props.dispatchLogin(this.state.values);
+    })
+  }
 
     goBack() { 
         if (typeof this.props.lexon !== 'undefined') {

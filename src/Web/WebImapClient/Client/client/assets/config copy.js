@@ -14,3 +14,4 @@ window.URL_MF_IMAP = "http://localhost:9000/user";
 window.URL_MF_LEXON = "http://localhost:3004/static/js/main.js";
 window.API_GATEWAY = "http://localhost:8086";
 window.URL_SERVER_API = "http://localhost:9010";
+window.API_ACC_GATEWAY = "https://now-apigwacc.lefebvre.es";
