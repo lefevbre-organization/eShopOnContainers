@@ -53,36 +53,15 @@
             return result;
         }
 
-        //public async Task<Result<long>> Remove(string id)
-        //{
-        //    var result = new Result<long> { errors = new List<ErrorInfo>() };
-        //    try
-        //    {
-        //        var accountRemove = await _context.Accounts.Find(x => x.Id == id).FirstOrDefaultAsync();
-        //        var resultRemove = await _context.Accounts.DeleteOneAsync(account => account.Id == id);
-        //        result.data = resultRemove.DeletedCount;
-
-        //        if (accountRemove != null)
-        //        {
-        //            var eventAssoc = new AddOperationAccountIntegrationEvent(accountRemove.User, accountRemove.Provider, accountRemove.Email, accountRemove.DefaultAccount, EnTypeOperation.Remove);
-        //            _eventBus.Publish(eventAssoc);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(result.errors, ex);
-        //    }
-        //    return result;
-        //}
-
         public async Task<Result<UserMail>> RemoveAccount(string user, string provider, string mail)
         {
             var result = new Result<UserMail> { errors = new List<ErrorInfo>() };
             var options = new FindOneAndUpdateOptions<UserMail> { ReturnDocument = ReturnDocument.After };
             try
             {
-                var update = Builders<UserMail>.Update.PullFilter(p => p.accounts,
-                                                f => f.email.Equals(mail) && f.provider.Equals(provider));
+                var update = Builders<UserMail>.Update.PullFilter(
+                    p => p.accounts,
+                    f => f.email.Equals(mail) && f.provider.Equals(provider));
                 var userUpdate = await _context.Accounts.FindOneAndUpdateAsync<UserMail>(
                     GetFilterUser(user),
                     update, options);
