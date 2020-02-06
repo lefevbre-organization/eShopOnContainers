@@ -72,11 +72,12 @@ class ListClassifications extends Component {
         </div>
         <style jsx>{`          
             #scrl-container .scrollbar-container {
-            position: absolute !important;
-            top: 350px  !important;
-            bottom: 0  !important;
-            height: unset !important;
-        }`}</style>
+              position: absolute !important;
+              top: 350px  !important;
+              bottom: 0  !important;
+              height: unset !important;
+            }        
+        `}</style>
       </Fragment>
     );
   }
