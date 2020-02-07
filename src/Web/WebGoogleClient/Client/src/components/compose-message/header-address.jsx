@@ -96,6 +96,8 @@ export class HeaderAddress extends Component {
           .header-address-suggestions-list {
             text-align: left;
             padding: 0px;
+            max-height: 300px;
+            overflow-y: auto;
           }
 
           .header-address-suggestion {
@@ -176,9 +178,9 @@ export class HeaderAddress extends Component {
   }
 
   filterItems(ar, query) {
-        return ar.filter(function (el) {
-            return el.toLowerCase().indexOf(query.toLowerCase()) > -1;
-        })
+    return ar.filter(function (el) {
+          return el.toLowerCase().indexOf(query.toLowerCase()) > -1;
+    })
   }
   async onSuggestionsFetchRequested({ value }) {
         var contacts = await getContacts();

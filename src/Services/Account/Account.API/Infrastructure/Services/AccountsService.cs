@@ -49,6 +49,11 @@
             return await _accountsRepository.DeleteAccountByUserAndEmail(user, email);
         }
 
+
+        public async Task<Result<long>> DeleteAccountByUser(string user)
+        {
+            return await _accountsRepository.DeleteAccountByUser(user);
+        }
         public async Task<Result<long>> ResetDefaultAccountByUser(string user)
         {
             return await _accountsRepository.ResetDefaultAccountByUser(user);
@@ -109,5 +114,6 @@
             return await _accountsRepository.UpSertAccountConfig(user, provider, mail, config);
 
         }
+
     }
 }

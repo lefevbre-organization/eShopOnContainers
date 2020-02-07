@@ -74,6 +74,9 @@ artifacts/
 # API Keys
 *.env
 
+# API Keys
+*.env
+
 # Chutzpah Test files
 _Chutzpah*
 

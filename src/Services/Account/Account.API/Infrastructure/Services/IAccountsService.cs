@@ -41,5 +41,6 @@
         Task<Result<List<MailRelation>>> GetRelationsFromMail(string user, string provider, string mail, string uid);
 
         Task<Result<bool>> UpSertAccountConfig(string user, string provider, string mail,  ConfigImapAccount config);
+        Task<Result<long>> DeleteAccountByUser(string user);
     }
 }

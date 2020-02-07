@@ -38,6 +38,10 @@
 
         //    try
         //    {
+<<<<<<< HEAD
+=======
+
+>>>>>>> add version mixta of accounts
         //       var resultReplace =  await _context.Accounts.ReplaceOneAsync(GetFilterUser(account.User, false), account, GetUpsertOptions());
         //        account.Id = resultReplace.IsAcknowledged ? resultReplace.UpsertedId?.ToString(): "0";
         //        result.data = account;
@@ -237,8 +241,8 @@
                             account => account.User == user && account.Email != email, 
                             Builders<UserMail>.Update
                                 .Set(x => x.DefaultAccount, false)
-                                .Set("accounts.$[i].defaultAccount", false),
-                                new UpdateOptions { ArrayFilters = arrayFilters }
+                                //.Set("accounts.$[i].defaultAccount", false),
+                                //new UpdateOptions { ArrayFilters = arrayFilters }
                                 );
                         result.data = resultUpdate.ModifiedCount;
                         resultUpdate = await _context.Accounts.UpdateManyAsync(
@@ -254,15 +258,15 @@
                             account => account.User == user && account.Email != email,
                             Builders<UserMail>.Update
                                 .Set(x => x.DefaultAccount, false)
-                                .Set("accounts.$[i].defaultAccount", false),
-                                new UpdateOptions { ArrayFilters = arrayFilters }
+                                //.Set("accounts.$[i].defaultAccount", false),
+                                //new UpdateOptions { ArrayFilters = arrayFilters }
                             );
                         result.data = resultUpdate.ModifiedCount;
                         await _context.Accounts.InsertOneAsync(userMail);
                         result.data++;
                     }
                 }
-
+            
                 var eventAssoc = new AddOperationAccountIntegrationEvent(user, provider, email, true, EnTypeOperation.UpdateDefaultAccount);
                 _eventBus.Publish(eventAssoc);
             }
@@ -356,9 +360,10 @@
                 Provider = provider,
                 state = true,
                 DefaultAccount = true,
-                accounts = new List<Account>() {
-                        new Account() {defaultAccount = true, email= email, guid= guid, provider= provider , mails = new List<MailRelation>()}
-                    }
+                accounts = new List<Account>()
+                //accounts = new List<Account>() {
+                //        new Account() {defaultAccount = true, email= email, guid= guid, provider= provider , mails = new List<MailRelation>()}
+                //    }
             };
         }
 
@@ -383,28 +388,47 @@
             return result;
         }
 
-        public async Task<Result<long>> ResetDefaultAccountByUser(string user)
+        public async Task<Result<long>> DeleteAccountByUser(string user)
         {
             var result = new Result<long> { errors = new List<ErrorInfo>() };
+            try
+            {
+
+                    var resultRemove = await _context.Accounts.DeleteManyAsync(GetFilterUser(user));
+                    result.data = resultRemove.DeletedCount;
+                    //var eventAssoc = new AddOperationAccountIntegrationEvent(accountRemove.User, accountRemove.Provider, accountRemove.Email, accountRemove.DefaultAccount, EnTypeOperation.Remove);
+                    //_eventBus.Publish(eventAssoc);
+ 
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
+
+        public async Task<Result<long>> ResetDefaultAccountByUser(string user)
+        {
+           var result = new Result<long> { errors = new List<ErrorInfo>() };
             try
             {
                 var resultUpdate = await _context.Accounts.UpdateManyAsync(
                     account => account.User == user,
                     Builders<UserMail>.Update
-                         .Set(x => x.DefaultAccount, false)
-                        .Set("accounts.$[i].defaultAccount", false),
-                    new UpdateOptions
-                    {
-                        ArrayFilters = new List<ArrayFilterDefinition>
-                        {
-                          new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.defaultAccount", true))
-                        }
-                    }
+                        .Set(x => x.DefaultAccount, false)
+                    //    .Set("accounts.$[i].defaultAccount", false),
+                    //new UpdateOptions
+                    //{
+                    //    ArrayFilters = new List<ArrayFilterDefinition>
+                    //    {
+                    //      new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.defaultAccount", true))
+                    //    }
+                    //}
                     );
-
+            
                 var modificados = resultUpdate.IsAcknowledged ? resultUpdate.ModifiedCount : 0;
                 TraceLog(parameters: new string[] { $"Se modifican {modificados} usuarios con default a :{false}" });
-
+            
                 result.data = modificados;
             }
             catch (Exception ex)
@@ -412,6 +436,7 @@
                 TraceMessage(result.errors, ex);
             }
             return result;
+
         }
 
         public async Task<Result<long>> UpSertAccount(string user, Account accountIn)

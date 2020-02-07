@@ -88,6 +88,21 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        [HttpGet("deleteaccountbyuser/{user}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> DeleteAccountByUser(
+            [FromRoute]string user
+            )
+        {
+            if (string.IsNullOrEmpty(user) )
+                return BadRequest("values invalid. Must be a valid user and email to delete the defaultAccount of userMail");
+
+            var result = await _accountsService.DeleteAccountByUser(user);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
         [HttpGet("resetdefaultaccountbyuser/{user}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.NotFound)]
