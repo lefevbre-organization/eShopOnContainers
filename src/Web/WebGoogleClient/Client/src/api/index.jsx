@@ -111,13 +111,15 @@ export const getContacts = () =>
          window.gapi.client.people.people.connections.list({
              'resourceName': 'people/me',
              'pageSize': 100,
-             'personFields': 'names'
+             'personFields': 'names,emailAddresses'
          })
              .then(response => {
                  let arr = response.result.connections;
                  let contacts = [];
                  arr.map(function (item) {
-                     contacts.push(item.names[0].givenName);
+                     if (typeof item.emailAddresses !== 'undefined') {
+                         contacts.push(item.emailAddresses[0].value);
+                     }
                  })
                  resolve(contacts);
              });
