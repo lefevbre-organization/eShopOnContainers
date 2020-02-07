@@ -556,10 +556,12 @@ export const getContacts = () =>
              .then(response => {
                  let arr = response.value;
                  let contacts = [];
-                 arr.map(function (item) {
-                     if (item.emailAddresses.length > 0)
-                     contacts.push(item.emailAddresses[0].address);
-                 })
+                 if(arr){
+                    arr.map(function (item) {
+                        if (item.emailAddresses.length > 0)
+                        contacts.push(item.emailAddresses[0].address);
+                    })
+                  }
                  resolve(contacts);
              });
 
