@@ -1,6 +1,7 @@
 ﻿namespace Account.API.Infrastructure.Repositories
 {
     using Account.API.Model;
+    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 
     #region Using
 
@@ -14,7 +15,7 @@
     {
         Task<Result<UserMail>> Create(UserMail account);
 
-        Task<Result<UpdateResult>> AddUser(string user);
+        //Task<Result<UpdateResult>> AddUser(string user);
 
         Task<Result<AccountList>> GetByUser(string user);
 

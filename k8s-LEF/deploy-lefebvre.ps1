@@ -5,7 +5,7 @@ Param(
     [parameter(Mandatory=$false)][string]$execPath,
     [parameter(Mandatory=$false)][string]$kubeconfigPath,
     [parameter(Mandatory=$false)][string]$configFile,
-    [parameter(Mandatory=$false)][string[]]$servicesToPush=("account.api"),
+    [parameter(Mandatory=$false)][string[]]$servicesToPush=("lexon.api"),
     [parameter(Mandatory=$false)][string]$imageTagPlatform="linux",
     [parameter(Mandatory=$false)][string]$imageTag="dev",
     [parameter(Mandatory=$false)][bool]$deployCI=$false,

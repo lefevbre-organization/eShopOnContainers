@@ -5,6 +5,7 @@
     using Account.API.Model;
     using IntegrationEvents.Events;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
@@ -32,27 +33,47 @@
             _eventBus = eventBus;
         }
 
-        //public async Task<Result<UserMail>> Create(UserMail account)
-        //{
-        //    var result = new Result<UserMail> { errors = new List<ErrorInfo>() };
+        /// <summary>
+        /// Crea o actualiza un usuario, mandando un mensaje al bus
+        /// </summary>
+        /// <param name="userMail"></param>
+        /// <returns></returns>
+        public async Task<Result<UserMail>> Create(UserMail userMail)
+        {
+            var result = new Result<UserMail>();
+            
+            try
+            {
+                var resultReplace = await _context.Accounts.ReplaceOneAsync(GetFilterUser(userMail.User, false), userMail, GetUpsertOptions());
+              //  userMail.Id = resultReplace.IsAcknowledged ? resultReplace.UpsertedId?.ToString() : "0";
 
-        //    try
-        //    {
-        //       var resultReplace =  await _context.Accounts.ReplaceOneAsync(GetFilterUser(account.User, false), account, GetUpsertOptions());
-        //        account.Id = resultReplace.IsAcknowledged ? resultReplace.UpsertedId?.ToString(): "0";
-        //        result.data = account;
 
-        //        //var eventAssoc = new AddOperationAccountIntegrationEvent(account.User, account.Provider, account.Email, account.DefaultAccount, EnTypeOperation.Create);
-        //        //_eventBus.Publish(eventAssoc);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(result.errors, ex);
-        //    }
-        //    return result;
-        //}
+                if (!resultReplace.IsAcknowledged)
+                {
+                    TraceMessage(result.errors, new Exception($"Don´t insert or modify the user"), (short)TypeOfInfo.MongoOtherError);
 
-        public async Task<Result<UserMail>> Create(UserMail account)
+                }else if (resultReplace.IsAcknowledged && resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0) {
+                    TraceInfo(result.infos, $"Se modifica el usuario {userMail.User}");
+                }
+                else if (resultReplace.IsAcknowledged && resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable)
+                {
+                    TraceInfo(result.infos, $"Se inserta el usuario {userMail.User} con {resultReplace.UpsertedId}");
+                    userMail.Id = resultReplace.UpsertedId.ToString();
+                }
+
+                result.data = userMail;
+
+                var eventAssoc = new AddUserMailIntegrationEvent(userMail.User, userMail.configUser);
+                _eventBus.Publish(eventAssoc);
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
+
+        public async Task<Result<UserMail>> CreateV1(UserMail account)
         {
             var result = new Result<UserMail> { errors = new List<ErrorInfo>() };
             var finalUser = GetNewUserMail(account.User, account.Email, account.Provider, account.guid);
@@ -108,23 +129,23 @@
             return result;
         }
 
-        //public async Task<Result<AccountList>> GetByUser(string user)
-        //{
-        //    var result = new Result<AccountList> { errors = new List<ErrorInfo>() };
-        //    try
-        //    {
-        //        var accounts =  await _context.Accounts.Find(GetFilterUser(user)).SortByDescending(x => x.Id).ToListAsync();
-
-        //        result.data = new AccountList { Accounts = accounts.ToArray() };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(result.errors, ex);
-        //    }
-        //    return result;
-        //}
-
         public async Task<Result<AccountList>> GetByUser(string user)
+        {
+            var result = new Result<AccountList> { errors = new List<ErrorInfo>() };
+            try
+            {
+                var accounts = await _context.Accounts.Find(GetFilterUser(user)).SortByDescending(x => x.Id).ToListAsync();
+
+                result.data = new AccountList { Accounts = accounts.ToArray() };
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
+
+        public async Task<Result<AccountList>> GetByUserV1(string user)
         {
             var result = new Result<AccountList> { errors = new List<ErrorInfo>() };
             try
@@ -144,7 +165,7 @@
 
         public async Task<Result<UserMail>> GetUser(string user)
         {
-            var result = new Result<UserMail> { errors = new List<ErrorInfo>() };
+            var result = new Result<UserMail> ();
             try
             {
                 result.data = await _context.Accounts.Find(GetFilterUser(user)).SingleOrDefaultAsync();
@@ -156,24 +177,24 @@
             return result;
         }
 
-        public async Task<Result<UpdateResult>> AddUser(string user)
-        {
-            var result = new Result<UpdateResult> { errors = new List<ErrorInfo>() };
-            var filter = GetFilterUser(user, false);
-            var update = Builders<UserMail>.Update
-                .Set($"user", user)
-                .Set($"state", true);
-            var options = GetUpsertOptions();
-            try
-            {
-                result.data = await _context.Accounts.UpdateOneAsync(filter, update, options);
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
-            return result;
-        }
+        //public async Task<Result<UpdateResult>> AddUser(string user)
+        //{
+        //    var result = new Result<UpdateResult> { errors = new List<ErrorInfo>() };
+        //    var filter = GetFilterUser(user, false);
+        //    var update = Builders<UserMail>.Update
+        //        .Set($"user", user)
+        //        .Set($"state", true);
+        //    var options = GetUpsertOptions();
+        //    try
+        //    {
+        //        result.data = await _context.Accounts.UpdateOneAsync(filter, update, options);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TraceMessage(result.errors, ex);
+        //    }
+        //    return result;
+        //}
 
         private static UpdateOptions GetUpsertOptions()
         {
