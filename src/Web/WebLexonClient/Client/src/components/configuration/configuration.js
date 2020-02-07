@@ -5,6 +5,8 @@ import { connect } from "react-redux";
 import Switch from "react-switch";
 
 import ACTIONS from "../../actions/selections";
+import APP_ACTIONS from "../../actions/applicationAction";
+
 import { PAGE_SELECT_ACTION } from "../../constants";
 class Configuration extends Component {
   constructor(props) {
@@ -12,7 +14,7 @@ class Configuration extends Component {
 
     this.state = {
       showMessage: false,
-      checked: false
+      config: this.props.config
     };
 
     this.handleOnClick = this.handleOnClick.bind(this);
@@ -21,9 +23,12 @@ class Configuration extends Component {
   componentDidMount() { 
   }
 
-  handleOnClick() {
-    const checked = !this.state.checked;
-    this.setState({checked})
+  handleOnClick(id) {
+    const newConfig = Object.assign({}, this.state.config);
+    newConfig[id] = !newConfig[id]
+    this.setState({config: newConfig}, ()=>{
+      this.props.setConfig(this.state.config)
+    })
   }
 
   renderShowMessageSelectCompany() {
@@ -51,49 +56,65 @@ class Configuration extends Component {
           <p>OPCIONES DE CONFIGURACIÓN</p>
           </div>
         </div>
-        <ul>
-          <li>
-            <label>
-              <Switch height={18} width={36} checkedIcon={false} uncheckedIcon={false} onChange={this.handleOnClick} checked={this.state.checked} />
-              <span>Switch with default style</span>
-              </label>
+        <ul className="options-list">
+          <li className="option-container">
+            <div>
+              <Switch height={18} width={36} onColor={"#001978"} checkedIcon={false} uncheckedIcon={false} onChange={()=>{this.handleOnClick("automaticClassification")}} checked={this.state.config.automaticClassification} />
+              <span>Clasificar contactos automáticamente al enviar correo</span>
+            </div>
           </li>
         </ul>
-      <style jsx>{`
-      .config-title {
-        border-bottom: 2px solid #001978;
-        margin: 10px 0;
-      }
+        <style jsx>{`
+        .options-list {
+          padding: 15px;
+        }
 
-      .config-title a:hover {
-        background-color: #e5e8f1;
-      }
+        .option-container>div {
+          display: flex;
+          line-height: 1.25;
+          align-items: center;
+        }
 
-      .config-title a {
-        border-radius: 50%;
-        width: 34px;        
-        height: 34px;
-        text-align: center;
-        padding-top: 5px;
-      }
+        .option-container span {
+          font-family: MTTMilano, Lato, Arial, sans-serif;
+          font-weight: 600;
+          margin-left: 10px;
+          color: #001978;
+        }
 
-      .config-title p {
-        color: #7f8cbb;
-        font-size: 12px;
-        font-weight: bold;
-        line-height: 32px;
-        text-align: center;
-        text-transform: uppercase;
-        font-family: MTTMilano, Lato, Arial, sans-serif;
-        margin-bottom: 0;
-        margin-left: 10px;
-      }
+        .config-title {
+          border-bottom: 2px solid #001978;
+          margin: 10px 0;
+        }
 
-      .icon {
-        font-size: 20px;
-        color: #001978;
-      }
+        .config-title a:hover {
+          background-color: #e5e8f1;
+        }
 
+        .config-title a {
+          border-radius: 50%;
+          width: 34px;        
+          height: 34px;
+          text-align: center;
+          padding-top: 5px;
+        }
+
+        .config-title p {
+          color: #7f8cbb;
+          font-size: 12px;
+          font-weight: bold;
+          line-height: 32px;
+          text-align: center;
+          text-transform: uppercase;
+          font-family: MTTMilano, Lato, Arial, sans-serif;
+          margin-bottom: 0;
+          margin-left: 10px;
+        }
+
+        .icon {
+          font-size: 20px;
+          color: #001978;
+        }
       `}</style>
       </Fragment>
     );
@@ -108,14 +129,12 @@ Configuration.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    companySelected: state.selections.companySelected,
-    errors: state.applicationReducer.errors,
-    initialBBDD: state.selections.initialBBDD
+    config: state.applicationReducer.config
   };
 };
 
 const mapDispatchToProps = dispatch => ({
-  setCompanySelected: item => dispatch(ACTIONS.setCompanySelected(item))
+  setConfig: item => dispatch(APP_ACTIONS.setConfig(item))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Configuration);

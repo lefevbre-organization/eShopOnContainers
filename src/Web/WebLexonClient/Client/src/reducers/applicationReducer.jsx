@@ -23,6 +23,15 @@ const applicationReducer = (state = INITIAL_STATE.application, action) => {
       };
     }
 
+    case ACTIONS.Types.SET_CONFIG: {
+      return {
+        ...state,
+        config: {
+          ...action.payload
+        }
+      }
+    }
+
     default:
       return state;
   }
