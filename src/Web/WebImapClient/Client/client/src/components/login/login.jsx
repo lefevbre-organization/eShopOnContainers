@@ -73,9 +73,9 @@ export class Login extends Component {
 
   async componentDidMount() {
     console.log("IN ... Login ->", window.URL_SERVER_API);
-    const { account, user } = this.props.lexon;
+    const { account, userId } = this.props.lexon;
 
-    const url = `${window.API_ACC_GATEWAY}/api/v2/accounts/usermail/${user}/account/imap/${account}`;
+    const url = `${window.API_ACC_GATEWAY}/api/v2/accounts/usermail/${userId}/account/imap/${account}`;
 
     const response = await fetch(url, {
       method: "GET"
@@ -212,9 +212,30 @@ export class Login extends Component {
 
   login(event) {
     event.preventDefault();
+    this.saveLoginConfig();
     this.props.dispatchLogin(this.state.values);
+    }   
+
+    async saveLoginConfig() {
+      const { userId = '', account = '' } = this.props.lexon; 
+      const url = `${window.API_ACC_GATEWAY}/api/v2/accounts/usermail/${userId}/account/imap/${account}/config/addorupdate`;
+      await fetch(url, {
+        method: 'POST',
+        headers: {
+          "content-Type":"application/json"
+        },
+        body: JSON.stringify({
+          imap: this.state.values.serverHost,
+          imapPort: this.state.values.serverPort,
+          imapUser: this.state.values.user,
+          imapPass: this.state.values.password,
+          imapSsl: this.state.values.imapSsl,
+          smtp: this.state.values.smtpHost,
+          smtpPort: this.state.values.smtpPort,
+          smtpSsl: this.state.values.smtpSsl
+        })
+      });
     }
-   
 }
 
 //export function logout() {
