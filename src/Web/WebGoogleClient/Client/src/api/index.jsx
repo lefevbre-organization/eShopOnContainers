@@ -116,9 +116,9 @@ export const getContacts = () =>
              .then(response => {
                  let arr = response.result.connections;
                  let contacts = [];
-                 arr.map(function (item) {
-                     contacts.push(item.names[0].givenName);
-                 })
+                    arr.map(function (item) {
+                        contacts.push(item.names[0].givenName);
+                    })
                  resolve(contacts);
              });
             
