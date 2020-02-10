@@ -31,6 +31,7 @@ class CaseFile extends Component {
     )
       .then(result => {
         const icase = parseInt(this.props.idCaseFile);
+        let cf;
         for(let i = 0; i < result.results.length; i++) {
           if(result.results[i].id === icase) {
             cf = result.results[i].id;
