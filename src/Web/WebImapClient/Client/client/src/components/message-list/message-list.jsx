@@ -231,6 +231,7 @@ class MessageList extends Component {
           }
         })
       );
+      console.log("Checkclick:" + message.messageId);
     }
   }
 
@@ -252,6 +253,7 @@ class MessageList extends Component {
           m => !Object.keys(this.props.downloadedMessages).includes(m.messageId)
         )
         .map(m => m.uid);
+      console.log(this.props.all);
       this.props.preloadMessages(this.props.selectedFolder, latestMessagesUids);
     }
   }
@@ -273,7 +275,8 @@ const mapStateToProps = state => ({
   activeRequests: state.messages.activeRequests,
   messages: getSelectedFolderMessageList(state),
   selectedMessages: state.messages.selected,
-  downloadedMessages: state.application.downloadedMessages
+  downloadedMessages: state.application.downloadedMessages,
+  all: state
 });
 
 const mapDispatchToProps = dispatch => ({

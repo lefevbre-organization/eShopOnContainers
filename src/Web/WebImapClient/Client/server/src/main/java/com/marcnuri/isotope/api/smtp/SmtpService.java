@@ -107,7 +107,7 @@ public class SmtpService {
         }
     }
 
-    void sendMessage(HttpServletRequest request, Message message) {
+    String sendMessage(HttpServletRequest request, Message message) {
         try {
             final Credentials credentials = getCredentials();
             final Charset currentCharset = Charset.defaultCharset();
@@ -169,12 +169,13 @@ public class SmtpService {
             mimeMessage.setContent(multipart);
 
             mimeMessage.saveChanges();
+            String[] messageId = mimeMessage.getHeader("Message-Id");
             getSmtpTransport(credentials).sendMessage(mimeMessage, mimeMessage.getAllRecipients());
+            return messageId[0];
         } catch(MessagingException | IOException ex) {
             throw new IsotopeException("Problem sending message", ex);
         }
     }
-
 
     @PreDestroy
     public void destroy() {

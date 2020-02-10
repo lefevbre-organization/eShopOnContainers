@@ -27,11 +27,53 @@ class UserLexon extends Component {
     const casefile = this.props.match.params.idCaseFile;
     const bbdd = this.props.match.params.bbdd;
     const company = this.props.match.params.idCompany;
-    this.props.setCaseFile({
-      casefile: casefile,
-      bbdd: bbdd,
-      company: company
-    });
+    const idMessage = this.props.match.params.idMessage;
+    const idFolder = this.props.match.params.idFolder;
+
+    if (casefile){
+      this.props.setCaseFile({
+        casefile: casefile,
+        bbdd: bbdd,
+        company: company
+      });
+    } else if (bbdd){
+      this.props.setDataBase({
+        bbdd: bbdd
+      });
+    }
+
+    if (idMessage) { 
+      this.props.setIdEmail({
+        idEmail: idMessage,
+        idFolder: idFolder,
+        emailShown: false
+      });
+    }
+    
+
+    // if (idMessage) { 
+    //   this.props.setIdEmail({
+    //     casefile: casefile,
+    //     bbdd: bbdd,
+    //     company: company,
+    //     idEmail: idMessage,
+    //     idFolder: idFolder,
+    //     emailShown: false
+    //   });
+    // }
+    // else if (casefile){
+    //   this.props.setCaseFile({
+    //     casefile: casefile,
+    //     bbdd: bbdd,
+    //     company: company
+    //   });
+    // }
+    // else if (bbdd){
+    //   this.props.setDataBase({
+    //     bbdd: bbdd
+    //   });
+    // };
+    
 
     this.setState({ isNewAccount: user.slice(2, 3) === "1" ? true : false });
 
@@ -109,6 +151,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   setUser: user => dispatch(ACTIONS.setUser(user)),
   setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
+  setDataBase: dataBase => dispatch(ACTIONS.setDataBase(dataBase)),
+  setIdEmail: emailInfo => dispatch(ACTIONS.setIdEmail(emailInfo)),
   logout: () => {
     dispatch(clearUserCredentials());
     history.push("/login");

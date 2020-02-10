@@ -35,6 +35,10 @@ export const parseJwt = token => {
     return(payload.hasOwnProperty('idMail') ? payload.idMail : null);
   }
 
+  export const getImapFolder = payload =>{
+    return( (payload.hasOwnProperty('folder') ? payload.folder.split("::")[1].toUpperCase() : null));
+  }
+
   export const getIdEntityType = payload =>{
     return(payload.hasOwnProperty('idEntityType') ? payload.idEntityType : null);
   }
@@ -72,7 +76,12 @@ export const parseJwt = token => {
         url = `/user/${user}/editMail/${payload.idMail}`;
         break;
       case "mailWithCaseFile":
-        url = `/user/${user}/editMail/${payload.idMail}/casefile/${payload.idEntity}/bbdd/${payload.bbdd}/company/${payload.idCompany}`
+        if (provider == INBOX_IMAP){
+          const folder = getImapFolder(payload);
+          url = `/user/${user}/folder/${folder}/message/${payload.idMail}/casefile/${payload.idEntity}`
+        }else {
+          url = `/user/${user}/editMail/${payload.idMail}/casefile/${payload.idEntity}/bbdd/${payload.bbdd}/company/${payload.idCompany}`
+        }
         break;
       case "caseFile":
         url = `/user/${user}/casefile/${payload.idEntity}/bbdd/${payload.bbdd}/company/${payload.idCompany}`;

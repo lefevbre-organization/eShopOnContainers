@@ -39,7 +39,11 @@ export function sendMessage(
   };
   postMessageRequest.onload = event => {
     if (isSuccessful(event.target.status)) {
-      dispatch(outboxSetSent(true));
+      if (event.target.hasOwnProperty('response')){
+        dispatch(outboxSetSent(true, event.target.response, false));
+      } else {
+        dispatch(outboxSetSent(true, "", false));
+      }
       setTimeout(() => dispatch(outboxMessageProcessed()), SNACKBAR_DURATION);
     } else {
       errorHandler();

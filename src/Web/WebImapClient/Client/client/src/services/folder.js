@@ -30,6 +30,10 @@ export const FolderTypes = Object.freeze({
 export const findTrashFolder = foldersState =>
   Object.values(foldersState.explodedItems).find(f => f.type === FolderTypes.TRASH);
 
+
+export const findSentFolder = foldersState =>
+  Object.values(foldersState.explodedItems).find(f => f.type === FolderTypes.SENT);
+
 /**
  * Returns the id of the provided folder and all its children.
  *
