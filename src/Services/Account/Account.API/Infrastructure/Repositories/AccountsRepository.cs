@@ -578,6 +578,7 @@
                     {
                         accountDb.guid = accountIn.guid;
                         accountDb.sign = accountIn.sign;
+                        accountDb.defaultAccount = accountIn.defaultAccount;
                         if (accountIn.configAccount != null)
                             accountDb.configAccount = accountIn.configAccount;
 
