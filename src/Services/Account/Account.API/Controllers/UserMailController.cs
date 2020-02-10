@@ -62,7 +62,7 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPut("{user}/deactivate")]
+        [HttpPost("{user}/deactivate")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Deactivate(
@@ -77,7 +77,7 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPut("{user}/activate")]
+        [HttpPost("{user}/activate")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Activate(
@@ -193,7 +193,7 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpDelete("{user}/account/{provider}/{mail}/relation/delete")]
+        [HttpPost("{user}/account/{provider}/{mail}/relation/delete")]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> RemoveRelationFromMail(
@@ -231,7 +231,7 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpDelete("{user}/account/delete/{provider}/{email}")]
+        [HttpPost("{user}/account/delete/{provider}/{email}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> DeleteAccountByUserAndEmail(
@@ -248,7 +248,7 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPut("{user}/account/reset")]
+        [HttpPost("{user}/account/reset")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> ResetAccounts(
