@@ -305,13 +305,9 @@
                 var resultReplace = await _context.Accounts.ReplaceOneAsync(GetFilterUser(userMail.User, false), userMail, GetUpsertOptions());
 
                 if (!resultReplace.IsAcknowledged)
-                {
                     TraceMessage(result.errors, new Exception($"Don´t insert or modify the user"), (short)TypeOfInfo.MongoOtherError);
-                }
                 else if (resultReplace.IsAcknowledged && resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
-                {
                     TraceInfo(result.infos, $"Se modifica el usuario {userMail.User}");
-                }
                 else if (resultReplace.IsAcknowledged && resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
                 {
                     TraceInfo(result.infos, $"Se inserta el usuario {userMail.User} con {resultReplace.UpsertedId}");
@@ -337,9 +333,8 @@
                 result.data = await _context.Accounts.Find(GetFilterUser(user)).SingleOrDefaultAsync();
 
                 if (result.data == null)
-                {
                     TraceInfo(result.infos, $"No se encuentra ningún usuario {user}");
-                }
+
             }
             catch (Exception ex)
             {
@@ -356,18 +351,13 @@
                 var usuario = await _context.Accounts.Find(GetFilterUser(user)).SingleAsync();
 
                 if (usuario == null)
-                {
                     TraceInfo(result.infos, $"No se encuentra ningún usuario {user} del que obtener cuenta");
-                }
-                var cuenta = usuario.accounts?.Find(
-                    x => x.email.ToLowerInvariant().Equals(mail.ToLowerInvariant())
-                        && x.provider.ToLowerInvariant().Equals(provider.ToLowerInvariant()));
+
+                var cuenta = usuario.accounts?.Find(GetFilterProviderMail(provider, mail));
                 result.data = cuenta;
 
                 if (result.data == null)
-                {
                     TraceInfo(result.infos, $"No se encuentra ningúna cuenta {provider} - {mail} en ese usuario {user}");
-                }
             }
             catch (Exception ex)
             {
@@ -375,23 +365,20 @@
             }
             return result;
         }
-
         public async Task<Result<Account>> GetDefaultAccount(string user)
         {
             var result = new Result<Account>();
             try
             {
                 var usuario = await _context.Accounts.Find(GetFilterUser(user)).SingleOrDefaultAsync();
-                if (usuario == null)
-                {
+                if (usuario == null) 
                     TraceInfo(result.infos, $"No se encuentra ningún usuario {user} del que obtener cuenta x defecto");
-                }
+              
                 var cuenta = usuario?.accounts.Find(x => x.defaultAccount == true);
                 result.data = cuenta;
-                if (result.data == null)
-                {
+                if (result.data == null)            
                     TraceInfo(result.infos, $"No se encuentra ningúna cuenta por defecto en ese usuario {user}");
-                }
+
             }
             catch (Exception ex)
             {
@@ -408,7 +395,7 @@
             {
                 var update = Builders<UserMail>.Update.PullFilter(
                     p => p.accounts,
-                    f => f.email.ToLowerInvariant().Equals(mail.ToLowerInvariant()) && f.provider.ToLowerInvariant().Equals(provider.ToLowerInvariant()));
+                    f => f.email.Equals(mail.ToLowerInvariant()) && f.provider.Equals(provider.ToLowerInvariant()));
                 var userUpdate = await _context.Accounts.FindOneAndUpdateAsync<UserMail>(
                     GetFilterUser(user),
                     update, options);
@@ -455,100 +442,10 @@
             return result;
         }
 
-        public async Task<Result<long>> UpSertAccountOld(string user, Account accountIn)
-        {
-            var result = new Result<long>();
-            accountIn.defaultAccount = true;
-            var cancel = default(CancellationToken);
-            using (var session = await _context.StartSession(cancel))
-            {
-                session.StartTransaction();
-                try
-                {
-                    var userMail = GetNewUserMail(user, accountIn.email, accountIn.provider, accountIn.guid);
-                    var existen = await _context.AccountsTransaction(session).CountDocumentsAsync(x => x.User == user);
-
-                    if (existen == 0)
-                    {
-                        await _context.Accounts.InsertOneAsync(userMail);
-                        if (userMail.Id?.Length > 0)
-                        {
-                            TraceInfo(result.infos, $"Se inserta el usuario {userMail.User}");
-                            result.data = 1;
-                        }
-                        else
-                        {
-                            TraceMessage(result.errors, new Exception($"Don´t existe {user} but impossible insert in database"), (short)TypeOfInfo.MongoOtherError);
-                        }
-                    }
-                    else
-                    {
-                        var resultUpdate = await _context.AccountsTransaction(session).UpdateManyAsync(
-                            GetFilterUser(user),
-                            Builders<UserMail>.Update
-                                .Set("accounts.$[i].defaultAccount", false),
-                                FindAccountsDefaultsInCollection()
-                            );
-
-                        if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
-                        {
-                            TraceInfo(result.infos, $"Se modifica {resultUpdate.ModifiedCount} cuentas por defecto del usuario {user}");
-                        }
-
-                        var arrayFilters = GetFilterFromAccount(accountIn.provider, accountIn.email);
-                        var resultUpdateAccount = await _context.AccountsTransaction(session).UpdateOneAsync(
-                            GetFilterUser(user),
-                            Builders<UserMail>.Update.Set($"accounts.$[i]", accountIn),
-                             new UpdateOptions { ArrayFilters = arrayFilters }
-                        );
-
-                        if (!resultUpdateAccount.IsAcknowledged)
-                        {
-                            TraceMessage(result.errors, new Exception($"Don´t insert or modify the user with the account"), (short)TypeOfInfo.MongoOtherError);
-                        }
-                        else if (resultUpdateAccount.IsAcknowledged && resultUpdateAccount.MatchedCount > 0 && resultUpdateAccount.ModifiedCount > 0)
-                        {
-                            TraceInfo(result.infos, $"Se modifica el usuario {user} modificando la cuenta para {accountIn.provider}-{accountIn.email}");
-                            result.data = 2;
-                        }
-
-                        if (resultUpdateAccount.ModifiedCount == 0)
-                        {
-                            var resultAddAccount = await _context.AccountsTransaction(session).UpdateOneAsync(
-                                GetFilterUser(user),
-                                Builders<UserMail>.Update.AddToSet($"accounts", accountIn)
-                            );
-
-                            if (!resultAddAccount.IsAcknowledged)
-                            {
-                                TraceMessage(result.errors, new Exception($"Don´t insert or modify the user with the account"), (short)TypeOfInfo.MongoOtherError);
-                            }
-                            else if (resultAddAccount.IsAcknowledged && resultAddAccount.MatchedCount > 0 && resultAddAccount.ModifiedCount > 0)
-                            {
-                                TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo una cuenta para {accountIn.provider}-{accountIn.email}");
-
-                                result.data = 3;
-                            }
-
-                            //insertado = resultAddAccount.IsAcknowledged ? resultAddAccount.ModifiedCount : 0;
-                            //TraceLog(parameters: new string[] { $"Se inserta {insertado} cuenta {accountIn.email} del proveedor {accountIn.provider} con default a {true}" });
-                        }
-                    }
-                    await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
-                }
-                catch (Exception ex)
-                {
-                    TraceMessage(result.errors, ex);
-                    session.AbortTransaction(cancel);
-                }
-            }
-            return result;
-        }
 
         public async Task<Result<long>> UpSertAccount(string user, Account accountIn)
         {
             var result = new Result<long>();
-            //accountIn.defaultAccount = true;
             ReviewAccountMail(accountIn);
 
             try
@@ -777,6 +674,12 @@
                 }
             }
 
+        }
+
+        private static Predicate<Account> GetFilterProviderMail(string provider, string mail)
+        {
+            return x => x.email.ToLowerInvariant().Equals(mail.ToLowerInvariant())
+                                    && x.provider.ToLowerInvariant().Equals(provider.ToLowerInvariant());
         }
 
         private static void ReviewAccountMail(Account acc)
