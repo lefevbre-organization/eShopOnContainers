@@ -298,10 +298,11 @@
         {
             var result = new Result<UserMail>();
 
+            ReviewUserMail(userMail);
+
             try
             {
                 var resultReplace = await _context.Accounts.ReplaceOneAsync(GetFilterUser(userMail.User, false), userMail, GetUpsertOptions());
-                //  userMail.Id = resultReplace.IsAcknowledged ? resultReplace.UpsertedId?.ToString() : "0";
 
                 if (!resultReplace.IsAcknowledged)
                 {
@@ -328,7 +329,6 @@
             }
             return result;
         }
-
         public async Task<Result<UserMail>> GetUser(string user)
         {
             var result = new Result<UserMail>();
@@ -360,10 +360,9 @@
                     TraceInfo(result.infos, $"No se encuentra ningún usuario {user} del que obtener cuenta");
                 }
                 var cuenta = usuario.accounts?.Find(
-                    x => x.email.ToUpperInvariant().Equals(mail.ToUpperInvariant())
-                        && x.provider.ToUpperInvariant().Equals(provider.ToUpperInvariant()));
+                    x => x.email.ToLowerInvariant().Equals(mail.ToLowerInvariant())
+                        && x.provider.ToLowerInvariant().Equals(provider.ToLowerInvariant()));
                 result.data = cuenta;
-
 
                 if (result.data == null)
                 {
@@ -409,7 +408,7 @@
             {
                 var update = Builders<UserMail>.Update.PullFilter(
                     p => p.accounts,
-                    f => f.email.Equals(mail) && f.provider.Equals(provider));
+                    f => f.email.ToLowerInvariant().Equals(mail.ToLowerInvariant()) && f.provider.ToLowerInvariant().Equals(provider.ToLowerInvariant()));
                 var userUpdate = await _context.Accounts.FindOneAndUpdateAsync<UserMail>(
                     GetFilterUser(user),
                     update, options);
@@ -440,7 +439,6 @@
                 var resultUpdate = await _context.Accounts.UpdateManyAsync(
                     account => account.User == user,
                     Builders<UserMail>.Update
-                        //.Set(x => x.DefaultAccount, false)
                         .Set("accounts.$[i].defaultAccount", false),
                         FindAccountsDefaultsInCollection()
                     );
@@ -457,12 +455,11 @@
             return result;
         }
 
-        public async Task<Result<long>> UpSertAccount(string user, Account accountIn)
+        public async Task<Result<long>> UpSertAccountOld(string user, Account accountIn)
         {
             var result = new Result<long>();
             accountIn.defaultAccount = true;
             var cancel = default(CancellationToken);
-            //long insertado = 0;
             using (var session = await _context.StartSession(cancel))
             {
                 session.StartTransaction();
@@ -470,6 +467,7 @@
                 {
                     var userMail = GetNewUserMail(user, accountIn.email, accountIn.provider, accountIn.guid);
                     var existen = await _context.AccountsTransaction(session).CountDocumentsAsync(x => x.User == user);
+
                     if (existen == 0)
                     {
                         await _context.Accounts.InsertOneAsync(userMail);
@@ -488,23 +486,14 @@
                         var resultUpdate = await _context.AccountsTransaction(session).UpdateManyAsync(
                             GetFilterUser(user),
                             Builders<UserMail>.Update
-                                // .Set(x => x.DefaultAccount, false)
                                 .Set("accounts.$[i].defaultAccount", false),
                                 FindAccountsDefaultsInCollection()
                             );
 
-                        //if (accountIn.defaultAccount == false)
-                        //{
-                        //    accountIn.defaultAccount = true;
-                        //    TraceLog(parameters: new string[] { $"Se cambia a true el defaultAccount" });
-                        //}
                         if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
                         {
                             TraceInfo(result.infos, $"Se modifica {resultUpdate.ModifiedCount} cuentas por defecto del usuario {user}");
                         }
-
-                        //var modificados = resultUpdate.IsAcknowledged ? resultUpdate.ModifiedCount : 0;
-                        //TraceLog(parameters: new string[] { $"Se modifican {modificados} usuarios con default a :{false}" });
 
                         var arrayFilters = GetFilterFromAccount(accountIn.provider, accountIn.email);
                         var resultUpdateAccount = await _context.AccountsTransaction(session).UpdateOneAsync(
@@ -523,10 +512,6 @@
                             result.data = 2;
                         }
 
-                        //    var modificado = resultUpdateAccount.IsAcknowledged ? resultUpdateAccount.ModifiedCount : 0;
-                        //TraceLog(parameters: new string[] { $"Se modifica la cuenta {accountIn.email} del proveedor {accountIn.provider} con default a {true}" });
-
-                        //result.data = modificado;
                         if (resultUpdateAccount.ModifiedCount == 0)
                         {
                             var resultAddAccount = await _context.AccountsTransaction(session).UpdateOneAsync(
@@ -557,6 +542,57 @@
                     session.AbortTransaction(cancel);
                 }
             }
+            return result;
+        }
+
+        public async Task<Result<long>> UpSertAccount(string user, Account accountIn)
+        {
+            var result = new Result<long>();
+            //accountIn.defaultAccount = true;
+            ReviewAccountMail(accountIn);
+
+            try
+            {
+                var userMail = GetNewUserMail(user, accountIn.email, accountIn.provider, accountIn.guid);
+
+                var userDb = await _context.Accounts.Find(GetFilterUser(user)).SingleOrDefaultAsync();
+                if (userDb == null)
+                {
+                    userDb = userMail;
+                    TraceInfo(result.infos, $"Se inserta el usuario {userMail.User}");
+                }
+                else
+                {
+                    userDb.accounts.ForEach(x => x.defaultAccount = false);    
+                    var accountDb = userDb.accounts.Find(
+                        a => a.email.ToLowerInvariant() == accountIn.email.ToLowerInvariant()
+                        && a.provider.ToLowerInvariant() == accountIn.provider.ToLowerInvariant());
+
+                    if (accountDb == null)
+                    {
+                        userDb.accounts.Add(accountIn);
+                        TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo una cuenta para {accountIn.provider}-{accountIn.email}");
+
+                    }
+                    else
+                    {
+                        accountDb.guid = accountIn.guid;
+                        accountDb.sign = accountIn.sign;
+                        if (accountIn.configAccount != null)
+                            accountDb.configAccount = accountIn.configAccount;
+
+                        TraceInfo(result.infos, $"Se modifica el usuario {user} modificando la cuenta para {accountIn.provider}-{accountIn.email}");
+                    }
+                }
+                var resultReplace = await _context.Accounts.ReplaceOneAsync(GetFilterUser(userMail.User), userDb, GetUpsertOptions());
+
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+
+             result.data = 1;
             return result;
         }
 
@@ -717,9 +753,6 @@
                     result.data = resultUpdate.ModifiedCount > 0;
                 }
 
-                //var insertado = resultUpdate.IsAcknowledged ? resultUpdate.ModifiedCount : 0;
-                //TraceLog(parameters: new string[] { $"Se cambia o inserta configuracion de cuenta imap: {config.imap} port: {config.imapPort} user a {config.imapUser}" });
-                //result.data = resultUpdate.IsAcknowledged && resultUpdate.ModifiedCount > 0;
             }
             catch (Exception ex)
             {
@@ -730,6 +763,29 @@
         }
 
         #region Common
+
+        private void ReviewUserMail(UserMail userMail)
+        {
+            userMail.User = userMail.User.ToUpperInvariant();
+            if (userMail.accounts.Count > 0)
+            {
+                foreach (var acc in userMail.accounts)
+                {
+                    ReviewAccountMail(acc);
+
+                }
+            }
+
+        }
+
+        private static void ReviewAccountMail(Account acc)
+        {
+            acc.provider = acc.provider.ToLowerInvariant();
+            acc.email = acc.email.ToLowerInvariant();
+            acc.defaultAccount = true;
+            if (acc.mails == null)
+                acc.mails = new List<MailRelation>();
+        }
 
         private static UpdateOptions GetUpsertOptions()
         {
@@ -766,27 +822,22 @@
             if (onlyValid)
             {
                 return Builders<UserMail>.Filter.And(
-                Builders<UserMail>.Filter.Eq(u => u.User, idUser),
+                Builders<UserMail>.Filter.Eq(u => u.User, idUser.ToUpperInvariant()),
                 Builders<UserMail>.Filter.Eq(u => u.state, true));
             }
 
-            return Builders<UserMail>.Filter.Eq(u => u.User, idUser);
+            return Builders<UserMail>.Filter.Eq(u => u.User, idUser.ToUpperInvariant());
         }
 
         private static UserMail GetNewUserMail(string user, string email, string provider, string guid)
         {
             return new UserMail()
             {
-                User = user,
+                User = user.ToUpperInvariant(),
                 configUser = new ConfigUserLexon() { defaultAdjunction = "onlyAdjunction", defaultEntity = "files", getContacts = false },
-                //Email = email,
-                //guid = guid,
-                //Provider = provider,
                 state = true,
-                //DefaultAccount = true,
-                //   accounts = new List<Account>()
                 accounts = new List<Account>() {
-                        new Account() {defaultAccount = true, email= email, guid= guid, provider= provider , mails = new List<MailRelation>()}
+                        new Account() {defaultAccount = true, email= email.ToLowerInvariant(), guid= guid, provider= provider.ToLowerInvariant() , mails = new List<MailRelation>()}
                     }
             };
         }
