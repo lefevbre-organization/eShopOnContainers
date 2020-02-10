@@ -19,7 +19,7 @@ class Classification extends Component {
   }
 
   async getClassificationData() {
-    const url = 'https://now-apigwlex.lefebvre.es/api/v1/lex/Lexon/entities/getbyid';
+    const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/entities/getbyid`;
     const response = await fetch(url, {
       method: 'POST',
       headers: {

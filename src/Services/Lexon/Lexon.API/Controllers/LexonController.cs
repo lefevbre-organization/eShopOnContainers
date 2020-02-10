@@ -127,7 +127,7 @@ namespace Lexon.API.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPut]
+        [HttpPost]
         [Route("classifications/remove")]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]

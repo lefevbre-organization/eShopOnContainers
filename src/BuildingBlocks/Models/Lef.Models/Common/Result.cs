@@ -7,6 +7,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         public Result()
         {
             errors = new List<ErrorInfo>();
+            infos = new List<Info>();
         }
 
         public Result(T t) : this()
@@ -20,6 +21,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         }
 
         public List<ErrorInfo> errors { get; set; }
+        public List<Info> infos { get; set; }
 
         public T data { get; set; }
     }

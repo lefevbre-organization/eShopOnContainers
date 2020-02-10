@@ -23,22 +23,22 @@
         [BsonElement("user")]
         public string User { get; set; }
 
-        /// <summary>
-        /// Obsoleta, en la siguiente versión deberá usarse la coleccion de Accounts.
-        /// Proveedor de correo (GO, OU, IM)
-        /// </summary>
-        [BsonElement("provider")]
-        public string Provider { get; set; }
+        ///// <summary>
+        ///// Obsoleta, en la siguiente versión deberá usarse la coleccion de Accounts.
+        ///// Proveedor de correo (GO, OU, IM)
+        ///// </summary>
+        //[BsonElement("provider")]
+        //public string Provider { get; set; }
 
 
         public ConfigUserLexon configUser { get; set; }
 
-        /// <summary>
-        /// Obsoleta, en la siguiente versión deberá usarse la coleccion de Accounts.
-        /// Indicador de si es la cuenta por defecto
-        /// </summary>
-        [BsonElement("defaultAccount")]
-        public bool DefaultAccount { get; set; }
+        ///// <summary>
+        ///// Obsoleta, en la siguiente versión deberá usarse la coleccion de Accounts.
+        ///// Indicador de si es la cuenta por defecto
+        ///// </summary>
+        //[BsonElement("defaultAccount")]
+        //public bool DefaultAccount { get; set; }
 
         ///// <summary>
         ///// Obsoleta, en la siguiente versión deberá usarse la coleccion de Accounts.
@@ -52,8 +52,8 @@
         public List<Account> accounts { get; set; }
         public bool state { get; set; }
 
-        [BsonElement("email")]
-        public string Email { get;  set; }
+        //[BsonElement("email")]
+        //public string Email { get;  set; }
 
     }
 }
