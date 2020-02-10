@@ -3,6 +3,7 @@
     #region Using
 
     using Account.API.Model;
+    using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
@@ -12,13 +13,13 @@
     {
         Task<Result<UserMail>> Create(UserMail account);
 
-        Task<Result<AccountList>> GetByUser(string user);
+        //Task<Result<AccountList>> GetByUser(string user);
 
         Task<Result<UserMail>> GetUser(string user);
 
-        Task<Result<long>> UpdateDefaultAccount(string user, string provider, string email, string guid);
+        //Task<Result<long>> UpdateDefaultAccount(string user, string provider, string email, string guid);
 
-        Task<Result<long>> DeleteAccountByUserAndEmail(string user, string email);
+        //Task<Result<long>> DeleteAccountByUserAndEmail(string user, string email);
 
         Task<Result<long>> ResetDefaultAccountByUser(string user);
 
@@ -41,5 +42,6 @@
         Task<Result<List<MailRelation>>> GetRelationsFromMail(string user, string provider, string mail, string uid);
 
         Task<Result<bool>> UpSertAccountConfig(string user, string provider, string mail,  ConfigImapAccount config);
+        //Task<Result<long>> DeleteAccountByUser(string user);
     }
 }

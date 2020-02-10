@@ -12,6 +12,7 @@ import ACTIONS from "../../actions/lexon";
 import { connect } from "react-redux";
 import { prettySize } from "../../utils/prettify";
 import { Notification, Confirmation } from '../notification/';
+import HeaderAddress from "./header-address";
 
 const Uppy = require("@uppy/core");
 const Tus = require("@uppy/tus");
@@ -26,14 +27,17 @@ export class ComposeMessage extends PureComponent {
         (props.history.location.state &&
           props.history.location.state.composeProps.to) ||
         "",
+      to2:[],
       cc:
         (props.history.location.state &&
           props.history.location.state.composeProps.cc) ||
         "",
+      cc2:[],
       bcc:
         (props.history.location.state &&
           props.history.location.state.composeProps.bcc) ||
         "",
+      bcc2:[],
       subject:
         (props.history.location.state &&
           props.history.location.state.composeProps.subject) ||
@@ -55,6 +59,11 @@ export class ComposeMessage extends PureComponent {
     this.goBack = this.goBack.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.setField = this.setField.bind(this);
+    // Header Address Events
+    this.handleAddAddress = this.addAddress.bind(this);
+    this.handleRemoveAddress = this.removeAddress.bind(this);
+    this.handleMoveAddress = this.moveAddress.bind(this);
+    
     this.uppy = new Uppy({
       id: "uppy1",
       autoProceed: false,
@@ -90,13 +99,13 @@ export class ComposeMessage extends PureComponent {
     this.uppy.on("file-added", file => {
       console.log("Added file", file);
 
-      // Define this onload every time to get file and base64 every time
-      this.reader = new FileReader();
-      this.reader.readAsDataURL(file.data);
+    // Define this onload every time to get file and base64 every time
+    this.reader = new FileReader();
+    this.reader.readAsDataURL(file.data);
 
-      this.reader.onload = readerEvt =>
-        this.addFileToState({ file, base64: readerEvt.target.result });
-      this.showAttachActions = true
+    this.reader.onload = readerEvt =>
+    this.addFileToState({ file, base64: readerEvt.target.result });
+    this.showAttachActions = true
     });
   }
 
@@ -338,11 +347,87 @@ export class ComposeMessage extends PureComponent {
   closeNotification() {
     const showNotification = !this.state.showNotification;
     this.setState({ showNotification: showNotification });
+    }
+
+    /**
+    * Adds an address to the list matching the id.
+    *
+    * @param id
+    * @param address
+    */
+   addAddress(id, address) {      
+    if (address.length > 0) {
+      if(id === 'to') {
+        const to2 = [...this.state.to2];
+        to2.push(address);
+        const to = to2.join(",");  
+        this.setState({to2, to})
+      } else if(id === 'cc') {
+        const cc2 = [...this.state.cc2];
+        cc2.push(address);
+        const cc = cc2.join(",");  
+        this.setState({cc2, cc})
+      } else if(id === 'bcc2') {
+        const bcc2 = [...this.state.bcc2];
+        bcc2.push(address);
+        const bcc = bcc2.join(",");  
+        this.setState({bcc2, bcc})
+      }
+    }
+  }
+
+  /**
+   * Removes the address from the under the field matching the id.
+   *
+   * @param id
+   * @param address
+   */
+  removeAddress(id, address) {
+    if(id === "to") {
+      const to2 = [...this.state.to2];
+      to2.splice(to2.indexOf(address), 1);
+      const to = to2.join(",");
+      this.setState({to2, to})
+    } else if (id === "cc") {
+      const cc2 = [...this.state.cc2];
+      cc2.splice(cc2.indexOf(address), 1);
+      const cc = cc2.join(",");
+      this.setState({cc2, cc})
+    } else if(id === "bcc2") {
+      const bcc2 = [...this.state.bcc2];
+      bcc2.splice(bcc2.indexOf(address), 1);
+      const bcc = bcc2.join(",");
+      this.setState({bcc2, bcc})
+    }
+  }
+
+  /**
+   * Moves an address from the address list under the field matching the fromId to the address field
+   * matching the toId.
+   *
+   * @param fromId
+   * @param toId
+   * @param address
+   */
+  moveAddress(fromId, toId, address) {
+      // const updatedMessage = { ...this.props.editedMessage };
+      // // Remove
+      // updatedMessage[fromId].splice(updatedMessage[fromId].indexOf(address), 1);
+      // // Add
+      // updatedMessage[toId] = [...updatedMessage[toId], address];
+      // this.props.editMessage(updatedMessage);
   }
 
   render() {
     const collapsed = this.props.sideBarCollapsed;
     const { showNotification, messageNotification, showEmptySubjectWarning } = this.state;
+    const { to2, cc2, bcc2 } = this.state;
+
+    const {
+          to,
+          cc,
+          bcc          
+     } = this.props;
 
     return (
       <React.Fragment>
@@ -391,39 +476,33 @@ export class ComposeMessage extends PureComponent {
             ) : null}
             <div className="compose-message">
               <div className="message-fields">
-                <InputGroup>
-                  <InputGroupAddon addonType="prepend">
-                    {i18n.t("compose-message.to")}
-                  </InputGroupAddon>
-                  <Input
-                    tabIndex={1}
-                    value={this.state.to}
-                    placeholder={i18n.t("compose-message.comma-separated")}
-                    invalid={this.isInvalid("to")}
-                    onChange={this.setField("to")}
+                <HeaderAddress
+                      id={"to"}
+                      addresses={to2}
+                      onAddressAdd={this.handleAddAddress}
+                      onAddressRemove={this.handleRemoveAddress}
+                      onAddressMove={this.handleMoveAddress}
+                      getAddresses={this.props.getAddresses}
+                      label={i18n.t("compose-message.to")}
                   />
-                </InputGroup>
-                <InputGroup>
-                  <InputGroupAddon addonType="prepend">Cc:</InputGroupAddon>
-                  <Input
-                    tabIndex={2}
-                    value={this.state.cc}
-                    placeholder={i18n.t("compose-message.comma-separated")}
-                    invalid={this.isInvalid("cc")}
-                    onChange={this.setField("cc")}
-                  />
-                </InputGroup>
-                <InputGroup>
-                  <InputGroupAddon addonType="prepend">
-                    {i18n.t("compose-message.bcc")}
-                  </InputGroupAddon>
-                  <Input
-                    tabIndex={3}
-                    placeholder={i18n.t("compose-message.comma-separated")}
-                    invalid={this.isInvalid("bcc")}
-                    onChange={this.setField("bcc")}
-                  />
-                </InputGroup>
+                  <HeaderAddress
+                      id={"cc"}
+                      addresses={cc2}
+                      onAddressAdd={this.handleAddAddress}
+                      onAddressRemove={this.handleRemoveAddress}
+                      onAddressMove={this.handleMoveAddress}
+                      getAddresses={this.props.getAddresses}
+                      label={'Cc:'}
+                  />                
+                  <HeaderAddress
+                    id={"bcc2"}
+                    addresses={bcc2}
+                    onAddressAdd={this.handleAddAddress}
+                    onAddressRemove={this.handleRemoveAddress}
+                    onAddressMove={this.handleMoveAddress}
+                    getAddresses={this.props.getAddresses}
+                    label={i18n.t("compose-message.bcc")}
+                />
                 <InputGroup>
                   <InputGroupAddon addonType="prepend">
                     {i18n.t("compose-message.subject")}

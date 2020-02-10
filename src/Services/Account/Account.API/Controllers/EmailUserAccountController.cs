@@ -37,11 +37,12 @@
         [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Post([FromBody]UserMail accountIn)
         {
-            if (string.IsNullOrEmpty(accountIn.User)) // || string.IsNullOrEmpty(accountIn.Email) || string.IsNullOrEmpty(accountIn.Provider) || string.IsNullOrEmpty(accountIn.guid))
-                return BadRequest("values invalid. Must be a valid user, email, provider and guid to insert the userMail");
-            var result = await _accountsService.Create(accountIn);
+            return BadRequest("This opertaion it´s obsolete, you need use de v2 version");
+            //if (string.IsNullOrEmpty(accountIn.User)) // || string.IsNullOrEmpty(accountIn.Email) || string.IsNullOrEmpty(accountIn.Provider) || string.IsNullOrEmpty(accountIn.guid))
+            //    return BadRequest("values invalid. Must be a valid user, email, provider and guid to insert the userMail");
+            //var result = await _accountsService.Create(accountIn);
 
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpGet("getbyuser/{user}")]
@@ -49,12 +50,13 @@
         [ProducesResponseType(typeof(IEnumerable<UserMail>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetByUser(string user)
         {
-            if (string.IsNullOrEmpty(user))
-                return BadRequest("user invalid. Must be a valid user to search the userMail");
+            return BadRequest("This opertaion it´s obsolete, you need use de v2 version");
+            //if (string.IsNullOrEmpty(user))
+            //    return BadRequest("user invalid. Must be a valid user to search the userMail");
 
-            var result = await _accountsService.GetByUser(user);
+            //var result = await _accountsService.GetByUser(user);
 
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpGet("updatedefaultaccount/{user}/{email}/{provider}/{guid}")]
@@ -65,12 +67,13 @@
             , [FromRoute]string provider = "GO"
             , [FromRoute]string guid = "no_guid_oh_lala")
         {
-            if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(provider) || string.IsNullOrEmpty(guid))
-                return BadRequest("values invalid. Must be a valid user, email, provider and guid to update the defaultAccount of userMail");
+            return BadRequest("This opertaion it´s obsolete, you need use de v2 version");
+            //if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(provider) || string.IsNullOrEmpty(guid))
+            //    return BadRequest("values invalid. Must be a valid user, email, provider and guid to update the defaultAccount of userMail");
 
-            var result = await _accountsService.UpdateDefaultAccount(user, email, provider, guid);
+            //var result = await _accountsService.UpdateDefaultAccount(user, email, provider, guid);
 
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpGet("deleteaccountbyuserandemail/{user}/{email}")]
@@ -80,12 +83,30 @@
             [FromRoute]string user
             , [FromRoute]string email)
         {
-            if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(email))
-                return BadRequest("values invalid. Must be a valid user and email to delete the defaultAccount of userMail");
+            return BadRequest("This opertaion it´s obsolete, you need use de v2 version");
 
-            var result = await _accountsService.DeleteAccountByUserAndEmail(user, email);
+            //if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(email))
+            //    return BadRequest("values invalid. Must be a valid user and email to delete the defaultAccount of userMail");
 
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            //var result = await _accountsService.DeleteAccountByUserAndEmail(user, email);
+
+            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpGet("deleteaccountbyuser/{user}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> DeleteAccountByUser(
+            [FromRoute]string user
+            )
+        {
+            return BadRequest("This opertaion it´s obsolete, you need use de v2 version");
+            //if (string.IsNullOrEmpty(user) )
+            //    return BadRequest("values invalid. Must be a valid user and email to delete the defaultAccount of userMail");
+
+            //var result = await _accountsService.DeleteAccountByUser(user);
+
+            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpGet("resetdefaultaccountbyuser/{user}")]
@@ -94,12 +115,13 @@
         public async Task<IActionResult> resetdefaultaccountbyuser(
             [FromRoute] string user)
         {
-            if (string.IsNullOrEmpty(user))
-                return BadRequest("values invalid. Must be a valid user to reset the defaultAccount");
+            return Ok("This opertaion it´s obsolete, you need use de v2 version");
+            //if (string.IsNullOrEmpty(user))
+            //    return BadRequest("values invalid. Must be a valid user to reset the defaultAccount");
 
-            var result = await _accountsService.ResetDefaultAccountByUser(user);
+            //var result = await _accountsService.ResetDefaultAccountByUser(user);
 
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
     }
 }

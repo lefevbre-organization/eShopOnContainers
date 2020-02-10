@@ -10,6 +10,8 @@
     [BsonIgnoreExtraElements]
     public class UserMail : MongoModel
     {
+        internal string guid;
+
         [BsonId]
         [BsonIgnoreIfDefault]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -28,7 +30,7 @@
         //[BsonElement("provider")]
         //public string Provider { get; set; }
 
- 
+
         public ConfigUserLexon configUser { get; set; }
 
         ///// <summary>
@@ -49,5 +51,9 @@
         /// </summary>
         public List<Account> accounts { get; set; }
         public bool state { get; set; }
+
+        //[BsonElement("email")]
+        //public string Email { get;  set; }
+
     }
 }

@@ -106,14 +106,23 @@
     .message-fields {
         .input-group {
             margin-bottom: 2px;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            display: flex;
 
             .input-group-text {
                 min-width: 75px;
                 background-color: #f9f9f9;
+                border: none;
+            }
+
+            .input-group-prepend {
+                flex: 0;
             }
 
             .form-control {
                 border-left-width: 0;
+                border: none;
 
                 &.is-invalid {
                     border-color: red;
@@ -125,8 +134,9 @@
                 }
 
                 &:focus {
-                    outline: none;
-                    box-shadow: none;
+                    outline: none !important;
+                    border: none !important;
+                    box-shadow: none !important;
                 }
             }
         }

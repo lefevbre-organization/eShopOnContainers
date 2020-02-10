@@ -24,9 +24,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\Models\Lef.Models\Lef.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="lexon_mysql.pfx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Model\" />
   </ItemGroup>
 
   <ProjectExtensions>

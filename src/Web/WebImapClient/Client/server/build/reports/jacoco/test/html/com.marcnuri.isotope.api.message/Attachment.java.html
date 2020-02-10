@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Attachment.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">api</a> &gt; <a href="index.source.html" class="el_package">com.marcnuri.isotope.api.message</a> &gt; <span class="el_source">Attachment.java</span></div><h1>Attachment.java</h1><pre class="source lang-java linenums">/*
+ * Attachment.java
+ *
+ * Created on 2018-09-11, 7:07
+ *
+ * Copyright 2018 Marc Nuri
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+package com.marcnuri.isotope.api.message;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.marcnuri.isotope.api.resource.IsotopeResource;
+
+import java.io.Serializable;
+import java.util.Objects;
+
+/**
+ * Created by Marc Nuri &lt;marc@marcnuri.com&gt; on 2018-09-11.
+ */
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class Attachment extends IsotopeResource implements Serializable {
+
+    private static final long serialVersionUID = 4001902363078332347L;
+
+    private String contentId;
+    private String fileName;
+    private String contentType;
+    private Integer size;
+    private byte[] content;
+
+<span class="fc" id="L43">    public Attachment(String contentId, String fileName, String contentType, Integer size) {</span>
+<span class="fc" id="L44">        this.contentId = contentId;</span>
+<span class="fc" id="L45">        this.fileName = fileName;</span>
+<span class="fc" id="L46">        this.contentType = contentType;</span>
+<span class="fc" id="L47">        this.size = size;</span>
+<span class="fc" id="L48">    }</span>
+
+    public String getContentId() {
+<span class="nc" id="L51">        return contentId;</span>
+    }
+
+    public void setContentId(String contentId) {
+<span class="nc" id="L55">        this.contentId = contentId;</span>
+<span class="nc" id="L56">    }</span>
+
+    public String getFileName() {
+<span class="fc" id="L59">        return fileName;</span>
+    }
+
+    public void setFileName(String fileName) {
+<span class="nc" id="L63">        this.fileName = fileName;</span>
+<span class="nc" id="L64">    }</span>
+
+    public String getContentType() {
+<span class="fc" id="L67">        return contentType;</span>
+    }
+
+    public void setContentType(String contentType) {
+<span class="nc" id="L71">        this.contentType = contentType;</span>
+<span class="nc" id="L72">    }</span>
+
+    public Integer getSize() {
+<span class="nc" id="L75">        return size;</span>
+    }
+
+    public void setSize(Integer size) {
+<span class="nc" id="L79">        this.size = size;</span>
+<span class="nc" id="L80">    }</span>
+
+    public byte[] getContent() {
+<span class="fc" id="L83">        return content;</span>
+    }
+
+    public void setContent(byte[] content) {
+<span class="fc" id="L87">        this.content = content;</span>
+<span class="fc" id="L88">    }</span>
+
+    @Override
+    public boolean equals(Object o) {
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (this == o) return true;</span>
+<span class="nc bnc" id="L93" title="All 4 branches missed.">        if (o == null || getClass() != o.getClass()) return false;</span>
+<span class="nc" id="L94">        Attachment that = (Attachment) o;</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        return Objects.equals(contentId, that.contentId) &amp;&amp;</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">                Objects.equals(fileName, that.fileName) &amp;&amp;</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">                Objects.equals(contentType, that.contentType) &amp;&amp;</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">                Objects.equals(size, that.size);</span>
+    }
+
+    @Override
+    public int hashCode() {
+
+<span class="nc" id="L104">        return Objects.hash(contentId, fileName, contentType, size);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

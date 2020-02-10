@@ -14,6 +14,7 @@ namespace Lexon.MySql.Model
         public string idMail { get; set; }
         public string provider { get; set; }
         public string mailAccount { get; set; }
+        public string folder { get; set; }
 
         public short? idEntityType { get; set; }
 

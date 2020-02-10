@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FolderUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">api</a> &gt; <a href="index.source.html" class="el_package">com.marcnuri.isotope.api.folder</a> &gt; <span class="el_source">FolderUtils.java</span></div><h1>FolderUtils.java</h1><pre class="source lang-java linenums">/*
+ * FolderUtils.java
+ *
+ * Created on 2018-11-20, 20:17
+ *
+ * Copyright 2018 Marc Nuri
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+package com.marcnuri.isotope.api.folder;
+
+import com.marcnuri.isotope.api.exception.InvalidFieldException;
+import com.sun.mail.imap.IMAPFolder;
+import org.springframework.lang.NonNull;
+
+import javax.mail.MessagingException;
+import javax.mail.URLName;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import static com.marcnuri.isotope.api.folder.Folder.ATTR_TRASH;
+import static com.marcnuri.isotope.api.folder.Folder.TRASH_FOLDER_NAME;
+import static javax.mail.Folder.HOLDS_MESSAGES;
+
+/**
+ * Created by Marc Nuri &lt;marc@marcnuri.com&gt; on 2018-11-20.
+ */
+public class FolderUtils {
+
+    private FolderUtils() {}
+
+    /**
+     * Adds default (required) system folders to user's mailbox if not present.
+     *
+     * @param rootFolder Top level folder in the mailbox
+     * @param existingFolders List of already existing folders
+     * @return list of folders to chain
+     * @throws MessagingException IMAP server related problems
+     */
+    public static List&lt;Folder&gt; addSystemFolders(@NonNull IMAPFolder rootFolder, @NonNull List&lt;Folder&gt; existingFolders)
+            throws MessagingException {
+
+        // Add Trash folder if none matches, or arbitrarily set Trash attribute
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        if (existingFolders.stream().noneMatch(f -&gt; f.getAttributes().contains(ATTR_TRASH))) {</span>
+<span class="fc" id="L57">            final Optional&lt;Folder&gt; existingTrash = existingFolders.stream()</span>
+<span class="fc" id="L58">                    .filter(f -&gt; f.getName().equalsIgnoreCase(TRASH_FOLDER_NAME))</span>
+<span class="fc" id="L59">                    .findAny();</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">            if (existingTrash.isPresent()) {</span>
+<span class="fc" id="L61">                existingTrash.get().getAttributes().add(ATTR_TRASH);</span>
+            } else {
+<span class="fc" id="L63">                final IMAPFolder newTrash = (IMAPFolder)rootFolder.getFolder(TRASH_FOLDER_NAME);</span>
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">                if (newTrash.create(HOLDS_MESSAGES)) {</span>
+<span class="fc" id="L65">                    final Folder newTrashFolder = Folder.from(newTrash, false);</span>
+<span class="fc" id="L66">                    newTrashFolder.getAttributes().add(ATTR_TRASH);</span>
+<span class="fc" id="L67">                    existingFolders.add(newTrashFolder);</span>
+                }
+            }
+        }
+<span class="fc" id="L71">        return existingFolders;</span>
+    }
+
+    /**
+     * Renames the specified {@link IMAPFolder} to the provided newFolderFullName.
+     *
+     * &lt;p&gt;Method return the newly named folder parent and all its children. Renamed folder will have
+     * a reference to its previous id in order to help the API consumers identify which folder was renamed.
+     *
+     * @param folderToRename the folder to rename
+     * @param newFolderFullName the new folder name (can contain separator characters)
+     * @return renamed folder parent
+     * @throws MessagingException IMAP server related problems
+     */
+    public static Folder renameFolder(IMAPFolder folderToRename, String newFolderFullName) throws MessagingException {
+<span class="fc" id="L86">        final String previousFolderId = Folder.toBase64Id(folderToRename.getURLName());</span>
+<span class="fc" id="L87">        final IMAPFolder renamedFolder = (IMAPFolder)folderToRename.getStore().getFolder(newFolderFullName);</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        if (!folderToRename.renameTo(renamedFolder)) {</span>
+<span class="fc" id="L89">            throw new InvalidFieldException(&quot;New folder name was not accepted by IMAP server&quot;);</span>
+        }
+        final IMAPFolder imapParent;
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">        if (renamedFolder.getParent().getFullName().equals(&quot;&quot;)) {</span>
+            // If parent is Root, getParent doesn't return the default folder, override to return default folder instead.
+<span class="nc" id="L94">            imapParent = (IMAPFolder)renamedFolder.getStore().getDefaultFolder();</span>
+        } else {
+<span class="fc" id="L96">            imapParent = (IMAPFolder)renamedFolder.getParent();</span>
+        }
+<span class="fc" id="L98">        final Folder parent = Folder.from(imapParent, true);</span>
+        // Identify renamed folder
+<span class="fc" id="L100">        Stream.of(parent.getChildren())</span>
+<span class="fc" id="L101">                .filter(f -&gt; f.getFullName().equals(newFolderFullName))</span>
+<span class="fc" id="L102">                .findAny()</span>
+<span class="fc" id="L103">                .ifPresent(f -&gt; f.setPreviousFolderId(previousFolderId));</span>
+<span class="fc" id="L104">        return parent;</span>
+    }
+
+    /**
+     * Method to resolve the proper name of a folder from an {@link URLName}.
+     *
+     * &lt;p&gt;{@link URLName#URLName(String)} truncates anything behind a # symbol and treats it as a ref.
+     *
+     * &lt;p&gt;This is a problem in {@link javax.mail.Store#getFolder(URLName)} as any folder with a # in its name
+     * will not be loaded properly.
+     *
+     * &lt;p&gt;This method can be used to resolve the complete folder name before passing it to the
+     * {@link javax.mail.Store#getFolder(String)} method so the proper folder gets loaded.
+     *
+     * @param folder URLName to get a safe proper name from
+     * @return the name of the folder including the ref if applicable
+     */
+    public static String getFileWithRef(@NonNull URLName folder) {
+<span class="fc bfc" id="L122" title="All 2 branches covered.">        return String.format(&quot;%s%s&quot;, folder.getFile(), folder.getRef() == null ? &quot;&quot; : &quot;#&quot; + folder.getRef());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

@@ -511,6 +511,7 @@ export const uploadFile = async(emailId, file, content) => {
   
 }
 
+
 export const uploadFileWithUploadSession = async(emailId, file, content) => {
   const accessToken = await getAccessTokenSilent();
   const client = await getAuthenticatedClient(accessToken);
@@ -542,3 +543,27 @@ export const uploadFileWithUploadSession = async(emailId, file, content) => {
   
   return [];
 }
+
+export const getContacts = () =>
+
+    new Promise(async (resolve, reject) => {
+      //resolve(["aaaa@aa.com", "bbbb@bb.com", "ccc@cc.com", "dddd@dd.com"])
+         const accessToken = await getAccessTokenSilent();
+         const client = getAuthenticatedClient(accessToken);
+         client
+             .api(`me/contacts?top=250`)
+             .get()
+             .then(response => {
+                 let arr = response.value;
+                 let contacts = [];
+                 if(arr){
+                    arr.map(function (item) {
+                        if (item.emailAddresses.length > 0)
+                        contacts.push(item.emailAddresses[0].address);
+                    })
+                  }
+                 resolve(contacts);
+             });
+
+    });
+

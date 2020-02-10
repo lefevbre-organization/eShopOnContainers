@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Message.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">api</a> &gt; <a href="index.source.html" class="el_package">com.marcnuri.isotope.api.message</a> &gt; <span class="el_source">Message.java</span></div><h1>Message.java</h1><pre class="source lang-java linenums">/*
+ * Message.java
+ *
+ * Created on 2018-08-10, 16:07
+ *
+ * Copyright 2018 Marc Nuri
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+package com.marcnuri.isotope.api.message;
+
+import com.marcnuri.isotope.api.exception.IsotopeException;
+import com.marcnuri.isotope.api.resource.IsotopeResource;
+import com.sun.mail.imap.IMAPMessage;
+
+import javax.mail.*;
+import javax.mail.Message.RecipientType;
+import javax.mail.internet.InternetAddress;
+import javax.validation.constraints.NotEmpty;
+import java.io.Serializable;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+/**
+ * Created by Marc Nuri &lt;marc@marcnuri.com&gt; on 2018-08-10.
+ */
+@SuppressWarnings({&quot;WeakerAccess&quot;, &quot;unused&quot;})
+<span class="fc" id="L42">public class Message extends IsotopeResource implements Serializable {</span>
+
+    private static final long serialVersionUID = -1068972394742882009L;
+
+    private static final String CET_ZONE_ID = &quot;CET&quot;;
+    public static final String HEADER_IN_REPLY_TO = &quot;In-Reply-To&quot;;
+    public static final String HEADER_REFERENCES = &quot;References&quot;;
+
+    private Long uid;
+    private String messageId;
+    private Long modseq;
+    private List&lt;String&gt; from;
+    private List&lt;String&gt;  replyTo;
+    @NotEmpty(groups = {SmtpSend.class})
+    private List&lt;Recipient&gt; recipients;
+    private String subject;
+    private ZonedDateTime receivedDate;
+    private Long size;
+    private Boolean flagged;
+    private Boolean seen;
+    private Boolean recent;
+    private Boolean deleted;
+    private String content;
+    private List&lt;Attachment&gt; attachments;
+    private List&lt;String&gt; references;
+    private List&lt;String&gt; inReplyTo;
+
+    public Long getUid() {
+<span class="fc" id="L70">        return uid;</span>
+    }
+
+    public void setUid(Long uid) {
+<span class="fc" id="L74">        this.uid = uid;</span>
+<span class="fc" id="L75">    }</span>
+
+    public String getMessageId() {
+<span class="fc" id="L78">        return messageId;</span>
+    }
+
+    public void setMessageId(String messageId) {
+<span class="nc" id="L82">        this.messageId = messageId;</span>
+<span class="nc" id="L83">    }</span>
+
+    public Long getModseq() {
+<span class="fc" id="L86">        return modseq;</span>
+    }
+
+    public void setModseq(Long modseq) {
+<span class="nc" id="L90">        this.modseq = modseq;</span>
+<span class="nc" id="L91">    }</span>
+
+    public List&lt;String&gt; getFrom() {
+<span class="fc" id="L94">        return from;</span>
+    }
+
+    public void setFrom(List&lt;String&gt; from) {
+<span class="nc" id="L98">        this.from = from;</span>
+<span class="nc" id="L99">    }</span>
+
+    public List&lt;String&gt; getReplyTo() {
+<span class="fc" id="L102">        return replyTo;</span>
+    }
+
+    public void setReplyTo(List&lt;String&gt; replyTo) {
+<span class="nc" id="L106">        this.replyTo = replyTo;</span>
+<span class="nc" id="L107">    }</span>
+
+    public List&lt;Recipient&gt; getRecipients() {
+<span class="fc" id="L110">        return recipients;</span>
+    }
+
+    public void setRecipients(List&lt;Recipient&gt; recipients) {
+<span class="fc" id="L114">        this.recipients = recipients;</span>
+<span class="fc" id="L115">    }</span>
+
+    public String getSubject() {
+<span class="fc" id="L118">        return subject;</span>
+    }
+
+    public void setSubject(String subject) {
+<span class="fc" id="L122">        this.subject = subject;</span>
+<span class="fc" id="L123">    }</span>
+
+    public ZonedDateTime getReceivedDate() {
+<span class="fc" id="L126">        return receivedDate;</span>
+    }
+
+    public void setReceivedDate(ZonedDateTime receivedDate) {
+<span class="nc" id="L130">        this.receivedDate = receivedDate;</span>
+<span class="nc" id="L131">    }</span>
+
+    public Long getSize() {
+<span class="fc" id="L134">        return size;</span>
+    }
+
+    public void setSize(Long size) {
+<span class="nc" id="L138">        this.size = size;</span>
+<span class="nc" id="L139">    }</span>
+
+    public Boolean getFlagged() {
+<span class="fc" id="L142">        return flagged;</span>
+    }
+
+    public void setFlagged(Boolean flagged) {
+<span class="nc" id="L146">        this.flagged = flagged;</span>
+<span class="nc" id="L147">    }</span>
+
+    public Boolean getSeen() {
+<span class="fc" id="L150">        return seen;</span>
+    }
+
+    public void setSeen(Boolean seen) {
+<span class="nc" id="L154">        this.seen = seen;</span>
+<span class="nc" id="L155">    }</span>
+
+    public Boolean getRecent() {
+<span class="fc" id="L158">        return recent;</span>
+    }
+
+    public void setRecent(Boolean recent) {
+<span class="nc" id="L162">        this.recent = recent;</span>
+<span class="nc" id="L163">    }</span>
+
+    public Boolean getDeleted() {
+<span class="fc" id="L166">        return deleted;</span>
+    }
+
+    public void setDeleted(Boolean deleted) {
+<span class="nc" id="L170">        this.deleted = deleted;</span>
+<span class="nc" id="L171">    }</span>
+
+    public String getContent() {
+<span class="fc" id="L174">        return content;</span>
+    }
+
+    public void setContent(String content) {
+<span class="fc" id="L178">        this.content = content;</span>
+<span class="fc" id="L179">    }</span>
+
+    public List&lt;Attachment&gt; getAttachments() {
+<span class="fc" id="L182">        return attachments;</span>
+    }
+
+    public void setAttachments(List&lt;Attachment&gt; attachments) {
+<span class="fc" id="L186">        this.attachments = attachments;</span>
+<span class="fc" id="L187">    }</span>
+
+    public List&lt;String&gt; getReferences() {
+<span class="fc" id="L190">        return references;</span>
+    }
+
+    public void setReferences(List&lt;String&gt; references) {
+<span class="nc" id="L194">        this.references = references;</span>
+<span class="nc" id="L195">    }</span>
+
+    public List&lt;String&gt; getInReplyTo() {
+<span class="fc" id="L198">        return inReplyTo;</span>
+    }
+
+    public void setInReplyTo(List&lt;String&gt; inReplyTo) {
+<span class="nc" id="L202">        this.inReplyTo = inReplyTo;</span>
+<span class="nc" id="L203">    }</span>
+
+    @Override
+    public boolean equals(Object o) {
+<span class="nc bnc" id="L207" title="All 2 branches missed.">        if (this == o) return true;</span>
+<span class="nc bnc" id="L208" title="All 4 branches missed.">        if (o == null || getClass() != o.getClass()) return false;</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">        if (!super.equals(o)) return false;</span>
+<span class="nc" id="L210">        Message message = (Message) o;</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">        return Objects.equals(uid, message.uid) &amp;&amp;</span>
+<span class="nc bnc" id="L212" title="All 2 branches missed.">                Objects.equals(messageId, message.messageId) &amp;&amp;</span>
+<span class="nc bnc" id="L213" title="All 2 branches missed.">                Objects.equals(modseq, message.modseq) &amp;&amp;</span>
+<span class="nc bnc" id="L214" title="All 2 branches missed.">                Objects.equals(from, message.from) &amp;&amp;</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">                Objects.equals(replyTo, message.replyTo) &amp;&amp;</span>
+<span class="nc bnc" id="L216" title="All 2 branches missed.">                Objects.equals(recipients, message.recipients) &amp;&amp;</span>
+<span class="nc bnc" id="L217" title="All 2 branches missed.">                Objects.equals(subject, message.subject) &amp;&amp;</span>
+<span class="nc bnc" id="L218" title="All 2 branches missed.">                Objects.equals(receivedDate, message.receivedDate) &amp;&amp;</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">                Objects.equals(size, message.size) &amp;&amp;</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">                Objects.equals(flagged, message.flagged) &amp;&amp;</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">                Objects.equals(seen, message.seen) &amp;&amp;</span>
+<span class="nc bnc" id="L222" title="All 2 branches missed.">                Objects.equals(recent, message.recent) &amp;&amp;</span>
+<span class="nc bnc" id="L223" title="All 2 branches missed.">                Objects.equals(deleted, message.deleted) &amp;&amp;</span>
+<span class="nc bnc" id="L224" title="All 2 branches missed.">                Objects.equals(content, message.content) &amp;&amp;</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">                Objects.equals(attachments, message.attachments) &amp;&amp;</span>
+<span class="nc bnc" id="L226" title="All 2 branches missed.">                Objects.equals(references, message.references) &amp;&amp;</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">                Objects.equals(inReplyTo, message.inReplyTo);</span>
+    }
+
+    @Override
+    public int hashCode() {
+
+<span class="nc" id="L233">        return Objects.hash(super.hashCode(), uid, messageId, modseq, from, replyTo, recipients, subject, receivedDate, size, flagged, seen, recent, deleted, content, attachments, references, inReplyTo);</span>
+    }
+
+    /**
+     * Maps an {@link com.sun.mail.imap.IMAPStore} to a {@link Message}.
+     *
+     * This method should only map those fields that are retrieved performed an IMAP fetch command (ENVELOPE,
+     * UID, FLAGS...)
+     *
+     * To map other fields use a separate method.
+     *
+     * @param clazz Class of the new Message instance
+     * @param folder where the message is located
+     * @param imapMessage original message to map
+     * @return mapped Message with fulfilled envelope fields
+     */
+    public static &lt;M extends Message, F extends Folder &amp; UIDFolder&gt; M from(
+            Class&lt;M&gt; clazz, F folder, IMAPMessage imapMessage) {
+
+        final M ret;
+<span class="nc bnc" id="L253" title="All 2 branches missed.">        if (imapMessage != null) {</span>
+            try {
+<span class="nc" id="L255">                ret = clazz.newInstance();</span>
+<span class="nc" id="L256">                ret.setUid(folder.getUID(imapMessage));</span>
+<span class="nc" id="L257">                ret.setMessageId(imapMessage.getMessageID());</span>
+<span class="nc" id="L258">                ret.setFrom(processAddress(imapMessage.getFrom()));</span>
+<span class="nc" id="L259">                ret.setReplyTo(processAddress(imapMessage.getReplyTo()));</span>
+                // Process only recipients received in ENVELOPE (don't use getAllRecipients)
+<span class="nc" id="L261">                ret.setRecipients(Stream.of(</span>
+<span class="nc" id="L262">                        processAddress(RecipientType.TO, imapMessage.getRecipients(RecipientType.TO)),</span>
+<span class="nc" id="L263">                        processAddress(RecipientType.CC, imapMessage.getRecipients(RecipientType.CC)),</span>
+<span class="nc" id="L264">                        processAddress(RecipientType.BCC, imapMessage.getRecipients(RecipientType.BCC))</span>
+<span class="nc" id="L265">                ).flatMap(Collection::stream).collect(Collectors.toList()));</span>
+<span class="nc" id="L266">                ret.setSubject(imapMessage.getSubject());</span>
+<span class="nc" id="L267">                ret.setReceivedDate(imapMessage.getReceivedDate().toInstant().atZone(ZoneId.of(CET_ZONE_ID)));</span>
+<span class="nc" id="L268">                ret.setSize(imapMessage.getSizeLong());</span>
+<span class="nc" id="L269">                ret.setInReplyTo(Arrays.asList(</span>
+<span class="nc" id="L270">                        Optional.ofNullable(imapMessage.getHeader(HEADER_IN_REPLY_TO)).orElse(new String[0])));</span>
+<span class="nc" id="L271">                ret.setReferences(Arrays.asList(</span>
+<span class="nc" id="L272">                        Optional.ofNullable(imapMessage.getHeader(HEADER_REFERENCES)).orElse(new String[0])));</span>
+<span class="nc" id="L273">                final Flags flags = imapMessage.getFlags();</span>
+<span class="nc" id="L274">                ret.setFlagged(flags.contains(Flags.Flag.FLAGGED));</span>
+<span class="nc" id="L275">                ret.setSeen(flags.contains(Flags.Flag.SEEN));</span>
+<span class="nc" id="L276">                ret.setRecent(flags.contains(Flags.Flag.RECENT));</span>
+<span class="nc" id="L277">                ret.setDeleted(flags.contains(Flags.Flag.DELETED));</span>
+<span class="nc" id="L278">            } catch (ReflectiveOperationException | MessagingException e) {</span>
+<span class="nc" id="L279">                throw new IsotopeException(&quot;Error parsing IMAP Message&quot;, e);</span>
+<span class="nc" id="L280">            }</span>
+        } else {
+<span class="nc" id="L282">            ret = null;</span>
+        }
+<span class="nc" id="L284">        return ret;</span>
+    }
+
+    public static &lt;F extends Folder &amp; UIDFolder&gt; Message from(F folder, IMAPMessage imapMessage) {
+<span class="nc" id="L288">        return from(Message.class, folder, imapMessage);</span>
+    }
+
+    private static List&lt;Recipient&gt; processAddress(RecipientType recipient, Address... addresses) {
+<span class="nc" id="L292">        return processAddress(addresses).stream()</span>
+<span class="nc" id="L293">                .map(a -&gt; new Recipient(recipient.toString(), a))</span>
+<span class="nc" id="L294">                .collect(Collectors.toList());</span>
+    }
+
+    private static List&lt;String&gt; processAddress(Address... addresses) {
+<span class="nc" id="L298">        return Stream.of(Optional.ofNullable(addresses).orElse(new Address[0]))</span>
+<span class="nc" id="L299">                .map(address -&gt; {</span>
+<span class="nc bnc" id="L300" title="All 2 branches missed.">                    if (address instanceof InternetAddress) {</span>
+<span class="nc" id="L301">                        final InternetAddress internetAddress = (InternetAddress) address;</span>
+<span class="nc bnc" id="L302" title="All 2 branches missed.">                        return internetAddress.getPersonal() == null ? internetAddress.getAddress() :</span>
+<span class="nc" id="L303">                                String.format(&quot;\&quot;%s\&quot; &lt;%s&gt;&quot;, internetAddress.getPersonal(), internetAddress.getAddress());</span>
+                    } else {
+<span class="nc" id="L305">                        return address.toString();</span>
+                    }
+                })
+<span class="nc" id="L308">                .collect(Collectors.toList());</span>
+    }
+
+    /**
+     * Validation Group interface for SMTP send operations
+     */
+    public interface SmtpSend {}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

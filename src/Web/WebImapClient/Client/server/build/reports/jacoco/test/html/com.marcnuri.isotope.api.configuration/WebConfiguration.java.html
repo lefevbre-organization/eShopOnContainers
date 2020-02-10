@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">api</a> &gt; <a href="index.source.html" class="el_package">com.marcnuri.isotope.api.configuration</a> &gt; <span class="el_source">WebConfiguration.java</span></div><h1>WebConfiguration.java</h1><pre class="source lang-java linenums">/*
+ * WebConfiguration.java
+ *
+ * Created on 2018-08-09, 7:55
+ *
+ * Copyright 2018 Marc Nuri
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+package com.marcnuri.isotope.api.configuration;
+
+import com.marcnuri.isotope.api.credentials.CredentialsService;
+import com.marcnuri.isotope.api.imap.ImapService;
+import com.sun.mail.util.MailSSLSocketFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.AsyncConfigurer;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.reactive.config.EnableWebFlux;
+import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.stream.Stream;
+
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
+/**
+ * Created by Marc Nuri &lt;marc@marcnuri.com&gt; on 2018-08-09.
+ */
+@Configuration
+@EnableWebFlux
+public class WebConfiguration implements WebMvcConfigurer, AsyncConfigurer {
+
+    public static final String IMAP_SERVICE_PROTOTYPE = &quot;prototypeImapService&quot;;
+    private static final String DEVELOPMENT_PROFILE = &quot;dev&quot;;
+
+    private final Environment environment;
+
+    @Autowired
+<span class="nc" id="L58">    public WebConfiguration(Environment environment) {</span>
+<span class="nc" id="L59">        this.environment = environment;</span>
+<span class="nc" id="L60">    }</span>
+
+    @Override
+    public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
+<span class="nc" id="L64">        configurer.setTaskExecutor(getAsyncExecutor());</span>
+<span class="nc" id="L65">    }</span>
+
+     @Override
+     public ThreadPoolTaskExecutor getAsyncExecutor() {
+<span class="nc" id="L69">         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();</span>
+<span class="nc" id="L70">         executor.setCorePoolSize(7);</span>
+<span class="nc" id="L71">         executor.setMaxPoolSize(42);</span>
+<span class="nc" id="L72">         executor.setQueueCapacity(11);</span>
+<span class="nc" id="L73">         executor.setThreadNamePrefix(&quot;MyExecutor-&quot;);</span>
+<span class="nc" id="L74">         executor.initialize();</span>
+<span class="nc" id="L75">         return executor;</span>
+     }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+<span class="nc" id="L80">        final UrlBasedCorsConfigurationSource corsConfigurationSource = new UrlBasedCorsConfigurationSource();</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        if (Stream.of(this.environment.getActiveProfiles()).anyMatch(DEVELOPMENT_PROFILE::equals)) {</span>
+<span class="nc" id="L82">            corsConfigurationSource.registerCorsConfiguration(&quot;/v1/**&quot;,</span>
+<span class="nc" id="L83">                    new CorsConfiguration().applyPermitDefaultValues());</span>
+        }
+<span class="nc" id="L85">        return corsConfigurationSource;</span>
+    }
+
+    @Bean(name = IMAP_SERVICE_PROTOTYPE)
+    @Scope(SCOPE_PROTOTYPE)
+    @Qualifier(IMAP_SERVICE_PROTOTYPE)
+    public ImapService imapService(
+            IsotopeApiConfiguration isotopeApiConfiguration, MailSSLSocketFactory mailSSLSocketFactory,
+            CredentialsService credentialsService) {
+
+<span class="nc" id="L95">        return new ImapService(isotopeApiConfiguration, mailSSLSocketFactory, credentialsService);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FolderResource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">api</a> &gt; <a href="index.source.html" class="el_package">com.marcnuri.isotope.api.folder</a> &gt; <span class="el_source">FolderResource.java</span></div><h1>FolderResource.java</h1><pre class="source lang-java linenums">/*
+ * FolderResource.java
+ *
+ * Created on 2018-08-08, 16:32
+ *
+ * Copyright 2018 Marc Nuri
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+package com.marcnuri.isotope.api.folder;
+
+import com.marcnuri.isotope.api.imap.ImapService;
+import com.marcnuri.isotope.api.message.Attachment;
+import com.marcnuri.isotope.api.message.Message;
+import com.marcnuri.isotope.api.message.MessageWithFolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.hateoas.MediaTypes;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.lang.NonNull;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
+
+import javax.mail.URLName;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static com.marcnuri.isotope.api.configuration.WebConfiguration.IMAP_SERVICE_PROTOTYPE;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.http.MediaType.TEXT_EVENT_STREAM_VALUE;
+
+/**
+ * Created by Marc Nuri &lt;marc@marcnuri.com&gt; on 2018-08-08.
+ */
+@RestController
+@RequestMapping(path = &quot;/v1/folders&quot;)
+@SuppressWarnings(&quot;squid:S4529&quot;)
+public class FolderResource implements ApplicationContextAware {
+
+<span class="fc" id="L68">    private static final Logger log = LoggerFactory.getLogger(FolderResource.class);</span>
+
+    private static final String REL_MESSAGES = &quot;messages&quot;;
+    public static final String REL_DOWNLOAD = &quot;download&quot;;
+    private static final String REL_DELETE = &quot;delete&quot;;
+    private static final String REL_RENAME = &quot;rename&quot;;
+    private static final String REL_MOVE = &quot;move&quot;;
+    private static final String REL_MESSAGE = &quot;message&quot;;
+    private static final String REL_MESSAGE_FLAGGED = &quot;message.flagged&quot;;
+    private static final String REL_MESSAGE_MOVE= &quot;message.move&quot;;
+    private static final String REL_MESSAGE_MOVE_BULK= &quot;message.move.bulk&quot;;
+    private static final String REL_MESSAGE_SEEN = &quot;message.seen&quot;;
+    private static final String REL_MESSAGE_SEEN_BULK = &quot;message.seen.bulk&quot;;
+
+    private final ObjectFactory&lt;ImapService&gt; imapServiceFactory;
+
+    private ApplicationContext applicationContext;
+
+    @Autowired
+<span class="fc" id="L87">    public FolderResource(ObjectFactory&lt;ImapService&gt; imapServiceFactory) {</span>
+<span class="fc" id="L88">        this.imapServiceFactory = imapServiceFactory;</span>
+<span class="fc" id="L89">    }</span>
+
+    @GetMapping(path = &quot;&quot;, produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity&lt;List&lt;Folder&gt;&gt; getFolders(
+            @RequestParam(value = &quot;loadChildren&quot;, required = false) Boolean loadChildren) {
+
+<span class="fc" id="L95">        log.debug(&quot;Loading list of folders [children:{}]&quot;, loadChildren);</span>
+<span class="fc" id="L96">        return ResponseEntity.ok(addLinks(imapServiceFactory.getObject().getFolders(loadChildren)));</span>
+    }
+
+    @PostMapping(path = &quot;&quot;, produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity&lt;List&lt;Folder&gt;&gt; createRootFolder(@RequestBody() String newFolderName) {
+<span class="fc" id="L101">        log.debug(&quot;Creating new 1st level folder with name {}&quot;, newFolderName);</span>
+<span class="fc" id="L102">        return ResponseEntity.ok(addLinks(imapServiceFactory.getObject().createRootFolder(newFolderName)));</span>
+    }
+
+    @PostMapping(path= &quot;/{folderId}&quot;, produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity&lt;Folder&gt; createChildFolder(
+            @NonNull @PathVariable(&quot;folderId&quot;) String folderId, @RequestBody() String newFolderName) {
+
+<span class="fc" id="L109">        log.debug(&quot;Creating new folder with name {} under {} folder&quot;, newFolderName, folderId);</span>
+<span class="fc" id="L110">        return ResponseEntity.ok(addLinks(imapServiceFactory.getObject()</span>
+<span class="fc" id="L111">                .createChildFolder(Folder.toId(folderId), newFolderName)));</span>
+    }
+
+    @DeleteMapping(path= &quot;/{folderId}&quot;, produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity&lt;Folder&gt; deleteFolder(@NonNull @PathVariable(&quot;folderId&quot;) String folderId) {
+<span class="fc" id="L116">        log.debug(&quot;Deleting folder with id {}&quot;, folderId);</span>
+<span class="fc" id="L117">        return ResponseEntity.ok(addLinks(imapServiceFactory.getObject().deleteFolder(Folder.toId(folderId))));</span>
+    }
+
+    @PutMapping(path= &quot;/{folderId}/name&quot;, produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity&lt;Folder&gt; renameFolder(
+            @NonNull @PathVariable(&quot;folderId&quot;) String folderId, @RequestBody String newName) {
+<span class="fc" id="L123">        log.debug(&quot;Renaming folder with id {} to {}&quot;, folderId, newName);</span>
+<span class="fc" id="L124">        return ResponseEntity.ok(addLinks(imapServiceFactory.getObject().renameFolder(Folder.toId(folderId), newName)));</span>
+    }
+
+    /**
+     * Moves the folder with the provided folderId as a child of the folder with the provided targetFolderId or
+     * to the first level if null.
+     *
+     * @param folderId
+     * @param targetFolderId
+     * @return
+     */
+    @PutMapping(path= &quot;/{folderId}/parent&quot;, produces = MediaTypes.HAL_JSON_VALUE)
+    public ResponseEntity&lt;Folder&gt; moveFolder(
+            @PathVariable(&quot;folderId&quot;) String folderId, @RequestBody(required = false) String targetFolderId) {
+
+<span class="fc bfc" id="L139" title="All 2 branches covered.">        final URLName targetFolderUrlName = targetFolderId == null ? null : Folder.toId(targetFolderId);</span>
+<span class="fc" id="L140">        return ResponseEntity.ok(</span>
+<span class="fc" id="L141">                addLinks(imapServiceFactory.getObject().moveFolder(Folder.toId(folderId), targetFolderUrlName)));</span>
+    }
+
+    @GetMapping(path = &quot;/{folderId}/messages&quot;, produces = TEXT_EVENT_STREAM_VALUE)
+    public Flux&lt;ServerSentEvent&lt;List&lt;Message&gt;&gt;&gt; getMessages(
+            @PathVariable(&quot;folderId&quot;) String folderId, HttpServletResponse response) {
+
+<span class="fc" id="L148">        log.debug(&quot;Loading list of messages for folder {} &quot;, folderId);</span>
+<span class="fc" id="L149">        return applicationContext.getBean(IMAP_SERVICE_PROTOTYPE, ImapService.class)</span>
+<span class="fc" id="L150">                .getMessagesFlux(Folder.toId(folderId), response)</span>
+<span class="fc" id="L151">                .subscribeOn(Schedulers.elastic())</span>
+<span class="fc" id="L152">                .publishOn(Schedulers.immediate()) // Will allow server to stop sending events in case client disconnects</span>
+                ;
+    }
+
+    @GetMapping(path = &quot;/{folderId}/messages&quot;)
+    public ResponseEntity&lt;List&lt;Message&gt;&gt; preloadMessages(
+            @PathVariable(&quot;folderId&quot;) String folderId, @RequestParam(&quot;id&quot;) List&lt;Long&gt; messageIds) {
+
+<span class="fc" id="L160">        log.debug(&quot;Preloading {} messages for folder {} &quot;, messageIds.size(), folderId);</span>
+<span class="fc" id="L161">        return ResponseEntity.ok(imapServiceFactory.getObject().preloadMessages(Folder.toId(folderId), messageIds));</span>
+    }
+
+    @DeleteMapping(path = &quot;/{folderId}/messages&quot;)
+    public ResponseEntity&lt;Folder&gt; deleteAllFolderMessages(@PathVariable(&quot;folderId&quot;) String folderId) {
+<span class="fc" id="L166">        log.debug(&quot;Deleting ALL messages for folder {} &quot;, folderId);</span>
+<span class="fc" id="L167">        final Folder folder = imapServiceFactory.getObject().deleteAllFolderMessages(Folder.toId(folderId));</span>
+<span class="fc" id="L168">        addLinks(folder);</span>
+<span class="fc" id="L169">        return ResponseEntity.ok(folder);</span>
+    }
+
+    @DeleteMapping(path = &quot;/{folderId}/messages&quot;, params = {&quot;id&quot;})
+    public ResponseEntity&lt;Folder&gt; deleteMessages(
+            @PathVariable(&quot;folderId&quot;) String folderId, @RequestParam(&quot;id&quot;) List&lt;Long&gt; messageIds) {
+
+<span class="fc" id="L176">        log.debug(&quot;Deleting {} messages for folder {} &quot;, messageIds.size(), folderId);</span>
+<span class="fc" id="L177">        final Folder folder = imapServiceFactory.getObject().deleteMessages(Folder.toId(folderId), messageIds);</span>
+<span class="fc" id="L178">        addLinks(folder);</span>
+<span class="fc" id="L179">        return ResponseEntity.ok(folder);</span>
+    }
+
+    @GetMapping(path = &quot;/{folderId}/messages/{messageId}&quot;)
+    public ResponseEntity&lt;MessageWithFolder&gt; getMessage(
+            @PathVariable(&quot;folderId&quot;) String folderId, @PathVariable(&quot;messageId&quot;) Long messageId) {
+
+<span class="fc" id="L186">        log.debug(&quot;Loading message {} from folder {}&quot;, messageId, folderId);</span>
+<span class="fc" id="L187">        final MessageWithFolder message = imapServiceFactory.getObject().getMessage(Folder.toId(folderId), messageId);</span>
+<span class="fc" id="L188">        addLinks(message.getFolder());</span>
+<span class="fc" id="L189">        addLinks(folderId, message);</span>
+<span class="fc" id="L190">        return ResponseEntity.ok(message);</span>
+    }
+
+    @GetMapping(path = &quot;/{folderId}/messages/{messageId}/attachments/{id}&quot;)
+    public ResponseEntity&lt;Void&gt; getAttachment(
+            @PathVariable(&quot;folderId&quot;) String folderId, @PathVariable(&quot;messageId&quot;) Long messageId,
+            @PathVariable(&quot;id&quot;) String id, @RequestParam(name=&quot;contentId&quot;, required = false) Boolean contentId,
+            HttpServletResponse response) {
+
+<span class="nc" id="L199">        log.debug(&quot;Loading attachment {} from message {} from folder {}&quot;, id, messageId, folderId);</span>
+<span class="nc" id="L200">        imapServiceFactory.getObject().readAttachment(response, Folder.toId(folderId), messageId, id, contentId);</span>
+<span class="nc" id="L201">        return ResponseEntity.ok().build();</span>
+    }
+
+    @PutMapping(path = &quot;/{fromFolderId}/messages/folder/{toFolderId}&quot;)
+    public ResponseEntity&lt;List&lt;MessageWithFolder&gt;&gt; moveMessages(
+            @PathVariable(&quot;fromFolderId&quot;) String fromFolderId,
+            @PathVariable(&quot;toFolderId&quot;) String toFolderId, @NonNull @RequestBody List&lt;Long&gt; messageIds) {
+
+<span class="nc" id="L209">        log.debug(&quot;Moving {} messages from folder {} to folder {}&quot;, messageIds.size(), fromFolderId, toFolderId);</span>
+<span class="nc" id="L210">        final List&lt;MessageWithFolder&gt; movedMessages = imapServiceFactory.getObject().moveMessages(</span>
+<span class="nc" id="L211">                Folder.toId(fromFolderId), Folder.toId(toFolderId), messageIds);</span>
+<span class="nc" id="L212">        movedMessages.forEach(mwf -&gt; addLinks(mwf.getFolder()));</span>
+<span class="nc" id="L213">        return ResponseEntity.ok(movedMessages);</span>
+    }
+
+    @PutMapping(path = &quot;/{fromFolderId}/messages/{messageId}/folder/{toFolderId}&quot;)
+    public ResponseEntity&lt;List&lt;MessageWithFolder&gt;&gt; moveMessage(
+            @PathVariable(&quot;fromFolderId&quot;) String fromFolderId,
+            @PathVariable(&quot;messageId&quot;) Long messageId, @PathVariable(&quot;toFolderId&quot;) String toFolderId) {
+
+<span class="nc" id="L221">        log.debug(&quot;Moving message {} from folder {} to folder {}&quot;, messageId, fromFolderId, toFolderId);</span>
+<span class="nc" id="L222">        final List&lt;MessageWithFolder&gt; movedMessages = imapServiceFactory.getObject().moveMessages(</span>
+<span class="nc" id="L223">                Folder.toId(fromFolderId), Folder.toId(toFolderId), Collections.singletonList(messageId));</span>
+<span class="nc" id="L224">        movedMessages.forEach(mwf -&gt; addLinks(mwf.getFolder()));</span>
+<span class="nc" id="L225">        return ResponseEntity.ok(movedMessages);</span>
+    }
+
+    @PutMapping(path = &quot;/{folderId}/messages/{messageId}/seen&quot;)
+    public ResponseEntity&lt;Void&gt; setMessageSeen(
+            @PathVariable(&quot;folderId&quot;) String folderId, @PathVariable(&quot;messageId&quot;) Long messageId,
+            @RequestBody boolean seen) {
+
+<span class="fc" id="L233">        log.debug(&quot;Setting message seen attribute to {} in message {} from folder {}&quot;, seen, messageId, folderId);</span>
+<span class="fc" id="L234">        imapServiceFactory.getObject().setMessagesSeen(Folder.toId(folderId), seen, messageId);</span>
+<span class="fc" id="L235">        return ResponseEntity.noContent().build();</span>
+    }
+
+    @PutMapping(path = &quot;/{folderId}/messages/seen/{seen}&quot;)
+    public ResponseEntity&lt;Void&gt; setMessagesSeen(
+            @PathVariable(&quot;folderId&quot;) String folderId,
+            @PathVariable(&quot;seen&quot;) Boolean seen, @RequestBody List&lt;Long&gt; messageIds) {
+
+<span class="fc" id="L243">        log.debug(&quot;Setting {} messages in folder {} seen attribute to {}&quot; , messageIds.size(), folderId, seen);</span>
+<span class="fc" id="L244">        imapServiceFactory.getObject().setMessagesSeen(</span>
+<span class="fc" id="L245">                Folder.toId(folderId), seen, messageIds.stream().mapToLong(Long::longValue).toArray());</span>
+<span class="fc" id="L246">        return ResponseEntity.noContent().build();</span>
+    }
+
+    @PutMapping(path = &quot;/{folderId}/messages/{messageId}/flagged&quot;)
+    public ResponseEntity&lt;Void&gt; setMessageFlagged(
+            @PathVariable(&quot;folderId&quot;) String folderId,
+            @PathVariable(&quot;messageId&quot;) Long messageId, @RequestBody boolean flagged) {
+
+<span class="fc" id="L254">        log.debug(&quot;Setting message flagged attribute to {} in message {} from folder {}&quot;, flagged, messageId, folderId);</span>
+<span class="fc" id="L255">        imapServiceFactory.getObject().setMessagesFlagged(Folder.toId(folderId), flagged, messageId);</span>
+<span class="fc" id="L256">        return ResponseEntity.noContent().build();</span>
+    }
+
+    private static Folder[] addLinks(Folder... folders) {
+<span class="fc" id="L260">        Stream.of(folders).forEach(FolderResource::addLinks);</span>
+<span class="fc" id="L261">        return folders;</span>
+    }
+
+    private static List&lt;Folder&gt; addLinks(List&lt;Folder&gt; folders) {
+<span class="fc" id="L265">        folders.forEach(FolderResource::addLinks);</span>
+<span class="fc" id="L266">        return folders;</span>
+    }
+
+    private static Folder addLinks(Folder folder) {
+<span class="fc" id="L270">        folder.add(linkTo(methodOn(FolderResource.class)</span>
+<span class="fc" id="L271">                .createChildFolder(folder.getFolderId(), null))</span>
+<span class="fc" id="L272">                .withSelfRel());</span>
+<span class="fc" id="L273">        folder.add(linkTo(methodOn(FolderResource.class)</span>
+<span class="fc" id="L274">                .getMessages( folder.getFolderId(), null))</span>
+<span class="fc" id="L275">                .withRel(REL_MESSAGES).expand());</span>
+<span class="fc" id="L276">        folder.add(linkTo(methodOn(FolderResource.class)</span>
+<span class="fc" id="L277">                .deleteFolder(folder.getFolderId()))</span>
+<span class="fc" id="L278">                .withRel(REL_DELETE));</span>
+<span class="fc" id="L279">        folder.add(linkTo(methodOn(FolderResource.class)</span>
+<span class="fc" id="L280">                .renameFolder(folder.getFolderId(), null))</span>
+<span class="fc" id="L281">                .withRel(REL_RENAME));</span>
+<span class="fc" id="L282">        folder.add(linkTo(methodOn(FolderResource.class)</span>
+<span class="fc" id="L283">                .moveFolder(folder.getFolderId(), null))</span>
+<span class="fc" id="L284">                .withRel(REL_MOVE));</span>
+<span class="fc" id="L285">        folder.add(linkTo(methodOn(FolderResource.class)</span>
+<span class="fc" id="L286">                .getMessage(folder.getFolderId(), null))</span>
+<span class="fc" id="L287">                .withRel(REL_MESSAGE));</span>
+<span class="fc" id="L288">        folder.add(linkTo(methodOn(FolderResource.class)</span>
+<span class="fc" id="L289">                .setMessageFlagged(folder.getFolderId(), null, false))</span>
+<span class="fc" id="L290">                .withRel(REL_MESSAGE_FLAGGED));</span>
+<span class="fc" id="L291">        folder.add(linkTo(methodOn(FolderResource.class)</span>
+<span class="fc" id="L292">                .moveMessage(folder.getFolderId(), null, null))</span>
+<span class="fc" id="L293">                .withRel(REL_MESSAGE_MOVE));</span>
+<span class="fc" id="L294">        folder.add(linkTo(methodOn(FolderResource.class)</span>
+<span class="fc" id="L295">                .moveMessages(folder.getFolderId(), null, Collections.emptyList()))</span>
+<span class="fc" id="L296">                .withRel(REL_MESSAGE_MOVE_BULK));</span>
+<span class="fc" id="L297">        folder.add(linkTo(methodOn(FolderResource.class)</span>
+<span class="fc" id="L298">                .setMessageSeen(folder.getFolderId(), null, false))</span>
+<span class="fc" id="L299">                .withRel(REL_MESSAGE_SEEN));</span>
+<span class="fc" id="L300">        folder.add(linkTo(methodOn(FolderResource.class)</span>
+<span class="fc" id="L301">                .setMessagesSeen(folder.getFolderId(), null, Collections.emptyList()))</span>
+<span class="fc" id="L302">                .withRel(REL_MESSAGE_SEEN_BULK));</span>
+<span class="fc" id="L303">        addLinks(folder.getChildren());</span>
+<span class="fc" id="L304">        return folder;</span>
+    }
+
+    private static Attachment[] addLinks(String folderId, Message message, Attachment... attachments) {
+<span class="pc" id="L308">        Stream.of(attachments).forEach(a -&gt; addLinks(folderId, message, a));</span>
+<span class="fc" id="L309">        return attachments;</span>
+    }
+
+    public static List&lt;Attachment&gt; addLinks(String folderId, Message message, List&lt;Attachment&gt; attachments) {
+<span class="nc" id="L313">        attachments.forEach(a -&gt; addLinks(folderId, message, a));</span>
+<span class="nc" id="L314">        return attachments;</span>
+    }
+
+    private static Attachment addLinks(String folderId, Message message, Attachment attachment) {
+<span class="nc bnc" id="L318" title="All 4 branches missed.">        final boolean isContentId = attachment.getContentId() != null &amp;&amp; !attachment.getContentId().isEmpty();</span>
+<span class="nc bnc" id="L319" title="All 2 branches missed.">        final String attachmentId = isContentId ? attachment.getContentId() : attachment.getFileName();</span>
+<span class="nc bnc" id="L320" title="All 4 branches missed.">        if (attachmentId != null &amp;&amp; !attachmentId.isEmpty()) {</span>
+<span class="nc" id="L321">            attachment.add(linkTo(methodOn(FolderResource.class).getAttachment(folderId, message.getUid(),</span>
+<span class="nc" id="L322">                    attachmentId, isContentId, null))</span>
+<span class="nc" id="L323">                    .withRel(REL_DOWNLOAD).expand());</span>
+        }
+<span class="nc" id="L325">        return attachment;</span>
+    }
+
+    @Override
+    public void setApplicationContext(@NonNull ApplicationContext applicationContext) {
+<span class="fc" id="L330">        this.applicationContext = applicationContext;</span>
+<span class="fc" id="L331">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

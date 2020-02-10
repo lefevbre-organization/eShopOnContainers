@@ -2,6 +2,7 @@
 using Lexon.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.Extensions.Options;
 using System;
@@ -23,7 +24,7 @@ namespace Lexon.API.Controllers
         public LexonController(
             IUsersService usersService
             , IOptionsSnapshot<LexonSettings> lexonSettings
-            , IEventBus eventBus )
+            , IEventBus eventBus)
         {
             _usersService = usersService ?? throw new ArgumentNullException(nameof(usersService));
             _settings = lexonSettings.Value;
@@ -59,70 +60,6 @@ namespace Lexon.API.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost]
-        [Route("classifications")]
-        [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> ClassificationsAsync(
-            [FromBody] ClassificationSearch classificationSearch
-            //, [FromHeader(Name = "x-requestid")] string requestId
-            )
-
-        {
-            if (string.IsNullOrEmpty(classificationSearch.idUser) || string.IsNullOrEmpty(classificationSearch.idMail) || string.IsNullOrEmpty(classificationSearch.bbdd))
-                return BadRequest("values invalid. Must be a valid user, bbdd and email order to search the classifications");
-
-            var result = await _usersService.GetClassificationsFromMailAsync(
-                classificationSearch.pageSize, classificationSearch.pageIndex, classificationSearch.idUser, classificationSearch.bbdd, classificationSearch.idMail, classificationSearch.idType);
-            
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-
-        }
-
-        [HttpPut]
-        [Route("classifications/add")]
-        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddClassificationAsync([FromBody]ClassificationAddView classification)  
-        {
-            if (string.IsNullOrEmpty(classification?.idUser) || (classification?.listaMails?.Count() <= 0) ||
-                string.IsNullOrEmpty(classification?.bbdd) || classification?.idRelated <= 0 || classification?.idType <= 0)
-                return BadRequest("values invalid. Must be a valid user, bbdd, email, related and type for create the classification");
-
-            var result = await _usersService.AddClassificationToListAsync(
-                classification.idUser, classification.bbdd, classification.listaMails, classification.idRelated, classification.idType);
-            
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-        }
-
-        [HttpPut]
-        [Route("classifications/remove")]
-        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> RemoveClassificationAsync([FromBody]ClassificationRemoveView classification)
-        {
-            if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.idMail) || 
-                string.IsNullOrEmpty(classification?.bbdd) || classification?.idRelated <= 0 || classification?.idType <= 0)
-                return BadRequest("values invalid. Must be a valid user, bbdd, email, related and type for remove the classification");
-
-            var result = await _usersService.RemoveClassificationFromListAsync(
-                classification.idUser, classification.bbdd,
-                classification.Provider, classification.MailAccount, classification.idMail,
-                classification.idRelated, classification.idType);
-            
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-        }
-
-        [HttpGet]
-        [Route("entities/types")]
-        [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityType>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityType>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> ClassificationsTypesAsync()
-        {
-            var result = await _usersService.GetClassificationMasterListAsync();
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-        }
-
         [HttpGet]
         [Route("companies/select")]
         [ProducesResponseType(typeof(Result<LexonCompany>), (int)HttpStatusCode.OK)]
@@ -139,10 +76,89 @@ namespace Lexon.API.Controllers
         }
 
         [HttpPost]
+        [Route("classifications")]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ClassificationsAsync(
+            [FromBody] ClassificationSearch classificationSearch
+            //, [FromHeader(Name = "x-requestid")] string requestId
+            )
+
+        {
+            if (string.IsNullOrEmpty(classificationSearch.idUser) || string.IsNullOrEmpty(classificationSearch.idMail) || string.IsNullOrEmpty(classificationSearch.bbdd))
+                return BadRequest("values invalid. Must be a valid user, bbdd and email order to search the classifications");
+
+            var result = await _usersService.GetClassificationsFromMailAsync(
+                classificationSearch.pageSize, classificationSearch.pageIndex, classificationSearch.idUser, classificationSearch.bbdd, classificationSearch.idMail, classificationSearch.idType);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpPut]
+        [Route("classifications/add")]
+        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddClassificationAsync([FromBody]ClassificationAddView classification)
+        {
+            if (string.IsNullOrEmpty(classification?.idUser) || (classification?.listaMails?.Count() <= 0) ||
+                string.IsNullOrEmpty(classification?.bbdd) || classification?.idRelated <= 0 || classification?.idType <= 0)
+                return BadRequest("values invalid. Must be a valid user, bbdd, email, related and type for create the classification");
+
+            var result = await _usersService.AddClassificationToListAsync(
+                classification.idUser, classification.bbdd, classification.listaMails, classification.idRelated, classification.idType);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpPost]
+        [Route("classifications/contacts/add")]
+        [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(int), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddRelationContactsMailAsync([FromBody]ClassificationContactsView classification)
+        {
+            if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.bbdd) ||
+                string.IsNullOrEmpty(classification?.mail.Provider) || string.IsNullOrEmpty(classification?.mail.MailAccount) || string.IsNullOrEmpty(classification?.mail.Uid) ||
+                classification.ContactList == null || classification.ContactList.GetLength(0) <= 0)
+                return (IActionResult)BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated, bbdd and some contacts to add in a actuation");
+
+            var result = await _usersService.AddRelationContactsMailAsync(classification);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpPost]
+        [Route("classifications/remove")]
+        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> RemoveClassificationAsync([FromBody]ClassificationRemoveView classification)
+        {
+            if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.idMail) ||
+                string.IsNullOrEmpty(classification?.bbdd) || classification?.idRelated <= 0 || classification?.idType <= 0)
+                return BadRequest("values invalid. Must be a valid user, bbdd, email, related and type for remove the classification");
+
+            var result = await _usersService.RemoveClassificationFromListAsync(
+                classification.idUser, classification.bbdd,
+                classification.Provider, classification.MailAccount, classification.idMail,
+                classification.idRelated, classification.idType);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpGet]
+        [Route("entities/types")]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityType>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityType>>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> EntitiesTypesAsync()
+        {
+            var result = await _usersService.GetMasterEntitiesAsync();
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+        [HttpPost]
         [Route("entities")]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityBase>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>),(int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> EntitiesAsync(
             [FromBody] EntitySearch entitySearch
@@ -170,6 +186,25 @@ namespace Lexon.API.Controllers
 
             return (resultPaginatedFinal.errors.Count > 0) ? (IActionResult)BadRequest(resultPaginatedFinal) : Ok(resultPaginatedFinal);
         }
+
+        [HttpPost]
+        [Route("entities/getbyid")]
+        [ProducesResponseType(typeof(Result<LexonEntityBase>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexonEntityBase>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> EntityByIdAsync(
+            [FromBody] EntitySearchById entitySearch
+            )
+        {
+            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0 || entitySearch.idEntity <= 0)
+                return BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
+
+
+                var result = await _usersService.GetEntityById(entitySearch.bbdd, entitySearch.idUser, entitySearch.idType,  entitySearch.idEntity);
+                return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+
+
+        }
+
 
     }
 }

@@ -3,18 +3,20 @@ export const signIn = () => {
 };
 
 export const initGmailClient = (apiKey, clientId) => {
-  const API_KEY = process.env.REACT_APP_API_KEY;
-  const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
+    const API_KEY = process.env.REACT_APP_API_KEY;
+    const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
 
-  // Array of API discovery doc URLs for APIs
-  const DISCOVERY_DOCS = [
-    "https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest"
-  ];
+    // Array of API discovery doc URLs for APIs
+    const DISCOVERY_DOCS = [
+        'https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest',
+        'https://people.googleapis.com/$discovery/rest'       
+    ];
 
-  // Authorization scopes required by the API; multiple scopes can be
-  // included, separated by spaces.
-  // More info: https://developers.google.com/identity/protocols/googlescopes
-  const SCOPES = "https://mail.google.com/"; // Scope for Read, send, delete, and manage your email
+    // Authorization scopes required by the API; multiple scopes can be
+    // included, separated by spaces.
+    // More info: https://developers.google.com/identity/protocols/googlescopes
+    const SCOPES ="https://mail.google.com https://www.googleapis.com/auth/contacts https://www.googleapis.com/auth/user.emails.read"; // Scope for Read, send, delete, and manage your email";
+    
 
   const gapi = window.gapi;
 

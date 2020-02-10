@@ -19,6 +19,11 @@ class ClssificationListSearch extends Component {
   }
 
   _handleOnclick() {
+    if(this.state.showSearch === true) {
+      this.setState({search: ""}, ()=>{
+        this._handleOnclickSearch();
+      })
+    }
     this.setState({ showSearch: !this.state.showSearch });
   }
 
