@@ -5,6 +5,7 @@ import ACTIONS from "../../actions/lexon";
 import { clearUserCredentials } from "../../actions/application";
 import history from "../../routes/history";
 import { PROVIDER } from "../../constants";
+import { getUser } from '../../services/accounts';
 import { removeState } from "../../services/state";
 
 class UserLexon extends Component {
@@ -104,24 +105,25 @@ class UserLexon extends Component {
 
   async isUniqueAccountByProvider() {
     const { lexon } = this.props;
-    const url = `${window.URL_GET_ACCOUNTS}/${lexon.userId}`;
+    try {
+      const result = getUser(lexon.userId)
 
-    const response = await fetch(url, { method: "GET" });
-    const result = await response.json();
-
-    if (result.errors.length === 0) {
-      const accountsByProvider = result.data.accounts.filter(
-        account => account.provider === PROVIDER
-      );
-      if (accountsByProvider.length > 1) {
-        this.setState({
-          readyToRedirectToLogin: true
-        });
-      } else {
-        this.setState({
-          readyToRedirect: true
-        });
+      if (result.errors.length === 0) {
+        const accountsByProvider = result.data.accounts.filter(
+          account => account.provider === PROVIDER
+        );
+        if (accountsByProvider.length > 1) {
+          this.setState({
+            readyToRedirectToLogin: true
+          });
+        } else {
+          this.setState({
+            readyToRedirect: true
+          });
+        }
       }
+    } catch(err) {
+      throw err
     }
   }
 

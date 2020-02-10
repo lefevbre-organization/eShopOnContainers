@@ -10,6 +10,7 @@ import { removeState } from "../../services/state";
 // import { logout } from '../login/login';
 import "react-perfect-scrollbar/dist/css/styles.css";
 import { PROVIDER } from "../../constants";
+import { getUser } from "../../services/accounts";
 import AccountUser from "../menu-user/account-user/account-user";
 
 class FilterDialogUser extends Component {
@@ -27,11 +28,7 @@ class FilterDialogUser extends Component {
     const { lexon } = this.props;
     const _this = this;
     if (lexon.userId) {
-      const url = `${window.URL_GET_ACCOUNTS}/${lexon.userId}`;
-      fetch(url, {
-        method: "GET"
-      })
-        .then(data => data.json())
+        getUser(lexon.userId)
         .then(result => {
           if (result.errors.length === 0) {
             _this.setState({

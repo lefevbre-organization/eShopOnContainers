@@ -12,6 +12,7 @@ import {
   DropdownToggle
 } from "reactstrap";
 import AccountUser from "./account-user/account-user";
+import { getUser } from "../../api_graph/accounts";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import i18n from "i18next";
@@ -33,11 +34,7 @@ class MenuUser extends Component {
     const { lexon } = this.props;
     const _this = this;
     if (lexon.userId) {
-      const url = `${window.URL_GET_ACCOUNTS}/${lexon.userId}`;
-      fetch(url, {
-        method: "GET"
-      })
-        .then(data => data.json())
+      getUser(lexon.userId)
         .then(result => {
           if (result.errors.length === 0) {
             _this.setState({

@@ -27,6 +27,7 @@ import { resetFolderMessagesCache } from "../services/message";
 import { readMessage } from "../services/message-read";
 import { persistApplicationNewMessageContent } from "../services/indexed-db";
 
+import { addOrUpdateAccount } from "../services/accounts";
 // import SplitPane from "react-split-pane";
 import styles from "./app.scss";
 import IconButton from "./buttons/icon-button";
@@ -438,14 +439,22 @@ class App extends Component {
     //setTimeout(function () { this.registerConnectorApp(); }, 2200);
     this.registerConnectorApp();
 
-    const { userId, idCaseFile, bbdd, idEmail, idFolder } = this.props.lexon;
+    const { userId, idCaseFile, bbdd, idEmail, idFolder, account } = this.props.lexon;
+    const { imapSsl, serverHost, serverPort, smtpHost, smtpPort, smtpSsl, user} = this.props.all.login.formValues;
     const { email } = this.props;
     if (userId !== null && email !== null) {
       const GUID = uuid();
-      const url = `${window.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}/${GUID}`;
-      fetch(url, {
-        method: "GET"
-      })
+      const newAccount = {
+        "provider": PROVIDER,
+        "email": email || account,
+        "guid": GUID,
+        "sign": "",
+        "defaultAccount": true,
+        "configAccount": {
+        },
+        "mails": []
+      };
+      addOrUpdateAccount(userId, newAccount)
       .then(() => {
         this.setState({ isUpdatedDefaultAccount: true });
       	Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, { domain: 'lefebvre.es' })

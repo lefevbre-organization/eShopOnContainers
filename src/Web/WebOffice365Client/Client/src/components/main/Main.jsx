@@ -30,6 +30,7 @@ import LexonComponent from "../../apps/lexon_content";
 import SidebarComponent from "../../apps/sidebar_content";
 import ComposeMessage from "../compose-message/ComposeMessage";
 import "react-reflex/styles.css";
+import { addOrUpdateAccount } from "../../api_graph/accounts";
 import { PROVIDER } from "../../constants";
 
 export class Main extends Component {
@@ -179,10 +180,17 @@ export class Main extends Component {
     const idEmail = this.props.idEmail;
     if (userId !== null && email !== null) {
       const GUID = uuid();
-      const url = `${window.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}/${GUID}`;
-      fetch(url, {
-        method: "GET"
-      }).then(result => {
+      const newAccount = {
+        "provider": PROVIDER,
+        "email": email,
+        "guid": GUID,
+        "sign": "",
+        "defaultAccount": true,
+        "configAccount": null,
+        "mails": []
+      };
+      addOrUpdateAccount(userId, newAccount)
+      .then(result => {
       	Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, { domain: 'lefebvre.es' })
 	      if (idEmail != null && idEmail !== undefined){
 	        if (idCaseFile !== null && idCaseFile !== undefined){

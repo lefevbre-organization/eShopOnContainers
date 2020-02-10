@@ -30,6 +30,7 @@ import SidebarCnn from "react-sidebar";
 import LexonComponent from "../../apps/lexon_content";
 import CalendarComponent from "../../apps/calendar_content";
 import "react-reflex/styles.css";
+import { addOrUpdateAccount } from "../../api/accounts";
 import { PROVIDER } from "../../constants";
 
 export class Main extends Component {
@@ -194,10 +195,17 @@ export class Main extends Component {
       const { googleUser } = this.props;
       const email = googleUser.w3.U3;
       const GUID = uuid();
-      const url = `${window.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}/${GUID}`;
-      fetch(url, {
-        method: "GET"
-      }).then(result => {
+      const newAccount = {
+        "provider": PROVIDER,
+        "email": email,
+        "guid": GUID,
+        "sign": "",
+        "defaultAccount": true,
+        "configAccount": null,
+        "mails": []
+      };
+      addOrUpdateAccount(userId, newAccount)
+      .then(result => {
       	Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, { domain: 'lefebvre.es' })
         if (idEmail != null && idEmail !== undefined){
           if (idCaseFile != null && idCaseFile != undefined){

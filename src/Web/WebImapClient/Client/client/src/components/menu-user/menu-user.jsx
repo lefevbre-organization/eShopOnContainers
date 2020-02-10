@@ -17,6 +17,7 @@ import "react-perfect-scrollbar/dist/css/styles.css";
 import i18n from "i18next";
 import { removeState } from "../../services/state";
 import { clearUserCredentials } from "../../actions/application";
+import { getUser } from "../../services/accounts";
 
 class MenuUser extends Component {
   constructor(props) {
@@ -35,11 +36,7 @@ class MenuUser extends Component {
   componentDidMount() {
     const { lexon } = this.props;
     if (lexon.userId) {
-      const url = `${window.URL_GET_ACCOUNTS}/${lexon.userId}`;
-      fetch(url, {
-        method: "GET"
-      })
-        .then(data => data.json())
+        getUser(lexon.userId)
         .then(result => {
           if (result.errors.length === 0) {
             this.setState({

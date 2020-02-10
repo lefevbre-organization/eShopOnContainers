@@ -77,10 +77,14 @@ export const getAccountsWithUserNoEncrypt = userId => {
     })
       .then(data => data.json())
       .then(result => {
-        if (result.errors.length === 0 && result.data) {
+        if (result.errors.length === 0) {
+          let accounts = [];
+          if(result.data && result.data.accounts) {
+            accounts = result.data.accounts.map( ac=> ({ ...ac, provider: ac.provider.toUpperCase(), user: userId}) )
+          }
           resolve({
             user: { ID_ENTRADA: userId },
-            accounts: result.data.accounts.map( ac=> ({ ...ac, provider: ac.provider.toUpperCase(), user: userId}) )
+            accounts
           });
         } else {
           let errors;
@@ -127,7 +131,7 @@ export const deleteAccountByUserAndEmail = (encrypt, userId, provider, email) =>
     if (encrypt === "1") {
       getUser(userId).then(user => {
         if (user.ID_ENTRADA != null) {
-          const url = `${window.API_ACCOUNTS}/v2/usermail/${userId}/account/${provider}/${email}/relation/delete//`;
+          const url = `${window.API_ACCOUNTS}/v2/accounts/usermail/${userId}/account/delete/${provider}/${email}`;
           fetch(url, {
             method: "GET"
           })
@@ -153,9 +157,9 @@ export const deleteAccountByUserAndEmail = (encrypt, userId, provider, email) =>
         }
       });
     } else {
-      const url = `${window.API_ACCOUNTS}/v2/accounts/usermail/${userId}/account/${provider}/${email}/relation/delete/`;
+      const url = `${window.API_ACCOUNTS}/v2/accounts/usermail/${userId}/account/delete/${provider}/${email}`;
       fetch(url, {
-        method: "GET"
+        method: "DELETE"
       })
         .then(data => data.json())
         .then(result => {

@@ -1,6 +1,6 @@
 window.REACT_APP_ENVIRONMENT = "LOCAL";
 window.URL_UPDATE_DEFAULTACCOUNT =
-  "http://localhost:8083/api/v1/accounts/emailuseraccount/updatedefaultaccount";
+  "https://now-apigwacc.lefebvre.es/api/v2/accounts/usermail";
 window.URL_RESET_DEFAULTACCOUNT =
   "http://localhost:8083/api/v1/accounts/emailuseraccount/resetdefaultaccountbyuser";
 window.URL_DELETE_ACCOUNT =
