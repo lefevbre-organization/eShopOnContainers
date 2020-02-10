@@ -30,6 +30,17 @@ const lexon = (state = INITIAL_STATE.lexon, action = {}) => {
         bbdd: action.payload.bbdd      
       }
 
+    case ActionTypes.LEXON_EMAIL:
+      return{
+        ...state,
+        idEmail: action.payload.idEmail,
+        idFolder: action.payload.idFolder,
+        emailShown: action.payload.emailShown
+      }
+
+    case ActionTypes.LEXON_EMAIL_SET_SHOWN:
+          return { ...state, emailShown: action.payload }
+
     default:
       return state;
   }

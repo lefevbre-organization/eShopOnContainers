@@ -124,7 +124,7 @@ const application = (state = INITIAL_STATE.application, action = {}) => {
     }
     case ActionTypes.APPLICATION_OUTBOX_SET_SENT: {
       const newState = {...state};
-      newState.outbox = {...newState.outbox, sent: action.payload};
+      newState.outbox = {...newState.outbox, sent: action.payload.sent, idMessage: action.payload.idMessage, eventNotified: action.payload.eventNotified};
       return newState;
     }
     case ActionTypes.APPLICATION_OUTBOX_SET_ERROR: {
@@ -135,6 +135,11 @@ const application = (state = INITIAL_STATE.application, action = {}) => {
     case ActionTypes.APPLICATION_OUTBOX_MESSAGE_PROCESSED: {
       const newState = {...state};
       newState.outbox = null;
+      return newState;
+    }
+    case ActionTypes.APPLICATION_OUTBOX_EVENT_NOTIFIED: {
+      const newState = {...state};
+      newState.outbox.eventNotified = true;
       return newState;
     }
     default:

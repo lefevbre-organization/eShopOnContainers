@@ -15,9 +15,20 @@ export const setDataBase = database => ({
   payload: database
 });
 
+export const setIdEmail = emailInfo=> ({
+  type: ActionTypes.LEXON_EMAIL,
+  payload: emailInfo
+});
+
+export const setEmailShown = (flag) => ({
+  type: ActionTypes.LEXON_EMAIL_SET_SHOWN,
+  payload: flag
+})
 
 export default {
   setUser,
   setCaseFile,
-  setDataBase
+  setDataBase,
+  setIdEmail,
+  setEmailShown
 };

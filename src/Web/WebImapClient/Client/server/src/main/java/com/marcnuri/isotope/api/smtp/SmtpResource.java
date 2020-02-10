@@ -51,12 +51,11 @@ public class SmtpResource {
     }
 
     @PostMapping
-    public ResponseEntity<Void> sendMessage(
+    public ResponseEntity<String> sendMessage(
             HttpServletRequest request, @Validated({Message.SmtpSend.class}) @RequestBody Message message) {
 
         log.debug("Sending SMTP message");
-        smtpServiceFactory.getObject().sendMessage(request, message);
-        return ResponseEntity.noContent().build();
+        String result = smtpServiceFactory.getObject().sendMessage(request, message);
+        return ResponseEntity.ok(result.toString());
     }
-
 }
