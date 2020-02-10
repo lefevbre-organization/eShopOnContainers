@@ -1,0 +1,656 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ImapService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">api</a> &gt; <a href="index.source.html" class="el_package">com.marcnuri.isotope.api.imap</a> &gt; <span class="el_source">ImapService.java</span></div><h1>ImapService.java</h1><pre class="source lang-java linenums">/*
+ * ImapService.java
+ *
+ * Created on 2018-08-08, 16:34
+ *
+ * Copyright 2018 Marc Nuri
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+package com.marcnuri.isotope.api.imap;
+
+import com.marcnuri.isotope.api.configuration.IsotopeApiConfiguration;
+import com.marcnuri.isotope.api.credentials.Credentials;
+import com.marcnuri.isotope.api.credentials.CredentialsService;
+import com.marcnuri.isotope.api.exception.AuthenticationException;
+import com.marcnuri.isotope.api.exception.InvalidFieldException;
+import com.marcnuri.isotope.api.exception.IsotopeException;
+import com.marcnuri.isotope.api.exception.NotFoundException;
+import com.marcnuri.isotope.api.folder.Folder;
+import com.marcnuri.isotope.api.folder.FolderUtils;
+import com.marcnuri.isotope.api.message.Attachment;
+import com.marcnuri.isotope.api.message.Message;
+import com.marcnuri.isotope.api.message.MessageWithFolder;
+import com.sun.mail.imap.IMAPFolder;
+import com.sun.mail.imap.IMAPMessage;
+import com.sun.mail.imap.IMAPStore;
+import com.sun.mail.util.MailSSLSocketFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.context.annotation.RequestScope;
+import reactor.core.publisher.Flux;
+
+import javax.annotation.PreDestroy;
+import javax.mail.BodyPart;
+import javax.mail.Flags;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Part;
+import javax.mail.Session;
+import javax.mail.UIDFolder;
+import javax.mail.URLName;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeUtility;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.marcnuri.isotope.api.configuration.IsotopeApiConfiguration.DEFAULT_CONNECTION_TIMEOUT;
+import static com.marcnuri.isotope.api.exception.AuthenticationException.Type.IMAP;
+import static com.marcnuri.isotope.api.folder.FolderResource.addLinks;
+import static com.marcnuri.isotope.api.folder.FolderUtils.addSystemFolders;
+import static com.marcnuri.isotope.api.folder.FolderUtils.getFileWithRef;
+import static com.marcnuri.isotope.api.message.MessageUtils.envelopeFetch;
+import static com.marcnuri.isotope.api.message.MessageUtils.extractBodypart;
+import static com.marcnuri.isotope.api.message.MessageUtils.extractContent;
+import static com.marcnuri.isotope.api.message.MessageUtils.replaceEmbeddedImage;
+import static javax.mail.Folder.READ_ONLY;
+import static javax.mail.Folder.READ_WRITE;
+
+/**
+ * Created by Marc Nuri &lt;marc@marcnuri.com&gt; on 2018-08-08.
+ */
+@Service
+@RequestScope
+@Primary
+@SuppressWarnings(&quot;squid:S4529&quot;)
+public class ImapService {
+
+<span class="fc" id="L96">    private static final Logger log = LoggerFactory.getLogger(ImapService.class);</span>
+
+    private static final String IMAP_PROTOCOL = &quot;imap&quot;;
+    private static final String IMAPS_PROTOCOL = &quot;imaps&quot;;
+    static final String IMAP_CAPABILITY_CONDSTORE = &quot;CONDSTORE&quot;;
+    public static final String MULTIPART_MIME_TYPE = &quot;multipart/&quot;;
+    static final int DEFAULT_INITIAL_MESSAGES_BATCH_SIZE = 20;
+    static final int DEFAULT_MAX_MESSAGES_BATCH_SIZE = 640;
+
+    private final IsotopeApiConfiguration isotopeApiConfiguration;
+    private final MailSSLSocketFactory mailSSLSocketFactory;
+    private final CredentialsService credentialsService;
+
+    private IMAPStore imapStore;
+
+    @Autowired
+    public ImapService(
+            IsotopeApiConfiguration isotopeApiConfiguration, MailSSLSocketFactory mailSSLSocketFactory,
+<span class="fc" id="L114">            CredentialsService credentialsService) {</span>
+
+<span class="fc" id="L116">        this.isotopeApiConfiguration = isotopeApiConfiguration;</span>
+<span class="fc" id="L117">        this.mailSSLSocketFactory = mailSSLSocketFactory;</span>
+<span class="fc" id="L118">        this.credentialsService = credentialsService;</span>
+<span class="fc" id="L119">    }</span>
+
+    /**
+     * Checks if specified {@link Credentials} are valid and returns a new Credentials object with
+     * encrypted values.
+     *
+     * @param credentials to validate
+     * @return credentials object with encrypted values
+     */
+    public Credentials checkCredentials(Credentials credentials) {
+        try {
+<span class="nc" id="L130">            credentialsService.checkHost(credentials);</span>
+<span class="nc" id="L131">            getImapStore(credentials).getDefaultFolder();</span>
+<span class="nc" id="L132">            return credentialsService.encrypt(credentials);</span>
+<span class="nc" id="L133">        } catch (MessagingException | IOException e) {</span>
+<span class="nc" id="L134">            throw new AuthenticationException(IMAP);</span>
+        }
+    }
+
+    public List&lt;Folder&gt; getFolders(@Nullable Boolean loadChildren) {
+        try {
+<span class="nc" id="L140">            final IMAPFolder rootFolder = (IMAPFolder)getImapStore().getDefaultFolder();</span>
+<span class="nc" id="L141">            final List&lt;Folder&gt; folders = Stream.of(rootFolder.list())</span>
+<span class="nc" id="L142">                    .map(IMAPFolder.class::cast)</span>
+<span class="nc" id="L143">                    .map(mf -&gt; Folder.from(mf, loadChildren))</span>
+<span class="nc" id="L144">                    .sorted(Comparator.comparing(Folder::getName))</span>
+<span class="nc" id="L145">                    .collect(Collectors.toList());</span>
+<span class="nc" id="L146">            addSystemFolders(rootFolder, folders);</span>
+            // Clear \Recent flags by opening and closing the INBOX
+<span class="nc bnc" id="L148" title="All 2 branches missed.">            if (folders.stream().anyMatch(</span>
+<span class="nc bnc" id="L149" title="All 4 branches missed.">                    f -&gt; f.getName().equalsIgnoreCase(&quot;INBOX&quot;) &amp;&amp; f.getNewMessageCount() &gt; 0)) {</span>
+<span class="nc" id="L150">                final IMAPFolder inbox = (IMAPFolder)rootFolder.getFolder(&quot;INBOX&quot;);</span>
+<span class="nc" id="L151">                inbox.open(READ_WRITE);</span>
+<span class="nc" id="L152">                inbox.getNewMessageCount();</span>
+<span class="nc" id="L153">                inbox.close();</span>
+            }
+<span class="nc" id="L155">            return folders;</span>
+<span class="nc" id="L156">        } catch (MessagingException ex) {</span>
+<span class="nc" id="L157">            log.error(&quot;Error loading folders&quot;, ex);</span>
+<span class="nc" id="L158">            throw new IsotopeException(ex.getMessage());</span>
+        }
+    }
+
+    /**
+     * Creates a new folder in the 1st level of the user's mailbox (root level)
+     *
+     * @param newFolderName name for the folder to be created
+     * @return List of 1st level folders with the new folder included
+     */
+    public List&lt;Folder&gt; createRootFolder(@NonNull String newFolderName) {
+        try {
+<span class="fc" id="L170">            final IMAPFolder rootFolder = (IMAPFolder)getImapStore().getDefaultFolder();</span>
+<span class="fc" id="L171">            final IMAPFolder newFolder = (IMAPFolder)rootFolder.getFolder(newFolderName);</span>
+<span class="pc bpc" id="L172" title="1 of 2 branches missed.">            if (!newFolder.exists()) {</span>
+<span class="fc" id="L173">                newFolder.create(IMAPFolder.HOLDS_MESSAGES | IMAPFolder.HOLDS_FOLDERS);</span>
+            }
+<span class="fc" id="L175">            return Arrays.asList(Folder.from(rootFolder, true).getChildren());</span>
+<span class="nc" id="L176">        } catch (MessagingException ex) {</span>
+<span class="nc" id="L177">            log.error(&quot;Error creating new root folder {}&quot;, newFolderName, ex);</span>
+<span class="nc" id="L178">            throw new IsotopeException(ex.getMessage());</span>
+        }
+    }
+
+    /**
+     * Creates a new folder in the 1st level of the user's mailbox (root level)
+     *
+     * @param parentFolderId Id of the folder to which to add the new child
+     * @param newFolderName name for the folder to be created
+     * @return Updated parent folder with child folders with the new folder included
+     */
+    public Folder createChildFolder(@NonNull  URLName parentFolderId, @NonNull String newFolderName) {
+
+        try {
+<span class="fc" id="L192">            final IMAPFolder parentFolder = getFolder(parentFolderId);</span>
+<span class="fc" id="L193">            final IMAPFolder newFolder = (IMAPFolder)parentFolder.getFolder(newFolderName);</span>
+<span class="pc bpc" id="L194" title="1 of 2 branches missed.">            if (!newFolder.exists()) {</span>
+<span class="fc" id="L195">                newFolder.create(IMAPFolder.HOLDS_MESSAGES | IMAPFolder.HOLDS_FOLDERS);</span>
+            }
+            // Must fetch folder again as attributes for the folder have changed and are cached in IMAPFolder
+<span class="fc" id="L198">            return Folder.from(getFolder(parentFolderId), true);</span>
+<span class="nc" id="L199">        } catch (MessagingException ex) {</span>
+<span class="nc" id="L200">            log.error(&quot;Error creating new folder {} under {}&quot;, newFolderName, parentFolderId, ex);</span>
+<span class="nc" id="L201">            throw new IsotopeException(ex.getMessage());</span>
+        }
+    }
+
+    /**
+     * Renames the folder with the provided {@link URLName} to the specified newName.
+     *
+     * &lt;p&gt;The newName must not contain the folder separator character.
+     *
+     * @param folderToRenameId Id of the folder to rename
+     * @param newName New name for the provided folder Id
+     * @return Folder with containing metadata from the parent of the renamed folder and all of its children
+     */
+    public Folder renameFolder(URLName folderToRenameId, @NonNull String newName) {
+        try {
+<span class="nc" id="L216">            final IMAPFolder folder = getFolder(folderToRenameId);</span>
+<span class="nc" id="L217">            newName = newName.replaceAll(&quot;[.\\[\\]/\\\\&amp;~*]&quot;, &quot;&quot;); /// Sanitize name</span>
+<span class="nc bnc" id="L218" title="All 4 branches missed.">            if (newName.isEmpty() || newName.indexOf(folder.getSeparator()) &gt;= 0) {</span>
+<span class="nc" id="L219">                throw new InvalidFieldException(&quot;New folder name contains invalid characters&quot;);</span>
+            }
+<span class="nc" id="L221">            final String folderToRenameFullName = folder.getFullName();</span>
+<span class="nc" id="L222">            final String newFolderFullName = String.format(&quot;%s%s&quot;,</span>
+<span class="nc" id="L223">                    folderToRenameFullName.substring(0, folderToRenameFullName.lastIndexOf(folder.getName())),</span>
+                    newName
+            );
+<span class="nc" id="L226">            return FolderUtils.renameFolder(folder, newFolderFullName);</span>
+<span class="nc" id="L227">        } catch (MessagingException ex) {</span>
+<span class="nc" id="L228">            log.error(&quot;Error renaming folder &quot; + folderToRenameId.toString(), ex);</span>
+<span class="nc" id="L229">            throw new IsotopeException(ex.getMessage());</span>
+        }
+    }
+
+    /**
+     * Moves the folder with the provided {@link URLName} to the specified target folder with the provided
+     * URLName or to the first level if the target folder is null.
+     *
+     * &lt;p&gt;Both folders must exist in order for the action to complete successfully.
+     *
+     * @param folderToMoveId Id of the folder to move
+     * @param targetFolderId Id of the target folder
+     * @return
+     */
+    public Folder moveFolder(@NonNull URLName folderToMoveId, @Nullable URLName targetFolderId) {
+        try {
+<span class="fc" id="L245">            final IMAPFolder folderToMove = getFolder(folderToMoveId);</span>
+            final String movedFolderFullName;
+<span class="fc bfc" id="L247" title="All 2 branches covered.">            if (targetFolderId == null) {</span>
+<span class="fc" id="L248">                movedFolderFullName = folderToMove.getName();</span>
+            } else {
+<span class="fc" id="L250">                final IMAPFolder targetFolder = getFolder(targetFolderId);</span>
+<span class="fc" id="L251">                movedFolderFullName = String.format(&quot;%s%s%s&quot;,</span>
+<span class="fc" id="L252">                        targetFolder.getFullName(), targetFolder.getSeparator(), folderToMove.getName());</span>
+            }
+<span class="fc" id="L254">            return FolderUtils.renameFolder(folderToMove, movedFolderFullName);</span>
+<span class="fc" id="L255">        } catch (MessagingException ex) {</span>
+<span class="fc" id="L256">            log.error(&quot;Error moving folder &quot; + folderToMoveId.toString(), ex);</span>
+<span class="fc" id="L257">            throw new IsotopeException(ex.getMessage());</span>
+        }
+    }
+
+    /**
+     * Permanently deletes the folder with the provided {@link URLName} and its children.
+     *
+     * @param folderToDeleteId Id of the folder to delete
+     * @return Parent of deleted folder
+     */
+    public Folder deleteFolder(@NonNull URLName folderToDeleteId) {
+        try {
+<span class="fc" id="L269">            final IMAPFolder folderToDelete = getFolder(folderToDeleteId);</span>
+<span class="fc" id="L270">            final IMAPFolder parent = (IMAPFolder)folderToDelete.getParent();</span>
+<span class="fc" id="L271">            folderToDelete.delete(true);</span>
+<span class="fc" id="L272">            return Folder.from(parent, true);</span>
+<span class="nc" id="L273">        } catch (MessagingException ex) {</span>
+<span class="nc" id="L274">            log.error(&quot;Error deleting folder &quot; + folderToDeleteId.toString(), ex);</span>
+<span class="nc" id="L275">            throw new IsotopeException(ex.getMessage());</span>
+        }
+    }
+
+    public Flux&lt;ServerSentEvent&lt;List&lt;Message&gt;&gt;&gt; getMessagesFlux(URLName folderId, HttpServletResponse response) {
+
+<span class="nc" id="L281">        return Flux.create(new MessageFluxSinkConsumer(</span>
+<span class="nc" id="L282">                (Credentials)SecurityContextHolder.getContext().getAuthentication(), folderId, response,this));</span>
+    }
+
+    public MessageWithFolder getMessage(URLName folderId, Long uid) {
+        try {
+<span class="nc" id="L287">            final IMAPFolder folder = getFolder(folderId);</span>
+<span class="nc bnc" id="L288" title="All 2 branches missed.">            if (!folder.isOpen()) {</span>
+<span class="nc" id="L289">                folder.open(READ_ONLY);</span>
+            }
+<span class="nc" id="L291">            final IMAPMessage imapMessage = (IMAPMessage)folder.getMessageByUID(uid);</span>
+<span class="nc bnc" id="L292" title="All 2 branches missed.">            if (imapMessage == null) {</span>
+<span class="nc" id="L293">                folder.close();</span>
+<span class="nc" id="L294">                throw new NotFoundException(&quot;Message not found&quot;);</span>
+            }
+<span class="nc" id="L296">            final MessageWithFolder ret = MessageWithFolder.from(folder, imapMessage);</span>
+<span class="nc" id="L297">            readContentIntoMessage(folderId, imapMessage, ret);</span>
+<span class="nc" id="L298">            folder.close();</span>
+<span class="nc" id="L299">            return ret;</span>
+<span class="nc" id="L300">        } catch (MessagingException | IOException ex) {</span>
+<span class="nc" id="L301">            log.error(&quot;Error loading messages for folder: &quot; + folderId.toString(), ex);</span>
+<span class="nc" id="L302">            throw  new IsotopeException(ex.getMessage());</span>
+        }
+    }
+
+    public List&lt;Message&gt; preloadMessages(@NonNull URLName folderId, @NonNull List&lt;Long&gt; uids) {
+
+        try {
+<span class="nc" id="L309">            final IMAPFolder folder = getFolder(folderId);</span>
+<span class="nc bnc" id="L310" title="All 2 branches missed.">            if (!folder.isOpen()) {</span>
+<span class="nc" id="L311">                folder.open(READ_ONLY);</span>
+            }
+<span class="nc" id="L313">            final List&lt;Message&gt; ret = new ArrayList&lt;&gt;(uids.size());</span>
+<span class="nc" id="L314">            final List&lt;IMAPMessage&gt; messages = Stream.of(</span>
+<span class="nc" id="L315">                    folder.getMessagesByUID(uids.stream().mapToLong(Long::longValue).toArray()))</span>
+<span class="nc" id="L316">                    .filter(Objects::nonNull)</span>
+<span class="nc" id="L317">                    .map(IMAPMessage.class::cast)</span>
+<span class="nc" id="L318">                    .collect(Collectors.toList());</span>
+<span class="nc bnc" id="L319" title="All 2 branches missed.">            for(IMAPMessage imapMessage : messages) {</span>
+<span class="nc" id="L320">                final Message message = Message.from(folder, imapMessage);</span>
+<span class="nc" id="L321">                ret.add(message);</span>
+<span class="nc" id="L322">                imapMessage.setPeek(true);</span>
+<span class="nc" id="L323">                readContentIntoMessage(folderId, imapMessage, message);</span>
+<span class="nc" id="L324">            }</span>
+<span class="nc" id="L325">            folder.close();</span>
+<span class="nc" id="L326">            return ret;</span>
+<span class="nc" id="L327">        } catch (MessagingException | IOException ex) {</span>
+<span class="nc" id="L328">            throw  new IsotopeException(ex.getMessage());</span>
+        }
+    }
+
+    public void readAttachment(
+            HttpServletResponse response, URLName folderId, Long messageId, String id, Boolean isContentId) {
+
+        try {
+<span class="nc" id="L336">            final IMAPFolder folder = getFolder(folderId);</span>
+<span class="nc bnc" id="L337" title="All 2 branches missed.">            if (!folder.isOpen()) {</span>
+<span class="nc" id="L338">                folder.open(READ_ONLY);</span>
+            }
+<span class="nc" id="L340">            final IMAPMessage imapMessage = (IMAPMessage)folder.getMessageByUID(messageId);</span>
+<span class="nc" id="L341">            final Object content = imapMessage.getContent();</span>
+<span class="nc bnc" id="L342" title="All 2 branches missed.">            if (content instanceof Multipart) {</span>
+<span class="nc" id="L343">                final BodyPart bp = extractBodypart((Multipart)content, id, isContentId);</span>
+<span class="nc bnc" id="L344" title="All 2 branches missed.">                if (bp != null) {</span>
+<span class="nc" id="L345">                    response.setContentType(bp.getContentType());</span>
+<span class="nc" id="L346">                    bp.getDataHandler().writeTo(response.getOutputStream());</span>
+<span class="nc" id="L347">                    response.getOutputStream().flush();</span>
+                } else {
+<span class="nc" id="L349">                    throw new NotFoundException(&quot;Attachment not found&quot;);</span>
+                }
+            }
+<span class="nc" id="L352">        } catch (MessagingException | IOException ex) {</span>
+<span class="nc" id="L353">            log.error(&quot;Error loading messages for folder: &quot; + folderId.toString(), ex);</span>
+<span class="nc" id="L354">            throw  new IsotopeException(ex.getMessage());</span>
+<span class="nc" id="L355">        }</span>
+
+<span class="nc" id="L357">    }</span>
+
+    /**
+     * Moves the provided messages from the specified folderId to the specified destination folderId.
+     *
+     * To maximize compatibility with IMAP servers, move is performed using a regular copy and delete in the originating
+     * folder, and a retrieval of messages in the target folder.
+     *
+     * @param fromFolderId name of the originating folder
+     * @param toFolderId name of the target folder
+     * @param uids list of uids to move
+     * @return list of new messages in the target folder since the move operation started (may include additional messages)
+     */
+    public List&lt;MessageWithFolder&gt; moveMessages(URLName fromFolderId, URLName toFolderId, List&lt;Long&gt; uids) {
+        try {
+<span class="nc" id="L372">            final IMAPFolder fromFolder = getFolder(fromFolderId);</span>
+<span class="nc" id="L373">            fromFolder.open(READ_WRITE);</span>
+<span class="nc" id="L374">            final IMAPFolder toFolder = getFolder(toFolderId);</span>
+<span class="nc" id="L375">            toFolder.open(READ_ONLY);</span>
+<span class="nc" id="L376">            long toFolderNextUID = toFolder.getUIDNext();</span>
+<span class="nc" id="L377">            toFolder.close(false);</span>
+
+            // Maximize IMAP compatibility, perform COPY and DELETE
+<span class="nc" id="L380">            final javax.mail.Message[] messagesToMove = Stream.of(getMessagesByUID(fromFolder, uids))</span>
+<span class="nc bnc" id="L381" title="All 2 branches missed.">                    .filter(m -&gt; !m.isExpunged())</span>
+<span class="nc" id="L382">                    .toArray(javax.mail.Message[]::new);</span>
+<span class="nc bnc" id="L383" title="All 2 branches missed.">            if (messagesToMove.length &gt; 0) {</span>
+<span class="nc" id="L384">                fromFolder.copyMessages(messagesToMove, toFolder);</span>
+<span class="nc bnc" id="L385" title="All 2 branches missed.">                for (javax.mail.Message m : messagesToMove) {</span>
+<span class="nc" id="L386">                    m.setFlag(Flags.Flag.DELETED, true);</span>
+                }
+<span class="nc" id="L388">                fromFolder.expunge(messagesToMove);</span>
+            }
+
+            // Retrieve new messages in target folder
+<span class="nc" id="L392">            toFolder.open(READ_ONLY);</span>
+            // copy operation may not have finished, wait a little
+            javax.mail.Message[] newMessages;
+<span class="nc" id="L395">            int retries = 5;</span>
+<span class="nc" id="L396">            final long sleepTimeMillis = 100L;</span>
+<span class="nc bnc" id="L397" title="All 4 branches missed.">            while((newMessages = toFolder.getMessagesByUID(toFolderNextUID, UIDFolder.LASTUID)).length == 0</span>
+                    &amp;&amp; retries-- &gt; 0) {
+<span class="nc" id="L399">                Thread.sleep(sleepTimeMillis);</span>
+            }
+<span class="nc" id="L401">            envelopeFetch(toFolder, newMessages);</span>
+<span class="nc" id="L402">            final List&lt;MessageWithFolder&gt; ret = Stream.of(newMessages)</span>
+<span class="nc" id="L403">                    .map(m -&gt; MessageWithFolder.from(toFolder, true, (IMAPMessage)m))</span>
+<span class="nc" id="L404">                    .collect(Collectors.toList());</span>
+<span class="nc" id="L405">            fromFolder.close(false);</span>
+<span class="nc" id="L406">            toFolder.close(false);</span>
+<span class="nc" id="L407">            return ret;</span>
+<span class="nc" id="L408">        } catch(InterruptedException ex) {</span>
+<span class="nc" id="L409">            Thread.currentThread().interrupt();</span>
+<span class="nc" id="L410">            log.error(&quot;Error moving messages when waiting for COPY to complete&quot;, ex);</span>
+<span class="nc" id="L411">            throw new IsotopeException(ex.getMessage(), ex);</span>
+
+<span class="nc" id="L413">        } catch (MessagingException ex) {</span>
+<span class="nc" id="L414">            log.error(&quot;Error moving messages&quot;, ex);</span>
+<span class="nc" id="L415">            log.debug(&quot;Error moving messages from folder {} to folder {}&quot;, fromFolderId, toFolderId);</span>
+<span class="nc" id="L416">            throw new IsotopeException(ex.getMessage(), ex);</span>
+        }
+    }
+
+    /**
+     * Sets the seen Flag ({@link javax.mail.Flags.Flag#SEEN}) to the provided boolean value for the specified
+     * messages uids
+     *
+     * @param folderId
+     * @param seen
+     * @param uids
+     */
+    public void setMessagesSeen(URLName folderId, boolean seen, long... uids) {
+<span class="fc" id="L429">        setMessagesFlag(folderId, Flags.Flag.SEEN, seen, uids);</span>
+<span class="fc" id="L430">    }</span>
+
+    public void setMessagesFlagged(URLName folderId, boolean flagged, long... uids) {
+<span class="fc" id="L433">       setMessagesFlag(folderId, Flags.Flag.FLAGGED, flagged, uids);</span>
+<span class="fc" id="L434">    }</span>
+
+    /**
+     * Flag deleted and expunge all messages from the provided folderId (Clear/Empty folder)
+     *
+     * @param folderId of the folder from which to delete all messages
+     * @return updated folder after deleting all messages
+     */
+    public Folder deleteAllFolderMessages(@NonNull URLName folderId) {
+        try {
+<span class="fc" id="L444">            final IMAPFolder folder = getFolder(folderId);</span>
+<span class="fc" id="L445">            folder.open(READ_WRITE);</span>
+<span class="fc" id="L446">            folder.setFlags(folder.getMessages(), new Flags(Flags.Flag.DELETED), true);</span>
+<span class="fc" id="L447">            folder.expunge();</span>
+<span class="fc" id="L448">            return Folder.from(folder, true);</span>
+<span class="nc" id="L449">        } catch (MessagingException ex) {</span>
+<span class="nc" id="L450">            throw new IsotopeException(ex.getMessage(), ex);</span>
+        }
+    }
+
+    public Folder deleteMessages(@NonNull URLName folderId, @NonNull List&lt;Long&gt; uids) {
+        try {
+<span class="fc" id="L456">            final IMAPFolder folder = getFolder(folderId);</span>
+<span class="fc" id="L457">            folder.open(READ_WRITE);</span>
+<span class="fc" id="L458">            final javax.mail.Message[] messages = getMessagesByUID(folder, uids);</span>
+<span class="fc" id="L459">            folder.setFlags(messages, new Flags(Flags.Flag.DELETED), true);</span>
+<span class="fc" id="L460">            folder.expunge(messages);</span>
+<span class="fc" id="L461">            return Folder.from(folder, true);</span>
+<span class="nc" id="L462">        } catch (MessagingException ex) {</span>
+<span class="nc" id="L463">            throw new IsotopeException(ex.getMessage(), ex);</span>
+        }
+    }
+
+    @PreDestroy
+    public void destroy() {
+<span class="nc" id="L469">        log.debug(&quot;ImapService destroyed&quot;);</span>
+<span class="nc bnc" id="L470" title="All 2 branches missed.">        if(imapStore != null) {</span>
+            try {
+<span class="nc" id="L472">                imapStore.close();</span>
+<span class="nc" id="L473">            } catch (MessagingException ex) {</span>
+<span class="nc" id="L474">                log.error(&quot;Error closing IMAP Store&quot;, ex);</span>
+<span class="nc" id="L475">            }</span>
+        }
+<span class="nc" id="L477">    }</span>
+
+    private IMAPStore getImapStore() throws MessagingException {
+<span class="fc" id="L480">        return getImapStore((Credentials)SecurityContextHolder.getContext().getAuthentication());</span>
+    }
+
+    IMAPStore getImapStore(Credentials credentials) throws MessagingException {
+<span class="fc bfc" id="L484" title="All 2 branches covered.">        if (imapStore == null) {</span>
+<span class="fc" id="L485">            final Session session = Session.getInstance(initMailProperties(credentials, mailSSLSocketFactory), null);</span>
+<span class="pc bpc" id="L486" title="1 of 2 branches missed.">            imapStore = (IMAPStore) session.getStore(credentials.getImapSsl() ? IMAPS_PROTOCOL : IMAP_PROTOCOL);</span>
+<span class="fc" id="L487">            imapStore.connect(</span>
+<span class="fc" id="L488">                    credentials.getServerHost(),</span>
+<span class="fc" id="L489">                    credentials.getServerPort(),</span>
+<span class="fc" id="L490">                    credentials.getUser(),</span>
+<span class="fc" id="L491">                    credentials.getPassword());</span>
+<span class="fc" id="L492">            log.debug(&quot;Opened new ImapStore session&quot;);</span>
+        }
+<span class="fc" id="L494">        return imapStore;</span>
+    }
+
+    List&lt;Message&gt; getMessages(
+            @NonNull IMAPFolder folder, @Nullable Integer start, @Nullable Integer end, boolean fetchModseq)
+            throws MessagingException {
+
+<span class="nc bnc" id="L501" title="All 2 branches missed.">        if (!folder.isOpen()) {</span>
+<span class="nc" id="L502">            folder.open(READ_ONLY);</span>
+        }
+        final javax.mail.Message[] messages;
+<span class="nc bnc" id="L505" title="All 4 branches missed.">        if (start != null &amp;&amp; end != null) {</span>
+            // start / end message counts may no longer match, recalculate index if necessary
+<span class="nc bnc" id="L507" title="All 2 branches missed.">            if (end &gt; folder.getMessageCount()) {</span>
+<span class="nc" id="L508">                start = folder.getMessageCount() - (end - start);</span>
+<span class="nc" id="L509">                end = folder.getMessageCount();</span>
+            }
+<span class="nc bnc" id="L511" title="All 2 branches missed.">            messages = folder.getMessages(start &lt; 1 ? 1 : start, end);</span>
+        } else {
+<span class="nc" id="L513">            messages = folder.getMessages();</span>
+        }
+<span class="nc" id="L515">        envelopeFetch(folder, messages);</span>
+        final Long highestModseq;
+<span class="nc bnc" id="L517" title="All 4 branches missed.">        if (fetchModseq &amp;&amp; messages.length &gt; 0) {</span>
+<span class="nc bnc" id="L518" title="All 2 branches missed.">            highestModseq = folder.getHighestModSeq() == -1L ?</span>
+<span class="nc" id="L519">                    ((IMAPMessage) messages[messages.length - 1]).getModSeq() : folder.getHighestModSeq();</span>
+        } else {
+<span class="nc" id="L521">            highestModseq = null;</span>
+        }
+<span class="nc" id="L523">        return Stream.of(messages)</span>
+<span class="nc" id="L524">                .map(m -&gt; Message.from(folder, (IMAPMessage)m))</span>
+<span class="nc" id="L525">                .peek(m -&gt; m.setModseq(highestModseq))</span>
+<span class="nc" id="L526">                .sorted(Comparator.comparingLong(Message::getUid).reversed())</span>
+<span class="nc" id="L527">                .collect(Collectors.toList());</span>
+    }
+
+    private IMAPFolder getFolder(URLName folderId) throws MessagingException {
+<span class="fc" id="L531">        final IMAPFolder folder = (IMAPFolder)getImapStore().getFolder(getFileWithRef(folderId));</span>
+<span class="fc bfc" id="L532" title="All 2 branches covered.">        if (!folder.exists()) {</span>
+<span class="fc" id="L533">            throw new NotFoundException(String.format(&quot;Folder %s not found&quot;, folderId.toString()));</span>
+        }
+<span class="fc" id="L535">        return folder;</span>
+    }
+
+    private void setMessagesFlag(URLName folderId, Flags.Flag flag, boolean flagValue, long... uids) {
+        try {
+<span class="fc" id="L540">            final IMAPFolder folder = getFolder(folderId);</span>
+<span class="fc" id="L541">            folder.open(READ_WRITE);</span>
+<span class="fc" id="L542">            final javax.mail.Message[] messages = getMessagesByUID(folder, uids);</span>
+<span class="fc" id="L543">            folder.setFlags(messages, new Flags(flag), flagValue);</span>
+<span class="fc" id="L544">            folder.close(false);</span>
+<span class="nc" id="L545">        } catch (MessagingException ex) {</span>
+<span class="nc" id="L546">            throw new IsotopeException(ex.getMessage(), ex);</span>
+<span class="fc" id="L547">        }</span>
+<span class="fc" id="L548">    }</span>
+
+    /**
+     * Returns a list of  {@link Attachment}s and replaces embedded images in {@link Message#content} if they are
+     * small in order to avoid future calls to the API which may result more expensive.
+     *
+     * @param finalMessage
+     * @param mp
+     * @param attachments
+     * @return
+     * @throws MessagingException
+     * @throws IOException
+     */
+    private List&lt;Attachment&gt; extractAttachments(
+            @NonNull Message finalMessage, @NonNull Multipart mp, @Nullable List&lt;Attachment&gt; attachments)
+            throws MessagingException, IOException {
+
+<span class="nc bnc" id="L565" title="All 2 branches missed.">        if (attachments == null){</span>
+<span class="nc" id="L566">            attachments = new ArrayList&lt;&gt;();</span>
+        }
+<span class="nc bnc" id="L568" title="All 2 branches missed.">        for (int it = 0; it &lt; mp.getCount(); it++) {</span>
+<span class="nc" id="L569">            final BodyPart bp = mp.getBodyPart(it);</span>
+            // Multipart message with embedded parts
+<span class="nc bnc" id="L571" title="All 2 branches missed.">            if (bp.getContentType().toLowerCase().startsWith(MULTIPART_MIME_TYPE)) {</span>
+<span class="nc" id="L572">                extractAttachments(finalMessage, (Multipart) bp.getContent(), attachments);</span>
+            }
+            // Image attachments
+<span class="nc bnc" id="L575" title="All 4 branches missed.">            else if (bp.getContentType().toLowerCase().startsWith(&quot;image/&quot;)</span>
+                    &amp;&amp; bp instanceof MimeBodyPart
+<span class="nc bnc" id="L577" title="All 2 branches missed.">                    &amp;&amp; ((MimeBodyPart) bp).getContentID() != null) {</span>
+                // If image is &quot;not too big&quot; embed as base64 data uri - successive IMAP connections will be more expensive
+<span class="nc bnc" id="L579" title="All 2 branches missed.">                if (bp.getSize() &lt;= isotopeApiConfiguration.getEmbeddedImageSizeThreshold()) {</span>
+<span class="nc" id="L580">                    finalMessage.setContent(replaceEmbeddedImage(finalMessage.getContent(), (MimeBodyPart)bp));</span>
+                } else {
+<span class="nc" id="L582">                    attachments.add(new Attachment(</span>
+<span class="nc" id="L583">                            ((MimeBodyPart) bp).getContentID(), bp.getFileName(), bp.getContentType(), bp.getSize()));</span>
+                }
+            }
+            // Embedded messages
+<span class="nc bnc" id="L587" title="All 2 branches missed.">            else if (bp.getContentType().toLowerCase().startsWith(&quot;message/&quot;)) {</span>
+<span class="nc" id="L588">                final Object nestedMessage = bp.getContent();</span>
+<span class="nc bnc" id="L589" title="All 2 branches missed.">                if (nestedMessage instanceof MimeMessage) {</span>
+<span class="nc" id="L590">                    attachments.add(new Attachment(null, ((MimeMessage)nestedMessage).getSubject(),</span>
+<span class="nc" id="L591">                            bp.getContentType(), ((MimeMessage)nestedMessage).getSize()));</span>
+                }
+<span class="nc" id="L593">            }</span>
+            // Regular files
+<span class="nc bnc" id="L595" title="All 4 branches missed.">            else if (bp.getDisposition() != null &amp;&amp; bp.getDisposition().equalsIgnoreCase(Part.ATTACHMENT)) {</span>
+<span class="nc" id="L596">                attachments.add(new Attachment(</span>
+<span class="nc" id="L597">                        null, MimeUtility.decodeText(bp.getFileName()), bp.getContentType(), bp.getSize()));</span>
+            }
+        }
+<span class="nc" id="L600">        return attachments;</span>
+    }
+
+    private void readContentIntoMessage(URLName folderId, @NonNull IMAPMessage imapMessage, @NonNull Message message)
+            throws MessagingException, IOException {
+
+<span class="nc" id="L606">        final Object content = imapMessage.getContent();</span>
+<span class="nc bnc" id="L607" title="All 2 branches missed.">        if (content instanceof Multipart) {</span>
+<span class="nc" id="L608">            message.setContent(extractContent((Multipart) content));</span>
+<span class="nc" id="L609">            message.setAttachments(addLinks(Folder.toBase64Id(folderId), message,</span>
+<span class="nc" id="L610">                    extractAttachments(message, (Multipart) content, null)));</span>
+<span class="nc bnc" id="L611" title="All 2 branches missed.">        } else if (content instanceof MimeMessage</span>
+<span class="nc bnc" id="L612" title="All 2 branches missed.">                &amp;&amp; ((MimeMessage) content).getContentType().toLowerCase().contains(&quot;html&quot;)) {</span>
+<span class="nc" id="L613">            message.setContent(content.toString());</span>
+<span class="nc bnc" id="L614" title="All 2 branches missed.">        } else if (imapMessage.getContentType().indexOf(MediaType.TEXT_HTML_VALUE) == 0){</span>
+<span class="nc" id="L615">            message.setContent(content.toString());</span>
+        } else {
+            //Preserve formatting
+<span class="nc" id="L618">            message.setContent(content.toString()</span>
+<span class="nc" id="L619">                    .replace(&quot;\r\n&quot;, &quot;&lt;br /&gt;&quot; )</span>
+<span class="nc" id="L620">                    .replaceAll(&quot;[\\r\\n]&quot;, &quot;&lt;br /&gt;&quot;));</span>
+        }
+<span class="nc" id="L622">    }</span>
+
+    /**
+     * Returns an array of {@link javax.mail.Message} with &lt;strong&gt;no&lt;/strong&gt; null entries from an array of uids for
+     * the provided {@link IMAPFolder}
+     *
+     * @param folder for which to retrieve the null-checked array of Messages
+     * @param uids to retrieve the messages from the folder
+     * @return array of Messages with no null entries
+     * @throws MessagingException
+     */
+    private static javax.mail.Message[] getMessagesByUID(IMAPFolder folder, long[] uids) throws MessagingException {
+<span class="fc" id="L634">        return Stream.of(folder.getMessagesByUID(uids)).filter(Objects::nonNull).toArray(javax.mail.Message[]::new);</span>
+    }
+
+    private static javax.mail.Message[] getMessagesByUID(IMAPFolder folder, List&lt;Long&gt; uids) throws MessagingException {
+<span class="fc" id="L638">        return getMessagesByUID(folder, uids.stream().mapToLong(Long::longValue).toArray());</span>
+    }
+
+    private static Properties initMailProperties(@NonNull Credentials credentials, MailSSLSocketFactory mailSSLSocketFactory) {
+<span class="fc" id="L642">        final Properties ret = new Properties();</span>
+<span class="fc" id="L643">        ret.put(&quot;mail.imap.ssl.enable&quot;, credentials.getImapSsl());</span>
+<span class="fc" id="L644">        ret.put(&quot;mail.imap.connectiontimeout&quot;, DEFAULT_CONNECTION_TIMEOUT);</span>
+<span class="fc" id="L645">        ret.put(&quot;mail.imap.connectionpooltimeout&quot;, DEFAULT_CONNECTION_TIMEOUT);</span>
+<span class="fc" id="L646">        ret.put(&quot;mail.imap.ssl.socketFactory&quot;, mailSSLSocketFactory);</span>
+<span class="fc" id="L647">        ret.put(&quot;mail.imap.starttls.enable&quot;, true);</span>
+<span class="fc" id="L648">        ret.put(&quot;mail.imap.starttls.required&quot;, false);</span>
+<span class="fc" id="L649">        ret.put(&quot;mail.imaps.socketFactory&quot;, mailSSLSocketFactory);</span>
+<span class="fc" id="L650">        ret.put(&quot;mail.imaps.socketFactory.fallback&quot;, false);</span>
+<span class="fc" id="L651">        ret.put(&quot;mail.imaps.ssl.socketFactory&quot;, mailSSLSocketFactory);</span>
+<span class="fc" id="L652">        return ret;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

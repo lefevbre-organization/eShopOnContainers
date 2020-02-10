@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MessageUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">api</a> &gt; <a href="index.source.html" class="el_package">com.marcnuri.isotope.api.message</a> &gt; <span class="el_source">MessageUtils.java</span></div><h1>MessageUtils.java</h1><pre class="source lang-java linenums">/*
+ * MessageUtils.java
+ *
+ * Created on 2018-09-16, 16:09
+ *
+ * Copyright 2018 Marc Nuri
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+package com.marcnuri.isotope.api.message;
+
+import com.marcnuri.isotope.api.exception.InvalidFieldException;
+import org.apache.commons.io.IOUtils;
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.http.MediaType;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
+import org.springframework.web.util.HtmlUtils;
+
+import javax.mail.*;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeUtility;
+import java.io.IOException;
+
+import static com.marcnuri.isotope.api.imap.ImapService.MULTIPART_MIME_TYPE;
+
+/**
+ * Created by Marc Nuri &lt;marc@marcnuri.com&gt; on 2018-09-16.
+ */
+public class MessageUtils {
+
+    private MessageUtils() {}
+
+    /**
+     * Fetches the envelope and basic &quot;lightweight&quot; fields from the provided {@link javax.mail.Message} array.
+     *
+     * @param folder the folder where the messages are located
+     * @param messages array of messages for which to fetch information
+     * @throws MessagingException for other javax.mail failures
+     */
+    @SuppressWarnings(&quot;squid:S1191&quot;)
+    public static void envelopeFetch(@NonNull  javax.mail.Folder folder, @NonNull javax.mail.Message[] messages)
+            throws MessagingException {
+
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if (messages.length != 0) {</span>
+<span class="fc" id="L60">            final FetchProfile fp = new FetchProfile();</span>
+<span class="fc" id="L61">            fp.add(FetchProfile.Item.ENVELOPE);</span>
+<span class="fc" id="L62">            fp.add(UIDFolder.FetchProfileItem.UID);</span>
+<span class="fc" id="L63">            fp.add(com.sun.mail.imap.IMAPFolder.FetchProfileItem.HEADERS);</span>
+<span class="fc" id="L64">            fp.add(FetchProfile.Item.FLAGS);</span>
+<span class="fc" id="L65">            fp.add(FetchProfile.Item.SIZE);</span>
+<span class="fc" id="L66">            folder.fetch(messages, fp);</span>
+        }
+<span class="fc" id="L68">    }</span>
+
+    /**
+     * Returns an array of {@link Address} for the provided {@link javax.mail.Message.RecipientType}
+     *
+     * @param message from which to extract Addresses
+     * @param type of recipients to extract
+     * @return Address array containing the recipients of the specified type
+     */
+    public static Address[] getRecipientAddresses(Message message, javax.mail.Message.RecipientType type) {
+<span class="fc bfc" id="L78" title="All 4 branches covered.">        if (message.getRecipients() == null || message.getRecipients().isEmpty()) {</span>
+<span class="fc" id="L79">            return new Address[0];</span>
+        }
+<span class="fc" id="L81">        return message.getRecipients().stream()</span>
+<span class="fc" id="L82">                .filter(r -&gt; type.toString().equals(r.getType()))</span>
+<span class="fc" id="L83">                .map(r -&gt; {</span>
+                    try {
+<span class="fc" id="L85">                        return new InternetAddress(r.getAddress());</span>
+<span class="fc" id="L86">                    } catch(AddressException ex) {</span>
+<span class="fc" id="L87">                        throw new InvalidFieldException(&quot;Problem parsing address &quot; + r.getAddress(), ex);</span>
+                    }
+                })
+<span class="fc" id="L90">                .toArray(InternetAddress[]::new);</span>
+    }
+
+    /**
+     * Extracts e-mail message content (body) from the provided {@link Multipart} body container.
+     *
+     * Multipart is processed recursively in order to find valid html or text e-mail content. Last body part
+     * with valid html will be used. Any found text/plain body will be returned as fallback.
+     *
+     * TODO: Check this is the right approach
+     *
+     * @param multipart to process and extract body
+     * @return
+     * @throws MessagingException
+     * @throws IOException
+     */
+    public static String extractContent(@NonNull Multipart multipart) throws MessagingException, IOException {
+<span class="nc" id="L107">        String ret = &quot;&quot;;</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        for (int it = 0; it &lt; multipart.getCount(); it++) {</span>
+<span class="nc" id="L109">            final BodyPart bp = multipart.getBodyPart(it);</span>
+<span class="nc bnc" id="L110" title="All 4 branches missed.">            if ((ret == null || ret.isEmpty())</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">                    &amp;&amp; bp.getContentType().toLowerCase().startsWith(MediaType.TEXT_PLAIN_VALUE)) {</span>
+<span class="nc" id="L112">                ret = String.format(&quot;&lt;pre&gt;%s&lt;/pre&gt;&quot;, HtmlUtils.htmlEscape(bp.getContent().toString()));</span>
+            }
+<span class="nc bnc" id="L114" title="All 2 branches missed.">            if (bp.getContentType().toLowerCase().startsWith(MediaType.TEXT_HTML_VALUE)) {</span>
+<span class="nc" id="L115">                ret = (bp.getContent().toString());</span>
+            }
+<span class="nc bnc" id="L117" title="All 2 branches missed.">            if (bp.getContentType().toLowerCase().startsWith(MULTIPART_MIME_TYPE)) {</span>
+<span class="nc" id="L118">                ret = extractContent((Multipart) bp.getContent());</span>
+            }
+        }
+<span class="nc" id="L121">        return ret;</span>
+    }
+
+    /**
+     * Extract a {@link BodyPart} from the provided {@link Multipart} matching the given id.
+     *
+     * @param mp
+     * @param id
+     * @param contentId
+     * @return
+     * @throws MessagingException
+     * @throws IOException
+     */
+    @Nullable public static BodyPart extractBodypart(@NonNull Multipart mp, @NonNull String id, Boolean contentId)
+            throws MessagingException, IOException {
+
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        return Boolean.TRUE.equals(contentId) ?</span>
+<span class="nc" id="L138">                extractEmbeddedBodypart(mp, id) : // Embedded contentId</span>
+<span class="nc" id="L139">                extractAttachmentBodypart(mp, id); // Attachment</span>
+    }
+
+    /**
+     * Replaces content image cid urls (&lt;code&gt;&amp;lt;img src='cid:1234' /&amp;gt;&lt;/code&gt;) by Base64 data urls for every occurrence
+     * of the provided {@link MimeBodyPart}.
+     *
+     * If no occurrences are found, same content is returned.
+     *
+     * @param content e-mail message content to replace cid urls
+     * @param imageBodyPart body part of the replaceable cid url
+     * @return a string with the original content with replaced image cid urls
+     * @throws MessagingException for javax.mail failures
+     * @throws IOException for IO failures
+     */
+    public static String replaceEmbeddedImage(@Nullable String content, @NonNull MimeBodyPart imageBodyPart)
+            throws MessagingException, IOException {
+
+<span class="nc" id="L157">        final String cid = imageBodyPart.getContentID().replaceAll(&quot;[&lt;&gt;]&quot;, &quot;&quot;);</span>
+<span class="nc bnc" id="L158" title="All 4 branches missed.">        if (content != null &amp;&amp; content.contains(cid)) {</span>
+<span class="nc" id="L159">            String contentType = imageBodyPart.getContentType();</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">            if (contentType.contains(&quot;;&quot;)) {</span>
+<span class="nc" id="L161">                contentType = contentType.substring(0, contentType.indexOf(';'));</span>
+            }
+<span class="nc" id="L163">            final String base64 = Base64.encodeBase64String(IOUtils.toByteArray(imageBodyPart.getInputStream()))</span>
+<span class="nc" id="L164">                    .replace(&quot;\r&quot;, &quot;&quot;).replace(&quot;\n&quot;, &quot;&quot;);</span>
+<span class="nc" id="L165">            return content.replace(&quot;cid:&quot; + cid,</span>
+<span class="nc" id="L166">                    String.format(&quot;data:%s;%s,%s&quot;,</span>
+                            contentType,
+<span class="nc" id="L168">                            imageBodyPart.getEncoding(),</span>
+                            base64));
+        }
+<span class="nc" id="L171">        return content;</span>
+    }
+
+    /**
+     * Extracts a {@link BodyPart} form a {@link Multipart} body for an &lt;b&gt;image&lt;/b&gt; matching the provided contentId
+     *
+     * @param multipart to extract the BodyPart from
+     * @param contentId of the image for which the BodyPart must be extracted
+     * @return the BodyPart for the image with the given contentId or null if not found
+     * @throws MessagingException for any IMAP exception
+     * @throws IOException for IO problems when reading the content
+     */
+    @Nullable private static BodyPart extractEmbeddedBodypart(@NonNull Multipart multipart, @NonNull String contentId)
+            throws MessagingException, IOException {
+
+<span class="nc bnc" id="L186" title="All 2 branches missed.">        for (int it = 0; it &lt; multipart.getCount(); it++) {</span>
+<span class="nc" id="L187">            final BodyPart bp = multipart.getBodyPart(it);</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">            if (bp.getContentType().toLowerCase().startsWith(MULTIPART_MIME_TYPE)) {</span>
+<span class="nc" id="L189">                final BodyPart nestedBodyPart = extractEmbeddedBodypart((Multipart) bp.getContent(), contentId);</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">                if (nestedBodyPart != null){</span>
+<span class="nc" id="L191">                    return nestedBodyPart;</span>
+                }
+            }
+<span class="nc bnc" id="L194" title="All 4 branches missed.">            if (bp.getContentType().toLowerCase().startsWith(&quot;image/&quot;) &amp;&amp; bp instanceof MimeBodyPart</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">                    &amp;&amp; contentId.equals(((MimeBodyPart) bp).getContentID())) {</span>
+<span class="nc" id="L196">                return bp;</span>
+            }
+        }
+<span class="nc" id="L199">        return null;</span>
+    }
+
+    /**
+     * Extracts a {@link BodyPart} form a {@link Multipart} body for an &lt;b&gt;attachment&lt;/b&gt; matching the provided id
+     *
+     * @param multipart to extract the BodyPart from
+     * @param id of the attachment for which the BodyPart must be extracted
+     * @return the BodyPart for the attachment with the given id or null if not found
+     * @throws MessagingException for any IMAP exception
+     * @throws IOException for IO problems when reading the content
+     */
+    @Nullable private static BodyPart extractAttachmentBodypart(@NonNull Multipart multipart, @NonNull String id)
+            throws MessagingException, IOException {
+
+<span class="nc bnc" id="L214" title="All 2 branches missed.">        for (int it = 0; it &lt; multipart.getCount(); it++) {</span>
+<span class="nc" id="L215">            final BodyPart bp = multipart.getBodyPart(it);</span>
+<span class="nc bnc" id="L216" title="All 4 branches missed.">            if (bp.getDisposition() != null &amp;&amp; Part.ATTACHMENT.equalsIgnoreCase(bp.getDisposition())) {</span>
+                // Regular file
+<span class="nc bnc" id="L218" title="All 2 branches missed.">                if (id.equals(MimeUtility.decodeText(bp.getFileName()))) {</span>
+<span class="nc" id="L219">                    return bp;</span>
+                }
+                // Embedded message
+<span class="nc bnc" id="L222" title="All 4 branches missed.">                if(bp.getContentType().toLowerCase().startsWith(&quot;message/&quot;) &amp;&amp; bp.getContent() instanceof MimeMessage</span>
+<span class="nc bnc" id="L223" title="All 2 branches missed.">                        &amp;&amp; ((MimeMessage)bp.getContent()).getSubject().equals(id)) {</span>
+<span class="nc" id="L224">                    return bp;</span>
+                }
+            }
+        }
+<span class="nc" id="L228">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

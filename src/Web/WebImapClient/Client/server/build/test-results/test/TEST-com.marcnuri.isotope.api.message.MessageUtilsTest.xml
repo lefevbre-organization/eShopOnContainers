@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.marcnuri.isotope.api.message.MessageUtilsTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2020-02-10T08:21:34" hostname="DESKTOP-PCQTJ6P" time="0.128">
+  <properties/>
+  <testcase name="getRecipientAddresses_validMessageNoRecipients_shouldReturnAddresses" classname="com.marcnuri.isotope.api.message.MessageUtilsTest" time="0.051"/>
+  <testcase name="getRecipientAddresses_validMessage_shouldReturnAddresses" classname="com.marcnuri.isotope.api.message.MessageUtilsTest" time="0.004"/>
+  <testcase name="getRecipientAddresses_invalidMessage_shouldThrowException" classname="com.marcnuri.isotope.api.message.MessageUtilsTest" time="0.0"/>
+  <testcase name="envelopeFetch_validFolderAndEmptyMessageArray_shouldNotFetchMessages" classname="com.marcnuri.isotope.api.message.MessageUtilsTest" time="0.042"/>
+  <testcase name="envelopeFetch_validFolderAndMessageArray_shouldFetchMessages" classname="com.marcnuri.isotope.api.message.MessageUtilsTest" time="0.03"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

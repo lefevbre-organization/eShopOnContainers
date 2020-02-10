@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IsotopeApiConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">api</a> &gt; <a href="index.source.html" class="el_package">com.marcnuri.isotope.api.configuration</a> &gt; <span class="el_source">IsotopeApiConfiguration.java</span></div><h1>IsotopeApiConfiguration.java</h1><pre class="source lang-java linenums">/*
+ * Configuration.java
+ *
+ * Created on 2018-08-08, 16:35
+ *
+ * Copyright 2018 Marc Nuri
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+package com.marcnuri.isotope.api.configuration;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.core.env.Environment;
+
+import java.time.Duration;
+import java.time.temporal.TemporalAmount;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+/**
+ * Created by Marc Nuri &lt;marc@marcnuri.com&gt; on 2018-08-08.
+ */
+@Configuration
+@ComponentScan(&quot;com.marcnuri.isotope.api&quot;)
+@EnableConfigurationProperties(ServerProperties.class)
+@Import({WebConfiguration.class})
+public class IsotopeApiConfiguration {
+
+    public static final int DEFAULT_CONNECTION_TIMEOUT = 5000;
+    @SuppressWarnings(&quot;squid:S2068&quot;)
+    private static final String ENCRYPTION_PASSWORD = &quot;ENCRYPTION_PASSWORD&quot;;
+    @SuppressWarnings(&quot;squid:S2068&quot;)
+    private static final String ENCRYPTION_PASSWORD_DEFAULT = &quot;THIS IS THE ENCRYPTION PASSWORD DEFAULT &quot; +
+            &quot;IN ORDER TO HAVE REAL SECURITY IT SHOULD BE REPLACED USING 'ENCRYPTION_PASSWORD' ENVIRONMENT VARIABLE&quot;;
+
+    private static final String TRUSTED_HOSTS = &quot;TRUSTED_HOSTS&quot;;
+
+    private static final String EMBEDDED_IMAGE_SIZE_THRESHOLD = &quot;EMBEDDED_IMAGE_SIZE_THRESHOLD&quot;;
+    private static final long EMBEDDED_IMAGE_SIZE_THRESHOLD_DEFAULT_50KB = 51200L;
+
+    private static final int CREDENTIALS_DURATION_MINUTES = 15;
+    private static final int CREDENTIALS_REFRESH_BEFORE_DURATION_MINUTES = 10;
+
+    private final Environment environment;
+
+    @Autowired
+<span class="nc" id="L65">    public IsotopeApiConfiguration(Environment environment) {</span>
+<span class="nc" id="L66">        this.environment = environment;</span>
+<span class="nc" id="L67">    }</span>
+
+    /**
+     * Retrieves the encryption password from the &lt;code&gt;ENCRYPTION_PASSWORD&lt;/code&gt; environment variable.
+     *
+     * If no password was specified in an environment variable ENCRYPTION_PASSWORD_DEFAULT will be used by default.
+     *
+     * @return the password for encryption operations
+     */
+    public String getEncryptionPassword() {
+<span class="nc" id="L77">        return environment.getProperty(ENCRYPTION_PASSWORD, ENCRYPTION_PASSWORD_DEFAULT);</span>
+    }
+
+    public Set&lt;String&gt; getTrustedHosts() {
+<span class="nc" id="L81">        final String trustedHosts = environment.getProperty(TRUSTED_HOSTS, &quot;&quot;);</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        return trustedHosts.isEmpty() ? Collections.emptySet() :</span>
+<span class="nc" id="L83">                Stream.of(trustedHosts.split(&quot;\\,&quot;)).map(String::trim).collect(Collectors.toSet());</span>
+    }
+
+    public long getEmbeddedImageSizeThreshold() {
+<span class="nc" id="L87">        return environment.getProperty(EMBEDDED_IMAGE_SIZE_THRESHOLD, Long.class, EMBEDDED_IMAGE_SIZE_THRESHOLD_DEFAULT_50KB);</span>
+    }
+
+    public TemporalAmount getCredentialsDuration() {
+<span class="nc" id="L91">        return Duration.ofMinutes(CREDENTIALS_DURATION_MINUTES);</span>
+    }
+
+    public TemporalAmount getCredentialsRefreshBeforeDuration() {
+<span class="nc" id="L95">        return Duration.ofMinutes(CREDENTIALS_REFRESH_BEFORE_DURATION_MINUTES);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

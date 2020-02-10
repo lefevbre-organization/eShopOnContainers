@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MessageFluxSinkConsumer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">api</a> &gt; <a href="index.source.html" class="el_package">com.marcnuri.isotope.api.imap</a> &gt; <span class="el_source">MessageFluxSinkConsumer.java</span></div><h1>MessageFluxSinkConsumer.java</h1><pre class="source lang-java linenums">/*
+ * MessageFluxSinkConsumer.java
+ *
+ * Created on 2018-10-09, 7:43
+ *
+ * Copyright 2018 Marc Nuri
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+package com.marcnuri.isotope.api.imap;
+
+import com.marcnuri.isotope.api.credentials.Credentials;
+import com.marcnuri.isotope.api.exception.IsotopeException;
+import com.marcnuri.isotope.api.message.Message;
+import com.sun.mail.imap.IMAPFolder;
+import com.sun.mail.imap.IMAPStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.codec.ServerSentEvent;
+import reactor.core.publisher.FluxSink;
+
+import javax.mail.MessagingException;
+import javax.mail.URLName;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+import java.util.function.Consumer;
+
+import static com.marcnuri.isotope.api.folder.FolderUtils.getFileWithRef;
+import static com.marcnuri.isotope.api.imap.ImapService.DEFAULT_INITIAL_MESSAGES_BATCH_SIZE;
+import static com.marcnuri.isotope.api.imap.ImapService.DEFAULT_MAX_MESSAGES_BATCH_SIZE;
+import static com.marcnuri.isotope.api.imap.ImapService.IMAP_CAPABILITY_CONDSTORE;
+
+/**
+ * {@link FluxSink} {@link Consumer} implementation to extract messages in batches from the provided folder and send
+ * {@link ServerSentEvent}s with the extracted message batches.
+ *
+ * &lt;p&gt;Created by Marc Nuri &lt;marc@marcnuri.com&gt; on 2018-10-09.
+ */
+public class MessageFluxSinkConsumer implements Consumer&lt;FluxSink&lt;ServerSentEvent&lt;List&lt;Message&gt;&gt;&gt;&gt; {
+
+<span class="nc" id="L53">    private static final Logger log = LoggerFactory.getLogger(MessageFluxSinkConsumer.class);</span>
+
+    private Credentials credentials;
+    private URLName folderId;
+    private HttpServletResponse response;
+    private ImapService imapService;
+
+<span class="nc" id="L60">    MessageFluxSinkConsumer(Credentials credentials, URLName folderId, HttpServletResponse response, ImapService imapService) {</span>
+<span class="nc" id="L61">        this.credentials = credentials;</span>
+<span class="nc" id="L62">        this.folderId = folderId;</span>
+<span class="nc" id="L63">        this.response = response;</span>
+<span class="nc" id="L64">        this.imapService = imapService;</span>
+<span class="nc" id="L65">    }</span>
+
+    @Override
+    public void accept(FluxSink&lt;ServerSentEvent&lt;List&lt;Message&gt;&gt;&gt; serverSentEventFluxSink) {
+        try {
+<span class="nc" id="L70">            final IMAPStore store = imapService.getImapStore(credentials);</span>
+<span class="nc" id="L71">            final boolean fetchModseq = store.hasCapability(IMAP_CAPABILITY_CONDSTORE);</span>
+<span class="nc" id="L72">            final IMAPFolder folder = (IMAPFolder)store.getFolder(getFileWithRef(folderId));</span>
+<span class="nc" id="L73">            processFolder(serverSentEventFluxSink, folder, fetchModseq);</span>
+<span class="nc" id="L74">            folder.close();</span>
+<span class="nc" id="L75">        } catch (MessagingException ex) {</span>
+<span class="nc" id="L76">            log.error(&quot;Error loading messages for folder: &quot; + folderId.toString(), ex);</span>
+<span class="nc" id="L77">            serverSentEventFluxSink.error(ex);</span>
+<span class="nc" id="L78">            finalizeFlux(serverSentEventFluxSink);</span>
+<span class="nc" id="L79">            throw  new IsotopeException(ex.getMessage());</span>
+<span class="nc" id="L80">        }</span>
+        // This bean will be effectively a Prototype, must manually disconnect
+<span class="nc" id="L82">        finalizeFlux(serverSentEventFluxSink);</span>
+<span class="nc" id="L83">    }</span>
+
+    /**
+     * Extracts batches of {@link Message}s from the specified folder starting from the last message.
+     *
+     * &lt;p&gt;Messages are published in the {@link ServerSentEvent} {@link FluxSink} while it has not been cancelled.
+     *
+     * @param serverSentEventFluxSink to publish the Message batches
+     * @param folder from where to read the Messages
+     * @param fetchModseq extract Modseq value from the message
+     * @throws MessagingException if there's an IMAP related problem
+     */
+    private void processFolder(
+            FluxSink&lt;ServerSentEvent&lt;List&lt;Message&gt;&gt;&gt; serverSentEventFluxSink, IMAPFolder folder, boolean fetchModseq)
+            throws MessagingException {
+
+        // From end to beginning
+<span class="nc" id="L100">        int end = folder.getMessageCount();</span>
+        int start;
+<span class="nc" id="L102">        int batchSize = DEFAULT_INITIAL_MESSAGES_BATCH_SIZE;</span>
+        try {
+            do {
+<span class="nc bnc" id="L105" title="All 2 branches missed.">                start = end - batchSize &gt; 0 ? end - batchSize : 1;</span>
+<span class="nc" id="L106">                log.debug(&quot;Getting message batch for folder {} [{}-{}]&quot;, folder.getName(), start, end);</span>
+<span class="nc" id="L107">                response.getOutputStream(); // Will force an IOException if client disconnected</span>
+<span class="nc" id="L108">                final ServerSentEvent&lt;List&lt;Message&gt;&gt; event = ServerSentEvent</span>
+<span class="nc" id="L109">                        .builder(imapService.getMessages(folder, start, end, fetchModseq))</span>
+<span class="nc" id="L110">                        .id(String.valueOf(start))</span>
+<span class="nc" id="L111">                        .build();</span>
+<span class="nc" id="L112">                serverSentEventFluxSink.next(event);</span>
+<span class="nc" id="L113">                end = start - 1;</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">                batchSize = (batchSize * 2 ) &gt; DEFAULT_MAX_MESSAGES_BATCH_SIZE ? DEFAULT_MAX_MESSAGES_BATCH_SIZE :</span>
+                        batchSize * 2;
+<span class="nc bnc" id="L116" title="All 4 branches missed.">            } while (end &gt; 0 &amp;&amp; !serverSentEventFluxSink.isCancelled());</span>
+<span class="nc" id="L117">        } catch(IOException ex) {</span>
+<span class="nc" id="L118">            log.debug(&quot;Response stream has already been closed ({})&quot;, ex.getMessage());</span>
+<span class="nc" id="L119">            serverSentEventFluxSink.error(ex);</span>
+<span class="nc" id="L120">        }</span>
+<span class="nc" id="L121">    }</span>
+
+    /**
+     * Complete {@link ServerSentEvent} {@link FluxSink}.
+     *
+     * &lt;p&gt;Call {@link ImapService#destroy()} method in order to disconnect from server as current instance is a
+     * Spring Bean Prototype.
+     *
+     * &lt;p&gt;Remove all references so that they can be Garbage Collected.
+     *
+     * @param serverSentEventFluxSink to complete
+     */
+    private void finalizeFlux(FluxSink&lt;ServerSentEvent&lt;List&lt;Message&gt;&gt;&gt; serverSentEventFluxSink) {
+<span class="nc" id="L134">        imapService.destroy();</span>
+<span class="nc" id="L135">        serverSentEventFluxSink.complete();</span>
+<span class="nc" id="L136">        imapService = null;</span>
+<span class="nc" id="L137">        credentials = null;</span>
+<span class="nc" id="L138">        folderId = null;</span>
+<span class="nc" id="L139">        response = null;</span>
+
+<span class="nc" id="L141">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

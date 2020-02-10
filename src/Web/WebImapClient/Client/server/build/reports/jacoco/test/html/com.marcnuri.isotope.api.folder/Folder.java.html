@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Folder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">api</a> &gt; <a href="index.source.html" class="el_package">com.marcnuri.isotope.api.folder</a> &gt; <span class="el_source">Folder.java</span></div><h1>Folder.java</h1><pre class="source lang-java linenums">/*
+ * Folder.java
+ *
+ * Created on 2018-08-08, 16:31
+ *
+ * Copyright 2018 Marc Nuri
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+package com.marcnuri.isotope.api.folder;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.marcnuri.isotope.api.exception.IsotopeException;
+import com.marcnuri.isotope.api.resource.IsotopeResource;
+import com.sun.mail.imap.IMAPFolder;
+import org.springframework.lang.Nullable;
+
+import javax.mail.MessagingException;
+import javax.mail.URLName;
+import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.stream.Stream;
+
+import static javax.mail.Folder.HOLDS_MESSAGES;
+
+/**
+ * Created by Marc Nuri &lt;marc@marcnuri.com&gt; on 2018-08-08.
+ */
+@JsonInclude(JsonInclude.Include.NON_NULL)
+<span class="fc" id="L42">public class Folder extends IsotopeResource implements Serializable {</span>
+
+    private static final long serialVersionUID = 8624907999271453862L;
+
+    public static final String ATTR_TRASH = &quot;\\Trash&quot;;
+    private static final String ATTR_HAS_NO_CHILDREN = &quot;\\HasNoChildren&quot;;
+    public static final String TRASH_FOLDER_NAME = &quot;Trash&quot;;
+<span class="fc" id="L49">    private static final Folder[] EMPTY_FOLDERS = {};</span>
+
+    private String folderId;
+    // Used when folder renaming to store previous folderId in order to identificate in FE
+    private String previousFolderId;
+    private String name;
+    private char separator;
+    private Long UIDValidity;
+    private String fullName;
+    private String fullURL;
+    private Set&lt;String&gt; attributes;
+    private int messageCount;
+    private int newMessageCount;
+    private int unreadMessageCount;
+    private int deletedMessageCount;
+    private Folder[] children;
+
+    public String getFolderId() {
+<span class="fc" id="L67">        return folderId;</span>
+    }
+
+    public void setFolderId(String folderId) {
+<span class="fc" id="L71">        this.folderId = folderId;</span>
+<span class="fc" id="L72">    }</span>
+
+    public String getPreviousFolderId() {
+<span class="fc" id="L75">        return previousFolderId;</span>
+    }
+
+    public void setPreviousFolderId(String previousFolderId) {
+<span class="fc" id="L79">        this.previousFolderId = previousFolderId;</span>
+<span class="fc" id="L80">    }</span>
+
+    public String getName() {
+<span class="fc" id="L83">        return name;</span>
+    }
+
+    public void setName(String name) {
+<span class="fc" id="L87">        this.name = name;</span>
+<span class="fc" id="L88">    }</span>
+
+    public char getSeparator() {
+<span class="fc" id="L91">        return separator;</span>
+    }
+
+    public void setSeparator(char separator) {
+<span class="fc" id="L95">        this.separator = separator;</span>
+<span class="fc" id="L96">    }</span>
+
+    public Long getUIDValidity() {
+<span class="fc" id="L99">        return UIDValidity;</span>
+    }
+
+    public void setUIDValidity(Long UIDValidity) {
+<span class="nc" id="L103">        this.UIDValidity = UIDValidity;</span>
+<span class="nc" id="L104">    }</span>
+
+    public String getFullName() {
+<span class="fc" id="L107">        return fullName;</span>
+    }
+
+    public void setFullName(String fullName) {
+<span class="fc" id="L111">        this.fullName = fullName;</span>
+<span class="fc" id="L112">    }</span>
+
+    public String getFullURL() {
+<span class="fc" id="L115">        return fullURL;</span>
+    }
+
+    public void setFullURL(String fullURL) {
+<span class="fc" id="L119">        this.fullURL = fullURL;</span>
+<span class="fc" id="L120">    }</span>
+
+    public Set&lt;String&gt; getAttributes() {
+<span class="fc" id="L123">        return attributes;</span>
+    }
+
+    public void setAttributes(Set&lt;String&gt; attributes) {
+<span class="fc" id="L127">        this.attributes = attributes;</span>
+<span class="fc" id="L128">    }</span>
+
+    public int getMessageCount() {
+<span class="fc" id="L131">        return messageCount;</span>
+    }
+
+    public void setMessageCount(int messageCount) {
+<span class="nc" id="L135">        this.messageCount = messageCount;</span>
+<span class="nc" id="L136">    }</span>
+
+    public int getNewMessageCount() {
+<span class="fc" id="L139">        return newMessageCount;</span>
+    }
+
+    public void setNewMessageCount(int newMessageCount) {
+<span class="nc" id="L143">        this.newMessageCount = newMessageCount;</span>
+<span class="nc" id="L144">    }</span>
+
+    public int getUnreadMessageCount() {
+<span class="fc" id="L147">        return unreadMessageCount;</span>
+    }
+
+    public void setUnreadMessageCount(int unreadMessageCount) {
+<span class="nc" id="L151">        this.unreadMessageCount = unreadMessageCount;</span>
+<span class="nc" id="L152">    }</span>
+
+    public int getDeletedMessageCount() {
+<span class="fc" id="L155">        return deletedMessageCount;</span>
+    }
+
+    public void setDeletedMessageCount(int deletedMessageCount) {
+<span class="nc" id="L159">        this.deletedMessageCount = deletedMessageCount;</span>
+<span class="nc" id="L160">    }</span>
+
+    public Folder[] getChildren() {
+<span class="fc" id="L163">        return children;</span>
+    }
+
+    public void setChildren(Folder[] children) {
+<span class="fc" id="L167">        this.children = children;</span>
+<span class="fc" id="L168">    }</span>
+
+    @Override
+    public boolean equals(Object o) {
+<span class="nc bnc" id="L172" title="All 2 branches missed.">        if (this == o) return true;</span>
+<span class="nc bnc" id="L173" title="All 4 branches missed.">        if (o == null || getClass() != o.getClass()) return false;</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        if (!super.equals(o)) return false;</span>
+<span class="nc" id="L175">        Folder folder = (Folder) o;</span>
+<span class="nc bnc" id="L176" title="All 10 branches missed.">        return separator == folder.separator &amp;&amp;</span>
+                messageCount == folder.messageCount &amp;&amp;
+                newMessageCount == folder.newMessageCount &amp;&amp;
+                unreadMessageCount == folder.unreadMessageCount &amp;&amp;
+                deletedMessageCount == folder.deletedMessageCount &amp;&amp;
+<span class="nc bnc" id="L181" title="All 2 branches missed.">                Objects.equals(folderId, folder.folderId) &amp;&amp;</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">                Objects.equals(previousFolderId, folder.previousFolderId) &amp;&amp;</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">                Objects.equals(name, folder.name) &amp;&amp;</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">                Objects.equals(UIDValidity, folder.UIDValidity) &amp;&amp;</span>
+<span class="nc bnc" id="L185" title="All 2 branches missed.">                Objects.equals(fullName, folder.fullName) &amp;&amp;</span>
+<span class="nc bnc" id="L186" title="All 2 branches missed.">                Objects.equals(fullURL, folder.fullURL) &amp;&amp;</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">                Objects.equals(attributes, folder.attributes) &amp;&amp;</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">                Arrays.equals(children, folder.children);</span>
+    }
+
+    @Override
+    public int hashCode() {
+
+<span class="nc" id="L194">        int result = Objects.hash(super.hashCode(), folderId, previousFolderId, name, separator, UIDValidity, fullName, fullURL, attributes, messageCount, newMessageCount, unreadMessageCount, deletedMessageCount);</span>
+<span class="nc" id="L195">        result = 31 * result + Arrays.hashCode(children);</span>
+<span class="nc" id="L196">        return result;</span>
+    }
+
+    public static Folder from(IMAPFolder mailFolder, @Nullable Boolean loadChildren) {
+        final Folder ret;
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">        if (mailFolder != null) {</span>
+<span class="fc" id="L202">            ret = new Folder();</span>
+<span class="fc" id="L203">            ret.setName(mailFolder.getName());</span>
+            try {
+<span class="fc" id="L205">                ret.setFolderId(toBase64Id(mailFolder.getURLName()));</span>
+<span class="fc" id="L206">                ret.setSeparator(mailFolder.getSeparator());</span>
+<span class="fc" id="L207">                ret.setFullName(mailFolder.getFullName());</span>
+<span class="fc" id="L208">                ret.setFullURL(mailFolder.getURLName().toString());</span>
+<span class="fc" id="L209">                ret.setAttributes(new HashSet&lt;&gt;(Arrays.asList(mailFolder.getAttributes())));</span>
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">                if ((mailFolder.getType() &amp; HOLDS_MESSAGES) != 0) {</span>
+<span class="nc" id="L211">                    ret.setUIDValidity(mailFolder.getUIDValidity());</span>
+<span class="nc" id="L212">                    ret.setMessageCount(mailFolder.getMessageCount());</span>
+<span class="nc" id="L213">                    ret.setNewMessageCount(mailFolder.getNewMessageCount());</span>
+<span class="nc" id="L214">                    ret.setUnreadMessageCount(mailFolder.getUnreadMessageCount());</span>
+<span class="nc" id="L215">                    ret.setDeletedMessageCount(mailFolder.getDeletedMessageCount());</span>
+                }
+<span class="pc bpc" id="L217" title="1 of 4 branches missed.">                if (Boolean.TRUE.equals(loadChildren) &amp;&amp; !ret.getAttributes().contains(ATTR_HAS_NO_CHILDREN)) {</span>
+<span class="fc" id="L218">                    ret.setChildren(Stream.of(mailFolder.list())</span>
+<span class="fc" id="L219">                            .map(IMAPFolder.class::cast)</span>
+<span class="fc" id="L220">                            .map(mf -&gt; from(mf, true))</span>
+<span class="fc" id="L221">                            .sorted(Comparator.comparing(Folder::getName))</span>
+<span class="fc" id="L222">                            .toArray(Folder[]::new));</span>
+                } else {
+<span class="fc" id="L224">                    ret.setChildren(EMPTY_FOLDERS);</span>
+                }
+<span class="nc" id="L226">            } catch (MessagingException e) {</span>
+<span class="nc" id="L227">                throw new IsotopeException(&quot;Error parsing IMAP Folder&quot;, e);</span>
+<span class="fc" id="L228">            }</span>
+        } else {
+<span class="nc" id="L230">            ret = null;</span>
+        }
+<span class="fc" id="L232">        return ret;</span>
+    }
+
+
+    public static URLName toId(String base64Id) {
+<span class="fc" id="L237">        return new URLName(decodeId(base64Id));</span>
+    }
+
+    public static String toBase64Id(URLName id) {
+<span class="fc" id="L241">        return encodeId(id.toString());</span>
+    }
+
+    private static String encodeId(String id) {
+<span class="fc" id="L245">        return Base64.getUrlEncoder().encodeToString(id.getBytes(StandardCharsets.UTF_8));</span>
+    }
+
+    private static String decodeId(String encodedId) {
+<span class="fc" id="L249">        return new String(Base64.getUrlDecoder().decode(encodedId), StandardCharsets.UTF_8);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>
