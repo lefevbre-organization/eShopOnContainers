@@ -337,8 +337,10 @@
                 result.data = await _context.Accounts.Find(GetFilterUser(user)).SingleOrDefaultAsync();
 
                 if (result.data == null)
+                {
                     TraceInfo(result.infos, $"No se encuentra ningún usuario {user}");
-
+                }
+            }
             catch (Exception ex)
             {
                 TraceMessage(result.errors, ex);
@@ -352,10 +354,21 @@
             try
             {
                 var usuario = await _context.Accounts.Find(GetFilterUser(user)).SingleAsync();
+
+                if (usuario == null)
+                {
+                    TraceInfo(result.infos, $"No se encuentra ningún usuario {user} del que obtener cuenta");
+                }
                 var cuenta = usuario.accounts?.Find(
                     x => x.email.ToUpperInvariant().Equals(mail.ToUpperInvariant())
                         && x.provider.ToUpperInvariant().Equals(provider.ToUpperInvariant()));
                 result.data = cuenta;
+
+
+                if (result.data == null)
+                {
+                    TraceInfo(result.infos, $"No se encuentra ningúna cuenta {provider} - {mail} en ese usuario {user}");
+                }
             }
             catch (Exception ex)
             {
@@ -370,8 +383,16 @@
             try
             {
                 var usuario = await _context.Accounts.Find(GetFilterUser(user)).SingleOrDefaultAsync();
-                var cuenta = usuario?.accounts.Find(x => x.defaultAccount = true);
+                if (usuario == null)
+                {
+                    TraceInfo(result.infos, $"No se encuentra ningún usuario {user} del que obtener cuenta x defecto");
+                }
+                var cuenta = usuario?.accounts.Find(x => x.defaultAccount == true);
                 result.data = cuenta;
+                if (result.data == null)
+                {
+                    TraceInfo(result.infos, $"No se encuentra ningúna cuenta por defecto en ese usuario {user}");
+                }
             }
             catch (Exception ex)
             {
@@ -398,6 +419,10 @@
                     result.data = userUpdate;
                     //var eventAssoc = new AddOperationAccountIntegrationEvent(userUpdate.User, userUpdate.Provider, userUpdate.Email, userUpdate.DefaultAccount, EnTypeOperation.Remove);
                     //_eventBus.Publish(eventAssoc);
+                }
+                else
+                {
+                    TraceInfo(result.infos, $"No se encuentra ningún usuario {user} del que quitar la cuenta {provider} - {mail}");
                 }
             }
             catch (Exception ex)
