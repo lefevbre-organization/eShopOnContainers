@@ -440,20 +440,29 @@ class App extends Component {
     this.registerConnectorApp();
 
     const { userId, idCaseFile, bbdd, idEmail, idFolder, account } = this.props.lexon;
-    const { imapSsl, serverHost, serverPort, smtpHost, smtpPort, smtpSsl, user} = this.props.all.login.formValues;
+    const { imapSsl, serverHost, serverPort, smtpHost, smtpPort, smtpSsl, user, password} = this.props.all.login.formValues;
     const { email } = this.props;
     if (userId !== null && email !== null) {
       const GUID = uuid();
       const newAccount = {
         "provider": PROVIDER,
-        "email": email || account,
+        "email": email,
         "guid": GUID,
-        "sign": "",
         "defaultAccount": true,
-        "configAccount": {
-        },
-        "mails": []
+        configAccount: {
+          "imap": serverHost,
+          "imapPort": serverPort,
+          "imapUser": user,
+          "imapPass": password,
+          "imapSsl": imapSsl,
+          "smtp": smtpHost,
+          "smtpPort": smtpPort,
+          "smtpSsl": smtpSsl
+        }
       };
+      if(!newAccount.configAccount.imapPass) {
+        delete newAccount.configAccount;
+      }
       addOrUpdateAccount(userId, newAccount)
       .then(() => {
         this.setState({ isUpdatedDefaultAccount: true });

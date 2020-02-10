@@ -17,6 +17,7 @@ import Spinner from '../spinner/spinner';
 import UserLexon from "../user-lexon/UserLexon";
 import mainCss from '../../styles/main.scss';
 import styles from './login.scss';
+import { PROVIDER } from '../../constants';
 
 /**
  * Returns a Login component valid state from the current URL params
@@ -212,13 +213,13 @@ export class Login extends Component {
 
   login(event) {
     event.preventDefault();
-    this.saveLoginConfig();
+    //this.saveLoginConfig();
     this.props.dispatchLogin(this.state.values);
     }   
 
     async saveLoginConfig() {
       const { userId = '', account = '' } = this.props.lexon; 
-      const url = `${window.API_ACC_GATEWAY}/api/v2/accounts/usermail/${userId}/account/imap/${account}/config/addorupdate`;
+      const url = `${window.API_ACC_GATEWAY}/api/v2/accounts/usermail/${userId}/account/${PROVIDER}/${account}/config/addorupdate`;
       await fetch(url, {
         method: 'POST',
         headers: {

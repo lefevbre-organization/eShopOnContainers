@@ -114,7 +114,7 @@ export class PageGoToLegacy extends Component {
 
         deleteAccountByUserAndEmail(encrypt, userId, provider, email)
             .then(result => {
-                if (result.data > 0) {
+                if (result.data) {
                     this.getAccounts();
                 } else {
                     const error = `Ha ocurrido un error cuando se borraba: userId -> ${userId}, email -> ${email}`;

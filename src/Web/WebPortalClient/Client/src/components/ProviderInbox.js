@@ -109,13 +109,18 @@ class ProviderInbox extends Component {
         email != null && email !== undefined
           ? (title = email)
           : (title = i18n.t("page-goto.other-server-mail"));
+        let linkHref = '';
 
-        const account64 = base64.encode(email)
+        if(email) {
+          const account64 = base64.encode(email)
+          linkHref = `${window.URL_INBOX_IMAP}/user/${user}/account/${account64}`;
+        } else {
+          linkHref = buildClientUrl(provider, user, payload);
+        }
         return (
           <React.Fragment>
             <a
-              //href={buildClientUrl(provider, user, payload)}
-              href={`${window.URL_INBOX_IMAP}/user/${user}/account/${account64}`}
+              href={linkHref}
               className="d-flex align-items-center"
             >
               <span className="lf-icon-mail"></span>
