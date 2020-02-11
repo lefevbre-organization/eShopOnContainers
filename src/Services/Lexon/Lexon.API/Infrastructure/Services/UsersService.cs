@@ -411,6 +411,7 @@ namespace Lexon.Infrastructure.Services
                 {
                     name = entity.Code,
                     description = entity.Description,
+                    email = entity.Email,
                     id = entity.IdRelated,
                     idType = idType ?? 1,
                     entityType = Enum.GetName(typeof(LexonAdjunctionType), idType ?? 1),
@@ -497,6 +498,7 @@ namespace Lexon.Infrastructure.Services
             {
                 name = entity.Code,
                 description = entity.Description,
+                email = entity.Email,
                 id = entity.IdRelated,
                 idType = idType,
                 entityType = Enum.GetName(typeof(LexonAdjunctionType), idType),

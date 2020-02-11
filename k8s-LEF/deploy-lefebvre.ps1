@@ -11,7 +11,7 @@ Param(
     [parameter(Mandatory=$false)][string]$imageTag="dev",
     [parameter(Mandatory=$false)][bool]$deployCI=$false,
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
-    [parameter(Mandatory=$false)][bool]$cleanDocker=$true,
+    [parameter(Mandatory=$false)][bool]$cleanDocker=$false,
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][bool]$pushImages=$true,

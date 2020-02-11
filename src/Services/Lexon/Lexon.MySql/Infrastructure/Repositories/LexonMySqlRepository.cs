@@ -55,6 +55,9 @@ namespace Lexon.MySql.Infrastructure.Repositories
                             if (EvaluateErrorCommand(result.errors, command) == 0)
                                 while (reader.Read()) { result.data = JsonConvert.DeserializeObject<JosUser>(reader.GetValue(0).ToString()); }
                         }
+
+                        WriteLine($"respuesta idUser:{result.data.IdUser}"); //para quitar
+
                     }
                 }
                 catch (Exception ex)
@@ -62,7 +65,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     TraceMessage(result.errors, ex);
                 }
             }
-
+            WriteLine($"Salimos de GetUserAsync"); //para quitar
             return result;
         }
 

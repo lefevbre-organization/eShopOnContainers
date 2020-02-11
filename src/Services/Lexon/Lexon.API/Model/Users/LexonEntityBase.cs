@@ -16,5 +16,6 @@ namespace Lexon.API.Model
         public string intervening { get; set; }
 
         public string[] mails { get; set; }
+        public string email { get; set; }
     }
 }

@@ -14,6 +14,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             log = logger ?? throw new ArgumentNullException(nameof(logger)); 
         }
 
+
         public void TraceMessage(
             List<ErrorInfo> errors,
             Exception ex,
@@ -46,7 +47,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             WriteLine("source line number: " + errorInfo.line);
         }
 
-        private void WriteLine(string msg)
+        public void WriteLine(string msg)
         {
             log.LogDebug(msg);
             System.Diagnostics.Trace.WriteLine(msg);
@@ -105,9 +106,5 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             infos.Add(info);
         }
 
-        private void TraceMessage(List<ErrorInfo> errors, string v, int value)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
