@@ -66,5 +66,9 @@
   "confirmation": {
     "cancel": "No",
     "ok": "Yes"
+  },
+  "message-not-found":{
+	"body": "Message not found in server",
+	"ok": "Continue"
   }
 }

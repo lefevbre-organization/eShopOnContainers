@@ -13,6 +13,7 @@ import MessageToolbar from "../message-toolbar/MessageToolbar";
 import "./messageContent.scss";
 import MessageHeader from "./messageHeader";
 import { setMessageAsRead } from '../../../../api';
+import MessageNotFound  from "../../../message-not-found/MessageNotFound";
 
 //BEGIN functions for attachment functionality
 
@@ -129,12 +130,23 @@ export class MessageContent extends Component {
 
     this.state = {
         errorMessage: undefined,
-        attachment: true
+        attachment: true,
+        showMessageNotFound: false
     };
     this.refresh = false;
     this.iframeRef = React.createRef();
     this.modifyMessage = this.modifyMessage.bind(this);
+    this.toggleShowMessageNotFound = this.toggleShowMessageNotFound.bind(this);
+    this.notFoundModal = props.notFoundModal
   }
+
+  
+
+  toggleShowMessageNotFound() {
+    this.setState(state => ({
+      showMessageNotFound: !state.showMessageNotFound
+    }));
+}
 
   componentDidMount(prevProps) {
     const messageId = this.props.match.params.id;
@@ -148,63 +160,66 @@ export class MessageContent extends Component {
     }
   }
 
-    componentDidUpdate(prevProps) {
-      const { emailMessageResult } = this.props;
-        if (!emailMessageResult.loading) {
-            if (!emailMessageResult.failed) {
-                this.markEmailAsRead(emailMessageResult.result);
-                if (this.state.attachment === true) {
-                    const { body } = this.iframeRef.current.contentWindow.document;
-                    body.style.margin = "0px";
-                    body.style.fontFamily = "Arial, Helvetica, sans-serif";
-                    body.style.fontSize = "13px";
-                    body.innerHTML = this.props.emailMessageResult.body;
+  componentDidUpdate(prevProps) {
+    const { emailMessageResult } = this.props;
+      if (!emailMessageResult.loading) {
+          if (!emailMessageResult.failed) {
+              this.markEmailAsRead(emailMessageResult.result);
+              if (this.state.attachment === true) {
+                  const { body } = this.iframeRef.current.contentWindow.document;
+                  body.style.margin = "0px";
+                  body.style.fontFamily = "Arial, Helvetica, sans-serif";
+                  body.style.fontSize = "13px";
+                  body.innerHTML = this.props.emailMessageResult.body;
 
-                    //Adding attach files
+                  //Adding attach files
 
-                    var attach = emailMessageResult.attach;
-                    if (typeof attach !== "undefined" && attach.length > 0) {
-                        this.setState({ attachment: false });
-                        var iframe = document.getElementById("message-iframe");
-                        var Divider = addDivDivider();
-                        iframe.contentDocument.body.appendChild(Divider);
+                  var attach = emailMessageResult.attach;
+                  if (typeof attach !== "undefined" && attach.length > 0) {
+                      this.setState({ attachment: false });
+                      var iframe = document.getElementById("message-iframe");
+                      var Divider = addDivDivider();
+                      iframe.contentDocument.body.appendChild(Divider);
 
-                        for (var i = 0; i < attach.length; i++) {
-                            if (attach[i].filename && attach[i].filename.length > 0) {
-                                getAttachments(emailMessageResult.id, attach[i], function (
-                                    filename,
-                                    mimeType,
-                                    attachment
-                                ) {
-                                   
-                                    let dataBase64Rep = attachment.data
-                                        .replace(/-/g, "+")
-                                        .replace(/_/g, "/");
-                                    let urlBlob = b64toBlob(
-                                        dataBase64Rep,
-                                        mimeType,
-                                        attachment.size
-                                    );
-                                    //console.log(urlBlob);
-                                    var blobUrl = URL.createObjectURL(urlBlob);
-                                    var Attachment = addAttachmentElement(blobUrl, filename);
-                                    var AttachmentDiv = addAttachmentContainer(mimeType);
-                                    AttachmentDiv.appendChild(Attachment);
-                                    iframe.contentDocument.body.appendChild(AttachmentDiv);
-                                });
-                            }
-                        }
+                      for (var i = 0; i < attach.length; i++) {
+                          if (attach[i].filename && attach[i].filename.length > 0) {
+                              getAttachments(emailMessageResult.id, attach[i], function (
+                                  filename,
+                                  mimeType,
+                                  attachment
+                              ) {
+                                  
+                                  let dataBase64Rep = attachment.data
+                                      .replace(/-/g, "+")
+                                      .replace(/_/g, "/");
+                                  let urlBlob = b64toBlob(
+                                      dataBase64Rep,
+                                      mimeType,
+                                      attachment.size
+                                  );
+                                  //console.log(urlBlob);
+                                  var blobUrl = URL.createObjectURL(urlBlob);
+                                  var Attachment = addAttachmentElement(blobUrl, filename);
+                                  var AttachmentDiv = addAttachmentContainer(mimeType);
+                                  AttachmentDiv.appendChild(Attachment);
+                                  iframe.contentDocument.body.appendChild(AttachmentDiv);
+                              });
+                          }
+                      }
 
-                    }
-                }
-            } else {
-              if (emailMessageResult.error.status === 404){
-                alert('El mensaje que desea abrir no existe en el servidor');
-                this.renderInbox();
+                  }
               }
+          } else {
+            if (emailMessageResult.error.status === 404 && this.notFoundModal === 0){
+              this.toggleShowMessageNotFound(true);
+              this.notFoundModal = 1;
             }
-        }
-    }
+            else if (this.state.showMessageNotFound === false) {
+              this.renderInbox();
+            }
+          }
+      } 
+  }
 
   markEmailAsRead(message) {
     const found = message.labelIds.find(elem => elem === 'UNREAD');
@@ -244,6 +259,7 @@ export class MessageContent extends Component {
     if (this.props.emailMessageResult.loading) {
       return this.renderSpinner();
     }
+    const { showMessageNotFound } = this.state;
 
     return (
       <React.Fragment>
@@ -274,6 +290,12 @@ export class MessageContent extends Component {
             />
           )}
         </div>
+        
+        <MessageNotFound
+          initialModalState={showMessageNotFound}
+          toggleShowMessageNotFound={this.toggleShowMessageNotFound}
+        />
+
       </React.Fragment>
     );
   }
