@@ -261,11 +261,34 @@ export const getCasefile = async (user, bbdd, company, typeId, search) => {
   }
 };
 
-export const getUser = userNavision => {
+export const getUser = async userNavision => {
+  const url = `${window.API_GATEWAY}/${USER}/?idUserNavision=${userNavision}`;
+  
+  try {
+    const response = await  fetch(url, { method: "GET" });
+    const result = await response.json()
+    const user = result.data;
+
+     const url2 =  `${window.URL_GET_ACCOUNTS}/${user.idNavision}`;
+    const response2 = await  fetch(url2, { method: "GET" });
+    const result2 = await response2.json()
+
+
+    return { user, config: result2.data.configUser };
+  } catch(err) {
+    throw err;
+  }
+};
+
+export const saveUserConfig = (config, userId) => {
   return new Promise((resolve, reject) => {
-    const url = `${window.API_GATEWAY}/${USER}/?idUserNavision=${userNavision}`;
+    const url = `${window.URL_GET_ACCOUNTS}/${userId}/config/addorupdate`;
     fetch(url, {
-      method: "GET"
+      method: "POST",
+      headers: {
+        "Content-type":"application/json"
+      },
+      body: JSON.stringify(config)
     })
       .then(data => data.json())
       .then(result => {
@@ -277,4 +300,4 @@ export const getUser = userNavision => {
         reject(error);
       });
   });
-};
+}
