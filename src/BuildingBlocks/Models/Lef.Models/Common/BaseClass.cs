@@ -41,10 +41,8 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 
         private void WriteError(ErrorInfo errorInfo)
         {
-            WriteLine("member name: " + errorInfo.member);
-            WriteLine("member name: " + errorInfo.member);
+            WriteLine($"member name: {errorInfo.member} - line:{errorInfo.line}" );
             WriteLine("source file path: " + errorInfo.source);
-            WriteLine("source line number: " + errorInfo.line);
         }
 
         public void WriteLine(string msg)
