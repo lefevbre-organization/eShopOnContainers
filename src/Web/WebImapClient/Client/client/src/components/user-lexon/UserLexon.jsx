@@ -5,7 +5,9 @@ import ACTIONS from "../../actions/lexon";
 import { clearUserCredentials } from "../../actions/application";
 import history from "../../routes/history";
 import { PROVIDER } from "../../constants";
+import { getUser } from '../../services/accounts';
 import { removeState } from "../../services/state";
+import * as base64 from 'base-64';
 
 class UserLexon extends Component {
   constructor(props) {
@@ -20,8 +22,20 @@ class UserLexon extends Component {
     this.isUniqueAccountByProvider = this.isUniqueAccountByProvider.bind(this);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const user = this.props.match.params.idUser;
+    const account64 = this.props.match.params.account;
+
+
+    if (account64) {
+      // Get user account
+      const account = base64.decode(account64);
+
+      if (account) {        
+        this.props.setAccount(account);
+      }
+    }
+
     this.props.setUser(user);
 
     const casefile = this.props.match.params.idCaseFile;
@@ -104,24 +118,25 @@ class UserLexon extends Component {
 
   async isUniqueAccountByProvider() {
     const { lexon } = this.props;
-    const url = `${window.URL_GET_ACCOUNTS}/${lexon.userId}`;
+    try {
+      const result = getUser(lexon.userId)
 
-    const response = await fetch(url, { method: "GET" });
-    const result = await response.json();
-
-    if (result.errors.length === 0) {
-      const accountsByProvider = result.data.accounts.filter(
-        account => account.provider === PROVIDER
-      );
-      if (accountsByProvider.length > 1) {
-        this.setState({
-          readyToRedirectToLogin: true
-        });
-      } else {
-        this.setState({
-          readyToRedirect: true
-        });
+      if (result.errors.length === 0) {
+        const accountsByProvider = result.data.accounts.filter(
+          account => account.provider === PROVIDER
+        );
+        if (accountsByProvider.length > 1) {
+          this.setState({
+            readyToRedirectToLogin: true
+          });
+        } else {
+          this.setState({
+            readyToRedirect: true
+          });
+        }
       }
+    } catch(err) {
+      throw err
     }
   }
 
@@ -150,6 +165,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   setUser: user => dispatch(ACTIONS.setUser(user)),
+  setAccount: account => dispatch(ACTIONS.setAccount(account)),
   setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
   setDataBase: dataBase => dispatch(ACTIONS.setDataBase(dataBase)),
   setIdEmail: emailInfo => dispatch(ACTIONS.setIdEmail(emailInfo)),

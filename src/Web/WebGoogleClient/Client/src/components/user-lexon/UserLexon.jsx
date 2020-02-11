@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import ACTIONS from "../../actions/lexon";
 import { mountScripts } from "../../api/scripts";
 import { checkSignInStatus, signOut, signOutDisconnect } from "../../api/authentication";
+import { getUser } from "../../api/accounts";
 import { PROVIDER } from "../../constants";
 
 class UserLexon extends Component {
@@ -46,22 +47,24 @@ class UserLexon extends Component {
 
   isUniqueAccountByProvider = async () => {
     const { lexon } = this.props;
-    const url = `${window.URL_GET_ACCOUNTS}/${lexon.userId}`;
 
-    const response = await fetch(url, { method: "GET" });
-    const result = await response.json();
+    try {
+      const result = await getUser(lexon.userId);
 
-    if (result.errors.length === 0) {
-      const accountsByProvider = result.data.accounts.filter(
-        account => account.provider === PROVIDER
-      );
-      if (accountsByProvider.length > 1) {
-        mountScripts().then(this.init);
-      } else {
-        this.setState({
-          readyToRedirect: true
-        });
+      if (result.errors.length === 0) {
+        const accountsByProvider = result.data.accounts.filter(
+          account => account.provider.toUpperCase() === PROVIDER
+        );
+        if (accountsByProvider.length > 1) {
+          mountScripts().then(this.init);
+        } else {
+          this.setState({
+            readyToRedirect: true
+          });
+        }
       }
+    } catch(err) {
+      throw err;
     }
   };
 

@@ -11,9 +11,9 @@ class Accounts extends Component {
 
     return (
       <Fragment>
-        {accounts.map(el => {
+        {accounts.map((el, index) => {
           return (
-            <li key={el.email}>
+            <li key={ index + '_' + el.email}>
               <ProviderInbox
                 userId={userId}
                 provider={el.provider}

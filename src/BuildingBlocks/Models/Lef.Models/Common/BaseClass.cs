@@ -17,7 +17,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         public void TraceMessage(
             List<ErrorInfo> errors,
             Exception ex,
-            short codeError = (short)TypeOfInfo.ErrorSystem,
+            int codeError = (int)TypeOfInfo.ErrorSystem,
             [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "")
@@ -78,7 +78,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 
             var errorInfo = new ErrorInfo
             {
-                code = (short)codeError,
+                code = (int)codeError,
                 message = (string)exMessage,
                 member = memberName,
                 source = sourceFilePath,
@@ -92,7 +92,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         public void TraceInfo(
             List<Info> infos,
             string message,
-            short codeInfo = (short)TypeOfInfo.General)
+            int codeInfo = (int)TypeOfInfo.General)
         {
             if (codeInfo == 0) return;
 

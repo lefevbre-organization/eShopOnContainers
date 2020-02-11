@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import i18n from "i18next";
 import { parseJwt, buildClientUrl } from "../utils/jwt";
-
+import * as base64 from 'base-64';
 import { INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP } from "../constants";
 
 class ProviderInbox extends Component {
@@ -14,7 +14,7 @@ class ProviderInbox extends Component {
   _handleOnClick(provider, email) {
     const { toggleConfirmRemoveAccount } = this.props;
 
-    toggleConfirmRemoveAccount(false, email);
+    toggleConfirmRemoveAccount(false, email, provider);
   }
 
   getUser() {
@@ -49,7 +49,7 @@ class ProviderInbox extends Component {
           <a
             href="#/"
             className="trash"
-            onClick={() => this._handleOnClick(provider, email)}
+            onClick={() => this._handleOnClick(provider, email, provider)}
           >
             <span className="icon lf-icon-trash"></span>
           </a>
@@ -65,8 +65,6 @@ class ProviderInbox extends Component {
     const user = this.getUser();
     const payload = (token) ? parseJwt(token) : "";
     
-
-
     let title;
     switch (provider) {
       case INBOX_GOOGLE:
@@ -111,11 +109,18 @@ class ProviderInbox extends Component {
         email != null && email !== undefined
           ? (title = email)
           : (title = i18n.t("page-goto.other-server-mail"));
+        let linkHref = '';
 
+        if(email) {
+          const account64 = base64.encode(email)
+          linkHref = `${window.URL_INBOX_IMAP}/user/${user}/account/${account64}`;
+        } else {
+          linkHref = buildClientUrl(provider, user, payload);
+        }
         return (
           <React.Fragment>
             <a
-              href={buildClientUrl(provider, user, payload)}
+              href={linkHref}
               className="d-flex align-items-center"
             >
               <span className="lf-icon-mail"></span>

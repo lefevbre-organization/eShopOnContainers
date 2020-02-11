@@ -1,4 +1,4 @@
-import { config, PROXY_CORS, PARAMS_ACCOUNTS, PARAMS_DELETACCOUNTBYUSERANDEMAIL } from "../constants";
+import { config, PROXY_CORS, PARAMS_ACCOUNTS } from "../constants";
 // import data from "../data.json";
 
 export const getAccounts = (userId, encrypt) => {
@@ -78,9 +78,13 @@ export const getAccountsWithUserNoEncrypt = userId => {
       .then(data => data.json())
       .then(result => {
         if (result.errors.length === 0) {
+          let accounts = [];
+          if(result.data && result.data.accounts) {
+            accounts = result.data.accounts.map( ac=> ({ ...ac, provider: ac.provider.toUpperCase(), user: userId}) )
+          }
           resolve({
             user: { ID_ENTRADA: userId },
-            accounts: result.data.accounts
+            accounts
           });
         } else {
           let errors;
@@ -122,14 +126,14 @@ const getUser = userId => {
   });
 };
 
-export const deleteAccountByUserAndEmail = (encrypt, userId, email) => {
+export const deleteAccountByUserAndEmail = (encrypt, userId, provider, email) => {
   return new Promise((resolve, reject) => {
     if (encrypt === "1") {
       getUser(userId).then(user => {
         if (user.ID_ENTRADA != null) {
-          const url = `${window.API_ACCOUNTS}/${PARAMS_DELETACCOUNTBYUSERANDEMAIL}/${user.ID_ENTRADA}/${email}`;
+          const url = `${window.API_ACCOUNTS}/api/v2/accounts/usermail/${userId}/account/delete/${provider}/${email}`;
           fetch(url, {
-            method: "GET"
+            method: "POST"
           })
             .then(data => data.json())
             .then(result => {
@@ -153,9 +157,9 @@ export const deleteAccountByUserAndEmail = (encrypt, userId, email) => {
         }
       });
     } else {
-      const url = `${window.API_ACCOUNTS}/${PARAMS_DELETACCOUNTBYUSERANDEMAIL}/${userId}/${email}`;
+      const url = `${window.API_ACCOUNTS}/api/v2/accounts/usermail/${userId}/account/delete/${provider}/${email}`;
       fetch(url, {
-        method: "GET"
+        method: "POST"
       })
         .then(data => data.json())
         .then(result => {

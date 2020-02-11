@@ -27,6 +27,7 @@ import { resetFolderMessagesCache } from "../services/message";
 import { readMessage } from "../services/message-read";
 import { persistApplicationNewMessageContent } from "../services/indexed-db";
 
+import { addOrUpdateAccount } from "../services/accounts";
 // import SplitPane from "react-split-pane";
 import styles from "./app.scss";
 import IconButton from "./buttons/icon-button";
@@ -438,14 +439,31 @@ class App extends Component {
     //setTimeout(function () { this.registerConnectorApp(); }, 2200);
     this.registerConnectorApp();
 
-    const { userId, idCaseFile, bbdd, idEmail, idFolder } = this.props.lexon;
+    const { userId, idCaseFile, bbdd, idEmail, idFolder, account } = this.props.lexon;
+    const { imapSsl, serverHost, serverPort, smtpHost, smtpPort, smtpSsl, user, password} = this.props.all.login.formValues;
     const { email } = this.props;
     if (userId !== null && email !== null) {
       const GUID = uuid();
-      const url = `${window.URL_UPDATE_DEFAULTACCOUNT}/${userId}/${email}/${PROVIDER}/${GUID}`;
-      fetch(url, {
-        method: "GET"
-      })
+      const newAccount = {
+        "provider": PROVIDER,
+        "email": email,
+        "guid": GUID,
+        "defaultAccount": true,
+        configAccount: {
+          "imap": serverHost,
+          "imapPort": serverPort,
+          "imapUser": user,
+          "imapPass": password,
+          "imapSsl": imapSsl,
+          "smtp": smtpHost,
+          "smtpPort": smtpPort,
+          "smtpSsl": smtpSsl
+        }
+      };
+      if(!newAccount.configAccount.imapPass) {
+        delete newAccount.configAccount;
+      }
+      addOrUpdateAccount(userId, newAccount)
       .then(() => {
         this.setState({ isUpdatedDefaultAccount: true });
       	Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, { domain: 'lefebvre.es' })

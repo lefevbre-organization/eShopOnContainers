@@ -10,6 +10,7 @@ import { removeState } from "../../services/state";
 // import { logout } from '../login/login';
 import "react-perfect-scrollbar/dist/css/styles.css";
 import { PROVIDER } from "../../constants";
+import { getUser, resetDefaultAccount } from "../../services/accounts";
 import AccountUser from "../menu-user/account-user/account-user";
 
 class FilterDialogUser extends Component {
@@ -27,11 +28,7 @@ class FilterDialogUser extends Component {
     const { lexon } = this.props;
     const _this = this;
     if (lexon.userId) {
-      const url = `${window.URL_GET_ACCOUNTS}/${lexon.userId}`;
-      fetch(url, {
-        method: "GET"
-      })
-        .then(data => data.json())
+        getUser(lexon.userId)
         .then(result => {
           if (result.errors.length === 0) {
             _this.setState({
@@ -56,10 +53,7 @@ class FilterDialogUser extends Component {
   routeChange() {
     const { userId } = this.props.lexon;
     if (userId !== null) {
-      const url = `${window.URL_RESET_DEFAULTACCOUNT}/${userId}`;
-      fetch(url, {
-        method: "GET"
-      })
+      resetDefaultAccount(userId)
         .then(() => {
           const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
           window.open(urlRedirect, "_self");
@@ -76,10 +70,7 @@ class FilterDialogUser extends Component {
 
     const { userId } = this.props.lexon;
     if (userId !== null) {
-      const url = `${Window.URL_RESET_DEFAULTACCOUNT}/${userId}`;
-      fetch(url, {
-        method: "GET"
-      })
+      resetDefaultAccount(userId)
         .then(result => {
           console.log(result);
           removeState();

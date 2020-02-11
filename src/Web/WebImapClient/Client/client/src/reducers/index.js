@@ -42,6 +42,7 @@ export const INITIAL_STATE = {
   },
   lexon: {
     user: null,
+    account: null,
     userId: null,
     provider: null,
     isNewAccount: false,

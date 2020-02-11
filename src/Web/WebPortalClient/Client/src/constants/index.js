@@ -22,7 +22,7 @@ const prod = {
 
 export const config = process.env.NODE_ENV === "development" ? dev : prod;
 
-export const PARAMS_ACCOUNTS = "api/v1/accounts/emailuseraccount/getbyuser";
+export const PARAMS_ACCOUNTS = "api/v2/accounts/usermail";
 export const PARAMS_DELETACCOUNTBYUSERANDEMAIL = "api/v1/accounts/emailuseraccount/deleteaccountbyuserandemail";
 export const INBOX_GOOGLE = "GOOGLE";
 export const INBOX_OUTLOOK = "OUTLOOK";

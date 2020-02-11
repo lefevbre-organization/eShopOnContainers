@@ -5,6 +5,7 @@ import ACTIONS from "../../actions/lexon";
 import { signOut } from "../../api_graph/authentication";
 import { PROVIDER } from "../../constants";
 import { getUserApplication } from '../../api_graph';
+import { getUser } from "../../api_graph/accounts";
 
 class UserLexon extends Component {
   constructor(props) {
@@ -72,23 +73,25 @@ class UserLexon extends Component {
 
   isUniqueAccountByProvider = async () => {
     const { lexon } = this.props;
-    const url = `${window.URL_GET_ACCOUNTS}/${lexon.userId}`;
 
-    const response = await fetch(url, { method: "GET" });
-    const result = await response.json();
+    try {
+      const result = await getUser(lexon.userId);
 
-    if (result.errors.length === 0) {
-      const accountsByProvider = result.data.accounts.filter(
-        account => account.provider === PROVIDER
-      );
-      if (accountsByProvider.length > 1) {
-        if (this.checkIsAuthenticated()) {
-         // this.onSignout();
+      if (result.errors.length === 0) {
+        const accountsByProvider = result.data.accounts.filter(
+          account => account.provider === PROVIDER
+        );
+        if (accountsByProvider.length > 1) {
+          if (this.checkIsAuthenticated()) {
+          // this.onSignout();
+          }
         }
+        this.setState({
+          readyToRedirect: true
+        });
       }
-      this.setState({
-        readyToRedirect: true
-      });
+    } catch(err) {
+      throw err;
     }
   };
 

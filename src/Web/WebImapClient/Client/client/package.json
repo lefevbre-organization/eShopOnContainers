@@ -6,6 +6,7 @@
   "scripts": {
     "build": "./node_modules/.bin/webpack -p --mode production",
     "start": "./node_modules/.bin/webpack-dev-server --config ./webpack.config.js --mode development",
+    "start:server": "java -jar ../server/build/libs/api-0.0.1-SNAPSHOT.jar",
     "test": "jest --coverage"
   },
   "keywords": [],
@@ -24,6 +25,7 @@
     "@tinymce/tinymce-react": "^2.3.0",
     "abortcontroller-polyfill": "^1.1.9",
     "babel-polyfill": "^6.26.0",
+    "base-64": "^0.1.0",
     "compression": "^1.7.2",
     "dompurify": "^1.0.7",
     "eev": "^0.1.5",
