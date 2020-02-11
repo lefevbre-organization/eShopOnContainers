@@ -168,9 +168,9 @@ export const deleteAccountByUserAndEmail = (encrypt, userId, provider, email) =>
               data: result.data
             });
           } else {
-            let errors;
+            let errors = [];
             result.errors.forEach(function(error) {
-              errors = `${error} `
+              errors.push(error.message)
             });
             reject(errors);
           }

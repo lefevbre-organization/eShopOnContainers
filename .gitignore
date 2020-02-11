@@ -291,3 +291,4 @@ src/**/inf.yaml
 /src/Web/WebPortalClient/node_modules_/@angular/compiler-cli/src/ngtsc/typecheck/src/context.d.ts
 /src/Web/WebPortalClient/node_modules_
 /src/Web/WebImapClient/Client/server/.settings
+/src/Web/WebImapClient/Client/server/.classpath

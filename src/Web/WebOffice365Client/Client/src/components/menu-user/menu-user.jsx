@@ -16,7 +16,6 @@ import { getUser, resetDefaultAccount } from "../../api_graph/accounts";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import i18n from "i18next";
-import { resetDefaultAccount } from '../../api_graph/accounts';
 
 class MenuUser extends Component {
   constructor(props) {
