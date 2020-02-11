@@ -489,6 +489,7 @@ export class Main extends Component {
                       sideBarCollapsed={leftSideBar.collapsed}
                       sideBarToggle={this.toggleSideBar}
                       refresh={()=> { this.refreshLabels(); }}
+                      notFoundModal={0}
                     />
                   )}
                 />
