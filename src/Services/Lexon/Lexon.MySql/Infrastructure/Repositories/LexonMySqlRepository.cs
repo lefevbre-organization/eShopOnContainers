@@ -52,6 +52,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         command.CommandType = CommandType.StoredProcedure;
                         using (var reader = await command.ExecuteReaderAsync())
                         {
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
                             if (EvaluateErrorCommand(result.errors, command) == 0)
                                 while (reader.Read()) { result.data = JsonConvert.DeserializeObject<JosUser>(reader.GetValue(0).ToString()); }
                         }
@@ -346,7 +347,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
             var result = new Result<int>(a);
             string filtro = GiveMeRelationFilter(bbdd, idUser, mailInfo, null, null, contactList);
 
-            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.RemoveRelation}", $"P_FILTER:{filtro}", $"P_UC:{idUser}" });
+            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.AddContactRelations}", $"P_FILTER:{filtro}", $"P_UC:{idUser}" });
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
                 try

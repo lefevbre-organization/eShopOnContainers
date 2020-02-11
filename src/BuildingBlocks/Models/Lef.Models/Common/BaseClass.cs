@@ -74,12 +74,14 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "")
         {
-            if (codeError == null || !(codeError is int) || (int)codeError == 0 || exMessage == null || !(exMessage is string))
+            //if (codeError == null || !(codeError is int) || (int)codeError == 0 || exMessage == null || !(exMessage is string))
+            //    return;
+            if (codeError == null  || exMessage == null || !(exMessage is string))
                 return;
 
             var errorInfo = new ErrorInfo
             {
-                code = (string)codeError,
+                code = codeError.ToString(),
                 message = (string)exMessage,
                 member = memberName,
                 source = sourceFilePath,
