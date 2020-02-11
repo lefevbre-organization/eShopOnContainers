@@ -19,6 +19,7 @@ import styles from "./message-editor.scss";
 import mainCss from "../../styles/main.scss";
 import i18n from "i18next";
 import ACTIONS from "../../actions/lexon";
+import { getUser, classifyEmail } from "../../services/accounts";
 
 const EDITOR_PERSISTED_AFTER_CHARACTERS_ADDED = 50;
 

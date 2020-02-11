@@ -1,6 +1,7 @@
 export const ActionTypes = {
   LEXON_USER: "LEXON_USER",
-  LEXON_CASEFILE: "LEXON_CASEFILE"
+  LEXON_CASEFILE: "LEXON_CASEFILE",
+  LEXON_ACCOUNT: "LEXON_ACCOUNT"
 };
 
 export const setUser = user => ({
@@ -13,7 +14,13 @@ export const setCaseFile = casefile => ({
   payload: casefile
 });
 
+export const setAccount = account => ({
+  type: ActionTypes.LEXON_ACCOUNT,
+  payload: account
+})
+
 export default {
   setUser,
-  setCaseFile
+  setCaseFile,
+  setAccount
 };

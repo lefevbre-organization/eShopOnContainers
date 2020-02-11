@@ -24,16 +24,17 @@ class UserLexon extends Component {
 
   async componentDidMount() {
     const user = this.props.match.params.idUser;
-    const account64 = this.props.match.params.account;
 
-
-    if (account64) {
-      // Get user account
-      const account = base64.decode(account64);
-
-      if (account) {        
-        this.props.setAccount(account);
-      }
+    if(this.props.location.search.indexOf("account=") > -1) {
+      const account64 = this.props.location.search.split("account=")[1];
+      if (account64) {
+        // Get user account
+        const account = base64.decode(account64);
+  
+        if (account) {        
+          this.props.setAccount(account);
+        }
+      }  
     }
 
     this.props.setUser(user);

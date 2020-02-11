@@ -93,6 +93,8 @@ class AppContainer extends Component {
       googleUser: googleUser,
       openEmail: this.props.match.params.idMail
     });
+
+    this.props.setAccount(googleUser.w3.U3);
   }
 
   renderView() {
@@ -118,7 +120,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   setUser: user => dispatch(ACTIONS.setUser(user)),
-  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile))
+  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
+  setAccount: account => dispatch(ACTIONS.setAccount(account))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);
