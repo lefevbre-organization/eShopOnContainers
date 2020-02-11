@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.marcnuri.isotope.api.folder.FolderUtilsTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2020-02-10T08:21:30" hostname="DESKTOP-PCQTJ6P" time="0.3">
+<testsuite name="com.marcnuri.isotope.api.folder.FolderUtilsTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2020-02-10T16:43:15" hostname="DESKTOP-U7U4TE6" time="0.257">
   <properties/>
-  <testcase name="getFileWithRef_URLNameWithEndHash_shouldReturnProperFolderName" classname="com.marcnuri.isotope.api.folder.FolderUtilsTest" time="0.001"/>
+  <testcase name="getFileWithRef_URLNameWithEndHash_shouldReturnProperFolderName" classname="com.marcnuri.isotope.api.folder.FolderUtilsTest" time="0.002"/>
   <testcase name="getFileWithRef_URLNameWithHash_shouldReturnProperFolderName" classname="com.marcnuri.isotope.api.folder.FolderUtilsTest" time="0.0"/>
-  <testcase name="renameFolder_validFolderAndName_shouldReturnParentWithRenamedChild" classname="com.marcnuri.isotope.api.folder.FolderUtilsTest" time="0.25"/>
-  <testcase name="addSystemFolders_emptyList_shouldAddTrashFolder" classname="com.marcnuri.isotope.api.folder.FolderUtilsTest" time="0.001"/>
-  <testcase name="addSystemFolders_listWithTrashAttribute_shouldDoNothing" classname="com.marcnuri.isotope.api.folder.FolderUtilsTest" time="0.044"/>
+  <testcase name="renameFolder_validFolderAndName_shouldReturnParentWithRenamedChild" classname="com.marcnuri.isotope.api.folder.FolderUtilsTest" time="0.209"/>
+  <testcase name="addSystemFolders_emptyList_shouldAddTrashFolder" classname="com.marcnuri.isotope.api.folder.FolderUtilsTest" time="0.002"/>
+  <testcase name="addSystemFolders_listWithTrashAttribute_shouldDoNothing" classname="com.marcnuri.isotope.api.folder.FolderUtilsTest" time="0.041"/>
   <testcase name="getFileWithRef_URLNameWithNoHash_shouldReturnProperFolderName" classname="com.marcnuri.isotope.api.folder.FolderUtilsTest" time="0.0"/>
   <testcase name="renameFolder_validFolderAndInvalidName_shouldThrowException" classname="com.marcnuri.isotope.api.folder.FolderUtilsTest" time="0.0"/>
   <testcase name="addSystemFolders_listWithTrashFolderName_shouldAddAttributeToExistingTrash" classname="com.marcnuri.isotope.api.folder.FolderUtilsTest" time="0.002"/>

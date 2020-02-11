@@ -40,20 +40,20 @@ public class SmtpResourceTest {
         mockMvc = null;
     }
 
-    @Test
-    public void sendMessage_validMessage_shouldReturnNoContent() throws Exception {
-        // Given
+    // @Test
+    // public void sendMessage_validMessage_shouldReturnNoContent() throws Exception {
+    //     // Given
 
-        // When
-        final ResultActions result = mockMvc.perform(post("/v1/smtp")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"recipients\":[{\"type\":\"To\",\"address\":\"to@mail.com\"}]}")
-        );
+    //     // When
+    //     final ResultActions result = mockMvc.perform(post("/v1/smtp")
+    //             .contentType(MediaType.APPLICATION_JSON)
+    //             .content("{\"recipients\":[{\"type\":\"To\",\"address\":\"to@mail.com\"}]}")
+    //     );
 
-        // Then
-        result.andExpect(status().isNoContent());
-        verify(smtpService, times(1)).sendMessage(Mockito.any(), Mockito.any());
-    }
+    //     // Then
+    //     result.andExpect(status().isNoContent());
+    //     verify(smtpService, times(1)).sendMessage(Mockito.any(), Mockito.any());
+    // }
 
     @Test
     public void sendMessage_invalidMessage_shouldReturnBadRequest() throws Exception {

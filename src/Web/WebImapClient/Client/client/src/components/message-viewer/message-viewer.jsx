@@ -10,6 +10,7 @@ import {getSelectedFolder} from '../../selectors/folders';
 import sanitize from '../../services/sanitize';
 import mainCss from '../../styles/main.scss';
 import styles from './message-viewer.scss';
+import ACTIONS from "../../actions/lexon";
 
 export function addressGroups(address) {
   const ret = {
@@ -21,6 +22,8 @@ export function addressGroups(address) {
   ret.email = formattedFrom !== null ? address.substring(formattedFrom[0].length).trim().replace(/[<>]/g, '') : '';
   return ret;
 }
+
+
 
 export class MessageViewer extends Component {
   render() {
@@ -63,6 +66,27 @@ export class MessageViewer extends Component {
     );
   }
 
+  componentWillUnmount() {
+    const { lexon } = this.props;
+  
+    clearTimeout(this.refreshPollTimeout);
+  
+    window.removeEventListener(
+      "GetUserFromLexonConnector",
+      this.handleGetUserFromLexonConnector
+    );
+  
+    if (lexon.idCaseFile !== null && lexon.idCaseFile !== undefined) {
+      window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
+      this.props.setCaseFile({
+        casefile: null,
+        bbdd: null,
+        company: null
+      });
+    }
+  }
+  
+
   onFolderClick(folder) {
     this.props.showFolder(folder);
   }
@@ -81,14 +105,16 @@ MessageViewer.defaultProps = {
 const mapStateToProps = state => ({
   refreshMessageActiveRequests: state.application.refreshMessageActiveRequests,
   currentFolder: getSelectedFolder(state) || {},
-  selectedMessage: state.application.selectedMessage
+  selectedMessage: state.application.selectedMessage,
+  lexon: state.lexon
 });
 
 const mapDispatchToProps = dispatch => ({
   showFolder: folder => {
     clearSelectedMessage(dispatch);
     dispatch(selectFolder(folder));
-  }
+  },
+  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MessageViewer);
