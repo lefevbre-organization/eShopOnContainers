@@ -39,7 +39,7 @@ class ResultsSearch extends Component {
     </Fragment>
   }
 
-  renderPerson(description, intervening, mail) {
+  renderPerson(description, intervening, email) {
     return <Fragment>
        <td>
           <span className="lf-icon-check"></span>
@@ -52,13 +52,13 @@ class ResultsSearch extends Component {
   }
 
   render() {
-    const { name, description, client, intervening = '', mail = '' } = this.props.result;
+    const { name, description, client, intervening = '', email = '' } = this.props.result;
     const classSelected = this.classSelected();
 
     return (
       <tr onClick={() => this._handleOnClick()} className={classSelected}>
         {this.props.selections.typeSelected === 1 && this.renderCasefile(name, description, intervening)}
-        {this.props.selections.typeSelected !== 1 && this.renderPerson(description, intervening, mail)}
+        {this.props.selections.typeSelected !== 1 && this.renderPerson(description, intervening, email)}
       </tr>
     );
   }
