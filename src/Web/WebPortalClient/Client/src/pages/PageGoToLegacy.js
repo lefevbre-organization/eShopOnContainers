@@ -135,8 +135,17 @@ export class PageGoToLegacy extends Component {
                 }
             })
             .catch(error => {
+                let message = "";
+                if(error.message) {
+                    message = error.message
+                } else if( Array.isArray(error)) {
+                    message = error.join(";")
+                } else if(typeof error === "string") {
+                    message = error;
+                }
+
                 store.addNotification({
-                    message: error.message,
+                    message,
                     type: "danger",
                     container: "bottom-center",
                     animationIn: ["animated", "fadeIn"],
