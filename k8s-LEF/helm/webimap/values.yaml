@@ -68,9 +68,10 @@ configValues: |
   window.URL_RESET_DEFAULTACCOUNT='https://now-apigwacc.lefebvre.es/api/v1/accounts/emailuseraccount/resetdefaultaccountbyuser'
   window.URL_DELETE_ACCOUNT='https://now-apigwacc.lefebvre.es/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider'
   window.URL_SELECT_ACCOUNT='https://now.lefebvre.es'
-  window.URL_GET_ACCOUNTS='https://now-apigwacc.lefebvre.es/api/v1/accounts/emailuseraccount/getbyuser'
+  window.URL_GET_ACCOUNTS='https://now-apigwacc.lefebvre.es/api/v2/accounts/usermail'
   window.URL_MF_GOOGLE='https://now-webgoogle.lefebvre.es/user'
   window.URL_MF_OUTLOOK='https://now-webgraph.lefebvre.es/user'
   window.URL_MF_IMAP='https://now-webimap.lefebvre.es/user'
   window.URL_MF_LEXON='https://now-weblexon.lefebvre.es/static/js/main.js'
-  window.API_GATEWAY='https://now-apigwlex.lefebvre.es'
+  window.API_GATEWAY='https://now-apigwlex.lefebvre.es'  
+  window.API_ACC_GATEWAY = "https://now-apigwacc.lefebvre.es";
