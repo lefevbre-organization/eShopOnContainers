@@ -30,7 +30,7 @@ import SidebarCnn from "react-sidebar";
 import LexonComponent from "../../apps/lexon_content";
 import CalendarComponent from "../../apps/calendar_content";
 import "react-reflex/styles.css";
-import { addOrUpdateAccount } from "../../api/accounts";
+import { addOrUpdateAccount, resetDefaultAccount } from "../../api/accounts";
 import { PROVIDER } from "../../constants";
 
 export class Main extends Component {
@@ -362,11 +362,8 @@ export class Main extends Component {
   onSignout() {
     console.log("IN ... onSignout");
     const { userId } = this.props.lexon;
-    const url = `${window.URL_RESET_DEFAULTACCOUNT}/${userId}`;
-    fetch(url, {
-      method: "GET"
-    })
-        .then(result => {
+      resetDefaultAccount(userId)
+      .then(result => {
             signOut()
       })
       .then(_ => {
@@ -381,17 +378,14 @@ export class Main extends Component {
     onSignoutDisconnect() {
         console.log("IN ... onSignoutDisconnect");
         const { userId } = this.props.lexon;
-        const url = `${window.URL_RESET_DEFAULTACCOUNT}/${userId}`;
-        fetch(url, {
-            method: "GET"
+        resetDefaultAccount(userId)
+        .then(result => {
+            signOutDisconnect()
         })
-            .then(result => {
-                signOutDisconnect()
-            })
-            .then(_ => {
-                const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-                window.open(urlRedirect, "_self");
-            });
+        .then(_ => {
+            const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+            window.open(urlRedirect, "_self");
+        });
 
         //sessionStorage.clear();
         //localStorage.clear();

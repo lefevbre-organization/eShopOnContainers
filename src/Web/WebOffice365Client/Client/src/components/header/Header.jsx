@@ -15,6 +15,7 @@ import { Nav, NavItem, NavLink } from "reactstrap";
 import { connect } from "react-redux";
 import MenuUser from "../menu-user/menu-user";
 import i18n from "i18next";
+import { resetDefaultAccount } from "../../api_graph/accounts";
 
 export class Header extends PureComponent {
   constructor(props) {
@@ -36,11 +37,8 @@ export class Header extends PureComponent {
   _handleOnClick(e) {
     const { userId } = this.props.lexon;
     if (userId !== null) {
-      const url = `${window.URL_RESET_DEFAULTACCOUNT}/${userId}`;
-      fetch(url, {
-        method: "GET"
-      })
-        .then(() => {
+      resetDefaultAccount(userId)
+      .then(() => {
           const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
           window.open(urlRedirect, "_self");
         })

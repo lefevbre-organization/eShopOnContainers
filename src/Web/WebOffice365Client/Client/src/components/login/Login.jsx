@@ -2,6 +2,7 @@ import React from "react";
 import { withTranslation } from "react-i18next";
 import { Button } from "reactstrap";
 import "./Login.scss";
+import { resetDefaultAccount } from "../../api_graph/accounts";
 
 function MSAuthButton(props) {
   return (
@@ -22,11 +23,8 @@ export class Login extends React.Component {
      if (typeof this.props.lexon !== 'undefined') {
          const { userId } = this.props.lexon;
          if (userId !== null) {
-             const url = `${window.URL_RESET_DEFAULTACCOUNT}/${userId}`;
-             fetch(url, {
-                    method: "GET"
-             })
-                .then(result => {
+          resetDefaultAccount(userId)
+          .then(result => {
                         const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
                         window.open(urlRedirect, "_self");
                 })

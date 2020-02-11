@@ -3,6 +3,7 @@ import GoogleButton from "react-google-button";
 import i18n from "i18next";
 import { Button } from "reactstrap";
 import "./login.scss";
+import { resetDefaultAccount } from "../../api/accounts";
 
 
 export class Login extends Component {
@@ -11,10 +12,7 @@ goBack() {
    if (typeof this.props.lexon !== 'undefined') {
       const { userId } = this.props.lexon;
       if (userId !== null) {
-          const url = `${window.URL_RESET_DEFAULTACCOUNT}/${userId}`;
-          fetch(url, {
-              method: "GET"
-          })
+          resetDefaultAccount(userId)
           .then(result => {
               const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
               window.open(urlRedirect, "_self");
