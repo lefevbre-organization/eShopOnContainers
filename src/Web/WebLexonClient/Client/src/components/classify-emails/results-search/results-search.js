@@ -46,7 +46,7 @@ class ResultsSearch extends Component {
           {description}
         </td>
          <td>
-          {mail}
+          {email}
          </td>
     </Fragment>
   }
