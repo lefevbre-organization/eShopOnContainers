@@ -8,3 +8,5 @@ export const USER = "api/v1/lex/Lexon/user"
 export const PAGE_SELECT_COMPANY = "PAGE_SELECT_COMPANY";
 export const PAGE_CASEFILE = "PAGE_CASEFILE";
 export const PAGE_SELECT_ACTION = "PAGE_SELECT_ACTION";
+export const PAGE_CONFIGURATION = "PAGE_CONFIGURATION";
+

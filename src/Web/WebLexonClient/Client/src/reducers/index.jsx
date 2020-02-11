@@ -7,7 +7,8 @@ import applicationReducer from "./applicationReducer";
 export const INITIAL_STATE = {
   application: {
     errors: [],
-    idCaseFile: null
+    idCaseFile: null,
+    config: {}
   },
   email: {
     selectedMessages: []
