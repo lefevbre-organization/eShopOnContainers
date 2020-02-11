@@ -30,7 +30,7 @@ import LexonComponent from "../../apps/lexon_content";
 import SidebarComponent from "../../apps/sidebar_content";
 import ComposeMessage from "../compose-message/ComposeMessage";
 import "react-reflex/styles.css";
-import { addOrUpdateAccount } from "../../api_graph/accounts";
+import { addOrUpdateAccount, resetDefaultAccount } from "../../api_graph/accounts";
 import { PROVIDER } from "../../constants";
 
 export class Main extends Component {
@@ -392,10 +392,8 @@ export class Main extends Component {
   onSignout() {
     const { userId } = this.props.lexon;
     if (userId !== null) {
-      const url = `${window.URL_RESET_DEFAULTACCOUNT}/${userId}`;
-      fetch(url, {
-        method: "GET"
-      }).then(result => {
+      resetDefaultAccount(userId)
+      .then(result => {
         console.log(result);
 
         const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;

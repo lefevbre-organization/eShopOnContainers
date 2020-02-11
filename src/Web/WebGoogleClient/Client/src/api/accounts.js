@@ -31,3 +31,18 @@ export const addOrUpdateAccount = async (userId, account) => {
         throw err;
     }
 }
+
+export const resetDefaultAccount = async (userId) => {
+    const url = `${window.URL_GET_ACCOUNTS}/${userId}/account/reset`;
+         
+    try {
+        const res = await fetch(url, {
+            method: "POST"
+        });
+        
+        const user = await res.json();
+        return user;
+    } catch(err) {
+        throw err;
+    }
+}

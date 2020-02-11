@@ -12,7 +12,7 @@ import {
   DropdownToggle
 } from "reactstrap";
 import AccountUser from "./account-user/account-user";
-import { getUser } from "../../api/accounts";
+import { getUser, resetDefaultAccount } from "../../api/accounts";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import i18n from "i18next";
@@ -67,10 +67,7 @@ class MenuUser extends Component {
   _handleOnClick() {
     const { userId } = this.props.lexon;
     if (userId !== null) {
-      const url = `${window.URL_RESET_DEFAULTACCOUNT}/${userId}`;
-      fetch(url, {
-        method: "GET"
-      })
+        resetDefaultAccount(userId)
         .then(result => {
           const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
           window.open(urlRedirect, "_self");
