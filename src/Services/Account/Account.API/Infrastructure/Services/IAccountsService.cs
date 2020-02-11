@@ -28,6 +28,7 @@
         Task<Result<Account>> GetAccount(string user, string provider, string mail);
 
         Task<Result<Account>> GetDefaultAccount(string user);
+        Task<Result<long>> Remove(string user);
 
         Task<Result<UserMail>> RemoveAccount(string user, string provider, string mail);
 

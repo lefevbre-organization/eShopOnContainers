@@ -305,7 +305,7 @@
                 var resultReplace = await _context.Accounts.ReplaceOneAsync(GetFilterUser(userMail.User, false), userMail, GetUpsertOptions());
 
                 if (!resultReplace.IsAcknowledged)
-                    TraceMessage(result.errors, new Exception($"Don´t insert or modify the user"), (short)TypeOfInfo.MongoOtherError);
+                    TraceMessage(result.errors, new Exception($"Don´t insert or modify the user"), "1003");
                 else if (resultReplace.IsAcknowledged && resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
                     TraceInfo(result.infos, $"Se modifica el usuario {userMail.User}");
                 else if (resultReplace.IsAcknowledged && resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
@@ -395,7 +395,7 @@
             {
                 var update = Builders<UserMail>.Update.PullFilter(
                     p => p.accounts,
-                    f => f.email.Equals(mail.ToLowerInvariant()) && f.provider.Equals(provider.ToLowerInvariant()));
+                    f => f.email.Equals(mail.ToLowerInvariant()) && f.provider.Equals(provider.ToUpperInvariant()));
                 var userUpdate = await _context.Accounts.FindOneAndUpdateAsync<UserMail>(
                     GetFilterUser(user),
                     update, options);
@@ -463,7 +463,7 @@
                     userDb.accounts.ForEach(x => x.defaultAccount = false);    
                     var accountDb = userDb.accounts.Find(
                         a => a.email == accountIn.email.ToLowerInvariant()
-                        && a.provider == accountIn.provider.ToLowerInvariant());
+                        && a.provider == accountIn.provider.ToUpperInvariant());
 
                     if (accountDb == null)
                     {
@@ -529,7 +529,7 @@
 
                 if (!resultUpdate.IsAcknowledged)
                 {
-                    TraceMessage(result.errors, new Exception($"Don´t insert or modify the userconfig"), (short)TypeOfInfo.MongoOtherError);
+                    TraceMessage(result.errors, new Exception($"Don´t insert or modify the userconfig"), "1003");
                 }
                 else if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
                 {
@@ -564,7 +564,7 @@
 
                 if (!resultUpdate.IsAcknowledged)
                 {
-                    TraceMessage(result.errors, new Exception($"Don´t insert or modify the relation"), (short)TypeOfInfo.MongoOtherError);
+                    TraceMessage(result.errors, new Exception($"Don´t insert or modify the relation"), "1003");
                 }
                 else if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
                 {
@@ -598,7 +598,7 @@
 
                 if (!resultUpdate.IsAcknowledged)
                 {
-                    TraceMessage(result.errors, new Exception($"Don´t insert or modify the relation"), (short)TypeOfInfo.MongoOtherError);
+                    TraceMessage(result.errors, new Exception($"Don´t insert or modify the relation"), "1003");
                 }
                 else if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
                 {
@@ -643,7 +643,7 @@
 
                 if (!resultUpdate.IsAcknowledged)
                 {
-                    TraceMessage(result.errors, new Exception($"Don´t insert or modify the account config"), (short)TypeOfInfo.MongoOtherError);
+                    TraceMessage(result.errors, new Exception($"Don´t insert or modify the account config"), "1003");
                 }
                 else if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
                 {
@@ -679,12 +679,12 @@
         private static Predicate<Account> GetFilterProviderMail(string provider, string mail)
         {
             return x => x.email.Equals(mail.ToLowerInvariant())
-                                    && x.provider.Equals(provider.ToLowerInvariant());
+                                    && x.provider.Equals(provider.ToUpperInvariant());
         }
 
         private static void ReviewAccountMail(Account acc)
         {
-            acc.provider = acc.provider.ToLowerInvariant();
+            acc.provider = acc.provider.ToUpperInvariant();
             acc.email = acc.email.ToLowerInvariant();
             acc.defaultAccount = true;
             if (acc.mails == null)
@@ -741,9 +741,26 @@
                 configUser = new ConfigUserLexon() { defaultAdjunction = "onlyAdjunction", defaultEntity = "files", getContacts = false },
                 state = true,
                 accounts = new List<Account>() {
-                        new Account() {defaultAccount = true, email= email.ToLowerInvariant(), guid= guid, provider= provider.ToLowerInvariant() , mails = new List<MailRelation>()}
+                        new Account() {defaultAccount = true, email= email.ToLowerInvariant(), guid= guid, provider= provider.ToUpperInvariant() , mails = new List<MailRelation>()}
                     }
             };
+        }
+
+        public async Task<Result<long>> Remove(string user)
+        {
+            var result = new Result<long>();
+            try
+            {
+                var resultRemove = await _context.Accounts.DeleteOneAsync(GetFilterUser(user, false));
+                result.data = resultRemove.DeletedCount;
+                //var eventAssoc = new AddOperationAccountIntegrationEvent(accountRemove.User, accountRemove.Provider, accountRemove.Email, accountRemove.DefaultAccount, EnTypeOperation.Remove);
+                //_eventBus.Publish(eventAssoc);
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
         }
 
         #endregion Common

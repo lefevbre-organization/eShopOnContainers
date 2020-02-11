@@ -92,6 +92,21 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        [HttpPost("{user}/delete")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> DeleteUser(
+            [FromRoute]string user
+            )
+        {
+            if (string.IsNullOrEmpty(user) )
+                return BadRequest("values invalid. Must be a valid user to delete the userMail");
+
+            var result = await _accountsService.Remove(user);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
         [HttpPost("{user}/config/addorupdate")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]

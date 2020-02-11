@@ -2,7 +2,7 @@
 {
     public class Info
     {
-        public int code { get; set; }
+        public string code { get; set; }
         public string message { get; set; }
 
     }

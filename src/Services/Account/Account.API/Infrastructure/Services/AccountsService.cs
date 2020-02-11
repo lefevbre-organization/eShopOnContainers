@@ -75,6 +75,11 @@
             return await _accountsRepository.GetDefaultAccount(user);
         }
 
+        public async Task<Result<long>> Remove(string user)
+        {
+            return await _accountsRepository.Remove(user);
+        }
+
         public async Task<Result<UserMail>> RemoveAccount(string user, string provider, string mail)
         {
             return await _accountsRepository.RemoveAccount(user, provider, mail);
@@ -115,6 +120,5 @@
             return await _accountsRepository.UpSertAccountConfig(user, provider, mail, config);
 
         }
-
     }
 }
