@@ -462,8 +462,8 @@
                 {
                     userDb.accounts.ForEach(x => x.defaultAccount = false);    
                     var accountDb = userDb.accounts.Find(
-                        a => a.email.ToLowerInvariant() == accountIn.email.ToLowerInvariant()
-                        && a.provider.ToLowerInvariant() == accountIn.provider.ToLowerInvariant());
+                        a => a.email == accountIn.email.ToLowerInvariant()
+                        && a.provider == accountIn.provider.ToLowerInvariant());
 
                     if (accountDb == null)
                     {
@@ -678,8 +678,8 @@
 
         private static Predicate<Account> GetFilterProviderMail(string provider, string mail)
         {
-            return x => x.email.ToLowerInvariant().Equals(mail.ToLowerInvariant())
-                                    && x.provider.ToLowerInvariant().Equals(provider.ToLowerInvariant());
+            return x => x.email.Equals(mail.ToLowerInvariant())
+                                    && x.provider.Equals(provider.ToLowerInvariant());
         }
 
         private static void ReviewAccountMail(Account acc)
