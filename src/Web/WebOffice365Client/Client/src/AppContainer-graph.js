@@ -101,6 +101,7 @@ class AppContainerGraph extends Component {
             console.log(err);
           })
       } else {
+        debugger
         this.setState({
           signInStatus: AUTH_SUCCESS,
           readyToRedirect: true,
@@ -205,6 +206,7 @@ class AppContainerGraph extends Component {
           },
           error: null
         });
+        this.props.setAccount(accessToken.account.userName);
         this.onSignInSuccess();
       }
       return true;
@@ -240,7 +242,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   setUser: user => dispatch(ACTIONS.setUser(user)),
-  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile))
+  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
+  setAccount: account => dispatch(ACTIONS.setAccount(account))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppContainerGraph);

@@ -7,7 +7,8 @@ const defaultLexon = {
   isNewAccount: false,
   idCaseFile: null,
   bbdd: null,
-  idCompany: null
+  idCompany: null,
+  account: null
 };
 
 export const lexon = (state = defaultLexon, action = {}) => {
@@ -32,6 +33,12 @@ export const lexon = (state = defaultLexon, action = {}) => {
         bbdd: action.payload.bbdd,
         idCompany: action.payload.company
       };
+
+    case ActionTypes.LEXON_ACCOUNT:
+      return {
+        ...state,
+        account: action.payload
+      }
 
     default:
       return state;

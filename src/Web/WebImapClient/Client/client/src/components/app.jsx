@@ -27,7 +27,7 @@ import { resetFolderMessagesCache } from "../services/message";
 import { readMessage } from "../services/message-read";
 import { persistApplicationNewMessageContent } from "../services/indexed-db";
 
-import { addOrUpdateAccount } from "../services/accounts";
+import { addOrUpdateAccount, getUser, classifyEmail } from "../services/accounts";
 // import SplitPane from "react-split-pane";
 import styles from "./app.scss";
 import IconButton from "./buttons/icon-button";
@@ -540,9 +540,34 @@ class App extends Component {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  componentDidUpdate() {
+  async componentDidUpdate() {
     if (this.props.lexon.userId !== "" && this.props.outbox && this.props.outbox.sent && !this.props.outbox.eventNotified){      
         this.sentEmail(this.props.outbox.idMessage, this.props.outbox.message.subject);
+
+        if(this.props.lexon.bbdd && this.props.lexon.account) {
+          try {
+            const user = await getUser(this.props.lexon.userId);
+            if(user && user.data && user.data.configUser) {
+              if(user.data.configUser.getContacts) {
+                const emailDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+                debugger
+                await classifyEmail(this.props.outbox.idMessage, 
+                  this.props.outbox.message.subject,
+                  emailDate, 
+                  this.props.outbox.message.recipients.map(rec => rec.address), 
+                  this.props.lexon.provider, 
+                  this.props.lexon.account, 
+                  this.props.lexon.bbdd, 
+                  user.data.lexonUserId
+                  );
+              }
+            }
+    
+          } catch(err) {
+            //throw err;
+          }
+        }
+
         this.props.outboxEventNotified();
     }
     else {
