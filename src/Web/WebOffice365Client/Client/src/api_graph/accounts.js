@@ -3,7 +3,6 @@ export const getUser = async (userId) => {
     const url = `${window.URL_GET_ACCOUNTS}/${userId}`;
     const url2 = `${window.API_GATEWAY}/api/v1/lex/Lexon/user?idUserNavision=${userId}`;
 
-    debugger
     try {
         const res = await fetch(url, {
         method: "GET"
