@@ -349,6 +349,78 @@
             return result;
         }
 
+        public async Task<Result<long>> Remove(string user)
+        {
+            var result = new Result<long>();
+            try
+            {
+                var resultRemove = await _context.Accounts.DeleteOneAsync(GetFilterUser(user, false));
+                result.data = resultRemove.DeletedCount;
+                //var eventAssoc = new AddOperationAccountIntegrationEvent(accountRemove.User, accountRemove.Provider, accountRemove.Email, accountRemove.DefaultAccount, EnTypeOperation.Remove);
+                //_eventBus.Publish(eventAssoc);
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
+
+        public async Task<Result<bool>> ChangueState(string user, bool state)
+        {
+            var result = new Result<bool>();
+            try
+            {
+                var resultUpdate = await _context.Accounts.UpdateOneAsync(
+                    GetFilterUser(user, false),
+                    Builders<UserMail>.Update.Set(x => x.state, state)
+                 );
+
+                var modificados = resultUpdate.IsAcknowledged && resultUpdate.ModifiedCount > 0;
+                TraceLog(parameters: new string[] { $"Se pone el usuario {user} en estado :{state}" });
+
+                result.data = modificados;
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
+
+        public async Task<Result<bool>> UpSertConfig(string user, ConfigUserLexon config)
+        {
+            var result = new Result<bool>();
+
+            try
+            {
+                var resultUpdate = await _context.Accounts.UpdateOneAsync(
+                    GetFilterUser(user),
+                    Builders<UserMail>.Update.Set($"configUser", config)
+                );
+
+                if (!resultUpdate.IsAcknowledged)
+                {
+                    TraceMessage(result.errors, new Exception($"Don´t insert or modify the userconfig"), "1003");
+                }
+                else if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
+                {
+                    TraceInfo(result.infos, $"Se modifica el usuario {user} modificando la configuracion a adjunction: {config.defaultAdjunction} - entity: {config.defaultEntity} - getContacts: {config.getContacts}");
+                    result.data = resultUpdate.ModifiedCount > 0;
+                }
+
+                //var insertado = resultUpdate.IsAcknowledged ? resultUpdate.ModifiedCount : 0;
+                //TraceLog(parameters: new string[] { $"Se cambia o inserta configuracion  con  getContacts: {config.getContacts} defaultAdjunction: {config.defaultAdjunction} defaultEntity a {config.defaultEntity}" });
+                //result.data = resultUpdate.IsAcknowledged && resultUpdate.ModifiedCount > 0;
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+
+            return result;
+        }
+
         public async Task<Result<Account>> GetAccount(string user, string provider, string mail)
         {
             var result = new Result<Account>();
@@ -497,62 +569,6 @@
             result.data = 1;
             return result;
         }
-
-        public async Task<Result<bool>> ChangueState(string user, bool state)
-        {
-            var result = new Result<bool>();
-            try
-            {
-                var resultUpdate = await _context.Accounts.UpdateOneAsync(
-                    GetFilterUser(user, false),
-                    Builders<UserMail>.Update.Set(x => x.state, state)
-                 );
-
-                var modificados = resultUpdate.IsAcknowledged && resultUpdate.ModifiedCount > 0;
-                TraceLog(parameters: new string[] { $"Se pone el usuario {user} en estado :{state}" });
-
-                result.data = modificados;
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
-            return result;
-        }
-
-        public async Task<Result<bool>> UpSertConfig(string user, ConfigUserLexon config)
-        {
-            var result = new Result<bool>();
-
-            try
-            {
-                var resultUpdate = await _context.Accounts.UpdateOneAsync(
-                    GetFilterUser(user),
-                    Builders<UserMail>.Update.Set($"configUser", config)
-                );
-
-                if (!resultUpdate.IsAcknowledged)
-                {
-                    TraceMessage(result.errors, new Exception($"Don´t insert or modify the userconfig"), "1003");
-                }
-                else if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
-                {
-                    TraceInfo(result.infos, $"Se modifica el usuario {user} modificando la configuracion a adjunction: {config.defaultAdjunction} - entity: {config.defaultEntity} - getContacts: {config.getContacts}");
-                    result.data = resultUpdate.ModifiedCount > 0;
-                }
-
-                //var insertado = resultUpdate.IsAcknowledged ? resultUpdate.ModifiedCount : 0;
-                //TraceLog(parameters: new string[] { $"Se cambia o inserta configuracion  con  getContacts: {config.getContacts} defaultAdjunction: {config.defaultAdjunction} defaultEntity a {config.defaultEntity}" });
-                //result.data = resultUpdate.IsAcknowledged && resultUpdate.ModifiedCount > 0;
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
-
-            return result;
-        }
-
         public async Task<Result<bool>> UpSertRelationMail(string user, string provider, string mail, MailRelation relation)
         {
             var result = new Result<bool>();
@@ -746,24 +762,6 @@
                     }
             };
         }
-
-        public async Task<Result<long>> Remove(string user)
-        {
-            var result = new Result<long>();
-            try
-            {
-                var resultRemove = await _context.Accounts.DeleteOneAsync(GetFilterUser(user, false));
-                result.data = resultRemove.DeletedCount;
-                //var eventAssoc = new AddOperationAccountIntegrationEvent(accountRemove.User, accountRemove.Provider, accountRemove.Email, accountRemove.DefaultAccount, EnTypeOperation.Remove);
-                //_eventBus.Publish(eventAssoc);
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
-            return result;
-        }
-
         #endregion Common
     }
 }
