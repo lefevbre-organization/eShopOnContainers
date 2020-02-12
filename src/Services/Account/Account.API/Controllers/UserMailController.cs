@@ -1,6 +1,6 @@
 ﻿namespace Account.API.Controllers
 {
-    #region
+    #region Usings
 
     using Infrastructure.Services;
     using Microsoft.AspNetCore.Mvc;
@@ -33,6 +33,8 @@
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
         }
 
+        #region User
+
         [HttpGet("{user}")]
         [ProducesResponseType(typeof(Result<UserMail>), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(Result<UserMail>), (int)HttpStatusCode.OK)]
@@ -50,11 +52,11 @@
         [HttpPost]
         [ProducesResponseType(typeof(Result<UserMail>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<UserMail>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> Post(
+        public async Task<IActionResult> PostUser(
             [FromBody] UserMail accountIn
             )
         {
-            if (string.IsNullOrEmpty(accountIn.User) )
+            if (string.IsNullOrEmpty(accountIn.User))
                 return BadRequest("values invalid. Must be a valid user and valid data to configuration");
 
             var result = await _accountsService.Create(accountIn);
@@ -93,13 +95,13 @@
         }
 
         [HttpPost("{user}/delete")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> DeleteUser(
             [FromRoute]string user
             )
         {
-            if (string.IsNullOrEmpty(user) )
+            if (string.IsNullOrEmpty(user))
                 return BadRequest("values invalid. Must be a valid user to delete the userMail");
 
             var result = await _accountsService.Remove(user);
@@ -110,8 +112,8 @@
         [HttpPost("{user}/config/addorupdate")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> AddConfig(
-            [FromRoute] string user
+        public async Task<IActionResult> AddUserConfig(
+              [FromRoute] string user
             , [FromBody] ConfigUserLexon config
             )
         {
@@ -123,10 +125,15 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        #endregion New Region
+
+        #region Accounts
+
+
         [HttpPost("{user}/account/{provider}/{mail}/config/addorupdate")]
-        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> AddConfigToAccount(
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> AddAccountConfig(
               [FromRoute]string user
             , [FromRoute]string provider
             , [FromRoute]string mail
@@ -146,7 +153,7 @@
         [ProducesResponseType(typeof(Result<Account>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<Account>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetAccountByMail(
-            [FromRoute]string user
+              [FromRoute]string user
             , [FromRoute]string provider
             , [FromRoute]string mail
             )
@@ -173,11 +180,28 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        [HttpPost("{user}/account/delete/{provider}/{email}")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> DeleteAccountByUserAndEmail(
+              [FromRoute]string user
+            , [FromRoute]string provider
+            , [FromRoute]string email
+            )
+        {
+            if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(provider) || string.IsNullOrEmpty(email))
+                return BadRequest("values invalid. Must be a valid user, provider and email to delete the account of userMail");
+
+            var result = await _accountsService.RemoveAccount(user, provider, email);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
         [HttpPost("{user}/account/addorupdate")]
-        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> Post(
-            [FromRoute]string user
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> PostAccount(
+              [FromRoute]string user
             , [FromBody]Account accountIn
             )
         {
@@ -189,17 +213,36 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        [HttpPost("{user}/account/reset")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> ResetAccounts(
+            [FromRoute]string user)
+        {
+            if (string.IsNullOrEmpty(user))
+                return BadRequest("values invalid. Must be a valid user to reset the defaultAccount");
+
+            var result = await _accountsService.ResetDefaultAccountByUser(user);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        #endregion New Region
+
+        #region Relations
+
+
         [HttpPost("{user}/account/{provider}/{mail}/relation/addorupdate")]
-        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> AddRelationToMail(
-            [FromRoute]string user
+              [FromRoute]string user
             , [FromRoute]string provider
             , [FromRoute]string mail
             , [FromBody] MailRelation relation
     )
         {
-            if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(provider) || string.IsNullOrEmpty(mail) 
+            if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(provider) || string.IsNullOrEmpty(mail)
                 || string.IsNullOrEmpty(relation?.uid) || string.IsNullOrEmpty(relation?.app) || relation?.idEntity == 0)
                 return BadRequest("values invalid. Must be a valid user, email, provider and relations data to insert or update the relation");
 
@@ -209,10 +252,10 @@
         }
 
         [HttpPost("{user}/account/{provider}/{mail}/relation/delete")]
-        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> RemoveRelationFromMail(
-            [FromRoute]string user
+              [FromRoute]string user
             , [FromRoute]string provider
             , [FromRoute]string mail
             , [FromBody] MailRelation relation
@@ -228,10 +271,10 @@
         }
 
         [HttpPost("{user}/account/{provider}/{mail}/{uid}/relations")]
-        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<List<MailRelation>>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<List<MailRelation>>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetRelationsFromMail(
-            [FromRoute] string user
+              [FromRoute] string user
             , [FromRoute] string provider
             , [FromRoute] string mail
             , [FromRoute] string uid
@@ -246,35 +289,6 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost("{user}/account/delete/{provider}/{email}")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> DeleteAccountByUserAndEmail(
-            [FromRoute]string user
-            , [FromRoute]string provider
-            , [FromRoute]string email
-            )
-        {
-            if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(provider) || string.IsNullOrEmpty(email))
-                return BadRequest("values invalid. Must be a valid user, provider and email to delete the account of userMail");
-
-            var result = await _accountsService.RemoveAccount(user, provider, email);
-
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-        }
-
-        [HttpPost("{user}/account/reset")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> ResetAccounts(
-            [FromRoute]string user)
-        {
-            if (string.IsNullOrEmpty(user))
-                return BadRequest("values invalid. Must be a valid user to reset the defaultAccount");
-
-            var result = await _accountsService.ResetDefaultAccountByUser(user);
-
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-        }
+#endregion New Region
     }
 }

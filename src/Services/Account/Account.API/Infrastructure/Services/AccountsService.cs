@@ -31,36 +31,13 @@
             return await _accountsRepository.Create(account);
         }
 
-        //#region old
-
-        //public async Task<Result<AccountList>> GetByUser(string user)
-        //{
-        //    return await _accountsRepository.GetByUser(user);
-        //}
-
-        //#endregion old
-
-        //public async Task<Result<long>> UpdateDefaultAccount(string user, string email, string provider, string guid)
-        //{
-        //    return await _accountsRepository.UpdateDefaultAccount(user, email, provider, guid);
-        //}
-
-        //public async Task<Result<long>> DeleteAccountByUserAndEmail(string user, string email)
-        //{
-        //    return await _accountsRepository.DeleteAccountByUserAndEmail(user, email);
-        //}
-
-
-        //public async Task<Result<long>> DeleteAccountByUser(string user)
-        //{
-        //    return await _accountsRepository.DeleteAccountByUser(user);
-        //}
-        public async Task<Result<long>> ResetDefaultAccountByUser(string user)
+ 
+        public async Task<Result<bool>> ResetDefaultAccountByUser(string user)
         {
             return await _accountsRepository.ResetDefaultAccountByUser(user);
         }
 
-        public async Task<Result<long>> UpSertAccount(string user, Account accountIn)
+        public async Task<Result<bool>> UpSertAccount(string user, Account accountIn)
         {
             return await _accountsRepository.UpSertAccount(user, accountIn);
         }
@@ -75,7 +52,7 @@
             return await _accountsRepository.GetDefaultAccount(user);
         }
 
-        public async Task<Result<long>> Remove(string user)
+        public async Task<Result<bool>> Remove(string user)
         {
             return await _accountsRepository.Remove(user);
         }

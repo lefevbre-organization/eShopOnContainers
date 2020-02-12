@@ -13,22 +13,16 @@
     {
         Task<Result<UserMail>> Create(UserMail account);
 
-        //Task<Result<AccountList>> GetByUser(string user);
-
         Task<Result<UserMail>> GetUser(string user);
 
-        //Task<Result<long>> UpdateDefaultAccount(string user, string provider, string email, string guid);
+        Task<Result<bool>> ResetDefaultAccountByUser(string user);
 
-        //Task<Result<long>> DeleteAccountByUserAndEmail(string user, string email);
-
-        Task<Result<long>> ResetDefaultAccountByUser(string user);
-
-        Task<Result<long>> UpSertAccount(string user, Account accountIn);
+        Task<Result<bool>> UpSertAccount(string user, Account accountIn);
 
         Task<Result<Account>> GetAccount(string user, string provider, string mail);
 
         Task<Result<Account>> GetDefaultAccount(string user);
-        Task<Result<long>> Remove(string user);
+        Task<Result<bool>> Remove(string user);
 
         Task<Result<UserMail>> RemoveAccount(string user, string provider, string mail);
 
@@ -43,6 +37,5 @@
         Task<Result<List<MailRelation>>> GetRelationsFromMail(string user, string provider, string mail, string uid);
 
         Task<Result<bool>> UpSertAccountConfig(string user, string provider, string mail,  ConfigImapAccount config);
-        //Task<Result<long>> DeleteAccountByUser(string user);
     }
 }
