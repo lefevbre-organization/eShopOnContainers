@@ -51,9 +51,6 @@ class CaseFile extends Component {
       return null;
     }
 
-    console.log("CASEFILE")
-    console.log(caseFile)
-
     if (!caseFile || (caseFile && caseFile.id === 0)) {
       return (<div class="container">
         <h2 class="lex-on-related-file-title">
