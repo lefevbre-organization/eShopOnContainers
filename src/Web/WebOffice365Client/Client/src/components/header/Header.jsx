@@ -92,7 +92,7 @@ export class Header extends PureComponent {
             <img
               border="0"
               alt="lefebvre"
-              src="assets/img/LogoLefebvre.png"
+              src="/assets/img/LogoLefebvre.png"
             ></img>
           </Link>
         </div>
@@ -147,7 +147,7 @@ export class Header extends PureComponent {
                 <DropdownToggle nav>
                   <img
                     className="img-menu"
-                    src="assets/img/icon-products.png"
+                    src="/assets/img/icon-products.png"
                     alt=""
                   />
                 </DropdownToggle>

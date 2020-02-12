@@ -155,7 +155,7 @@ export class Sidebar extends Component {
             className="logo-ext"
             border="0"
             alt="otulook"
-            src="assets/img/office365.png"
+            src="/assets/img/office365.png"
           ></img>
           {i18n.t("sidebar.folders")}
         </li>
@@ -217,7 +217,7 @@ export class Sidebar extends Component {
                   className="ImgLf"
                   border="0"
                   alt="otulook"
-                  src="assets/img/plus.png"
+                  src="/assets/img/plus.png"
                 ></img>
                 {i18n.t("sidebar.compose")}
               </Link>
