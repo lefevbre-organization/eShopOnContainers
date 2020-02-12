@@ -91,6 +91,7 @@
   },
   "case-file": {
     "casefile-related": "Related Casefile",
+    "casefile-notfound": "Related Casefile not found",
     "identifier": "Identifier",
     "description": "Description:",
     "client": "Client:"

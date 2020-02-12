@@ -91,6 +91,7 @@
   },
   "case-file": {
     "casefile-related": "Expediente relacionado",
+    "casefile-notfound": "Expediente relacionado no encontrado",
     "identifier": "Identificador",
     "description": "Descripción:",
     "client": "Cliente:"

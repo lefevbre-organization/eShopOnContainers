@@ -9,40 +9,29 @@ class CaseFile extends Component {
     super(props);
 
     this.state = {
-      caseFileSearch: null,
-      caseFile: null
+      caseFile: null,
+      loading: true
     };
 
     this.handleRemoveCaseFile = this.handleRemoveCaseFile.bind(this);
   }
 
-  componentDidMount() {
-    // console.log("user ->", this.props.user);
-    // console.log("idCaseFile ->", this.props.idCaseFile);
-    // console.log("bbdd ->", this.props.bbdd);
-    // console.log("idCompany ->", this.props.idCompany);
-
-    getCasefile(
-      this.props.user.idUser,
-      this.props.bbdd,
-      this.props.idCompany,
-      1,
-      this.props.idCaseFile
-    )
-      .then(result => {
-        const icase = parseInt(this.props.idCaseFile);
-        let cf;
-        for(let i = 0; i < result.results.length; i++) {
-          if(result.results[i].id === icase) {
-            cf = result.results[i].id;
-            break;
-          }
-        }
-        this.setState( { caseFileSearch: result.results, caseFile: cf } );
+  async componentDidMount() {
+    const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/entities/getbyid`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        idType: 1,
+        idEntity: this.props.idCaseFile,
+        bbdd: this.props.bbdd,
+        idUser: this.props.user.idUser
       })
-      .catch(error => {
-        console.log("error ->", error);
-      });
+    });
+    const data = await response.json();
+    this.setState({ caseFile: data.data, loading: false })
 
     window.addEventListener("RemoveCaseFile", this.handleRemoveCaseFile);
   }
@@ -56,7 +45,32 @@ class CaseFile extends Component {
   }
 
   render() {
-    const { caseFileSearch } = this.state;
+    const { caseFile, loading } = this.state;
+
+    if(loading === true) {
+      return null;
+    }
+
+    console.log("CASEFILE")
+    console.log(caseFile)
+
+    if (!caseFile || (caseFile && caseFile.id === 0)) {
+      return (<div class="container">
+        <h2 class="lex-on-related-file-title">
+          <span class="lf-icon-law"></span>
+          {i18n.t("case-file.casefile-related")}
+        </h2>
+        <ul class="lex-on-related-file-details">
+          <li className="col-xl-12 lexon-item">
+            <p>
+            {i18n.t("case-file.casefile-notfound")}
+            </p>
+          </li>
+        </ul>
+      </div>)
+    }
+
+    const { name, description, intervening } = caseFile;
 
     return (
       <div class="container">
@@ -66,14 +80,17 @@ class CaseFile extends Component {
         </h2>
 
         <ul class="lex-on-related-file-details">
-          <li>
-            <strong>{i18n.t("case-file.identifier")}</strong> {this.props.idCaseFile}
-          </li>
-          <li>
-            <strong>{i18n.t("case-file.description")}</strong> {caseFileSearch ? caseFileSearch.description : null}
-          </li>
-          <li>
-            <strong>{i18n.t("case-file.client")}</strong>
+          <li className="col-xl-12 lexon-item">
+            <p>
+              <strong>{i18n.t(`classification.1`)}: </strong>
+              <span>{name}</span>
+            </p>
+            <p>
+              {description}
+            </p>
+            <p>
+              {intervening}
+            </p>
           </li>
         </ul>
       </div>
