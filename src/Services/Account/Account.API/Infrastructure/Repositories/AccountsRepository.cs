@@ -14,7 +14,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
 
     #endregion Using
@@ -326,18 +325,22 @@
             }
             return result;
         }
+
         public async Task<Result<UserMail>> GetUser(string user)
         {
             var result = new Result<UserMail>();
             try
             {
-                result.data = await _context.Accounts.Find(GetFilterUser(user)).SingleOrDefaultAsync();
-                var orderAccounts = result.data.accounts.OrderByDescending(x => x.defaultAccount).ToList();
-                result.data.accounts = orderAccounts;
+                result.data = await _context.Accounts.Find(GetFilterUser(user)).FirstOrDefaultAsync();
 
                 if (result.data == null)
                     TraceInfo(result.infos, $"No se encuentra ningún usuario {user}");
-
+                else
+                {
+                    var orderAccounts = result.data?.accounts.OrderByDescending(x => x.defaultAccount).ToList();
+                    if (orderAccounts != null)
+                        result.data.accounts = orderAccounts;
+                }
             }
             catch (Exception ex)
             {
@@ -351,16 +354,16 @@
             var result = new Result<Account>();
             try
             {
-                var usuario = await _context.Accounts.Find(GetFilterUser(user)).SingleAsync();
+                var usuario = await _context.Accounts.Find(GetFilterUser(user)).FirstOrDefaultAsync();
 
                 if (usuario == null)
                     TraceInfo(result.infos, $"No se encuentra ningún usuario {user} del que obtener cuenta");
-
-                var cuenta = usuario.accounts?.Find(GetFilterProviderMail(provider, mail));
-                result.data = cuenta;
-
-                if (result.data == null)
-                    TraceInfo(result.infos, $"No se encuentra ningúna cuenta {provider} - {mail} en ese usuario {user}");
+                else
+                {
+                    result.data = usuario.accounts?.Find(GetFilterProviderMail(provider, mail));
+                    if (result.data == null)
+                        TraceInfo(result.infos, $"No se encuentra ningúna cuenta {provider} - {mail} en ese usuario {user}");
+                }
             }
             catch (Exception ex)
             {
@@ -368,20 +371,21 @@
             }
             return result;
         }
+
         public async Task<Result<Account>> GetDefaultAccount(string user)
         {
             var result = new Result<Account>();
             try
             {
-                var usuario = await _context.Accounts.Find(GetFilterUser(user)).SingleOrDefaultAsync();
-                if (usuario == null) 
+                var usuario = await _context.Accounts.Find(GetFilterUser(user)).FirstOrDefaultAsync();
+                if (usuario == null)
                     TraceInfo(result.infos, $"No se encuentra ningún usuario {user} del que obtener cuenta x defecto");
-              
-                var cuenta = usuario?.accounts.Find(x => x.defaultAccount == true);
-                result.data = cuenta;
-                if (result.data == null)            
-                    TraceInfo(result.infos, $"No se encuentra ningúna cuenta por defecto en ese usuario {user}");
-
+                else
+                {
+                    result.data = usuario?.accounts.Find(x => x.defaultAccount == true);
+                    if (result.data == null)
+                        TraceInfo(result.infos, $"No se encuentra ningúna cuenta por defecto en ese usuario {user}");
+                }
             }
             catch (Exception ex)
             {
@@ -445,7 +449,6 @@
             return result;
         }
 
-
         public async Task<Result<long>> UpSertAccount(string user, Account accountIn)
         {
             var result = new Result<long>();
@@ -463,7 +466,7 @@
                 }
                 else
                 {
-                    userDb.accounts.ForEach(x => x.defaultAccount = false);    
+                    userDb.accounts.ForEach(x => x.defaultAccount = false);
                     var accountDb = userDb.accounts.Find(
                         a => a.email == accountIn.email.ToLowerInvariant()
                         && a.provider == accountIn.provider.ToUpperInvariant());
@@ -472,7 +475,6 @@
                     {
                         userDb.accounts.Add(accountIn);
                         TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo una cuenta para {accountIn.provider}-{accountIn.email}");
-
                     }
                     else
                     {
@@ -486,14 +488,13 @@
                     }
                 }
                 var resultReplace = await _context.Accounts.ReplaceOneAsync(GetFilterUser(userMail.User), userDb, GetUpsertOptions());
-
             }
             catch (Exception ex)
             {
                 TraceMessage(result.errors, ex);
             }
 
-             result.data = 1;
+            result.data = 1;
             return result;
         }
 
@@ -653,7 +654,6 @@
                     TraceInfo(result.infos, $"Se modifica el usuario {user} creando o modificando la configuracion de cuenta {provider}-{mail} con imap: {config.imap} port: {config.imapPort} user a {config.imapUser}");
                     result.data = resultUpdate.ModifiedCount > 0;
                 }
-
             }
             catch (Exception ex)
             {
@@ -673,10 +673,8 @@
                 foreach (var acc in userMail.accounts)
                 {
                     ReviewAccountMail(acc);
-
                 }
             }
-
         }
 
         private static Predicate<Account> GetFilterProviderMail(string provider, string mail)
