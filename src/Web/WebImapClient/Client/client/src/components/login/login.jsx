@@ -16,6 +16,7 @@ import TextField from '../form/text-field/text-field';
 import Spinner from '../spinner/spinner';
 import UserLexon from "../user-lexon/UserLexon";
 import mainCss from '../../styles/main.scss';
+import {validateEmail} from '../../services/validation';
 import styles from './login.scss';
 import { PROVIDER } from '../../constants';
 import { resetDefaultAccount } from '../../services/accounts';
@@ -84,10 +85,12 @@ export class Login extends Component {
     });
     const data = await response.json();
 
-    const newValues = stateFromAccount(data.data.configAccount)
-    this.setState({values: newValues.values}, ()=>{
-      this.props.dispatchLogin(this.state.values);
-    })
+    if(data && data.data) {
+      const newValues = stateFromAccount(data.data.configAccount)
+      this.setState({values: newValues.values}, ()=>{
+        this.props.dispatchLogin(this.state.values);
+      })
+    }
   }
 
     goBack() { 
@@ -209,11 +212,28 @@ export class Login extends Component {
     this.setState({advanced: !this.state.advanced});
   }
 
+  validateEmail(event) {
+    const target = event.target;
+
+    var element = document.getElementById("user");      
+    const error = validateEmail(this.state.values.user);
+    debugger
+    if (error) {
+      element.setCustomValidity(error);
+      setTimeout(() => element.reportValidity());
+      return false;
+    }
+    return true;
+  }
+
   login(event) {
     event.preventDefault();
-    //this.saveLoginConfig();
-    this.props.dispatchLogin(this.state.values);
-    }   
+
+    if(this.validateEmail(event) === true) {
+      this.saveLoginConfig();
+      this.props.dispatchLogin(this.state.values);
+    }
+  }   
 
     async saveLoginConfig() {
       const { userId = '', account = '' } = this.props.lexon; 
