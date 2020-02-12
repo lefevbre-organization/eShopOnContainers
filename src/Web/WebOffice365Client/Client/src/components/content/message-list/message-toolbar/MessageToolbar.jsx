@@ -51,7 +51,7 @@ export class MessageToolbar extends PureComponent {
 
     const replyHeader = `<p>${t("composemessage-toobar.on")} ${parsedDate.format(
           "MMMM Do YYYY, h:mm:ss a"
-    )} < ${nameEmail.email} > ${t("composemessage-toobar.wrote")}:</p>`;
+    )} < ${nameEmail?nameEmail.email:""} > ${t("composemessage-toobar.wrote")}:</p>`;
 
     const composeProps = {
       subject: `Re: ${subject}`,
