@@ -121,7 +121,7 @@ class AppContainerGraph extends Component {
     const { signInStatus, openEmail, readyToRedirect } = this.state;
 
     if (signInStatus === AUTH_SUCCESS && readyToRedirect) {
-      return <Main User={this.state.user} idEmail={openEmail} />;
+      return <Main User={this.state.user} idEmail={openEmail} notFoundModal={0} />;
     } else if (signInStatus === AUTH_IN_PROGRESS) {
       return <Authenticating />;
     } else {

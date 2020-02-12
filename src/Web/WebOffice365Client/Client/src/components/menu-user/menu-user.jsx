@@ -103,7 +103,7 @@ class MenuUser extends Component {
             <DropdownToggle nav>
               <img
                 className="mx-2 profile-pic"
-                src="assets/img/icon-user.png"
+                src="/assets/img/icon-user.png"
                 alt={fullName}
               />
             </DropdownToggle>

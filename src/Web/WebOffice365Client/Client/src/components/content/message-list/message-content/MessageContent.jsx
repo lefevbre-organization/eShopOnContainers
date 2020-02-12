@@ -12,6 +12,7 @@ import MessageToolbar from "../message-toolbar/MessageToolbar";
 import "./messageContent.scss";
 import MessageHeader from "./messageHeader";
 import { setMessageAsRead } from '../../../../api_graph';
+import MessageNotFound  from "../../../message-not-found/MessageNotFound";
 
 //BEGIN functions for attachment functionality
 
@@ -126,11 +127,19 @@ export class MessageContent extends Component {
     super(props);
 
     this.state = {
-      errorMessage: undefined
+      errorMessage: undefined,
+      showMessageNotFound: false
     };
     this.refresh = false;
     this.iframeRef = React.createRef();
     this.modifyMessage = this.modifyMessage.bind(this);
+    this.notFoundModal = props.notFoundModal;
+  }
+
+  toggleShowMessageNotFound() {
+    this.setState(state => ({
+      showMessageNotFound: !state.showMessageNotFound
+    }));
   }
 
   componentDidMount(prevProps) {
@@ -184,8 +193,11 @@ export class MessageContent extends Component {
         }
       } else {
         if (this.props.match.path == "/:id([a-zA-Z0-9!@#$%^&+=_-]+)" && this.props.match.url !== "/inbox"){
-          if (emailMessageResult.error.statusCode === 400 || emailMessageResult.error.statusCode === 404){
-            alert('El mensaje que desea abrir no existe en el servidor');
+          if ((emailMessageResult.error.statusCode === 400 || emailMessageResult.error.statusCode === 404) && this.notFoundModal === 0){
+            this.toggleShowMessageNotFound(true);
+            this.notFoundModal = 1;
+          }
+          else if (this.state.showMessageNotFound === false){
             this.renderInbox();
           }
         }

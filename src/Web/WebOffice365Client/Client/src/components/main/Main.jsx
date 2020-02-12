@@ -32,6 +32,7 @@ import ComposeMessage from "../compose-message/ComposeMessage";
 import "react-reflex/styles.css";
 import { addOrUpdateAccount, resetDefaultAccount } from "../../api_graph/accounts";
 import { PROVIDER } from "../../constants";
+import MessageNotFound  from "../message-not-found/MessageNotFound";
 
 export class Main extends Component {
   constructor(props) {
@@ -56,13 +57,14 @@ export class Main extends Component {
       sidebarOpen: false,
       sidebarDocked: false,
       sidebarComponent: (
-        <img border="0" alt="Lefebvre" src="assets/img/lexon-fake.png"></img>
+        <img border="0" alt="Lefebvre" src="/assets/img/lexon-fake.png"></img>
       ),
       leftSideBar: {
         collapsed: false
       },
       loadFolders: false,
-      retry: false
+      retry: false,
+      showMessageNotFound: false
     };
 
     e.on("message", function(data) {
@@ -83,6 +85,14 @@ export class Main extends Component {
     );
 
     this.toggleSideBar = this.toggleSideBar.bind(this);
+    this.toggleShowMessageNotFound = this.toggleShowMessageNotFound.bind(this);
+    this.notFoundModal = props.notFoundModal;
+  }
+
+  toggleShowMessageNotFound() {
+    this.setState(state => ({
+      showMessageNotFound: !state.showMessageNotFound
+    }));
   }
 
   toggleSideBar() {
@@ -140,7 +150,7 @@ export class Main extends Component {
 
   onSetSidebarOpenQMemento(open) {
     let lexon = (
-      <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>
+      <img border="0" alt="Lefebvre" src="/assets/img/lexon-fake-null.png"></img>
     );
     this.setState({ sidebarComponent: lexon });
     this.setState({ sidebarDocked: open });
@@ -148,7 +158,7 @@ export class Main extends Component {
 
   onSetSidebarOpenCompliance(open) {
     let lexon = (
-      <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>
+      <img border="0" alt="Lefebvre" src="/assets/img/lexon-fake-null.png"></img>
     );
     this.setState({ sidebarComponent: lexon });
     this.setState({ sidebarDocked: open });
@@ -156,7 +166,7 @@ export class Main extends Component {
 
   onSetSidebarOpenDatabase(open) {
     let lexon = (
-      <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>
+      <img border="0" alt="Lefebvre" src="/assets/img/lexon-fake-null.png"></img>
     );
     this.setState({ sidebarComponent: lexon });
     this.setState({ sidebarDocked: open });
@@ -192,7 +202,7 @@ export class Main extends Component {
       addOrUpdateAccount(userId, newAccount)
       .then(result => {
       	Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, { domain: 'lefebvre.es' })
-	      if (idEmail != null && idEmail !== undefined){
+	      if (idEmail != null && idEmail !== undefined && idEmail !== "notFound"){
 	        if (idCaseFile !== null && idCaseFile !== undefined){
 	          this.onSetSidebarOpenLexon(true);
 	          this.props.history.push(`/${idEmail}`);
@@ -204,7 +214,19 @@ export class Main extends Component {
           this.props.history.push("/compose");
           this.onSetSidebarOpenLexon(true);
 	      } else {
-	        this.props.history.push("/inbox");
+          // // if (idEmail === "notFound") {
+          // //   this.toggleShowMessageNotFound(true);
+          // // }
+          // // else if (this.state.showMessageNotFound === false){
+          // //   this.props.history.push("/inbox");
+          // // }
+          // // else {
+          //   this.props.history.push("/inbox");          
+          // // }
+          if (idEmail === "notFound"){
+            this.toggleShowMessageNotFound(true);
+            this.setState({selectFolder: this.getLabelInbox()})
+          }
 	      }
       }).catch(error => {
         console.error("error ->", error);
@@ -226,55 +248,72 @@ export class Main extends Component {
       });
     }
 
-    const { labels } = this.props.labelsResult;
-    const { pathname } = this.props.location;
-    const selectedLabel = labels.find(el => el.selected);
-    const labelPathMatch = labels.find(
-      el => el.id.toLowerCase() === pathname.slice(1)
-    );
-    if (!selectedLabel) {
-      if (labelPathMatch && this.props.searchQuery === "") {
-        this.props.selectLabel(labelPathMatch.id);
-      }
-    } else {
-      if (labelPathMatch && selectedLabel.id !== labelPathMatch.id) {
-        this.props.selectLabel(labelPathMatch.id);
-      }
+    if (this.state.showMessageNotFound === true && this.notFoundModal === 0){
+      this.notFoundModal = 1;
     }
+    else if (this.state.showMessageNotFound === false && this.notFoundModal === 1){
+      var labelInbox = this.props.labelsResult.labels.find(label => {
+            if (label.displayName === "Inbox"){
+              return label
+            }
+          }) ;
 
-    if (
-      !this.state.loadFolders &&
-      prevProps.labelsResult.labels !== this.props.labelsResult.labels
-    ) {
-      this.setState({ loadFolders: true });
-      if (
-        this.props.labelsResult &&
-        this.props.labelsResult.labels.length > 0 &&
-        (this.props.lexon.idCaseFile == null ||
-          this.props.lexon.idCaseFile === undefined)
-      ) {
-        if (
-          this.props.labelsResult.labelInbox !== null &&
-          this.props.labelsResult.labelInbox !== undefined
-        ) {
-          this.loadLabelMessages(this.props.labelsResult.labelInbox);
-          this.setState({ retry: false });
-        } else {
-          this.setState({ retry: true });
+      this.setState({selectFolder: labelInbox.id});
+      this.loadLabelMessages(labelInbox);
+      this.notFoundModal = 2;
+    }
+    else {
+      var { labels } = this.props.labelsResult;
+      var { pathname } = this.props.location;
+      var selectedLabel = labels.find(el => el.selected);
+      var labelPathMatch = labels.find(
+        el => el.id.toLowerCase() === pathname.slice(1)
+      );      
+      
+      if (!selectedLabel) {
+        if (labelPathMatch && this.props.searchQuery === "") {
+          this.props.selectLabel(labelPathMatch.id);
+        }
+      } else {
+        if (labelPathMatch && selectedLabel.id !== labelPathMatch.id) {
+          this.props.selectLabel(labelPathMatch.id);
         }
       }
-    }
-
-    console.log("(0) this.props.labelsResult ->", this.props.labelsResult);
-    console.log("(0) this.state.retry ->", this.state.retry);
-    if (
-      this.state.retry &&
-      this.props.labelsResult.labelInbox !== null &&
-      this.props.labelsResult.labelInbox !== undefined
-    ) {
-      console.log("(1) this.props.labelsResult ->", this.props.labelsResult);
-      this.setState({ retry: false });
-      this.loadLabelMessages(this.props.labelsResult.labelInbox);
+  
+      if (
+        !this.state.loadFolders &&
+        prevProps.labelsResult.labels !== this.props.labelsResult.labels
+      ) {
+        this.setState({ loadFolders: true });
+        if (
+          this.props.labelsResult &&
+          this.props.labelsResult.labels.length > 0 &&
+          (this.props.lexon.idCaseFile == null ||
+            this.props.lexon.idCaseFile === undefined)
+        ) {
+          if (
+            this.props.labelsResult.labelInbox !== null &&
+            this.props.labelsResult.labelInbox !== undefined
+          ) {
+            this.loadLabelMessages(this.props.labelsResult.labelInbox);
+            this.setState({ retry: false });
+          } else {
+            this.setState({ retry: true });
+          }
+        }
+      }
+  
+      console.log("(0) this.props.labelsResult ->", this.props.labelsResult);
+      console.log("(0) this.state.retry ->", this.state.retry);
+      if (
+        this.state.retry &&
+        this.props.labelsResult.labelInbox !== null &&
+        this.props.labelsResult.labelInbox !== undefined
+      ) {
+        console.log("(1) this.props.labelsResult ->", this.props.labelsResult);
+        this.setState({ retry: false });
+        this.loadLabelMessages(this.props.labelsResult.labelInbox);
+      }
     }
   }
 
@@ -403,7 +442,7 @@ export class Main extends Component {
   }
 
   renderInboxViewport() {
-    const { leftSideBar } = this.state;
+    const { leftSideBar, showMessageNotFound } = this.state;
     const { lexon } = this.props;
 
     if (this.props.labelsResult.labels.length < 1) {
@@ -455,6 +494,10 @@ export class Main extends Component {
           }
         }}
       >
+        <MessageNotFound
+          initialModalState={showMessageNotFound}
+          toggleShowMessageNotFound={this.toggleShowMessageNotFound}
+        />
         <Fragment>
           <Header
             microsoftUser={this.props.User}
@@ -485,7 +528,9 @@ export class Main extends Component {
                       sideBarCollapsed={leftSideBar.collapsed}
                       sideBarToggle={this.toggleSideBar}
                       casefile={lexon.idCaseFile}
+                      bbdd={lexon.bbdd}
                       loadLabelMessages={this.loadLabelMessages}
+                      labelsResult={this.props.labelsResult}
                     />
                   )}
                 />
@@ -498,6 +543,7 @@ export class Main extends Component {
                       sideBarCollapsed={leftSideBar.collapsed}
                       sideBarToggle={this.toggleSideBar}
                       refresh={()=> { this.refreshLabels(); }}
+                      notFoundModal={0}
                     />
                   )}
                 />
@@ -512,7 +558,7 @@ export class Main extends Component {
                       className="imgproduct"
                       border="0"
                       alt="Lex-On"
-                      src="assets/img/icon-lexon.png"
+                      src="/assets/img/icon-lexon.png"
                     ></img>
                   </div>
                 ) : (
@@ -521,7 +567,7 @@ export class Main extends Component {
                       className="imgproductdisable"
                       border="0"
                       alt="Lex-On"
-                      src="assets/img/icon-lexon.png"
+                      src="/assets/img/icon-lexon.png"
                     ></img>
                   </div>
                 )}
