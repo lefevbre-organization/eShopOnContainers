@@ -14,6 +14,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             log = logger ?? throw new ArgumentNullException(nameof(logger)); 
         }
 
+
         public void TraceMessage(
             List<ErrorInfo> errors,
             Exception ex,
@@ -40,13 +41,11 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 
         private void WriteError(ErrorInfo errorInfo)
         {
-            WriteLine("member name: " + errorInfo.member);
-            WriteLine("member name: " + errorInfo.member);
+            WriteLine($"member name: {errorInfo.member} - line:{errorInfo.line}" );
             WriteLine("source file path: " + errorInfo.source);
-            WriteLine("source line number: " + errorInfo.line);
         }
 
-        private void WriteLine(string msg)
+        public void WriteLine(string msg)
         {
             log.LogDebug(msg);
             System.Diagnostics.Trace.WriteLine(msg);
@@ -73,12 +72,14 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "")
         {
-            if (codeError == null || !(codeError is int) || (int)codeError == 0 || exMessage == null || !(exMessage is string))
+            //if (codeError == null || !(codeError is int) || (int)codeError == 0 || exMessage == null || !(exMessage is string))
+            //    return;
+            if (codeError == null  || exMessage == null || !(exMessage is string))
                 return;
 
             var errorInfo = new ErrorInfo
             {
-                code = (string)codeError,
+                code = codeError.ToString(),
                 message = (string)exMessage,
                 member = memberName,
                 source = sourceFilePath,
@@ -105,9 +106,5 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             infos.Add(info);
         }
 
-        private void TraceMessage(List<ErrorInfo> errors, string v, int value)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

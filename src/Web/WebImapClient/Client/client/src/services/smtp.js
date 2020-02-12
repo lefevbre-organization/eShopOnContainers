@@ -39,7 +39,8 @@ export function sendMessage(
   };
   postMessageRequest.onload = event => {
     if (isSuccessful(event.target.status)) {
-      if (event.target.hasOwnProperty('response')){
+      if (event && event.target && event.target.response){
+      //if (event.target.hasOwnProperty('response')){
         dispatch(outboxSetSent(true, event.target.response, false));
       } else {
         dispatch(outboxSetSent(true, "", false));

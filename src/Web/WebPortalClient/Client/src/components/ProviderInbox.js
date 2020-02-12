@@ -110,13 +110,13 @@ class ProviderInbox extends Component {
           ? (title = email)
           : (title = i18n.t("page-goto.other-server-mail"));
         let linkHref = '';
+        linkHref = buildClientUrl(provider, user, payload);
 
         if(email) {
           const account64 = base64.encode(email)
-          linkHref = `${window.URL_INBOX_IMAP}/user/${user}/account/${account64}`;
-        } else {
-          linkHref = buildClientUrl(provider, user, payload);
+          linkHref += `?account=${account64}`;
         }
+
         return (
           <React.Fragment>
             <a

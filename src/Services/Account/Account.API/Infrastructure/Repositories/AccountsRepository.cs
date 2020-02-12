@@ -13,6 +13,7 @@
     using MongoDB.Driver;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -331,6 +332,8 @@
             try
             {
                 result.data = await _context.Accounts.Find(GetFilterUser(user)).SingleOrDefaultAsync();
+                var orderAccounts = result.data.accounts.OrderByDescending(x => x.defaultAccount).ToList();
+                result.data.accounts = orderAccounts;
 
                 if (result.data == null)
                     TraceInfo(result.infos, $"No se encuentra ningún usuario {user}");

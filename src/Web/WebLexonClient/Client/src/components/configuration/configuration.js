@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import i18n from "i18next";
 import { connect } from "react-redux";
 import Switch from "react-switch";
-
+import { saveUserConfig } from "../../services/services-lexon";
 import ACTIONS from "../../actions/selections";
 import APP_ACTIONS from "../../actions/applicationAction";
 
@@ -14,13 +14,14 @@ class Configuration extends Component {
 
     this.state = {
       showMessage: false,
-      config: this.props.config
+      config: this.props.user.config
     };
 
     this.handleOnClick = this.handleOnClick.bind(this);
   }
 
   componentDidMount() { 
+    console.log(this.props.user)
   }
 
   handleOnClick(id) {
@@ -28,6 +29,12 @@ class Configuration extends Component {
     newConfig[id] = !newConfig[id]
     this.setState({config: newConfig}, ()=>{
       this.props.setConfig(this.state.config)
+      // Save the configuration on user
+      const conf = { "getContacts": this.state.config[id],   
+                     "defaultAdjunction": "onlyAttachments",
+                     "defaultEntity": "contacts" 
+                    };
+      saveUserConfig(conf, this.props.user.idNavision)
     })
   }
 
@@ -59,7 +66,7 @@ class Configuration extends Component {
         <ul className="options-list">
           <li className="option-container">
             <div>
-              <Switch height={18} width={36} onColor={"#001978"} checkedIcon={false} uncheckedIcon={false} onChange={()=>{this.handleOnClick("automaticClassification")}} checked={this.state.config.automaticClassification} />
+              <Switch height={18} width={36} onColor={"#001978"} checkedIcon={false} uncheckedIcon={false} onChange={()=>{this.handleOnClick("getContacts")}} checked={this.state.config.getContacts} />
               <span>Clasificar contactos automáticamente al enviar correo</span>
             </div>
           </li>

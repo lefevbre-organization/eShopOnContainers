@@ -13,6 +13,7 @@ import { connect } from "react-redux";
 import { prettySize } from "../../utils/prettify";
 import { Notification, Confirmation } from '../notification/';
 import HeaderAddress from "./header-address";
+import { getUser, classifyEmail } from "../../api/accounts";
 
 const Uppy = require("@uppy/core");
 const Tus = require("@uppy/tus");
@@ -143,17 +144,39 @@ export class ComposeMessage extends PureComponent {
     this.props.history.push("/inbox");
   }
 
-  sentEmail(id, subject) {
+  async sentEmail(id, subject) {
+    const emailDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
     window.dispatchEvent(
       new CustomEvent("SentMessage", {
         detail: {
           idEmail: id,
-          subject: window.atob(subject.replace('=?UTF-8?B?', '').replace('?=', '')),
-          date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+          subject: subject,     // window.atob(subject.replace('=?UTF-8?B?', '').replace('?=', '')),
+          date: emailDate
         }
       })
     );
-    console.log("SentEmail output - Id: " + id + " Subject:" + window.atob(subject.replace('=?UTF-8?B?', '').replace('?=', '')))
+    
+    setTimeout(async ()=>{
+      if(this.props.lexon.bbdd && this.props.lexon.account) {
+        try {
+          const user = await getUser(this.props.lexon.userId);   
+          if(user && user.data && user.data.configUser) {
+            if(user.data.configUser.getContacts) {
+              await classifyEmail(id, subject, emailDate, this.state.to2, this.props.lexon.provider, this.props.lexon.account, this.props.lexon.bbdd, user.data.lexonUserId);
+            }
+          }
+
+        } catch(err) {
+          //throw err;
+        }
+      }
+    }, 1000);
+
+
+
+
+    // Get User config to auto classify emails
+
   }
 
   addFileToState(file) {
@@ -244,7 +267,7 @@ export class ComposeMessage extends PureComponent {
       function (response) {
         return response.json();
       }).then(email => {
-        this.sentEmail(email.id, headers.Subject);
+        this.sentEmail(email.id, this.state.subject);
       });
     this.resetFields();
     this.closeModal();

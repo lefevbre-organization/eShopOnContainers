@@ -99,6 +99,11 @@ namespace Lexon.MySql.Infrastructure.Services
             bool addTerminatorToToken = true)
         {
             var resultado = await _lexonRepository.GetUserAsync(idUser);
+            if (resultado?.data?.IdUser == null || resultado?.data?.IdUser == 0)
+            {
+                resultado.errors.Add(new ErrorInfo() { code="5000", message= "No se recupera un idUser desde Lexon" });
+            }
+
             resultado.data.Token = BuildTokenWithPayloadAsync(new TokenModel
             {
                 idClienteNavision = idUser,
@@ -115,6 +120,7 @@ namespace Lexon.MySql.Infrastructure.Services
                 roles = GetRolesOfUser(idUser)
             }).Result;
             resultado.data.Token += addTerminatorToToken ? "/" : "";
+
             return resultado;
         }
 

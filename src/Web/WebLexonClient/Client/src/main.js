@@ -150,9 +150,9 @@ class Main extends Component {
 
     getUser(user)
       .then(result => {
-        const newUser = Object.assign({}, result.user, { account, provider } );
+        const newUser = Object.assign({}, result.user, { account, provider, config: result.config } );
         this.setState({ user: newUser});
-        getCompanies(this.state.user)
+        getCompanies(newUser)
           .then(result => {
             this.setState({
               isLoading: false,

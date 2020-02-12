@@ -14,6 +14,7 @@ import { connect } from "react-redux";
 import { prettySize } from "../../utils/prettify";
 import { Notification, Confirmation } from '../notification/';
 import HeaderAddress from "./header-address";
+import { getUser, classifyEmail } from "../../api_graph/accounts";
 
 const Uppy = require("@uppy/core");
 const Tus = require("@uppy/tus");
@@ -160,16 +161,34 @@ export class ComposeMessage extends PureComponent {
   }
 
   sentEmail(email) {
+    const emailDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+
     window.dispatchEvent(
       new CustomEvent("SentMessage", {
         detail: {
           idEmail: email.internetMessageId,
           subject: email.subject,
-          date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') 
+          date: emailDate 
         }
       })
     );
-    console.log("sentEmail data - id:" + email.internetMessageId + " subject: " + email.subject);
+
+    setTimeout(async ()=>{
+      debugger
+      if(this.props.lexon.bbdd && this.props.lexon.account) {
+        try {
+          const user = await getUser(this.props.lexon.userId);   
+          if(user && user.data && user.data.configUser) {
+            if(user.data.configUser.getContacts) {
+              await classifyEmail(email.internetMessageId, email.subject, emailDate, this.state.to2, this.props.lexon.provider, this.props.lexon.account, this.props.lexon.bbdd, user.data.lexonUserId);
+            }
+          }
+
+        } catch(err) {
+          //throw err;
+        }
+      }
+    }, 1000);
   }
 
   addFileToState(file) {
