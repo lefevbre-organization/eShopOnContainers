@@ -48,7 +48,7 @@ env:
     - name: ASPNETCORE_ENVIRONMENT
       value: Staging
     - name: ConnectionString
-      value: 'database=lexon_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5'
+      value: 'database=lexon_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connection Timeout=100'
     - name: OrchestratorType
       value: 'K8S'
 
