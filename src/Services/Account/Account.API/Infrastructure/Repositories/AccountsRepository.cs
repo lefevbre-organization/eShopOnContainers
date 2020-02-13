@@ -1,6 +1,5 @@
 ﻿namespace Account.API.Infrastructure.Repositories
 {
-
     using Account.API.Model;
     using IntegrationEvents.Events;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
@@ -14,7 +13,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-
 
     public class AccountsRepository : BaseClass<AccountsRepository>, IAccountsRepository
     {
@@ -61,18 +59,21 @@
 
         private string ManageCreateUser(string msgError, string msgModify, string msgInsert, Result<UserMail> result, ReplaceOneResult resultReplace)
         {
-            if (!resultReplace.IsAcknowledged)
+            if (resultReplace.IsAcknowledged)
+            {
+                if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
+                {
+                    TraceInfo(result.infos, msgModify);
+                }
+                else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
+                {
+                    TraceInfo(result.infos, msgInsert);
+                    return resultReplace.UpsertedId.ToString();
+                }
+            }
+            else
             {
                 TraceMessage(result.errors, new Exception(msgError), "1003");
-            }
-            else if (resultReplace.IsAcknowledged && resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
-            {
-                TraceInfo(result.infos, msgModify);
-            }
-            else if (resultReplace.IsAcknowledged && resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
-            {
-                TraceInfo(result.infos, msgInsert);
-                return resultReplace.UpsertedId.ToString();
             }
             return null;
         }
@@ -86,7 +87,6 @@
 
                 if (result.data == null)
                     TraceMessage(result.errors, new Exception($"No se encuentra ningún usuario {user}"), "1003");
-                //TraceInfo(result.infos, $"No se encuentra ningún usuario {user}");
                 else
                 {
                     var orderAccounts = result.data?.accounts.OrderByDescending(x => x.defaultAccount).ToList();
@@ -107,9 +107,10 @@
             try
             {
                 var resultRemove = await _context.Accounts.DeleteOneAsync(GetFilterUser(user, false));
-                result.data = resultRemove.DeletedCount > 0;
+                result.data = resultRemove.IsAcknowledged && resultRemove.DeletedCount > 0;
                 if (result.data)
                 {
+                    TraceInfo(result.infos, $"Se ha eliminado correctamente a {user}");
                     var eventAssoc = new RemoveUserMailIntegrationEvent(user);
                     _eventBus.Publish(eventAssoc);
                 }
@@ -131,7 +132,7 @@
                     Builders<UserMail>.Update.Set(x => x.state, state)
                  );
 
-                ManageUpdate($"Don´t changue the state of user", $"Se pone el usuario {user} en estado :{state}", result, resultUpdate);
+                ManageUpdate($"Don´t changue the state of user", $"Se pone el usuario {user} en estado {state}", result, resultUpdate);
 
                 if (result.data)
                 {
@@ -182,7 +183,7 @@
 
                 if (usuario == null)
                     TraceMessage(result.errors, new Exception($"No se encuentra ningún usuario {user} del que obtener cuenta"), "1003");
-              //  TraceInfo(result.infos, $"No se encuentra ningún usuario {user} del que obtener cuenta");
+                //  TraceInfo(result.infos, $"No se encuentra ningún usuario {user} del que obtener cuenta");
                 else
                 {
                     result.data = usuario.accounts?.Find(GetFilterProviderMail(provider, mail));
@@ -235,13 +236,14 @@
 
                 if (userUpdate != null)
                 {
+                    TraceInfo(result.infos, $"Se ha removido la cuenta {provider}-{mail} del usuario {user}");
                     result.data = userUpdate;
                     var eventAssoc = new RemoveAccountIntegrationEvent(user, provider, mail);
                     _eventBus.Publish(eventAssoc);
                 }
                 else
                 {
-                    TraceInfo(result.infos, $"No se encuentra ningún usuario {user} del que quitar la cuenta {provider} - {mail}");
+                    TraceInfo(result.infos, $"No se encuentra ningún usuario {user} del que quitar la cuenta {provider}-{mail}");
                 }
             }
             catch (Exception ex)
@@ -387,21 +389,8 @@
                 );
 
                 ManageUpdate($"Don´t insert or modify the relation in user {user}",
-                    $"Se añade relación al usuario {user} y provider/cuenta {provider}/{mail}/{relation.uid} con app/id {relation.app}/{relation.idEntity}",
+                    $"Se añade relación en el usuario {user} y cuenta {provider}-{mail}, para el mail: {relation.uid} app: {relation.app} id:{relation.idEntity}",
                     result, resultUpdate);
-
-                //if (!resultUpdate.IsAcknowledged)
-                //{
-                //    TraceMessage(result.errors, new Exception($"Don´t insert or modify the relation"), "1003");
-                //}
-                //else if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
-                //{
-                //    TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo la relacion en el provider/cuenta {provider}/{mail}/{relation.uid} con app/id {relation.app}/{relation.idEntity}");
-                //    result.data = resultUpdate.ModifiedCount > 0;
-                //}
-
-                //TraceLog(parameters: new string[] { $"Se añade relacion en provider/cuenta {provider}/{mail}/{relation.uid} con app/id {relation.app}/{relation.idEntity}" });
-                //result.data = resultUpdate.IsAcknowledged && resultUpdate.ModifiedCount > 0;
             }
             catch (Exception ex)
             {
@@ -425,21 +414,8 @@
                 );
 
                 ManageUpdate($"Don´t remove the relation in user {user}",
-                    $"Se elimina relación en usuario {user} y provider/cuenta {provider}/{mail}/{relation.uid} con app/id {relation.app}/{relation.idEntity}",
+                    $"Se elimina relación en el usuario {user} y cuenta {provider}-{mail}, para el mail: {relation.uid} app: {relation.app} id:{relation.idEntity}",
                     result, resultUpdate);
-
-                //if (!resultUpdate.IsAcknowledged)
-                //{
-                //    TraceMessage(result.errors, new Exception($"Don´t insert or modify the relation"), "1003");
-                //}
-                //else if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
-                //{
-                //    TraceInfo(result.infos, $"Se modifica el usuario {user} quitando la relacion en el provider/cuenta {provider}/{mail}/{relation.uid} con app/id {relation.app}/{relation.idEntity}");
-                //    result.data = resultUpdate.ModifiedCount > 0;
-                //}
-
-                //TraceLog(parameters: new string[] { $"Se añade relacion en provider/cuenta {provider}/{mail}/{relation.uid} con app/id {relation.app}/{relation.idEntity}" });
-                //result.data = resultUpdate.IsAcknowledged && resultUpdate.ModifiedCount > 0;
             }
             catch (Exception ex)
             {
@@ -455,14 +431,18 @@
             try
             {
                 var resultUser = await GetUser(user);
-
-                if (resultUser.data?.accounts?.Count > 0)
+                if (resultUser.data == null)
+                    TraceMessage(result.errors, new Exception($"No se encuentra ningún usuario {user}"), "1003");
+                else
                 {
-                    var cuenta = resultUser.data?.accounts?.Find(GetFilterProviderMail(provider, mail));
-                    result.data = cuenta?.mails?.FindAll(c => c.uid == uid);
+                    if (resultUser.data?.accounts?.Count > 0)
+                    {
+                        var cuenta = resultUser.data?.accounts?.Find(GetFilterProviderMail(provider, mail));
+                        result.data = cuenta?.mails?.FindAll(c => c.uid == uid);
 
-                    if (result.data == null)
-                        TraceInfo(result.infos, $"No se encuentra ningúna relación en la cuenta {provider} - {mail} del usuario {user}");
+                        if (result.data == null)
+                            TraceInfo(result.infos, $"No se encuentra ningúna relación en la cuenta {provider} - {mail} del usuario {user}");
+                    }
                 }
             }
             catch (Exception ex)
@@ -478,14 +458,25 @@
 
         private void ManageUpdate(string errorMsg, string modifyMsg, Result<bool> result, UpdateResult resultUpdate)
         {
-            if (!resultUpdate.IsAcknowledged)
+            if (resultUpdate.IsAcknowledged)
+            {
+                if (resultUpdate.MatchedCount == 0)
+                {
+                    TraceInfo(result.infos, "No se encuentran datos, asegurese que el usuario existe y esta activo");
+                }
+                else if (resultUpdate.MatchedCount > 0)
+                {
+                    if (resultUpdate.ModifiedCount == 0)
+                        TraceInfo(result.infos, "Se encuentran datos pero no se han producido actualizaciones");
+                    else
+                        TraceInfo(result.infos, modifyMsg);
+
+                    result.data = resultUpdate.ModifiedCount > 0;
+                }
+            }
+            else
             {
                 TraceMessage(result.errors, new Exception(errorMsg), "1003");
-            }
-            else if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
-            {
-                TraceInfo(result.infos, modifyMsg);
-                result.data = resultUpdate.ModifiedCount > 0;
             }
         }
 
@@ -529,8 +520,8 @@
             var arrayFilters = new List<ArrayFilterDefinition>();
             var dictionary = new Dictionary<string, string>
             {
-                { "i.provider", provider },
-                { "i.email", mail }
+                { "i.provider", provider.ToUpperInvariant() },
+                { "i.email", mail.ToLowerInvariant() }
             };
             var doc = new BsonDocument(dictionary);
             var docarrayFilter = new BsonDocumentArrayFilterDefinition<BsonDocument>(doc);

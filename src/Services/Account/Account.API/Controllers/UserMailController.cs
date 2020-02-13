@@ -270,7 +270,7 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost("{user}/account/{provider}/{mail}/{uid}/relations")]
+        [HttpGet("{user}/account/{provider}/{mail}/{uid}/relations")]
         [ProducesResponseType(typeof(Result<List<MailRelation>>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<List<MailRelation>>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetRelationsFromMail(
