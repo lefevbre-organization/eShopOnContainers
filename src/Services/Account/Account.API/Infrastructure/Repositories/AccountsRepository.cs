@@ -85,7 +85,8 @@
                 result.data = await _context.Accounts.Find(GetFilterUser(user)).FirstOrDefaultAsync();
 
                 if (result.data == null)
-                    TraceInfo(result.infos, $"No se encuentra ningún usuario {user}");
+                    TraceMessage(result.errors, new Exception($"No se encuentra ningún usuario {user}"), "1003");
+                //TraceInfo(result.infos, $"No se encuentra ningún usuario {user}");
                 else
                 {
                     var orderAccounts = result.data?.accounts.OrderByDescending(x => x.defaultAccount).ToList();
@@ -180,7 +181,8 @@
                 var usuario = await _context.Accounts.Find(GetFilterUser(user)).FirstOrDefaultAsync();
 
                 if (usuario == null)
-                    TraceInfo(result.infos, $"No se encuentra ningún usuario {user} del que obtener cuenta");
+                    TraceMessage(result.errors, new Exception($"No se encuentra ningún usuario {user} del que obtener cuenta"), "1003");
+              //  TraceInfo(result.infos, $"No se encuentra ningún usuario {user} del que obtener cuenta");
                 else
                 {
                     result.data = usuario.accounts?.Find(GetFilterProviderMail(provider, mail));
@@ -202,7 +204,7 @@
             {
                 var usuario = await _context.Accounts.Find(GetFilterUser(user)).FirstOrDefaultAsync();
                 if (usuario == null)
-                    TraceInfo(result.infos, $"No se encuentra ningún usuario {user} del que obtener cuenta x defecto");
+                    TraceMessage(result.errors, new Exception($"No se encuentra ningún usuario {user} del que obtener cuenta x defecto"), "1003");
                 else
                 {
                     result.data = usuario?.accounts.Find(x => x.defaultAccount == true);
