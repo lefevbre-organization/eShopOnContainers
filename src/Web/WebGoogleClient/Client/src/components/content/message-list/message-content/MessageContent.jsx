@@ -176,7 +176,10 @@ export class MessageContent extends Component {
 
                   var attach = emailMessageResult.attach;
                   if (typeof attach !== "undefined" && attach.length > 0) {
-                      this.setState({ attachment: false });
+                      const isFirefox = typeof InstallTrigger !== 'undefined';
+                      if(isFirefox === false) {
+                        this.setState({ attachment: false });
+                      }
                       var iframe = document.getElementById("message-iframe");
                       var Divider = addDivDivider();
                       iframe.contentDocument.body.appendChild(Divider);
@@ -206,7 +209,6 @@ export class MessageContent extends Component {
                               });
                           }
                       }
-
                   }
               }
           } else {
