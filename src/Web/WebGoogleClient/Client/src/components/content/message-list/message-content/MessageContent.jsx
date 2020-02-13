@@ -138,6 +138,7 @@ export class MessageContent extends Component {
     this.modifyMessage = this.modifyMessage.bind(this);
     this.toggleShowMessageNotFound = this.toggleShowMessageNotFound.bind(this);
     this.notFoundModal = props.notFoundModal
+    this.attachments = [];
   }
 
   
@@ -186,6 +187,9 @@ export class MessageContent extends Component {
 
                       for (var i = 0; i < attach.length; i++) {
                           if (attach[i].filename && attach[i].filename.length > 0) {
+
+                            if(!this.attachments[attach[i].partId]) {
+                              this.attachments[attach[i].partId] = "1" 
                               getAttachments(emailMessageResult.id, attach[i], function (
                                   filename,
                                   mimeType,
@@ -207,6 +211,7 @@ export class MessageContent extends Component {
                                   AttachmentDiv.appendChild(Attachment);
                                   iframe.contentDocument.body.appendChild(AttachmentDiv);
                               });
+                            }
                           }
                       }
                   }
