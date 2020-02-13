@@ -217,7 +217,6 @@ export class Login extends Component {
 
     var element = document.getElementById("user");      
     const error = validateEmail(this.state.values.user);
-    debugger
     if (error) {
       element.setCustomValidity(error);
       setTimeout(() => element.reportValidity());

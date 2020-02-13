@@ -46,6 +46,14 @@ const lexon = (state = INITIAL_STATE.lexon, action = {}) => {
     case ActionTypes.LEXON_EMAIL_SET_SHOWN:
           return { ...state, emailShown: action.payload }
 
+    case ActionTypes.LEXON_RESET_EMAIL:
+        return {
+          ...state, 
+          idEmail: null, 
+          idFolder: null, 
+          emailShown: null
+        }
+
     default:
       return state;
   }

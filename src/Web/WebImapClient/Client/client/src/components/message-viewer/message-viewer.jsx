@@ -83,6 +83,10 @@ export class MessageViewer extends Component {
         bbdd: null,
         company: null
       });
+    };
+
+    if (lexon.idMail && lexon.idMail !== null && lexon.idMail !== undefined){
+      this.props.resetIdEmail(); // Se borra la información del email para que no vuelva a entrar si se refresca la ventana.
     }
   }
   
@@ -114,7 +118,8 @@ const mapDispatchToProps = dispatch => ({
     clearSelectedMessage(dispatch);
     dispatch(selectFolder(folder));
   },
-  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile))
+  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
+  resetIdEmail: ()=> dispatch(ACTIONS.resetIdEmail()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MessageViewer);

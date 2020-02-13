@@ -46,7 +46,10 @@ export const INITIAL_STATE = {
     userId: null,
     provider: null,
     isNewAccount: false,
-    idCaseFile: null
+    idCaseFile: null,
+    idEmail: null,
+    idFolder: null,
+    emailShown: null
   }
 };
 

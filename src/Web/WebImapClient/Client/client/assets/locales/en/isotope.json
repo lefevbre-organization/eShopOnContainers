@@ -128,5 +128,8 @@
     "reset-pwd": "RESET PASSWORD",
     "add-other-account": "ADD OTHER ACCOUNT",
     "close-session": "CLOSE SESSION"
+  },
+  "msgNotFoundSnackbar": {
+    "error": "Message not found in server"
   }
 }

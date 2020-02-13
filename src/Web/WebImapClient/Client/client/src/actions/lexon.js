@@ -30,11 +30,17 @@ export const setEmailShown = (flag) => ({
   payload: flag
 })
 
+export const resetIdEmail = (emailInfo) => ({
+  type: ActionTypes.LEXON_RESET_EMAIL,
+  payload: emailInfo
+})
+
 export default {
   setUser,
   setDataBase,
   setIdEmail,
   setEmailShown,
   setAccount,
-  setCaseFile
+  setCaseFile,
+  resetIdEmail
 };
