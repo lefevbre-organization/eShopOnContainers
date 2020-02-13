@@ -1,6 +1,5 @@
 ﻿namespace Account.API.Infrastructure.Repositories
 {
-    #region Using
 
     using Account.API.Model;
     using IntegrationEvents.Events;
@@ -16,7 +15,6 @@
     using System.Linq;
     using System.Threading.Tasks;
 
-    #endregion Using
 
     public class AccountsRepository : BaseClass<AccountsRepository>, IAccountsRepository
     {
@@ -34,7 +32,6 @@
         }
 
         #region User
-
 
         public async Task<Result<UserMail>> Create(UserMail userMail)
         {
@@ -171,10 +168,9 @@
             return result;
         }
 
-        #endregion New Region
+        #endregion User
 
         #region Accounts
-
 
         public async Task<Result<Account>> GetAccount(string user, string provider, string mail)
         {
@@ -291,7 +287,6 @@
 
                     var eventAssoc = new AddUserMailIntegrationEvent(userMail.User, userMail.configUser);
                     _eventBus.Publish(eventAssoc);
-
                 }
                 else
                 {
@@ -299,7 +294,7 @@
                 }
                 var resultReplace = await _context.Accounts.ReplaceOneAsync(GetFilterUser(userMail.User), userDb, GetUpsertOptions());
 
-                if(resultReplace.IsAcknowledged && resultReplace.IsModifiedCountAvailable)
+                if (resultReplace.IsAcknowledged && resultReplace.IsModifiedCountAvailable)
                 {
                     var eventAssoc = new UpsertAccountIntegrationEvent(userMail.User, accountIn.provider, accountIn.email, accountIn.defaultAccount, accountIn.configAccount);
                     _eventBus.Publish(eventAssoc);
@@ -372,10 +367,9 @@
             return result;
         }
 
-        #endregion New Region
+        #endregion Accounts
 
         #region Relations
-
 
         public async Task<Result<bool>> UpSertRelationMail(string user, string provider, string mail, MailRelation relation)
         {
@@ -455,13 +449,12 @@
 
         public async Task<Result<List<MailRelation>>> GetRelationsFromMail(string user, string provider, string mail, string uid)
         {
-
             var result = new Result<List<MailRelation>>();
             try
             {
                 var resultUser = await GetUser(user);
 
-                if (resultUser.data?.accounts?.Count > 0 )
+                if (resultUser.data?.accounts?.Count > 0)
                 {
                     var cuenta = resultUser.data?.accounts?.Find(GetFilterProviderMail(provider, mail));
                     result.data = cuenta?.mails?.FindAll(c => c.uid == uid);
@@ -475,10 +468,9 @@
                 TraceMessage(result.errors, ex);
             }
             return result;
-
         }
 
-#endregion New Region
+        #endregion Relations
 
         #region Common
 
@@ -498,6 +490,9 @@
         private void ReviewUserMail(UserMail userMail)
         {
             userMail.User = userMail.User.ToUpperInvariant();
+            if (userMail.configUser == null)
+                userMail.configUser = AddConfigDefault();
+
             if (userMail.accounts.Count > 0)
             {
                 foreach (var acc in userMail.accounts)
@@ -564,17 +559,22 @@
             return Builders<UserMail>.Filter.Eq(u => u.User, idUser.ToUpperInvariant());
         }
 
-        private static UserMail GetNewUserMail(string user, string email, string provider, string guid)
+        private UserMail GetNewUserMail(string user, string email, string provider, string guid)
         {
             return new UserMail()
             {
                 User = user.ToUpperInvariant(),
-                configUser = new ConfigUserLexon() { defaultAdjunction = "onlyAdjunction", defaultEntity = "files", getContacts = false },
+                configUser = AddConfigDefault(),
                 state = true,
                 accounts = new List<Account>() {
                         new Account() {defaultAccount = true, email= email.ToLowerInvariant(), guid= guid, provider= provider.ToUpperInvariant() , mails = new List<MailRelation>()}
                     }
             };
+        }
+
+        private ConfigUserLexon AddConfigDefault()
+        {
+            return new ConfigUserLexon() { defaultAdjunction = "onlyAdjunction", defaultEntity = "files", getContacts = false };
         }
 
         #endregion Common
