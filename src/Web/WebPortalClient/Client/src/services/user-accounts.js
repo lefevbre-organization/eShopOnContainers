@@ -97,7 +97,11 @@ export const createUser = async userId => {
       body: JSON.stringify({
         "user": userId,
         "state": true,
-        "configUser": null,
+        "configUser": {
+          "getContacts": false,
+          "defaultAdjunction": "onlyAttachments",
+          "defaultEntity": "contacts"
+      },
         "accounts": []
       })
     })
