@@ -527,11 +527,10 @@ export class ComposeMessage extends PureComponent {
                     label={i18n.t("compose-message.bcc")}
                 />
                 <InputGroup>
-                  <InputGroupAddon addonType="prepend">
+                  <InputGroupAddon addonType="prepend" tabIndex={-1}>
                     {i18n.t("compose-message.subject")}
                   </InputGroupAddon>
                   <Input
-                    tabIndex={4}
                     placeholder=""
                     value={this.state.subject}
                     onChange={this.setField("subject", false)}
@@ -540,7 +539,7 @@ export class ComposeMessage extends PureComponent {
               </div>
               <div className="editor-wrapper">
                 <ReactQuill
-                  tabIndex={5}
+                  tabIndex={0}
                   value={this.state.content}
                   onChange={this.handleChange}
                   className=""
