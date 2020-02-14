@@ -184,6 +184,19 @@ export class Main extends Component {
       return false;
     }
 
+    if(nextProps.messagesResult.openMessage !== null && nextProps.messagesResult.openMessage === this.props.messagesResult.openMessage) {
+      if(nextProps.location.pathname === ("/"+nextProps.messagesResult.openMessage)) {
+
+        if(nextState.sidebarDocked !== this.state.sidebarDocked) {
+          return true;
+        }
+
+        return false;
+      } else {
+        return true;
+      }
+    }
+
     return true;
   }
   

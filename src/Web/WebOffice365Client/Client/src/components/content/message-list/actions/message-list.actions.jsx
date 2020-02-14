@@ -214,6 +214,7 @@ export const modifyMessages = ({
 export const addMessage = message => dispatch => {
   const data = {
     id: message.id,
+    internetId: message.internetId,
     subject: message.subject,
     sentDateTime: message.sentDateTime
   };
