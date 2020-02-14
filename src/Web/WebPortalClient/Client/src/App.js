@@ -10,6 +10,7 @@ import { PageGoToLegacy } from "./pages/PageGoToLegacy";
 class App extends Component {
   componentDidMount() {
     console.log("ENVIRONMENT ->", window.REACT_APP_ENVIRONMENT);
+    window.opener = null;
   }
 
   render() {
