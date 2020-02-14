@@ -6,7 +6,8 @@ import {
   getEmailMessage,
   modifyMessages,
   toggleSelected,
-  clearListMessages
+  clearListMessages,
+  setOpenMessage
 } from "../actions/message-list.actions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
@@ -136,6 +137,8 @@ export class MessageContent extends Component {
     this.iframeRef = React.createRef();
     this.modifyMessage = this.modifyMessage.bind(this);
     this.notFoundModal = props.notFoundModal;
+    this.timer = null;
+
   }
 
   toggleShowMessageNotFound() {
@@ -148,34 +151,45 @@ export class MessageContent extends Component {
     const messageId = this.props.match.params.id;
     this.props.getEmailMessage(messageId);
     
-    window.dispatchEvent(new CustomEvent("ResetList"));
-    const detail = {
-      id: this.props.match.params.id,
-      subject: "",
-      sentDateTime: "",
-      chkselected: true
-    };
-    window.dispatchEvent(new CustomEvent("Checkclick",  {
-      detail
-    }));
+    this.timer = setTimeout(()=>{
+      window.dispatchEvent(new CustomEvent("ResetList"));
+      const detail = {
+        id: this.props.match.params.id,
+        subject: "",
+        sentDateTime: "",
+        chkselected: true
+      };
+      window.dispatchEvent(new CustomEvent("Checkclick",  {
+        detail
+      }));
+  
+      this.props.setOpenMessage(messageId);
+    }, 1000)
   }
 
   componentWillUnmount() {
+    if(this.timer) {
+      clearTimeout(this.timer);
+    }
+    setTimeout(() => {
+      this.props.setOpenMessage("");      
+    }, 1000);
+
     window.dispatchEvent(new CustomEvent("ResetList"));
     if(this.refresh && this.props.refresh) {
       this.props.refresh();
     }
 
     // Debe enviar los mensajes que están en la lista de selected
-    for(let i = 0; i < this.props.selectedMessages.length; i++) {
-      const detail = {
-        ...this.props.selectedMessages[i],
-        chkselected: true
-      };
-      window.dispatchEvent(new CustomEvent("Checkclick",  {
-        detail
-      }));      
-  }
+    // for(let i = 0; i < this.props.selectedMessages.length; i++) {
+    //   const detail = {
+    //     ...this.props.selectedMessages[i],
+    //     chkselected: true
+    //   };
+    //   window.dispatchEvent(new CustomEvent("Checkclick",  {
+    //     detail
+    //   }));      
+    // }
   
   }
 
@@ -326,7 +340,8 @@ const mapDispatchToProps = dispatch =>
       toggleSelected,
       getEmailMessage,
       modifyMessages,
-      clearListMessages
+      clearListMessages,
+      setOpenMessage
     },
     dispatch
   );

@@ -141,6 +141,7 @@ export class MessageContent extends Component {
     this.modifyMessage = this.modifyMessage.bind(this);
     this.toggleShowMessageNotFound = this.toggleShowMessageNotFound.bind(this);
     this.notFoundModal = props.notFoundModal
+    this.timer = null;
   }
 
   toggleShowMessageNotFound() {
@@ -152,37 +153,45 @@ export class MessageContent extends Component {
     const messageId = this.props.match.params.id;
     this.props.getEmailHeaderMessage(messageId);
     this.props.getEmailMessage(messageId);
-    this.props.setOpenMessage(messageId);
-
-    window.dispatchEvent(new CustomEvent("ResetList"));
-    const detail = {
-      id: this.props.match.params.id,
-      subject: "",
-      sentDateTime: "",
-      chkselected: true
-    };
-    window.dispatchEvent(new CustomEvent("Checkclick",  {
-      detail
-    }));
+    
+    this.timer = setTimeout(()=>{
+      window.dispatchEvent(new CustomEvent("ResetList"));
+      const detail = {
+        id: this.props.match.params.id,
+        subject: "",
+        sentDateTime: "",
+        chkselected: true
+      };
+      window.dispatchEvent(new CustomEvent("Checkclick",  {
+        detail
+      }));
+  
+      this.props.setOpenMessage(messageId);
+    }, 1000)
   }
 
   componentWillUnmount() {
-    this.props.setOpenMessage(null);
+    if(this.timer) {
+      clearTimeout(this.timer);
+    }
+    setTimeout(() => {
+      this.props.setOpenMessage("");      
+    }, 1000);
     window.dispatchEvent(new CustomEvent("ResetList"));
     if(this.refresh && this.props.refresh) {
       this.props.refresh();
     }
 
-    // Debe enviar los mensajes que están en la lista de selected
-    for(let i = 0; i < this.props.selectedMessages.length; i++) {
-        const detail = {
-          ...this.props.selectedMessages[i],
-          chkselected: true
-        };
-        window.dispatchEvent(new CustomEvent("Checkclick",  {
-          detail
-        }));      
-    }
+    // // Debe enviar los mensajes que están en la lista de selected
+    // for(let i = 0; i < this.props.selectedMessages.length; i++) {
+    //     const detail = {
+    //       ...this.props.selectedMessages[i],
+    //       chkselected: true
+    //     };
+    //     window.dispatchEvent(new CustomEvent("Checkclick",  {
+    //       detail
+    //     }));      
+    // }
   }
 
   componentDidUpdate(prevProps) {

@@ -19,6 +19,7 @@ import {
   DELETE_MESSAGE,
   DELETE_LIST_MESSAGES,
   CLEAR_LIST_MESSAGES,
+  SET_OPEN_MESSAGE,
   ADD_LIST_MESSAGES
 } from "../actions/message-list.actions";
 
@@ -91,6 +92,17 @@ export const messagesResult = (state = defaultMessagesState, action) => {
           el => action.payload.modifiedIds.indexOf(el.id) === -1
         )
       };
+
+      case SET_OPEN_MESSAGE:
+        if(state.openMessage === action.payload) {
+          return state;
+        }
+  
+        return {
+          ...state,
+          openMessage: action.payload
+        }
+        
     default:
       return state;
   }
