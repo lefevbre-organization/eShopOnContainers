@@ -224,7 +224,7 @@ export class Main extends Component {
     const { userId, idCaseFile } = this.props.lexon;
     const { googleUser } = this.props;
     if(!googleUser || !googleUser.w3) {
-      this.setState({googleDown: true, showNotification: true, messageNotification: "Google está caido"})
+      this.setState({googleDown: true, showNotification: true, messageNotification: "El proveedor de Google está caido"})
       return;
     } 
 
