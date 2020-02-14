@@ -153,49 +153,43 @@ export class MessageContent extends Component {
     const messageId = this.props.match.params.id;
     this.props.getEmailHeaderMessage(messageId);
     this.props.getEmailMessage(messageId);
-    
-    this.timer = setTimeout(()=>{
+    this.props.setOpenMessage(messageId);
+
+    window.dispatchEvent(new CustomEvent("ResetList"));
+  }
+
+  componentWillUnmount() {
+      this.props.setOpenMessage("");
       window.dispatchEvent(new CustomEvent("ResetList"));
+      for(let i = 0; i < this.props.selectedMessages.length; i++) {
+          const detail = {
+            ...this.props.selectedMessages[i],
+            chkselected: true
+          };
+      window.dispatchEvent(new CustomEvent("Checkclick",  {
+        detail
+      }));   
+    }
+    if(this.refresh && this.props.refresh) {
+      this.props.refresh();
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    const { emailMessageResult, emailHeaderMessageResult } = this.props;
+
+    if(prevProps.emailHeaderMessageResult.headers === null && emailHeaderMessageResult.headers !== null) {
       const detail = {
         id: this.props.match.params.id,
-        subject: "",
-        sentDateTime: "",
+        subject: getHeader(emailHeaderMessageResult.headers, "subject"),
+        sentDateTime: getHeader(emailHeaderMessageResult.headers, "date"),
         chkselected: true
       };
       window.dispatchEvent(new CustomEvent("Checkclick",  {
         detail
       }));
-  
-      this.props.setOpenMessage(messageId);
-    }, 1000)
-  }
-
-  componentWillUnmount() {
-    if(this.timer) {
-      clearTimeout(this.timer);
-    }
-    setTimeout(() => {
-      this.props.setOpenMessage("");      
-    }, 1000);
-    window.dispatchEvent(new CustomEvent("ResetList"));
-    if(this.refresh && this.props.refresh) {
-      this.props.refresh();
     }
 
-    // // Debe enviar los mensajes que están en la lista de selected
-    // for(let i = 0; i < this.props.selectedMessages.length; i++) {
-    //     const detail = {
-    //       ...this.props.selectedMessages[i],
-    //       chkselected: true
-    //     };
-    //     window.dispatchEvent(new CustomEvent("Checkclick",  {
-    //       detail
-    //     }));      
-    // }
-  }
-
-  componentDidUpdate(prevProps) {
-    const { emailMessageResult, emailHeaderMessageResult } = this.props;
       if (!emailMessageResult.loading) {
           if(emailHeaderMessageResult.loading === false && prevProps.emailHeaderMessageResult.loading === true) {
             return;
@@ -361,3 +355,12 @@ export default compose(
   withRouter,
   connect(mapStateToProps, mapDispatchToProps)
 )(MessageContent);
+
+
+const getHeader = (headers, name) => {
+  for(let i = 0; i < headers.length; i++) {
+    if(headers[i].name.toLowerCase() === name.toLowerCase()) {
+      return headers[i].value;
+    }
+  }
+}

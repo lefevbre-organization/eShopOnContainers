@@ -80,12 +80,12 @@ export class MessageList extends PureComponent {
 
   onSelectionChange(selected, msgId) {
     this.props.toggleSelected([msgId], selected);
-    //e.emit('received', { text: "Id: " + msgId + " selected: " + selected })
 
     getMessageHeader(msgId)
       .then(response => {
         const message = {
           id: msgId,
+          internetId: response.internetMessageId,
           subject: response.subject,
           sentDateTime: response.sentDateTime,
           chkselected: selected
