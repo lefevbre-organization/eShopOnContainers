@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose } from "redux";
 import * as uuid from 'uuid/v4';
+import { diff, addedDiff, deletedDiff, updatedDiff, detailedDiff } from 'deep-object-diff';
 import Cookies from 'js-cookie';
 import Header from "../header/Header";
 import Sidebar from "../sidebar/Sidebar";
@@ -177,33 +178,13 @@ export class Main extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if(JSON.stringify(nextProps.labelsResult) !== JSON.stringify(this.props.labelsResult) ) {
-      return true
-    }
-    if(JSON.stringify(nextProps.messagesResult) !== JSON.stringify(this.props.messagesResult) ) {
-      return true
-    }
-    if(JSON.stringify(nextProps.pageTokens) !== JSON.stringify(this.props.pageTokens) ) {
-      return true
-    }
-    if(JSON.stringify(nextProps.searchQuery) !== JSON.stringify(this.props.searchQuery) ) {
-      return true
-    }
-    if(JSON.stringify(nextProps.lexon) !== JSON.stringify(this.props.lexon) ) {
-      return true
-    }
-    if( JSON.stringify(nextProps.selectedMessages) !== JSON.stringify(this.props.selectedMessages) ) {
-      return true
-    }
-    if( JSON.stringify(nextProps.location) !== JSON.stringify(this.props.location) ) {
-      return true
+    const difP = detailedDiff(this.props, nextProps);
+
+    if(difP.updated.messagesResult && difP.updated.messagesResult.hasOwnProperty("openMessage")) {
+      return false;
     }
 
-    if(JSON.stringify(nextState) !== JSON.stringify(this.state)) {
-      return true
-    }
-
-    return false;
+    return true;
   }
 
   componentDidMount() {

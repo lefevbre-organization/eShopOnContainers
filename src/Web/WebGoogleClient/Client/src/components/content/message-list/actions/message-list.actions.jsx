@@ -208,5 +208,5 @@ export const setOpenMessage = (message) => dispatch => {
     type: SET_OPEN_MESSAGE,
     payload: message
   });
-}
+};
 
