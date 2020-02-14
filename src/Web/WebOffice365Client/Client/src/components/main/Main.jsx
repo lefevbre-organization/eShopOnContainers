@@ -166,6 +166,36 @@ export class Main extends Component {
     this.setState({ sidebarDocked: open });
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if(JSON.stringify(nextProps.labelsResult) !== JSON.stringify(this.props.labelsResult) ) {
+      return true
+    }
+    if(JSON.stringify(nextProps.messagesResult) !== JSON.stringify(this.props.messagesResult) ) {
+      return true
+    }
+    if(JSON.stringify(nextProps.pageTokens) !== JSON.stringify(this.props.pageTokens) ) {
+      return true
+    }
+    if(JSON.stringify(nextProps.searchQuery) !== JSON.stringify(this.props.searchQuery) ) {
+      return true
+    }
+    if(JSON.stringify(nextProps.lexon) !== JSON.stringify(this.props.lexon) ) {
+      return true
+    }
+    if( JSON.stringify(nextProps.selectedMessages) !== JSON.stringify(this.props.selectedMessages) ) {
+      return true
+    }
+    if( JSON.stringify(nextProps.location) !== JSON.stringify(this.props.location) ) {
+      return true
+    }
+
+    if(JSON.stringify(nextState) !== JSON.stringify(this.state)) {
+      return true
+    }
+
+    return false;
+  }
+  
   componentDidMount() {
     this.getLabelList();
     this.getLabelInbox();

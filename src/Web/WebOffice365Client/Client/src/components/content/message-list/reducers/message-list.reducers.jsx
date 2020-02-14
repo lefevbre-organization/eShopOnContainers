@@ -18,6 +18,7 @@ import {
   ADD_MESSAGE,
   DELETE_MESSAGE,
   DELETE_LIST_MESSAGES,
+  CLEAR_LIST_MESSAGES,
   ADD_LIST_MESSAGES
 } from "../actions/message-list.actions";
 
@@ -245,6 +246,13 @@ export function messageList(state = defaultMessageList, action) {
       };
     }
 
+    case CLEAR_LIST_MESSAGES: {
+      return {
+        ...state,
+        selectedMessages: []
+      };
+    }
+    
     default:
       return state;
   }

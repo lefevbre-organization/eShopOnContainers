@@ -53,7 +53,7 @@ class ListClassifications extends Component {
         <div id="scrl-container">
         <PerfectScrollbar options={{ suppressScrollX: true }}>
           <ul className="row lexon-document-list">
-            {classifications.map(classification => {
+            {classifications && classifications.map(classification => {
               return (
                 <Classification
                   classification={classification}

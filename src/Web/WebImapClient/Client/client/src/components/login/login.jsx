@@ -65,7 +65,6 @@ export class Login extends Component {
   constructor(props) {
     super(props);
 
-
     this.state = stateFromParams(new URLSearchParams(this.props.location.search));
     if (this.props.formValues && Object.keys(this.props.formValues).length > 0) {
       this.state = stateFromFormValues(this.props.formValues);

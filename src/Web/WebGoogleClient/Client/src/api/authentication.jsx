@@ -1,5 +1,6 @@
 export const signIn = () => {
-    return window.gapi.auth2.getAuthInstance().signIn({ "prompt": "select_account", "app_package_name": "Lefebvre.mail.com" });
+    const userInfo = window.gapi.auth2.getAuthInstance().signIn({ "prompt": "select_account", "app_package_name": "Lefebvre.mail.com" });
+    return userInfo;
 };
 
 export const initGmailClient = (apiKey, clientId) => {

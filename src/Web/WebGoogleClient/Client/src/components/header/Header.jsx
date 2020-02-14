@@ -79,7 +79,14 @@ export class Header extends PureComponent {
   }
 
   render() {
+    if(!this.props.googleUser) {
+      return null;
+    }
+
     const userInfo = this.props.googleUser.w3;
+    if(!userInfo) {
+      return null;
+    }
     const email = userInfo.U3;
     const fullName = userInfo.ig;
     const picUrl = userInfo.Paa;

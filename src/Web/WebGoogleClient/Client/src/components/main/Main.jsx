@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 import Header from "../header/Header";
 import Sidebar from "../sidebar/Sidebar";
 import NotFound from "../not-found/NotFound";
+import { Notification } from '../notification/';
 import "./main.scss";
 import MessageList from "../content/message-list/MessageList";
 import MessageContent from "../content/message-list/message-content/MessageContent";
@@ -58,6 +59,9 @@ export class Main extends Component {
       size: 0.25,
       sidebarOpen: false,
       sidebarDocked: false,
+      googleDown: false,
+      showNotification: false,
+      messageNotification: "",
       leftSideBar: {
         collapsed: false
       },
@@ -90,7 +94,7 @@ export class Main extends Component {
     });
   }
 
-  //handleShowLeftSidebarClick() {
+    //handleShowLeftSidebarClick() {
   //    this.setState({
   //        leftSidebarOpen: !this.leftSidebarOpen
   //    })
@@ -172,6 +176,36 @@ export class Main extends Component {
     this.setState({ sidebarDocked: open });
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if(JSON.stringify(nextProps.labelsResult) !== JSON.stringify(this.props.labelsResult) ) {
+      return true
+    }
+    if(JSON.stringify(nextProps.messagesResult) !== JSON.stringify(this.props.messagesResult) ) {
+      return true
+    }
+    if(JSON.stringify(nextProps.pageTokens) !== JSON.stringify(this.props.pageTokens) ) {
+      return true
+    }
+    if(JSON.stringify(nextProps.searchQuery) !== JSON.stringify(this.props.searchQuery) ) {
+      return true
+    }
+    if(JSON.stringify(nextProps.lexon) !== JSON.stringify(this.props.lexon) ) {
+      return true
+    }
+    if( JSON.stringify(nextProps.selectedMessages) !== JSON.stringify(this.props.selectedMessages) ) {
+      return true
+    }
+    if( JSON.stringify(nextProps.location) !== JSON.stringify(this.props.location) ) {
+      return true
+    }
+
+    if(JSON.stringify(nextState) !== JSON.stringify(this.state)) {
+      return true
+    }
+
+    return false;
+  }
+
   componentDidMount() {
     /* Label list is fetched from here 
     so that we can declare Routes by labelId 
@@ -189,6 +223,11 @@ export class Main extends Component {
 
     const { userId, idCaseFile } = this.props.lexon;
     const { googleUser } = this.props;
+    if(!googleUser || !googleUser.w3) {
+      this.setState({googleDown: true, showNotification: true, messageNotification: "Google está caido"})
+      return;
+    } 
+
     const idEmail = this.props.idEmail;
     const email = googleUser.w3.U3;
     if (userId !== null && email !== null) {
@@ -573,6 +612,19 @@ export class Main extends Component {
   }
 
   render() {
+    if(this.state.googleDown) {
+      const { showNotification, messageNotification } = this.state;
+
+      return (
+        <div className="d-flex h-100 align-items-center justify-content-center">
+          <Notification
+            initialModalState={showNotification}
+            toggleNotification={() => { this.onSignoutDisconnect()  }}
+            message={messageNotification}
+        />
+        </div>
+      );
+    }
     return this.renderInboxViewport();
   }
 }

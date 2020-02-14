@@ -3,7 +3,8 @@ const Types = {
     ADD_MESSAGE: 'ADD_MESSAGE',
     DELETE_MESSAGE: 'DELETE_MESSAGE',
     ADD_LIST_MESSAGES: 'ADD_LIST_MESSAGES',
-    DELETE_LIST_MESSAGES: 'DELETE_LIST_MESSAGES'
+    DELETE_LIST_MESSAGES: 'DELETE_LIST_MESSAGES',
+    RESET_LIST_MESSAGES: 'RESET_LIST_MESSAGES'
 };
 
 // actions
@@ -27,10 +28,15 @@ const deleteListMessages = listItems => ({
     payload: listItems
 });  
 
+const resetListMessages = () => ({
+    type: Types.RESET_LIST_MESSAGES
+})
+
 export default {
     addMessage,
     deleteMessage,
     addListMessages,
     deleteListMessages,
+    resetListMessages,
     Types
 };
