@@ -44,7 +44,7 @@ export const checkSignInStatus = () => {
             updateSigninStatus(isSignedIn);
           });
 
-          resolve(googleAuthInstance.currentUser.Ab);
+          resolve(googleAuthInstance.currentUser.je);
         } else {
           reject();
         }

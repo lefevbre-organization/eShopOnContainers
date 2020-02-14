@@ -108,7 +108,7 @@ export class Main extends Component {
           bbdd: this.props.lexon.bbdd,
           idCompany: this.props.lexon.idCompany,
           provider: this.props.lexon.provider,
-          account: googleUser.w3.U3
+          account: googleUser.Rt.Au
         }
       })
     );
@@ -187,13 +187,13 @@ export class Main extends Component {
       this.handleGetUserFromLexonConnector
     );
 
-    const { userId, idCaseFile } = this.props.lexon;
+    const { userId, idCaseFile, bbdd } = this.props.lexon;
     const { googleUser } = this.props;
     const idEmail = this.props.idEmail;
-    const email = googleUser.w3.U3;
+    const email = googleUser.Rt.Au;
     if (userId !== null && email !== null) {
       const { googleUser } = this.props;
-      const email = googleUser.w3.U3;
+      const email = googleUser.Rt.Au;
       const GUID = uuid();
       const newAccount = {
         "provider": PROVIDER,
@@ -213,11 +213,15 @@ export class Main extends Component {
             this.props.history.push(`/${idEmail}`);
           }
           else {
+            this.onSetSidebarOpenLexon(true);
             this.props.history.push(`/${idEmail}`);
           }
         } else if (idCaseFile != null && idCaseFile !== undefined){
           this.props.history.push("/compose");
           this.onSetSidebarOpenLexon(true);
+        } else if (bbdd !== null & bbdd !== undefined) {
+          this.onSetSidebarOpenLexon(true);
+          this.props.history.push("/inbox");
         } else {
           this.props.history.push("/inbox");
         }
