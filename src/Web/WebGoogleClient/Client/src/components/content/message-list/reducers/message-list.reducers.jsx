@@ -18,13 +18,16 @@ import {
   ADD_MESSAGE,
   DELETE_MESSAGE,
   DELETE_LIST_MESSAGES,
-  ADD_LIST_MESSAGES
+  CLEAR_LIST_MESSAGES,
+  ADD_LIST_MESSAGES,
+  SET_OPEN_MESSAGE
 } from "../actions/message-list.actions";
 
 const defaultMessagesState = {
   messages: [],
   loading: true,
-  pageTokens: []
+  pageTokens: [],
+  openMessage: null
 };
 
 export const messagesResult = (state = defaultMessagesState, action) => {
@@ -87,6 +90,13 @@ export const messagesResult = (state = defaultMessagesState, action) => {
           el => action.payload.modifiedIds.indexOf(el.id) === -1
         )
       };
+
+    
+    case SET_OPEN_MESSAGE:
+      return {
+        ...state,
+        openMessage: action.payload
+      }
     default:
       return state;
   }
@@ -239,6 +249,13 @@ export function messageList(state = defaultMessageList, action) {
       return {
         ...state,
         selectedMessages: state.selectedMessages
+      };
+    }
+
+    case CLEAR_LIST_MESSAGES: {
+      return {
+        ...state,
+        selectedMessages: []
       };
     }
 

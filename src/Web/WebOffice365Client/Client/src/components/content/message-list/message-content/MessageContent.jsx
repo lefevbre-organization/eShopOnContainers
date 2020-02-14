@@ -4,7 +4,9 @@ import { withRouter } from "react-router-dom";
 import { bindActionCreators, compose } from "redux";
 import {
   getEmailMessage,
-  modifyMessages
+  modifyMessages,
+  toggleSelected,
+  clearListMessages
 } from "../actions/message-list.actions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
@@ -145,16 +147,40 @@ export class MessageContent extends Component {
   componentDidMount(prevProps) {
     const messageId = this.props.match.params.id;
     this.props.getEmailMessage(messageId);
+    
+    window.dispatchEvent(new CustomEvent("ResetList"));
+    const detail = {
+      id: this.props.match.params.id,
+      subject: "",
+      sentDateTime: "",
+      chkselected: true
+    };
+    window.dispatchEvent(new CustomEvent("Checkclick",  {
+      detail
+    }));
   }
 
   componentWillUnmount() {
+    window.dispatchEvent(new CustomEvent("ResetList"));
     if(this.refresh && this.props.refresh) {
       this.props.refresh();
     }
+
+    // Debe enviar los mensajes que están en la lista de selected
+    for(let i = 0; i < this.props.selectedMessages.length; i++) {
+      const detail = {
+        ...this.props.selectedMessages[i],
+        chkselected: true
+      };
+      window.dispatchEvent(new CustomEvent("Checkclick",  {
+        detail
+      }));      
+  }
+  
   }
 
   componentDidUpdate(prevProps) {
-    const { emailMessageResult } = this.props;
+    const { emailMessageResult, emailHeaderMessageResult } = this.props;
     if (!emailMessageResult.loading) {
       if (!emailMessageResult.failed) {
         this.markEmailAsRead(emailMessageResult.result);
@@ -290,14 +316,17 @@ export class MessageContent extends Component {
 }
 
 const mapStateToProps = state => ({
-  emailMessageResult: state.emailMessageResult
+  emailMessageResult: state.emailMessageResult,
+  selectedMessages: state.messageList.selectedMessages
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
+      toggleSelected,
       getEmailMessage,
-      modifyMessages
+      modifyMessages,
+      clearListMessages
     },
     dispatch
   );

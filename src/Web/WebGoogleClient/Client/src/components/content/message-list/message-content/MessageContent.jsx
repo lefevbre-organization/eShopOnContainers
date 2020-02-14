@@ -5,7 +5,10 @@ import { bindActionCreators, compose } from "redux";
 import {
   getEmailMessage,
   getEmailHeaderMessage,
-  modifyMessages
+  modifyMessages,
+  toggleSelected,
+  clearListMessages,
+  setOpenMessage
 } from "../actions/message-list.actions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
@@ -140,29 +143,55 @@ export class MessageContent extends Component {
     this.notFoundModal = props.notFoundModal
   }
 
-  
-
   toggleShowMessageNotFound() {
     this.setState(state => ({
-      showMessageNotFound: !state.showMessageNotFound
-    }));
+      showMessageNotFound: !state.showMessageNotFound    }));
 }
 
   componentDidMount(prevProps) {
     const messageId = this.props.match.params.id;
     this.props.getEmailHeaderMessage(messageId);
     this.props.getEmailMessage(messageId);
+    this.props.setOpenMessage(messageId);
+
+    window.dispatchEvent(new CustomEvent("ResetList"));
+    const detail = {
+      id: this.props.match.params.id,
+      subject: "",
+      sentDateTime: "",
+      chkselected: true
+    };
+    window.dispatchEvent(new CustomEvent("Checkclick",  {
+      detail
+    }));
   }
 
   componentWillUnmount() {
+    this.props.setOpenMessage(null);
+    window.dispatchEvent(new CustomEvent("ResetList"));
     if(this.refresh && this.props.refresh) {
       this.props.refresh();
+    }
+
+    // Debe enviar los mensajes que están en la lista de selected
+    for(let i = 0; i < this.props.selectedMessages.length; i++) {
+        const detail = {
+          ...this.props.selectedMessages[i],
+          chkselected: true
+        };
+        window.dispatchEvent(new CustomEvent("Checkclick",  {
+          detail
+        }));      
     }
   }
 
   componentDidUpdate(prevProps) {
-    const { emailMessageResult } = this.props;
+    const { emailMessageResult, emailHeaderMessageResult } = this.props;
       if (!emailMessageResult.loading) {
+          if(emailHeaderMessageResult.loading === false && prevProps.emailHeaderMessageResult.loading === true) {
+            return;
+          }
+
           if (!emailMessageResult.failed) {
               this.markEmailAsRead(emailMessageResult.result);
               if (this.state.attachment === true) {
@@ -173,7 +202,6 @@ export class MessageContent extends Component {
                   body.innerHTML = this.props.emailMessageResult.body;
 
                   //Adding attach files
-
                   var attach = emailMessageResult.attach;
                   if (typeof attach !== "undefined" && attach.length > 0) {
                       this.setState({ attachment: false });
@@ -303,15 +331,19 @@ export class MessageContent extends Component {
 
 const mapStateToProps = state => ({
   emailMessageResult: state.emailMessageResult,
-  emailHeaderMessageResult: state.emailHeaderMessageResult
+  emailHeaderMessageResult: state.emailHeaderMessageResult,
+  selectedMessages: state.messageList.selectedMessages
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
+      toggleSelected,
       getEmailMessage,
       getEmailHeaderMessage,
-      modifyMessages
+      modifyMessages,
+      clearListMessages,
+      setOpenMessage
     },
     dispatch
   );

@@ -48,11 +48,11 @@ class SelectActionHeader extends Component {
     return (
       <Fragment>
         <p className="selected-messages">
+          {i18n.t("select-action-header.messages-selected")}
+          <br />
           <span className="badge badge-pill badge-light">
             {selectedMessages.length}
           </span>
-          <br />
-          {i18n.t("select-action-header.messages-selected")}
         </p>
         <p className="company-id">
           {i18n.t("select-action-header.company-selected")}
