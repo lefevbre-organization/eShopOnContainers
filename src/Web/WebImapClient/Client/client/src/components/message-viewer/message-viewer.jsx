@@ -68,7 +68,6 @@ export class MessageViewer extends Component {
   }
 
   clearSelectedList() {
-    debugger
     this.oldSelectedList = Object.assign([], this.props.selectedMessages);
     this.props.setSelected(this.props.selectedMessages, false);
     window.dispatchEvent(
@@ -94,7 +93,6 @@ export class MessageViewer extends Component {
   }
 
   restoreSelectedList() {
-    debugger
     this.props.setSelected([this.props.selectedMessage], false);
     this.props.setSelected(this.oldSelectedList, true);
 
@@ -109,15 +107,19 @@ export class MessageViewer extends Component {
       })
     );
 
-    debugger
-    window.dispatchEvent(
-      new CustomEvent("CheckAllclick", {
-        detail: {
-          listMessages: this.oldSelectedList,
-          chkselected: true
-      }
-    }  
-    ))
+    for(let i = 0; i < this.oldSelectedList.length; i++) {
+      window.dispatchEvent(
+        new CustomEvent("Checkclick", {
+          detail: {
+            id: this.oldSelectedList[i].id,
+            subject: this.oldSelectedList[i].subject,
+            sentDateTime: this.oldSelectedList[i].sentDateTime,
+            chkselected: true
+          }
+        })
+      );
+    }
+    
   }
 
   componentDidMount() {
