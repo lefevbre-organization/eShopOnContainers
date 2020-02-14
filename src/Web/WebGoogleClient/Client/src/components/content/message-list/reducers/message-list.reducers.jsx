@@ -218,6 +218,7 @@ export function messageList(state = defaultMessageList, action) {
     }
 
     case DELETE_LIST_MESSAGES: {
+      debugger
       for (let i = 0; i < action.listMessages.length; i++) {
         const index = state.selectedMessages.findIndex(
           message => message.id === action.listMessages[i]
@@ -228,14 +229,14 @@ export function messageList(state = defaultMessageList, action) {
       }
       return {
         ...state,
-        selectedMessages: state.selectedMessages
+        selectedMessages: [ ...state.selectedMessages ]
       };
     }
 
     case ADD_LIST_MESSAGES: {
       for (let i = 0; i < action.listMessages.length; i++) {
         const index = state.selectedMessages.findIndex(
-          message => message.id === action.listMessages[i]
+          message => message.id === action.listMessages[i].id
         );
         if (index === -1) {
           const data = {
@@ -248,7 +249,14 @@ export function messageList(state = defaultMessageList, action) {
       }
       return {
         ...state,
-        selectedMessages: state.selectedMessages
+        selectedMessages: [ ...state.selectedMessages ]
+      };
+    }
+
+    case CLEAR_LIST_MESSAGES: {
+      return {
+        ...state,
+        selectedMessages: []
       };
     }
 

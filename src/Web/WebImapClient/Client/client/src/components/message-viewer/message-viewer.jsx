@@ -11,6 +11,7 @@ import sanitize from '../../services/sanitize';
 import mainCss from '../../styles/main.scss';
 import styles from './message-viewer.scss';
 import ACTIONS from "../../actions/lexon";
+import { setSelected } from "../../actions/messages";
 
 export function addressGroups(address) {
   const ret = {
@@ -66,7 +67,67 @@ export class MessageViewer extends Component {
     );
   }
 
+  clearSelectedList() {
+    this.oldSelectedList = Object.assign([], this.props.selectedMessages);
+    this.props.setSelected(this.props.selectedMessages, false);
+    window.dispatchEvent(
+      new CustomEvent("CheckAllclick", {
+        detail: {
+          listMessages: this.oldSelectedList,
+          chkselected: false
+      }
+    }  
+    ))
+
+    this.props.setSelected([this.props.selectedMessage], true);
+    window.dispatchEvent(
+      new CustomEvent("Checkclick", {
+        detail: {
+          id: this.props.selectedMessage.messageId,
+          subject: this.props.selectedMessage.subject,
+          sentDateTime: this.props.selectedMessage.receivedDate,
+          chkselected: true
+        }
+      })
+    );
+  }
+
+  restoreSelectedList() {
+    this.props.setSelected([this.props.selectedMessage], false);
+    this.props.setSelected(this.oldSelectedList, true);
+
+    window.dispatchEvent(
+      new CustomEvent("Checkclick", {
+        detail: {
+          id: this.props.selectedMessage.messageId,
+          subject: this.props.selectedMessage.subject,
+          sentDateTime: this.props.selectedMessage.receivedDate,
+          chkselected: false
+        }
+      })
+    );
+
+    for(let i = 0; i < this.oldSelectedList.length; i++) {
+      window.dispatchEvent(
+        new CustomEvent("Checkclick", {
+          detail: {
+            id: this.oldSelectedList[i].id,
+            subject: this.oldSelectedList[i].subject,
+            sentDateTime: this.oldSelectedList[i].sentDateTime,
+            chkselected: true
+          }
+        })
+      );
+    }
+    
+  }
+
+  componentDidMount() {
+    this.clearSelectedList();
+  }
+
   componentWillUnmount() {
+    this.restoreSelectedList();
     const { lexon } = this.props;
   
     clearTimeout(this.refreshPollTimeout);
@@ -110,6 +171,7 @@ const mapStateToProps = state => ({
   refreshMessageActiveRequests: state.application.refreshMessageActiveRequests,
   currentFolder: getSelectedFolder(state) || {},
   selectedMessage: state.application.selectedMessage,
+  selectedMessages: state.messages.selectedMessages,
   lexon: state.lexon
 });
 
@@ -120,6 +182,8 @@ const mapDispatchToProps = dispatch => ({
   },
   setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
   resetIdEmail: ()=> dispatch(ACTIONS.resetIdEmail()),
+  setSelected: (messages, selected, shiftKey) =>
+    dispatch(setSelected(messages, selected, shiftKey)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MessageViewer);
