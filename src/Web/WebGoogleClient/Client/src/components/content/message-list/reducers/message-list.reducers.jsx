@@ -260,6 +260,13 @@ export function messageList(state = defaultMessageList, action) {
       };
     }
 
+    case CLEAR_LIST_MESSAGES: {
+      return {
+        ...state,
+        selectedMessages: []
+      };
+    }
+
     default:
       return state;
   }
