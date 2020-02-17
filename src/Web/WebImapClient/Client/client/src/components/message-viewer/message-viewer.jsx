@@ -94,7 +94,10 @@ export class MessageViewer extends Component {
 
   restoreSelectedList() {
     this.props.setSelected([this.props.selectedMessage], false);
-    this.props.setSelected(this.oldSelectedList, true);
+    const ms = this.oldSelectedList.map(item=>item.messageId);
+    setTimeout(()=>{
+      this.props.setSelected(ms, true);
+    }, 1000);
 
     window.dispatchEvent(
       new CustomEvent("Checkclick", {
