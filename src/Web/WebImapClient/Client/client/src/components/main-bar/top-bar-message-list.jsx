@@ -5,6 +5,7 @@ import ButtonUser from './button-user';
 import mainCss from '../../styles/main.scss';
 import styles from './top-bar-message-list.scss';
 import {Link} from "react-router-dom";
+import SearchBar from 'material-ui-search-bar'
 
 const picUrl = 'assets/images/LogoLefebvre.png';
 //const picImap = 'assets/images/imap.png';
@@ -24,6 +25,18 @@ export const TopBarMessageList = (
         {/* <div className={`${styles['main-header-imap-div']}`}>
              <img border="0" alt="Lefebvre" src={picImap}></img>
          </div>*/}
+    </section>
+    <section  className={`${mainCss['mdc-top-app-bar__section']} ${mainCss['mdc-top-app-bar__section--align-start']}  ${styles['modules-item-custom']}`}>
+    <SearchBar
+      onChange={() => console.log('onChange')}
+      onRequestSearch={() => console.log('onRequestSearch')}
+      placeholder={t('topBar.search')}
+      style={{
+        margin: '0 auto',
+        width: '100%',
+        maxWidth: 800
+      }}
+    />
     </section>
    
     <section className={`${mainCss['mdc-top-app-bar__section']} ${mainCss['mdc-top-app-bar__section--align-end']}  ${styles['modules-item-custom']}`}>
