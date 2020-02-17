@@ -74,4 +74,4 @@ configValues: |
   window.URL_MF_IMAP='https://now-webimap.lefebvre.es/user'
   window.URL_MF_LEXON='https://now-weblexon.lefebvre.es/static/js/main.js'
   window.API_GATEWAY='https://now-apigwlex.lefebvre.es'  
-  window.API_ACC_GATEWAY = "https://now-apigwacc.lefebvre.es";
+  window.API_ACC_GATEWAY = 'https://now-apigwacc.lefebvre.es'
