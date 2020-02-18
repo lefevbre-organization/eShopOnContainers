@@ -5,12 +5,20 @@ import { getTypes } from '../../services/services-lexon'
 export class ConnectingEmailsStep1 extends React.Component {
     constructor() {
         super()
+        this.state = {
+            types: []
+        }
     }
 
-
-
     async componentDidMount() {
-        const types = await getTypes();
+        try {
+            const types = await getTypes();
+            if(types && types.data) {
+                this.setState({types: types.data})
+            } 
+        } catch(err) {
+            console.log(err)
+        }
     }
 
     render() {
@@ -28,16 +36,17 @@ export class ConnectingEmailsStep1 extends React.Component {
                 <li>
                     <span>Con que tipo de entidad quieres conectarlos?</span>
                     <ul className="two-columns">
-                        <li><RadioButtonComponent cssClass="e-primary" label="Expediente"/></li>
-                        <li><RadioButtonComponent cssClass="e-primary" label="Cliente"/></li>
-                        <li><RadioButtonComponent cssClass="e-primary" label="Abogado propio"/></li>
-                        <li><RadioButtonComponent cssClass="e-primary" label="Procurador propio"/></li>
-                        <li><RadioButtonComponent cssClass="e-primary" label="Notario"/></li>
-                        <li><RadioButtonComponent cssClass="e-primary" label="Otros contactos"/></li>
-                        <li><RadioButtonComponent cssClass="e-primary" label="Contrario"/></li>
-                        <li><RadioButtonComponent cssClass="e-primary" label="Abogado contrario"/></li>
-                        <li><RadioButtonComponent cssClass="e-primary" label="Procurador contrario"/></li>
-                        <li><RadioButtonComponent cssClass="e-primary" label="Juzgado"/></li>
+                        {this.state.types.map( item => (<li><RadioButtonComponent cssClass="e-primary" label={item.name}/></li>))}
+                        {/* // <li><RadioButtonComponent cssClass="e-primary" label="Expediente"/></li>
+                        // <li><RadioButtonComponent cssClass="e-primary" label="Cliente"/></li>
+                        // <li><RadioButtonComponent cssClass="e-primary" label="Abogado propio"/></li>
+                        // <li><RadioButtonComponent cssClass="e-primary" label="Procurador propio"/></li>
+                        // <li><RadioButtonComponent cssClass="e-primary" label="Notario"/></li>
+                        // <li><RadioButtonComponent cssClass="e-primary" label="Otros contactos"/></li>
+                        // <li><RadioButtonComponent cssClass="e-primary" label="Contrario"/></li>
+                        // <li><RadioButtonComponent cssClass="e-primary" label="Abogado contrario"/></li>
+                        // <li><RadioButtonComponent cssClass="e-primary" label="Procurador contrario"/></li>
+                        // <li><RadioButtonComponent cssClass="e-primary" label="Juzgado"/></li> */}
 
                     </ul>
                 </li>
