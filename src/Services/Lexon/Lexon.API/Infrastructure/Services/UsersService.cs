@@ -53,7 +53,7 @@ namespace Lexon.Infrastructure.Services
 
             var classificationAdd = new ClassificationAddView
             {
-                idType = idType,
+                idType = (short)idType,
                 bbdd = bbdd,
                 idRelated = idRelated,
                 idUser = idUser,
@@ -162,7 +162,7 @@ namespace Lexon.Infrastructure.Services
             {
                 var classificationRemove = new ClassificationRemoveView
                 {
-                    idType = idType,
+                    idType = (short)idType,
                     bbdd = bbdd,
                     idRelated = idRelated,
                     idUser = idUser,
@@ -224,6 +224,43 @@ namespace Lexon.Infrastructure.Services
             var result = new Result<List<LexonActuation>>(new List<LexonActuation>());
             idType = idType != null ? idType : 0;
 
+            var url = $"{_settings.Value.LexonMySqlUrl}/classifications/search";
+
+            TraceLog(parameters: new string[] { $"url={url}" });
+
+            var classificationSearch = new ClassificationSearchView
+            {
+                idType = (short)idType,
+                bbdd = bbdd,
+                idRelated = 0,
+                idUser = idUser,
+                idMail = idMail,
+                pageIndex = pageIndex,
+                pageSize = pageSize
+            };
+
+            var json = JsonConvert.SerializeObject(classificationSearch);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            try
+            {
+                using (var response = await _client.PostAsync(url, data))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var resultMysql = await response.Content.ReadAsAsync<Result<JosRelationsList>>();
+                        if (GetClassificationsFromMailMySqlAsync(ref result, resultMysql, idMail))
+                            return result;
+                    }
+                    else
+                    {
+                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
             var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/classifications/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={idType}&bbdd={bbdd}&idUser={idUser}&idMail={idMail}");
             TraceLog(parameters: new string[] { $"request:{request}" });
 

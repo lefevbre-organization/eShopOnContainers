@@ -211,24 +211,26 @@ namespace Lexon.MySql.Controllers
         /// <param name="idUser">the id of the user</param>
         /// <param name="idMail">thes string code of the mail</param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         [Route("classifications/search")]
         [ProducesResponseType(typeof(Result<JosRelationsList>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<JosRelationsList>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> RelationsAsync(
-            [FromQuery]int pageSize = 0
-            , [FromQuery]int pageIndex = 1
-            , short? idType = null
-            , string bbdd = "lexon_admin_02"
-            , string idUser = "449"
-            , string idMail = "")
+            [FromBody]ClassificationSearchView classification
+            //, [FromQuery]int pageSize = 0
+            //, [FromQuery]int pageIndex = 1
+            //, short? idType = null
+            //, string bbdd = "lexon_admin_02"
+            //, string idUser = "449"
+            //, string idMail = ""
+            )
         {
-            idType = idType <= 0 ? null : idType;
-            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd) || string.IsNullOrEmpty(idMail))
+            //idType = classification.idType <= 0 ? null : idType;
+            if (string.IsNullOrEmpty(classification.idUser) || string.IsNullOrEmpty(classification.bbdd) || string.IsNullOrEmpty(classification.idMail))
                 return (IActionResult)BadRequest("values invalid. Must be a valid user, idMail and bbdd to search the entities");
 
-            var result = await _lexonService.GetRelationsAsync(pageSize, pageIndex, idType, bbdd, idUser, idMail);
+            var result = await _lexonService.GetRelationsAsync(classification.pageSize, classification.pageIndex, classification.idType, classification.bbdd, classification.idUser, classification.idMail);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
     }
