@@ -40,6 +40,7 @@
   "classify-emails": {
     "cancel": "CANCELAR",
     "save": "GUARDAR",
+    "continue": "CONTINUAR",
     "title": "Nueva clasificación",
     "body": "Selecciona tipo de clasificación para cargar el listado correspondiente y asigna los mensajes a uno de los elementos de la lista.",
     "classification-saved-ok": "La clasificación se ha guardado correctamente",
@@ -79,8 +80,11 @@
   "tab-document": {
     "select-mail": "Selecciona uno o más mensajes y guárdalos como copia independiente en la documentación de Lex-on."
   },
+  "tab-connect": {
+    "select-mail": "Selecciona uno o más mensajes y conéctalos con Lex-on. Las conexiones realizadas se mostrarán individualmente en cada mensaje."
+  },
   "save-copy": {
-    "save-copy": "Guardar copia"
+    "save-copy": "Nueva conexión"
   },
   "list-classifications": {
     "classifications": "CLASIFICACIONES:",
@@ -91,6 +95,9 @@
   },
   "modal-documents-emails": {
     "save-copy": "Guardar copia en Documentación"
+  },
+  "modal-conecting-emails": {
+    "save-copy": "Conectar mensajes con Lex-on"
   },
   "case-file": {
     "casefile-related": "Expediente relacionado",

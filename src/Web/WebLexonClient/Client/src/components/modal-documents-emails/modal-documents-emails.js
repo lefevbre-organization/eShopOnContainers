@@ -312,6 +312,7 @@ class ModalDocumentsEmails extends Component {
             </Button>
           </Modal.Footer>
         </Modal>
+        
       </div>
     );
   }

@@ -5,7 +5,7 @@ import SaveDocument from "../save-document/save-document";
 import ListDocuments from "../list-documents/list-documents";
 import i18n from "i18next";
 import { connect } from "react-redux";
-import ModalDocumentsEmails from "../../modal-documents-emails/modal-documents-emails";
+import ModalConnectingEmails from "../../modal-connecting-emails/modal-connecting-emails";
 
 class TabConnectMessage extends Component {
   constructor(props) {
@@ -65,13 +65,15 @@ class TabConnectMessage extends Component {
         />
       );
     } else {
-      return <strong>{i18n.t("tab-document.select-mail")}</strong>;
+      return <strong>{i18n.t("tab-connect.select-mail")}</strong>;
     }
   }
 
   renderShowDocuments() {
     const { user } = this.props;
     const { classifications, showDocuments } = this.state;
+
+    return null;
 
     if (showDocuments) {
       return <ListDocuments user={user} />;
@@ -83,7 +85,7 @@ class TabConnectMessage extends Component {
   render() {
     return (
       <Fragment>
-        <ModalDocumentsEmails />
+        <ModalConnectingEmails />
         {this.renderShowSaveDocument()}
         {this.renderShowDocuments()}
       </Fragment>

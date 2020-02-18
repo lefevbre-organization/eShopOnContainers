@@ -40,6 +40,7 @@
   "classify-emails": {
     "cancel": "CANCEL",
     "save": "SAVE",
+    "continue": "CONTINUE",
     "title": "New classification",
     "body": "Select classification type to load the corresponding list and assign the messages to one of the items in the list.",
     "classification-saved-ok": "The classification saved correctly",
@@ -61,6 +62,9 @@
   "tab-classify": {
     "select-mail": "Select a message and rate it in Lex-on. The relationship established will be visible in this panel and also in the application."
   },
+  "tab-connect": {
+    "select-mail": "Select a message and rate it in Lex-on. The relationship established will be visible in this panel and also in the application."
+  },
   "classification-list": {
     "assigned-to": "Assigned to",
     "code": "Code",
@@ -80,7 +84,7 @@
     "select-mail": "Select one or more messages and save them as a separate copy in the Lex-on documentation."
   },
   "save-copy": {
-    "save-copy": "Save copy"
+    "save-copy": "New conection"
   },
   "list-classifications": {
     "classifications": "CLASSIFICATIONS:",
@@ -91,6 +95,9 @@
   },
   "modal-documents-emails": {
     "save-copy": "Save copy in Documentation"
+  },
+  "modal-conecting-emails": {
+    "save-copy": "Connecting messages with Lex-on"
   },
   "case-file": {
     "casefile-related": "Related Casefile",
