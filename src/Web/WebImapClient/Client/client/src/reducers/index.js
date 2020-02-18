@@ -12,6 +12,7 @@ export const INITIAL_STATE = {
     newMessage: null,
     selectedFolderId: {},
     messageFilterKey: null,
+    messageFilterKeyword: null,
     createFolderParentId: null,
     renameFolderId: null,
     selectedMessage: null,
