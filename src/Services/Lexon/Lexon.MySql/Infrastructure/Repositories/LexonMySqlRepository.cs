@@ -93,6 +93,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         command.CommandType = CommandType.StoredProcedure;
                         using (var reader = await command.ExecuteReaderAsync())
                         {
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
                             if (EvaluateErrorCommand(result.errors, command) == 0)
                                 while (reader.Read()) { result.data = JsonConvert.DeserializeObject<JosUserCompanies>(reader.GetValue(0).ToString()); }
                         }
@@ -135,9 +136,12 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         command.CommandType = CommandType.StoredProcedure;
                         using (var reader = await command.ExecuteReaderAsync())
                         {
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
                             if (EvaluateErrorCommand(result.errors, command) == 0)
                                 while (reader.Read()) { result.data = JsonConvert.DeserializeObject<JosEntityList>(reader.GetValue(0).ToString(), jsonSerializerSettings); }
                         }
+
+                        result.data.TotalRegs = (int?)command.Parameters["P_TOTAL_REG"].Value;
                     }
                 }
                 catch (Exception ex)
@@ -254,6 +258,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         command.CommandType = CommandType.StoredProcedure;
                         using (var reader = await command.ExecuteReaderAsync())
                         {
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
                             if (EvaluateErrorCommand(result.errors, command) == 0)
                                 while (reader.Read()) { result.data = JsonConvert.DeserializeObject<JosRelationsList>(reader.GetValue(0).ToString()); }
                         }
