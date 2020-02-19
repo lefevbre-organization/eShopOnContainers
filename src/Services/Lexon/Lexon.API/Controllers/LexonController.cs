@@ -39,7 +39,7 @@ namespace Lexon.API.Controllers
 
         {
             if (string.IsNullOrEmpty(idUserNavision))
-                return (IActionResult)BadRequest("idUser need a correct value");
+                return BadRequest("idUser need a correct value");
 
             var result = await _usersService.GetUserAsync(idUserNavision);
 
@@ -80,7 +80,7 @@ namespace Lexon.API.Controllers
         [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ClassificationsAsync(
-            [FromBody] ClassificationSearch classificationSearch
+            [FromBody] ClassificationSearchView classificationSearch
             //, [FromHeader(Name = "x-requestid")] string requestId
             )
 
@@ -88,8 +88,7 @@ namespace Lexon.API.Controllers
             if (string.IsNullOrEmpty(classificationSearch.idUser) || string.IsNullOrEmpty(classificationSearch.idMail) || string.IsNullOrEmpty(classificationSearch.bbdd))
                 return BadRequest("values invalid. Must be a valid user, bbdd and email order to search the classifications");
 
-            var result = await _usersService.GetClassificationsFromMailAsync(
-                classificationSearch.pageSize, classificationSearch.pageIndex, classificationSearch.idUser, classificationSearch.bbdd, classificationSearch.idMail, classificationSearch.idType);
+            var result = await _usersService.GetClassificationsFromMailAsync(classificationSearch);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
@@ -104,8 +103,7 @@ namespace Lexon.API.Controllers
                 string.IsNullOrEmpty(classification?.bbdd) || classification?.idRelated <= 0 || classification?.idType <= 0)
                 return BadRequest("values invalid. Must be a valid user, bbdd, email, related and type for create the classification");
 
-            var result = await _usersService.AddClassificationToListAsync(
-                classification.idUser, classification.bbdd, classification.listaMails, classification.idRelated, classification.idType);
+            var result = await _usersService.AddClassificationToListAsync(classification);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
@@ -120,7 +118,7 @@ namespace Lexon.API.Controllers
             if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.bbdd) ||
                 string.IsNullOrEmpty(classification?.mail.Provider) || string.IsNullOrEmpty(classification?.mail.MailAccount) || string.IsNullOrEmpty(classification?.mail.Uid) ||
                 classification.ContactList == null || classification.ContactList.GetLength(0) <= 0)
-                return (IActionResult)BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated, bbdd and some contacts to add in a actuation");
+                return BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated, bbdd and some contacts to add in a actuation");
 
             var result = await _usersService.AddRelationContactsMailAsync(classification);
 
@@ -137,23 +135,20 @@ namespace Lexon.API.Controllers
                 string.IsNullOrEmpty(classification?.bbdd) || classification?.idRelated <= 0 || classification?.idType <= 0)
                 return BadRequest("values invalid. Must be a valid user, bbdd, email, related and type for remove the classification");
 
-            var result = await _usersService.RemoveClassificationFromListAsync(
-                classification.idUser, classification.bbdd,
-                classification.Provider, classification.MailAccount, classification.idMail,
-                classification.idRelated, classification.idType);
+            var result = await _usersService.RemoveClassificationFromListAsync(classification);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpGet]
-        [Route("entities/types")]
-        [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityType>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityType>>), (int)HttpStatusCode.BadRequest)]
+        [HttpGet("entities/types")]
+        [ProducesResponseType(typeof(MySqlList<List<JosEntityType>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(MySqlList<List<JosEntityType>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> EntitiesTypesAsync()
         {
             var result = await _usersService.GetMasterEntitiesAsync();
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
+
         [HttpPost]
         [Route("entities")]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.OK)]
@@ -161,28 +156,24 @@ namespace Lexon.API.Controllers
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> EntitiesAsync(
-            [FromBody] EntitySearch entitySearch
+            [FromBody] EntitySearchView entitySearch
             )
         {
             if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0)
                 return BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
 
-            //if (pageIndex == 1 && pageSize == 0)
+            var entities = await _usersService.GetEntitiesListAsync(entitySearch);
+
             if (entitySearch.pageIndex == 0 && entitySearch.pageSize == 0)
             {
-                var result = await _usersService.GetEntitiesListAsync(
-                    entitySearch.pageSize, entitySearch.pageIndex, entitySearch.idType, entitySearch.idUser, entitySearch.bbdd, entitySearch.search, entitySearch.idFilter);
-                return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+                return (entities.errors.Count > 0) ? (IActionResult)BadRequest(entities) : Ok(entities);
             }
 
-            var resultPaginated = await _usersService.GetEntitiesListAsync(
-                entitySearch.pageSize, entitySearch.pageIndex, entitySearch.idType, entitySearch.idUser, entitySearch.bbdd, entitySearch.search, entitySearch.idFilter);
-
-            var totalItems = resultPaginated.data.Count;
+            var totalItems = entities.data.Count;
 
             var resultPaginatedFinal =
                 new Result<PaginatedItemsViewModel<LexonEntityBase>>(
-                    new PaginatedItemsViewModel<LexonEntityBase>(entitySearch.pageIndex, entitySearch.pageSize, totalItems, resultPaginated.data), resultPaginated.errors);
+                    new PaginatedItemsViewModel<LexonEntityBase>(entitySearch.pageIndex, entitySearch.pageSize, totalItems, entities.data), entities.errors);
 
             return (resultPaginatedFinal.errors.Count > 0) ? (IActionResult)BadRequest(resultPaginatedFinal) : Ok(resultPaginatedFinal);
         }
@@ -195,11 +186,11 @@ namespace Lexon.API.Controllers
             [FromBody] EntitySearchById entitySearch
             )
         {
-            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0 || entitySearch.idEntity <= 0)
+            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null || entitySearch.idEntity <= 0)
                 return BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
 
 
-                var result = await _usersService.GetEntityById(entitySearch.bbdd, entitySearch.idUser, entitySearch.idType,  entitySearch.idEntity);
+                var result = await _usersService.GetEntityById(entitySearch);
                 return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
 
 

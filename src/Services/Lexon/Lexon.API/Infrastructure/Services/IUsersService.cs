@@ -15,18 +15,18 @@ namespace Lexon.Infrastructure.Services
 
         Task<Result<long>> SelectCompanyAsync(string idUser, string bbdd);
 
-        Task<Result<List<LexonEntityBase>>> GetEntitiesListAsync(int pageSize, int pageIndex, short? idType, string idUser, string bbdd, string searchFilter, long? idFilter);
+        Task<Result<List<LexonEntityBase>>> GetEntitiesListAsync(EntitySearchView entitySearch);
 
-        Task<Result<LexonEntityBase>> GetEntityById(string bbdd, string idUser, short idType, long idEntity);
+        Task<Result<LexonEntityBase>> GetEntityById(EntitySearchById entitySearch);
 
-        Task<Result<List<LexonEntityType>>> GetMasterEntitiesAsync();
+        Task<MySqlList<List<JosEntityType>>> GetMasterEntitiesAsync();
 
-        Task<Result<long>> AddClassificationToListAsync(string idUser, string bbdd, MailInfo[] listaMails, long idRelated, short? idType = 1);
+        Task<Result<long>> AddClassificationToListAsync(ClassificationAddView classification);
         Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification);
 
-        Task<Result<long>> RemoveClassificationFromListAsync(string idUser, string provider, string mailAccount, string uidMail, string bbdd, long idRelated, short? idType = 1);
+        Task<Result<long>> RemoveClassificationFromListAsync(ClassificationRemoveView classificationRemove);
 
-        Task<Result<List<LexonActuation>>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, string bbdd, string idMail, short? idType);
+        Task<Result<List<LexonActuation>>> GetClassificationsFromMailAsync(ClassificationSearchView classificationSearch);
 
     }
 }

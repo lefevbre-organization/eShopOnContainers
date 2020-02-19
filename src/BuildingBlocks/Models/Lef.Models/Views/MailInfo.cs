@@ -13,8 +13,14 @@
             Uid = uid;
         }
 
-        public MailInfo(string provider, string mailAccount, string uid, string subject, string date)
-            :this(provider, mailAccount, uid)
+        public MailInfo(string provider, string mailAccount, string uid, string folder)
+             : this(provider, mailAccount, uid)
+        {
+            Folder = folder;
+        }
+
+        public MailInfo(string provider, string mailAccount, string uid, string folder, string subject, string date)
+            :this(provider, mailAccount, uid, folder)
         {
             Subject = subject;
             Date = date;
@@ -25,5 +31,7 @@
         public string Uid { get; set; }
         public string Subject { get; set; }
         public string Date { get; set; }
+        public string Folder { get; set; }
+
     }
 }

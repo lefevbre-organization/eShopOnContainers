@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosEntity">
+    <Position X="1.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACggAAAAAAAgAABAAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>MySql\JosEntity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosActuation">
+    <Position X="4.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQEAAAAAgAAAAAABCAAAABAAAAAAAAA=</HashCode>
+      <FileName>MySql\JosActuation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosCompany">
+    <Position X="2" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAQAAAAAEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MySql\JosCompany.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosEntityList">
+    <Position X="2.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAAAAAA=</HashCode>
+      <FileName>MySql\JosEntityList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosEntityType">
+    <Position X="11" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>MySql\JosEntityType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosEntityTypeList">
+    <Position X="11" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>MySql\JosEntityTypeList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosRelationsList">
+    <Position X="7.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEAAAQABAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>MySql\JosRelationsList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosUser">
+    <Position X="8.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAQAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>MySql\JosUser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosUserCompanies">
+    <Position X="4.25" Y="0.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>MySql\JosUserCompanies.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.MySqlList&lt;T&gt;">
+    <Position X="5.75" Y="2.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAASAAAAAAAAAAIAAAAAAEAIEAAAAAAAA=</HashCode>
+      <FileName>MySql\MySqlList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

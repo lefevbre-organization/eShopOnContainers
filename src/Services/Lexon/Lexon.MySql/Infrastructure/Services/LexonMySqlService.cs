@@ -31,47 +31,23 @@ namespace Lexon.MySql.Infrastructure.Services
 
         #region Relations
 
-        public async Task<Result<int>> AddRelationMailAsync(short idType, string bbdd, string idUser, MailInfo[] listaMails, long idRelated)
-        {
-            return await _lexonRepository.AddRelationMailAsync(idType, bbdd, idUser, listaMails, idRelated);
-        }
+        public async Task<Result<int>> AddRelationMailAsync(ClassificationAddView classification) => await _lexonRepository.AddRelationMailAsync(classification);
 
-        public async Task<Result<int>> AddRelationContactsMailAsync(string bbdd,
-                                                                    string idUser,
-                                                                    MailInfo mailInfo,
-                                                                    string[] contactList)
-        {
-            return await _lexonRepository.AddRelationContactsMailAsync(bbdd, idUser, mailInfo, contactList);
-        }
+        public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification) => await _lexonRepository.AddRelationContactsMailAsync(classification);
 
-        public async Task<Result<int>> RemoveRelationMailAsync(short idType, string bbdd, string idUser, string provider, string mailAccount, string uidMail, long idRelated)
-        {
-            return await _lexonRepository.RemoveRelationMailAsync(idType, bbdd, idUser, provider, mailAccount, uidMail, idRelated);
-        }
+        public async Task<Result<int>> RemoveRelationMailAsync(ClassificationRemoveView classification) => await _lexonRepository.RemoveRelationMailAsync(classification);
 
-        public async Task<Result<JosRelationsList>> GetRelationsAsync(int pageSize, int pageIndex, short? idType, string bbdd, string idUser, string idMail)
-        {
-            return await _lexonRepository.SearchRelationsAsync(pageSize, pageIndex, idType, bbdd, idUser, idMail);
-        }
+        public async Task<Result<JosRelationsList>> GetRelationsAsync(ClassificationSearchView classification) => await _lexonRepository.SearchRelationsAsync(classification);
 
         #endregion Relations
 
         #region Entities
 
-        public async Task<Result<JosEntityList>> GetEntitiesAsync(int pageSize, int pageIndex, short? idType, string bbdd, string idUser, string search, long? idFilter)
-        {
-            return await _lexonRepository.SearchEntitiesAsync(pageSize, pageIndex, idType, bbdd, idUser, search, idFilter);
-        }
+        public async Task<Result<JosEntityList>> GetEntitiesAsync(EntitySearchView entitySearch) => await _lexonRepository.SearchEntitiesAsync(entitySearch);
 
-        public async Task<Result<JosEntity>> GetEntityAsync(string bbdd, string idUser, short idType, long idEntity)
-        {
-            return await _lexonRepository.GetEntityAsync(bbdd, idUser, idType, idEntity);
-        }
+        public async Task<Result<JosEntity>> GetEntityAsync(EntitySearchById entitySearch) => await _lexonRepository.GetEntityAsync(entitySearch);
 
-        public async Task<Result<JosEntityTypeList>> GetMasterEntitiesAsync()
-        {
-            return await _lexonRepository.GetMasterEntitiesAsync();
-        }
+        public async Task<MySqlList<JosEntityTypeList>> GetMasterEntitiesAsync() => await _lexonRepository.GetMasterEntitiesAsync();
 
         #endregion Entities
 
@@ -196,9 +172,7 @@ namespace Lexon.MySql.Infrastructure.Services
 
         #endregion User and tokens
 
-        public async Task<Result<JosUserCompanies>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser)
-        {
-            return await _lexonRepository.GetCompaniesListAsync(pageSize, pageIndex, idUser);
-        }
+        public async Task<Result<JosUserCompanies>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser) 
+            => await _lexonRepository.GetCompaniesListAsync(pageSize, pageIndex, idUser);
     }
 }

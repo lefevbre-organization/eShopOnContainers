@@ -1,6 +1,6 @@
-﻿namespace Lexon.API.Model
+﻿namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
-    public class EntitySearch : EntityView
+    public class EntitySearchView : EntityView
     {
         /// <summary>id to filter (use in documents and folders entities</summary>
         public long? idFilter { get; set; }
