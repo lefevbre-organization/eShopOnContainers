@@ -27,4 +27,7 @@ export const PARAMS_DELETACCOUNTBYUSERANDEMAIL = "api/v1/accounts/emailuseraccou
 export const INBOX_GOOGLE = "GOOGLE";
 export const INBOX_OUTLOOK = "OUTLOOK";
 export const INBOX_IMAP = "IMAP";
+export const IN_GOOGLE = "GO";
+export const IN_OUTLOOK = "OU";
+export const IN_IMAP = "IM";
 export const PROXY_CORS = "https://cors-anywhere.herokuapp.com/";
