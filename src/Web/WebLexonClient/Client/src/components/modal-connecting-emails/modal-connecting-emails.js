@@ -1,35 +1,60 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import i18n from "i18next";
 import { Button, Modal, Container } from "react-bootstrap";
 import { connect } from "react-redux";
-import { ConnectingEmailsStep1 } from './step1'
+import { ConnectingEmailsStep1 } from './step1';
+import { ConnectingEmailsStep2 } from './step2'
 import ACTIONS from "../../actions/documentsAction";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 
 class ModalConnectingEmails extends Component {
-   constructor() {
-     super();
+  constructor() {
+    super();
 
-     this.state = {
-      step: 1
-     }
-   }
+    this.state = {
+      step: 1,
+      step1Data: {
+        actuation: false,
+        copyDocuments: false,
+        saveDocuments: false,
+        entity: 0
+      }
+    }
+  }
 
-  toggle(event) {
-    const { target } = event;
-    this.props.updateSelectedCompany(target.value);
+  closeDialog() {
+    setTimeout(()=>{
+      this.setState({step: 1})
+    }, 1000)
+    this.props.toggleModalDocuments && this.props.toggleModalDocuments();
+  }
+
+  nextStep() {
+    if(this.state.step === 1) {
+      this.setState({step: 2})
+    }
+  }
+
+  prevStep() {
+    if(this.state.step === 2) {
+      this.setState({step: 1})
+    }
+  }
+
+  changeStep1Data(data) {
+    this.setState({step1Data: data})
   }
 
   render() {
-    const { showModalDocuments, toggleModalDocuments } = this.props;
+    const { user, companySelected, showModalDocuments } = this.props;
 
     return (
       <div>
         <Modal
-          show={showModalDocuments}
-          onHide={toggleModalDocuments}
+          show={showModalDocuments }
+          onHide={()=>{ this.closeDialog() }}
           size="lg"
           aria-labelledby="contained-modal-title-vcenter"
           centered
@@ -47,22 +72,36 @@ class ModalConnectingEmails extends Component {
           </Modal.Header>
           <Modal.Body>
             <Container>
-              { this.state.step === 1 && <ConnectingEmailsStep1></ConnectingEmailsStep1> }
+              <div style={{ display: this.state.step === 1? 'block' : 'none'}}><ConnectingEmailsStep1 onChange={(data)=>{ this.changeStep1Data(data) }}></ConnectingEmailsStep1></div>
+              <div style={{ display: this.state.step === 2? 'block' : 'none'}}><ConnectingEmailsStep2 user={user} bbdd={companySelected} entity={this.state.step1Data.entity}></ConnectingEmailsStep2></div>
             </Container>
           </Modal.Body>
           <Modal.Footer>
             <Button
               bsPrefix="btn btn-outline-primary"
-              onClick={() => this._handleOnClick(false)}
-            >
+              onClick={() => { this.closeDialog() }}>
               {i18n.t("classify-emails.cancel")}
             </Button>
-            <Button
+            {this.state.step === 1 && <Button
               bsPrefix="btn btn-primary"
-              onClick={() => this._handleOnClick(true)}
-            >
+              onClick={() => { this.nextStep() }}>
               {i18n.t("classify-emails.continue")}
-            </Button>
+              </Button> 
+            }
+            {this.state.step === 2 && <Fragment>
+                <Button
+                  bsPrefix="btn btn-outline-primary"
+                  onClick={() => { this.prevStep() }}>
+                  {i18n.t("classify-emails.back")}
+                </Button> 
+                <Button
+                  bsPrefix="btn btn-primary"
+                  onClick={() => {  }} >
+                  {i18n.t("classify-emails.save")}
+                </Button>
+              </Fragment>
+            }
+            
           </Modal.Footer>
         </Modal>
 
@@ -250,6 +289,7 @@ class ModalConnectingEmails extends Component {
           }
           .modal-body {
             background-color: #ffffff;
+            height: 500px;
           }
           
           .modal-body.info {
@@ -574,7 +614,8 @@ ModalConnectingEmails.propTypes = {};
 
 const mapStateToProps = state => {
   return {
-    showModalDocuments: state.documentsReducer.showModalDocuments
+    showModalDocuments: state.documentsReducer.showModalDocuments,
+    companySelected: state.selections.companySelected
   };
 };
 

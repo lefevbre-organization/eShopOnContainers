@@ -19,7 +19,7 @@ class SelectActionTab extends Component {
         bsPrefix="menu-lexon-actions"
       >
         <Tab eventKey="classify" title={i18n.t("select-action.connect-messages")}>
-          <TabConnectMessage userNavision={user} />
+          <TabConnectMessage user={user} />
         </Tab>
 
         {/* <Tab eventKey="classify" title="Clasificar">

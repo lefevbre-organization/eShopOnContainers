@@ -18,6 +18,13 @@
   "new-classification": {
     "new-classification": "Nueva clasificación"
   },
+  "connecting":{
+    "q1":"¿Que quieres hacer con los mensajes seleccionados?",
+    "q2":"¿Con que tipo de entidad quieres conectarlos?",
+    "create":"Crear actuación",
+    "copy": "Guardar copia de los mensajes en documentación",
+    "save":"Guardar los archivos adjuntos en documentación"
+  },
   "classification": {
     "type": "Tipo: ",
     "assigned": "Asignado a: ",
@@ -41,6 +48,7 @@
     "cancel": "CANCELAR",
     "save": "GUARDAR",
     "continue": "CONTINUAR",
+    "back": "ANTERIOR",
     "title": "Nueva clasificación",
     "body": "Selecciona tipo de clasificación para cargar el listado correspondiente y asigna los mensajes a uno de los elementos de la lista.",
     "classification-saved-ok": "La clasificación se ha guardado correctamente",

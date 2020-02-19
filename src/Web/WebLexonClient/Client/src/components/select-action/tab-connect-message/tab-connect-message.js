@@ -83,9 +83,11 @@ class TabConnectMessage extends Component {
   }
 
   render() {
+    const { user } = this.props;
+
     return (
       <Fragment>
-        <ModalConnectingEmails />
+        <ModalConnectingEmails user={user}/>
         {this.renderShowSaveDocument()}
         {this.renderShowDocuments()}
       </Fragment>
