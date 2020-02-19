@@ -259,10 +259,6 @@ class ModalConnectingEmails extends Component {
       }
 
                            
-            .imgproduct {
-              margin-left: 40px;
-              margin-right: 20px;
-            }
 
             .container p {
               color: #001978;
