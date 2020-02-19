@@ -1,4 +1,4 @@
-import { INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP } from "../constants";
+import { INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP, IN_GOOGLE, IN_OUTLOOK, IN_IMAP } from "../constants";
 
 export const parseJwt = token => {
     var base64Url = token.split('.')[1];
@@ -36,7 +36,15 @@ export const parseJwt = token => {
   }
 
   export const getImapFolder = payload =>{
-    return( (payload.hasOwnProperty('folder') ? payload.folder.split("::")[1].toUpperCase() : null));
+    if (payload && payload.folder){
+      if (payload.folder.indexOf("::") !== -1){
+        return payload.folder.split("::")[1].toUpperCase();
+      } else {
+        return payload.folder.toUpperCase();
+      }
+    } else {
+      return null;
+    }
   }
 
   export const getIdEntityType = payload =>{
@@ -99,13 +107,13 @@ export const parseJwt = token => {
         break;
     }
     switch (provider){
-      case INBOX_GOOGLE:
+      case INBOX_GOOGLE, IN_GOOGLE:
         url = `${window.URL_INBOX_GOOGLE}${url}`
         break;
-      case INBOX_OUTLOOK:
+      case INBOX_OUTLOOK, IN_OUTLOOK:
         url = `${window.URL_INBOX_OUTLOOK}${url}`           
         break;
-      case INBOX_IMAP:
+      case INBOX_IMAP, IN_IMAP:
         url = `${window.URL_INBOX_IMAP}${url}`                  
         break;
       default:
