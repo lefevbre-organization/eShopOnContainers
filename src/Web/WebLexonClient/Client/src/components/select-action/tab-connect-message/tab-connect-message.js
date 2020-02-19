@@ -5,32 +5,37 @@ import SaveDocument from "../save-document/save-document";
 import ListDocuments from "../list-documents/list-documents";
 import i18n from "i18next";
 import { connect } from "react-redux";
+import { getClassifications } from "../../../services/services-lexon";
 import ModalConnectingEmails from "../../modal-connecting-emails/modal-connecting-emails";
+import ListClassifications from "../list-classifications/list-classifications";
+import ConfirmRemoveClassification from "../../confirm-remove-classification/confirm-remove-classification";
 
 class TabConnectMessage extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      showSaveDocument: false,
-      showDocuments: false
+      showClassifications: false,
+      showConfirmRemoveClassification: false,
     };
+    this.toggleConfirmRemoveClassification = this.toggleConfirmRemoveClassification.bind(this);
+    this.getClassifications = this.getClassifications.bind(this);
+
   }
 
   componentDidMount() {
     const { selectedMessages } = this.props;
 
     if (selectedMessages.length > 0) {
-      this.setState({ showSaveDocument: true });
+      this.setState({ showNewClassification: true });
     } else {
-      this.setState({ showSaveDocument: false });
+      this.setState({ showNewClassification: false });
     }
 
     if (selectedMessages.length === 1) {
-      this.setState({ showDocuments: true });
-      this.getDocuments(this.props.selectedMessages[0]);
+      this.getClassifications(this.props.selectedMessages[0].id);
     } else {
-      this.setState({ showDocuments: false });
+      this.setState({ classifications: [], showClassifications: false });
     }
   }
 
@@ -43,15 +48,53 @@ class TabConnectMessage extends Component {
       }
 
       if (this.props.selectedMessages.length === 1) {
-        this.getDocuments(this.props.selectedMessages[0]);
+        this.getClassifications(this.props.selectedMessages[0].id);
       } else {
-        this.setState({ classifications: [], showDocuments: false });
+        this.setState({ classifications: [], showClassifications: false });
       }
     }
   }
 
-  getDocuments(mailId) {
-    this.setState({ showDocuments: true });
+  toggleConfirmRemoveClassification(classification) {
+    this.setState(state => ({
+      showConfirmRemoveClassification: !state.showConfirmRemoveClassification,
+      classificationToRemove: classification
+    }));
+  }
+
+  getClassifications(mailId) {
+    const { user, companySelected } = this.props;
+
+    getClassifications(user, companySelected.idCompany, companySelected.bbdd, mailId)
+      .then(result => {
+        this.setState({
+          classifications: result.classifications,
+          showClassifications: true
+        });
+      })
+      .catch(error => {
+        console.log("error ->", error);
+      });
+  }
+
+  renderShowClassifications() {
+    const { user } = this.props;
+    const { classifications, showClassifications } = this.state;
+
+    if (showClassifications) {
+      return (
+        <ListClassifications
+          user={user}
+          updateClassifications={getClassifications}
+          classifications={classifications}
+          toggleConfirmRemoveClassification={
+            this.toggleConfirmRemoveClassification
+          }
+        />
+      );
+    } else {
+      return null;
+    }
   }
 
   renderShowSaveDocument() {
@@ -69,27 +112,31 @@ class TabConnectMessage extends Component {
     }
   }
 
-  renderShowDocuments() {
-    const { user } = this.props;
-    const { classifications, showDocuments } = this.state;
-
-    return null;
-
-    if (showDocuments) {
-      return <ListDocuments user={user} />;
-    } else {
-      return null;
-    }
-  }
-
   render() {
-    const { user } = this.props;
-
+    const { user, toggleNotification } = this.props;
+    const {
+      showConfirmRemoveClassification,
+      classificationToRemove
+    } = this.state;
     return (
       <Fragment>
-        <ModalConnectingEmails user={user}/>
+        <ModalConnectingEmails 
+          user={user} 
+          updateClassifications={this.getClassifications}
+          toggleNotification={toggleNotification}/>
+        <ConfirmRemoveClassification
+          user={user}
+          initialModalState={showConfirmRemoveClassification}
+          toggleConfirmRemoveClassification={
+            this.toggleConfirmRemoveClassification
+          }
+          classification={classificationToRemove}
+          updateClassifications={this.getClassifications}      
+          toggleNotification={toggleNotification}
+        />
+
         {this.renderShowSaveDocument()}
-        {this.renderShowDocuments()}
+        {this.renderShowClassifications()}
       </Fragment>
     );
   }

@@ -14,12 +14,18 @@ class SelectActionTab extends Component {
 
     return (
       <Tabs
-        defaultActiveKey="classify"
+        defaultActiveKey="connect"
         id="uncontrolled-tab-example"
         bsPrefix="menu-lexon-actions"
       >
-        <Tab eventKey="classify" title={i18n.t("select-action.connect-messages")}>
-          <TabConnectMessage user={user} />
+        {/* <Tab eventKey="classify" title="Clasificar">
+          <TabClassify
+            user={user}
+            toggleNotification={toggleNotification}
+          />
+        </Tab> */}
+        <Tab eventKey="connect" title={i18n.t("select-action.connect-messages")}>
+          <TabConnectMessage user={user} toggleNotification={toggleNotification}/>
         </Tab>
 
         {/* <Tab eventKey="classify" title="Clasificar">

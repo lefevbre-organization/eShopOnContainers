@@ -12,7 +12,8 @@ export class ConnectingEmailsStep2 extends React.Component {
             entities: [],
             rowSelected: -1,
             currentPage: 1,
-            showSpinner: true
+            showSpinner: true,
+            lastPage: false
         }
         this.toolbarOptions = ['Search']
         this.renderCheck = this._renderCheck.bind(this);
@@ -20,14 +21,24 @@ export class ConnectingEmailsStep2 extends React.Component {
     }
 
     async componentDidUpdate(prevProps, prevState) {
-        if (prevProps.entity !== this.props.entity ||
-            prevState.currentPage !== this.state.currentPage) {
-            const { user, bbdd, entity } = this.props;
-            const { currentPage } = this.state;
+        const { user, bbdd, entity } = this.props;
+        const { currentPage } = this.state;
+
+        if(prevProps.show === false && this.props.show === true) {
+            this.setState({currentPage: -1, showSpinner: true}, ()=>{
+                this.setState({currentPage: 1})
+            })
+            return
+        }
+
+        if (prevProps.show === false && this.props.show === true || 
+            prevProps.entity !== this.props.entity ||
+            (prevState.currentPage !== this.state.currentPage && this.state.currentPage > -1)) {
             try {
                 const response = await getResults(user, bbdd, entity, "", 6, currentPage);
                 if (response && response.results && response.results.data) {
-                    this.setState({ entities: [...response.results.data], showSpinner: false }, ()=>{
+                    let lastPage = response.results.count < 6;
+                    this.setState({ entities: [...response.results.data], lastPage, showSpinner: false }, ()=>{
                     })
                 }
             } catch (err) {
@@ -37,14 +48,17 @@ export class ConnectingEmailsStep2 extends React.Component {
     }
 
     _renderCheck(props) {
+        console.log("RenderCheck")
         const ix = props.id + '_' + props.idType;
         const check = (ix === this.state.rowSelected ? 'checked' : '')
         return <div className={`row-check ${check}`}><div className={`row-check-inner ${check}`}></div></div>
     }
 
     nextPage() {
-        const np = this.state.currentPage + 1;
-        this.setState({ currentPage: np, showSpinner: true })
+        if(this.state.lastPage === false) {
+            const np = this.state.currentPage + 1;
+            this.setState({ currentPage: np, showSpinner: true })
+        }
     }
 
     prevPage() {
@@ -54,12 +68,11 @@ export class ConnectingEmailsStep2 extends React.Component {
         }
     }
 
-    showSpinner() {
-        this.setState({showSpinner: true})
-    }
-
-    hideSpinner() {
-        this.setState({showSpinner: false})
+    onRowSelected(event) {
+        this.setState({ rowSelected: event.data.id + '_' + event.data.idType }, ()=>{
+            this.props.onSelectedEntity && this.props.onSelectedEntity({id: event.data.id, idType:event.data.idType} )
+            this.gridRef && this.gridRef.refresh()
+        });
     }
 
     render() {
@@ -69,37 +82,39 @@ export class ConnectingEmailsStep2 extends React.Component {
             <div className="step2-container">
                 <ol>
                     <li className="index-3">
-                        <span>{i18n.t("¿En que cliente quieres clasificar los mensajes?") + this.state.showSpinner}</span>
+                        <span>{i18n.t(`connecting.q3_${this.props.entity}`)}</span>
                     </li>
                 </ol>
-                <div style={{ height: 300 }}>
+                <div style={{ height: 300 }}>                    
                     { this.state.showSpinner === true && 
                         <div className="spinner"> <Spinner /></div>
                     }
-                    {this.state.showSpinner === false &&
-                    <GridComponent ref={g => this.gridRef = g} dataSource={this.state.entities} height={'300px'} selectionSettings={{ type: 'Single', mode: 'Row' }}
+                    
+                    <GridComponent ref={ g => this.gridRef = g} dataSource={this.state.entities} height={'300px'} selectionSettings={{ type: 'Single', mode: 'Row' }}
                         hideScroll={true}
                         rowSelected={
                             (event) => {
-                                this.setState({ rowSelected: event.data.id + '_' + event.data.idType });
+                               this.onRowSelected(event);
                             }
                         }>
                         {entity === 1 &&
                             <ColumnsDirective>
-                                <ColumnDirective headerText='' width='40' template={this.renderCheck} />
+                                <ColumnDirective headerText='' field='id' width='40' template={this.renderCheck} />
                                 <ColumnDirective field='name' headerText='Código' width='100'></ColumnDirective>
                                 <ColumnDirective field='intervening' headerText='Cliente' width='150'></ColumnDirective>
                                 <ColumnDirective field='description' headerText='Descripción' width='170'></ColumnDirective>
                             </ColumnsDirective>}
                         {entity !== 1 &&
                             <ColumnsDirective>
+                                <ColumnDirective headerText='' width='40' template={this.renderCheck} />
                                 <ColumnDirective field='description' headerText='Nombre' width='170'></ColumnDirective>
                                 <ColumnDirective field='email' headerText='Email' width='150'></ColumnDirective>
                             </ColumnsDirective>}
-                    </GridComponent>}
+                    </GridComponent>
                     <section className="pager">
-                        <div className="prevButton" onClick={() => this.prevPage()}><span className="pager-icon lf-icon-angle-left" /><span>Anterior</span></div>
-                        <div className="nextButton" onClick={() => this.nextPage()}><span>Siguiente</span><span className="pager-icon lf-icon-angle-right" /></div>
+                        <div className={`prevButton ${this.state.currentPage === 1?'disabled':''}`} onClick={() => this.prevPage()}><span className="pager-icon lf-icon-angle-left" /><span>Anterior</span></div>
+                        <div className="currentPage">{this.state.currentPage}</div>
+                        <div className={`nextButton ${this.state.lastPage === true?'disabled':''}`} onClick={() => this.nextPage()}><span>Siguiente</span><span className="pager-icon lf-icon-angle-right" /></div>
                     </section>
                 </div>
             </div>
@@ -109,8 +124,13 @@ export class ConnectingEmailsStep2 extends React.Component {
                 }
 
                 .spinner {
+                    position: absolute;
+                    top: 150px;
+                    right: 0;
                     width: 100%;
-                    height: 100%;
+                    height: calc(100% - 150px);
+                    z-index: 100;
+                    background: rgba(255,255,255,0.8);
                 }
 
                 .pager-icon {
@@ -132,8 +152,10 @@ export class ConnectingEmailsStep2 extends React.Component {
                 .pager {
                     display: flex;
                     width: 100%;
-                    color: red;
-                    justify-content: space-evenly;
+                    justify-content: center;
+                }
+                .currentPage {
+                    color: #001978;	
                 }
                 .row-check {
                     width: 24px;
@@ -215,6 +237,22 @@ export class ConnectingEmailsStep2 extends React.Component {
                     border-left: none !important;
                     border-right: none !important;
                     border-bottom: 1px solid #001978 !important;
+                }
+
+                .prevButton {
+                    margin-right: 20px;
+                }
+
+                .prevButton.disabled,
+                .prevButton.disabled > .pager-icon,
+                .nextButton.disabled,
+                .nextButton.disabled > .pager-icon {
+                    cursor: default;
+                    color: #7C868C !important;
+                }
+                
+                .nextButton {
+                    margin-left: 20px;
                 }
             `}
             </style>

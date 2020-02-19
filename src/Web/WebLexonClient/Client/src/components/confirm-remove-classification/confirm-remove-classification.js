@@ -105,6 +105,11 @@ class ConfirmRemoveClassification extends Component {
             </Button>
           </Modal.Footer>
         </Modal>
+        <style jsx>{`
+          .modal-body {
+            height: auto;
+          }
+        `}></style>
       </div>
     );
   }

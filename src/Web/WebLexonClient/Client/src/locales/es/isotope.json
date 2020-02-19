@@ -23,7 +23,22 @@
     "q2":"¿Con que tipo de entidad quieres conectarlos?",
     "create":"Crear actuación",
     "copy": "Guardar copia de los mensajes en documentación",
-    "save":"Guardar los archivos adjuntos en documentación"
+    "save":"Guardar los archivos adjuntos en documentación",
+    "q3_1":"¿En que expediente quieres clasificar los mensajes?",
+    "q3_2":"¿En que cliente quieres clasificar los mensajes?",
+    "q3_3":"¿En que contrario quieres clasificar los mensajes?",
+    "q3_4":"¿En que proveedor quieres clasificar los mensajes?",
+    "q3_5":"¿En que abogado propio quieres clasificar los mensajes?",
+    "q3_6":"¿En que abogado contrario quieres clasificar los mensajes?",
+    "q3_7":"¿En que procurador propio quieres clasificar los mensajes?",
+    "q3_8":"¿En que procurador privado quieres clasificar los mensajes?",
+    "q3_9":"¿En que notario quieres clasificar los mensajes?",
+    "q3_10":"¿En que juzgado quieres clasificar los mensajes?",
+    "q3_11":"¿En que asegurador quieres clasificar los mensajes?",
+    "q3_12":"¿En que entidad quieres clasificar los mensajes?",
+    "q3_13":"¿En que carpeta quieres clasificar los mensajes?",
+    "q3_14":"¿En que documento quieres clasificar los mensajes?"
+
   },
   "classification": {
     "type": "Tipo: ",
