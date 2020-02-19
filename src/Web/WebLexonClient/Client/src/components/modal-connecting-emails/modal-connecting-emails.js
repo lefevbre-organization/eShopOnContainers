@@ -298,7 +298,7 @@ class ModalConnectingEmails extends Component {
             }
 
             .modal-dialog {
-              margin-top: 6rem;
+              margin-top: 4rem;
             }
             
             .modal-content {
@@ -354,7 +354,7 @@ class ModalConnectingEmails extends Component {
             }
             .modal-body.mimodal {
               background-color: #ffffff;
-              height: 500px;
+              height: 550px;
             }
             
             .modal-body.info {

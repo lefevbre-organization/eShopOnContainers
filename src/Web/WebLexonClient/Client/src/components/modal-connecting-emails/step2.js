@@ -4,6 +4,7 @@ import i18n from "i18next";
 import { RadioButtonComponent } from '@syncfusion/ej2-react-buttons';
 import { getResults } from '../../services/services-lexon'
 import Spinner from "../../components/spinner/spinner";
+import ClassificationListSearch from "../classify-emails/classification-list-search/classification-list-search";
 
 export class ConnectingEmailsStep2 extends React.Component {
     constructor() {
@@ -12,33 +13,44 @@ export class ConnectingEmailsStep2 extends React.Component {
             entities: [],
             rowSelected: -1,
             currentPage: 1,
+            search: '',
             showSpinner: true,
             lastPage: false
         }
         this.toolbarOptions = ['Search']
         this.renderCheck = this._renderCheck.bind(this);
         this.gridRef = null;
+        this.searchResultsByType  = this.searchResultsByType.bind(this)
     }
 
     async componentDidUpdate(prevProps, prevState) {
         const { user, bbdd, entity } = this.props;
-        const { currentPage } = this.state;
+        const { currentPage, search } = this.state;
 
-        if(prevProps.show === false && this.props.show === true) {
-            this.setState({currentPage: -1, showSpinner: true}, ()=>{
-                this.setState({currentPage: 1})
+        if (prevProps.show === false && this.props.show === true) {
+            const opened = document.getElementsByClassName("lexon-clasification-list-searcher opened")
+            if(opened && opened.length > 0) {
+                const closeButton = document.getElementsByClassName("search-trigger-hide")[0]
+                if(closeButton) {
+                    closeButton.click();
+                }
+            }
+
+            this.setState({ currentPage: -1, search:'', showSpinner: true }, () => {
+                this.setState({ currentPage: 1 })
             })
             return
         }
 
-        if (prevProps.show === false && this.props.show === true || 
+        if (prevProps.show === false && this.props.show === true ||
             prevProps.entity !== this.props.entity ||
+            prevState.search !== this.state.search ||
             (prevState.currentPage !== this.state.currentPage && this.state.currentPage > -1)) {
             try {
-                const response = await getResults(user, bbdd, entity, "", 6, currentPage);
+                const response = await getResults(user, bbdd, entity, search, 6, currentPage);
                 if (response && response.results && response.results.data) {
                     let lastPage = response.results.count < 6;
-                    this.setState({ entities: [...response.results.data], lastPage, showSpinner: false }, ()=>{
+                    this.setState({ entities: [...response.results.data], lastPage, showSpinner: false }, () => {
                     })
                 }
             } catch (err) {
@@ -55,7 +67,7 @@ export class ConnectingEmailsStep2 extends React.Component {
     }
 
     nextPage() {
-        if(this.state.lastPage === false) {
+        if (this.state.lastPage === false) {
             const np = this.state.currentPage + 1;
             this.setState({ currentPage: np, showSpinner: true })
         }
@@ -64,15 +76,19 @@ export class ConnectingEmailsStep2 extends React.Component {
     prevPage() {
         if (this.state.currentPage > 1) {
             const np = this.state.currentPage - 1;
-            this.setState({ currentPage: np, showSpinner: true })   
+            this.setState({ currentPage: np, showSpinner: true })
         }
     }
 
     onRowSelected(event) {
-        this.setState({ rowSelected: event.data.id + '_' + event.data.idType }, ()=>{
-            this.props.onSelectedEntity && this.props.onSelectedEntity({id: event.data.id, idType:event.data.idType} )
+        this.setState({ rowSelected: event.data.id + '_' + event.data.idType }, () => {
+            this.props.onSelectedEntity && this.props.onSelectedEntity({ id: event.data.id, idType: event.data.idType })
             this.gridRef && this.gridRef.refresh()
         });
+    }
+
+    searchResultsByType(type, search) {
+        this.setState({search: search || '', showSpinner: true, currentPage: 1})
     }
 
     render() {
@@ -80,55 +96,81 @@ export class ConnectingEmailsStep2 extends React.Component {
 
         return <Fragment>
             <div className="step2-container">
-                <ol>
+                <ol style={{textAlign: "center"}}>
                     <li className="index-3">
                         <span>{i18n.t(`connecting.q3_${this.props.entity}`)}</span>
                     </li>
                 </ol>
-                <div style={{ height: 300 }}>                    
-                    { this.state.showSpinner === true && 
-                        <div className="spinner"> <Spinner /></div>
-                    }
-                    
-                    <GridComponent ref={ g => this.gridRef = g} dataSource={this.state.entities} height={'300px'} selectionSettings={{ type: 'Single', mode: 'Row' }}
-                        hideScroll={true}
-                        rowSelected={
-                            (event) => {
-                               this.onRowSelected(event);
-                            }
-                        }>
-                        {entity === 1 &&
-                            <ColumnsDirective>
-                                <ColumnDirective headerText='' field='id' width='40' template={this.renderCheck} />
-                                <ColumnDirective field='name' headerText='Código' width='100'></ColumnDirective>
-                                <ColumnDirective field='intervening' headerText='Cliente' width='150'></ColumnDirective>
-                                <ColumnDirective field='description' headerText='Descripción' width='170'></ColumnDirective>
-                            </ColumnsDirective>}
-                        {entity !== 1 &&
-                            <ColumnsDirective>
-                                <ColumnDirective headerText='' width='40' template={this.renderCheck} />
-                                <ColumnDirective field='description' headerText='Nombre' width='170'></ColumnDirective>
-                                <ColumnDirective field='email' headerText='Email' width='150'></ColumnDirective>
-                            </ColumnsDirective>}
-                    </GridComponent>
-                    <section className="pager">
-                        <div className={`prevButton ${this.state.currentPage === 1?'disabled':''}`} onClick={() => this.prevPage()}><span className="pager-icon lf-icon-angle-left" /><span>Anterior</span></div>
-                        <div className="currentPage">{this.state.currentPage}</div>
-                        <div className={`nextButton ${this.state.lastPage === true?'disabled':''}`} onClick={() => this.nextPage()}><span>Siguiente</span><span className="pager-icon lf-icon-angle-right" /></div>
-                    </section>
-                </div>
+                <section className="section-border">
+                    <p className="section-title">{i18n.t(`classification.${entity}`)}</p>
+                    <ClassificationListSearch
+                        searchResultsByType={this.searchResultsByType}
+                        countResults={0}
+                    ></ClassificationListSearch>
+                    <div style={{ height: 300 }}>
+                        {this.state.showSpinner === true &&
+                            <div className="spinner"> <Spinner /></div>
+                        }
+
+                        <GridComponent ref={g => this.gridRef = g} dataSource={this.state.entities} height={'300px'} selectionSettings={{ type: 'Single', mode: 'Row' }}
+                            hideScroll={true}
+                            rowSelected={
+                                (event) => {
+                                    this.onRowSelected(event);
+                                }
+                            }>
+                            {entity === 1 &&
+                                <ColumnsDirective>
+                                    <ColumnDirective headerText='' field='id' width='40' template={this.renderCheck} />
+                                    <ColumnDirective field='name' headerText='Código' width='100'></ColumnDirective>
+                                    <ColumnDirective field='intervening' headerText='Cliente' width='150'></ColumnDirective>
+                                    <ColumnDirective field='description' headerText='Descripción' width='170'></ColumnDirective>
+                                </ColumnsDirective>}
+                            {entity !== 1 &&
+                                <ColumnsDirective>
+                                    <ColumnDirective headerText='' width='40' template={this.renderCheck} />
+                                    <ColumnDirective field='description' headerText='Nombre' width='170'></ColumnDirective>
+                                    <ColumnDirective field='email' headerText='Email' width='150'></ColumnDirective>
+                                </ColumnsDirective>}
+                        </GridComponent>
+                        <section className="pager">
+                            <div className={`prevButton ${this.state.currentPage === 1 ? 'disabled' : ''}`} onClick={() => this.prevPage()}><span className="pager-icon lf-icon-angle-left" /><span>Anterior</span></div>
+                            <div className="currentPage">{this.state.currentPage}</div>
+                            <div className={`nextButton ${this.state.lastPage === true ? 'disabled' : ''}`} onClick={() => this.nextPage()}><span>Siguiente</span><span className="pager-icon lf-icon-angle-right" /></div>
+                        </section>
+                    </div>
+                </section>
             </div>
             <style jsx>{`
+                .e-headercelldiv {
+                    outline: none !important;
+                }
                 .step2-container {
-                    margin: 50px;
+                    margin: 30px;
+                }
+
+                .section-border {
+                    position: sticky;
+                    border: 1px solid #D2D2D2;
+                    height: 450px;
+                }
+
+                .section-title {
+                    color: #001978;	
+                    font-family: "MTTMilano-Medium" !important;
+                    font-size: 16px;	
+                    font-weight: 500;
+                    margin-left: 10px;
+                    margin-top: 10px;
+                    text-transform: uppercase;
                 }
 
                 .spinner {
                     position: absolute;
-                    top: 150px;
+                    top: 90px;
                     right: 0;
                     width: 100%;
-                    height: calc(100% - 150px);
+                    height: calc(100% - 90px);
                     z-index: 100;
                     background: rgba(255,255,255,0.8);
                 }
