@@ -130,7 +130,7 @@ class ModalConnectingEmails extends Component {
               id="documentarGuardardocumentacionLabel"
             >
               <img class="imgproduct" border="0" alt="Lex-On" src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
-              {i18n.t("modal-conecting-emails.save-copy")}
+              <span>{i18n.t("modal-conecting-emails.save-copy")}</span>
             </h5>
           </Modal.Header>
           <Modal.Body className="mimodal">
@@ -174,6 +174,11 @@ class ModalConnectingEmails extends Component {
         .e-checkbox-wrapper .e-checkbox:focus + .e-frame.e-check,
         .e-checkbox-wrapper:hover .e-frame.e-check {
           background-color: #001978;
+        }
+
+        .modal-header h5 span {
+          font-size: 22px !important;
+          margin-left: 15px;
         }
 
         .e-checkbox-wrapper .e-check, .e-css.e-checkbox-wrapper .e-check {
@@ -320,6 +325,7 @@ class ModalConnectingEmails extends Component {
               margin-right: 15px;
             }
             .modal-header .modal-title {
+              margin-left: 20px;
               font-size: 22px;
             }
             .modal-header .close {
