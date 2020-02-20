@@ -278,6 +278,9 @@ export class ComposeMessage extends PureComponent {
       to: this.props.to || "",
       cc: this.props.cc || "",
       bcc: this.props.bcc || "",
+      to2: [],
+      cc2: [],
+      bcc2:[],
       subject: this.props.subject || "",
       content: this.props.content || "",
       uppyPreviews: []
