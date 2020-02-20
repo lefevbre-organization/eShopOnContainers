@@ -224,7 +224,6 @@ export function messageList(state = defaultMessageList, action) {
     }
 
     case DELETE_LIST_MESSAGES: {
-      debugger
       for (let i = 0; i < action.listMessages.length; i++) {
         const index = state.selectedMessages.findIndex(
           message => message.id === action.listMessages[i]

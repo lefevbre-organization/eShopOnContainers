@@ -182,7 +182,6 @@ export class ComposeMessage extends PureComponent {
     );
 
     setTimeout(async ()=>{
-      debugger
       if(this.props.lexon.bbdd && this.props.lexon.account) {
         try {
           const user = await getUser(this.props.lexon.userId);   
