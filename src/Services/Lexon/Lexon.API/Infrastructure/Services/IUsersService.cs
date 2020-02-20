@@ -15,7 +15,7 @@ namespace Lexon.Infrastructure.Services
 
         Task<Result<long>> SelectCompanyAsync(string idUser, string bbdd);
 
-        Task<Result<List<LexonEntityBase>>> GetEntitiesListAsync(EntitySearchView entitySearch);
+        Task<MySqlList<JosEntityList, LexonEntityBase>> GetEntitiesListAsync(EntitySearchView entitySearch);
 
         Task<Result<LexonEntityBase>> GetEntityById(EntitySearchById entitySearch);
 

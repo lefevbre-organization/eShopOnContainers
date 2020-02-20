@@ -4,6 +4,5 @@
     {
         public JosEntity[] Entities { get; set; }
 
-        public int? TotalRegs { get; set; }
     }
 }

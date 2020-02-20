@@ -90,9 +90,9 @@ namespace Lexon.MySql.Controllers
         /// <summary>
         /// Search entities
         /// </summary>
-        [HttpGet("entities/search")]
-        [ProducesResponseType(typeof(Result<JosEntityList>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<JosEntityList>), (int)HttpStatusCode.BadRequest)]
+        [HttpPost("entities/search")]
+        [ProducesResponseType(typeof(MySqlList<JosEntityList, JosEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(MySqlList<JosEntityList, JosEntity>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> EntitiesAsync( [FromBody] EntitySearchView entitySearch )
         {
@@ -100,7 +100,7 @@ namespace Lexon.MySql.Controllers
                 return BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
 
             var result = await _lexonService.GetEntitiesAsync(entitySearch);
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
         
         /// <summary>

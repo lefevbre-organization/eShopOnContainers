@@ -2,7 +2,7 @@
 {
     public class ClassificationView :BaseView
     {
-        public short idType { get; set; }
+        public short? idType { get; set; }
         public long idRelated { get; set; }
 
     }

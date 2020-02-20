@@ -6,6 +6,8 @@
         public string idMail { get; set; }
         public string Provider { get; set; }
         public string MailAccount { get; set; }
+        public string Folder { get; set; }
+
 
     }
 }

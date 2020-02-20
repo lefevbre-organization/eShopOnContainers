@@ -149,12 +149,11 @@ namespace Lexon.API.Controllers
             return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost]
-        [Route("entities")]
-        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityBase>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(Result<IEnumerable<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
+        [HttpPost("entities")]
+        //[ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(MySqlList<JosEntityList, LexonEntityBase>), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(MySqlList<JosEntityList, LexonEntityBase>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> EntitiesAsync(
             [FromBody] EntitySearchView entitySearch
             )
@@ -164,18 +163,18 @@ namespace Lexon.API.Controllers
 
             var entities = await _usersService.GetEntitiesListAsync(entitySearch);
 
-            if (entitySearch.pageIndex == 0 && entitySearch.pageSize == 0)
-            {
-                return (entities.errors.Count > 0) ? (IActionResult)BadRequest(entities) : Ok(entities);
-            }
+            //if (entitySearch.pageIndex == 0 && entitySearch.pageSize == 0)
+            //{
+                return (entities.Errors.Count > 0) ? (IActionResult)BadRequest(entities) : Ok(entities);
+            //}
 
-            var totalItems = entities.data.Count;
+            //var totalItems = entities.data.Count;
 
-            var resultPaginatedFinal =
-                new Result<PaginatedItemsViewModel<LexonEntityBase>>(
-                    new PaginatedItemsViewModel<LexonEntityBase>(entitySearch.pageIndex, entitySearch.pageSize, totalItems, entities.data), entities.errors);
+            //var resultPaginatedFinal =
+            //    new Result<PaginatedItemsViewModel<LexonEntityBase>>(
+            //        new PaginatedItemsViewModel<LexonEntityBase>(entitySearch.pageIndex, entitySearch.pageSize, totalItems, entities.data), entities.errors);
 
-            return (resultPaginatedFinal.errors.Count > 0) ? (IActionResult)BadRequest(resultPaginatedFinal) : Ok(resultPaginatedFinal);
+            //return (resultPaginatedFinal.errors.Count > 0) ? (IActionResult)BadRequest(resultPaginatedFinal) : Ok(resultPaginatedFinal);
         }
 
         [HttpPost]

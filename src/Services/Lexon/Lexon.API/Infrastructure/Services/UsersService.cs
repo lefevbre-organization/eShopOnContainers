@@ -286,7 +286,7 @@ namespace Lexon.Infrastructure.Services
                     if (response.IsSuccessStatusCode)
                     {
                         resultMySql = await response.Content.ReadAsAsync<MySqlList<JosEntityTypeList, JosEntityType>>();
-
+                        resultMySql.result = null;
                         if (!resultMySql.TengoLista())
                             TraceOutputMessage(resultMySql.Errors, "Mysql don´t recover the master´s entities", 2001);
                     }
@@ -323,9 +323,12 @@ namespace Lexon.Infrastructure.Services
             }
         }
 
-        public async Task<Result<List<LexonEntityBase>>> GetEntitiesListAsync(EntitySearchView entitySearch)
+        public async Task<MySqlList<JosEntityList, LexonEntityBase>> GetEntitiesListAsync(EntitySearchView entitySearch)
         {
-            var result = new Result<List<LexonEntityBase>>(new List<LexonEntityBase>());
+            //var resultMySql = new MySqlList<JosEntityList, JosEntity>();
+            var resultLexon = new MySqlList<JosEntityList, LexonEntityBase>();
+
+           // var result = new Result<List<LexonEntityBase>>(new List<LexonEntityBase>());
             SerializeObjectToPost(entitySearch, "/entities/search", out string url, out StringContent data);
 
             try
@@ -334,25 +337,69 @@ namespace Lexon.Infrastructure.Services
                 {
                     if (response.IsSuccessStatusCode)
                     {
+                        var resultMySql = await response.Content.ReadAsAsync<MySqlList<JosEntityList, JosEntity>>();
+
+                        if (!resultMySql.TengoLista())
+                            TraceOutputMessage(resultMySql.Errors, "Mysql don´t recover the master´s entities", 2001);
+
                         var entityList = await response.Content.ReadAsAsync<Result<JosEntityList>>();
-                        if (GetEntitiesListMySqlAsync(ref result, entityList, entitySearch.idType))
-                            return result;
+                        if (GetEntitiesListMySqlAsync(ref resultLexon, resultMySql, entitySearch.idType))
+                            return resultLexon;
                     }
                     else
                     {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+                        TraceOutputMessage(resultLexon.Errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", 2003);
                     }
                 }
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceMessage(resultLexon.Errors, ex);
             }
 
-               await GetEntitiesListMongoAsync(
-                entitySearch.pageSize, entitySearch.pageIndex, entitySearch.idType, 
-                entitySearch.idUser, entitySearch.bbdd, entitySearch.search, result);
-            return result;
+               //await GetEntitiesListMongoAsync(
+               // entitySearch.pageSize, entitySearch.pageIndex, entitySearch.idType, 
+               // entitySearch.idUser, entitySearch.bbdd, entitySearch.search, result);
+            return resultLexon;
+        }
+
+        private bool GetEntitiesListMySqlAsync(ref MySqlList<JosEntityList, LexonEntityBase> result, MySqlList<JosEntityList, JosEntity> entityList, short? idType)
+        {
+            if (!entityList.TengoLista())
+            {
+                TraceOutputMessage(entityList.Errors, "The response fo Mysql is empty", 2001);
+                return false;
+            }
+
+            List<LexonEntityBase> listadoFinal = new List<LexonEntityBase>();
+            foreach (var entity in (entityList.Data))
+            {
+                listadoFinal.Add(new LexonEntityBase()
+                {
+                    name = entity.Code,
+                    description = entity.Description,
+                    email = entity.Email,
+                    id = entity.IdRelated,
+                    idType = idType ?? 1,
+                    entityType = Enum.GetName(typeof(LexonAdjunctionType), idType ?? 1),
+                    intervening = entity.Intervening
+                });
+                TraceLog(parameters: new string[] { $"code {entity.Code}" });
+            }
+
+            result.Errors = entityList.Errors;
+            result.Infos = entityList.Infos;
+            result.PageIndex = entityList.PageIndex;
+            result.PageSize = entityList.PageSize;
+            result.Count = entityList.Count;
+            result.Data = listadoFinal;
+
+            if (!result.TengoLista())
+                TraceOutputMessage(result.Errors, "Mysql don´t recover the entities", 2001);
+            else
+                return true;
+
+            return false;
         }
 
         private bool GetEntitiesListMySqlAsync(ref Result<List<LexonEntityBase>> result, Result<JosEntityList> entityList, short? idType)

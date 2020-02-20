@@ -93,7 +93,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             }
         }
 
-        public void AddData(JosEntityTypeList resultado, object[] entities)
+        public void AddData(object resultado, object[] entities)
         {
             AddData(resultado);
             if (entities is IEnumerable<TItems>)

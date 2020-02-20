@@ -106,9 +106,10 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         #region Entities
 
-        public async Task<Result<JosEntityList>> SearchEntitiesAsync(EntitySearchView entitySearch)
+        public async Task<MySqlList<JosEntityList, JosEntity>> SearchEntitiesAsync(EntitySearchView entitySearch)
         {
-            var result = new Result<JosEntityList>(new JosEntityList());
+            var resultMySql = new MySqlList<JosEntityList, JosEntity>(new JosEntityList(), _settings.Value.SP.SearchEntities, entitySearch.pageIndex, entitySearch.pageSize);
+           // var result = new Result<JosEntityList>(new JosEntityList());
             string filtro = GiveMeSearchEntitiesFilter(entitySearch.idType, entitySearch.bbdd, entitySearch.idUser, entitySearch.search, entitySearch.idFilter);
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.SearchEntities}", $"P_FILTER:{filtro}", $"P_UC:{entitySearch.idUser}-pageSize:{entitySearch.pageSize}-pageIndex:{entitySearch.pageIndex}" });
 
@@ -130,23 +131,32 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_TOTAL_REG", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.CommandType = CommandType.StoredProcedure;
+                        var r = command.ExecuteNonQuery();
+                        resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
+
                         using (var reader = await command.ExecuteReaderAsync())
                         {
-                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
-                            if (EvaluateErrorCommand(result.errors, command) == 0)
-                                while (reader.Read()) { result.data = JsonConvert.DeserializeObject<JosEntityList>(reader.GetValue(0).ToString(), jsonSerializerSettings); }
+                         //   resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
+
+                            if (resultMySql.PossibleHasData())
+                            {
+                                while (reader.Read())
+                                {
+                                    var resultado = (JsonConvert.DeserializeObject<JosEntityList>(reader.GetValue(0).ToString()));
+                                    resultMySql.AddData(resultado, resultado.Entities);
+                                }
+                            }
                         }
 
-                        result.data.TotalRegs = (int?)command.Parameters["P_TOTAL_REG"].Value;
                     }
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceMessage(resultMySql.Errors, ex);
                 }
             }
 
-            return result;
+            return resultMySql;
         }
 
         public async Task<Result<JosEntity>> GetEntityAsync(EntitySearchById entitySearch)
@@ -209,19 +219,18 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_TOTAL_REG", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.CommandType = CommandType.StoredProcedure;
+                        var r = command.ExecuteNonQuery();
+                        resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
                         using (var reader = await command.ExecuteReaderAsync())
                         {
-                            resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
+                          //  resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
 
-                            //if (EvaluateErrorCommand(result.errors, command) == 0)
-                            //    while (reader.Read()) { result.data = JsonConvert.DeserializeObject<JosEntityTypeList>(reader.GetValue(0).ToString()); }
                             if (resultMySql.PossibleHasData())
                             {
                                 while (reader.Read())
                                 {
                                     var resultado = (JsonConvert.DeserializeObject<JosEntityTypeList>(reader.GetValue(0).ToString()));
                                     resultMySql.AddData(resultado, resultado.Entities);
-                                    // resultMySql.AddData(JsonConvert.DeserializeObject<JosEntityTypeList>(reader.GetValue(0).ToString())); }
                                 }
                             }
                         }
