@@ -143,7 +143,7 @@ export class MessageContent extends Component {
     this.modifyMessage = this.modifyMessage.bind(this);
     this.toggleShowMessageNotFound = this.toggleShowMessageNotFound.bind(this);
     this.notFoundModal = props.notFoundModal
-    this.timer = null;
+    this.attachments = [];
   }
 
   toggleShowMessageNotFound() {
@@ -209,13 +209,19 @@ export class MessageContent extends Component {
                   //Adding attach files
                   var attach = emailMessageResult.attach;
                   if (typeof attach !== "undefined" && attach.length > 0) {
-                      this.setState({ attachment: false });
+                      const isFirefox = typeof InstallTrigger !== 'undefined';
+                      if(isFirefox === false) {
+                        this.setState({ attachment: false });
+                      }
                       var iframe = document.getElementById("message-iframe");
                       var Divider = addDivDivider();
                       iframe.contentDocument.body.appendChild(Divider);
 
                       for (var i = 0; i < attach.length; i++) {
                           if (attach[i].filename && attach[i].filename.length > 0) {
+
+                            if(!this.attachments[attach[i].partId]) {
+                              this.attachments[attach[i].partId] = "1" 
                               getAttachments(emailMessageResult.id, attach[i], function (
                                   filename,
                                   mimeType,
@@ -237,9 +243,9 @@ export class MessageContent extends Component {
                                   AttachmentDiv.appendChild(Attachment);
                                   iframe.contentDocument.body.appendChild(AttachmentDiv);
                               });
+                            }
                           }
                       }
-
                   }
               }
           } else {
