@@ -5,7 +5,7 @@ const getRead = messages => messages.filter(message => message.seen === true);
 const getUnread = messages => messages.filter(message => message.seen === false);
 const getFlagged = messages => messages.filter(message => message.flagged === true);
 const getUserSearch = (messages, searchTerm) => messages.filter(message => {
-  if (message && message.subject && message.from && message.from.length){
+  if (message && message.subject && message.from && message.from.length && searchTerm){
     return (
       message.subject.toUpperCase().indexOf(searchTerm.toUpperCase()) !== -1 || 
       message.from[0].toUpperCase().indexOf(searchTerm.toUpperCase()) !== -1

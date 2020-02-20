@@ -35,8 +35,12 @@ export class TopBarMessageList extends React.Component{
                 value = {this.state.searchTerm}
                 onChange={(newSearchTerm) => this.setState({searchTerm: newSearchTerm})}
                 onRequestSearch={() => {
-                  this.props.setMessageFilter('USER_SEARCH');
-                  this.props.setMessageFilterKeyword(this.state.searchTerm);
+                  if (this.state.searchTerm !== null && this.state.searchTerm !== undefined && this.state.searchTerm !== ""){
+                    this.props.setMessageFilter('USER_SEARCH');
+                    this.props.setMessageFilterKeyword(this.state.searchTerm);
+                  } else {
+                    this.props.setMessageFilter('ALL');
+                  }
                 }}
                 onCancelSearch={() => {
                   this.props.setMessageFilter(null);
