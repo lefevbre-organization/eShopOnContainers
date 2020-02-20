@@ -107,13 +107,16 @@ export const parseJwt = token => {
         break;
     }
     switch (provider){
-      case INBOX_GOOGLE, IN_GOOGLE:
+      case INBOX_GOOGLE:
+      case IN_GOOGLE:
         url = `${window.URL_INBOX_GOOGLE}${url}`
         break;
-      case INBOX_OUTLOOK, IN_OUTLOOK:
+      case INBOX_OUTLOOK: 
+      case IN_OUTLOOK:
         url = `${window.URL_INBOX_OUTLOOK}${url}`           
         break;
-      case INBOX_IMAP, IN_IMAP:
+      case INBOX_IMAP: 
+      case IN_IMAP:
         url = `${window.URL_INBOX_IMAP}${url}`                  
         break;
       default:
