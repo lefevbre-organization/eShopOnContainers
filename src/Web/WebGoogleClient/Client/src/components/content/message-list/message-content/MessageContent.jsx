@@ -143,7 +143,6 @@ export class MessageContent extends Component {
     this.modifyMessage = this.modifyMessage.bind(this);
     this.toggleShowMessageNotFound = this.toggleShowMessageNotFound.bind(this);
     this.notFoundModal = props.notFoundModal
-    this.attachments = [];
   }
 
   toggleShowMessageNotFound() {
