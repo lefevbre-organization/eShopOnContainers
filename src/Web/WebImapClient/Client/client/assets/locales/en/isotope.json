@@ -36,6 +36,7 @@
     "delete": "Delete",
     "markUnread": "Mark unread",
     "markRead": "Mark read",
+    "search": "Search",
     "deleteFromTrashDialog": {
       "title": "Confirm deletion",
       "message": "This will permanently delete messages from Trash. Are you sure you want to continue?",
@@ -128,5 +129,8 @@
     "reset-pwd": "RESET PASSWORD",
     "add-other-account": "ADD OTHER ACCOUNT",
     "close-session": "CLOSE SESSION"
+  },
+  "msgNotFoundSnackbar": {
+    "error": "Message not found in server"
   }
 }

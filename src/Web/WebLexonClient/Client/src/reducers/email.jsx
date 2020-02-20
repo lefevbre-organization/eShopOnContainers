@@ -47,6 +47,13 @@ const email = (state = INITIAL_STATE.email, action) => {
             }     
         }
 
+        case ACTIONS.Types.RESET_LIST_MESSAGES: {        
+            return {
+                ...state,
+                selectedMessages: []
+            }     
+        }
+
         default: return state;
     }
 }

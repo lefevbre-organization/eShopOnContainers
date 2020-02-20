@@ -2,10 +2,12 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose } from "redux";
 import * as uuid from 'uuid/v4';
+import { diff, addedDiff, deletedDiff, updatedDiff, detailedDiff } from 'deep-object-diff';
 import Cookies from 'js-cookie';
 import Header from "../header/Header";
 import Sidebar from "../sidebar/Sidebar";
 import NotFound from "../not-found/NotFound";
+import { Notification } from '../notification/';
 import "./main.scss";
 import MessageList from "../content/message-list/MessageList";
 import MessageContent from "../content/message-list/message-content/MessageContent";
@@ -58,6 +60,10 @@ export class Main extends Component {
       size: 0.25,
       sidebarOpen: false,
       sidebarDocked: false,
+      googleDown: false,
+      showNotification: false,
+      messageNotification: "",
+      errorNotification: false,
       leftSideBar: {
         collapsed: false
       },
@@ -90,7 +96,7 @@ export class Main extends Component {
     });
   }
 
-  //handleShowLeftSidebarClick() {
+    //handleShowLeftSidebarClick() {
   //    this.setState({
   //        leftSidebarOpen: !this.leftSidebarOpen
   //    })
@@ -108,7 +114,7 @@ export class Main extends Component {
           bbdd: this.props.lexon.bbdd,
           idCompany: this.props.lexon.idCompany,
           provider: this.props.lexon.provider,
-          account: googleUser.w3.U3
+          account: googleUser.Rt.Au
         }
       })
     );
@@ -172,6 +178,28 @@ export class Main extends Component {
     this.setState({ sidebarDocked: open });
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    const difP = detailedDiff(this.props, nextProps);
+
+    if(difP.updated.messagesResult && difP.updated.messagesResult.hasOwnProperty("openMessage")) {
+      return false;
+    }
+
+    if(nextProps.messagesResult.openMessage !== null && nextProps.messagesResult.openMessage === this.props.messagesResult.openMessage) {
+      if(nextProps.location.pathname === ("/"+nextProps.messagesResult.openMessage)) {
+        if(nextState.sidebarDocked !== this.state.sidebarDocked) {
+          return true;
+        }
+
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    return true;
+  }
+
   componentDidMount() {
     /* Label list is fetched from here 
     so that we can declare Routes by labelId 
@@ -187,13 +215,18 @@ export class Main extends Component {
       this.handleGetUserFromLexonConnector
     );
 
-    const { userId, idCaseFile } = this.props.lexon;
+    const { userId, idCaseFile, bbdd } = this.props.lexon;
     const { googleUser } = this.props;
+    if(!googleUser || !googleUser.Rt) {
+      this.setState({googleDown: true, showNotification: true, messageNotification: "El proveedor de Google está caido"})
+      return;
+    } 
+
     const idEmail = this.props.idEmail;
-    const email = googleUser.w3.U3;
+    const email = googleUser.Rt.Au;
     if (userId !== null && email !== null) {
       const { googleUser } = this.props;
-      const email = googleUser.w3.U3;
+      const email = googleUser.Rt.Au;
       const GUID = uuid();
       const newAccount = {
         "provider": PROVIDER,
@@ -213,11 +246,15 @@ export class Main extends Component {
             this.props.history.push(`/${idEmail}`);
           }
           else {
+            this.onSetSidebarOpenLexon(true);
             this.props.history.push(`/${idEmail}`);
           }
         } else if (idCaseFile != null && idCaseFile !== undefined){
           this.props.history.push("/compose");
           this.onSetSidebarOpenLexon(true);
+        } else if (bbdd !== null & bbdd !== undefined) {
+          this.onSetSidebarOpenLexon(true);
+          this.props.history.push("/inbox");
         } else {
           this.props.history.push("/inbox");
         }
@@ -233,6 +270,10 @@ export class Main extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    if(this.props.messagesResult.openMessage === "" && prevProps.messagesResult.openMessage !== "") {
+      alert("Cerrado")
+    }
+
     if (prevProps.signedInUser !== this.props.signedInUser) {
       this.setState({
         signedInUser: this.props.signedInUser
@@ -573,6 +614,20 @@ export class Main extends Component {
   }
 
   render() {
+    if(this.state.googleDown) {
+      const { showNotification, messageNotification, errorNotification } = this.state;
+
+      return (
+        <div className="d-flex h-100 align-items-center justify-content-center">
+          <Notification
+            initialModalState={showNotification}
+            toggleNotification={() => { this.onSignoutDisconnect()  }}
+            message={messageNotification}
+            error={errorNotification}
+        />
+        </div>
+      );
+    }
     return this.renderInboxViewport();
   }
 }

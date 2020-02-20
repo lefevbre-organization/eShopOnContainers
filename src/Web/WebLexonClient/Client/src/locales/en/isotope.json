@@ -18,6 +18,27 @@
   "new-classification": {
     "new-classification": "New classification"
   },
+  "connecting":{
+    "q1":"¿Que quieres hacer con los mensajes seleccionados?",
+    "q2":"¿Con que tipo de entidad quieres conectarlos?",
+    "create":"Crear actuación",
+    "copy": "Guardar copia de los mensajes en documentación",
+    "save":"Guardar los archivos adjuntos en documentación",
+    "q3_1":"¿En que expediente quieres clasificar los mensajes?",
+    "q3_2":"¿En que cliente quieres clasificar los mensajes?",
+    "q3_3":"¿En que contrario quieres clasificar los mensajes?",
+    "q3_4":"¿En que proveedor quieres clasificar los mensajes?",
+    "q3_5":"¿En que abogado propio quieres clasificar los mensajes?",
+    "q3_6":"¿En que abogado contrario quieres clasificar los mensajes?",
+    "q3_7":"¿En que procurador propio quieres clasificar los mensajes?",
+    "q3_8":"¿En que procurador privado quieres clasificar los mensajes?",
+    "q3_9":"¿En que notario quieres clasificar los mensajes?",
+    "q3_10":"¿En que juzgado quieres clasificar los mensajes?",
+    "q3_11":"¿En que asegurador quieres clasificar los mensajes?",
+    "q3_12":"¿En que entidad quieres clasificar los mensajes?",
+    "q3_13":"¿En que carpeta quieres clasificar los mensajes?",
+    "q3_14":"¿En que documento quieres clasificar los mensajes?"
+    },
   "classification": {
     "type": "Type: ",
     "assigned": "Assigned to: ",
@@ -40,6 +61,8 @@
   "classify-emails": {
     "cancel": "CANCEL",
     "save": "SAVE",
+    "continue": "CONTINUE",
+    "back":"BACK",
     "title": "New classification",
     "body": "Select classification type to load the corresponding list and assign the messages to one of the items in the list.",
     "classification-saved-ok": "The classification saved correctly",
@@ -61,6 +84,9 @@
   "tab-classify": {
     "select-mail": "Select a message and rate it in Lex-on. The relationship established will be visible in this panel and also in the application."
   },
+  "tab-connect": {
+    "select-mail": "Select a message and rate it in Lex-on. The relationship established will be visible in this panel and also in the application."
+  },
   "classification-list": {
     "assigned-to": "Assigned to",
     "code": "Code",
@@ -73,11 +99,14 @@
     "no": "No",
     "text-confirm-remove": "If you delete this link, you will stop viewing the email in the corresponding Lex-on classification. Do you want to continue?"
   },
+  "select-action": {
+    "connect-messages": "Connect messages"
+  },
   "tab-document": {
     "select-mail": "Select one or more messages and save them as a separate copy in the Lex-on documentation."
   },
   "save-copy": {
-    "save-copy": "Save copy"
+    "save-copy": "New conection"
   },
   "list-classifications": {
     "classifications": "CLASSIFICATIONS:",
@@ -89,8 +118,12 @@
   "modal-documents-emails": {
     "save-copy": "Save copy in Documentation"
   },
+  "modal-conecting-emails": {
+    "save-copy": "Connecting messages with Lex-on"
+  },
   "case-file": {
     "casefile-related": "Related Casefile",
+    "casefile-notfound": "Related Casefile not found",
     "identifier": "Identifier",
     "description": "Description:",
     "client": "Client:"

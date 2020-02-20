@@ -12,6 +12,7 @@ export const INITIAL_STATE = {
     newMessage: null,
     selectedFolderId: {},
     messageFilterKey: null,
+    messageFilterKeyword: null,
     createFolderParentId: null,
     renameFolderId: null,
     selectedMessage: null,
@@ -46,7 +47,10 @@ export const INITIAL_STATE = {
     userId: null,
     provider: null,
     isNewAccount: false,
-    idCaseFile: null
+    idCaseFile: null,
+    idEmail: null,
+    idFolder: null,
+    emailShown: null
   }
 };
 

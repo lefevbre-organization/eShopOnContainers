@@ -205,11 +205,13 @@ export const getTypes = () => {
   });
 };
 
-export const getResults = async (user, company, typeId, search) => {
-    const url = `${window.API_GATEWAY}/${RESULTS}?pageSize=100&pageIndex=1&search=${search}&idUser=${user.idUser}&idCompany=${company.idCompany}&bbdd=${company.bbdd}&idType=${typeId}`;
+export const getResults = async (user, company, typeId, search, pageSize, page) => {
+    const ps = pageSize || 100;
+    const cp = page || 1;
+    const url = `${window.API_GATEWAY}/${RESULTS}?pageSize=${ps}&pageIndex=${cp}&search=${search}&idUser=${user.idUser}&idCompany=${company.idCompany}&bbdd=${company.bbdd}&idType=${typeId}`;
     const body = {
-      pageSize: 100,
-      pageIndex: 1,
+      pageSize: ps,
+      pageIndex: cp,
       search,
       idUser: user.idUser,
       bbdd: company.bbdd,

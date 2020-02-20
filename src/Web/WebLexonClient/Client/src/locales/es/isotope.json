@@ -18,6 +18,28 @@
   "new-classification": {
     "new-classification": "Nueva clasificación"
   },
+  "connecting":{
+    "q1":"¿Que quieres hacer con los mensajes seleccionados?",
+    "q2":"¿Con que tipo de entidad quieres conectarlos?",
+    "create":"Crear actuación",
+    "copy": "Guardar copia de los mensajes en documentación",
+    "save":"Guardar los archivos adjuntos en documentación",
+    "q3_1":"¿En que expediente quieres clasificar los mensajes?",
+    "q3_2":"¿En que cliente quieres clasificar los mensajes?",
+    "q3_3":"¿En que contrario quieres clasificar los mensajes?",
+    "q3_4":"¿En que proveedor quieres clasificar los mensajes?",
+    "q3_5":"¿En que abogado propio quieres clasificar los mensajes?",
+    "q3_6":"¿En que abogado contrario quieres clasificar los mensajes?",
+    "q3_7":"¿En que procurador propio quieres clasificar los mensajes?",
+    "q3_8":"¿En que procurador privado quieres clasificar los mensajes?",
+    "q3_9":"¿En que notario quieres clasificar los mensajes?",
+    "q3_10":"¿En que juzgado quieres clasificar los mensajes?",
+    "q3_11":"¿En que asegurador quieres clasificar los mensajes?",
+    "q3_12":"¿En que entidad quieres clasificar los mensajes?",
+    "q3_13":"¿En que carpeta quieres clasificar los mensajes?",
+    "q3_14":"¿En que documento quieres clasificar los mensajes?"
+
+  },
   "classification": {
     "type": "Tipo: ",
     "assigned": "Asignado a: ",
@@ -40,6 +62,8 @@
   "classify-emails": {
     "cancel": "CANCELAR",
     "save": "GUARDAR",
+    "continue": "CONTINUAR",
+    "back": "ANTERIOR",
     "title": "Nueva clasificación",
     "body": "Selecciona tipo de clasificación para cargar el listado correspondiente y asigna los mensajes a uno de los elementos de la lista.",
     "classification-saved-ok": "La clasificación se ha guardado correctamente",
@@ -61,6 +85,9 @@
   "tab-classify": {
     "select-mail": "Selecciona un mensaje y clasifícalo en Lex-on. La relación establecida será visible en este panel y también en la aplicación."
   },
+  "select-action": {
+    "connect-messages": "Conectar mensajes"
+  },
   "classification-list": {
     "assigned-to": "Asignado a",
     "code": "Código",
@@ -76,8 +103,11 @@
   "tab-document": {
     "select-mail": "Selecciona uno o más mensajes y guárdalos como copia independiente en la documentación de Lex-on."
   },
+  "tab-connect": {
+    "select-mail": "Selecciona uno o más mensajes y conéctalos con Lex-on. Las conexiones realizadas se mostrarán individualmente en cada mensaje."
+  },
   "save-copy": {
-    "save-copy": "Guardar copia"
+    "save-copy": "Nueva conexión"
   },
   "list-classifications": {
     "classifications": "CLASIFICACIONES:",
@@ -89,8 +119,12 @@
   "modal-documents-emails": {
     "save-copy": "Guardar copia en Documentación"
   },
+  "modal-conecting-emails": {
+    "save-copy": "Conectar mensajes con Lex-on"
+  },
   "case-file": {
     "casefile-related": "Expediente relacionado",
+    "casefile-notfound": "Expediente relacionado no encontrado",
     "identifier": "Identificador",
     "description": "Descripción:",
     "client": "Cliente:"

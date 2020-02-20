@@ -94,7 +94,7 @@ class AppContainer extends Component {
       openEmail: this.props.match.params.idMail
     });
 
-    this.props.setAccount(googleUser.w3.U3);
+    this.props.setAccount(googleUser.Rt.Au);
   }
 
   renderView() {

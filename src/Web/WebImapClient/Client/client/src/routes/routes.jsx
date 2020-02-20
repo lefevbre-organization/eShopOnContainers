@@ -19,7 +19,7 @@ class Routes extends Component {
         <Switch>
           <Route exact path="/user/:idUser" component={UserLexon} />
           <Route exact path="/user/:idUser/bbdd/:bbdd" component={UserLexon} />
-          <Route exact path="/user/:idUser/folder/:idFolder/message/:idMessage/casefile/:idCaseFile" component={UserLexon}/>
+          <Route exact path="/user/:idUser/folder/:idFolder/message/:idMessage/casefile/:idCaseFile/bbdd/:bbdd" component={UserLexon}/>
           <Route exact path="/user/:idUser/casefile/:idCaseFile/bbdd/:bbdd/company/:idCompany" component={UserLexon} />
           <Route exact path="/login" render={() => <Login />} />
           <PrivateRoute exact path="/" component={App} />

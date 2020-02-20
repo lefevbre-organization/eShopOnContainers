@@ -15,12 +15,14 @@ export const FilterDialog = ({t, visible, activeMessageFilter, setMessageFilter}
     <ul className={`${mainCss['mdc-list']} ${mainCss['mdc-list--dense']}`} >
       {Object.entries(MessageFilters).map(([key, value]) => {
         const active = key === activeMessageFilter.key;
+        const hide = key === "USER_SEARCH";
         return (
           <li
             key={key}
             className={`${styles['filter-dialog__item']} ${mainCss['mdc-list-item']}
           ${active ? mainCss['mdc-list-item--selected'] : ''}`}
             onClick={() => setMessageFilter(value)}
+            hidden={hide}
           >
             <i className={`${styles.check} ${active ? styles['check--active'] : ''} material-icons`}>
               check

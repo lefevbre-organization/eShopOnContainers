@@ -23,6 +23,7 @@ class Main extends Component {
       isLoading: true,
       showNotification: false,
       messageNotification: null,
+      errorNotification: false,
       idCaseFile: null,
       bbdd: null,
       idCompany: null,
@@ -33,6 +34,7 @@ class Main extends Component {
     this.handleSentMessage = this.handleSentMessage.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleCheckAllclick = this.handleCheckAllclick.bind(this);
+    this.handleResetList = this.handleResetList.bind(this);
     this.handlePutUserFromLexonConnector = this.handlePutUserFromLexonConnector.bind(
       this
     );
@@ -44,10 +46,8 @@ class Main extends Component {
     window.addEventListener("Checkclick", this.handleKeyPress);
     window.addEventListener("CheckAllclick", this.handleCheckAllclick);
     window.addEventListener("SentMessage", this.handleSentMessage);
-    window.addEventListener(
-      "PutUserFromLexonConnector",
-      this.handlePutUserFromLexonConnector
-    );
+    window.addEventListener("ResetList", this.handleResetList);
+    window.addEventListener("PutUserFromLexonConnector", this.handlePutUserFromLexonConnector);
 
     this.sendMessageGetUser();
   }
@@ -67,10 +67,12 @@ class Main extends Component {
     window.removeEventListener("SentMessage", this.handleSentMessage);
     window.removeEventListener("Checkclick", this.handleKeyPress);
     window.removeEventListener("CheckAllclick", this.handleCheckAllclick);
-    window.removeEventListener(
-      "PutUserFromLexonConnector",
-      this.handlePutUserFromLexonConnector
-    );
+    window.removeEventListener("ResetList", this.handleResetList);
+    window.removeEventListener("PutUserFromLexonConnector", this.handlePutUserFromLexonConnector);
+  }
+
+  async handleResetList(event) {
+    this.props.resetListMessages();
   }
 
   async handleSentMessage(event) {
@@ -87,6 +89,23 @@ class Main extends Component {
     //   bbdd: null,
     //   company: null
     // });
+  }
+
+  async handleSentMessage(event) {
+    const { user, idCaseFile, bbdd} = this.state;
+    const { idEmail, subject, date } = event.detail;
+    
+    await addClassification(user, {bbdd}, [{
+      id: idEmail, subject, sentDateTime: date
+    }], idCaseFile, 1)    
+
+    window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
+    this.props.setCaseFile({
+      casefile: null,
+      bbdd: null,
+      company: null
+    });
+
   }
 
   handleKeyPress(event) {
@@ -189,10 +208,11 @@ class Main extends Component {
       });
   }
 
-  toggleNotification(message) {
+  toggleNotification(message, error = false) {
     this.setState(state => ({
       showNotification: !state.showNotification,
-      messageNotification: message
+      messageNotification: message,
+      errorNotification: error
     }));
   }
 
@@ -215,6 +235,7 @@ class Main extends Component {
       companies,
       showNotification,
       messageNotification,
+      errorNotification,
       idCaseFile,
       bbdd,
       idCompany
@@ -234,6 +255,7 @@ class Main extends Component {
           initialModalState={showNotification}
           toggleNotification={this.toggleNotification}
           message={messageNotification}
+          error={errorNotification}
         />
 
         <Routing
@@ -264,6 +286,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(ACTIONS.addListMessages(listMessages)),
   deleteListMessages: listMessages =>
     dispatch(ACTIONS.deleteListMessages(listMessages)),
+  resetListMessages: () => dispatch(ACTIONS.resetListMessages()),
   addError: error => dispatch(APPLICATION_ACTIONS.addError(error))
 });
 

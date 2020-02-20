@@ -52,6 +52,7 @@ export class ComposeMessage extends PureComponent {
       uppyPreviews: [],
       dropZoneActive: false,
       showNotification: false,
+      errorNotification: false,
       messageNotification: '',
       showEmptySubjectWarning: false
     };
@@ -86,7 +87,7 @@ export class ComposeMessage extends PureComponent {
         }
 
         if (totalSize > MAX_TOTAL_ATTACHMENTS_SIZE) {
-          this.showNotification(i18n.t("compose-message.max-file-size"));
+          this.showNotification(i18n.t("compose-message.max-file-size"), false);
           return false;
         } else {
           return true;
@@ -278,6 +279,9 @@ export class ComposeMessage extends PureComponent {
       to: this.props.to || "",
       cc: this.props.cc || "",
       bcc: this.props.bcc || "",
+      to2: [],
+      cc2: [],
+      bcc2:[],
       subject: this.props.subject || "",
       content: this.props.content || "",
       uppyPreviews: []
@@ -363,8 +367,8 @@ export class ComposeMessage extends PureComponent {
     this.setState({ dropZoneActive: false });
   }
 
-  showNotification(message) {
-    this.setState({ messageNotification: message, showNotification: true });
+  showNotification(message, isError = false) {
+    this.setState({ messageNotification: message, errorNotification: isError, showNotification: true });
   }
 
   closeNotification() {
@@ -443,7 +447,7 @@ export class ComposeMessage extends PureComponent {
 
   render() {
     const collapsed = this.props.sideBarCollapsed;
-    const { showNotification, messageNotification, showEmptySubjectWarning } = this.state;
+    const { showNotification, messageNotification, showEmptySubjectWarning, errorNotification } = this.state;
     const { to2, cc2, bcc2 } = this.state;
 
     const {
@@ -458,6 +462,7 @@ export class ComposeMessage extends PureComponent {
           initialModalState={showNotification}
           toggleNotification={() => { this.closeNotification() }}
           message={messageNotification}
+          error={errorNotification}
         />
         <Confirmation
           initialModalState={showEmptySubjectWarning}
@@ -527,11 +532,10 @@ export class ComposeMessage extends PureComponent {
                     label={i18n.t("compose-message.bcc")}
                 />
                 <InputGroup>
-                  <InputGroupAddon addonType="prepend">
+                  <InputGroupAddon addonType="prepend" tabIndex={-1}>
                     {i18n.t("compose-message.subject")}
                   </InputGroupAddon>
                   <Input
-                    tabIndex={4}
                     placeholder=""
                     value={this.state.subject}
                     onChange={this.setField("subject", false)}
@@ -540,7 +544,7 @@ export class ComposeMessage extends PureComponent {
               </div>
               <div className="editor-wrapper">
                 <ReactQuill
-                  tabIndex={5}
+                  tabIndex={0}
                   value={this.state.content}
                   onChange={this.handleChange}
                   className=""

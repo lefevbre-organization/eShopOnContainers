@@ -18,13 +18,16 @@ import {
   ADD_MESSAGE,
   DELETE_MESSAGE,
   DELETE_LIST_MESSAGES,
-  ADD_LIST_MESSAGES
+  CLEAR_LIST_MESSAGES,
+  ADD_LIST_MESSAGES,
+  SET_OPEN_MESSAGE
 } from "../actions/message-list.actions";
 
 const defaultMessagesState = {
   messages: [],
   loading: true,
-  pageTokens: []
+  pageTokens: [],
+  openMessage: null
 };
 
 export const messagesResult = (state = defaultMessagesState, action) => {
@@ -87,6 +90,17 @@ export const messagesResult = (state = defaultMessagesState, action) => {
           el => action.payload.modifiedIds.indexOf(el.id) === -1
         )
       };
+
+    
+    case SET_OPEN_MESSAGE:
+      if(state.openMessage === action.payload) {
+        return state;
+      }
+
+      return {
+        ...state,
+        openMessage: action.payload
+      }
     default:
       return state;
   }
@@ -218,14 +232,14 @@ export function messageList(state = defaultMessageList, action) {
       }
       return {
         ...state,
-        selectedMessages: state.selectedMessages
+        selectedMessages: [ ...state.selectedMessages ]
       };
     }
 
     case ADD_LIST_MESSAGES: {
       for (let i = 0; i < action.listMessages.length; i++) {
         const index = state.selectedMessages.findIndex(
-          message => message.id === action.listMessages[i]
+          message => message.id === action.listMessages[i].id
         );
         if (index === -1) {
           const data = {
@@ -238,7 +252,21 @@ export function messageList(state = defaultMessageList, action) {
       }
       return {
         ...state,
-        selectedMessages: state.selectedMessages
+        selectedMessages: [ ...state.selectedMessages ]
+      };
+    }
+
+    case CLEAR_LIST_MESSAGES: {
+      return {
+        ...state,
+        selectedMessages: []
+      };
+    }
+
+    case CLEAR_LIST_MESSAGES: {
+      return {
+        ...state,
+        selectedMessages: []
       };
     }
 

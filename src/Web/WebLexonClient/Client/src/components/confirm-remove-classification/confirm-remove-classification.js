@@ -49,7 +49,7 @@ class ConfirmRemoveClassification extends Component {
         }
       })
       .catch(error => {
-        toggleNotification(i18n.t("classify-emails.classification-removed-ko"));
+        toggleNotification(i18n.t("classify-emails.classification-removed-ko"), true);
         console.log("error ->", error);
       });
   }
@@ -105,6 +105,11 @@ class ConfirmRemoveClassification extends Component {
             </Button>
           </Modal.Footer>
         </Modal>
+        <style jsx>{`
+          .modal-body {
+            height: auto;
+          }
+        `}></style>
       </div>
     );
   }

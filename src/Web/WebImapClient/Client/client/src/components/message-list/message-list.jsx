@@ -218,7 +218,7 @@ class MessageList extends Component {
       this.props.messageSelected(messagesToSelect, checked);
     } else {
       // Single selection
-      this.props.messageSelected([message], checked);
+      this.props.messageSelected([message], checked, this.props.selectedFolder.fullName);
       // Send message to connectors
       //e.emit('received', { text: "Id: " + message.messageId + " selected: " + checked })
       window.dispatchEvent(
@@ -227,11 +227,12 @@ class MessageList extends Component {
             id: message.messageId,
             subject: message.subject,
             sentDateTime: message.receivedDate,
-            chkselected: checked
+            chkselected: checked,
+            folder: this.props.selectedFolder.fullName
           }
         })
       );
-      console.log("Checkclick:" + message.messageId);
+      console.log("Checkclick:" + message.messageId + " Folder:" + this.props.selectedFolder.fullName);
     }
   }
 
@@ -284,8 +285,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch(selectMessage(message));
     readMessage(dispatch, credentials, downloadedMessages, folder, message);
   },
-  messageSelected: (messages, selected, shiftKey) =>
-    dispatch(setSelected(messages, selected, shiftKey)),
+  messageSelected: (messages, selected, folderName) =>
+    dispatch(setSelected(messages, selected, folderName)),
   preloadMessages: (credentials, folder, messageUids) =>
     preloadMessages(dispatch, credentials, folder, messageUids),
   toggleMessageFlagged: (credentials, folder, message) =>

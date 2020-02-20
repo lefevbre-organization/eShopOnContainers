@@ -3,7 +3,7 @@ import "./classification-list-search.css";
 import i18n from "i18next";
 import PropTypes from "prop-types";
 
-class ClssificationListSearch extends Component {
+class ClassificationListSearch extends Component {
   constructor(props) {
     super(props);
 
@@ -110,9 +110,9 @@ class ClssificationListSearch extends Component {
   }
 }
 
-ClssificationListSearch.propTypes = {
+ClassificationListSearch.propTypes = {
   searchResultsByType: PropTypes.func.isRequired,
   countResults: PropTypes.number.isRequired
 };
 
-export default ClssificationListSearch;
+export default ClassificationListSearch;

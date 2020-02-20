@@ -13,10 +13,11 @@ import MessageEditor from "./message-editor/message-editor";
 import MessageList from "./message-list/message-list";
 import MessageViewer from "./message-viewer/message-viewer";
 import MessageSnackbar from "./message-snackbar/message-snackbar";
+import NotFoundSnackbar from "./messageNotFound-snackbar/messageNotFound-snackbar";
 
-import { clearUserCredentials, selectMessage, selectFolder, outboxEventNotified, editMessage} from "../actions/application";
+import { clearUserCredentials, selectMessage, selectFolder, outboxEventNotified, editMessage, setError} from "../actions/application";
 import {clearSelected} from '../actions/messages';
-import { setEmailShown} from '../actions/lexon';
+import { setEmailShown, resetIdEmail, setCaseFile} from '../actions/lexon';
 
 import { getSelectedFolder } from "../selectors/folders";
 
@@ -44,6 +45,9 @@ import LexonComponent from "../apps/lexon_content";
 import CalendarComponent from "../apps/calendar_content";
 import DataBaseComponent from "../apps/database_content";
 import { PROVIDER } from "../constants";
+
+const MESSAGENOTFOUND_SNACKBAR_DURATION = 4000;
+
 
 // const activityFunction = location => location.pathname.startsWith('/lexon-connector');
 
@@ -358,6 +362,7 @@ class App extends Component {
             </div>
 
             <MessageSnackbar />
+            <NotFoundSnackbar />
           </div>
 
           {/*<div className={styles.connector}  style={{
@@ -513,14 +518,19 @@ class App extends Component {
                 } 
                 this.props.messageClicked(message);
                 this.props.setEmailShown(true);
+                this.onSetSidebarOpenLexon(true);
               }
               else {
-                window.alert("No se ha encontrado el mensaje en el servidor");
+                this.onSetSidebarOpenLexon(true);
+                this.renderNotFoundModal();
+                //window.alert("No se ha encontrado el mensaje en el servidor");
               }
             });
           }
           else {
-            window.alert("No se ha encontrado el mensaje en el servidor");
+            //window.alert("No se ha encontrado el mensaje en el servidor");
+            this.onSetSidebarOpenLexon(true);
+            this.renderNotFoundModal();
           }
         }
       }
@@ -534,6 +544,20 @@ class App extends Component {
     );
 
     console.log("ENVIRONMENT ->", window.REACT_APP_ENVIRONMENT);
+  }
+
+  renderNotFoundModal(){
+    this.props.setError('messageNotFound', "No se encuentra el mensaje"); //tenia authentication
+    setTimeout(() => this.props.setError('messageNotFound', null), MESSAGENOTFOUND_SNACKBAR_DURATION);
+    this.props.resetIdEmail();
+    if (this.props.lexon.idCaseFile !== null && this.props.lexon.idCaseFile !== undefined) {
+      window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
+      this.props.setCaseFile({
+        casefile: null,
+        bbdd: this.props.lexon.bbdd,
+        company: this.props.lexon.company
+      });
+    } 
   }
 
   sleep(ms){
@@ -591,7 +615,8 @@ class App extends Component {
         detail: {
           idEmail: id,
           subject: subject,
-          date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+          date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
+          folder: this.props.application.selectedFolderId
         }
       })
     );
@@ -648,9 +673,11 @@ class App extends Component {
               if (message){
                 console.log("**************************** MESSAGE FOUND2:" + message.uid);
                 this.props.messageClicked(message);
+                this.onSetSidebarOpenLexon(true);
               }
               else {
-                console.log("**************************** MESSAGE NOT FOUND2:" + message.uid);
+                console.log("**************************** MESSAGE NOT FOUND2:");
+                this.renderNotFoundModal();
               }
               this.props.setEmailShown(true);
             });
@@ -695,7 +722,8 @@ App.propTypes = {
   reloadFolders: PropTypes.func,
   reloadMessageCache: PropTypes.func,
   loadMessageByFolder: PropTypes.func,
-  newMessage: PropTypes.func.isRequired
+  newMessage: PropTypes.func.isRequired,
+  resetIdEmail: PropTypes.func
 };
 
 const mapStateToProps = state => ({
@@ -733,6 +761,9 @@ const mapDispatchToProps = dispatch => ({
     dispatch(editMessage(null));
     //persistApplicationNewMessageContent(application, "");
   },
+  setError: (err, msg) => dispatch(setError(err, msg)),
+  resetIdEmail: () => dispatch(resetIdEmail()),
+  setCaseFile: casefile => dispatch(setCaseFile(casefile))
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
@@ -743,7 +774,10 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
     messageClicked: message => dispatchProps.messageClicked(stateProps.application.user.credentials,stateProps.application.downloadedMessages,stateProps.receivedFolder,message),
     setEmailShown: flag => dispatchProps.setEmailShown(flag),
     outboxEventNotified: () => dispatchProps.outboxEventNotified(),
-    close: application => dispatchProps.close(stateProps.application)
+    close: application => dispatchProps.close(stateProps.application),
+    setError: (err, msg) => dispatchProps.setError(err, msg),
+    resetIdEmail: () => dispatchProps.resetIdEmail(),
+    setCaseFile: casefile => dispatchProps.setCaseFile(casefile)
   });
 
 export default connect(

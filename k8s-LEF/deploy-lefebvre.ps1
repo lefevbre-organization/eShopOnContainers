@@ -12,7 +12,7 @@ Param(
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
     [parameter(Mandatory=$false)][bool]$cleanDocker=$true,
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
-    [parameter(Mandatory=$false)][bool]$buildAll=$true,
+    [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
     [parameter(Mandatory=$false)][string]$dockerOrg="elefebvreoncontainers"

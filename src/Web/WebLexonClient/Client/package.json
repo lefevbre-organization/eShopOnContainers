@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@syncfusion/ej2-react-buttons": "^17.4.49",
+    "@syncfusion/ej2-react-grids": "^17.4.49",
     "autoprefixer": "7.1.6",
     "babel-core": "^6.26.3",
     "babel-eslint": "7.2.3",

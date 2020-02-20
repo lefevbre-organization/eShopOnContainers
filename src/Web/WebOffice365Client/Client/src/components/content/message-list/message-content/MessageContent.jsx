@@ -4,7 +4,10 @@ import { withRouter } from "react-router-dom";
 import { bindActionCreators, compose } from "redux";
 import {
   getEmailMessage,
-  modifyMessages
+  modifyMessages,
+  toggleSelected,
+  clearListMessages,
+  setOpenMessage
 } from "../actions/message-list.actions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
@@ -12,6 +15,7 @@ import MessageToolbar from "../message-toolbar/MessageToolbar";
 import "./messageContent.scss";
 import MessageHeader from "./messageHeader";
 import { setMessageAsRead } from '../../../../api_graph';
+import MessageNotFound  from "../../../message-not-found/MessageNotFound";
 
 //BEGIN functions for attachment functionality
 
@@ -126,26 +130,65 @@ export class MessageContent extends Component {
     super(props);
 
     this.state = {
-      errorMessage: undefined
+      errorMessage: undefined,
+      showMessageNotFound: false
     };
     this.refresh = false;
     this.iframeRef = React.createRef();
     this.modifyMessage = this.modifyMessage.bind(this);
+    this.notFoundModal = props.notFoundModal;
+    this.timer = null;
+
+  }
+
+  toggleShowMessageNotFound() {
+    this.setState(state => ({
+      showMessageNotFound: !state.showMessageNotFound
+    }));
   }
 
   componentDidMount(prevProps) {
     const messageId = this.props.match.params.id;
-    this.props.getEmailMessage(messageId);
+    this.props.getEmailMessage(messageId);  
+    this.props.setOpenMessage(messageId);
+
+    window.dispatchEvent(new CustomEvent("ResetList"));
   }
 
   componentWillUnmount() {
-    if(this.refresh && this.props.refresh) {
-      this.props.refresh();
-    }
+    this.props.setOpenMessage("");
+    window.dispatchEvent(new CustomEvent("ResetList"));
+    for(let i = 0; i < this.props.selectedMessages.length; i++) {
+        const detail = {
+          subject: this.props.selectedMessages[i].subject,
+          sentDateTime: this.props.selectedMessages[i].sentDateTime,
+          id: this.props.selectedMessages[i].internetId,
+          chkselected: true
+        };
+    window.dispatchEvent(new CustomEvent("Checkclick",  {
+      detail
+    }));   
+  }
+  if(this.refresh && this.props.refresh) {
+    this.props.refresh();
+  }
   }
 
   componentDidUpdate(prevProps) {
-    const { emailMessageResult } = this.props;
+    const { emailMessageResult, emailHeaderMessageResult } = this.props;
+
+    if(prevProps.emailHeaderMessageResult.headers === null && emailHeaderMessageResult.headers !== null) {
+      const detail = {
+        id: emailHeaderMessageResult.headers.internetMessageId,
+        subject: emailHeaderMessageResult.headers.subject,
+        sentDateTime: emailHeaderMessageResult.headers.sentDateTime,
+        chkselected: true
+      };
+      window.dispatchEvent(new CustomEvent("Checkclick",  {
+        detail
+      }));
+    }
+
     if (!emailMessageResult.loading) {
       if (!emailMessageResult.failed) {
         this.markEmailAsRead(emailMessageResult.result);
@@ -172,20 +215,28 @@ export class MessageContent extends Component {
                   attach[i].contentType,
                   attach[i].size
                 );
-                //console.log(urlBlob);
-                var blobUrl = URL.createObjectURL(urlBlob);
-                var Attachment = addAttachmentElement(blobUrl, attach[i].name);
-                var AttachmentDiv = addAttachmentContainer(attach[i].contentType);
-                AttachmentDiv.appendChild(Attachment);
-                iframe.contentDocument.body.appendChild(AttachmentDiv);
+
+                if(attach[i].isInline === false) {
+                  var blobUrl = URL.createObjectURL(urlBlob);
+                  var Attachment = addAttachmentElement(blobUrl, attach[i].name);
+                  var AttachmentDiv = addAttachmentContainer(attach[i].contentType);
+                  AttachmentDiv.appendChild(Attachment);
+                  iframe.contentDocument.body.appendChild(AttachmentDiv);
+                } else {
+                  const bd = body.innerHTML.replace(`cid:${attach[0].contentId}`, "data:image/png;base64, " + dataBase64Rep)
+                  body.innerHTML = bd;
+                }
               }
             }
           }
         }
       } else {
         if (this.props.match.path == "/:id([a-zA-Z0-9!@#$%^&+=_-]+)" && this.props.match.url !== "/inbox"){
-          if (emailMessageResult.error.statusCode === 400 || emailMessageResult.error.statusCode === 404){
-            alert('El mensaje que desea abrir no existe en el servidor');
+          if ((emailMessageResult.error.statusCode === 400 || emailMessageResult.error.statusCode === 404) && this.notFoundModal === 0){
+            this.toggleShowMessageNotFound(true);
+            this.notFoundModal = 1;
+          }
+          else if (this.state.showMessageNotFound === false){
             this.renderInbox();
           }
         }
@@ -278,14 +329,19 @@ export class MessageContent extends Component {
 }
 
 const mapStateToProps = state => ({
-  emailMessageResult: state.emailMessageResult
+  emailMessageResult: state.emailMessageResult,
+  emailHeaderMessageResult: state.emailHeaderMessageResult,
+  selectedMessages: state.messageList.selectedMessages
 });
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators(
     {
+      toggleSelected,
       getEmailMessage,
-      modifyMessages
+      modifyMessages,
+      clearListMessages,
+      setOpenMessage
     },
     dispatch
   );

@@ -65,7 +65,6 @@ export class Login extends Component {
   constructor(props) {
     super(props);
 
-
     this.state = stateFromParams(new URLSearchParams(this.props.location.search));
     if (this.props.formValues && Object.keys(this.props.formValues).length > 0) {
       this.state = stateFromFormValues(this.props.formValues);
@@ -217,7 +216,6 @@ export class Login extends Component {
 
     var element = document.getElementById("user");      
     const error = validateEmail(this.state.values.user);
-    debugger
     if (error) {
       element.setCustomValidity(error);
       setTimeout(() => element.reportValidity());

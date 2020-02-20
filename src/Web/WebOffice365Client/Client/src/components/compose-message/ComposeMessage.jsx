@@ -53,6 +53,7 @@ export class ComposeMessage extends PureComponent {
       uppyPreviews: [],
       dropZoneActive: false,
       showNotification: false,
+      errorNotification: false,
       messageNotification: '',
       showEmptySubjectWarning: false
     };
@@ -82,7 +83,7 @@ export class ComposeMessage extends PureComponent {
         }
 
         if (totalSize > MAX_TOTAL_ATTACHMENTS_SIZE) {
-          this.showNotification(i18n.t("compose-message.max-file-size"));
+          this.showNotification(i18n.t("compose-message.max-file-size"), false);
           return false;
         } else {
           return true;
@@ -99,7 +100,7 @@ export class ComposeMessage extends PureComponent {
       // Define this onload every time to get file and base64 every time
       this.reader = new FileReader();
       
-      if(file.data.size <= 4194304) {
+      if(file.data.size <= 3145728) {
         this.reader.readAsDataURL(file.data);
       } else {
         this.reader.readAsArrayBuffer(file.data);
@@ -133,13 +134,21 @@ export class ComposeMessage extends PureComponent {
     this.addFileToState();
   }
 
-  closeModal() {
+  closeModal() { 
     if (
       this.props.lexon.idCaseFile === null ||
       this.props.lexon.idCaseFile === undefined
     ) {
       this.props.history.goBack();
     } else {
+      if (this.props.casefile != null && this.props.casefile !== undefined) {
+        window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
+        this.props.setCaseFile({
+          casefile: null,
+          bbdd: null,
+          company: null
+        });
+      } 
       if(this.props.labelsResult) {
         this.props.loadLabelMessages(this.props.labelsResult.labelInbox);
       }
@@ -174,7 +183,6 @@ export class ComposeMessage extends PureComponent {
     );
 
     setTimeout(async ()=>{
-      debugger
       if(this.props.lexon.bbdd && this.props.lexon.account) {
         try {
           const user = await getUser(this.props.lexon.userId);   
@@ -213,7 +221,7 @@ export class ComposeMessage extends PureComponent {
   }
 
   componentWillUnmount() {
-    window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
+    //window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
     this.uppy.close();
   }
 
@@ -368,8 +376,8 @@ export class ComposeMessage extends PureComponent {
     this.setState({ dropZoneActive: false });
   }
 
-  showNotification(message) {
-    this.setState({messageNotification: message, showNotification: true});
+  showNotification(message, error = false) {
+    this.setState({messageNotification: message, errorNotification: error, showNotification: true});
   }
 
   closeNotification() {
@@ -453,7 +461,7 @@ export class ComposeMessage extends PureComponent {
 
   render() {
     const collapsed = this.props.sideBarCollapsed;
-    const { showNotification, messageNotification, showEmptySubjectWarning } = this.state;
+    const { showNotification, messageNotification, showEmptySubjectWarning, errorNotification } = this.state;
 
     const {
        to,
@@ -469,6 +477,7 @@ export class ComposeMessage extends PureComponent {
           initialModalState={showNotification}
           toggleNotification={() => { this.closeNotification() }}
           message={messageNotification}
+          error={errorNotification}
         />
         <Confirmation 
           initialModalState={showEmptySubjectWarning}
@@ -540,11 +549,10 @@ export class ComposeMessage extends PureComponent {
               />
                 
                 <InputGroup>
-                  <InputGroupAddon addonType="prepend">
+                  <InputGroupAddon addonType="prepend"  tabIndex={-1}>
                     {i18n.t("compose-message.subject")}
                   </InputGroupAddon>
                   <Input
-                    tabIndex={4}
                     placeholder=""
                     value={this.state.subject}
                     onChange={this.setField("subject", false)}
@@ -553,7 +561,7 @@ export class ComposeMessage extends PureComponent {
               </div>
               <div className="editor-wrapper">
                 <ReactQuill
-                  tabIndex={5}
+                  tabIndex={0}
                   value={this.state.content}
                   onChange={this.handleChange}
                   className=""

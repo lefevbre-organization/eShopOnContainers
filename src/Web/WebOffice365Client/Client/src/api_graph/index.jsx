@@ -292,9 +292,16 @@ export const getMessageByInternetMessageId = async internetMessageId => {
   try {
     const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
+    var result = undefined;
 
     const response = await client.api(`me/messages?$filter=internetMessageId eq '${internetMessageId}'`).get()
-    const result = response.value[response.value.length-1];
+    if (response.value.length > 0){
+      result = response.value[response.value.length-1];
+    }
+    else {
+      result = { id: "notFound", subject: undefined, sentDateTime: undefined };
+    }
+    
     console.log("hola response: " + result.id);
 
     return {
@@ -479,7 +486,7 @@ export const batchModify = async ({ ids, addLabelIds = [], removeLabelIds = [] }
 
 export const uploadFiles = async(emailId, attachments) => {
   for (var i = 0; i < attachments.length; i++) {
-    if(attachments[i].data.size > 4194304) {
+    if(attachments[i].data.size > 3145728) {
       await uploadFileWithUploadSession(emailId, attachments[i].data, attachments[i].content);
     } else {
       await uploadFile(emailId, attachments[i].data, attachments[i].content);

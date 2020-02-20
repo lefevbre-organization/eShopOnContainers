@@ -39,6 +39,12 @@ class ListClassifications extends Component {
       toggleConfirmRemoveClassification
     } = this.props;
     const mail = selectedMessages[0];
+    
+    if(selectedMessages.length > 1) {
+      return null;
+    }
+
+    const classificationsFiltered = [...new Set(classifications)];
 
     const uuidv1 = require("uuid/v1");
 
@@ -53,7 +59,7 @@ class ListClassifications extends Component {
         <div id="scrl-container">
         <PerfectScrollbar options={{ suppressScrollX: true }}>
           <ul className="row lexon-document-list">
-            {classifications.map(classification => {
+            {classificationsFiltered && classificationsFiltered.map(classification => {
               return (
                 <Classification
                   classification={classification}
