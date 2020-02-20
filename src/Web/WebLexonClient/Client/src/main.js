@@ -23,6 +23,7 @@ class Main extends Component {
       isLoading: true,
       showNotification: false,
       messageNotification: null,
+      errorNotification: false,
       idCaseFile: null,
       bbdd: null,
       idCompany: null,
@@ -207,10 +208,11 @@ class Main extends Component {
       });
   }
 
-  toggleNotification(message) {
+  toggleNotification(message, error = false) {
     this.setState(state => ({
       showNotification: !state.showNotification,
-      messageNotification: message
+      messageNotification: message,
+      errorNotification: error
     }));
   }
 
@@ -233,6 +235,7 @@ class Main extends Component {
       companies,
       showNotification,
       messageNotification,
+      errorNotification,
       idCaseFile,
       bbdd,
       idCompany
@@ -252,6 +255,7 @@ class Main extends Component {
           initialModalState={showNotification}
           toggleNotification={this.toggleNotification}
           message={messageNotification}
+          error={errorNotification}
         />
 
         <Routing

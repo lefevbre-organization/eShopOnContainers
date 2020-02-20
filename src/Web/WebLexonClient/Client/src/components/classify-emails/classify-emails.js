@@ -79,7 +79,7 @@ class ClassifyEmails extends Component {
           toggleNotification(i18n.t("classify-emails.classification-saved-ok"));
         })
         .catch(error => {
-          toggleNotification(i18n.t("classify-emails.classification-saved-ko"));
+          toggleNotification(i18n.t("classify-emails.classification-saved-ko"), true);
           console.log("error ->", error);
         });
     } else {

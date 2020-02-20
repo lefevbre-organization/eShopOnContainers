@@ -5,7 +5,7 @@ import { Modal } from "react-bootstrap";
 
 class Notification extends Component {
   render() {
-    const { initialModalState, toggleNotification, message } = this.props;
+    const { initialModalState, toggleNotification, message, error = false  } = this.props;
 
     return (
       <Modal
@@ -14,7 +14,7 @@ class Notification extends Component {
         size="lg"
         aria-labelledby="contained-modal-title-vcenter"
         centered
-        dialogClassName="modal"
+        dialogClassName={`modal notification ${error?'error':''}`}
         animation={false}
       >
         <Modal.Header className="align-items-center" closeButton>
@@ -24,12 +24,30 @@ class Notification extends Component {
                 className="modal-title d-flex align-items-center"
                 id="clasificarNuevaclasificacionLabel"
               >
-                <span className="lf-icon-bookmarks"></span>
+                { error === false && <span className="lf-icon-bookmarks"></span> }
+                { error === true &&  <img
+                      className="img-warning"
+                      alt=""
+                      src="/assets/img/icon-warning.png"
+                    ></img>}
                 {message}
               </h5>
             </div>
           </Modal.Title>
         </Modal.Header>
+        <style jsx>{`
+        .modal.error .modal-content .modal-header {
+          background-color: #C43741 !important;
+        }
+
+        .modal.error .modal-content .modal-header .close span:first-child {
+          color: transparent !important;
+        }
+
+        .notification .modal-header .modal-title {
+          min-height: 150px;
+        }
+        `}</style>
       </Modal>
     );
   }
@@ -38,7 +56,8 @@ class Notification extends Component {
 Notification.propTypes = {
   initialModalState: PropTypes.bool.isRequired,
   toggleNotification: PropTypes.func.isRequired,
-  message: PropTypes.string
+  message: PropTypes.string,
+  error: PropTypes.bool
 };
 
 export default Notification;
