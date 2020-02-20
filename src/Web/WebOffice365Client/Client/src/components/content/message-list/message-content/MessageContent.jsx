@@ -201,7 +201,6 @@ export class MessageContent extends Component {
 
           //Adding attach files
           var attach = emailMessageResult.attach;
-          debugger
           if (typeof attach !== "undefined" && attach.length > 0) {
             var iframe = document.getElementById("message-iframe");
             var Divider = addDivDivider();

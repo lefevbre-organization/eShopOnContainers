@@ -8,4 +8,5 @@ window.URL_MF_GOOGLE = "http://localhost:3001/user";
 window.URL_MF_OUTLOOK = "http://localhost:3002/user";
 window.URL_MF_IMAP = "http://localhost:9000/user";
 window.URL_MF_LEXON = "http://localhost:3004/static/js/main.js";
+window.URL_MF_LEXON_BASE = "http://localhost:3004";
 window.API_GATEWAY = "https://lexbox-test-apigwlex.lefebvre.es";
