@@ -218,7 +218,7 @@ export class MessageContent extends Component {
 
                       for (var i = 0; i < attach.length; i++) {
                           if (attach[i].filename && attach[i].filename.length > 0) {
-
+                            const athc = attach[i];
                             if(!this.attachments[attach[i].partId]) {
                               this.attachments[attach[i].partId] = "1" 
                               getAttachments(emailMessageResult.id, attach[i], function (
@@ -236,12 +236,19 @@ export class MessageContent extends Component {
                                       attachment.size
                                   );
                                   //console.log(urlBlob);
-                                  var blobUrl = URL.createObjectURL(urlBlob);
-                                  var Attachment = addAttachmentElement(blobUrl, filename);
-                                  var AttachmentDiv = addAttachmentContainer(mimeType);
-                                  AttachmentDiv.appendChild(Attachment);
-                                  iframe.contentDocument.body.appendChild(AttachmentDiv);
-                              });
+                                  const contentDisposition = getHeader(athc.headers, "content-disposition");
+                                  if(contentDisposition && contentDisposition.indexOf("inline;") === -1) {                              
+                                    var blobUrl = URL.createObjectURL(urlBlob);
+                                    var Attachment = addAttachmentElement(blobUrl, filename);
+                                    var AttachmentDiv = addAttachmentContainer(mimeType);
+                                    AttachmentDiv.appendChild(Attachment);
+                                    iframe.contentDocument.body.appendChild(AttachmentDiv);
+                                  } else {
+                                    const contentId = getHeader(athc.headers, "x-attachment-id");
+                                    const bd = body.innerHTML.replace(`cid:${contentId}`, "data:image/png;base64, " + dataBase64Rep)
+                                    body.innerHTML = bd;
+                                  }
+                                });
                             }
                           }
                       }
