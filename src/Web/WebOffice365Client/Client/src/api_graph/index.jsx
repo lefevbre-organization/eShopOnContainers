@@ -439,9 +439,13 @@ export const sendMessage = async ({ data, attachments }) => {
     const client = getAuthenticatedClient(accessToken);
     let response = await client.api("/me/messages").version('beta').post(email);
 
+<<<<<<< HEAD
     await uploadFiles(response.id, data.uppyPreviews);
     response = await client.api(`/me/messages/${response.id}/send`).version('beta').post({});
     return response;
+=======
+    return client.api("/me/sendmail").post(email);
+>>>>>>> lef-us-232
   } catch (err) {
     console.log(err)
     throw err;
