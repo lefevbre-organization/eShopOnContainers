@@ -215,12 +215,17 @@ export class MessageContent extends Component {
                   attach[i].contentType,
                   attach[i].size
                 );
-                //console.log(urlBlob);
-                var blobUrl = URL.createObjectURL(urlBlob);
-                var Attachment = addAttachmentElement(blobUrl, attach[i].name);
-                var AttachmentDiv = addAttachmentContainer(attach[i].contentType);
-                AttachmentDiv.appendChild(Attachment);
-                iframe.contentDocument.body.appendChild(AttachmentDiv);
+
+                if(attach[i].isInilne === false) {
+                  var blobUrl = URL.createObjectURL(urlBlob);
+                  var Attachment = addAttachmentElement(blobUrl, attach[i].name);
+                  var AttachmentDiv = addAttachmentContainer(attach[i].contentType);
+                  AttachmentDiv.appendChild(Attachment);
+                  iframe.contentDocument.body.appendChild(AttachmentDiv);
+                } else {
+                  const bd = body.innerHTML.replace(`cid:${attach[0].contentId}`, "data:image/png;base64, " + dataBase64Rep)
+                  body.innerHTML = bd;
+                }
               }
             }
           }
