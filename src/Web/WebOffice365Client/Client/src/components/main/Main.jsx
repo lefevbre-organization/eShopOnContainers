@@ -112,7 +112,7 @@ export class Main extends Component {
       new CustomEvent("PutUserFromLexonConnector", {
         detail: {
           user,
-          selectedMessages: selectedMessages,
+          selectedMessages: selectedMessages.map( itm => ({ ...itm, id: itm.internetId})),
           idCaseFile: this.props.lexon.idCaseFile,
           bbdd: this.props.lexon.bbdd,
           idCompany: this.props.lexon.idCompany,

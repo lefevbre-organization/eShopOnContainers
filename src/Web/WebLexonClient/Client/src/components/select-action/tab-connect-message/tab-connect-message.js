@@ -99,9 +99,9 @@ class TabConnectMessage extends Component {
 
   renderShowSaveDocument() {
     const { showSaveDocument } = this.state;
-    const { user } = this.props;
+    const { user, selectedMessages } = this.props;
 
-    if (showSaveDocument) {
+    if (selectedMessages.length > 0) {
       return (
         <SaveDocument
           user={user}
