@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,26 +43,12 @@ namespace Lexon.Infrastructure.Services
 
         #region Classifications
 
-        public async Task<Result<long>> AddClassificationToListAsync(string idUser, string bbdd, MailInfo[] listaMails, long idRelated, short? idType = 1)
+        public async Task<Result<long>> AddClassificationToListAsync(ClassificationAddView classificationAdd)
         {
             long a = 0;
             var result = new Result<long>(a);
 
-            var url = $"{_settings.Value.LexonMySqlUrl}/classifications/add";
-
-            TraceLog(parameters: new string[] { $"url={url}" });
-
-            var classificationAdd = new ClassificationAddView
-            {
-                idType = idType,
-                bbdd = bbdd,
-                idRelated = idRelated,
-                idUser = idUser,
-                listaMails = listaMails
-            };
-
-            var json = JsonConvert.SerializeObject(classificationAdd);
-            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            SerializeObjectToPost(classificationAdd, "/classifications/add", out string url, out StringContent data);
             try
             {
                 using (var response = await _client.PostAsync(url, data))
@@ -72,9 +59,6 @@ namespace Lexon.Infrastructure.Services
 
                         if (result.data == 0)
                             TraceOutputMessage(result.errors, "Mysql don´t create the classification", 2001);
-                        //else
-                        //    return result;
-                        //todo: deberia gestionarse el error y tomar decision se seguir o no, mandar un evento...
                     }
                     else
                     {
@@ -86,8 +70,18 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceMessage(result.errors, ex);
             }
-            await AddClassificationToListMongoAsync(idUser, bbdd, listaMails, idRelated, idType, result);
+            await AddClassificationToListMongoAsync(
+                classificationAdd.idUser, classificationAdd.bbdd, classificationAdd.listaMails,
+                classificationAdd.idRelated, classificationAdd.idType, result);
             return result;
+        }
+
+        private void SerializeObjectToPost(object classificationAdd, string path, out string url, out StringContent data)
+        {
+            url = $"{_settings.Value.LexonMySqlUrl}{path}";
+            TraceLog(parameters: new string[] { $"url={url}" });
+            var json = JsonConvert.SerializeObject(classificationAdd);
+            data = new StringContent(json, Encoding.UTF8, "application/json");
         }
 
         private async Task AddClassificationToListMongoAsync(string idUser, string bbdd, MailInfo[] listaMails, long idRelated, short? idClassificationType, Result<long> result)
@@ -114,13 +108,7 @@ namespace Lexon.Infrastructure.Services
             int a = 0;
             var result = new Result<int>(a);
 
-            var url = $"{_settings.Value.LexonMySqlUrl}/classifications/contacts/add";
-
-            TraceLog(parameters: new string[] { $"url={url}" });
-
-
-            var json = JsonConvert.SerializeObject(classification);
-            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            SerializeObjectToPost(classification, "/classifications/contacts/add", out string url, out StringContent data);
             try
             {
                 using (var response = await _client.PostAsync(url, data))
@@ -131,9 +119,6 @@ namespace Lexon.Infrastructure.Services
 
                         if (result.data == 0)
                             TraceOutputMessage(result.errors, "Mysql don´t create the classification of contacts", 2001);
-                        //else
-                        //    return result;
-                        //todo: deberia gestionarse el error y tomar decision se seguir o no, mandar un evento...
                     }
                     else
                     {
@@ -149,31 +134,14 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        public async Task<Result<long>> RemoveClassificationFromListAsync(string idUser, string bbdd, string provider, string mailAccount, string uidMail, long idRelated, short? idType = 1)
+        public async Task<Result<long>> RemoveClassificationFromListAsync(ClassificationRemoveView classificationRemove)
         {
             long a = 0;
             var result = new Result<long>(a);
-
-            var url = $"{_settings.Value.LexonMySqlUrl}/classifications/delete";
-
-            TraceLog(parameters: new string[] { $"url={url}" });
+            SerializeObjectToPost(classificationRemove, "/classifications/delete", out string url, out StringContent data);
 
             try
             {
-                var classificationRemove = new ClassificationRemoveView
-                {
-                    idType = idType,
-                    bbdd = bbdd,
-                    idRelated = idRelated,
-                    idUser = idUser,
-                    idMail = uidMail,
-                    Provider = provider,
-                    MailAccount = mailAccount
-                };
-
-                var json = JsonConvert.SerializeObject(classificationRemove);
-                var data = new StringContent(json, Encoding.UTF8, "application/json");
-
                 using (var response = await _client.PostAsync(url, data))
                 {
                     if (response.IsSuccessStatusCode)
@@ -182,9 +150,7 @@ namespace Lexon.Infrastructure.Services
 
                         if (result.data == 0)
                             TraceOutputMessage(result.errors, "Mysql don´t remove the classification", 2001);
-                        //else
-                        //    return result;
-                        //todo: deberia gestionarse el error y tomar decision se seguir o no, mandar un evento...
+
                     }
                     else
                     {
@@ -196,7 +162,9 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceMessage(result.errors, ex);
             }
-            await RemoveClassificationFromListMongoAsync(idUser, bbdd, provider, mailAccount, uidMail, idRelated, idType, result);
+            await RemoveClassificationFromListMongoAsync(
+                classificationRemove.idUser, classificationRemove.bbdd, classificationRemove.Provider, 
+                classificationRemove.MailAccount, classificationRemove.idMail, classificationRemove.idRelated, classificationRemove.idType, result);
             return result;
         }
 
@@ -219,22 +187,19 @@ namespace Lexon.Infrastructure.Services
             }
         }
 
-        public async Task<Result<List<LexonActuation>>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, string bbdd, string idMail, short? idType)
+        public async Task<Result<List<LexonActuation>>> GetClassificationsFromMailAsync(ClassificationSearchView classificationSearch)
         {
             var result = new Result<List<LexonActuation>>(new List<LexonActuation>());
-            idType = idType != null ? idType : 0;
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/classifications/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={idType}&bbdd={bbdd}&idUser={idUser}&idMail={idMail}");
-            TraceLog(parameters: new string[] { $"request:{request}" });
+            SerializeObjectToPost(classificationSearch, "/classifications/search", out string url, out StringContent data);
 
             try
             {
-                using (var response = await _client.SendAsync(request))
+                using (var response = await _client.PostAsync(url, data))
                 {
                     if (response.IsSuccessStatusCode)
                     {
                         var resultMysql = await response.Content.ReadAsAsync<Result<JosRelationsList>>();
-                        if (GetClassificationsFromMailMySqlAsync(ref result, resultMysql, idMail))
+                        if (GetClassificationsFromMailMySqlAsync(ref result, resultMysql, classificationSearch.idMail))
                             return result;
                     }
                     else
@@ -247,7 +212,10 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceMessage(result.errors, ex);
             }
-            await GetClassificationsFromMailMongoAsync(result, pageSize, pageIndex, idUser, bbdd, idMail);
+
+            await GetClassificationsFromMailMongoAsync(
+                result, classificationSearch.pageSize, classificationSearch.pageIndex,
+                classificationSearch.idUser, classificationSearch.bbdd, classificationSearch.idMail);
             return result;
         }
 
@@ -269,7 +237,7 @@ namespace Lexon.Infrastructure.Services
                     idRelated = entity.IdRelacion,
                     date = entity.Fecha,
                     entityIdType = entity.TipoRelacion,
-                    entityType = Enum.GetName(typeof(LexonAdjunctionType), entity.TipoRelacion) //TODO: poner cambio de dioma
+                    entityType = Enum.GetName(typeof(LexonAdjunctionType), entity.TipoRelacion) 
                 });
                 TraceLog(parameters: new string[] { $"add Name {entity.Nombre}", $"desc {entity.Asunto}", $"tipo Mail", $"idrelated {entity.IdRelacion}", $"idmail {idMail}", $"date {entity.Fecha}", $"tipo {entity.TipoRelacion}" });
             }
@@ -305,10 +273,9 @@ namespace Lexon.Infrastructure.Services
 
         #region Entities
 
-        public async Task<Result<List<LexonEntityType>>> GetMasterEntitiesAsync()
+        public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync()
         {
-            var result = new Result<List<LexonEntityType>>(new List<LexonEntityType>());
-
+            var resultMySql = new MySqlList<JosEntityTypeList, JosEntityType>();
             var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/entities/masters");
             TraceLog(parameters: new string[] { $"request:{request}" });
 
@@ -318,29 +285,23 @@ namespace Lexon.Infrastructure.Services
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        foreach (var entity in (await response.Content.ReadAsAsync<Result<JosEntityTypeList>>()).data.Entities)
-                        {
-                            result.data.Add(new LexonEntityType() { name = entity.Name, idEntity = entity.IdEntity });
-                            TraceLog(parameters: new string[] { $"add {entity.Name}" });
-                        }
-
-                        if (result.data.Count == 0)
-                            TraceOutputMessage(result.errors, "Mysql don´t recover the master´s entities", 2001);
-                        else
-                            return result;
+                        resultMySql = await response.Content.ReadAsAsync<MySqlList<JosEntityTypeList, JosEntityType>>();
+                        resultMySql.result = null;
+                        if (!resultMySql.TengoLista())
+                            TraceOutputMessage(resultMySql.Errors, "Mysql don´t recover the master´s entities", 2001);
                     }
                     else
                     {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+                        TraceOutputMessage(resultMySql.Errors, $"Response not ok with mysql.api with code->{response.StatusCode} - {response.ReasonPhrase}", 2003);
                     }
                 }
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceMessage(resultMySql.Errors, ex);
             }
-            await GetMasterEntitiesMongoAsync(result);
-            return result;
+            //await GetMasterEntitiesMongoAsync(result);
+            return resultMySql;
         }
 
         private async Task GetMasterEntitiesMongoAsync(Result<List<LexonEntityType>> result)
@@ -362,39 +323,83 @@ namespace Lexon.Infrastructure.Services
             }
         }
 
-        public async Task<Result<List<LexonEntityBase>>> GetEntitiesListAsync(int pageSize, int pageIndex, short? idType, string idUser, string bbdd, string searchFilter, long? idFilter)
+        public async Task<MySqlList<JosEntityList, LexonEntityBase>> GetEntitiesListAsync(EntitySearchView entitySearch)
         {
-            var result = new Result<List<LexonEntityBase>>(new List<LexonEntityBase>());
+            //var resultMySql = new MySqlList<JosEntityList, JosEntity>();
+            var resultLexon = new MySqlList<JosEntityList, LexonEntityBase>();
 
-            var request = new HttpRequestMessage(HttpMethod.Get,
-                $"{_settings.Value.LexonMySqlUrl}/entities/search?pageSize={pageSize}&pageIndex={pageIndex}&idType={idType}&bbdd={bbdd}&search={searchFilter}&idUser={idUser}&idFilter={idFilter}");
-
-            TraceLog(parameters: new string[] { $"request={request}" });
+           // var result = new Result<List<LexonEntityBase>>(new List<LexonEntityBase>());
+            SerializeObjectToPost(entitySearch, "/entities/search", out string url, out StringContent data);
 
             try
             {
-                var entities = new List<LexonEntityBase>();
-
-                using (var response = await _client.SendAsync(request))
+                using (var response = await _client.PostAsync(url, data))
                 {
                     if (response.IsSuccessStatusCode)
                     {
+                        var resultMySql = await response.Content.ReadAsAsync<MySqlList<JosEntityList, JosEntity>>();
+
+                        if (!resultMySql.TengoLista())
+                            TraceOutputMessage(resultMySql.Errors, "Mysql don´t recover the master´s entities", 2001);
+
                         var entityList = await response.Content.ReadAsAsync<Result<JosEntityList>>();
-                        if (GetEntitiesListMySqlAsync(ref result, entityList, idType))
-                            return result;
+                        if (GetEntitiesListMySqlAsync(ref resultLexon, resultMySql, entitySearch.idType))
+                            return resultLexon;
                     }
                     else
                     {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+                        TraceOutputMessage(resultLexon.Errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", 2003);
                     }
                 }
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceMessage(resultLexon.Errors, ex);
             }
-            await GetEntitiesListMongoAsync(pageSize, pageIndex, idType, idUser, bbdd, searchFilter, result);
-            return result;
+
+               //await GetEntitiesListMongoAsync(
+               // entitySearch.pageSize, entitySearch.pageIndex, entitySearch.idType, 
+               // entitySearch.idUser, entitySearch.bbdd, entitySearch.search, result);
+            return resultLexon;
+        }
+
+        private bool GetEntitiesListMySqlAsync(ref MySqlList<JosEntityList, LexonEntityBase> result, MySqlList<JosEntityList, JosEntity> entityList, short? idType)
+        {
+            if (!entityList.TengoLista())
+            {
+                TraceOutputMessage(entityList.Errors, "The response fo Mysql is empty", 2001);
+                return false;
+            }
+
+            List<LexonEntityBase> listadoFinal = new List<LexonEntityBase>();
+            foreach (var entity in (entityList.Data))
+            {
+                listadoFinal.Add(new LexonEntityBase()
+                {
+                    name = entity.Code,
+                    description = entity.Description,
+                    email = entity.Email,
+                    id = entity.IdRelated,
+                    idType = idType ?? 1,
+                    entityType = Enum.GetName(typeof(LexonAdjunctionType), idType ?? 1),
+                    intervening = entity.Intervening
+                });
+                TraceLog(parameters: new string[] { $"code {entity.Code}" });
+            }
+
+            result.Errors = entityList.Errors;
+            result.Infos = entityList.Infos;
+            result.PageIndex = entityList.PageIndex;
+            result.PageSize = entityList.PageSize;
+            result.Count = entityList.Count;
+            result.Data = listadoFinal;
+
+            if (!result.TengoLista())
+                TraceOutputMessage(result.Errors, "Mysql don´t recover the entities", 2001);
+            else
+                return true;
+
+            return false;
         }
 
         private bool GetEntitiesListMySqlAsync(ref Result<List<LexonEntityBase>> result, Result<JosEntityList> entityList, short? idType)
@@ -448,25 +453,19 @@ namespace Lexon.Infrastructure.Services
             }
         }
 
-        public async Task<Result<LexonEntityBase>> GetEntityById(string bbdd, string idUser, short idType, long idEntity)
+        public async Task<Result<LexonEntityBase>> GetEntityById(EntitySearchById entitySearch)
         {
             var result = new Result<LexonEntityBase>(new LexonEntityBase());
-
-            var request = new HttpRequestMessage(HttpMethod.Get,
-                $"{_settings.Value.LexonMySqlUrl}/entities/getbyid?bbdd={bbdd}&idUser={idUser}&idType={idType}&idEntity={idEntity}");
-
-            TraceLog(parameters: new string[] { $"request={request}" });
+            SerializeObjectToPost(entitySearch, "/entities/getbyid", out string url, out StringContent data);
 
             try
             {
-                var entity = new LexonEntityBase();
-
-                using (var response = await _client.SendAsync(request))
+                using (var response = await _client.PostAsync(url, data))
                 {
                     if (response.IsSuccessStatusCode)
                     {
                         var josEntity = await response.Content.ReadAsAsync<Result<JosEntity>>();
-                        if (GetEntityByIdMySqlAsync(ref result, josEntity, idType))
+                        if (GetEntityByIdMySqlAsync(ref result, josEntity, (short)entitySearch.idType))
                             return result;
                     }
                     else

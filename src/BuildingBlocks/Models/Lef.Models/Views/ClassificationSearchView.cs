@@ -1,12 +1,10 @@
-﻿namespace Lexon.API.Model
+﻿namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
     /// <summary>
-    /// Use to search classifications
+    /// User to search classifications of mails
     /// </summary>
-    public class ClassificationSearch : ClassificationView
+    public class ClassificationSearchView:  ClassificationRemoveView
     {
-        /// <summary> string with the id of the mail to search</summary>
-        public string idMail { get; set; }
 
         /// <summary>quantity of records to return , by default 20,  all = 0</summary>
         public int pageSize { get; set; }
@@ -14,4 +12,5 @@
         /// <summary>use to paginate results, by default 1</summary>
         public int pageIndex { get; set; }
     }
+
 }

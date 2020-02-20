@@ -9,42 +9,18 @@ namespace Lexon.MySql.Infrastructure.Repositories
         Task<Result<JosUserCompanies>> GetCompaniesListAsync(int pageSize,
                                                              int pageIndex,
                                                              string idUser);
-        Task<Result<JosEntityTypeList>> GetMasterEntitiesAsync();
+        Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync();
 
-        Task<Result<JosEntityList>> SearchEntitiesAsync(int pageSize,
-                                                        int pageIndex,
-                                                        short? idType,
-                                                        string bbdd,
-                                                        string idUser,
-                                                        string search,
-                                                        long? idFilter);
+        Task<MySqlList<JosEntityList, JosEntity>> SearchEntitiesAsync(EntitySearchView entitySearch);
 
-        Task<Result<int>> RemoveRelationMailAsync(short idType,
-                                                  string bbdd,
-                                                  string idUser,
-                                                  string provider,
-                                                  string mailAccount,
-                                                  string uidMail,
-                                                  long idRelated);
+        Task<Result<int>> RemoveRelationMailAsync(ClassificationRemoveView classification);
 
-        Task<Result<int>> AddRelationMailAsync(short idType,
-                                               string bbdd,
-                                               string idUser,
-                                               MailInfo[] listaMails,
-                                               long idRelated);
+        Task<Result<int>> AddRelationMailAsync(ClassificationAddView classification);
 
         Task<Result<JosUser>> GetUserAsync(string idNavisionUser);
 
-        Task<Result<JosRelationsList>> SearchRelationsAsync(int pageSize,
-                                                            int pageIndex,
-                                                            short? idType,
-                                                            string bbdd,
-                                                            string idUser,
-                                                            string idMail);
-        Task<Result<int>> AddRelationContactsMailAsync( string bbdd,
-                                                        string idUser,
-                                                        MailInfo mailInfo,
-                                                        string[] contactList);
-        Task<Result<JosEntity>> GetEntityAsync(string bbdd, string idUser, short idType, long idEntity);
+        Task<Result<JosRelationsList>> SearchRelationsAsync(ClassificationSearchView classification);
+        Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification);
+        Task<Result<JosEntity>> GetEntityAsync(EntitySearchById entitySearch);
     }
 }
