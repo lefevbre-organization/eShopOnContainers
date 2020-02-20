@@ -65,9 +65,9 @@ export const renameCache = (oldId, newId) => ({
  * @param selected {boolean}
  * @returns {{type: string, payload: {message: *, selected: *}}}
  */
-export const setSelected = (messages, selected) => ({
+export const setSelected = (messages, selected, folderName) => ({
   type: ActionTypes.MESSAGES_SET_SELECTED,
-  payload: {messages, selected}
+  payload: {messages, selected, folderName}
 });
 
 /**
