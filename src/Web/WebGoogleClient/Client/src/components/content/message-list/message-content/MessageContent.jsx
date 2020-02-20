@@ -415,16 +415,18 @@ const getHeader = (headers, name) => {
 
 const findAttachments = (email) => {
   let attachs = [];
-  for(let i = 0; i < email.attach.length; i++) {
+  debugger
+  if(email.attach) {
+    for(let i = 0; i < email.attach.length; i++) {
 
-    if(email.attach[i].mimeType === "multipart/related") {
-      for(let j = 0; j < email.attach[i].parts.length; j++) {
-        attachs.push(email.attach[i].parts[j])
+      if(email.attach[i].mimeType === "multipart/related") {
+        for(let j = 0; j < email.attach[i].parts.length; j++) {
+          attachs.push(email.attach[i].parts[j])
+        }
+      } else {
+        attachs.push(email.attach[i])
       }
-    } else {
-      attachs.push(email.attach[i])
     }
   }
-
   return attachs
 }

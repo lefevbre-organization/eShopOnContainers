@@ -228,7 +228,9 @@ class MessageList extends Component {
             subject: message.subject,
             sentDateTime: message.receivedDate,
             chkselected: checked,
-            folder: this.props.selectedFolder.fullName
+            folder: this.props.selectedFolder.fullName,
+            account: this.props.all.login.formValues.user,
+            provider: 'IMAP'
           }
         })
       );

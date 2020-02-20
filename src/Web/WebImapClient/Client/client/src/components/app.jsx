@@ -158,7 +158,9 @@ class App extends Component {
           bbdd: this.props.lexon.bbdd,
           idCompany: this.props.lexon.idCompany,
           idEmail: this.props.lexon.idEmail,
-          idFolder: this.props.lexon.idFolder
+          idFolder: this.props.lexon.idFolder,
+          account: this.props.all.login.formValues.user,
+          provider: 'IMAP'
         }
       })
     );
@@ -616,7 +618,9 @@ class App extends Component {
           idEmail: id,
           subject: subject,
           date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
-          folder: this.props.application.selectedFolderId
+          folder: "SENT",
+          account: this.props.all.login.formValues.user,
+          provider: 'IMAP'
         }
       })
     );
