@@ -206,7 +206,8 @@ export class MessageContent extends Component {
                   body.innerHTML = this.props.emailMessageResult.body;
 
                   //Adding attach files
-                  var attach = emailMessageResult.attach;
+                  var attach = findAttachments(emailMessageResult)
+
                   if (typeof attach !== "undefined" && attach.length > 0) {
                       const isFirefox = typeof InstallTrigger !== 'undefined';
                       if(isFirefox === false) {
@@ -220,7 +221,7 @@ export class MessageContent extends Component {
                           if (attach[i].filename && attach[i].filename.length > 0) {
                             const athc = attach[i];
                             if(!this.attachments[attach[i].partId]) {
-                              this.attachments[attach[i].partId] = "1" 
+                              this.attachments[attach[i].partId] = "1"                             
                               getAttachments(emailMessageResult.id, attach[i], function (
                                   filename,
                                   mimeType,
@@ -410,4 +411,20 @@ const getHeader = (headers, name) => {
       return headers[i].value;
     }
   }
+}
+
+const findAttachments = (email) => {
+  let attachs = [];
+  for(let i = 0; i < email.attach.length; i++) {
+
+    if(email.attach[i].mimeType === "multipart/related") {
+      for(let j = 0; j < email.attach[i].parts.length; j++) {
+        attachs.push(email.attach[i].parts[j])
+      }
+    } else {
+      attachs.push(email.attach[i])
+    }
+  }
+
+  return attachs
 }

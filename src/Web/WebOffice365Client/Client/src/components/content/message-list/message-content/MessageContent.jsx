@@ -201,6 +201,7 @@ export class MessageContent extends Component {
 
           //Adding attach files
           var attach = emailMessageResult.attach;
+          debugger
           if (typeof attach !== "undefined" && attach.length > 0) {
             var iframe = document.getElementById("message-iframe");
             var Divider = addDivDivider();
@@ -216,7 +217,7 @@ export class MessageContent extends Component {
                   attach[i].size
                 );
 
-                if(attach[i].isInilne === false) {
+                if(attach[i].isInline === false) {
                   var blobUrl = URL.createObjectURL(urlBlob);
                   var Attachment = addAttachmentElement(blobUrl, attach[i].name);
                   var AttachmentDiv = addAttachmentContainer(attach[i].contentType);
