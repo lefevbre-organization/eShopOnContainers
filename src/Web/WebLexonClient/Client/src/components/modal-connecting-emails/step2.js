@@ -1,10 +1,19 @@
 import React, { Fragment } from 'react';
 import { GridComponent, ColumnsDirective, ColumnDirective, Page, Search, Toolbar, Filter, Inject } from '@syncfusion/ej2-react-grids';
+import { L10n } from '@syncfusion/ej2-base';
 import i18n from "i18next";
 import { RadioButtonComponent } from '@syncfusion/ej2-react-buttons';
 import { getResults } from '../../services/services-lexon'
 import Spinner from "../../components/spinner/spinner";
 import ClassificationListSearch from "../classify-emails/classification-list-search/classification-list-search";
+
+L10n.load({
+    'es-ES': {
+        'grid': {
+            'EmptyRecord': 'No hay datos que mostrar'
+        }
+    }
+  });
 
 export class ConnectingEmailsStep2 extends React.Component {
     constructor() {
@@ -114,6 +123,7 @@ export class ConnectingEmailsStep2 extends React.Component {
 
                         <GridComponent ref={g => this.gridRef = g} dataSource={this.state.entities} height={'300px'} selectionSettings={{ type: 'Single', mode: 'Row' }}
                             hideScroll={true}
+                            locale="es-ES"
                             rowSelected={
                                 (event) => {
                                     this.onRowSelected(event);
@@ -225,6 +235,9 @@ export class ConnectingEmailsStep2 extends React.Component {
                 .e-primary.list {
                     margin-top: -25px !important;
                     padding: 0 !important;
+                }
+                .e-emptyrow {
+                    text-align: center;
                 }
                 .e-rowcell .e-templatecell {
                     padding: 0 !important;

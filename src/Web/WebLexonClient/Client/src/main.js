@@ -90,6 +90,23 @@ class Main extends Component {
     // });
   }
 
+  async handleSentMessage(event) {
+    const { user, idCaseFile, bbdd} = this.state;
+    const { idEmail, subject, date } = event.detail;
+    
+    await addClassification(user, {bbdd}, [{
+      id: idEmail, subject, sentDateTime: date
+    }], idCaseFile, 1)    
+
+    window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
+    this.props.setCaseFile({
+      casefile: null,
+      bbdd: null,
+      company: null
+    });
+
+  }
+
   handleKeyPress(event) {
     console.log("HandleEvent Client -> Lexon - Checkclick");
 

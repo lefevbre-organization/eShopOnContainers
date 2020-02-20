@@ -74,3 +74,4 @@ configValues: |
   window.URL_MF_IMAP='https://lexbox-test-webimap.lefebvre.es/user'
   window.URL_MF_LEXON='https://lexbox-test-weblexon.lefebvre.es/static/js/main.js'
   window.API_GATEWAY='https://lexbox-test-apigwlex.lefebvre.es'
+  window.URL_MF_LEXON_BASE = 'https://lexbox-test-weblexon.lefebvre.es'

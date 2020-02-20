@@ -101,7 +101,6 @@ class AppContainerGraph extends Component {
             console.log(err);
           })
       } else {
-        debugger
         this.setState({
           signInStatus: AUTH_SUCCESS,
           readyToRedirect: true,

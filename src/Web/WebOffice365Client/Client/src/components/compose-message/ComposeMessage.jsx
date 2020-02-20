@@ -99,7 +99,7 @@ export class ComposeMessage extends PureComponent {
       // Define this onload every time to get file and base64 every time
       this.reader = new FileReader();
       
-      if(file.data.size <= 4194304) {
+      if(file.data.size <= 3145728) {
         this.reader.readAsDataURL(file.data);
       } else {
         this.reader.readAsArrayBuffer(file.data);
@@ -182,7 +182,6 @@ export class ComposeMessage extends PureComponent {
     );
 
     setTimeout(async ()=>{
-      debugger
       if(this.props.lexon.bbdd && this.props.lexon.account) {
         try {
           const user = await getUser(this.props.lexon.userId);   

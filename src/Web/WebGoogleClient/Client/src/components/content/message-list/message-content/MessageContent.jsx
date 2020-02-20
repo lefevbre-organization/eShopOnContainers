@@ -16,7 +16,7 @@ import MessageToolbar from "../message-toolbar/MessageToolbar";
 import "./messageContent.scss";
 import MessageHeader from "./messageHeader";
 import { setMessageAsRead } from '../../../../api';
-import MessageNotFound  from "../../../message-not-found/MessageNotFound";
+import MessageNotFound from "../../../message-not-found/MessageNotFound";
 
 //BEGIN functions for attachment functionality
 
@@ -51,7 +51,7 @@ function getAttachments(messageID, parts, callback) {
     messageId: messageID,
     userId: "me"
   });
-  request.execute(function(attachment) {
+  request.execute(function (attachment) {
     callback(parts.filename, parts.mimeType, attachment);
   });
 }
@@ -72,7 +72,7 @@ function addAttachmentElement(blobUrl, filename) {
 
 function addAttachmentContainer(mimeType) {
   var aDiv = document.createElement("span");
-  aDiv.className="attachelement"
+  aDiv.className = "attachelement"
   aDiv.style.whiteSpace = "nowrap";
   aDiv.style.backgroundColor = "#fafafa";
   aDiv.style.border = "solid 1px #aaa";
@@ -132,16 +132,17 @@ export class MessageContent extends Component {
     super(props);
 
     this.state = {
-        errorMessage: undefined,
-        attachment: true,
-        showMessageNotFound: false
+      errorMessage: undefined,
+      attachment: true,
+      attachments: [],
+      showMessageNotFound: false
     };
+    this.attachments = [];
     this.refresh = false;
     this.iframeRef = React.createRef();
     this.modifyMessage = this.modifyMessage.bind(this);
     this.toggleShowMessageNotFound = this.toggleShowMessageNotFound.bind(this);
     this.notFoundModal = props.notFoundModal
-    this.timer = null;
   }
 
   toggleShowMessageNotFound() {
@@ -207,13 +208,19 @@ export class MessageContent extends Component {
                   //Adding attach files
                   var attach = emailMessageResult.attach;
                   if (typeof attach !== "undefined" && attach.length > 0) {
-                      this.setState({ attachment: false });
+                      const isFirefox = typeof InstallTrigger !== 'undefined';
+                      if(isFirefox === false) {
+                        this.setState({ attachment: false });
+                      }
                       var iframe = document.getElementById("message-iframe");
                       var Divider = addDivDivider();
                       iframe.contentDocument.body.appendChild(Divider);
 
                       for (var i = 0; i < attach.length; i++) {
                           if (attach[i].filename && attach[i].filename.length > 0) {
+
+                            if(!this.attachments[attach[i].partId]) {
+                              this.attachments[attach[i].partId] = "1" 
                               getAttachments(emailMessageResult.id, attach[i], function (
                                   filename,
                                   mimeType,
@@ -235,9 +242,9 @@ export class MessageContent extends Component {
                                   AttachmentDiv.appendChild(Attachment);
                                   iframe.contentDocument.body.appendChild(AttachmentDiv);
                               });
+                            }
                           }
                       }
-
                   }
               }
           } else {
@@ -245,16 +252,49 @@ export class MessageContent extends Component {
               this.toggleShowMessageNotFound(true);
               this.notFoundModal = 1;
             }
-            else if (this.state.showMessageNotFound === false) {
-              this.renderInbox();
-            }
-          }
-      } 
+            var iframe = document.getElementById("message-iframe");
+            var Divider = addDivDivider();
+            if (iframe.contentDocument) {
+              iframe.contentDocument.body.appendChild(Divider);
+
+              for (var i = 0; i < attach.length; i++) {
+                if (attach[i].filename && attach[i].filename.length > 0) {
+                  if(!this.attachments[attach[i].partId]) {
+                    this.attachments[attach[i].partId] = attach[i];
+                    getAttachments(emailMessageResult.id, attach[i], function (
+                      filename,
+                      mimeType,
+                      attachment
+                    ) {
+  
+                      console.log("Attachment received")
+                      let dataBase64Rep = attachment.data
+                        .replace(/-/g, "+")
+                        .replace(/_/g, "/");
+                      let urlBlob = b64toBlob(
+                        dataBase64Rep,
+                        mimeType,
+                        attachment.size
+                      );
+                      //console.log(urlBlob);
+                      var blobUrl = URL.createObjectURL(urlBlob);
+                      var Attachment = addAttachmentElement(blobUrl, filename);
+                      var AttachmentDiv = addAttachmentContainer(mimeType);
+                      AttachmentDiv.appendChild(Attachment);
+                      iframe.contentDocument.body.appendChild(AttachmentDiv);
+                    });                  }
+                }
+              }
+            } else if (this.state.showMessageNotFound === false) {
+          this.renderInbox();
+        }
+      }
+    }
   }
 
   markEmailAsRead(message) {
     const found = message.labelIds.find(elem => elem === 'UNREAD');
-    if(found) {
+    if (found) {
       setMessageAsRead(message.id)
       this.refresh = true;
     }
@@ -272,7 +312,7 @@ export class MessageContent extends Component {
     return <Redirect to="/notfound" />;
   }
 
-  renderInbox(){
+  renderInbox() {
     this.props.history.push("/inbox");
   }
 
@@ -309,19 +349,19 @@ export class MessageContent extends Component {
           {this.state.errorMessage ? (
             this.renderErrorModal()
           ) : (
-            <iframe
-              ref={this.iframeRef}
-              title="Message contents"
-              id="message-iframe"
-              style={{
-                display: this.props.emailMessageResult.loading
-                  ? "none"
-                  : "block"
-              }}
-            />
-          )}
+              <iframe
+                ref={this.iframeRef}
+                title="Message contents"
+                id="message-iframe"
+                style={{
+                  display: this.props.emailMessageResult.loading
+                    ? "none"
+                    : "block"
+                }}
+              />
+            )}
         </div>
-        
+
         <MessageNotFound
           initialModalState={showMessageNotFound}
           toggleShowMessageNotFound={this.toggleShowMessageNotFound}
