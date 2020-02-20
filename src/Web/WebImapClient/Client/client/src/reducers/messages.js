@@ -134,7 +134,8 @@ const messages = (state = INITIAL_STATE.messages, action = {}) => {
           const data = {
             id: message.messageId,
             subject: message.subject,
-            sentDateTime: message.receivedDate
+            sentDateTime: message.receivedDate,
+            folder: action.payload.folderName
           };
           newUpdateState.selectedMessages.push(data);
         } else if (!action.payload.selected) {
