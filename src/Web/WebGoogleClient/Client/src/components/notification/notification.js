@@ -5,7 +5,8 @@ import { Modal } from "react-bootstrap";
 
 export class Notification extends Component {
   render() {
-    const { initialModalState, toggleNotification, message } = this.props;
+    const { initialModalState, toggleNotification, message /*, error = false */ } = this.props;
+    const error = true;
 
     return (
       <Modal
@@ -14,7 +15,7 @@ export class Notification extends Component {
         size="lg"
         aria-labelledby="contained-modal-title-vcenter"
         centered
-        dialogClassName="modal"
+        dialogClassName={`modal ${error?'error':''}`}
         animation={false}
       >
         <Modal.Header className="align-items-center" closeButton>
@@ -30,6 +31,11 @@ export class Notification extends Component {
             </div>
           </Modal.Title>
         </Modal.Header>
+        <style jsx>{`
+        .modal.error .modal {
+          background-color: red !important;
+        }
+        `}</style>
       </Modal>
     );
   }
@@ -38,5 +44,6 @@ export class Notification extends Component {
 Notification.propTypes = {
   initialModalState: PropTypes.bool.isRequired,
   toggleNotification: PropTypes.func.isRequired,
-  message: PropTypes.string
+  message: PropTypes.string,
+  error: PropTypes.bool
 };

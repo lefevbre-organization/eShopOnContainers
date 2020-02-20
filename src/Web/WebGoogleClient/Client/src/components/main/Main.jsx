@@ -63,6 +63,7 @@ export class Main extends Component {
       googleDown: false,
       showNotification: false,
       messageNotification: "",
+      errorNotification: false,
       leftSideBar: {
         collapsed: false
       },
@@ -614,7 +615,7 @@ export class Main extends Component {
 
   render() {
     if(this.state.googleDown) {
-      const { showNotification, messageNotification } = this.state;
+      const { showNotification, messageNotification, errorNotification } = this.state;
 
       return (
         <div className="d-flex h-100 align-items-center justify-content-center">
@@ -622,6 +623,7 @@ export class Main extends Component {
             initialModalState={showNotification}
             toggleNotification={() => { this.onSignoutDisconnect()  }}
             message={messageNotification}
+            error={errorNotification}
         />
         </div>
       );
