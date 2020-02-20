@@ -9,7 +9,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
         Task<Result<JosUserCompanies>> GetCompaniesListAsync(int pageSize,
                                                              int pageIndex,
                                                              string idUser);
-        Task<MySqlList<JosEntityTypeList>> GetMasterEntitiesAsync();
+        Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync();
 
         Task<Result<JosEntityList>> SearchEntitiesAsync(EntitySearchView entitySearch);
 

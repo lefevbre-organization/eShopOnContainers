@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
-    public class MySqlList<T>
+    public class MySqlList<T, TItems>
     {
         public MySqlList()
         {
@@ -14,31 +15,35 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 
         public MySqlList(T t) : this()
         {
-            data = t;
+            result = t;
         }
 
-        public MySqlList(T t, List<ErrorInfo> errors, List<Info> infos, int? totalRegs ) 
+        public MySqlList(T t, string parameterName, int pageIndex, int pageSize) : this(t)
         {
-            data = t;
+            ParameterDB = parameterName;
+            PageIndex = pageIndex;
+            PageSize = pageSize;
+        }
+
+        public MySqlList(T t, List<ErrorInfo> errors, List<Info> infos, long? totalRegs ) 
+        {
+            result = t;
             Errors = errors;
             Infos = infos;
-            TotalRegs = totalRegs;
+            Count = totalRegs;
         }
+        public T result { get; set; }
 
-        public MySqlList(T t, string parameterName) : this(t)
-        {
-
-            ParameterDB = parameterName;
-        }
-
-        public T data { get; set; }
+        public IEnumerable<TItems> Data { get; set; }
 
         public List<ErrorInfo> Errors { get; set; }
         public List<Info> Infos { get; set; }
 
-        //public List<T> Entities { get; set; }
+        public int PageIndex { get;  set; }
 
-        public int? TotalRegs { get; set; }
+        public int PageSize { get; set; }
+
+        public long? Count { get; set; }
 
         private int? IdError { get; set; }
 
@@ -50,9 +55,10 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             try
             {
                 if (DataFromMySql is T)
-                    data = (T)DataFromMySql;
+                    result = (T)DataFromMySql;
+
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 IdError = 101;
                 Error = ex.Message;
@@ -78,13 +84,27 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
                     Errors.Add(new ErrorInfo() { code = IdError.ToString(), member = $"MySqlRepository.{ParameterDB}", message = Error });
                 
                 if (Total is int)
-                    TotalRegs = (int?)Total;
+                    Count = (int?)Total;
             }
-            catch (System.Exception exp)
+            catch (Exception exp)
             {
                 IdError = 100;
                 Error = exp.Message;
             }
+        }
+
+        public void AddData(JosEntityTypeList resultado, object[] entities)
+        {
+            AddData(resultado);
+            if (entities is IEnumerable<TItems>)
+                Data = entities as IEnumerable<TItems>;
+
+        }
+
+        public bool TengoLista()
+        {
+            var listado = (Data as List<TItems>);
+            return listado?.Count > 0;
         }
     }
 }

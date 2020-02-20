@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
@@ -11,9 +12,8 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         public BaseClass(
             ILogger<T> logger)
         {
-            log = logger ?? throw new ArgumentNullException(nameof(logger)); 
+            log = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-
 
         public void TraceMessage(
             List<ErrorInfo> errors,
@@ -41,8 +41,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 
         private void WriteError(ErrorInfo errorInfo)
         {
-            WriteLine($"member name: {errorInfo.member} - line:{errorInfo.line}" );
-            WriteLine("source file path: " + errorInfo.source);
+            WriteLine($"origin: {errorInfo.member}[{errorInfo.line}]-> error: {errorInfo.detail}");
         }
 
         public void WriteLine(string msg)
@@ -57,11 +56,13 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "",
              params string[] parameters)
         {
-            WriteLine($"FILE[{sourceFilePath}]//PROC[{memberName}] : ");
+            var builder = new StringBuilder();
+            builder.AppendLine($"FILE[{sourceFilePath}]//PROC[{memberName}] : ");
             foreach (var item in parameters)
             {
-               WriteLine(item);
+                builder.Append($"{item} ");
             }
+            WriteLine(builder.ToString());
         }
 
         public void TraceOutputMessage(
@@ -74,7 +75,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         {
             //if (codeError == null || !(codeError is int) || (int)codeError == 0 || exMessage == null || !(exMessage is string))
             //    return;
-            if (codeError == null  || exMessage == null || !(exMessage is string))
+            if (codeError == null || exMessage == null || !(exMessage is string))
                 return;
 
             var errorInfo = new ErrorInfo
@@ -105,6 +106,5 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 
             infos.Add(info);
         }
-
     }
 }

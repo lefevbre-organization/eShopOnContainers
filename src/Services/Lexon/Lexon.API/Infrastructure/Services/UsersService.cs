@@ -273,11 +273,9 @@ namespace Lexon.Infrastructure.Services
 
         #region Entities
 
-        public async Task<MySqlList<List<JosEntityType>>> GetMasterEntitiesAsync()
+        public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync()
         {
-            //var result = new MySqlList<List<JosEntityType>>(new List<JosEntityType>());
-            var resultMySql = new MySqlList<JosEntityTypeList>(new JosEntityTypeList());
-
+            var resultMySql = new MySqlList<JosEntityTypeList, JosEntityType>();
             var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/entities/masters");
             TraceLog(parameters: new string[] { $"request:{request}" });
 
@@ -287,19 +285,10 @@ namespace Lexon.Infrastructure.Services
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        resultMySql = await response.Content.ReadAsAsync<MySqlList<JosEntityTypeList>>();
-                      
-                     
-                        //foreach (var entity in (await response.Content.ReadAsAsync<Result<JosEntityTypeList>>()).data.Entities)
-                        //{
-                        //    result.data.Add(new LexonEntityType() { name = entity.Name, idEntity = entity.IdEntity });
-                        //    TraceLog(parameters: new string[] { $"add {entity.Name}" });
-                        //}
+                        resultMySql = await response.Content.ReadAsAsync<MySqlList<JosEntityTypeList, JosEntityType>>();
 
-                        if (resultMySql.data.Entities.Length == 0)
+                        if (!resultMySql.TengoLista())
                             TraceOutputMessage(resultMySql.Errors, "Mysql don´t recover the master´s entities", 2001);
-                        //else
-                        //    return resultMySql;
                     }
                     else
                     {
@@ -311,9 +300,8 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceMessage(resultMySql.Errors, ex);
             }
-            var result = new MySqlList<List<JosEntityType>>(resultMySql.data.Entities.ToList(), resultMySql.Errors, resultMySql.Infos, resultMySql.TotalRegs);
             //await GetMasterEntitiesMongoAsync(result);
-            return result;
+            return resultMySql;
         }
 
         private async Task GetMasterEntitiesMongoAsync(Result<List<LexonEntityType>> result)

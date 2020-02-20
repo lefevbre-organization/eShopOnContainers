@@ -189,12 +189,10 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return result;
         }
 
-        public async Task<MySqlList<JosEntityTypeList>> GetMasterEntitiesAsync()
+        public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync()
         {
-            var pageSize = 0;
-            var pageIndex = 1;
             var filter = "{}";
-            var resultMySql = new MySqlList<JosEntityTypeList>(new JosEntityTypeList(), _settings.Value.SP.GetMasterEntities);
+            var resultMySql = new MySqlList<JosEntityTypeList, JosEntityType>(new JosEntityTypeList(), _settings.Value.SP.GetMasterEntities, 1, 0);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -205,8 +203,8 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     {
                         command.Parameters.Add(new MySqlParameter("P_FILTER", MySqlDbType.String) { Value = filter });
                         command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = 0 });
-                        command.Parameters.Add(new MySqlParameter("P_PAGE_SIZE", MySqlDbType.Int32) { Value = pageSize });
-                        command.Parameters.Add(new MySqlParameter("P_PAGE_NUMBER", MySqlDbType.Int32) { Value = pageIndex });
+                        command.Parameters.Add(new MySqlParameter("P_PAGE_SIZE", MySqlDbType.Int32) { Value = resultMySql.PageSize });
+                        command.Parameters.Add(new MySqlParameter("P_PAGE_NUMBER", MySqlDbType.Int32) { Value = resultMySql.PageIndex });
                         command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_TOTAL_REG", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
@@ -219,7 +217,12 @@ namespace Lexon.MySql.Infrastructure.Repositories
                             //    while (reader.Read()) { result.data = JsonConvert.DeserializeObject<JosEntityTypeList>(reader.GetValue(0).ToString()); }
                             if (resultMySql.PossibleHasData())
                             {
-                                while (reader.Read()) { resultMySql.AddData(JsonConvert.DeserializeObject<JosEntityTypeList>(reader.GetValue(0).ToString())); }
+                                while (reader.Read())
+                                {
+                                    var resultado = (JsonConvert.DeserializeObject<JosEntityTypeList>(reader.GetValue(0).ToString()));
+                                    resultMySql.AddData(resultado, resultado.Entities);
+                                    // resultMySql.AddData(JsonConvert.DeserializeObject<JosEntityTypeList>(reader.GetValue(0).ToString())); }
+                                }
                             }
                         }
                     }

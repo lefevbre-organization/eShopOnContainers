@@ -19,7 +19,7 @@ namespace Lexon.Infrastructure.Services
 
         Task<Result<LexonEntityBase>> GetEntityById(EntitySearchById entitySearch);
 
-        Task<MySqlList<List<JosEntityType>>> GetMasterEntitiesAsync();
+        Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync();
 
         Task<Result<long>> AddClassificationToListAsync(ClassificationAddView classification);
         Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification);
