@@ -105,7 +105,7 @@ class ModalConnectingEmails extends Component {
         toggleNotification(i18n.t("classify-emails.classification-saved-ok"));
       })
       .catch(error => {
-        toggleNotification(i18n.t("classify-emails.classification-saved-ko"));       
+        toggleNotification(i18n.t("classify-emails.classification-saved-ko"), true);       
       });
 
     //this.setState({ type: null, search: "" });

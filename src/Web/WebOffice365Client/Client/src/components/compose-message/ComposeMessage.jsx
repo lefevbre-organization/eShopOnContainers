@@ -53,6 +53,7 @@ export class ComposeMessage extends PureComponent {
       uppyPreviews: [],
       dropZoneActive: false,
       showNotification: false,
+      errorNotification: false,
       messageNotification: '',
       showEmptySubjectWarning: false
     };
@@ -82,7 +83,7 @@ export class ComposeMessage extends PureComponent {
         }
 
         if (totalSize > MAX_TOTAL_ATTACHMENTS_SIZE) {
-          this.showNotification(i18n.t("compose-message.max-file-size"));
+          this.showNotification(i18n.t("compose-message.max-file-size"), false);
           return false;
         } else {
           return true;
@@ -375,8 +376,8 @@ export class ComposeMessage extends PureComponent {
     this.setState({ dropZoneActive: false });
   }
 
-  showNotification(message) {
-    this.setState({messageNotification: message, showNotification: true});
+  showNotification(message, error = false) {
+    this.setState({messageNotification: message, errorNotification: error, showNotification: true});
   }
 
   closeNotification() {
@@ -460,7 +461,7 @@ export class ComposeMessage extends PureComponent {
 
   render() {
     const collapsed = this.props.sideBarCollapsed;
-    const { showNotification, messageNotification, showEmptySubjectWarning } = this.state;
+    const { showNotification, messageNotification, showEmptySubjectWarning, errorNotification } = this.state;
 
     const {
        to,
@@ -476,6 +477,7 @@ export class ComposeMessage extends PureComponent {
           initialModalState={showNotification}
           toggleNotification={() => { this.closeNotification() }}
           message={messageNotification}
+          error={errorNotification}
         />
         <Confirmation 
           initialModalState={showEmptySubjectWarning}
