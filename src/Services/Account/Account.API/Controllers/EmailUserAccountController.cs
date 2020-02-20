@@ -33,11 +33,12 @@
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
         }
 
+        [Obsolete]
         [HttpPost]
         [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Post([FromBody]UserMail accountIn)
         {
-            return BadRequest("This opertaion it´s obsolete, you need use de v2 version");
+            return BadRequest("This operation it´s obsolete, you need use v2 version");
             //if (string.IsNullOrEmpty(accountIn.User)) // || string.IsNullOrEmpty(accountIn.Email) || string.IsNullOrEmpty(accountIn.Provider) || string.IsNullOrEmpty(accountIn.guid))
             //    return BadRequest("values invalid. Must be a valid user, email, provider and guid to insert the userMail");
             //var result = await _accountsService.Create(accountIn);
@@ -45,12 +46,13 @@
             //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        [Obsolete]
         [HttpGet("getbyuser/{user}")]
         [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(IEnumerable<UserMail>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetByUser(string user)
         {
-            return BadRequest("This opertaion it´s obsolete, you need use de v2 version");
+            return BadRequest("This operation it´s obsolete, you need use v2 version");
             //if (string.IsNullOrEmpty(user))
             //    return BadRequest("user invalid. Must be a valid user to search the userMail");
 
@@ -59,6 +61,7 @@
             //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        [Obsolete]
         [HttpGet("updatedefaultaccount/{user}/{email}/{provider}/{guid}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> UpdateDefaultAccount(
@@ -67,7 +70,7 @@
             , [FromRoute]string provider = "GO"
             , [FromRoute]string guid = "no_guid_oh_lala")
         {
-            return BadRequest("This opertaion it´s obsolete, you need use de v2 version");
+            return BadRequest("This operation it´s obsolete, you need use v2 version");
             //if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(provider) || string.IsNullOrEmpty(guid))
             //    return BadRequest("values invalid. Must be a valid user, email, provider and guid to update the defaultAccount of userMail");
 
@@ -76,6 +79,7 @@
             //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        [Obsolete]
         [HttpGet("deleteaccountbyuserandemail/{user}/{email}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.NotFound)]
@@ -83,7 +87,7 @@
             [FromRoute]string user
             , [FromRoute]string email)
         {
-            return BadRequest("This opertaion it´s obsolete, you need use de v2 version");
+            return BadRequest("This operation it´s obsolete, you need use v2 version");
 
             //if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(email))
             //    return BadRequest("values invalid. Must be a valid user and email to delete the defaultAccount of userMail");
@@ -93,6 +97,7 @@
             //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        [Obsolete]
         [HttpGet("deleteaccountbyuser/{user}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.NotFound)]
@@ -100,7 +105,7 @@
             [FromRoute]string user
             )
         {
-            return BadRequest("This opertaion it´s obsolete, you need use de v2 version");
+            return BadRequest("This operation it´s obsolete, you need use v2 version");
             //if (string.IsNullOrEmpty(user) )
             //    return BadRequest("values invalid. Must be a valid user and email to delete the defaultAccount of userMail");
 
@@ -109,13 +114,14 @@
             //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        [Obsolete]
         [HttpGet("resetdefaultaccountbyuser/{user}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(UserMail), (int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> resetdefaultaccountbyuser(
             [FromRoute] string user)
         {
-            return Ok("This opertaion it´s obsolete, you need use de v2 version");
+            return Ok("This operation it´s obsolete, you need use v2 version");
             //if (string.IsNullOrEmpty(user))
             //    return BadRequest("values invalid. Must be a valid user to reset the defaultAccount");
 

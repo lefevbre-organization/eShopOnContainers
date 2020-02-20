@@ -1,8 +1,9 @@
 ﻿namespace Account.API.IntegrationEvents.Events
 {
+    using Account.API.Model;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 
-    public class AddOperationAccountIntegrationEvent : IntegrationEvent
+    public class UpsertAccountIntegrationEvent : IntegrationEvent
     {
         public string User { get; set; }
 
@@ -12,22 +13,21 @@
 
         public bool DefaultAccount { get; set; }
 
-        public EnTypeOperation TypeOperation { get; set; }
+        public ConfigImapAccount Config { get; set; }
 
-        public AddOperationAccountIntegrationEvent(
+
+        public UpsertAccountIntegrationEvent(
             string user,
             string provider,
             string email,
             bool defaultAccount,
-            EnTypeOperation typeOperation)
+            ConfigImapAccount config)
         {
             User = user;
             Provider = provider;
             Email = email;
             DefaultAccount = defaultAccount;
-            TypeOperation = typeOperation;
+            Config = config;
         }
     }
-
-    public enum EnTypeOperation { Create = 1, Remove, UpdateDefaultAccount, Get, Update }
 }

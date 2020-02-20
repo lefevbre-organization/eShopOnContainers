@@ -38,7 +38,7 @@ namespace Lexon.MySql
                 .AddSwagger()
                 .AddHttpClient()
                 .AddCustomHealthCheck(Configuration);
-            //.AddDbContext<LexonMySqlContext>(options => options.UseMySQL(Configuration.GetConnectionString("LexonPpal")));
+
 
         }
 

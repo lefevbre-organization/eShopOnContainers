@@ -56,9 +56,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
                             if (EvaluateErrorCommand(result.errors, command) == 0)
                                 while (reader.Read()) { result.data = JsonConvert.DeserializeObject<JosUser>(reader.GetValue(0).ToString()); }
                         }
-
-                        WriteLine($"respuesta idUser:{result.data.IdUser}"); //para quitar
-
                     }
                 }
                 catch (Exception ex)
@@ -66,7 +63,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     TraceMessage(result.errors, ex);
                 }
             }
-            WriteLine($"Salimos de GetUserAsync"); //para quitar
             return result;
         }
 
@@ -93,6 +89,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         command.CommandType = CommandType.StoredProcedure;
                         using (var reader = await command.ExecuteReaderAsync())
                         {
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
                             if (EvaluateErrorCommand(result.errors, command) == 0)
                                 while (reader.Read()) { result.data = JsonConvert.DeserializeObject<JosUserCompanies>(reader.GetValue(0).ToString()); }
                         }
@@ -109,11 +106,12 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         #region Entities
 
-        public async Task<Result<JosEntityList>> SearchEntitiesAsync(int pageSize, int pageIndex, short? idType, string bbdd, string idUser, string search, long? idFilter)
+        public async Task<MySqlList<JosEntityList, JosEntity>> SearchEntitiesAsync(EntitySearchView entitySearch)
         {
-            var result = new Result<JosEntityList>(new JosEntityList());
-            string filtro = GiveMeSearchEntitiesFilter(idType, bbdd, idUser, search, idFilter);
-            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.SearchEntities}", $"P_FILTER:{filtro}", $"P_UC:{idUser}", $"pageSize:{pageSize}", $"pageIndex:{pageIndex}" });
+            var resultMySql = new MySqlList<JosEntityList, JosEntity>(new JosEntityList(), _settings.Value.SP.SearchEntities, entitySearch.pageIndex, entitySearch.pageSize);
+           // var result = new Result<JosEntityList>(new JosEntityList());
+            string filtro = GiveMeSearchEntitiesFilter(entitySearch.idType, entitySearch.bbdd, entitySearch.idUser, entitySearch.search, entitySearch.idFilter);
+            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.SearchEntities}", $"P_FILTER:{filtro}", $"P_UC:{entitySearch.idUser}-pageSize:{entitySearch.pageSize}-pageIndex:{entitySearch.pageIndex}" });
 
             var jsonSerializerSettings = new JsonSerializerSettings();
             jsonSerializerSettings.MissingMemberHandling = MissingMemberHandling.Ignore;
@@ -126,34 +124,46 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.SearchEntities, conn))
                     {
                         command.Parameters.Add(new MySqlParameter("P_FILTER", MySqlDbType.String) { Value = filtro });
-                        command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = idUser });
-                        command.Parameters.Add(new MySqlParameter("P_PAGE_SIZE", MySqlDbType.Int32) { Value = pageSize });
-                        command.Parameters.Add(new MySqlParameter("P_PAGE_NUMBER", MySqlDbType.Int32) { Value = pageIndex });
+                        command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = entitySearch.idUser });
+                        command.Parameters.Add(new MySqlParameter("P_PAGE_SIZE", MySqlDbType.Int32) { Value = entitySearch.pageSize });
+                        command.Parameters.Add(new MySqlParameter("P_PAGE_NUMBER", MySqlDbType.Int32) { Value = entitySearch.pageIndex });
                         command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_TOTAL_REG", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.CommandType = CommandType.StoredProcedure;
+                        var r = command.ExecuteNonQuery();
+                        resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
+
                         using (var reader = await command.ExecuteReaderAsync())
                         {
-                            if (EvaluateErrorCommand(result.errors, command) == 0)
-                                while (reader.Read()) { result.data = JsonConvert.DeserializeObject<JosEntityList>(reader.GetValue(0).ToString(), jsonSerializerSettings); }
+                         //   resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
+
+                            if (resultMySql.PossibleHasData())
+                            {
+                                while (reader.Read())
+                                {
+                                    var resultado = (JsonConvert.DeserializeObject<JosEntityList>(reader.GetValue(0).ToString()));
+                                    resultMySql.AddData(resultado, resultado.Entities);
+                                }
+                            }
                         }
+
                     }
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceMessage(resultMySql.Errors, ex);
                 }
             }
 
-            return result;
+            return resultMySql;
         }
 
-        public async Task<Result<JosEntity>> GetEntityAsync(string bbdd, string idUser, short idType, long idEntity)
+        public async Task<Result<JosEntity>> GetEntityAsync(EntitySearchById entitySearch)
         {
             var result = new Result<JosEntity>(new JosEntity());
-            string filtro = GiveMeEntityFilter(bbdd, idUser, idType, idEntity);
-            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.SearchEntities}", $"P_FILTER:{filtro}", $"P_UC:{idUser}" });
+            string filtro = GiveMeEntityFilter(entitySearch.bbdd, entitySearch.idUser, (short)entitySearch.idType, entitySearch.idEntity);
+            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.SearchEntities}", $"P_FILTER:{filtro}", $"P_UC:{entitySearch.idUser}" });
 
             var jsonSerializerSettings = new JsonSerializerSettings();
             jsonSerializerSettings.MissingMemberHandling = MissingMemberHandling.Ignore;
@@ -167,12 +177,13 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetEntity, conn))
                     {
                         command.Parameters.Add(new MySqlParameter("P_FILTER", MySqlDbType.String) { Value = filtro });
-                        command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = idUser });
+                        command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = entitySearch.idUser });
                         command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
                         command.CommandType = CommandType.StoredProcedure;
                         using (var reader = await command.ExecuteReaderAsync())
                         {
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
                             if (EvaluateErrorCommand(result.errors, command) == 0)
                                 while (reader.Read()) { listaResultados = JsonConvert.DeserializeObject<JosEntityList>(reader.GetValue(0).ToString(), jsonSerializerSettings); }
                         }
@@ -188,13 +199,10 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return result;
         }
 
-        public async Task<Result<JosEntityTypeList>> GetMasterEntitiesAsync()
+        public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync()
         {
-            var pageSize = 0;
-            var pageIndex = 1;
             var filter = "{}";
-            var result = new Result<JosEntityTypeList>(new JosEntityTypeList());
-            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.GetMasterEntities}", $"P_UC:{_settings.Value.UserApp}", $"pageSize:{pageSize}", $"pageIndex:{pageIndex}" });
+            var resultMySql = new MySqlList<JosEntityTypeList, JosEntityType>(new JosEntityTypeList(), _settings.Value.SP.GetMasterEntities, 1, 0);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -205,37 +213,47 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     {
                         command.Parameters.Add(new MySqlParameter("P_FILTER", MySqlDbType.String) { Value = filter });
                         command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = 0 });
-                        command.Parameters.Add(new MySqlParameter("P_PAGE_SIZE", MySqlDbType.Int32) { Value = pageSize });
-                        command.Parameters.Add(new MySqlParameter("P_PAGE_NUMBER", MySqlDbType.Int32) { Value = pageIndex });
+                        command.Parameters.Add(new MySqlParameter("P_PAGE_SIZE", MySqlDbType.Int32) { Value = resultMySql.PageSize });
+                        command.Parameters.Add(new MySqlParameter("P_PAGE_NUMBER", MySqlDbType.Int32) { Value = resultMySql.PageIndex });
                         command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_TOTAL_REG", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.CommandType = CommandType.StoredProcedure;
+                        var r = command.ExecuteNonQuery();
+                        resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
                         using (var reader = await command.ExecuteReaderAsync())
                         {
-                            if (EvaluateErrorCommand(result.errors, command) == 0)
-                                while (reader.Read()) { result.data = JsonConvert.DeserializeObject<JosEntityTypeList>(reader.GetValue(0).ToString()); }
+                          //  resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
+
+                            if (resultMySql.PossibleHasData())
+                            {
+                                while (reader.Read())
+                                {
+                                    var resultado = (JsonConvert.DeserializeObject<JosEntityTypeList>(reader.GetValue(0).ToString()));
+                                    resultMySql.AddData(resultado, resultado.Entities);
+                                }
+                            }
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceMessage(resultMySql.Errors, ex);
                 }
             }
 
-            return result;
+            return resultMySql;
         }
 
         #endregion Entities
 
         #region Relations
 
-        public async Task<Result<JosRelationsList>> SearchRelationsAsync(int pageSize, int pageIndex, short? idType, string bbdd, string idUser, string idMail)
+        public async Task<Result<JosRelationsList>> SearchRelationsAsync(ClassificationSearchView classification)
         {
             var result = new Result<JosRelationsList>(new JosRelationsList());
-            var filtro = GiveMeSearchRelationsFilter(idType, bbdd, idUser, idMail);
-            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.SearchRelations}", $"P_FILTER:{filtro}", $"P_UC:{idUser}", $"pageSize:{pageSize}", $"pageIndex:{pageIndex}" });
+            var filtro = GiveMeSearchRelationsFilter(classification.idType, classification.bbdd, classification.idUser, classification.idMail);
+            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.SearchRelations}", $"P_FILTER:{filtro}", $"P_UC:{classification.idUser}-pageSize:{classification.pageSize}-pageIndex:{classification.pageIndex}" });
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -245,15 +263,16 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.SearchRelations, conn))
                     {
                         command.Parameters.Add(new MySqlParameter("P_FILTER", MySqlDbType.String) { Value = filtro });
-                        command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = idUser });
-                        command.Parameters.Add(new MySqlParameter("P_PAGE_SIZE", MySqlDbType.Int32) { Value = pageSize });
-                        command.Parameters.Add(new MySqlParameter("P_PAGE_NUMBER", MySqlDbType.Int32) { Value = pageIndex });
+                        command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = classification.idUser });
+                        command.Parameters.Add(new MySqlParameter("P_PAGE_SIZE", MySqlDbType.Int32) { Value = classification.pageSize });
+                        command.Parameters.Add(new MySqlParameter("P_PAGE_NUMBER", MySqlDbType.Int32) { Value = classification.pageIndex });
                         command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_TOTAL_REG", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.CommandType = CommandType.StoredProcedure;
                         using (var reader = await command.ExecuteReaderAsync())
                         {
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
                             if (EvaluateErrorCommand(result.errors, command) == 0)
                                 while (reader.Read()) { result.data = JsonConvert.DeserializeObject<JosRelationsList>(reader.GetValue(0).ToString()); }
                         }
@@ -268,13 +287,13 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return result;
         }
 
-        public async Task<Result<int>> AddRelationMailAsync(short idType, string bbdd, string idUser, MailInfo[] listaMails, long idRelated)
+        public async Task<Result<int>> AddRelationMailAsync(ClassificationAddView classification)
         {
             int a = 0;
             var result = new Result<int>(a);
-            string filtro = GiveMeRelationMultipleFilter(bbdd, idUser, listaMails, idType, idRelated);
+            string filtro = GiveMeRelationMultipleFilter(classification.bbdd, classification.idUser, classification.listaMails, classification.idType, classification.idRelated);
 
-            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.AddRelation}", $"P_FILTER:{filtro}", $"P_UC:{idUser}" });
+            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.AddRelation}", $"P_FILTER:{filtro}", $"P_UC:{classification.idUser}" });
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -284,7 +303,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddRelation, conn))
                     {
                         command.Parameters.Add(new MySqlParameter("P_JSON", MySqlDbType.String) { Value = filtro });
-                        command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = idUser });
+                        command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = classification.idUser });
                         command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
                         command.CommandType = CommandType.StoredProcedure;
@@ -303,14 +322,14 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return result;
         }
 
-        public async Task<Result<int>> RemoveRelationMailAsync(short idType, string bbdd, string idUser, string provider, string mailAccount, string uidMail, long idRelated)
+        public async Task<Result<int>> RemoveRelationMailAsync(ClassificationRemoveView classification)
         {
             int a = 0;
             var result = new Result<int>(a);
-            var mailInfo = new MailInfo(provider, mailAccount, uidMail);
-            string filtro = GiveMeRelationFilter(bbdd, idUser, mailInfo, idType, idRelated, null);
+            var mailInfo = new MailInfo(classification.Provider, classification.MailAccount, classification.idMail);
+            var filtro = GiveMeRelationFilter(classification.bbdd, classification.idUser, mailInfo, classification.idType, classification.idRelated, null);
 
-            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.RemoveRelation}", $"P_FILTER:{filtro}", $"P_UC:{idUser}" });
+            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.RemoveRelation}", $"P_FILTER:{filtro}", $"P_UC:{classification.idUser}" });
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
                 try
@@ -319,7 +338,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.RemoveRelation, conn))
                     {
                         command.Parameters.Add(new MySqlParameter("P_JSON", MySqlDbType.String) { Value = filtro });
-                        command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = idUser });
+                        command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = classification.idUser });
                         command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
                         command.CommandType = CommandType.StoredProcedure;
@@ -338,16 +357,13 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return result;
         }
 
-        public async Task<Result<int>> AddRelationContactsMailAsync(string bbdd,
-                                                        string idUser,
-                                                        MailInfo mailInfo,
-                                                        string[] contactList)
+        public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification)
         {
             int a = 0;
             var result = new Result<int>(a);
-            string filtro = GiveMeRelationFilter(bbdd, idUser, mailInfo, null, null, contactList);
+            string filtro = GiveMeRelationFilter(classification.bbdd, classification.idUser, classification.mail, null, null, classification.ContactList);
 
-            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.AddContactRelations}", $"P_FILTER:{filtro}", $"P_UC:{idUser}" });
+            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.AddContactRelations}", $"P_FILTER:{filtro}", $"P_UC:{classification.idUser}" });
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
                 try
@@ -356,7 +372,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddContactRelations, conn))
                     {
                         command.Parameters.Add(new MySqlParameter("P_JSON", MySqlDbType.String) { Value = filtro });
-                        command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = idUser });
+                        command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = classification.idUser });
                         command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
                         command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
                         command.CommandType = CommandType.StoredProcedure;
