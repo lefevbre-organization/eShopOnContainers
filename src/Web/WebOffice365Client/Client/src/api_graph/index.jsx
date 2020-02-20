@@ -486,7 +486,7 @@ export const batchModify = async ({ ids, addLabelIds = [], removeLabelIds = [] }
 
 export const uploadFiles = async(emailId, attachments) => {
   for (var i = 0; i < attachments.length; i++) {
-    if(attachments[i].data.size > 4194304) {
+    if(attachments[i].data.size > 3145728) {
       await uploadFileWithUploadSession(emailId, attachments[i].data, attachments[i].content);
     } else {
       await uploadFile(emailId, attachments[i].data, attachments[i].content);
