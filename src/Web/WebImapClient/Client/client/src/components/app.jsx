@@ -615,7 +615,8 @@ class App extends Component {
         detail: {
           idEmail: id,
           subject: subject,
-          date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+          date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
+          folder: this.props.application.selectedFolderId
         }
       })
     );

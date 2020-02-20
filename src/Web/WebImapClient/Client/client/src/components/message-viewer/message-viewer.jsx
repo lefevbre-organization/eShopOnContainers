@@ -79,14 +79,15 @@ export class MessageViewer extends Component {
     }  
     ))
 
-    this.props.setSelected([this.props.selectedMessage], true);
+    this.props.setSelected([this.props.selectedMessage], true, this.props.currentFolder.fullName);
     window.dispatchEvent(
       new CustomEvent("Checkclick", {
         detail: {
           id: this.props.selectedMessage.messageId,
           subject: this.props.selectedMessage.subject,
           sentDateTime: this.props.selectedMessage.receivedDate,
-          chkselected: true
+          chkselected: true,
+          folder: this.props.currentFolder.fullName
         }
       })
     );
@@ -105,7 +106,8 @@ export class MessageViewer extends Component {
           id: this.props.selectedMessage.messageId,
           subject: this.props.selectedMessage.subject,
           sentDateTime: this.props.selectedMessage.receivedDate,
-          chkselected: false
+          chkselected: false,
+          folder: this.props.currentFolder.fullName
         }
       })
     );
@@ -117,13 +119,15 @@ export class MessageViewer extends Component {
             id: this.oldSelectedList[i].id,
             subject: this.oldSelectedList[i].subject,
             sentDateTime: this.oldSelectedList[i].sentDateTime,
-            chkselected: true
+            chkselected: true,
+            folder: this.oldSelectedList[i].folder
           }
         })
       );
     }
     
   }
+  //clearSelectedMessage(dispatch)
 
   componentDidMount() {
     this.clearSelectedList();
