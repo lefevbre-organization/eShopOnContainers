@@ -150,10 +150,10 @@ namespace Lexon.API.Controllers
         }
 
         [HttpPost("entities")]
-        //[ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(MySqlList<JosEntityList, LexonEntityBase>), (int)HttpStatusCode.OK)]
-        //[ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(MySqlList<JosEntityList, LexonEntityBase>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType(typeof(MySqlList<JosEntityList, LexonEntityBase>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
+        //[ProducesResponseType(typeof(MySqlList<JosEntityList, LexonEntityBase>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> EntitiesAsync(
             [FromBody] EntitySearchView entitySearch
             )
@@ -163,18 +163,14 @@ namespace Lexon.API.Controllers
 
             var entities = await _usersService.GetEntitiesListAsync(entitySearch);
 
-            //if (entitySearch.pageIndex == 0 && entitySearch.pageSize == 0)
-            //{
-                return (entities.Errors.Count > 0) ? (IActionResult)BadRequest(entities) : Ok(entities);
-            //}
 
-            //var totalItems = entities.data.Count;
+            var paginatedEntities = new PaginatedItemsViewModel<LexonEntityBase>(entities.PageIndex, entities.PageSize, entities.Count, entities.Data);
+            var result = new Result<PaginatedItemsViewModel<LexonEntityBase>>(paginatedEntities, entities.Errors) {  infos = entities.Infos  };
 
-            //var resultPaginatedFinal =
             //    new Result<PaginatedItemsViewModel<LexonEntityBase>>(
             //        new PaginatedItemsViewModel<LexonEntityBase>(entitySearch.pageIndex, entitySearch.pageSize, totalItems, entities.data), entities.errors);
 
-            //return (resultPaginatedFinal.errors.Count > 0) ? (IActionResult)BadRequest(resultPaginatedFinal) : Ok(resultPaginatedFinal);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpPost]
