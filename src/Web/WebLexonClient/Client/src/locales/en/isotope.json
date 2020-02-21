@@ -37,7 +37,8 @@
     "q3_11":"¿En que asegurador quieres clasificar los mensajes?",
     "q3_12":"¿En que entidad quieres clasificar los mensajes?",
     "q3_13":"¿En que carpeta quieres clasificar los mensajes?",
-    "q3_14":"¿En que documento quieres clasificar los mensajes?"
+    "q3_14":"¿En que documento quieres clasificar los mensajes?",
+    "q4":"Selecciona la ubicación exacta para los archivos"
     },
   "classification": {
     "type": "Type: ",

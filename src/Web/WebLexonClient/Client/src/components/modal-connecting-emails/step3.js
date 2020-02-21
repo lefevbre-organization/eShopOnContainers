@@ -25,7 +25,7 @@ export class ConnectingEmailsStep3 extends React.Component {
             <div className="step3-container">
                 <ol style={{textAlign: "center"}}>
                     <li className="index-3">
-                        <span>{i18n.t(`connecting.q3_${this.props.entity}`)}</span>
+                        <span>{i18n.t(`connecting.q4`)}</span>
                     </li>
                 </ol>                
             </div>
@@ -36,7 +36,7 @@ export class ConnectingEmailsStep3 extends React.Component {
                 }
 
                 ol>li.index-3::before {
-                    content: '3'; 
+                    content: '4'; 
                     color: #001978;
                     display: inline-block; 
                     width: 1em;
