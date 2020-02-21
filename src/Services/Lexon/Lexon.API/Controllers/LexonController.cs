@@ -163,12 +163,8 @@ namespace Lexon.API.Controllers
 
             var entities = await _usersService.GetEntitiesListAsync(entitySearch);
 
-
             var paginatedEntities = new PaginatedItemsViewModel<LexonEntityBase>(entities.PageIndex, entities.PageSize, entities.Count, entities.Data);
             var result = new Result<PaginatedItemsViewModel<LexonEntityBase>>(paginatedEntities, entities.Errors) {  infos = entities.Infos  };
-
-            //    new Result<PaginatedItemsViewModel<LexonEntityBase>>(
-            //        new PaginatedItemsViewModel<LexonEntityBase>(entitySearch.pageIndex, entitySearch.pageSize, totalItems, entities.data), entities.errors);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
