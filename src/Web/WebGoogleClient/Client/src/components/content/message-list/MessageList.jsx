@@ -19,6 +19,21 @@ const ViewMode = {
   EDIT: 3
 };
 
+const months = {
+  'Jan' : '01',
+  'Feb' : '02',
+  'Mar' : '03',
+  'Apr' : '04',
+  'May' : '05',
+  'Jun' : '06',
+  'Jul' : '07',
+  'Aug' : '08',
+  'Sep' : '09',
+  'Oct' : '10',
+  'Nov' : '11',
+  'Dec' : '12'
+}
+
 export class MessageList extends PureComponent {
   constructor(props) {
     super(props);
@@ -78,20 +93,30 @@ export class MessageList extends PureComponent {
   onSelectionChange(selected, msgId) {
     this.props.toggleSelected([msgId], selected);
     //e.emit('received', { text: "Id: " + msgId + " selected: " + selected })
-
+    console.log(this.props);
     getMessageHeader(msgId)
       .then(response => {
+        const sentDate = this.getContentByHeader(response, "Date").split(' ');
         const message = {
-          id: msgId,
+          id: this.getContentByHeader(response, "Message-Id"),
           subject: this.getContentByHeader(response, "Subject"),
           sentDateTime: this.getContentByHeader(response, "Date"),
+          folder: "",
+          provider: "GOOGLE",
+          account: this.props.lexon.account,
           chkselected: selected
         };
+        console.log('*****Message clicked:'+ message.id + ' Message subject:' + message.subject + ' Message sentDateTime:' + message.sentDateTime);
+        console.log(`${sentDate[3]}-${months[sentDate[2]]}-${sentDate[1]} ${sentDate[4]}`);
+        console.log(new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''));
         window.dispatchEvent(
           new CustomEvent("Checkclick", {
             detail: message
           })
         );
+
+        message.extMessageId = message.id;
+        message.id = msgId // Se sobreescribe con el valor normal para que no dejen de funcionar los checks de los mensajes
 
         selected
           ? this.props.addMessage(message)
@@ -104,6 +129,9 @@ export class MessageList extends PureComponent {
             name: msgId,
             subject: "",
             sentDateTime: "",
+            folder: "",
+            provider: "GOOGLE",
+            account: this.props.lexon.account,
             chkselected: selected
           }
         });
@@ -112,7 +140,7 @@ export class MessageList extends PureComponent {
 
   getContentByHeader(message, header) {
     for (let i = 0; i < message.payload.headers.length; i++) {
-      if (message.payload.headers[i].name === header) {
+      if (message.payload.headers[i].name.toUpperCase() === header.toUpperCase()) {
         return message.payload.headers[i].value;
       }
     }
@@ -230,7 +258,8 @@ export class MessageList extends PureComponent {
 
 const mapStateToProps = state => {
   return {
-    selectedMessages: state.messageList.selectedMessages
+    selectedMessages: state.messageList.selectedMessages,
+    lexon: state.lexon
   };
 };
 

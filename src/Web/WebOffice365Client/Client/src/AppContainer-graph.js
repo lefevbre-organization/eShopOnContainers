@@ -16,6 +16,7 @@ import {
 import { getStateStorage } from "./localstorage";
 import { getUserApplication, getMessageByInternetMessageId } from './api_graph';
 import ACTIONS from "./actions/lexon";
+import * as base64 from 'base-64';
 
 class AppContainerGraph extends Component {
   constructor(props) {
@@ -83,9 +84,15 @@ class AppContainerGraph extends Component {
   }
 
   onSignInSuccess() {
+    const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+
     var idMail = this.props.match.params.idMail
+    //var idMail64 = this.props.match.params.idMail;
 
     if (idMail){
+      if (base64regex.test(idMail)){
+        idMail = base64.decode(idMail);
+      }
         if (idMail.includes('@')){
           getMessageByInternetMessageId(idMail)
           .then(res => {

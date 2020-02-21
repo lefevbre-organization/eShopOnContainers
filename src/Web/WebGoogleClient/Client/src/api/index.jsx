@@ -97,13 +97,23 @@ const getMessageRawList = ({ labelIds, maxResults, pageToken, q = "" }) =>
       });
   });
 
+  export const getMessageListWithRFC = ( q ) =>
+  new Promise((resolve, reject) => {
+    window.gapi.client.gmail.users.messages
+      .list({
+        userId: "me",
+        q: `rfc822msgid:${q}`,
+        maxResults: 1
+      })
+      .then(response => resolve(response))
+      .catch(err => {
+        reject(err);
+      });
+  });
+    
 /**
 * Load Google People client library. List Contact requested info
 */
-
-
-
-
 export const getContacts = () =>
     
     new Promise((resolve, reject) => {

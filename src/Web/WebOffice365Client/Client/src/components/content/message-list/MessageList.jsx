@@ -94,7 +94,10 @@ export class MessageList extends PureComponent {
           id: ((response.internetMessageId == "undefined") ? msgId : response.internetMessageId),
           subject: response.subject,
           sentDateTime: response.sentDateTime,
-          chkselected: selected         
+          chkselected: selected,
+          folder: "",
+          account: this.props.lexon.account,
+          provider: "OUTLOOK"         
         }
         window.dispatchEvent(
           new CustomEvent("Checkclick", {
@@ -110,14 +113,17 @@ export class MessageList extends PureComponent {
       })
       .catch(error => {
         console.log("error ->", error);
-        new CustomEvent("Checkclick", {
-          detail: {
-            name: msgId,
-            subject: "",
-            sentDateTime: "",
-            chkselected: selected
-          }
-        });
+        // new CustomEvent("Checkclick", {
+        //   detail: {
+        //     name: msgId,
+        //     subject: "",
+        //     sentDateTime: "",
+        //     chkselected: selected,
+        //     folder: "",
+        //     account: this.props.lexon.account,
+        //     provider: "OUTLOOK"
+        //   }
+        // });
       });
   }
 
@@ -224,6 +230,7 @@ export class MessageList extends PureComponent {
 const mapStateToProps = state => {
   return {
     selectedMessages: state.messageList.selectedMessages,
+    lexon: state.lexon
   };
 };
 

@@ -50,6 +50,7 @@ export class FolderListClass extends Component {
   onClick(event, folder) {
     event.stopPropagation();
     this.props.selectFolder(folder);
+    window.dispatchEvent(new CustomEvent("ResetList"));
   }
 
   static onDragStart(event, folder) {
@@ -126,8 +127,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   selectFolder: (folder, user) => {
     dispatch(selectFolder(folder));
-    //clearSelectedMessage(dispatch);
-    //dispatch(clearSelected());
+    clearSelectedMessage(dispatch);
+    dispatch(clearSelected());
     resetFolderMessagesCache(dispatch, user, folder);
   },
   renameFolder: folder => dispatch(renameFolder(folder)),

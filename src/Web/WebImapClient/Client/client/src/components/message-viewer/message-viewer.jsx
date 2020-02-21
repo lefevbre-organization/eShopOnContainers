@@ -159,7 +159,7 @@ export class MessageViewer extends Component {
       });
     };
 
-    if (lexon.idMail && lexon.idMail !== null && lexon.idMail !== undefined){
+    if (lexon.idEmail && lexon.idEmail !== null && lexon.idEmail !== undefined){
       this.props.resetIdEmail(); // Se borra la información del email para que no vuelva a entrar si se refresca la ventana.
     }
   }

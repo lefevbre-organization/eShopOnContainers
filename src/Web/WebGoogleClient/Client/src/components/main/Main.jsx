@@ -2,6 +2,8 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators, compose } from "redux";
 import * as uuid from 'uuid/v4';
+import * as base64 from 'base-64';
+
 import { diff, addedDiff, deletedDiff, updatedDiff, detailedDiff } from 'deep-object-diff';
 import Cookies from 'js-cookie';
 import Header from "../header/Header";
@@ -34,6 +36,7 @@ import CalendarComponent from "../../apps/calendar_content";
 import "react-reflex/styles.css";
 import { addOrUpdateAccount, resetDefaultAccount } from "../../api/accounts";
 import { PROVIDER } from "../../constants";
+import { getMessageListWithRFC } from "../../api/";
 
 export class Main extends Component {
   constructor(props) {
@@ -63,7 +66,6 @@ export class Main extends Component {
       googleDown: false,
       showNotification: false,
       messageNotification: "",
-      errorNotification: false,
       leftSideBar: {
         collapsed: false
       },
@@ -215,18 +217,29 @@ export class Main extends Component {
       this.handleGetUserFromLexonConnector
     );
 
+    const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
     const { userId, idCaseFile, bbdd } = this.props.lexon;
     const { googleUser } = this.props;
+    
     if(!googleUser || !googleUser.Rt) {
       this.setState({googleDown: true, showNotification: true, messageNotification: "El proveedor de Google está caido"})
       return;
     } 
 
-    const idEmail = this.props.idEmail;
+    //var idEmail64 = this.props.idEmail;
+    var idEmail = this.props.idEmail;
+
+    // if (idEmail64 && base64regex.test(idEmail64)){
+    //   idEmail = base64.decode(idEmail64);
+    // }
+
+    if (idEmail && base64regex.test(idEmail)){
+      idEmail = base64.decode(idEmail);
+    }
+
     const email = googleUser.Rt.Au;
+
     if (userId !== null && email !== null) {
-      const { googleUser } = this.props;
-      const email = googleUser.Rt.Au;
       const GUID = uuid();
       const newAccount = {
         "provider": PROVIDER,
@@ -243,15 +256,27 @@ export class Main extends Component {
         if (idEmail != null && idEmail !== undefined){
           if (idCaseFile != null && idCaseFile != undefined){
             this.onSetSidebarOpenLexon(true);
-            this.props.history.push(`/${idEmail}`);
+          }
+          if (idEmail.indexOf('<') !== -1 && idEmail.indexOf('>') !== -1){
+            getMessageListWithRFC(idEmail)
+            .then(response => {
+              if (response && response.result && response.result.messages && response.result.messages.length > 0){
+                console.log("El messageId:" + idEmail + " se corresponde con el id Interno:" + response.result.messages[0].id);
+                idEmail = response.result.messages[0].id;
+                this.props.history.push(`/${idEmail}`);
+              }
+              else {
+                this.setState({googleDown: true, showNotification: true, messageNotification: "El mensaje no está en el servidor"});
+                return;
+              }
+            });
           }
           else {
-            this.onSetSidebarOpenLexon(true);
             this.props.history.push(`/${idEmail}`);
           }
         } else if (idCaseFile != null && idCaseFile !== undefined){
-          this.props.history.push("/compose");
           this.onSetSidebarOpenLexon(true);
+          this.props.history.push("/compose");
         } else if (bbdd !== null & bbdd !== undefined) {
           this.onSetSidebarOpenLexon(true);
           this.props.history.push("/inbox");
@@ -297,7 +322,6 @@ export class Main extends Component {
     }
   }
 
-  
   refreshLabels() {
     this.getLabelList();
     this.renderLabelRoutes();
@@ -615,15 +639,16 @@ export class Main extends Component {
 
   render() {
     if(this.state.googleDown) {
-      const { showNotification, messageNotification, errorNotification } = this.state;
+      const { showNotification, messageNotification } = this.state;
 
       return (
         <div className="d-flex h-100 align-items-center justify-content-center">
           <Notification
             initialModalState={showNotification}
-            toggleNotification={() => { this.onSignoutDisconnect()  }}
+            toggleNotification={() => {
+              (messageNotification === "El mensaje no está en el servidor") ? window.open(`${window.URL_MF_GOOGLE}/GO0${this.props.lexon.userId}`, "_self") : this.onSignoutDisconnect()
+            }}
             message={messageNotification}
-            error={errorNotification}
         />
         </div>
       );

@@ -117,7 +117,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   setUser: user => dispatch(ACTIONS.setUser(user)),
-  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile))
+  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserLexon);

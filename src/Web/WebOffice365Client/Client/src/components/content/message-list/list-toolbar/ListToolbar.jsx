@@ -67,7 +67,10 @@ export class MessageToolbar extends PureComponent {
         new CustomEvent("CheckAllclick", {
           detail: {
             listMessages: messagesLexon,
-            chkselected: checked
+            chkselected: checked,
+            provider: "OUTLOOK",
+            account: this.props.lexon.account,
+            folder: ""
           }
         })
       );
@@ -175,7 +178,8 @@ export class MessageToolbar extends PureComponent {
 
 const mapStateToProps = state => ({
   messagesResult: state.messagesResult,
-  selectedMessages: state.messageList.selectedMessages
+  selectedMessages: state.messageList.selectedMessages,
+  lexon: state.lexon
 });
 
 const mapDispatchToProps = dispatch =>

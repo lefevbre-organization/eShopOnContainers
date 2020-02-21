@@ -342,7 +342,7 @@ namespace Lexon.Infrastructure.Services
                         if (!resultMySql.TengoLista())
                             TraceOutputMessage(resultMySql.Errors, "Mysql don´t recover the master´s entities", 2001);
 
-                        var entityList = await response.Content.ReadAsAsync<Result<JosEntityList>>();
+                        //var entityList = await response.Content.ReadAsAsync<Result<JosEntityList>>();
                         if (GetEntitiesListMySqlAsync(ref resultLexon, resultMySql, entitySearch.idType))
                             return resultLexon;
                     }

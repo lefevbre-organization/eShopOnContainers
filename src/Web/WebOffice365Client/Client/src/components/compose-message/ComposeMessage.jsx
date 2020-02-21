@@ -165,7 +165,7 @@ export class ComposeMessage extends PureComponent {
       });
     }
 
-    this.resetFields();  
+    //this.resetFields();  
     this.closeModal();
   }
 
@@ -177,7 +177,10 @@ export class ComposeMessage extends PureComponent {
         detail: {
           idEmail: email.internetMessageId,
           subject: email.subject,
-          date: emailDate 
+          date: emailDate,
+          provider: "OUTLOOK",
+          account: this.props.lexon.account,
+          folder: "SENT"
         }
       })
     );
