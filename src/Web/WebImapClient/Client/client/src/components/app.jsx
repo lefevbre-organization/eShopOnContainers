@@ -23,7 +23,7 @@ import { getSelectedFolder } from "../selectors/folders";
 
 import { AuthenticationException } from "../services/fetch";
 import { editNewMessage, clearSelectedMessage } from "../services/application";
-import { getFolders } from "../services/folder";
+import { getFolders, findSentFolder } from "../services/folder";
 import { resetFolderMessagesCache } from "../services/message";
 import { readMessage } from "../services/message-read";
 import { persistApplicationNewMessageContent } from "../services/indexed-db";
@@ -70,7 +70,7 @@ class App extends Component {
         collapsed: false
       },
       sidebarComponent: (
-        <img border="0" alt="Lefebvre" src="assets/images/lexon-fake.png"></img>
+        <img border="0" alt="Lefebvre" src="/assets/images/lexon-fake.png"></img>
       ),
       actualSidebarComponent: 0,
       isUpdatedDefaultAccount: false
@@ -123,7 +123,7 @@ class App extends Component {
       <img
         border="0"
         alt="Lefebvre"
-        src="assets/images/lexon-fake-null.png"
+        src="/assets/images/lexon-fake-null.png"
       ></img>
     );
     this.setState({ sidebarComponent: lexon });
@@ -135,7 +135,7 @@ class App extends Component {
       <img
         border="0"
         alt="Lefebvre"
-        src="assets/images/lexon-fake-null.png"
+        src="/assets/images/lexon-fake-null.png"
       ></img>
     );
     this.setState({ sidebarComponent: lexon });
@@ -280,7 +280,7 @@ class App extends Component {
                     <img
                       border="0"
                       alt="Lex-On"
-                      src="assets/images/icon-lexon.png"
+                      src="/assets/images/icon-lexon.png"
                     ></img>
                   </IconButton>
                 ) : (
@@ -289,7 +289,7 @@ class App extends Component {
                       disabled
                       border="0"
                       alt="Lex-On"
-                      src="assets/images/icon-lexon.png"
+                      src="/assets/images/icon-lexon.png"
                     ></img>
                   </IconButton>
                 )}
@@ -497,13 +497,13 @@ class App extends Component {
           const explodedItems = Object.entries(this.props.folders.explodedItems);
 
           explodedItems.some( folder => {
-            if (folder[1].name.toUpperCase() === idFolder){
+            if (folder[1].fullName.toUpperCase() === idFolder.toUpperCase()){
               console.log("*************** FOLDER FOUND");
               targetFolder = folder[1];
               folderIdentifier = folder[0];
               console.log("*************** FOLDER ID: " + folderIdentifier);
             }
-            return folder[1].name.toUpperCase() === idFolder;
+            return folder[1].fullName.toUpperCase() === idFolder.toUpperCase();
           })
 
           if (targetFolder){
@@ -612,19 +612,23 @@ class App extends Component {
   }
 
   sentEmail (id, subject) {
+    console.log('***** NOTIFICANDO MENSAJE ENVIADO *****');
+    const sentFolder = findSentFolder(this.props.folders);
+
     window.dispatchEvent(
       new CustomEvent("SentMessage", {
         detail: {
           idEmail: id,
           subject: subject,
           date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
-          folder: "SENT",
+          folder: sentFolder.fullName,
+          //folder: this.props.application.selectedFolderId,
           account: this.props.all.login.formValues.user,
-          provider: 'IMAP'
+          provider: "IMAP"
         }
       })
     );
-    console.log("SentEmail output - Id: " + id + " Subject:" + subject)
+    console.log("SentEmail output - Id: " + id + " Subject:" + subject + " CurrentSentFolderName:" + sentFolder.fullName);
   };
 
 
@@ -658,13 +662,13 @@ class App extends Component {
           const explodedItems = Object.entries(this.props.folders.explodedItems);
 
           explodedItems.some( folder => {
-            if (folder[1].name.toUpperCase() === this.props.lexon.idFolder){
+            if (folder[1].fullName.toUpperCase() === this.props.lexon.idFolder.toUpperCase()){
               console.log("*************** FOLDER FOUND2");
               targetFolder = folder[1];
               folderIdentifier = folder[0];
               console.log("*************** FOLDER ID2: " + folderIdentifier);
             }
-            return folder[1].name.toUpperCase() === this.props.lexon.idFolder;
+            return folder[1].fullName.toUpperCase() === this.props.lexon.idFolder.toUpperCase();
           })
 
           if (targetFolder){

@@ -163,7 +163,8 @@ export const addMessage = message => dispatch => {
   const data = {
     id: message.id,
     subject: message.subject,
-    sentDateTime: message.sentDateTime
+    sentDateTime: message.sentDateTime,
+    extMessageId: message.extMessageId
   };
 
   dispatch({

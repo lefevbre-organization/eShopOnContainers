@@ -228,13 +228,13 @@ class MessageList extends Component {
             subject: message.subject,
             sentDateTime: message.receivedDate,
             chkselected: checked,
-            folder: this.props.selectedFolder.fullName,
             account: this.props.all.login.formValues.user,
-            provider: 'IMAP'
+            folder: this.props.selectedFolder.fullName,
+            provider: "IMAP"
           }
         })
       );
-      console.log("Checkclick:" + message.messageId + " Folder:" + this.props.selectedFolder.fullName);
+      console.log("Checkclick:" + message.messageId + " Folder:" + this.props.selectedFolder.fullName + " Account:" + this.props.all.login.formValues.user );
     }
   }
 

@@ -23,6 +23,7 @@ class UserLexon extends Component {
   }
 
   async componentDidMount() {
+    const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
     const user = this.props.match.params.idUser;
 
     if(this.props.location.search.indexOf("account=") > -1) {
@@ -42,8 +43,13 @@ class UserLexon extends Component {
     const casefile = this.props.match.params.idCaseFile;
     const bbdd = this.props.match.params.bbdd;
     const company = this.props.match.params.idCompany;
-    const idMessage = this.props.match.params.idMessage;
-    const idFolder = this.props.match.params.idFolder;
+    const idMessage64 = this.props.match.params.idMessage;
+    var idMessage = this.props.match.params.idMessage;
+    const idFolder64 = this.props.match.params.idFolder;
+    var idFolder = this.props.match.params.idFolder;
+
+    if (idMessage64 && base64regex.test(idMessage64)) { idMessage = base64.decode(idMessage64); }
+    if (idFolder64 && base64regex.test(idFolder64)) { idFolder = base64.decode(idFolder64); }
 
     if (casefile){
       this.props.setCaseFile({

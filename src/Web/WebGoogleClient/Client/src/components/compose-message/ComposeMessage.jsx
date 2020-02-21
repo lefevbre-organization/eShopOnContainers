@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { sendMessage } from "../../api";
+import { sendMessage, getMessageHeader } from "../../api";
 import { getValidEmails } from "../../utils";
 import i18n from "i18next";
 import { Button, InputGroup, InputGroupAddon, Input } from "reactstrap";
@@ -145,14 +145,18 @@ export class ComposeMessage extends PureComponent {
     this.props.history.push("/inbox");
   }
 
-  async sentEmail(id, subject) {
-    const emailDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+  async sentEmail(message) {
+    //const emailDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+    console.log("SentEmail:" + message.id + " Subject:" +  message.subject + " SentDate:" +  message.sentDateTime);
     window.dispatchEvent(
       new CustomEvent("SentMessage", {
         detail: {
-          idEmail: id,
-          subject: subject,     // window.atob(subject.replace('=?UTF-8?B?', '').replace('?=', '')),
-          date: emailDate
+          idEmail: message.id,
+          subject: message.subject,     // window.atob(subject.replace('=?UTF-8?B?', '').replace('?=', '')),
+          date: message.emailDate,
+          folder: "[GMAIL]/Enviados",
+          account: this.props.lexon.account,
+          provider: "GOOGLE"
         }
       })
     );
@@ -163,7 +167,7 @@ export class ComposeMessage extends PureComponent {
           const user = await getUser(this.props.lexon.userId);   
           if(user && user.data && user.data.configUser) {
             if(user.data.configUser.getContacts) {
-              await classifyEmail(id, subject, emailDate, this.state.to2, this.props.lexon.provider, this.props.lexon.account, this.props.lexon.bbdd, user.data.lexonUserId);
+              await classifyEmail(message.id, message.subject, message.sentDateTime, this.state.to2, this.props.lexon.provider, this.props.lexon.account, this.props.lexon.bbdd, user.data.lexonUserId);
             }
           }
 
@@ -173,11 +177,8 @@ export class ComposeMessage extends PureComponent {
       }
     }, 1000);
 
-
-
-
+    window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
     // Get User config to auto classify emails
-
   }
 
   addFileToState(file) {
@@ -268,10 +269,29 @@ export class ComposeMessage extends PureComponent {
       function (response) {
         return response.json();
       }).then(email => {
-        this.sentEmail(email.id, this.state.subject);
+        //this.sentEmail(email.id, this.state.subject);
+        getMessageHeader(email.id)
+        .then( headers => {
+          console.log("Headers:"+headers);
+          const message = {
+            id: this.getContentByHeader(headers, "Message-Id"),
+            subject: this.getContentByHeader(headers, "Subject"),
+            sentDateTime: this.getContentByHeader(headers, "Date")
+          };
+          this.sentEmail(message)
+        })
+        .catch( err => console.log("Error getting Headers:"+ err));
       });
     this.resetFields();
     this.closeModal();
+  }
+
+  getContentByHeader(message, header) {
+    for (let i = 0; i < message.payload.headers.length; i++) {
+      if (message.payload.headers[i].name.toUpperCase() === header.toUpperCase()) {
+        return message.payload.headers[i].value;
+      }
+    }
   }
 
   resetFields() {

@@ -1,4 +1,5 @@
 import { INBOX_GOOGLE, INBOX_OUTLOOK, INBOX_IMAP, IN_GOOGLE, IN_OUTLOOK, IN_IMAP } from "../constants";
+import * as base64 from 'base-64';
 
 export const parseJwt = token => {
     var base64Url = token.split('.')[1];
@@ -63,7 +64,7 @@ export const parseJwt = token => {
       return "mailWithCaseFile"
     }
     else if (getIdCasefile(payload) != null){
-      return "caseFile";
+      return "composeWithCaseFile";
     }
     else if (payload.hasOwnProperty('bbdd')){
       return "dbOnly";
@@ -81,17 +82,17 @@ export const parseJwt = token => {
         url = `/user/${user}`;
         break;
       case "mailOnly":
-        url = `/user/${user}/editMail/${payload.idMail}`;
+        url = `/user/${user}/editMail/${base64.encode(payload.idMail)}`;
         break;
       case "mailWithCaseFile":
-        if (provider == INBOX_IMAP){
+        if (provider === INBOX_IMAP || provider === IN_IMAP){
           const folder = getImapFolder(payload);
-          url = `/user/${user}/folder/${folder}/message/${payload.idMail}/casefile/${payload.idEntity}`
+          url = `/user/${user}/folder/${base64.encode(folder)}/message/${base64.encode(payload.idMail)}/casefile/${payload.idEntity}/bbdd/${payload.bbdd}`;
         }else {
-          url = `/user/${user}/editMail/${payload.idMail}/casefile/${payload.idEntity}/bbdd/${payload.bbdd}/company/${payload.idCompany}`
+          url = `/user/${user}/editMail/${base64.encode(payload.idMail)}/casefile/${payload.idEntity}/bbdd/${payload.bbdd}/company/${payload.idCompany}`;
         }
         break;
-      case "caseFile":
+      case "composeWithCaseFile":
         url = `/user/${user}/casefile/${payload.idEntity}/bbdd/${payload.bbdd}/company/${payload.idCompany}`;
         break;
       case "dbOnly":
