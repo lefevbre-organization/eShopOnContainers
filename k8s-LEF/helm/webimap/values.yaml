@@ -34,24 +34,20 @@ env:
       key: all__InstrumentationKey
     - name: UseLoadTest
       key: all_EnableLoadTest
-    - name: DPConnectionString
-      key: webmvc__keystore
-    - name: PurchaseUrl
-      key: internalurls__apigwws
-    - name: ExternalPurchaseUrl
-      key: urls__apigwws
-    - name: CallBackUrl
-      key: urls__mvc
-    - name: IdentityUrl
-      key: urls__IdentityUrl
-    - name: MarketingUrl
-      key: internalurls__apigwwm
-    - name: PurchaseUrlHC
-      key: internalurls__apigwws__hc
+    - name: LexonApiUrlHC
+      key: internalurls__lexonapi
+    - name: LexonMySqlApiUrlHC
+      key: internalurls__lexonmysqlapi
+    - name: AccountApiUrlHC
+      key: internalurls__accountapi
+    - name: LexonApiGatewayUrlHC
+      key: internalurls__lexonapigw
+    - name: AccountApiGatewayUrlHC
+      key: internalurls__accountapigw
     - name: IdentityUrlHC
       key: internalurls__identity__hc      
-    - name: MarketingUrlHC
-      key: internalurls__apigwwm__hc    
+    - name: IdentityUrl
+      key: urls__IdentityUrl 
     - name: SignalrHubUrl
       key: urls__apigwws
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
