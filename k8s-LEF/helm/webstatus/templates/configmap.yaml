@@ -1,0 +1,39 @@
+{{- $name := include "webstatus.fullname" . -}}
+{{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
+{{- $mongo := include "mongo-name" . -}}
+
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "cfg-{{ $name }}"
+  labels:
+    app: {{ template "webstatus.name" . }}
+    chart: {{ template "webstatus.chart" .}}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  all__InstrumentationKey: "{{ .Values.inf.appinsights.key }}"
+  all__UseAzureServiceBus: "{{ .Values.inf.eventbus.useAzure }}"
+  all_EnableLoadTest: "{{ .Values.inf.misc.useLoadTest }}"
+  webstatus__keystore: {{ .Values.inf.redis.keystore.constr }}
+  name__webportal__hc: WebPortalClient HTTP Check
+  internalurls__webportal__hc: http://{{ .Values.app.svc.portal }}/hc
+  name__webgoogle__hc: WebGoogleClient HTTP Check
+  internalurls__webgoogle__hc: http://{{ .Values.app.svc.google }}/hc
+  name__weboffice__hc: WebOfficeClient HTTP Check
+  internalurls__weboffice__hc: http://{{ .Values.app.svc.graph }}/hc
+  name__webimap__hc: WebImapClient HTTP Check
+  internalurls__webimap__hc: http://{{ .Values.app.svc.imap }}/hc
+  name__weblexon__hc: WebLexonClient HTTP Check
+  internalurls__weblexon__hc: http://{{ .Values.app.svc.lexon }}/hc
+  name__accountapigw__hc: Account API GW HTTP Check
+  internalurls__accountapigw__hc: http://{{ .Values.app.svc.accountapigw }}/hc
+  name__lexonapigw__hc: Lexon API GW HTTP Check
+  internalurls__lexonapigw__hc: http://{{ .Values.app.svc.lexonapigw }}/hc
+  name__accountapi__hc: Account API HTTP Check
+  internalurls__accountapi__hc: http://{{ .Values.app.svc.accountapi }}/hc
+  name__lexonapi__hc: Lexon API HTTP Check
+  internalurls__lexonapi__hc: http://{{ .Values.app.svc.lexonapi }}/hc
+  name__lexonmysqlapi__hc: Lexon MySql API HTTP Check
+  internalurls__lexonmysqlapi__hc: http://{{ .Values.app.svc.lexonmysqlapi }}/hc

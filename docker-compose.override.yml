@@ -38,13 +38,13 @@ services:
       - HealthChecksUI__HealthChecks__4__Uri=http://weblexonclient/hc
       - HealthChecksUI__HealthChecks__5__Name=Account API HTTP Check
       - HealthChecksUI__HealthChecks__5__Uri=http://account.api/hc
-      - HealthChecksUI__HealthChecks__6__Name=Web Account API GW HTTP Check
+      - HealthChecksUI__HealthChecks__6__Name=Account API GW HTTP Check
       - HealthChecksUI__HealthChecks__6__Uri=http://webaccountapigw/hc
-      - HealthChecksUI__HealthChecks__7__Name=Web Lexon API GW HTTP Check
+      - HealthChecksUI__HealthChecks__7__Name=Lexon API GW HTTP Check
       - HealthChecksUI__HealthChecks__7__Uri=http://weblexonapigw/hc
-      - HealthChecksUI__HealthChecks__8__Name=Lexon HTTP Check
+      - HealthChecksUI__HealthChecks__8__Name=Lexon API HTTP Check
       - HealthChecksUI__HealthChecks__8__Uri=http://lexon.api/hc
-      - HealthChecksUI__HealthChecks__9__Name=Lexon MySql HTTP Check
+      - HealthChecksUI__HealthChecks__9__Name=Lexon MySql API HTTP Check
       - HealthChecksUI__HealthChecks__9__Uri=http://lexon.mysql.api/hc
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}

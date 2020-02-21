@@ -22,12 +22,10 @@ inf:
 #    host: my-nosql-data    # Uncomment to use specify custom mongo host. By default nosql-data is used
     locations:
       database: LocationsDb
-    marketing:
-      database: MarketingDb
     account:
-      database: users-accounts
+      database: MailAccounts
     lexon:
-      database: LexonAPIDb  
+      database: LexonApiDb  
 
   redis:                    # inf.redis defines the redis' connection strings
     basket:     
