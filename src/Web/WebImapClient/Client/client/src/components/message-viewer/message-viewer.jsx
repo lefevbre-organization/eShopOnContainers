@@ -88,7 +88,7 @@ export class MessageViewer extends Component {
           sentDateTime: this.props.selectedMessage.receivedDate,
           chkselected: true,
           folder: this.props.currentFolder.fullName,
-          account: this.props.all.login.formValues.user,
+          account: this.props.login.formValues.user,
           provider: 'IMAP'
         }
       })
@@ -110,7 +110,7 @@ export class MessageViewer extends Component {
           sentDateTime: this.props.selectedMessage.receivedDate,
           chkselected: false,
           folder: this.props.currentFolder.fullName,
-          account: this.props.all.login.formValues.user,
+          account: this.props.login.formValues.user,
           provider: 'IMAP'
         }
       })
@@ -125,7 +125,7 @@ export class MessageViewer extends Component {
             sentDateTime: this.oldSelectedList[i].sentDateTime,
             chkselected: true,
             folder: this.oldSelectedList[i].folder,
-            account: this.props.all.login.formValues.user,
+            account: this.props.login.formValues.user,
             provider: 'IMAP'
           }
         })
@@ -185,7 +185,8 @@ const mapStateToProps = state => ({
   currentFolder: getSelectedFolder(state) || {},
   selectedMessage: state.application.selectedMessage,
   selectedMessages: state.messages.selectedMessages,
-  lexon: state.lexon
+  lexon: state.lexon,
+  login: state.login 
 });
 
 const mapDispatchToProps = dispatch => ({
