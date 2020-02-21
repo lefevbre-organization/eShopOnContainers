@@ -5,6 +5,7 @@ import { Button, Modal, Container } from "react-bootstrap";
 import { connect } from "react-redux";
 import { ConnectingEmailsStep1 } from './step1';
 import { ConnectingEmailsStep2 } from './step2';
+import { ConnectingEmailsStep3 } from './step3';
 import { addClassification } from '../../services/services-lexon';
 import ACTIONS from "../../actions/documentsAction";
 import "react-perfect-scrollbar/dist/css/styles.css";
@@ -31,11 +32,16 @@ class ModalConnectingEmails extends Component {
   closeDialog() {
     setTimeout(() => {
       this.setState({
-        step: 1, step1Data: {
+        step: 1, 
+        step1Data: {
           entity: 1,
           actuation: false,
           copyDocuments: false,
           saveDocuments: false
+        },
+        step2Data: {
+          id: -1,
+          idType: -1
         }
       })
     }, 1000)
@@ -45,22 +51,38 @@ class ModalConnectingEmails extends Component {
   nextStep() {
     if (this.state.step === 1) {
       this.setState({ step: 2 })
+    } else if(this.state.step === 2) {
+      this.setState({ step: 3 })
     }
   }
 
   prevStep() {
     if (this.state.step === 2) {
       this.setState({ step: 1 })
+    } else if (this.state.step === 3) {
+      this.setState({ step: 2 })
     }
   }
 
-  changeStep1Data(data) {
-    this.setState({ step1Data: data })
+  changeStep1Data(data) {    
+    let step2Data = this.state.step2Data;
+    if (this.state.step1Data.entity !== data.entity) {
+      step2Data = {
+        id: -1,
+        idType: -1
+      }
+    }
+
+    this.setState({ step1Data: data, step2Data})
   }
 
   changeStep2Data(data) {
     this.setState({ step2Data: data })
   }
+  
+  changeStep3Data(data) {
+  }
+
 
   saveDisabled() {
     if (this.state.step2Data.idType !== -1 && this.state.step2Data.id !== -1) {
@@ -71,14 +93,16 @@ class ModalConnectingEmails extends Component {
   }
 
   onSave() {
-    const _this = this;
+    if(this.state.step === 2) {
+      this.onSaveStep2()
+    } else if(this.state.step === 3) {
+      this.onSaveStep3()
+    }
+  }
 
-    const { step2Data } = this.state;
+  onSaveStep2() {
+    const { step1Data, step2Data } = this.state;
     const {
-      user,
-      companySelected,
-      toggleClassifyEmails,
-      selectedMessages,
       toggleNotification
     } = this.props;
 
@@ -89,7 +113,30 @@ class ModalConnectingEmails extends Component {
       return;
     }
 
-    this.closeDialog();
+    if(step1Data.copyDocuments === false && step1Data.saveDocuments === false) {
+      this.closeDialog();
+      this.saveClassification();
+    } else {
+      this.nextStep();
+    }    
+  }
+
+  onSaveStep3() {
+    this.closeDialog()
+
+    if(this.state.step1Data.actuation === true) {
+      this.saveClassification();
+    }
+  }
+
+  saveClassification() {
+    const { step1Data, step2Data } = this.state;
+    const {
+      user,
+      companySelected,
+      selectedMessages,
+      toggleNotification
+    } = this.props;
 
     addClassification(
       user,
@@ -107,8 +154,6 @@ class ModalConnectingEmails extends Component {
       .catch(error => {
         toggleNotification(i18n.t("classify-emails.classification-saved-ko"), true);       
       });
-
-    //this.setState({ type: null, search: "" });
   }
 
   render() {
@@ -130,13 +175,14 @@ class ModalConnectingEmails extends Component {
               id="documentarGuardardocumentacionLabel"
             >
               <img class="imgproduct" border="0" alt="Lex-On" src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
-              <span>{i18n.t("modal-conecting-emails.save-copy")}</span>
+              <span>{i18n.t("modal-conecting-emails.save-copy") }</span>
             </h5>
           </Modal.Header>
           <Modal.Body className="mimodal">
             <Container>
               <div style={{ display: this.state.step === 1 ? 'block' : 'none' }}><ConnectingEmailsStep1 show={this.state.step === 1} onChange={(data) => { this.changeStep1Data(data) }}></ConnectingEmailsStep1></div>
               <div style={{ display: this.state.step === 2 ? 'block' : 'none' }}><ConnectingEmailsStep2 show={this.state.step === 2} user={user} bbdd={companySelected} entity={this.state.step1Data.entity} onSelectedEntity={(data) => this.changeStep2Data(data)}></ConnectingEmailsStep2></div>
+              <div style={{ display: this.state.step === 3 ? 'block' : 'none' }}><ConnectingEmailsStep3 show={this.state.step === 3} user={user} bbdd={companySelected} entity={this.state.step1Data.entity} onSelectedEntity={(data) => this.changeStep3Data(data)}></ConnectingEmailsStep3></div>
             </Container>
           </Modal.Body>
           <Modal.Footer>
@@ -151,7 +197,7 @@ class ModalConnectingEmails extends Component {
               {i18n.t("classify-emails.continue")}
             </Button>
             }
-            {this.state.step === 2 && <Fragment>
+            {this.state.step == 2 && <Fragment>
               <Button
                 bsPrefix="btn btn-outline-primary"
                 onClick={() => { this.prevStep() }}>
@@ -161,7 +207,21 @@ class ModalConnectingEmails extends Component {
                 disabled={this.saveDisabled()}
                 bsPrefix="btn btn-primary"
                 onClick={() => { this.onSave() }} >
-                {i18n.t("classify-emails.save")}
+                { (this.state.step1Data.copyDocuments === false &&  this.state.step1Data.saveDocuments === false)?i18n.t("classify-emails.save"): i18n.t("classify-emails.continue")}
+              </Button>
+            </Fragment>
+            }
+            {this.state.step == 3 && <Fragment>
+              <Button
+                bsPrefix="btn btn-outline-primary"
+                onClick={() => { this.prevStep() }}>
+                {i18n.t("classify-emails.back")}
+              </Button>
+              <Button
+                disabled={this.saveDisabled()}
+                bsPrefix="btn btn-primary"
+                onClick={() => { this.onSave() }} >
+                { i18n.t("classify-emails.save") }
               </Button>
             </Fragment>
             }

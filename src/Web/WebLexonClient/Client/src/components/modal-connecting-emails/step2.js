@@ -1,8 +1,7 @@
 import React, { Fragment } from 'react';
-import { GridComponent, ColumnsDirective, ColumnDirective, Page, Search, Toolbar, Filter, Inject } from '@syncfusion/ej2-react-grids';
+import { GridComponent, ColumnsDirective, ColumnDirective } from '@syncfusion/ej2-react-grids';
 import { L10n } from '@syncfusion/ej2-base';
 import i18n from "i18next";
-import { RadioButtonComponent } from '@syncfusion/ej2-react-buttons';
 import { getResults } from '../../services/services-lexon'
 import Spinner from "../../components/spinner/spinner";
 import ClassificationListSearch from "../classify-emails/classification-list-search/classification-list-search";
@@ -51,11 +50,16 @@ export class ConnectingEmailsStep2 extends React.Component {
             return
         }
 
+        if(prevProps.entity !== this.props.entity) {
+            this.setState(this.setState({rowSelected: -1}))
+        }
+
         if (prevProps.show === false && this.props.show === true ||
             prevProps.entity !== this.props.entity ||
             prevState.search !== this.state.search ||
             (prevState.currentPage !== this.state.currentPage && this.state.currentPage > -1)) {
             try {
+                this.setState({showSpinner: true})
                 const response = await getResults(user, bbdd, entity, search, 6, currentPage);
                 if (response && response.results && response.results.data) {
                     let lastPage = response.results.count < 6;
@@ -97,7 +101,9 @@ export class ConnectingEmailsStep2 extends React.Component {
     }
 
     searchResultsByType(type, search) {
-        this.setState({search: search || '', showSpinner: true, currentPage: 1})
+        if(this.state.search !== search) {
+            this.setState({search: search || '', showSpinner: true, currentPage: 1})
+        }
     }
 
     render() {
