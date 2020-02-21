@@ -11,6 +11,7 @@ export class LabelItem extends PureComponent {
   }
 
   onClick(evt) {
+    window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
     this.props.onClick(evt, this.props.id);
   }
 

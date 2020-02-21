@@ -54,7 +54,10 @@ export class MessageToolbar extends PureComponent {
         messages.push({
           id: message.id,
           subject: this.getContentByHeader(message, "Subject"),
-          sentDateTime: this.getContentByHeader(message, "Date")
+          sentDateTime: this.getContentByHeader(message, "Date"),
+          account: this.props.lexon.account,
+          folder: "",
+          provider: "GOOGLE"
         });
       });
       window.dispatchEvent(
@@ -164,7 +167,8 @@ export class MessageToolbar extends PureComponent {
 
 const mapStateToProps = state => ({
   messagesResult: state.messagesResult,
-  selectedMessages: state.messageList.selectedMessages
+  selectedMessages: state.messageList.selectedMessages,
+  lexon: state.lexon
 });
 
 const mapDispatchToProps = dispatch =>

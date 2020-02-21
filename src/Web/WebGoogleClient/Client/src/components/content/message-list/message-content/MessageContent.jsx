@@ -164,9 +164,16 @@ export class MessageContent extends Component {
       window.dispatchEvent(new CustomEvent("ResetList"));
       for(let i = 0; i < this.props.selectedMessages.length; i++) {
           const detail = {
-            ...this.props.selectedMessages[i],
-            chkselected: true
+            id: this.props.selectedMessages[i].extMessageId,
+            subject: this.props.selectedMessages[i].subject,
+            sentDateTime: this.props.selectedMessages[i].sentDateTime,
+            chkselected: true,
+            account: this.props.lexon.account,
+            folder: "",
+            provider: "GOOGLE",
+
           };
+          console.log('ComponenWillUnmount ***** detail:' + detail );
       window.dispatchEvent(new CustomEvent("Checkclick",  {
         detail
       }));   
@@ -181,10 +188,13 @@ export class MessageContent extends Component {
 
     if(prevProps.emailHeaderMessageResult.headers === null && emailHeaderMessageResult.headers !== null) {
       const detail = {
-        id: this.props.match.params.id,
+        id: getHeader(emailHeaderMessageResult.headers, "Message-Id"),
         subject: getHeader(emailHeaderMessageResult.headers, "subject"),
         sentDateTime: getHeader(emailHeaderMessageResult.headers, "date"),
-        chkselected: true
+        chkselected: true,
+        folder: "",
+        account: this.props.lexon.account,
+        provider: "GOOGLE"
       };
       window.dispatchEvent(new CustomEvent("Checkclick",  {
         detail
@@ -375,7 +385,8 @@ export class MessageContent extends Component {
 const mapStateToProps = state => ({
   emailMessageResult: state.emailMessageResult,
   emailHeaderMessageResult: state.emailHeaderMessageResult,
-  selectedMessages: state.messageList.selectedMessages
+  selectedMessages: state.messageList.selectedMessages,
+  lexon: state.lexon
 });
 
 const mapDispatchToProps = dispatch =>

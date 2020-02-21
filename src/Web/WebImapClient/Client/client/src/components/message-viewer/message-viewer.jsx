@@ -87,7 +87,9 @@ export class MessageViewer extends Component {
           subject: this.props.selectedMessage.subject,
           sentDateTime: this.props.selectedMessage.receivedDate,
           chkselected: true,
-          folder: this.props.currentFolder.fullName
+          folder: this.props.currentFolder.fullName,
+          account: this.props.all.login.formValues.user,
+          provider: "IMAP"
         }
       })
     );
@@ -107,7 +109,9 @@ export class MessageViewer extends Component {
           subject: this.props.selectedMessage.subject,
           sentDateTime: this.props.selectedMessage.receivedDate,
           chkselected: false,
-          folder: this.props.currentFolder.fullName
+          folder: this.props.currentFolder.fullName,
+          account: this.props.all.login.formValues.user,
+          provider: "IMAP"
         }
       })
     );
@@ -120,7 +124,9 @@ export class MessageViewer extends Component {
             subject: this.oldSelectedList[i].subject,
             sentDateTime: this.oldSelectedList[i].sentDateTime,
             chkselected: true,
-            folder: this.oldSelectedList[i].folder
+            folder: this.oldSelectedList[i].folder,
+            account: this.props.all.login.formValues.user,
+            provider: "IMAP"
           }
         })
       );
@@ -153,7 +159,7 @@ export class MessageViewer extends Component {
       });
     };
 
-    if (lexon.idMail && lexon.idMail !== null && lexon.idMail !== undefined){
+    if (lexon.idEmail && lexon.idEmail !== null && lexon.idEmail !== undefined){
       this.props.resetIdEmail(); // Se borra la información del email para que no vuelva a entrar si se refresca la ventana.
     }
   }
@@ -179,7 +185,8 @@ const mapStateToProps = state => ({
   currentFolder: getSelectedFolder(state) || {},
   selectedMessage: state.application.selectedMessage,
   selectedMessages: state.messages.selectedMessages,
-  lexon: state.lexon
+  lexon: state.lexon,
+  all: state
 });
 
 const mapDispatchToProps = dispatch => ({
