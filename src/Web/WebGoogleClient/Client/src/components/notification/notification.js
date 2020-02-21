@@ -47,6 +47,12 @@ export class Notification extends Component {
         .notification .modal-header .modal-title {
           min-height: 150px;
         }
+
+        .modal-header .close {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+        }
         `}</style>
       </Modal>
     );
