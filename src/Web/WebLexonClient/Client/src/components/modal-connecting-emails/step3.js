@@ -3,6 +3,7 @@ import i18n from "i18next";
 import { TreeViewComponent } from '@syncfusion/ej2-react-navigations';
 import { GridComponent, ColumnsDirective, ColumnDirective } from '@syncfusion/ej2-react-grids';
 import Spinner from "../../components/spinner/spinner";
+import ClassificationListSearch from "../classify-emails/classification-list-search/classification-list-search";
 
 export class ConnectingEmailsStep3 extends React.Component {
     constructor() {
@@ -23,26 +24,48 @@ export class ConnectingEmailsStep3 extends React.Component {
         this.hierarchicalData = [
             {
                 id: '01', name: 'CLIENTE', expanded: true,
+                imageUrl: `${window.URL_MF_LEXON_BASE}/assets/img/icon-law.png`,
                 subChild: [
                     {
-                        id: '01-01', name: 'Directorio 1',
+                        id: '01-01', name: 'Directorio 1',imageUrl: `${window.URL_MF_LEXON_BASE}/assets/img/icon-folder.png`
                     },
                     {
-                        id: '01-02', name: 'Directorio 2', expanded: true,                        
+                        id: '01-02', name: 'Directorio 2', expanded: true, imageUrl: `${window.URL_MF_LEXON_BASE}/assets/img/icon-folder.png`                
                     }
                 ]
             }
         ];
         this.fields = { dataSource: this.hierarchicalData, id: 'id', text: 'name', child: 'subChild' };
+        this.searchResultsByType  = this.searchResultsByType.bind(this)
+        this.nodeSelected = this.onNodeSelected.bind(this)
+        this.nodeSelecting = this.onNodeSelecting.bind(this)
+        this.onRowSelected = this.onRowSelected.bind(this)
     }
 
     async componentDidUpdate(prevProps, prevState) {
 
     }
 
-    render() {
-        const { entity } = this.props;
+    onNodeSelected(event) {
+        alert("Nodo seleccionado")
+    }
 
+    onNodeSelecting(event) {
+        if(event.nodeData.hasChildren === true) {
+            event.cancel = true;
+        }
+    }
+
+    onRowSelected(event) {
+        console.log(event)
+        alert("Directorio seleccionado")
+    }
+
+    searchResultsByType(type, search) {
+        alert("Búsqueda")
+    }
+
+    render() {
         return <Fragment>
             <div className="step3-container">
                 <ol style={{ textAlign: "center" }}>
@@ -52,17 +75,23 @@ export class ConnectingEmailsStep3 extends React.Component {
                 </ol>
                 <section className="panel section-border">
                     <div className="panel-left">
-                        <TreeViewComponent fields={this.fields} />);
+                        <TreeViewComponent fields={this.fields} expandOn="Click" nodeSelected={this.onNodeSelected} nodeSelecting={this.onNodeSelecting}/>
                     </div>
                     <div className="panel-right">
                         <div className="panel-right-top">
                             <span className="section-title">José Manuel García</span>
+                            <ClassificationListSearch
+                                searchResultsByType={this.searchResultsByType}
+                                countResults={-1}
+                            ></ClassificationListSearch>
+
                         </div>
                         {this.state.showSpinner === true &&
                             <div className="spinner"> <Spinner /></div>
                         }
 
                         <GridComponent ref={g => this.gridRef = g} dataSource={this.state.entities} height={'300px'} selectionSettings={{ type: 'Single', mode: 'Row' }}
+                            rowSelected={this.onRowSelected}
                             hideScroll={true}
                             locale="es-ES">
                             
@@ -81,7 +110,6 @@ export class ConnectingEmailsStep3 extends React.Component {
                 </section>
             </div>
             <style jsx>{`
-
                 .step3-container {
                     margin: 30px;
                 }
@@ -102,6 +130,7 @@ export class ConnectingEmailsStep3 extends React.Component {
                 .panel-right-top {
                     color: red;
                     border-bottom: 1px solid #001978;
+                    height: 46px;
                 }
                 
                 .section-border {
@@ -118,6 +147,7 @@ export class ConnectingEmailsStep3 extends React.Component {
                     margin-left: 10px;
                     margin-top: 10px;
                     text-transform: none;
+                    vertical-align: text-top;
                 }
 
                 ol>li.index-4::before {
@@ -134,7 +164,31 @@ export class ConnectingEmailsStep3 extends React.Component {
                     font-family: "MTTMilano-Medium";	
                     font-size: 16px;	
                     font-weight: bold;	
-                }                                
+                }                 
+
+                .e-treeview .e-ul,
+                .e-treeview .e-text-content {
+                    padding: 0 0 0 18px;
+                }
+
+                .e-list-text {
+                    text-transform: uppercase;
+                    color: #001978;
+                    margin-left: 5px;
+                }
+                .e-treeview .e-list-item > .e-text-content .e-list-text,
+                .e-treeview .e-list-item.e-active > .e-text-content .e-list-text,
+                .e-treeview .e-list-item.e-hover > .e-text-content .e-list-text,
+                .e-treeview .e-list-item.e-active, .e-treeview .e-list-item.e-hover  {
+                    color: #001978 !important;
+                }
+                .e-treeview .e-list-icon, .e-treeview .e-list-img {
+                    height: auto;
+                }
+                .e-treeview .e-icon-collapsible, .e-treeview .e-icon-expandable
+                {
+                    color: #001978;
+                }
             `}
             </style>
         </Fragment>

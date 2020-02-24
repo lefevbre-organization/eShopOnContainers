@@ -38,9 +38,11 @@ export class ConnectingEmailsStep2 extends React.Component {
         if (prevProps.show === false && this.props.show === true) {
             const opened = document.getElementsByClassName("lexon-clasification-list-searcher opened")
             if(opened && opened.length > 0) {
-                const closeButton = document.getElementsByClassName("search-trigger-hide")[0]
-                if(closeButton) {
-                    closeButton.click();
+                for(let i = 0; i < opened.length; i++) {
+                    const closeButton = document.getElementsByClassName("search-trigger-hide")[i]
+                    if(closeButton) {
+                        closeButton.click();
+                    }    
                 }
             }
 
