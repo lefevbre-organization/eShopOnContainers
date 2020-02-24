@@ -115,6 +115,7 @@ class Main extends Component {
       ? this.props.addMessage({
           id: event.detail.id,
           subject: event.detail.subject,
+          folder: event.detail.folder,
           sentDateTime: event.detail.sentDateTime
         })
       : this.props.deleteMessage(event.detail.id);
