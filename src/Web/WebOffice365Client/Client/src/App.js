@@ -14,11 +14,11 @@ class App extends Component {
     return (
       <Router>
         <Switch>
-          <Route exact path="/viewMail/:idMail" component={AppContainer} />
+          <Route exact path="/user/:idUser/message/:idMail/casefile/:idCaseFile/bbdd/:bbdd/company/:idCompany" component={UserLexon} />
           <Route exact path="/user/:idUser/casefile/:idCaseFile/bbdd/:bbdd/company/:idCompany" component={UserLexon} />
-          <Route exact path="/user/:idUser/editMail/:idMail" component={UserLexon} />
-          <Route exact path="/user/:idUser/editMail/:idMail/casefile/:idCaseFile/bbdd/:bbdd/company/:idCompany" component={UserLexon} />
+          <Route exact path="/user/:idUser/message/:idMail/bbdd/:bbdd" component={UserLexon} />
           <Route exact path="/user/:idUser/bbdd/:bbdd" component={UserLexon} /> 
+          <Route exact path="/message/:idMail" component={AppContainer} />
           <Route exact path="/user/:idUser" component={UserLexon} />
           <Route path="/" component={AppContainer} />
           {/* <AppContainer /> */}
