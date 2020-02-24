@@ -100,7 +100,7 @@ namespace Lexon.API.Controllers
         public async Task<IActionResult> AddClassificationAsync([FromBody]ClassificationAddView classification)
         {
             if (string.IsNullOrEmpty(classification?.idUser) || (classification?.listaMails?.Count() <= 0) ||
-                string.IsNullOrEmpty(classification?.bbdd) || classification?.idRelated <= 0 || classification?.idType <= 0)
+                string.IsNullOrEmpty(classification?.bbdd) || classification?.idRelated == null || classification?.idRelated <= 0 || classification?.idType <= 0)
                 return BadRequest("values invalid. Must be a valid user, bbdd, email, related and type for create the classification");
 
             var result = await _usersService.AddClassificationToListAsync(classification);
@@ -132,7 +132,7 @@ namespace Lexon.API.Controllers
         public async Task<IActionResult> RemoveClassificationAsync([FromBody]ClassificationRemoveView classification)
         {
             if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.idMail) ||
-                string.IsNullOrEmpty(classification?.bbdd) || classification?.idRelated <= 0 || classification?.idType <= 0)
+                string.IsNullOrEmpty(classification?.bbdd) || classification?.idRelated == null || classification?.idRelated <= 0 || classification?.idType <= 0)
                 return BadRequest("values invalid. Must be a valid user, bbdd, email, related and type for remove the classification");
 
             var result = await _usersService.RemoveClassificationFromListAsync(classification);

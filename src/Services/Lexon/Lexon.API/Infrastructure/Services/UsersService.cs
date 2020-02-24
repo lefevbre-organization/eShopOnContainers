@@ -70,9 +70,7 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceMessage(result.errors, ex);
             }
-            await AddClassificationToListMongoAsync(
-                classificationAdd.idUser, classificationAdd.bbdd, classificationAdd.listaMails,
-                classificationAdd.idRelated, classificationAdd.idType, result);
+            await AddClassificationToListMongoAsync(classificationAdd, result);
             return result;
         }
 
@@ -84,11 +82,11 @@ namespace Lexon.Infrastructure.Services
             data = new StringContent(json, Encoding.UTF8, "application/json");
         }
 
-        private async Task AddClassificationToListMongoAsync(string idUser, string bbdd, MailInfo[] listaMails, long idRelated, short? idClassificationType, Result<long> result)
+        private async Task AddClassificationToListMongoAsync(ClassificationAddView classificationAdd, Result<long> result)
         {
             try
             {
-                var resultMongo = await _usersRepository.AddClassificationToListAsync(idUser, bbdd, listaMails, idRelated, idClassificationType);
+                var resultMongo = await _usersRepository.AddClassificationToListAsync(classificationAdd.idUser, classificationAdd.bbdd, classificationAdd.listaMails, (long)classificationAdd.idRelated, classificationAdd.idType);
 
                 if (resultMongo.errors.Count > 0)
                     result.errors.AddRange(resultMongo.errors);
@@ -162,17 +160,15 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceMessage(result.errors, ex);
             }
-            await RemoveClassificationFromListMongoAsync(
-                classificationRemove.idUser, classificationRemove.bbdd, classificationRemove.Provider, 
-                classificationRemove.MailAccount, classificationRemove.idMail, classificationRemove.idRelated, classificationRemove.idType, result);
+            await RemoveClassificationFromListMongoAsync(classificationRemove, result);
             return result;
         }
 
-        private async Task RemoveClassificationFromListMongoAsync(string idUser, string bbdd, string provider, string mailAccount, string uidMail, long idRelated, short? idClassificationType, Result<long> result)
+        private async Task RemoveClassificationFromListMongoAsync(ClassificationRemoveView classificationRemove, Result<long> result)
         {
             try
             {
-                var resultMongo = await _usersRepository.RemoveClassificationFromListAsync(idUser, bbdd, provider, mailAccount, uidMail, idRelated, idClassificationType);
+                var resultMongo = await _usersRepository.RemoveClassificationFromListAsync(classificationRemove.idUser, classificationRemove.bbdd, classificationRemove.Provider, classificationRemove.MailAccount, classificationRemove.idMail, (long)classificationRemove.idRelated, classificationRemove.idType);
 
                 if (resultMongo.errors.Count > 0)
                     result.errors.AddRange(resultMongo.errors);

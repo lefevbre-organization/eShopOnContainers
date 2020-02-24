@@ -126,7 +126,8 @@ namespace Lexon.MySql.Controllers
         public async Task<IActionResult> AddRelationMailAsync([FromBody]ClassificationAddView classification)
         {
             if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.bbdd) ||
-                classification?.listaMails?.Length < 1 || classification?.idType == null || classification?.idType < 1 || classification?.idRelated < 1)
+                classification?.listaMails?.Length < 1 || classification?.idType == null || classification?.idType < 1 ||
+                classification?.idRelated == null|| classification?.idRelated < 1)
                 return BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated and bbdd to create an actuation with the mail");
 
             var result = await _lexonService.AddRelationMailAsync(classification);
@@ -157,7 +158,7 @@ namespace Lexon.MySql.Controllers
         {
             if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.bbdd) ||
                 string.IsNullOrEmpty(classification?.Provider) || string.IsNullOrEmpty(classification?.MailAccount) || string.IsNullOrEmpty(classification?.idMail) ||
-                classification?.idType == null || classification?.idType < 1 || classification?.idRelated < 1)
+                classification?.idType == null || classification?.idType < 1 || classification?.idRelated == null || classification?.idRelated < 1)
                 return BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated and bbdd to remove an actuation");
 
             var result = await _lexonService.RemoveRelationMailAsync(classification);
