@@ -109,7 +109,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
         public async Task<MySqlList<JosEntityList, JosEntity>> SearchEntitiesAsync(EntitySearchView entitySearch)
         {
             var resultMySql = new MySqlList<JosEntityList, JosEntity>(new JosEntityList(), _settings.Value.SP.SearchEntities, entitySearch.pageIndex, entitySearch.pageSize);
-           // var result = new Result<JosEntityList>(new JosEntityList());
             string filtro = GiveMeSearchEntitiesFilter(entitySearch.idType, entitySearch.bbdd, entitySearch.idUser, entitySearch.search, entitySearch.idFilter);
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.SearchEntities}", $"P_FILTER:{filtro}", $"P_UC:{entitySearch.idUser}-pageSize:{entitySearch.pageSize}-pageIndex:{entitySearch.pageIndex}" });
 
@@ -136,14 +135,20 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
                         using (var reader = await command.ExecuteReaderAsync())
                         {
-                         //   resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
 
                             if (resultMySql.PossibleHasData())
                             {
                                 while (reader.Read())
                                 {
-                                    var resultado = (JsonConvert.DeserializeObject<JosEntityList>(reader.GetValue(0).ToString()));
-                                    resultMySql.AddData(resultado, resultado.Entities);
+                                    var rawResult = reader.GetValue(0).ToString();
+                                    if (!string.IsNullOrEmpty(rawResult))
+                                    {
+                                        var resultado = (JsonConvert.DeserializeObject<JosEntityList>(rawResult));
+                                        resultMySql.AddData(resultado, resultado.Entities);
+
+                                    }
+                                    else { 
+                                        TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search"); }
                                 }
                             }
                         }

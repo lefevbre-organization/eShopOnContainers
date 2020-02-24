@@ -335,10 +335,9 @@ namespace Lexon.Infrastructure.Services
                     {
                         var resultMySql = await response.Content.ReadAsAsync<MySqlList<JosEntityList, JosEntity>>();
 
-                        if (!resultMySql.TengoLista())
-                            TraceOutputMessage(resultMySql.Errors, "Mysql don´t recover the master´s entities", 2001);
+                        //if (!resultMySql.TengoLista())
+                        //    TraceOutputMessage(resultMySql.Errors, "Mysql don´t recover the master´s entities", 2001);
 
-                        //var entityList = await response.Content.ReadAsAsync<Result<JosEntityList>>();
                         if (GetEntitiesListMySqlAsync(ref resultLexon, resultMySql, entitySearch.idType))
                             return resultLexon;
                     }
@@ -361,9 +360,15 @@ namespace Lexon.Infrastructure.Services
 
         private bool GetEntitiesListMySqlAsync(ref MySqlList<JosEntityList, LexonEntityBase> result, MySqlList<JosEntityList, JosEntity> entityList, short? idType)
         {
+            result.Errors = entityList.Errors;
+            result.Infos = entityList.Infos;
+            result.PageIndex = entityList.PageIndex;
+            result.PageSize = entityList.PageSize;
+            result.Count = entityList.Count;
+
             if (!entityList.TengoLista())
             {
-                TraceOutputMessage(entityList.Errors, "The response fo Mysql is empty", 2001);
+                TraceOutputMessage(entityList.Errors, "The response of Mysql is empty", 2001);
                 return false;
             }
 
@@ -383,11 +388,6 @@ namespace Lexon.Infrastructure.Services
                 TraceLog(parameters: new string[] { $"code {entity.Code}" });
             }
 
-            result.Errors = entityList.Errors;
-            result.Infos = entityList.Infos;
-            result.PageIndex = entityList.PageIndex;
-            result.PageSize = entityList.PageSize;
-            result.Count = entityList.Count;
             result.Data = listadoFinal;
 
             if (!result.TengoLista())
