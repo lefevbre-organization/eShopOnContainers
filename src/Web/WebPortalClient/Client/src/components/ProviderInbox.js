@@ -42,14 +42,16 @@ class ProviderInbox extends Component {
   }
 
   getTrash(provider) {
-    const { email } = this.props;
+    const { email, token } = this.props;
+    const payload = (token) ? parseJwt(token) : "";
+
     if (email != null && email !== undefined) {
       return (
         <React.Fragment>
           <a
             href="#/"
             className="trash"
-            onClick={() => this._handleOnClick(provider, email, provider)}
+            onClick={() => this._handleOnClick(provider, email)}
           >
             <span className="icon lf-icon-trash"></span>
           </a>

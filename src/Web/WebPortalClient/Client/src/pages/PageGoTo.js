@@ -75,9 +75,9 @@ export class PageGoTo extends Component {
             }
             else {
               if (account.defaultAccount) {
-	      	if (this.canRedirect(account)) {
-                	url = buildClientUrl(account.provider, `${account.provider.substring(0,2)}0${userId}`, this.state.payload);
-		}
+                if (this.canRedirect(account)) {
+                        url = buildClientUrl(account.provider, `${account.provider.substring(0,2)}0${userId}`, this.state.payload);
+                }
               }
             }
             
@@ -105,12 +105,13 @@ export class PageGoTo extends Component {
   }
 
   removeAccount = (email, provider) => {
-    const userId = this.props.match.params.userId;
-    const encrypt = this.props.match.params.encrypt;
+    const payload = this.state.payload;
+    const userId = getUserId(payload);
+    const encrypt = 0;
     
     deleteAccountByUserAndEmail(encrypt, userId, provider, email)
       .then(result => {
-        if (result.data > 0) {
+        if (result.data) {
           this.getAccounts();
         } else {
           const error = `Ha ocurrido un error cuando se borraba: userId -> ${userId}, email -> ${email}`;
@@ -148,15 +149,15 @@ export class PageGoTo extends Component {
       });
   };
 
-  toggleConfirmRemoveAccount(remove, email, provided) {
+  toggleConfirmRemoveAccount(remove, email, provider) {
     this.setState(state => ({
       showConfirmRemoveAccount: !state.showConfirmRemoveAccount,
       emailRemoved: email,
-      providedRemoved: provided
+      providerRemoved: provider
     }));
 
     if (remove === true && email !== undefined) {
-      this.removeAccount(email, provided);
+      this.removeAccount(email, provider);
     }
   }
 

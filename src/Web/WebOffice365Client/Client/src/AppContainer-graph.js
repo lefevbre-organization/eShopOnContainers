@@ -93,9 +93,23 @@ class AppContainerGraph extends Component {
       if (base64regex.test(idMail)){
         idMail = base64.decode(idMail);
       }
-        if (idMail.includes('@')){
+        if (idMail.indexOf('@') !== -1 && idMail.indexOf('<') !== -1 && idMail.indexOf('>') !== -1){
           getMessageByInternetMessageId(idMail)
           .then(res => {
+            console.log(res);
+            const detail = {
+              id: idMail,
+              subject: res.subject,
+              sentDateTime: res.sentDateTime,
+              chkselected: true,
+              provider: "OUTLOOK",
+              account: this.props.lexon.account,
+              folder: ""
+            };
+            window.dispatchEvent(new CustomEvent("Checkclick",  {
+              detail
+            }));            
+
             idMail = res.id;
             
             this.setState({

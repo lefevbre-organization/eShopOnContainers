@@ -43,13 +43,15 @@ class UserLexon extends Component {
     const casefile = this.props.match.params.idCaseFile;
     const bbdd = this.props.match.params.bbdd;
     const company = this.props.match.params.idCompany;
-    const idMessage64 = this.props.match.params.idMessage;
+    //const idMessage64 = this.props.match.params.idMessage;
     var idMessage = this.props.match.params.idMessage;
-    const idFolder64 = this.props.match.params.idFolder;
+    //const idFolder64 = this.props.match.params.idFolder;
     var idFolder = this.props.match.params.idFolder;
 
-    if (idMessage64 && base64regex.test(idMessage64)) { idMessage = base64.decode(idMessage64); }
-    if (idFolder64 && base64regex.test(idFolder64)) { idFolder = base64.decode(idFolder64); }
+    //if (idMessage64 && base64regex.test(idMessage64)) { idMessage = base64.decode(idMessage64); }
+    //if (idFolder64 && base64regex.test(idFolder64)) { idFolder = base64.decode(idFolder64); }
+    if (idMessage && base64regex.test(idMessage)) { idMessage = base64.decode(idMessage); }
+    if (idFolder && base64regex.test(idFolder)) { idFolder = base64.decode(idFolder); }
 
     if (casefile){
       this.props.setCaseFile({

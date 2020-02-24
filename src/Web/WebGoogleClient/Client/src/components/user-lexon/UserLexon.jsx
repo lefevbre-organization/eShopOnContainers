@@ -103,7 +103,7 @@ class UserLexon extends Component {
       if (redirectToEmail === undefined){
         return <Redirect to="/" />;
       }else{
-        return <Redirect to={`/viewMail/${this.props.match.params.idMail}`}/>;      
+        return <Redirect to={`/message/${this.props.match.params.idMail}`}/>;      
       }
     }
 

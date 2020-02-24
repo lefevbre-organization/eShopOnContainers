@@ -209,7 +209,7 @@ export class Main extends Component {
       this.handleGetUserFromLexonConnector
     );
 
-    const { userId, idCaseFile } = this.props.lexon;
+    const { userId, idCaseFile, bbdd } = this.props.lexon;
     const { email } = this.props.User;
     const idEmail = this.props.idEmail;
     if (userId !== null && email !== null) {
@@ -227,13 +227,12 @@ export class Main extends Component {
       .then(result => {
       	Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, { domain: 'lefebvre.es' })
 	      if (idEmail != null && idEmail !== undefined && idEmail !== "notFound"){
-	        if (idCaseFile !== null && idCaseFile !== undefined){
+	        if ((idCaseFile != null && idCaseFile != undefined) || (bbdd !== null & bbdd !== undefined)){
 	          this.onSetSidebarOpenLexon(true);
-	          this.props.history.push(`/${idEmail}`);
-	        } else {
-           const EncodeIdMessage = encodeURI(this.props.idEmail);
-           this.props.history.push(`/${EncodeIdMessage}`);
-	        }
+          }
+
+          this.props.history.push(`/${idEmail}`);
+
 	      } else if (idCaseFile != null && idCaseFile !== undefined){
           this.props.history.push("/compose");
           this.onSetSidebarOpenLexon(true);
