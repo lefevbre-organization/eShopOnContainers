@@ -46,12 +46,12 @@ class ClassificationListSearch extends Component {
   }
 
   render() {
-    const { countResults } = this.props;
+    const { countResults, closeClassName = "" } = this.props;
     const { showSearch } = this.state;
 
     const classListSearcher = showSearch
-      ? "lexon-clasification-list-searcher opened"
-      : "lexon-clasification-list-searcher";
+      ? `lexon-clasification-list-searcher ${closeClassName} opened`
+      : `lexon-clasification-list-searcher ${closeClassName}`;
     const classTriggerShow = showSearch
       ? "search-trigger-show invisible"
       : "search-trigger-show";
@@ -97,7 +97,7 @@ class ClassificationListSearch extends Component {
           />
           <a
             href="#/"
-            className="search-trigger-hide"
+            className={`search-trigger-hide ${closeClassName}`}
             title={i18n.t("classification-list-search.hide-search")}
             onClick={this._handleOnclick}
           >

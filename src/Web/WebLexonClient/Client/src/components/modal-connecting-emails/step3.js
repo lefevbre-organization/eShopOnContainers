@@ -40,10 +40,22 @@ export class ConnectingEmailsStep3 extends React.Component {
         this.nodeSelected = this.onNodeSelected.bind(this)
         this.nodeSelecting = this.onNodeSelecting.bind(this)
         this.onRowSelected = this.onRowSelected.bind(this)
+        this.onNextPage = this.onNextPage.bind(this)
+        this.onPrevPage = this.onPrevPage.bind(this)
     }
 
     async componentDidUpdate(prevProps, prevState) {
+        if (prevProps.show === false && this.props.show === true) {
+            const opened = document.getElementsByClassName("lexon-clasification-list-searcher search-close-3 opened")
+            if(opened && opened.length > 0) {
+                const closeButton = document.getElementsByClassName("search-trigger-hide search-close-3")[0]
+                if(closeButton) {
+                    closeButton.click();
+                }
+            }
 
+            return
+        }
     }
 
     onNodeSelected(event) {
@@ -56,13 +68,24 @@ export class ConnectingEmailsStep3 extends React.Component {
         }
     }
 
+    onNextPage() {
+        alert("onNextPage")
+    }
+
+    onPrevPage() {
+        alert("onPrevPage")
+    }
+
     onRowSelected(event) {
         console.log(event)
-        alert("Directorio seleccionado")
+        const { onSelectedDirectory } = this.props;
+        onSelectedDirectory && onSelectedDirectory({selected: 1})
     }
 
     searchResultsByType(type, search) {
-        alert("Búsqueda")
+        if(search !== "") {
+            alert("Búsqueda")
+        }
     }
 
     render() {
@@ -81,10 +104,10 @@ export class ConnectingEmailsStep3 extends React.Component {
                         <div className="panel-right-top">
                             <span className="section-title">José Manuel García</span>
                             <ClassificationListSearch
+                                closeClassName="search-close-3"
                                 searchResultsByType={this.searchResultsByType}
                                 countResults={-1}
                             ></ClassificationListSearch>
-
                         </div>
                         {this.state.showSpinner === true &&
                             <div className="spinner"> <Spinner /></div>
@@ -102,9 +125,9 @@ export class ConnectingEmailsStep3 extends React.Component {
                                 </ColumnsDirective>
                         </GridComponent>
                         <section className="pager">
-                            <div className={`prevButton`} onClick={() => {}}><span className="pager-icon lf-icon-angle-left" /><span>Anterior</span></div>
+                            <div className={`prevButton`} onClick={this.onPrevPage}><span className="pager-icon lf-icon-angle-left" /><span>Anterior</span></div>
                             <div className="currentPage">1</div>
-                            <div className={`nextButton`} onClick={() => {}}><span>Siguiente</span><span className="pager-icon lf-icon-angle-right" /></div>
+                            <div className={`nextButton`} onClick={this.onNextPage}><span>Siguiente</span><span className="pager-icon lf-icon-angle-right" /></div>
                         </section>
                     </div>
                 </section>

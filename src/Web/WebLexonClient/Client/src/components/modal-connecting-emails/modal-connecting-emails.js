@@ -25,6 +25,9 @@ class ModalConnectingEmails extends Component {
       step2Data: {
         id: -1,
         idType: -1
+      },
+      step3Data: {
+        selected: -1
       }
     }
   }
@@ -42,6 +45,9 @@ class ModalConnectingEmails extends Component {
         step2Data: {
           id: -1,
           idType: -1
+        },
+        step3Data: {
+          selected: -1
         }
       })
     }, 1000)
@@ -81,11 +87,20 @@ class ModalConnectingEmails extends Component {
   }
   
   changeStep3Data(data) {
+    this.setState({ step3Data: data })
   }
 
 
   saveDisabled() {
     if (this.state.step2Data.idType !== -1 && this.state.step2Data.id !== -1) {
+      return false;
+    }
+
+    return true;
+  }
+
+  save3Disabled() {
+    if (this.state.step3Data.selected !== -1) {
       return false;
     }
 
@@ -118,7 +133,7 @@ class ModalConnectingEmails extends Component {
       this.saveClassification();
     } else {
       this.nextStep();
-    }    
+    }
   }
 
   onSaveStep3() {
@@ -172,8 +187,7 @@ class ModalConnectingEmails extends Component {
           <Modal.Header className="align-items-center" closeButton>
             <h5
               className="modal-title d-flex align-items-center"
-              id="documentarGuardardocumentacionLabel"
-            >
+              id="documentarGuardardocumentacionLabel">
               <img class="imgproduct" border="0" alt="Lex-On" src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
               <span>{i18n.t("modal-conecting-emails.save-copy") }</span>
             </h5>
@@ -182,7 +196,7 @@ class ModalConnectingEmails extends Component {
             <Container>
               <div style={{ display: this.state.step === 1 ? 'block' : 'none' }}><ConnectingEmailsStep1 show={this.state.step === 1} onChange={(data) => { this.changeStep1Data(data) }}></ConnectingEmailsStep1></div>
               <div style={{ display: this.state.step === 2 ? 'block' : 'none' }}><ConnectingEmailsStep2 show={this.state.step === 2} user={user} bbdd={companySelected} entity={this.state.step1Data.entity} onSelectedEntity={(data) => this.changeStep2Data(data)}></ConnectingEmailsStep2></div>
-              <div style={{ display: this.state.step === 3 ? 'block' : 'none' }}><ConnectingEmailsStep3 show={this.state.step === 3} user={user} bbdd={companySelected} entity={this.state.step1Data.entity} onSelectedEntity={(data) => this.changeStep3Data(data)}></ConnectingEmailsStep3></div>
+              <div style={{ display: this.state.step === 3 ? 'block' : 'none' }}><ConnectingEmailsStep3 show={this.state.step === 3} user={user} bbdd={companySelected} entity={this.state.step1Data.entity} onSelectedDirectory={(data) => this.changeStep3Data(data)}></ConnectingEmailsStep3></div>
             </Container>
           </Modal.Body>
           <Modal.Footer>
@@ -218,7 +232,7 @@ class ModalConnectingEmails extends Component {
                 {i18n.t("classify-emails.back")}
               </Button>
               <Button
-                disabled={this.saveDisabled()}
+                disabled={this.save3Disabled()}
                 bsPrefix="btn btn-primary"
                 onClick={() => { this.onSave() }} >
                 { i18n.t("classify-emails.save") }

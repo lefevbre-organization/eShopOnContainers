@@ -36,13 +36,11 @@ export class ConnectingEmailsStep2 extends React.Component {
         const { currentPage, search } = this.state;
 
         if (prevProps.show === false && this.props.show === true) {
-            const opened = document.getElementsByClassName("lexon-clasification-list-searcher opened")
+            const opened = document.getElementsByClassName("lexon-clasification-list-searcher search-close-2 opened")
             if(opened && opened.length > 0) {
-                for(let i = 0; i < opened.length; i++) {
-                    const closeButton = document.getElementsByClassName("search-trigger-hide")[i]
-                    if(closeButton) {
-                        closeButton.click();
-                    }    
+                const closeButton = document.getElementsByClassName("search-trigger-hide search-close-2")[0]
+                if(closeButton) {
+                    closeButton.click();
                 }
             }
 
@@ -121,6 +119,7 @@ export class ConnectingEmailsStep2 extends React.Component {
                 <section className="section-border">
                     <p className="section-title">{i18n.t(`classification.${entity}`)}</p>
                     <ClassificationListSearch
+                        closeClassName="search-close-2"
                         searchResultsByType={this.searchResultsByType}
                         countResults={0}
                     ></ClassificationListSearch>
