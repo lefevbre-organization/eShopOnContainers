@@ -82,7 +82,13 @@ export const parseJwt = token => {
         url = `/user/${user}`;
         break;
       case "mailOnly":
-        url = `/user/${user}/editMail/${base64.encode(payload.idMail)}`;
+        if (provider === INBOX_IMAP || provider === IN_IMAP){
+          const folder = getImapFolder(payload);
+          url = `/user/${user}/folder/${base64.encode(folder)}/message/${base64.encode(payload.idMail)}/bbdd/${payload.bbdd}`;
+        }
+        else {
+          url = `/user/${user}/message/${base64.encode(payload.idMail)}/bbdd/${payload.bbdd}`;
+        }
         break;
       case "mailWithCaseFile":
         if (provider === INBOX_IMAP || provider === IN_IMAP){

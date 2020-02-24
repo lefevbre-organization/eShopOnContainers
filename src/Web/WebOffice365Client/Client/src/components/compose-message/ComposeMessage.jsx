@@ -279,7 +279,7 @@ export class ComposeMessage extends PureComponent {
 
     const Fileattached = this.state.uppyPreviews;
 
-    const email = Object.assign({}, this.state, { subject: this.state.subject , internetMessageId: `${uuid()}-${uuid()}@lefebvre.es`})
+    const email = Object.assign({}, this.state, { subject: this.state.subject , internetMessageId: `<${uuid()}-${uuid()}@lefebvre.es>`})
 
     sendMessage({
       data: email,

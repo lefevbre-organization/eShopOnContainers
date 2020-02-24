@@ -482,10 +482,6 @@ class App extends Component {
         this.props.newMessage();
         this.onSetSidebarOpenLexon(true);
       }
-      else if (bbdd && (idCaseFile == undefined || idCaseFile == undefined)){
-        //this.props.newMessage();
-        this.onSetSidebarOpenLexon(true);
-      }
       else if (idEmail){
         console.log("**************** Ha llegado un id de email");
         console.log(this.state);
@@ -535,6 +531,9 @@ class App extends Component {
             this.renderNotFoundModal();
           }
         }
+      }
+      else if (bbdd){
+        this.onSetSidebarOpenLexon(true);
       }
     } else {
       this.setState({ isUpdatedDefaultAccount: true });

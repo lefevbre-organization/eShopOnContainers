@@ -254,7 +254,7 @@ export class Main extends Component {
       .then(result => {
       	Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, { domain: 'lefebvre.es' })
         if (idEmail != null && idEmail !== undefined){
-          if (idCaseFile != null && idCaseFile != undefined){
+          if ((idCaseFile != null && idCaseFile != undefined) || (bbdd !== null & bbdd !== undefined) ) {
             this.onSetSidebarOpenLexon(true);
           }
           if (idEmail.indexOf('<') !== -1 && idEmail.indexOf('>') !== -1){
