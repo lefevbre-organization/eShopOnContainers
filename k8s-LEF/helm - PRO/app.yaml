@@ -12,7 +12,7 @@ app:                                                  # app global settings
       identity: identity                              # ingress entry for identity api
       mvc: webmvc                                     # ingress entry for web mvc
       spa: ""                                         # ingress entry for web spa
-      status: webstatus                               # ingress entry for web status
+      status: webstatus                               # ingress entry for web status lef
       webshoppingapigw: webshoppingapigw              # ingress entry for web shopping Agw
       webmarketingapigw: webmarketingapigw            # ingress entry for web mkg Agw
       mobilemarketingapigw: mobilemarketingapigw      # ingress entry for mobile mkg Agw

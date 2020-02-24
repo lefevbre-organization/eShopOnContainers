@@ -18,7 +18,7 @@ data:
   all_EnableLoadTest: "{{ .Values.inf.misc.useLoadTest }}"
   webstatus__keystore: {{ .Values.inf.redis.keystore.constr }}
   name__webportal__hc: WebPortalClient HTTP Check
-  internalurls__webportal__hc: https://{{ .Values.app.svc.portal }}/hc
+  internalurls__webportal__hc: http://{{ .Values.app.svc.portal }}/hc
   name__webgoogle__hc: WebGoogleClient HTTP Check
   internalurls__webgoogle__hc: http://{{ .Values.app.svc.google }}/hc
   name__weboffice__hc: WebOfficeClient HTTP Check
