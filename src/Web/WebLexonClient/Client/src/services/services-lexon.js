@@ -64,7 +64,6 @@ export const getClassifications = async (
   catch(err) {
     throw err;
   }
-
 };
 
 export const addClassification = async (
