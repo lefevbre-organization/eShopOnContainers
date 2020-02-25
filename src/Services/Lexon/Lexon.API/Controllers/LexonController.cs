@@ -169,6 +169,24 @@ namespace Lexon.API.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        [HttpPost("entities/new")]
+        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> EntitiesNewAsync(
+                [FromBody] EntitySearchView entitySearch
+                )
+        {
+            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0)
+                return BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
+
+            var entities = await _usersService.GetEntitiesAsync(entitySearch);
+
+            var paginatedEntities = new PaginatedItemsViewModel<LexEntity>(entities.PageIndex, entities.PageSize, entities.Count, entities.Data);
+            var result = new Result<PaginatedItemsViewModel<LexEntity>>(paginatedEntities, entities.Errors) { infos = entities.Infos };
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
         [HttpPost]
         [Route("entities/getbyid")]
         [ProducesResponseType(typeof(Result<LexonEntityBase>), (int)HttpStatusCode.OK)]

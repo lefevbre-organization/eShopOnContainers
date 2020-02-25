@@ -1,6 +1,5 @@
-﻿using Lexon.MySql.Model;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using System.Threading.Tasks;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 
 namespace Lexon.MySql.Infrastructure.Repositories
 {
@@ -9,9 +8,15 @@ namespace Lexon.MySql.Infrastructure.Repositories
         Task<Result<JosUserCompanies>> GetCompaniesListAsync(int pageSize,
                                                              int pageIndex,
                                                              string idUser);
+
         Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync();
 
         Task<MySqlList<JosEntityList, JosEntity>> SearchEntitiesAsync(EntitySearchView entitySearch);
+
+        Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch);
+
+
+        Task<Result<JosEntity>> GetEntityAsync(EntitySearchById entitySearch);
 
         Task<Result<int>> RemoveRelationMailAsync(ClassificationRemoveView classification);
 
@@ -20,7 +25,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
         Task<Result<JosUser>> GetUserAsync(string idNavisionUser);
 
         Task<Result<JosRelationsList>> SearchRelationsAsync(ClassificationSearchView classification);
+
         Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification);
-        Task<Result<JosEntity>> GetEntityAsync(EntitySearchById entitySearch);
     }
 }

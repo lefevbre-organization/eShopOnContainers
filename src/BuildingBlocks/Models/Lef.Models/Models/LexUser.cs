@@ -1,25 +1,28 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 
-namespace Lexon.API.Model
+namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
     [BsonIgnoreExtraElements]
-    public class LexonUser : MongoModel
+    public class LexUser : MongoModel
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        public string id { get; set; }
 
+        [BsonIgnore]
         public string token { get; set; }
 
         public string idUser { get; set; }
 
         public string idNavision { get; set; }
 
-        public string Name { get; set; }
+        public string name { get; set; }
 
+        [JsonIgnore]
         public short version { get; set; }
 
-        public LexonCompaniesList companies { get; set; }
+        public LexCompany[] companies { get; set; }
     }
 }
