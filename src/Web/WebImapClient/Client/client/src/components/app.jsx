@@ -569,19 +569,18 @@ class App extends Component {
     if (this.props.lexon.userId !== "" && this.props.outbox && this.props.outbox.sent && !this.props.outbox.eventNotified){      
         this.sentEmail(this.props.outbox.idMessage, this.props.outbox.message.subject);
 
-        if(this.props.lexon.bbdd && this.props.lexon.account) {
+        if(this.props.lexon.bbdd && this.props.email) {
           try {
             const user = await getUser(this.props.lexon.userId);
             if(user && user.data && user.data.configUser) {
               if(user.data.configUser.getContacts) {
                 const emailDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
-                debugger
                 await classifyEmail(this.props.outbox.idMessage, 
                   this.props.outbox.message.subject,
                   emailDate, 
                   this.props.outbox.message.recipients.map(rec => rec.address), 
                   this.props.lexon.provider, 
-                  this.props.lexon.account, 
+                  this.props.email, 
                   this.props.lexon.bbdd, 
                   user.data.lexonUserId
                   );

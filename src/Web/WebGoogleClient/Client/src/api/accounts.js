@@ -1,3 +1,5 @@
+import * as moment from 'moment'
+
 
 export const getUser = async (userId) => {
     const url = `${window.URL_GET_ACCOUNTS}/${userId}`;
@@ -50,7 +52,8 @@ export const resetDefaultAccount = async (userId) => {
     }
 }
 
-export const classifyEmail = async (id, subject, date, to, provider, account, bbdd, userId) => {   
+export const classifyEmail = async (id, subject, date, to, provider, account, bbdd, userId) => { 
+    const m = moment(date).format('YYYY-MM-DD HH:mm:ss'); 
     const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/classifications/contacts/add`;
     const classification = {
         "contactList": [
@@ -61,7 +64,7 @@ export const classifyEmail = async (id, subject, date, to, provider, account, bb
             "mailAccount": account,
             "uid": id,
             "subject": subject,
-            "date": date
+            "date": m
         },
         "bbdd": bbdd,
         "idUser": userId
