@@ -98,13 +98,31 @@ namespace Lexon.MySql.Controllers
         {
             if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null)
                 return BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
-
+           // var resultTest = await _lexonService.GetEntitiesNewAsync(entitySearch);
             var result = await _lexonService.GetEntitiesAsync(entitySearch);
             return Ok(result);
 
             //return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
-        
+
+        /// <summary>
+        /// Search entities
+        /// </summary>
+        [HttpPost("entities/search/new")]
+        [ProducesResponseType(typeof(MySqlCompany), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType(typeof(MySqlList<JosEntityList, JosEntity>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetEntitiesAsync([FromBody] EntitySearchView entitySearch)
+        {
+            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null)
+                return BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
+  
+            var resultTest = await _lexonService.GetEntitiesNewAsync(entitySearch);
+            return Ok(resultTest);
+
+
+        }
+
         /// <summary>
         /// Search entities
         /// </summary>

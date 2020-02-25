@@ -8,7 +8,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         /// <summary>
         /// id del tipo de entidad, establecerá la configuración delr esto de los campos
         /// </summary>
-        public short idType { get; set; }
+        public short? idType { get; set; }
 
         /// <summary>
         /// Nombre del tipo de entidad
@@ -23,7 +23,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         /// <summary>
         /// su idFolder correspondiente
         /// </summary>
-        public long idFolder { get; set; }
+        public long? idFolder { get; set; }
 
         /// <summary>
         /// el codigo o nombre que identifica a la entidad
@@ -50,6 +50,6 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         /// <summary>
         /// Coleccion de mails con los que esta relacionado (adjunción)
         /// </summary>
-        public LexMail[] mails { get; set; }
+        //public LexMail[] mails { get; set; }
     }
 }

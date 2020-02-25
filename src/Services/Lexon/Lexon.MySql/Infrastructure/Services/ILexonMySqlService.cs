@@ -13,6 +13,9 @@ namespace Lexon.MySql.Infrastructure.Services
 
         Task<MySqlList<JosEntityList, JosEntity>> GetEntitiesAsync(EntitySearchView entitySearch);
 
+        Task<MySqlCompany> GetEntitiesNewAsync(EntitySearchView entitySearch);
+        Task<Result<JosEntity>> GetEntityAsync(EntitySearchById entitySearch);
+
         Task<Result<int>> RemoveRelationMailAsync(ClassificationRemoveView classification);
 
         Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification);
@@ -32,7 +35,7 @@ namespace Lexon.MySql.Infrastructure.Services
                                            List<string> mailContacts = null,
                                            bool addTerminatorToToken = true);
 
-        Task<Result<JosEntity>> GetEntityAsync(EntitySearchById entitySearch);
-      
+
+
     }
 }

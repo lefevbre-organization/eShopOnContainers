@@ -1,5 +1,4 @@
-﻿using Lexon.MySql.Model;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
@@ -7,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Lexon.MySql.Infrastructure.Repositories
@@ -135,7 +135,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
                         using (var reader = await command.ExecuteReaderAsync())
                         {
-
                             if (resultMySql.PossibleHasData())
                             {
                                 while (reader.Read())
@@ -145,14 +144,70 @@ namespace Lexon.MySql.Infrastructure.Repositories
                                     {
                                         var resultado = (JsonConvert.DeserializeObject<JosEntityList>(rawResult));
                                         resultMySql.AddData(resultado, resultado.Entities);
-
                                     }
-                                    else { 
-                                        TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search"); }
+                                    else
+                                    {
+                                        TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
+                                    }
                                 }
                             }
                         }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TraceMessage(resultMySql.Errors, ex);
+                }
+            }
 
+            return resultMySql;
+        }
+
+        public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch)
+        {
+            var resultMySql = new MySqlCompany(_settings.Value.SP.SearchEntities, entitySearch.pageIndex, entitySearch.pageSize, entitySearch.bbdd, entitySearch.idType);
+            string filtro = GiveMeSearchEntitiesFilter(entitySearch.idType, entitySearch.bbdd, entitySearch.idUser, entitySearch.search, entitySearch.idFilter);
+            TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.SearchEntities}", $"P_FILTER:{filtro}", $"P_UC:{entitySearch.idUser}-pageSize:{entitySearch.pageSize}-pageIndex:{entitySearch.pageIndex}" });
+
+            // var jsonSerializerSettings = new JsonSerializerSettings   {  MissingMemberHandling = MissingMemberHandling.Ignore };
+
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.SearchEntities, conn))
+                    {
+                        command.Parameters.Add(new MySqlParameter("P_FILTER", MySqlDbType.String) { Value = filtro });
+                        command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = entitySearch.idUser });
+                        command.Parameters.Add(new MySqlParameter("P_PAGE_SIZE", MySqlDbType.Int32) { Value = entitySearch.pageSize });
+                        command.Parameters.Add(new MySqlParameter("P_PAGE_NUMBER", MySqlDbType.Int32) { Value = entitySearch.pageIndex });
+                        command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
+                        command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
+                        command.Parameters.Add(new MySqlParameter("P_TOTAL_REG", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
+                        command.CommandType = CommandType.StoredProcedure;
+                        var r = command.ExecuteNonQuery();
+                        resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            //if (resultMySql.PossibleHasData())
+                            //{
+                            while (reader.Read())
+                            {
+                                var rawResult = reader.GetValue(0).ToString();
+                                if (!string.IsNullOrEmpty(rawResult))
+                                {
+                                    var resultado = (JsonConvert.DeserializeObject<LexCompany>(rawResult));
+                                    resultMySql.AddData(resultado);
+                                }
+                                else
+                                {
+                                    TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
+                                }
+                            }
+                            //}
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -228,7 +283,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
                         using (var reader = await command.ExecuteReaderAsync())
                         {
-                          //  resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
+                            //  resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
 
                             if (resultMySql.PossibleHasData())
                             {
@@ -296,6 +351,10 @@ namespace Lexon.MySql.Infrastructure.Repositories
         {
             int a = 0;
             var result = new Result<int>(a);
+            foreach (var mail in classification.listaMails)
+            {
+                mail.Subject = RemoveProblematicChars(mail.Subject);
+            }
             string filtro = GiveMeRelationMultipleFilter(classification.bbdd, classification.idUser, classification.listaMails, classification.idType, classification.idRelated);
 
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.AddRelation}", $"P_FILTER:{filtro}", $"P_UC:{classification.idUser}" });
@@ -366,6 +425,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
         {
             int a = 0;
             var result = new Result<int>(a);
+            classification.mail.Subject = RemoveProblematicChars(classification.mail.Subject);
             string filtro = GiveMeRelationFilter(classification.bbdd, classification.idUser, classification.mail, null, null, classification.ContactList);
 
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.AddContactRelations}", $"P_FILTER:{filtro}", $"P_UC:{classification.idUser}" });
@@ -394,6 +454,23 @@ namespace Lexon.MySql.Infrastructure.Repositories
             }
 
             return result;
+        }
+
+        private string RemoveProblematicChars(string inputString)
+        {
+            // string inputString = "Räksmörgås";
+            string asAscii = Encoding.ASCII.GetString(
+                Encoding.Convert(
+                    Encoding.UTF8,
+                    Encoding.GetEncoding(
+                        Encoding.ASCII.EncodingName,
+                        new EncoderReplacementFallback(string.Empty),
+                        new DecoderExceptionFallback()
+                        ),
+                    Encoding.UTF8.GetBytes(inputString)
+                )
+            );
+            return asAscii;
         }
 
         #endregion Relations
