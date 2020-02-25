@@ -225,6 +225,41 @@ $header-chip-height: 21px;
             &.cancel {
                 margin-left: auto;
             }
+
+            &.attach {
+                background-color: white;
+                border:none;
+                cursor: pointer;
+                margin-left: 20px;
+                margin-right: 0;
+                padding: 0;
+                color: #001978 !important;
+                height: 20px;
+                display:flex;
+
+                div {
+                    margin-right: 0;
+                    color: #001978 !important;
+                }
+
+                span {
+                    font-family: Roboto, "San Serif";
+                    font-size: 14px;    
+                }
+            }
+
+            &.attach:hover::before,
+            &.attach:active::before,
+            &.attach:focus::before {
+                opacity: 0 !important;
+                background-color: white !important;
+
+                .mdc-icon-button::before {
+                    background-color: white;
+                }
+            }
         }
+
+
     }
 }

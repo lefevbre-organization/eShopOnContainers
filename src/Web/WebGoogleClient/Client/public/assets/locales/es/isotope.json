@@ -31,6 +31,7 @@
     "drag-and-drop": "Deja los archivos aquí",
     "add-attachments": "Añadir archivos adjuntos",
     "browse": "Seleccionar",
+    "attach":"ADJUNTAR",
     "or": "o",
     "bcc": "Cco:",
     "max-file-size": "El tamaño total de los adjuntos debe ser menor que 25MB para este proveedor.",

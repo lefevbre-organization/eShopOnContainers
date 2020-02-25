@@ -5,7 +5,7 @@ import { getValidEmails } from "../../utils";
 import i18n from "i18next";
 import { Button, InputGroup, InputGroupAddon, Input } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faTrash, faPaperclip } from "@fortawesome/free-solid-svg-icons";
 import ReactQuill from "react-quill";
 import "../../../node_modules/react-quill/dist/quill.snow.css";
 import "./composeMessage.scss";
@@ -111,10 +111,20 @@ export class ComposeMessage extends PureComponent {
       this.showAttachActions = true
     });
 
+    this.onAttachButton = this.onAttachButton.bind(this);
+    this.onAttachSelected = this.onAttachSelected.bind(this);
+    this.fileInput = null;
+
     // Header Address Events
     this.handleAddAddress = this.addAddress.bind(this);
     this.handleRemoveAddress = this.removeAddress.bind(this);
     this.handleMoveAddress = this.moveAddress.bind(this);
+  }
+
+  componentDidMount() {
+    if(this.fileInput) {
+      this.fileInput.onchange = this.onAttachSelected
+    }
   }
 
   typeAllowed(file) {
@@ -462,6 +472,39 @@ export class ComposeMessage extends PureComponent {
         // this.props.editMessage(updatedMessage);
     }
 
+    onAttachButton() {
+      console.log(this.fileInput);
+      this.fileInput && this.fileInput.click()
+    }
+  
+    onAttachSelected(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      const uppy = this.uppy;
+      const addAttachment = (file, dataUrl) => {
+        const newAttachment = {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          source: 'Local',
+          isRemote: false,
+          data: file,
+          //content: dataUrl.currentTarget.result.replace(/^data:[^;]*;base64,/, "")
+        };
+  
+        uppy.addFile(newAttachment);
+      };
+  
+      debugger
+      Array.from(event.target.files).forEach(file => {
+        //const fileReader = new FileReader();
+        //fileReader.onload = addAttachment.bind(this, file);
+        //fileReader.readAsDataURL(file);
+        addAttachment(file);
+      });
+      return true;
+    }
+
   render() {
     const collapsed = this.props.sideBarCollapsed;
     const { showNotification, messageNotification, showEmptySubjectWarning, errorNotification } = this.state;
@@ -609,9 +652,36 @@ export class ComposeMessage extends PureComponent {
               >
                 {i18n.t("compose-message.discard")}
               </Button>
+              <Button onClick={this.onAttachButton}
+                      className={"attach-button"}>
+                <FontAwesomeIcon icon={faPaperclip} size="1x" />
+                <span>{i18n.t("compose-message.attach")}</span>
+                <input ref={r => this.fileInput = r} id="file-input" type="file" name="name" style={{display: "none"}} multiple="true"/>
+              </Button>              
             </div>
           </div>
         </div>
+        <style jsx>{`
+          .attach-button,
+          .attach-button:hover,
+          .attach-button:focus,
+          .attach-button:active
+           {
+            outline: none !important;
+            box-shadow: none !important;
+            margin-left: 20px !important;
+            border: none !important;
+            background-color: white !important;
+            color: #001978 !important;
+            font-size: 14px !important;
+          }
+
+          .attach-button .fa-paperclip {
+            font-size: 20px;
+            margin-right: 5px;
+          }
+
+        `}</style>
       </React.Fragment>
     );
   }
