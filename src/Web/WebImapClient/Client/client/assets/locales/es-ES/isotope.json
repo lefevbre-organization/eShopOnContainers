@@ -81,6 +81,7 @@
     "subject": "Asunto",
     "send": "Enviar",
     "dropZoneMessage": "Deposita aquí ficheros",
+    "attach":"ADJUNTAR",
     "insertLinkDialog": {
       "title": "Insertar Enlace",
       "cancel": "Cancelar",

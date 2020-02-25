@@ -82,6 +82,7 @@
     "subject": "Subject",
     "send": "Send",
     "dropZoneMessage": "Drop files here",
+    "attach":"ATTACH",
     "insertLinkDialog": {
       "title": "Insert Link",
       "cancel": "Cancel",

@@ -59,6 +59,12 @@ class MessageEditor extends Component {
     this.onAttachSelected = this.onAttachSelected.bind(this);
   }
 
+  componentDidMount() {
+    if (this.fileInput) {
+      this.fileInput.onchange = this.onAttachSelected
+    }
+  }
+
   removeMessageEditor(aplication) {
     const { close, lexon } = this.props;
 
@@ -199,12 +205,12 @@ class MessageEditor extends Component {
           >
             {t("messageEditor.send")}
           </button>
-          <button className={`${styles["action-button"]} ${styles.attach}`}>
-              <div className={`material-icons ${mainCss['mdc-list-item__graphic']} ${styles.icon}`}>
+          <button className={`${styles["action-button"]} ${styles.attach}`} onClick={this.onAttachButton}>
+            <div className={`material-icons ${mainCss['mdc-list-item__graphic']} ${styles.icon}`}>
               attach_file
-              </div>    
-              <div><span>ADJUNTAR</span></div>
-              <input ref={r => this.fileInput = r} id="file-input" type="file" name="name" style={{display: "none"}} multiple="true"/> 
+              </div>
+            <div><span>{i18n.t("messageEditor.attach")}</span></div>
+            <input ref={r => this.fileInput = r} id="file-input" type="file" name="name" style={{ display: "none" }} multiple="true" />
           </button>
           <button
             className={`material-icons ${mainCss["mdc-icon-button"]} ${styles["action-button"]} ${styles.cancel}`}
@@ -367,6 +373,35 @@ class MessageEditor extends Component {
       );
       this.props.editMessage(updatedMessage);
     }
+  }
+
+  onAttachButton() {
+    this.fileInput && this.fileInput.click()
+  }
+
+  onAttachSelected(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.setState({ dropZoneActive: false });
+    const addAttachment = (file, dataUrl) => {
+      const newAttachment = {
+        fileName: file.name,
+        size: file.size,
+        contentType: file.type,
+        content: dataUrl.currentTarget.result.replace(/^data:[^;]*;base64,/, "")
+      };
+      const updatedMessage = { ...this.props.editedMessage };
+      updatedMessage.attachments = updatedMessage.attachments
+        ? [...updatedMessage.attachments, newAttachment]
+        : [newAttachment];
+      this.props.editMessage(updatedMessage);
+    };
+    Array.from(event.target.files).forEach(file => {
+      const fileReader = new FileReader();
+      fileReader.onload = addAttachment.bind(this, file);
+      fileReader.readAsDataURL(file);
+    });
+    return true;
   }
 
   getEditor() {

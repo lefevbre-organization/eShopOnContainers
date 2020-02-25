@@ -498,7 +498,6 @@ export class ComposeMessage extends PureComponent {
       uppy.addFile(newAttachment);
     };
 
-    debugger
     Array.from(event.target.files).forEach(file => {
       //const fileReader = new FileReader();
       //fileReader.onload = addAttachment.bind(this, file);
@@ -683,7 +682,7 @@ export class ComposeMessage extends PureComponent {
               <Button onClick={this.onAttachButton}
                       className={"attach-button"}>
                 <FontAwesomeIcon icon={faPaperclip} size="1x" />
-                <span>ADJUNTAR</span>
+              <span>{i18n.t("compose-message.attach")}</span>
                 <input ref={r => this.fileInput = r} id="file-input" type="file" name="name" style={{display: "none"}} multiple="true"/>
               </Button>              
             </div>
