@@ -426,7 +426,6 @@ const getHeader = (headers, name) => {
 
 const findAttachments = (email) => {
   let attachs = [];
-  debugger
   if(email.attach) {
     for(let i = 0; i < email.attach.length; i++) {
 

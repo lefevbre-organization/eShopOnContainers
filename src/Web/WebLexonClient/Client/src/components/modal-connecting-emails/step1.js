@@ -7,9 +7,9 @@ export class ConnectingEmailsStep1 extends React.Component {
     constructor() {
         super()
         this.state = {
-            types: [],            
+            types: [],
             actuation: true,
-            copyDocuments: false,
+            copyDocuments: true,
             saveDocuments: false,
             entity: 1
         }
@@ -19,10 +19,10 @@ export class ConnectingEmailsStep1 extends React.Component {
         try {
             const response = await getTypes();
             console.log(response)
-            if(response && response.types) {
-                this.setState({types: response.types})
-            } 
-        } catch(err) {
+            if (response && response.types) {
+                this.setState({ types: response.types })
+            }
+        } catch (err) {
             console.log(err)
         }
 
@@ -42,33 +42,34 @@ export class ConnectingEmailsStep1 extends React.Component {
     render() {
         return <Fragment>
             <div className="step1-container">
-            <ol> 
-                <li>
-                    <span>{i18n.t("connecting.q1")}</span>
-                    <ul>
-                        <li><CheckBoxComponent disabled checked={this.state.actuation} label={i18n.t("connecting.create")} change={(event)=>{
-                            this.setState({actuation: event.checked}, ()=>{ this.onChangeData() })}
-                            }/>
-                        </li>
-                        <li><CheckBoxComponent disabled label={i18n.t("connecting.copy")} onChange={(data)=>{ this.changeStep1Data(data) }}/></li>
-                        <li><CheckBoxComponent disabled label={i18n.t("connecting.save")} onChange={(data)=>{ this.changeStep1Data(data) }}/></li>
-                    </ul>
-                </li>
-                <li>
-                    <span>{i18n.t("connecting.q2")}</span>
-                    <ul className="two-columns">
-                        {this.state.types.map( item => (<li key={item.idEntity}>
-                            <RadioButtonComponent 
-                                cssClass="e-primary" 
-                                label={i18n.t('classification.' + item.idEntity)} 
-                                name="entity" 
-                                checked={item.idEntity === 1}
-                                change={()=>{this.setState({entity: item.idEntity}, ()=>{ this.onChangeData() })}}
-                            />
-                        </li>))}
-                    </ul>
-                </li>
-            </ol>
+                <ol>
+                    <li>
+                        <span>{i18n.t("connecting.q1")}</span>
+                        <ul>
+                            <li><CheckBoxComponent disabled checked={this.state.actuation} label={i18n.t("connecting.create")} change={(event) => {
+                                    this.setState({ actuation: event.checked }, () => { this.onChangeData() })
+                                }
+                            } />
+                            </li>
+                            <li><CheckBoxComponent label={i18n.t("connecting.copy")} checked={this.state.copyDocuments} onChange={(data) => { this.changeStep1Data(data) }} /></li>
+                            <li><CheckBoxComponent label={i18n.t("connecting.save")} checked={this.state.saveDocuments} onChange={(data) => { this.changeStep1Data(data) }} /></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <span>{i18n.t("connecting.q2")}</span>
+                        <ul className="two-columns">
+                            {this.state.types.map(item => (<li key={item.idEntity}>
+                                <RadioButtonComponent
+                                    cssClass="e-primary"
+                                    label={i18n.t('classification.' + item.idEntity)}
+                                    name="entity"
+                                    checked={item.idEntity === 1}
+                                    change={() => { this.setState({ entity: item.idEntity }, () => { this.onChangeData() }) }}
+                                />
+                            </li>))}
+                        </ul>
+                    </li>
+                </ol>
             </div>
             <style jsx>{`
                 .step1-container {
