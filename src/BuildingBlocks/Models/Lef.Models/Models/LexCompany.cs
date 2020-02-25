@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
-namespace Lexon.API.Model
+namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
     [BsonIgnoreExtraElements]
     public class LexCompany : MongoModel
