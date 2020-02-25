@@ -35,6 +35,7 @@ class MessageEditor extends Component {
       editorState: {}
     };
 
+    this.fileInput = null;
     this.headerFormRef = React.createRef();
     this.editorRef = React.createRef();
     this.handleSetState = patchedState => this.setState(patchedState);
@@ -54,6 +55,8 @@ class MessageEditor extends Component {
     this.handleEditorBlur = this.editorBlur.bind(this);
     this.handleSelectionChange = this.selectionChange.bind(this);
     this.handleEditorInsertLink = this.editorInsertLink.bind(this);
+    this.onAttachButton = this.onAttachButton.bind(this);
+    this.onAttachSelected = this.onAttachSelected.bind(this);
   }
 
   removeMessageEditor(aplication) {
@@ -195,6 +198,13 @@ class MessageEditor extends Component {
             onClick={this.handleSubmit}
           >
             {t("messageEditor.send")}
+          </button>
+          <button className={`${styles["action-button"]} ${styles.attach}`}>
+              <div className={`material-icons ${mainCss['mdc-list-item__graphic']} ${styles.icon}`}>
+              attach_file
+              </div>    
+              <div><span>ADJUNTAR</span></div>
+              <input ref={r => this.fileInput = r} id="file-input" type="file" name="name" style={{display: "none"}} multiple="true"/> 
           </button>
           <button
             className={`material-icons ${mainCss["mdc-icon-button"]} ${styles["action-button"]} ${styles.cancel}`}

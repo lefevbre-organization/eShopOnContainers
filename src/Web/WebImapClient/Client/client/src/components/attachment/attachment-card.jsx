@@ -23,7 +23,7 @@ export class AttachmentCard extends Component {
         onClick={() => this.download(attachment)}
         isotip={attachment.fileName} isotip-position='bottom'>
         <Spinner className={styles.spinner} canvasClassName={styles.canvas} visible={this.state.downloading}/>
-        <div className={`material-icons ${mainCss['mdc-list-item__graphic']} ${styles.icon}`}>
+        <div className={`material-icons ${mainCss['mdc-list-item__graphic']}`}>
           attach_file
         </div>
         <div className={styles.fileInfo}>
