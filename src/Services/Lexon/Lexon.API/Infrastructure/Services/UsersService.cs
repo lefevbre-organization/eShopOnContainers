@@ -321,10 +321,7 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<MySqlList<JosEntityList, LexonEntityBase>> GetEntitiesListAsync(EntitySearchView entitySearch)
         {
-            //var resultMySql = new MySqlList<JosEntityList, JosEntity>();
             var resultLexon = new MySqlList<JosEntityList, LexonEntityBase>();
-
-           // var result = new Result<List<LexonEntityBase>>(new List<LexonEntityBase>());
             SerializeObjectToPost(entitySearch, "/entities/search", out string url, out StringContent data);
 
             try
@@ -334,9 +331,6 @@ namespace Lexon.Infrastructure.Services
                     if (response.IsSuccessStatusCode)
                     {
                         var resultMySql = await response.Content.ReadAsAsync<MySqlList<JosEntityList, JosEntity>>();
-
-                        //if (!resultMySql.TengoLista())
-                        //    TraceOutputMessage(resultMySql.Errors, "Mysql don´t recover the master´s entities", 2001);
 
                         if (GetEntitiesListMySqlAsync(ref resultLexon, resultMySql, entitySearch.idType))
                             return resultLexon;
@@ -357,6 +351,53 @@ namespace Lexon.Infrastructure.Services
                // entitySearch.idUser, entitySearch.bbdd, entitySearch.search, result);
             return resultLexon;
         }
+
+        #region New Entities
+
+        public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch)
+        {
+
+            var resultMySql = new MySqlCompany();
+            SerializeObjectToPost(entitySearch, "/entities/search/new", out string url, out StringContent data);
+
+            try
+            {
+                using (var response = await _client.PostAsync(url, data))
+                {
+                    if (response.IsSuccessStatusCode)                 
+                        resultMySql = await response.Content.ReadAsAsync<MySqlCompany>();
+                    else
+                        TraceOutputMessage(resultMySql.Errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", 2003);
+  
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(resultMySql.Errors, ex);
+            }
+
+            if (resultMySql.TengoLista())
+                UpsertDataMongoAsync(resultMySql);
+            else
+                GetEntitiesMongoAsync(entitySearch, resultMySql);
+
+            return resultMySql;
+        }
+
+        private async void GetEntitiesMongoAsync(EntitySearchView search, MySqlCompany resultMySql)
+        {
+            return;
+            MySqlCompany resultMongo = await _usersRepository.GetEntitiesAsync(search);
+            resultMySql.Data = resultMongo.Data;
+            return;
+        }
+
+        private void UpsertDataMongoAsync(MySqlCompany resultMySql)
+        {
+            return;
+        }
+
+        #endregion New Entities
 
         private bool GetEntitiesListMySqlAsync(ref MySqlList<JosEntityList, LexonEntityBase> result, MySqlList<JosEntityList, JosEntity> entityList, short? idType)
         {

@@ -2,6 +2,7 @@
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
+using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -73,6 +74,11 @@ namespace Lexon.API.Infrastructure
         public IMongoCollection<LexonUser> LexonUsers
         {
             get { return Database.GetCollection<LexonUser>(_settings.Value.Collection); }
+        }
+
+        public IMongoCollection<LexUser> LexUsers
+        {
+            get { return Database.GetCollection<LexUser>(_settings.Value.Collection); }
         }
 
         public IMongoCollection<LexonUser> LexonUsersTransaction(IClientSessionHandle session)

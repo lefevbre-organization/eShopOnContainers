@@ -72,6 +72,14 @@ namespace Lexon.API.Infrastructure.Repositories
                 );
         }
 
+        private static FilterDefinition<LexUser> GetFilterLexUser(string idUser)
+        {
+            return Builders<LexUser>.Filter.Or(
+                Builders<LexUser>.Filter.Eq(u => u.idUser, idUser),
+                Builders<LexUser>.Filter.Gte(u => u.version, 11)
+                );
+        }
+
         public async Task<Result<List<LexonUser>>> GetListAsync(int pageSize, int pageIndex, string idUser)
         {
             var result = new Result<List<LexonUser>>(new List<LexonUser>());
@@ -222,6 +230,74 @@ namespace Lexon.API.Infrastructure.Repositories
                 TraceMessage(result.errors, ex);
             }
             return result;
+        }
+
+        public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView search)
+        {
+            LexEntity[] entidades;
+            var resultMongo = new MySqlCompany();
+            var filterUser = GetFilterLexUser(search.idUser);
+
+            var filter = Builders<LexUser>.Filter.And(
+                filterUser,
+                Builders<LexUser>.Filter.Eq("companies.$.bbdd", search.bbdd)
+                );
+
+            var filterEntities = Builders<LexEntity>.Filter.And(
+                Builders<LexEntity>.Filter.Eq(x => x.idType, search.idType),
+                GetFilterSearch(search),
+                GetFilterIdRelated(search)
+                );
+
+            TraceLog(parameters: new string[] { $"filter:{filter.ToString()}" });
+
+            try
+            {
+                var user = await _context.LexUsers
+                    .Find(filter)
+                    .SingleAsync();
+
+                var company = user.companies.FirstOrDefault(x => x.bbdd.Contains(search.bbdd));
+                if (!string.IsNullOrEmpty(search.search))
+                {
+                    var files = from s in company.entities
+                                where s.description.Contains(search.search) || s.code.Contains(search.search)
+                                select s;
+                    entidades = files.ToArray();
+                }
+                else
+                {
+
+                    entidades = (from s in company.entities 
+                                 select s).ToArray();
+                }
+
+
+                company.entities = entidades;
+                resultMongo.AddData(company);
+
+
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(resultMongo.Errors, ex);
+            }
+            return resultMongo;
+
+        }
+
+        private static FilterDefinition<LexEntity> GetFilterIdRelated(EntitySearchView search)
+        {
+            if (search.idFilter != null)
+                return Builders<LexEntity>.Filter.Eq(x => x.idRelated, search.idFilter);
+            return FilterDefinition<LexEntity>.Empty;
+        }
+
+        private static FilterDefinition<LexEntity> GetFilterSearch(EntitySearchView search)
+        {
+            if (search.search != null)
+                return Builders<LexEntity>.Filter.Eq(x => x.description, search.search);
+            return FilterDefinition<LexEntity>.Empty;
         }
 
         public async Task<Result<List<LexonEntityType>>> GetClassificationMasterListAsync()

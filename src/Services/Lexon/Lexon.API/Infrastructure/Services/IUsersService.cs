@@ -17,6 +17,8 @@ namespace Lexon.Infrastructure.Services
 
         Task<MySqlList<JosEntityList, LexonEntityBase>> GetEntitiesListAsync(EntitySearchView entitySearch);
 
+        Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch);
+
         Task<Result<LexonEntityBase>> GetEntityById(EntitySearchById entitySearch);
 
         Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync();
