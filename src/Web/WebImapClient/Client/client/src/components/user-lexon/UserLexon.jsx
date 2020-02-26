@@ -53,6 +53,10 @@ class UserLexon extends Component {
     if (idMessage && base64regex.test(idMessage)) { idMessage = base64.decode(idMessage); }
     if (idFolder && base64regex.test(idFolder)) { idFolder = base64.decode(idFolder); }
 
+    if (idFolder === null || idFolder === undefined || idFolder === "NULL"){
+      idFolder = "INBOX"
+    }
+
     if (casefile){
       this.props.setCaseFile({
         casefile: casefile,

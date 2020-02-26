@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import "./account-user.css";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { removeStateExLexon } from "../../../services/state";
+import { removeStateExLexon, removeState } from "../../../services/state";
+import { clearUserCredentials } from "../../../actions/application";
+import * as base64 from 'base-64';
 
 class AccountUser extends Component {
   constructor(props) {
@@ -11,7 +13,7 @@ class AccountUser extends Component {
     this._handleOnClick = this._handleOnClick.bind(this);
   }
 
-  _handleOnClick(provider) {
+  _handleOnClick(provider, account) {
     const { userId } = this.props.lexon;
 
     switch (provider) {
@@ -23,9 +25,15 @@ class AccountUser extends Component {
         window.open(`${window.URL_MF_OUTLOOK}/OU0${userId}`, "_self");
         break;
 
-        default: 
-          removeStateExLexon();
-          window.location.reload();           
+        default:
+          removeState();
+          this.props.logout(); 
+          //const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0&account=${base64.encode(account)}`;
+          //window.open(urlRedirect, "_self");
+          window.open(`${window.URL_MF_IMAP}/IM0${userId}?account=${base64.encode(account)}`, "_self");
+         
+          //removeStateExLexon();
+          //window.location.reload();           
         break;
     }
   }
@@ -50,7 +58,7 @@ class AccountUser extends Component {
         <a
           href="#/"
           className="d-flex align-items-center account-text"
-          onClick={() => this._handleOnClick(account.provider)}
+          onClick={() => this._handleOnClick(account.provider, account.email)}
         >
           <span>
             <img src={this.getImage(account.provider)} alt={account.provider} />
@@ -71,4 +79,10 @@ const mapStateToProps = state => ({
   lexon: state.lexon
 });
 
-export default connect(mapStateToProps)(AccountUser);
+const mapDispatchToProps = dispatch => ({
+  logout: () => {
+    dispatch(clearUserCredentials());
+  }
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(AccountUser);
