@@ -39,6 +39,18 @@ export class ConnectingEmailsStep1 extends React.Component {
         })
     }
 
+    changeCheck1(event) {
+        this.setState({copyDocuments: event.checked}, ()=>{
+            this.onChangeData()
+        })
+    }
+
+    changeCheck2(event) {
+        this.setState({saveDocuments: event.checked}, ()=>{
+            this.onChangeData()
+        })
+    }
+
     render() {
         return <Fragment>
             <div className="step1-container">
@@ -51,8 +63,8 @@ export class ConnectingEmailsStep1 extends React.Component {
                                 }
                             } />
                             </li>
-                            <li><CheckBoxComponent label={i18n.t("connecting.copy")} checked={this.state.copyDocuments} onChange={(data) => { this.changeStep1Data(data) }} /></li>
-                            <li><CheckBoxComponent label={i18n.t("connecting.save")} checked={this.state.saveDocuments} onChange={(data) => { this.changeStep1Data(data) }} /></li>
+                            <li><CheckBoxComponent label={i18n.t("connecting.copy")} checked={this.state.copyDocuments} change={(data) => { this.changeCheck1(data) }} /></li>
+                            <li><CheckBoxComponent label={i18n.t("connecting.save")} checked={this.state.saveDocuments} change={(data) => { this.changeCheck2(data) }} /></li>
                         </ul>
                     </li>
                     <li>
