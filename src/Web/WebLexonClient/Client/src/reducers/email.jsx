@@ -31,7 +31,8 @@ const email = (state = INITIAL_STATE.email, action) => {
             }
             return {
                 ...state,
-                selectedMessages: state.selectedMessages            }     
+                selectedMessages: [...state.selectedMessages]
+            }     
         }
 
         case ACTIONS.Types.ADD_LIST_MESSAGES: {
@@ -43,7 +44,7 @@ const email = (state = INITIAL_STATE.email, action) => {
             }
             return {
                 ...state,
-                selectedMessages: state.selectedMessages
+                selectedMessages: [...state.selectedMessages]
             }     
         }
 
