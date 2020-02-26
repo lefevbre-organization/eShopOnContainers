@@ -23,22 +23,26 @@ const FORBIDDEN_EXTENSIONS = ["ade", "adp", "apk", "appx", "appxbundle", "bat", 
 export class ComposeMessage extends PureComponent {
   constructor(props) {
     super(props);
+    debugger
     this.state = {
       to:
         (props.history.location.state &&
           props.history.location.state.composeProps.to) ||
         "",
-      to2:[],
+      to2: (props.history.location.state &&
+        props.history.location.state.composeProps.to)?props.history.location.state.composeProps.to.split(','):[],
       cc:
         (props.history.location.state &&
           props.history.location.state.composeProps.cc) ||
         "",
-      cc2:[],
+      cc2:(props.history.location.state &&
+        props.history.location.state.composeProps.cc)?props.history.location.state.composeProps.cc.split(','):[],
       bcc:
         (props.history.location.state &&
           props.history.location.state.composeProps.bcc) ||
         "",
-      bcc2:[],
+      bcc2:(props.history.location.state &&
+        props.history.location.state.composeProps.bcc)?props.history.location.state.composeProps.bcc.split(','):[],
       subject:
         (props.history.location.state &&
           props.history.location.state.composeProps.subject) ||
