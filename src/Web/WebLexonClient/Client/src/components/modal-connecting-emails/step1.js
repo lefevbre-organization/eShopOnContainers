@@ -9,7 +9,7 @@ export class ConnectingEmailsStep1 extends React.Component {
         this.state = {
             types: [],
             actuation: true,
-            copyDocuments: true,
+            copyDocuments: false,
             saveDocuments: false,
             entity: 1
         }
