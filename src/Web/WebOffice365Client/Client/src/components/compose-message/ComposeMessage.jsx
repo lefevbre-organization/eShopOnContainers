@@ -29,18 +29,21 @@ export class ComposeMessage extends PureComponent {
         (props.history.location.state &&
           props.history.location.state.composeProps.to) ||
         "",
-      to2: [],
-      cc:
+        to2: (props.history.location.state &&
+          props.history.location.state.composeProps.to)?props.history.location.state.composeProps.to.split(','):[],
+        cc:
         (props.history.location.state &&
           props.history.location.state.composeProps.cc) ||
         "",
-      cc2: [],
-      bcc:
+        cc2:(props.history.location.state &&
+          props.history.location.state.composeProps.cc)?props.history.location.state.composeProps.cc.split(','):[],
+        bcc:
         (props.history.location.state &&
           props.history.location.state.composeProps.bcc) ||
         "",
-      bcc2: [],
-      subject:
+        bcc2:(props.history.location.state &&
+          props.history.location.state.composeProps.bcc)?props.history.location.state.composeProps.bcc.split(','):[],
+        subject:
         (props.history.location.state &&
           props.history.location.state.composeProps.subject) ||
         "",
