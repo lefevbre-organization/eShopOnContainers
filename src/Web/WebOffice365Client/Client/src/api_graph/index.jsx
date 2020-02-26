@@ -6,15 +6,22 @@ import { UserAgentApplication } from "msal";
 const graph = require("@microsoft/microsoft-graph-client");
 let userAgentApplication = null;
 
-export const getUserApplication = () => {
+export const getUserApplication = (userId = "", signout = false, redirect = false) => {
+  if (signout) {userAgentApplication = null};
   if (userAgentApplication === null) {
 
+    if (userId && (userId.indexOf('OU1') !== -1 || userId.indexOf('OU0') !== -1)) {
+      userId = userId.slice(3);
+    }
+
     const redirectUri = window.location.origin
+    //debugger;
 
     userAgentApplication = new UserAgentApplication({
       auth: {
         clientId: config.appId,
-        redirectUri: redirectUri
+        redirectUri: redirectUri,
+        postLogoutRedirectUri: (userId !== '' ? `${window.URL_SELECT_ACCOUNT}?user=${userId}&encrypt=0&redirect=${redirect}` : `${window.URL_MF_OUTLOOK}` ) //"http://localhost:3010?user=E1654569&encrypt=0"
       },
       cache: {
         cacheLocation: "localStorage",
@@ -573,4 +580,3 @@ export const getContacts = () =>
              });
 
     });
-
