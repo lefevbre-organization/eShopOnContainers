@@ -7,6 +7,9 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
     [BsonIgnoreExtraElements]
     public class LexUser : MongoModel
     {
+        /// <summary>
+        /// id  del Usuario en formato Bsonid autogenerado por mongo
+        /// </summary>
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string id { get; set; }
