@@ -88,6 +88,8 @@ class MenuUser extends Component {
           removeState();
         })
         .then(() => {
+          //Call action to reset all redux info
+          this.props.logout();
           const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
           window.open(urlRedirect, "_self");
         });
@@ -232,7 +234,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   logout: () => {
     dispatch(clearUserCredentials());
-    history.push("/login");
+    //history.push("/login");
   }
 });
 
