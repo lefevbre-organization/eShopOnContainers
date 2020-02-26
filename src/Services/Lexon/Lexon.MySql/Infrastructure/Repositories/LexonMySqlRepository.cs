@@ -109,7 +109,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
         public async Task<MySqlList<JosEntityList, JosEntity>> SearchEntitiesAsync(EntitySearchView entitySearch)
         {
             var resultMySql = new MySqlList<JosEntityList, JosEntity>(new JosEntityList(), _settings.Value.SP.SearchEntities, entitySearch.pageIndex, entitySearch.pageSize);
-            string filtro = GiveMeSearchEntitiesFilter(entitySearch.idType, entitySearch.bbdd, entitySearch.idUser, entitySearch.search, entitySearch.idFilter);
+            string filtro = GiveMeSearchEntitiesFilter(entitySearch);
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.SearchEntities}", $"P_FILTER:{filtro}", $"P_UC:{entitySearch.idUser}-pageSize:{entitySearch.pageSize}-pageIndex:{entitySearch.pageIndex}" });
 
             var jsonSerializerSettings = new JsonSerializerSettings();
@@ -166,7 +166,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
         public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch)
         {
             var resultMySql = new MySqlCompany(_settings.Value.SP.SearchEntities, entitySearch.pageIndex, entitySearch.pageSize, entitySearch.bbdd, entitySearch.idType);
-            string filtro = GiveMeSearchEntitiesFilter(entitySearch.idType, entitySearch.bbdd, entitySearch.idUser, entitySearch.search, entitySearch.idFilter);
+            string filtro = GiveMeSearchEntitiesFilter(entitySearch);
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.SearchEntities}", $"P_FILTER:{filtro}", $"P_UC:{entitySearch.idUser}-pageSize:{entitySearch.pageSize}-pageIndex:{entitySearch.pageIndex}" });
 
             // var jsonSerializerSettings = new JsonSerializerSettings   {  MissingMemberHandling = MissingMemberHandling.Ignore };
@@ -551,13 +551,13 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     $" }}";
         }
 
-        private string GiveMeSearchEntitiesFilter(short? idType, string bbdd, string idUser, string search, long? idFilter)
+        private string GiveMeSearchEntitiesFilter(EntitySearchView search )
         {
             return $"{{ " +
-                    GetUserFilter(bbdd, idUser) +
-                    GetShortFilter("IdEntityType", idType) +
-                    GetTextFilter("Description", search) +
-                    GetEntityFilter(idType, idFilter) +
+                    GetUserFilter(search.bbdd, search.idUser) +
+                    GetShortFilter("IdEntityType", search.idType) +
+                    GetTextFilter("Description", search.search) +
+                    GetFolderDocumentFilter(search) +
                     $" }}";
         }
 
@@ -570,14 +570,13 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     $" }}";
         }
 
-        private string GetEntityFilter(short? idType, long? idFilter)
+        private string GetFolderDocumentFilter(EntitySearchView search)
         {
-            if (idType == null)
-                return "";
-            else if (idType == (short)LexonAssociationType.MailToDocumentsEvent)
-                return $"{GetLongFilter("IdFolder", idFilter)}";
-            else if (idType == (short)LexonAssociationType.MailToFoldersEvent)
-                return $"{GetLongFilter("IdParent", idFilter)}";
+            if(search is EntitySearchFoldersView)
+                return $"{GetLongFilter("IdParent", (search as EntitySearchFoldersView)?.idParent)}{GetLongFilter("IdFolder", (search as EntitySearchFoldersView)?.idFolder)}";
+            else if(search is EntitySearchDocumentsView)
+                return $"{GetLongFilter("IdFolder", (search as EntitySearchDocumentsView)?.idFolder)}";
+           
             return "";
         }
 

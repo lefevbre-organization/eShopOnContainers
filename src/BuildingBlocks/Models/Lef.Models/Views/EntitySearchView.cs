@@ -2,8 +2,6 @@
 {
     public class EntitySearchView : EntityView
     {
-        /// <summary>id to filter (use in documents and folders entities</summary>
-        public long? idFilter { get; set; }
 
         /// <summary> string with search filter </summary>
         public string search { get; set; }

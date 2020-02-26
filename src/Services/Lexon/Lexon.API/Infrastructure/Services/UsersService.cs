@@ -74,11 +74,11 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        private void SerializeObjectToPost(object classificationAdd, string path, out string url, out StringContent data)
+        private void SerializeObjectToPost(object parameters, string path, out string url, out StringContent data)
         {
             url = $"{_settings.Value.LexonMySqlUrl}{path}";
             TraceLog(parameters: new string[] { $"url={url}" });
-            var json = JsonConvert.SerializeObject(classificationAdd);
+            var json = JsonConvert.SerializeObject(parameters);
             data = new StringContent(json, Encoding.UTF8, "application/json");
         }
 

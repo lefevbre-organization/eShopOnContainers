@@ -288,8 +288,8 @@ namespace Lexon.API.Infrastructure.Repositories
 
         private static FilterDefinition<LexEntity> GetFilterIdRelated(EntitySearchView search)
         {
-            if (search.idFilter != null)
-                return Builders<LexEntity>.Filter.Eq(x => x.idRelated, search.idFilter);
+            //if (search.idFilter != null)
+            //    return Builders<LexEntity>.Filter.Eq(x => x.idRelated, search.idFilter);
             return FilterDefinition<LexEntity>.Empty;
         }
 
