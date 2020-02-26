@@ -189,7 +189,7 @@ class ModalConnectingEmails extends Component {
               className="modal-title d-flex align-items-center"
               id="documentarGuardardocumentacionLabel">
               <img class="imgproduct" border="0" alt="Lex-On" src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
-              <span>{i18n.t("modal-conecting-emails.save-copy") + this.state.step1Data.saveDocuments + this.state.step1Data.copyDocuments}</span>
+              <span>{i18n.t("modal-conecting-emails.save-copy")}</span>
             </h5>
           </Modal.Header>
           <Modal.Body className="mimodal">
