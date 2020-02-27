@@ -14,7 +14,6 @@ class UserLexon extends Component {
     this.state = {
       readyToRedirect: false,
       redirectToEmail: this.props.match.params.idMail,
-      redirectUser: this.props.match.params.idUser
     };
 
     this.isUniqueAccountByProvider = this.isUniqueAccountByProvider.bind(this);
@@ -67,7 +66,7 @@ class UserLexon extends Component {
   }
 
   checkIsAuthenticated() {
-    this.userAgentApplication = getUserApplication(this.props.lexon.userId);
+    this.userAgentApplication = getUserApplication();
     const user = this.userAgentApplication.getAccount();
     return user === null ? false : true;
   }
@@ -99,8 +98,7 @@ class UserLexon extends Component {
   onSignout() {
     const user = this.props.match.params.idUser;
     const urlRedirect = `${window.URL_MF_OUTLOOK}/${user}`;
-    //signOut(urlRedirect);
-    signOut(user);
+    signOut(urlRedirect);
   }
 
   render() {

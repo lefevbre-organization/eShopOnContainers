@@ -19,8 +19,7 @@ class AccountUser extends Component {
         window.open(`${window.URL_MF_GOOGLE}/GO0${userId}`, "_self");
         break;
       case "OUTLOOK":
-            //signOut(`${window.URL_MF_OUTLOOK}/OU0${userId}`);
-            signOut(`${userId}`, true);
+            signOut(`${window.URL_MF_OUTLOOK}/OU0${userId}`);
        // window.open(`${window.URL_MF_OUTLOOK}/OU0${userId}`, "_self");
         break;
       default:

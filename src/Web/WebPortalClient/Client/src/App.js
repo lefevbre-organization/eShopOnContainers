@@ -3,7 +3,7 @@ import { Switch, Route } from "react-router-dom";
 
 import "./App.css";
 
-import NotFound from "./components/not-found/NotFound";
+import { NotFound } from "./components/not-found/NotFound";
 import { PageGoTo } from "./pages/PageGoTo";
 import { PageGoToLegacy } from "./pages/PageGoToLegacy";
 

@@ -459,11 +459,8 @@ export class Main extends Component {
         console.log(result);
 
         const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-        //signOut(urlRedirect);
-        signOut(userId);
+        signOut(urlRedirect);
       });
-    } else {
-      signOut('');
     }
   }
 
