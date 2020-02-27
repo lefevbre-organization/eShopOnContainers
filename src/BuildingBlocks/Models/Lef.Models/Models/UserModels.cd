@@ -1,45 +1,66 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.MongoModel">
-    <Position X="4.5" Y="1.25" Width="1.5" />
+    <Position X="4.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>IAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\MongoModel.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexUser">
-    <Position X="2.5" Y="3" Width="1.5" />
+    <Position X="2.5" Y="2.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAEAACAAAAAAAAgAAAAAACAAAAAEAAAAAAAAAEAAAgA=</HashCode>
       <FileName>Models\LexUser.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexCompany">
-    <Position X="4.5" Y="3.75" Width="1.5" />
+    <Position X="4.5" Y="2.5" Width="1.5" />
+    <AssociationLine Name="entities" Type="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexEntity" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.523" Y="4.31" />
+        <Point X="5.523" Y="6.062" />
+        <Point X="6.25" Y="6.062" />
+      </Path>
+    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAABAAAAAAAAAAAAQAAAEAQAAAAAAAEAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAQAAAEAQAAAAAAEEAAAAA=</HashCode>
       <FileName>Models\LexCompany.cs</FileName>
     </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="entities" />
+      <Property Name="mailActuations" />
+    </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexEntity">
-    <Position X="6.75" Y="4.75" Width="1.5" />
+    <Position X="6.25" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAoIkQAAAAAIAAAAAAAAAAAAAAAQAA=</HashCode>
       <FileName>Models\LexEntity.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexMail">
-    <Position X="8.75" Y="6.25" Width="1.5" />
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexMailActuation">
+    <Position X="2.75" Y="5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAEAAQAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA=</HashCode>
-      <FileName>Models\LexMail.cs</FileName>
+      <HashCode>AAAEAAQAAAAAEAAAACAAAAAAAAAAAAAAAAAAAAAAAIA=</HashCode>
+      <FileName>Models\LexMailActuation.cs</FileName>
     </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="actuations" />
+    </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.MySqlCompany">
     <Position X="11" Y="1.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAEAIAgBQAAAAAAEAQAIAAAABAAAIQAEAAEAAA=</HashCode>
       <FileName>MySql\MySqlCompany.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosActuation">
+    <Position X="1" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQEAAAAAgAAAAAABCAAAABAAAAAAAAA=</HashCode>
+      <FileName>MySql\JosActuation.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

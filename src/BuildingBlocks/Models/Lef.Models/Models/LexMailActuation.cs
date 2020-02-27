@@ -1,6 +1,6 @@
 ﻿namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
-    public class LexMail
+    public class LexMailActuation
     {
         /// <summary>
         /// identificador universal del mail
@@ -21,5 +21,10 @@
         /// campo opcional que indica el folder
         /// </summary>
         public string folder { get; set; }
+
+        /// <summary>
+        /// lista de actuaciones
+        /// </summary>
+        public JosActuation[] actuaciones { get; set; }
     }
 }

@@ -62,6 +62,11 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
                 else
                     Infos.Add(new Info() { code = "11", message = "No puede obtenerse un conjuntos de entidades de los datos obtenidos en Mysql" });
 
+                //if (Result.Actuaciones is LexEntity[])
+                //    Data = Result.entities.ToList();
+                //else
+                //    Infos.Add(new Info() { code = "11", message = "No puede obtenerse un conjuntos de entidades de los datos obtenidos en Mysql" });
+
                 CompleteData();
 
                 Result.updated = DateTime.Now.Ticks;
@@ -69,8 +74,6 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             catch (Exception ex)
             {
                 Infos.Add(new Info() { code = "12", message = $"Error no controlado al parsear el objeto LexCompany de los datos obtenidos en Mysql + {ex.Message}" });
-                //IdError = 101;
-                //Error = ex.Message;
             }
         }
 
@@ -93,14 +96,6 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             }
         }
 
-        //public void AddData(object resultado, object[] entities)
-        //{
-        //    AddData(resultado);
-        //    if (entities is IEnumerable<TItems>)
-        //        Data = entities as IEnumerable<TItems>;
-
-        //}
-
         public bool PossibleHasData()
         {
             return (Data != null && Data.Count > 0);
@@ -115,16 +110,6 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 
                 if (Total is int)
                     Count = (int?)Total;
-
-                //if (idError is int)
-                //    IdError = (int?)idError;
-
-                //if (TextError is int || TextError is string)
-                //    Error = TextError.ToString();
-
-                //if (!PossibleHasData())
-                //    Errors.Add(new ErrorInfo() { code = IdError.ToString(), member = $"MySqlRepository.{ParameterDB}", message = Error });
-
 
             }
             catch (Exception ex)

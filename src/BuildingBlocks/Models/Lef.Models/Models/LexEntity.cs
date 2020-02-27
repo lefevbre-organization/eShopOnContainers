@@ -47,9 +47,5 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         /// </summary>
         public string email { get; set; }
 
-        /// <summary>
-        /// Coleccion de mails con los que esta relacionado (adjunción)
-        /// </summary>
-        //public LexMail[] mails { get; set; }
     }
 }
