@@ -172,7 +172,7 @@ class ModalConnectingEmails extends Component {
   }
 
   render() {
-    const { user, companySelected, showModalDocuments } = this.props;
+    const { user, companySelected, showModalDocuments, toggleNotification } = this.props;
 
     return (
       <div className="modal-connection-emails">
@@ -195,8 +195,8 @@ class ModalConnectingEmails extends Component {
           <Modal.Body className="mimodal">
             <Container>
               <div style={{ display: this.state.step === 1 ? 'block' : 'none' }}><ConnectingEmailsStep1 show={this.state.step === 1} onChange={(data) => { this.changeStep1Data(data) }}></ConnectingEmailsStep1></div>
-              <div style={{ display: this.state.step === 2 ? 'block' : 'none' }}><ConnectingEmailsStep2 show={this.state.step === 2} user={user} bbdd={companySelected} entity={this.state.step1Data.entity} onSelectedEntity={(data) => this.changeStep2Data(data)}></ConnectingEmailsStep2></div>
-              <div style={{ display: this.state.step === 3 ? 'block' : 'none' }}><ConnectingEmailsStep3 show={this.state.step === 3} user={user} bbdd={companySelected} entity={this.state.step1Data.entity} onSelectedDirectory={(data) => this.changeStep3Data(data)}></ConnectingEmailsStep3></div>
+              <div style={{ display: this.state.step === 2 ? 'block' : 'none' }}><ConnectingEmailsStep2 show={this.state.step === 2} user={user} bbdd={companySelected} entity={this.state.step1Data.entity} toggleNotification={toggleNotification} onSelectedEntity={(data) => this.changeStep2Data(data)}></ConnectingEmailsStep2></div>
+              <div style={{ display: this.state.step === 3 ? 'block' : 'none' }}><ConnectingEmailsStep3 show={this.state.step === 3} user={user} bbdd={companySelected} entity={this.state.step1Data.entity} toggleNotification={toggleNotification} onSelectedDirectory={(data) => this.changeStep3Data(data)}></ConnectingEmailsStep3></div>
             </Container>
           </Modal.Body>
           <Modal.Footer>
