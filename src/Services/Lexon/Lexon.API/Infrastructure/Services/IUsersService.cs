@@ -28,7 +28,7 @@ namespace Lexon.Infrastructure.Services
 
         Task<Result<long>> RemoveClassificationFromListAsync(ClassificationRemoveView classificationRemove);
 
-        Task<Result<List<LexonActuation>>> GetClassificationsFromMailAsync(ClassificationSearchView classificationSearch);
-
+        Task<Result<List<LexonActuation>>> GetClassificationsFromMailOldAsync(ClassificationSearchView classificationSearch);
+        Task<MySqlCompany> GetClassificationsFromMailAsync(ClassificationSearchView classificationSearch);
     }
 }

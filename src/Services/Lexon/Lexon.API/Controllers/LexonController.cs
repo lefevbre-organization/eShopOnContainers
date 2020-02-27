@@ -77,7 +77,7 @@ namespace Lexon.API.Controllers
 
             var result = await _usersService.GetClassificationsFromMailAsync(classificationSearch);
 
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpPut]

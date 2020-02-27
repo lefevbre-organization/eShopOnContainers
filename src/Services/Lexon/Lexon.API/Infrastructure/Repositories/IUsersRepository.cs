@@ -16,6 +16,7 @@ namespace Lexon.API.Infrastructure.Repositories
         Task<Result<List<LexonActuation>>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, string bbdd, string idMail);
 
         Task<MySqlCompany> GetEntitiesAsync(EntitySearchView search);
+        Task<MySqlCompany> GetRelationsAsync(ClassificationSearchView search);
 
         Task<Result<long>> AddFileToListAsync(string idUser, string bbdd, long idFile, string nameFile, string descriptionFile = "");
 
@@ -27,5 +28,6 @@ namespace Lexon.API.Infrastructure.Repositories
         Task<Result<long>> RemoveClassificationFromListAsync(string idUser, string bbdd, string provider, string mailAccount, string uidMail, long idRelated, short? idClassificationType);
 
         Task<Result<bool>> UpsertEntitiesAsync(EntitySearchView search, MySqlCompany resultMySql);
+        Task<Result<bool>> UpsertRelationsAsync(ClassificationSearchView classificationSearch, MySqlCompany resultMySql);
     }
 }

@@ -210,6 +210,35 @@ namespace Lexon.API.Infrastructure.Repositories
             return resultMongo;
         }
 
+        public async Task<MySqlCompany> GetRelationsAsync(ClassificationSearchView search)
+        {
+            var resultMongo = new MySqlCompany();
+
+            try
+            {
+                var filterUser = GetFilterLexUser(search.idUser);
+                TraceLog(parameters: new string[] { $"filter:{filterUser.ToString()}" });
+
+                var user = await _context.LexUsers
+                    .Find(filterUser)
+                    .FirstOrDefaultAsync();
+
+                var company = user.companies.FirstOrDefault(x => x.bbdd.Contains(search.bbdd));
+
+                var relationsSearch = company.mailActuations.Where(ent =>ent.uid == search.idMail);
+
+                var relations = relationsSearch.ToArray();
+
+                company.mailActuations = relations;
+                resultMongo.AddData(company);
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(resultMongo.Errors, ex);
+            }
+            return resultMongo;
+        }
+
         public async Task<Result<bool>> UpsertEntitiesAsync(EntitySearchView search, MySqlCompany resultMySql)
         {
             var result = new Result<bool>();
@@ -227,26 +256,42 @@ namespace Lexon.API.Infrastructure.Repositories
                         new UpdateOptions { ArrayFilters = arrayFiltersSimple, IsUpsert = true }
                 );
 
-                //foreach (var newEntity in resultMySql.Data)
-                //{
-                //    var arrayFilters = GetFilterFromEntity(search.bbdd, newEntity.idType, newEntity.idRelated);
-                //    resultUpdate = await _context.LexUsers.UpdateOneAsync(
-                //        filterUser,
-                //        Builders<LexUser>.Update
-                //            .AddToSet($"companies.$[i].entities.$[j]", newEntity),
-                //            new UpdateOptions { ArrayFilters = arrayFilters, IsUpsert= true }
-                //    );
-
-                //    if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
-                //    {
-                //        TraceInfo(result.infos, $"Se modifica el usuario {search.idUser} añadiendo la entidad {newEntity.code}-{newEntity.description} de tipo: {newEntity.entityType}");
-                //        result.data = resultUpdate.ModifiedCount > 0;
-                //    }
-                //}
 
                 if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0)
                 {
                     TraceInfo(result.infos, $"Se modifica el usuario {search.idUser} añadiendo varias entidades {resultUpdate.ModifiedCount} de tipo: {search.idType}");
+                    result.data = resultUpdate.ModifiedCount > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+
+            return result;
+        }
+
+        public async Task<Result<bool>> UpsertRelationsAsync(ClassificationSearchView search, MySqlCompany resultMySql)
+        {
+            var result = new Result<bool>();
+
+            var filterUser = GetFilterLexUser(search.idUser);
+
+            try
+            {
+                var arrayFiltersSimple = GetFilterFromRelation(search.bbdd, resultMySql.Result.mailActuations[0]?.uid);
+
+                var resultUpdate = await _context.LexUsers.UpdateOneAsync(
+                    filterUser,
+                    Builders<LexUser>.Update
+                        .AddToSetEach($"companies.$[i].mailActuations.$[j]", resultMySql.Result.mailActuations.ToArray()),
+                        new UpdateOptions { ArrayFilters = arrayFiltersSimple, IsUpsert = true }
+                );
+
+
+                if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0)
+                {
+                    TraceInfo(result.infos, $"Se modifica el usuario {search.idUser} añadiendo varias relaciones al mail {search.idMail}");
                     result.data = resultUpdate.ModifiedCount > 0;
                 }
             }
@@ -277,6 +322,16 @@ namespace Lexon.API.Infrastructure.Repositories
             {
                 new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument(new BsonElement("i.bbdd", bbdd))),
                 new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument(doc_j))
+            };
+        }
+
+        private static List<ArrayFilterDefinition> GetFilterFromRelation(string bbdd, string uid)
+        {
+
+            return new List<ArrayFilterDefinition>
+            {
+                new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument(new BsonElement("i.bbdd", bbdd))),
+                new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument( new BsonElement("j.uid", uid)))
             };
         }
 

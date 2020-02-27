@@ -11,7 +11,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync();
 
-        Task<MySqlList<JosEntityList, JosEntity>> SearchEntitiesAsync(EntitySearchView entitySearch);
+      //  Task<MySqlList<JosEntityList, JosEntity>> SearchEntitiesAsync(EntitySearchView entitySearch);
 
         Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch);
 
@@ -24,7 +24,8 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         Task<Result<JosUser>> GetUserAsync(string idNavisionUser);
 
-        Task<Result<JosRelationsList>> SearchRelationsAsync(ClassificationSearchView classification);
+        Task<MySqlCompany> GetRelationsAsync(ClassificationSearchView classification);
+        //Task<Result<JosRelationsList>> SearchRelationsAsync(ClassificationSearchView classification);
 
         Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification);
     }
