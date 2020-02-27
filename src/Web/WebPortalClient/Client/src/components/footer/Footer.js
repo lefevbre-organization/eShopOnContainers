@@ -95,7 +95,13 @@ class Footer extends Component {
                   {i18n.t("footer.cookies-policy")}
                 </a>
               </span>
-            </p>
+                    </p>
+          
+          </div>
+          <div className="row">
+            <p className="col-xs-12 pull-right">
+                        Versión RC 0.16
+            </p>  
           </div>
         </div>
       </footer>

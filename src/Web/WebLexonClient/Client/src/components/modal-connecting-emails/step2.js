@@ -61,13 +61,15 @@ export class ConnectingEmailsStep2 extends React.Component {
             try {
                 this.setState({showSpinner: true})
                 const response = await getResults(user, bbdd, entity, search, 6, currentPage);
+
                 if (response && response.results && response.results.data) {
                     let lastPage = response.results.count < 6;
                     this.setState({ entities: [...response.results.data], lastPage, showSpinner: false }, () => {
                     })
                 }
             } catch (err) {
-                console.log(err)
+                this.props.toggleNotification("Errores: " + err.errors.map(e => e.message ).join("; "), true)
+                this.setState({ entities: [], lastPage: false, showSpinner: false })
             }
         }
     }

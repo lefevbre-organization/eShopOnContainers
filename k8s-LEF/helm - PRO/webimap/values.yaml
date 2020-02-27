@@ -75,4 +75,4 @@ configValues: |
   window.URL_MF_LEXON='https://lexbox-weblexon.lefebvre.es/static/js/main.js'
   window.API_GATEWAY='https://lexbox-apigwlex.lefebvre.es' 
   window.API_ACC_GATEWAY = 'https://lexbox-apigwacc.lefebvre.es' 
-window.URL_MF_LEXON_BASE = 'https://lexbox-weblexon.lefebvre.es'  
+  window.URL_MF_LEXON_BASE = 'https://lexbox-weblexon.lefebvre.es'  
