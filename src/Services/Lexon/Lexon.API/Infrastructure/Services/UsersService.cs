@@ -377,7 +377,7 @@ namespace Lexon.Infrastructure.Services
             }
 
             if (resultMySql.TengoLista())
-                UpsertDataMongoAsync(resultMySql);
+                await UpsertDataMongoAsync(entitySearch, resultMySql);
             else
                 GetEntitiesMongoAsync(entitySearch, resultMySql);
 
@@ -386,15 +386,15 @@ namespace Lexon.Infrastructure.Services
 
         private async void GetEntitiesMongoAsync(EntitySearchView search, MySqlCompany resultMySql)
         {
-            return;
-            MySqlCompany resultMongo = await _usersRepository.GetEntitiesAsync(search);
+           // return;
+            var resultMongo = await _usersRepository.GetEntitiesAsync(search);
             resultMySql.Data = resultMongo.Data;
             return;
         }
 
-        private void UpsertDataMongoAsync(MySqlCompany resultMySql)
+        private async Task UpsertDataMongoAsync(EntitySearchView search, MySqlCompany resultMySql)
         {
-            return;
+           var result = await _usersRepository.UpsertEntitiesAsync(search, resultMySql);
         }
 
         #endregion New Entities
@@ -470,25 +470,25 @@ namespace Lexon.Infrastructure.Services
             return false;
         }
 
-        private async Task GetEntitiesListMongoAsync(int pageSize, int pageIndex, short? idType, string idUser, string bbdd, string search, Result<List<LexonEntityBase>> result)
-        {
-            try
-            {
-                //todo idFilter tiene que implementarse en mongo
-                var resultMongo = await _usersRepository.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, bbdd, search);
+        //private async Task GetEntitiesListMongoAsync(int pageSize, int pageIndex, short? idType, string idUser, string bbdd, string search, Result<List<LexonEntityBase>> result)
+        //{
+        //    try
+        //    {
+        //        //todo idFilter tiene que implementarse en mongo
+        //        var resultMongo = await _usersRepository.GetEntitiesListAsync(pageSize, pageIndex, idType, idUser, bbdd, search);
 
-                if (resultMongo.errors.Count > 0)
-                    result.errors.AddRange(resultMongo.errors);
-                else if (resultMongo.data.Count == 0)
-                    TraceOutputMessage(result.errors, "MongoDb don´t recover the entities", 2002);
-                else
-                    result.data = resultMongo.data;
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
-        }
+        //        if (resultMongo.errors.Count > 0)
+        //            result.errors.AddRange(resultMongo.errors);
+        //        else if (resultMongo.data.Count == 0)
+        //            TraceOutputMessage(result.errors, "MongoDb don´t recover the entities", 2002);
+        //        else
+        //            result.data = resultMongo.data;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TraceMessage(result.errors, ex);
+        //    }
+        //}
 
         public async Task<Result<LexonEntityBase>> GetEntityById(EntitySearchById entitySearch)
         {
@@ -673,10 +673,10 @@ namespace Lexon.Infrastructure.Services
             }
         }
 
-        public async Task<Result<long>> SelectCompanyAsync(string idUser, string bbdd)
-        {
-            TraceLog(parameters: new string[] { $"idUser={idUser}", $"bbdd={bbdd}" });
-            return await _usersRepository.SelectCompanyAsync(idUser, bbdd);
-        }
+        //public async Task<Result<long>> SelectCompanyAsync(string idUser, string bbdd)
+        //{
+        //    TraceLog(parameters: new string[] { $"idUser={idUser}", $"bbdd={bbdd}" });
+        //    return await _usersRepository.SelectCompanyAsync(idUser, bbdd);
+        //}
     }
 }

@@ -177,113 +177,107 @@ namespace Lexon.API.Infrastructure.Repositories
             return result;
         }
 
-        public async Task<Result<List<LexonEntityBase>>> GetEntitiesListAsync(int pageSize, int pageIndex, short? idType, string idUser, string bbdd, string search)
-        {
-            var result = new Result<List<LexonEntityBase>>(new List<LexonEntityBase>());
-
-            var filterDocuments = FilterDefinition<LexonUser>.Empty;
-            //if (!string.IsNullOrEmpty(search))
-            //{
-            //    filterDocuments = Builders<LexonUser>.Filter.Or(
-            //        Builders<LexonUser>.Filter.Regex("Companies.list.Files.list.Name", $"/*{search}*/i"),
-            //        Builders<LexonUser>.Filter.Regex("Companies.list.Files.list.Description", $"/*{search}*/i")
-            //    );
-            //}
-            var filterUser = GetFilterUser(idUser);
-
-            var filter = Builders<LexonUser>.Filter.And(
-                filterUser,
-                Builders<LexonUser>.Filter.Eq("companies.list.bbdd", bbdd),
-                filterDocuments
-                );
-
-            TraceLog(parameters: new string[] { $"filter:{filter.ToString()}" });
-
-            try
-            {
-                var user = await _context.LexonUsers
-                    .Find(filter)
-                    .SingleAsync();
-
-                var company = user.companies.list.FirstOrDefault(x => x.bbdd.Contains(bbdd));
-                if (!string.IsNullOrEmpty(search))
-                {
-                    var files = from s in company.files.list
-                                where s.description.Contains(search) || s.name.Contains(search)
-                                select s;
-                    result.data = files.ToList();
-                }
-
-                var filesWithoutSearch = from s in company.files.list
-                                         select s;
-                long idFile = 1;
-                foreach (var f in filesWithoutSearch)
-                {
-                    idFile += 1;
-                    f.id = idFile;
-                }
-
-                result.data = filesWithoutSearch.ToList();
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
-            return result;
-        }
-
         public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView search)
         {
-            LexEntity[] entidades;
             var resultMongo = new MySqlCompany();
-            var filterUser = GetFilterLexUser(search.idUser);
-
-            var filter = Builders<LexUser>.Filter.And(
-                filterUser,
-                Builders<LexUser>.Filter.Eq("companies.$.bbdd", search.bbdd)
-                );
-
-            var filterEntities = Builders<LexEntity>.Filter.And(
-                Builders<LexEntity>.Filter.Eq(x => x.idType, search.idType),
-                GetFilterSearch(search),
-                GetFilterIdRelated(search)
-                );
-
-            TraceLog(parameters: new string[] { $"filter:{filter.ToString()}" });
 
             try
             {
+                var filterUser = GetFilterLexUser(search.idUser);
+                TraceLog(parameters: new string[] { $"filter:{filterUser.ToString()}" });
+                
                 var user = await _context.LexUsers
-                    .Find(filter)
-                    .SingleAsync();
+                    .Find(filterUser)
+                    .FirstOrDefaultAsync();
 
                 var company = user.companies.FirstOrDefault(x => x.bbdd.Contains(search.bbdd));
-                if (!string.IsNullOrEmpty(search.search))
-                {
-                    var files = from s in company.entities
-                                where s.description.Contains(search.search) || s.code.Contains(search.search)
-                                select s;
-                    entidades = files.ToArray();
-                }
-                else
-                {
 
-                    entidades = (from s in company.entities 
-                                 select s).ToArray();
-                }
+                var entitiesSearch = company.entities.Where
+                    (ent =>
+                        (ent.idType == search.idType)
+                      //  && (search.search != null && (ent.description.Contains(search.search) || ent.code.Contains(search.search) || ent.email.Contains(search.search)))
+                    );
 
+                var entidades = entitiesSearch.ToArray();
 
                 company.entities = entidades;
                 resultMongo.AddData(company);
-
-
             }
             catch (Exception ex)
             {
                 TraceMessage(resultMongo.Errors, ex);
             }
             return resultMongo;
+        }
 
+        public async Task<Result<bool>> UpsertEntitiesAsync(EntitySearchView search, MySqlCompany resultMySql)
+        {
+            var result = new Result<bool>();
+
+            var filterUser = GetFilterLexUser(search.idUser);
+
+            try
+            {
+                var arrayFiltersSimple = GetFilterFromEntities(search.bbdd);
+
+                var resultUpdate = await _context.LexUsers.UpdateOneAsync(
+                    filterUser,
+                    Builders<LexUser>.Update
+                        .AddToSetEach($"companies.$[i].entities", resultMySql.Data.ToArray()),
+                        new UpdateOptions { ArrayFilters = arrayFiltersSimple, IsUpsert = true }
+                );
+
+                //foreach (var newEntity in resultMySql.Data)
+                //{
+                //    var arrayFilters = GetFilterFromEntity(search.bbdd, newEntity.idType, newEntity.idRelated);
+                //    resultUpdate = await _context.LexUsers.UpdateOneAsync(
+                //        filterUser,
+                //        Builders<LexUser>.Update
+                //            .AddToSet($"companies.$[i].entities.$[j]", newEntity),
+                //            new UpdateOptions { ArrayFilters = arrayFilters, IsUpsert= true }
+                //    );
+
+                //    if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
+                //    {
+                //        TraceInfo(result.infos, $"Se modifica el usuario {search.idUser} añadiendo la entidad {newEntity.code}-{newEntity.description} de tipo: {newEntity.entityType}");
+                //        result.data = resultUpdate.ModifiedCount > 0;
+                //    }
+                //}
+
+                if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0)
+                {
+                    TraceInfo(result.infos, $"Se modifica el usuario {search.idUser} añadiendo varias entidades {resultUpdate.ModifiedCount} de tipo: {search.idType}");
+                    result.data = resultUpdate.ModifiedCount > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+
+            return result;
+        }
+
+        private static List<ArrayFilterDefinition> GetFilterFromEntities(string bbdd)
+        {
+            return new List<ArrayFilterDefinition>
+            {
+                new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument(new BsonElement("i.bbdd", bbdd)))
+            };
+        }
+
+        private static List<ArrayFilterDefinition> GetFilterFromEntity(string bbdd, short? idType, long? idRelated)
+        {
+            var doc_j = new BsonDocument() {
+                 new BsonElement("j.idType", idType),
+                new BsonElement("j.idRelated", idRelated)
+            };
+
+            return new List<ArrayFilterDefinition>
+            {
+                new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument(new BsonElement("i.bbdd", bbdd))),
+                new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument(doc_j))
+            };
         }
 
         private static FilterDefinition<LexEntity> GetFilterIdRelated(EntitySearchView search)
@@ -424,37 +418,6 @@ namespace Lexon.API.Infrastructure.Repositories
                     TraceMessage(result.errors, ex);
                     session.AbortTransaction();
                 }
-            }
-            return result;
-        }
-
-        public async Task<Result<long>> SelectCompanyAsync(string idUser, string bbdd)
-        {
-            TraceLog(parameters: new string[] { $"idUser:{idUser}", $"bbdd:{bbdd}" });
-            long a = 0;
-            var result = new Result<long>(a);
-
-            try
-            {
-                var resultMongo = await _context.LexonUsers.UpdateOneAsync(
-                   GetFilterUser(idUser),
-                   Builders<LexonUser>.Update.Set("companies.list.$[i].selected", true),
-                   new UpdateOptions
-                   {
-                       ArrayFilters = new List<ArrayFilterDefinition>
-                       {
-                    new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.bbdd", bbdd))
-                       }
-                   }
-                );
-                if (resultMongo.IsAcknowledged)
-                    result.data = resultMongo.ModifiedCount;
-                else
-                    TraceOutputMessage(result.errors, "Error in Update MongoDB", 1001);
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
             }
             return result;
         }

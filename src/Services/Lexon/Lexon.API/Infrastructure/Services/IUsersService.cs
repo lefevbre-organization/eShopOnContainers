@@ -13,7 +13,7 @@ namespace Lexon.Infrastructure.Services
 
         Task<Result<List<LexonCompany>>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser);
 
-        Task<Result<long>> SelectCompanyAsync(string idUser, string bbdd);
+       // Task<Result<long>> SelectCompanyAsync(string idUser, string bbdd);
 
         Task<MySqlList<JosEntityList, LexonEntityBase>> GetEntitiesListAsync(EntitySearchView entitySearch);
 
