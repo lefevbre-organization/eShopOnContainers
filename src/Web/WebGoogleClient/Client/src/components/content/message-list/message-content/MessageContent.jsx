@@ -151,6 +151,8 @@ export class MessageContent extends Component {
 }
 
   componentDidMount(prevProps) {
+    console.log('ComponenDidUnmount ***** detail' );
+
     const messageId = this.props.match.params.id;
     this.props.getEmailHeaderMessage(messageId);
     this.props.getEmailMessage(messageId);
@@ -185,6 +187,7 @@ export class MessageContent extends Component {
 
   componentDidUpdate(prevProps) {
     const { emailMessageResult, emailHeaderMessageResult } = this.props;
+    console.log('ComponenDidUpdate  ***** detail' );
 
     if(prevProps.emailHeaderMessageResult.headers === null && emailHeaderMessageResult.headers !== null) {
       const detail = {
@@ -213,16 +216,16 @@ export class MessageContent extends Component {
                   body.style.margin = "0px";
                   body.style.fontFamily = "Arial, Helvetica, sans-serif";
                   body.style.fontSize = "13px";
-                  body.innerHTML = this.props.emailMessageResult.body;
+                  // body.innerHTML = this.props.emailMessageResult.body;
 
                   //Adding attach files
                   var attach = findAttachments(emailMessageResult)
 
                   if (typeof attach !== "undefined" && attach.length > 0) {
                       const isFirefox = typeof InstallTrigger !== 'undefined';
-                      if(isFirefox === false) {
-                        this.setState({ attachment: false });
-                      }
+                      // if(isFirefox === false) {
+                      //   this.setState({ attachment: false });
+                      // }
                       var iframe = document.getElementById("message-iframe");
                       var Divider = addDivDivider();
                       iframe.contentDocument.body.appendChild(Divider);
@@ -231,12 +234,13 @@ export class MessageContent extends Component {
                           if (attach[i].filename && attach[i].filename.length > 0) {
                             const athc = attach[i];
                             if(!this.attachments[attach[i].partId]) {
+                              const msgid = emailMessageResult.id || emailMessageResult.result.id
                               this.attachments[attach[i].partId] = "1"                             
-                              getAttachments(emailMessageResult.id, attach[i], function (
+                              getAttachments(msgid, attach[i], (
                                   filename,
                                   mimeType,
                                   attachment
-                              ) {
+                              ) => {
                                   
                                   let dataBase64Rep = attachment.data
                                       .replace(/-/g, "+")
@@ -253,11 +257,16 @@ export class MessageContent extends Component {
                                     var Attachment = addAttachmentElement(blobUrl, filename);
                                     var AttachmentDiv = addAttachmentContainer(mimeType);
                                     AttachmentDiv.appendChild(Attachment);
-                                    iframe.contentDocument.body.appendChild(AttachmentDiv);
+                                    var iframe = document.getElementById("message-iframe");
+                                    iframe && iframe.contentDocument && iframe.contentDocument.body.appendChild(AttachmentDiv);
                                   } else {
+                                    console.log(this.iframeRef.current.contentWindow.document)
                                     const contentId = getHeader(athc.headers, "x-attachment-id");
-                                    const bd = body.innerHTML.replace(`cid:${contentId}`, "data:image/png;base64, " + dataBase64Rep)
-                                    body.innerHTML = bd;
+                                    var iframe = document.getElementById("message-iframe");
+                                    var Divider = addDivDivider();
+                                    iframe.contentDocument.body.appendChild(Divider);              
+                                    const bd = iframe.contentDocument.body.innerHTML.replace(`cid:${contentId}`, "data:image/png;base64, " + dataBase64Rep)
+                                    iframe.contentDocument.body.innerHTML = bd;
                                   }
                                 });
                             }
@@ -277,9 +286,10 @@ export class MessageContent extends Component {
 
               for (var i = 0; i < attach.length; i++) {
                 if (attach[i].filename && attach[i].filename.length > 0) {
+                  const msgid = emailMessageResult.id || emailMessageResult.result.id
                   if(!this.attachments[attach[i].partId]) {
                     this.attachments[attach[i].partId] = attach[i];
-                    getAttachments(emailMessageResult.id, attach[i], function (
+                    getAttachments(msgid, attach[i], function (
                       filename,
                       mimeType,
                       attachment
@@ -371,6 +381,7 @@ export class MessageContent extends Component {
                 ref={this.iframeRef}
                 title="Message contents"
                 id="message-iframe"
+                srcDoc={this.props.emailMessageResult.body}
                 style={{
                   display: this.props.emailMessageResult.loading
                     ? "none"
