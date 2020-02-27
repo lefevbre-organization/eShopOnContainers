@@ -21,7 +21,7 @@ export const getUserApplication = (userId = "", signout = false, redirect = fals
       auth: {
         clientId: config.appId,
         redirectUri: redirectUri,
-        postLogoutRedirectUri: "https://lexbox-test.lefebvre.es" //(userId !== '' ? `${window.URL_SELECT_ACCOUNT}?user=${userId}&encrypt=0&redirect=${redirect}` : `${window.URL_MF_OUTLOOK}` )
+        postLogoutRedirectUri: (userId !== '' ? `${window.URL_SELECT_ACCOUNT}?user=${userId}&encrypt=0&redirect=${redirect}` : `${window.URL_MF_OUTLOOK}` ) //"http://localhost:3010?user=E1654569&encrypt=0"
       },
       cache: {
         cacheLocation: "localStorage",
