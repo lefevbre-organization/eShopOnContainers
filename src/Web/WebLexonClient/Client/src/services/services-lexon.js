@@ -227,8 +227,12 @@ export const getResults = async (user, company, typeId, search, pageSize, page) 
         },
         body: JSON.stringify(body)
       });
-  
+
       const result = await response.json();
+      if(response.status === 400) {
+        throw result
+      }
+
       return { results: result.data }
     }
     catch(err) {
