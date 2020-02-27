@@ -100,7 +100,7 @@ class Footer extends Component {
           </div>
           <div className="row">
             <p className="col-xs-12 pull-right">
-                        Versión 1.0
+                        Versión RC 0.16
             </p>  
           </div>
         </div>
