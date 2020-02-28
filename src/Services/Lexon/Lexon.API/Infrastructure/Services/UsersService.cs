@@ -240,17 +240,15 @@ namespace Lexon.Infrastructure.Services
             if (resultMySql.TengoActuaciones())
                 await _usersRepository.UpsertRelationsAsync(classificationSearch, resultMySql);
             else
-                GetRelationsMongoAsync(classificationSearch, resultMySql);
+            {
+                var resultMongo = await _usersRepository.GetRelationsAsync(classificationSearch);
+                resultMySql.Data = resultMongo.Data;
+            }
+
 
             return resultMySql;
         }
 
-        private async void GetRelationsMongoAsync(ClassificationSearchView search, MySqlCompany resultMySql)
-        {
-            var resultMongo = await _usersRepository.GetRelationsAsync(search);
-            resultMySql.Data = resultMongo.Data;
-            return;
-        }
 
         private bool GetClassificationsFromMailMySqlAsync(ref Result<List<LexonActuation>> result, Result<JosRelationsList> resultMysql, string idMail)
         {

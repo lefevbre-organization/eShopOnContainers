@@ -66,7 +66,7 @@ namespace Lexon.API.Controllers
         [Route("classifications")]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> ClassificationsAsync(
+        public async Task<IActionResult> GetClassificationsAsync(
             [FromBody] ClassificationSearchView classificationSearch
             //, [FromHeader(Name = "x-requestid")] string requestId
             )
@@ -134,34 +134,34 @@ namespace Lexon.API.Controllers
         [HttpGet("entities/types")]
         [ProducesResponseType(typeof(MySqlList<JosEntityTypeList, JosEntityType>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(MySqlList<JosEntityTypeList, JosEntityType>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> EntitiesTypesAsync()
+        public async Task<IActionResult> GetEntitiesTypesAsync()
         {
             var result = await _usersService.GetMasterEntitiesAsync();
             return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost("entities/old")]
-        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> EntitiesOldAsync(
-            [FromBody] EntitySearchView entitySearch
-            )
-        {
-            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0)
-                return BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
+        //[HttpPost("entities/old")]
+        //[ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
+        //public async Task<IActionResult> EntitiesOldAsync(
+        //    [FromBody] EntitySearchView entitySearch
+        //    )
+        //{
+        //    if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0)
+        //        return BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
 
-            var entities = await _usersService.GetEntitiesListAsync(entitySearch);
+        //    var entities = await _usersService.GetEntitiesListAsync(entitySearch);
 
-            var paginatedEntities = new PaginatedItemsViewModel<LexonEntityBase>(entities.PageIndex, entities.PageSize, entities.Count, entities.Data);
-            var result = new Result<PaginatedItemsViewModel<LexonEntityBase>>(paginatedEntities, entities.Errors) { infos = entities.Infos };
+        //    var paginatedEntities = new PaginatedItemsViewModel<LexonEntityBase>(entities.PageIndex, entities.PageSize, entities.Count, entities.Data);
+        //    var result = new Result<PaginatedItemsViewModel<LexonEntityBase>>(paginatedEntities, entities.Errors) { infos = entities.Infos };
 
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-        }
+        //    return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        //}
 
         [HttpPost("entities")]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> EntitiesAsync(
+        public async Task<IActionResult> GetEntitiesAsync(
                 [FromBody] EntitySearchView entitySearch
                 )
         {
@@ -170,21 +170,10 @@ namespace Lexon.API.Controllers
 
             return await GetEntitiesCommon(entitySearch);
         }
-
-        private async Task<IActionResult> GetEntitiesCommon(EntitySearchView entitySearch)
-        {
-            var entities = await _usersService.GetEntitiesAsync(entitySearch);
-
-            var paginatedEntities = new PaginatedItemsViewModel<LexEntity>(entities.PageIndex, entities.PageSize, entities.Count, entities.Data);
-            var result = new Result<PaginatedItemsViewModel<LexEntity>>(paginatedEntities, entities.Errors) { infos = entities.Infos };
-
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-        }
-
         [HttpPost("entities/folders")]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> EntitiesFoldersAsync(
+        public async Task<IActionResult> GetEntitiesFoldersAsync(
         [FromBody] EntitySearchFoldersView entitySearch
         )
         {
@@ -198,7 +187,7 @@ namespace Lexon.API.Controllers
         [HttpPost("entities/documents")]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> EntitiesDocumentsAsync(
+        public async Task<IActionResult> GetEntitiesDocumentsAsync(
             [FromBody] EntitySearchDocumentsView entitySearch
 )
         {
@@ -207,6 +196,16 @@ namespace Lexon.API.Controllers
                 return BadRequest("values invalid. Must be a valid user, idCompany, type and idFolder to search documents");
 
             return await GetEntitiesCommon(entitySearch);
+        }
+
+        private async Task<IActionResult> GetEntitiesCommon(EntitySearchView entitySearch)
+        {
+            var entities = await _usersService.GetEntitiesAsync(entitySearch);
+
+            var paginatedEntities = new PaginatedItemsViewModel<LexEntity>(entities.PageIndex, entities.PageSize, entities.Count, entities.Data);
+            var result = new Result<PaginatedItemsViewModel<LexEntity>>(paginatedEntities, entities.Errors) { infos = entities.Infos };
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpPost]

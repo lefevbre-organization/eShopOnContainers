@@ -28,7 +28,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 
         public List<LexEntity> Data { get; set; }
 
-        public List<LexMailActuation> DataActuation { get; set; }
+        public List<LexActuation> DataActuation { get; set; }
 
         public List<ErrorInfo> Errors { get; set; }
         public List<Info> Infos { get; set; }
@@ -86,21 +86,18 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 
         private void CompleteDataRelations(LexMailActuation relationsMail)
         {
-            Result.mailActuations = new LexMailActuation[] { relationsMail };
-            DataActuation = Result.mailActuations.ToList();
+            Result.actuations = relationsMail.actuaciones;
+            DataActuation = Result.actuations.ToList();
 
-            foreach (var ent in DataActuation)
+            foreach (var act in DataActuation)
             {
-                foreach (var act in ent.actuaciones)
-                {
-                    act.entityType = Enum.GetName(typeof(LexonAdjunctionType), act.TipoRelacion);
-                    act.date = act.Fecha;
-                    act.name = act.Nombre;
-                    act.description = act.Asunto;
-                    act.idMail = relationsMail.uid;
-                    act.idRelated = act.IdRelacion;
-                    act.entityIdType = act.TipoRelacion;
-                }
+                act.entityType = Enum.GetName(typeof(LexonAdjunctionType), act.TipoRelacion);
+                act.date = act.Fecha;
+                act.name = act.Nombre;
+                act.description = act.Asunto;
+                act.idMail = relationsMail.uid;
+                act.idRelated = act.IdRelacion;
+                act.entityIdType = act.TipoRelacion;
             }
         }
 

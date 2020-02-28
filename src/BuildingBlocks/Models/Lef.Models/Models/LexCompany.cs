@@ -29,6 +29,6 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         /// <summary>
         /// Coleccion de mails con los que esta relacionado (adjunción)
         /// </summary>
-        public LexMailActuation[] mailActuations { get; set; }
+        public LexActuation[] actuations { get; set; }
     }
 }

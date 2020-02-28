@@ -225,11 +225,11 @@ namespace Lexon.API.Infrastructure.Repositories
 
                 var company = user.companies.FirstOrDefault(x => x.bbdd.Contains(search.bbdd));
 
-                var relationsSearch = company.mailActuations.Where(ent =>ent.uid == search.idMail);
+                var relationsSearch = company.actuations.Where(ent =>ent.idMail == search.idMail);
 
                 var relations = relationsSearch.ToArray();
 
-                company.mailActuations = relations;
+                company.actuations = relations;
                 resultMongo.AddData(company);
             }
             catch (Exception ex)
@@ -279,19 +279,20 @@ namespace Lexon.API.Infrastructure.Repositories
 
             try
             {
-                var arrayFiltersSimple = GetFilterFromRelation(search.bbdd, resultMySql.Result.mailActuations[0]?.uid);
+                var arrayFiltersSimple = GetFilterFromEntities(search.bbdd);
+              //  var arrayFiltersSimple = GetFilterFromRelation(search.bbdd, resultMySql.Result.mailActuations[0]?.uid);
 
                 var resultUpdate = await _context.LexUsers.UpdateOneAsync(
                     filterUser,
                     Builders<LexUser>.Update
-                        .AddToSetEach($"companies.$[i].mailActuations.$[j]", resultMySql.Result.mailActuations.ToArray()),
+                        .AddToSetEach($"companies.$[i].actuations", resultMySql.DataActuation.ToArray()),
                         new UpdateOptions { ArrayFilters = arrayFiltersSimple, IsUpsert = true }
                 );
 
 
                 if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0)
                 {
-                    TraceInfo(result.infos, $"Se modifica el usuario {search.idUser} añadiendo varias relaciones al mail {search.idMail}");
+                    TraceInfo(result.infos, $"Se modifica el usuario {search.idUser} añadiendo o actualizando las relaciones del mail {search.idMail}");
                     result.data = resultUpdate.ModifiedCount > 0;
                 }
             }

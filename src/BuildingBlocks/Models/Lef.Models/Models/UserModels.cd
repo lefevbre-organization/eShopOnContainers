@@ -18,18 +18,17 @@
     <Position X="4.5" Y="2.5" Width="1.5" />
     <AssociationLine Name="entities" Type="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexEntity" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="5.523" Y="4.31" />
+        <Point X="5.523" Y="4.502" />
         <Point X="5.523" Y="6.062" />
         <Point X="6.25" Y="6.062" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAABAAAAAAAAAAAAQAAAEAQAAAAAAEEAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAABAAAAAACAAAAAQAAAEAQAAAAAAAEAAAAA=</HashCode>
       <FileName>Models\LexCompany.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="entities" />
-      <Property Name="mailActuations" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexEntity">
