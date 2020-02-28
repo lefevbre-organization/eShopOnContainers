@@ -14,3 +14,12 @@
 .lf-icon-user {
   font-size: 20px;
 }
+
+.version {
+    position: absolute;
+    right: 10px;
+    bottom: -5px;
+    color: #949191 !important;
+    font-family: MTTMilano, Lato, Arial, sans-serif;
+    font-size: 0.9em !important;
+}

@@ -65,3 +65,4 @@ env:
 configValues: |
  window.REACT_APP_ENVIRONMENT='PRODUCTION'
  window.API_GATEWAY='http://lexbox-apigwlex.lefebvre.es'
+ window.RELEASE= 'RC 0.17'

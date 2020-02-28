@@ -6,9 +6,9 @@ import "./Footer.css";
 class Footer extends Component {
   render() {
     return (
-      <footer className="row footer mt-auto">
+     <footer className="row footer mt-auto">           
         <div className="container">
-          <div className="row">
+          <div className="row">           
             <div className="col-xs-12 col-md-6 footer-logo">
               <a 
                 rel="noopener noreferrer" 
@@ -62,7 +62,8 @@ class Footer extends Component {
                   <span className="lf-icon-twitter-round"></span>
                 </a>
               </li>
-            </ul>
+             </ul>
+            
           </div>
           <div className="row">
             <p className="col-xs-12">
@@ -94,15 +95,11 @@ class Footer extends Component {
                 >
                   {i18n.t("footer.cookies-policy")}
                 </a>
-              </span>
-                    </p>
-          
+              </span>             
+            </p>
+           
           </div>
-          <div className="row">
-            <p className="col-xs-12 pull-right">
-                        Versión RC 0.16
-            </p>  
-          </div>
+                <p className="version">{i18n.t("footer.version")}: {window.RELEASE}</p>    
         </div>
       </footer>
     );

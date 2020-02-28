@@ -55,7 +55,8 @@
     "edit-basic-data": "EDIT BASIC DATA",
     "reset-pwd": "RESET PASSWORD",
     "add-other-account": "ADD OTHER ACCOUNT",
-    "close-session": "CLOSE SESSION"
+    "close-session": "CLOSE SESSION",
+    "version": "Version"
   },
   "header": {
     "search": "Search"

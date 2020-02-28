@@ -129,7 +129,8 @@
     "edit-basic-data": "EDITAR DATOS BÁSICOS",
     "reset-pwd": "RESETEAR CONTRASEÑA",
     "add-other-account": "AÑADIR OTRA CUENTA",
-    "close-session": "CERRAR SESIÓN"
+    "close-session": "CERRAR SESIÓN",
+    "version": "Versión"
   },
   "msgNotFoundSnackbar": {
     "error": "Mensaje no encontrado en el servidor"

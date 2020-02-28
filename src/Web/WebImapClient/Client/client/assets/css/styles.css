@@ -1487,3 +1487,13 @@ input[type="radio"]:checked + label:after {
   top: -5px !important;
   transform: translate3d(-335px, 45px, 0px) !important;
 }
+
+.version {
+    position: absolute;
+    right: 10px;
+    bottom: 0px;
+    color: #949191 !important;
+    font-family: MTTMilano, Lato, Arial, sans-serif;
+    font-size: 0.7em !important;
+}
+

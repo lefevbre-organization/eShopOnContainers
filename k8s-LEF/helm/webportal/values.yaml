@@ -65,3 +65,4 @@ configValues: |
   window.URL_INBOX_GOOGLE= 'https://lexbox-test-webgoogle.lefebvre.es'
   window.URL_INBOX_OUTLOOK= 'https://lexbox-test-webgraph.lefebvre.es'
   window.URL_INBOX_IMAP= 'https://lexbox-test-webimap.lefebvre.es'
+  window.RELEASE= 'RC 0.17'

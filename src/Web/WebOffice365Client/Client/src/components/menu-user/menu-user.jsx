@@ -130,33 +130,7 @@ class MenuUser extends Component {
                 <div className="content">
                   <div className="menu-title mb-5">
                     <span>{i18n.t("menu-user.user")}</span>
-                  </div>
-                  {/* <div className="user-options">
-                    <ul className="p-0">
-                      <li>
-                        <a
-                          href="#/"
-                          className="d-flex align-items-center"
-                          data-toggle="modal"
-                          data-target="#basicData"
-                        >
-                          <span className="lf-icon-lead"></span>{" "}
-                          <span>{i18n.t("menu-user.edit-basic-data")}</span>
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#/"
-                          className="d-flex align-items-center"
-                          data-toggle="modal"
-                          data-target="#resetPassword"
-                        >
-                          <span className="lf-icon-lock"></span>{" "}
-                          <span>{i18n.t("menu-user.reset-pwd")}</span>
-                        </a>
-                      </li>
-                    </ul>
-                  </div> */}
+                  </div>                 
                   <div className="user-image-and-name text-center">
                     <div className="user-image">
                       <a href="#/">
@@ -200,7 +174,8 @@ class MenuUser extends Component {
                     </button>
                   </div>
                 </div>
-              </DropdownItem>
+                        </DropdownItem>
+              <div disabled className="version">{i18n.t("menu-user.version")}: {window.RELEASE}</div>
             </DropdownMenu>
           </Dropdown>
         </Nav>

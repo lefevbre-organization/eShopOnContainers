@@ -99,6 +99,14 @@
   font-size: 30px;
 }
 
+.version {
+    position: absolute;
+    right: 10px;
+    color: #949191 !important;
+    font-family: MTTMilano, Lato, Arial, sans-serif;
+    font-size: 0.7em !important;
+    padding-top: 20px;
+}
 @media (min-width: 992px) {
   .footer .social-squares {
     text-align: right;

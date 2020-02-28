@@ -16,3 +16,4 @@ window.URL_MF_LEXON_BASE = "http://localhost:3004";
 //window.URL_MF_LEXON = "https://lexbox-test-weblexon.lefebvre.es/static/js/main.js"
 //window.URL_MF_LEXON_BASE = "https://lexbox-test-weblexon.lefebvre.es"
 window.API_GATEWAY = "https://lexbox-test-apigwlex.lefebvre.es";
+window.RELEASE = 'RC DEV';
