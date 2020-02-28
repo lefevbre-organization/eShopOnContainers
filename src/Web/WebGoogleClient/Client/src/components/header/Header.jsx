@@ -81,8 +81,8 @@ export class Header extends PureComponent {
   render() {
     const userInfo = this.props.googleUser.Rt;
     const email = userInfo.Au;
-    const fullName = userInfo.ig;
-    const picUrl = userInfo.Paa;
+    const fullName = userInfo.Ad;
+    const picUrl = userInfo.kL;
 
     return (
       <header className="d-flex p-3 align-content-center align-items-center header ">

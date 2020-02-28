@@ -256,8 +256,11 @@ class MessageList extends Component {
           m => !Object.keys(this.props.downloadedMessages).includes(m.messageId)
         )
         .map(m => m.uid);
-      console.log(this.props.all);
-      this.props.preloadMessages(this.props.selectedFolder, latestMessagesUids);
+        console.log(this.props.all);
+        if ('null' != this.props.selectedFolder) {
+            this.props.preloadMessages(this.props.selectedFolder, latestMessagesUids);
+        }
+      
     }
   }
 }
