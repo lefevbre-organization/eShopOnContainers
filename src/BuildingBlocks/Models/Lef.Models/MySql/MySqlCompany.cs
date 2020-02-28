@@ -91,13 +91,9 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 
             foreach (var act in DataActuation)
             {
-                act.entityType = Enum.GetName(typeof(LexonAdjunctionType), act.TipoRelacion);
-                act.date = act.Fecha;
-                act.name = act.Nombre;
-                act.description = act.Asunto;
+                act.entityType = Enum.GetName(typeof(LexonAdjunctionType), act.entityIdType);
                 act.idMail = relationsMail.uid;
-                act.idRelated = act.IdRelacion;
-                act.entityIdType = act.TipoRelacion;
+
             }
         }
 

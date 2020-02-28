@@ -158,6 +158,22 @@ namespace Lexon.API.Controllers
         //    return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         //}
 
+        [HttpPost("entities/folders/add")]
+        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddEntityFolderAsync(
+             [FromBody] FolderToEntity entityFolder
+    )
+        {
+            if (string.IsNullOrEmpty(entityFolder.idUser) || string.IsNullOrEmpty(entityFolder.bbdd) || entityFolder?.idType <= 0 || entityFolder.idEntity <= 0)
+                return BadRequest("values invalid. Must be a valid user, bbdd type and idEntity for make a folder to the entity");
+
+
+            var result = await _usersService.AddFolderToEntityAsync(entityFolder);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
         [HttpPost("entities")]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.BadRequest)]
@@ -170,6 +186,7 @@ namespace Lexon.API.Controllers
 
             return await GetEntitiesCommon(entitySearch);
         }
+
         [HttpPost("entities/folders")]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.BadRequest)]

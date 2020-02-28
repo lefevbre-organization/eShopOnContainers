@@ -176,5 +176,8 @@ namespace Lexon.MySql.Infrastructure.Services
 
         public async Task<Result<JosUserCompanies>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser) 
             => await _lexonRepository.GetCompaniesListAsync(pageSize, pageIndex, idUser);
+
+        public async Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder)
+            => await _lexonRepository.AddFolderToEntityAsync(entityFolder);
     }
 }

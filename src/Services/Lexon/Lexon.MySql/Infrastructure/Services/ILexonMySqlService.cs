@@ -35,7 +35,6 @@ namespace Lexon.MySql.Infrastructure.Services
                                            List<string> mailContacts = null,
                                            bool addTerminatorToToken = true);
 
-
-
+        Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder);
     }
 }

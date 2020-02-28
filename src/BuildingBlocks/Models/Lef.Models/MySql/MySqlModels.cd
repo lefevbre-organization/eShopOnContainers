@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosEntity">
-    <Position X="1.75" Y="5.75" Width="1.5" />
+    <Position X="1.5" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAACggAAAAAAAgAABAAAAAAAAAAAIAAAAAAAA=</HashCode>
       <FileName>MySql\JosEntity.cs</FileName>
@@ -10,23 +10,31 @@
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosActuation">
     <Position X="4" Y="6" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAQEAAAAAgAAAAAABCAAAABAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAQEAAAAAgAAAAAABCAAAABAAAAIAAAA=</HashCode>
       <FileName>MySql\JosActuation.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosCompany">
-    <Position X="2" Y="0.75" Width="1.5" />
+    <Position X="2.75" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAEAAAAAAQAAAAAEAAAAAAAAAAAAAA=</HashCode>
       <FileName>MySql\JosCompany.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosEntityList">
-    <Position X="2.25" Y="4" Width="1.5" />
+    <Position X="1.5" Y="3.75" Width="1.5" />
+    <AssociationLine Name="Entities" Type="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosEntity">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.11" Y="0.331" />
+      </MemberNameLabel>
+    </AssociationLine>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
       <FileName>MySql\JosEntityList.cs</FileName>
     </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Entities" />
+    </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosEntityType">
     <Position X="11" Y="5.25" Width="1.5" />
@@ -37,34 +45,58 @@
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosEntityTypeList">
     <Position X="11" Y="3" Width="1.5" />
+    <AssociationLine Name="Entities" Type="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosEntityType">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.12" Y="0.56" />
+      </MemberNameLabel>
+    </AssociationLine>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
       <FileName>MySql\JosEntityTypeList.cs</FileName>
     </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Entities" />
+    </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosRelationsList">
-    <Position X="8.5" Y="5.5" Width="1.5" />
+    <Position X="4" Y="3.75" Width="1.5" />
+    <AssociationLine Name="Actuaciones" Type="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosActuation">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.11" Y="0.268" />
+      </MemberNameLabel>
+    </AssociationLine>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAEAAAQABAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
       <FileName>MySql\JosRelationsList.cs</FileName>
     </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Actuaciones" />
+    </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosUser">
-    <Position X="8.5" Y="1" Width="1.5" />
+    <Position X="7" Y="1" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAACAAAAAAAAAAAAAQAAAAAAAAAAAAAAAABAAA=</HashCode>
       <FileName>MySql\JosUser.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosUserCompanies">
-    <Position X="4.25" Y="0.75" Width="1.75" />
+    <Position X="4.5" Y="0.5" Width="1.75" />
+    <AssociationLine Name="Companies" Type="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosCompany">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.37" Y="-0.367" />
+      </MemberNameLabel>
+    </AssociationLine>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
       <FileName>MySql\JosUserCompanies.cs</FileName>
     </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Companies" />
+    </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.MySqlList&lt;T, TItems&gt;">
-    <Position X="6" Y="2.25" Width="2" />
+    <Position X="7" Y="3.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAEAIAgASAABAAAEAQAIAAAABAAAIQAEAAAAAA=</HashCode>
       <FileName>MySql\MySqlList.cs</FileName>

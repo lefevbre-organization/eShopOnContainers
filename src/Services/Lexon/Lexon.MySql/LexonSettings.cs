@@ -21,6 +21,7 @@
         public string SearchEntities { get; set; }
         public string SearchRelations { get; set; }
         public string AddRelation { get; set; }
+        public string AddEntityFolder { get; set; }
         public string RemoveRelation { get; set; }
         public string AddContactRelations { get; set; }
         public string GetEntity { get; set; }

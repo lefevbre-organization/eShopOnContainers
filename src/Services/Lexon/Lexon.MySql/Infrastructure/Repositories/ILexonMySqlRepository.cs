@@ -28,5 +28,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
         //Task<Result<JosRelationsList>> SearchRelationsAsync(ClassificationSearchView classification);
 
         Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification);
+        Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder);
     }
 }

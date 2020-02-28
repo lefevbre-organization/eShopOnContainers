@@ -15,7 +15,7 @@ namespace Lexon.Infrastructure.Services
 
        // Task<Result<long>> SelectCompanyAsync(string idUser, string bbdd);
 
-        Task<MySqlList<JosEntityList, LexonEntityBase>> GetEntitiesListAsync(EntitySearchView entitySearch);
+     //   Task<MySqlList<JosEntityList, LexonEntityBase>> GetEntitiesListAsync(EntitySearchView entitySearch);
 
         Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch);
 
@@ -28,7 +28,8 @@ namespace Lexon.Infrastructure.Services
 
         Task<Result<long>> RemoveClassificationFromListAsync(ClassificationRemoveView classificationRemove);
 
-        Task<Result<List<LexonActuation>>> GetClassificationsFromMailOldAsync(ClassificationSearchView classificationSearch);
+       // Task<Result<List<LexonActuation>>> GetClassificationsFromMailOldAsync(ClassificationSearchView classificationSearch);
         Task<MySqlCompany> GetClassificationsFromMailAsync(ClassificationSearchView classificationSearch);
+        Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder);
     }
 }

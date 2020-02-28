@@ -272,6 +272,34 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return resultMySql;
         }
 
+        public async Task<Result<long>> AddFolderToEntityAsync(FolderToEntity folderToEntity)
+        {
+            var result = new Result<long>(0);
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    var filtro = $"{{ \"BBDD\":\"{folderToEntity.bbdd}\", \"IdEntityType\":{folderToEntity.idType}, \"IdParent\":{folderToEntity.IdParent}, \"Name\":\"{folderToEntity.Name}\", \"IdRelated\":{folderToEntity.idEntity} }}";
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddEntityFolder, conn))
+                    {
+                        AddCommonParameters(folderToEntity.idUser, command, "P_JSON", filtro, true);
+
+                        await command.ExecuteNonQueryAsync();
+                        TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
+                        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                        result.data = (long)command.Parameters["P_ID"].Value;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TraceMessage(result.errors, ex);
+                }
+            }
+
+            return result;
+        }
+
         #endregion Entities
 
         #region Relations
@@ -418,12 +446,15 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         #region Common
 
-        private void AddCommonParameters(string idUser, MySqlCommand command, string nameFilter = "P_FILTER", string filterValue = "{}")
+        private void AddCommonParameters(string idUser, MySqlCommand command, string nameFilter = "P_FILTER", string filterValue = "{}", bool addParameterId = false)
         {
             command.Parameters.Add(new MySqlParameter(nameFilter, MySqlDbType.String) { Value = filterValue });
             command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = idUser });
             command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
             command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
+            if (addParameterId)
+                command.Parameters.Add(new MySqlParameter("P_ID", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
+
             command.CommandType = CommandType.StoredProcedure;
 
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{command.CommandText} {nameFilter}='{filterValue}', P_UC={idUser}" });
@@ -560,7 +591,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
             var comma = withComma ? ", " : "";
             return !string.IsNullOrEmpty(value) ? $"{comma}\"{name}\":\"{value}\"" : string.Empty;
         }
-
         #endregion Common
     }
 }
