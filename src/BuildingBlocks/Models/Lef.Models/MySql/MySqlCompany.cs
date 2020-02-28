@@ -11,7 +11,6 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             Result = new LexCompany();
             Errors = new List<ErrorInfo>();
             Infos = new List<Info>();
-
         }
 
         public MySqlCompany(string parameterName, int pageIndex, int pageSize, string bbdd, short? idType) : this()
@@ -28,7 +27,9 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         public LexCompany Result { get; set; }
 
         public List<LexEntity> Data { get; set; }
-   
+
+        public List<LexMailActuation> DataActuation { get; set; }
+
         public List<ErrorInfo> Errors { get; set; }
         public List<Info> Infos { get; set; }
 
@@ -51,7 +52,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
                 if (DataFromMySql is LexCompany)
                     Result = (LexCompany)DataFromMySql;
                 else
-                    Infos.Add(new Info() { code = "510", message="No puede obtenerse un LexCompany de los datos obtenidos en Mysql" });
+                    Infos.Add(new Info() { code = "510", message = "No puede obtenerse un LexCompany de los datos obtenidos en Mysql" });
 
                 if (Result.entities is LexEntity[])
                     Data = Result.entities.ToList();
@@ -73,20 +74,35 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             try
             {
                 if (relationsMail is LexMailActuation)
-                    Result.mailActuations = new LexMailActuation[] { relationsMail };
+                    CompleteDataRelations(relationsMail);
                 else
                     Infos.Add(new Info() { code = "511", message = "No puede obtenerse las relaciones del mail de los datos obtenidos en Mysql" });
-
-               // CompleteDataRelations();
-
             }
             catch (Exception ex)
             {
-
                 Infos.Add(new Info() { code = "512", message = $"Error no controlado al parsear el objeto Relaciones de los datos obtenidos en Mysql + {ex.Message}" });
             }
         }
 
+        private void CompleteDataRelations(LexMailActuation relationsMail)
+        {
+            Result.mailActuations = new LexMailActuation[] { relationsMail };
+            DataActuation = Result.mailActuations.ToList();
+
+            foreach (var ent in DataActuation)
+            {
+                foreach (var act in ent.actuaciones)
+                {
+                    act.entityType = Enum.GetName(typeof(LexonAdjunctionType), act.TipoRelacion);
+                    act.date = act.Fecha;
+                    act.name = act.Nombre;
+                    act.description = act.Asunto;
+                    act.idMail = relationsMail.uid;
+                    act.idRelated = act.IdRelacion;
+                    act.entityIdType = act.TipoRelacion;
+                }
+            }
+        }
 
         private void CompleteData()
         {
@@ -100,9 +116,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             }
             catch (Exception ex)
             {
-
                 Infos.Add(new Info() { code = "513", message = $"Error no controlado al completar datos de tipoEntidad en los datos obtenidos en Mysql + {ex.Message}" });
-
             }
         }
 
@@ -120,17 +134,21 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 
                 if (Total is int)
                     Count = (int?)Total;
-
             }
             catch (Exception ex)
             {
                 Infos.Add(new Info() { code = "514", message = $"Error no controlado al obtener los pàrámetros de salida del Mysql + {ex.Message}" });
             }
         }
+
         public bool TengoLista()
         {
             return Data?.Count > 0;
         }
-    }
 
+        public bool TengoActuaciones()
+        {
+            return DataActuation?.Count > 0;
+        }
+    }
 }

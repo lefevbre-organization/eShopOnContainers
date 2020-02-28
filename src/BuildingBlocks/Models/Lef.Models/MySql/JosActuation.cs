@@ -8,6 +8,6 @@
         public int Actuacion { get; set; }
         public int IdRelacion { get; set; }
         public short TipoRelacion { get; set; }
-
+        public string TipoEntidad { get; set; }
     }
 }

@@ -237,7 +237,7 @@ namespace Lexon.Infrastructure.Services
                 TraceMessage(resultMySql.Errors, ex);
             }
 
-            if (resultMySql.TengoLista())
+            if (resultMySql.TengoActuaciones())
                 await _usersRepository.UpsertRelationsAsync(classificationSearch, resultMySql);
             else
                 GetRelationsMongoAsync(classificationSearch, resultMySql);
@@ -361,7 +361,7 @@ namespace Lexon.Infrastructure.Services
         {
 
             var resultMySql = new MySqlCompany();
-            SerializeObjectToPost(entitySearch, "/entities/search/new", out string url, out StringContent data);
+            SerializeObjectToPost(entitySearch, "/entities/search", out string url, out StringContent data);
 
             try
             {

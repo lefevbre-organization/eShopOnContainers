@@ -42,24 +42,21 @@
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexMailActuation">
     <Position X="2.75" Y="5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAEAAQAAAAAEAAAACAAAAAAAAAAAAAAAAAAAAAAAIA=</HashCode>
+      <HashCode>AAAEAAQAABAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA=</HashCode>
       <FileName>Models\LexMailActuation.cs</FileName>
     </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Property Name="actuations" />
-    </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.MySqlCompany">
     <Position X="11" Y="1.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAEAIAgBQAAAAAAEAQAIAAAABAAAIQAEAAEAAA=</HashCode>
+      <HashCode>AAAAAAAEAIAgBQAAAAAgEIQAYAAAABAAAIQAEAAEEAA=</HashCode>
       <FileName>MySql\MySqlCompany.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosActuation">
     <Position X="1" Y="6.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAQEAAAAAgAAAAAABCAAAABAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAQEAAAAAgAAAAAABCAAAABAAAAIAAAA=</HashCode>
       <FileName>MySql\JosActuation.cs</FileName>
     </TypeIdentifier>
   </Class>

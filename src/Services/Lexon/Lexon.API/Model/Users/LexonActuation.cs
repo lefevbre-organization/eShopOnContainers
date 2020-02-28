@@ -5,7 +5,7 @@ namespace Lexon.API.Model
     [BsonIgnoreExtraElements]
     public class LexonActuation : MongoModel //, IEntity
     {
-        public string entityType;
+        public string entityType { get; set; }
 
         public string idMail { get; set; }
 
