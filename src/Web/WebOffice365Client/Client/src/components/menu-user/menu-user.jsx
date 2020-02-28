@@ -16,8 +16,6 @@ import { getUser, resetDefaultAccount } from "../../api_graph/accounts";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import i18n from "i18next";
-import { signOut } from "../../api_graph/authentication";
-
 
 class MenuUser extends Component {
   constructor(props) {
@@ -63,13 +61,11 @@ class MenuUser extends Component {
     });
   }
 
-
   _handleOnClick(e) {
-    const { userId, onSignout } = this.props.lexon;
+    const { userId } = this.props.lexon;
     if (userId !== null) {
         resetDefaultAccount(userId)
         .then(() => {
-          signOut(userId);
           const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
           window.open(urlRedirect, "_self");
         })

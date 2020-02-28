@@ -22,7 +22,7 @@ class AppContainerGraph extends Component {
   constructor(props) {
     super(props);
 
-    this.userAgentApplication = getUserApplication(this.props.match.params.idUser);
+    this.userAgentApplication = getUserApplication();
     var user = this.userAgentApplication.getAccount();
 
     this.state = {
@@ -76,7 +76,7 @@ class AppContainerGraph extends Component {
   }
 
   onSignout() {
-    this.props.signOut(this.props.lexon.user);
+    this.props.signOut();
   }
 
   onSignIn() {

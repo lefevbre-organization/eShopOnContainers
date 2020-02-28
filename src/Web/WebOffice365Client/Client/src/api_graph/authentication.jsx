@@ -1,10 +1,9 @@
 import { getUserApplication } from '../api_graph';
 
-export const signOut = (userId, redirect = false) => {   
+export const signOut = (url) => {   
     
-    const userAgentApplication = getUserApplication(userId, true, redirect);
+    const userAgentApplication = getUserApplication();
     userAgentApplication.logout();
     
     return true
 }
-
