@@ -13,7 +13,9 @@
     "messages-selected": "MENSAJES SELECCIONADOS:",
     "company-selected": "Empresa identificada:",
     "change-company": "Cambiar de empresa",
-    "select-another-company": "Seleccionar otra empresa diferente"
+    "select-another-company": "Seleccionar otra empresa diferente",
+    "folder": "Carpeta",
+    "subject": "Asunto"
   },
   "new-classification": {
     "new-classification": "Nueva clasificación"
@@ -128,5 +130,10 @@
     "identifier": "Identificador",
     "description": "Descripción:",
     "client": "Cliente:"
+  },
+  "configuration": {
+    "version": "Versión",
+    "configuration":"OPCIONES DE CONFIGURACIÓN",
+    "classify-contacts":"Clasificar contactos automáticamente al enviar correo"
   }
 }

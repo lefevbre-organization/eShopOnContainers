@@ -68,7 +68,6 @@ export class MessageViewer extends Component {
   }
 
   clearSelectedList() {
-    debugger
     this.oldSelectedList = Object.assign([], this.props.selectedMessages);
     this.props.setSelected(this.props.selectedMessages.map(item=>( { ...item, messageId: item.id })), false, this.props.currentFolder.fullName);
     window.dispatchEvent(

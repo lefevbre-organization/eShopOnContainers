@@ -20,20 +20,21 @@ class Configuration extends Component {
     this.handleOnClick = this.handleOnClick.bind(this);
   }
 
-  componentDidMount() { 
+  componentDidMount() {
     console.log(this.props.user)
   }
 
   handleOnClick(id) {
     const newConfig = Object.assign({}, this.state.config);
     newConfig[id] = !newConfig[id]
-    this.setState({config: newConfig}, ()=>{
+    this.setState({ config: newConfig }, () => {
       this.props.setConfig(this.state.config)
       // Save the configuration on user
-      const conf = { "getContacts": this.state.config[id],   
-                     "defaultAdjunction": "onlyAttachments",
-                     "defaultEntity": "contacts" 
-                    };
+      const conf = {
+        "getContacts": this.state.config[id],
+        "defaultAdjunction": "onlyAttachments",
+        "defaultEntity": "contacts"
+      };
       saveUserConfig(conf, this.props.user.idNavision)
     })
   }
@@ -56,22 +57,41 @@ class Configuration extends Component {
       <Fragment>
         <div className="container">
           <div className="row config-title">
-            <a href="#" onClick={()=>{this.props.changePage(PAGE_SELECT_ACTION)}}>
+            <a href="#" onClick={() => { this.props.changePage(PAGE_SELECT_ACTION) }}>
               <span
-              className="icon lf-icon-arrow-left"></span>
+                className="icon lf-icon-arrow-left"></span>
             </a>
-          <p>OPCIONES DE CONFIGURACIÓN</p>
+            <p>{i18n.t("configuration.configuration")}</p>
           </div>
         </div>
         <ul className="options-list">
           <li className="option-container">
             <div>
-              <Switch height={18} width={36} onColor={"#001978"} checkedIcon={false} uncheckedIcon={false} onChange={()=>{this.handleOnClick("getContacts")}} checked={this.state.config.getContacts} />
-              <span>Clasificar contactos automáticamente al enviar correo</span>
+              <Switch height={18} width={36} onColor={"#001978"} checkedIcon={false} uncheckedIcon={false} onChange={() => { this.handleOnClick("getContacts") }} checked={this.state.config.getContacts} />
+              <span>{i18n.t("configuration.classify-contacts")}</span>
             </div>
           </li>
         </ul>
+        <div className="version-container">
+          <div disabled className="version">{i18n.t("configuration.version")}: {window.RELEASE}</div>
+        </div>
         <style jsx>{`
+        .version {
+          position: absolute;
+          right: 5px;   
+          color: #949191 !important;
+          font-family: MTTMilano, Lato, Arial, sans-serif;
+          font-size: 0.9em !important;
+      }
+
+      .version-container {
+        bottom: 0;
+        right: 0;
+        position: absolute;
+        width: 100%;
+        height: 20px;
+      }
+
         .options-list {
           padding: 15px;
         }

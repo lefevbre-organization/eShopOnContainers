@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react'
+import i18n from "i18next";
 
 export default class SelectedMessage extends React.PureComponent {
     constructor() {
@@ -16,23 +17,30 @@ export default class SelectedMessage extends React.PureComponent {
         if(!message) {
             return null;
         }
-
+        
         return (
         <Fragment>
             <div className="selected-message-container">
                 <div><button className="close-button" onClick={this.onClick}>X</button></div>
-                <div><span className="title">Carpeta: </span>{message.folder===''?'-':message.folder}</div>
-                <div><span className="title">Asunto: </span>{message.subject}</div>
+                <div><span className="title">{i18n.t("select-action-header.folder")}: </span><span className="subtitle">{message.folder===''?'-':message.folder}</span></div>
+                <div><span className="title">{i18n.t("select-action-header.subject")}: </span><span className="subtitle">{message.subject}</span></div>
             </div>
             <style jsx>{`
                 .selected-message-container {
                     border-top: 1px dashed #001978;
                     display: flex;
                     flex-direction: column;
+                    margin-top: 5px;
                 }
 
                 .title {
                     color: #001978;
+                    font-size: 12px;
+                    font-family: MTTMilano-Medium, Lato, Arial, sans-serif;
+                }
+                .subtitle {
+                    font-size: 12px;
+                    font-family: MTTMilano-Medium, Lato, Arial, sans-serif;
                 }
 
                 .close-button {
