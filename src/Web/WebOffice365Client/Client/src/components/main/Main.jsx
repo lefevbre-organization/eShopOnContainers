@@ -19,7 +19,8 @@ import {
   setPageTokens,
   addInitialPageToken,
   clearPageTokens,
-  setSearchQuery
+  setSearchQuery,
+  deleteMessage
 } from "../content/message-list/actions/message-list.actions";
 import { selectLabel } from "../sidebar/sidebar.actions";
 import { signOut } from "../../api_graph/authentication";
@@ -208,6 +209,22 @@ export class Main extends Component {
       "GetUserFromLexonConnector",
       this.handleGetUserFromLexonConnector
     );
+    window.addEventListener("RemoveSelectedDocument", (event)=>{
+      this.props.deleteMessage(event.detail.id)
+      dispatchEvent(new CustomEvent("Checkclick", {
+        detail: {
+          id: event.detail.id,
+          extMessageId: event.detail.id,
+          name: event.detail.id,
+          subject: event.detail.subject,
+          sentDateTime: event.detail.sentDateTime,
+          folder: event.detail.folder,
+          provider: "GOOGLE",
+          account: this.props.lexon.account,
+          chkselected: false
+        }
+      }));
+    });
 
     const { userId, idCaseFile, bbdd } = this.props.lexon;
     const { email } = this.props.User;
@@ -676,7 +693,8 @@ const mapDispatchToProps = dispatch =>
       setPageTokens,
       addInitialPageToken,
       clearPageTokens,
-      setSearchQuery
+      setSearchQuery,
+      deleteMessage
     },
     dispatch
   );

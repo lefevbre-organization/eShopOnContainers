@@ -37,47 +37,49 @@ export class MessageToolbar extends PureComponent {
   onSelectionChange(evt) {
     const checked = evt.target.checked;
 
-    const messageIds = this.props.messagesResult.messages.reduce((acc, el) => {
-      acc.push(el.id);
-      return acc;
-    }, []);
+
+    const messages = this.props.messagesResult.messages.map(msg => {
+      const extMessageId = this.getContentByHeader(msg, "message-id");
+      const subject = this.getContentByHeader(msg, "subject");
+      const sentDateTime = this.getContentByHeader(msg, "date");
+
+      return {
+        id: msg.id,
+        subject,
+        sentDateTime,
+        extMessageId
+      }
+    });
 
     this.setState({
-      selectedMessageIds: messageIds
+      selectedMessageIds: messages.map(msg => msg.id)
     });
 
-    this.props.toggleSelected(messageIds, checked);
+    this.props.toggleSelected(messages, checked);
+    checked
+      ? this.props.addListMessages(messages)
+      : this.props.deleteListMessages(messages.map(msg => msg.extMessageId));
 
-    getMessageHeadersFromId(messageIds).then(response => {
-      let messages = [];
-      response.messages.forEach(message => {
-        messages.push({
-          id: message.id,
-          subject: this.getContentByHeader(message, "Subject"),
-          sentDateTime: this.getContentByHeader(message, "Date"),
-          account: this.props.lexon.account,
-          folder: "",
-          provider: "GOOGLE"
-        });
-      });
-      window.dispatchEvent(
-        new CustomEvent("CheckAllclick", {
-          detail: {
-            listMessages: messages,
-            chkselected: checked
-          }
-        })
-      );
 
-      checked
-        ? this.props.addListMessages(response.messages)
-        : this.props.deleteListMessages(messageIds);
-    });
+    window.dispatchEvent(
+      new CustomEvent("CheckAllclick", {
+        detail: {
+          listMessages: messages.map(msg => ({
+            ...msg,
+            id: msg.extMessageId,
+            account: this.props.lexon.account,
+            folder: "",
+            provider: "GOOGLE"
+          })),
+          chkselected: checked
+        }
+      })
+    );
   }
 
   getContentByHeader(message, header) {
     for (let i = 0; i < message.payload.headers.length; i++) {
-      if (message.payload.headers[i].name === header) {
+      if (message.payload.headers[i].name.toUpperCase() === header.toUpperCase()) {
         return message.payload.headers[i].value;
       }
     }

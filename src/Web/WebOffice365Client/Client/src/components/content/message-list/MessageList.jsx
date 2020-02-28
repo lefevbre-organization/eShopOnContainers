@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { Component } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { withTranslation } from "react-i18next";
 import { bindActionCreators, compose } from "redux";
@@ -19,7 +19,7 @@ const ViewMode = {
   EDIT: 3
 };
 
-export class MessageList extends PureComponent {
+export class MessageList extends Component {
   constructor(props) {
     super(props);
 
@@ -78,53 +78,30 @@ export class MessageList extends PureComponent {
     }
   }
 
-  onSelectionChange(selected, msgId) {
-    this.props.toggleSelected([msgId], selected);
+  onSelectionChange(selected, msg) {
+    this.props.toggleSelected([msg.id], selected);
 
-    getMessageHeader(msgId)
-      .then(response => {
-        const message = {
-          id: msgId,
-          internetId: response.internetMessageId,
-          subject: response.subject,
-          sentDateTime: response.sentDateTime,
-          chkselected: selected
-        };
-        const messageLexon = {
-          id: ((response.internetMessageId == "undefined") ? msgId : response.internetMessageId),
-          subject: response.subject,
-          sentDateTime: response.sentDateTime,
-          chkselected: selected,
-          folder: "",
-          account: this.props.lexon.account,
-          provider: "OUTLOOK"         
-        }
-        window.dispatchEvent(
-          new CustomEvent("Checkclick", {
-            detail: messageLexon
-          })
-        );
+    const extMessageId = msg.internetMessageId
+    const message = {
+      id: msg.id,
+      extMessageId,
+      subject: msg.subject,
+      sentDateTime: msg.sentDateTime,
+      folder: "",
+      provider: "GOOGLE",
+      account: this.props.lexon.account,
+      chkselected: selected
+    };
 
-        console.log("EVENTO ENVIADO A CONECTOR DE LEXON: Checkclick - " + messageLexon.id + " " + messageLexon.subject);
-
-        selected
-          ? this.props.addMessage(message)
-          : this.props.deleteMessage(msgId);
+    window.dispatchEvent(
+      new CustomEvent("Checkclick", {
+        detail: message
       })
-      .catch(error => {
-        console.log("error ->", error);
-        // new CustomEvent("Checkclick", {
-        //   detail: {
-        //     name: msgId,
-        //     subject: "",
-        //     sentDateTime: "",
-        //     chkselected: selected,
-        //     folder: "",
-        //     account: this.props.lexon.account,
-        //     provider: "OUTLOOK"
-        //   }
-        // });
-      });
+    );
+
+    selected
+      ? this.props.addMessage(message)
+      : this.props.deleteMessage(msg.internetMessageId);
   }
 
   renderSpinner() {
@@ -137,6 +114,7 @@ export class MessageList extends PureComponent {
 
   renderMessages() {
     const { t } = this.props;
+    const _this = this;
 
     if (this.props.messagesResult.loading) {
       return this.renderSpinner();
@@ -147,7 +125,7 @@ export class MessageList extends PureComponent {
     }
 
     return this.props.messagesResult.messages.map(el => {
-      if (this.props.selectedMessages.find(x => x.id === el.id)) {
+      if (_this.props.selectedMessages.find(x => x.id === el.id)) {
         el.selected = true;
       } else {
         el.selected = false;

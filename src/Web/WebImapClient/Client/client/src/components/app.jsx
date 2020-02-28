@@ -15,8 +15,8 @@ import MessageViewer from "./message-viewer/message-viewer";
 import MessageSnackbar from "./message-snackbar/message-snackbar";
 import NotFoundSnackbar from "./messageNotFound-snackbar/messageNotFound-snackbar";
 
-import { clearUserCredentials, selectMessage, selectFolder, outboxEventNotified, editMessage, setError} from "../actions/application";
-import {clearSelected} from '../actions/messages';
+import { clearUserCredentials, selectMessage, selectFolder, outboxEventNotified, editMessage, setError } from "../actions/application";
+import {clearSelected, setSelected} from '../actions/messages';
 import { setEmailShown, resetIdEmail, setCaseFile} from '../actions/lexon';
 
 import { getSelectedFolder } from "../selectors/folders";
@@ -544,6 +544,29 @@ class App extends Component {
       this.handleGetUserFromLexonConnector
     );
 
+    window.addEventListener("RemoveSelectedDocument", (event)=>{
+
+      const messages = [event.detail].map( msg => ({ 
+        ...msg,
+        messageId: msg.id,
+      }) )
+      this.props.setSelected(messages, false, event.detail.folder)
+      
+      dispatchEvent(new CustomEvent("Checkclick", {
+        detail: {
+          id: event.detail.id,
+          extMessageId: event.detail.id,
+          name: event.detail.id,
+          subject: event.detail.subject,
+          sentDateTime: event.detail.sentDateTime,
+          folder: event.detail.folder,
+          provider: "GOOGLE",
+          account: this.props.lexon.account,
+          chkselected: false
+        }
+      }));
+    });
+
     console.log("ENVIRONMENT ->", window.REACT_APP_ENVIRONMENT);
   }
 
@@ -769,7 +792,9 @@ const mapDispatchToProps = dispatch => ({
   },
   setError: (err, msg) => dispatch(setError(err, msg)),
   resetIdEmail: () => dispatch(resetIdEmail()),
-  setCaseFile: casefile => dispatch(setCaseFile(casefile))
+  setCaseFile: casefile => dispatch(setCaseFile(casefile)),
+  setSelected: (messages, selected, shiftKey) =>
+    dispatch(setSelected(messages, selected, shiftKey)),
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>

@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { Component } from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { withTranslation } from "react-i18next";
 import { bindActionCreators, compose } from "redux";
@@ -34,7 +34,7 @@ const months = {
   'Dec' : '12'
 }
 
-export class MessageList extends PureComponent {
+export class MessageList extends Component {
   constructor(props) {
     super(props);
 
@@ -90,52 +90,29 @@ export class MessageList extends PureComponent {
     }
   }
 
-  onSelectionChange(selected, msgId) {
-    this.props.toggleSelected([msgId], selected);
-    //e.emit('received', { text: "Id: " + msgId + " selected: " + selected })
-    console.log(this.props);
-    getMessageHeader(msgId)
-      .then(response => {
-        const sentDate = this.getContentByHeader(response, "Date").split(' ');
-        const message = {
-          id: this.getContentByHeader(response, "Message-Id"),
-          subject: this.getContentByHeader(response, "Subject"),
-          sentDateTime: this.getContentByHeader(response, "Date"),
-          folder: "",
-          provider: "GOOGLE",
-          account: this.props.lexon.account,
-          chkselected: selected
-        };
-        console.log('*****Message clicked:'+ message.id + ' Message subject:' + message.subject + ' Message sentDateTime:' + message.sentDateTime);
-        console.log(`${sentDate[3]}-${months[sentDate[2]]}-${sentDate[1]} ${sentDate[4]}`);
-        console.log(new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''));
-        window.dispatchEvent(
-          new CustomEvent("Checkclick", {
-            detail: message
-          })
-        );
+  onSelectionChange(selected, msg) {
+    this.props.toggleSelected([msg.id], selected);
+    const extMessageId = this.getContentByHeader(msg, "Message-Id")
+    const message = {
+      id: msg.id,
+      extMessageId,
+      subject: this.getContentByHeader(msg, "Subject"),
+      sentDateTime: this.getContentByHeader(msg, "Date"),
+      folder: "",
+      provider: "GOOGLE",
+      account: this.props.lexon.account,
+      chkselected: selected
+    };
 
-        message.extMessageId = message.id;
-        message.id = msgId // Se sobreescribe con el valor normal para que no dejen de funcionar los checks de los mensajes
-
-        selected
-          ? this.props.addMessage(message)
-          : this.props.deleteMessage(msgId);
+    window.dispatchEvent(
+      new CustomEvent("Checkclick", {
+        detail: message
       })
-      .catch(error => {
-        console.log("error ->", error);
-        new CustomEvent("Checkclick", {
-          detail: {
-            name: msgId,
-            subject: "",
-            sentDateTime: "",
-            folder: "",
-            provider: "GOOGLE",
-            account: this.props.lexon.account,
-            chkselected: selected
-          }
-        });
-      });
+    );
+
+    selected
+    ? this.props.addMessage(message)
+    : this.props.deleteMessage(message.extMessageId);
   }
 
   getContentByHeader(message, header) {
@@ -156,6 +133,7 @@ export class MessageList extends PureComponent {
 
   renderMessages() {
     const { t } = this.props;
+    const _this = this;
 
     if (this.props.messagesResult.loading) {
       return this.renderSpinner();
@@ -166,7 +144,7 @@ export class MessageList extends PureComponent {
     }
 
     return this.props.messagesResult.messages.map(el => {
-      if (this.props.selectedMessages.find(x => x.id === el.id)) {
+      if (_this.props.selectedMessages.find(x => x.id === el.id)) {
         el.selected = true;
       } else {
         el.selected = false;

@@ -68,8 +68,9 @@ export class MessageViewer extends Component {
   }
 
   clearSelectedList() {
+    debugger
     this.oldSelectedList = Object.assign([], this.props.selectedMessages);
-    this.props.setSelected(this.props.selectedMessages, false);
+    this.props.setSelected(this.props.selectedMessages.map(item=>( { ...item, messageId: item.id })), false, this.props.currentFolder.fullName);
     window.dispatchEvent(
       new CustomEvent("CheckAllclick", {
         detail: {
@@ -84,6 +85,7 @@ export class MessageViewer extends Component {
       new CustomEvent("Checkclick", {
         detail: {
           id: this.props.selectedMessage.messageId,
+          extMessageId: this.props.selectedMessage.messageId,
           subject: this.props.selectedMessage.subject,
           sentDateTime: this.props.selectedMessage.receivedDate,
           chkselected: true,
@@ -96,16 +98,17 @@ export class MessageViewer extends Component {
   }
 
   restoreSelectedList() {
-    this.props.setSelected([this.props.selectedMessage], false);
-    const ms = this.oldSelectedList.map(item=>item.messageId);
-    setTimeout(()=>{
-      this.props.setSelected(ms, true);
-    }, 1000);
+    this.props.setSelected([this.props.selectedMessage], false, this.props.currentFolder.fullName);
+    const ms = this.oldSelectedList.map(item=>( { ...item, messageId: item.id }));
+    //setTimeout(()=>{
+      this.props.setSelected(ms, true, this.props.currentFolder.fullName);
+    //}, 1000);
 
     window.dispatchEvent(
       new CustomEvent("Checkclick", {
         detail: {
           id: this.props.selectedMessage.messageId,
+          extMessageId: this.props.selectedMessage.messageId,
           subject: this.props.selectedMessage.subject,
           sentDateTime: this.props.selectedMessage.receivedDate,
           chkselected: false,
@@ -121,6 +124,7 @@ export class MessageViewer extends Component {
         new CustomEvent("Checkclick", {
           detail: {
             id: this.oldSelectedList[i].id,
+            extMessageId: this.oldSelectedList[i].id,
             subject: this.oldSelectedList[i].subject,
             sentDateTime: this.oldSelectedList[i].sentDateTime,
             chkselected: true,

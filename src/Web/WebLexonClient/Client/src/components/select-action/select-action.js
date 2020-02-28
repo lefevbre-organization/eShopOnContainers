@@ -9,26 +9,39 @@ import { PAGE_SELECT_COMPANY } from "../../constants";
 class SelectAction extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      showDocuments: true
+    }
 
     this._handelOnClick = this._handelOnClick.bind(this);
+    this.onShowDocuments = this.onShowDocuments.bind(this);
   }
 
   _handelOnClick() {
     this.props.changePage(PAGE_SELECT_COMPANY);
   }
 
+  onShowDocuments(show) {
+    this.setState({showDocuments: show})
+  }
+
+
   render() {
     const { user, companies, toggleNotification } = this.props;
+    const { showDocuments } = this.state;
     return (
       <div className="container-fluid">
         <SelectActionHeader
           companies={companies}
           changePage={this.props.changePage}
+          onChange={this.onShowDocuments}
         />
-        <SelectActionTab
-          user={user}
-          toggleNotification={toggleNotification}
-        />
+        { showDocuments === true &&
+          <SelectActionTab
+            user={user}
+            toggleNotification={toggleNotification}
+          />
+        }
       </div>
     );
   }

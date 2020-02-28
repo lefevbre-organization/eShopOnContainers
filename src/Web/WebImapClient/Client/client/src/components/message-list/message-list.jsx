@@ -108,7 +108,7 @@ class MessageList extends Component {
   renderItem({ index, key, style }) {
     const folder = this.props.selectedFolder;
     const message = this.props.messages[index];
-    const selected = this.props.selectedMessages.indexOf(message.uid) > -1;
+    const selected = this.props.selectedMessages.indexOf(message.messageId) > -1;
     return (
       <li
         key={key}
@@ -121,7 +121,7 @@ class MessageList extends Component {
                 ${message.deleted ? styles.deleted : ""}`}
       >
         <Checkbox
-          id={message.uid}
+          id={message.messageId}
           onChange={event => this.selectMessage(event, message)}
           checked={selected}
         />
@@ -158,12 +158,12 @@ class MessageList extends Component {
     const payload = { type: DroppablePayloadTypes.MESSAGES, fromFolder };
     if (this.props.selectedMessages.length > 0) {
       // Prevent dragging single messages when there is a selection and message is not part of the selection
-      if (this.props.selectedMessages.indexOf(message.uid) < 0) {
+      if (this.props.selectedMessages.indexOf(message.messageId) < 0) {
         event.preventDefault();
         return;
       }
       const messages = this.props.messages.filter(
-        m => this.props.selectedMessages.indexOf(m.uid) > -1
+        m => this.props.selectedMessages.indexOf(m.messageId) > -1
       );
       if (event.dataTransfer.setDragImage) {
         const image = _dragImage(
@@ -208,23 +208,41 @@ class MessageList extends Component {
       ];
       let selecting = false;
       this.props.messages.forEach(m => {
-        if (m.uid === message.uid || m.uid === lastSelectedMessageUid) {
+        if (m.messageId === message.messageId || m.messageId === lastSelectedMessageUid) {
           selecting = !selecting;
           messagesToSelect.push(m);
         } else if (selecting) {
           messagesToSelect.push(m);
         }
       });
-      this.props.messageSelected(messagesToSelect, checked);
+      this.props.messageSelected(messagesToSelect, checked, this.props.selectedFolder.fullName);
+
+      for(let i = 0; i < messagesToSelect.length; i++) {
+        const message = messagesToSelect[i];
+        window.dispatchEvent(
+          new CustomEvent("Checkclick", {
+            detail: {
+              id: message.messageId,
+              extMessageId: message.messageId,
+              subject: message.subject,
+              sentDateTime: message.receivedDate,
+              chkselected: checked,
+              account: this.props.all.login.formValues.user,
+              folder: this.props.selectedFolder.fullName,
+              provider: "IMAP"
+            }
+          })
+        );
+      }
     } else {
       // Single selection
       this.props.messageSelected([message], checked, this.props.selectedFolder.fullName);
       // Send message to connectors
-      //e.emit('received', { text: "Id: " + message.messageId + " selected: " + checked })
       window.dispatchEvent(
         new CustomEvent("Checkclick", {
           detail: {
             id: message.messageId,
+            extMessageId: message.messageId,
             subject: message.subject,
             sentDateTime: message.receivedDate,
             chkselected: checked,
@@ -255,7 +273,7 @@ class MessageList extends Component {
         .filter(
           m => !Object.keys(this.props.downloadedMessages).includes(m.messageId)
         )
-        .map(m => m.uid);
+        .map(m => m.messageId);
       console.log(this.props.all);
       this.props.preloadMessages(this.props.selectedFolder, latestMessagesUids);
     }

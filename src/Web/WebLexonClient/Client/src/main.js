@@ -113,12 +113,13 @@ class Main extends Component {
 
     event.detail.chkselected
       ? this.props.addMessage({
-          id: event.detail.id,
+          id: event.detail.extMessageId,
+          //extMessageId: event.detail.extMessageId,
           subject: event.detail.subject,
           folder: event.detail.folder,
           sentDateTime: event.detail.sentDateTime
         })
-      : this.props.deleteMessage(event.detail.id);
+      : this.props.deleteMessage(event.detail.extMessageId);
   }
 
   handleCheckAllclick(event) {
