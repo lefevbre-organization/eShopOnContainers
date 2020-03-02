@@ -11,7 +11,7 @@ trigger:
     - src/Web/WebSPA/*
     - k8s/helm/webspa/*            
 jobs:
-- template: ../buildimages.yaml
+- template: ../build/azure-devops/buildimages.yaml
   parameters:
     services: webspa
     registryEndpoint: $(registryEndpoint)          
