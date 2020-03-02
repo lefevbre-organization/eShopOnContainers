@@ -14,7 +14,7 @@ const email = (state = INITIAL_STATE.email, action) => {
             return state;     
         }
 
-        case ACTIONS.Types.DELETE_MESSAGE: {           
+        case ACTIONS.Types.DELETE_MESSAGE: {     
             return {
                 ...state,
                 selectedMessages: state.selectedMessages.filter(message => message.id !== action.payload)

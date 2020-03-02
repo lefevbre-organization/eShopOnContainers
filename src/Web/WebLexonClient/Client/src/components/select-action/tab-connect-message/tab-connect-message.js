@@ -98,7 +98,6 @@ class TabConnectMessage extends Component {
   }
 
   renderShowSaveDocument() {
-    const { showSaveDocument } = this.state;
     const { user, selectedMessages } = this.props;
 
     if (selectedMessages.length > 0) {

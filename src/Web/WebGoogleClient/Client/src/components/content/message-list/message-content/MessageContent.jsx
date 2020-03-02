@@ -166,7 +166,8 @@ export class MessageContent extends Component {
       window.dispatchEvent(new CustomEvent("ResetList"));
       for(let i = 0; i < this.props.selectedMessages.length; i++) {
           const detail = {
-            id: this.props.selectedMessages[i].extMessageId,
+            id: this.props.selectedMessages[i].id,
+            extMessageId: this.props.selectedMessages[i].extMessageId,
             subject: this.props.selectedMessages[i].subject,
             sentDateTime: this.props.selectedMessages[i].sentDateTime,
             chkselected: true,
@@ -175,10 +176,9 @@ export class MessageContent extends Component {
             provider: "GOOGLE",
 
           };
-          console.log('ComponenWillUnmount ***** detail:' + detail );
       window.dispatchEvent(new CustomEvent("Checkclick",  {
         detail
-      }));   
+      }));
     }
     if(this.refresh && this.props.refresh) {
       this.props.refresh();
@@ -187,11 +187,11 @@ export class MessageContent extends Component {
 
   componentDidUpdate(prevProps) {
     const { emailMessageResult, emailHeaderMessageResult } = this.props;
-    console.log('ComponenDidUpdate  ***** detail' );
 
     if(prevProps.emailHeaderMessageResult.headers === null && emailHeaderMessageResult.headers !== null) {
       const detail = {
-        id: getHeader(emailHeaderMessageResult.headers, "Message-Id"),
+        id: emailHeaderMessageResult.id,
+        extMessageId: getHeader(emailHeaderMessageResult.headers, "Message-Id"),
         subject: getHeader(emailHeaderMessageResult.headers, "subject"),
         sentDateTime: getHeader(emailHeaderMessageResult.headers, "date"),
         chkselected: true,

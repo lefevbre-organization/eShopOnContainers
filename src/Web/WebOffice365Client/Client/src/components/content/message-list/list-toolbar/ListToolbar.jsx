@@ -37,50 +37,43 @@ export class MessageToolbar extends PureComponent {
   onSelectionChange(evt) {
     const checked = evt.target.checked;
 
-    const messageIds = this.props.messagesResult.messages.reduce((acc, el) => {
-      acc.push(el.id);
-      return acc;
-    }, []);
+    const messages = this.props.messagesResult.messages.map(msg => {
+      const extMessageId = msg.internetMessageId;
+      const subject = msg.subject;
+      const sentDateTime = msg.sentDateTime;
+
+      return {
+        id: msg.id,
+        subject,
+        sentDateTime,
+        extMessageId
+      }
+    });
 
     this.setState({
-      selectedMessageIds: messageIds
+      selectedMessageIds: messages.map(msg => msg.id)
     });
 
-    this.props.toggleSelected(messageIds, checked);
+    this.props.toggleSelected(messages, checked);
+    checked
+      ? this.props.addListMessages(messages)
+      : this.props.deleteListMessages(messages.map(msg => msg.extMessageId));
 
-    getMessageHeadersFromId(messageIds).then(response => {
-      let messages = [];
-      let messagesLexon = [];
-      response.messages.forEach(message => {
-        messages.push({
-          id: message.id,
-          subject: message.subject,
-          sentDateTime: message.sentDateTime
-        });
-        messagesLexon.push({
-          id: ((message.internetMessageId) == "undefined" ? message.id : message.internetMessageId),
-          subject: message.subject,
-          sentDateTime: message.sentDateTime
-        });
-      });
-      window.dispatchEvent(
-        new CustomEvent("CheckAllclick", {
-          detail: {
-            listMessages: messagesLexon,
-            chkselected: checked,
-            provider: "OUTLOOK",
+
+    window.dispatchEvent(
+      new CustomEvent("CheckAllclick", {
+        detail: {
+          listMessages: messages.map(msg => ({
+            ...msg,
+            id: msg.extMessageId,
             account: this.props.lexon.account,
-            folder: ""
-          }
-        })
-      );
-
-      console.log("EVENTO ENVIADO A CONECTOR DE LEXON: Checkclick - " + messagesLexon + " " + messagesLexon.length + " " + messagesLexon[0].id + " " + messagesLexon[1].id);
-
-      checked
-        ? this.props.addListMessages(response.messages)
-        : this.props.deleteListMessages(messageIds);
-    });
+            folder: "",
+            provider: "GOOGLE"
+          })),
+          chkselected: checked
+        }
+      })
+    );
   }
 
   getLabelMessagesSynk() {

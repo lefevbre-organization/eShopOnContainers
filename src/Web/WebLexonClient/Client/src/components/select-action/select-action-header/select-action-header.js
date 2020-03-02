@@ -4,6 +4,10 @@ import "./select-action-header.css";
 import { connect } from "react-redux";
 import i18n from "i18next";
 import ACTIONS from "../../../actions/selections";
+import ACTIONS_EMAIL from "../../../actions/email";
+import MessageCounter from './message-counter';
+import SelectedMessage from './selected-message';
+import PerfectScrollbar from "react-perfect-scrollbar";
 
 import { PAGE_SELECT_COMPANY } from "../../../constants";
 
@@ -11,13 +15,29 @@ class SelectActionHeader extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      showDocuments: true
+    }
     this._handelOnClick = this._handelOnClick.bind(this);
+    this.onShowDocuments = this.onShowDocuments.bind(this);
+    this.onDeleteMessage = this.onDeleteMessage.bind(this);
   }
 
   componentDidUpdate(prevProps) {
     if(this.props.initialBBDD === null && prevProps.initialBBDD !== null) {
       this.props.changePage(PAGE_SELECT_COMPANY);
     }
+  }
+
+  onShowDocuments(show) {
+    this.setState({showDocuments: show}, ()=>{
+      const { onChange } = this.props;
+      onChange && onChange(show)
+    })
+  }
+
+  onDeleteMessage(msg) {
+    this.props.deleteMessage(msg);
   }
 
   _handelOnClick() {
@@ -44,16 +64,17 @@ class SelectActionHeader extends Component {
 
   render() {
     const { selectedMessages, companySelected } = this.props;
+    const { showDocuments } = this.state;
 
     return (
       <Fragment>
         <p className="selected-messages">
           {i18n.t("select-action-header.messages-selected")}
           <br />
-          <span className="badge badge-pill badge-light">
-            {selectedMessages.length}
-          </span>
+          <MessageCounter onChange={this.onShowDocuments}>{selectedMessages.length}</MessageCounter>
         </p>
+
+        { showDocuments && 
         <p className="company-id">
           {i18n.t("select-action-header.company-selected")}
           <br />
@@ -65,6 +86,22 @@ class SelectActionHeader extends Component {
             {this.renderArrowChangePage()}
           </a>
         </p>
+        }
+        { showDocuments === false && 
+          <div className="messages-list-container">
+            <PerfectScrollbar>{
+                this.props.selectedMessages.map( (sm) => <SelectedMessage message={sm} onDeleteMessage={this.onDeleteMessage}></SelectedMessage>)
+            }</PerfectScrollbar>
+          </div>
+        }
+        <style jsx>{`
+          .messages-list-container {
+            padding-right: 15px;
+            position: absolute;
+            height: calc(100% - 160px);
+            width: calc(100% - 15px);
+          }
+        `}</style>
       </Fragment>
     );
   }
@@ -84,7 +121,8 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  clearInitialBBDD: () => dispatch(ACTIONS.clearInitialBBDD())
+  clearInitialBBDD: () => dispatch(ACTIONS.clearInitialBBDD()),
+  deleteMessage: (msg) => dispatch(ACTIONS_EMAIL.deleteMessage(msg))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SelectActionHeader);

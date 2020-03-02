@@ -115,14 +115,14 @@ const messages = (state = INITIAL_STATE.messages, action = {}) => {
       newUpdateState.selected = [...state.selected];
       newUpdateState.selectedMessages = [...state.selectedMessages];
       action.payload.messages.forEach(message => {
-        const indexOfMessage = newUpdateState.selected.indexOf(message.uid);
+        const indexOfMessage = newUpdateState.selected.indexOf(message.messageId);
         if (action.payload.selected && indexOfMessage < 0) {
           // Select Message
-          newUpdateState.selected.push(message.uid);
+          newUpdateState.selected.push(message.messageId);
         } else if (!action.payload.selected) {
           // Unselect message
           newUpdateState.selected = newUpdateState.selected.filter(
-            uid => uid !== message.uid
+            messageId => messageId !== message.messageId
           );
         }
 

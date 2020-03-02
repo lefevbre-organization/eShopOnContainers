@@ -13,7 +13,9 @@
     "messages-selected": "SELECTED MESSAGES:",
     "company-selected": "Company identified:",
     "change-company": "Change company",
-    "select-another-company": "Select another company"
+    "select-another-company": "Select another company",
+    "folder": "Folder",
+    "subject": "Subject"
   },
   "new-classification": {
     "new-classification": "New classification"
@@ -128,5 +130,8 @@
     "identifier": "Identifier",
     "description": "Description:",
     "client": "Client:"
+  },
+  "configuration": {
+    "version": "Version"
   }
 }

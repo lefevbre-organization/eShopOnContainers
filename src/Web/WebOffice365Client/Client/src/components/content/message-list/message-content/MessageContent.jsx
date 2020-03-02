@@ -160,9 +160,10 @@ export class MessageContent extends Component {
     window.dispatchEvent(new CustomEvent("ResetList"));
     for(let i = 0; i < this.props.selectedMessages.length; i++) {
         const detail = {
+          id: this.props.selectedMessages[i].id,
+          extMessageId: this.props.selectedMessages[i].internetId,
           subject: this.props.selectedMessages[i].subject,
           sentDateTime: this.props.selectedMessages[i].sentDateTime,
-          id: this.props.selectedMessages[i].internetId,
           chkselected: true
         };
     window.dispatchEvent(new CustomEvent("Checkclick",  {
@@ -179,7 +180,8 @@ export class MessageContent extends Component {
 
     if(prevProps.emailHeaderMessageResult.headers === null && emailHeaderMessageResult.headers !== null) {
       const detail = {
-        id: emailHeaderMessageResult.headers.internetMessageId,
+        extMessageId: emailHeaderMessageResult.headers.internetMessageId,
+        id: emailHeaderMessageResult.id,
         subject: emailHeaderMessageResult.headers.subject,
         sentDateTime: emailHeaderMessageResult.headers.sentDateTime,
         chkselected: true

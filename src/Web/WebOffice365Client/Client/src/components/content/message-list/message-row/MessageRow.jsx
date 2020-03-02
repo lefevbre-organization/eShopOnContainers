@@ -16,7 +16,7 @@ export class MessageItem extends PureComponent {
   }
 
   onSelectionChange(evt) {
-    this.props.onSelectionChange(evt.target.checked, this.props.data.id);
+    this.props.onSelectionChange(evt.target.checked, this.props.data);
   }
 
   getMessage(evt) {

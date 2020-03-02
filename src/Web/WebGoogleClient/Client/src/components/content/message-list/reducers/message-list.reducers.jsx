@@ -201,7 +201,7 @@ export function messageList(state = defaultMessageList, action) {
   switch (action.type) {
     case ADD_MESSAGE: {
       const index = state.selectedMessages.findIndex(
-        message => message.id === action.data.id
+        message => message.extMessageId === action.data.extMessageId
       );
       if (index === -1) {
         return {
@@ -216,7 +216,7 @@ export function messageList(state = defaultMessageList, action) {
       return {
         ...state,
         selectedMessages: state.selectedMessages.filter(
-          message => message.id !== action.data.id
+          message => message.extMessageId !== action.data.id
         )
       };
     }
@@ -224,7 +224,7 @@ export function messageList(state = defaultMessageList, action) {
     case DELETE_LIST_MESSAGES: {
       for (let i = 0; i < action.listMessages.length; i++) {
         const index = state.selectedMessages.findIndex(
-          message => message.id === action.listMessages[i]
+          message => message.extMessageId === action.listMessages[i]
         );
         if (index > -1) {
           state.selectedMessages.splice(index, 1);
@@ -239,11 +239,12 @@ export function messageList(state = defaultMessageList, action) {
     case ADD_LIST_MESSAGES: {
       for (let i = 0; i < action.listMessages.length; i++) {
         const index = state.selectedMessages.findIndex(
-          message => message.id === action.listMessages[i].id
+          message => message.extMessageId === action.listMessages[i].extMessageId
         );
         if (index === -1) {
           const data = {
             id: action.listMessages[i].id,
+            extMessageId: action.listMessages[i].extMessageId,
             subject: action.listMessages[i].subject,
             sentDateTime: action.listMessages[i].sentDateTime
           };
@@ -253,13 +254,6 @@ export function messageList(state = defaultMessageList, action) {
       return {
         ...state,
         selectedMessages: [ ...state.selectedMessages ]
-      };
-    }
-
-    case CLEAR_LIST_MESSAGES: {
-      return {
-        ...state,
-        selectedMessages: []
       };
     }
 

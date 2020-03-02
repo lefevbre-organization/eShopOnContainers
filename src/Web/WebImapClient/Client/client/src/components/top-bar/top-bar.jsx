@@ -101,7 +101,7 @@ const mapStateToProps = state => {
   const selectedMessagesIds = state.messages.selected;
   const messages = state.application.selectedFolderId && state.messages.cache[state.application.selectedFolderId] ?
     Array.from(state.messages.cache[state.application.selectedFolderId].values()) : [];
-  const selectedMessages = messages.filter(m => selectedMessagesIds.indexOf(m.uid) > -1);
+  const selectedMessages = messages.filter(m => selectedMessagesIds.indexOf(m.messageId) > -1);
   const selectedMessagesAllUnread = selectedMessages.filter(m => m.seen === true).length === 0;
   return ({
     title: state.application.title,
