@@ -1,5 +1,5 @@
 variables:
-    registryEndpoint: eshop-registry
+    registryEndpoint: lefebvre-pipe
 trigger:
   branches:
     include:
