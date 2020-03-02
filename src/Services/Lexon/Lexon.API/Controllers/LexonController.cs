@@ -64,8 +64,8 @@ namespace Lexon.API.Controllers
 
         [HttpPost]
         [Route("classifications")]
-        [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexActuation>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexActuation>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetClassificationsAsync(
             [FromBody] ClassificationSearchView classificationSearch
             //, [FromHeader(Name = "x-requestid")] string requestId
@@ -227,8 +227,8 @@ namespace Lexon.API.Controllers
 
         [HttpPost]
         [Route("entities/getbyid")]
-        [ProducesResponseType(typeof(Result<LexonEntityBase>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<LexonEntityBase>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<LexEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexEntity>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> EntityByIdAsync(
             [FromBody] EntitySearchById entitySearch
             )

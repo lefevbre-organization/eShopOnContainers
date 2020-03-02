@@ -67,24 +67,30 @@ namespace Lexon.API.Infrastructure
         private static void ClassMapping()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(IntegrationEventLogEntry))) { BsonClassMap.RegisterClassMap<IntegrationEventLogEntry>(); }
-            if (!BsonClassMap.IsClassMapRegistered(typeof(LexonUser))) { BsonClassMap.RegisterClassMap<LexonUser>(); }
+            //if (!BsonClassMap.IsClassMapRegistered(typeof(LexonUser))) { BsonClassMap.RegisterClassMap<LexonUser>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(LexUser))) { BsonClassMap.RegisterClassMap<LexUser>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(LexonMaster))) { BsonClassMap.RegisterClassMap<LexonMaster>(); }
         }
 
-        public IMongoCollection<LexonUser> LexonUsers
-        {
-            get { return Database.GetCollection<LexonUser>(_settings.Value.Collection); }
-        }
+        //public IMongoCollection<LexonUser> LexonUsers
+        //{
+        //    get { return Database.GetCollection<LexonUser>(_settings.Value.Collection); }
+        //}
 
         public IMongoCollection<LexUser> LexUsers
         {
             get { return Database.GetCollection<LexUser>(_settings.Value.Collection); }
         }
 
-        public IMongoCollection<LexonUser> LexonUsersTransaction(IClientSessionHandle session)
+        public IMongoCollection<LexUser> LexUsersTransaction(IClientSessionHandle session)
         {
-            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<LexonUser>(_settings.Value.Collection);
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<LexUser>(_settings.Value.Collection);
         }
+
+        //public IMongoCollection<LexonUser> LexonUsersTransaction(IClientSessionHandle session)
+        //{
+        //    return session.Client.GetDatabase(_settings.Value.Database).GetCollection<LexonUser>(_settings.Value.Collection);
+        //}
 
         public IMongoCollection<LexonMaster> LexonMasters
         {

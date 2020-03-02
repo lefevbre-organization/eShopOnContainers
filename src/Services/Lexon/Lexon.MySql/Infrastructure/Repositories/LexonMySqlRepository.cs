@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lexon.MySql.Infrastructure.Repositories
@@ -30,11 +31,11 @@ namespace Lexon.MySql.Infrastructure.Repositories
             var result = new Result<LexUser>(new LexUser());
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
-            { 
+            {
                 try
                 {
                     var filtro = $"{{\"NavisionId\":\"{idNavisionUser}\"}}";
-                    await GetUserCommon(0, 1,result, conn, filtro);
+                    await GetUserCommon(0, 1, result, conn, filtro);
                 }
                 catch (Exception ex)
                 {
@@ -74,22 +75,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 {
                     var filtro = $"{{\"IdUser\":\"{idUser}\"}}";
                     await GetUserCommon(pageSize, pageIndex, result, conn, filtro);
-                    //conn.Open();
-                    //using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetCompanies, conn))
-                    //{
-                    //    AddCommonParameters(idUser, command, "P_FILTER", filtro);
-                    //    AddListSearchParameters(pageSize, pageIndex, command);
-                    //    using (var reader = await command.ExecuteReaderAsync())
-                    //    {
-                    //        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
-                    //        if (EvaluateErrorCommand(result.errors, command) == 0)
-                    //            while (reader.Read())
-                    //            {
-                    //                var rawJson = reader.GetValue(0).ToString();
-                    //                result.data = JsonConvert.DeserializeObject<LexUser>(rawJson);
-                    //            }
-                    //    }
-                    //}
                 }
                 catch (Exception ex)
                 {
@@ -101,63 +86,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
         }
 
         #region Entities
-
-        //public async Task<MySqlList<JosEntityList, JosEntity>> SearchEntitiesAsync(EntitySearchView entitySearch)
-        //{
-        //    var resultMySql = new MySqlList<JosEntityList, JosEntity>(new JosEntityList(), _settings.Value.SP.SearchEntities, entitySearch.pageIndex, entitySearch.pageSize);
-        //    string filtro = GiveMeSearchEntitiesFilter(entitySearch);
-        //    TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{_settings.Value.SP.SearchEntities}", $"P_FILTER:{filtro}", $"P_UC:{entitySearch.idUser}-pageSize:{entitySearch.pageSize}-pageIndex:{entitySearch.pageIndex}" });
-
-        //    var jsonSerializerSettings = new JsonSerializerSettings();
-        //    jsonSerializerSettings.MissingMemberHandling = MissingMemberHandling.Ignore;
-
-        //    using (MySqlConnection conn = new MySqlConnection(_conn))
-        //    {
-        //        try
-        //        {
-        //            conn.Open();
-        //            using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.SearchEntities, conn))
-        //            {
-        //                command.Parameters.Add(new MySqlParameter("P_FILTER", MySqlDbType.String) { Value = filtro });
-        //                command.Parameters.Add(new MySqlParameter("P_UC", MySqlDbType.Int32) { Value = entitySearch.idUser });
-        //                command.Parameters.Add(new MySqlParameter("P_PAGE_SIZE", MySqlDbType.Int32) { Value = entitySearch.pageSize });
-        //                command.Parameters.Add(new MySqlParameter("P_PAGE_NUMBER", MySqlDbType.Int32) { Value = entitySearch.pageIndex });
-        //                command.Parameters.Add(new MySqlParameter("P_IDERROR", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
-        //                command.Parameters.Add(new MySqlParameter("P_ERROR", MySqlDbType.String) { Direction = ParameterDirection.Output });
-        //                command.Parameters.Add(new MySqlParameter("P_TOTAL_REG", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
-        //                command.CommandType = CommandType.StoredProcedure;
-        //                var r = command.ExecuteNonQuery();
-        //                resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
-
-        //                using (var reader = await command.ExecuteReaderAsync())
-        //                {
-        //                    if (resultMySql.PossibleHasData())
-        //                    {
-        //                        while (reader.Read())
-        //                        {
-        //                            var rawResult = reader.GetValue(0).ToString();
-        //                            if (!string.IsNullOrEmpty(rawResult))
-        //                            {
-        //                                var resultado = (JsonConvert.DeserializeObject<JosEntityList>(rawResult));
-        //                                resultMySql.AddData(resultado, resultado.Entities);
-        //                            }
-        //                            else
-        //                            {
-        //                                TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
-        //                            }
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            TraceMessage(resultMySql.Errors, ex);
-        //        }
-        //    }
-
-        //    return resultMySql;
-        //}
 
         public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch)
         {
@@ -203,11 +131,10 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return resultMySql;
         }
 
-        public async Task<Result<JosEntity>> GetEntityAsync(EntitySearchById entitySearch)
+        public async Task<Result<LexEntity>> GetEntityAsync(EntitySearchById entitySearch)
         {
-            var result = new Result<JosEntity>(new JosEntity());
-            var jsonSerializerSettings = new JsonSerializerSettings { MissingMemberHandling = MissingMemberHandling.Ignore };
-            var listaResultados = new JosEntityList();
+            var resultMySql = new MySqlCompany(_settings.Value.SP.GetEntity, 1, 1, entitySearch.bbdd, entitySearch.idType);
+            var result = new Result<LexEntity>(new LexEntity());
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -224,12 +151,20 @@ namespace Lexon.MySql.Infrastructure.Repositories
                             if (EvaluateErrorCommand(result.errors, command) == 0)
                                 while (reader.Read())
                                 {
-                                    var jsonRaw = reader.GetValue(0).ToString();
-                                    listaResultados = JsonConvert.DeserializeObject<JosEntityList>(jsonRaw, jsonSerializerSettings);
+                                    var rawResult = reader.GetValue(0).ToString();
+                                    if (!string.IsNullOrEmpty(rawResult))
+                                    {
+                                        var resultado = (JsonConvert.DeserializeObject<LexCompany>(rawResult));
+                                        resultMySql.AddData(resultado);
+                                    }
+                                    else
+                                    {
+                                        TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
+                                    }
                                 }
                         }
                     }
-                    result.data = listaResultados?.Entities?.Length == 1 ? listaResultados?.Entities[0] : null;
+                    result.data = resultMySql?.Data?.FirstOrDefault();
                 }
                 catch (Exception ex)
                 {
@@ -310,10 +245,8 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         #region Relations
 
-        // public async Task<Result<JosRelationsList>> SearchRelationsAsync(ClassificationSearchView classification)
         public async Task<MySqlCompany> GetRelationsAsync(ClassificationSearchView classification)
         {
-            //var result = new Result<JosRelationsList>(new JosRelationsList());
             var resultMySql = new MySqlCompany(_settings.Value.SP.SearchRelations, classification.pageIndex, classification.pageSize, classification.bbdd, classification.idType);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
@@ -344,8 +277,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
                                     TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
                                 }
                             }
-
-                       
                         }
                     }
                 }
@@ -597,6 +528,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
             var comma = withComma ? ", " : "";
             return !string.IsNullOrEmpty(value) ? $"{comma}\"{name}\":\"{value}\"" : string.Empty;
         }
+
         #endregion Common
     }
 }

@@ -46,17 +46,10 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.MySqlCompany">
-    <Position X="11" Y="1.5" Width="2.5" />
+    <Position X="9.25" Y="1.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAEAIAgBQAAAAAgEIQAYAAAABAAAIQAEAAEEAA=</HashCode>
       <FileName>MySql\MySqlCompany.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosActuation">
-    <Position X="1" Y="6.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAQEAAAAAgAAAAAABCAAAABAAAAIAAAA=</HashCode>
-      <FileName>MySql\JosActuation.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
