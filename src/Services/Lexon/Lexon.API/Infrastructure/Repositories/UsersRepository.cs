@@ -33,28 +33,27 @@ namespace Lexon.API.Infrastructure.Repositories
             _context = new LexonContext(settings, eventBus);
         }
 
-        public async Task<Result<List<LexonCompany>>> GetCompaniesListAsync(string idUser)
+        public async Task<Result<List<LexCompany>>> GetCompaniesListAsync(string idUser)
         {
-            var result = new Result<List<LexonCompany>>(new List<LexonCompany>());
+            var result = new Result<List<LexCompany>>(new List<LexCompany>());
 
-            var filter = GetFilterUser(idUser);
+            var filter = GetFilterLexUser(idUser);
 
-            var fields = Builders<LexonUser>.Projection
-                .Include("companies.list.idCompany")
-                .Include("companies.list.bbdd")
-                .Include("companies.list.name");
+            var fields = Builders<LexUser>.Projection
+                .Include(x => x.companies)
+                .Include(x => x.idUser);
 
             TraceLog(parameters: new string[] { $"fields:{fields.ToString()}", $"filter:{filter.ToString()}" });
 
             try
             {
-                var user = await _context.LexonUsers
+                var user = await _context.LexUsers
                             .Find(filter)
-                            .Project<LexonUser>(fields)
+                            .Project<LexUser>(fields)
                             .FirstOrDefaultAsync();
 
-                var companies = user?.companies?.list?.ToList();
-                result.data = companies ?? new List<LexonCompany>();
+                var companies = user?.companies?.ToList();
+                result.data = companies ?? new List<LexCompany>();
             }
             catch (Exception ex)
             {
@@ -74,9 +73,13 @@ namespace Lexon.API.Infrastructure.Repositories
 
         private static FilterDefinition<LexUser> GetFilterLexUser(string idUser)
         {
-            return Builders<LexUser>.Filter.Or(
-                Builders<LexUser>.Filter.Eq(u => u.idUser, idUser),
-                Builders<LexUser>.Filter.Gte(u => u.version, 11)
+            return
+                Builders<LexUser>.Filter.And(
+                    Builders<LexUser>.Filter.Gte(u => u.version, 11),
+                    Builders<LexUser>.Filter.Or(
+                        Builders<LexUser>.Filter.Eq(u => u.idUser, idUser),
+                        Builders<LexUser>.Filter.Eq(u => u.idNavision, idUser)
+                        )
                 );
         }
 
@@ -162,13 +165,13 @@ namespace Lexon.API.Infrastructure.Repositories
             return result;
         }
 
-        public async Task<Result<LexonUser>> GetAsync(string idUser)
+        public async Task<Result<LexUser>> GetUserAsync(string idUser)
         {
-            var result = new Result<LexonUser>(new LexonUser());
-            var filter = GetFilterUser(idUser);
+            var result = new Result<LexUser>(new LexUser());
+            var filter = GetFilterLexUser(idUser);
             try
             {
-                result.data = await _context.LexonUsers.Find(filter).SingleAsync();
+                result.data = await _context.LexUsers.Find(filter).SingleAsync();
             }
             catch (Exception ex)
             {
@@ -185,7 +188,7 @@ namespace Lexon.API.Infrastructure.Repositories
             {
                 var filterUser = GetFilterLexUser(search.idUser);
                 TraceLog(parameters: new string[] { $"filter:{filterUser.ToString()}" });
-                
+
                 var user = await _context.LexUsers
                     .Find(filterUser)
                     .FirstOrDefaultAsync();
@@ -195,7 +198,7 @@ namespace Lexon.API.Infrastructure.Repositories
                 var entitiesSearch = company.entities.Where
                     (ent =>
                         (ent.idType == search.idType)
-                      //  && (search.search != null && (ent.description.Contains(search.search) || ent.code.Contains(search.search) || ent.email.Contains(search.search)))
+                    //  && (search.search != null && (ent.description.Contains(search.search) || ent.code.Contains(search.search) || ent.email.Contains(search.search)))
                     );
 
                 var entidades = entitiesSearch.ToArray();
@@ -225,7 +228,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
                 var company = user.companies.FirstOrDefault(x => x.bbdd.Contains(search.bbdd));
 
-                var relationsSearch = company.actuations.Where(ent =>ent.idMail == search.idMail);
+                var relationsSearch = company.actuations.Where(ent => ent.idMail == search.idMail);
 
                 var relations = relationsSearch.ToArray();
 
@@ -256,7 +259,6 @@ namespace Lexon.API.Infrastructure.Repositories
                         new UpdateOptions { ArrayFilters = arrayFiltersSimple, IsUpsert = true }
                 );
 
-
                 if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0)
                 {
                     TraceInfo(result.infos, $"Se modifica el usuario {search.idUser} añadiendo varias entidades {resultUpdate.ModifiedCount} de tipo: {search.idType}");
@@ -280,7 +282,7 @@ namespace Lexon.API.Infrastructure.Repositories
             try
             {
                 var arrayFiltersSimple = GetFilterFromEntities(search.bbdd);
-              //  var arrayFiltersSimple = GetFilterFromRelation(search.bbdd, resultMySql.Result.mailActuations[0]?.uid);
+                //  var arrayFiltersSimple = GetFilterFromRelation(search.bbdd, resultMySql.Result.mailActuations[0]?.uid);
 
                 var resultUpdate = await _context.LexUsers.UpdateOneAsync(
                     filterUser,
@@ -288,7 +290,6 @@ namespace Lexon.API.Infrastructure.Repositories
                         .AddToSetEach($"companies.$[i].actuations", resultMySql.DataActuation.ToArray()),
                         new UpdateOptions { ArrayFilters = arrayFiltersSimple, IsUpsert = true }
                 );
-
 
                 if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0)
                 {
@@ -328,7 +329,6 @@ namespace Lexon.API.Infrastructure.Repositories
 
         private static List<ArrayFilterDefinition> GetFilterFromRelation(string bbdd, string uid)
         {
-
             return new List<ArrayFilterDefinition>
             {
                 new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument(new BsonElement("i.bbdd", bbdd))),
@@ -605,6 +605,84 @@ namespace Lexon.API.Infrastructure.Repositories
             {
                 TraceMessage(result.errors, ex);
             }
+            return result;
+        }
+
+        public async Task<Result<bool>> UpsertUserAsync(Result<LexUser> lexUser)
+        {
+            var result = new Result<bool>();
+
+            var filterUser = GetFilterLexUser(lexUser.data.idUser);
+
+            try
+            {
+                var update = Builders<LexUser>.Update
+                    .Set(x => x.idUser, lexUser.data.idUser)
+                    .Set(x => x.idNavision, lexUser.data.idNavision)
+                    .Set(x => x.version, 12)
+                    .Set(x => x.name, lexUser.data.name);
+                    //.AddToSetEach(x => x.companies, lexUser.data.companies);
+
+                var resultUpdate = await _context.LexUsers.UpdateOneAsync(
+                    filterUser, update, new UpdateOptions { IsUpsert = true }
+                );
+
+                if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
+                {
+                    TraceInfo(result.infos, $"Se modifica el usuario {lexUser.data.idUser}");
+                    result.data = resultUpdate.ModifiedCount > 0;
+                }
+                else if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.UpsertedId != null)
+                {
+                    TraceInfo(result.infos, $"Se crea un usuario {lexUser.data.idUser}");
+                    result.data = resultUpdate.UpsertedId != null;
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+
+            return result;
+        }
+
+        public async Task<Result<bool>> UpsertCompaniesAsync(Result<LexUser> lexUser)
+        {
+            var result = new Result<bool>();
+            var companiesToInsert = new List<LexCompany>();
+            var filterUser = GetFilterLexUser(lexUser.data.idUser);
+
+            try
+            {
+                var user = await _context.LexUsers.Find(filterUser).FirstOrDefaultAsync();
+
+                if (user != null)
+                {
+                    foreach (var comp in lexUser.data.companies)
+                    {
+                        var companySearch = user.companies.Where(x => x.bbdd.Equals(comp.bbdd) && x.idCompany == comp.idCompany).Count();
+                        if (companySearch == 0)
+                        {
+                            companiesToInsert.Add(comp);
+                        }
+                    }
+                }
+
+                var update = Builders<LexUser>.Update.AddToSetEach(x => x.companies, companiesToInsert?.ToArray());
+                var resultUpdate = await _context.LexUsers.UpdateOneAsync(filterUser, update);
+
+                if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
+                {
+                    TraceInfo(result.infos, $"Se modifica el usuario {lexUser.data.idUser} añadiendo {companiesToInsert.Count} empresas");
+                    result.data = true;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+
             return result;
         }
     }

@@ -9,9 +9,9 @@ namespace Lexon.Infrastructure.Services
     {
         Task<Result<List<LexonUser>>> GetListUsersAsync(int pageSize, int pageIndex, string idUser);
 
-        Task<Result<LexonUser>> GetUserAsync(string idUser);
+        Task<Result<LexUser>> GetUserAsync(string idNavisionUser);
 
-        Task<Result<List<LexonCompany>>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser);
+        Task<Result<List<LexCompany>>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser);
 
        // Task<Result<long>> SelectCompanyAsync(string idUser, string bbdd);
 

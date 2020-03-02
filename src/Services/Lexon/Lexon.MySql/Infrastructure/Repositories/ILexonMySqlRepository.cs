@@ -5,7 +5,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
 {
     public interface ILexonMySqlRepository
     {
-        Task<Result<JosUserCompanies>> GetCompaniesListAsync(int pageSize,
+        Task<Result<LexUser>> GetCompaniesListAsync(int pageSize,
                                                              int pageIndex,
                                                              string idUser);
 
@@ -22,7 +22,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         Task<Result<int>> AddRelationMailAsync(ClassificationAddView classification);
 
-        Task<Result<JosUser>> GetUserAsync(string idNavisionUser);
+        Task<Result<LexUser>> GetUserAsync(string idNavisionUser);
 
         Task<MySqlCompany> GetRelationsAsync(ClassificationSearchView classification);
         //Task<Result<JosRelationsList>> SearchRelationsAsync(ClassificationSearchView classification);

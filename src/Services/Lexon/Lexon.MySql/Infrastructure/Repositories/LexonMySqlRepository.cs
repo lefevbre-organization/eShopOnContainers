@@ -25,31 +25,16 @@ namespace Lexon.MySql.Infrastructure.Repositories
             _conn = _settings.Value.ConnectionString;
         }
 
-        public async Task<Result<JosUser>> GetUserAsync(string idNavisionUser)
+        public async Task<Result<LexUser>> GetUserAsync(string idNavisionUser)
         {
-            var result = new Result<JosUser>(new JosUser());
+            var result = new Result<LexUser>(new LexUser());
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
-            {
+            { 
                 try
                 {
                     var filtro = $"{{\"NavisionId\":\"{idNavisionUser}\"}}";
-                    conn.Open();
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetCompanies, conn))
-                    {
-                        AddCommonParameters("0", command, "P_FILTER", filtro);
-                        AddListSearchParameters(0, 1, command);
-                        using (var reader = await command.ExecuteReaderAsync())
-                        {
-                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
-                            if (EvaluateErrorCommand(result.errors, command) == 0)
-                                while (reader.Read())
-                                {
-                                    var rawJson = reader.GetValue(0).ToString();
-                                    result.data = JsonConvert.DeserializeObject<JosUser>(rawJson);
-                                }
-                        }
-                    }
+                    await GetUserCommon(0, 1,result, conn, filtro);
                 }
                 catch (Exception ex)
                 {
@@ -59,31 +44,52 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return result;
         }
 
-        public async Task<Result<JosUserCompanies>> GetCompaniesListAsync(int pageSize, int pageIndex, string idUser)
+        private async Task GetUserCommon(int pageSize, int pageIndex, Result<LexUser> result, MySqlConnection conn, string filtro)
         {
-            var result = new Result<JosUserCompanies>(new JosUserCompanies());
+            conn.Open();
+            using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetCompanies, conn))
+            {
+                AddCommonParameters("0", command, "P_FILTER", filtro);
+                AddListSearchParameters(pageSize, pageIndex, command);
+                using (var reader = await command.ExecuteReaderAsync())
+                {
+                    TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                    if (EvaluateErrorCommand(result.errors, command) == 0)
+                        while (reader.Read())
+                        {
+                            var rawJson = reader.GetValue(0).ToString();
+                            result.data = JsonConvert.DeserializeObject<LexUser>(rawJson);
+                        }
+                }
+            }
+        }
+
+        public async Task<Result<LexUser>> GetCompaniesListAsync(int pageSize, int pageIndex, string idUser)
+        {
+            var result = new Result<LexUser>(new LexUser());
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
                 try
                 {
                     var filtro = $"{{\"IdUser\":\"{idUser}\"}}";
-                    conn.Open();
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetCompanies, conn))
-                    {
-                        AddCommonParameters(idUser, command, "P_FILTER", filtro);
-                        AddListSearchParameters(pageSize, pageIndex, command);
-                        using (var reader = await command.ExecuteReaderAsync())
-                        {
-                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
-                            if (EvaluateErrorCommand(result.errors, command) == 0)
-                                while (reader.Read())
-                                {
-                                    var rawJson = reader.GetValue(0).ToString();
-                                    result.data = JsonConvert.DeserializeObject<JosUserCompanies>(rawJson);
-                                }
-                        }
-                    }
+                    await GetUserCommon(pageSize, pageIndex, result, conn, filtro);
+                    //conn.Open();
+                    //using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetCompanies, conn))
+                    //{
+                    //    AddCommonParameters(idUser, command, "P_FILTER", filtro);
+                    //    AddListSearchParameters(pageSize, pageIndex, command);
+                    //    using (var reader = await command.ExecuteReaderAsync())
+                    //    {
+                    //        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                    //        if (EvaluateErrorCommand(result.errors, command) == 0)
+                    //            while (reader.Read())
+                    //            {
+                    //                var rawJson = reader.GetValue(0).ToString();
+                    //                result.data = JsonConvert.DeserializeObject<LexUser>(rawJson);
+                    //            }
+                    //    }
+                    //}
                 }
                 catch (Exception ex)
                 {

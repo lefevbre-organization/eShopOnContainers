@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -591,11 +592,11 @@ namespace Lexon.Infrastructure.Services
             return await _usersRepository.GetListAsync(pageSize, pageIndex, idUser);
         }
 
-        public async Task<Result<LexonUser>> GetUserAsync(string idUser)
+        public async Task<Result<LexUser>> GetUserAsync(string idNavisionUser)
         {
-            var result = new Result<LexonUser>(new LexonUser());
+            var result = new Result<LexUser>(new LexUser());
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/user?idNavisionUser={idUser}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/user?idNavisionUser={idNavisionUser}");
             TraceLog(parameters: new string[] { $"request:{request}" });
 
             try
@@ -604,17 +605,9 @@ namespace Lexon.Infrastructure.Services
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        var resultMysql = await response.Content.ReadAsAsync<Result<JosUser>>();
-                        result.errors = resultMysql.errors;
+                        result = await response.Content.ReadAsAsync<Result<LexUser>>();
+                        result.data.idNavision = idNavisionUser;
 
-                        if (string.IsNullOrEmpty(resultMysql.data.Name))
-                            TraceOutputMessage(result.errors, "Mysql don´t recover the user", 2001);
-                        else
-                        {
-                            result.data = new LexonUser() { Name = resultMysql.data.Name, idUser = resultMysql.data.IdUser.ToString(), idNavision = idUser, token = resultMysql.data.Token };
-                            TraceLog(parameters: new string[] { $"iduser {result.data.idUser}" });
-                            return result;
-                        }
                     }
                     else
                     {
@@ -626,32 +619,45 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceMessage(result.errors, ex);
             }
-            await GetUserForMongoAsync(idUser, result);
+
+
+            if (!string.IsNullOrEmpty(result.data?.name))
+            {
+                await _usersRepository.UpsertUserAsync(result);
+            }
+            else
+            {
+                TraceOutputMessage(result.errors, "Mysql don´t recover the user", 2001);
+                var resultMongo = await _usersRepository.GetUserAsync(idNavisionUser);
+                result.data = resultMongo.data;
+            }
+
             return result;
         }
 
-        private async Task GetUserForMongoAsync(string idUser, Result<LexonUser> result)
-        {
-            try
-            {
-                var resultMongo = await _usersRepository.GetAsync(idUser);
+        //private async Task GetUserForMongoAsync(string idUser, Result<LexUser> result)
+        //{
+        //    try
+        //    {
+        //        var resultMongo = await _usersRepository.GetAsync(idUser);
 
-                if (resultMongo.errors.Count > 0)
-                    result.errors.AddRange(resultMongo.errors);
-                else if ((string.IsNullOrEmpty(resultMongo.data.Name)))
-                    TraceOutputMessage(result.errors, "MongoDb don´t recover the user", 2002);
-                else
-                    result.data = resultMongo.data;
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
-        }
+        //        if (resultMongo.errors.Count > 0)
+        //            result.errors.AddRange(resultMongo.errors);
+        //        else if ((string.IsNullOrEmpty(resultMongo.data.Name)))
+        //            TraceOutputMessage(result.errors, "MongoDb don´t recover the user", 2002);
+        //        else
+        //            result.data = resultMongo.data;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TraceMessage(result.errors, ex);
+        //    }
+        //}
 
-        public async Task<Result<List<LexonCompany>>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser)
+        public async Task<Result<List<LexCompany>>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser)
         {
-            var result = new Result<List<LexonCompany>>(new List<LexonCompany>());
+            var resultCompany = new Result<LexUser>(new LexUser());
+            var result = new Result<List<LexCompany>>(new List<LexCompany>());
             var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/companies?pageSize={pageSize}&pageIndex={pageIndex}&idUser={idUser}");
             TraceLog(parameters: new string[] { $"request:{request}" });
 
@@ -661,16 +667,20 @@ namespace Lexon.Infrastructure.Services
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        foreach (var company in (await response.Content.ReadAsAsync<Result<JosUserCompanies>>()).data.Companies)
-                        {
-                            result.data.Add(new LexonCompany() { name = company.Name, bbdd = company.BBDD, idCompany = company.IdCompany });
-                            TraceLog(parameters: new string[] { $"add {company.Name}" });
-                        }
 
-                        if (result.data.Count == 0)
-                            TraceOutputMessage(result.errors, "Mysql don´t recover the companies", 2001);
-                        else
-                            return result;
+                        resultCompany = await response.Content.ReadAsAsync<Result<LexUser>>();
+                        result.data = resultCompany.data?.companies?.ToList();
+
+                        //foreach (var company in (await response.Content.ReadAsAsync<Result<LexUser>>()).data?.companies)
+                        //{
+                        //    result.data.Add(new LexCompany() { name = company.name, bbdd = company.bbdd, idCompany = company.idCompany });
+                        //    TraceLog(parameters: new string[] { $"add {company.name}" });
+                        //}
+
+                        //if (result.data.Count == 0)
+                        //    TraceOutputMessage(result.errors, "Mysql don´t recover the companies", 2001);
+                        //else
+                        //    return result;
                     }
                     else
                     {
@@ -682,28 +692,39 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceMessage(result.errors, ex);
             }
-            await GetCompaniesFromUserMongoAsync(idUser, result);
+
+            if (!string.IsNullOrEmpty(resultCompany.data?.name))
+            {
+                await _usersRepository.UpsertCompaniesAsync(resultCompany);
+            }
+            else
+            {
+                TraceOutputMessage(result.errors, "Mysql don´t recover the user with companies", 2001);
+                var resultMongo = await _usersRepository.GetUserAsync(idUser);
+                result.data = resultMongo.data?.companies?.ToList();
+            }
+
             return result;
         }
 
-        private async Task GetCompaniesFromUserMongoAsync(string idUser, Result<List<LexonCompany>> result)
-        {
-            try
-            {
-                var resultMongo = await _usersRepository.GetCompaniesListAsync(idUser);
+        //private async Task GetCompaniesFromUserMongoAsync(string idUser, Result<List<LexonCompany>> result)
+        //{
+        //    try
+        //    {
+        //        var resultMongo = await _usersRepository.GetCompaniesListAsync(idUser);
 
-                if (resultMongo.errors.Count > 0)
-                    result.errors.AddRange(resultMongo.errors);
-                else if (resultMongo.data.Count == 0)
-                    TraceOutputMessage(result.errors, "MongoDb don´t recover the companies", 2002);
-                else
-                    result.data = resultMongo.data;
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
-        }
+        //        if (resultMongo.errors.Count > 0)
+        //            result.errors.AddRange(resultMongo.errors);
+        //        else if (resultMongo.data.Count == 0)
+        //            TraceOutputMessage(result.errors, "MongoDb don´t recover the companies", 2002);
+        //        else
+        //            result.data = resultMongo.data;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TraceMessage(result.errors, ex);
+        //    }
+        //}
 
         #endregion User and Companies
 

@@ -9,9 +9,9 @@ namespace Lexon.API.Infrastructure.Repositories
     {
         Task<Result<List<LexonUser>>> GetListAsync(int pageSize, int pageIndex, string idUser);
 
-        Task<Result<LexonUser>> GetAsync(string idUser);
+        Task<Result<LexUser>> GetUserAsync(string idUser);
 
-        Task<Result<List<LexonCompany>>> GetCompaniesListAsync(string idUser);
+        Task<Result<List<LexCompany>>> GetCompaniesListAsync(string idUser);
 
         Task<Result<List<LexonActuation>>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, string bbdd, string idMail);
 
@@ -29,5 +29,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
         Task<Result<bool>> UpsertEntitiesAsync(EntitySearchView search, MySqlCompany resultMySql);
         Task<Result<bool>> UpsertRelationsAsync(ClassificationSearchView classificationSearch, MySqlCompany resultMySql);
+        Task<Result<bool>> UpsertUserAsync(Result<LexUser> result);
+        Task<Result<bool>> UpsertCompaniesAsync(Result<LexUser> lexUser);
     }
 }

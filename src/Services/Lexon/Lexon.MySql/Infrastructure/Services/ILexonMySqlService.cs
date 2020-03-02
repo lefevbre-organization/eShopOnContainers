@@ -7,7 +7,7 @@ namespace Lexon.MySql.Infrastructure.Services
 {
     public interface ILexonMySqlService
     {
-        Task<Result<JosUserCompanies>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idNavisionUser);
+        Task<Result<LexUser>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idNavisionUser);
 
         Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync();
 
@@ -24,7 +24,7 @@ namespace Lexon.MySql.Infrastructure.Services
 
         Task<MySqlCompany> GetRelationsAsync(ClassificationSearchView classification);
 
-        Task<Result<JosUser>> GetUserAsync(string idUser,
+        Task<Result<LexUser>> GetUserAsync(string idUser,
                                            string bbdd = null,
                                            string provider = null,
                                            string mailAccount = null,

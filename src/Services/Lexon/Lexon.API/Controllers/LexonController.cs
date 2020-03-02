@@ -33,8 +33,8 @@ namespace Lexon.API.Controllers
 
         [HttpGet]
         [Route("user")]
-        [ProducesResponseType(typeof(Result<LexonUser>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<LexonUser>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UsersAsync(string idUserNavision = "E1621396")
 
         {
@@ -48,8 +48,8 @@ namespace Lexon.API.Controllers
 
         [HttpGet]
         [Route("companies")]
-        [ProducesResponseType(typeof(Result<IEnumerable<LexonCompany>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<IEnumerable<LexonCompany>>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexCompany>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexCompany>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CompaniesAsync(string idUser = "449")
 
         {

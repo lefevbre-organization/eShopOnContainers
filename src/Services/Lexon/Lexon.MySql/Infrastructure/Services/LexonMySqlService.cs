@@ -64,7 +64,7 @@ namespace Lexon.MySql.Infrastructure.Services
         /// <param name="idEntityType">opcionalmente el tipo de entidad si viene relacionado</param>
         /// <param name="idEntity">opcionalmente el id de entidad si viene relacionado</param>
         /// <returns></returns>
-        public async Task<Result<JosUser>> GetUserAsync(
+        public async Task<Result<LexUser>> GetUserAsync(
             string idUser,
             string bbdd,
             string provider = null,
@@ -77,16 +77,16 @@ namespace Lexon.MySql.Infrastructure.Services
             bool addTerminatorToToken = true)
         {
             var resultado = await _lexonRepository.GetUserAsync(idUser);
-            if (resultado?.data?.IdUser == null || resultado?.data?.IdUser == 0)
+            if (string.IsNullOrEmpty(resultado?.data?.idUser))
             {
                 resultado.errors.Add(new ErrorInfo() { code="5000", message= "No se recupera un idUser desde Lexon" });
             }
 
-            resultado.data.Token = BuildTokenWithPayloadAsync(new TokenModel
+            resultado.data.token = BuildTokenWithPayloadAsync(new TokenModel
             {
                 idClienteNavision = idUser,
-                name = resultado?.data?.Name,
-                idUserApp = resultado?.data?.IdUser,
+                name = resultado?.data?.name,
+                idUserApp = GetLongIdUser(resultado?.data?.idUser),
                 bbdd = bbdd,
                 provider = provider,
                 mailAccount = mailAccount,
@@ -97,9 +97,16 @@ namespace Lexon.MySql.Infrastructure.Services
                 mailContacts = mailContacts,
                 roles = GetRolesOfUser(idUser)
             }).Result;
-            resultado.data.Token += addTerminatorToToken ? "/" : "";
+
+            resultado.data.token += addTerminatorToToken ? "/" : "";
 
             return resultado;
+        }
+
+        private long? GetLongIdUser(string idUser)
+        {
+            long.TryParse(idUser, out long idUserLong);
+            return idUserLong;
         }
 
         /// <summary>
@@ -174,7 +181,7 @@ namespace Lexon.MySql.Infrastructure.Services
 
         #endregion User and tokens
 
-        public async Task<Result<JosUserCompanies>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser) 
+        public async Task<Result<LexUser>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser) 
             => await _lexonRepository.GetCompaniesListAsync(pageSize, pageIndex, idUser);
 
         public async Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder)

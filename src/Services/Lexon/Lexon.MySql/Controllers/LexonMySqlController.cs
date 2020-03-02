@@ -26,15 +26,16 @@ namespace Lexon.MySql.Controllers
         }
 
         [HttpGet("user")]
-        [ProducesResponseType(typeof(Result<JosUser>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<JosUser>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UserAsync(string idNavisionUser = "E1621396")
         {
             if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
             var result = await _lexonService.GetUserAsync(idNavisionUser);
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+           // return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            return  Ok(result);
         }
 
         /// <summary>
@@ -43,8 +44,8 @@ namespace Lexon.MySql.Controllers
         /// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>
         /// <returns></returns>
         [HttpPut("token")]
-        [ProducesResponseType(typeof(Result<JosUser>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<JosUser>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> TokenAsync(
             [FromBody] TokenModelView tokenRequest
             , bool addTerminatorToToken = true
@@ -62,8 +63,8 @@ namespace Lexon.MySql.Controllers
         }
 
         [HttpGet("companies")]
-        [ProducesResponseType(typeof(Result<JosUserCompanies>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<JosUserCompanies>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CompaniesAsync(
             [FromQuery]int pageSize = 0
             , [FromQuery]int pageIndex = 1
