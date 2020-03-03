@@ -13,12 +13,12 @@ trigger:
 jobs:
 - template: ../buildimages.yaml
   parameters:
-    services: webstatus
+    services: webstatuslef
     registryEndpoint: $(registryEndpoint)         
     helmfrom: $(Build.SourcesDirectory)/k8s-LEF/helm
     helmto: $(Build.ArtifactStagingDirectory)/k8s-LEF/helm          
 - template: ../multiarch.yaml
   parameters:
-    image: webstatus
+    image: webstatuslef
     branch: $(Build.SourceBranchName)
     registryEndpoint: $(registryEndpoint)
