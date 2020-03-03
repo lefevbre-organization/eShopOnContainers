@@ -7,26 +7,11 @@
       <FileName>MySql\JosEntityType.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosEntityTypeList">
-    <Position X="8.25" Y="2.25" Width="1.5" />
-    <AssociationLine Name="Entities" Type="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.JosEntityType">
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="0.12" Y="0.56" />
-      </MemberNameLabel>
-    </AssociationLine>
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
-      <FileName>MySql\JosEntityTypeList.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Property Name="Entities" />
-    </ShowAsCollectionAssociation>
-  </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.MySqlList&lt;T, TItems&gt;">
     <Position X="5.25" Y="2.25" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAEAIAgASAABAAAEAQAIAAAABAAAIQAEAAAAAA=</HashCode>
-      <FileName>MySql\MySqlList.cs</FileName>
+      <FileName>Common\MySqlList.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

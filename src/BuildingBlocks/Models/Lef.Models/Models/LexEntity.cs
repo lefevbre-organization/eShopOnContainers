@@ -1,10 +1,8 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using System.Collections.Generic;
-
+﻿
 namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
-    [BsonIgnoreExtraElements]
-    public class LexEntity : MongoModel
+
+    public class LexEntity
     {
         /// <summary>
         /// id del tipo de entidad, establecerá la configuración delr esto de los campos
@@ -48,33 +46,6 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         /// </summary>
         public string email { get; set; }
 
-
     }
 
-    /// <summary>
-    /// Se utiliza para recuperar estructuras de directorios y archivos anidados
-    /// </summary>
-    public class LexNestedEntity: LexEntity
-    {
-        public LexNestedEntity()
-        {
-            subChild = new List<LexNestedEntity>();
-        }
-
-        public LexNestedEntity(LexEntity entity)
-            :this()
-        {
-            idFolder = entity.idFolder;
-            idRelated = entity.idRelated;
-            idType = entity.idType;
-            intervening = entity.intervening;
-            entityType = entity.entityType;
-            code = entity.code;
-            description = entity.description;
-            email = entity.email;
-        }
-
-        public List<LexNestedEntity> subChild { get; set; }
-
-    }
 }

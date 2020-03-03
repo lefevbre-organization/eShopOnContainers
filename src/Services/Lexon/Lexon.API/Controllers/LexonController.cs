@@ -139,6 +139,7 @@ namespace Lexon.API.Controllers
             var result = await _usersService.GetMasterEntitiesAsync();
             return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
+
         [HttpPost("entities/folders/add")]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]

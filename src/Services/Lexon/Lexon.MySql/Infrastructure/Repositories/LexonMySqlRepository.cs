@@ -177,6 +177,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync()
         {
+
             var resultMySql = new MySqlList<JosEntityTypeList, JosEntityType>(new JosEntityTypeList(), _settings.Value.SP.GetMasterEntities, 1, 0);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
@@ -197,7 +198,8 @@ namespace Lexon.MySql.Infrastructure.Repositories
                             {
                                 while (reader.Read())
                                 {
-                                    var resultado = (JsonConvert.DeserializeObject<JosEntityTypeList>(reader.GetValue(0).ToString()));
+                                    var rawJson = reader.GetValue(0).ToString();
+                                    var resultado = (JsonConvert.DeserializeObject<JosEntityTypeList>(rawJson));
                                     resultMySql.AddData(resultado, resultado.Entities);
                                 }
                             }

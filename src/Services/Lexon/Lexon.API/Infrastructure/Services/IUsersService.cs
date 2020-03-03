@@ -7,7 +7,6 @@ namespace Lexon.Infrastructure.Services
 {
     public interface IUsersService
     {
-      //  Task<Result<List<LexonUser>>> GetListUsersAsync(int pageSize, int pageIndex, string idUser);
 
         Task<Result<LexUser>> GetUserAsync(string idNavisionUser);
 
