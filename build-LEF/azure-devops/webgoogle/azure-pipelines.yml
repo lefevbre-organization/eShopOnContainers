@@ -13,12 +13,7 @@ trigger:
 jobs:
 - template: ../buildimages.yaml
   parameters:
-    services: webgoogle
+    services: webgoogleclient
     registryEndpoint: $(registryEndpoint)          
     helmfrom: $(Build.SourcesDirectory)/k8s-LEF/helm
     helmto: $(Build.ArtifactStagingDirectory)/k8s-LEF/helm      
-- template: ../multiarch.yaml
-  parameters:
-    image: webgoogle
-    branch: $(Build.SourceBranchName)
-    registryEndpoint: $(registryEndpoint)
