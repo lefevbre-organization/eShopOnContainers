@@ -15,7 +15,7 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import MessageToolbar from "../message-toolbar/MessageToolbar";
 import "./messageContent.scss";
 import MessageHeader from "./messageHeader";
-import { setMessageAsRead } from '../../../../api';
+import { setMessageAsRead, getMessage } from '../../../../api';
 import MessageNotFound from "../../../message-not-found/MessageNotFound";
 
 //BEGIN functions for attachment functionality
@@ -174,7 +174,7 @@ export class MessageContent extends Component {
             account: this.props.lexon.account,
             folder: "",
             provider: "GOOGLE",
-
+            raw: ""
           };
       window.dispatchEvent(new CustomEvent("Checkclick",  {
         detail
@@ -185,23 +185,36 @@ export class MessageContent extends Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps) {
     const { emailMessageResult, emailHeaderMessageResult } = this.props;
 
     if(prevProps.emailHeaderMessageResult.headers === null && emailHeaderMessageResult.headers !== null) {
+      
       const detail = {
-        id: emailHeaderMessageResult.id,
+        id: emailMessageResult.result.id,
         extMessageId: getHeader(emailHeaderMessageResult.headers, "Message-Id"),
         subject: getHeader(emailHeaderMessageResult.headers, "subject"),
         sentDateTime: getHeader(emailHeaderMessageResult.headers, "date"),
         chkselected: true,
         folder: "",
         account: this.props.lexon.account,
-        provider: "GOOGLE"
+        provider: "GOOGLE",
+        raw: null
       };
-      window.dispatchEvent(new CustomEvent("Checkclick",  {
-        detail
-      }));
+
+      debugger
+      window.dispatchEvent(new CustomEvent("LoadingMessage"))
+      getMessage(emailMessageResult.result.id, "raw").then( (msgRaw) => {
+        window.dispatchEvent(new CustomEvent("LoadedMessage"))
+        detail.raw = msgRaw;
+  
+        window.dispatchEvent(new CustomEvent("Checkclick",  {
+          detail
+        }));
+      }).catch( (err)=> {
+        window.dispatchEvent(new CustomEvent("LoadedMessage"))
+      })
+
     }
 
       if (!emailMessageResult.loading) {

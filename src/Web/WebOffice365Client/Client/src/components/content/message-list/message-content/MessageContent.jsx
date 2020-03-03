@@ -14,7 +14,7 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import MessageToolbar from "../message-toolbar/MessageToolbar";
 import "./messageContent.scss";
 import MessageHeader from "./messageHeader";
-import { setMessageAsRead } from '../../../../api_graph';
+import { setMessageAsRead, getMessage } from '../../../../api_graph';
 import MessageNotFound  from "../../../message-not-found/MessageNotFound";
 
 //BEGIN functions for attachment functionality
@@ -164,6 +164,7 @@ export class MessageContent extends Component {
           extMessageId: this.props.selectedMessages[i].internetId,
           subject: this.props.selectedMessages[i].subject,
           sentDateTime: this.props.selectedMessages[i].sentDateTime,
+          raw:"",
           chkselected: true
         };
     window.dispatchEvent(new CustomEvent("Checkclick",  {
@@ -175,7 +176,7 @@ export class MessageContent extends Component {
   }
   }
 
-  componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps) {
     const { emailMessageResult, emailHeaderMessageResult } = this.props;
 
     if(prevProps.emailHeaderMessageResult.headers === null && emailHeaderMessageResult.headers !== null) {
@@ -183,12 +184,24 @@ export class MessageContent extends Component {
         extMessageId: emailHeaderMessageResult.headers.internetMessageId,
         id: emailHeaderMessageResult.id,
         subject: emailHeaderMessageResult.headers.subject,
-        sentDateTime: emailHeaderMessageResult.headers.sentDateTime,
-        chkselected: true
+        sentDateTime: emailHeaderMessageResult.headers.sentDateTime,        
+        chkselected: true,
+        raw: null
       };
-      window.dispatchEvent(new CustomEvent("Checkclick",  {
-        detail
-      }));
+
+      // Get raw message      
+      debugger
+      window.dispatchEvent(new CustomEvent("LoadingMessage"))
+      getMessage(emailHeaderMessageResult.headers.id, "raw").then( (msgRaw) => {
+        window.dispatchEvent(new CustomEvent("LoadedMessage"))
+        detail.raw = msgRaw;
+  
+        window.dispatchEvent(new CustomEvent("Checkclick",  {
+          detail
+        }));
+      }).catch( (err)=> {
+        window.dispatchEvent(new CustomEvent("LoadedMessage"))
+      })
     }
 
     if (!emailMessageResult.loading) {

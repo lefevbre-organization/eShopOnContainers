@@ -1,5 +1,6 @@
 import { MAX_RESULTS } from "../constants";
 import { getBody, isHTML, base64MimeType, base64Data } from "./utils";
+import base64url from "base64url";
 
 const getLabelDetailPromise = labelId => {
   return new Promise((resolve, reject) => {
@@ -200,46 +201,52 @@ export const getMessageHeader = id => {
   });
 };
 
-export const getMessage = messageId => {
+export const getMessage = (messageId, format) => {
   return new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.messages
       .get({
         userId: "me",
         id: messageId,
-        format: "full"
+        format: format || "full"
       })
-      .then(response => {
+      .then(response => {        
         const { result } = response;
 
-        let body = getBody(result.payload, "text/html");
-        let attach = result.payload.parts;
-
-        if (body === "") {
-          body = getBody(result.payload, "text/plain");
-          body = body
-            .replace(/(\r\n)+/g, '<br data-break="rn-1">')
-            .replace(/[\n\r]+/g, '<br data-break="nr">');
-        }
-
-        if (body !== "" && !isHTML(body)) {
-          body = body
-            .replace(
-              /(\r\n)+/g,
-              '<div data-break="rn-1" style="margin-bottom:10px"></div>'
-            )
-            .replace(/[\n\r]+/g, '<br data-break="nr">');
-        }
-
-        resolve({
-          body,
-          attach,
-          headers: response.headers,
-          result: {
-            ...result,
-            messageHeaders: response.result.payload.headers,
-            payload: undefined
+        if(format === "raw") {
+          resolve({
+            result:  base64url.decode(result.raw)
+          });
+        } else {
+          let body = getBody(result.payload, "text/html");
+          let attach = result.payload.parts;
+  
+          if (body === "") {
+            body = getBody(result.payload, "text/plain");
+            body = body
+              .replace(/(\r\n)+/g, '<br data-break="rn-1">')
+              .replace(/[\n\r]+/g, '<br data-break="nr">');
           }
-        });
+  
+          if (body !== "" && !isHTML(body)) {
+            body = body
+              .replace(
+                /(\r\n)+/g,
+                '<div data-break="rn-1" style="margin-bottom:10px"></div>'
+              )
+              .replace(/[\n\r]+/g, '<br data-break="nr">');
+          }
+  
+          resolve({
+            body,
+            attach,
+            headers: response.headers,
+            result: {
+              ...result,
+              messageHeaders: response.result.payload.headers,
+              payload: undefined
+            }
+          });
+        }
       })
       .catch(error => {
         reject(error);
