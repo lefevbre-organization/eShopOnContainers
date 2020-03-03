@@ -117,7 +117,8 @@ class Main extends Component {
           //extMessageId: event.detail.extMessageId,
           subject: event.detail.subject,
           folder: event.detail.folder,
-          sentDateTime: event.detail.sentDateTime
+          sentDateTime: event.detail.sentDateTime,
+          raw: event.detail.raw
         })
       : this.props.deleteMessage(event.detail.extMessageId);
   }

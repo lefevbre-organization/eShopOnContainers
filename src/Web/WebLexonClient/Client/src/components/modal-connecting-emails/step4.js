@@ -8,7 +8,6 @@ export class ConnectingEmailsStep4 extends React.Component {
         super()
 
         this.state = {
-           
         }
 
         this.onNextPage = this.onNextPage.bind(this)
@@ -33,6 +32,7 @@ export class ConnectingEmailsStep4 extends React.Component {
     }
 
     render() {
+        console.log(this.props.messages)
         return <Fragment>
             <div className="step4-container">
                 <ol style={{ textAlign: "center" }}>

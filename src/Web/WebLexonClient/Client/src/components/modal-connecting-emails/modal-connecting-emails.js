@@ -19,7 +19,7 @@ class ModalConnectingEmails extends Component {
       step: 1,
       step1Data: {
         actuation: false,
-        copyDocuments: false,
+        copyDocuments: true,
         saveDocuments: false,
         entity: 0
       },
@@ -37,7 +37,7 @@ class ModalConnectingEmails extends Component {
   }
 
   componentDidMount() {
-    // this.setState( {messages:this.props.selectedMessages })
+    this.setState( {messages:this.props.selectedMessages })
   }
 
   componentDidUpdate(prevProps) {
@@ -77,6 +77,8 @@ class ModalConnectingEmails extends Component {
       } else {
         this.setState({ step: 3 })
       }
+    } else if(this.state.step === 3) {
+      this.setState({step: 4 });
     }
   }
 
@@ -90,7 +92,8 @@ class ModalConnectingEmails extends Component {
         this.setState({ step: 2 })
       } else {
         this.setState({ step: 3 })
-      }    }
+      }    
+    }
   }
 
   changeStep1Data(data) {
@@ -140,9 +143,10 @@ class ModalConnectingEmails extends Component {
   }
 
   onSave() {
+    console.log("onSave")
     if (this.state.step === 2) {
       this.onSaveStep2()
-    } else if (this.state.step === 4 ) {
+    } else if (this.state.step === 4) {
       this.onSaveStep3()
     }
   }
@@ -169,10 +173,23 @@ class ModalConnectingEmails extends Component {
   }
 
   onSaveStep3() {
+    const { step1Data } = this.state;
+    const { selectedMessages } = this.props;
     this.closeDialog()
 
-    if (this.state.step1Data.actuation === true) {
+    if (step1Data.actuation === true) {
       this.saveClassification();
+    }
+
+    console.log(selectedMessages)
+    if(step1Data.copyDocuments === true) {
+      for(let i = 0; i < selectedMessages.length; i++) {
+        const raw = selectedMessages[i].raw
+        const subject =selectedMessages[i].subject
+        console.log(subject)
+        console.log(raw)
+        downloadEML(raw, subject + ".eml", "application/text")
+      }
     }
   }
 
@@ -254,8 +271,8 @@ class ModalConnectingEmails extends Component {
           <Button
             disabled={this.save3Disabled()}
             bsPrefix="btn btn-primary"
-            onClick={() => { this.onSave() }} >
-            {i18n.t("classify-emails.save")}
+            onClick={() => { this.nextStep() }} >
+            {i18n.t("classify-emails.continue")}
           </Button>
         </Fragment>
       case 4:
@@ -281,7 +298,7 @@ class ModalConnectingEmails extends Component {
 
   render() {
     const { user, companySelected, showModalDocuments, toggleNotification } = this.props;
-    const { messages, step1Data } = this.state;
+    const { messages, step1Data, step } = this.state;
 
     return (
       <div className="modal-connection-emails">
@@ -298,7 +315,7 @@ class ModalConnectingEmails extends Component {
               className="modal-title d-flex align-items-center"
               id="documentarGuardardocumentacionLabel">
               <img class="imgproduct" border="0" alt="Lex-On" src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
-              <span>{i18n.t("modal-conecting-emails.save-copy")}</span>
+              <span>{i18n.t("modal-conecting-emails.save-copy") + " - " + step}</span>
             </h5>
           </Modal.Header>
           <Modal.Body className="mimodal">
@@ -842,3 +859,23 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(ModalConnectingEmails);
+
+
+const downloadEML =(data, filename, type) => {
+  console.log("Downloading...")
+  var file = new Blob([data], {type: type});
+  if (window.navigator.msSaveOrOpenBlob) // IE10+
+      window.navigator.msSaveOrOpenBlob(file, filename);
+  else { // Others
+      var a = document.createElement("a"),
+              url = URL.createObjectURL(file);
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function() {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);  
+      }, 0); 
+  }
+}
