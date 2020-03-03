@@ -1,5 +1,6 @@
 ﻿using Lexon.API.Model;
 using Lexon.Infrastructure.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
@@ -77,7 +78,25 @@ namespace Lexon.API.Controllers
 
             var result = await _usersService.GetClassificationsFromMailAsync(classificationSearch);
 
-            return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            Result<List<LexActuation>> actuaciones = new Result<List<LexActuation>>
+            {
+                data = result.DataActuation,
+                errors = result.Errors,
+                infos = result.Infos
+            };
+
+            if (actuaciones.errors.Count() > 0 && result.DataActuation.Count == 0)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, actuaciones);
+      
+            }else if(actuaciones.errors.Count() == 0 && result.DataActuation.Count == 0)
+            {
+                return NotFound(actuaciones);
+            }
+
+            return Ok(actuaciones);
+
+           // return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpPut]

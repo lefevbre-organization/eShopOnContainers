@@ -198,7 +198,7 @@ namespace Lexon.Infrastructure.Services
             else
             {
                 var resultMongo = await _usersRepository.GetRelationsAsync(classificationSearch);
-                resultMySql.Data = resultMongo.Data;
+                resultMySql.DataActuation = resultMongo.DataActuation;
             }
 
             return resultMySql;

@@ -63,14 +63,6 @@ namespace Lexon.API.Infrastructure.Repositories
             return result;
         }
 
-        //private static FilterDefinition<LexonUser> GetFilterUser(string idUser)
-        //{
-        //    return Builders<LexonUser>.Filter.Or(
-        //        Builders<LexonUser>.Filter.Eq(u => u.idUser, idUser),
-        //        Builders<LexonUser>.Filter.Eq(u => u.idNavision, idUser)
-        //        );
-        //}
-
         private static FilterDefinition<LexUser> GetFilterLexUser(string idUser)
         {
             return
@@ -83,28 +75,6 @@ namespace Lexon.API.Infrastructure.Repositories
                 );
         }
 
-        //public async Task<Result<List<LexonUser>>> GetListAsync(int pageSize, int pageIndex, string idUser)
-        //{
-        //    var result = new Result<List<LexonUser>>(new List<LexonUser>());
-        //    var filter = GetFilterUser(idUser);
-
-        //    TraceLog(parameters: new string[] { $"filter:{filter.ToString()}" });
-
-        //    try
-        //    {
-        //        result.data = await _context.LexonUsers
-        //            .Find(filter)
-        //            .Skip(pageIndex * pageSize)
-        //            .Limit(pageSize)
-        //            .ToListAsync();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(result.errors, ex);
-        //    }
-
-        //    return result;
-        //}
 
         private async Task CreateAndPublishIntegrationEventLogEntry(IClientSessionHandle session, IntegrationEvent eventAssoc)
         {
@@ -113,57 +83,6 @@ namespace Lexon.API.Infrastructure.Repositories
             await _context.PublishThroughEventBusAsync(eventAssoc, session);
         }
 
-        //public async Task<Result<long>> AddFileToListAsync(string idUser, string bbdd, long idFile, string nameFile, string descriptionFile = "")
-        //{
-        //    long a = 0;
-        //    var result = new Result<long>(a);
-        //    var cancel = default(CancellationToken);
-        //    using (var session = await _context.StartSession(cancel))
-        //    {
-        //        //var transactionOptions = new TransactionOptions(ReadConcern.Snapshot, ReadPreference.Primary, WriteConcern.WMajority);
-        //        //session.StartTransaction(transactionOptions);
-        //        session.StartTransaction();
-        //        try
-        //        {
-        //            var filter = GetFilterUser(idUser);
-        //            TraceLog(parameters: new string[] { $"filter:{filter.ToString()}" });
-
-        //            var user = await _context.LexonUsers
-        //                .Find(filter)
-        //                .SingleAsync();
-
-        //            var company = user.companies.list.FirstOrDefault(x => x.bbdd.Contains(bbdd));
-
-        //            var builder = Builders<LexonUser>.Update;
-
-        //            var subitem = new LexonEntityBase
-        //            {
-        //                id = (int)idFile,
-        //                name = nameFile,
-        //                description = descriptionFile
-        //            };
-        //            var update = builder.Push("files", subitem);
-
-        //            var resultMongo = await _context.LexonUsers.UpdateOneAsync(filter, update);
-
-        //            // var eventAssoc = new AddFileToUserIntegrationEvent(idUser, bbdd, idFile, nameFile, descriptionFile);
-        //            // await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
-
-        //            await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
-
-        //            if (resultMongo.IsAcknowledged)
-        //                result.data = resultMongo.ModifiedCount;
-        //            else
-        //                TraceOutputMessage(result.errors, "Error in Insert MongoDB", 1002);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            TraceMessage(result.errors, ex);
-        //            session.AbortTransaction(cancel);
-        //        }
-        //    }
-        //    return result;
-        //}
 
         public async Task<Result<LexUser>> GetUserAsync(string idUser)
         {
@@ -220,7 +139,7 @@ namespace Lexon.API.Infrastructure.Repositories
             try
             {
                 var filterUser = GetFilterLexUser(search.idUser);
-                TraceLog(parameters: new string[] { $"filter:{filterUser.ToString()}" });
+                //TraceLog(parameters: new string[] { $"filter:{filterUser.ToString()}" });
 
                 var user = await _context.LexUsers
                     .Find(filterUser)
@@ -233,7 +152,11 @@ namespace Lexon.API.Infrastructure.Repositories
                 var relations = relationsSearch.ToArray();
 
                 company.actuations = relations;
-                resultMongo.AddData(company);
+               // resultMongo.AddData(company);
+                var lexMailActuacion = new LexMailActuation();
+                lexMailActuacion.uid = search.idMail;
+                lexMailActuacion.actuaciones = relations;
+                resultMongo.AddRelationsMail(lexMailActuacion);
             }
             catch (Exception ex)
             {
@@ -282,7 +205,6 @@ namespace Lexon.API.Infrastructure.Repositories
             try
             {
                 var arrayFiltersSimple = GetFilterFromEntities(search.bbdd);
-                //  var arrayFiltersSimple = GetFilterFromRelation(search.bbdd, resultMySql.Result.mailActuations[0]?.uid);
 
                 var resultUpdate = await _context.LexUsers.UpdateOneAsync(
                     filterUser,
@@ -411,7 +333,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
                 await _context.LexUsersTransaction(session).UpdateOneAsync(
                     GetFilterLexUser(actuation.idUser),
-                    Builders<LexUser>.Update.AddToSet($"companies.actuations", actua),
+                    Builders<LexUser>.Update.AddToSet($"companies.$[i].actuations", actua),
                     new UpdateOptions { ArrayFilters = GetFilterFromEntities(actuation.bbdd) }
                 );
 
