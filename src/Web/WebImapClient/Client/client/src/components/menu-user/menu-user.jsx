@@ -166,7 +166,7 @@ class MenuUser extends Component {
                     <PerfectScrollbar>
                       <ul className="other-accounts">
                         {accounts.map(account => (
-                            <AccountUser key={account.id} account={account} />
+                            <AccountUser key={account.guid} account={account} />
                         ))}
                       </ul>
                     </PerfectScrollbar>

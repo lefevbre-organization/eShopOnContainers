@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { ConnectingEmailsStep1 } from './step1';
 import { ConnectingEmailsStep2 } from './step2';
 import { ConnectingEmailsStep3 } from './step3';
+import { ConnectingEmailsStep4 } from './step4';
 import { addClassification } from '../../services/services-lexon';
 import ACTIONS from "../../actions/documentsAction";
 import "react-perfect-scrollbar/dist/css/styles.css";
@@ -28,14 +29,27 @@ class ModalConnectingEmails extends Component {
       },
       step3Data: {
         selected: -1
-      }
+      },
+      messages: []
+    }
+
+    this.changeSubject = this.changeSubject.bind(this)
+  }
+
+  componentDidMount() {
+    // this.setState( {messages:this.props.selectedMessages })
+  }
+
+  componentDidUpdate(prevProps) {
+    if( JSON.stringify(prevProps.selectedMessages) !== JSON.stringify(this.props.selectedMessages) ) {
+      this.setState( {messages:this.props.selectedMessages })
     }
   }
 
   closeDialog() {
     setTimeout(() => {
       this.setState({
-        step: 1, 
+        step: 1,
         step1Data: {
           entity: 1,
           actuation: false,
@@ -57,8 +71,12 @@ class ModalConnectingEmails extends Component {
   nextStep() {
     if (this.state.step === 1) {
       this.setState({ step: 2 })
-    } else if(this.state.step === 2) {
-      this.setState({ step: 3 })
+    } else if (this.state.step === 2) {
+      if (this.state.step1Data.copyDocuments === false && this.state.step1Data.saveDocuments === false) {
+        this.setState({ step: 4 })
+      } else {
+        this.setState({ step: 3 })
+      }
     }
   }
 
@@ -67,10 +85,15 @@ class ModalConnectingEmails extends Component {
       this.setState({ step: 1 })
     } else if (this.state.step === 3) {
       this.setState({ step: 2 })
-    }
+    } else  if(this.state.step === 4) {
+      if (this.state.step1Data.copyDocuments === false && this.state.step1Data.saveDocuments === false) {
+        this.setState({ step: 2 })
+      } else {
+        this.setState({ step: 3 })
+      }    }
   }
 
-  changeStep1Data(data) {    
+  changeStep1Data(data) {
     let step2Data = this.state.step2Data;
     if (this.state.step1Data.entity !== data.entity) {
       step2Data = {
@@ -79,15 +102,24 @@ class ModalConnectingEmails extends Component {
       }
     }
 
-    this.setState({ step1Data: data, step2Data})
+    this.setState({ step1Data: data, step2Data })
   }
 
   changeStep2Data(data) {
     this.setState({ step2Data: data })
   }
-  
+
   changeStep3Data(data) {
     this.setState({ step3Data: data })
+  }
+
+  changeSubject(id, subject) {
+    const { messages } = this.state;
+    for(let i = 0; i < messages.length; i++) {
+      if( messages[i].id === id ) {
+        messages[i].subject = subject
+      }
+    }
   }
 
 
@@ -108,9 +140,9 @@ class ModalConnectingEmails extends Component {
   }
 
   onSave() {
-    if(this.state.step === 2) {
+    if (this.state.step === 2) {
       this.onSaveStep2()
-    } else if(this.state.step === 3) {
+    } else if (this.state.step === 4 ) {
       this.onSaveStep3()
     }
   }
@@ -128,7 +160,7 @@ class ModalConnectingEmails extends Component {
       return;
     }
 
-    if(step1Data.copyDocuments === false && step1Data.saveDocuments === false) {
+    if (step1Data.copyDocuments === false && step1Data.saveDocuments === false) {
       this.closeDialog();
       this.saveClassification();
     } else {
@@ -139,7 +171,7 @@ class ModalConnectingEmails extends Component {
   onSaveStep3() {
     this.closeDialog()
 
-    if(this.state.step1Data.actuation === true) {
+    if (this.state.step1Data.actuation === true) {
       this.saveClassification();
     }
   }
@@ -167,12 +199,89 @@ class ModalConnectingEmails extends Component {
         toggleNotification(i18n.t("classify-emails.classification-saved-ok"));
       })
       .catch(error => {
-        toggleNotification(i18n.t("classify-emails.classification-saved-ko"), true);       
+        toggleNotification(i18n.t("classify-emails.classification-saved-ko"), true);
       });
+  }
+
+  renderButtons() {
+    const { step } = this.state;
+
+    switch (step) {
+      case 1:
+        return <Fragment>
+          <Button
+            bsPrefix="btn btn-outline-primary"
+            onClick={() => { this.closeDialog() }}>
+            {i18n.t("classify-emails.cancel")}
+          </Button>
+          <Button
+          bsPrefix="btn btn-primary"
+          onClick={() => { this.nextStep() }}>
+          {i18n.t("classify-emails.continue")}
+        </Button>
+        </Fragment>
+      case 2:
+        return <Fragment>
+          <Button
+            bsPrefix="btn btn-outline-primary"
+            onClick={() => { this.closeDialog() }}>
+            {i18n.t("classify-emails.cancel")}
+          </Button>
+          <Button
+            bsPrefix="btn btn-outline-primary"
+            onClick={() => { this.prevStep() }}>
+            {i18n.t("classify-emails.back")}
+          </Button>
+          <Button
+            disabled={this.saveDisabled()}
+            bsPrefix="btn btn-primary"
+            onClick={() => { this.nextStep() }} >
+            {i18n.t("classify-emails.continue")}
+          </Button>
+        </Fragment>
+      case 3:
+        return <Fragment>
+          <Button
+            bsPrefix="btn btn-outline-primary"
+            onClick={() => { this.closeDialog() }}>
+            {i18n.t("classify-emails.cancel")}
+          </Button>
+          <Button
+            bsPrefix="btn btn-outline-primary"
+            onClick={() => { this.prevStep() }}>
+            {i18n.t("classify-emails.back")}
+          </Button>
+          <Button
+            disabled={this.save3Disabled()}
+            bsPrefix="btn btn-primary"
+            onClick={() => { this.onSave() }} >
+            {i18n.t("classify-emails.save")}
+          </Button>
+        </Fragment>
+      case 4:
+        return <Fragment>
+          <Button
+            bsPrefix="btn btn-outline-primary"
+            onClick={() => { this.closeDialog() }}>
+            {i18n.t("classify-emails.cancel")}
+          </Button>
+          <Button
+            bsPrefix="btn btn-outline-primary"
+            onClick={() => { this.prevStep() }}>
+            {i18n.t("classify-emails.back")}
+          </Button>
+          <Button           
+            bsPrefix="btn btn-primary"
+            onClick={() => { this.onSave() }} >
+            {i18n.t("classify-emails.save")}
+          </Button>
+        </Fragment>
+    }
   }
 
   render() {
     const { user, companySelected, showModalDocuments, toggleNotification } = this.props;
+    const { messages, step1Data } = this.state;
 
     return (
       <div className="modal-connection-emails">
@@ -197,48 +306,11 @@ class ModalConnectingEmails extends Component {
               <div style={{ display: this.state.step === 1 ? 'block' : 'none' }}><ConnectingEmailsStep1 show={this.state.step === 1} onChange={(data) => { this.changeStep1Data(data) }}></ConnectingEmailsStep1></div>
               <div style={{ display: this.state.step === 2 ? 'block' : 'none' }}><ConnectingEmailsStep2 show={this.state.step === 2} user={user} bbdd={companySelected} entity={this.state.step1Data.entity} toggleNotification={toggleNotification} onSelectedEntity={(data) => this.changeStep2Data(data)}></ConnectingEmailsStep2></div>
               <div style={{ display: this.state.step === 3 ? 'block' : 'none' }}><ConnectingEmailsStep3 show={this.state.step === 3} user={user} bbdd={companySelected} entity={this.state.step1Data.entity} toggleNotification={toggleNotification} onSelectedDirectory={(data) => this.changeStep3Data(data)}></ConnectingEmailsStep3></div>
+              <div style={{ display: this.state.step === 4 ? 'block' : 'none' }}><ConnectingEmailsStep4 show={this.state.step === 4} step={(step1Data.copyDocuments === false && step1Data.saveDocuments === false)?3:4} messages={messages} onChange={this.changeSubject}></ConnectingEmailsStep4></div>
             </Container>
           </Modal.Body>
           <Modal.Footer>
-            <Button
-              bsPrefix="btn btn-outline-primary"
-              onClick={() => { this.closeDialog() }}>
-              {i18n.t("classify-emails.cancel")}
-            </Button>
-            {this.state.step === 1 && <Button
-              bsPrefix="btn btn-primary"
-              onClick={() => { this.nextStep() }}>
-              {i18n.t("classify-emails.continue")}
-            </Button>
-            }
-            {this.state.step == 2 && <Fragment>
-              <Button
-                bsPrefix="btn btn-outline-primary"
-                onClick={() => { this.prevStep() }}>
-                {i18n.t("classify-emails.back")}
-              </Button>
-              <Button
-                disabled={this.saveDisabled()}
-                bsPrefix="btn btn-primary"
-                onClick={() => { this.onSave() }} >
-                { (this.state.step1Data.copyDocuments === false &&  this.state.step1Data.saveDocuments === false)?i18n.t("classify-emails.save"): i18n.t("classify-emails.continue")}
-              </Button>
-            </Fragment>
-            }
-            {this.state.step == 3 && <Fragment>
-              <Button
-                bsPrefix="btn btn-outline-primary"
-                onClick={() => { this.prevStep() }}>
-                {i18n.t("classify-emails.back")}
-              </Button>
-              <Button
-                disabled={this.save3Disabled()}
-                bsPrefix="btn btn-primary"
-                onClick={() => { this.onSave() }} >
-                { i18n.t("classify-emails.save") }
-              </Button>
-            </Fragment>
-            }
+            {this.renderButtons()}
 
           </Modal.Footer>
         </Modal>

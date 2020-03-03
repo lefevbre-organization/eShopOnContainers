@@ -54,7 +54,7 @@ const stateFromAccount = account => ({
     imapSsl: account.imapSsl || DEFAULT_IMAP_SSL,
     smtpHost: account.smtp || '',
     smtpPort: account.smtpPort || DEFAULT_SMTP_PORT,
-    smtpSsl: account.smtpSsl || DEFAULT_SMTP_SSL
+    smtpSsl: (account && account.smtpSsl !== undefined && account.smtpSsl !== null) ? account.smtpSsl : DEFAULT_SMTP_SSL
   },
   advanced: false
 });

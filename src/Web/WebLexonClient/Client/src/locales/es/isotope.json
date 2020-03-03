@@ -40,7 +40,10 @@
     "q3_12":"¿En que entidad quieres clasificar los mensajes?",
     "q3_13":"¿En que carpeta quieres clasificar los mensajes?",
     "q3_14":"¿En que documento quieres clasificar los mensajes?",
-    "q4":"Selecciona la ubicación exacta para los archivos"
+    "q4":"Selecciona la ubicación exacta para los archivos",
+    "q5":"¿Quieres renombrar las nuevas actuaciones?",
+    "qs5":"Las actuaciones creadas toman por defecto como título el asunto de los mensajes clasificados. Si lo deseas, puedes editar estos títulos.",
+    "actuation-title":"Título de la actuación"
   },
   "classification": {
     "type": "Tipo: ",
