@@ -276,7 +276,11 @@ namespace Lexon.MySql.Infrastructure.Repositories
                                 }
                                 else
                                 {
-                                    TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
+                                    if(resultMySql.Infos.Count > 1)
+                                        TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
+                                    else
+                                        resultMySql.Infos.Add(new Info() { code = "515", message = "MySql get and empty string with this search" });
+
                                 }
                             }
                         }
@@ -457,6 +461,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 $"{GetTextFilter("MailAccount", mail.MailAccount)}" +
                 $"{GetTextFilter("Uid", mail.Uid)}" +
                 $"{GetTextFilter("Subject", mail.Subject)}" +
+                $"{GetTextFilter("Folder", mail.Folder)}" +
                 $"{GetTextFilter("Date", mail.Date)}";
         }
 

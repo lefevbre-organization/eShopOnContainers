@@ -155,7 +155,8 @@ namespace Lexon.MySql.Controllers
                 return BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated and bbdd to create an actuation with the mail");
 
             var result = await _lexonService.AddRelationMailAsync(classification);
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            return Ok(result);
         }
 
         [HttpPost("classifications/contacts/add")]
@@ -171,7 +172,8 @@ namespace Lexon.MySql.Controllers
 
             var result = await _lexonService.AddRelationContactsMailAsync(classification);
 
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            return Ok(result);
         }
 
         [HttpPost("classifications/delete")]
@@ -187,7 +189,8 @@ namespace Lexon.MySql.Controllers
 
             var result = await _lexonService.RemoveRelationMailAsync(classification);
 
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            return Ok(result);
         }
 
         /// <summary>

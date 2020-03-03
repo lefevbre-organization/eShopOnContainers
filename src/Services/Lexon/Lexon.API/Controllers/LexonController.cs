@@ -78,6 +78,7 @@ namespace Lexon.API.Controllers
 
             var result = await _usersService.GetClassificationsFromMailAsync(classificationSearch);
 
+
             Result<List<LexActuation>> actuaciones = new Result<List<LexActuation>>
             {
                 data = result.DataActuation,
