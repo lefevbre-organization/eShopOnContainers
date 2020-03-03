@@ -8,17 +8,17 @@ trigger:
   paths:
     include:
     - src/BuildingBlocks/*
-    - src/Web/WebStatus/*
-    - k8s-LEF/helm/webstatus/* 
+    - src/Web/WebStatuslef/*
+    - k8s-LEF/helm/webstatuslef/* 
 jobs:
 - template: ../buildimages.yaml
   parameters:
-    services: webstatuslef
+    services: webstatus
     registryEndpoint: $(registryEndpoint)         
     helmfrom: $(Build.SourcesDirectory)/k8s-LEF/helm
     helmto: $(Build.ArtifactStagingDirectory)/k8s-LEF/helm          
 - template: ../multiarch.yaml
   parameters:
-    image: webstatuslef
+    image: webstatus
     branch: $(Build.SourceBranchName)
     registryEndpoint: $(registryEndpoint)
