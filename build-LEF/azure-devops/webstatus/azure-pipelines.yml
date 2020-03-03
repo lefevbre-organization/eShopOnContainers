@@ -17,8 +17,3 @@ jobs:
     registryEndpoint: $(registryEndpoint)         
     helmfrom: $(Build.SourcesDirectory)/k8s-LEF/helm
     helmto: $(Build.ArtifactStagingDirectory)/k8s-LEF/helm          
-- template: ../multiarch.yaml
-  parameters:
-    image: webstatus
-    branch: $(Build.SourceBranchName)
-    registryEndpoint: $(registryEndpoint)
