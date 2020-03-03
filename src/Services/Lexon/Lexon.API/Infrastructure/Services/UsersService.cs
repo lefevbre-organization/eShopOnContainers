@@ -289,6 +289,36 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
+        public async Task<Result<LexNestedEntity>> GetNestedFolderAsync(FolderNestedView entityFolder)
+        {
+            var result = new Result<LexNestedEntity>( new LexNestedEntity());
+
+            SerializeObjectToPost(entityFolder, "/entities/folders/nested", out string url, out StringContent data);
+            try
+            {
+                using (var response = await _client.PostAsync(url, data))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        result = await response.Content.ReadAsAsync<Result<LexNestedEntity>>();
+
+                        if (result.data == null)
+                            TraceOutputMessage(result.errors, "Mysql don´t get the nested folders", 2001);
+                    }
+                    else
+                    {
+                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+
+            return result;
+        }
+
         public async Task<Result<LexEntity>> GetEntityById(EntitySearchById entitySearch)
         {
             var result = new Result<LexEntity>(new LexEntity());
@@ -301,8 +331,6 @@ namespace Lexon.Infrastructure.Services
                     if (response.IsSuccessStatusCode)
                     {
                         result = await response.Content.ReadAsAsync<Result<LexEntity>>();
-                        //if (GetEntityByIdMySqlAsync(ref result, josEntity, (short)entitySearch.idType))
-                        //    return result;
                     }
                     else
                     {
@@ -319,36 +347,6 @@ namespace Lexon.Infrastructure.Services
         }
 
  
-        //private bool GetEntityByIdMySqlAsync(ref Result<LexonEntityBase> result, Result<JosEntity> josEntity, short idType)
-        //{
-        //    if (josEntity?.data == null)
-        //    {
-        //        TraceOutputMessage(result.errors, "The response fo Mysql is empty", 2001);
-        //        return false;
-        //    }
-
-        //    var entity = josEntity.data;
-
-        //    result.data = new LexonEntityBase()
-        //    {
-        //        name = entity.Code,
-        //        description = entity.Description,
-        //        email = entity.Email,
-        //        id = entity.IdRelated,
-        //        idType = idType,
-        //        entityType = Enum.GetName(typeof(LexonAdjunctionType), idType),
-        //        intervening = entity.Intervening
-        //    };
-        //    TraceLog(parameters: new string[] { $"code {entity.Code}" });
-
-        //    if (result.data?.id == 0)
-        //        TraceOutputMessage(result.errors, "Mysql don´t recover the entities", 2001);
-        //    else
-        //        return true;
-
-        //    return false;
-        //}
-
         public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch)
         {
             var resultMySql = new MySqlCompany();
@@ -433,11 +431,11 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        public async Task<Result<List<LexCompany>>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser)
+        public async Task<Result<List<LexCompany>>> GetCompaniesFromUserAsync(string idUser)
         {
             var resultCompany = new Result<LexUser>(new LexUser());
             var result = new Result<List<LexCompany>>(new List<LexCompany>());
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/companies?pageSize={pageSize}&pageIndex={pageIndex}&idUser={idUser}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/companies?idUser={idUser}");
             TraceLog(parameters: new string[] { $"request:{request}" });
 
             try

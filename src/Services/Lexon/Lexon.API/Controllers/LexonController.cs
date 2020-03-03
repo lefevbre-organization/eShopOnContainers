@@ -56,7 +56,7 @@ namespace Lexon.API.Controllers
             if (string.IsNullOrEmpty(idUser))
                 return (IActionResult)BadRequest("idUser need a correct value");
 
-            var result = await _usersService.GetCompaniesFromUserAsync(0, 1, idUser);
+            var result = await _usersService.GetCompaniesFromUserAsync( idUser);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
@@ -139,25 +139,6 @@ namespace Lexon.API.Controllers
             var result = await _usersService.GetMasterEntitiesAsync();
             return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
-
-        //[HttpPost("entities/old")]
-        //[ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.OK)]
-        //[ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
-        //public async Task<IActionResult> EntitiesOldAsync(
-        //    [FromBody] EntitySearchView entitySearch
-        //    )
-        //{
-        //    if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0)
-        //        return BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
-
-        //    var entities = await _usersService.GetEntitiesListAsync(entitySearch);
-
-        //    var paginatedEntities = new PaginatedItemsViewModel<LexonEntityBase>(entities.PageIndex, entities.PageSize, entities.Count, entities.Data);
-        //    var result = new Result<PaginatedItemsViewModel<LexonEntityBase>>(paginatedEntities, entities.Errors) { infos = entities.Infos };
-
-        //    return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-        //}
-
         [HttpPost("entities/folders/add")]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
@@ -213,6 +194,21 @@ namespace Lexon.API.Controllers
                 return BadRequest("values invalid. Must be a valid user, idCompany, type and idFolder to search documents");
 
             return await GetEntitiesCommon(entitySearch);
+        }
+
+        [HttpPost("entities/folders/nested")]
+        [ProducesResponseType(typeof(Result<LexNestedEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexNestedEntity>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetNestedFoldersAsync(
+             [FromBody] FolderNestedView entityFolder
+            )
+        {
+            if (string.IsNullOrEmpty(entityFolder.idUser) || string.IsNullOrEmpty(entityFolder.bbdd) || entityFolder?.idFolder <= 0)
+                return BadRequest("values invalid. Must be a valid user, bbdd type and idFolder for get the nested folders");
+
+            Result<LexNestedEntity> result = await _usersService.GetNestedFolderAsync(entityFolder);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         private async Task<IActionResult> GetEntitiesCommon(EntitySearchView entitySearch)

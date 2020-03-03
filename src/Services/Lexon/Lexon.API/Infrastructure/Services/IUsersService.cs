@@ -11,7 +11,7 @@ namespace Lexon.Infrastructure.Services
 
         Task<Result<LexUser>> GetUserAsync(string idNavisionUser);
 
-        Task<Result<List<LexCompany>>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser);
+        Task<Result<List<LexCompany>>> GetCompaniesFromUserAsync(string idUser);
 
         Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch);
 
@@ -28,5 +28,6 @@ namespace Lexon.Infrastructure.Services
         Task<MySqlCompany> GetClassificationsFromMailAsync(ClassificationSearchView classificationSearch);
 
         Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder);
+        Task<Result<LexNestedEntity>> GetNestedFolderAsync(FolderNestedView entityFolder);
     }
 }

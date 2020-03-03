@@ -19,8 +19,8 @@
     <AssociationLine Name="entities" Type="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexEntity" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="5.523" Y="4.502" />
-        <Point X="5.523" Y="6.062" />
-        <Point X="6.25" Y="6.062" />
+        <Point X="5.523" Y="6.063" />
+        <Point X="6.25" Y="6.063" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
@@ -46,7 +46,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.MySqlCompany">
-    <Position X="9.25" Y="1.25" Width="2.5" />
+    <Position X="11" Y="1.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAEAIAgBQAAAAAgEIQAYAAAABAAAIQAEAAEEAA=</HashCode>
       <FileName>MySql\MySqlCompany.cs</FileName>

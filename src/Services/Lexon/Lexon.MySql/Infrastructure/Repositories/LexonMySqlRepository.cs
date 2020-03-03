@@ -35,7 +35,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 try
                 {
                     var filtro = $"{{\"NavisionId\":\"{idNavisionUser}\"}}";
-                    await GetUserCommon(0, 1, result, conn, filtro);
+                    await GetUserCommon(result, conn, filtro);
                 }
                 catch (Exception ex)
                 {
@@ -45,13 +45,13 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return result;
         }
 
-        private async Task GetUserCommon(int pageSize, int pageIndex, Result<LexUser> result, MySqlConnection conn, string filtro)
+        private async Task GetUserCommon(Result<LexUser> result, MySqlConnection conn, string filtro)
         {
             conn.Open();
             using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetCompanies, conn))
             {
                 AddCommonParameters("0", command, "P_FILTER", filtro);
-                AddListSearchParameters(pageSize, pageIndex, command);
+                AddListSearchParameters(0, 1, command);
                 using (var reader = await command.ExecuteReaderAsync())
                 {
                     TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
@@ -65,7 +65,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
             }
         }
 
-        public async Task<Result<LexUser>> GetCompaniesListAsync(int pageSize, int pageIndex, string idUser)
+        public async Task<Result<LexUser>> GetCompaniesListAsync(string idUser)
         {
             var result = new Result<LexUser>(new LexUser());
 
@@ -74,7 +74,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 try
                 {
                     var filtro = $"{{\"IdUser\":\"{idUser}\"}}";
-                    await GetUserCommon(pageSize, pageIndex, result, conn, filtro);
+                    await GetUserCommon(result, conn, filtro);
                 }
                 catch (Exception ex)
                 {

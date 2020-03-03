@@ -1,5 +1,4 @@
-﻿using Lexon.MySql.Model;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,13 +6,12 @@ namespace Lexon.MySql.Infrastructure.Services
 {
     public interface ILexonMySqlService
     {
-        Task<Result<LexUser>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idNavisionUser);
+        Task<Result<LexUser>> GetCompaniesFromUserAsync(string idNavisionUser);
 
         Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync();
 
-        //Task<MySqlList<JosEntityList, JosEntity>> GetEntitiesAsync(EntitySearchView entitySearch);
-
         Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch);
+
         Task<Result<LexEntity>> GetEntityAsync(EntitySearchById entitySearch);
 
         Task<Result<int>> RemoveRelationMailAsync(ClassificationRemoveView classification);
@@ -36,5 +34,6 @@ namespace Lexon.MySql.Infrastructure.Services
                                            bool addTerminatorToToken = true);
 
         Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder);
+        Result<LexNestedEntity> GetNestedFolderAsync(FolderNestedView entityFolder);
     }
 }

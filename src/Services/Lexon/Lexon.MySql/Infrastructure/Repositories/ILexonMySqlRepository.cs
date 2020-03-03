@@ -5,16 +5,11 @@ namespace Lexon.MySql.Infrastructure.Repositories
 {
     public interface ILexonMySqlRepository
     {
-        Task<Result<LexUser>> GetCompaniesListAsync(int pageSize,
-                                                             int pageIndex,
-                                                             string idUser);
+        Task<Result<LexUser>> GetCompaniesListAsync(string idUser);
 
         Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync();
 
-      //  Task<MySqlList<JosEntityList, JosEntity>> SearchEntitiesAsync(EntitySearchView entitySearch);
-
         Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch);
-
 
         Task<Result<LexEntity>> GetEntityAsync(EntitySearchById entitySearch);
 
@@ -25,9 +20,10 @@ namespace Lexon.MySql.Infrastructure.Repositories
         Task<Result<LexUser>> GetUserAsync(string idNavisionUser);
 
         Task<MySqlCompany> GetRelationsAsync(ClassificationSearchView classification);
-        //Task<Result<JosRelationsList>> SearchRelationsAsync(ClassificationSearchView classification);
 
         Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification);
+
         Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder);
+        //Task<Result<LexNestedEntity>> GetNestedFolderAsync(FolderNestedView entityFolder);
     }
 }
