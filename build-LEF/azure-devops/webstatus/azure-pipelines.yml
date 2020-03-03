@@ -15,8 +15,8 @@ jobs:
   parameters:
     services: webstatus
     registryEndpoint: $(registryEndpoint)         
-    helmfrom: $(Build.SourcesDirectory)/k8s/helm
-    helmto: $(Build.ArtifactStagingDirectory)/k8s/helm          
+    helmfrom: $(Build.SourcesDirectory)/k8s-LEF/helm
+    helmto: $(Build.ArtifactStagingDirectory)/k8s-LEF/helm          
 - template: ../multiarch.yaml
   parameters:
     image: webstatus
