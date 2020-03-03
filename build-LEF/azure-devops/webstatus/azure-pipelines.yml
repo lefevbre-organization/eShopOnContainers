@@ -9,7 +9,7 @@ trigger:
     include:
     - src/BuildingBlocks/*
     - src/Web/WebStatus/*
-    - k8s/helm/webstatus/* 
+    - k8s-LEF/helm/webstatus/* 
 jobs:
 - template: ../buildimages.yaml
   parameters:
