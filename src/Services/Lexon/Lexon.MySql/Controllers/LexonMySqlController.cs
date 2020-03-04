@@ -85,19 +85,44 @@ namespace Lexon.MySql.Controllers
             return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        /// <summary>
-        /// Search entities
-        /// </summary>
         [HttpPost("entities/search")]
         [ProducesResponseType(typeof(MySqlCompany), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetEntitiesAsync([FromBody] EntitySearchView entitySearch)
         {
+
             if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null)
                 return BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
 
-            var resultTest = await _lexonService.GetEntitiesAsync(entitySearch);
-            return Ok(resultTest);
+            var result = await _lexonService.GetEntitiesAsync(entitySearch);
+            return Ok(result);
+        }
+
+
+        [HttpPost("entities/folders/search")]
+        [ProducesResponseType(typeof(MySqlCompany), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetEntitiesFoldersAsync([FromBody] EntitySearchFoldersView entitySearch)
+        {
+
+            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null)
+                return BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
+
+            var result = await _lexonService.GetEntitiesAsync(entitySearch);
+            return Ok(result);
+        }
+
+        [HttpPost("entities/documents/search")]
+        [ProducesResponseType(typeof(MySqlCompany), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetEntitiesDocumentsAsync([FromBody] EntitySearchDocumentsView entitySearch)
+        {
+
+            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null)
+                return BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
+
+            var result = await _lexonService.GetEntitiesAsync(entitySearch);
+            return Ok(result);
         }
 
         [HttpPost("entities/getbyid")]
@@ -110,7 +135,7 @@ namespace Lexon.MySql.Controllers
                 return BadRequest("values invalid. Must be a valid user, bbdd, idType and idEntity to get de Entity");
 
             var result = await _lexonService.GetEntityAsync(entitySearch);
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            return Ok(result);
         }
 
         [HttpPost("entities/folders/nested")]

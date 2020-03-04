@@ -186,7 +186,9 @@ namespace Lexon.API.Controllers
             if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0)
                 return BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
 
-            return await GetEntitiesCommon(entitySearch);
+            var entities = await _usersService.GetEntitiesAsync(entitySearch);
+
+            return ResponseEntities(entities);
         }
 
         [HttpPost("entities/folders")]
@@ -200,7 +202,9 @@ namespace Lexon.API.Controllers
                 || (entitySearch.idFolder == null && entitySearch.idParent == null))
                 return BadRequest("values invalid. Must be a valid user, idCompany, type and idFolder or idParent to search folders");
 
-            return await GetEntitiesCommon(entitySearch);
+            var entities = await _usersService.GetEntitiesFoldersAsync(entitySearch);
+
+            return ResponseEntities(entities);
         }
 
         [HttpPost("entities/documents")]
@@ -214,9 +218,28 @@ namespace Lexon.API.Controllers
                 || entitySearch.idFolder == null)
                 return BadRequest("values invalid. Must be a valid user, idCompany, type and idFolder to search documents");
 
-            return await GetEntitiesCommon(entitySearch);
+            var entities = await _usersService.GetEntitiesDocumentsAsync(entitySearch);
+
+            return ResponseEntities(entities);
         }
 
+        private IActionResult ResponseEntities(MySqlCompany entities)
+        {
+            var paginatedEntities = new PaginatedItemsViewModel<LexEntity>(entities.PageIndex, entities.PageSize, entities.Count, entities.Data);
+            var result = new Result<PaginatedItemsViewModel<LexEntity>>(paginatedEntities, entities.Errors) { infos = entities.Infos };
+
+            if (result.errors.Count() > 0 && result.data.Count == 0)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+
+            }
+            else if (result.errors.Count() == 0 && result.data.Count == 0)
+            {
+                return NotFound(result);
+            }
+
+            return Ok(result);
+        }
         [HttpPost("entities/folders/nested")]
         [ProducesResponseType(typeof(Result<LexNestedEntity>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexNestedEntity>), (int)HttpStatusCode.BadRequest)]
@@ -232,15 +255,6 @@ namespace Lexon.API.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        private async Task<IActionResult> GetEntitiesCommon(EntitySearchView entitySearch)
-        {
-            var entities = await _usersService.GetEntitiesAsync(entitySearch);
-
-            var paginatedEntities = new PaginatedItemsViewModel<LexEntity>(entities.PageIndex, entities.PageSize, entities.Count, entities.Data);
-            var result = new Result<PaginatedItemsViewModel<LexEntity>>(paginatedEntities, entities.Errors) { infos = entities.Infos };
-
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-        }
 
         [HttpPost]
         [Route("entities/getbyid")]
@@ -254,7 +268,18 @@ namespace Lexon.API.Controllers
                 return BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
 
             var result = await _usersService.GetEntityById(entitySearch);
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+          //  return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            if (result.errors.Count() > 0 && result.data == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+
+            }
+            else if (result.errors.Count() == 0 && result.data == null)
+            {
+                return NotFound(result);
+            }
+
+            return Ok(result);
         }
 
         #endregion Entities

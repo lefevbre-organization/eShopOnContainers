@@ -1,6 +1,6 @@
 ﻿namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
-    public class EntitySearchDocumentsView: EntitySearchView
+    public class EntitySearchDocumentsView: EntitySearchView, IEntitySearchView
     {
         /// <summary>
         /// en caso de documentos, sirve para buscar por la carpeta donde se encuentres,

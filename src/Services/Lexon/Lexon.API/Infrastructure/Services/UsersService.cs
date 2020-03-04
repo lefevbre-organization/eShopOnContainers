@@ -71,7 +71,7 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceMessage(result.errors, ex);
             }
-            
+
             return result;
         }
 
@@ -204,7 +204,6 @@ namespace Lexon.Infrastructure.Services
             return resultMySql;
         }
 
-
         #endregion Classifications
 
         #region Entities
@@ -291,7 +290,7 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<Result<LexNestedEntity>> GetNestedFolderAsync(FolderNestedView entityFolder)
         {
-            var result = new Result<LexNestedEntity>( new LexNestedEntity());
+            var result = new Result<LexNestedEntity>(new LexNestedEntity());
 
             SerializeObjectToPost(entityFolder, "/entities/folders/nested", out string url, out StringContent data);
             try
@@ -346,14 +345,18 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
- 
         public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch)
         {
+            return await GetEntitiesCommon(entitySearch, "/entities/search");
+        }
+
+        private async Task<MySqlCompany> GetEntitiesCommon(EntitySearchView entitySearch, string path)
+        {
             var resultMySql = new MySqlCompany();
-            SerializeObjectToPost(entitySearch, "/entities/search", out string url, out StringContent data);
 
             try
             {
+                SerializeObjectToPost(entitySearch, path, out string url, out StringContent data);
                 using (var response = await _client.PostAsync(url, data))
                 {
                     if (response.IsSuccessStatusCode)
@@ -378,7 +381,16 @@ namespace Lexon.Infrastructure.Services
             return resultMySql;
         }
 
-     
+        public async Task<MySqlCompany> GetEntitiesFoldersAsync(EntitySearchFoldersView entitySearch)
+        {
+            return await GetEntitiesCommon(entitySearch, "/entities/folders/search");
+        }
+
+        public async Task<MySqlCompany> GetEntitiesDocumentsAsync(EntitySearchDocumentsView entitySearch)
+        {
+            return await GetEntitiesCommon(entitySearch, "/entities/documents/search");
+        }
+
         #endregion Entities
 
         #region User and Companies

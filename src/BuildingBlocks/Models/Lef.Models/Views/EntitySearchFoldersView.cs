@@ -1,6 +1,6 @@
 ﻿namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
-    public class EntitySearchFoldersView: EntitySearchDocumentsView
+    public class EntitySearchFoldersView: EntitySearchDocumentsView, IEntitySearchView
     {
         public EntitySearchFoldersView()
         {

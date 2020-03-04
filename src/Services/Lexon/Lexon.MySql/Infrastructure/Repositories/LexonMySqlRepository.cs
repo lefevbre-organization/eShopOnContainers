@@ -87,9 +87,9 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         #region Entities
 
-        public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch)
+        public async Task<MySqlCompany> GetEntitiesAsync(IEntitySearchView entitySearch)
         {
-            var resultMySql = new MySqlCompany(_settings.Value.SP.SearchEntities, entitySearch.pageIndex, entitySearch.pageSize, entitySearch.bbdd, entitySearch.idType);
+            var resultMySql = new MySqlCompany(_settings.Value.SP.SearchEntities, entitySearch.pageIndex, entitySearch.pageSize, ((EntitySearchView)entitySearch).bbdd, ((EntitySearchView)entitySearch).idType);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -99,7 +99,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     conn.Open();
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.SearchEntities, conn))
                     {
-                        AddCommonParameters(entitySearch.idUser, command, "P_FILTER", filtro);
+                        AddCommonParameters(((EntitySearchView)entitySearch).idUser, command, "P_FILTER", filtro);
                         AddListSearchParameters(entitySearch.pageSize, entitySearch.pageIndex, command);
                         var r = command.ExecuteNonQuery();
                         resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
@@ -116,7 +116,10 @@ namespace Lexon.MySql.Infrastructure.Repositories
                                 }
                                 else
                                 {
-                                    TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
+                                    if (resultMySql.Infos.Count > 1)
+                                        TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
+                                    else
+                                        resultMySql.Infos.Add(new Info() { code = "515", message = "MySql get and empty string with this search" });
                                 }
                             }
                         }
@@ -159,7 +162,10 @@ namespace Lexon.MySql.Infrastructure.Repositories
                                     }
                                     else
                                     {
-                                        TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
+                                        if (resultMySql.Infos.Count > 1)
+                                            TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
+                                        else
+                                            resultMySql.Infos.Add(new Info() { code = "515", message = "MySql get and empty string with this search" });
                                     }
                                 }
                         }
@@ -487,11 +493,11 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     $" }}";
         }
 
-        private string GiveMeSearchEntitiesFilter(EntitySearchView search)
+        private string GiveMeSearchEntitiesFilter(IEntitySearchView search)
         {
             return $"{{ " +
-                    GetUserFilter(search.bbdd, search.idUser) +
-                    GetShortFilter("IdEntityType", search.idType) +
+                    GetUserFilter(((EntitySearchView)search).bbdd, ((EntitySearchView)search).idUser) +
+                    GetShortFilter("IdEntityType", ((EntitySearchView)search).idType) +
                     GetTextFilter("Description", search.search) +
                     GetFolderDocumentFilter(search) +
                     $" }}";
@@ -506,7 +512,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     $" }}";
         }
 
-        private string GetFolderDocumentFilter(EntitySearchView search)
+        private string GetFolderDocumentFilter(IEntitySearchView search)
         {
             if (search is EntitySearchFoldersView)
                 return $"{GetLongFilter("IdParent", (search as EntitySearchFoldersView)?.idParent)}{GetLongFilter("IdFolder", (search as EntitySearchFoldersView)?.idFolder)}";

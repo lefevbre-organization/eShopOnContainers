@@ -1,6 +1,6 @@
 ﻿namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
-    public class EntitySearchView : EntityView
+    public class EntitySearchView : EntityView, IEntitySearchView
     {
 
         /// <summary> string with search filter </summary>

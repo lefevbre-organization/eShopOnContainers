@@ -10,7 +10,7 @@ namespace Lexon.MySql.Infrastructure.Services
 
         Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync();
 
-        Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch);
+        Task<MySqlCompany> GetEntitiesAsync(IEntitySearchView entitySearch);
 
         Task<Result<LexEntity>> GetEntityAsync(EntitySearchById entitySearch);
 

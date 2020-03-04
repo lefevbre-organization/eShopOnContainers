@@ -43,7 +43,7 @@ namespace Lexon.MySql.Infrastructure.Services
 
         #region Entities
 
-        public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch) => await _lexonRepository.GetEntitiesAsync(entitySearch);
+        public async Task<MySqlCompany> GetEntitiesAsync(IEntitySearchView entitySearch) => await _lexonRepository.GetEntitiesAsync(entitySearch);
 
         public async Task<Result<LexEntity>> GetEntityAsync(EntitySearchById entitySearch) => await _lexonRepository.GetEntityAsync(entitySearch);
 
