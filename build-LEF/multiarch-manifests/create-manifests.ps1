@@ -12,7 +12,7 @@ Write-Host "Tags used are linux-master, win-master, linux-dev, win-dev, linux-la
 Write-Host "Multiarch images tags will be master, dev, latest" -ForegroundColor Yellow
 
 
-$services =  "webstatus", "webgoogle"
+$services =  "webstatus", "webgoogle", "webgraph"
 
 foreach ($svc in $services) {
     Write-Host "Creating manifest for $svc and tags :latest, :master, and :dev"

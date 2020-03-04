@@ -11,7 +11,8 @@ $gitContext = "https://github.com/$gitUser/$repoName"
 $services = @( 
     
     @{ Name="elefebvrewebstatus"; Image="elefebvreoncontainers/webstatuslef"; File="src/Web/WebStatuslef/Dockerfile" },
-	@{ Name="elefebvrewebstatus"; Image="elefebvreoncontainers/webgoogle"; File="src/Web/WebGoogleClient/Dockerfile" },
+	@{ Name="elefebvrewebgoogle"; Image="elefebvreoncontainers/webgoogle"; File="src/Web/WebGoogleClient/Dockerfile" },
+	@{ Name="elefebvrewebgraph"; Image="elefebvreoncontainers/webgraph"; File="src/Web/WebOffice365Client/Dockerfile" }
     
 )
 
