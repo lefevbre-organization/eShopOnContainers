@@ -165,7 +165,7 @@ namespace Lexon.MySql.Controllers
 
             var result = await _lexonService.AddFolderToEntityAsync(entityFolder);
 
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            return Ok(result);
         }
 
         [HttpPost("classifications/add")]

@@ -183,7 +183,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync()
         {
-
             var resultMySql = new MySqlList<JosEntityTypeList, JosEntityType>(new JosEntityTypeList(), _settings.Value.SP.GetMasterEntities, 1, 0);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
@@ -228,7 +227,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
             {
                 try
                 {
-                    var filtro = $"{{ \"BBDD\":\"{folderToEntity.bbdd}\", \"IdEntityType\":{folderToEntity.idType}, \"IdParent\":{folderToEntity.IdParent}, \"Name\":\"{folderToEntity.Name}\", \"IdRelated\":{folderToEntity.idEntity} }}";
+                    string filtro = GeFolderCreateFilter(folderToEntity);
                     conn.Open();
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddEntityFolder, conn))
                     {
@@ -237,7 +236,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         await command.ExecuteNonQueryAsync();
                         TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
                         TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
-                        result.data = (long)command.Parameters["P_ID"].Value;
+                        result.data = (int)command.Parameters["P_ID"].Value;
                     }
                 }
                 catch (Exception ex)
@@ -282,11 +281,10 @@ namespace Lexon.MySql.Infrastructure.Repositories
                                 }
                                 else
                                 {
-                                    if(resultMySql.Infos.Count > 1)
+                                    if (resultMySql.Infos.Count > 1)
                                         TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
                                     else
                                         resultMySql.Infos.Add(new Info() { code = "515", message = "MySql get and empty string with this search" });
-
                                 }
                             }
                         }
@@ -469,6 +467,17 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 $"{GetTextFilter("Subject", mail.Subject)}" +
                 $"{GetTextFilter("Folder", mail.Folder)}" +
                 $"{GetTextFilter("Date", mail.Date)}";
+        }
+
+        private string GeFolderCreateFilter(FolderToEntity folderToEntity)
+        {
+            return $"{{ " +
+                $"{GetTextFilter("BBDD", folderToEntity.bbdd, false)}" +
+                $"{GetShortFilter("IdEntityType", folderToEntity.idType)}" +
+                $"{GetLongFilter("IdParent", folderToEntity.IdParent)}" +
+                $"{GetTextFilter("Name", folderToEntity.Name)}" +
+                $"{GetLongFilter("IdRelated", folderToEntity.idEntity)}" +
+                    $" }}";
         }
 
         private string GetMailListFilter(string name, MailInfo[] mailInfoList, bool withComma = true)
