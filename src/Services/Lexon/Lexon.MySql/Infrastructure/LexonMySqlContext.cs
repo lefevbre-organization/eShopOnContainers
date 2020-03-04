@@ -14,7 +14,7 @@ namespace Lexon.MySql.Infrastructure
         {
         }
 
-        public virtual DbSet<JosCompany> JosCompanies { get; set; }
+        //public virtual DbSet<JosCompany> JosCompanies { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

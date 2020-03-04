@@ -26,12 +26,12 @@ namespace Lexon.API.IntegrationsEvents.EventHandling
 
         public async Task Handle(AddFileToUserIntegrationEvent @event)
         {
-            await _repository.AddFileToListAsync(@event.UserId, @event.Bbdd, @event.FileId, @event.FileName, @event.FileDescription);
+           // await _repository.AddFileToListAsync(@event.UserId, @event.Bbdd, @event.FileId, @event.FileName, @event.FileDescription);
             using (LogContext.PushProperty("IntegrationEventContext", $"{@event.Id}-{Program.AppName}"))
             {
                 _logger.LogInformation("----- Handling integration event: {IntegrationEventId} at {AppName} - ({@IntegrationEvent})", @event.Id, Program.AppName, @event);
-                await _repository.AddFileToListAsync(@event.UserId, @event.Bbdd, @event.FileId, @event.FileName, @event.FileDescription);
-                //await _repository.DeleteBasketAsync(@event.UserId.ToString());
+               // await _repository.AddFileToListAsync(@event.UserId, @event.Bbdd, @event.FileId, @event.FileName, @event.FileDescription);
+            
             }
         }
     }

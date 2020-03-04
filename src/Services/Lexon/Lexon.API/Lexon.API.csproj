@@ -41,6 +41,13 @@
   </ItemGroup>
 
 
+  <ItemGroup>
+    <Folder Include="Model\Base\" />
+    <Folder Include="Model\Masters\" />
+    <Folder Include="Model\Users\" />
+  </ItemGroup>
+
+
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

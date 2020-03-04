@@ -1,5 +1,4 @@
-﻿using Lexon.MySql.Model;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,14 +6,13 @@ namespace Lexon.MySql.Infrastructure.Services
 {
     public interface ILexonMySqlService
     {
-        Task<Result<JosUserCompanies>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idNavisionUser);
+        Task<Result<LexUser>> GetCompaniesFromUserAsync(string idNavisionUser);
 
         Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync();
 
-        Task<MySqlList<JosEntityList, JosEntity>> GetEntitiesAsync(EntitySearchView entitySearch);
+        Task<MySqlCompany> GetEntitiesAsync(IEntitySearchView entitySearch);
 
-        Task<MySqlCompany> GetEntitiesNewAsync(EntitySearchView entitySearch);
-        Task<Result<JosEntity>> GetEntityAsync(EntitySearchById entitySearch);
+        Task<Result<LexEntity>> GetEntityAsync(EntitySearchById entitySearch);
 
         Task<Result<int>> RemoveRelationMailAsync(ClassificationRemoveView classification);
 
@@ -22,9 +20,9 @@ namespace Lexon.MySql.Infrastructure.Services
 
         Task<Result<int>> AddRelationMailAsync(ClassificationAddView classification);
 
-        Task<Result<JosRelationsList>> GetRelationsAsync(ClassificationSearchView classification);
+        Task<MySqlCompany> GetRelationsAsync(ClassificationSearchView classification);
 
-        Task<Result<JosUser>> GetUserAsync(string idUser,
+        Task<Result<LexUser>> GetUserAsync(string idUser,
                                            string bbdd = null,
                                            string provider = null,
                                            string mailAccount = null,
@@ -35,7 +33,7 @@ namespace Lexon.MySql.Infrastructure.Services
                                            List<string> mailContacts = null,
                                            bool addTerminatorToToken = true);
 
-
-
+        Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder);
+        Result<LexNestedEntity> GetNestedFolderAsync(FolderNestedView entityFolder);
     }
 }

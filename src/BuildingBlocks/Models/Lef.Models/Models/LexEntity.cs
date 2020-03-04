@@ -1,9 +1,8 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-
+﻿
 namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
-    [BsonIgnoreExtraElements]
-    public class LexEntity : MongoModel
+
+    public class LexEntity
     {
         /// <summary>
         /// id del tipo de entidad, establecerá la configuración delr esto de los campos
@@ -47,9 +46,6 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         /// </summary>
         public string email { get; set; }
 
-        /// <summary>
-        /// Coleccion de mails con los que esta relacionado (adjunción)
-        /// </summary>
-        //public LexMail[] mails { get; set; }
     }
+
 }

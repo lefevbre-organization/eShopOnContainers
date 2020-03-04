@@ -7,28 +7,29 @@ namespace Lexon.Infrastructure.Services
 {
     public interface IUsersService
     {
-        Task<Result<List<LexonUser>>> GetListUsersAsync(int pageSize, int pageIndex, string idUser);
 
-        Task<Result<LexonUser>> GetUserAsync(string idUser);
+        Task<Result<LexUser>> GetUserAsync(string idNavisionUser);
 
-        Task<Result<List<LexonCompany>>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser);
-
-        Task<Result<long>> SelectCompanyAsync(string idUser, string bbdd);
-
-        Task<MySqlList<JosEntityList, LexonEntityBase>> GetEntitiesListAsync(EntitySearchView entitySearch);
+        Task<Result<List<LexCompany>>> GetCompaniesFromUserAsync(string idUser);
 
         Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch);
 
-        Task<Result<LexonEntityBase>> GetEntityById(EntitySearchById entitySearch);
+        Task<Result<LexEntity>> GetEntityById(EntitySearchById entitySearch);
+
+        Task<MySqlCompany> GetEntitiesFoldersAsync(EntitySearchFoldersView entitySearch);
+        Task<MySqlCompany> GetEntitiesDocumentsAsync(EntitySearchDocumentsView entitySearch);
 
         Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync();
 
         Task<Result<long>> AddClassificationToListAsync(ClassificationAddView classification);
+
         Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification);
 
         Task<Result<long>> RemoveClassificationFromListAsync(ClassificationRemoveView classificationRemove);
 
-        Task<Result<List<LexonActuation>>> GetClassificationsFromMailAsync(ClassificationSearchView classificationSearch);
+        Task<MySqlCompany> GetClassificationsFromMailAsync(ClassificationSearchView classificationSearch);
 
+        Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder);
+        Task<Result<LexNestedEntity>> GetNestedFolderAsync(FolderNestedView entityFolder);
     }
 }
