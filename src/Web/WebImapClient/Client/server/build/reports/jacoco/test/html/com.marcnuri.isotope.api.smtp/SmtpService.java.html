@@ -28,6 +28,10 @@ import com.marcnuri.isotope.api.message.Attachment;
 import com.marcnuri.isotope.api.message.Message;
 import com.marcnuri.isotope.api.message.MessageUtils;
 import com.sun.mail.util.MailSSLSocketFactory;
+import com.sun.mail.imap.IMAPFolder;
+import com.sun.mail.imap.IMAPStore;
+
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +46,11 @@ import javax.annotation.PreDestroy;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.Folder;
+import javax.mail.Address;
+import javax.mail.Flags;
+import javax.mail.event.TransportEvent;
+import javax.mail.event.TransportListener;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -50,6 +59,8 @@ import javax.mail.internet.MimeUtility;
 import javax.mail.util.ByteArrayDataSource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.ByteArrayOutputStream;
+
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.Properties;
@@ -63,6 +74,7 @@ import static com.marcnuri.isotope.api.folder.FolderResource.REL_DOWNLOAD;
 import static com.marcnuri.isotope.api.message.Message.HEADER_IN_REPLY_TO;
 import static com.marcnuri.isotope.api.message.Message.HEADER_REFERENCES;
 
+
 /**
  * Created by Marc Nuri &lt;marc@marcnuri.com&gt; on 2018-10-07.
  */
@@ -70,11 +82,13 @@ import static com.marcnuri.isotope.api.message.Message.HEADER_REFERENCES;
 @RequestScope
 public class SmtpService {
 
-<span class="fc" id="L73">    private static final Logger log = LoggerFactory.getLogger(SmtpService.class);</span>
+<span class="fc" id="L85">    private static final Logger log = LoggerFactory.getLogger(SmtpService.class);</span>
 
+    private static final String IMAP_PROTOCOL = &quot;imap&quot;;
+    private static final String IMAPS_PROTOCOL = &quot;imaps&quot;;
     private static final String SMTP_PROTOCOL = &quot;smtp&quot;;
     private static final String SMTPS_PROTOCOL = &quot;smtps&quot;;
-<span class="fc" id="L77">    private static final Pattern DATA_URI_IMAGE_PATTERN = Pattern.compile(&quot;\&quot;data:(image\\/[^;]*?);base64,([^\\\&quot;]*?)\&quot;&quot;);</span>
+<span class="fc" id="L91">    private static final Pattern DATA_URI_IMAGE_PATTERN = Pattern.compile(&quot;\&quot;data:(image\\/[^;]*?);base64,([^\\\&quot;]*?)\&quot;&quot;);</span>
     private static final String STYLES =
             &quot;body {font-family: 'Roboto', 'Calibri',  sans-serif; font-size: 1rem; color: #333}&quot; +
             &quot;h1 {margin: 6px 0 16px 0; font-size: 3rem; font-weight: normal}&quot; +
@@ -87,11 +101,13 @@ public class SmtpService {
 
     private Session session;
     private Transport smtpTransport;
+    public Credentials originalCredentials;
+    public String sentFolderName;
 
     @Autowired
-<span class="fc" id="L92">    public SmtpService(MailSSLSocketFactory mailSSLSocketFactory) {</span>
-<span class="fc" id="L93">        this.mailSSLSocketFactory = mailSSLSocketFactory;</span>
-<span class="fc" id="L94">    }</span>
+<span class="fc" id="L108">    public SmtpService(MailSSLSocketFactory mailSSLSocketFactory) {</span>
+<span class="fc" id="L109">        this.mailSSLSocketFactory = mailSSLSocketFactory;</span>
+<span class="fc" id="L110">    }</span>
 
     /**
      * Checks if specified {@link Credentials} are valid
@@ -101,151 +117,318 @@ public class SmtpService {
      */
     public void checkCredentials(Credentials credentials) {
         try {
-<span class="fc" id="L104">            getSmtpTransport(credentials);</span>
-<span class="fc" id="L105">        } catch (MessagingException e) {</span>
-<span class="fc" id="L106">            throw new AuthenticationException(SMTP);</span>
-<span class="fc" id="L107">        }</span>
-<span class="fc" id="L108">    }</span>
+<span class="fc" id="L120">            getSmtpTransport(credentials);</span>
+<span class="fc" id="L121">        } catch (MessagingException e) {</span>
+<span class="fc" id="L122">            throw new AuthenticationException(SMTP);</span>
+<span class="fc" id="L123">        }</span>
+<span class="fc" id="L124">    }</span>
+
+    public Boolean autoSentFolder( Address[] provider){
+
+<span class="nc bnc" id="L128" title="All 2 branches missed.">        if (provider.length &gt; 0){</span>
+<span class="nc" id="L129">            String email = provider[0].toString();</span>
+<span class="nc" id="L130">            log.info(&quot;Address: &quot; + email);</span>
+<span class="nc bnc" id="L131" title="All 6 branches missed.">            if (email.contains(&quot;@gmail.com&quot;) || email.contains(&quot;@outlook.com&quot;) || email.contains(&quot;@hotmail.com&quot;) </span>
+<span class="nc bnc" id="L132" title="All 4 branches missed.">                || email.contains(&quot;@lefebvre.es&quot;) || email.contains(&quot;@lefebvreelderecho.com&quot;)){</span>
+                //log.info(&quot;Provider stores in sent Folder automatically&quot;);
+<span class="nc" id="L134">                return true;</span>
+            }
+            //log.info(&quot;Provider doesn't store in sent Folder automatically. Doing it Manually&quot;);
+        }
+<span class="nc" id="L138">        return false;</span>
+    }
+
+    public void copyMsgToSentFolder(MimeMessage msg){
+        //log.info(&quot;ImapStore:&quot; + imapStore.toString());
+        try {
+            //log.info(&quot;STORE SENT MESSAGE BEGINNING&quot; );
+            final Session session;
+            IMAPStore imapStore;
+            Folder folder;
+            
+<span class="nc" id="L149">            session = Session.getInstance(initMailPropertiesImap(originalCredentials, mailSSLSocketFactory), null);</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">            imapStore = (IMAPStore) session.getStore(originalCredentials.getImapSsl() ? IMAPS_PROTOCOL : IMAP_PROTOCOL);</span>
+<span class="nc" id="L151">            imapStore.connect(</span>
+<span class="nc" id="L152">                originalCredentials.getServerHost(),</span>
+<span class="nc" id="L153">                originalCredentials.getServerPort(),</span>
+<span class="nc" id="L154">                originalCredentials.getUser(),</span>
+<span class="nc" id="L155">                originalCredentials.getPassword());</span>
+
+<span class="nc" id="L157">            folder = imapStore.getDefaultFolder();</span>
+
+<span class="nc" id="L159">            processFolderElements(folder, false, &quot;&quot;);</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">            if ((folder.getType() &amp; Folder.HOLDS_FOLDERS) != 0) {</span>
+<span class="nc" id="L161">                Folder[] f = folder.list(&quot;%&quot;);</span>
+<span class="nc bnc" id="L162" title="All 2 branches missed.">                for (int i = 0; i &lt; f.length; i++)</span>
+<span class="nc" id="L163">                processFolderElements(f[i], true, &quot;    &quot;);</span>
+            }
+
+            //log.info(&quot;Sent folder Name: &quot; + sentFolderName);
+
+<span class="nc" id="L168">            folder = imapStore.getFolder(sentFolderName);</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">            if (folder == null){</span>
+<span class="nc" id="L170">                log.debug(&quot;Error obteniendo el folder&quot;);</span>
+            } else {
+
+<span class="nc" id="L173">                javax.mail.Message[] msgs = new javax.mail.Message[1];</span>
+<span class="nc" id="L174">                msgs[0] = msg;</span>
+<span class="nc" id="L175">                msgs[0].setFlag(Flags.Flag.SEEN, true);</span>
+                
+<span class="nc" id="L177">                folder.appendMessages(msgs);</span>
+
+                // A implementar: verificar si el mensaje ya existe antes de insertarlo.
+                // if (!folder.isOpen()) {
+                //     folder.open(READ_ONLY);
+                // }
+                // final IMAPMessage imapMessage = (IMAPMessage)folder.getMessageByUID(msg.getMessageID());
+                // if (imapMessage == null) {
+                //     folder.close();
+                //     throw new NotFoundException(&quot;Message not found&quot;);
+                // }
+                // final MessageWithFolder ret = MessageWithFolder.from(folder, imapMessage);
+                // readContentIntoMessage(folderId, imapMessage, ret);
+                // folder.close();
+            }
+
+<span class="nc" id="L193">            imapStore.close();</span>
+<span class="nc" id="L194">        } catch (Exception e) {</span>
+            //TODO: handle exception
+            //log.info(&quot;Error de los buenos&quot;);
+<span class="nc" id="L197">            throw new IsotopeException(&quot;Problem leaving a copy of the message in Sent Folder&quot;, e);</span>
+<span class="nc" id="L198">        }</span>
+<span class="nc" id="L199">    }</span>
 
     String sendMessage(HttpServletRequest request, Message message) {
         try {
-<span class="fc" id="L112">            final Credentials credentials = getCredentials();</span>
-<span class="fc" id="L113">            final Charset currentCharset = Charset.defaultCharset();</span>
-<span class="fc" id="L114">            final MimeMessage mimeMessage = new MimeMessage(getSession(credentials));</span>
-<span class="fc" id="L115">            mimeMessage.setSentDate(new Date());</span>
-<span class="pc bpc" id="L116" title="1 of 4 branches missed.">            if (credentials.getUser() != null &amp;&amp; credentials.getUser().contains(&quot;@&quot;)) {</span>
-<span class="fc" id="L117">                mimeMessage.setFrom(credentials.getUser());</span>
+<span class="fc" id="L203">            final Credentials credentials = getCredentials();</span>
+<span class="fc" id="L204">            final Charset currentCharset = Charset.defaultCharset();</span>
+<span class="fc" id="L205">            final MimeMessage mimeMessage = new MimeMessage(getSession(credentials));</span>
+<span class="fc" id="L206">            final Transport smtpTransport = getSmtpTransport(credentials); </span>
+<span class="fc" id="L207">            final TransportListener transportListener = new TransportListener(){</span>
+            
+                @Override
+                public void messagePartiallyDelivered(TransportEvent e) {
+                    // TODO Auto-generated method stub
+<span class="nc" id="L212">                    log.debug(&quot;messagePartiallyDelivered&quot;);</span>
+<span class="nc" id="L213">                }</span>
+            
+                @Override
+                public void messageNotDelivered(TransportEvent e) {
+                    // TODO Auto-generated method stub
+<span class="nc" id="L218">                    log.debug(&quot;messagePartiallyDelivered&quot;);</span>
+<span class="nc" id="L219">                }</span>
+            
+                @Override
+                public void messageDelivered(TransportEvent e) {
+                    // TODO Auto-generated method stub
+<span class="nc" id="L224">                    log.debug(&quot;messageDelivered&quot;);</span>
+                    try {
+<span class="nc bnc" id="L226" title="All 2 branches missed.">                        if (!autoSentFolder(mimeMessage.getFrom())){</span>
+<span class="nc" id="L227">                            log.debug(&quot;Leaving a copy of sent message into sent folder&quot;);</span>
+<span class="nc" id="L228">                            copyMsgToSentFolder(mimeMessage);</span>
+                        } else {
+<span class="nc" id="L230">                            log.debug(&quot;Sent folder automatically updated&quot;);</span>
+                        }
+<span class="nc" id="L232">                    } catch (Exception ex1) {</span>
+                        //TODO: handle exception
+<span class="nc" id="L234">                        throw new IsotopeException(&quot;Problem storing copy of message&quot;, ex1);</span>
+<span class="nc" id="L235">                    }</span>
+<span class="nc" id="L236">                }</span>
+            };
+<span class="fc" id="L238">            mimeMessage.setSentDate(new Date());</span>
+<span class="pc bpc" id="L239" title="1 of 4 branches missed.">            if (credentials.getUser() != null &amp;&amp; credentials.getUser().contains(&quot;@&quot;)) {</span>
+<span class="fc" id="L240">                mimeMessage.setFrom(credentials.getUser());</span>
             } else {
-<span class="fc" id="L119">                mimeMessage.setFrom(String.format(&quot;%s@%s&quot;, credentials.getUser(), credentials.getServerHost()));</span>
+<span class="fc" id="L242">                mimeMessage.setFrom(String.format(&quot;%s@%s&quot;, credentials.getUser(), credentials.getServerHost()));</span>
             }
-<span class="fc bfc" id="L121" title="All 2 branches covered.">            for (javax.mail.Message.RecipientType type : new javax.mail.Message.RecipientType[]{</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">            for (javax.mail.Message.RecipientType type : new javax.mail.Message.RecipientType[]{</span>
                     MimeMessage.RecipientType.TO, MimeMessage.RecipientType.CC, MimeMessage.RecipientType.BCC
             }) {
-<span class="fc" id="L124">                mimeMessage.setRecipients(type, MessageUtils.getRecipientAddresses(message, type));</span>
+<span class="fc" id="L247">                mimeMessage.setRecipients(type, MessageUtils.getRecipientAddresses(message, type));</span>
             }
-<span class="fc" id="L126">            mimeMessage.setSubject(message.getSubject(), currentCharset.name());</span>
+<span class="fc" id="L249">            mimeMessage.setSubject(message.getSubject(), currentCharset.name());</span>
 
-<span class="pc bpc" id="L128" title="1 of 2 branches missed.">            if (message.getInReplyTo() != null) {</span>
-<span class="nc" id="L129">                mimeMessage.setHeader(HEADER_IN_REPLY_TO, String.join(&quot; &quot;, message.getInReplyTo()));</span>
+<span class="pc bpc" id="L251" title="1 of 2 branches missed.">            if (message.getInReplyTo() != null) {</span>
+<span class="nc" id="L252">                mimeMessage.setHeader(HEADER_IN_REPLY_TO, String.join(&quot; &quot;, message.getInReplyTo()));</span>
             }
-<span class="pc bpc" id="L131" title="1 of 2 branches missed.">            if (message.getReferences() != null) {</span>
-<span class="nc" id="L132">                mimeMessage.setHeader(HEADER_REFERENCES, String.join(&quot; &quot;, message.getReferences()));</span>
+<span class="pc bpc" id="L254" title="1 of 2 branches missed.">            if (message.getReferences() != null) {</span>
+<span class="nc" id="L255">                mimeMessage.setHeader(HEADER_REFERENCES, String.join(&quot; &quot;, message.getReferences()));</span>
             }
 
-<span class="fc" id="L135">            final MimeMultipart multipart = new MimeMultipart();</span>
+<span class="fc" id="L258">            final MimeMultipart multipart = new MimeMultipart();</span>
 
             // Extract data-uri images to inline attachments
-<span class="fc" id="L138">            final String originalContent = message.getContent();</span>
-<span class="fc" id="L139">            String finalContent = originalContent;</span>
-<span class="fc" id="L140">            final Matcher matcher = DATA_URI_IMAGE_PATTERN.matcher(originalContent);</span>
-<span class="pc bpc" id="L141" title="1 of 2 branches missed.">            while(matcher.find()) {</span>
-<span class="nc" id="L142">                final String cid = UUID.randomUUID().toString().replace(&quot;-&quot;, &quot;&quot;);</span>
-<span class="nc" id="L143">                final String contentType = matcher.group(1);</span>
-<span class="nc" id="L144">                final InternetHeaders headers = new InternetHeaders();</span>
-<span class="nc" id="L145">                headers.addHeader(&quot;Content-Type&quot;, contentType);</span>
-<span class="nc" id="L146">                headers.addHeader(&quot;Content-Transfer-Encoding&quot;, &quot;base64&quot;);</span>
-<span class="nc" id="L147">                final MimeBodyPart cidImagePart = new MimeBodyPart(headers, matcher.group(2).getBytes());</span>
-<span class="nc" id="L148">                multipart.addBodyPart(cidImagePart);</span>
-<span class="nc" id="L149">                cidImagePart.setDisposition(MimeBodyPart.INLINE);</span>
-<span class="nc" id="L150">                cidImagePart.setContentID(String.format(&quot;&lt;%s&gt;&quot;,cid));</span>
-<span class="nc" id="L151">                cidImagePart.setFileName(String.format(&quot;%s.%s&quot;, cid, contentType.substring(contentType.indexOf('/') + 1)));</span>
-<span class="nc" id="L152">                finalContent = finalContent.replace(matcher.group(), &quot;\&quot;cid:&quot; +cid +&quot;\&quot;&quot;);</span>
-<span class="nc" id="L153">            }</span>
+<span class="fc" id="L261">            final String originalContent = message.getContent();</span>
+<span class="fc" id="L262">            String finalContent = originalContent;</span>
+<span class="fc" id="L263">            final Matcher matcher = DATA_URI_IMAGE_PATTERN.matcher(originalContent);</span>
+<span class="pc bpc" id="L264" title="1 of 2 branches missed.">            while(matcher.find()) {</span>
+<span class="nc" id="L265">                final String cid = UUID.randomUUID().toString().replace(&quot;-&quot;, &quot;&quot;);</span>
+<span class="nc" id="L266">                final String contentType = matcher.group(1);</span>
+<span class="nc" id="L267">                final InternetHeaders headers = new InternetHeaders();</span>
+<span class="nc" id="L268">                headers.addHeader(&quot;Content-Type&quot;, contentType);</span>
+<span class="nc" id="L269">                headers.addHeader(&quot;Content-Transfer-Encoding&quot;, &quot;base64&quot;);</span>
+<span class="nc" id="L270">                final MimeBodyPart cidImagePart = new MimeBodyPart(headers, matcher.group(2).getBytes());</span>
+<span class="nc" id="L271">                multipart.addBodyPart(cidImagePart);</span>
+<span class="nc" id="L272">                cidImagePart.setDisposition(MimeBodyPart.INLINE);</span>
+<span class="nc" id="L273">                cidImagePart.setContentID(String.format(&quot;&lt;%s&gt;&quot;,cid));</span>
+<span class="nc" id="L274">                cidImagePart.setFileName(String.format(&quot;%s.%s&quot;, cid, contentType.substring(contentType.indexOf('/') + 1)));</span>
+<span class="nc" id="L275">                finalContent = finalContent.replace(matcher.group(), &quot;\&quot;cid:&quot; +cid +&quot;\&quot;&quot;);</span>
+<span class="nc" id="L276">            }</span>
 
             // Include attachments
-<span class="pc bpc" id="L156" title="1 of 4 branches missed.">            if (message.getAttachments() != null &amp;&amp; !message.getAttachments().isEmpty()) {</span>
-<span class="fc bfc" id="L157" title="All 2 branches covered.">                for (Attachment attachment : message.getAttachments()) {</span>
-<span class="fc" id="L158">                    multipart.addBodyPart(toBodyPart(request, attachment));</span>
-<span class="fc" id="L159">                }</span>
+<span class="pc bpc" id="L279" title="1 of 4 branches missed.">            if (message.getAttachments() != null &amp;&amp; !message.getAttachments().isEmpty()) {</span>
+<span class="fc bfc" id="L280" title="All 2 branches covered.">                for (Attachment attachment : message.getAttachments()) {</span>
+<span class="fc" id="L281">                    multipart.addBodyPart(toBodyPart(request, attachment));</span>
+<span class="fc" id="L282">                }</span>
             }
 
             // Create body part
-<span class="fc" id="L163">            final MimeBodyPart body = new MimeBodyPart();</span>
-<span class="fc" id="L164">            multipart.addBodyPart(body);</span>
-<span class="fc" id="L165">            body.setContent(new String(String.format(&quot;&lt;html&gt;&lt;head&gt;&lt;style&gt;%1$s&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div id='scoped'&gt;&quot;</span>
+<span class="fc" id="L286">            final MimeBodyPart body = new MimeBodyPart();</span>
+<span class="fc" id="L287">            multipart.addBodyPart(body);</span>
+<span class="fc" id="L288">            body.setContent(new String(String.format(&quot;&lt;html&gt;&lt;head&gt;&lt;style&gt;%1$s&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div id='scoped'&gt;&quot;</span>
                             + &quot;&lt;style type='text/css' scoped&gt;%1$s&lt;/style&gt;%2$s&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;&quot;,
-<span class="fc" id="L167">                            STYLES, finalContent).getBytes(), currentCharset),</span>
-<span class="fc" id="L168">                    String.format(&quot;%s; charset=\&quot;%s\&quot;&quot;, MediaType.TEXT_HTML_VALUE, currentCharset.name()));</span>
-<span class="fc" id="L169">            mimeMessage.setContent(multipart);</span>
+<span class="fc" id="L290">                            STYLES, finalContent).getBytes(), currentCharset),</span>
+<span class="fc" id="L291">                    String.format(&quot;%s; charset=\&quot;%s\&quot;&quot;, MediaType.TEXT_HTML_VALUE, currentCharset.name()));</span>
+<span class="fc" id="L292">            mimeMessage.setContent(multipart);</span>
+<span class="fc" id="L293">            mimeMessage.saveChanges();</span>
+            
+<span class="fc" id="L295">            String[] messageId = mimeMessage.getHeader(&quot;Message-Id&quot;);</span>
+<span class="fc" id="L296">            smtpTransport.addTransportListener(transportListener);</span>
+<span class="fc" id="L297">            smtpTransport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());</span>
 
-<span class="fc" id="L171">            mimeMessage.saveChanges();</span>
-<span class="fc" id="L172">            String[] messageId = mimeMessage.getHeader(&quot;Message-Id&quot;);</span>
-<span class="fc" id="L173">            getSmtpTransport(credentials).sendMessage(mimeMessage, mimeMessage.getAllRecipients());</span>
-<span class="fc" id="L174">            return messageId[0];</span>
-<span class="nc" id="L175">        } catch(MessagingException | IOException ex) {</span>
-<span class="nc" id="L176">            throw new IsotopeException(&quot;Problem sending message&quot;, ex);</span>
+<span class="fc" id="L299">            return messageId[0];</span>
+<span class="nc" id="L300">        } catch(MessagingException | IOException ex) {</span>
+<span class="nc" id="L301">            throw new IsotopeException(&quot;Problem sending message&quot;, ex);</span>
         }
     }
 
     @PreDestroy
     public void destroy() {
-<span class="fc" id="L182">        log.debug(&quot;SmtpService destroyed&quot;);</span>
-<span class="pc bpc" id="L183" title="1 of 2 branches missed.">        if(smtpTransport != null) {</span>
+<span class="fc" id="L307">        log.debug(&quot;SmtpService destroyed&quot;);</span>
+<span class="pc bpc" id="L308" title="1 of 2 branches missed.">        if(smtpTransport != null) {</span>
             try {
-<span class="nc" id="L185">                smtpTransport.close();</span>
-<span class="nc" id="L186">            } catch (MessagingException ex) {</span>
-<span class="nc" id="L187">                log.error(&quot;Error closing SMTP Transport&quot;, ex);</span>
-<span class="nc" id="L188">            }</span>
+<span class="nc" id="L310">                smtpTransport.close();</span>
+<span class="nc" id="L311">            } catch (MessagingException ex) {</span>
+<span class="nc" id="L312">                log.error(&quot;Error closing SMTP Transport&quot;, ex);</span>
+<span class="nc" id="L313">            }</span>
         }
-<span class="fc" id="L190">    }</span>
+<span class="fc" id="L315">    }</span>
 
     private Session getSession(Credentials credentials) {
-<span class="fc bfc" id="L193" title="All 2 branches covered.">        if (session == null) {</span>
-<span class="fc" id="L194">            session = Session.getInstance(initMailProperties(credentials, mailSSLSocketFactory), null);</span>
+<span class="fc bfc" id="L318" title="All 2 branches covered.">        if (session == null) {</span>
+<span class="fc" id="L319">            originalCredentials = credentials;</span>
+<span class="fc" id="L320">            session = Session.getInstance(initMailProperties(credentials, mailSSLSocketFactory), null);</span>
         }
-<span class="fc" id="L196">        return session;</span>
+<span class="fc" id="L322">        return session;</span>
     }
 
     private Transport getSmtpTransport(Credentials credentials) throws MessagingException {
-<span class="pc bpc" id="L200" title="1 of 2 branches missed.">        if (smtpTransport == null) {</span>
-<span class="pc bpc" id="L201" title="1 of 2 branches missed.">            smtpTransport = getSession(credentials).getTransport(credentials.getSmtpSsl() ? SMTPS_PROTOCOL : SMTP_PROTOCOL);</span>
-<span class="fc" id="L202">            final String smtpHost = credentials.getSmtpHost();</span>
-<span class="fc bfc" id="L203" title="All 2 branches covered.">            smtpTransport.connect(</span>
-<span class="pc bpc" id="L204" title="1 of 2 branches missed.">                    smtpHost != null &amp;&amp; !smtpHost.isEmpty() ? smtpHost : credentials.getServerHost(),</span>
-<span class="fc" id="L205">                    credentials.getSmtpPort(),</span>
-<span class="fc" id="L206">                    credentials.getUser(),</span>
-<span class="fc" id="L207">                    credentials.getPassword());</span>
-<span class="fc" id="L208">            log.debug(&quot;Opened new SMTP transport&quot;);</span>
+<span class="pc bpc" id="L326" title="1 of 2 branches missed.">        if (smtpTransport == null) {</span>
+<span class="pc bpc" id="L327" title="1 of 2 branches missed.">            smtpTransport = getSession(credentials).getTransport(credentials.getSmtpSsl() ? SMTPS_PROTOCOL : SMTP_PROTOCOL);</span>
+<span class="fc" id="L328">            final String smtpHost = credentials.getSmtpHost();</span>
+<span class="fc bfc" id="L329" title="All 2 branches covered.">            smtpTransport.connect(</span>
+<span class="pc bpc" id="L330" title="1 of 2 branches missed.">                    smtpHost != null &amp;&amp; !smtpHost.isEmpty() ? smtpHost : credentials.getServerHost(),</span>
+<span class="fc" id="L331">                    credentials.getSmtpPort(),</span>
+<span class="fc" id="L332">                    credentials.getUser(),</span>
+<span class="fc" id="L333">                    credentials.getPassword());</span>
+<span class="fc" id="L334">            log.debug(&quot;Opened new SMTP transport&quot;);</span>
         }
-<span class="fc" id="L210">        return smtpTransport;</span>
+<span class="fc" id="L336">        return smtpTransport;</span>
     }
 
     private Credentials getCredentials() {
-<span class="fc" id="L214">        return (Credentials)SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="fc" id="L340">        return (Credentials)SecurityContextHolder.getContext().getAuthentication();</span>
     }
 
     private static Properties initMailProperties(Credentials credentials, MailSSLSocketFactory socketFactory) {
-<span class="fc" id="L218">        final Properties ret = new Properties();</span>
-<span class="fc" id="L219">        ret.put(&quot;mail.smtp.ssl.enable&quot;, credentials.getSmtpSsl());</span>
-<span class="fc" id="L220">        ret.put(&quot;mail.smtp.connectiontimeout&quot;, DEFAULT_CONNECTION_TIMEOUT);</span>
-<span class="fc" id="L221">        ret.put(&quot;mail.smtp.ssl.socketFactory&quot;, socketFactory);</span>
-<span class="fc" id="L222">        ret.put(&quot;mail.smtp.starttls.enable&quot;, true);</span>
-<span class="fc" id="L223">        ret.put(&quot;mail.smtp.starttls.required&quot;, false);</span>
-<span class="fc" id="L224">        ret.put(&quot;mail.smtps.connectiontimeout&quot;, DEFAULT_CONNECTION_TIMEOUT);</span>
-<span class="fc" id="L225">        ret.put(&quot;mail.smtps.socketFactory&quot;, socketFactory);</span>
-<span class="fc" id="L226">        ret.put(&quot;mail.smtps.ssl.socketFactory&quot;, socketFactory);</span>
-<span class="fc" id="L227">        ret.put(&quot;mail.smtps.socketFactory.fallback&quot;, false);</span>
-<span class="fc" id="L228">        ret.put(&quot;mail.smtps.auth&quot;, true);</span>
-<span class="fc" id="L229">        return ret;</span>
+<span class="fc" id="L344">        final Properties ret = new Properties();</span>
+<span class="fc" id="L345">        ret.put(&quot;mail.smtp.ssl.enable&quot;, credentials.getSmtpSsl());</span>
+<span class="fc" id="L346">        ret.put(&quot;mail.smtp.connectiontimeout&quot;, DEFAULT_CONNECTION_TIMEOUT);</span>
+<span class="fc" id="L347">        ret.put(&quot;mail.smtp.ssl.socketFactory&quot;, socketFactory);</span>
+<span class="fc" id="L348">        ret.put(&quot;mail.smtp.starttls.enable&quot;, true);</span>
+<span class="fc" id="L349">        ret.put(&quot;mail.smtp.starttls.required&quot;, false);</span>
+<span class="fc" id="L350">        ret.put(&quot;mail.smtps.connectiontimeout&quot;, DEFAULT_CONNECTION_TIMEOUT);</span>
+<span class="fc" id="L351">        ret.put(&quot;mail.smtps.socketFactory&quot;, socketFactory);</span>
+<span class="fc" id="L352">        ret.put(&quot;mail.smtps.ssl.socketFactory&quot;, socketFactory);</span>
+<span class="fc" id="L353">        ret.put(&quot;mail.smtps.socketFactory.fallback&quot;, false);</span>
+<span class="fc" id="L354">        ret.put(&quot;mail.smtps.auth&quot;, true);</span>
+<span class="fc" id="L355">        return ret;</span>
+    }
+
+    private static Properties initMailPropertiesImap(Credentials credentials, MailSSLSocketFactory mailSSLSocketFactory) {
+<span class="nc" id="L359">        final Properties ret = new Properties();</span>
+<span class="nc" id="L360">        ret.put(&quot;mail.imap.ssl.enable&quot;, credentials.getImapSsl());</span>
+<span class="nc" id="L361">        ret.put(&quot;mail.imap.connectiontimeout&quot;, DEFAULT_CONNECTION_TIMEOUT);</span>
+<span class="nc" id="L362">        ret.put(&quot;mail.imap.connectionpooltimeout&quot;, DEFAULT_CONNECTION_TIMEOUT);</span>
+<span class="nc" id="L363">        ret.put(&quot;mail.imap.ssl.socketFactory&quot;, mailSSLSocketFactory);</span>
+<span class="nc" id="L364">        ret.put(&quot;mail.imap.starttls.enable&quot;, true);</span>
+<span class="nc" id="L365">        ret.put(&quot;mail.imap.starttls.required&quot;, false);</span>
+<span class="nc" id="L366">        ret.put(&quot;mail.imaps.socketFactory&quot;, mailSSLSocketFactory);</span>
+<span class="nc" id="L367">        ret.put(&quot;mail.imaps.socketFactory.fallback&quot;, false);</span>
+<span class="nc" id="L368">        ret.put(&quot;mail.imaps.ssl.socketFactory&quot;, mailSSLSocketFactory);</span>
+<span class="nc" id="L369">        return ret;</span>
     }
 
     private static MimeBodyPart toBodyPart(HttpServletRequest request, Attachment attachment)
             throws MessagingException, IOException {
 
-<span class="fc" id="L235">        final MimeBodyPart mimeAttachment = new MimeBodyPart();</span>
-<span class="fc" id="L236">        mimeAttachment.setDisposition(MimeBodyPart.ATTACHMENT);</span>
-<span class="pc bpc" id="L237" title="1 of 4 branches missed.">        final String mimeType = attachment.getContentType() != null &amp;&amp; !attachment.getContentType().isEmpty() ?</span>
-<span class="fc" id="L238">                attachment.getContentType() : MediaType.APPLICATION_OCTET_STREAM_VALUE;</span>
+<span class="fc" id="L375">        final MimeBodyPart mimeAttachment = new MimeBodyPart();</span>
+<span class="fc" id="L376">        mimeAttachment.setDisposition(MimeBodyPart.ATTACHMENT);</span>
+<span class="pc bpc" id="L377" title="1 of 4 branches missed.">        final String mimeType = attachment.getContentType() != null &amp;&amp; !attachment.getContentType().isEmpty() ?</span>
+<span class="fc" id="L378">                attachment.getContentType() : MediaType.APPLICATION_OCTET_STREAM_VALUE;</span>
         final DataSource dataSource;
-<span class="fc bfc" id="L240" title="All 2 branches covered.">        if (attachment.getContent() != null) {</span>
-<span class="fc" id="L241">            dataSource = new ByteArrayDataSource(attachment.getContent(), mimeType);</span>
+<span class="fc bfc" id="L380" title="All 2 branches covered.">        if (attachment.getContent() != null) {</span>
+<span class="fc" id="L381">            dataSource = new ByteArrayDataSource(attachment.getContent(), mimeType);</span>
         } else {
-<span class="fc" id="L243">            dataSource = new IsotopeURLDataSource(attachment.getLink(REL_DOWNLOAD).getTemplate().expand().toURL(),</span>
+<span class="fc" id="L383">            dataSource = new IsotopeURLDataSource(attachment.getLink(REL_DOWNLOAD).getTemplate().expand().toURL(),</span>
                     mimeType, request);
         }
-<span class="fc" id="L246">        mimeAttachment.setDataHandler(new DataHandler(dataSource));</span>
-<span class="fc" id="L247">        mimeAttachment.setFileName(MimeUtility.encodeText(attachment.getFileName()));</span>
-<span class="fc" id="L248">        return mimeAttachment;</span>
+<span class="fc" id="L386">        mimeAttachment.setDataHandler(new DataHandler(dataSource));</span>
+<span class="fc" id="L387">        mimeAttachment.setFileName(MimeUtility.encodeText(attachment.getFileName()));</span>
+<span class="fc" id="L388">        return mimeAttachment;</span>
     }
+
+
+    private void processFolderElements(Folder folder, boolean recurse, String tab)
+					throws Exception {
+        // Uncomment this section to debug:
+        // log.info(tab + &quot;Name:      &quot; + folder.getName());
+        // log.info(tab + &quot;Full Name: &quot; + folder.getFullName());
+        // log.info(tab + &quot;URL:       &quot; + folder.getURLName());
+        // if (!folder.isSubscribed())
+        // log.info(tab + &quot;Not Subscribed&quot;);
+        // if ((folder.getType() &amp; Folder.HOLDS_MESSAGES) != 0) {
+        //     if (folder.hasNewMessages())
+        //         log.info(tab + &quot;Has New Messages&quot;);
+        //     log.info(tab + &quot;Total Messages:  &quot; + folder.getMessageCount());
+        //     log.info(tab + &quot;New Messages:    &quot; + folder.getNewMessageCount());
+        //     log.info(tab + &quot;Unread Messages: &quot; + folder.getUnreadMessageCount());
+        // }
+        // if ((folder.getType() &amp; Folder.HOLDS_FOLDERS) != 0)
+        //     log.info(tab + &quot;Is Directory&quot;);
+
+<span class="nc bnc" id="L410" title="All 2 branches missed.">        if (folder instanceof IMAPFolder) {</span>
+<span class="nc" id="L411">            IMAPFolder f = (IMAPFolder)folder;</span>
+<span class="nc" id="L412">            String[] attrs = f.getAttributes();</span>
+<span class="nc bnc" id="L413" title="All 4 branches missed.">            if (attrs != null &amp;&amp; attrs.length &gt; 0) {</span>
+                //log.info(tab + &quot;IMAP Attributes:&quot;);
+<span class="nc bnc" id="L415" title="All 2 branches missed.">                for (int i = 0; i &lt; attrs.length; i++){</span>
+                    //log.info(tab + &quot;    &quot; + attrs[i]);
+<span class="nc bnc" id="L417" title="All 2 branches missed.">                    if (&quot;\\Sent&quot;.equals(attrs[i])){</span>
+                        //log.info(&quot;Localizado el folder de enviados &quot;);
+<span class="nc" id="L419">                        sentFolderName = f.getFullName();</span>
+                    }
+                }
+            }
+        }
+        //log.info(&quot;***&quot;);
+<span class="nc bnc" id="L425" title="All 2 branches missed.">        if ((folder.getType() &amp; Folder.HOLDS_FOLDERS) != 0) {</span>
+<span class="nc bnc" id="L426" title="All 2 branches missed.">            if (recurse) {</span>
+<span class="nc" id="L427">            Folder[] f = folder.list();</span>
+<span class="nc bnc" id="L428" title="All 2 branches missed.">            for (int i = 0; i &lt; f.length; i++)</span>
+<span class="nc" id="L429">            processFolderElements(f[i], recurse, tab + &quot;    &quot;);</span>
+            }
+        }
+<span class="nc" id="L432">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

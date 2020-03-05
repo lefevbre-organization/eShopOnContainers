@@ -47,6 +47,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.RequestScope;
+import org.apache.tomcat.util.codec.binary.Base64;
 import reactor.core.publisher.Flux;
 
 import javax.annotation.PreDestroy;
@@ -63,6 +64,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeUtility;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -303,6 +305,34 @@ public class ImapService {
         }
     }
 
+    public String getMessageRaw(URLName folderId, Long uid) {
+        try {
+            final IMAPFolder folder = getFolder(folderId);
+            if (!folder.isOpen()) {
+                folder.open(READ_ONLY);
+            }
+            final IMAPMessage imapMessage = (IMAPMessage)folder.getMessageByUID(uid);
+            if (imapMessage == null) {
+                folder.close();
+                throw new NotFoundException("Message not found");
+            }
+
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            imapMessage.writeTo(buffer);
+            byte[] bytes = buffer.toByteArray();
+            String encodedEmail = Base64.encodeBase64URLSafeString(bytes);
+            
+            log.debug("Mensaje sin codificar: " + buffer.toString());
+            log.debug("Mensaje codificado Base64URL: " + encodedEmail);
+
+            folder.close();
+            return encodedEmail;
+        } catch (MessagingException | IOException ex) {
+            log.error("Error loading raw messages for folder: " + folderId.toString(), ex);
+            throw  new IsotopeException(ex.getMessage());
+        }
+    }
+
     public List<Message> preloadMessages(@NonNull URLName folderId, @NonNull List<Long> uids) {
 
         try {
@@ -470,6 +500,11 @@ public class ImapService {
         if(imapStore != null) {
             try {
                 imapStore.close();
+                
+                // log.info("++++++++++++++++++");
+                // log.info("ImapService closed");
+                // log.info("++++++++++++++++++");
+                
             } catch (MessagingException ex) {
                 log.error("Error closing IMAP Store", ex);
             }
@@ -490,6 +525,15 @@ public class ImapService {
                     credentials.getUser(),
                     credentials.getPassword());
             log.debug("Opened new ImapStore session");
+            
+            // log.info("Opened new ImapStore session from imapService");
+            // log.info("---------------------------------------------");
+            // log.info("credentials.getServerHost() --> " + credentials.getServerHost());
+            // log.info("credentials.getServerPort() --> " + credentials.getServerPort());
+            // log.info("credentials.getUser() --> " + credentials.getUser());
+            // log.info("credentials.getPassword() --> " + credentials.getPassword());
+            // log.info("---------------------------------------------");
+            
         }
         return imapStore;
     }

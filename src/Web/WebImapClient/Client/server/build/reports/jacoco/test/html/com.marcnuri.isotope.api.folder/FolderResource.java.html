@@ -190,15 +190,24 @@ public class FolderResource implements ApplicationContextAware {
 <span class="fc" id="L190">        return ResponseEntity.ok(message);</span>
     }
 
+    @GetMapping(path = &quot;/{folderId}/messages/{messageId}/raw&quot;)
+    public ResponseEntity&lt;String&gt; getMessageRaw(
+            @PathVariable(&quot;folderId&quot;) String folderId, @PathVariable(&quot;messageId&quot;) Long messageId) {
+
+<span class="nc" id="L197">        log.debug(&quot;Loading message {} from folder {}&quot;, messageId, folderId);</span>
+<span class="nc" id="L198">        final String rawMessage = imapServiceFactory.getObject().getMessageRaw(Folder.toId(folderId), messageId);</span>
+<span class="nc" id="L199">        return ResponseEntity.ok(rawMessage);</span>
+    }
+
     @GetMapping(path = &quot;/{folderId}/messages/{messageId}/attachments/{id}&quot;)
     public ResponseEntity&lt;Void&gt; getAttachment(
             @PathVariable(&quot;folderId&quot;) String folderId, @PathVariable(&quot;messageId&quot;) Long messageId,
             @PathVariable(&quot;id&quot;) String id, @RequestParam(name=&quot;contentId&quot;, required = false) Boolean contentId,
             HttpServletResponse response) {
 
-<span class="nc" id="L199">        log.debug(&quot;Loading attachment {} from message {} from folder {}&quot;, id, messageId, folderId);</span>
-<span class="nc" id="L200">        imapServiceFactory.getObject().readAttachment(response, Folder.toId(folderId), messageId, id, contentId);</span>
-<span class="nc" id="L201">        return ResponseEntity.ok().build();</span>
+<span class="nc" id="L208">        log.debug(&quot;Loading attachment {} from message {} from folder {}&quot;, id, messageId, folderId);</span>
+<span class="nc" id="L209">        imapServiceFactory.getObject().readAttachment(response, Folder.toId(folderId), messageId, id, contentId);</span>
+<span class="nc" id="L210">        return ResponseEntity.ok().build();</span>
     }
 
     @PutMapping(path = &quot;/{fromFolderId}/messages/folder/{toFolderId}&quot;)
@@ -206,11 +215,11 @@ public class FolderResource implements ApplicationContextAware {
             @PathVariable(&quot;fromFolderId&quot;) String fromFolderId,
             @PathVariable(&quot;toFolderId&quot;) String toFolderId, @NonNull @RequestBody List&lt;Long&gt; messageIds) {
 
-<span class="nc" id="L209">        log.debug(&quot;Moving {} messages from folder {} to folder {}&quot;, messageIds.size(), fromFolderId, toFolderId);</span>
-<span class="nc" id="L210">        final List&lt;MessageWithFolder&gt; movedMessages = imapServiceFactory.getObject().moveMessages(</span>
-<span class="nc" id="L211">                Folder.toId(fromFolderId), Folder.toId(toFolderId), messageIds);</span>
-<span class="nc" id="L212">        movedMessages.forEach(mwf -&gt; addLinks(mwf.getFolder()));</span>
-<span class="nc" id="L213">        return ResponseEntity.ok(movedMessages);</span>
+<span class="nc" id="L218">        log.debug(&quot;Moving {} messages from folder {} to folder {}&quot;, messageIds.size(), fromFolderId, toFolderId);</span>
+<span class="nc" id="L219">        final List&lt;MessageWithFolder&gt; movedMessages = imapServiceFactory.getObject().moveMessages(</span>
+<span class="nc" id="L220">                Folder.toId(fromFolderId), Folder.toId(toFolderId), messageIds);</span>
+<span class="nc" id="L221">        movedMessages.forEach(mwf -&gt; addLinks(mwf.getFolder()));</span>
+<span class="nc" id="L222">        return ResponseEntity.ok(movedMessages);</span>
     }
 
     @PutMapping(path = &quot;/{fromFolderId}/messages/{messageId}/folder/{toFolderId}&quot;)
@@ -218,11 +227,11 @@ public class FolderResource implements ApplicationContextAware {
             @PathVariable(&quot;fromFolderId&quot;) String fromFolderId,
             @PathVariable(&quot;messageId&quot;) Long messageId, @PathVariable(&quot;toFolderId&quot;) String toFolderId) {
 
-<span class="nc" id="L221">        log.debug(&quot;Moving message {} from folder {} to folder {}&quot;, messageId, fromFolderId, toFolderId);</span>
-<span class="nc" id="L222">        final List&lt;MessageWithFolder&gt; movedMessages = imapServiceFactory.getObject().moveMessages(</span>
-<span class="nc" id="L223">                Folder.toId(fromFolderId), Folder.toId(toFolderId), Collections.singletonList(messageId));</span>
-<span class="nc" id="L224">        movedMessages.forEach(mwf -&gt; addLinks(mwf.getFolder()));</span>
-<span class="nc" id="L225">        return ResponseEntity.ok(movedMessages);</span>
+<span class="nc" id="L230">        log.debug(&quot;Moving message {} from folder {} to folder {}&quot;, messageId, fromFolderId, toFolderId);</span>
+<span class="nc" id="L231">        final List&lt;MessageWithFolder&gt; movedMessages = imapServiceFactory.getObject().moveMessages(</span>
+<span class="nc" id="L232">                Folder.toId(fromFolderId), Folder.toId(toFolderId), Collections.singletonList(messageId));</span>
+<span class="nc" id="L233">        movedMessages.forEach(mwf -&gt; addLinks(mwf.getFolder()));</span>
+<span class="nc" id="L234">        return ResponseEntity.ok(movedMessages);</span>
     }
 
     @PutMapping(path = &quot;/{folderId}/messages/{messageId}/seen&quot;)
@@ -230,9 +239,9 @@ public class FolderResource implements ApplicationContextAware {
             @PathVariable(&quot;folderId&quot;) String folderId, @PathVariable(&quot;messageId&quot;) Long messageId,
             @RequestBody boolean seen) {
 
-<span class="fc" id="L233">        log.debug(&quot;Setting message seen attribute to {} in message {} from folder {}&quot;, seen, messageId, folderId);</span>
-<span class="fc" id="L234">        imapServiceFactory.getObject().setMessagesSeen(Folder.toId(folderId), seen, messageId);</span>
-<span class="fc" id="L235">        return ResponseEntity.noContent().build();</span>
+<span class="fc" id="L242">        log.debug(&quot;Setting message seen attribute to {} in message {} from folder {}&quot;, seen, messageId, folderId);</span>
+<span class="fc" id="L243">        imapServiceFactory.getObject().setMessagesSeen(Folder.toId(folderId), seen, messageId);</span>
+<span class="fc" id="L244">        return ResponseEntity.noContent().build();</span>
     }
 
     @PutMapping(path = &quot;/{folderId}/messages/seen/{seen}&quot;)
@@ -240,10 +249,10 @@ public class FolderResource implements ApplicationContextAware {
             @PathVariable(&quot;folderId&quot;) String folderId,
             @PathVariable(&quot;seen&quot;) Boolean seen, @RequestBody List&lt;Long&gt; messageIds) {
 
-<span class="fc" id="L243">        log.debug(&quot;Setting {} messages in folder {} seen attribute to {}&quot; , messageIds.size(), folderId, seen);</span>
-<span class="fc" id="L244">        imapServiceFactory.getObject().setMessagesSeen(</span>
-<span class="fc" id="L245">                Folder.toId(folderId), seen, messageIds.stream().mapToLong(Long::longValue).toArray());</span>
-<span class="fc" id="L246">        return ResponseEntity.noContent().build();</span>
+<span class="fc" id="L252">        log.debug(&quot;Setting {} messages in folder {} seen attribute to {}&quot; , messageIds.size(), folderId, seen);</span>
+<span class="fc" id="L253">        imapServiceFactory.getObject().setMessagesSeen(</span>
+<span class="fc" id="L254">                Folder.toId(folderId), seen, messageIds.stream().mapToLong(Long::longValue).toArray());</span>
+<span class="fc" id="L255">        return ResponseEntity.noContent().build();</span>
     }
 
     @PutMapping(path = &quot;/{folderId}/messages/{messageId}/flagged&quot;)
@@ -251,84 +260,84 @@ public class FolderResource implements ApplicationContextAware {
             @PathVariable(&quot;folderId&quot;) String folderId,
             @PathVariable(&quot;messageId&quot;) Long messageId, @RequestBody boolean flagged) {
 
-<span class="fc" id="L254">        log.debug(&quot;Setting message flagged attribute to {} in message {} from folder {}&quot;, flagged, messageId, folderId);</span>
-<span class="fc" id="L255">        imapServiceFactory.getObject().setMessagesFlagged(Folder.toId(folderId), flagged, messageId);</span>
-<span class="fc" id="L256">        return ResponseEntity.noContent().build();</span>
+<span class="fc" id="L263">        log.debug(&quot;Setting message flagged attribute to {} in message {} from folder {}&quot;, flagged, messageId, folderId);</span>
+<span class="fc" id="L264">        imapServiceFactory.getObject().setMessagesFlagged(Folder.toId(folderId), flagged, messageId);</span>
+<span class="fc" id="L265">        return ResponseEntity.noContent().build();</span>
     }
 
     private static Folder[] addLinks(Folder... folders) {
-<span class="fc" id="L260">        Stream.of(folders).forEach(FolderResource::addLinks);</span>
-<span class="fc" id="L261">        return folders;</span>
+<span class="fc" id="L269">        Stream.of(folders).forEach(FolderResource::addLinks);</span>
+<span class="fc" id="L270">        return folders;</span>
     }
 
     private static List&lt;Folder&gt; addLinks(List&lt;Folder&gt; folders) {
-<span class="fc" id="L265">        folders.forEach(FolderResource::addLinks);</span>
-<span class="fc" id="L266">        return folders;</span>
+<span class="fc" id="L274">        folders.forEach(FolderResource::addLinks);</span>
+<span class="fc" id="L275">        return folders;</span>
     }
 
     private static Folder addLinks(Folder folder) {
-<span class="fc" id="L270">        folder.add(linkTo(methodOn(FolderResource.class)</span>
-<span class="fc" id="L271">                .createChildFolder(folder.getFolderId(), null))</span>
-<span class="fc" id="L272">                .withSelfRel());</span>
-<span class="fc" id="L273">        folder.add(linkTo(methodOn(FolderResource.class)</span>
-<span class="fc" id="L274">                .getMessages( folder.getFolderId(), null))</span>
-<span class="fc" id="L275">                .withRel(REL_MESSAGES).expand());</span>
-<span class="fc" id="L276">        folder.add(linkTo(methodOn(FolderResource.class)</span>
-<span class="fc" id="L277">                .deleteFolder(folder.getFolderId()))</span>
-<span class="fc" id="L278">                .withRel(REL_DELETE));</span>
 <span class="fc" id="L279">        folder.add(linkTo(methodOn(FolderResource.class)</span>
-<span class="fc" id="L280">                .renameFolder(folder.getFolderId(), null))</span>
-<span class="fc" id="L281">                .withRel(REL_RENAME));</span>
+<span class="fc" id="L280">                .createChildFolder(folder.getFolderId(), null))</span>
+<span class="fc" id="L281">                .withSelfRel());</span>
 <span class="fc" id="L282">        folder.add(linkTo(methodOn(FolderResource.class)</span>
-<span class="fc" id="L283">                .moveFolder(folder.getFolderId(), null))</span>
-<span class="fc" id="L284">                .withRel(REL_MOVE));</span>
+<span class="fc" id="L283">                .getMessages( folder.getFolderId(), null))</span>
+<span class="fc" id="L284">                .withRel(REL_MESSAGES).expand());</span>
 <span class="fc" id="L285">        folder.add(linkTo(methodOn(FolderResource.class)</span>
-<span class="fc" id="L286">                .getMessage(folder.getFolderId(), null))</span>
-<span class="fc" id="L287">                .withRel(REL_MESSAGE));</span>
+<span class="fc" id="L286">                .deleteFolder(folder.getFolderId()))</span>
+<span class="fc" id="L287">                .withRel(REL_DELETE));</span>
 <span class="fc" id="L288">        folder.add(linkTo(methodOn(FolderResource.class)</span>
-<span class="fc" id="L289">                .setMessageFlagged(folder.getFolderId(), null, false))</span>
-<span class="fc" id="L290">                .withRel(REL_MESSAGE_FLAGGED));</span>
+<span class="fc" id="L289">                .renameFolder(folder.getFolderId(), null))</span>
+<span class="fc" id="L290">                .withRel(REL_RENAME));</span>
 <span class="fc" id="L291">        folder.add(linkTo(methodOn(FolderResource.class)</span>
-<span class="fc" id="L292">                .moveMessage(folder.getFolderId(), null, null))</span>
-<span class="fc" id="L293">                .withRel(REL_MESSAGE_MOVE));</span>
+<span class="fc" id="L292">                .moveFolder(folder.getFolderId(), null))</span>
+<span class="fc" id="L293">                .withRel(REL_MOVE));</span>
 <span class="fc" id="L294">        folder.add(linkTo(methodOn(FolderResource.class)</span>
-<span class="fc" id="L295">                .moveMessages(folder.getFolderId(), null, Collections.emptyList()))</span>
-<span class="fc" id="L296">                .withRel(REL_MESSAGE_MOVE_BULK));</span>
+<span class="fc" id="L295">                .getMessage(folder.getFolderId(), null))</span>
+<span class="fc" id="L296">                .withRel(REL_MESSAGE));</span>
 <span class="fc" id="L297">        folder.add(linkTo(methodOn(FolderResource.class)</span>
-<span class="fc" id="L298">                .setMessageSeen(folder.getFolderId(), null, false))</span>
-<span class="fc" id="L299">                .withRel(REL_MESSAGE_SEEN));</span>
+<span class="fc" id="L298">                .setMessageFlagged(folder.getFolderId(), null, false))</span>
+<span class="fc" id="L299">                .withRel(REL_MESSAGE_FLAGGED));</span>
 <span class="fc" id="L300">        folder.add(linkTo(methodOn(FolderResource.class)</span>
-<span class="fc" id="L301">                .setMessagesSeen(folder.getFolderId(), null, Collections.emptyList()))</span>
-<span class="fc" id="L302">                .withRel(REL_MESSAGE_SEEN_BULK));</span>
-<span class="fc" id="L303">        addLinks(folder.getChildren());</span>
-<span class="fc" id="L304">        return folder;</span>
+<span class="fc" id="L301">                .moveMessage(folder.getFolderId(), null, null))</span>
+<span class="fc" id="L302">                .withRel(REL_MESSAGE_MOVE));</span>
+<span class="fc" id="L303">        folder.add(linkTo(methodOn(FolderResource.class)</span>
+<span class="fc" id="L304">                .moveMessages(folder.getFolderId(), null, Collections.emptyList()))</span>
+<span class="fc" id="L305">                .withRel(REL_MESSAGE_MOVE_BULK));</span>
+<span class="fc" id="L306">        folder.add(linkTo(methodOn(FolderResource.class)</span>
+<span class="fc" id="L307">                .setMessageSeen(folder.getFolderId(), null, false))</span>
+<span class="fc" id="L308">                .withRel(REL_MESSAGE_SEEN));</span>
+<span class="fc" id="L309">        folder.add(linkTo(methodOn(FolderResource.class)</span>
+<span class="fc" id="L310">                .setMessagesSeen(folder.getFolderId(), null, Collections.emptyList()))</span>
+<span class="fc" id="L311">                .withRel(REL_MESSAGE_SEEN_BULK));</span>
+<span class="fc" id="L312">        addLinks(folder.getChildren());</span>
+<span class="fc" id="L313">        return folder;</span>
     }
 
     private static Attachment[] addLinks(String folderId, Message message, Attachment... attachments) {
-<span class="pc" id="L308">        Stream.of(attachments).forEach(a -&gt; addLinks(folderId, message, a));</span>
-<span class="fc" id="L309">        return attachments;</span>
+<span class="pc" id="L317">        Stream.of(attachments).forEach(a -&gt; addLinks(folderId, message, a));</span>
+<span class="fc" id="L318">        return attachments;</span>
     }
 
     public static List&lt;Attachment&gt; addLinks(String folderId, Message message, List&lt;Attachment&gt; attachments) {
-<span class="nc" id="L313">        attachments.forEach(a -&gt; addLinks(folderId, message, a));</span>
-<span class="nc" id="L314">        return attachments;</span>
+<span class="nc" id="L322">        attachments.forEach(a -&gt; addLinks(folderId, message, a));</span>
+<span class="nc" id="L323">        return attachments;</span>
     }
 
     private static Attachment addLinks(String folderId, Message message, Attachment attachment) {
-<span class="nc bnc" id="L318" title="All 4 branches missed.">        final boolean isContentId = attachment.getContentId() != null &amp;&amp; !attachment.getContentId().isEmpty();</span>
-<span class="nc bnc" id="L319" title="All 2 branches missed.">        final String attachmentId = isContentId ? attachment.getContentId() : attachment.getFileName();</span>
-<span class="nc bnc" id="L320" title="All 4 branches missed.">        if (attachmentId != null &amp;&amp; !attachmentId.isEmpty()) {</span>
-<span class="nc" id="L321">            attachment.add(linkTo(methodOn(FolderResource.class).getAttachment(folderId, message.getUid(),</span>
-<span class="nc" id="L322">                    attachmentId, isContentId, null))</span>
-<span class="nc" id="L323">                    .withRel(REL_DOWNLOAD).expand());</span>
+<span class="nc bnc" id="L327" title="All 4 branches missed.">        final boolean isContentId = attachment.getContentId() != null &amp;&amp; !attachment.getContentId().isEmpty();</span>
+<span class="nc bnc" id="L328" title="All 2 branches missed.">        final String attachmentId = isContentId ? attachment.getContentId() : attachment.getFileName();</span>
+<span class="nc bnc" id="L329" title="All 4 branches missed.">        if (attachmentId != null &amp;&amp; !attachmentId.isEmpty()) {</span>
+<span class="nc" id="L330">            attachment.add(linkTo(methodOn(FolderResource.class).getAttachment(folderId, message.getUid(),</span>
+<span class="nc" id="L331">                    attachmentId, isContentId, null))</span>
+<span class="nc" id="L332">                    .withRel(REL_DOWNLOAD).expand());</span>
         }
-<span class="nc" id="L325">        return attachment;</span>
+<span class="nc" id="L334">        return attachment;</span>
     }
 
     @Override
     public void setApplicationContext(@NonNull ApplicationContext applicationContext) {
-<span class="fc" id="L330">        this.applicationContext = applicationContext;</span>
-<span class="fc" id="L331">    }</span>
+<span class="fc" id="L339">        this.applicationContext = applicationContext;</span>
+<span class="fc" id="L340">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

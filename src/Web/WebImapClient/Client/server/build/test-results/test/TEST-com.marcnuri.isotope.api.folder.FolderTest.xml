@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.marcnuri.isotope.api.folder.FolderTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2020-02-10T16:43:15" hostname="DESKTOP-U7U4TE6" time="0.001">
+<testsuite name="com.marcnuri.isotope.api.folder.FolderTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2020-03-04T12:25:58" hostname="DESKTOP-U7U4TE6" time="0.001">
   <properties/>
   <testcase name="toBase64Id_fullMixedUrlString2_shouldEncodeOk" classname="com.marcnuri.isotope.api.folder.FolderTest" time="0.0"/>
   <testcase name="toId_mixedChineseCharactersString_shouldDecodeOk" classname="com.marcnuri.isotope.api.folder.FolderTest" time="0.0"/>
