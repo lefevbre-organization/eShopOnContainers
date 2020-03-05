@@ -90,7 +90,6 @@ namespace Lexon.MySql.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetEntitiesAsync([FromBody] EntitySearchView entitySearch)
         {
-
             if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null)
                 return BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
 
@@ -98,13 +97,11 @@ namespace Lexon.MySql.Controllers
             return Ok(result);
         }
 
-
         [HttpPost("entities/folders/search")]
         [ProducesResponseType(typeof(MySqlCompany), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetEntitiesFoldersAsync([FromBody] EntitySearchFoldersView entitySearch)
         {
-
             if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null)
                 return BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
 
@@ -117,7 +114,6 @@ namespace Lexon.MySql.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetEntitiesDocumentsAsync([FromBody] EntitySearchDocumentsView entitySearch)
         {
-
             if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null)
                 return BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
 
@@ -148,7 +144,7 @@ namespace Lexon.MySql.Controllers
             if (string.IsNullOrEmpty(entityFolder.idUser) || string.IsNullOrEmpty(entityFolder.bbdd) || entityFolder?.idFolder <= 0)
                 return BadRequest("values invalid. Must be a valid user, bbdd type and idFolder for get the nested folders");
 
-            Result<LexNestedEntity> result =  _lexonService.GetNestedFolderAsync(entityFolder);
+            Result<LexNestedEntity> result = _lexonService.GetNestedFolderAsync(entityFolder);
 
             return Ok(result);
         }
@@ -160,8 +156,12 @@ namespace Lexon.MySql.Controllers
              [FromBody] FolderToEntity entityFolder
             )
         {
-            if (string.IsNullOrEmpty(entityFolder.idUser) || string.IsNullOrEmpty(entityFolder.bbdd) || entityFolder?.idType <= 0 || entityFolder.idEntity <= 0)
-                return BadRequest("values invalid. Must be a valid user, bbdd type and idEntity for make a folder to the entity");
+            if (string.IsNullOrEmpty(entityFolder.idUser) || string.IsNullOrEmpty(entityFolder.bbdd)
+                   || entityFolder.idEntity == null || entityFolder.idEntity <= 0
+                   || entityFolder.idType == null || entityFolder.idType <= 0
+                   )
+                return BadRequest("values invalid. Must be a valid user, bbdd , idtype and idEnttity for make a folder to the entity");
+
 
             var result = await _lexonService.AddFolderToEntityAsync(entityFolder);
 

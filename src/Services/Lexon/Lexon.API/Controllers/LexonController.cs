@@ -1,5 +1,4 @@
-﻿using Lexon.API.Model;
-using Lexon.Infrastructure.Services;
+﻿using Lexon.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
@@ -8,6 +7,7 @@ using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -57,7 +57,7 @@ namespace Lexon.API.Controllers
             if (string.IsNullOrEmpty(idUser))
                 return (IActionResult)BadRequest("idUser need a correct value");
 
-            var result = await _usersService.GetCompaniesFromUserAsync( idUser);
+            var result = await _usersService.GetCompaniesFromUserAsync(idUser);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
@@ -78,7 +78,6 @@ namespace Lexon.API.Controllers
 
             var result = await _usersService.GetClassificationsFromMailAsync(classificationSearch);
 
-
             Result<List<LexActuation>> actuaciones = new Result<List<LexActuation>>
             {
                 data = result.DataActuation,
@@ -89,15 +88,15 @@ namespace Lexon.API.Controllers
             if (actuaciones.errors.Count() > 0 && result.DataActuation.Count == 0)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, actuaciones);
-      
-            }else if(actuaciones.errors.Count() == 0 && result.DataActuation.Count == 0)
+            }
+            else if (actuaciones.errors.Count() == 0 && result.DataActuation.Count == 0)
             {
                 return NotFound(actuaciones);
             }
 
             return Ok(actuaciones);
 
-           // return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            // return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpPut]
@@ -165,15 +164,59 @@ namespace Lexon.API.Controllers
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddEntityFolderAsync(
              [FromBody] FolderToEntity entityFolder
-    )
+            )
         {
-            if (string.IsNullOrEmpty(entityFolder.idUser) || string.IsNullOrEmpty(entityFolder.bbdd) || entityFolder?.idType <= 0 || entityFolder.idEntity <= 0)
-                return BadRequest("values invalid. Must be a valid user, bbdd type and idEntity for make a folder to the entity");
-
+            if (string.IsNullOrEmpty(entityFolder.idUser) || string.IsNullOrEmpty(entityFolder.bbdd)
+                || entityFolder.idEntity == null || entityFolder.idEntity <= 0
+                || entityFolder.idType == null || entityFolder.idType <= 0
+                )
+                return BadRequest("values invalid. Must be a valid user, bbdd , idtype and idEnttity for make a folder to the entity");
 
             var result = await _usersService.AddFolderToEntityAsync(entityFolder);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpPost("entities/files/post")]
+        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> Post(
+            [FromForm(Name = "myFile")]IFormFile fileMail,
+            [FromForm] string bbdd,
+            [FromForm] string idUser,
+            [FromForm] string idParent
+            )
+        {
+            var folderName = "files";
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            using (var fileContentStream = new MemoryStream())
+            {
+                await fileMail.CopyToAsync(fileContentStream);
+                await System.IO.File.WriteAllBytesAsync(Path.Combine(folderPath, fileMail.FileName), fileContentStream.ToArray());
+            }
+            return CreatedAtRoute(routeName: "myFile", routeValues: new { filename = fileMail.FileName }, value: null); ;
+        }
+
+        [HttpGet("entities/files/{filename}", Name = "myFile")]
+        [ProducesResponseType(typeof(FileContentResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(NotFoundResult), (int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> Get([FromRoute] string filename)
+        {
+            var folderName = "files";
+            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+
+            var filePath = Path.Combine(folderPath, filename);
+            if (System.IO.File.Exists(filePath))
+            {
+                return File(await System.IO.File.ReadAllBytesAsync(filePath), "application/octet-stream", filename);
+            }
+            return NotFound();
         }
 
         [HttpPost("entities")]
@@ -216,7 +259,6 @@ namespace Lexon.API.Controllers
             [FromBody] EntitySearchDocumentsView entitySearch
 )
         {
-
             if (entitySearch.idType != (short?)LexonAdjunctionType.documents)
                 entitySearch.idType = (short)LexonAdjunctionType.documents;
 
@@ -237,7 +279,6 @@ namespace Lexon.API.Controllers
             if (result.errors.Count() > 0 && result.data.Count == 0)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
-
             }
             else if (result.errors.Count() == 0 && result.data.Count == 0)
             {
@@ -246,6 +287,7 @@ namespace Lexon.API.Controllers
 
             return Ok(result);
         }
+
         [HttpPost("entities/folders/nested")]
         [ProducesResponseType(typeof(Result<LexNestedEntity>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexNestedEntity>), (int)HttpStatusCode.BadRequest)]
@@ -261,7 +303,6 @@ namespace Lexon.API.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-
         [HttpPost]
         [Route("entities/getbyid")]
         [ProducesResponseType(typeof(Result<LexEntity>), (int)HttpStatusCode.OK)]
@@ -270,15 +311,15 @@ namespace Lexon.API.Controllers
             [FromBody] EntitySearchById entitySearch
             )
         {
-            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null || entitySearch.idEntity <= 0)
+            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd)
+                || entitySearch.idType == null || entitySearch.idEntity == null || entitySearch.idEntity <= 0)
                 return BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
 
             var result = await _usersService.GetEntityById(entitySearch);
-          //  return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            //  return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
             if (result.errors.Count() > 0 && result.data == null)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
-
             }
             else if (result.errors.Count() == 0 && result.data == null)
             {
