@@ -143,7 +143,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
             {
                 try
                 {
-                    var filtro = GiveMeEntityFilter(entitySearch.bbdd, entitySearch.idUser, (short)entitySearch.idType, entitySearch.idEntity);
+                    var filtro = GiveMeEntityFilter(entitySearch);
                     conn.Open();
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetEntity, conn))
                     {
@@ -512,12 +512,12 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     $" }}";
         }
 
-        private string GiveMeEntityFilter(string bbdd, string idUser, short idType, long idEntity)
+        private string GiveMeEntityFilter(EntitySearchById search)
         {
             return $"{{ " +
-                    GetUserFilter(bbdd, idUser) +
-                    GetShortFilter("IdEntityType", idType) +
-                    GetLongFilter("IdRelation", idEntity) +
+                    GetUserFilter(search.bbdd, search.idUser) +
+                    GetShortFilter("IdEntityType", search.idType) +
+                    GetLongFilter("IdRelation", search.idEntity) +
                     $" }}";
         }
 
