@@ -54,8 +54,8 @@ public class SmtpResource {
     public ResponseEntity&lt;String&gt; sendMessage(
             HttpServletRequest request, @Validated({Message.SmtpSend.class}) @RequestBody Message message) {
 
-<span class="fc" id="L57">        log.debug(&quot;Sending SMTP message&quot;);</span>
-<span class="fc" id="L58">        String result = smtpServiceFactory.getObject().sendMessage(request, message);</span>
+<span class="nc" id="L57">        log.debug(&quot;Sending SMTP message&quot;);</span>
+<span class="nc" id="L58">        String result = smtpServiceFactory.getObject().sendMessage(request, message);</span>
 <span class="nc" id="L59">        return ResponseEntity.ok(result.toString());</span>
     }
 }
