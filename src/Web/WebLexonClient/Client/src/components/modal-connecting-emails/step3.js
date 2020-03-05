@@ -4,7 +4,7 @@ import { TreeViewComponent } from '@syncfusion/ej2-react-navigations';
 import { GridComponent, ColumnsDirective, ColumnDirective } from '@syncfusion/ej2-react-grids';
 import Spinner from "../../components/spinner/spinner";
 import ClassificationListSearch from "../classify-emails/classification-list-search/classification-list-search";
-import { getFolderTree } from "../../services/services-lexon";
+import { getFolderTree, createFolder } from "../../services/services-lexon";
 
 export class ConnectingEmailsStep3 extends React.Component {
     constructor() {
@@ -13,9 +13,9 @@ export class ConnectingEmailsStep3 extends React.Component {
         this.state = {
             fields: { dataSource: [], id: 'id', text: 'name', child: 'subChild' },
             entities: [],
-            selected: -1
+            selected: null,
+            loadingTree: false
         }
-
 
         this.searchResultsByType = this.searchResultsByType.bind(this)
         this.nodeSelected = this.onNodeSelected.bind(this)
@@ -28,10 +28,12 @@ export class ConnectingEmailsStep3 extends React.Component {
 
     async componentDidUpdate(prevProps, prevState) {
         if (JSON.stringify(prevProps.entity) !== JSON.stringify(this.props.entity)) {
-            const response = await getFolderTree(this.props.entity.idFolder, "lexon_admin_02", "449")
-            const tree = normalizeTree(this.props.entity, response.result.data)
-            const childs = getChilds(tree, 0)
-            this.setState({ fields: { dataSource: tree, id: 'id', text: 'name', child: 'subChild' }, entities: childs })
+            this.setState({ loadingTree: true }, async () => {
+                const response = await getFolderTree(this.props.entity.idFolder, this.props.bbdd.bbdd, this.props.user.idUser)
+                const tree = normalizeTree(this.props.entity, response.result.data)
+                const childs = getChilds(tree, 0)
+                this.setState({ loadingTree: false, fields: { dataSource: tree, id: 'id', text: 'name', child: 'subChild' }, entities: childs })
+            });
         }
 
         if (prevProps.show === false && this.props.show === true) {
@@ -47,47 +49,75 @@ export class ConnectingEmailsStep3 extends React.Component {
     }
 
     onNodeSelected(event) {
-        this.onRowSelected()
+        const { onSelectedDirectory } = this.props;
+
+        this.setState({ selected: event.nodeData }, () => {
+            onSelectedDirectory && onSelectedDirectory({ selected: parseInt(event.nodeData.id) })
+        })
+        const node = findNode(this.state.fields.dataSource[0], event.nodeData.id)
+        console.log(node)
+
+        // Show children of selected node
+        const entities = node.subChild.map(sc => {
+            return {
+                origin: i18n.t(`classification.${this.props.entity.idType}`),
+                name: sc.code || sc.description || "",
+                type: "dir",
+                modified: "26/09/2019 16:57",
+                id: sc.idRelated
+            }
+        })
+
+        this.setState({ entities })
     }
 
     onNodeSelecting(event) {
     }
 
     onNextPage() {
-        alert("onNextPage")
     }
 
     onPrevPage() {
-        alert("onPrevPage")
     }
 
-    onCreateFolder() {
-        if (this.state.selected === -1) {
+    async onCreateFolder() {
+        if (this.state.selected === null) {
             return;
         }
 
         const folderName = prompt("Nombre de la carpeta");
         if (folderName) {
-            alert("Creando carpeta")
+            const { idType, idRelated, idFolder } = this.props.entity;
+            try {
+                this.setState({ loadingTree: true }, async () => {
+                    const selectedId = this.state.selected.id;
+                    const res = await createFolder(selectedId, folderName, idRelated, idType, this.props.bbdd.bbdd, this.props.user.idUser);
+                    const response = await getFolderTree(idFolder, this.props.bbdd.bbdd, this.props.user.idUser)
+                    const tree = normalizeTree(this.props.entity, response.result.data)
+                    const childs = getChilds(tree, 0)
+                    this.setState({ loadingTree: false, fields: { dataSource: tree, id: 'id', text: 'name', child: 'subChild' }, entities: childs })
+                })
+            } catch (err) {
+
+            }
         }
     }
 
     onRowSelected(event) {
         const { onSelectedDirectory } = this.props;
 
-        this.setState({ selected: 1 }, () => {
-            onSelectedDirectory && onSelectedDirectory({ selected: 1 })
+        this.setState({ selected: event.data }, () => {
+            onSelectedDirectory && onSelectedDirectory({ selected: parseInt(event.data.id) })
         })
     }
 
     searchResultsByType(type, search) {
         if (search !== "") {
-            alert("Búsqueda")
         }
     }
 
     render() {
-        const disabled = this.state.selected === -1 ? "disabled" : "";
+        const disabled = this.state.selected === null ? "disabled" : "";
         return <Fragment>
             <div className="step3-container">
                 <ol style={{ textAlign: "center" }}>
@@ -105,8 +135,14 @@ export class ConnectingEmailsStep3 extends React.Component {
                 </div>
                 <section className="panel section-border">
                     <div className="panel-left">
-                        <TreeViewComponent fields={this.state.fields} expandOn="Auto" nodeSelected={this.nodeSelected} nodeSelecting={this.onNodeSelecting} />
+                        {this.state.loadingTree === true &&
+                            <div className="panel-left-spinner-container"><Spinner /></div>
+                        }
+                        {this.state.loadingTree === false &&
+                            <TreeViewComponent fields={this.state.fields} expandOn="Auto" nodeSelected={this.nodeSelected} nodeSelecting={this.onNodeSelecting} />
+                        }
                     </div>
+
                     <div className="panel-right">
                         <div className="panel-right-top">
                             <span className="section-title">{this.props.entity.description}</span>
@@ -126,9 +162,10 @@ export class ConnectingEmailsStep3 extends React.Component {
                             locale="es-ES">
 
                             <ColumnsDirective>
+                                <ColumnDirective field='origin' headerText='Origen' width='100'></ColumnDirective>
                                 <ColumnDirective field='name' headerText='Nombre' width='150'></ColumnDirective>
                                 <ColumnDirective field='type' headerText='Tipo' width='50'></ColumnDirective>
-                                <ColumnDirective field='modified' headerText='Modificación' width='100'></ColumnDirective>
+                                {/* <ColumnDirective field='modified' headerText='Modificación' width='100'></ColumnDirective> */}
                             </ColumnsDirective>
                         </GridComponent>
                         <section className="pager">
@@ -142,6 +179,17 @@ export class ConnectingEmailsStep3 extends React.Component {
             <style jsx>{`
                 .step3-container {
                     margin: 30px;
+                }
+
+                .panel-left-spinner-container {
+                    width: 100%;
+                    height: 100%;
+                }
+
+                .panel-left .preloader-holder-blue {
+                    z-index: 1;
+                    position: relative;
+                    top: 250px;
                 }
                                 
                 .new-folder {
@@ -163,9 +211,10 @@ export class ConnectingEmailsStep3 extends React.Component {
 
                 a.disabled,
                 a.disabled span,
-                .new-folder-container.disabled  {
-                    color: #d2d2d2;
-                    cursor: default;
+                .new-folder-container.disabled,
+                a.disabled .new-folder-text {
+                    color: #d2d2d2 !important;
+                    cursor: default !important;
                 }
 
 
@@ -178,7 +227,7 @@ export class ConnectingEmailsStep3 extends React.Component {
                     text-decoration: underline;
                     line-height: 19px !important;
                     font-size: 14px !important;
-
+                    color: #001978 !important;
                 }
 
                 .add-more:hover .new-folder-text {
@@ -279,16 +328,28 @@ export class ConnectingEmailsStep3 extends React.Component {
 }
 
 function normalizeTree(entity, data) {
-    const root = { id: entity.id, selected: false, name: i18n.t(`classification.${entity.idType}`), expanded: true }
-    const tree = { ...data, id: data.idRelated, name: data.code, imageUrl: `${window.URL_MF_LEXON_BASE}/assets/img/icon-folder.png` };
+    const root = { ...data, id: data.idRelated, selected: false, name: i18n.t(`classification.${entity.idType}`), expanded: true }
 
     if (entity.idType === 1) {
         root.imageUrl = `${window.URL_MF_LEXON_BASE}/assets/img/icon-law.png`
     }
-    root.subChild = tree.subChild
+    root.subChild = normalizeNodes(root.subChild)
 
     console.log(root)
     return [root]
+}
+
+function normalizeNodes(nodes) {
+    const children = []
+    for (let i = 0; i < nodes.length; i++) {
+        const n = { ...nodes[i], id: nodes[i].idRelated, expanded: true, name: nodes[i].code, imageUrl: `${window.URL_MF_LEXON_BASE}/assets/img/icon-folder.png` };
+        if (n.subChild.length > 0) {
+            n.subChild = normalizeNodes(n.subChild)
+        }
+        children.push(n)
+    }
+
+    return children;
 }
 
 function getChilds(tree, id) {
@@ -301,3 +362,17 @@ function getChilds(tree, id) {
     return tree.subChilds
 }
 
+function findNode(node, id) {
+    if (node.id == id) {
+        return node;
+    }
+
+    for (let i = 0; i < node.subChild.length; i++) {
+        const n = findNode(node.subChild[i], id)
+        if (n) {
+            return n;
+        }
+    }
+
+    return null;
+}

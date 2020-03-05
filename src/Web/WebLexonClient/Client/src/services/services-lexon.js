@@ -335,29 +335,30 @@ export const getFolderTree = async (idFolder, bbdd, idUser) => {
   }
 }
 
-// export const createFolder = async (idFolder, folderName, bbdd, idUser) => {
-//   const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/entities/folders/nested`
-//   const body = {
-//     idFolder,
-//     nestedLimit: 1,
-//     includeFiles: false,
-//     bbdd,
-//     idUser
-//   }
+export const createFolder = async (idParent, name, idEntity, idType, bbdd, idUser) => {
+  const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/entities/folders/add`
+  const body = {
+    idParent,
+    name,
+    idEntity,
+    idType,
+    bbdd,
+    idUser
+  }
 
-//   try {
-//     const response = await fetch(url, {
-//       method: "POST",
-//       headers: {
-//         'Accept': 'application/json',
-//         'Content-Type': 'application/json'
-//       },
-//       body: JSON.stringify(body)
-//     });
-//     const result = await response.json()
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+    const result = await response.json()
 
-//     return { result };
-//   } catch (err) {
-//     throw err;
-//   }
-// }
+    return { result };
+  } catch (err) {
+    throw err;
+  }
+}

@@ -37,12 +37,12 @@ class ModalConnectingEmails extends Component {
   }
 
   componentDidMount() {
-    this.setState( {messages:this.props.selectedMessages })
+    this.setState({ messages: this.props.selectedMessages })
   }
 
   componentDidUpdate(prevProps) {
-    if( JSON.stringify(prevProps.selectedMessages) !== JSON.stringify(this.props.selectedMessages) ) {
-      this.setState( {messages:this.props.selectedMessages })
+    if (JSON.stringify(prevProps.selectedMessages) !== JSON.stringify(this.props.selectedMessages)) {
+      this.setState({ messages: this.props.selectedMessages })
     }
   }
 
@@ -77,8 +77,8 @@ class ModalConnectingEmails extends Component {
       } else {
         this.setState({ step: 3 })
       }
-    } else if(this.state.step === 3) {
-      this.setState({step: 4 });
+    } else if (this.state.step === 3) {
+      this.setState({ step: 4 });
     }
   }
 
@@ -87,12 +87,12 @@ class ModalConnectingEmails extends Component {
       this.setState({ step: 1 })
     } else if (this.state.step === 3) {
       this.setState({ step: 2 })
-    } else  if(this.state.step === 4) {
+    } else if (this.state.step === 4) {
       if (this.state.step1Data.copyDocuments === false && this.state.step1Data.saveDocuments === false) {
         this.setState({ step: 2 })
       } else {
         this.setState({ step: 3 })
-      }    
+      }
     }
   }
 
@@ -109,7 +109,7 @@ class ModalConnectingEmails extends Component {
   }
 
   changeStep2Data(data) {
-    this.setState({ step2Data: {...data} })
+    this.setState({ step2Data: { ...data } })
   }
 
   changeStep3Data(data) {
@@ -118,8 +118,8 @@ class ModalConnectingEmails extends Component {
 
   changeSubject(id, subject) {
     const { messages } = this.state;
-    for(let i = 0; i < messages.length; i++) {
-      if( messages[i].id === id ) {
+    for (let i = 0; i < messages.length; i++) {
+      if (messages[i].id === id) {
         messages[i].subject = subject
       }
     }
@@ -182,10 +182,10 @@ class ModalConnectingEmails extends Component {
     }
 
     console.log(selectedMessages)
-    if(step1Data.copyDocuments === true) {
-      for(let i = 0; i < selectedMessages.length; i++) {
+    if (step1Data.copyDocuments === true) {
+      for (let i = 0; i < selectedMessages.length; i++) {
         const raw = selectedMessages[i].raw
-        const subject =selectedMessages[i].subject
+        const subject = selectedMessages[i].subject
         console.log(subject)
         console.log(raw)
         downloadEML(raw, subject + ".eml", "application/text")
@@ -232,10 +232,10 @@ class ModalConnectingEmails extends Component {
             {i18n.t("classify-emails.cancel")}
           </Button>
           <Button
-          bsPrefix="btn btn-primary"
-          onClick={() => { this.nextStep() }}>
-          {i18n.t("classify-emails.continue")}
-        </Button>
+            bsPrefix="btn btn-primary"
+            onClick={() => { this.nextStep() }}>
+            {i18n.t("classify-emails.continue")}
+          </Button>
         </Fragment>
       case 2:
         return <Fragment>
@@ -287,7 +287,7 @@ class ModalConnectingEmails extends Component {
             onClick={() => { this.prevStep() }}>
             {i18n.t("classify-emails.back")}
           </Button>
-          <Button           
+          <Button
             bsPrefix="btn btn-primary"
             onClick={() => { this.onSave() }} >
             {i18n.t("classify-emails.save")}
@@ -323,7 +323,7 @@ class ModalConnectingEmails extends Component {
               <div style={{ display: this.state.step === 1 ? 'block' : 'none' }}><ConnectingEmailsStep1 show={this.state.step === 1} onChange={(data) => { this.changeStep1Data(data) }}></ConnectingEmailsStep1></div>
               <div style={{ display: this.state.step === 2 ? 'block' : 'none' }}><ConnectingEmailsStep2 show={this.state.step === 2} user={user} bbdd={companySelected} entity={this.state.step1Data.entity} toggleNotification={toggleNotification} onSelectedEntity={(data) => this.changeStep2Data(data)}></ConnectingEmailsStep2></div>
               <div style={{ display: this.state.step === 3 ? 'block' : 'none' }}><ConnectingEmailsStep3 show={this.state.step === 3} user={user} bbdd={companySelected} entity={this.state.step2Data} toggleNotification={toggleNotification} onSelectedDirectory={(data) => this.changeStep3Data(data)}></ConnectingEmailsStep3></div>
-              <div style={{ display: this.state.step === 4 ? 'block' : 'none' }}><ConnectingEmailsStep4 show={this.state.step === 4} step={(step1Data.copyDocuments === false && step1Data.saveDocuments === false)?4:5} messages={messages} onChange={this.changeSubject}></ConnectingEmailsStep4></div>
+              <div style={{ display: this.state.step === 4 ? 'block' : 'none' }}><ConnectingEmailsStep4 show={this.state.step === 4} step={(step1Data.copyDocuments === false && step1Data.saveDocuments === false) ? 4 : 5} messages={messages} onChange={this.changeSubject}></ConnectingEmailsStep4></div>
             </Container>
           </Modal.Body>
           <Modal.Footer>
@@ -870,21 +870,20 @@ export default connect(
 )(ModalConnectingEmails);
 
 
-const downloadEML =(data, filename, type) => {
-  console.log("Downloading...")
-  var file = new Blob([data], {type: type});
+const downloadEML = (data, filename, type) => {
+  var file = new Blob([data], { type: type });
   if (window.navigator.msSaveOrOpenBlob) // IE10+
-      window.navigator.msSaveOrOpenBlob(file, filename);
+    window.navigator.msSaveOrOpenBlob(file, filename);
   else { // Others
-      var a = document.createElement("a"),
-              url = URL.createObjectURL(file);
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(function() {
-          document.body.removeChild(a);
-          window.URL.revokeObjectURL(url);  
-      }, 0); 
+    var a = document.createElement("a"),
+      url = URL.createObjectURL(file);
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () {
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }, 0);
   }
 }
