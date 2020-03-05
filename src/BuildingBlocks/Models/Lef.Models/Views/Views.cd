@@ -62,9 +62,10 @@
       <HashCode>AAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAACAAAAAAABA=</HashCode>
       <FileName>Views\EntitySearchView.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.EntitySearchById">
-    <Position X="2.75" Y="4" Width="1.5" />
+    <Position X="2.5" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
       <FileName>Views\EntitySearchById.cs</FileName>
@@ -76,12 +77,21 @@
       <HashCode>AAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Views\EntitySearchDocumentsView.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.EntitySearchFoldersView">
     <Position X="0.75" Y="7.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Views\EntitySearchFoldersView.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.MailFileView">
+    <Position X="4.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAQAAAAAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Views\MailFileView.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

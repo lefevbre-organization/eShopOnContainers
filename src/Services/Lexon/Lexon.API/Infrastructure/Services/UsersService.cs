@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -285,6 +286,27 @@ namespace Lexon.Infrastructure.Services
                 TraceMessage(result.errors, ex);
             }
 
+            return result;
+        }
+
+        public async Task<Result<bool>> FilePostAsync(MailFileView fileMail)
+        {
+            var result = new Result<bool>(false);
+            try
+            {
+                var imageDataByteArray = Convert.FromBase64String(fileMail.contentFile);
+
+                //When creating a stream, you need to reset the position, without it you will see that you always write files with a 0 byte length. 
+                var imageDataStream = new MemoryStream(imageDataByteArray);
+                imageDataStream.Position = 0;
+                result.data = true;
+                TraceInfo(result.infos, $"Se guarda el fichero {fileMail.nameFile}");
+            }
+            catch (Exception ex)
+            {
+                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.nameFile}", "590");
+                throw;
+            }
             return result;
         }
 

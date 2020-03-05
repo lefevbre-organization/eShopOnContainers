@@ -201,46 +201,36 @@ namespace Lexon.API.Controllers
         }
 
         [HttpPost("entities/files/post")]
-        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.Created)]
-        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> Post(
-            [FromForm(Name = "myFile")]IFormFile fileMail,
-            [FromForm] string bbdd,
-            [FromForm] string idUser,
-            [FromForm] string idParent
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> FilePost(
+            [FromBody] MailFileView fileMail
             )
         {
-            var folderName = "files";
-            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), folderName);
 
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
+            var result = await _usersService.FilePostAsync(fileMail);
+            
+            if(result.errors.Count == 0)
+                return StatusCode(201);
 
-            using (var fileContentStream = new MemoryStream())
-            {
-                await fileMail.CopyToAsync(fileContentStream);
-                await System.IO.File.WriteAllBytesAsync(Path.Combine(folderPath, fileMail.FileName), fileContentStream.ToArray());
-            }
-            return CreatedAtRoute(routeName: "myFile", routeValues: new { filename = fileMail.FileName }, value: null); ;
+            return BadRequest(result);
         }
 
-        [HttpGet("entities/files/{filename}", Name = "myFile")]
-        [ProducesResponseType(typeof(FileContentResult), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(NotFoundResult), (int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> Get([FromRoute] string filename)
-        {
-            var folderName = "files";
-            var folderPath = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+        //[HttpGet("entities/files/{filename}", Name = "myFile")]
+        //[ProducesResponseType(typeof(FileContentResult), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType(typeof(NotFoundResult), (int)HttpStatusCode.NotFound)]
+        //public async Task<IActionResult> Get([FromRoute] string filename)
+        //{
+        //    var folderName = "files";
+        //    var folderPath = Path.Combine(Directory.GetCurrentDirectory(), folderName);
 
-            var filePath = Path.Combine(folderPath, filename);
-            if (System.IO.File.Exists(filePath))
-            {
-                return File(await System.IO.File.ReadAllBytesAsync(filePath), "application/octet-stream", filename);
-            }
-            return NotFound();
-        }
+        //    var filePath = Path.Combine(folderPath, filename);
+        //    if (System.IO.File.Exists(filePath))
+        //    {
+        //        return File(await System.IO.File.ReadAllBytesAsync(filePath), "application/octet-stream", filename);
+        //    }
+        //    return NotFound();
+        //}
 
         [HttpPost("entities")]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.OK)]
