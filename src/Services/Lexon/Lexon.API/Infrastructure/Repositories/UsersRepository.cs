@@ -43,7 +43,7 @@ namespace Lexon.API.Infrastructure.Repositories
                 .Include(x => x.companies)
                 .Include(x => x.idUser);
 
-            TraceLog(parameters: new string[] { $"fields:{fields.ToString()}", $"filter:{filter.ToString()}" });
+            TraceLog(parameters: new string[] { $"fields:{fields.ToString()} ->filter:{filter.ToString()}" });
 
             try
             {
@@ -57,7 +57,7 @@ namespace Lexon.API.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceInfo(result.infos, $"Error al obtener las compañias de {idUser}: {ex.Message}");
             }
 
             return result;
@@ -75,14 +75,12 @@ namespace Lexon.API.Infrastructure.Repositories
                 );
         }
 
-
         private async Task CreateAndPublishIntegrationEventLogEntry(IClientSessionHandle session, IntegrationEvent eventAssoc)
         {
             var eventLogEntry = new IntegrationEventLogEntry(eventAssoc, Guid.NewGuid());
             await _context.IntegrationEventLogsTransaction(session).InsertOneAsync(eventLogEntry);
             await _context.PublishThroughEventBusAsync(eventAssoc, session);
         }
-
 
         public async Task<Result<LexUser>> GetUserAsync(string idUser)
         {
@@ -94,14 +92,14 @@ namespace Lexon.API.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceInfo(result.infos, $"Error al obtener datos de {idUser}: {ex.Message}");
             }
             return result;
         }
 
         public async Task<MySqlCompany> GetEntitiesAsync(IEntitySearchView search)
         {
-            var resultMongo = new MySqlCompany();
+            var result = new MySqlCompany();
 
             try
             {
@@ -119,27 +117,26 @@ namespace Lexon.API.Infrastructure.Repositories
                 var entidades = entitiesSearch.ToArray();
 
                 company.entities = entidades;
-                resultMongo.AddData(company);
+                result.AddData(company);
             }
             catch (Exception ex)
             {
-                TraceMessage(resultMongo.Errors, ex);
+                TraceInfo(result.Infos, $"fallo al  obtener entidades de {((EntitySearchView)search).idUser}: {ex.Message}");
             }
-            return resultMongo;
+            return result;
         }
 
         private static IEnumerable<LexEntity> GetEntitiesSearch(IEntitySearchView search, LexCompany company)
         {
-
             if (search is EntitySearchFoldersView)
             {
                 var searchFolder = search as EntitySearchFoldersView;
                 return company.entities.Where
                     (ent =>
-                        (ent.idType == (searchFolder.idType) 
-                            && (searchFolder.idFolder == null || (ent.idFolder == searchFolder.idFolder) || (ent.idRelated == searchFolder.idFolder ))
-                            && (searchFolder.idParent == null || (ent.idRelated == searchFolder.idParent) || (ent.idFolder == searchFolder.idParent ))
-                            && (searchFolder.search == null || (ent.description.Contains(searchFolder.search) || ent.code.Contains(searchFolder.search) || ent.email.Contains(searchFolder.search) ))
+                        (ent.idType == (searchFolder.idType)
+                            && (searchFolder.idFolder == null || (ent.idFolder == searchFolder.idFolder) || (ent.idRelated == searchFolder.idFolder))
+                            && (searchFolder.idParent == null || (ent.idRelated == searchFolder.idParent) || (ent.idFolder == searchFolder.idParent))
+                            && (searchFolder.search == null || (ent.description.Contains(searchFolder.search) || ent.code.Contains(searchFolder.search) || ent.email.Contains(searchFolder.search)))
                     ));
             }
             else if (search is EntitySearchDocumentsView)
@@ -159,17 +156,15 @@ namespace Lexon.API.Infrastructure.Repositories
                     (ent.idType == (searchSimple.idType)
                         && (searchSimple.search != null || (ent.description.Contains(searchSimple.search) || ent.code.Contains(searchSimple.search) || ent.email.Contains(searchSimple.search)))
                 ));
-
         }
 
         public async Task<MySqlCompany> GetRelationsAsync(ClassificationSearchView search)
         {
-            var resultMongo = new MySqlCompany();
+            var result = new MySqlCompany();
 
             try
             {
                 var filterUser = GetFilterLexUser(search.idUser);
-                //TraceLog(parameters: new string[] { $"filter:{filterUser.ToString()}" });
 
                 var user = await _context.LexUsers
                     .Find(filterUser)
@@ -181,18 +176,20 @@ namespace Lexon.API.Infrastructure.Repositories
 
                 var relations = relationsSearch.ToArray();
 
-                company.actuations = relations;
-               // resultMongo.AddData(company);
-                var lexMailActuacion = new LexMailActuation();
-                lexMailActuacion.uid = search.idMail;
-                lexMailActuacion.actuaciones = relations;
-                resultMongo.AddRelationsMail(lexMailActuacion);
+                // company.actuations = relations;
+                // resultMongo.AddData(company);
+                var lexMailActuacion = new LexMailActuation
+                {
+                    uid = search.idMail,
+                    actuaciones = relations
+                };
+                result.AddRelationsMail(lexMailActuacion);
             }
             catch (Exception ex)
             {
-                TraceMessage(resultMongo.Errors, ex);
+                TraceInfo(result.Infos, $"fallo al  obtener actuaciones de {search.idUser}: {ex.Message}");
             }
-            return resultMongo;
+            return result;
         }
 
         public async Task<Result<bool>> UpsertEntitiesAsync(IEntitySearchView search, MySqlCompany resultMySql)
@@ -220,7 +217,7 @@ namespace Lexon.API.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceInfo(result.infos, $"fallo al  actualizar entidades de {((EntitySearchView)search).idUser}: {ex.Message}");
             }
 
             return result;
@@ -251,7 +248,7 @@ namespace Lexon.API.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceInfo(result.infos, $"fallo al  actualizar relaciones de {search.idUser}: {ex.Message}");
             }
 
             return result;
@@ -288,20 +285,6 @@ namespace Lexon.API.Infrastructure.Repositories
             };
         }
 
-        private static FilterDefinition<LexEntity> GetFilterIdRelated(EntitySearchView search)
-        {
-            //if (search.idFilter != null)
-            //    return Builders<LexEntity>.Filter.Eq(x => x.idRelated, search.idFilter);
-            return FilterDefinition<LexEntity>.Empty;
-        }
-
-        private static FilterDefinition<LexEntity> GetFilterSearch(EntitySearchView search)
-        {
-            if (search.search != null)
-                return Builders<LexEntity>.Filter.Eq(x => x.description, search.search);
-            return FilterDefinition<LexEntity>.Empty;
-        }
-
         public async Task<Result<List<LexonEntityType>>> GetClassificationMasterListAsync()
         {
             var result = new Result<List<LexonEntityType>>(new List<LexonEntityType>());
@@ -318,7 +301,7 @@ namespace Lexon.API.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceInfo(result.infos, $"fallo al  obtener lista de tipos de entidad: {ex.Message}");
             }
             return result;
         }
@@ -334,21 +317,20 @@ namespace Lexon.API.Infrastructure.Repositories
                 session.StartTransaction();
                 try
                 {
-                    await AddAndPublish(actuation, session);
+                    await AddAndPublish(actuation, session, result);
 
                     await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
-                    result.data = 1;
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceInfo(result.infos, $"Error al añadir la actuacion de la entidad {actuation.idRelated} al usuario {actuation.idUser}: {ex.Message}");
                     session.AbortTransaction();
                 }
             }
             return result;
         }
 
-        private async Task AddAndPublish(ClassificationAddView actuation, IClientSessionHandle session)
+        private async Task AddAndPublish(ClassificationAddView actuation, IClientSessionHandle session, Result<long> result)
         {
             foreach (var mailData in actuation.listaMails)
             {
@@ -361,14 +343,20 @@ namespace Lexon.API.Infrastructure.Repositories
                     idRelated = (long)actuation.idRelated
                 };
 
-                await _context.LexUsersTransaction(session).UpdateOneAsync(
-                    GetFilterLexUser(actuation.idUser),
-                    Builders<LexUser>.Update.AddToSet($"companies.$[i].actuations", actua),
-                    new UpdateOptions { ArrayFilters = GetFilterFromEntities(actuation.bbdd) }
-                );
+                var resultUpdate = await _context.LexUsersTransaction(session).UpdateOneAsync(
+                     GetFilterLexUser(actuation.idUser),
+                     Builders<LexUser>.Update.AddToSet($"companies.$[i].actuations", actua),
+                     new UpdateOptions { ArrayFilters = GetFilterFromEntities(actuation.bbdd) }
+                 );
 
-                var eventAssoc = new AssociateMailToEntityIntegrationEvent(_settings.Value.IdAppNavision, actuation.idUser, actua.entityType, actua.idRelated, mailData.Provider, mailData.MailAccount, mailData.Uid, mailData.Subject, mailData.Date);
-                await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
+                if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
+                {
+                    TraceInfo(result.infos, $"Se modifica el usuario {actuation.idUser} añadiendo actuación");
+                    result.data = resultUpdate.ModifiedCount;
+
+                    var eventAssoc = new AssociateMailToEntityIntegrationEvent(_settings.Value.IdAppNavision, actuation.idUser, actua.entityType, actua.idRelated, mailData.Provider, mailData.MailAccount, mailData.Uid, mailData.Subject, mailData.Date);
+                    await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
+                }
             }
         }
 
@@ -383,25 +371,24 @@ namespace Lexon.API.Infrastructure.Repositories
                 session.StartTransaction();
                 try
                 {
-                    await RemoveAndPublish(actuation, session);
+                    await RemoveAndPublish(actuation, session, result);
 
                     await session.CommitTransactionAsync(cancel).ConfigureAwait(false);
-                    result.data = 1;
                 }
                 catch (Exception ex)
                 {
-                    TraceMessage(result.errors, ex);
+                    TraceInfo(result.infos, $"Error al añadir la actuacion de la entidad {actuation.idRelated} al usuario {actuation.idUser}: {ex.Message}");
                     session.AbortTransaction();
                 }
             }
             return result;
         }
 
-        private async Task RemoveAndPublish(ClassificationRemoveView actuation, IClientSessionHandle session)
+        private async Task RemoveAndPublish(ClassificationRemoveView actuation, IClientSessionHandle session, Result<long> result)
         {
             var typeName = Enum.GetName(typeof(LexonAdjunctionType), actuation.idType);
 
-            await _context.LexUsersTransaction(session).UpdateOneAsync(
+            var resultUpdate = await _context.LexUsersTransaction(session).UpdateOneAsync(
                 GetFilterLexUser(actuation.idUser),
                 Builders<LexUser>.Update.Pull($"companies.$[i].actuations.$[j]", actuation.idMail),
                     new UpdateOptions
@@ -414,8 +401,14 @@ namespace Lexon.API.Infrastructure.Repositories
                     }
             );
 
-            var eventAssoc = new DissociateMailFromEntityIntegrationEvent(_settings.Value.IdAppNavision, actuation.idUser, typeName, (long)actuation.idRelated, actuation.Provider, actuation.MailAccount, actuation.idMail);
-            await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
+            if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
+            {
+                TraceInfo(result.infos, $"Se modifica el usuario {actuation.idUser} eliminando actuación");
+                result.data = resultUpdate.ModifiedCount;
+
+                var eventAssoc = new DissociateMailFromEntityIntegrationEvent(_settings.Value.IdAppNavision, actuation.idUser, typeName, (long)actuation.idRelated, actuation.Provider, actuation.MailAccount, actuation.idMail);
+                await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
+            }
         }
 
         public async Task<Result<List<LexActuation>>> GetClassificationsFromMailAsync(int pageSize, int pageIndex, string idUser, string bbdd, string idMail)
@@ -534,7 +527,7 @@ namespace Lexon.API.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceInfo(result.infos, $"fallo al  actualizar relaciones de {idUser}: {ex.Message}");
             }
             return result;
         }
@@ -571,7 +564,7 @@ namespace Lexon.API.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceInfo(result.infos, $"fallo al  actualizar usuario de {lexUser.data.idUser}: {ex.Message}");
             }
 
             return result;
@@ -610,7 +603,7 @@ namespace Lexon.API.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceInfo(result.infos, $"fallo al  insertar o actualizar compañias para {lexUser.data.idUser}: {ex.Message}");
             }
 
             return result;

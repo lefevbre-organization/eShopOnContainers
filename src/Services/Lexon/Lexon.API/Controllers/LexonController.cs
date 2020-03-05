@@ -44,7 +44,18 @@ namespace Lexon.API.Controllers
 
             var result = await _usersService.GetUserAsync(idUserNavision);
 
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            if (result.errors.Count() > 0 && result.data?.idUser == null)
+            {
+                result.data = null;
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            else if (result.errors.Count() == 0 && result.data?.idUser == null)
+            {
+                return NotFound(result);
+            }
+
+            return Ok(result);
+
         }
 
         [HttpGet]
@@ -58,7 +69,19 @@ namespace Lexon.API.Controllers
                 return (IActionResult)BadRequest("idUser need a correct value");
 
             var result = await _usersService.GetCompaniesFromUserAsync(idUser);
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+
+            if (result.errors.Count() > 0 && result.data?.Count() == 0)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            else if (result.errors.Count() == 0 && result.data?.Count() == 0)
+            {
+                return NotFound(result);
+            }
+
+            return Ok(result);
+
+           // return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         #region Classifications

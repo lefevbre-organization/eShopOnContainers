@@ -81,16 +81,16 @@ namespace Lexon.Infrastructure.Services
             {
                 var resultMongo = await _usersRepository.AddClassificationToListAsync(classificationAdd);
 
-                if (resultMongo.errors.Count > 0)
-                    result.errors.AddRange(resultMongo.errors);
+                if (resultMongo.infos.Count > 0)
+                    result.infos.AddRange(resultMongo.infos);
                 else if (resultMongo.data == 0)
-                    TraceOutputMessage(result.errors, "MongoDb don´t create the classification", 2002);
+                    result.infos.Add(new Info() { code="error_add_cactuation_mongo", message="error when add classification"});
                 else
                     result.data = resultMongo.data;
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceInfo(result.infos, $"Error al añadir actuaciones para  {classificationAdd.idRelated}: {ex.Message}");
             }
         }
 
@@ -148,7 +148,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceInfo(result.infos, $"Error al eliminar actuaciones para  {classificationRemove.idRelated}: {ex.Message}");
             }
             await RemoveClassificationFromListMongoAsync(classificationRemove, result);
             return result;
@@ -239,24 +239,24 @@ namespace Lexon.Infrastructure.Services
             return resultMySql;
         }
 
-        private async Task GetMasterEntitiesMongoAsync(Result<List<LexonEntityType>> result)
-        {
-            try
-            {
-                var resultMongo = await _usersRepository.GetClassificationMasterListAsync();
+        //private async Task GetMasterEntitiesMongoAsync(Result<List<LexonEntityType>> result)
+        //{
+        //    try
+        //    {
+        //        var resultMongo = await _usersRepository.GetClassificationMasterListAsync();
 
-                if (resultMongo.errors.Count > 0)
-                    result.errors.AddRange(resultMongo.errors);
-                else if (resultMongo.data.Count == 0)
-                    TraceOutputMessage(result.errors, "MongoDb don´t recover the master´s entities", 2002);
-                else
-                    result.data = resultMongo.data;
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
-        }
+        //        if (resultMongo.errors.Count > 0)
+        //            result.errors.AddRange(resultMongo.errors);
+        //        else if (resultMongo.data.Count == 0)
+        //            TraceOutputMessage(result.errors, "MongoDb don´t recover the master´s entities", 2002);
+        //        else
+        //            result.data = resultMongo.data;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TraceMessage(result.errors, ex);
+        //    }
+        //}
 
         public async Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder)
         {
