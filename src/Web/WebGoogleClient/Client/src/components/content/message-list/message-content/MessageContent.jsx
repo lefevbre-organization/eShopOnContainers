@@ -189,22 +189,6 @@ export class MessageContent extends Component {
   componentDidUpdate(prevProps) {
     const { emailMessageResult, emailHeaderMessageResult } = this.props;
 
-    // if(prevProps.emailHeaderMessageResult.headers === null && emailHeaderMessageResult.headers !== null) {
-    //   const detail = {
-    //     id: emailHeaderMessageResult.id,
-    //     extMessageId: getHeader(emailHeaderMessageResult.headers, "Message-Id"),
-    //     subject: getHeader(emailHeaderMessageResult.headers, "subject"),
-    //     sentDateTime: getHeader(emailHeaderMessageResult.headers, "date"),
-    //     chkselected: true,
-    //     folder: "",
-    //     account: this.props.lexon.account,
-    //     provider: "GOOGLE"
-    //   };
-    //   window.dispatchEvent(new CustomEvent("Checkclick",  {
-    //     detail
-    //   }));
-    // }
-
     if (prevProps.emailHeaderMessageResult.headers === null && emailHeaderMessageResult.headers !== null) {
       if (this.props.emailMessageResult && this.props.emailMessageResult.result) {
         const msgId = this.props.emailMessageResult.result.id;
@@ -223,14 +207,12 @@ export class MessageContent extends Component {
         window.dispatchEvent(new CustomEvent("LoadingMessage"))
         getMessage(msgId, "raw").then((msgRaw) => {
           window.dispatchEvent(new CustomEvent("LoadedMessage"))
-          detail.raw = msgRaw;
+          detail.raw = msgRaw.result;
 
-          debugger
           window.dispatchEvent(new CustomEvent("Checkclick", {
             detail
           }));
         }).catch((err) => {
-          debugger
           window.dispatchEvent(new CustomEvent("LoadedMessage"))
         })
       }

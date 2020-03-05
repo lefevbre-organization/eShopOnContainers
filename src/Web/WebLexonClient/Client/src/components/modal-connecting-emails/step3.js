@@ -4,68 +4,53 @@ import { TreeViewComponent } from '@syncfusion/ej2-react-navigations';
 import { GridComponent, ColumnsDirective, ColumnDirective } from '@syncfusion/ej2-react-grids';
 import Spinner from "../../components/spinner/spinner";
 import ClassificationListSearch from "../classify-emails/classification-list-search/classification-list-search";
+import { getFolderTree } from "../../services/services-lexon";
 
 export class ConnectingEmailsStep3 extends React.Component {
     constructor() {
         super()
 
         this.state = {
-            entities: [
-                { name: 'Directorio 1', type: 'dir', modified: '26/09/2018 16:57' },
-                { name: 'Directorio 2', type: 'dir', modified: '26/09/2018 16:57' },
-                { name: 'Prueba de nombre de documento asociado al cliente', type: 'file', modified: '26/09/2018 16:57' },
-                { name: 'Prueba de nombre de documento asociado al cliente', type: 'file', modified: '26/09/2018 16:57' },
-                { name: 'Prueba de nombre de documento asociado al cliente', type: 'file', modified: '26/09/2018 16:57' },
-                { name: 'Prueba de nombre de documento asociado al cliente', type: 'file', modified: '26/09/2018 16:57' },
-                { name: 'Prueba de nombre de documento asociado al cliente', type: 'file', modified: '26/09/2018 16:57' },
-            ]
+            fields: { dataSource: [], id: 'id', text: 'name', child: 'subChild' },
+            entities: [],
+            selected: -1
         }
 
-        this.hierarchicalData = [
-            {
-                id: '01', name: 'CLIENTE', expanded: true,
-                imageUrl: `${window.URL_MF_LEXON_BASE}/assets/img/icon-law.png`,
-                subChild: [
-                    {
-                        id: '01-01', name: 'Directorio 1',imageUrl: `${window.URL_MF_LEXON_BASE}/assets/img/icon-folder.png`
-                    },
-                    {
-                        id: '01-02', name: 'Directorio 2', expanded: true, imageUrl: `${window.URL_MF_LEXON_BASE}/assets/img/icon-folder.png`                
-                    }
-                ]
-            }
-        ];
-        this.fields = { dataSource: this.hierarchicalData, id: 'id', text: 'name', child: 'subChild' };
-        this.searchResultsByType  = this.searchResultsByType.bind(this)
+
+        this.searchResultsByType = this.searchResultsByType.bind(this)
         this.nodeSelected = this.onNodeSelected.bind(this)
         this.nodeSelecting = this.onNodeSelecting.bind(this)
         this.onRowSelected = this.onRowSelected.bind(this)
         this.onNextPage = this.onNextPage.bind(this)
         this.onPrevPage = this.onPrevPage.bind(this)
+        this.onCreateFolder = this.onCreateFolder.bind(this)
     }
 
     async componentDidUpdate(prevProps, prevState) {
+        if (JSON.stringify(prevProps.entity) !== JSON.stringify(this.props.entity)) {
+            const response = await getFolderTree(this.props.entity.idFolder, "lexon_admin_02", "449")
+            const tree = normalizeTree(this.props.entity, response.result.data)
+            const childs = getChilds(tree, 0)
+            this.setState({ fields: { dataSource: tree, id: 'id', text: 'name', child: 'subChild' }, entities: childs })
+        }
+
         if (prevProps.show === false && this.props.show === true) {
             const opened = document.getElementsByClassName("lexon-clasification-list-searcher search-close-3 opened")
-            if(opened && opened.length > 0) {
+            if (opened && opened.length > 0) {
                 const closeButton = document.getElementsByClassName("search-trigger-hide search-close-3")[0]
-                if(closeButton) {
+                if (closeButton) {
                     closeButton.click();
                 }
             }
-
             return
         }
     }
 
     onNodeSelected(event) {
-        alert("Nodo seleccionado")
+        this.onRowSelected()
     }
 
     onNodeSelecting(event) {
-        if(event.nodeData.hasChildren === true) {
-            event.cancel = true;
-        }
     }
 
     onNextPage() {
@@ -76,19 +61,33 @@ export class ConnectingEmailsStep3 extends React.Component {
         alert("onPrevPage")
     }
 
+    onCreateFolder() {
+        if (this.state.selected === -1) {
+            return;
+        }
+
+        const folderName = prompt("Nombre de la carpeta");
+        if (folderName) {
+            alert("Creando carpeta")
+        }
+    }
+
     onRowSelected(event) {
-        console.log(event)
         const { onSelectedDirectory } = this.props;
-        onSelectedDirectory && onSelectedDirectory({selected: 1})
+
+        this.setState({ selected: 1 }, () => {
+            onSelectedDirectory && onSelectedDirectory({ selected: 1 })
+        })
     }
 
     searchResultsByType(type, search) {
-        if(search !== "") {
+        if (search !== "") {
             alert("Búsqueda")
         }
     }
 
     render() {
+        const disabled = this.state.selected === -1 ? "disabled" : "";
         return <Fragment>
             <div className="step3-container">
                 <ol style={{ textAlign: "center" }}>
@@ -96,13 +95,21 @@ export class ConnectingEmailsStep3 extends React.Component {
                         <span>{i18n.t(`connecting.q4`)}</span>
                     </li>
                 </ol>
+                <div className="new-folder">
+                    <div className={`new-folder-container ${disabled}`}>
+                        <a href="#" class="add-more" onClick={this.onCreateFolder} className={disabled}>
+                            <span className="pager-icon lf-icon-folder-new new-folder-icon" />
+                            <span className="new-folder-text">Nueva carpeta</span>
+                        </a>
+                    </div>
+                </div>
                 <section className="panel section-border">
                     <div className="panel-left">
-                        <TreeViewComponent fields={this.fields} expandOn="Click" nodeSelected={this.onNodeSelected} nodeSelecting={this.onNodeSelecting}/>
+                        <TreeViewComponent fields={this.state.fields} expandOn="Auto" nodeSelected={this.nodeSelected} nodeSelecting={this.onNodeSelecting} />
                     </div>
                     <div className="panel-right">
                         <div className="panel-right-top">
-                            <span className="section-title">José Manuel García</span>
+                            <span className="section-title">{this.props.entity.description}</span>
                             <ClassificationListSearch
                                 closeClassName="search-close-3"
                                 searchResultsByType={this.searchResultsByType}
@@ -117,12 +124,12 @@ export class ConnectingEmailsStep3 extends React.Component {
                             rowSelected={this.onRowSelected}
                             hideScroll={true}
                             locale="es-ES">
-                            
-                                <ColumnsDirective>
-                                    <ColumnDirective field='name' headerText='Nombre' width='150'></ColumnDirective>
-                                    <ColumnDirective field='type' headerText='Tipo' width='50'></ColumnDirective>
-                                    <ColumnDirective field='modified' headerText='Modificación' width='100'></ColumnDirective>
-                                </ColumnsDirective>
+
+                            <ColumnsDirective>
+                                <ColumnDirective field='name' headerText='Nombre' width='150'></ColumnDirective>
+                                <ColumnDirective field='type' headerText='Tipo' width='50'></ColumnDirective>
+                                <ColumnDirective field='modified' headerText='Modificación' width='100'></ColumnDirective>
+                            </ColumnsDirective>
                         </GridComponent>
                         <section className="pager">
                             <div className={`prevButton`} onClick={this.onPrevPage}><span className="pager-icon lf-icon-angle-left" /><span>Anterior</span></div>
@@ -136,10 +143,63 @@ export class ConnectingEmailsStep3 extends React.Component {
                 .step3-container {
                     margin: 30px;
                 }
-                
+                                
+                .new-folder {
+                    text-align: right;
+                    font-size: 14px;
+                    color: #001978 !important;
+                    height: 26px;
+                }
+
+                .new-folder-container {
+                    cursor: pointer;    
+                    display: inline-block;
+                    margin-bottom: 5px;
+                    padding-bottom: 0;
+                    box-sizing: border-box;
+                    -moz-box-sizing: border-box;
+                    -webkit-box-sizing: border-box;
+                }
+
+                a.disabled,
+                a.disabled span,
+                .new-folder-container.disabled  {
+                    color: #d2d2d2;
+                    cursor: default;
+                }
+
+
+                .new-folder-icon {
+                    margin-right: 0px;
+                }
+
+                .new-folder-text {
+                    font-family: "MTTMilano-Medium" !important;
+                    text-decoration: underline;
+                    line-height: 19px !important;
+                    font-size: 14px !important;
+
+                }
+
+                .add-more:hover .new-folder-text {
+                    background: none !important;
+                }
+
+                .new-folder-text:hover {
+                    background: none !important;
+                }
+
                 .panel {
                     display: flex;
                     height: 450px;
+                }
+
+                .e-treeview {
+                    width: 250px !important;                    
+                }
+
+                .e-treeview .e-ul {
+                    overflow: hidden !important;
                 }
 
                 .panel-left {
@@ -217,3 +277,27 @@ export class ConnectingEmailsStep3 extends React.Component {
         </Fragment>
     }
 }
+
+function normalizeTree(entity, data) {
+    const root = { id: entity.id, selected: false, name: i18n.t(`classification.${entity.idType}`), expanded: true }
+    const tree = { ...data, id: data.idRelated, name: data.code, imageUrl: `${window.URL_MF_LEXON_BASE}/assets/img/icon-folder.png` };
+
+    if (entity.idType === 1) {
+        root.imageUrl = `${window.URL_MF_LEXON_BASE}/assets/img/icon-law.png`
+    }
+    root.subChild = tree.subChild
+
+    console.log(root)
+    return [root]
+}
+
+function getChilds(tree, id) {
+    const root = tree[0];
+    const children = root.subChild;
+    for (let i = 0; i < children.length; i++) {
+        children[i].type = children[i].idType === 13 ? "dir" : "file";
+        children[i].modified = '26/09/2018 16:57';
+    }
+    return tree.subChilds
+}
+

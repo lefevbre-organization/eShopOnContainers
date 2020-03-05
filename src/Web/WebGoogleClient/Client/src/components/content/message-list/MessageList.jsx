@@ -111,6 +111,7 @@ export class MessageList extends Component {
     : this.props.deleteMessage(message.extMessageId);
 
     if(selected === true) {
+      debugger
       window.dispatchEvent(new CustomEvent("LoadingMessage"))
       const msgRaw = await getMessage(msg.id, "raw");
       message.raw = msgRaw.result;

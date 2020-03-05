@@ -16,8 +16,8 @@ import MessageSnackbar from "./message-snackbar/message-snackbar";
 import NotFoundSnackbar from "./messageNotFound-snackbar/messageNotFound-snackbar";
 
 import { clearUserCredentials, selectMessage, selectFolder, outboxEventNotified, editMessage, setError } from "../actions/application";
-import {clearSelected, setSelected} from '../actions/messages';
-import { setEmailShown, resetIdEmail, setCaseFile} from '../actions/lexon';
+import { clearSelected, setSelected } from '../actions/messages';
+import { setEmailShown, resetIdEmail, setCaseFile } from '../actions/lexon';
 
 import { getSelectedFolder } from "../selectors/folders";
 
@@ -260,10 +260,10 @@ class App extends Component {
             <div
               className={`${styles["content-wrapper"]}
                                 ${
-                                  sideBar.collapsed
-                                    ? ""
-                                    : styles["with-side-bar"]
-                                } ${styles["custom-padding-top"]}`}
+                sideBar.collapsed
+                  ? ""
+                  : styles["with-side-bar"]
+                } ${styles["custom-padding-top"]}`}
             >
               {this.renderContent()}
             </div>
@@ -284,15 +284,15 @@ class App extends Component {
                     ></img>
                   </IconButton>
                 ) : (
-                  <IconButton>
-                    <img
-                      disabled
-                      border="0"
-                      alt="Lex-On"
-                      src="/assets/images/icon-lexon.png"
-                    ></img>
-                  </IconButton>
-                )}
+                    <IconButton>
+                      <img
+                        disabled
+                        border="0"
+                        alt="Lex-On"
+                        src="/assets/images/icon-lexon.png"
+                      ></img>
+                    </IconButton>
+                  )}
                 <div className={styles.btnselect}></div>
               </span>
               {/* <span
@@ -436,7 +436,7 @@ class App extends Component {
     //         //console.error(error);
     //     }
     // }
-    }
+  }
 
   componentDidMount() {
     document.title = this.props.application.title;
@@ -447,7 +447,7 @@ class App extends Component {
     this.registerConnectorApp();
 
     const { userId, idCaseFile, bbdd, idEmail, idFolder, account } = this.props.lexon;
-    const { imapSsl, serverHost, serverPort, smtpHost, smtpPort, smtpSsl, user, password} = this.props.all.login.formValues;
+    const { imapSsl, serverHost, serverPort, smtpHost, smtpPort, smtpSsl, user, password } = this.props.all.login.formValues;
     const { email } = this.props;
     if (userId !== null && email !== null) {
       const GUID = uuid();
@@ -467,33 +467,33 @@ class App extends Component {
           "smtpSsl": smtpSsl
         }
       };
-      if(!newAccount.configAccount.imapPass) {
+      if (!newAccount.configAccount.imapPass) {
         delete newAccount.configAccount;
       }
       addOrUpdateAccount(userId, newAccount)
-      .then(() => {
-        this.setState({ isUpdatedDefaultAccount: true });
-      	Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, { domain: 'lefebvre.es' })
-      })
-      .catch(error => {
-        console.log("error =>", error);
-      });
+        .then(() => {
+          this.setState({ isUpdatedDefaultAccount: true });
+          Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, { domain: 'lefebvre.es' })
+        })
+        .catch(error => {
+          console.log("error =>", error);
+        });
       if (idCaseFile !== null && idCaseFile !== undefined && idEmail == undefined) {
         this.props.newMessage();
         this.onSetSidebarOpenLexon(true);
       }
-      else if (idEmail){
+      else if (idEmail) {
         console.log("**************** Ha llegado un id de email");
         console.log(this.state);
         console.log(this.props);
 
-        if (Object.entries(this.props.folders.explodedItems).length > 0){
+        if (Object.entries(this.props.folders.explodedItems).length > 0) {
           var folderIdentifier = undefined;
           var targetFolder = undefined;
           const explodedItems = Object.entries(this.props.folders.explodedItems);
 
-          explodedItems.some( folder => {
-            if (folder[1].fullName.toUpperCase() === idFolder.toUpperCase()){
+          explodedItems.some(folder => {
+            if (folder[1].fullName.toUpperCase() === idFolder.toUpperCase()) {
               console.log("*************** FOLDER FOUND");
               targetFolder = folder[1];
               folderIdentifier = folder[0];
@@ -502,18 +502,18 @@ class App extends Component {
             return folder[1].fullName.toUpperCase() === idFolder.toUpperCase();
           })
 
-          if (targetFolder){
+          if (targetFolder) {
             this.props.selectFolder(targetFolder);
             this.sleep(500).then(() => {
               const messages = Array.from(this.props.messages.cache[this.props.application.selectedFolderId].values());
               const message = messages.find(e => e.messageId === idEmail);
               console.log({ messages });
-    
-              if (message){
+
+              if (message) {
                 console.log("**************************** MESSAGE FOUND:" + message.uid);
-                if ( this.props.application.newMessage && Object.keys(this.props.application.newMessage).length > 0 ) {
+                if (this.props.application.newMessage && Object.keys(this.props.application.newMessage).length > 0) {
                   this.props.close();
-                } 
+                }
                 this.props.messageClicked(message);
                 this.props.setEmailShown(true);
                 this.onSetSidebarOpenLexon(true);
@@ -532,7 +532,7 @@ class App extends Component {
           }
         }
       }
-      else if (bbdd){
+      else if (bbdd) {
         this.onSetSidebarOpenLexon(true);
       }
     } else {
@@ -544,14 +544,14 @@ class App extends Component {
       this.handleGetUserFromLexonConnector
     );
 
-    window.addEventListener("RemoveSelectedDocument", (event)=>{
+    window.addEventListener("RemoveSelectedDocument", (event) => {
 
-      const messages = [event.detail].map( msg => ({ 
+      const messages = [event.detail].map(msg => ({
         ...msg,
         messageId: msg.id,
-      }) )
+      }))
       this.props.setSelected(messages, false, event.detail.folder)
-      
+
       dispatchEvent(new CustomEvent("Checkclick", {
         detail: {
           id: event.detail.id,
@@ -570,7 +570,7 @@ class App extends Component {
     console.log("ENVIRONMENT ->", window.REACT_APP_ENVIRONMENT);
   }
 
-  renderNotFoundModal(){
+  renderNotFoundModal() {
     this.props.setError('messageNotFound', "No se encuentra el mensaje"); //tenia authentication
     setTimeout(() => this.props.setError('messageNotFound', null), MESSAGENOTFOUND_SNACKBAR_DURATION);
     this.props.resetIdEmail();
@@ -581,41 +581,41 @@ class App extends Component {
         bbdd: this.props.lexon.bbdd,
         company: this.props.lexon.company
       });
-    } 
+    }
   }
 
-  sleep(ms){
+  sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   async componentDidUpdate() {
-    if (this.props.lexon.userId !== "" && this.props.outbox && this.props.outbox.sent && !this.props.outbox.eventNotified){      
-        this.sentEmail(this.props.outbox.idMessage, this.props.outbox.message.subject);
+    if (this.props.lexon.userId !== "" && this.props.outbox && this.props.outbox.sent && !this.props.outbox.eventNotified) {
+      this.sentEmail(this.props.outbox.idMessage, this.props.outbox.message.subject);
 
-        if(this.props.lexon.bbdd && this.props.email) {
-          try {
-            const user = await getUser(this.props.lexon.userId);
-            if(user && user.data && user.data.configUser) {
-              if(user.data.configUser.getContacts) {
-                const emailDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
-                await classifyEmail(this.props.outbox.idMessage, 
-                  this.props.outbox.message.subject,
-                  emailDate, 
-                  this.props.outbox.message.recipients.map(rec => rec.address), 
-                  this.props.lexon.provider, 
-                  this.props.email, 
-                  this.props.lexon.bbdd, 
-                  user.data.lexonUserId
-                  );
-              }
+      if (this.props.lexon.bbdd && this.props.email) {
+        try {
+          const user = await getUser(this.props.lexon.userId);
+          if (user && user.data && user.data.configUser) {
+            if (user.data.configUser.getContacts) {
+              const emailDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+              await classifyEmail(this.props.outbox.idMessage,
+                this.props.outbox.message.subject,
+                emailDate,
+                this.props.outbox.message.recipients.map(rec => rec.address),
+                this.props.lexon.provider,
+                this.props.email,
+                this.props.lexon.bbdd,
+                user.data.lexonUserId
+              );
             }
-    
-          } catch(err) {
-            //throw err;
           }
-        }
 
-        this.props.outboxEventNotified();
+        } catch (err) {
+          //throw err;
+        }
+      }
+
+      this.props.outboxEventNotified();
     }
     else {
       this.startPoll();
@@ -632,7 +632,7 @@ class App extends Component {
     );
   }
 
-  sentEmail (id, subject) {
+  sentEmail(id, subject) {
     console.log('***** NOTIFICANDO MENSAJE ENVIADO *****');
     const sentFolder = findSentFolder(this.props.folders);
 
@@ -673,17 +673,17 @@ class App extends Component {
   async refreshPoll() {
     let keepPolling = true;
     try {
-      if (this.props.lexon.idEmail && !this.props.lexon.emailShown){
+      if (this.props.lexon.idEmail && !this.props.lexon.emailShown) {
         const folderPromise = this.props.reloadFolders();
         await Promise.all([folderPromise]);
 
-        if (Object.entries(this.props.folders.explodedItems).length > 0){
+        if (Object.entries(this.props.folders.explodedItems).length > 0) {
           var folderIdentifier = undefined;
           var targetFolder = undefined;
           const explodedItems = Object.entries(this.props.folders.explodedItems);
 
-          explodedItems.some( folder => {
-            if (folder[1].fullName.toUpperCase() === this.props.lexon.idFolder.toUpperCase()){
+          explodedItems.some(folder => {
+            if (folder[1].fullName.toUpperCase() === this.props.lexon.idFolder.toUpperCase()) {
               console.log("*************** FOLDER FOUND2");
               targetFolder = folder[1];
               folderIdentifier = folder[0];
@@ -692,14 +692,14 @@ class App extends Component {
             return folder[1].fullName.toUpperCase() === this.props.lexon.idFolder.toUpperCase();
           })
 
-          if (targetFolder){
+          if (targetFolder) {
             this.props.selectFolder(targetFolder);
             this.sleep(2000).then(() => {
               const messages = Array.from(this.props.messages.cache[this.props.application.selectedFolderId].values());
               const message = messages.find(e => e.messageId === this.props.lexon.idEmail);
               console.log({ messages });
-    
-              if (message){
+
+              if (message) {
                 console.log("**************************** MESSAGE FOUND2:" + message.uid);
                 this.props.messageClicked(message);
                 this.onSetSidebarOpenLexon(true);
@@ -718,7 +718,7 @@ class App extends Component {
         const selectedFolder = this.props.folders.explodedItems[this.props.application.selectedFolderId] || {};
         const messagePromise = this.props.reloadMessageCache(selectedFolder);
         await Promise.all([folderPromise, messagePromise]);
-      }      
+      }
     } catch (e) {
       console.log(`Error in refresh poll: ${e}`);
       if (e instanceof AuthenticationException) {
@@ -802,7 +802,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
     reloadFolders: () => dispatchProps.reloadFolders(stateProps.application.user.credentials),
     reloadMessageCache: folder => dispatchProps.reloadMessageCache(stateProps.application.user, folder),
     selectFolder: folder => dispatchProps.selectFolder(folder, stateProps.application.user),
-    messageClicked: message => dispatchProps.messageClicked(stateProps.application.user.credentials,stateProps.application.downloadedMessages,stateProps.receivedFolder,message),
+    messageClicked: message => dispatchProps.messageClicked(stateProps.application.user.credentials, stateProps.application.downloadedMessages, stateProps.receivedFolder, message),
     setEmailShown: flag => dispatchProps.setEmailShown(flag),
     outboxEventNotified: () => dispatchProps.outboxEventNotified(),
     close: application => dispatchProps.close(stateProps.application),

@@ -109,7 +109,7 @@ class ModalConnectingEmails extends Component {
   }
 
   changeStep2Data(data) {
-    this.setState({ step2Data: data })
+    this.setState({ step2Data: {...data} })
   }
 
   changeStep3Data(data) {
@@ -298,7 +298,7 @@ class ModalConnectingEmails extends Component {
 
   render() {
     const { user, companySelected, showModalDocuments, toggleNotification } = this.props;
-    const { messages, step1Data, step } = this.state;
+    const { messages, step1Data } = this.state;
 
     return (
       <div className="modal-connection-emails">
@@ -315,15 +315,15 @@ class ModalConnectingEmails extends Component {
               className="modal-title d-flex align-items-center"
               id="documentarGuardardocumentacionLabel">
               <img class="imgproduct" border="0" alt="Lex-On" src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
-              <span>{i18n.t("modal-conecting-emails.save-copy") + " - " + step}</span>
+              <span>{i18n.t("modal-conecting-emails.save-copy")}</span>
             </h5>
           </Modal.Header>
           <Modal.Body className="mimodal">
             <Container>
               <div style={{ display: this.state.step === 1 ? 'block' : 'none' }}><ConnectingEmailsStep1 show={this.state.step === 1} onChange={(data) => { this.changeStep1Data(data) }}></ConnectingEmailsStep1></div>
               <div style={{ display: this.state.step === 2 ? 'block' : 'none' }}><ConnectingEmailsStep2 show={this.state.step === 2} user={user} bbdd={companySelected} entity={this.state.step1Data.entity} toggleNotification={toggleNotification} onSelectedEntity={(data) => this.changeStep2Data(data)}></ConnectingEmailsStep2></div>
-              <div style={{ display: this.state.step === 3 ? 'block' : 'none' }}><ConnectingEmailsStep3 show={this.state.step === 3} user={user} bbdd={companySelected} entity={this.state.step1Data.entity} toggleNotification={toggleNotification} onSelectedDirectory={(data) => this.changeStep3Data(data)}></ConnectingEmailsStep3></div>
-              <div style={{ display: this.state.step === 4 ? 'block' : 'none' }}><ConnectingEmailsStep4 show={this.state.step === 4} step={(step1Data.copyDocuments === false && step1Data.saveDocuments === false)?3:4} messages={messages} onChange={this.changeSubject}></ConnectingEmailsStep4></div>
+              <div style={{ display: this.state.step === 3 ? 'block' : 'none' }}><ConnectingEmailsStep3 show={this.state.step === 3} user={user} bbdd={companySelected} entity={this.state.step2Data} toggleNotification={toggleNotification} onSelectedDirectory={(data) => this.changeStep3Data(data)}></ConnectingEmailsStep3></div>
+              <div style={{ display: this.state.step === 4 ? 'block' : 'none' }}><ConnectingEmailsStep4 show={this.state.step === 4} step={(step1Data.copyDocuments === false && step1Data.saveDocuments === false)?4:5} messages={messages} onChange={this.changeSubject}></ConnectingEmailsStep4></div>
             </Container>
           </Modal.Body>
           <Modal.Footer>
@@ -337,6 +337,10 @@ class ModalConnectingEmails extends Component {
         .e-checkbox-wrapper .e-checkbox:focus + .e-frame.e-check,
         .e-checkbox-wrapper:hover .e-frame.e-check {
           background-color: #001978;
+        }
+
+        .modal-footer .btn-primary:hover {
+          color: white;
         }
 
         .modal-header h5 span {
@@ -371,6 +375,10 @@ class ModalConnectingEmails extends Component {
         .e-radio:checked + .e-success::after { /* csslint allow: adjoining-classes */
           background-color: #001978;
           border-color: #001978;
+        }
+
+        ol>li:before {
+          padding-top: 4px;
         }
 
         .e-radio:checked + label::before,
@@ -520,6 +528,7 @@ class ModalConnectingEmails extends Component {
             .modal-body.mimodal {
               background-color: #ffffff;
               height: 550px;
+              padding-top: 0 !important;
             }
             
             .modal-body.info {
