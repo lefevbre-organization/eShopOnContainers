@@ -395,12 +395,6 @@ namespace Lexon.Infrastructure.Services
 
         #region User and Companies
 
-        //public async Task<Result<List<LexonUser>>> GetListUsersAsync(int pageSize, int pageIndex, string idUser)
-        //{
-        //    TraceLog(parameters: new string[] { $"idUser:{idUser}" });
-
-        //    return await _usersRepository.GetListAsync(pageSize, pageIndex, idUser);
-        //}
 
         public async Task<Result<LexUser>> GetUserAsync(string idNavisionUser)
         {

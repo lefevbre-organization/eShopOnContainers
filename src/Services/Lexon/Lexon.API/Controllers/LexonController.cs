@@ -198,9 +198,11 @@ namespace Lexon.API.Controllers
         [FromBody] EntitySearchFoldersView entitySearch
         )
         {
-            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0
-                || (entitySearch.idFolder == null && entitySearch.idParent == null))
-                return BadRequest("values invalid. Must be a valid user, idCompany, type and idFolder or idParent to search folders");
+            if (entitySearch.idType != (short?)LexonAdjunctionType.folders)
+                entitySearch.idType = (short)LexonAdjunctionType.folders;
+
+            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0)
+                return BadRequest("values invalid. Must be a valid user, bbdd ands idType to serach folders");
 
             var entities = await _usersService.GetEntitiesFoldersAsync(entitySearch);
 
@@ -214,6 +216,10 @@ namespace Lexon.API.Controllers
             [FromBody] EntitySearchDocumentsView entitySearch
 )
         {
+
+            if (entitySearch.idType != (short?)LexonAdjunctionType.documents)
+                entitySearch.idType = (short)LexonAdjunctionType.documents;
+
             if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0
                 || entitySearch.idFolder == null)
                 return BadRequest("values invalid. Must be a valid user, idCompany, type and idFolder to search documents");

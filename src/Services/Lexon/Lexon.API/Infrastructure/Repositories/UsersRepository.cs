@@ -99,26 +99,22 @@ namespace Lexon.API.Infrastructure.Repositories
             return result;
         }
 
-        public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView search)
+        public async Task<MySqlCompany> GetEntitiesAsync(IEntitySearchView search)
         {
             var resultMongo = new MySqlCompany();
 
             try
             {
-                var filterUser = GetFilterLexUser(search.idUser);
+                var filterUser = GetFilterLexUser(((EntitySearchView)search).idUser);
                 TraceLog(parameters: new string[] { $"filter:{filterUser.ToString()}" });
 
                 var user = await _context.LexUsers
                     .Find(filterUser)
                     .FirstOrDefaultAsync();
 
-                var company = user.companies.FirstOrDefault(x => x.bbdd.Contains(search.bbdd));
+                var company = user.companies.FirstOrDefault(x => x.bbdd.Contains(((EntitySearchView)search).bbdd));
 
-                var entitiesSearch = company.entities.Where
-                    (ent =>
-                        (ent.idType == search.idType)
-                    //  && (search.search != null && (ent.description.Contains(search.search) || ent.code.Contains(search.search) || ent.email.Contains(search.search)))
-                    );
+                var entitiesSearch = GetEntitiesSearch(search, company);
 
                 var entidades = entitiesSearch.ToArray();
 
@@ -130,6 +126,40 @@ namespace Lexon.API.Infrastructure.Repositories
                 TraceMessage(resultMongo.Errors, ex);
             }
             return resultMongo;
+        }
+
+        private static IEnumerable<LexEntity> GetEntitiesSearch(IEntitySearchView search, LexCompany company)
+        {
+
+            if (search is EntitySearchFoldersView)
+            {
+                var searchFolder = search as EntitySearchFoldersView;
+                return company.entities.Where
+                    (ent =>
+                        (ent.idType == (searchFolder.idType) 
+                            && (searchFolder.idFolder == null || (ent.idFolder == searchFolder.idFolder) || (ent.idRelated == searchFolder.idFolder ))
+                            && (searchFolder.idParent == null || (ent.idRelated == searchFolder.idParent) || (ent.idFolder == searchFolder.idParent ))
+                            && (searchFolder.search == null || (ent.description.Contains(searchFolder.search) || ent.code.Contains(searchFolder.search) || ent.email.Contains(searchFolder.search) ))
+                    ));
+            }
+            else if (search is EntitySearchDocumentsView)
+            {
+                var searchDoc = search as EntitySearchDocumentsView;
+                return company.entities.Where
+                    (ent =>
+                        (ent.idType == (searchDoc.idType)
+                            && (searchDoc.idFolder == null || (ent.idFolder == searchDoc.idFolder) || (ent.idRelated == searchDoc.idFolder))
+                            && (searchDoc.search == null || (ent.description.Contains(searchDoc.search) || ent.code.Contains(searchDoc.search) || ent.email.Contains(searchDoc.search)))
+                    ));
+            }
+
+            var searchSimple = search as EntitySearchView;
+            return company.entities.Where
+                (ent =>
+                    (ent.idType == (searchSimple.idType)
+                        && (searchSimple.search != null || (ent.description.Contains(searchSimple.search) || ent.code.Contains(searchSimple.search) || ent.email.Contains(searchSimple.search)))
+                ));
+
         }
 
         public async Task<MySqlCompany> GetRelationsAsync(ClassificationSearchView search)
@@ -165,15 +195,15 @@ namespace Lexon.API.Infrastructure.Repositories
             return resultMongo;
         }
 
-        public async Task<Result<bool>> UpsertEntitiesAsync(EntitySearchView search, MySqlCompany resultMySql)
+        public async Task<Result<bool>> UpsertEntitiesAsync(IEntitySearchView search, MySqlCompany resultMySql)
         {
             var result = new Result<bool>();
 
-            var filterUser = GetFilterLexUser(search.idUser);
+            var filterUser = GetFilterLexUser(((EntitySearchView)search).idUser);
 
             try
             {
-                var arrayFiltersSimple = GetFilterFromEntities(search.bbdd);
+                var arrayFiltersSimple = GetFilterFromEntities(((EntitySearchView)search).bbdd);
 
                 var resultUpdate = await _context.LexUsers.UpdateOneAsync(
                     filterUser,
@@ -184,7 +214,7 @@ namespace Lexon.API.Infrastructure.Repositories
 
                 if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0)
                 {
-                    TraceInfo(result.infos, $"Se modifica el usuario {search.idUser} añadiendo varias entidades {resultUpdate.ModifiedCount} de tipo: {search.idType}");
+                    TraceInfo(result.infos, $"Se modifica el usuario {((EntitySearchView)search).idUser} añadiendo varias entidades {resultUpdate.ModifiedCount} de tipo: {((EntitySearchView)search).idType}");
                     result.data = resultUpdate.ModifiedCount > 0;
                 }
             }
