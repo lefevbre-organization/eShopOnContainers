@@ -8,20 +8,18 @@ trigger:
   paths:
     include:
     - src/ApiGateways/*
-    - k8s/helm/apigwmm/*
-    - k8s/helm/apigwms/*
-    - k8s/helm/apigwwm/*
-    - k8s/helm/apigwws/*
+    - k8s-lef/helm/apigwacc/*
+    - k8s-lef/helm/apigwlex/* 
     exclude:
-    - src/ApiGateways/Mobile.Bff.Shopping/aggregator/*
+    - src/ApiGateways/Mobile.Bff.Account/aggregator/*
     - src/ApiGateways/Web.Bff.Shopping/aggregator/*
 jobs:
 - template: ../buildimages.yaml
   parameters:
-    services: mobileshoppingapigw mobilemarketingapigw webshoppingapigw webmarketingapigw
+    services: weblexonapigw webaccountapigw
     registryEndpoint: $(registryEndpoint)
-    helmfrom: $(Build.SourcesDirectory)/k8s/helm
-    helmto: $(Build.ArtifactStagingDirectory)/k8s/helm    
+    helmfrom: $(Build.SourcesDirectory)/k8s-LEF/helm
+    helmto: $(Build.ArtifactStagingDirectory)/k8s-LEF/helm    
 - template: ../multiarch.yaml
   parameters:
     image: ocelotapigw
