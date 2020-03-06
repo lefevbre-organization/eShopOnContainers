@@ -97,8 +97,8 @@ export async function login(dispatch, credentials) {
   }
 }
 
-export function editNewMessage(dispatch) {
-  dispatch(editMessage({to: [], cc: [], bcc: [], attachments: [], subject: '', content: ''}));
+export function editNewMessage(dispatch, to = []) {
+  dispatch(editMessage({to: to, cc: [], bcc: [], attachments: [], subject: '', content: ''}));
 }
 
 export function editMessageAsNew(dispatch, message) {

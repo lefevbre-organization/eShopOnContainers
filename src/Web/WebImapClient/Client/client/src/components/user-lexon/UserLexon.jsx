@@ -43,13 +43,10 @@ class UserLexon extends Component {
     const casefile = this.props.match.params.idCaseFile;
     const bbdd = this.props.match.params.bbdd;
     const company = this.props.match.params.idCompany;
-    //const idMessage64 = this.props.match.params.idMessage;
     var idMessage = this.props.match.params.idMessage;
-    //const idFolder64 = this.props.match.params.idFolder;
     var idFolder = this.props.match.params.idFolder;
+    const mailContacts = this.props.match.params.mailContacts;
 
-    //if (idMessage64 && base64regex.test(idMessage64)) { idMessage = base64.decode(idMessage64); }
-    //if (idFolder64 && base64regex.test(idFolder64)) { idFolder = base64.decode(idFolder64); }
     if (idMessage && base64regex.test(idMessage)) { idMessage = base64.decode(idMessage); }
     if (idFolder && base64regex.test(idFolder)) { idFolder = base64.decode(idFolder); }
 
@@ -68,7 +65,6 @@ class UserLexon extends Component {
         bbdd: bbdd
       });
     }
-
     if (idMessage) { 
       this.props.setIdEmail({
         idEmail: idMessage,
@@ -76,32 +72,13 @@ class UserLexon extends Component {
         emailShown: false
       });
     }
-    
-
-    // if (idMessage) { 
-    //   this.props.setIdEmail({
-    //     casefile: casefile,
-    //     bbdd: bbdd,
-    //     company: company,
-    //     idEmail: idMessage,
-    //     idFolder: idFolder,
-    //     emailShown: false
-    //   });
-    // }
-    // else if (casefile){
-    //   this.props.setCaseFile({
-    //     casefile: casefile,
-    //     bbdd: bbdd,
-    //     company: company
-    //   });
-    // }
-    // else if (bbdd){
-    //   this.props.setDataBase({
-    //     bbdd: bbdd
-    //   });
-    // };
-    
-
+    if (mailContacts){
+      console.log('Contactos recibidos');
+      if (base64regex.test(mailContacts)){
+        this.props.setMailContacts(base64.decode(mailContacts));
+      }
+    }
+  
     this.setState({ isNewAccount: user.slice(2, 3) === "1" ? true : false });
 
     // const isNewAccount = user.slice(2, 3) === "1" ? true : false;
@@ -182,6 +159,7 @@ const mapDispatchToProps = dispatch => ({
   setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
   setDataBase: dataBase => dispatch(ACTIONS.setDataBase(dataBase)),
   setIdEmail: emailInfo => dispatch(ACTIONS.setIdEmail(emailInfo)),
+  setMailContacts: mailContacts => dispatch(ACTIONS.setMailContacts(mailContacts)),
   logout: () => {
     dispatch(clearUserCredentials());
     history.push("/login");

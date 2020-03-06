@@ -35,6 +35,12 @@ export const resetIdEmail = (emailInfo) => ({
   payload: emailInfo
 })
 
+export const setMailContacts = mailContacts => ({
+  type: ActionTypes.LEXON_MAILCONTACTS,
+  payload: mailContacts
+})
+
+
 export default {
   setUser,
   setDataBase,
@@ -42,5 +48,6 @@ export default {
   setEmailShown,
   setAccount,
   setCaseFile,
-  resetIdEmail
+  resetIdEmail,
+  setMailContacts
 };

@@ -54,6 +54,12 @@ const lexon = (state = INITIAL_STATE.lexon, action = {}) => {
           emailShown: null
         }
 
+    case ActionTypes.LEXON_MAILCONTACTS:
+      return {
+        ...state,
+        mailContacts: action.payload
+      }
+    
     default:
       return state;
   }
