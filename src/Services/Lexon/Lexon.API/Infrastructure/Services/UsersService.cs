@@ -85,7 +85,7 @@ namespace Lexon.Infrastructure.Services
                 if (resultMongo.infos.Count > 0)
                     result.infos.AddRange(resultMongo.infos);
                 else if (resultMongo.data == 0)
-                    result.infos.Add(new Info() { code="error_add_cactuation_mongo", message="error when add classification"});
+                    result.infos.Add(new Info() { code="error_actuation_mongo", message="error when add classification"});
                 else
                     result.data = resultMongo.data;
             }
@@ -161,16 +161,17 @@ namespace Lexon.Infrastructure.Services
             {
                 var resultMongo = await _usersRepository.RemoveClassificationFromListAsync(classificationRemove);
 
-                if (resultMongo.errors.Count > 0)
-                    result.errors.AddRange(resultMongo.errors);
+                if (resultMongo.infos.Count > 0)
+                    result.infos.AddRange(resultMongo.infos);
                 else if (resultMongo.data == 0)
-                    TraceOutputMessage(result.errors, "MongoDb don´t remove the classification", 2002);
+                    result.infos.Add(new Info() { code = "error_actuation_mongo", message = "error when remove classification" });
                 else
                     result.data = resultMongo.data;
+
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceInfo(result.infos, $"Error al eliminar actuaciones para  {classificationRemove.idRelated}: {ex.Message}");
             }
         }
 
