@@ -201,17 +201,22 @@ namespace Lexon.API.Controllers
         }
 
         [HttpPost("entities/files/post")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(Result<MailFileView>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> FilePost(
             [FromBody] MailFileView fileMail
             )
         {
-
+            Result<MailFileView> resultFile = new Result<MailFileView>(fileMail);
             var result = await _usersService.FilePostAsync(fileMail);
             
             if(result.errors.Count == 0)
-                return StatusCode(201);
+            {
+                resultFile.errors = result.errors;
+                resultFile.infos = result.infos;
+                return StatusCode(201, resultFile);
+
+            }
 
             return BadRequest(result);
         }

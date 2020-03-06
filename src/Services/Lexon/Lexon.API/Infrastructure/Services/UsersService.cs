@@ -295,17 +295,17 @@ namespace Lexon.Infrastructure.Services
             var result = new Result<bool>(false);
             try
             {
-                var imageDataByteArray = Convert.FromBase64String(fileMail.contentFile);
+                var imageDataByteArray = Convert.FromBase64String(fileMail.ContentFile);
 
                 //When creating a stream, you need to reset the position, without it you will see that you always write files with a 0 byte length. 
                 var imageDataStream = new MemoryStream(imageDataByteArray);
                 imageDataStream.Position = 0;
                 result.data = true;
-                TraceInfo(result.infos, $"Se guarda el fichero {fileMail.nameFile}");
+                TraceInfo(result.infos, $"Se guarda el fichero {fileMail.Name}");
             }
             catch (Exception ex)
             {
-                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.nameFile}", "590");
+                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}", "590");
                 throw;
             }
             return result;

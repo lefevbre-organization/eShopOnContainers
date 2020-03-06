@@ -88,9 +88,9 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.MailFileView">
-    <Position X="4.25" Y="2.5" Width="1.5" />
+    <Position X="4.25" Y="7.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAABAAAAAAAAAAAQAAAAAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Views\MailFileView.cs</FileName>
     </TypeIdentifier>
   </Class>
