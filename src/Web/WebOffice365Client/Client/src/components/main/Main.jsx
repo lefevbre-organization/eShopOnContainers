@@ -226,7 +226,7 @@ export class Main extends Component {
       }));
     });
 
-    const { userId, idCaseFile, bbdd } = this.props.lexon;
+    const { userId, idCaseFile, bbdd, mailContacts } = this.props.lexon;
     const { email } = this.props.User;
     const idEmail = this.props.idEmail;
     if (userId !== null && email !== null) {
@@ -250,10 +250,13 @@ export class Main extends Component {
 
           this.props.history.push(`/${idEmail}`);
 
-	      } else if (idCaseFile != null && idCaseFile !== undefined){
+	      } else if (idCaseFile !== null && idCaseFile !== undefined){
           this.props.history.push("/compose");
           this.onSetSidebarOpenLexon(true);
-	      } else {
+        } else if (mailContacts !== null){
+          this.props.history.push("/compose");
+          this.onSetSidebarOpenLexon(true);       
+        }else {
           // // if (idEmail === "notFound") {
           // //   this.toggleShowMessageNotFound(true);
           // // }
@@ -388,6 +391,7 @@ export class Main extends Component {
   }
 
   loadLabelMessages(label) {
+    const { mailContacts } = this.props.lexon; 
     const currentSearchQuery = this.props.searchQuery;
     this.props.clearPageTokens();
     this.props.selectLabel(label.id);
@@ -402,8 +406,9 @@ export class Main extends Component {
         return;
       }
     }
-
-    this.props.history.push(`/${label.id.toLowerCase()}`);
+    if (!mailContacts){
+      this.props.history.push(`/${label.id.toLowerCase()}`);
+    }
   }
 
   getLabelList() {
@@ -569,6 +574,7 @@ export class Main extends Component {
                       sideBarToggle={this.toggleSideBar}
                       casefile={lexon.idCaseFile}
                       bbdd={lexon.bbdd}
+                      mailContacts ={lexon.mailContacts}
                       loadLabelMessages={this.loadLabelMessages}
                       labelsResult={this.props.labelsResult}
                     />

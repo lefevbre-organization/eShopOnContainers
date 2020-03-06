@@ -237,7 +237,7 @@ export class Main extends Component {
     });
 
     const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
-    const { userId, idCaseFile, bbdd } = this.props.lexon;
+    const { userId, idCaseFile, bbdd, mailContacts } = this.props.lexon;
     const { googleUser } = this.props;
     
     if(!googleUser || !googleUser.Rt) {
@@ -293,7 +293,10 @@ export class Main extends Component {
           else {
             this.props.history.push(`/${idEmail}`);
           }
-        } else if (idCaseFile != null && idCaseFile !== undefined){
+        } else if (idCaseFile !== null && idCaseFile !== undefined){
+          this.onSetSidebarOpenLexon(true);
+          this.props.history.push("/compose");
+        } else if (mailContacts !== null){
           this.onSetSidebarOpenLexon(true);
           this.props.history.push("/compose");
         } else if (bbdd !== null & bbdd !== undefined) {
@@ -457,25 +460,24 @@ export class Main extends Component {
       
       //sessionStorage.clear();
       //localStorage.clear();
-    }
+  }
 
-    onSignoutDisconnect() {
-        console.log("IN ... onSignoutDisconnect");
-        const { userId } = this.props.lexon;
-        resetDefaultAccount(userId)
-        .then(result => {
-            signOutDisconnect()
-        })
-        .then(_ => {
-            const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-            window.open(urlRedirect, "_self");
-        });
+  onSignoutDisconnect() {
+      console.log("IN ... onSignoutDisconnect");
+      const { userId } = this.props.lexon;
+      resetDefaultAccount(userId)
+      .then(result => {
+          signOutDisconnect()
+      })
+      .then(_ => {
+          const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+          window.open(urlRedirect, "_self");
+      });
 
-        //sessionStorage.clear();
-        //localStorage.clear();
-    }
+      //sessionStorage.clear();
+      //localStorage.clear();
+  }
 
- 
 
   renderInboxViewport() {
     const { leftSideBar } = this.state;
@@ -561,6 +563,7 @@ export class Main extends Component {
                       sideBarCollapsed={leftSideBar.collapsed}
                       sideBarToggle={this.toggleSideBar}
                       casefile={lexon.idCaseFile}
+                      mailContacts={lexon.mailContacts}
                     />
                   )}
                 />

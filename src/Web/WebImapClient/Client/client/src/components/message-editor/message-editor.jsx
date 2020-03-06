@@ -77,6 +77,10 @@ class MessageEditor extends Component {
       });
     }
 
+    if (lexon.mailContacts) {
+      this.props.setMailContacts(null);
+    }
+
     close(aplication);
   }
 
@@ -93,6 +97,7 @@ class MessageEditor extends Component {
       subject,
       content
     } = this.props;
+
     return (
       <div
         className={`${className} ${styles["message-editor"]}`}
@@ -571,7 +576,8 @@ const mapDispatchToProps = dispatch => ({
       subject,
       content
     }),
-  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile))
+  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
+  setMailContacts: mailContacts => dispatch(ACTIONS.setMailContacts(mailContacts))
 });
 
 export default connect(

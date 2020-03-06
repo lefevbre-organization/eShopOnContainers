@@ -23,14 +23,23 @@ const FORBIDDEN_EXTENSIONS = ["ade", "adp", "apk", "appx", "appxbundle", "bat", 
 export class ComposeMessage extends PureComponent {
   constructor(props) {
     super(props);
-    debugger
     this.state = {
-      to:
-        (props.history.location.state &&
-          props.history.location.state.composeProps.to) ||
-        "",
-      to2: (props.history.location.state &&
-        props.history.location.state.composeProps.to)?props.history.location.state.composeProps.to.split(','):[],
+      to: 
+        (props.mailContacts && props.mailContacts !== null) 
+        ? props.mailContacts 
+        : (
+            (props.history.location.state && props.history.location.state.composeProps.to) 
+            ? props.history.location.state.composeProps.to
+            : ""
+          ),
+      to2: 
+        (props.mailContacts && props.mailContacts !== null) 
+        ? props.mailContacts.split(',') 
+        : (
+            (props.history.location.state && props.history.location.state.composeProps.to) 
+            ? props.history.location.state.composeProps.to.split(',')
+            :[]
+          ),        
       cc:
         (props.history.location.state &&
           props.history.location.state.composeProps.cc) ||
@@ -154,6 +163,8 @@ export class ComposeMessage extends PureComponent {
         bbdd: null,
         company: null
       });
+    } else if (this.props.mailContacts) {
+      this.props.setMailContacts(null);
     }
 
     this.props.history.push("/inbox");
@@ -162,6 +173,8 @@ export class ComposeMessage extends PureComponent {
   async sentEmail(message) {
     //const emailDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
     console.log("SentEmail:" + message.id + " Subject:" +  message.subject + " SentDate:" +  message.sentDateTime);
+    this.props.setMailContacts(null);
+
     window.dispatchEvent(
       new CustomEvent("SentMessage", {
         detail: {
@@ -423,6 +436,7 @@ export class ComposeMessage extends PureComponent {
         to2.push(address);
         const to = to2.join(",");  
         this.setState({to2, to})
+        this.props.setMailContacts(to);
       } else if(id === 'cc') {
         const cc2 = [...this.state.cc2];
         cc2.push(address);
@@ -449,6 +463,7 @@ export class ComposeMessage extends PureComponent {
       to2.splice(to2.indexOf(address), 1);
       const to = to2.join(",");
       this.setState({to2, to})
+      this.props.setMailContacts(to);
     } else if (id === "cc") {
       const cc2 = [...this.state.cc2];
       cc2.splice(cc2.indexOf(address), 1);
@@ -723,7 +738,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile))
+  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
+  setMailContacts: mailContacts => dispatch(ACTIONS.setMailContacts(mailContacts))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ComposeMessage);
