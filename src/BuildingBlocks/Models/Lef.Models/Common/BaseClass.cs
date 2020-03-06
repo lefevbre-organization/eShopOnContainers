@@ -18,18 +18,18 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         public string RemoveProblematicChars(string inputString)
         {
             // string inputString = "Räksmörgås";
-            string asAscii = Encoding.ASCII.GetString(
+            string latinText = iso.GetString(
                 Encoding.Convert(
                     Encoding.UTF8,
                     Encoding.GetEncoding(
-                        Encoding.ASCII.EncodingName,
+                        "ISO-8859-1",
                         new EncoderReplacementFallback(string.Empty),
                         new DecoderExceptionFallback()
-                        ),
+                    ),
                     Encoding.UTF8.GetBytes(inputString)
                 )
             );
-            return asAscii;
+            return latinText;
         }
 
         public void TraceMessage(

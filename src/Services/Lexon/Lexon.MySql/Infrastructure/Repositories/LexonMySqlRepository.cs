@@ -302,15 +302,16 @@ namespace Lexon.MySql.Infrastructure.Repositories
         public async Task<Result<int>> AddRelationMailAsync(ClassificationAddView classification)
         {
             var result = new Result<int>(0);
-            foreach (var mail in classification.listaMails)
-            {
-                mail.Subject = RemoveProblematicChars(mail.Subject);
-            }
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
                 try
                 {
+                    foreach (var mail in classification.listaMails)
+                    {
+                        mail.Subject = RemoveProblematicChars(mail.Subject);
+                    }
+
                     string filtro = GiveMeRelationMultipleFilter(classification.bbdd, classification.idUser, classification.listaMails, classification.idType, classification.idRelated);
                     conn.Open();
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddRelation, conn))
