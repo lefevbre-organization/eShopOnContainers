@@ -1,5 +1,5 @@
 variables:
-    registryEndpoint: lefevbre-docker
+    registryEndpoint: lefebvre-docker
 trigger:
   branches:
     include:
