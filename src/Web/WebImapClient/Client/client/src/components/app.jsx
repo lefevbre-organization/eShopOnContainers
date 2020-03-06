@@ -446,7 +446,7 @@ class App extends Component {
     //setTimeout(function () { this.registerConnectorApp(); }, 2200);
     this.registerConnectorApp();
 
-    const { userId, idCaseFile, bbdd, idEmail, idFolder, account } = this.props.lexon;
+    const { userId, idCaseFile, bbdd, idEmail, idFolder, account, mailContacts } = this.props.lexon;
     const { imapSsl, serverHost, serverPort, smtpHost, smtpPort, smtpSsl, user, password} = this.props.all.login.formValues;
     const { email } = this.props;
     if (userId !== null && email !== null) {
@@ -481,8 +481,10 @@ class App extends Component {
       if (idCaseFile !== null && idCaseFile !== undefined && idEmail == undefined) {
         this.props.newMessage();
         this.onSetSidebarOpenLexon(true);
-      }
-      else if (idEmail){
+      } else if (mailContacts){
+        this.props.newMessage(mailContacts.split(','));
+        this.onSetSidebarOpenLexon(true);
+      } else if (idEmail){
         console.log("**************** Ha llegado un id de email");
         console.log(this.state);
         console.log(this.props);
@@ -769,7 +771,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   reloadFolders: credentials => getFolders(dispatch, credentials, true),
   reloadMessageCache: (user, folder) => resetFolderMessagesCache(dispatch, user, folder),
-  newMessage: () => editNewMessage(dispatch),
+  newMessage: to => editNewMessage(dispatch, to),
   selectFolder: (folder, user) => {
     dispatch(selectFolder(folder));
     clearSelectedMessage(dispatch);

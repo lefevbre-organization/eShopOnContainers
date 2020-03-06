@@ -1,0 +1,20 @@
+variables:
+    registryEndpoint: lefebvre-docker
+trigger:
+  branches:
+    include:
+    - master
+    - dev
+  paths:
+    include:
+    - src/BuildingBlocks/*
+    - src/Services/Lexon/*
+    - k8s/helm/lexon-api/*
+jobs:
+- template: ../buildimages.yaml
+  parameters:
+    services: lexon.api
+    registryEndpoint: $(registryEndpoint)
+    helmfrom: $(Build.SourcesDirectory)/k8s-LEF/helm
+    helmto: $(Build.ArtifactStagingDirectory)/k8s-LEF/helm    
+
