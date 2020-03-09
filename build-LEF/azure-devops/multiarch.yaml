@@ -1,7 +1,7 @@
 parameters:
   image: ''
   branch: ''
-  registry: 'eshop'
+  registry: 'elefebvreoncontainers'
   registryEndpoint: ''
 
 jobs:

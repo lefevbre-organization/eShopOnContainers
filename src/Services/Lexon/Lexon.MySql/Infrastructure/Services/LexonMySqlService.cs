@@ -37,16 +37,15 @@ namespace Lexon.MySql.Infrastructure.Services
 
         public async Task<Result<int>> RemoveRelationMailAsync(ClassificationRemoveView classification) => await _lexonRepository.RemoveRelationMailAsync(classification);
 
-        public async Task<Result<JosRelationsList>> GetRelationsAsync(ClassificationSearchView classification) => await _lexonRepository.SearchRelationsAsync(classification);
+        public async Task<MySqlCompany> GetRelationsAsync(ClassificationSearchView classification) => await _lexonRepository.GetRelationsAsync(classification);
 
         #endregion Relations
 
         #region Entities
 
-        public async Task<MySqlList<JosEntityList, JosEntity>> GetEntitiesAsync(EntitySearchView entitySearch) => await _lexonRepository.SearchEntitiesAsync(entitySearch);
+        public async Task<MySqlCompany> GetEntitiesAsync(IEntitySearchView entitySearch) => await _lexonRepository.GetEntitiesAsync(entitySearch);
 
-        public async Task<MySqlCompany> GetEntitiesNewAsync(EntitySearchView entitySearch) => await _lexonRepository.GetEntitiesAsync(entitySearch);
-        public async Task<Result<JosEntity>> GetEntityAsync(EntitySearchById entitySearch) => await _lexonRepository.GetEntityAsync(entitySearch);
+        public async Task<Result<LexEntity>> GetEntityAsync(EntitySearchById entitySearch) => await _lexonRepository.GetEntityAsync(entitySearch);
 
         public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync() => await _lexonRepository.GetMasterEntitiesAsync();
 
@@ -63,7 +62,7 @@ namespace Lexon.MySql.Infrastructure.Services
         /// <param name="idEntityType">opcionalmente el tipo de entidad si viene relacionado</param>
         /// <param name="idEntity">opcionalmente el id de entidad si viene relacionado</param>
         /// <returns></returns>
-        public async Task<Result<JosUser>> GetUserAsync(
+        public async Task<Result<LexUser>> GetUserAsync(
             string idUser,
             string bbdd,
             string provider = null,
@@ -76,16 +75,16 @@ namespace Lexon.MySql.Infrastructure.Services
             bool addTerminatorToToken = true)
         {
             var resultado = await _lexonRepository.GetUserAsync(idUser);
-            if (resultado?.data?.IdUser == null || resultado?.data?.IdUser == 0)
+            if (string.IsNullOrEmpty(resultado?.data?.idUser))
             {
-                resultado.errors.Add(new ErrorInfo() { code="5000", message= "No se recupera un idUser desde Lexon" });
+                resultado.errors.Add(new ErrorInfo() { code = "5000", message = "No se recupera un idUser desde Lexon" });
             }
 
-            resultado.data.Token = BuildTokenWithPayloadAsync(new TokenModel
+            resultado.data.token = BuildTokenWithPayloadAsync(new TokenModel
             {
                 idClienteNavision = idUser,
-                name = resultado?.data?.Name,
-                idUserApp = resultado?.data?.IdUser,
+                name = resultado?.data?.name,
+                idUserApp = GetLongIdUser(resultado?.data?.idUser),
                 bbdd = bbdd,
                 provider = provider,
                 mailAccount = mailAccount,
@@ -96,9 +95,16 @@ namespace Lexon.MySql.Infrastructure.Services
                 mailContacts = mailContacts,
                 roles = GetRolesOfUser(idUser)
             }).Result;
-            resultado.data.Token += addTerminatorToToken ? "/" : "";
+
+            resultado.data.token += addTerminatorToToken ? "/" : "";
 
             return resultado;
+        }
+
+        private long? GetLongIdUser(string idUser)
+        {
+            long.TryParse(idUser, out long idUserLong);
+            return idUserLong;
         }
 
         /// <summary>
@@ -173,7 +179,65 @@ namespace Lexon.MySql.Infrastructure.Services
 
         #endregion User and tokens
 
-        public async Task<Result<JosUserCompanies>> GetCompaniesFromUserAsync(int pageSize, int pageIndex, string idUser) 
-            => await _lexonRepository.GetCompaniesListAsync(pageSize, pageIndex, idUser);
+        public async Task<Result<LexUser>> GetCompaniesFromUserAsync(string idUser)
+            => await _lexonRepository.GetCompaniesListAsync(idUser);
+
+        public async Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder)
+            => await _lexonRepository.AddFolderToEntityAsync(entityFolder);
+
+        public Result<LexNestedEntity> GetNestedFolderAsync(FolderNestedView entityFolder)
+        {
+            var limit = entityFolder.nestedLimit <= 0 ? 2 : entityFolder.nestedLimit;
+
+            var result = new Result<LexNestedEntity>(new LexNestedEntity());
+            var entitySearch = new EntitySearchFoldersView(entityFolder.bbdd, entityFolder.idUser) 
+            {
+                idFolder= entityFolder.idFolder 
+            };
+            
+            var partialResultTop = _lexonRepository.GetEntitiesAsync(entitySearch).Result;
+            result.errors.AddRange(partialResultTop.Errors);
+            result.infos.AddRange(partialResultTop.Infos);
+
+            if (!partialResultTop.PossibleHasData())
+            {
+                result.infos.Add(new Info() { code = "noChilds", message = $"{entityFolder.idFolder} no tiene  folders anidados" });
+                return result;
+            }
+
+            var entity = new LexNestedEntity(partialResultTop.Data[0]);
+
+            GetRecursiveEntities(entityFolder, result, entity, ref limit);
+
+            result.data = entity;
+            return result;
+        }
+
+        private void GetRecursiveEntities(FolderNestedView entityFolder, Result<LexNestedEntity> result, LexNestedEntity entity, ref int limit)
+        {
+            //if (limit == 0)
+            //{
+            //    result.infos.Add(new Info { code = "limited_rebase", message = $"{entity.idRelated} ha llegado al limnite de anidamiento" });
+            //    return;
+            //}
+
+            var entitySearchSon = new EntitySearchFoldersView(entityFolder.bbdd, entityFolder.idUser)
+            {
+                idParent = entity.idRelated
+            };
+
+            var partialResult = _lexonRepository.GetEntitiesAsync(entitySearchSon).Result;
+            if (!partialResult.PossibleHasData())          
+                return;
+            
+
+            foreach (var item in partialResult.Data)
+            {
+                var nestedentity = new LexNestedEntity(item);
+                GetRecursiveEntities(entityFolder, result, nestedentity, ref limit);
+                entity.subChild.Add(nestedentity);
+            };
+            //limit -= 1;
+        }
     }
 }

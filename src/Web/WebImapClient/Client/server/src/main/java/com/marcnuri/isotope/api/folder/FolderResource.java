@@ -190,6 +190,15 @@ public class FolderResource implements ApplicationContextAware {
         return ResponseEntity.ok(message);
     }
 
+    @GetMapping(path = "/{folderId}/messages/{messageId}/raw")
+    public ResponseEntity<String> getMessageRaw(
+            @PathVariable("folderId") String folderId, @PathVariable("messageId") Long messageId) {
+
+        log.debug("Loading message {} from folder {}", messageId, folderId);
+        final String rawMessage = imapServiceFactory.getObject().getMessageRaw(Folder.toId(folderId), messageId);
+        return ResponseEntity.ok(rawMessage);
+    }
+
     @GetMapping(path = "/{folderId}/messages/{messageId}/attachments/{id}")
     public ResponseEntity<Void> getAttachment(
             @PathVariable("folderId") String folderId, @PathVariable("messageId") Long messageId,

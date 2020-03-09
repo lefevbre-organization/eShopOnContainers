@@ -1,9 +1,7 @@
 ﻿namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
-    public class EntitySearchView : EntityView
+    public class EntitySearchView : EntityView, IEntitySearchView
     {
-        /// <summary>id to filter (use in documents and folders entities</summary>
-        public long? idFilter { get; set; }
 
         /// <summary> string with search filter </summary>
         public string search { get; set; }

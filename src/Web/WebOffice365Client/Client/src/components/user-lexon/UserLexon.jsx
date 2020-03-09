@@ -6,6 +6,7 @@ import { signOut } from "../../api_graph/authentication";
 import { PROVIDER } from "../../constants";
 import { getUserApplication } from '../../api_graph';
 import { getUser } from "../../api_graph/accounts";
+import * as base64 from 'base-64';
 
 class UserLexon extends Component {
   constructor(props) {
@@ -26,12 +27,20 @@ class UserLexon extends Component {
     const casefile = this.props.match.params.idCaseFile;
     const bbdd = this.props.match.params.bbdd;
     const company = this.props.match.params.idCompany;
+    const mailContacts = this.props.match.params.mailContacts;
     this.props.setCaseFile({
       casefile: casefile,
       bbdd: bbdd,
       company: company
     });
 
+    if (mailContacts){
+      console.log('Contactos recibidos');
+      const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+      if (base64regex.test(mailContacts)){
+        this.props.setMailContacts(base64.decode(mailContacts));
+      }
+    }
     // const isNewAccount = user.slice(2, 3) === "1" ? true : false;
     // this.checkIsAuthenticated();
     // if (isNewAccount) {
@@ -121,7 +130,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   setUser: user => dispatch(ACTIONS.setUser(user)),
-  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile))
+  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
+  setMailContacts: mailContacts => dispatch(ACTIONS.setMailContacts(mailContacts))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserLexon);

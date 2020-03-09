@@ -26,24 +26,36 @@ export class ComposeMessage extends PureComponent {
     super(props);
     this.state = {
       to:
-        (props.history.location.state &&
-          props.history.location.state.composeProps.to) ||
-        "",
-        to2: (props.history.location.state &&
-          props.history.location.state.composeProps.to)?props.history.location.state.composeProps.to.split(','):[],
-        cc:
+        (props.mailContacts && props.mailContacts !== null) 
+        ? props.mailContacts 
+        : (
+            (props.history.location.state && props.history.location.state.composeProps.to) 
+            ? props.history.location.state.composeProps.to
+            : ""
+          ),
+      to2: 
+        (props.mailContacts && props.mailContacts !== null) 
+          ? props.mailContacts.split(',') 
+          : (
+              (props.history.location.state && props.history.location.state.composeProps.to) 
+              ? props.history.location.state.composeProps.to.split(',')
+              :[]
+            ),       
+      cc:
         (props.history.location.state &&
           props.history.location.state.composeProps.cc) ||
         "",
-        cc2:(props.history.location.state &&
-          props.history.location.state.composeProps.cc)?props.history.location.state.composeProps.cc.split(','):[],
-        bcc:
+      cc2:
+        (props.history.location.state &&
+          props.history.location.state.composeProps.cc) ? props.history.location.state.composeProps.cc.split(',') : [],
+      bcc:
         (props.history.location.state &&
           props.history.location.state.composeProps.bcc) ||
         "",
-        bcc2:(props.history.location.state &&
-          props.history.location.state.composeProps.bcc)?props.history.location.state.composeProps.bcc.split(','):[],
-        subject:
+      bcc2:
+        (props.history.location.state &&
+          props.history.location.state.composeProps.bcc) ? props.history.location.state.composeProps.bcc.split(',') : [],
+      subject:
         (props.history.location.state &&
           props.history.location.state.composeProps.subject) ||
         "",
@@ -152,9 +164,9 @@ export class ComposeMessage extends PureComponent {
       this.props.lexon.idCaseFile === null ||
       this.props.lexon.idCaseFile === undefined
     ) {
-      this.props.history.goBack();
+      this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
     } else {
-      if (this.props.casefile != null && this.props.casefile !== undefined) {
+      if (this.props.casefile !== null && this.props.casefile !== undefined) {
         window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
         this.props.setCaseFile({
           casefile: null,
@@ -169,21 +181,24 @@ export class ComposeMessage extends PureComponent {
   }
 
   goBack() {
-    if (this.props.casefile != null && this.props.casefile !== undefined) {
+    if (this.props.casefile !== null && this.props.casefile !== undefined) {
       window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
       this.props.setCaseFile({
         casefile: null,
         bbdd: null,
         company: null
       });
+    } else if (this.props.mailContacts) {
+      this.props.setMailContacts(null);
     }
-
     //this.resetFields();  
     this.closeModal();
   }
 
   sentEmail(email) {
     const emailDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+    
+    this.props.setMailContacts(null);
 
     window.dispatchEvent(
       new CustomEvent("SentMessage", {
@@ -440,6 +455,7 @@ export class ComposeMessage extends PureComponent {
         to2.splice(to2.indexOf(address), 1);
         const to = to2.join(",");
         this.setState({to2, to})
+        this.props.setMailContacts(to);
       } else if (id === "cc") {
         const cc2 = [...this.state.cc2];
         cc2.splice(cc2.indexOf(address), 1);
@@ -498,7 +514,6 @@ export class ComposeMessage extends PureComponent {
         uppy.addFile(newAttachment);
       };
   
-      debugger
       Array.from(event.target.files).forEach(file => {
         //const fileReader = new FileReader();
         //fileReader.onload = addAttachment.bind(this, file);
@@ -695,7 +710,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile))
+  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
+  setMailContacts: mailContacts => dispatch(ACTIONS.setMailContacts(mailContacts))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ComposeMessage);

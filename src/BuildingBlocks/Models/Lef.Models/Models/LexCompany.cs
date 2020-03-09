@@ -25,5 +25,10 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         /// Coleccion de entidades de la compañia
         /// </summary>
         public LexEntity[] entities { get; set; }
+
+        /// <summary>
+        /// Coleccion de mails con los que esta relacionado (adjunción)
+        /// </summary>
+        public LexActuation[] actuations { get; set; }
     }
 }

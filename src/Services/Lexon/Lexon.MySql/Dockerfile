@@ -37,7 +37,7 @@ RUN dotnet restore eLefebvreOnContainers-ServicesAndWebApps.sln
 COPY . .
 WORKDIR /src/src/Services/Lexon/Lexon.MySql
 RUN dotnet publish --no-restore -c Release -o /app
-RUN ls -lha /app
+# RUN ls -lha /app
 
 #FROM build as unittest
 #WORKDIR /src/src/Services/Lexon/Lexon.UnitTests

@@ -3,6 +3,6 @@
     public class EntitySearchById : EntityView
     {
 
-        public long idEntity { get; set; }
+        public long? idEntity { get; set; }
     }
 }

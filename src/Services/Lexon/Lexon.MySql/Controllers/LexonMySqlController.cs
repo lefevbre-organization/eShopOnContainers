@@ -26,15 +26,16 @@ namespace Lexon.MySql.Controllers
         }
 
         [HttpGet("user")]
-        [ProducesResponseType(typeof(Result<JosUser>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<JosUser>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UserAsync(string idNavisionUser = "E1621396")
         {
             if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
             var result = await _lexonService.GetUserAsync(idNavisionUser);
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            // return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            return Ok(result);
         }
 
         /// <summary>
@@ -43,8 +44,8 @@ namespace Lexon.MySql.Controllers
         /// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>
         /// <returns></returns>
         [HttpPut("token")]
-        [ProducesResponseType(typeof(Result<JosUser>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<JosUser>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> TokenAsync(
             [FromBody] TokenModelView tokenRequest
             , bool addTerminatorToToken = true
@@ -55,25 +56,22 @@ namespace Lexon.MySql.Controllers
 
             var result = await _lexonService.GetUserAsync(
                 tokenRequest.idClienteNavision, tokenRequest.bbdd,
-                tokenRequest.provider, tokenRequest.mailAccount, tokenRequest.idMail, tokenRequest.folder, 
+                tokenRequest.provider, tokenRequest.mailAccount, tokenRequest.idMail, tokenRequest.folder,
                 tokenRequest.idEntityType, tokenRequest.idEntity,
                 tokenRequest.mailContacts, addTerminatorToToken);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpGet("companies")]
-        [ProducesResponseType(typeof(Result<JosUserCompanies>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<JosUserCompanies>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CompaniesAsync(
-            [FromQuery]int pageSize = 0
-            , [FromQuery]int pageIndex = 1
-            , string idUser = "449")
+        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> CompaniesAsync(string idUser = "449")
 
         {
             if (string.IsNullOrEmpty(idUser))
                 return BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
-            var result = await _lexonService.GetCompaniesFromUserAsync(pageSize, pageIndex, idUser);
+            var result = await _lexonService.GetCompaniesFromUserAsync(idUser);
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
@@ -87,56 +85,87 @@ namespace Lexon.MySql.Controllers
             return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        /// <summary>
-        /// Search entities
-        /// </summary>
         [HttpPost("entities/search")]
-        [ProducesResponseType(typeof(MySqlList<JosEntityList, JosEntity>), (int)HttpStatusCode.OK)]
-        //[ProducesResponseType(typeof(MySqlList<JosEntityList, JosEntity>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> EntitiesAsync( [FromBody] EntitySearchView entitySearch )
-        {
-            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null)
-                return BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
-           // var resultTest = await _lexonService.GetEntitiesNewAsync(entitySearch);
-            var result = await _lexonService.GetEntitiesAsync(entitySearch);
-            return Ok(result);
-
-            //return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-        }
-
-        /// <summary>
-        /// Search entities
-        /// </summary>
-        [HttpPost("entities/search/new")]
         [ProducesResponseType(typeof(MySqlCompany), (int)HttpStatusCode.OK)]
-        //[ProducesResponseType(typeof(MySqlList<JosEntityList, JosEntity>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetEntitiesAsync([FromBody] EntitySearchView entitySearch)
         {
             if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null)
                 return BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
-  
-            var resultTest = await _lexonService.GetEntitiesNewAsync(entitySearch);
-            return Ok(resultTest);
 
-
+            var result = await _lexonService.GetEntitiesAsync(entitySearch);
+            return Ok(result);
         }
 
-        /// <summary>
-        /// Search entities
-        /// </summary>
-        [HttpPost("entities/getbyid")]
-        [ProducesResponseType(typeof(Result<JosEntity>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<JosEntity>), (int)HttpStatusCode.BadRequest)]
+        [HttpPost("entities/folders/search")]
+        [ProducesResponseType(typeof(MySqlCompany), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> EntityByIdAsync( [FromBody] EntitySearchById entitySearch )
+        public async Task<IActionResult> GetEntitiesFoldersAsync([FromBody] EntitySearchFoldersView entitySearch)
+        {
+            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null)
+                return BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
+
+            var result = await _lexonService.GetEntitiesAsync(entitySearch);
+            return Ok(result);
+        }
+
+        [HttpPost("entities/documents/search")]
+        [ProducesResponseType(typeof(MySqlCompany), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetEntitiesDocumentsAsync([FromBody] EntitySearchDocumentsView entitySearch)
+        {
+            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null)
+                return BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
+
+            var result = await _lexonService.GetEntitiesAsync(entitySearch);
+            return Ok(result);
+        }
+
+        [HttpPost("entities/getbyid")]
+        [ProducesResponseType(typeof(Result<LexEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexEntity>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> EntityByIdAsync([FromBody] EntitySearchById entitySearch)
         {
             if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null)
                 return BadRequest("values invalid. Must be a valid user, bbdd, idType and idEntity to get de Entity");
 
             var result = await _lexonService.GetEntityAsync(entitySearch);
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            return Ok(result);
+        }
+
+        [HttpPost("entities/folders/nested")]
+        [ProducesResponseType(typeof(Result<LexNestedEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexNestedEntity>), (int)HttpStatusCode.BadRequest)]
+        public IActionResult GetNestedFoldersAsync(
+                 [FromBody] FolderNestedView entityFolder
+            )
+        {
+            if (string.IsNullOrEmpty(entityFolder.idUser) || string.IsNullOrEmpty(entityFolder.bbdd) || entityFolder?.idFolder <= 0)
+                return BadRequest("values invalid. Must be a valid user, bbdd type and idFolder for get the nested folders");
+
+            Result<LexNestedEntity> result = _lexonService.GetNestedFolderAsync(entityFolder);
+
+            return Ok(result);
+        }
+
+        [HttpPost("entities/folders/add")]
+        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddEntityFolderAsync(
+             [FromBody] FolderToEntity entityFolder
+            )
+        {
+            if (string.IsNullOrEmpty(entityFolder.idUser) || string.IsNullOrEmpty(entityFolder.bbdd)
+                   || entityFolder.idEntity == null || entityFolder.idEntity <= 0
+                   || entityFolder.idType == null || entityFolder.idType <= 0
+                   )
+                return BadRequest("values invalid. Must be a valid user, bbdd , idtype and idEnttity for make a folder to the entity");
+
+
+            var result = await _lexonService.AddFolderToEntityAsync(entityFolder);
+
+            return Ok(result);
         }
 
         [HttpPost("classifications/add")]
@@ -147,11 +176,12 @@ namespace Lexon.MySql.Controllers
         {
             if (string.IsNullOrEmpty(classification?.idUser) || string.IsNullOrEmpty(classification?.bbdd) ||
                 classification?.listaMails?.Length < 1 || classification?.idType == null || classification?.idType < 1 ||
-                classification?.idRelated == null|| classification?.idRelated < 1)
+                classification?.idRelated == null || classification?.idRelated < 1)
                 return BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated and bbdd to create an actuation with the mail");
 
             var result = await _lexonService.AddRelationMailAsync(classification);
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            return Ok(result);
         }
 
         [HttpPost("classifications/contacts/add")]
@@ -167,7 +197,8 @@ namespace Lexon.MySql.Controllers
 
             var result = await _lexonService.AddRelationContactsMailAsync(classification);
 
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            return Ok(result);
         }
 
         [HttpPost("classifications/delete")]
@@ -183,23 +214,23 @@ namespace Lexon.MySql.Controllers
 
             var result = await _lexonService.RemoveRelationMailAsync(classification);
 
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            return Ok(result);
         }
 
         /// <summary>
         /// Search classifications of mail
         /// </summary>
         [HttpPost("classifications/search")]
-        [ProducesResponseType(typeof(Result<JosRelationsList>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<JosRelationsList>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(MySqlCompany), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> RelationsAsync( [FromBody]ClassificationSearchView classification )
+        public async Task<IActionResult> RelationsAsync([FromBody]ClassificationSearchView classification)
         {
             if (string.IsNullOrEmpty(classification.idUser) || string.IsNullOrEmpty(classification.bbdd) || string.IsNullOrEmpty(classification.idMail))
                 return BadRequest("values invalid. Must be a valid user, idMail and bbdd to search the entities");
 
             var result = await _lexonService.GetRelationsAsync(classification);
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            return Ok(result);
         }
     }
 }

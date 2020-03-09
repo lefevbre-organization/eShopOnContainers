@@ -28,6 +28,10 @@ import com.marcnuri.isotope.api.message.Attachment;
 import com.marcnuri.isotope.api.message.Message;
 import com.marcnuri.isotope.api.message.MessageUtils;
 import com.sun.mail.util.MailSSLSocketFactory;
+import com.sun.mail.imap.IMAPFolder;
+import com.sun.mail.imap.IMAPStore;
+
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +46,11 @@ import javax.annotation.PreDestroy;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.Folder;
+import javax.mail.Address;
+import javax.mail.Flags;
+import javax.mail.event.TransportEvent;
+import javax.mail.event.TransportListener;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -50,6 +59,8 @@ import javax.mail.internet.MimeUtility;
 import javax.mail.util.ByteArrayDataSource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.ByteArrayOutputStream;
+
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.Properties;
@@ -63,6 +74,7 @@ import static com.marcnuri.isotope.api.folder.FolderResource.REL_DOWNLOAD;
 import static com.marcnuri.isotope.api.message.Message.HEADER_IN_REPLY_TO;
 import static com.marcnuri.isotope.api.message.Message.HEADER_REFERENCES;
 
+
 /**
  * Created by Marc Nuri <marc@marcnuri.com> on 2018-10-07.
  */
@@ -72,6 +84,8 @@ public class SmtpService {
 
     private static final Logger log = LoggerFactory.getLogger(SmtpService.class);
 
+    private static final String IMAP_PROTOCOL = "imap";
+    private static final String IMAPS_PROTOCOL = "imaps";
     private static final String SMTP_PROTOCOL = "smtp";
     private static final String SMTPS_PROTOCOL = "smtps";
     private static final Pattern DATA_URI_IMAGE_PATTERN = Pattern.compile("\"data:(image\\/[^;]*?);base64,([^\\\"]*?)\"");
@@ -87,6 +101,8 @@ public class SmtpService {
 
     private Session session;
     private Transport smtpTransport;
+    public Credentials originalCredentials;
+    public String sentFolderName;
 
     @Autowired
     public SmtpService(MailSSLSocketFactory mailSSLSocketFactory) {
@@ -107,11 +123,118 @@ public class SmtpService {
         }
     }
 
+    public Boolean autoSentFolder( Address[] provider){
+
+        if (provider.length > 0){
+            String email = provider[0].toString();
+            log.info("Address: " + email);
+            if (email.contains("@gmail.com") || email.contains("@outlook.com") || email.contains("@hotmail.com") 
+                || email.contains("@lefebvre.es") || email.contains("@lefebvreelderecho.com")){
+                //log.info("Provider stores in sent Folder automatically");
+                return true;
+            }
+            //log.info("Provider doesn't store in sent Folder automatically. Doing it Manually");
+        }
+        return false;
+    }
+
+    public void copyMsgToSentFolder(MimeMessage msg){
+        //log.info("ImapStore:" + imapStore.toString());
+        try {
+            //log.info("STORE SENT MESSAGE BEGINNING" );
+            final Session session;
+            IMAPStore imapStore;
+            Folder folder;
+            
+            session = Session.getInstance(initMailPropertiesImap(originalCredentials, mailSSLSocketFactory), null);
+            imapStore = (IMAPStore) session.getStore(originalCredentials.getImapSsl() ? IMAPS_PROTOCOL : IMAP_PROTOCOL);
+            imapStore.connect(
+                originalCredentials.getServerHost(),
+                originalCredentials.getServerPort(),
+                originalCredentials.getUser(),
+                originalCredentials.getPassword());
+
+            folder = imapStore.getDefaultFolder();
+
+            processFolderElements(folder, false, "");
+            if ((folder.getType() & Folder.HOLDS_FOLDERS) != 0) {
+                Folder[] f = folder.list("%");
+                for (int i = 0; i < f.length; i++)
+                processFolderElements(f[i], true, "    ");
+            }
+
+            //log.info("Sent folder Name: " + sentFolderName);
+
+            folder = imapStore.getFolder(sentFolderName);
+            if (folder == null){
+                log.debug("Error obteniendo el folder");
+            } else {
+
+                javax.mail.Message[] msgs = new javax.mail.Message[1];
+                msgs[0] = msg;
+                msgs[0].setFlag(Flags.Flag.SEEN, true);
+                
+                folder.appendMessages(msgs);
+
+                // A implementar: verificar si el mensaje ya existe antes de insertarlo.
+                // if (!folder.isOpen()) {
+                //     folder.open(READ_ONLY);
+                // }
+                // final IMAPMessage imapMessage = (IMAPMessage)folder.getMessageByUID(msg.getMessageID());
+                // if (imapMessage == null) {
+                //     folder.close();
+                //     throw new NotFoundException("Message not found");
+                // }
+                // final MessageWithFolder ret = MessageWithFolder.from(folder, imapMessage);
+                // readContentIntoMessage(folderId, imapMessage, ret);
+                // folder.close();
+            }
+
+            imapStore.close();
+        } catch (Exception e) {
+            //TODO: handle exception
+            //log.info("Error de los buenos");
+            throw new IsotopeException("Problem leaving a copy of the message in Sent Folder", e);
+        }
+    }
+
     String sendMessage(HttpServletRequest request, Message message) {
         try {
             final Credentials credentials = getCredentials();
             final Charset currentCharset = Charset.defaultCharset();
             final MimeMessage mimeMessage = new MimeMessage(getSession(credentials));
+            final Transport smtpTransport = getSmtpTransport(credentials); 
+            final TransportListener transportListener = new TransportListener(){
+            
+                @Override
+                public void messagePartiallyDelivered(TransportEvent e) {
+                    // TODO Auto-generated method stub
+                    log.debug("messagePartiallyDelivered");
+                }
+            
+                @Override
+                public void messageNotDelivered(TransportEvent e) {
+                    // TODO Auto-generated method stub
+                    log.debug("messagePartiallyDelivered");
+                }
+            
+                @Override
+                public void messageDelivered(TransportEvent e) {
+                    // TODO Auto-generated method stub
+                    log.debug("messageDelivered");
+                    try {
+                        if (!autoSentFolder(mimeMessage.getFrom())){
+                            log.debug("Leaving a copy of sent message into sent folder");
+                            copyMsgToSentFolder(mimeMessage);
+                        } else {
+                            log.debug("Sent folder automatically updated");
+                        }
+                    } catch (Exception ex1) {
+                        //TODO: handle exception
+                        throw new IsotopeException("Problem storing copy of message", ex1);
+                    }
+                }
+            };
             mimeMessage.setSentDate(new Date());
             if (credentials.getUser() != null && credentials.getUser().contains("@")) {
                 mimeMessage.setFrom(credentials.getUser());
@@ -167,10 +290,12 @@ public class SmtpService {
                             STYLES, finalContent).getBytes(), currentCharset),
                     String.format("%s; charset=\"%s\"", MediaType.TEXT_HTML_VALUE, currentCharset.name()));
             mimeMessage.setContent(multipart);
-
             mimeMessage.saveChanges();
+            
             String[] messageId = mimeMessage.getHeader("Message-Id");
-            getSmtpTransport(credentials).sendMessage(mimeMessage, mimeMessage.getAllRecipients());
+            smtpTransport.addTransportListener(transportListener);
+            smtpTransport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
+
             return messageId[0];
         } catch(MessagingException | IOException ex) {
             throw new IsotopeException("Problem sending message", ex);
@@ -191,6 +316,7 @@ public class SmtpService {
 
     private Session getSession(Credentials credentials) {
         if (session == null) {
+            originalCredentials = credentials;
             session = Session.getInstance(initMailProperties(credentials, mailSSLSocketFactory), null);
         }
         return session;
@@ -229,6 +355,20 @@ public class SmtpService {
         return ret;
     }
 
+    private static Properties initMailPropertiesImap(Credentials credentials, MailSSLSocketFactory mailSSLSocketFactory) {
+        final Properties ret = new Properties();
+        ret.put("mail.imap.ssl.enable", credentials.getImapSsl());
+        ret.put("mail.imap.connectiontimeout", DEFAULT_CONNECTION_TIMEOUT);
+        ret.put("mail.imap.connectionpooltimeout", DEFAULT_CONNECTION_TIMEOUT);
+        ret.put("mail.imap.ssl.socketFactory", mailSSLSocketFactory);
+        ret.put("mail.imap.starttls.enable", true);
+        ret.put("mail.imap.starttls.required", false);
+        ret.put("mail.imaps.socketFactory", mailSSLSocketFactory);
+        ret.put("mail.imaps.socketFactory.fallback", false);
+        ret.put("mail.imaps.ssl.socketFactory", mailSSLSocketFactory);
+        return ret;
+    }
+
     private static MimeBodyPart toBodyPart(HttpServletRequest request, Attachment attachment)
             throws MessagingException, IOException {
 
@@ -246,5 +386,48 @@ public class SmtpService {
         mimeAttachment.setDataHandler(new DataHandler(dataSource));
         mimeAttachment.setFileName(MimeUtility.encodeText(attachment.getFileName()));
         return mimeAttachment;
+    }
+
+
+    private void processFolderElements(Folder folder, boolean recurse, String tab)
+					throws Exception {
+        // Uncomment this section to debug:
+        // log.info(tab + "Name:      " + folder.getName());
+        // log.info(tab + "Full Name: " + folder.getFullName());
+        // log.info(tab + "URL:       " + folder.getURLName());
+        // if (!folder.isSubscribed())
+        // log.info(tab + "Not Subscribed");
+        // if ((folder.getType() & Folder.HOLDS_MESSAGES) != 0) {
+        //     if (folder.hasNewMessages())
+        //         log.info(tab + "Has New Messages");
+        //     log.info(tab + "Total Messages:  " + folder.getMessageCount());
+        //     log.info(tab + "New Messages:    " + folder.getNewMessageCount());
+        //     log.info(tab + "Unread Messages: " + folder.getUnreadMessageCount());
+        // }
+        // if ((folder.getType() & Folder.HOLDS_FOLDERS) != 0)
+        //     log.info(tab + "Is Directory");
+
+        if (folder instanceof IMAPFolder) {
+            IMAPFolder f = (IMAPFolder)folder;
+            String[] attrs = f.getAttributes();
+            if (attrs != null && attrs.length > 0) {
+                //log.info(tab + "IMAP Attributes:");
+                for (int i = 0; i < attrs.length; i++){
+                    //log.info(tab + "    " + attrs[i]);
+                    if ("\\Sent".equals(attrs[i])){
+                        //log.info("Localizado el folder de enviados ");
+                        sentFolderName = f.getFullName();
+                    }
+                }
+            }
+        }
+        //log.info("***");
+        if ((folder.getType() & Folder.HOLDS_FOLDERS) != 0) {
+            if (recurse) {
+            Folder[] f = folder.list();
+            for (int i = 0; i < f.length; i++)
+            processFolderElements(f[i], recurse, tab + "    ");
+            }
+        }
     }
 }

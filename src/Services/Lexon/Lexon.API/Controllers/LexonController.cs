@@ -1,5 +1,5 @@
-﻿using Lexon.API.Model;
-using Lexon.Infrastructure.Services;
+﻿using Lexon.Infrastructure.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
@@ -7,6 +7,7 @@ using Microsoft.eShopOnContainers.Services.Lexon.API.ViewModel;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -33,8 +34,8 @@ namespace Lexon.API.Controllers
 
         [HttpGet]
         [Route("user")]
-        [ProducesResponseType(typeof(Result<LexonUser>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<LexonUser>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UsersAsync(string idUserNavision = "E1621396")
 
         {
@@ -43,43 +44,53 @@ namespace Lexon.API.Controllers
 
             var result = await _usersService.GetUserAsync(idUserNavision);
 
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            if (result.errors.Count() > 0 && result.data?.idUser == null)
+            {
+                result.data = null;
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            else if (result.errors.Count() == 0 && result.data?.idUser == null)
+            {
+                return NotFound(result);
+            }
+
+            return Ok(result);
+
         }
 
         [HttpGet]
         [Route("companies")]
-        [ProducesResponseType(typeof(Result<IEnumerable<LexonCompany>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<IEnumerable<LexonCompany>>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexCompany>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexCompany>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CompaniesAsync(string idUser = "449")
 
         {
             if (string.IsNullOrEmpty(idUser))
                 return (IActionResult)BadRequest("idUser need a correct value");
 
-            var result = await _usersService.GetCompaniesFromUserAsync(0, 1, idUser);
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            var result = await _usersService.GetCompaniesFromUserAsync(idUser);
+
+            if (result.errors.Count() > 0 && result.data?.Count() == 0)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            else if (result.errors.Count() == 0 && result.data?.Count() == 0)
+            {
+                return NotFound(result);
+            }
+
+            return Ok(result);
+
+           // return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpGet]
-        [Route("companies/select")]
-        [ProducesResponseType(typeof(Result<LexonCompany>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<LexonCompany>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> SelectCompanyAsync(
-            [FromQuery]string idUser
-            , [FromQuery]string bbdd)
-        {
-            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(bbdd))
-                return BadRequest("values invalid. Must be a valid user and bbdd to select the company");
-
-            var result = await _usersService.SelectCompanyAsync(idUser, bbdd);
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-        }
+        #region Classifications
 
         [HttpPost]
         [Route("classifications")]
-        [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<IEnumerable<LexonActuation>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> ClassificationsAsync(
+        [ProducesResponseType(typeof(Result<IEnumerable<LexActuation>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<IEnumerable<LexActuation>>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetClassificationsAsync(
             [FromBody] ClassificationSearchView classificationSearch
             //, [FromHeader(Name = "x-requestid")] string requestId
             )
@@ -90,7 +101,25 @@ namespace Lexon.API.Controllers
 
             var result = await _usersService.GetClassificationsFromMailAsync(classificationSearch);
 
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            Result<List<LexActuation>> actuaciones = new Result<List<LexActuation>>
+            {
+                data = result.DataActuation,
+                errors = result.Errors,
+                infos = result.Infos
+            };
+
+            if (actuaciones.errors.Count() > 0 && result.DataActuation.Count == 0)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, actuaciones);
+            }
+            else if (actuaciones.errors.Count() == 0 && result.DataActuation.Count == 0)
+            {
+                return NotFound(actuaciones);
+            }
+
+            return Ok(actuaciones);
+
+            // return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpPut]
@@ -140,39 +169,78 @@ namespace Lexon.API.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        #endregion Classifications
+
+        #region Entities
+
         [HttpGet("entities/types")]
         [ProducesResponseType(typeof(MySqlList<JosEntityTypeList, JosEntityType>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(MySqlList<JosEntityTypeList, JosEntityType>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> EntitiesTypesAsync()
+        public async Task<IActionResult> GetEntitiesTypesAsync()
         {
             var result = await _usersService.GetMasterEntitiesAsync();
             return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost("entities")]
-        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.OK)]
-        //[ProducesResponseType(typeof(MySqlList<JosEntityList, LexonEntityBase>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexonEntityBase>>), (int)HttpStatusCode.BadRequest)]
-        //[ProducesResponseType(typeof(MySqlList<JosEntityList, LexonEntityBase>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> EntitiesAsync(
-            [FromBody] EntitySearchView entitySearch
+        [HttpPost("entities/folders/add")]
+        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddEntityFolderAsync(
+             [FromBody] FolderToEntity entityFolder
             )
         {
-            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0)
-                return BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
+            if (string.IsNullOrEmpty(entityFolder.idUser) || string.IsNullOrEmpty(entityFolder.bbdd)
+                || entityFolder.idEntity == null || entityFolder.idEntity <= 0
+                || entityFolder.idType == null || entityFolder.idType <= 0
+                )
+                return BadRequest("values invalid. Must be a valid user, bbdd , idtype and idEnttity for make a folder to the entity");
 
-            var entities = await _usersService.GetEntitiesListAsync(entitySearch);
-
-            var paginatedEntities = new PaginatedItemsViewModel<LexonEntityBase>(entities.PageIndex, entities.PageSize, entities.Count, entities.Data);
-            var result = new Result<PaginatedItemsViewModel<LexonEntityBase>>(paginatedEntities, entities.Errors) {  infos = entities.Infos  };
+            var result = await _usersService.AddFolderToEntityAsync(entityFolder);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost("entities/new")]
+        [HttpPost("entities/files/post")]
+        [ProducesResponseType(typeof(Result<MailFileView>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> FilePost(
+            [FromBody] MailFileView fileMail
+            )
+        {
+            Result<MailFileView> resultFile = new Result<MailFileView>(fileMail);
+            var result = await _usersService.FilePostAsync(fileMail);
+            
+            if(result.errors.Count == 0)
+            {
+                resultFile.errors = result.errors;
+                resultFile.infos = result.infos;
+                return StatusCode(201, resultFile);
+
+            }
+
+            return BadRequest(result);
+        }
+
+        //[HttpGet("entities/files/{filename}", Name = "myFile")]
+        //[ProducesResponseType(typeof(FileContentResult), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType(typeof(NotFoundResult), (int)HttpStatusCode.NotFound)]
+        //public async Task<IActionResult> Get([FromRoute] string filename)
+        //{
+        //    var folderName = "files";
+        //    var folderPath = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+
+        //    var filePath = Path.Combine(folderPath, filename);
+        //    if (System.IO.File.Exists(filePath))
+        //    {
+        //        return File(await System.IO.File.ReadAllBytesAsync(filePath), "application/octet-stream", filename);
+        //    }
+        //    return NotFound();
+        //}
+
+        [HttpPost("entities")]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> EntitiesNewAsync(
+        public async Task<IActionResult> GetEntitiesAsync(
                 [FromBody] EntitySearchView entitySearch
                 )
         {
@@ -181,30 +249,104 @@ namespace Lexon.API.Controllers
 
             var entities = await _usersService.GetEntitiesAsync(entitySearch);
 
+            return ResponseEntities(entities);
+        }
+
+        [HttpPost("entities/folders")]
+        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetEntitiesFoldersAsync(
+        [FromBody] EntitySearchFoldersView entitySearch
+        )
+        {
+            if (entitySearch.idType != (short?)LexonAdjunctionType.folders)
+                entitySearch.idType = (short)LexonAdjunctionType.folders;
+
+            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0)
+                return BadRequest("values invalid. Must be a valid user, bbdd ands idType to serach folders");
+
+            var entities = await _usersService.GetEntitiesFoldersAsync(entitySearch);
+
+            return ResponseEntities(entities);
+        }
+
+        [HttpPost("entities/documents")]
+        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetEntitiesDocumentsAsync(
+            [FromBody] EntitySearchDocumentsView entitySearch
+)
+        {
+            if (entitySearch.idType != (short?)LexonAdjunctionType.documents)
+                entitySearch.idType = (short)LexonAdjunctionType.documents;
+
+            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0
+                || entitySearch.idFolder == null)
+                return BadRequest("values invalid. Must be a valid user, idCompany, type and idFolder to search documents");
+
+            var entities = await _usersService.GetEntitiesDocumentsAsync(entitySearch);
+
+            return ResponseEntities(entities);
+        }
+
+        private IActionResult ResponseEntities(MySqlCompany entities)
+        {
             var paginatedEntities = new PaginatedItemsViewModel<LexEntity>(entities.PageIndex, entities.PageSize, entities.Count, entities.Data);
             var result = new Result<PaginatedItemsViewModel<LexEntity>>(paginatedEntities, entities.Errors) { infos = entities.Infos };
+
+            if (result.errors.Count() > 0 && result.data.Count == 0)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            else if (result.errors.Count() == 0 && result.data.Count == 0)
+            {
+                return NotFound(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost("entities/folders/nested")]
+        [ProducesResponseType(typeof(Result<LexNestedEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexNestedEntity>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetNestedFoldersAsync(
+             [FromBody] FolderNestedView entityFolder
+            )
+        {
+            if (string.IsNullOrEmpty(entityFolder.idUser) || string.IsNullOrEmpty(entityFolder.bbdd) || entityFolder?.idFolder <= 0)
+                return BadRequest("values invalid. Must be a valid user, bbdd type and idFolder for get the nested folders");
+
+            Result<LexNestedEntity> result = await _usersService.GetNestedFolderAsync(entityFolder);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpPost]
         [Route("entities/getbyid")]
-        [ProducesResponseType(typeof(Result<LexonEntityBase>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<LexonEntityBase>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<LexEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexEntity>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> EntityByIdAsync(
             [FromBody] EntitySearchById entitySearch
             )
         {
-            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null || entitySearch.idEntity <= 0)
+            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd)
+                || entitySearch.idType == null || entitySearch.idEntity == null || entitySearch.idEntity <= 0)
                 return BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
 
+            var result = await _usersService.GetEntityById(entitySearch);
+            //  return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            if (result.errors.Count() > 0 && result.data == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
+            }
+            else if (result.errors.Count() == 0 && result.data == null)
+            {
+                return NotFound(result);
+            }
 
-                var result = await _usersService.GetEntityById(entitySearch);
-                return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
-
-
+            return Ok(result);
         }
 
-
+        #endregion Entities
     }
 }
