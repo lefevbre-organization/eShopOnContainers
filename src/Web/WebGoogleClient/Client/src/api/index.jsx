@@ -1,5 +1,6 @@
 import { MAX_RESULTS } from "../constants";
 import { getBody, isHTML, base64MimeType, base64Data } from "./utils";
+import base64url from "base64url";
 
 const getLabelDetailPromise = labelId => {
   return new Promise((resolve, reject) => {
@@ -97,7 +98,7 @@ const getMessageRawList = ({ labelIds, maxResults, pageToken, q = "" }) =>
       });
   });
 
-  export const getMessageListWithRFC = ( q ) =>
+export const getMessageListWithRFC = (q) =>
   new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.messages
       .list({
@@ -110,31 +111,30 @@ const getMessageRawList = ({ labelIds, maxResults, pageToken, q = "" }) =>
         reject(err);
       });
   });
-    
+
 /**
 * Load Google People client library. List Contact requested info
 */
 export const getContacts = () =>
-    
-    new Promise((resolve, reject) => {
-       // resolve(["aaaa@aa.com", "bbbb@bb.com", "ccc@cc.com", "dddd@dd.com"])
-         window.gapi.client.people.people.connections.list({
-             'resourceName': 'people/me',
-             'pageSize': 100,
-             'personFields': 'names,emailAddresses'
-         })
-             .then(response => {
-                 let arr = response.result.connections;
-                 let contacts = [];
-                 arr.map(function (item) {
-                     if (typeof item.emailAddresses !== 'undefined') {
-                         contacts.push(item.emailAddresses[0].value);
-                     }
-                 })
-                 resolve(contacts);
-             });
-            
-    });
+
+  new Promise((resolve, reject) => {
+    window.gapi.client.people.people.connections.list({
+      'resourceName': 'people/me',
+      'pageSize': 100,
+      'personFields': 'names,emailAddresses'
+    })
+      .then(response => {
+        let arr = response.result.connections;
+        let contacts = [];
+        arr.map(function (item) {
+          if (typeof item.emailAddresses !== 'undefined') {
+            contacts.push(item.emailAddresses[0].value);
+          }
+        })
+        resolve(contacts);
+      });
+
+  });
 
 
 
@@ -200,46 +200,52 @@ export const getMessageHeader = id => {
   });
 };
 
-export const getMessage = messageId => {
+export const getMessage = (messageId, format) => {
   return new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.messages
       .get({
         userId: "me",
         id: messageId,
-        format: "full"
+        format: format || "full"
       })
       .then(response => {
         const { result } = response;
 
-        let body = getBody(result.payload, "text/html");
-        let attach = result.payload.parts;
+        if (format === "raw") {
+          resolve({
+            result: base64url.decode(result.raw)
+          });
+        } else {
+          let body = getBody(result.payload, "text/html");
+          let attach = result.payload.parts;
 
-        if (body === "") {
-          body = getBody(result.payload, "text/plain");
-          body = body
-            .replace(/(\r\n)+/g, '<br data-break="rn-1">')
-            .replace(/[\n\r]+/g, '<br data-break="nr">');
-        }
-
-        if (body !== "" && !isHTML(body)) {
-          body = body
-            .replace(
-              /(\r\n)+/g,
-              '<div data-break="rn-1" style="margin-bottom:10px"></div>'
-            )
-            .replace(/[\n\r]+/g, '<br data-break="nr">');
-        }
-
-        resolve({
-          body,
-          attach,
-          headers: response.headers,
-          result: {
-            ...result,
-            messageHeaders: response.result.payload.headers,
-            payload: undefined
+          if (body === "") {
+            body = getBody(result.payload, "text/plain");
+            body = body
+              .replace(/(\r\n)+/g, '<br data-break="rn-1">')
+              .replace(/[\n\r]+/g, '<br data-break="nr">');
           }
-        });
+
+          if (body !== "" && !isHTML(body)) {
+            body = body
+              .replace(
+                /(\r\n)+/g,
+                '<div data-break="rn-1" style="margin-bottom:10px"></div>'
+              )
+              .replace(/[\n\r]+/g, '<br data-break="nr">');
+          }
+
+          resolve({
+            body,
+            attach,
+            headers: response.headers,
+            result: {
+              ...result,
+              messageHeaders: response.result.payload.headers,
+              payload: undefined
+            }
+          });
+        }
       })
       .catch(error => {
         reject(error);
@@ -300,14 +306,14 @@ export const sendMessage = async ({ headers, body, attachments }) => {
   return fetch("https://www.googleapis.com/upload/gmail/v1/users/me/messages/send?uploadType=multipart", {
     method: 'POST',
     body: email,
-    headers:{
+    headers: {
       'Authorization': `Bearer ${window.gapi.auth.getToken().access_token}`,
       'Content-Type': 'message/rfc822'
     },
   });
 };
 
-export const setMessageAsRead = async messageId =>  new Promise((resolve, reject) => {
+export const setMessageAsRead = async messageId => new Promise((resolve, reject) => {
   window.gapi.client.gmail.users.messages
     .modify({
       userId: "me",

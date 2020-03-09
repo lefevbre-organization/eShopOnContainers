@@ -15,7 +15,7 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import MessageToolbar from "../message-toolbar/MessageToolbar";
 import "./messageContent.scss";
 import MessageHeader from "./messageHeader";
-import { setMessageAsRead } from '../../../../api';
+import { setMessageAsRead, getMessage } from '../../../../api';
 import MessageNotFound from "../../../message-not-found/MessageNotFound";
 
 //BEGIN functions for attachment functionality
@@ -147,11 +147,12 @@ export class MessageContent extends Component {
 
   toggleShowMessageNotFound() {
     this.setState(state => ({
-      showMessageNotFound: !state.showMessageNotFound    }));
-}
+      showMessageNotFound: !state.showMessageNotFound
+    }));
+  }
 
   componentDidMount(prevProps) {
-    console.log('ComponenDidUnmount ***** detail' );
+    console.log('ComponenDidUnmount ***** detail');
 
     const messageId = this.props.match.params.id;
     this.props.getEmailHeaderMessage(messageId);
@@ -162,25 +163,25 @@ export class MessageContent extends Component {
   }
 
   componentWillUnmount() {
-      this.props.setOpenMessage("");
-      window.dispatchEvent(new CustomEvent("ResetList"));
-      for(let i = 0; i < this.props.selectedMessages.length; i++) {
-          const detail = {
-            id: this.props.selectedMessages[i].id,
-            extMessageId: this.props.selectedMessages[i].extMessageId,
-            subject: this.props.selectedMessages[i].subject,
-            sentDateTime: this.props.selectedMessages[i].sentDateTime,
-            chkselected: true,
-            account: this.props.lexon.account,
-            folder: "",
-            provider: "GOOGLE",
-
-          };
-      window.dispatchEvent(new CustomEvent("Checkclick",  {
+    this.props.setOpenMessage("");
+    window.dispatchEvent(new CustomEvent("ResetList"));
+    for (let i = 0; i < this.props.selectedMessages.length; i++) {
+      const detail = {
+        id: this.props.selectedMessages[i].id,
+        extMessageId: this.props.selectedMessages[i].extMessageId,
+        subject: this.props.selectedMessages[i].subject,
+        sentDateTime: this.props.selectedMessages[i].sentDateTime,
+        chkselected: true,
+        account: this.props.lexon.account,
+        folder: "",
+        provider: "GOOGLE",
+        raw: this.props.selectedMessages[i].raw
+      };
+      window.dispatchEvent(new CustomEvent("Checkclick", {
         detail
       }));
     }
-    if(this.refresh && this.props.refresh) {
+    if (this.refresh && this.props.refresh) {
       this.props.refresh();
     }
   }
@@ -188,132 +189,146 @@ export class MessageContent extends Component {
   componentDidUpdate(prevProps) {
     const { emailMessageResult, emailHeaderMessageResult } = this.props;
 
-    if(prevProps.emailHeaderMessageResult.headers === null && emailHeaderMessageResult.headers !== null) {
-      const detail = {
-        id: emailHeaderMessageResult.id,
-        extMessageId: getHeader(emailHeaderMessageResult.headers, "Message-Id"),
-        subject: getHeader(emailHeaderMessageResult.headers, "subject"),
-        sentDateTime: getHeader(emailHeaderMessageResult.headers, "date"),
-        chkselected: true,
-        folder: "",
-        account: this.props.lexon.account,
-        provider: "GOOGLE"
-      };
-      window.dispatchEvent(new CustomEvent("Checkclick",  {
-        detail
-      }));
+    if (prevProps.emailHeaderMessageResult.headers === null && emailHeaderMessageResult.headers !== null) {
+      if (this.props.emailMessageResult && this.props.emailMessageResult.result) {
+        const msgId = this.props.emailMessageResult.result.id;
+        const detail = {
+          id: msgId,
+          extMessageId: getHeader(emailHeaderMessageResult.headers, "Message-Id"),
+          subject: getHeader(emailHeaderMessageResult.headers, "subject"),
+          sentDateTime: getHeader(emailHeaderMessageResult.headers, "date"),
+          chkselected: true,
+          folder: "",
+          account: this.props.lexon.account,
+          provider: "GOOGLE",
+          raw: null
+        };
+
+        window.dispatchEvent(new CustomEvent("LoadingMessage"))
+        getMessage(msgId, "raw").then((msgRaw) => {
+          window.dispatchEvent(new CustomEvent("LoadedMessage"))
+          detail.raw = msgRaw.result;
+
+          window.dispatchEvent(new CustomEvent("Checkclick", {
+            detail
+          }));
+        }).catch((err) => {
+          window.dispatchEvent(new CustomEvent("LoadedMessage"))
+        })
+      }
     }
 
-      if (!emailMessageResult.loading) {
-          if(emailHeaderMessageResult.loading === false && prevProps.emailHeaderMessageResult.loading === true) {
-            return;
-          }
+    if (!emailMessageResult.loading) {
+      if (emailHeaderMessageResult.loading === false && prevProps.emailHeaderMessageResult.loading === true) {
+        return;
+      }
 
-          if (!emailMessageResult.failed) {
-              this.markEmailAsRead(emailMessageResult.result);
-              if (this.state.attachment === true) {
-                  const { body } = this.iframeRef.current.contentWindow.document;
-                  body.style.margin = "0px";
-                  body.style.fontFamily = "Arial, Helvetica, sans-serif";
-                  body.style.fontSize = "13px";
-                  // body.innerHTML = this.props.emailMessageResult.body;
+      if (!emailMessageResult.failed) {
+        this.markEmailAsRead(emailMessageResult.result);
+        if (this.state.attachment === true) {
+          const { body } = this.iframeRef.current.contentWindow.document;
+          body.style.margin = "0px";
+          body.style.fontFamily = "Arial, Helvetica, sans-serif";
+          body.style.fontSize = "13px";
+          // body.innerHTML = this.props.emailMessageResult.body;
 
-                  //Adding attach files
-                  var attach = findAttachments(emailMessageResult)
+          //Adding attach files
+          var attach = findAttachments(emailMessageResult)
 
-                  if (typeof attach !== "undefined" && attach.length > 0) {
-                      const isFirefox = typeof InstallTrigger !== 'undefined';
-                      // if(isFirefox === false) {
-                      //   this.setState({ attachment: false });
-                      // }
-                      var iframe = document.getElementById("message-iframe");
-                      var Divider = addDivDivider();
-                      iframe.contentDocument.body.appendChild(Divider);
-
-                      for (var i = 0; i < attach.length; i++) {
-                          if (attach[i].filename && attach[i].filename.length > 0) {
-                            const athc = attach[i];
-                            if(!this.attachments[attach[i].partId]) {
-                              const msgid = emailMessageResult.id || emailMessageResult.result.id
-                              this.attachments[attach[i].partId] = "1"                             
-                              getAttachments(msgid, attach[i], (
-                                  filename,
-                                  mimeType,
-                                  attachment
-                              ) => {
-                                  
-                                  let dataBase64Rep = attachment.data
-                                      .replace(/-/g, "+")
-                                      .replace(/_/g, "/");
-                                  let urlBlob = b64toBlob(
-                                      dataBase64Rep,
-                                      mimeType,
-                                      attachment.size
-                                  );
-                                  //console.log(urlBlob);
-                                  const contentDisposition = getHeader(athc.headers, "content-disposition");
-                                  if(contentDisposition && contentDisposition.indexOf("inline;") === -1) {                              
-                                    var blobUrl = URL.createObjectURL(urlBlob);
-                                    var Attachment = addAttachmentElement(blobUrl, filename);
-                                    var AttachmentDiv = addAttachmentContainer(mimeType);
-                                    AttachmentDiv.appendChild(Attachment);
-                                    var iframe = document.getElementById("message-iframe");
-                                    iframe && iframe.contentDocument && iframe.contentDocument.body.appendChild(AttachmentDiv);
-                                  } else {
-                                    console.log(this.iframeRef.current.contentWindow.document)
-                                    const contentId = getHeader(athc.headers, "x-attachment-id");
-                                    var iframe = document.getElementById("message-iframe");
-                                    var Divider = addDivDivider();
-                                    iframe.contentDocument.body.appendChild(Divider);              
-                                    const bd = iframe.contentDocument.body.innerHTML.replace(`cid:${contentId}`, "data:image/png;base64, " + dataBase64Rep)
-                                    iframe.contentDocument.body.innerHTML = bd;
-                                  }
-                                });
-                            }
-                          }
-                      }
-                  }
-              }
-          } else {
-            if (emailMessageResult.error.status === 404 && this.notFoundModal === 0){
-              this.toggleShowMessageNotFound(true);
-              this.notFoundModal = 1;
-            }
+          if (typeof attach !== "undefined" && attach.length > 0) {
+            const isFirefox = typeof InstallTrigger !== 'undefined';
+            // if(isFirefox === false) {
+            //   this.setState({ attachment: false });
+            // }
             var iframe = document.getElementById("message-iframe");
             var Divider = addDivDivider();
-            if (iframe.contentDocument) {
-              iframe.contentDocument.body.appendChild(Divider);
+            iframe.contentDocument.body.appendChild(Divider);
 
-              for (var i = 0; i < attach.length; i++) {
-                if (attach[i].filename && attach[i].filename.length > 0) {
+            for (var i = 0; i < attach.length; i++) {
+              if (attach[i].filename && attach[i].filename.length > 0) {
+                const athc = attach[i];
+                if (!this.attachments[attach[i].partId]) {
                   const msgid = emailMessageResult.id || emailMessageResult.result.id
-                  if(!this.attachments[attach[i].partId]) {
-                    this.attachments[attach[i].partId] = attach[i];
-                    getAttachments(msgid, attach[i], function (
-                      filename,
+                  this.attachments[attach[i].partId] = "1"
+                  getAttachments(msgid, attach[i], (
+                    filename,
+                    mimeType,
+                    attachment
+                  ) => {
+
+                    let dataBase64Rep = attachment.data
+                      .replace(/-/g, "+")
+                      .replace(/_/g, "/");
+                    let urlBlob = b64toBlob(
+                      dataBase64Rep,
                       mimeType,
-                      attachment
-                    ) {
-  
-                      console.log("Attachment received")
-                      let dataBase64Rep = attachment.data
-                        .replace(/-/g, "+")
-                        .replace(/_/g, "/");
-                      let urlBlob = b64toBlob(
-                        dataBase64Rep,
-                        mimeType,
-                        attachment.size
-                      );
-                      //console.log(urlBlob);
+                      attachment.size
+                    );
+                    //console.log(urlBlob);
+                    const contentDisposition = getHeader(athc.headers, "content-disposition");
+                    if (contentDisposition && contentDisposition.indexOf("inline;") === -1) {
                       var blobUrl = URL.createObjectURL(urlBlob);
                       var Attachment = addAttachmentElement(blobUrl, filename);
                       var AttachmentDiv = addAttachmentContainer(mimeType);
                       AttachmentDiv.appendChild(Attachment);
-                      iframe.contentDocument.body.appendChild(AttachmentDiv);
-                    });                  }
+                      var iframe = document.getElementById("message-iframe");
+                      iframe && iframe.contentDocument && iframe.contentDocument.body.appendChild(AttachmentDiv);
+                    } else {
+                      console.log(this.iframeRef.current.contentWindow.document)
+                      const contentId = getHeader(athc.headers, "x-attachment-id");
+                      var iframe = document.getElementById("message-iframe");
+                      var Divider = addDivDivider();
+                      iframe.contentDocument.body.appendChild(Divider);
+                      const bd = iframe.contentDocument.body.innerHTML.replace(`cid:${contentId}`, "data:image/png;base64, " + dataBase64Rep)
+                      iframe.contentDocument.body.innerHTML = bd;
+                    }
+                  });
                 }
               }
-            } else if (this.state.showMessageNotFound === false) {
+            }
+          }
+        }
+      } else {
+        if (emailMessageResult.error.status === 404 && this.notFoundModal === 0) {
+          this.toggleShowMessageNotFound(true);
+          this.notFoundModal = 1;
+        }
+        var iframe = document.getElementById("message-iframe");
+        var Divider = addDivDivider();
+        if (iframe.contentDocument) {
+          iframe.contentDocument.body.appendChild(Divider);
+
+          for (var i = 0; i < attach.length; i++) {
+            if (attach[i].filename && attach[i].filename.length > 0) {
+              const msgid = emailMessageResult.id || emailMessageResult.result.id
+              if (!this.attachments[attach[i].partId]) {
+                this.attachments[attach[i].partId] = attach[i];
+                getAttachments(msgid, attach[i], function (
+                  filename,
+                  mimeType,
+                  attachment
+                ) {
+
+                  console.log("Attachment received")
+                  let dataBase64Rep = attachment.data
+                    .replace(/-/g, "+")
+                    .replace(/_/g, "/");
+                  let urlBlob = b64toBlob(
+                    dataBase64Rep,
+                    mimeType,
+                    attachment.size
+                  );
+                  //console.log(urlBlob);
+                  var blobUrl = URL.createObjectURL(urlBlob);
+                  var Attachment = addAttachmentElement(blobUrl, filename);
+                  var AttachmentDiv = addAttachmentContainer(mimeType);
+                  AttachmentDiv.appendChild(Attachment);
+                  iframe.contentDocument.body.appendChild(AttachmentDiv);
+                });
+              }
+            }
+          }
+        } else if (this.state.showMessageNotFound === false) {
           this.renderInbox();
         }
       }
@@ -428,8 +443,8 @@ export default compose(
 
 
 const getHeader = (headers, name) => {
-  for(let i = 0; i < headers.length; i++) {
-    if(headers[i].name.toLowerCase() === name.toLowerCase()) {
+  for (let i = 0; i < headers.length; i++) {
+    if (headers[i].name.toLowerCase() === name.toLowerCase()) {
       return headers[i].value;
     }
   }
@@ -437,11 +452,11 @@ const getHeader = (headers, name) => {
 
 const findAttachments = (email) => {
   let attachs = [];
-  if(email.attach) {
-    for(let i = 0; i < email.attach.length; i++) {
+  if (email.attach) {
+    for (let i = 0; i < email.attach.length; i++) {
 
-      if(email.attach[i].mimeType === "multipart/related") {
-        for(let j = 0; j < email.attach[i].parts.length; j++) {
+      if (email.attach[i].mimeType === "multipart/related") {
+        for (let j = 0; j < email.attach[i].parts.length; j++) {
           attachs.push(email.attach[i].parts[j])
         }
       } else {

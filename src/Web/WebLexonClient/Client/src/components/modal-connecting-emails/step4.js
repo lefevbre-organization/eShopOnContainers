@@ -75,7 +75,7 @@ export class ConnectingEmailsStep4 extends React.Component {
                 }
 
                 ol>li.index-5::before {
-                    content: '5'; 
+                    content: '${this.props.step}'; 
                     color: #001978;
                     display: inline-block; 
                     width: 1em;

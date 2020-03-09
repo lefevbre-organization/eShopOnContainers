@@ -1,12 +1,13 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Spinner from '../spinner/spinner';
 import HeaderTo from './header-to';
 import AttachmentCard from '../attachment/attachment-card';
-import {selectFolder} from '../../actions/application';
-import {clearSelectedMessage} from '../../services/application';
-import {getSelectedFolder} from '../../selectors/folders';
+import { selectFolder } from '../../actions/application';
+import { clearSelectedMessage, getCredentials } from '../../services/application';
+import { readMessageRaw } from "../../services/message-read";
+import { getSelectedFolder } from '../../selectors/folders';
 import sanitize from '../../services/sanitize';
 import mainCss from '../../styles/main.scss';
 import styles from './message-viewer.scss';
@@ -56,11 +57,11 @@ export class MessageViewer extends Component {
           <HeaderTo className={styles.to} recipients={message.recipients} />
         </div>
         <div className={styles.body}>
-          <Spinner visible={this.props.refreshMessageActiveRequests > 0 && !message.content}/>
+          <Spinner visible={this.props.refreshMessageActiveRequests > 0 && !message.content} />
           <div className={styles.attachments}>
             {attachments.map((a, index) => <AttachmentCard key={index} attachment={a} />)}
           </div>
-          <div dangerouslySetInnerHTML={{__html: sanitize.sanitize(message.content)}}>
+          <div dangerouslySetInnerHTML={{ __html: sanitize.sanitize(message.content) }}>
           </div>
         </div>
       </div>
@@ -69,38 +70,44 @@ export class MessageViewer extends Component {
 
   clearSelectedList() {
     this.oldSelectedList = Object.assign([], this.props.selectedMessages);
-    this.props.setSelected(this.props.selectedMessages.map(item=>( { ...item, messageId: item.id })), false, this.props.currentFolder.fullName);
+    this.props.setSelected(this.props.selectedMessages.map(item => ({ ...item, messageId: item.id })), false, this.props.currentFolder.fullName);
     window.dispatchEvent(
       new CustomEvent("CheckAllclick", {
         detail: {
           listMessages: this.oldSelectedList,
           chkselected: false
+        }
       }
-    }  
-    ))
+      ))
 
     this.props.setSelected([this.props.selectedMessage], true, this.props.currentFolder.fullName);
-    window.dispatchEvent(
-      new CustomEvent("Checkclick", {
-        detail: {
-          id: this.props.selectedMessage.messageId,
-          extMessageId: this.props.selectedMessage.messageId,
-          subject: this.props.selectedMessage.subject,
-          sentDateTime: this.props.selectedMessage.receivedDate,
-          chkselected: true,
-          folder: this.props.currentFolder.fullName,
-          account: this.props.login.formValues.user,
-          provider: 'IMAP'
-        }
-      })
-    );
+
+    window.dispatchEvent(new CustomEvent("LoadingMessage"))
+    readMessageRaw(null, this.props.credentials, null, this.props.currentFolder, this.props.selectedMessage).then((response) => {
+      window.dispatchEvent(
+        new CustomEvent("Checkclick", {
+          detail: {
+            id: this.props.selectedMessage.messageId,
+            extMessageId: this.props.selectedMessage.messageId,
+            subject: this.props.selectedMessage.subject,
+            sentDateTime: this.props.selectedMessage.receivedDate,
+            chkselected: true,
+            folder: this.props.currentFolder.fullName,
+            account: this.props.login.formValues.user,
+            provider: 'IMAP',
+            raw: response
+          }
+        })
+      );
+      window.dispatchEvent(new CustomEvent("LoadedMessage"))
+    })
   }
 
   restoreSelectedList() {
     this.props.setSelected([this.props.selectedMessage], false, this.props.currentFolder.fullName);
-    const ms = this.oldSelectedList.map(item=>( { ...item, messageId: item.id }));
+    const ms = this.oldSelectedList.map(item => ({ ...item, messageId: item.id }));
     //setTimeout(()=>{
-      this.props.setSelected(ms, true, this.props.currentFolder.fullName);
+    this.props.setSelected(ms, true, this.props.currentFolder.fullName);
     //}, 1000);
 
     window.dispatchEvent(
@@ -113,12 +120,13 @@ export class MessageViewer extends Component {
           chkselected: false,
           folder: this.props.currentFolder.fullName,
           account: this.props.login.formValues.user,
-          provider: 'IMAP'
+          provider: 'IMAP',
+          raw: null
         }
       })
     );
 
-    for(let i = 0; i < this.oldSelectedList.length; i++) {
+    for (let i = 0; i < this.oldSelectedList.length; i++) {
       window.dispatchEvent(
         new CustomEvent("Checkclick", {
           detail: {
@@ -129,12 +137,13 @@ export class MessageViewer extends Component {
             chkselected: true,
             folder: this.oldSelectedList[i].folder,
             account: this.props.login.formValues.user,
-            provider: 'IMAP'
+            provider: 'IMAP',
+            raw: this.oldSelectedList[i].raw
           }
         })
       );
     }
-    
+
   }
   //clearSelectedMessage(dispatch)
 
@@ -145,14 +154,14 @@ export class MessageViewer extends Component {
   componentWillUnmount() {
     this.restoreSelectedList();
     const { lexon } = this.props;
-  
+
     clearTimeout(this.refreshPollTimeout);
-  
+
     window.removeEventListener(
       "GetUserFromLexonConnector",
       this.handleGetUserFromLexonConnector
     );
-  
+
     if (lexon.idCaseFile !== null && lexon.idCaseFile !== undefined) {
       window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
       this.props.setCaseFile({
@@ -162,11 +171,11 @@ export class MessageViewer extends Component {
       });
     };
 
-    if (lexon.idEmail && lexon.idEmail !== null && lexon.idEmail !== undefined){
+    if (lexon.idEmail && lexon.idEmail !== null && lexon.idEmail !== undefined) {
       this.props.resetIdEmail(); // Se borra la información del email para que no vuelva a entrar si se refresca la ventana.
     }
   }
-  
+
 
   onFolderClick(folder) {
     this.props.showFolder(folder);
@@ -183,14 +192,17 @@ MessageViewer.defaultProps = {
   className: ''
 };
 
-const mapStateToProps = state => ({
-  refreshMessageActiveRequests: state.application.refreshMessageActiveRequests,
-  currentFolder: getSelectedFolder(state) || {},
-  selectedMessage: state.application.selectedMessage,
-  selectedMessages: state.messages.selectedMessages,
-  lexon: state.lexon,
-  login: state.login 
-});
+const mapStateToProps = state => {
+  return {
+    refreshMessageActiveRequests: state.application.refreshMessageActiveRequests,
+    currentFolder: getSelectedFolder(state) || {},
+    selectedMessage: state.application.selectedMessage,
+    selectedMessages: state.messages.selectedMessages,
+    lexon: state.lexon,
+    login: state.login,
+    credentials: state.application.user.credentials
+  }
+};
 
 const mapDispatchToProps = dispatch => ({
   showFolder: folder => {
@@ -198,7 +210,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(selectFolder(folder));
   },
   setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
-  resetIdEmail: ()=> dispatch(ACTIONS.resetIdEmail()),
+  resetIdEmail: () => dispatch(ACTIONS.resetIdEmail()),
   setSelected: (messages, selected, shiftKey) =>
     dispatch(setSelected(messages, selected, shiftKey)),
 });

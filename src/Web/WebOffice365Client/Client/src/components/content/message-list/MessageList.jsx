@@ -11,7 +11,7 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import ListToolbar from "./list-toolbar/ListToolbar";
 import ListFooter from "./list-footer/ListFooter";
 import "./messageList.scss";
-import { getMessageHeader, getLabelSentItems } from "../../../api_graph";
+import { getMessage, getLabelSentItems } from "../../../api_graph";
 
 const ViewMode = {
   LIST: 1,
@@ -78,7 +78,7 @@ export class MessageList extends Component {
     }
   }
 
-  onSelectionChange(selected, msg) {
+  async onSelectionChange(selected, msg) {
     this.props.toggleSelected([msg.id], selected);
 
     const extMessageId = msg.internetMessageId
@@ -90,8 +90,19 @@ export class MessageList extends Component {
       folder: "",
       provider: "GOOGLE",
       account: this.props.lexon.account,
-      chkselected: selected
+      chkselected: selected,
+      raw: null
     };
+
+    selected
+    ? this.props.addMessage(message)
+    : this.props.deleteMessage(message.extMessageId);
+
+    if(selected === true) {
+      window.dispatchEvent(new CustomEvent("LoadingMessage"))
+      const msgRaw = await getMessage(msg.id, "raw");
+      message.raw = msgRaw;
+    }
 
     window.dispatchEvent(
       new CustomEvent("Checkclick", {
@@ -99,9 +110,7 @@ export class MessageList extends Component {
       })
     );
 
-    selected
-      ? this.props.addMessage(message)
-      : this.props.deleteMessage(msg.internetMessageId);
+    window.dispatchEvent(new CustomEvent("LoadedMessage"))
   }
 
   renderSpinner() {

@@ -24,18 +24,19 @@ class SelectCompany extends Component {
 
   componentDidMount() {
     const { companies } = this.props;
+
     if (companies.length === 1) {
       this.props.setCompanySelected(companies[0]);
       this.props.changePage(PAGE_SELECT_ACTION);
     }
 
-    for(let i = 0; i < companies.length; i++) {
-      if(companies[i].bbdd === this.props.initialBBDD) {
+    for (let i = 0; i < companies.length; i++) {
+      if (companies[i].bbdd === this.props.initialBBDD) {
         console.log("Selecting default BBDD")
         this.props.setCompanySelected(companies[i]);
         this.props.changePage(PAGE_SELECT_ACTION);
       }
-    }  
+    }
   }
 
   _handleOnClick() {
@@ -111,11 +112,11 @@ class SelectCompany extends Component {
           <form className="col-12 form-selection-business">
             <p>{i18n.t("select-company.select-company")}</p>
             {/* <PerfectScrollbar style={{ height: "50vh" }}> */}
-              <ul className="list-unstyled">
-                {this.props.companies.map(company => {
-                  return _this.renderCompany(company);
-                })}
-              </ul>
+            <ul className="list-unstyled">
+              {this.props.companies && this.props.companies.map(company => {
+                return _this.renderCompany(company);
+              })}
+            </ul>
             {/* </PerfectScrollbar> */}
             {this.renderShowMessageSelectCompany()}
             <div className="d-flex justify-content-center mt-5">

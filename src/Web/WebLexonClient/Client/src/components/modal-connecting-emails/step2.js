@@ -76,7 +76,7 @@ export class ConnectingEmailsStep2 extends React.Component {
 
     _renderCheck(props) {
         console.log("RenderCheck")
-        const ix = props.id + '_' + props.idType;
+        const ix = props.idRelated + '_' + props.idType;
         const check = (ix === this.state.rowSelected ? 'checked' : '')
         return <div className={`row-check ${check}`}><div className={`row-check-inner ${check}`}></div></div>
     }
@@ -96,8 +96,8 @@ export class ConnectingEmailsStep2 extends React.Component {
     }
 
     onRowSelected(event) {
-        this.setState({ rowSelected: event.data.id + '_' + event.data.idType }, () => {
-            this.props.onSelectedEntity && this.props.onSelectedEntity({ id: event.data.id, idType: event.data.idType })
+        this.setState({ rowSelected: event.data.idRelated + '_' + event.data.idType }, () => {
+            this.props.onSelectedEntity && this.props.onSelectedEntity({ ...event.data, id: event.data.idRelated })
             this.gridRef && this.gridRef.refresh()
         });
     }

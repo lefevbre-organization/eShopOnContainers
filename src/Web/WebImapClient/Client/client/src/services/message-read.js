@@ -3,11 +3,12 @@ import {
   refreshMessageBackendRequestCompleted,
   replaceMessageEmbeddedImages
 } from '../actions/application';
-import {updateCacheIfExist} from '../actions/messages';
-import {abortControllerWrappers, abortFetch, credentialsHeaders, toJson} from './fetch';
-import {updateFolder} from '../actions/folders';
-import {refreshMessage} from '../actions/application';
-import {closeResetFolderMessagesCacheEventSource} from './message';
+import { updateCacheIfExist } from '../actions/messages';
+import { abortControllerWrappers, abortFetch, credentialsHeaders, toJson, toText } from './fetch';
+import { updateFolder } from '../actions/folders';
+import { refreshMessage } from '../actions/application';
+import { closeResetFolderMessagesCacheEventSource } from './message';
+import base64url from "base64url";
 
 /**
  * Performs a BE request to read an embedded attachment (image) and replaces the e-mail content
@@ -68,6 +69,22 @@ function _readMessageRequest(dispatch, credentials, folder, message) {
   };
 }
 
+function _readMessageRawRequest(dispatch, credentials, folder, message) {
+  return () => {
+    return fetch(folder._links.message.href.replace('{messageId}', +message.uid + '/raw'), {
+      method: 'GET',
+      headers: credentialsHeaders(credentials)
+    })
+      .then(response => {
+        return response;
+      })
+      .then(toText).
+      catch(() => {
+        throw Error();
+      });
+  };
+}
+
 /**
  * Performs a request to the BE to mark a message as seen
  * @param credentials
@@ -79,7 +96,7 @@ function _readMessageRequest(dispatch, credentials, folder, message) {
 function _messageSeenRequest(credentials, folder, message) {
   return fetch(folder._links['message.seen'].href.replace('{messageId}', message.uid), {
     method: 'PUT',
-    headers: credentialsHeaders(credentials, {'Content-Type': 'application/json'}),
+    headers: credentialsHeaders(credentials, { 'Content-Type': 'application/json' }),
     body: JSON.stringify(true)
   });
 }
@@ -118,31 +135,31 @@ export function readMessage(dispatch, credentials, downloadedMessages, folder, m
     // Read message from application.downloadedMessages cache
     // //////////////////////////////////////////////////////
     // Update cached/downloaded message (keep content), message may have been moved/read/...
-    let updatedMessage = {...message, folder: {...folder}, seen: true};
+    let updatedMessage = { ...message, folder: { ...folder }, seen: true };
     Object.entries(updatedMessage)
       .filter(entry => entry[1] === null // Remove empty arrays/strings...
         || entry[1].length === 0) // Remove null attributes
       .forEach(([key]) => delete updatedMessage[key]);
-    updatedMessage = Object.assign({...downloadedMessage}, updatedMessage);
+    updatedMessage = Object.assign({ ...downloadedMessage }, updatedMessage);
     // Show optimistic version of updated downloadedMessage
     dispatch(refreshMessage(folder, updatedMessage));
     // Update folder message cache to set message as seen ASAP
     dispatch(updateCacheIfExist(folder, [updatedMessage]));
     // Update folder seen counter if applicable
     if (!message.seen) {
-      dispatch(updateFolder({...folder, unreadMessageCount: folder.unreadMessageCount - 1}));
+      dispatch(updateFolder({ ...folder, unreadMessageCount: folder.unreadMessageCount - 1 }));
       // Send request to BE to mark message as read
       _messageSeenRequest(credentials, folder, message);
     }
     // Read message from BE to update links (attachments) and other mutable properties
     $message = fetchMessage()
       .then(completeMessage => (
-        Promise.resolve({...completeMessage, content: updatedMessage.content})
+        Promise.resolve({ ...completeMessage, content: updatedMessage.content })
       ));
   } else {
     // Read message from BE (Set message seen only if request is successful)
     $message = fetchMessage()
-    // Message successfully loaded, send signal to BE to mark as read if applicable and change folder information
+      // Message successfully loaded, send signal to BE to mark as read if applicable and change folder information
       .then(completeMessage => {
         if (!completeMessage.seen) {
           _messageSeenRequest(credentials, completeMessage.folder, completeMessage);
@@ -158,7 +175,7 @@ export function readMessage(dispatch, credentials, downloadedMessages, folder, m
       // Update folder with freshest BE information (and optimistic unreadMessageCount)
       dispatch(updateFolder(completeMessage.folder));
       // Update folder cache with message marked as read (don't store content in cache)
-      const messageWithNoContent = {...completeMessage};
+      const messageWithNoContent = { ...completeMessage };
       delete messageWithNoContent.content;
       dispatch(updateCacheIfExist(folder, [messageWithNoContent]));
       // Refresh message view
@@ -172,5 +189,16 @@ export function readMessage(dispatch, credentials, downloadedMessages, folder, m
           return completeMessage.content.indexOf(`cid:${contentId}`) >= 0;
         })
         .forEach(a => _readEmbeddedContent(dispatch, credentials, folder, message, signal, a));
-    }).catch(() => {});
+    }).catch(() => { });
+}
+
+
+export function readMessageRaw(dispatch, credentials, downloadedMessages, folder, message) {
+  const fetchMessage = _readMessageRawRequest(dispatch, credentials, folder, message);
+  const $message = fetchMessage()
+    .then(completeMessage => {
+      return Promise.resolve({ message, raw: base64url.decode(completeMessage) });
+    });
+
+  return $message;
 }
