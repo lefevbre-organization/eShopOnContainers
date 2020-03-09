@@ -3,11 +3,12 @@ import PropTypes from "prop-types";
 import i18n from "i18next";
 import { Button, Modal, Container } from "react-bootstrap";
 import { connect } from "react-redux";
+import { Base64 } from 'js-base64';
 import { ConnectingEmailsStep1 } from './step1';
 import { ConnectingEmailsStep2 } from './step2';
 import { ConnectingEmailsStep3 } from './step3';
 import { ConnectingEmailsStep4 } from './step4';
-import { addClassification } from '../../services/services-lexon';
+import { addClassification, uploadFile } from '../../services/services-lexon';
 import ACTIONS from "../../actions/documentsAction";
 import "react-perfect-scrollbar/dist/css/styles.css";
 
@@ -172,24 +173,24 @@ class ModalConnectingEmails extends Component {
     }
   }
 
-  onSaveStep3() {
-    const { step1Data } = this.state;
+  async onSaveStep3() {
+    const { step1Data, step2Data, step3Data } = this.state;
     const { selectedMessages } = this.props;
     this.closeDialog()
 
     if (step1Data.actuation === true) {
-      this.saveClassification();
+      const sc = this.saveClassification();
     }
 
-    console.log(selectedMessages)
     if (step1Data.copyDocuments === true) {
+      // Save email as eml format
       for (let i = 0; i < selectedMessages.length; i++) {
-        const raw = selectedMessages[i].raw
+        const raw = Base64.encode(selectedMessages[i].raw)
         const subject = selectedMessages[i].subject
-        console.log(subject)
-        console.log(raw)
-        downloadEML(raw, subject + ".eml", "application/text")
+        const upl = await uploadFile(step3Data.selected, step2Data.id, step2Data.idType, this.props.companySelected.bbdd, this.props.user.idUser, subject + ".eml", raw)
       }
+    } if (step1Data.saveDocuments === true) {
+      // Save attachments
     }
   }
 
@@ -870,20 +871,20 @@ export default connect(
 )(ModalConnectingEmails);
 
 
-const downloadEML = (data, filename, type) => {
-  var file = new Blob([data], { type: type });
-  if (window.navigator.msSaveOrOpenBlob) // IE10+
-    window.navigator.msSaveOrOpenBlob(file, filename);
-  else { // Others
-    var a = document.createElement("a"),
-      url = URL.createObjectURL(file);
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(function () {
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }, 0);
-  }
-}
+// const downloadEML = (data, filename, type) => {
+//   var file = new Blob([data], { type: type });
+//   if (window.navigator.msSaveOrOpenBlob) // IE10+
+//     window.navigator.msSaveOrOpenBlob(file, filename);
+//   else { // Others
+//     var a = document.createElement("a"),
+//       url = URL.createObjectURL(file);
+//     a.href = url;
+//     a.download = filename;
+//     document.body.appendChild(a);
+//     a.click();
+//     setTimeout(function () {
+//       document.body.removeChild(a);
+//       window.URL.revokeObjectURL(url);
+//     }, 0);
+//   }
+// }

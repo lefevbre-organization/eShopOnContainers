@@ -1,10 +1,11 @@
 import React, { Fragment } from 'react';
 import i18n from "i18next";
 import { TreeViewComponent } from '@syncfusion/ej2-react-navigations';
-import { GridComponent, ColumnsDirective, ColumnDirective } from '@syncfusion/ej2-react-grids';
+import { GridComponent, ColumnsDirective, ColumnDirective, Inject, Search, Sort } from '@syncfusion/ej2-react-grids';
 import Spinner from "../../components/spinner/spinner";
 import ClassificationListSearch from "../classify-emails/classification-list-search/classification-list-search";
 import { getFolderTree, createFolder } from "../../services/services-lexon";
+import PerfectScrollbar from "react-perfect-scrollbar";
 
 export class ConnectingEmailsStep3 extends React.Component {
     constructor() {
@@ -24,6 +25,9 @@ export class ConnectingEmailsStep3 extends React.Component {
         this.onNextPage = this.onNextPage.bind(this)
         this.onPrevPage = this.onPrevPage.bind(this)
         this.onCreateFolder = this.onCreateFolder.bind(this)
+        this.renderType = this.renderType.bind(this)
+        this.renderOrigin = this.renderOrigin.bind(this)
+        this.onDoubleClick = this.onDoubleClick.bind(this)
     }
 
     async componentDidUpdate(prevProps, prevState) {
@@ -32,7 +36,9 @@ export class ConnectingEmailsStep3 extends React.Component {
                 const response = await getFolderTree(this.props.entity.idFolder, this.props.bbdd.bbdd, this.props.user.idUser)
                 const tree = normalizeTree(this.props.entity, response.result.data)
                 const childs = getChilds(tree, 0)
-                this.setState({ loadingTree: false, fields: { dataSource: tree, id: 'id', text: 'name', child: 'subChild' }, entities: childs })
+                this.setState({ loadingTree: false, fields: { dataSource: tree, id: 'id', text: 'name', child: 'subChild' }, entities: childs }, () => {
+                    this.onNodeSelected({ nodeData: { id: this.props.entity.idFolder } })
+                })
             });
         }
 
@@ -93,9 +99,11 @@ export class ConnectingEmailsStep3 extends React.Component {
                     const selectedId = this.state.selected.id;
                     const res = await createFolder(selectedId, folderName, idRelated, idType, this.props.bbdd.bbdd, this.props.user.idUser);
                     const response = await getFolderTree(idFolder, this.props.bbdd.bbdd, this.props.user.idUser)
-                    const tree = normalizeTree(this.props.entity, response.result.data)
+                    const tree = normalizeTree(this.props.entity, response.result.data, res.result.data)
                     const childs = getChilds(tree, 0)
-                    this.setState({ loadingTree: false, fields: { dataSource: tree, id: 'id', text: 'name', child: 'subChild' }, entities: childs })
+                    this.setState({ loadingTree: false, fields: { dataSource: tree, id: 'id', text: 'name', child: 'subChild' }, entities: childs }, () => {
+                        this.onNodeSelected({ nodeData: { id: res.result.data } })
+                    })
                 })
             } catch (err) {
 
@@ -111,9 +119,27 @@ export class ConnectingEmailsStep3 extends React.Component {
         })
     }
 
+    onDoubleClick(event) {
+        this.treeRef && (this.treeRef.selectedNodes = [event.rowData.id])
+    }
+
     searchResultsByType(type, search) {
         if (search !== "") {
+            this.gridRef.search(search)
+        } else {
+            this.gridRef.search("")
         }
+    }
+
+    renderType(props) {
+        const icon = props.type === "dir" ? "lf-icon-folder" : "";
+        return <span className={`pager-icon ${icon} new-folder-icon`} />
+    }
+
+    renderOrigin(props) {
+        const icon = this.props.entity.idType === 1 ? "lf-icon-law" : "";
+        console.log(props)
+        return <div><span style={{ marginRight: 10 }} className={`pager-icon ${icon} new-folder-icon`}></span><span>Expediente</span></div>
     }
 
     render() {
@@ -129,7 +155,7 @@ export class ConnectingEmailsStep3 extends React.Component {
                     <div className={`new-folder-container ${disabled}`}>
                         <a href="#" class="add-more" onClick={this.onCreateFolder} className={disabled}>
                             <span className="pager-icon lf-icon-folder-new new-folder-icon" />
-                            <span className="new-folder-text">Nueva carpeta</span>
+                            <span className="new-folder-text">{i18n.t(`connecting.new-folder`)}</span>
                         </a>
                     </div>
                 </div>
@@ -139,7 +165,9 @@ export class ConnectingEmailsStep3 extends React.Component {
                             <div className="panel-left-spinner-container"><Spinner /></div>
                         }
                         {this.state.loadingTree === false &&
-                            <TreeViewComponent fields={this.state.fields} expandOn="Auto" nodeSelected={this.nodeSelected} nodeSelecting={this.onNodeSelecting} />
+                            <PerfectScrollbar style={{ height: "445px" }}>
+                                <TreeViewComponent ref={t => this.treeRef = t} fields={this.state.fields} expandOn="Auto" nodeSelected={this.nodeSelected} nodeSelecting={this.onNodeSelecting} />
+                            </PerfectScrollbar>
                         }
                     </div>
 
@@ -156,29 +184,49 @@ export class ConnectingEmailsStep3 extends React.Component {
                             <div className="spinner"> <Spinner /></div>
                         }
 
-                        <GridComponent ref={g => this.gridRef = g} dataSource={this.state.entities} height={'300px'} selectionSettings={{ type: 'Single', mode: 'Row' }}
+                        <GridComponent ref={g => this.gridRef = g} dataSource={this.state.entities} height={'300px'} selectionSettings={{ type: 'Single', mode: 'Row', enableToggle: false }}
                             rowSelected={this.onRowSelected}
+                            allowSorting={true}
                             hideScroll={true}
+                            selected={1}
+                            recordDoubleClick={this.onDoubleClick}
                             locale="es-ES">
 
                             <ColumnsDirective>
-                                <ColumnDirective field='origin' headerText='Origen' width='100'></ColumnDirective>
+                                <ColumnDirective field='origin' headerText='Origen' width='100' template={this.renderOrigin}></ColumnDirective>
                                 <ColumnDirective field='name' headerText='Nombre' width='150'></ColumnDirective>
-                                <ColumnDirective field='type' headerText='Tipo' width='50'></ColumnDirective>
-                                {/* <ColumnDirective field='modified' headerText='Modificación' width='100'></ColumnDirective> */}
+                                <ColumnDirective field='type' headerText='Tipo' width='50' template={this.renderType}></ColumnDirective>
                             </ColumnsDirective>
+                            <Inject services={[Search, Sort]} />
                         </GridComponent>
-                        <section className="pager">
-                            <div className={`prevButton`} onClick={this.onPrevPage}><span className="pager-icon lf-icon-angle-left" /><span>Anterior</span></div>
-                            <div className="currentPage">1</div>
-                            <div className={`nextButton`} onClick={this.onNextPage}><span>Siguiente</span><span className="pager-icon lf-icon-angle-right" /></div>
-                        </section>
                     </div>
                 </section>
             </div>
             <style jsx>{`
                 .step3-container {
                     margin: 30px;
+                }
+
+                .e-selectionbackground {
+                    background-color: #E5E8F1 !important;
+                }
+
+                .e-row:hover {
+                    background-color: #E5E8F1 !important;
+                }
+
+                .e-list-text {
+                    text-transform: none !important;
+                }
+
+                .e-treeview .e-list-item.e-active > .e-fullrow {
+                    background-color: #E5E8F1;
+                    border-color: #E5E8F1;
+                }
+
+                .e-treeview .e-list-item.e-active > .e-fullrow:hover {
+                    background-color: #E5E8F1;
+                    border-color: #E5E8F1;
                 }
 
                 .panel-left-spinner-container {
@@ -244,7 +292,7 @@ export class ConnectingEmailsStep3 extends React.Component {
                 }
 
                 .e-treeview {
-                    width: 250px !important;                    
+                    width: 250px !important;  
                 }
 
                 .e-treeview .e-ul {
@@ -327,22 +375,26 @@ export class ConnectingEmailsStep3 extends React.Component {
     }
 }
 
-function normalizeTree(entity, data) {
-    const root = { ...data, id: data.idRelated, selected: false, name: i18n.t(`classification.${entity.idType}`), expanded: true }
+function normalizeTree(entity, data, preselectId) {
+    let preselectRoot = true;
+    if (preselectId && preselectId != data.idRelated) {
+        preselectRoot = false;
+    }
+    const root = { ...data, id: data.idRelated, selected: preselectRoot, name: i18n.t(`classification.${entity.idType}`), expanded: true }
 
     if (entity.idType === 1) {
         root.imageUrl = `${window.URL_MF_LEXON_BASE}/assets/img/icon-law.png`
     }
-    root.subChild = normalizeNodes(root.subChild)
+    root.subChild = normalizeNodes(root.subChild, preselectId)
 
     console.log(root)
     return [root]
 }
 
-function normalizeNodes(nodes) {
+function normalizeNodes(nodes, preselectId = 0) {
     const children = []
     for (let i = 0; i < nodes.length; i++) {
-        const n = { ...nodes[i], id: nodes[i].idRelated, expanded: true, name: nodes[i].code, imageUrl: `${window.URL_MF_LEXON_BASE}/assets/img/icon-folder.png` };
+        const n = { ...nodes[i], id: nodes[i].idRelated, expanded: true, selected: preselectId == nodes[i].idRelated, name: nodes[i].code, imageUrl: `${window.URL_MF_LEXON_BASE}/assets/img/icon-folder.png` };
         if (n.subChild.length > 0) {
             n.subChild = normalizeNodes(n.subChild)
         }

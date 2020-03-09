@@ -20,18 +20,18 @@ const ViewMode = {
 };
 
 const months = {
-  'Jan' : '01',
-  'Feb' : '02',
-  'Mar' : '03',
-  'Apr' : '04',
-  'May' : '05',
-  'Jun' : '06',
-  'Jul' : '07',
-  'Aug' : '08',
-  'Sep' : '09',
-  'Oct' : '10',
-  'Nov' : '11',
-  'Dec' : '12'
+  'Jan': '01',
+  'Feb': '02',
+  'Mar': '03',
+  'Apr': '04',
+  'May': '05',
+  'Jun': '06',
+  'Jul': '07',
+  'Aug': '08',
+  'Sep': '09',
+  'Oct': '10',
+  'Nov': '11',
+  'Dec': '12'
 }
 
 export class MessageList extends Component {
@@ -71,7 +71,7 @@ export class MessageList extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if(prevProps.messagesResult.messages.length > 0 && prevProps.messagesResult.messages.length !== this.props.messagesResult.messages.length) {
+    if (prevProps.messagesResult.messages.length > 0 && prevProps.messagesResult.messages.length !== this.props.messagesResult.messages.length) {
       this.props.refresh();
     }
 
@@ -107,11 +107,10 @@ export class MessageList extends Component {
     };
 
     selected
-    ? this.props.addMessage(message)
-    : this.props.deleteMessage(message.extMessageId);
+      ? this.props.addMessage(message)
+      : this.props.deleteMessage(message.extMessageId);
 
-    if(selected === true) {
-      debugger
+    if (selected === true) {
       window.dispatchEvent(new CustomEvent("LoadingMessage"))
       const msgRaw = await getMessage(msg.id, "raw");
       message.raw = msgRaw.result;

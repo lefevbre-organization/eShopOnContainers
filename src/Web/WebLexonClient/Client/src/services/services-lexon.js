@@ -362,3 +362,34 @@ export const createFolder = async (idParent, name, idEntity, idType, bbdd, idUse
     throw err;
   }
 }
+
+export const uploadFile = async (idFolder, idEntity, idType, bbdd, idUser, nameFile, contentFile) => {
+  const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/entities/files/post`
+  const body = {
+    idFolder,
+    idEntity,
+    idType,
+    bbdd,
+    idUser,
+    idActuation: null,
+    name: nameFile,
+    contentFile
+  }
+
+  console.log(JSON.stringify(body))
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        'Accept': 'application/text',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    return { response };
+  } catch (err) {
+    throw err;
+  }
+}
