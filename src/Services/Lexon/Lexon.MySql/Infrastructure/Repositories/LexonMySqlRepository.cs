@@ -39,6 +39,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 }
                 catch (Exception ex)
                 {
+                    result.data = null;
                     TraceMessage(result.errors, ex);
                 }
             }
@@ -78,6 +79,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 }
                 catch (Exception ex)
                 {
+                    result.data = null;
                     TraceMessage(result.errors, ex);
                 }
             }

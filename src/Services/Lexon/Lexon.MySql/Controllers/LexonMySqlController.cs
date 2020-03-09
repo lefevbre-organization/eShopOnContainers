@@ -59,7 +59,8 @@ namespace Lexon.MySql.Controllers
                 tokenRequest.provider, tokenRequest.mailAccount, tokenRequest.idMail, tokenRequest.folder,
                 tokenRequest.idEntityType, tokenRequest.idEntity,
                 tokenRequest.mailContacts, addTerminatorToToken);
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            return  Ok(result);
         }
 
         [HttpGet("companies")]
@@ -72,7 +73,8 @@ namespace Lexon.MySql.Controllers
                 return BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
             var result = await _lexonService.GetCompaniesFromUserAsync(idUser);
-            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            return Ok(result);
         }
 
         [HttpGet("entities/masters")]
@@ -82,7 +84,8 @@ namespace Lexon.MySql.Controllers
 
         {
             var result = await _lexonService.GetMasterEntitiesAsync();
-            return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+            return Ok(result);
         }
 
         [HttpPost("entities/search")]
