@@ -1,4 +1,4 @@
-import {refreshUserCredentials} from '../actions/application';
+import { refreshUserCredentials } from '../actions/application';
 
 export const HttpHeaders = {
   ISOTOPE_CREDENTIALS: 'Isotope-Credentials',
@@ -45,6 +45,23 @@ export function toJson(response) {
     }
   }
   return response.json();
+}
+
+/**
+ * Converts response Promise to text Promise or throws an error.
+ *
+ * @param {Response}response
+ * @returns {PromiseLike<object>}
+ */
+export function toText(response) {
+  if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      throw new AuthenticationException(response.statusText);
+    } else {
+      throw Error(`${response.status}`);
+    }
+  }
+  return response.text();
 }
 
 /**

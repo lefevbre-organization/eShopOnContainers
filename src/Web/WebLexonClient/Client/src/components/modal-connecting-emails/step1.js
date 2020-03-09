@@ -9,7 +9,7 @@ export class ConnectingEmailsStep1 extends React.Component {
         this.state = {
             types: [],
             actuation: true,
-            copyDocuments: false,
+            copyDocuments: true,
             saveDocuments: false,
             entity: 1
         }
@@ -57,7 +57,7 @@ export class ConnectingEmailsStep1 extends React.Component {
                 <ol>
                     <li>
                         <span>{i18n.t("connecting.q1")}</span>
-                        <ul>
+                        <ul className="list-checks">
                             <li><CheckBoxComponent disabled checked={this.state.actuation} label={i18n.t("connecting.create")} change={(event) => {
                                     this.setState({ actuation: event.checked }, () => { this.onChangeData() })
                                 }
@@ -88,6 +88,9 @@ export class ConnectingEmailsStep1 extends React.Component {
                     margin: 50px;
                 }
                 ol {list-style: none; counter-reset: li;}
+                .list-checks li {
+                    margin-top: 10px;
+                }
                 ol>li::before {
                     content: counter(li); 
                     color: #001978;
