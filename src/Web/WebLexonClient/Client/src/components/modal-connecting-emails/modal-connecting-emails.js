@@ -1,5 +1,4 @@
 import React, { Component, Fragment } from "react";
-import PropTypes from "prop-types";
 import i18n from "i18next";
 import { Button, Modal, Container } from "react-bootstrap";
 import { connect } from "react-redux";
@@ -191,6 +190,12 @@ class ModalConnectingEmails extends Component {
       }
     } if (step1Data.saveDocuments === true) {
       // Save attachments
+      console.log("Saving attachments")
+      for (let i = 0; i < selectedMessages.length; i++) {
+        // const raw = Base64.encode(selectedMessages[i].raw)
+        // const subject = selectedMessages[i].subject
+        // const upl = await uploadFile(step3Data.selected, step2Data.id, step2Data.idType, this.props.companySelected.bbdd, this.props.user.idUser, subject + ".eml", raw)
+      }
     }
   }
 
@@ -871,20 +876,3 @@ export default connect(
 )(ModalConnectingEmails);
 
 
-// const downloadEML = (data, filename, type) => {
-//   var file = new Blob([data], { type: type });
-//   if (window.navigator.msSaveOrOpenBlob) // IE10+
-//     window.navigator.msSaveOrOpenBlob(file, filename);
-//   else { // Others
-//     var a = document.createElement("a"),
-//       url = URL.createObjectURL(file);
-//     a.href = url;
-//     a.download = filename;
-//     document.body.appendChild(a);
-//     a.click();
-//     setTimeout(function () {
-//       document.body.removeChild(a);
-//       window.URL.revokeObjectURL(url);
-//     }, 0);
-//   }
-// }
