@@ -140,6 +140,8 @@ namespace Lexon.Infrastructure.Services
 
                         if (result.data == 0)
                             TraceOutputMessage(result.errors, "Mysql don´t remove the classification", 2001);
+                        else
+                            await RemoveClassificationFromListMongoAsync(classificationRemove, result);
                     }
                     else
                     {
@@ -151,7 +153,7 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceInfo(result.infos, $"Error al eliminar actuaciones para  {classificationRemove.idRelated}: {ex.Message}");
             }
-            await RemoveClassificationFromListMongoAsync(classificationRemove, result);
+            
             return result;
         }
 
