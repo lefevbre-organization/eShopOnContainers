@@ -275,7 +275,7 @@ export class Main extends Component {
             if ((idCaseFile != null && idCaseFile != undefined) || (bbdd !== null & bbdd !== undefined)) {
               this.onSetSidebarOpenLexon(true);
             }
-            if (idEmail.indexOf('<') !== -1 && idEmail.indexOf('>') !== -1) {
+            if (idEmail && idEmail.indexOf('<') !== -1 && idEmail.indexOf('>') !== -1) {
               getMessageListWithRFC(idEmail)
                 .then(response => {
                   if (response && response.result && response.result.messages && response.result.messages.length > 0) {
@@ -303,23 +303,6 @@ export class Main extends Component {
             this.props.history.push("/inbox");
           } else {
             this.props.history.push("/inbox");
-          }
-          if (idEmail.indexOf('<') !== -1 && idEmail.indexOf('>') !== -1) {
-            getMessageListWithRFC(idEmail)
-              .then(response => {
-                if (response && response.result && response.result.messages && response.result.messages.length > 0) {
-                  console.log("El messageId:" + idEmail + " se corresponde con el id Interno:" + response.result.messages[0].id);
-                  idEmail = response.result.messages[0].id;
-                  this.props.history.push(`/${idEmail}`);
-                }
-                else {
-                  this.setState({ googleDown: true, showNotification: true, messageNotification: "El mensaje no está en el servidor" });
-                  return;
-                }
-              });
-          }
-          else {
-            this.props.history.push(`/${idEmail}`);
           }
         });
     }
