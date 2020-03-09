@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import { withTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faReply } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faReply, faShare } from "@fortawesome/free-solid-svg-icons";
 import { getNameEmail } from "../../../../utils";
 import moment from "moment";
 import { Button } from "reactstrap";
@@ -68,9 +68,9 @@ export class MessageToolbar extends PureComponent {
         parseInt(this.props.messageResult.result.internalDate)
       );
     }
-      const replyHeader = `<p>${t("composemessage-toobar.on")} ${parsedDate.format(
+    const replyHeader = `<p>${t("composemessage-toobar.on")} ${parsedDate.format(
       "MMMM Do YYYY, h:mm:ss a"
-      )} < ${nameEmail.email} > ${t("composemessage-toobar.wrote")}:</p>`;
+    )} < ${nameEmail.email} > ${t("composemessage-toobar.wrote")}:</p>`;
 
     const composeProps = {
       subject: `Re: ${subject.value}`,
@@ -81,6 +81,16 @@ export class MessageToolbar extends PureComponent {
           ${replyHeader}
           <blockquote>${this.props.messageResult.body}</blockquote>`,
       ...(cc && { cc: cc.value })
+    };
+
+    const forwardHeader = `<p>${t("composemessage-toobar.on")} ${parsedDate.format(
+      "MMMM Do YYYY, h:mm:ss a"
+    )} < ${nameEmail.email} > ${t("composemessage-toobar.wrote")}:</p>`;
+
+    const composePropsFwd = {
+      ...composeProps,
+      subject: `Fwd: ${subject.value}`,
+      to: ""
     };
 
     const collapsed = this.props.sideBarCollapsed;
@@ -122,6 +132,23 @@ export class MessageToolbar extends PureComponent {
               <FontAwesomeIcon
                 title={t("message-toolbar.reply")}
                 icon={faReply}
+                size="lg"
+              />
+            </Link>
+          </div>
+          <div className="action-btn mr-2">
+            <Link
+              to={{
+                pathname: "/compose",
+                search: "",
+                sideBarCollapsed: this.props.sideBarCollapsed,
+                sideBarToggle: this.props.sideBarToggle,
+                state: { composeProps: composePropsFwd }
+              }}
+            >
+              <FontAwesomeIcon
+                title={t("message-toolbar.resend")}
+                icon={faShare}
                 size="lg"
               />
             </Link>

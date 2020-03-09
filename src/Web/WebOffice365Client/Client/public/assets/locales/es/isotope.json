@@ -31,7 +31,7 @@
     "drag-and-drop": "Deja los archivos aquí",
     "add-attachments": "Añadir archivos adjuntos",
     "browse": "Seleccionar",
-    "attach":"ADJUNTAR",
+    "attach": "ADJUNTAR",
     "or": "o",
     "bcc": "Cco:",
     "max-file-size": "El tamaño total de los adjuntos debe ser menor que 25MB para este proveedor.",
@@ -41,7 +41,8 @@
   },
   "message-toolbar": {
     "move-to-trash": "Mover a la Papelera",
-    "reply": "Responder"
+    "reply": "Responder",
+    "resend": "Reenviar"
   },
   "message-footer": {
     "messages": "Mensajes"
@@ -69,7 +70,7 @@
     "cancel": "No",
     "ok": "Si"
   },
-  "message-not-found":{
+  "message-not-found": {
     "body": "No se encuentra el mensaje en el servidor",
     "ok": "Continuar"
   }
