@@ -238,7 +238,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         await command.ExecuteNonQueryAsync();
                         TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
                         TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
-                        result.data = (int)command.Parameters["P_ID"].Value;
+                        result.data = GetIntOutputParameter(command.Parameters["P_ID"].Value);
                     }
                 }
                 catch (Exception ex)
@@ -318,11 +318,12 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     conn.Open();
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddRelation, conn))
                     {
-                        AddCommonParameters(classification.idUser, command, "P_JSON", filtro);
+                        AddCommonParameters(classification.idUser, command, "P_JSON", filtro, true);
                         await command.ExecuteNonQueryAsync();
-                        result.data = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString()) ? -1 : 1;
+                        //result.data = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString()) ? -1 : 1;
                         TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
                         TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                        result.data = GetIntOutputParameter(command.Parameters["P_ID"].Value);
                     }
                 }
                 catch (Exception ex)
@@ -333,6 +334,8 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
             return result;
         }
+
+
 
         public async Task<Result<int>> RemoveRelationMailAsync(ClassificationRemoveView classification)
         {
