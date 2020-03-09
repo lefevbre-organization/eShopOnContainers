@@ -1,11 +1,10 @@
 import React, { PureComponent } from "react";
 import { withTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faReply } from "@fortawesome/free-solid-svg-icons";
 import { getNameEmail } from "../../../../utils";
 import moment from "moment";
 import { Button } from "reactstrap";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faReply, faShare } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import "./messageToolbar.scss";
 
@@ -34,7 +33,7 @@ export class MessageToolbar extends PureComponent {
     let replyTo, cc, subject;
     subject = messageHeaders.subject;
 
-    replyTo = messageHeaders.from?messageHeaders.from.emailAddress.address:"";
+    replyTo = messageHeaders.from ? messageHeaders.from.emailAddress.address : "";
 
     for (let i = 0; i < messageHeaders.ccRecipients.length; i++) {
       cc = messageHeaders.ccRecipients[i].emailAddress.address;
@@ -47,21 +46,32 @@ export class MessageToolbar extends PureComponent {
       parsedDate = moment(
         parseInt(this.props.messageResult.result.internalDate)
       );
-      }
+    }
 
     const replyHeader = `<p>${t("composemessage-toobar.on")} ${parsedDate.format(
-          "MMMM Do YYYY, h:mm:ss a"
-    )} < ${nameEmail?nameEmail.email:""} > ${t("composemessage-toobar.wrote")}:</p>`;
+      "MMMM Do YYYY, h:mm:ss a"
+    )} < ${nameEmail ? nameEmail.email : ""} > ${t("composemessage-toobar.wrote")}:</p>`;
 
     const composeProps = {
       subject: `Re: ${subject}`,
-      to: nameEmail?nameEmail.email:"",
+      to: nameEmail ? nameEmail.email : "",
       content: `<p>&nbsp;</p>
           <p>&nbsp;</p>
           <p>&nbsp;</p>
           ${replyHeader}
           <blockquote>${this.props.messageResult.body.content}</blockquote>`,
       ...(cc && { cc: cc.value })
+    };
+
+
+    const forwardHeader = `<p>${t("composemessage-toobar.on")} ${parsedDate.format(
+      "MMMM Do YYYY, h:mm:ss a"
+    )} < ${nameEmail.email} > ${t("composemessage-toobar.wrote")}:</p>`;
+
+    const composePropsFwd = {
+      ...composeProps,
+      subject: `Fwd: ${subject}`,
+      to: ""
     };
 
     const collapsed = this.props.sideBarCollapsed;
@@ -94,6 +104,23 @@ export class MessageToolbar extends PureComponent {
               <FontAwesomeIcon
                 title={t("message-toolbar.reply")}
                 icon={faReply}
+                size="lg"
+              />
+            </Link>
+          </div>
+          <div className="action-btn mr-2">
+            <Link
+              to={{
+                pathname: "/compose",
+                search: "",
+                sideBarCollapsed: this.props.sideBarCollapsed,
+                sideBarToggle: this.props.sideBarToggle,
+                state: { composeProps: composePropsFwd }
+              }}
+            >
+              <FontAwesomeIcon
+                title={t("message-toolbar.resend")}
+                icon={faShare}
                 size="lg"
               />
             </Link>
