@@ -111,6 +111,15 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             errors.Add(errorInfo);
         }
 
+        public int GetIntOutputParameter(object outputData)
+        {
+            //    return;
+            if (outputData == null || !(outputData is int))
+                return 0;
+
+            return (int)outputData;
+        }
+
         public void TraceInfo(
             List<Info> infos,
             string message,
