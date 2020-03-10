@@ -17,6 +17,7 @@ import './messageContent.scss';
 import MessageHeader from './messageHeader';
 import { setMessageAsRead, getMessage } from '../../../../api';
 import MessageNotFound from '../../../message-not-found/MessageNotFound';
+import i18n from 'i18next';
 
 //BEGIN functions for attachment functionality
 
@@ -165,6 +166,7 @@ export class MessageContent extends Component {
   componentWillUnmount() {
     this.props.setOpenMessage('');
     window.dispatchEvent(new CustomEvent('ResetList'));
+    debugger;
     for (let i = 0; i < this.props.selectedMessages.length; i++) {
       const detail = {
         id: this.props.selectedMessages[i].id,
@@ -173,7 +175,7 @@ export class MessageContent extends Component {
         sentDateTime: this.props.selectedMessages[i].sentDateTime,
         chkselected: true,
         account: this.props.lexon.account,
-        folder: getFolderName(this.props.t, this.props.selectedFolder),
+        folder: getFolderName(i18n.t, this.props.selectedFolder),
         provider: 'GOOGLE',
         raw: this.props.selectedMessages[i].raw
       };
@@ -200,6 +202,7 @@ export class MessageContent extends Component {
         this.props.emailMessageResult.result
       ) {
         const msgId = this.props.emailMessageResult.result.id;
+        debugger;
         const detail = {
           id: msgId,
           extMessageId: getHeader(
@@ -209,7 +212,7 @@ export class MessageContent extends Component {
           subject: getHeader(emailHeaderMessageResult.headers, 'subject'),
           sentDateTime: getHeader(emailHeaderMessageResult.headers, 'date'),
           chkselected: true,
-          folder: getFolderName(this.props.t, this.props.selectedFolder),
+          folder: getFolderName(i18n.t, this.props.selectedFolder),
           account: this.props.lexon.account,
           provider: 'GOOGLE',
           raw: null
@@ -515,13 +518,13 @@ const findAttachments = email => {
 function getFolderName(t, folder) {
   switch (folder) {
     case 'INBOX':
-      return t('sidebar.inbox');
+      return i18n.t('sidebar.inbox');
     case 'SENT':
-      return t('sidebar.sent');
+      return i18n.t('sidebar.sent');
     case 'TRASH':
-      return t('sidebar.trash');
+      return i18n.t('sidebar.trash');
     case 'SPAM':
-      return t('sidebar.spam');
+      return i18n.t('sidebar.spam');
     default:
       return folder;
   }

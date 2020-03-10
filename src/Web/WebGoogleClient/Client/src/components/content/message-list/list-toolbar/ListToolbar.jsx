@@ -17,6 +17,7 @@ import { Button } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { getMessage } from '../../../../api';
+import i18n from 'i18next';
 
 export class MessageToolbar extends PureComponent {
   constructor(props) {
@@ -75,7 +76,7 @@ export class MessageToolbar extends PureComponent {
             ...msg,
             id: msg.extMessageId,
             account: this.props.lexon.account,
-            folder: getFolderName(this.props.t, this.props.selectedFolder),
+            folder: getFolderName(i18n.t, this.props.selectedFolder),
             provider: 'GOOGLE'
           })),
           chkselected: checked
@@ -200,13 +201,13 @@ export default connect(mapStateToProps, mapDispatchToProps)(MessageToolbar);
 function getFolderName(t, folder) {
   switch (folder) {
     case 'INBOX':
-      return t('sidebar.inbox');
+      return i18n.t('sidebar.inbox');
     case 'SENT':
-      return t('sidebar.sent');
+      return i18n.t('sidebar.sent');
     case 'TRASH':
-      return t('sidebar.trash');
+      return i18n.t('sidebar.trash');
     case 'SPAM':
-      return t('sidebar.spam');
+      return i18n.t('sidebar.spam');
     default:
       return folder;
   }

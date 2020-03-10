@@ -1,12 +1,12 @@
-import React, { Fragment, Component } from "react";
-import { Button, Modal, Container } from "react-bootstrap";
-import i18n from "i18next";
-import ClassificationType from "./classification-type/classification-type";
-import ClassificationList from "./classification-list/classification-list";
-import PropTypes from "prop-types";
-import { getResults, addClassification } from "../../services/services-lexon";
-import { connect } from "react-redux";
-import APPLICATION_ACTIONS from "../../actions/applicationAction";
+import React, { Fragment, Component } from 'react';
+import { Button, Modal, Container } from 'react-bootstrap';
+import i18n from 'i18next';
+import ClassificationType from './classification-type/classification-type';
+import ClassificationList from './classification-list/classification-list';
+import PropTypes from 'prop-types';
+import { getResults, addClassification } from '../../services/services-lexon';
+import { connect } from 'react-redux';
+import APPLICATION_ACTIONS from '../../actions/applicationAction';
 
 class ClassifyEmails extends Component {
   constructor(props) {
@@ -17,7 +17,7 @@ class ClassifyEmails extends Component {
       listResultsByType: [],
       resultsSelected: [],
       type: null,
-      search: "",
+      search: '',
       forceUpdate: null,
       isLoading: false
     };
@@ -58,7 +58,7 @@ class ClassifyEmails extends Component {
     if (fromSave === true) {
       if (type === null || resultsSelected.length === 0) {
         toggleNotification(
-          i18n.t("classify-emails.classification-selection-ko")
+          i18n.t('classify-emails.classification-selection-ko')
         );
         return;
       }
@@ -76,17 +76,20 @@ class ClassifyEmails extends Component {
           if (selectedMessages.length === 1) {
             _this.updateResultsSelected(selectedMessages[0].id);
           }
-          toggleNotification(i18n.t("classify-emails.classification-saved-ok"));
+          toggleNotification(i18n.t('classify-emails.classification-saved-ok'));
         })
         .catch(error => {
-          toggleNotification(i18n.t("classify-emails.classification-saved-ko"), true);
-          console.log("error ->", error);
+          toggleNotification(
+            i18n.t('classify-emails.classification-saved-ko'),
+            true
+          );
+          console.log('error ->', error);
         });
     } else {
       toggleClassifyEmails();
     }
 
-    this.setState({ type: null, search: "" });
+    this.setState({ type: null, search: '' });
   }
 
   getListResultsByType() {
@@ -117,7 +120,7 @@ class ClassifyEmails extends Component {
         } else {
           this.props.addError(JSON.stringify(errors));
         }
-        console.log("error ->", errors);
+        console.log('error ->', errors);
         this.setState({
           isLoading: false,
           listResultsByType: []
@@ -130,7 +133,7 @@ class ClassifyEmails extends Component {
 
     if (type) {
       if (this.state.type === type) {
-        const uuidv1 = require("uuid/v1");
+        const uuidv1 = require('uuid/v1');
         this.setState({
           forceUpdate: uuidv1()
         });
@@ -176,20 +179,20 @@ class ClassifyEmails extends Component {
             onHide={() => {
               this._handleOnClick(false);
             }}
-            size="lg"
-            aria-labelledby="contained-modal-title-vcenter"
+            size='lg'
+            aria-labelledby='contained-modal-title-vcenter'
             centered
-            dialogClassName="modal"
+            dialogClassName='modal'
           >
-            <Modal.Header className="align-items-center" closeButton>
+            <Modal.Header className='align-items-center' closeButton>
               <Modal.Title>
-                <div className="modal-title h4">
+                <div className='modal-title h4'>
                   <h5
-                    className="modal-title d-flex align-items-center"
-                    id="clasificarNuevaclasificacionLabel"
+                    className='modal-title d-flex align-items-center'
+                    id='clasificarNuevaclasificacionLabel'
                   >
-                    <span className="lf-icon-bookmarks"></span>
-                    {i18n.t("classify-emails.title")}
+                    <span className='lf-icon-bookmarks'></span>
+                    {i18n.t('classify-emails.title')}
                   </h5>
                 </div>
               </Modal.Title>
@@ -197,7 +200,7 @@ class ClassifyEmails extends Component {
             <Modal.Body>
               <Container>
                 <p>
-                  <strong>{i18n.t("classify-emails.body")}</strong>
+                  <strong>{i18n.t('classify-emails.body')}</strong>
                 </p>
                 <ClassificationType
                   searchResultsByType={(type, search) => {
@@ -212,7 +215,6 @@ class ClassifyEmails extends Component {
                     this.searchResultsByType(type, search);
                   }}
                   updateResultsSelected={item => {
-                    debugger
                     this.updateResultsSelected(item);
                   }}
                 />
@@ -220,16 +222,16 @@ class ClassifyEmails extends Component {
             </Modal.Body>
             <Modal.Footer>
               <Button
-                bsPrefix="btn btn-outline-primary"
+                bsPrefix='btn btn-outline-primary'
                 onClick={() => this._handleOnClick(false)}
               >
-                {i18n.t("classify-emails.cancel")}
+                {i18n.t('classify-emails.cancel')}
               </Button>
               <Button
-                bsPrefix="btn btn-secundary"
+                bsPrefix='btn btn-secundary'
                 onClick={() => this._handleOnClick(true)}
               >
-                {i18n.t("classify-emails.save")}
+                {i18n.t('classify-emails.save')}
               </Button>
             </Modal.Footer>
           </Modal>
@@ -251,20 +253,19 @@ class ClassifyEmails extends Component {
             letter-spacing: 0.7px;
             color: #ffff;
             padding: 10px;
-        }   
+          }
 
-        .btn-secundary:focus {
-          background-color: #001978 !important;
-          border: 2px solid #001978 !important;
-          color: #ffff !important;
-        }
+          .btn-secundary:focus {
+            background-color: #001978 !important;
+            border: 2px solid #001978 !important;
+            color: #ffff !important;
+          }
 
-                  
           strong {
             font-weight: 500;
             font-family: MTTMilano-Medium, Lato, Arial, sans-serif;
           }
-          
+
           table {
             color: #7c868c;
           }
@@ -272,12 +273,12 @@ class ClassifyEmails extends Component {
           .modal-dialog {
             margin-top: 6rem;
           }
-          
+
           .modal-content {
             border: 0;
             border-radius: 0;
           }
-          
+
           .modal-header {
             border: 0;
             background-color: #001978;
@@ -285,12 +286,12 @@ class ClassifyEmails extends Component {
             font-size: 22px;
             border-radius: 0;
           }
-          
+
           .modal .modal-dialog .modal-content .modal-header:not(.infoModal) {
             min-height: 64px;
             padding: 0 50px;
           }
-          
+
           .modal-header h5 span {
             font-size: 28px;
             margin-right: 15px;
@@ -307,9 +308,9 @@ class ClassifyEmails extends Component {
           }
 
           .modal-header .close:before {
-            content: "\\e938";
+            content: '\\e938';
             color: #fff;
-            font-family: "lf-font" !important;
+            font-family: 'lf-font' !important;
             speak: none;
             font-style: normal;
             font-weight: normal;
@@ -327,21 +328,21 @@ class ClassifyEmails extends Component {
           .modal-body {
             background-color: #ffffff;
           }
-          
+
           .modal-body.info {
             background-color: #001978;
           }
-          
+
           .modal-body.info .content {
             color: #fff;
             font-size: 19px;
           }
-          
-          .modal-body.info .content [class^="lf-icon"] {
+
+          .modal-body.info .content [class^='lf-icon'] {
             font-size: 100px;
             margin-right: 50px;
           }
-          
+
           .modal-footer {
             border: 0;
             border-radius: 0;
@@ -351,18 +352,18 @@ class ClassifyEmails extends Component {
           .modal-footer.info {
             background-color: #001978;
           }
-          
+
           .modal-footer .btn-primary,
           .modal-footer .btn-primary:hover {
             margin-left: 10px;
           }
-          
+
           .form-group .requerido {
             color: #d81f2a;
             font-size: 20px;
             text-align: start;
           }
-          
+
           .lexon-select-like-custom-trigger {
             height: 45px;
             width: 350px;
@@ -441,7 +442,7 @@ class ClassifyEmails extends Component {
           .lexon-select-like-custom-list li:hover span {
             color: #001978;
           }
-          
+
           .lexon-clasification-list-container {
             border: 1px solid #d2d2d2;
             position: relative;
@@ -555,7 +556,7 @@ class ClassifyEmails extends Component {
           .lexon-clasification-list-container table tbody tr {
             border-bottom: 1px solid #d2d2d2;
           }
-          
+
           .lexon-clasification-list-container tr {
             display: table;
             width: 100%;
@@ -605,7 +606,7 @@ class ClassifyEmails extends Component {
               justify-content: space-between !important;
             }
           }
-          
+
           @media (max-width: 767px) {
             .modal .modal-dialog .modal-content .modal-header:not(.infoModal) {
               padding: 1rem;
@@ -614,20 +615,20 @@ class ClassifyEmails extends Component {
               padding: 1rem;
             }
           }
-          
+
           @media (min-width: 768px) {
             .modal-footer,
             .modal-body {
               padding: 1rem 50px;
             }
           }
-          
+
           @media (max-height: 570px) {
             .modal-dialog {
               margin-top: 3.5rem;
             }
           }
-          
+
           @media (min-width: 992px) {
             .modal-lg,
             .modal-xl {

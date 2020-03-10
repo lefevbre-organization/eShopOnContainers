@@ -12,8 +12,8 @@ export class ConnectingEmailsStep1 extends React.Component {
     this.state = {
       types: [],
       actuation: true,
-      copyDocuments: true,
-      saveDocuments: true,
+      copyDocuments: false,
+      saveDocuments: false,
       entity: 1
     };
   }
@@ -77,6 +77,7 @@ export class ConnectingEmailsStep1 extends React.Component {
                 </li>
                 <li>
                   <CheckBoxComponent
+                    disabled
                     label={i18n.t('connecting.copy')}
                     checked={this.state.copyDocuments}
                     change={data => {
@@ -86,6 +87,7 @@ export class ConnectingEmailsStep1 extends React.Component {
                 </li>
                 <li>
                   <CheckBoxComponent
+                    disabled
                     label={i18n.t('connecting.save')}
                     checked={this.state.saveDocuments}
                     change={data => {
