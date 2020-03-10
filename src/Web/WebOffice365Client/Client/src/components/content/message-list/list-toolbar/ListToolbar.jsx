@@ -1,22 +1,22 @@
-import React, { PureComponent } from "react";
-import Checkbox from "../../../common/Checkbox";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import React, { PureComponent } from 'react';
+import Checkbox from '../../../common/Checkbox';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import {
   toggleSelected,
   modifyMessages
-} from "../actions/message-list.actions";
-import Pager from "../pager-buttons/PagerButtons";
-import Synkbutton from "../synk-buttons/SynkButtons";
-import ListActionButtons from "./ListActionButtons";
+} from '../actions/message-list.actions';
+import Pager from '../pager-buttons/PagerButtons';
+import Synkbutton from '../synk-buttons/SynkButtons';
+import ListActionButtons from './ListActionButtons';
 import {
   deleteListMessages,
   addListMessages
-} from "../actions/message-list.actions";
-import { Button } from "reactstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
-import { getMessage } from "../../../../api_graph";
+} from '../actions/message-list.actions';
+import { Button } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { getMessage } from '../../../../api_graph';
 
 export class MessageToolbar extends PureComponent {
   constructor(props) {
@@ -48,7 +48,7 @@ export class MessageToolbar extends PureComponent {
         sentDateTime,
         extMessageId,
         raw: null
-      }
+      };
     });
 
     this.setState({
@@ -60,46 +60,44 @@ export class MessageToolbar extends PureComponent {
       ? this.props.addListMessages(messages)
       : this.props.deleteListMessages(messages.map(msg => msg.extMessageId));
 
-
     if (checked === true) {
-      window.dispatchEvent(new CustomEvent("LoadingMessage"))
+      window.dispatchEvent(new CustomEvent('LoadingMessage'));
       for (let i = 0; i < messages.length; i++) {
-        const msgRaw = await getMessage(messages[i].id, "raw");
+        const msgRaw = await getMessage(messages[i].id, 'raw');
         messages[i].raw = msgRaw;
-      }  
+      }
     }
 
     window.dispatchEvent(
-      new CustomEvent("CheckAllclick", {
+      new CustomEvent('CheckAllclick', {
         detail: {
           listMessages: messages.map(msg => ({
             ...msg,
             id: msg.extMessageId,
             account: this.props.lexon.account,
-            folder: "",
-            provider: "GOOGLE"
+            folder: this.props.selectedFolder,
+            provider: 'GOOGLE'
           })),
           chkselected: checked
         }
       })
     );
 
-    window.dispatchEvent(new CustomEvent("LoadedMessage"))
+    window.dispatchEvent(new CustomEvent('LoadedMessage'));
   }
 
   getLabelMessagesSynk() {
-    this.props.loadLabelMessageSingle()
-
+    this.props.loadLabelMessageSingle();
   }
 
   navigateToNextPage() {
-    this.props.messagesResult.paginatioDirectionSelected = "next";
-    this.props.getLabelMessages("", "", "")
+    this.props.messagesResult.paginatioDirectionSelected = 'next';
+    this.props.getLabelMessages('', '', '');
   }
 
   navigateToPrevPage() {
-    this.props.messagesResult.paginatioDirectionSelected = "prev";
-    this.props.getLabelMessages("", "", "");
+    this.props.messagesResult.paginatioDirectionSelected = 'prev';
+    this.props.getLabelMessages('', '', '');
   }
 
   modifyMessages(addLabelIds, removeLabelIds) {
@@ -129,22 +127,22 @@ export class MessageToolbar extends PureComponent {
     }
 
     return (
-      <div className="msg-toolbar">
+      <div className='msg-toolbar'>
         <div
           className={
             collapsed
-              ? "pl-2 py-2 pr-4 d-flex align-items-center bd-highlight"
-              : "pl-2 py-2 pr-4 d-flex align-items-center bd-highlight margin-top-5"
+              ? 'pl-2 py-2 pr-4 d-flex align-items-center bd-highlight'
+              : 'pl-2 py-2 pr-4 d-flex align-items-center bd-highlight margin-top-5'
           }
         >
-          <div className="d-flex align-content-center align-items-center">
-            <div className="padding-top-10">
-              <span className={collapsed ? "" : "with-side-bar"}>
+          <div className='d-flex align-content-center align-items-center'>
+            <div className='padding-top-10'>
+              <span className={collapsed ? '' : 'with-side-bar'}>
                 <Button
                   onClick={this.props.sideBarToggle}
-                  className="btn-transparent margin-right-10 margin-bottom-10"
+                  className='btn-transparent margin-right-10 margin-bottom-10'
                 >
-                  <FontAwesomeIcon icon={faBars} size="1x" />
+                  <FontAwesomeIcon icon={faBars} size='1x' />
                 </Button>
               </span>
 
@@ -152,7 +150,7 @@ export class MessageToolbar extends PureComponent {
             </div>
             <div />
 
-            <div className="ml-auto p-2 bd-highlight">
+            <div className='ml-auto p-2 bd-highlight'>
               <div>
                 {selectedMessages.length ? (
                   <ListActionButtons onClick={this.modifyMessages} />
@@ -161,18 +159,15 @@ export class MessageToolbar extends PureComponent {
             </div>
           </div>
 
-          <div className="right-buttons">
+          <div className='right-buttons'>
             <Pager
               nextToken={this.props.nextToken}
               prevToken={this.props.prevToken}
               navigateToPrevPage={this.navigateToPrevPage}
               navigateToNextPage={this.navigateToNextPage}
               getLabelMessages={this.getLabelMessages}
-
             />
-            <Synkbutton
-              getLabelMessagesSynk={this.getLabelMessagesSynk}
-            />
+            <Synkbutton getLabelMessagesSynk={this.getLabelMessagesSynk} />
           </div>
         </div>
       </div>
@@ -183,6 +178,9 @@ export class MessageToolbar extends PureComponent {
 const mapStateToProps = state => ({
   messagesResult: state.messagesResult,
   selectedMessages: state.messageList.selectedMessages,
+  selectedFolder: state.messagesResult.label
+  ? state.messagesResult.label.result.name
+  : '',
   lexon: state.lexon
 });
 
