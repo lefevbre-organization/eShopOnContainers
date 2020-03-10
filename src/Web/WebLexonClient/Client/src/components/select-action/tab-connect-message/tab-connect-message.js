@@ -9,22 +9,28 @@ import { getClassifications } from "../../../services/services-lexon";
 import ModalConnectingEmails from "../../modal-connecting-emails/modal-connecting-emails";
 import ListClassifications from "../list-classifications/list-classifications";
 import ConfirmRemoveClassification from "../../confirm-remove-classification/confirm-remove-classification";
+import Spinner from "../../../components/spinner/spinner";
 
 class TabConnectMessage extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      loading: false,
       showClassifications: false,
       showConfirmRemoveClassification: false,
     };
     this.toggleConfirmRemoveClassification = this.toggleConfirmRemoveClassification.bind(this);
     this.getClassifications = this.getClassifications.bind(this);
-
+    this.onShowLoader = this.onShowLoader.bind(this);
+    this.onHideLoader = this.onHideLoader.bind(this);
   }
 
   componentDidMount() {
     const { selectedMessages } = this.props;
+
+    window.addEventListener("LoadingMessage", this.onShowLoader);
+    window.addEventListener("LoadedMessage", this.onHideLoader);
 
     if (selectedMessages.length > 0) {
       this.setState({ showNewClassification: true });
@@ -37,6 +43,11 @@ class TabConnectMessage extends Component {
     } else {
       this.setState({ classifications: [], showClassifications: false });
     }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("LoadingMessage", this.onShowLoader);
+    window.removeEventListener("LoadedMessage", this.onHideLoader);
   }
 
   componentDidUpdate(prevProps) {
@@ -53,6 +64,14 @@ class TabConnectMessage extends Component {
         this.setState({ classifications: [], showClassifications: false });
       }
     }
+  }
+
+  onShowLoader() {
+    this.setState({loading: true})
+  }
+
+  onHideLoader() {
+    this.setState({loading: false})
   }
 
   toggleConfirmRemoveClassification(classification) {
@@ -117,8 +136,13 @@ class TabConnectMessage extends Component {
       showConfirmRemoveClassification,
       classificationToRemove
     } = this.state;
+
+    if(this.state.loading === true) {
+      return <Spinner/>
+    }
+    
     return (
-      <Fragment>
+      <Fragment>        
         <ModalConnectingEmails 
           user={user} 
           updateClassifications={this.getClassifications}

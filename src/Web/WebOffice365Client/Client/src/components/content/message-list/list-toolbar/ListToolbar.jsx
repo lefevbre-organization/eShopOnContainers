@@ -16,7 +16,7 @@ import {
 import { Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
-import { getMessageHeadersFromId } from "../../../../api_graph";
+import { getMessage } from "../../../../api_graph";
 
 export class MessageToolbar extends PureComponent {
   constructor(props) {
@@ -34,7 +34,7 @@ export class MessageToolbar extends PureComponent {
     };
   }
 
-  onSelectionChange(evt) {
+  async onSelectionChange(evt) {
     const checked = evt.target.checked;
 
     const messages = this.props.messagesResult.messages.map(msg => {
@@ -46,7 +46,8 @@ export class MessageToolbar extends PureComponent {
         id: msg.id,
         subject,
         sentDateTime,
-        extMessageId
+        extMessageId,
+        raw: null
       }
     });
 
@@ -59,6 +60,14 @@ export class MessageToolbar extends PureComponent {
       ? this.props.addListMessages(messages)
       : this.props.deleteListMessages(messages.map(msg => msg.extMessageId));
 
+
+    if (checked === true) {
+      window.dispatchEvent(new CustomEvent("LoadingMessage"))
+      for (let i = 0; i < messages.length; i++) {
+        const msgRaw = await getMessage(messages[i].id, "raw");
+        messages[i].raw = msgRaw;
+      }  
+    }
 
     window.dispatchEvent(
       new CustomEvent("CheckAllclick", {
@@ -74,6 +83,8 @@ export class MessageToolbar extends PureComponent {
         }
       })
     );
+
+    window.dispatchEvent(new CustomEvent("LoadedMessage"))
   }
 
   getLabelMessagesSynk() {

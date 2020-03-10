@@ -44,9 +44,9 @@ namespace Lexon.Infrastructure.Services
 
         #region Classifications
 
-        public async Task<Result<long>> AddClassificationToListAsync(ClassificationAddView classificationAdd)
+        public async Task<Result<List<int>>> AddClassificationToListAsync(ClassificationAddView classificationAdd)
         {
-            var result = new Result<long>(0);
+            var result = new Result<List<int>>(new List<int>());
 
             SerializeObjectToPost(classificationAdd, "/classifications/add", out string url, out StringContent data);
             try
@@ -55,9 +55,9 @@ namespace Lexon.Infrastructure.Services
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        result = await response.Content.ReadAsAsync<Result<long>>();
+                        result = await response.Content.ReadAsAsync<Result<List<int>>>();
 
-                        if (result.data == 0)
+                        if (result.data?.Count == 0)
                             TraceOutputMessage(result.errors, "Mysql don´t create the classification", 2001);
                         else
                             await AddClassificationToListMongoAsync(classificationAdd, result);
@@ -76,7 +76,7 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        private async Task AddClassificationToListMongoAsync(ClassificationAddView classificationAdd, Result<long> result)
+        private async Task AddClassificationToListMongoAsync(ClassificationAddView classificationAdd, Result<List<int>> result)
         {
             try
             {
@@ -85,9 +85,11 @@ namespace Lexon.Infrastructure.Services
                 if (resultMongo.infos.Count > 0)
                     result.infos.AddRange(resultMongo.infos);
                 else if (resultMongo.data == 0)
-                    result.infos.Add(new Info() { code="error_add_cactuation_mongo", message="error when add classification"});
+                    result.infos.Add(new Info() { code="error_actuation_mongo", message="error when add classification"});
                 else
-                    result.data = resultMongo.data;
+                    result.infos.Add(new Info() { code = "add_actuations_mong", message = "add classification to mongo" });
+
+                //    result.data.Add((int)resultMongo.data);
             }
             catch (Exception ex)
             {
@@ -140,6 +142,8 @@ namespace Lexon.Infrastructure.Services
 
                         if (result.data == 0)
                             TraceOutputMessage(result.errors, "Mysql don´t remove the classification", 2001);
+                        else
+                            await RemoveClassificationFromListMongoAsync(classificationRemove, result);
                     }
                     else
                     {
@@ -151,7 +155,7 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceInfo(result.infos, $"Error al eliminar actuaciones para  {classificationRemove.idRelated}: {ex.Message}");
             }
-            await RemoveClassificationFromListMongoAsync(classificationRemove, result);
+            
             return result;
         }
 
@@ -161,16 +165,17 @@ namespace Lexon.Infrastructure.Services
             {
                 var resultMongo = await _usersRepository.RemoveClassificationFromListAsync(classificationRemove);
 
-                if (resultMongo.errors.Count > 0)
-                    result.errors.AddRange(resultMongo.errors);
+                if (resultMongo.infos.Count > 0)
+                    result.infos.AddRange(resultMongo.infos);
                 else if (resultMongo.data == 0)
-                    TraceOutputMessage(result.errors, "MongoDb don´t remove the classification", 2002);
+                    result.infos.Add(new Info() { code = "error_actuation_mongo", message = "error when remove classification" });
                 else
                     result.data = resultMongo.data;
+
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                TraceInfo(result.infos, $"Error al eliminar actuaciones para  {classificationRemove.idRelated}: {ex.Message}");
             }
         }
 
@@ -294,17 +299,17 @@ namespace Lexon.Infrastructure.Services
             var result = new Result<bool>(false);
             try
             {
-                var imageDataByteArray = Convert.FromBase64String(fileMail.contentFile);
+                var imageDataByteArray = Convert.FromBase64String(fileMail.ContentFile);
 
                 //When creating a stream, you need to reset the position, without it you will see that you always write files with a 0 byte length. 
                 var imageDataStream = new MemoryStream(imageDataByteArray);
                 imageDataStream.Position = 0;
                 result.data = true;
-                TraceInfo(result.infos, $"Se guarda el fichero {fileMail.nameFile}");
+                TraceInfo(result.infos, $"Se guarda el fichero {fileMail.Name}");
             }
             catch (Exception ex)
             {
-                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.nameFile}", "590");
+                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}", "590");
                 throw;
             }
             return result;

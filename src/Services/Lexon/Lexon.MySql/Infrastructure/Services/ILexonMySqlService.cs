@@ -18,7 +18,7 @@ namespace Lexon.MySql.Infrastructure.Services
 
         Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification);
 
-        Task<Result<int>> AddRelationMailAsync(ClassificationAddView classification);
+        Task<Result<List<int>>> AddRelationMailAsync(ClassificationAddView classification);
 
         Task<MySqlCompany> GetRelationsAsync(ClassificationSearchView classification);
 

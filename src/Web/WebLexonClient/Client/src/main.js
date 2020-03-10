@@ -76,12 +76,12 @@ class Main extends Component {
   }
 
   async handleSentMessage(event) {
-    const { user, idCaseFile, bbdd} = this.state;
+    const { user, idCaseFile, bbdd } = this.state;
     const { idEmail, subject, date } = event.detail;
-    
-    await addClassification(user, {bbdd}, [{
+
+    await addClassification(user, { bbdd }, [{
       id: idEmail, subject, sentDateTime: date
-    }], idCaseFile, 1)    
+    }], idCaseFile, 1)
 
     window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
     // this.props.setCaseFile({
@@ -92,12 +92,12 @@ class Main extends Component {
   }
 
   async handleSentMessage(event) {
-    const { user, idCaseFile, bbdd} = this.state;
+    const { user, idCaseFile, bbdd } = this.state;
     const { idEmail, subject, date } = event.detail;
-    
-    await addClassification(user, {bbdd}, [{
+
+    await addClassification(user, { bbdd }, [{
       id: idEmail, subject, sentDateTime: date
-    }], idCaseFile, 1)    
+    }], idCaseFile, 1)
 
     window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
     this.props.setCaseFile({
@@ -113,12 +113,13 @@ class Main extends Component {
 
     event.detail.chkselected
       ? this.props.addMessage({
-          id: event.detail.extMessageId,
-          //extMessageId: event.detail.extMessageId,
-          subject: event.detail.subject,
-          folder: event.detail.folder,
-          sentDateTime: event.detail.sentDateTime
-        })
+        id: event.detail.extMessageId,
+        //extMessageId: event.detail.extMessageId,
+        subject: event.detail.subject,
+        folder: event.detail.folder,
+        sentDateTime: event.detail.sentDateTime,
+        raw: event.detail.raw
+      })
       : this.props.deleteMessage(event.detail.extMessageId);
   }
 
@@ -159,9 +160,9 @@ class Main extends Component {
         provider,
         account
       });
-    } 
-    
-    if(bbdd && bbdd !== '') {
+    }
+
+    if (bbdd && bbdd !== '') {
       this.props.setInitialBBDD(bbdd);
     }
 
@@ -171,13 +172,20 @@ class Main extends Component {
 
     getUser(user)
       .then(result => {
-        const newUser = Object.assign({}, result.user, { account, provider, config: result.config } );
-        this.setState({ user: newUser});
+        const newUser = Object.assign({}, result.user, { account, provider, config: result.config });
+        this.setState({ user: newUser });
         getCompanies(newUser)
           .then(result => {
+
+            if (Array.isArray(result.errors)) {
+              result.errors.forEach(error => this.props.addError(JSON.stringify(error)));
+            } else {
+              this.props.addError(JSON.stringify(result.errors));
+            }
+
             this.setState({
               isLoading: false,
-              companies: result.companies
+              companies: result.companies || []
             });
             if (Array.isArray(result.errors)) {
               result.errors.forEach(error =>
@@ -220,10 +228,18 @@ class Main extends Component {
 
   renderErrors() {
     const { errors } = this.props;
+    let bbddError = false;
     if (errors.length > 0) {
+      for (let i = 0; i < errors.length; i++) {
+        if (errors[i].indexOf('"code":"2003"') > -1) {
+          bbddError = true;
+          break;
+        }
+      }
+
       return (
         <p className="connexion-status connexion-status-ko">
-          {i18n.t("main.error_connection")}
+          {bbddError === true ? i18n.t("main.bbdd_error") : i18n.t("main.error_connection")}
           <span className="lf-icon-warning"></span>
         </p>
       );
@@ -242,6 +258,7 @@ class Main extends Component {
       bbdd,
       idCompany
     } = this.state;
+    const { errors } = this.props;
 
     if (isLoading) {
       return <Spinner />;
@@ -252,7 +269,7 @@ class Main extends Component {
     return (
       <Fragment>
         {/* <Header title={"LEX-ON"} /> */}
-        {this.renderErrors()}
+        {errors && errors.length > 0 && this.renderErrors()}
         <Notification
           initialModalState={showNotification}
           toggleNotification={this.toggleNotification}
@@ -260,14 +277,16 @@ class Main extends Component {
           error={errorNotification}
         />
 
-        <Routing
-          user={user}
-          companies={companies}
-          toggleNotification={this.toggleNotification}
-          casefile={idCaseFile}
-          bbdd={bbdd}
-          company={idCompany}
-        />
+        {errors && errors.length === 0 &&
+          <Routing
+            user={user}
+            companies={companies}
+            toggleNotification={this.toggleNotification}
+            casefile={idCaseFile}
+            bbdd={bbdd}
+            company={idCompany}
+          />
+        }
       </Fragment>
     );
   }
@@ -281,7 +300,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  setInitialBBDD: item => dispatch(SELECTION_ACTIONS.setInitialBBDD(item)),  
+  setInitialBBDD: item => dispatch(SELECTION_ACTIONS.setInitialBBDD(item)),
   addMessage: item => dispatch(ACTIONS.addMessage(item)),
   deleteMessage: id => dispatch(ACTIONS.deleteMessage(id)),
   addListMessages: listMessages =>

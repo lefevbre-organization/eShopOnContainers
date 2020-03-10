@@ -33,7 +33,7 @@
     "browse": "browse",
     "or": "or",
     "bcc": "Bcc:",
-    "attach":"ATTACH",
+    "attach": "ATTACH",
     "max-file-size": "The total attachments size must be less than 25MB for this provider.",
     "min-dest-alert": "This message must have at least one recipient.",
     "no-subject-warning": "Do you want to send this message without subject?",
@@ -41,7 +41,8 @@
   },
   "message-toolbar": {
     "move-to-trash": "Move to Trash",
-    "reply": "Reply"
+    "reply": "Reply",
+    "resend": "Resend"
   },
   "message-footer": {
     "messages": "Messages"
@@ -69,8 +70,8 @@
     "cancel": "No",
     "ok": "Yes"
   },
-  "message-not-found":{
-	"body": "Message not found in server",
-	"ok": "Continue"
+  "message-not-found": {
+    "body": "Message not found in server",
+    "ok": "Continue"
   }
 }

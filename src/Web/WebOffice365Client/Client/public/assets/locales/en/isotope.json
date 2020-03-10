@@ -15,7 +15,7 @@
   "pager-buttons": {
     "previous-page": "Previous Page",
     "next-page": "Next Page"
-    },
+  },
   "synk-button": {
     "refresh": "Refresh",
     "refresh-tooltip": "Refresh"
@@ -30,7 +30,7 @@
     "discard": "Discard",
     "drag-and-drop": "Drop here your files",
     "add-attachments": "add attachments",
-    "attach":"ATTACH",
+    "attach": "ATTACH",
     "browse": "browse",
     "or": "or",
     "bcc": "Bcc:",
@@ -41,7 +41,8 @@
   },
   "message-toolbar": {
     "move-to-trash": "Move to Trash",
-    "reply": "Reply"
+    "reply": "Reply",
+    "resend": "Resend"
   },
   "message-footer": {
     "messages": "Messages"
@@ -69,7 +70,7 @@
     "cancel": "No",
     "ok": "Yes"
   },
-  "message-not-found":{
+  "message-not-found": {
     "body": "Message not found in server",
     "ok": "Continue"
   }

@@ -1,10 +1,11 @@
 ﻿namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
-    public class MailFileView : BaseView
+    public class MailFileView : FolderToEntity
     {
-        public long idParent { get; set; }
 
-        public string contentFile { get; set; }
-        public string nameFile { get; set; }
+        public string ContentFile { get; set; }
+
+        public long? IdActuation { get; set; }
+
     }
 }

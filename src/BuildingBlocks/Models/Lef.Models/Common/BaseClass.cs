@@ -18,18 +18,21 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         public string RemoveProblematicChars(string inputString)
         {
             // string inputString = "Räksmörgås";
-            string asAscii = Encoding.ASCII.GetString(
+
+            Encoding iso = Encoding.GetEncoding(
+                "ISO-8859-1", 
+                new EncoderReplacementFallback(string.Empty),
+                new DecoderExceptionFallback()
+                );
+
+            string latinText = iso.GetString(
                 Encoding.Convert(
                     Encoding.UTF8,
-                    Encoding.GetEncoding(
-                        Encoding.ASCII.EncodingName,
-                        new EncoderReplacementFallback(string.Empty),
-                        new DecoderExceptionFallback()
-                        ),
+                    iso,
                     Encoding.UTF8.GetBytes(inputString)
                 )
             );
-            return asAscii;
+            return latinText;
         }
 
         public void TraceMessage(
@@ -106,6 +109,15 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 
             WriteError(errorInfo);
             errors.Add(errorInfo);
+        }
+
+        public int GetIntOutputParameter(object outputData)
+        {
+            //    return;
+            if (outputData == null || !(outputData is int))
+                return 0;
+
+            return (int)outputData;
         }
 
         public void TraceInfo(

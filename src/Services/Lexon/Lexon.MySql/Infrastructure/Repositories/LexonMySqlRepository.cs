@@ -39,6 +39,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 }
                 catch (Exception ex)
                 {
+                    result.data = null;
                     TraceMessage(result.errors, ex);
                 }
             }
@@ -78,6 +79,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 }
                 catch (Exception ex)
                 {
+                    result.data = null;
                     TraceMessage(result.errors, ex);
                 }
             }
@@ -236,7 +238,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                         await command.ExecuteNonQueryAsync();
                         TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
                         TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
-                        result.data = (int)command.Parameters["P_ID"].Value;
+                        result.data = GetIntOutputParameter(command.Parameters["P_ID"].Value);
                     }
                 }
                 catch (Exception ex)
@@ -299,33 +301,34 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return resultMySql;
         }
 
-        public async Task<Result<int>> AddRelationMailAsync(ClassificationAddView classification)
+        public async Task<Result<List<int>>> AddRelationMailAsync(ClassificationAddView classification)
         {
-            var result = new Result<int>(0);
-            foreach (var mail in classification.listaMails)
+            var result = new Result<List<int>>(new List<int>());
+            try
             {
-                mail.Subject = RemoveProblematicChars(mail.Subject);
-            }
-
-            using (MySqlConnection conn = new MySqlConnection(_conn))
-            {
-                try
+                using (MySqlConnection conn = new MySqlConnection(_conn))
                 {
-                    string filtro = GiveMeRelationMultipleFilter(classification.bbdd, classification.idUser, classification.listaMails, classification.idType, classification.idRelated);
                     conn.Open();
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddRelation, conn))
+                    foreach (var mail in classification.listaMails)
                     {
-                        AddCommonParameters(classification.idUser, command, "P_JSON", filtro);
-                        await command.ExecuteNonQueryAsync();
-                        result.data = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString()) ? -1 : 1;
-                        TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
-                        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                        mail.Subject = RemoveProblematicChars(mail.Subject);
+                        var listaUnicaMails = new MailInfo[] { mail };
+                        var filtro = GiveMeRelationMultipleFilter(classification.bbdd, classification.idUser, listaUnicaMails, classification.idType, classification.idRelated);
+
+                        using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddRelation, conn))
+                        {
+                            AddCommonParameters(classification.idUser, command, "P_JSON", filtro, true);
+                            await command.ExecuteNonQueryAsync();
+                            TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                            result.data.Add(GetIntOutputParameter(command.Parameters["P_ID"].Value));
+                        }
                     }
                 }
-                catch (Exception ex)
-                {
-                    TraceMessage(result.errors, ex);
-                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
             }
 
             return result;

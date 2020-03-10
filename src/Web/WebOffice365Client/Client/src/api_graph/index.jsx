@@ -22,7 +22,7 @@ export const getUserApplication = () => {
       }
     });
 
-    userAgentApplication.handleRedirectCallback((error, response)=>{
+    userAgentApplication.handleRedirectCallback((error, response) => {
     });
   }
 
@@ -240,16 +240,22 @@ export const getMessageHeader = id => {
   });
 };
 
-export const getMessage = messageId =>
+export const getMessage = (messageId, format) =>
   new Promise((resolve, reject) => {
-    getMessageDetail(messageId)
-      .then(Messagedetail =>
+    getMessageDetail(messageId, format)
+      .then(Messagedetail => {
+        if (format === "raw") {
+          resolve(Messagedetail)
+          return;
+        }
+
         getAttachmentsList(messageId).then(MessagesandAttachementsDetails =>
           resolve({
             ...Messagedetail,
             attach: MessagesandAttachementsDetails
           })
         )
+      }
       )
       .catch(err => {
         reject(err);
@@ -270,13 +276,19 @@ export const getAttachmentsList = messageId => {
   });
 };
 
-export const getMessageDetail = async messageId => {
+export const getMessageDetail = async (messageId, format = "") => {
   try {
     const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
+    const value = format === "raw" ? "/$value" : "";
 
-    const response = await client.api(`me/messages/${messageId}`).get()
+    const response = await client.api(`me/messages/${messageId + value}`).get()
+
     const result = response;
+
+    if (format === "raw") {
+      return response;
+    }
 
     return {
       body: result.body,
@@ -295,13 +307,13 @@ export const getMessageByInternetMessageId = async internetMessageId => {
     var result = undefined;
 
     const response = await client.api(`me/messages?$filter=internetMessageId eq '${internetMessageId}'`).get()
-    if (response.value.length > 0){
-      result = response.value[response.value.length-1];
+    if (response.value.length > 0) {
+      result = response.value[response.value.length - 1];
     }
     else {
       result = { id: "notFound", subject: undefined, sentDateTime: undefined };
     }
-    
+
     console.log("hola response: " + result.id);
 
     return {
@@ -410,7 +422,7 @@ export const emailAttachments = data => {
 
   email = `"Attachments": [`;
   for (var i = 0; i < attachments.length; i++) {
-    if(attachments[i].data.size <= 3145728) {
+    if (attachments[i].data.size <= 3145728) {
       var fileData = base64Data(attachments[i].content);
       var fileName = attachments[i].data.name;
 
@@ -419,7 +431,7 @@ export const emailAttachments = data => {
           "Name": "${fileName}",
           "ContentBytes": "${fileData}"
         },\r\n`;
-    } 
+    }
   }
   email += `],\r\n`;
   return email;
@@ -484,9 +496,9 @@ export const batchModify = async ({ ids, addLabelIds = [], removeLabelIds = [] }
   return ids
 }
 
-export const uploadFiles = async(emailId, attachments) => {
+export const uploadFiles = async (emailId, attachments) => {
   for (var i = 0; i < attachments.length; i++) {
-    if(attachments[i].data.size > 3145728) {
+    if (attachments[i].data.size > 3145728) {
       await uploadFileWithUploadSession(emailId, attachments[i].data, attachments[i].content);
     } else {
       await uploadFile(emailId, attachments[i].data, attachments[i].content);
@@ -494,7 +506,7 @@ export const uploadFiles = async(emailId, attachments) => {
   }
 }
 
-export const uploadFile = async(emailId, file, content) => {
+export const uploadFile = async (emailId, file, content) => {
   const accessToken = await getAccessTokenSilent();
   const client = await getAuthenticatedClient(accessToken);
 
@@ -503,74 +515,74 @@ export const uploadFile = async(emailId, file, content) => {
   const attachment = {
     "@odata.type": "#microsoft.graph.fileAttachment",
     name: file.name,
-    contentBytes:data
+    contentBytes: data
   };
-  
+
   try {
-  let res = await client.api(`/me/messages/${emailId}/attachments`)
-    .version('beta')
-    .post(attachment);
+    let res = await client.api(`/me/messages/${emailId}/attachments`)
+      .version('beta')
+      .post(attachment);
 
     console.log(res);
-  } catch(err) {
+  } catch (err) {
     console.log(err);
   }
-  
+
 }
 
 
-export const uploadFileWithUploadSession = async(emailId, file, content) => {
+export const uploadFileWithUploadSession = async (emailId, file, content) => {
   const accessToken = await getAccessTokenSilent();
   const client = await getAuthenticatedClient(accessToken);
   const uploadSession = {
     AttachmentItem: {
       attachmentType: "file",
-      name: file.name, 
+      name: file.name,
       size: file.size
     }
   };
 
-    try {   
-      const session = await client.api(`/me/messages/${emailId}/attachments/createUploadSession`).version('beta').post(uploadSession);
-      
-      console.log(content)
-      await fetch(session.uploadUrl,
-        {
-          method: 'PUT',
-          headers: {
-            "Content-Type": "application/octet-stream",
-            "Content-Length": `${file.size}`,
-            "Content-Range": `bytes 0-${file.size-1}/${file.size}`
-          },
-          body: content
+  try {
+    const session = await client.api(`/me/messages/${emailId}/attachments/createUploadSession`).version('beta').post(uploadSession);
+
+    console.log(content)
+    await fetch(session.uploadUrl,
+      {
+        method: 'PUT',
+        headers: {
+          "Content-Type": "application/octet-stream",
+          "Content-Length": `${file.size}`,
+          "Content-Range": `bytes 0-${file.size - 1}/${file.size}`
+        },
+        body: content
       });
-    } catch (err) {
-      console.log(err)
-    }
-  
+  } catch (err) {
+    console.log(err)
+  }
+
   return [];
 }
 
 export const getContacts = () =>
 
-    new Promise(async (resolve, reject) => {
-      //resolve(["aaaa@aa.com", "bbbb@bb.com", "ccc@cc.com", "dddd@dd.com"])
-         const accessToken = await getAccessTokenSilent();
-         const client = getAuthenticatedClient(accessToken);
-         client
-             .api(`me/contacts?top=250`)
-             .get()
-             .then(response => {
-                 let arr = response.value;
-                 let contacts = [];
-                 if(arr){
-                    arr.map(function (item) {
-                        if (item.emailAddresses.length > 0)
-                        contacts.push(item.emailAddresses[0].address);
-                    })
-                  }
-                 resolve(contacts);
-             });
+  new Promise(async (resolve, reject) => {
+    //resolve(["aaaa@aa.com", "bbbb@bb.com", "ccc@cc.com", "dddd@dd.com"])
+    const accessToken = await getAccessTokenSilent();
+    const client = getAuthenticatedClient(accessToken);
+    client
+      .api(`me/contacts?top=250`)
+      .get()
+      .then(response => {
+        let arr = response.value;
+        let contacts = [];
+        if (arr) {
+          arr.map(function (item) {
+            if (item.emailAddresses.length > 0)
+              contacts.push(item.emailAddresses[0].address);
+          })
+        }
+        resolve(contacts);
+      });
 
-    });
+  });
 

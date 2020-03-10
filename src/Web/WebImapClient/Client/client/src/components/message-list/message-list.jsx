@@ -14,7 +14,7 @@ import { prettyDate, prettySize } from "../../services/prettify";
 import { selectMessage } from "../../actions/application";
 import { setSelected } from "../../actions/messages";
 import { preloadMessages, setMessageFlagged } from "../../services/message";
-import { readMessage } from "../../services/message-read";
+import { readMessage, readMessageRaw } from "../../services/message-read";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import mainCss from "../../styles/main.scss";
@@ -29,7 +29,7 @@ function parseFrom(from) {
 function parseTo(recipients) {
   let to = "";
 
-  if(recipients && recipients.length && recipients.length > 0) {
+  if (recipients && recipients.length && recipients.length > 0) {
     const rec = recipients[0];
     to = rec.address || "";
   }
@@ -131,8 +131,8 @@ class MessageList extends Component {
           draggable={true}
           onDragStart={event => this.onDragStart(event, folder, message)}
         >
-          { folder.type.attribute !== '\\Sent' && <span className={styles.from}>{parseFrom(message.from)}</span>}
-          { folder.type.attribute === '\\Sent' && <span className={styles.from}>{parseTo(message.recipients)}</span>}
+          {folder.type.attribute !== '\\Sent' && <span className={styles.from}>{parseFrom(message.from)}</span>}
+          {folder.type.attribute === '\\Sent' && <span className={styles.from}>{parseTo(message.recipients)}</span>}
           <span
             className={`material-icons ${styles.flag} ${message.flagged &&
               styles.flagged}`}
@@ -217,8 +217,83 @@ class MessageList extends Component {
       });
       this.props.messageSelected(messagesToSelect, checked, this.props.selectedFolder.fullName);
 
-      for(let i = 0; i < messagesToSelect.length; i++) {
+      if (checked === true) {
+        window.dispatchEvent(new CustomEvent("LoadingMessage"))
+      }
+
+      const prs = [];
+      for (let i = 0; i < messagesToSelect.length; i++) {
         const message = messagesToSelect[i];
+        if (checked === true) {
+          prs.push(readMessageRaw(null, this.props.credentials, null, this.props.selectedFolder, message))
+        } else {
+          window.dispatchEvent(
+            new CustomEvent("Checkclick", {
+              detail: {
+                id: message.messageId,
+                extMessageId: message.messageId,
+                subject: message.subject,
+                sentDateTime: message.receivedDate,
+                chkselected: checked,
+                account: this.props.all.login.formValues.user,
+                folder: this.props.selectedFolder.fullName,
+                provider: "IMAP",
+                raw: null
+              }
+            })
+          )
+        }
+      }
+
+      if (checked === true) {
+        Promise.all(prs).then((msgs) => {
+          for (let i = 0; i < msgs.length; i++) {
+            const msg = msgs[i];
+            window.dispatchEvent(
+              new CustomEvent("Checkclick", {
+                detail: {
+                  id: msg.message.messageId,
+                  extMessageId: msg.message.messageId,
+                  subject: msg.message.subject,
+                  sentDateTime: msg.message.receivedDate,
+                  chkselected: checked,
+                  account: this.props.all.login.formValues.user,
+                  folder: this.props.selectedFolder.fullName,
+                  provider: "IMAP",
+                  raw: msg.raw
+                }
+              })
+            );
+          }
+          window.dispatchEvent(new CustomEvent("LoadedMessage"))
+        });
+      }
+    } else {
+      // Single selection
+      this.props.messageSelected([message], checked, this.props.selectedFolder.fullName);
+
+      if (checked === true) {
+        window.dispatchEvent(new CustomEvent("LoadingMessage"))
+        const rm = readMessageRaw(null, this.props.credentials, null, this.props.selectedFolder, message).then((response) => {
+          // Send message to connectors
+          window.dispatchEvent(
+            new CustomEvent("Checkclick", {
+              detail: {
+                id: message.messageId,
+                extMessageId: message.messageId,
+                subject: message.subject,
+                sentDateTime: message.receivedDate,
+                chkselected: checked,
+                account: this.props.all.login.formValues.user,
+                folder: this.props.selectedFolder.fullName,
+                provider: "IMAP",
+                raw: response
+              }
+            })
+          );
+          window.dispatchEvent(new CustomEvent("LoadedMessage"))
+        })
+      } else {
         window.dispatchEvent(
           new CustomEvent("Checkclick", {
             detail: {
@@ -229,30 +304,12 @@ class MessageList extends Component {
               chkselected: checked,
               account: this.props.all.login.formValues.user,
               folder: this.props.selectedFolder.fullName,
-              provider: "IMAP"
+              provider: "IMAP",
+              raw: null
             }
           })
         );
       }
-    } else {
-      // Single selection
-      this.props.messageSelected([message], checked, this.props.selectedFolder.fullName);
-      // Send message to connectors
-      window.dispatchEvent(
-        new CustomEvent("Checkclick", {
-          detail: {
-            id: message.messageId,
-            extMessageId: message.messageId,
-            subject: message.subject,
-            sentDateTime: message.receivedDate,
-            chkselected: checked,
-            account: this.props.all.login.formValues.user,
-            folder: this.props.selectedFolder.fullName,
-            provider: "IMAP"
-          }
-        })
-      );
-      console.log("Checkclick:" + message.messageId + " Folder:" + this.props.selectedFolder.fullName + " Account:" + this.props.all.login.formValues.user );
     }
   }
 

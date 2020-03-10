@@ -24,34 +24,34 @@ export class ComposeMessage extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      to: 
-        (props.mailContacts && props.mailContacts !== null) 
-        ? props.mailContacts 
-        : (
-            (props.history.location.state && props.history.location.state.composeProps.to) 
-            ? props.history.location.state.composeProps.to
-            : ""
+      to:
+        (props.mailContacts && props.mailContacts !== null)
+          ? props.mailContacts
+          : (
+            (props.history.location.state && props.history.location.state.composeProps.to)
+              ? props.history.location.state.composeProps.to
+              : ""
           ),
-      to2: 
-        (props.mailContacts && props.mailContacts !== null) 
-        ? props.mailContacts.split(',') 
-        : (
-            (props.history.location.state && props.history.location.state.composeProps.to) 
-            ? props.history.location.state.composeProps.to.split(',')
-            :[]
-          ),        
+      to2:
+        (props.mailContacts && props.mailContacts !== null)
+          ? props.mailContacts.split(',')
+          : (
+            (props.history.location.state && props.history.location.state.composeProps.to)
+              ? props.history.location.state.composeProps.to.split(',')
+              : []
+          ),
       cc:
         (props.history.location.state &&
           props.history.location.state.composeProps.cc) ||
         "",
-      cc2:(props.history.location.state &&
-        props.history.location.state.composeProps.cc)?props.history.location.state.composeProps.cc.split(','):[],
+      cc2: (props.history.location.state &&
+        props.history.location.state.composeProps.cc) ? props.history.location.state.composeProps.cc.split(',') : [],
       bcc:
         (props.history.location.state &&
           props.history.location.state.composeProps.bcc) ||
         "",
-      bcc2:(props.history.location.state &&
-        props.history.location.state.composeProps.bcc)?props.history.location.state.composeProps.bcc.split(','):[],
+      bcc2: (props.history.location.state &&
+        props.history.location.state.composeProps.bcc) ? props.history.location.state.composeProps.bcc.split(',') : [],
       subject:
         (props.history.location.state &&
           props.history.location.state.composeProps.subject) ||
@@ -82,7 +82,7 @@ export class ComposeMessage extends PureComponent {
     this.handleMoveAddress = this.moveAddress.bind(this);
 
     this.fileInput = null;
-    
+
     this.uppy = new Uppy({
       id: "uppy1",
       autoProceed: false,
@@ -118,18 +118,18 @@ export class ComposeMessage extends PureComponent {
     this.uppy.on("file-added", file => {
       console.log("Added file", file);
 
-    // Define this onload every time to get file and base64 every time
-    this.reader = new FileReader();
-    this.reader.readAsDataURL(file.data);
+      // Define this onload every time to get file and base64 every time
+      this.reader = new FileReader();
+      this.reader.readAsDataURL(file.data);
 
-    this.reader.onload = readerEvt =>
-    this.addFileToState({ file, base64: readerEvt.target.result });
-    this.showAttachActions = true
+      this.reader.onload = readerEvt =>
+        this.addFileToState({ file, base64: readerEvt.target.result });
+      this.showAttachActions = true
     });
   }
 
   componentDidMount() {
-    if(this.fileInput) {
+    if (this.fileInput) {
       this.fileInput.onchange = this.onAttachSelected
     }
   }
@@ -172,7 +172,7 @@ export class ComposeMessage extends PureComponent {
 
   async sentEmail(message) {
     //const emailDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
-    console.log("SentEmail:" + message.id + " Subject:" +  message.subject + " SentDate:" +  message.sentDateTime);
+    console.log("SentEmail:" + message.id + " Subject:" + message.subject + " SentDate:" + message.sentDateTime);
     this.props.setMailContacts(null);
 
     window.dispatchEvent(
@@ -187,18 +187,18 @@ export class ComposeMessage extends PureComponent {
         }
       })
     );
-    
-    setTimeout(async ()=>{
-      if(this.props.lexon.bbdd && this.props.lexon.account) {
+
+    setTimeout(async () => {
+      if (this.props.lexon.bbdd && this.props.lexon.account) {
         try {
-          const user = await getUser(this.props.lexon.userId);   
-          if(user && user.data && user.data.configUser) {
-            if(user.data.configUser.getContacts) {
+          const user = await getUser(this.props.lexon.userId);
+          if (user && user.data && user.data.configUser) {
+            if (user.data.configUser.getContacts) {
               await classifyEmail(message.id, message.subject, message.sentDateTime, this.state.to2, this.props.lexon.provider, this.props.lexon.account, this.props.lexon.bbdd, user.data.lexonUserId);
             }
           }
 
-        } catch(err) {
+        } catch (err) {
           //throw err;
         }
       }
@@ -269,9 +269,10 @@ export class ComposeMessage extends PureComponent {
   _sendEmail() {
     const validTo = getValidEmails(this.state.to);
 
+    debugger
     const headers = {
       To: validTo.join(", "),
-      // Subject: this.state.subject,
+      //Subject: this.state.subject,
       Subject: "=?UTF-8?B?" + window.btoa(this.state.subject) + "?=",
       attachments: this.state.uppyPreviews
     };
@@ -298,16 +299,16 @@ export class ComposeMessage extends PureComponent {
       }).then(email => {
         //this.sentEmail(email.id, this.state.subject);
         getMessageHeader(email.id)
-        .then( headers => {
-          console.log("Headers:"+headers);
-          const message = {
-            id: this.getContentByHeader(headers, "Message-Id"),
-            subject: this.getContentByHeader(headers, "Subject"),
-            sentDateTime: this.getContentByHeader(headers, "Date")
-          };
-          this.sentEmail(message)
-        })
-        .catch( err => console.log("Error getting Headers:"+ err));
+          .then(headers => {
+            console.log("Headers:" + headers);
+            const message = {
+              id: this.getContentByHeader(headers, "Message-Id"),
+              subject: this.getContentByHeader(headers, "Subject"),
+              sentDateTime: this.getContentByHeader(headers, "Date")
+            };
+            this.sentEmail(message)
+          })
+          .catch(err => console.log("Error getting Headers:" + err));
       });
     this.resetFields();
     this.closeModal();
@@ -328,7 +329,7 @@ export class ComposeMessage extends PureComponent {
       bcc: this.props.bcc || "",
       to2: [],
       cc2: [],
-      bcc2:[],
+      bcc2: [],
       subject: this.props.subject || "",
       content: this.props.content || "",
       uppyPreviews: []
@@ -421,32 +422,32 @@ export class ComposeMessage extends PureComponent {
   closeNotification() {
     const showNotification = !this.state.showNotification;
     this.setState({ showNotification: showNotification });
-    }
+  }
 
-    /**
-    * Adds an address to the list matching the id.
-    *
-    * @param id
-    * @param address
-    */
-   addAddress(id, address) {      
+  /**
+  * Adds an address to the list matching the id.
+  *
+  * @param id
+  * @param address
+  */
+  addAddress(id, address) {
     if (address.length > 0) {
-      if(id === 'to') {
+      if (id === 'to') {
         const to2 = [...this.state.to2];
         to2.push(address);
-        const to = to2.join(",");  
-        this.setState({to2, to})
+        const to = to2.join(",");
+        this.setState({ to2, to })
         this.props.setMailContacts(to);
-      } else if(id === 'cc') {
+      } else if (id === 'cc') {
         const cc2 = [...this.state.cc2];
         cc2.push(address);
-        const cc = cc2.join(",");  
-        this.setState({cc2, cc})
-      } else if(id === 'bcc2') {
+        const cc = cc2.join(",");
+        this.setState({ cc2, cc })
+      } else if (id === 'bcc2') {
         const bcc2 = [...this.state.bcc2];
         bcc2.push(address);
-        const bcc = bcc2.join(",");  
-        this.setState({bcc2, bcc})
+        const bcc = bcc2.join(",");
+        this.setState({ bcc2, bcc })
       }
     }
   }
@@ -458,22 +459,22 @@ export class ComposeMessage extends PureComponent {
    * @param address
    */
   removeAddress(id, address) {
-    if(id === "to") {
+    if (id === "to") {
       const to2 = [...this.state.to2];
       to2.splice(to2.indexOf(address), 1);
       const to = to2.join(",");
-      this.setState({to2, to})
+      this.setState({ to2, to })
       this.props.setMailContacts(to);
     } else if (id === "cc") {
       const cc2 = [...this.state.cc2];
       cc2.splice(cc2.indexOf(address), 1);
       const cc = cc2.join(",");
-      this.setState({cc2, cc})
-    } else if(id === "bcc2") {
+      this.setState({ cc2, cc })
+    } else if (id === "bcc2") {
       const bcc2 = [...this.state.bcc2];
       bcc2.splice(bcc2.indexOf(address), 1);
       const bcc = bcc2.join(",");
-      this.setState({bcc2, bcc})
+      this.setState({ bcc2, bcc })
     }
   }
 
@@ -486,12 +487,12 @@ export class ComposeMessage extends PureComponent {
    * @param address
    */
   moveAddress(fromId, toId, address) {
-      // const updatedMessage = { ...this.props.editedMessage };
-      // // Remove
-      // updatedMessage[fromId].splice(updatedMessage[fromId].indexOf(address), 1);
-      // // Add
-      // updatedMessage[toId] = [...updatedMessage[toId], address];
-      // this.props.editMessage(updatedMessage);
+    // const updatedMessage = { ...this.props.editedMessage };
+    // // Remove
+    // updatedMessage[fromId].splice(updatedMessage[fromId].indexOf(address), 1);
+    // // Add
+    // updatedMessage[toId] = [...updatedMessage[toId], address];
+    // this.props.editMessage(updatedMessage);
   }
 
   onAttachButton() {
@@ -532,10 +533,10 @@ export class ComposeMessage extends PureComponent {
     const { to2, cc2, bcc2 } = this.state;
 
     const {
-          to,
-          cc,
-          bcc          
-     } = this.props;
+      to,
+      cc,
+      bcc
+    } = this.props;
 
     return (
       <React.Fragment>
@@ -586,31 +587,31 @@ export class ComposeMessage extends PureComponent {
             <div className="compose-message">
               <div className="message-fields">
                 <HeaderAddress
-                      id={"to"}
-                      addresses={to2}
-                      onAddressAdd={this.handleAddAddress}
-                      onAddressRemove={this.handleRemoveAddress}
-                      onAddressMove={this.handleMoveAddress}
-                      getAddresses={this.props.getAddresses}
-                      label={i18n.t("compose-message.to")}
-                  />
-                  <HeaderAddress
-                      id={"cc"}
-                      addresses={cc2}
-                      onAddressAdd={this.handleAddAddress}
-                      onAddressRemove={this.handleRemoveAddress}
-                      onAddressMove={this.handleMoveAddress}
-                      getAddresses={this.props.getAddresses}
-                      label={'Cc:'}
-                  />                
-                  <HeaderAddress
-                    id={"bcc2"}
-                    addresses={bcc2}
-                    onAddressAdd={this.handleAddAddress}
-                    onAddressRemove={this.handleRemoveAddress}
-                    onAddressMove={this.handleMoveAddress}
-                    getAddresses={this.props.getAddresses}
-                    label={i18n.t("compose-message.bcc")}
+                  id={"to"}
+                  addresses={to2}
+                  onAddressAdd={this.handleAddAddress}
+                  onAddressRemove={this.handleRemoveAddress}
+                  onAddressMove={this.handleMoveAddress}
+                  getAddresses={this.props.getAddresses}
+                  label={i18n.t("compose-message.to")}
+                />
+                <HeaderAddress
+                  id={"cc"}
+                  addresses={cc2}
+                  onAddressAdd={this.handleAddAddress}
+                  onAddressRemove={this.handleRemoveAddress}
+                  onAddressMove={this.handleMoveAddress}
+                  getAddresses={this.props.getAddresses}
+                  label={'Cc:'}
+                />
+                <HeaderAddress
+                  id={"bcc2"}
+                  addresses={bcc2}
+                  onAddressAdd={this.handleAddAddress}
+                  onAddressRemove={this.handleRemoveAddress}
+                  onAddressMove={this.handleMoveAddress}
+                  getAddresses={this.props.getAddresses}
+                  label={i18n.t("compose-message.bcc")}
                 />
                 <InputGroup>
                   <InputGroupAddon addonType="prepend" tabIndex={-1}>
@@ -697,13 +698,13 @@ export class ComposeMessage extends PureComponent {
               >
                 {i18n.t("compose-message.discard")}
               </Button>
-              
+
               <Button onClick={this.onAttachButton}
-                      className={"attach-button"}>
+                className={"attach-button"}>
                 <FontAwesomeIcon icon={faPaperclip} size="1x" />
-              <span>{i18n.t("compose-message.attach")}</span>
-                <input ref={r => this.fileInput = r} id="file-input" type="file" name="name" style={{display: "none"}} multiple="true"/>
-              </Button>              
+                <span>{i18n.t("compose-message.attach")}</span>
+                <input ref={r => this.fileInput = r} id="file-input" type="file" name="name" style={{ display: "none" }} multiple="true" />
+              </Button>
             </div>
           </div>
         </div>
