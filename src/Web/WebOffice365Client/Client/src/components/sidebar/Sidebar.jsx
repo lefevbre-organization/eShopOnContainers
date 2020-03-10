@@ -1,14 +1,14 @@
-import React, { Component } from "react";
-import i18n from "i18next";
-import PerfectScrollbar from "react-perfect-scrollbar";
-import sortBy from "lodash/sortBy";
-import { faFolderOpen, faChevronLeft } from "@fortawesome/free-solid-svg-icons";
-import LabelItem from "./LabelItem";
-import { Link } from "react-router-dom";
-import { Button } from "reactstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { connect } from "react-redux";
-import "./sidebar.scss";
+import React, { Component } from 'react';
+import i18n from 'i18next';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import sortBy from 'lodash/sortBy';
+import { faFolderOpen, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import LabelItem from './LabelItem';
+import { Link } from 'react-router-dom';
+import { Button } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { connect } from 'react-redux';
+import './sidebar.scss';
 
 export class Sidebar extends Component {
   constructor(props) {
@@ -16,7 +16,7 @@ export class Sidebar extends Component {
 
     this.state = {
       selectedLabel: props.pathname,
-      selectedFolder: "",
+      selectedFolder: this.props.selectedFolder,
       leftSideBarOpen: true
     };
 
@@ -26,8 +26,7 @@ export class Sidebar extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-
-    if(this.state.selectedFolder === "") {
+    if (this.state.selectedFolder === '') {
       if (this.props.selectedLabel !== null) {
         this.navigateToList(null, this.props.selectedLabel.id);
       }
@@ -37,14 +36,14 @@ export class Sidebar extends Component {
         this.props.selectedLabel !== null
       ) {
         this.setState({ selectedFolder: this.props.selectedLabel.id });
-      }  
+      }
     }
   }
 
   navigateToList(evt, labelId) {
     const label = this.props.labelsResult.labels.find(el => el.id === labelId);
     this.setState({ selectedFolder: labelId });
-    this.props.onLabelClick(label || { id: "" });
+    this.props.onLabelClick(label || { id: '' });
   }
 
   sidebarAction() {
@@ -75,7 +74,7 @@ export class Sidebar extends Component {
     //   sortedLabels = sortBy(visibleLabels, "name");
     //}
 
-    sortedLabels = sortBy(labels, "displayName");
+    sortedLabels = sortBy(labels, 'displayName');
 
     //return (
     //  <React.Fragment>
@@ -150,27 +149,27 @@ export class Sidebar extends Component {
 
     return (
       <React.Fragment>
-        <li key="olders-nav-title" className="pl-2 nav-title">
+        <li key='olders-nav-title' className='pl-2 nav-title'>
           <img
-            className="logo-ext"
-            border="0"
-            alt="otulook"
-            src="/assets/img/office365.png"
+            className='logo-ext'
+            border='0'
+            alt='otulook'
+            src='/assets/img/office365.png'
           ></img>
-          {i18n.t("sidebar.folders")}
+          {i18n.t('sidebar.folders')}
         </li>
         {labels.map(el => {
           const iconProps = {
             icon: faFolderOpen,
-            color: "#001978",
-            size: "lg"
+            color: '#001978',
+            size: 'lg'
           };
-          if (folder === "") {
+          if (folder === '') {
             folder = el.id;
           }
           return (
             <LabelItem
-              key={el.id + "_label"}
+              key={el.id + '_label'}
               onClick={this.navigateToList}
               name={el.displayName}
               id={el.id}
@@ -188,51 +187,51 @@ export class Sidebar extends Component {
     const collapsed = this.props.sideBarCollapsed;
 
     const composeProps = {
-      subject: "",
-      to: "",
-      content: ""
+      subject: '',
+      to: '',
+      content: ''
     };
 
     return (
       <nav
-        id="left-sidebar"
+        id='left-sidebar'
         className={
           collapsed
-            ? "d-flex flex-column text-truncate left-panel sidebar-close"
-            : "d-flex flex-column text-truncate left-panel sidebar-open"
+            ? 'd-flex flex-column text-truncate left-panel sidebar-close'
+            : 'd-flex flex-column text-truncate left-panel sidebar-open'
         }
       >
-        <div className="compose-panel">
-          <div className="d-flex justify-content-center p-2 compose-btn">
-            <div className="compose-div">
+        <div className='compose-panel'>
+          <div className='d-flex justify-content-center p-2 compose-btn'>
+            <div className='compose-div'>
               <Link
-                className="btn font-weight-bold BtnLfcolor uppercase compose-btn"
+                className='btn font-weight-bold BtnLfcolor uppercase compose-btn'
                 to={{
-                  pathname: "/compose",
-                  search: "",
+                  pathname: '/compose',
+                  search: '',
                   state: { composeProps }
                 }}
               >
                 <img
-                  className="ImgLf"
-                  border="0"
-                  alt="otulook"
-                  src="/assets/img/plus.png"
+                  className='ImgLf'
+                  border='0'
+                  alt='otulook'
+                  src='/assets/img/plus.png'
                 ></img>
-                {i18n.t("sidebar.compose")}
+                {i18n.t('sidebar.compose')}
               </Link>
               <Button
                 onClick={this.props.sideBarToggle}
-                className="btn-transparent margin-right-20 float-right margin-top-10"
+                className='btn-transparent margin-right-20 float-right margin-top-10'
               >
-                <FontAwesomeIcon icon={faChevronLeft} size="1x" />
+                <FontAwesomeIcon icon={faChevronLeft} size='1x' />
               </Button>
             </div>
           </div>
         </div>
         <PerfectScrollbar
-          component="ul"
-          className="d-flex flex-column border-0 m-0 sidebar"
+          component='ul'
+          className='d-flex flex-column border-0 m-0 sidebar'
         >
           {this.renderItems(this.props.labelsResult.labels)}
         </PerfectScrollbar>
@@ -241,10 +240,25 @@ export class Sidebar extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  labelsResult: state.labelsResult
-});
+const mapStateToProps = state => {
+  return {
+    labelsResult: state.labelsResult,
+    selectedFolder:
+      state.messagesResult && state.labelsResult.labels
+        ? getSelectedFolder(state.labelsResult.labels)
+        : ''
+  };
+};
 
 export default connect(mapStateToProps)(Sidebar);
 
 //export default withTranslation()(Sidebar);
+
+function getSelectedFolder(labels) {
+  const lbl = labels.filter(lbl => lbl.selected === true);
+  if (lbl.length > 0) {
+    return lbl[0].displayName;
+  }
+
+  return '';
+}

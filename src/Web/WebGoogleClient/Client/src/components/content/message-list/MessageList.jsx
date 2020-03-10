@@ -1,17 +1,17 @@
-import React, { Component } from "react";
-import PerfectScrollbar from "react-perfect-scrollbar";
-import { withTranslation } from "react-i18next";
-import { bindActionCreators, compose } from "redux";
-import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
-import MessageRow from "./message-row/MessageRow";
-import { addMessage, deleteMessage } from "./actions/message-list.actions";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import ListToolbar from "./list-toolbar/ListToolbar";
-import ListFooter from "./list-footer/ListFooter";
-import "./messageList.scss";
-import { getMessage, getMessageHeader, getLabelSentItems } from "../../../api";
+import React, { Component } from 'react';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import { withTranslation } from 'react-i18next';
+import { bindActionCreators, compose } from 'redux';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import MessageRow from './message-row/MessageRow';
+import { addMessage, deleteMessage } from './actions/message-list.actions';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import ListToolbar from './list-toolbar/ListToolbar';
+import ListFooter from './list-footer/ListFooter';
+import './messageList.scss';
+import { getMessage, getMessageHeader, getLabelSentItems } from '../../../api';
 
 const ViewMode = {
   LIST: 1,
@@ -20,19 +20,19 @@ const ViewMode = {
 };
 
 const months = {
-  'Jan': '01',
-  'Feb': '02',
-  'Mar': '03',
-  'Apr': '04',
-  'May': '05',
-  'Jun': '06',
-  'Jul': '07',
-  'Aug': '08',
-  'Sep': '09',
-  'Oct': '10',
-  'Nov': '11',
-  'Dec': '12'
-}
+  Jan: '01',
+  Feb: '02',
+  Mar: '03',
+  Apr: '04',
+  May: '05',
+  Jun: '06',
+  Jul: '07',
+  Aug: '08',
+  Sep: '09',
+  Oct: '10',
+  Nov: '11',
+  Dec: '12'
+};
 
 export class MessageList extends Component {
   constructor(props) {
@@ -41,7 +41,7 @@ export class MessageList extends Component {
     this.state = {
       viewMode: ViewMode.LIST,
       contentMessageId: undefined,
-      currentLabel: ""
+      currentLabel: ''
     };
 
     this.onSelectionChange = this.onSelectionChange.bind(this);
@@ -53,35 +53,39 @@ export class MessageList extends Component {
 
   async componentDidMount() {
     const searchParam = this.props.location.search;
-    const token = searchParam.indexOf("?") === 0 ? searchParam.slice(1) : null;
+    const token = searchParam.indexOf('?') === 0 ? searchParam.slice(1) : null;
 
     if (token && this.props.messagesResult.pageTokens.length === 0) {
       this.props.addInitialPageToken(token);
     }
 
     const labelIds =
-      this.props.searchQuery === "" ? [this.props.parentLabel.id] : undefined;
+      this.props.searchQuery === '' ? [this.props.parentLabel.id] : undefined;
 
     this.props.getLabelMessages({
       ...(labelIds && { labelIds }),
       pageToken: token
     });
 
-    this.isSentFolder = this.props.parentLabel.id === "SENT";
+    this.isSentFolder = this.props.parentLabel.id === 'SENT';
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.messagesResult.messages.length > 0 && prevProps.messagesResult.messages.length !== this.props.messagesResult.messages.length) {
+    if (
+      prevProps.messagesResult.messages.length > 0 &&
+      prevProps.messagesResult.messages.length !==
+        this.props.messagesResult.messages.length
+    ) {
       this.props.refresh();
     }
 
     if (prevProps.location.search !== this.props.location.search) {
       const searchParam = this.props.location.search;
       const token =
-        searchParam.indexOf("?") === 0 ? searchParam.slice(1) : null;
+        searchParam.indexOf('?') === 0 ? searchParam.slice(1) : null;
 
       const labelIds =
-        this.props.searchQuery === "" ? [this.props.parentLabel.id] : undefined;
+        this.props.searchQuery === '' ? [this.props.parentLabel.id] : undefined;
 
       this.props.getLabelMessages({
         ...(labelIds && { labelIds }),
@@ -91,16 +95,17 @@ export class MessageList extends Component {
   }
 
   async onSelectionChange(selected, msg) {
+    debugger;
     this.props.toggleSelected([msg.id], selected);
-    const extMessageId = this.getContentByHeader(msg, "Message-Id")
+    const extMessageId = this.getContentByHeader(msg, 'Message-Id');
 
     const message = {
       id: msg.id,
       extMessageId,
-      subject: this.getContentByHeader(msg, "Subject"),
-      sentDateTime: this.getContentByHeader(msg, "Date"),
-      folder: "",
-      provider: "GOOGLE",
+      subject: this.getContentByHeader(msg, 'Subject'),
+      sentDateTime: this.getContentByHeader(msg, 'Date'),
+      folder: getFolderName(this.props.t, this.props.selectedFolder),
+      provider: 'GOOGLE',
       account: this.props.lexon.account,
       chkselected: selected,
       raw: null
@@ -111,23 +116,25 @@ export class MessageList extends Component {
       : this.props.deleteMessage(message.extMessageId);
 
     if (selected === true) {
-      window.dispatchEvent(new CustomEvent("LoadingMessage"))
-      const msgRaw = await getMessage(msg.id, "raw");
+      window.dispatchEvent(new CustomEvent('LoadingMessage'));
+      const msgRaw = await getMessage(msg.id, 'raw');
       message.raw = msgRaw.result;
     }
 
     window.dispatchEvent(
-      new CustomEvent("Checkclick", {
+      new CustomEvent('Checkclick', {
         detail: message
       })
     );
 
-    window.dispatchEvent(new CustomEvent("LoadedMessage"))
+    window.dispatchEvent(new CustomEvent('LoadedMessage'));
   }
 
   getContentByHeader(message, header) {
     for (let i = 0; i < message.payload.headers.length; i++) {
-      if (message.payload.headers[i].name.toUpperCase() === header.toUpperCase()) {
+      if (
+        message.payload.headers[i].name.toUpperCase() === header.toUpperCase()
+      ) {
         return message.payload.headers[i].value;
       }
     }
@@ -135,8 +142,8 @@ export class MessageList extends Component {
 
   renderSpinner() {
     return (
-      <div className="d-flex h-100 justify-content-center align-items-center  ">
-        <FontAwesomeIcon icon={faSpinner} spin size="3x" />
+      <div className='d-flex h-100 justify-content-center align-items-center  '>
+        <FontAwesomeIcon icon={faSpinner} spin size='3x' />
       </div>
     );
   }
@@ -149,7 +156,7 @@ export class MessageList extends Component {
       return this.renderSpinner();
     } else if (this.props.messagesResult.messages.length === 0) {
       return (
-        <div className="p-4 text-center">{t("message-list.no-message")}</div>
+        <div className='p-4 text-center'>{t('message-list.no-message')}</div>
       );
     }
 
@@ -194,7 +201,7 @@ export class MessageList extends Component {
     let nextToken = messagesResult.nextPageToken;
     const searchParam = location.search;
     const currentToken =
-      searchParam.indexOf("?") === 0 ? searchParam.slice(1) : null;
+      searchParam.indexOf('?') === 0 ? searchParam.slice(1) : null;
     if (currentToken) {
       const tokenIndex = messagesResult.pageTokens.indexOf(currentToken);
       if (tokenIndex > -1) {
@@ -235,7 +242,7 @@ export class MessageList extends Component {
           getPageTokens={this.props.getPageTokens}
           loadLabelMessageSingle={this.props.loadLabelMessageSingle}
         />
-        <PerfectScrollbar className="container-fluid no-gutters px-0 message-list-container">
+        <PerfectScrollbar className='container-fluid no-gutters px-0 message-list-container'>
           {this.renderView()}
         </PerfectScrollbar>
         <ListFooter messagesTotal={messagesTotal} />
@@ -247,6 +254,9 @@ export class MessageList extends Component {
 const mapStateToProps = state => {
   return {
     selectedMessages: state.messageList.selectedMessages,
+    selectedFolder: state.messagesResult.label
+      ? state.messagesResult.label.result.name
+      : '',
     lexon: state.lexon
   };
 };
@@ -265,3 +275,18 @@ export default compose(
   withTranslation(),
   connect(mapStateToProps, mapDispatchToProps)
 )(MessageList);
+
+function getFolderName(t, folder) {
+  switch (folder) {
+    case 'INBOX':
+      return t('sidebar.inbox');
+    case 'SENT':
+      return t('sidebar.sent');
+    case 'TRASH':
+      return t('sidebar.trash');
+    case 'SPAM':
+      return t('sidebar.spam');
+    default:
+      return folder;
+  }
+}
