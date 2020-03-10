@@ -22,8 +22,8 @@
     "new-classification": "New classification"
   },
   "connecting": {
-    "q1": "What do you want to do with the selected messages?",
-    "q2": "What type of entity do you want to connect with?",
+    "q1": "What do you want to do with the selected messages? (Available soon)",
+    "q2": "What type of entity do you want to connect with? (Available soon)",
     "create": "Create performance",
     "copy": "Save copy of the messages in documentation",
     "save": "Save attachments in documentation",

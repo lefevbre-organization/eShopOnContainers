@@ -20,8 +20,8 @@ class ModalConnectingEmails extends Component {
       step: 1,
       step1Data: {
         actuation: false,
-        copyDocuments: true,
-        saveDocuments: true,
+        copyDocuments: false,
+        saveDocuments: false,
         entity: 0
       },
       step2Data: {
@@ -174,7 +174,7 @@ class ModalConnectingEmails extends Component {
       step1Data.saveDocuments === false
     ) {
       this.closeDialog();
-      this.saveClassification();
+      this.saveClassifications();
     } else {
       this.nextStep();
     }
@@ -187,7 +187,7 @@ class ModalConnectingEmails extends Component {
     let sc = null;
 
     if (step1Data.actuation === true) {
-      sc = await this.saveClassification();
+      sc = await this.saveClassifications();
     }
 
     if (step1Data.copyDocuments === true || step1Data.saveDocuments === true) {
