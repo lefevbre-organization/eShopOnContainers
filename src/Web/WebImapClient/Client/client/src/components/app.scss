@@ -108,6 +108,7 @@ body {
         &.with-side-bar {
             margin-left: $drawerWidth;
             width: calc(100% - #{$drawerWidthtopbar});
+            height: calc(100% - 133px);
         }
 
         .message-grid {
