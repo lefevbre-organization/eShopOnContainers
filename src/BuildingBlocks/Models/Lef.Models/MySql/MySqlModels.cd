@@ -14,5 +14,12 @@
       <FileName>Common\MySqlList.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexonFile">
+    <Position X="11.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAACAAAgAAgAAAAAQAAAAAAAAAEAAAABAAAA=</HashCode>
+      <FileName>MySql\LexonFile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

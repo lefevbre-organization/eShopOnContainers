@@ -1,6 +1,5 @@
 ﻿using Lexon.API;
 using Lexon.API.Infrastructure.Repositories;
-using Lexon.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
@@ -11,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,6 +22,7 @@ namespace Lexon.Infrastructure.Services
         private readonly IEventBus _eventBus;
         private readonly IHttpClientFactory _clientFactory;
         private readonly HttpClient _client;
+        private readonly HttpClient _clientFiles;
         private readonly IOptions<LexonSettings> _settings;
 
         public UsersService(
@@ -40,6 +41,10 @@ namespace Lexon.Infrastructure.Services
             _client = _clientFactory.CreateClient();
             _client.BaseAddress = new Uri(_settings.Value.LexonMySqlUrl);
             _client.DefaultRequestHeaders.Add("Accept", "text/plain");
+
+            _clientFiles = _clientFactory.CreateClient();
+            _clientFiles.BaseAddress = new Uri(_settings.Value.LexonFilesUrl);
+            _clientFiles.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
         #region Classifications
@@ -85,7 +90,7 @@ namespace Lexon.Infrastructure.Services
                 if (resultMongo.infos.Count > 0)
                     result.infos.AddRange(resultMongo.infos);
                 else if (resultMongo.data == 0)
-                    result.infos.Add(new Info() { code="error_actuation_mongo", message="error when add classification"});
+                    result.infos.Add(new Info() { code = "error_actuation_mongo", message = "error when add classification" });
                 else
                     result.infos.Add(new Info() { code = "add_actuations_mong", message = "add classification to mongo" });
 
@@ -155,7 +160,7 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceInfo(result.infos, $"Error al eliminar actuaciones para  {classificationRemove.idRelated}: {ex.Message}");
             }
-            
+
             return result;
         }
 
@@ -171,7 +176,6 @@ namespace Lexon.Infrastructure.Services
                     result.infos.Add(new Info() { code = "error_actuation_mongo", message = "error when remove classification" });
                 else
                     result.data = resultMongo.data;
-
             }
             catch (Exception ex)
             {
@@ -299,20 +303,64 @@ namespace Lexon.Infrastructure.Services
             var result = new Result<bool>(false);
             try
             {
-                var imageDataByteArray = Convert.FromBase64String(fileMail.ContentFile);
+                LexonFile lexonFile = new LexonFile
+                {
+                    fileName = fileMail.Name,
+                    idAction = fileMail.IdActuation ?? 0,
+                    idCompany = GetIdCompany(fileMail.idUser,fileMail.bbdd),
+                    idUser = fileMail.idUser,
+                    idFolder = fileMail.IdParent ?? 0,
+                    idEntity = fileMail.idEntity ?? 0,
+                    idTypeEntity = fileMail.idType ?? 0
+                };
 
-                //When creating a stream, you need to reset the position, without it you will see that you always write files with a 0 byte length. 
-                var imageDataStream = new MemoryStream(imageDataByteArray);
-                imageDataStream.Position = 0;
-                result.data = true;
-                TraceInfo(result.infos, $"Se guarda el fichero {fileMail.Name}");
+                var json = JsonConvert.SerializeObject(lexonFile);
+                byte[] buffer = Encoding.Unicode.GetBytes(json);
+                var dataparameters = Convert.ToBase64String(buffer);
+                //var dataparameters = new StringContent(json, Encoding.UTF8, "application/json");
+
+                SerializeObjectToPut(fileMail.ContentFile, $"?option=com_lexon&task=hook.receive&type=repository&data={dataparameters}", out string url, out ByteArrayContent data);
+
+                using (var response = await _clientFiles.PutAsync(url, data))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        result.data = true;
+                        TraceInfo(result.infos, $"Se guarda el fichero {fileMail.Name}");
+                    }
+                    else
+                        TraceOutputMessage(result.errors, $"Response not ok with lexon-dev with code-> {response.StatusCode} - {response.ReasonPhrase}", 2003);
+                }
             }
             catch (Exception ex)
             {
-                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}", "590");
-                throw;
+                //TraceMessage(result.errors, ex);
+                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message}", "590");
+
             }
+
+            //try
+            //{
+            //    var imageDataByteArray = Convert.FromBase64String(fileMail.ContentFile);
+
+            //    //When creating a stream, you need to reset the position, without it you will see that you always write files with a 0 byte length.
+            //    var imageDataStream = new MemoryStream(imageDataByteArray);
+            //    imageDataStream.Position = 0;
+            //    result.data = true;
+            //    TraceInfo(result.infos, $"Se guarda el fichero {fileMail.Name}");
+            //}
+            //catch (Exception ex)
+            //{
+            //    TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}", "590");
+            //    throw;
+            //}
             return result;
+        }
+
+        private string GetIdCompany(string idUser, string bbdd)
+        {
+            var resultadoCompanies = GetCompaniesFromUserAsync(idUser);
+            return "88";
         }
 
         public async Task<Result<LexNestedEntity>> GetNestedFolderAsync(FolderNestedView entityFolder)
@@ -422,7 +470,6 @@ namespace Lexon.Infrastructure.Services
 
         #region User and Companies
 
-
         public async Task<Result<LexUser>> GetUserAsync(string idNavisionUser)
         {
             var result = new Result<LexUser>(new LexUser());
@@ -523,10 +570,21 @@ namespace Lexon.Infrastructure.Services
 
         private void SerializeObjectToPost(object parameters, string path, out string url, out StringContent data)
         {
-            url = $"{_settings.Value.LexonMySqlUrl}{path}";
+            url = $"{_settings.Value.LexonFilesUrl}{path}";
             TraceLog(parameters: new string[] { $"url={url}" });
             var json = JsonConvert.SerializeObject(parameters);
             data = new StringContent(json, Encoding.UTF8, "application/json");
+        }
+
+        private void SerializeObjectToPut(string textInBase64, string path, out string url, out ByteArrayContent byteArrayContent)
+        {
+            url = $"{_settings.Value.LexonFilesUrl}{path}";
+            TraceLog(parameters: new string[] { $"url={url}" });
+            byte[] newBytes = Convert.FromBase64String(textInBase64);
+
+            byteArrayContent = new ByteArrayContent(newBytes);
+            byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("application/bson");
+
         }
     }
 }
