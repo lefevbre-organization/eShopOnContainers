@@ -1,17 +1,17 @@
-import React, { PureComponent } from "react";
-import { withTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getNameEmail } from "../../../../utils";
-import moment from "moment";
-import { Button } from "reactstrap";
-import { faBars, faReply, faShare } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
-import "./messageToolbar.scss";
+import React, { PureComponent } from 'react';
+import { withTranslation } from 'react-i18next';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getNameEmail } from '../../../../utils';
+import moment from 'moment';
+import { Button } from 'reactstrap';
+import { faBars, faReply, faShare } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
+import './messageToolbar.scss';
 
 export class MessageToolbar extends PureComponent {
   constructor(props) {
     super(props);
-    this.trashHandler = this.getClickHandler(["TRASH"]);
+    this.trashHandler = this.getClickHandler(['TRASH']);
   }
 
   getClickHandler(action) {
@@ -33,7 +33,9 @@ export class MessageToolbar extends PureComponent {
     let replyTo, cc, subject;
     subject = messageHeaders.subject;
 
-    replyTo = messageHeaders.from ? messageHeaders.from.emailAddress.address : "";
+    replyTo = messageHeaders.from
+      ? messageHeaders.from.emailAddress.address
+      : '';
 
     for (let i = 0; i < messageHeaders.ccRecipients.length; i++) {
       cc = messageHeaders.ccRecipients[i].emailAddress.address;
@@ -48,13 +50,15 @@ export class MessageToolbar extends PureComponent {
       );
     }
 
-    const replyHeader = `<p>${t("composemessage-toobar.on")} ${parsedDate.format(
-      "MMMM Do YYYY, h:mm:ss a"
-    )} < ${nameEmail ? nameEmail.email : ""} > ${t("composemessage-toobar.wrote")}:</p>`;
+    const replyHeader = `<p>${t(
+      'composemessage-toobar.on'
+    )} ${parsedDate.format('MMMM Do YYYY, h:mm:ss a')} < ${
+      nameEmail ? nameEmail.email : ''
+    } > ${t('composemessage-toobar.wrote')}:</p>`;
 
     const composeProps = {
       subject: `Re: ${subject}`,
-      to: nameEmail ? nameEmail.email : "",
+      to: nameEmail ? nameEmail.email : '',
       content: `<p>&nbsp;</p>
           <p>&nbsp;</p>
           <p>&nbsp;</p>
@@ -63,65 +67,66 @@ export class MessageToolbar extends PureComponent {
       ...(cc && { cc: cc.value })
     };
 
-
-    const forwardHeader = `<p>${t("composemessage-toobar.on")} ${parsedDate.format(
-      "MMMM Do YYYY, h:mm:ss a"
-    )} < ${nameEmail.email} > ${t("composemessage-toobar.wrote")}:</p>`;
+    const forwardHeader = `<p>${t(
+      'composemessage-toobar.on'
+    )} ${parsedDate.format('MMMM Do YYYY, h:mm:ss a')} < ${
+      nameEmail.email
+    } > ${t('composemessage-toobar.wrote')}:</p>`;
 
     const composePropsFwd = {
       ...composeProps,
       subject: `Fwd: ${subject}`,
-      to: ""
+      to: ''
     };
 
     const collapsed = this.props.sideBarCollapsed;
 
     return (
-      <div className="d-flex justify-content-center align-items-center message-toolbar">
-        <div className="action-btns">
+      <div className='d-flex justify-content-center align-items-center message-toolbar'>
+        <div className='action-btns'>
           <span
             className={
-              collapsed ? "action-btn mr-2" : "action-btn mr-2 with-side-bar"
+              collapsed ? 'action-btn mr-2' : 'action-btn mr-2 with-side-bar'
             }
           >
             <Button
               onClick={this.props.sideBarToggle}
-              className="btn-transparent"
+              className='btn-transparent'
             >
-              <FontAwesomeIcon icon={faBars} size="1x" />
+              <FontAwesomeIcon icon={faBars} size='1x' />
             </Button>
           </span>
-          <div className="action-btn mr-2">
+          <div className='action-btn mr-2' title={t('message-toolbar.reply')}>
             <Link
               to={{
-                pathname: "/compose",
-                search: "",
+                pathname: '/compose',
+                search: '',
                 sideBarCollapsed: this.props.sideBarCollapsed,
                 sideBarToggle: this.props.sideBarToggle,
                 state: { composeProps }
               }}
             >
               <FontAwesomeIcon
-                title={t("message-toolbar.reply")}
+                // title={t('message-toolbar.reply')}
                 icon={faReply}
-                size="lg"
+                size='lg'
               />
             </Link>
           </div>
-          <div className="action-btn mr-2">
+          <div className='action-btn mr-2' title={t('message-toolbar.resend')}>
             <Link
               to={{
-                pathname: "/compose",
-                search: "",
+                pathname: '/compose',
+                search: '',
                 sideBarCollapsed: this.props.sideBarCollapsed,
                 sideBarToggle: this.props.sideBarToggle,
                 state: { composeProps: composePropsFwd }
               }}
             >
               <FontAwesomeIcon
-                title={t("message-toolbar.resend")}
+                // title={t('message-toolbar.resend')}
                 icon={faShare}
-                size="lg"
+                size='lg'
               />
             </Link>
           </div>
