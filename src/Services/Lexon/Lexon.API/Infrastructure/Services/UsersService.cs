@@ -458,10 +458,17 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceOutputMessage(result.errors, "Mysql don´t recover the user", 2001);
                 var resultMongo = await _usersRepository.GetUserAsync(idNavisionUser);
-                result.data = resultMongo.data;
+                AddToFinalResult(result, resultMongo);
             }
 
             return result;
+        }
+
+        private static void AddToFinalResult(Result<LexUser> result, Result<LexUser> resultPreview)
+        {
+            result.errors.AddRange(resultPreview.errors);
+            result.infos.AddRange(resultPreview.infos);
+            result.data = resultPreview.data;
         }
 
         public async Task<Result<List<LexCompany>>> GetCompaniesFromUserAsync(string idUser)
@@ -478,7 +485,7 @@ namespace Lexon.Infrastructure.Services
                     if (response.IsSuccessStatusCode)
                     {
                         resultCompany = await response.Content.ReadAsAsync<Result<LexUser>>();
-                        result.data = resultCompany.data?.companies?.ToList();
+                        AddToFinalResult(result, resultCompany);
                     }
                     else
                     {
@@ -499,10 +506,17 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceOutputMessage(result.errors, "Mysql don´t recover the user with companies", 2001);
                 var resultMongo = await _usersRepository.GetUserAsync(idUser);
-                result.data = resultMongo.data?.companies?.ToList();
+                AddToFinalResult(result, resultMongo);
             }
 
             return result;
+        }
+
+        private static void AddToFinalResult(Result<List<LexCompany>> result, Result<LexUser> resultPreliminar)
+        {
+            result.errors.AddRange(resultPreliminar.errors);
+            result.infos.AddRange(resultPreliminar.infos);
+            result.data = resultPreliminar.data?.companies?.ToList();
         }
 
         #endregion User and Companies
