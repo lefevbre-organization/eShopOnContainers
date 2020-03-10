@@ -124,8 +124,8 @@ namespace Lexon.API.Controllers
 
         [HttpPut]
         [Route("classifications/add")]
-        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<List<int>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<List<int>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddClassificationAsync([FromBody]ClassificationAddView classification)
         {
             if (string.IsNullOrEmpty(classification?.idUser) || (classification?.listaMails?.Count() <= 0) ||

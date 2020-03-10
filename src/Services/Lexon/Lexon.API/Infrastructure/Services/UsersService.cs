@@ -44,9 +44,9 @@ namespace Lexon.Infrastructure.Services
 
         #region Classifications
 
-        public async Task<Result<long>> AddClassificationToListAsync(ClassificationAddView classificationAdd)
+        public async Task<Result<List<int>>> AddClassificationToListAsync(ClassificationAddView classificationAdd)
         {
-            var result = new Result<long>(0);
+            var result = new Result<List<int>>(new List<int>());
 
             SerializeObjectToPost(classificationAdd, "/classifications/add", out string url, out StringContent data);
             try
@@ -55,9 +55,9 @@ namespace Lexon.Infrastructure.Services
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        result = await response.Content.ReadAsAsync<Result<long>>();
+                        result = await response.Content.ReadAsAsync<Result<List<int>>>();
 
-                        if (result.data == 0)
+                        if (result.data?.Count == 0)
                             TraceOutputMessage(result.errors, "Mysql don´t create the classification", 2001);
                         else
                             await AddClassificationToListMongoAsync(classificationAdd, result);
@@ -76,7 +76,7 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        private async Task AddClassificationToListMongoAsync(ClassificationAddView classificationAdd, Result<long> result)
+        private async Task AddClassificationToListMongoAsync(ClassificationAddView classificationAdd, Result<List<int>> result)
         {
             try
             {
@@ -87,7 +87,9 @@ namespace Lexon.Infrastructure.Services
                 else if (resultMongo.data == 0)
                     result.infos.Add(new Info() { code="error_actuation_mongo", message="error when add classification"});
                 else
-                    result.data = resultMongo.data;
+                    result.infos.Add(new Info() { code = "add_actuations_mong", message = "add classification to mongo" });
+
+                //    result.data.Add((int)resultMongo.data);
             }
             catch (Exception ex)
             {
@@ -456,10 +458,17 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceOutputMessage(result.errors, "Mysql don´t recover the user", 2001);
                 var resultMongo = await _usersRepository.GetUserAsync(idNavisionUser);
-                result.data = resultMongo.data;
+                AddToFinalResult(result, resultMongo);
             }
 
             return result;
+        }
+
+        private static void AddToFinalResult(Result<LexUser> result, Result<LexUser> resultPreview)
+        {
+            result.errors.AddRange(resultPreview.errors);
+            result.infos.AddRange(resultPreview.infos);
+            result.data = resultPreview.data;
         }
 
         public async Task<Result<List<LexCompany>>> GetCompaniesFromUserAsync(string idUser)
@@ -476,7 +485,7 @@ namespace Lexon.Infrastructure.Services
                     if (response.IsSuccessStatusCode)
                     {
                         resultCompany = await response.Content.ReadAsAsync<Result<LexUser>>();
-                        result.data = resultCompany.data?.companies?.ToList();
+                        AddToFinalResult(result, resultCompany);
                     }
                     else
                     {
@@ -497,10 +506,17 @@ namespace Lexon.Infrastructure.Services
             {
                 TraceOutputMessage(result.errors, "Mysql don´t recover the user with companies", 2001);
                 var resultMongo = await _usersRepository.GetUserAsync(idUser);
-                result.data = resultMongo.data?.companies?.ToList();
+                AddToFinalResult(result, resultMongo);
             }
 
             return result;
+        }
+
+        private static void AddToFinalResult(Result<List<LexCompany>> result, Result<LexUser> resultPreliminar)
+        {
+            result.errors.AddRange(resultPreliminar.errors);
+            result.infos.AddRange(resultPreliminar.infos);
+            result.data = resultPreliminar.data?.companies?.ToList();
         }
 
         #endregion User and Companies

@@ -301,41 +301,38 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return resultMySql;
         }
 
-        public async Task<Result<int>> AddRelationMailAsync(ClassificationAddView classification)
+        public async Task<Result<List<int>>> AddRelationMailAsync(ClassificationAddView classification)
         {
-            var result = new Result<int>(0);
-
-            using (MySqlConnection conn = new MySqlConnection(_conn))
+            var result = new Result<List<int>>(new List<int>());
+            try
             {
-                try
+                using (MySqlConnection conn = new MySqlConnection(_conn))
                 {
+                    conn.Open();
                     foreach (var mail in classification.listaMails)
                     {
                         mail.Subject = RemoveProblematicChars(mail.Subject);
-                    }
+                        var listaUnicaMails = new MailInfo[] { mail };
+                        var filtro = GiveMeRelationMultipleFilter(classification.bbdd, classification.idUser, listaUnicaMails, classification.idType, classification.idRelated);
 
-                    string filtro = GiveMeRelationMultipleFilter(classification.bbdd, classification.idUser, classification.listaMails, classification.idType, classification.idRelated);
-                    conn.Open();
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddRelation, conn))
-                    {
-                        AddCommonParameters(classification.idUser, command, "P_JSON", filtro, true);
-                        await command.ExecuteNonQueryAsync();
-                        //result.data = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString()) ? -1 : 1;
-                        TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
-                        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
-                        result.data = GetIntOutputParameter(command.Parameters["P_ID"].Value);
+                        using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddRelation, conn))
+                        {
+                            AddCommonParameters(classification.idUser, command, "P_JSON", filtro, true);
+                            await command.ExecuteNonQueryAsync();
+                            TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                            result.data.Add(GetIntOutputParameter(command.Parameters["P_ID"].Value));
+                        }
                     }
                 }
-                catch (Exception ex)
-                {
-                    TraceMessage(result.errors, ex);
-                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
             }
 
             return result;
         }
-
-
 
         public async Task<Result<int>> RemoveRelationMailAsync(ClassificationRemoveView classification)
         {

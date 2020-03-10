@@ -352,7 +352,7 @@ namespace Lexon.API.Infrastructure.Repositories
                 if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
                 {
                     TraceInfo(result.infos, $"Se modifica el usuario {actuation.idUser} añadiendo actuación");
-                    result.data = resultUpdate.ModifiedCount;
+                    result.data += 1;
 
                     var eventAssoc = new AssociateMailToEntityIntegrationEvent(_settings.Value.IdAppNavision, actuation.idUser, actua.entityType, actua.idRelated, mailData.Provider, mailData.MailAccount, mailData.Uid, mailData.Subject, mailData.Date);
                     await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);

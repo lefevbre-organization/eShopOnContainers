@@ -18,7 +18,7 @@
     <Position X="4.5" Y="2.5" Width="1.5" />
     <AssociationLine Name="entities" Type="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexEntity" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="5.523" Y="4.502" />
+        <Point X="5.523" Y="4.31" />
         <Point X="5.523" Y="6.063" />
         <Point X="6.25" Y="6.063" />
       </Path>
@@ -29,6 +29,7 @@
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="entities" />
+      <Property Name="actuations" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexEntity">
@@ -39,14 +40,14 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexMailActuation">
-    <Position X="2.75" Y="5" Width="1.5" />
+    <Position X="2.5" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAEAAQAABAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA=</HashCode>
       <FileName>Models\LexMailActuation.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.MySqlCompany">
-    <Position X="9.25" Y="0.5" Width="2.5" />
+    <Position X="12.25" Y="0.75" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAEAIAgBQAAAAAgEIQAYAAAABAAAIQAEAAEEAA=</HashCode>
       <FileName>MySql\MySqlCompany.cs</FileName>
@@ -72,6 +73,13 @@
     <ShowAsCollectionAssociation>
       <Property Name="subChild" />
     </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexActuation">
+    <Position X="7" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAIIAAAAAAAAAAEAAAAAAAQAQAAQQA=</HashCode>
+      <FileName>Models\LexActuation.cs</FileName>
+    </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

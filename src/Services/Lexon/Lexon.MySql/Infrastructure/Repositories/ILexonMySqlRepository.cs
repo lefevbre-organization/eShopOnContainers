@@ -1,4 +1,5 @@
 ﻿using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lexon.MySql.Infrastructure.Repositories
@@ -15,7 +16,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         Task<Result<int>> RemoveRelationMailAsync(ClassificationRemoveView classification);
 
-        Task<Result<int>> AddRelationMailAsync(ClassificationAddView classification);
+        Task<Result<List<int>>> AddRelationMailAsync(ClassificationAddView classification);
 
         Task<Result<LexUser>> GetUserAsync(string idNavisionUser);
 
