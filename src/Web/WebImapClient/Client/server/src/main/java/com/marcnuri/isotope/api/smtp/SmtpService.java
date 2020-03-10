@@ -255,14 +255,16 @@ public class SmtpService {
                 msgs[0].setFlag(Flags.Flag.SEEN, true);
                 
                 if  (!getSentMessage(ifolder, msgs[0].getHeader("Message-Id")[0], msgs[0].getHeader("Subject")[0])){
-                    log.info("Hace falta dejar copia");
+                    log.debug("Copying message to sent folder");
                     ifolder.appendMessages(msgs);
                 }
                 else {
-                    log.info("No hace falta dejar copia");
+                    log.debug("Message automatically stored in sent folder by email provider");
                 }
+
+                ifolder.close(true);
             }
-            ifolder.close(true);
+            
             imapStore.close();
         } catch (Exception e) {
             //log.info("Error de los buenos");
@@ -280,58 +282,40 @@ public class SmtpService {
             
                 @Override
                 public void messagePartiallyDelivered(TransportEvent e) {
-                    log.info("messagePartiallyDelivered");
+                    log.debug("messagePartiallyDelivered");
                     if (e.getValidSentAddresses().length > 0){
                         try {
-                            if (!autoSentFolder(mimeMessage.getFrom())){
-                                log.info("Leaving a copy of sent message into sent folder");
-                                copyMsgToSentFolder(mimeMessage);
-                            } else {
-                                log.info("Sent folder automatically updated");
-                            }                            
-                        } catch(MessagingException ex) {
-                            throw new IsotopeException("Error getting messagePartiallyDelivered messageInfo", ex);
+                            copyMsgToSentFolder(mimeMessage);                            
+                        } catch(Exception ex) {
+                            throw new IsotopeException("Problem storing copy of message: messagePartiallyDelivered", ex);
                         }
                     }
                 }
             
                 @Override
                 public void messageNotDelivered(TransportEvent e) {
-                    log.info("messageNotDelivered");
+                    log.debug("messageNotDelivered");
                     if (e.getValidSentAddresses().length > 0){
                         try {
-                            if (!autoSentFolder(mimeMessage.getFrom())){
-                                log.info("Leaving a copy of sent message into sent folder");
-                                copyMsgToSentFolder(mimeMessage);
-                            } else {
-                                log.info("Sent folder automatically updated");
-                            }                            
-                        } catch (MessagingException ex) {
-                            throw new IsotopeException("Error getting messageNotDelivered messageInfo", ex);
+                            copyMsgToSentFolder(mimeMessage);                         
+                        } catch (Exception ex) {
+                            throw new IsotopeException("Problem storing copy of message: messageNotDelivered ", ex);
                         }
                     }
                 }
             
                 @Override
                 public void messageDelivered(TransportEvent e) {
-                    log.info("messageDelivered");
+                    log.debug("messageDelivered");
                     try {
-                        log.info("MessageID:" + e.getMessage().getHeader("Message-ID")[0]);
-                        
-                    } catch (Exception ex123123) {
-                        //TODO: handle exception
+                        log.debug("MessageID:" + e.getMessage().getHeader("Message-ID")[0]);
+                    } catch (Exception ex) {
+                        throw new IsotopeException("Problem getting deliverd message-id", ex);
                     }
-                   
                     try {
-                        // if (!autoSentFolder(mimeMessage.getFrom())){
-                        //     log.info("Leaving a copy of sent message into sent folder");
-                        //     copyMsgToSentFolder(mimeMessage);
-                        // } else {
-                        //     log.info("Sent folder automatically updated");
-                        // }
                         copyMsgToSentFolder(mimeMessage);
-                    } catch (Exception ex1) {
-                        throw new IsotopeException("Problem storing copy of message", ex1);
+                    } catch (Exception ex) {
+                        throw new IsotopeException("Problem storing copy of message: messageDelivered" , ex);
                     }
                 }
             };
