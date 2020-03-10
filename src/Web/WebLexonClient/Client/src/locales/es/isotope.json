@@ -23,7 +23,7 @@
   },
   "connecting": {
     "q1": "¿Que quieres hacer con los mensajes seleccionados?",
-    "q2": "¿Con que tipo de entidad quieres conectarlos?",
+    "q2": "¿Con que tipo de entidad quieres clasificarlos?",
     "create": "Crear actuación",
     "copy": "Guardar copia de los mensajes en documentación",
     "save": "Guardar los archivos adjuntos en documentación",
@@ -93,7 +93,7 @@
     "select-mail": "Selecciona un mensaje y clasifícalo en Lex-on. La relación establecida será visible en este panel y también en la aplicación."
   },
   "select-action": {
-    "connect-messages": "Conectar mensajes"
+    "connect-messages": "Clasificar mensajes"
   },
   "classification-list": {
     "assigned-to": "Asignado a",
@@ -111,10 +111,10 @@
     "select-mail": "Selecciona uno o más mensajes y guárdalos como copia independiente en la documentación de Lex-on."
   },
   "tab-connect": {
-    "select-mail": "Selecciona uno o más mensajes y conéctalos con Lex-on. Las conexiones realizadas se mostrarán individualmente en cada mensaje."
+    "select-mail": "Selecciona uno o más mensajes y clasifícalos con Lex-on. Las clasificaciones realizadas se mostrarán individualmente en cada mensaje."
   },
   "save-copy": {
-    "save-copy": "Nueva conexión"
+    "save-copy": "Nueva clasificación"
   },
   "list-classifications": {
     "classifications": "CLASIFICACIONES:",
@@ -127,7 +127,7 @@
     "save-copy": "Guardar copia en Documentación"
   },
   "modal-conecting-emails": {
-    "save-copy": "Conectar mensajes con Lex-on"
+    "save-copy": "Clasificar mensajes con Lex-on"
   },
   "case-file": {
     "casefile-related": "Expediente relacionado",

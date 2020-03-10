@@ -237,7 +237,6 @@ class Main extends Component {
         }
       }
 
-
       return (
         <p className="connexion-status connexion-status-ko">
           {bbddError === true ? i18n.t("main.bbdd_error") : i18n.t("main.error_connection")}
