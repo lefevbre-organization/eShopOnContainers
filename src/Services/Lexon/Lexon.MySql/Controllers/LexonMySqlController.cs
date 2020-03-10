@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -154,7 +155,6 @@ namespace Lexon.MySql.Controllers
 
         [HttpPost("entities/folders/add")]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddEntityFolderAsync(
              [FromBody] FolderToEntity entityFolder
             )
@@ -172,8 +172,7 @@ namespace Lexon.MySql.Controllers
         }
 
         [HttpPost("classifications/add")]
-        [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<List<int>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> AddRelationMailAsync([FromBody]ClassificationAddView classification)
         {
@@ -183,7 +182,7 @@ namespace Lexon.MySql.Controllers
                 return BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated and bbdd to create an actuation with the mail");
 
             var result = await _lexonService.AddRelationMailAsync(classification);
-            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+
             return Ok(result);
         }
 

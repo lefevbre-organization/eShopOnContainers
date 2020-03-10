@@ -31,7 +31,7 @@ namespace Lexon.MySql.Infrastructure.Services
 
         #region Relations
 
-        public async Task<Result<int>> AddRelationMailAsync(ClassificationAddView classification) => await _lexonRepository.AddRelationMailAsync(classification);
+        public async Task<Result<List<int>>> AddRelationMailAsync(ClassificationAddView classification) => await _lexonRepository.AddRelationMailAsync(classification);
 
         public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification) => await _lexonRepository.AddRelationContactsMailAsync(classification);
 
