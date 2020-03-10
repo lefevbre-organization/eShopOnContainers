@@ -307,7 +307,7 @@ namespace Lexon.Infrastructure.Services
                 {
                     fileName = fileMail.Name,
                     idAction = fileMail.IdActuation ?? 0,
-                    idCompany = GetIdCompany(fileMail.idUser,fileMail.bbdd),
+                    idCompany = await GetIdCompany(fileMail.idUser,fileMail.bbdd),
                     idUser = fileMail.idUser,
                     idFolder = fileMail.IdParent ?? 0,
                     idEntity = fileMail.idEntity ?? 0,
@@ -317,7 +317,6 @@ namespace Lexon.Infrastructure.Services
                 var json = JsonConvert.SerializeObject(lexonFile);
                 byte[] buffer = Encoding.Unicode.GetBytes(json);
                 var dataparameters = Convert.ToBase64String(buffer);
-                //var dataparameters = new StringContent(json, Encoding.UTF8, "application/json");
 
                 SerializeObjectToPut(fileMail.ContentFile, $"?option=com_lexon&task=hook.receive&type=repository&data={dataparameters}", out string url, out ByteArrayContent data);
 
@@ -339,28 +338,15 @@ namespace Lexon.Infrastructure.Services
 
             }
 
-            //try
-            //{
-            //    var imageDataByteArray = Convert.FromBase64String(fileMail.ContentFile);
-
-            //    //When creating a stream, you need to reset the position, without it you will see that you always write files with a 0 byte length.
-            //    var imageDataStream = new MemoryStream(imageDataByteArray);
-            //    imageDataStream.Position = 0;
-            //    result.data = true;
-            //    TraceInfo(result.infos, $"Se guarda el fichero {fileMail.Name}");
-            //}
-            //catch (Exception ex)
-            //{
-            //    TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}", "590");
-            //    throw;
-            //}
             return result;
         }
 
-        private string GetIdCompany(string idUser, string bbdd)
+        private async Task<long> GetIdCompany(string idUser, string bbdd)
         {
-            var resultadoCompanies = GetCompaniesFromUserAsync(idUser);
-            return "88";
+            var resultadoCompanies = await GetCompaniesFromUserAsync(idUser);
+            var companies = resultadoCompanies.data.Where(x => x.bbdd.ToLower().Contains(bbdd.ToLower()));
+            var idCompany = companies?.FirstOrDefault()?.idCompany;
+            return idCompany ?? 0; // "88";
         }
 
         public async Task<Result<LexNestedEntity>> GetNestedFolderAsync(FolderNestedView entityFolder)
