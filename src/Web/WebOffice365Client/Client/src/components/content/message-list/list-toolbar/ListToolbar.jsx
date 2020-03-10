@@ -178,9 +178,10 @@ export class MessageToolbar extends PureComponent {
 const mapStateToProps = state => ({
   messagesResult: state.messagesResult,
   selectedMessages: state.messageList.selectedMessages,
-  selectedFolder: state.messagesResult.label
-  ? state.messagesResult.label.result.name
-  : '',
+  selectedFolder:
+    state.messagesResult && state.labelsResult.labels
+      ? getSelectedFolder(state.labelsResult.labels)
+      : '',
   lexon: state.lexon
 });
 
@@ -196,3 +197,12 @@ const mapDispatchToProps = dispatch =>
   );
 
 export default connect(mapStateToProps, mapDispatchToProps)(MessageToolbar);
+
+function getSelectedFolder(labels) {
+  const lbl = labels.filter(lbl => lbl.selected === true);
+  if (lbl.length > 0) {
+    return lbl[0].displayName;
+  }
+
+  return '';
+}

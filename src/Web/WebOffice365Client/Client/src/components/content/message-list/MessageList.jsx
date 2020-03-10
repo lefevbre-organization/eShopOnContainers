@@ -224,11 +224,13 @@ export class MessageList extends Component {
 }
 
 const mapStateToProps = state => {
+  debugger;
   return {
     selectedMessages: state.messageList.selectedMessages,
-    selectedFolder: state.messagesResult.label
-      ? state.messagesResult.label.result.name
-      : '',
+    selectedFolder:
+      state.messagesResult && state.labelsResult.labels
+        ? getSelectedFolder(state.labelsResult.labels)
+        : '',
     lexon: state.lexon
   };
 };
@@ -247,3 +249,12 @@ export default compose(
   withTranslation(),
   connect(mapStateToProps, mapDispatchToProps)
 )(MessageList);
+
+function getSelectedFolder(labels) {
+  const lbl = labels.filter(lbl => lbl.selected === true);
+  if (lbl.length > 0) {
+    return lbl[0].displayName;
+  }
+
+  return '';
+}

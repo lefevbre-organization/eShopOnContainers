@@ -243,12 +243,22 @@ export class Sidebar extends Component {
 const mapStateToProps = state => {
   return {
     labelsResult: state.labelsResult,
-    selectedFolder: state.messagesResult.label
-      ? state.messagesResult.label.result.name
-      : ''
+    selectedFolder:
+      state.messagesResult && state.labelsResult.labels
+        ? getSelectedFolder(state.labelsResult.labels)
+        : ''
   };
 };
 
 export default connect(mapStateToProps)(Sidebar);
 
 //export default withTranslation()(Sidebar);
+
+function getSelectedFolder(labels) {
+  const lbl = labels.filter(lbl => lbl.selected === true);
+  if (lbl.length > 0) {
+    return lbl[0].displayName;
+  }
+
+  return '';
+}

@@ -173,7 +173,7 @@ export class MessageContent extends Component {
         sentDateTime: this.props.selectedMessages[i].sentDateTime,
         chkselected: true,
         account: this.props.lexon.account,
-        folder: this.props.selectedFolder,
+        folder: getFolderName(this.props.t, this.props.selectedFolder),
         provider: 'GOOGLE',
         raw: this.props.selectedMessages[i].raw
       };
@@ -209,7 +209,7 @@ export class MessageContent extends Component {
           subject: getHeader(emailHeaderMessageResult.headers, 'subject'),
           sentDateTime: getHeader(emailHeaderMessageResult.headers, 'date'),
           chkselected: true,
-          folder: this.props.selectedFolder,
+          folder: getFolderName(this.props.t, this.props.selectedFolder),
           account: this.props.lexon.account,
           provider: 'GOOGLE',
           raw: null
@@ -511,3 +511,18 @@ const findAttachments = email => {
   }
   return attachs;
 };
+
+function getFolderName(t, folder) {
+  switch (folder) {
+    case 'INBOX':
+      return t('sidebar.inbox');
+    case 'SENT':
+      return t('sidebar.sent');
+    case 'TRASH':
+      return t('sidebar.trash');
+    case 'SPAM':
+      return t('sidebar.spam');
+    default:
+      return folder;
+  }
+}

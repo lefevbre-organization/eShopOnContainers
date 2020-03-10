@@ -104,7 +104,7 @@ export class MessageList extends Component {
       extMessageId,
       subject: this.getContentByHeader(msg, 'Subject'),
       sentDateTime: this.getContentByHeader(msg, 'Date'),
-      folder: this.props.selectedFolder,
+      folder: getFolderName(this.props.t, this.props.selectedFolder),
       provider: 'GOOGLE',
       account: this.props.lexon.account,
       chkselected: selected,
@@ -275,3 +275,18 @@ export default compose(
   withTranslation(),
   connect(mapStateToProps, mapDispatchToProps)
 )(MessageList);
+
+function getFolderName(t, folder) {
+  switch (folder) {
+    case 'INBOX':
+      return t('sidebar.inbox');
+    case 'SENT':
+      return t('sidebar.sent');
+    case 'TRASH':
+      return t('sidebar.trash');
+    case 'SPAM':
+      return t('sidebar.spam');
+    default:
+      return folder;
+  }
+}
