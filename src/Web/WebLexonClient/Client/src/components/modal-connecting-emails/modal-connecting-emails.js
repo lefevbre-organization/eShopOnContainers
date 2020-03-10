@@ -21,7 +21,7 @@ class ModalConnectingEmails extends Component {
       step1Data: {
         actuation: false,
         copyDocuments: true,
-        saveDocuments: false,
+        saveDocuments: true,
         entity: 0
       },
       step2Data: {
