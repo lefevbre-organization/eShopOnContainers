@@ -19,6 +19,8 @@ namespace Lexon.MySql.Model
         public short? idEntityType { get; set; }
 
         public int? idEntity { get; set; }
+        public string login { get; set; }
+        public string password { get; set; }
 
         public List<string> mailContacts { get; set; }
     }

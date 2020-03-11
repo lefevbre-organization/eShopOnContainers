@@ -31,9 +31,12 @@ namespace Lexon.MySql.Infrastructure.Services
                                            short? idEntityType = null,
                                            int? idEntity = null,
                                            List<string> mailContacts = null,
+                                           string login = null,
+                                           string password = null,
                                            bool addTerminatorToToken = true);
 
         Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder);
+
         Result<LexNestedEntity> GetNestedFolderAsync(FolderNestedView entityFolder);
     }
 }
