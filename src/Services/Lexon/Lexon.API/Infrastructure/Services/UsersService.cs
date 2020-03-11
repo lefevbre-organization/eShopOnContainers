@@ -556,7 +556,7 @@ namespace Lexon.Infrastructure.Services
 
         private void SerializeObjectToPost(object parameters, string path, out string url, out StringContent data)
         {
-            url = $"{_settings.Value.LexonFilesUrl}{path}";
+            url = $"{_settings.Value.LexonMySqlUrl}{path}";
             TraceLog(parameters: new string[] { $"url={url}" });
             var json = JsonConvert.SerializeObject(parameters);
             data = new StringContent(json, Encoding.UTF8, "application/json");
