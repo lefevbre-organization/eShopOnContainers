@@ -315,7 +315,7 @@ namespace Lexon.Infrastructure.Services
                 };
 
                 var json = JsonConvert.SerializeObject(lexonFile);
-                byte[] buffer = Encoding.Unicode.GetBytes(json);
+                byte[] buffer = Encoding.UTF8.GetBytes(json);
                 var dataparameters = Convert.ToBase64String(buffer);
 
                 SerializeObjectToPut(fileMail.ContentFile, $"?option=com_lexon&task=hook.receive&type=repository&data={dataparameters}", out string url, out ByteArrayContent data);
