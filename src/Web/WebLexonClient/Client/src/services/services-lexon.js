@@ -233,6 +233,11 @@ export const getResults = async (
       throw result;
     }
 
+    console.log(result);
+    if (result.errors.length > 0) {
+      throw result;
+    }
+
     return { results: result.data };
   } catch (err) {
     throw err;
