@@ -20,4 +20,4 @@ jobs:
     registryEndpoint: $(registryEndpoint)
     helmfrom: $(Build.SourcesDirectory)/k8s-LEF/helm
     helmto: $(Build.ArtifactStagingDirectory)/k8s-LEF/helm    
--
+
