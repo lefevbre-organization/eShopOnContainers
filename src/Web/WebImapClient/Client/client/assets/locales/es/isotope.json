@@ -1,6 +1,6 @@
 {
   "login": {
-    "Login": "Configuración de correo",    
+    "Login": "Configuración de correo",
     "Host": "Servidor",
     "Port": "Puerto",
     "User": "Usuario",
@@ -37,6 +37,7 @@
     "markUnread": "Marcar como no leído",
     "markRead": "Marcar como leído",
     "search": "Buscar",
+    "returnlexon": "Volver a Lex-on",
     "deleteFromTrashDialog": {
       "title": "Confirmar borrado",
       "message": "Esta acción eliminará permenentemente los mensajes de la basura. ¿Seguro que quieres continuar?",
@@ -82,7 +83,7 @@
     "subject": "Asunto",
     "send": "Enviar",
     "dropZoneMessage": "Deposita aquí ficheros",
-    "attach":"ADJUNTAR",
+    "attach": "ADJUNTAR",
     "insertLinkDialog": {
       "title": "Insertar Enlace",
       "cancel": "Cancelar",
