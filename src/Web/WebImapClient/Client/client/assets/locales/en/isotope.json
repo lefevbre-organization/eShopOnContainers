@@ -1,6 +1,6 @@
 {
   "login": {
-    "Login": "Inbox configuration",   
+    "Login": "Inbox configuration",
     "Host": "Host",
     "Port": "Port",
     "User": "User",
@@ -37,6 +37,7 @@
     "markUnread": "Mark unread",
     "markRead": "Mark read",
     "search": "Search",
+    "returnlexon": "Return Lex-on",
     "deleteFromTrashDialog": {
       "title": "Confirm deletion",
       "message": "This will permanently delete messages from Trash. Are you sure you want to continue?",
@@ -82,7 +83,7 @@
     "subject": "Subject",
     "send": "Send",
     "dropZoneMessage": "Drop files here",
-    "attach":"ATTACH",
+    "attach": "ATTACH",
     "insertLinkDialog": {
       "title": "Insert Link",
       "cancel": "Cancel",

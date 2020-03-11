@@ -1,21 +1,21 @@
-import React, { PureComponent } from "react";
-import "./header.scss";
+import React, { PureComponent } from 'react';
+import './header.scss';
 //import Signout from "../signout/Signout";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
-import debounce from "lodash/debounce";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
+import debounce from 'lodash/debounce';
 import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownToggle
-} from "reactstrap";
-import { Nav, NavItem, NavLink } from "reactstrap";
-import { connect } from "react-redux";
-import MenuUser from "../menu-user/menu-user";
-import i18n from "i18next";
-import { resetDefaultAccount } from "../../api_graph/accounts";
+} from 'reactstrap';
+import { Nav, NavItem, NavLink } from 'reactstrap';
+import { connect } from 'react-redux';
+import MenuUser from '../menu-user/menu-user';
+import i18n from 'i18next';
+import { resetDefaultAccount } from '../../api_graph/accounts';
 
 export class Header extends PureComponent {
   constructor(props) {
@@ -38,12 +38,12 @@ export class Header extends PureComponent {
     const { userId } = this.props.lexon;
     if (userId !== null) {
       resetDefaultAccount(userId)
-      .then(() => {
+        .then(() => {
           const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-          window.open(urlRedirect, "_self");
+          window.open(urlRedirect, '_self');
         })
         .catch(error => {
-          console.log("error =>", error);
+          console.log('error =>', error);
         });
     }
   }
@@ -61,7 +61,7 @@ export class Header extends PureComponent {
   }
 
   handleSearchClick(evt) {
-    if (this.props.searhQuery !== "") {
+    if (this.props.searhQuery !== '') {
       this.performSearch();
     }
   }
@@ -73,8 +73,8 @@ export class Header extends PureComponent {
 
   performSearch() {
     const searchParams = {};
-    if (!this.props.searchQuery || this.props.searchQuery === "") {
-      searchParams.labelIds = ["INBOX"];
+    if (!this.props.searchQuery || this.props.searchQuery === '') {
+      searchParams.labelIds = ['INBOX'];
     }
     this.props.getLabelMessages({ ...searchParams });
   }
@@ -86,37 +86,34 @@ export class Header extends PureComponent {
     // const picUrl = "assets/img/icon-user.png";
 
     return (
-      <header className="d-flex p-3 align-content-center align-items-center header ">
-        <div className="justify-content-left">
-          <Link to="/aamkadywn2u5owzllwuwzdktndq3yi05mtq2ltmxymuymgexmjcwngauaaaaaaabgtrist65r5xlvfmy3kaqaqacnbiklwlkqrvib8xkwxacaaaaaae-aaa=">
+      <header className='d-flex p-3 align-content-center align-items-center header '>
+        <div className='justify-content-left'>
+          <Link to='/aamkadywn2u5owzllwuwzdktndq3yi05mtq2ltmxymuymgexmjcwngauaaaaaaabgtrist65r5xlvfmy3kaqaqacnbiklwlkqrvib8xkwxacaaaaaae-aaa='>
             <img
-              border="0"
-              alt="lefebvre"
-              src="/assets/img/LogoLefebvre.png"
-            ></img>
+              border='0'
+              alt='lefebvre'
+              src='/assets/img/LogoLefebvre.png'></img>
           </Link>
         </div>
-        <div className="header-logo justify-content-center">
+        <div className='header-logo justify-content-center'>
           {/*<Link to="/inbox"><img border="0" alt="gmail" src="assets/img/logo-elderecho.png"></img></Link>
                     <Link to="/inbox"><img className="logo-ext" border="0" alt="office 365" src="assets/img/office365.png"></img></Link>*/}
         </div>
-        <div className="header-search">
-          <div className="input-group w-75 ml-1 mr-auto">
+        <div className='header-search'>
+          <div className='input-group w-75 ml-1 mr-auto'>
             <input
-              type="search"
-              className="form-control search"
-              placeholder={i18n.t("header.search")}
+              type='search'
+              className='form-control search'
+              placeholder={i18n.t('header.search')}
               value={this.props.searchQuery}
               onChange={this.handleInputChange}
             />
             <div
-              className="input-group-append"
-              onClick={this.handleSearchClick}
-            >
+              className='input-group-append'
+              onClick={this.handleSearchClick}>
               <button
-                className="btn btn-light  bg-white text-dark btn-search"
-                type="button"
-              >
+                className='btn btn-light  bg-white text-dark btn-search'
+                type='button'>
                 <FontAwesomeIcon icon={faSearch} />
               </button>
             </div>
@@ -133,22 +130,21 @@ export class Header extends PureComponent {
           />
 
           <div>
-            <Nav className="ml-auto" navbar>
-              <NavItem className="d-md-down-none">
-                <NavLink href="#">
-                  <i className="icon-location-pin"></i>
+            <Nav className='ml-auto' navbar>
+              <NavItem className='d-md-down-none'>
+                <NavLink href='#'>
+                  <i className='icon-location-pin'></i>
                 </NavLink>
               </NavItem>
               <Dropdown
                 nav
                 isOpen={this.state.dropdownMenuOpen}
-                toggle={this.toggleMenu}
-              >
+                toggle={this.toggleMenu}>
                 <DropdownToggle nav>
                   <img
-                    className="img-menu"
-                    src="/assets/img/icon-products.png"
-                    alt=""
+                    className='img-menu'
+                    src='/assets/img/icon-products.png'
+                    alt=''
                   />
                 </DropdownToggle>
                 <DropdownMenu right>
@@ -169,10 +165,10 @@ export class Header extends PureComponent {
                   <DropdownItem>
                     <span
                       onClick={() =>
-                        window.open("https://www.lex-on.es/", "_self")
-                      }
-                    >
-                      <i className="fa fa-lock"></i> Return to Lex-on
+                        window.open('https://www.lex-on.es/', '_self')
+                      }>
+                      <i className='fa fa-lock'></i>
+                      {i18n.t('header.returnlexon')}
                     </span>
                   </DropdownItem>
                 </DropdownMenu>

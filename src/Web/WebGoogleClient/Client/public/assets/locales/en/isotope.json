@@ -60,7 +60,8 @@
     "version": "Version"
   },
   "header": {
-    "search": "Search"
+    "search": "Search",
+    "returnlexon": "Return Lex-on"
   },
   "login": {
     "cancel": "Cancel",

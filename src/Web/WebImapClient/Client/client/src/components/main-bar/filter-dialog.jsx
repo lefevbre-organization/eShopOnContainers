@@ -1,10 +1,10 @@
-import React from "react";
-import { connect } from "react-redux";
-import { translate } from "react-i18next";
-import { setMessageFilterKey } from "../../actions/application";
-import MessageFilters, { getFromKey } from "../../services/message-filters";
-import styles from "./filter-dialog.scss";
-import mainCss from "../../styles/main.scss";
+import React from 'react';
+import { connect } from 'react-redux';
+import { translate } from 'react-i18next';
+import { setMessageFilterKey } from '../../actions/application';
+import MessageFilters, { getFromKey } from '../../services/message-filters';
+import styles from './filter-dialog.scss';
+import mainCss from '../../styles/main.scss';
 
 export const FilterDialog = ({
   t,
@@ -13,13 +13,12 @@ export const FilterDialog = ({
   setMessageFilter
 }) => (
   <div
-    className={`${styles["filter-dialog"]} ${mainCss["mdc-menu"]} ${
-      mainCss["mdc-menu-surface"]
+    className={`${styles['filter-dialog']} ${mainCss['mdc-menu']} ${
+      mainCss['mdc-menu-surface']
     }
-    ${visible ? mainCss["mdc-menu-surface--open"] : ""}`}
-    aria-hidden={!visible}
-  >
-    <ul className={`${mainCss["mdc-list"]} ${mainCss["mdc-list--dense"]}`}>
+    ${visible ? mainCss['mdc-menu-surface--open'] : ''}`}
+    aria-hidden={!visible}>
+    <ul className={`${mainCss['mdc-list']} ${mainCss['mdc-list--dense']}`}>
       {/* <li
         key="1"
         className={`${styles["filter-dialog__item"]} ${
@@ -72,20 +71,14 @@ export const FilterDialog = ({
       </li> */}
 
       <li
-        key="4"
-        className={`${styles["filter-dialog__item"]} ${
-          mainCss["mdc-list-item"]
-        }`}
-        onClick={() => window.open("https://www.lex-on.es/", "_self")}
-      >
+        key='4'
+        className={`${styles['filter-dialog__item']} ${mainCss['mdc-list-item']}`}
+        onClick={() => window.open('https://www.lex-on.es/', '_self')}>
         <i
-          className={`${styles.check} ${
-            styles["check--active"]
-          } material-icons`}
-        >
+          className={`${styles.check} ${styles['check--active']} material-icons`}>
           home
         </i>
-        Return Lex-on
+        {t('topBar.returnlexon')}
       </li>
     </ul>
   </div>
