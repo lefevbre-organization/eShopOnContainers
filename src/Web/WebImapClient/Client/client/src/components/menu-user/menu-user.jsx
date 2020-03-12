@@ -104,7 +104,8 @@ class MenuUser extends Component {
 
   render() {
     const { dropdownOpen, accounts } = this.state;
-    const { fullName, lexon } = this.props;
+    const { lexon } = this.props;
+    const fullName = this.props.login.formValues.user;
 
     let acronym;
     if (fullName) {
@@ -204,7 +205,8 @@ MenuUser.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  lexon: state.lexon
+  lexon: state.lexon,
+  login: state.login
 });
 
 const mapDispatchToProps = dispatch => ({
