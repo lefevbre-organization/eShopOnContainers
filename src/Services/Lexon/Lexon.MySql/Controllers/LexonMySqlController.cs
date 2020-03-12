@@ -35,7 +35,6 @@ namespace Lexon.MySql.Controllers
                 return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
             var result = await _lexonService.GetUserAsync(idNavisionUser);
-            // return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
             return Ok(result);
         }
 
@@ -52,15 +51,20 @@ namespace Lexon.MySql.Controllers
             , bool addTerminatorToToken = true
             )
         {
-            if (string.IsNullOrEmpty(tokenRequest.idClienteNavision))
-                return BadRequest("id value invalid. Must be a valid user code in the enviroment");
+            if (string.IsNullOrEmpty(tokenRequest.idClienteNavision) 
+                && (string.IsNullOrEmpty(tokenRequest.login) && string.IsNullOrEmpty(tokenRequest.password)))
+                return BadRequest("id value invalid. Must be a valid user code in the enviroment or login and password");
 
             var result = await _lexonService.GetUserAsync(
                 tokenRequest.idClienteNavision, tokenRequest.bbdd,
                 tokenRequest.provider, tokenRequest.mailAccount, tokenRequest.idMail, tokenRequest.folder,
                 tokenRequest.idEntityType, tokenRequest.idEntity,
-                tokenRequest.mailContacts, addTerminatorToToken);
-            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+                tokenRequest.mailContacts, tokenRequest.login, tokenRequest.password,
+                addTerminatorToToken);
+           
+            if(result?.data != null)
+                result.data.companies = null;
+            
             return  Ok(result);
         }
 
@@ -74,7 +78,6 @@ namespace Lexon.MySql.Controllers
                 return BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
             var result = await _lexonService.GetCompaniesFromUserAsync(idUser);
-            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
             return Ok(result);
         }
 
@@ -85,7 +88,6 @@ namespace Lexon.MySql.Controllers
 
         {
             var result = await _lexonService.GetMasterEntitiesAsync();
-            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
             return Ok(result);
         }
 
@@ -149,7 +151,6 @@ namespace Lexon.MySql.Controllers
                 return BadRequest("values invalid. Must be a valid user, bbdd type and idFolder for get the nested folders");
 
             Result<LexNestedEntity> result = _lexonService.GetNestedFolderAsync(entityFolder);
-
             return Ok(result);
         }
 
@@ -167,7 +168,6 @@ namespace Lexon.MySql.Controllers
 
 
             var result = await _lexonService.AddFolderToEntityAsync(entityFolder);
-
             return Ok(result);
         }
 
@@ -199,7 +199,6 @@ namespace Lexon.MySql.Controllers
 
             var result = await _lexonService.AddRelationContactsMailAsync(classification);
 
-            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
             return Ok(result);
         }
 
@@ -215,14 +214,9 @@ namespace Lexon.MySql.Controllers
                 return BadRequest("values invalid. Must be a valid user, idType, idmail, idRelated and bbdd to remove an actuation");
 
             var result = await _lexonService.RemoveRelationMailAsync(classification);
-
-            //return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
             return Ok(result);
         }
 
-        /// <summary>
-        /// Search classifications of mail
-        /// </summary>
         [HttpPost("classifications/search")]
         [ProducesResponseType(typeof(MySqlCompany), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]

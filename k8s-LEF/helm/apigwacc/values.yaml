@@ -3,7 +3,7 @@ clusterName: eshop-aks
 pathBase: /accountapigw
 
 image:
-  repository: elefebvreoncontainers/ocelotapigw
+  repository: eshop/ocelotapigw
   tag: latest
   pullPolicy: IfNotPresent
 

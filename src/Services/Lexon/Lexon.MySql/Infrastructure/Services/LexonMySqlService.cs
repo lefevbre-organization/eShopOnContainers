@@ -72,8 +72,11 @@ namespace Lexon.MySql.Infrastructure.Services
             short? idEntityType = null,
             int? idEntity = null,
             List<string> mailContacts = null,
+            string login = null,
+            string password = null,
             bool addTerminatorToToken = true)
         {
+            idUser = ValidarUsuario(login, password, idUser);
             var resultado = await _lexonRepository.GetUserAsync(idUser);
             if (string.IsNullOrEmpty(resultado?.data?.idUser))
             {
@@ -93,12 +96,20 @@ namespace Lexon.MySql.Infrastructure.Services
                 idEntityType = idEntityType,
                 idEntity = idEntity,
                 mailContacts = mailContacts,
-                roles = GetRolesOfUser(idUser)
+                roles = GetRolesOfUser(idUser, login, password)
             }).Result;
 
             resultado.data.token += addTerminatorToToken ? "/" : "";
-
             return resultado;
+        }
+
+        private string ValidarUsuario(string login, string password, string idUser)
+        {
+            //TODO: validar usuario
+            if (!string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password) && string.IsNullOrEmpty(idUser))
+                idUser = "E1621396";
+                        
+            return idUser;
         }
 
         private long? GetLongIdUser(string idUser)
@@ -155,10 +166,16 @@ namespace Lexon.MySql.Infrastructure.Services
             }
         }
 
-        private static List<string> GetRolesOfUser(string idClienteNavision)
+        private static List<string> GetRolesOfUser(string idClienteNavision, string login, string password)
         {
             //TODO: connect to external service to obtain de data
-            return new List<string>() { "lexonconnector", "centinelaconnector" };
+            var usuarioValido = !string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password);
+            if (!string.IsNullOrEmpty(idClienteNavision) && usuarioValido)
+                return new List<string>() { "lexonconnector", "centinelaconnector", "gmailpanel", "outlookpanel" };
+            else if(!string.IsNullOrEmpty(idClienteNavision))
+                return new List<string>() { "lexonconnector", "centinelaconnector"};
+
+            return new List<string>() { };
         }
 
         private void AddClaimNumberToPayload(JwtPayload payload, long? valorClaim, string nombreClaim)
