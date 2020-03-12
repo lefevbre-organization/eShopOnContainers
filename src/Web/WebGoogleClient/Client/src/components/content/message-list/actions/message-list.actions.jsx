@@ -1,35 +1,35 @@
-import { getMessageList } from "../../../../api";
-import { getMessage } from "../../../../api";
-import { getMessageHeader } from "../../../../api";
-import { batchModify } from "../../../../api";
-import { selectLabel } from "../../../sidebar/sidebar.actions";
+import { getMessageList } from '../../../../api';
+import { getMessage } from '../../../../api';
+import { getMessageHeader } from '../../../../api';
+import { batchModify } from '../../../../api';
+import { selectLabel } from '../../../sidebar/sidebar.actions';
 
-export const GET_MESSAGES = "GET_MESSAGES";
-export const GET_MESSAGES_LOAD_IN_PROGRESS = "GET_MESSAGES_LOAD_IN_PROGRESS";
-export const GET_MESSAGES_FAILED = "GET_MESSAGES_FAILED";
-export const TOGGLE_SELECTED = "TOGGLE_SELECTED";
-export const MESSAGE_LOAD_IN_PROGRESS = "MESSAGE_LOAD_IN_PROGRESS";
-export const MESSAGE_LOAD_SUCCESS = "MESSAGE_LOAD_SUCCESS";
-export const MESSAGE_HEADER_LOAD_FAIL = "MESSAGE_HEADER_LOAD_FAIL";
+export const GET_MESSAGES = 'GET_MESSAGES';
+export const GET_MESSAGES_LOAD_IN_PROGRESS = 'GET_MESSAGES_LOAD_IN_PROGRESS';
+export const GET_MESSAGES_FAILED = 'GET_MESSAGES_FAILED';
+export const TOGGLE_SELECTED = 'TOGGLE_SELECTED';
+export const MESSAGE_LOAD_IN_PROGRESS = 'MESSAGE_LOAD_IN_PROGRESS';
+export const MESSAGE_LOAD_SUCCESS = 'MESSAGE_LOAD_SUCCESS';
+export const MESSAGE_HEADER_LOAD_FAIL = 'MESSAGE_HEADER_LOAD_FAIL';
 export const MESSAGE_HEADER_LOAD_IN_PROGRESS =
-  "MESSAGE_HEADER_LOAD_IN_PROGRESS";
-export const MESSAGE_HEADER_LOAD_SUCCESS = "MESSAGE_HEADER_LOAD_SUCCESS";
-export const MESSAGE_LOAD_FAIL = "MESSAGE_LOAD_FAIL";
-export const EMPTY_MESSAGES = "EMPTY_MESSAGES";
-export const SET_PAGE_TOKENS = "SET_PAGE_TOKENS";
-export const ADD_INITIAL_PAGE_TOKEN = "ADD_INITIAL_PAGE_TOKEN";
-export const CLEAR_PAGE_TOKENS = "CLEAR_PAGE_TOKENS";
-export const MODIFY_MESSAGES_SUCCESS = "MODIFY_MESSAGES_SUCCESS";
-export const MODIFY_MESSAGES_FAILED = "MODIFY_MESSAGES_FAILED";
-export const SET_SEARCH_QUERY = "SET_SEARCH_QUERY";
-export const ADD_MESSAGE = "ADD_MESSAGE";
-export const DELETE_MESSAGE = "DELETE_MESSAGE";
-export const DELETE_LIST_MESSAGES = "DELETE_LIST_MESSAGES";
-export const ADD_LIST_MESSAGES = "ADD_LIST_MESSAGES";
-export const CLEAR_LIST_MESSAGES = "CLEAR_LIST_MESSAGES";
-export const SET_OPEN_MESSAGE = "SET_OPEN_MESSAGE";
+  'MESSAGE_HEADER_LOAD_IN_PROGRESS';
+export const MESSAGE_HEADER_LOAD_SUCCESS = 'MESSAGE_HEADER_LOAD_SUCCESS';
+export const MESSAGE_LOAD_FAIL = 'MESSAGE_LOAD_FAIL';
+export const EMPTY_MESSAGES = 'EMPTY_MESSAGES';
+export const SET_PAGE_TOKENS = 'SET_PAGE_TOKENS';
+export const ADD_INITIAL_PAGE_TOKEN = 'ADD_INITIAL_PAGE_TOKEN';
+export const CLEAR_PAGE_TOKENS = 'CLEAR_PAGE_TOKENS';
+export const MODIFY_MESSAGES_SUCCESS = 'MODIFY_MESSAGES_SUCCESS';
+export const MODIFY_MESSAGES_FAILED = 'MODIFY_MESSAGES_FAILED';
+export const SET_SEARCH_QUERY = 'SET_SEARCH_QUERY';
+export const ADD_MESSAGE = 'ADD_MESSAGE';
+export const DELETE_MESSAGE = 'DELETE_MESSAGE';
+export const DELETE_LIST_MESSAGES = 'DELETE_LIST_MESSAGES';
+export const ADD_LIST_MESSAGES = 'ADD_LIST_MESSAGES';
+export const CLEAR_LIST_MESSAGES = 'CLEAR_LIST_MESSAGES';
+export const SET_OPEN_MESSAGE = 'SET_OPEN_MESSAGE';
 
-export const getLabelMessages = ({ labelIds, q = "", pageToken }) => (
+export const getLabelMessages = ({ labelIds, q = '', pageToken }) => (
   dispatch,
   getState
 ) => {
@@ -38,8 +38,8 @@ export const getLabelMessages = ({ labelIds, q = "", pageToken }) => (
   const state = getState();
   const { searchQuery } = state;
 
-  if (searchQuery !== "") {
-    dispatch(selectLabel("-1"));
+  if (searchQuery !== '') {
+    dispatch(selectLabel('-1'));
   }
 
   getMessageList({ labelIds, maxResults: 20, q: searchQuery, pageToken })
@@ -51,7 +51,7 @@ export const getLabelMessages = ({ labelIds, q = "", pageToken }) => (
 
       dispatch(
         setPageTokens({
-          nextPageToken: response.nextPageToken || ""
+          nextPageToken: response.nextPageToken || ''
         })
       );
     })
@@ -164,7 +164,8 @@ export const addMessage = message => dispatch => {
     id: message.id,
     subject: message.subject,
     sentDateTime: message.sentDateTime,
-    extMessageId: message.extMessageId
+    extMessageId: message.extMessageId,
+    folder: message.folder
   };
 
   dispatch({
@@ -204,10 +205,9 @@ export const clearListMessages = () => dispatch => {
   });
 };
 
-export const setOpenMessage = (message) => dispatch => {
+export const setOpenMessage = message => dispatch => {
   dispatch({
     type: SET_OPEN_MESSAGE,
     payload: message
   });
 };
-
