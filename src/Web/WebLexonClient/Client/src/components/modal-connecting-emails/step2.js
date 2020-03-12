@@ -177,8 +177,7 @@ export class ConnectingEmailsStep2 extends React.Component {
             <ClassificationListSearch
               closeClassName='search-close-2'
               searchResultsByType={this.searchResultsByType}
-              countResults={counter}
-            ></ClassificationListSearch>
+              countResults={counter}></ClassificationListSearch>
             <div style={{ height: 300 }}>
               {this.state.showSpinner === true && (
                 <div className='spinner'>
@@ -196,8 +195,7 @@ export class ConnectingEmailsStep2 extends React.Component {
                 locale='es-ES'
                 rowSelected={event => {
                   this.onRowSelected(event);
-                }}
-              >
+                }}>
                 {entity === 1 && (
                   <ColumnsDirective>
                     <ColumnDirective
@@ -207,20 +205,17 @@ export class ConnectingEmailsStep2 extends React.Component {
                       template={this.renderCheck}
                     />
                     <ColumnDirective
-                      field='name'
+                      field='code'
                       headerText='Código'
-                      width='100'
-                    ></ColumnDirective>
+                      width='100'></ColumnDirective>
                     <ColumnDirective
                       field='intervening'
                       headerText='Cliente'
-                      width='150'
-                    ></ColumnDirective>
+                      width='150'></ColumnDirective>
                     <ColumnDirective
                       field='description'
                       headerText='Descripción'
-                      width='170'
-                    ></ColumnDirective>
+                      width='170'></ColumnDirective>
                   </ColumnsDirective>
                 )}
                 {entity !== 1 && (
@@ -233,13 +228,11 @@ export class ConnectingEmailsStep2 extends React.Component {
                     <ColumnDirective
                       field='description'
                       headerText='Nombre'
-                      width='170'
-                    ></ColumnDirective>
+                      width='170'></ColumnDirective>
                     <ColumnDirective
                       field='email'
                       headerText='Email'
-                      width='150'
-                    ></ColumnDirective>
+                      width='150'></ColumnDirective>
                   </ColumnsDirective>
                 )}
               </GridComponent>
@@ -248,8 +241,7 @@ export class ConnectingEmailsStep2 extends React.Component {
                   className={`prevButton ${
                     this.state.currentPage === 1 ? 'disabled' : ''
                   }`}
-                  onClick={() => this.prevPage()}
-                >
+                  onClick={() => this.prevPage()}>
                   <span className='pager-icon lf-icon-angle-left' />
                   <span>Anterior</span>
                 </div>
@@ -258,8 +250,7 @@ export class ConnectingEmailsStep2 extends React.Component {
                   className={`nextButton ${
                     this.state.lastPage === true ? 'disabled' : ''
                   }`}
-                  onClick={() => this.nextPage()}
-                >
+                  onClick={() => this.nextPage()}>
                   <span>Siguiente</span>
                   <span className='pager-icon lf-icon-angle-right' />
                 </div>
@@ -274,6 +265,11 @@ export class ConnectingEmailsStep2 extends React.Component {
             }
             .step2-container {
               margin: 30px;
+            }
+
+            .e-rowcell.e-templatecell {
+              width: 160px;
+              display: flex;
             }
 
             .section-border {

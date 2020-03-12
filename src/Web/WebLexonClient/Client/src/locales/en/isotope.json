@@ -23,7 +23,7 @@
   },
   "connecting": {
     "q1": "What do you want to do with the selected messages? (Available soon)",
-    "q2": "What type of entity do you want to connect with? (Available soon)",
+    "q2": "What type of entity do you want to classify with? (Available soon)",
     "create": "Create performance",
     "copy": "Save copy of the messages in documentation",
     "save": "Save attachments in documentation",
@@ -108,7 +108,7 @@
     "text-confirm-remove": "If you delete this link, you will stop viewing the email in the corresponding Lex-on classification. Do you want to continue?"
   },
   "select-action": {
-    "connect-messages": "Connect messages"
+    "connect-messages": "Classify messages"
   },
   "tab-document": {
     "select-mail": "Select one or more messages and save them as a separate copy in the Lex-on documentation."
@@ -127,7 +127,7 @@
     "save-copy": "Save copy in Documentation"
   },
   "modal-conecting-emails": {
-    "save-copy": "Connecting messages with Lex-on"
+    "save-copy": "Classify messages on Lex-on"
   },
   "case-file": {
     "casefile-related": "Related Casefile",

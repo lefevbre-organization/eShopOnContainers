@@ -1,21 +1,27 @@
-import React, { Component, Fragment } from "react";
-import { connect } from "react-redux";
-import { bindActionCreators, compose } from "redux";
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators, compose } from 'redux';
 import * as uuid from 'uuid/v4';
 import * as base64 from 'base-64';
 
-import { diff, addedDiff, deletedDiff, updatedDiff, detailedDiff } from 'deep-object-diff';
+import {
+  diff,
+  addedDiff,
+  deletedDiff,
+  updatedDiff,
+  detailedDiff
+} from 'deep-object-diff';
 import Cookies from 'js-cookie';
-import Header from "../header/Header";
-import Sidebar from "../sidebar/Sidebar";
-import NotFound from "../not-found/NotFound";
+import Header from '../header/Header';
+import Sidebar from '../sidebar/Sidebar';
+import NotFound from '../not-found/NotFound';
 import { Notification } from '../notification/';
-import "./main.scss";
-import MessageList from "../content/message-list/MessageList";
-import MessageContent from "../content/message-list/message-content/MessageContent";
-import { Route, Switch, withRouter } from "react-router-dom";
-import { getLabels } from "../sidebar/sidebar.actions";
-import ComposeMessage from "../compose-message/ComposeMessage";
+import './main.scss';
+import MessageList from '../content/message-list/MessageList';
+import MessageContent from '../content/message-list/message-content/MessageContent';
+import { Route, Switch, withRouter } from 'react-router-dom';
+import { getLabels } from '../sidebar/sidebar.actions';
+import ComposeMessage from '../compose-message/ComposeMessage';
 import {
   getLabelMessages,
   emptyLabelMessages,
@@ -25,20 +31,20 @@ import {
   clearPageTokens,
   setSearchQuery,
   deleteMessage
-} from "../content/message-list/actions/message-list.actions";
+} from '../content/message-list/actions/message-list.actions';
 
-import { selectLabel } from "../sidebar/sidebar.actions";
-import { signOut } from "../../api/authentication";
-import { signOutDisconnect } from "../../api/authentication";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import SidebarCnn from "react-sidebar";
-import LexonComponent from "../../apps/lexon_content";
-import CalendarComponent from "../../apps/calendar_content";
-import "react-reflex/styles.css";
-import { addOrUpdateAccount, resetDefaultAccount } from "../../api/accounts";
-import { PROVIDER } from "../../constants";
-import { getMessageListWithRFC } from "../../api/";
+import { selectLabel } from '../sidebar/sidebar.actions';
+import { signOut } from '../../api/authentication';
+import { signOutDisconnect } from '../../api/authentication';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import SidebarCnn from 'react-sidebar';
+import LexonComponent from '../../apps/lexon_content';
+import CalendarComponent from '../../apps/calendar_content';
+import 'react-reflex/styles.css';
+import { addOrUpdateAccount, resetDefaultAccount } from '../../api/accounts';
+import { PROVIDER } from '../../constants';
+import { getMessageListWithRFC } from '../../api/';
 
 export class Main extends Component {
   constructor(props) {
@@ -67,12 +73,12 @@ export class Main extends Component {
       sidebarDocked: false,
       googleDown: false,
       showNotification: false,
-      messageNotification: "",
+      messageNotification: '',
       leftSideBar: {
         collapsed: false
       },
       sidebarComponent: (
-        <img border="0" alt="Lefebvre" src="assets/img/lexon-fake.png"></img>
+        <img border='0' alt='Lefebvre' src='assets/img/lexon-fake.png'></img>
       )
     };
 
@@ -109,8 +115,9 @@ export class Main extends Component {
   sendMessagePutUser(user) {
     const { selectedMessages, googleUser } = this.props;
 
+    debugger;
     window.dispatchEvent(
-      new CustomEvent("PutUserFromLexonConnector", {
+      new CustomEvent('PutUserFromLexonConnector', {
         detail: {
           user,
           selectedMessages: selectedMessages,
@@ -156,7 +163,7 @@ export class Main extends Component {
 
   onSetSidebarOpenQMemento(open) {
     let lexon = (
-      <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>
+      <img border='0' alt='Lefebvre' src='assets/img/lexon-fake-null.png'></img>
     );
     this.setState({ sidebarComponent: lexon });
     this.setState({ sidebarDocked: open });
@@ -164,7 +171,7 @@ export class Main extends Component {
 
   onSetSidebarOpenCompliance(open) {
     let lexon = (
-      <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>
+      <img border='0' alt='Lefebvre' src='assets/img/lexon-fake-null.png'></img>
     );
     this.setState({ sidebarComponent: lexon });
     this.setState({ sidebarDocked: open });
@@ -172,7 +179,7 @@ export class Main extends Component {
 
   onSetSidebarOpenDatabase(open) {
     let lexon = (
-      <img border="0" alt="Lefebvre" src="assets/img/lexon-fake-null.png"></img>
+      <img border='0' alt='Lefebvre' src='assets/img/lexon-fake-null.png'></img>
     );
     this.setState({ sidebarComponent: lexon });
     this.setState({ sidebarDocked: open });
@@ -185,12 +192,22 @@ export class Main extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     const difP = detailedDiff(this.props, nextProps);
 
-    if (difP.updated.messagesResult && difP.updated.messagesResult.hasOwnProperty("openMessage")) {
+    if (
+      difP.updated.messagesResult &&
+      difP.updated.messagesResult.hasOwnProperty('openMessage')
+    ) {
       return false;
     }
 
-    if (nextProps.messagesResult.openMessage !== null && nextProps.messagesResult.openMessage === this.props.messagesResult.openMessage) {
-      if (nextProps.location.pathname === ("/" + nextProps.messagesResult.openMessage)) {
+    if (
+      nextProps.messagesResult.openMessage !== null &&
+      nextProps.messagesResult.openMessage ===
+        this.props.messagesResult.openMessage
+    ) {
+      if (
+        nextProps.location.pathname ===
+        '/' + nextProps.messagesResult.openMessage
+      ) {
         if (nextState.sidebarDocked !== this.state.sidebarDocked) {
           return true;
         }
@@ -211,28 +228,30 @@ export class Main extends Component {
 
     this.getLabelList();
 
-    window.addEventListener("toggleClock", function (event) {
+    window.addEventListener('toggleClock', function(event) {
       alert(event.detail.name);
     });
     window.addEventListener(
-      "GetUserFromLexonConnector",
+      'GetUserFromLexonConnector',
       this.handleGetUserFromLexonConnector
     );
-    window.addEventListener("RemoveSelectedDocument", (event) => {
-      this.props.deleteMessage(event.detail.id)
-      dispatchEvent(new CustomEvent("Checkclick", {
-        detail: {
-          id: event.detail.id,
-          extMessageId: event.detail.id,
-          name: event.detail.id,
-          subject: event.detail.subject,
-          sentDateTime: event.detail.sentDateTime,
-          folder: event.detail.folder,
-          provider: "GOOGLE",
-          account: this.props.lexon.account,
-          chkselected: false
-        }
-      }));
+    window.addEventListener('RemoveSelectedDocument', event => {
+      this.props.deleteMessage(event.detail.id);
+      dispatchEvent(
+        new CustomEvent('Checkclick', {
+          detail: {
+            id: event.detail.id,
+            extMessageId: event.detail.id,
+            name: event.detail.id,
+            subject: event.detail.subject,
+            sentDateTime: event.detail.sentDateTime,
+            folder: event.detail.folder,
+            provider: 'GOOGLE',
+            account: this.props.lexon.account,
+            chkselected: false
+          }
+        })
+      );
     });
 
     const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
@@ -240,7 +259,11 @@ export class Main extends Component {
     const { googleUser } = this.props;
 
     if (!googleUser || !googleUser.Rt) {
-      this.setState({ googleDown: true, showNotification: true, messageNotification: "El proveedor de Google está caido" })
+      this.setState({
+        googleDown: true,
+        showNotification: true,
+        messageNotification: 'El proveedor de Google está caido'
+      });
       return;
     }
 
@@ -260,64 +283,86 @@ export class Main extends Component {
     if (userId !== null && email !== null) {
       const GUID = uuid();
       const newAccount = {
-        "provider": PROVIDER,
-        "email": email,
-        "guid": GUID,
-        "sign": "",
-        "defaultAccount": true,
-        "configAccount": null,
-        "mails": []
+        provider: PROVIDER,
+        email: email,
+        guid: GUID,
+        sign: '',
+        defaultAccount: true,
+        configAccount: null,
+        mails: []
       };
-      addOrUpdateAccount(userId, newAccount)
-        .then(result => {
-          Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, { domain: 'lefebvre.es' })
-          if (idEmail != null && idEmail !== undefined) {
-            if ((idCaseFile != null && idCaseFile != undefined) || (bbdd !== null & bbdd !== undefined)) {
-              this.onSetSidebarOpenLexon(true);
-            }
-            if (idEmail && idEmail.indexOf('<') !== -1 && idEmail.indexOf('>') !== -1) {
-              getMessageListWithRFC(idEmail)
-                .then(response => {
-                  if (response && response.result && response.result.messages && response.result.messages.length > 0) {
-                    console.log("El messageId:" + idEmail + " se corresponde con el id Interno:" + response.result.messages[0].id);
-                    idEmail = response.result.messages[0].id;
-                    this.props.history.push(`/${idEmail}`);
-                  }
-                  else {
-                    this.setState({ googleDown: true, showNotification: true, messageNotification: "El mensaje no está en el servidor" });
-                    return;
-                  }
-                });
-            }
-            else {
-              this.props.history.push(`/${idEmail}`);
-            }
-          } else if (idCaseFile != null && idCaseFile !== undefined) {
-            this.onSetSidebarOpenLexon(true);
-            this.props.history.push("/compose");
-          } else if (mailContacts !== null) {
-            this.onSetSidebarOpenLexon(true);
-            this.props.history.push("/compose");
-          } else if (bbdd !== null & bbdd !== undefined) {
-            this.onSetSidebarOpenLexon(true);
-            this.props.history.push("/inbox");
-          } else {
-            this.props.history.push("/inbox");
-          }
+      addOrUpdateAccount(userId, newAccount).then(result => {
+        Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, {
+          domain: 'lefebvre.es'
         });
+        if (idEmail != null && idEmail !== undefined) {
+          if (
+            (idCaseFile != null && idCaseFile != undefined) ||
+            (bbdd !== null) & (bbdd !== undefined)
+          ) {
+            this.onSetSidebarOpenLexon(true);
+          }
+          if (
+            idEmail &&
+            idEmail.indexOf('<') !== -1 &&
+            idEmail.indexOf('>') !== -1
+          ) {
+            getMessageListWithRFC(idEmail).then(response => {
+              if (
+                response &&
+                response.result &&
+                response.result.messages &&
+                response.result.messages.length > 0
+              ) {
+                console.log(
+                  'El messageId:' +
+                    idEmail +
+                    ' se corresponde con el id Interno:' +
+                    response.result.messages[0].id
+                );
+                idEmail = response.result.messages[0].id;
+                this.props.history.push(`/${idEmail}`);
+              } else {
+                this.setState({
+                  googleDown: true,
+                  showNotification: true,
+                  messageNotification: 'El mensaje no está en el servidor'
+                });
+                return;
+              }
+            });
+          } else {
+            this.props.history.push(`/${idEmail}`);
+          }
+        } else if (idCaseFile != null && idCaseFile !== undefined) {
+          this.onSetSidebarOpenLexon(true);
+          this.props.history.push('/compose');
+        } else if (mailContacts !== null) {
+          this.onSetSidebarOpenLexon(true);
+          this.props.history.push('/compose');
+        } else if ((bbdd !== null) & (bbdd !== undefined)) {
+          this.onSetSidebarOpenLexon(true);
+          this.props.history.push('/inbox');
+        } else {
+          this.props.history.push('/inbox');
+        }
+      });
     }
   }
 
   componentWillUnmount() {
     window.removeEventListener(
-      "GetUserFromLexonConnector",
+      'GetUserFromLexonConnector',
       this.handleGetUserFromLexonConnector
     );
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.messagesResult.openMessage === "" && prevProps.messagesResult.openMessage !== "") {
-      alert("Cerrado")
+    if (
+      this.props.messagesResult.openMessage === '' &&
+      prevProps.messagesResult.openMessage !== ''
+    ) {
+      alert('Cerrado');
     }
 
     if (prevProps.signedInUser !== this.props.signedInUser) {
@@ -333,7 +378,7 @@ export class Main extends Component {
       el => el.id.toLowerCase() === pathname.slice(1)
     );
     if (!selectedLabel) {
-      if (labelPathMatch && this.props.searchQuery === "") {
+      if (labelPathMatch && this.props.searchQuery === '') {
         this.props.selectLabel(labelPathMatch.id);
       }
     } else {
@@ -359,7 +404,7 @@ export class Main extends Component {
   navigateToNextPage(token) {
     const searchParam = this.props.location.search;
     const currentToken =
-      searchParam.indexOf("?") === 0 ? searchParam.slice(1) : "";
+      searchParam.indexOf('?') === 0 ? searchParam.slice(1) : '';
     this.props.setPageTokens({
       prevPageToken: currentToken
     });
@@ -377,8 +422,8 @@ export class Main extends Component {
 
     const newPathToPush = `/${label.id.toLowerCase()}`;
 
-    if (currentSearchQuery && currentSearchQuery !== "") {
-      this.props.setSearchQuery("");
+    if (currentSearchQuery && currentSearchQuery !== '') {
+      this.props.setSearchQuery('');
       const { pathname } = this.props.location;
       if (newPathToPush === pathname) {
         this.getLabelMessages({ labelIds: [label.id] });
@@ -407,9 +452,9 @@ export class Main extends Component {
     const { leftSideBar } = this.state;
     return this.props.labelsResult.labels.map(el => (
       <Route
-        key={el.id + "_route"}
+        key={el.id + '_route'}
         exact
-        path={"/" + el.id}
+        path={'/' + el.id}
         render={props => {
           const that = this;
           return (
@@ -423,7 +468,9 @@ export class Main extends Component {
               navigateToNextPage={this.navigateToNextPage}
               navigateToPrevPage={this.navigateToPrevPage}
               pageTokens={this.props.pageTokens}
-              refresh={() => { this.refreshLabels() }}
+              refresh={() => {
+                this.refreshLabels();
+              }}
               addInitialPageToken={this.addInitialPageToken}
               parentLabel={that.props.labelsResult.labels.find(
                 el => el.id === props.match.path.slice(1)
@@ -439,22 +486,22 @@ export class Main extends Component {
 
   renderSpinner() {
     return (
-      <div className="d-flex h-100 align-items-center justify-content-center">
-        <FontAwesomeIcon icon={faSpinner} spin size="3x" />
+      <div className='d-flex h-100 align-items-center justify-content-center'>
+        <FontAwesomeIcon icon={faSpinner} spin size='3x' />
       </div>
     );
   }
 
   onSignout() {
-    console.log("IN ... onSignout");
+    console.log('IN ... onSignout');
     const { userId } = this.props.lexon;
     resetDefaultAccount(userId)
       .then(result => {
-        signOut()
+        signOut();
       })
       .then(_ => {
         const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-        window.open(urlRedirect, "_self");
+        window.open(urlRedirect, '_self');
       });
 
     //sessionStorage.clear();
@@ -462,21 +509,20 @@ export class Main extends Component {
   }
 
   onSignoutDisconnect() {
-    console.log("IN ... onSignoutDisconnect");
+    console.log('IN ... onSignoutDisconnect');
     const { userId } = this.props.lexon;
     resetDefaultAccount(userId)
       .then(result => {
-        signOutDisconnect()
+        signOutDisconnect();
       })
       .then(_ => {
         const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-        window.open(urlRedirect, "_self");
+        window.open(urlRedirect, '_self');
       });
 
     //sessionStorage.clear();
     //localStorage.clear();
   }
-
 
   renderInboxViewport() {
     const { leftSideBar } = this.state;
@@ -494,43 +540,42 @@ export class Main extends Component {
         docked={this.state.sidebarDocked}
         styles={{
           sidebar: {
-            background: "white",
+            background: 'white',
             zIndex: 100,
-            overflowY: "hidden",
-            WebkitTransition: "-webkit-transform 0s",
-            willChange: "transform"
+            overflowY: 'hidden',
+            WebkitTransition: '-webkit-transform 0s',
+            willChange: 'transform'
           },
           content: {
-            position: "absolute",
+            position: 'absolute',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            overflowY: "hidden",
-            overflowX: "hidden",
-            WebkitOverflowScrolling: "touch",
-            transition: "left .0s ease-out, right .0s ease-out"
+            overflowY: 'hidden',
+            overflowX: 'hidden',
+            WebkitOverflowScrolling: 'touch',
+            transition: 'left .0s ease-out, right .0s ease-out'
           },
           overlay: {
             zIndex: 1,
-            position: "fixed",
+            position: 'fixed',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
             opacity: 0,
-            visibility: "hidden",
+            visibility: 'hidden',
             //transition: "opacity .3s ease-out, visibility .0s ease-out",
-            backgroundColor: "rgba(0,0,0,.3)"
+            backgroundColor: 'rgba(0,0,0,.3)'
           },
           dragHandle: {
             zIndex: 1,
-            position: "fixed",
+            position: 'fixed',
             top: 0,
             bottom: 0
           }
-        }}
-      >
+        }}>
         <Fragment>
           <Header
             googleUser={this.props.googleUser}
@@ -540,7 +585,7 @@ export class Main extends Component {
             getLabelMessages={this.getLabelMessages}
             searchQuery={this.props.searchQuery}
           />
-          <section className="main hbox space-between">
+          <section className='main hbox space-between'>
             <Sidebar
               sideBarCollapsed={leftSideBar.collapsed}
               sideBarToggle={this.toggleSideBar}
@@ -550,12 +595,12 @@ export class Main extends Component {
               onLabelClick={this.loadLabelMessages}
               onSidebarCloseClick={this.handleShowLeftSidebarClick}
             />
-            <article className="d-flex flex-column position-relative">
+            <article className='d-flex flex-column position-relative'>
               <Switch>
                 {this.renderLabelRoutes()}
                 <Route
                   exact
-                  path="/compose"
+                  path='/compose'
                   component={() => (
                     <ComposeMessage
                       history={this.props.history}
@@ -566,15 +611,17 @@ export class Main extends Component {
                     />
                   )}
                 />
-                <Route exact path="/notfound" component={NotFound} />
+                <Route exact path='/notfound' component={NotFound} />
                 <Route
                   exact
-                  path="/:id([a-zA-Z0-9]+)"
+                  path='/:id([a-zA-Z0-9]+)'
                   component={() => (
                     <MessageContent
                       sideBarCollapsed={leftSideBar.collapsed}
                       sideBarToggle={this.toggleSideBar}
-                      refresh={() => { this.refreshLabels(); }}
+                      refresh={() => {
+                        this.refreshLabels();
+                      }}
                       notFoundModal={0}
                     />
                   )}
@@ -582,27 +629,25 @@ export class Main extends Component {
               </Switch>
             </article>
 
-            <div className="productpanel">
-              <span className="productsbutton">
+            <div className='productpanel'>
+              <span className='productsbutton'>
                 {lexon.user ? (
                   <div onClick={() => this.onSetSidebarOpenLexon(true)}>
                     <img
-                      className="imgproduct"
-                      border="0"
-                      alt="Lex-On"
-                      src="assets/img/icon-lexon.png"
-                    ></img>
+                      className='imgproduct'
+                      border='0'
+                      alt='Lex-On'
+                      src='assets/img/icon-lexon.png'></img>
                   </div>
                 ) : (
-                    <div>
-                      <img
-                        className="imgproductdisable"
-                        border="0"
-                        alt="Lex-On"
-                        src="assets/img/icon-lexon.png"
-                      ></img>
-                    </div>
-                  )}
+                  <div>
+                    <img
+                      className='imgproductdisable'
+                      border='0'
+                      alt='Lex-On'
+                      src='assets/img/icon-lexon.png'></img>
+                  </div>
+                )}
               </span>
               {/* <span className="productsbutton">
                  <div onClick={() => this.onSetSidebarOpenCalendar(true)}> 
@@ -663,11 +708,16 @@ export class Main extends Component {
       const { showNotification, messageNotification } = this.state;
 
       return (
-        <div className="d-flex h-100 align-items-center justify-content-center">
+        <div className='d-flex h-100 align-items-center justify-content-center'>
           <Notification
             initialModalState={showNotification}
             toggleNotification={() => {
-              (messageNotification === "El mensaje no está en el servidor") ? window.open(`${window.URL_MF_GOOGLE}/GO0${this.props.lexon.userId}`, "_self") : this.onSignoutDisconnect()
+              messageNotification === 'El mensaje no está en el servidor'
+                ? window.open(
+                    `${window.URL_MF_GOOGLE}/GO0${this.props.lexon.userId}`,
+                    '_self'
+                  )
+                : this.onSignoutDisconnect();
             }}
             message={messageNotification}
           />
