@@ -186,11 +186,12 @@ class ModalConnectingEmails extends Component {
     this.closeDialog();
     let sc = null;
 
-    if (step1Data.actuation === true) {
-      sc = await this.saveClassifications();
-    }
+    sc = await this.saveClassifications();
 
-    if (step1Data.copyDocuments === true || step1Data.saveDocuments === true) {
+    if (
+      sc &&
+      (step1Data.copyDocuments === true || step1Data.saveDocuments === true)
+    ) {
       // Save email as eml format
       for (let i = 0; i < selectedMessages.length; i++) {
         const raw = Base64.encode(selectedMessages[i].raw);
@@ -263,7 +264,7 @@ class ModalConnectingEmails extends Component {
       }
       toggleNotification(i18n.t('classify-emails.classification-saved-ok'));
 
-      return res.data;
+      return res.classifications;
     } catch (err) {
       toggleNotification(
         i18n.t('classify-emails.classification-saved-ko'),
@@ -285,16 +286,14 @@ class ModalConnectingEmails extends Component {
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
                 this.closeDialog();
-              }}
-            >
+              }}>
               {i18n.t('classify-emails.cancel')}
             </Button>
             <Button
               bsPrefix='btn btn-primary'
               onClick={() => {
                 this.nextStep();
-              }}
-            >
+              }}>
               {i18n.t('classify-emails.continue')}
             </Button>
           </Fragment>
@@ -306,16 +305,14 @@ class ModalConnectingEmails extends Component {
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
                 this.closeDialog();
-              }}
-            >
+              }}>
               {i18n.t('classify-emails.cancel')}
             </Button>
             <Button
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
                 this.prevStep();
-              }}
-            >
+              }}>
               {i18n.t('classify-emails.back')}
             </Button>
             <Button
@@ -323,8 +320,7 @@ class ModalConnectingEmails extends Component {
               bsPrefix='btn btn-primary'
               onClick={() => {
                 this.nextStep();
-              }}
-            >
+              }}>
               {i18n.t('classify-emails.continue')}
             </Button>
           </Fragment>
@@ -336,16 +332,14 @@ class ModalConnectingEmails extends Component {
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
                 this.closeDialog();
-              }}
-            >
+              }}>
               {i18n.t('classify-emails.cancel')}
             </Button>
             <Button
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
                 this.prevStep();
-              }}
-            >
+              }}>
               {i18n.t('classify-emails.back')}
             </Button>
             <Button
@@ -353,8 +347,7 @@ class ModalConnectingEmails extends Component {
               bsPrefix='btn btn-primary'
               onClick={() => {
                 this.nextStep();
-              }}
-            >
+              }}>
               {i18n.t('classify-emails.continue')}
             </Button>
           </Fragment>
@@ -366,24 +359,21 @@ class ModalConnectingEmails extends Component {
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
                 this.closeDialog();
-              }}
-            >
+              }}>
               {i18n.t('classify-emails.cancel')}
             </Button>
             <Button
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
                 this.prevStep();
-              }}
-            >
+              }}>
               {i18n.t('classify-emails.back')}
             </Button>
             <Button
               bsPrefix='btn btn-primary'
               onClick={() => {
                 this.onSave();
-              }}
-            >
+              }}>
               {i18n.t('classify-emails.save')}
             </Button>
           </Fragment>
@@ -412,61 +402,55 @@ class ModalConnectingEmails extends Component {
           size='lg'
           aria-labelledby='contained-modal-title-vcenter'
           centered
-          dialogClassName='modal'
-        >
+          dialogClassName='modal'>
           <Modal.Header className='align-items-center' closeButton>
             <h5
               className='modal-title d-flex align-items-center'
-              id='documentarGuardardocumentacionLabel'
-            >
+              id='documentarGuardardocumentacionLabel'>
               <img
                 class='imgproduct'
                 border='0'
                 alt='Lex-On'
-                src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}
-              ></img>
+                src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
               <span>{i18n.t('modal-conecting-emails.save-copy')}</span>
             </h5>
           </Modal.Header>
           <Modal.Body className='mimodal'>
             <Container>
               <div
-                style={{ display: this.state.step === 1 ? 'block' : 'none' }}
-              >
+                style={{ display: this.state.step === 1 ? 'block' : 'none' }}>
                 <ConnectingEmailsStep1
                   show={this.state.step === 1}
                   onChange={data => {
                     this.changeStep1Data(data);
-                  }}
-                ></ConnectingEmailsStep1>
+                  }}></ConnectingEmailsStep1>
               </div>
               <div
-                style={{ display: this.state.step === 2 ? 'block' : 'none' }}
-              >
+                style={{ display: this.state.step === 2 ? 'block' : 'none' }}>
                 <ConnectingEmailsStep2
                   show={this.state.step === 2}
                   user={user}
                   bbdd={companySelected}
                   entity={this.state.step1Data.entity}
                   toggleNotification={toggleNotification}
-                  onSelectedEntity={data => this.changeStep2Data(data)}
-                ></ConnectingEmailsStep2>
+                  onSelectedEntity={data =>
+                    this.changeStep2Data(data)
+                  }></ConnectingEmailsStep2>
               </div>
               <div
-                style={{ display: this.state.step === 3 ? 'block' : 'none' }}
-              >
+                style={{ display: this.state.step === 3 ? 'block' : 'none' }}>
                 <ConnectingEmailsStep3
                   show={this.state.step === 3}
                   user={user}
                   bbdd={companySelected}
                   entity={this.state.step2Data}
                   toggleNotification={toggleNotification}
-                  onSelectedDirectory={data => this.changeStep3Data(data)}
-                ></ConnectingEmailsStep3>
+                  onSelectedDirectory={data =>
+                    this.changeStep3Data(data)
+                  }></ConnectingEmailsStep3>
               </div>
               <div
-                style={{ display: this.state.step === 4 ? 'block' : 'none' }}
-              >
+                style={{ display: this.state.step === 4 ? 'block' : 'none' }}>
                 <ConnectingEmailsStep4
                   show={this.state.step === 4}
                   step={
@@ -476,8 +460,7 @@ class ModalConnectingEmails extends Component {
                       : 5
                   }
                   messages={messages}
-                  onChange={this.changeSubject}
-                ></ConnectingEmailsStep4>
+                  onChange={this.changeSubject}></ConnectingEmailsStep4>
               </div>
             </Container>
           </Modal.Body>
