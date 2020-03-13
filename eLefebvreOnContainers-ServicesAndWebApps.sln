@@ -82,7 +82,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebStatusLef", "src\Web\Web
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Models", "Models", "{D7B0B8E5-5B1E-41AA-A103-ED3061C50084}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lef.Models", "src\BuildingBlocks\Models\Lef.Models\Lef.Models.csproj", "{F4B87F97-FA78-432B-85A0-6EA7B78225EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lef.Models", "src\BuildingBlocks\Models\Lef.Models\Lef.Models.csproj", "{F4B87F97-FA78-432B-85A0-6EA7B78225EA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Addons", "Addons", "{B9554B09-4489-4930-A54D-E9C2C1A803DE}"
+	ProjectSection(SolutionItems) = preProject
+		src\Addon\here addons .txt = src\Addon\here addons .txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1061,6 +1066,7 @@ Global
 		{6D75E74D-9CD0-48D7-AA2D-43A6BD0B4FAC} = {E279BF0F-7F66-4F3A-A3AB-2CDA66C1CD04}
 		{D7B0B8E5-5B1E-41AA-A103-ED3061C50084} = {DB0EFB20-B024-4E5E-A75C-52143C131D25}
 		{F4B87F97-FA78-432B-85A0-6EA7B78225EA} = {D7B0B8E5-5B1E-41AA-A103-ED3061C50084}
+		{B9554B09-4489-4930-A54D-E9C2C1A803DE} = {932D8224-11F6-4D07-B109-DA28AD288A63}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {25728519-5F0F-4973-8A64-0A81EB4EA8D9}
