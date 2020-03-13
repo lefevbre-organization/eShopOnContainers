@@ -191,10 +191,28 @@ export class Main extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     const difP = detailedDiff(this.props, nextProps);
+    const difSt = detailedDiff(this.state, nextState);
 
+    if (
+      isEmpty(difP.updated) &&
+      isEmpty(difP.added) &&
+      isEmpty(difP.deleted) &&
+      isEmpty(difSt.updated) &&
+      isEmpty(difSt.added) &&
+      isEmpty(difSt.deleted)
+    ) {
+      return false;
+    }
     if (
       difP.updated.messagesResult &&
       difP.updated.messagesResult.hasOwnProperty('openMessage')
+    ) {
+      return false;
+    }
+
+    if (
+      difP.updated.lexon &&
+      difP.updated.lexon.hasOwnProperty('mailContacts')
     ) {
       return false;
     }
@@ -758,3 +776,13 @@ export default compose(
   withRouter,
   connect(mapStateToProps, mapDispatchToProps)
 )(Main);
+
+function isEmpty(obj) {
+  for (var prop in obj) {
+    if (obj.hasOwnProperty(prop)) {
+      return false;
+    }
+  }
+
+  return JSON.stringify(obj) === JSON.stringify({});
+}

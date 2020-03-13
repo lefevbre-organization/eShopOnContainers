@@ -1,17 +1,23 @@
-import React, { Component, Fragment } from "react";
-import { connect } from "react-redux";
-import { bindActionCreators, compose } from "redux";
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators, compose } from 'redux';
 import * as uuid from 'uuid/v4';
 import Cookies from 'js-cookie';
-import { diff, addedDiff, deletedDiff, updatedDiff, detailedDiff } from 'deep-object-diff';
-import Header from "../header/Header";
-import Sidebar from "../sidebar/Sidebar";
-import NotFound from "../not-found/NotFound";
-import "./main.scss";
-import MessageList from "../content/message-list/MessageList";
-import MessageContent from "../content/message-list/message-content/MessageContent";
-import { Route, Switch, withRouter } from "react-router-dom";
-import { getLabels, getInbox } from "../sidebar/sidebar.actions";
+import {
+  diff,
+  addedDiff,
+  deletedDiff,
+  updatedDiff,
+  detailedDiff
+} from 'deep-object-diff';
+import Header from '../header/Header';
+import Sidebar from '../sidebar/Sidebar';
+import NotFound from '../not-found/NotFound';
+import './main.scss';
+import MessageList from '../content/message-list/MessageList';
+import MessageContent from '../content/message-list/message-content/MessageContent';
+import { Route, Switch, withRouter } from 'react-router-dom';
+import { getLabels, getInbox } from '../sidebar/sidebar.actions';
 import {
   getLabelMessages,
   emptyLabelMessages,
@@ -21,20 +27,23 @@ import {
   clearPageTokens,
   setSearchQuery,
   deleteMessage
-} from "../content/message-list/actions/message-list.actions";
-import { selectLabel } from "../sidebar/sidebar.actions";
-import { signOut } from "../../api_graph/authentication";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import e from "../../event-bus";
-import SidebarCnn from "react-sidebar";
-import LexonComponent from "../../apps/lexon_content";
-import SidebarComponent from "../../apps/sidebar_content";
-import ComposeMessage from "../compose-message/ComposeMessage";
-import "react-reflex/styles.css";
-import { addOrUpdateAccount, resetDefaultAccount } from "../../api_graph/accounts";
-import { PROVIDER } from "../../constants";
-import MessageNotFound  from "../message-not-found/MessageNotFound";
+} from '../content/message-list/actions/message-list.actions';
+import { selectLabel } from '../sidebar/sidebar.actions';
+import { signOut } from '../../api_graph/authentication';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import e from '../../event-bus';
+import SidebarCnn from 'react-sidebar';
+import LexonComponent from '../../apps/lexon_content';
+import SidebarComponent from '../../apps/sidebar_content';
+import ComposeMessage from '../compose-message/ComposeMessage';
+import 'react-reflex/styles.css';
+import {
+  addOrUpdateAccount,
+  resetDefaultAccount
+} from '../../api_graph/accounts';
+import { PROVIDER } from '../../constants';
+import MessageNotFound from '../message-not-found/MessageNotFound';
 
 export class Main extends Component {
   constructor(props) {
@@ -59,7 +68,7 @@ export class Main extends Component {
       sidebarOpen: false,
       sidebarDocked: false,
       sidebarComponent: (
-        <img border="0" alt="Lefebvre" src="/assets/img/lexon-fake.png"></img>
+        <img border='0' alt='Lefebvre' src='/assets/img/lexon-fake.png'></img>
       ),
       leftSideBar: {
         collapsed: false
@@ -69,9 +78,9 @@ export class Main extends Component {
       showMessageNotFound: false
     };
 
-    e.on("message", function(data) {
-      alert("got " + data.text);
-      e.emit("received", { text: "Woohoo! Hello from Multi-channel app!" });
+    e.on('message', function(data) {
+      alert('got ' + data.text);
+      e.emit('received', { text: 'Woohoo! Hello from Multi-channel app!' });
     });
 
     this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
@@ -110,14 +119,17 @@ export class Main extends Component {
     const { selectedMessages } = this.props;
 
     window.dispatchEvent(
-      new CustomEvent("PutUserFromLexonConnector", {
+      new CustomEvent('PutUserFromLexonConnector', {
         detail: {
           user,
-          selectedMessages: selectedMessages.map( itm => ({ ...itm, id: itm.internetId})),
+          selectedMessages: selectedMessages.map(itm => ({
+            ...itm,
+            id: itm.internetId
+          })),
           idCaseFile: this.props.lexon.idCaseFile,
           bbdd: this.props.lexon.bbdd,
           idCompany: this.props.lexon.idCompany,
-          provider: "OU",
+          provider: 'OU',
           account: this.props.User.email
         }
       })
@@ -152,7 +164,10 @@ export class Main extends Component {
 
   onSetSidebarOpenQMemento(open) {
     let lexon = (
-      <img border="0" alt="Lefebvre" src="/assets/img/lexon-fake-null.png"></img>
+      <img
+        border='0'
+        alt='Lefebvre'
+        src='/assets/img/lexon-fake-null.png'></img>
     );
     this.setState({ sidebarComponent: lexon });
     this.setState({ sidebarDocked: open });
@@ -160,7 +175,10 @@ export class Main extends Component {
 
   onSetSidebarOpenCompliance(open) {
     let lexon = (
-      <img border="0" alt="Lefebvre" src="/assets/img/lexon-fake-null.png"></img>
+      <img
+        border='0'
+        alt='Lefebvre'
+        src='/assets/img/lexon-fake-null.png'></img>
     );
     this.setState({ sidebarComponent: lexon });
     this.setState({ sidebarDocked: open });
@@ -168,7 +186,10 @@ export class Main extends Component {
 
   onSetSidebarOpenDatabase(open) {
     let lexon = (
-      <img border="0" alt="Lefebvre" src="/assets/img/lexon-fake-null.png"></img>
+      <img
+        border='0'
+        alt='Lefebvre'
+        src='/assets/img/lexon-fake-null.png'></img>
     );
     this.setState({ sidebarComponent: lexon });
     this.setState({ sidebarDocked: open });
@@ -180,15 +201,43 @@ export class Main extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     const difP = detailedDiff(this.props, nextProps);
+    const difSt = detailedDiff(this.state, nextState);
 
-    if(difP.updated.messagesResult && difP.updated.messagesResult.hasOwnProperty("openMessage")) {
+    if (
+      isEmpty(difP.updated) &&
+      isEmpty(difP.added) &&
+      isEmpty(difP.deleted) &&
+      isEmpty(difSt.updated) &&
+      isEmpty(difSt.added) &&
+      isEmpty(difSt.deleted)
+    ) {
       return false;
     }
 
-    if(nextProps.messagesResult.openMessage !== null && nextProps.messagesResult.openMessage === this.props.messagesResult.openMessage) {
-      if(nextProps.location.pathname === ("/"+nextProps.messagesResult.openMessage)) {
+    if (
+      difP.updated.messagesResult &&
+      difP.updated.messagesResult.hasOwnProperty('openMessage')
+    ) {
+      return false;
+    }
 
-        if(nextState.sidebarDocked !== this.state.sidebarDocked) {
+    if (
+      difP.updated.lexon &&
+      difP.updated.lexon.hasOwnProperty('mailContacts')
+    ) {
+      return false;
+    }
+
+    if (
+      nextProps.messagesResult.openMessage !== null &&
+      nextProps.messagesResult.openMessage ===
+        this.props.messagesResult.openMessage
+    ) {
+      if (
+        nextProps.location.pathname ===
+        '/' + nextProps.messagesResult.openMessage
+      ) {
+        if (nextState.sidebarDocked !== this.state.sidebarDocked) {
           return true;
         }
 
@@ -200,30 +249,32 @@ export class Main extends Component {
 
     return true;
   }
-  
+
   componentDidMount() {
     this.getLabelList();
     this.getLabelInbox();
 
     window.addEventListener(
-      "GetUserFromLexonConnector",
+      'GetUserFromLexonConnector',
       this.handleGetUserFromLexonConnector
     );
-    window.addEventListener("RemoveSelectedDocument", (event)=>{
-      this.props.deleteMessage(event.detail.id)
-      dispatchEvent(new CustomEvent("Checkclick", {
-        detail: {
-          id: event.detail.id,
-          extMessageId: event.detail.id,
-          name: event.detail.id,
-          subject: event.detail.subject,
-          sentDateTime: event.detail.sentDateTime,
-          folder: event.detail.folder,
-          provider: "GOOGLE",
-          account: this.props.lexon.account,
-          chkselected: false
-        }
-      }));
+    window.addEventListener('RemoveSelectedDocument', event => {
+      this.props.deleteMessage(event.detail.id);
+      dispatchEvent(
+        new CustomEvent('Checkclick', {
+          detail: {
+            id: event.detail.id,
+            extMessageId: event.detail.id,
+            name: event.detail.id,
+            subject: event.detail.subject,
+            sentDateTime: event.detail.sentDateTime,
+            folder: event.detail.folder,
+            provider: 'GOOGLE',
+            account: this.props.lexon.account,
+            chkselected: false
+          }
+        })
+      );
     });
 
     const { userId, idCaseFile, bbdd, mailContacts } = this.props.lexon;
@@ -232,54 +283,63 @@ export class Main extends Component {
     if (userId !== null && email !== null) {
       const GUID = uuid();
       const newAccount = {
-        "provider": PROVIDER,
-        "email": email,
-        "guid": GUID,
-        "sign": "",
-        "defaultAccount": true,
-        "configAccount": null,
-        "mails": []
+        provider: PROVIDER,
+        email: email,
+        guid: GUID,
+        sign: '',
+        defaultAccount: true,
+        configAccount: null,
+        mails: []
       };
       addOrUpdateAccount(userId, newAccount)
-      .then(result => {
-      	Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, { domain: 'lefebvre.es' })
-	      if (idEmail != null && idEmail !== undefined && idEmail !== "notFound"){
-	        if ((idCaseFile != null && idCaseFile != undefined) || (bbdd !== null & bbdd !== undefined)){
-	          this.onSetSidebarOpenLexon(true);
-          }
+        .then(result => {
+          Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, {
+            domain: 'lefebvre.es'
+          });
+          if (
+            idEmail != null &&
+            idEmail !== undefined &&
+            idEmail !== 'notFound'
+          ) {
+            if (
+              (idCaseFile != null && idCaseFile != undefined) ||
+              (bbdd !== null) & (bbdd !== undefined)
+            ) {
+              this.onSetSidebarOpenLexon(true);
+            }
 
-          this.props.history.push(`/${idEmail}`);
-
-	      } else if (idCaseFile !== null && idCaseFile !== undefined){
-          this.props.history.push("/compose");
-          this.onSetSidebarOpenLexon(true);
-        } else if (mailContacts !== null){
-          this.props.history.push("/compose");
-          this.onSetSidebarOpenLexon(true);       
-        }else {
-          // // if (idEmail === "notFound") {
-          // //   this.toggleShowMessageNotFound(true);
-          // // }
-          // // else if (this.state.showMessageNotFound === false){
-          // //   this.props.history.push("/inbox");
-          // // }
-          // // else {
-          //   this.props.history.push("/inbox");          
-          // // }
-          if (idEmail === "notFound"){
-            this.toggleShowMessageNotFound(true);
-            this.setState({selectFolder: this.getLabelInbox()})
+            this.props.history.push(`/${idEmail}`);
+          } else if (idCaseFile !== null && idCaseFile !== undefined) {
+            this.props.history.push('/compose');
+            this.onSetSidebarOpenLexon(true);
+          } else if (mailContacts !== null) {
+            this.props.history.push('/compose');
+            this.onSetSidebarOpenLexon(true);
+          } else {
+            // // if (idEmail === "notFound") {
+            // //   this.toggleShowMessageNotFound(true);
+            // // }
+            // // else if (this.state.showMessageNotFound === false){
+            // //   this.props.history.push("/inbox");
+            // // }
+            // // else {
+            //   this.props.history.push("/inbox");
+            // // }
+            if (idEmail === 'notFound') {
+              this.toggleShowMessageNotFound(true);
+              this.setState({ selectFolder: this.getLabelInbox() });
+            }
           }
-	      }
-      }).catch(error => {
-        console.error("error ->", error);
-      });
+        })
+        .catch(error => {
+          console.error('error ->', error);
+        });
     }
   }
 
   componentWillUnmount() {
     window.removeEventListener(
-      "GetUserFromLexonConnector",
+      'GetUserFromLexonConnector',
       this.handleGetUserFromLexonConnector
     );
   }
@@ -291,30 +351,31 @@ export class Main extends Component {
       });
     }
 
-    if (this.state.showMessageNotFound === true && this.notFoundModal === 0){
+    if (this.state.showMessageNotFound === true && this.notFoundModal === 0) {
       this.notFoundModal = 1;
-    }
-    else if (this.state.showMessageNotFound === false && this.notFoundModal === 1){
+    } else if (
+      this.state.showMessageNotFound === false &&
+      this.notFoundModal === 1
+    ) {
       var labelInbox = this.props.labelsResult.labels.find(label => {
-            if (label.displayName === "Inbox"){
-              return label
-            }
-          }) ;
+        if (label.displayName === 'Inbox') {
+          return label;
+        }
+      });
 
-      this.setState({selectFolder: labelInbox.id});
+      this.setState({ selectFolder: labelInbox.id });
       this.loadLabelMessages(labelInbox);
       this.notFoundModal = 2;
-    }
-    else {
+    } else {
       var { labels } = this.props.labelsResult;
       var { pathname } = this.props.location;
       var selectedLabel = labels.find(el => el.selected);
       var labelPathMatch = labels.find(
         el => el.id.toLowerCase() === pathname.slice(1)
-      );      
-      
+      );
+
       if (!selectedLabel) {
-        if (labelPathMatch && this.props.searchQuery === "") {
+        if (labelPathMatch && this.props.searchQuery === '') {
           this.props.selectLabel(labelPathMatch.id);
         }
       } else {
@@ -322,7 +383,7 @@ export class Main extends Component {
           this.props.selectLabel(labelPathMatch.id);
         }
       }
-  
+
       if (
         !this.state.loadFolders &&
         prevProps.labelsResult.labels !== this.props.labelsResult.labels
@@ -345,15 +406,15 @@ export class Main extends Component {
           }
         }
       }
-  
-      console.log("(0) this.props.labelsResult ->", this.props.labelsResult);
-      console.log("(0) this.state.retry ->", this.state.retry);
+
+      console.log('(0) this.props.labelsResult ->', this.props.labelsResult);
+      console.log('(0) this.state.retry ->', this.state.retry);
       if (
         this.state.retry &&
         this.props.labelsResult.labelInbox !== null &&
         this.props.labelsResult.labelInbox !== undefined
       ) {
-        console.log("(1) this.props.labelsResult ->", this.props.labelsResult);
+        console.log('(1) this.props.labelsResult ->', this.props.labelsResult);
         this.setState({ retry: false });
         this.loadLabelMessages(this.props.labelsResult.labelInbox);
       }
@@ -365,7 +426,7 @@ export class Main extends Component {
     this.renderLabelRoutes();
     // const { labels } = this.props.labelsResult;
     // const selectedLabel = labels.find(el => el.selected);
-    // this.getLabelMessages({ labelIds: [selectedLabel.id] });        
+    // this.getLabelMessages({ labelIds: [selectedLabel.id] });
   }
 
   loadLabelMessageSingle() {
@@ -373,13 +434,13 @@ export class Main extends Component {
     this.renderLabelRoutes();
     const { labels } = this.props.labelsResult;
     const selectedLabel = labels.find(el => el.selected);
-    this.getLabelMessages({ labelIds: [selectedLabel.id] });        
+    this.getLabelMessages({ labelIds: [selectedLabel.id] });
   }
 
   navigateToNextPage(token) {
     const searchParam = this.props.location.search;
     const currentToken =
-      searchParam.indexOf("?") === 0 ? searchParam.slice(1) : "";
+      searchParam.indexOf('?') === 0 ? searchParam.slice(1) : '';
     this.props.setPageTokens({
       prevPageToken: currentToken
     });
@@ -391,22 +452,22 @@ export class Main extends Component {
   }
 
   loadLabelMessages(label) {
-    const { mailContacts } = this.props.lexon; 
+    const { mailContacts } = this.props.lexon;
     const currentSearchQuery = this.props.searchQuery;
     this.props.clearPageTokens();
     this.props.selectLabel(label.id);
 
     const newPathToPush = `/${label.id.toLowerCase()}`;
 
-    if (currentSearchQuery && currentSearchQuery !== "") {
-      this.props.setSearchQuery("");
+    if (currentSearchQuery && currentSearchQuery !== '') {
+      this.props.setSearchQuery('');
       const { pathname } = this.props.location;
       if (newPathToPush === pathname) {
         this.getLabelMessages({ labelIds: [label.id] });
         return;
       }
     }
-    if (!mailContacts){
+    if (!mailContacts) {
       this.props.history.push(`/${label.id.toLowerCase()}`);
     }
   }
@@ -416,12 +477,12 @@ export class Main extends Component {
   }
 
   getLabelInbox() {
-    if (this.props.idEmail === undefined){
+    if (this.props.idEmail === undefined) {
       this.props.getInbox();
     }
   }
 
-   getLabelMessages(labelIds, q, pageToken) {
+  getLabelMessages(labelIds, q, pageToken) {
     this.props.emptyLabelMessages();
     this.props.getLabelMessages(labelIds, q, pageToken);
   }
@@ -434,9 +495,9 @@ export class Main extends Component {
     const { leftSideBar } = this.state;
     return this.props.labelsResult.labels.map(el => (
       <Route
-        key={el.id + "_route"}
+        key={el.id + '_route'}
         exact
-        path={"/" + el.id}
+        path={'/' + el.id}
         render={props => {
           const that = this;
           return (
@@ -452,7 +513,9 @@ export class Main extends Component {
               pageTokens={this.props.pageTokens}
               addInitialPageToken={this.addInitialPageToken}
               totalmessages={el.totalItemCount}
-              refresh={()=>{ this.refreshLabels() }}
+              refresh={() => {
+                this.refreshLabels();
+              }}
               parentLabel={that.props.labelsResult.labels.find(
                 el => el.id === props.match.path.slice(1)
               )}
@@ -467,8 +530,8 @@ export class Main extends Component {
 
   renderSpinner() {
     return (
-      <div className="d-flex h-100 align-items-center justify-content-center">
-        <FontAwesomeIcon icon={faSpinner} spin size="3x" />
+      <div className='d-flex h-100 align-items-center justify-content-center'>
+        <FontAwesomeIcon icon={faSpinner} spin size='3x' />
       </div>
     );
   }
@@ -476,8 +539,7 @@ export class Main extends Component {
   onSignout() {
     const { userId } = this.props.lexon;
     if (userId !== null) {
-      resetDefaultAccount(userId)
-      .then(result => {
+      resetDefaultAccount(userId).then(result => {
         console.log(result);
 
         const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
@@ -502,43 +564,42 @@ export class Main extends Component {
         docked={this.state.sidebarDocked}
         styles={{
           sidebar: {
-            background: "white",
+            background: 'white',
             zIndex: 100,
-            overflowY: "hidden",
-            WebkitTransition: "-webkit-transform 0s",
-            willChange: "transform"
+            overflowY: 'hidden',
+            WebkitTransition: '-webkit-transform 0s',
+            willChange: 'transform'
           },
           content: {
-            position: "absolute",
+            position: 'absolute',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            overflowY: "hidden",
-            overflowX: "hidden",
-            WebkitOverflowScrolling: "touch",
-            transition: "left .0s ease-out, right .0s ease-out"
+            overflowY: 'hidden',
+            overflowX: 'hidden',
+            WebkitOverflowScrolling: 'touch',
+            transition: 'left .0s ease-out, right .0s ease-out'
           },
           overlay: {
             zIndex: 1,
-            position: "fixed",
+            position: 'fixed',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
             opacity: 0,
-            visibility: "hidden",
+            visibility: 'hidden',
             //transition: "opacity .3s ease-out, visibility .0s ease-out",
-            backgroundColor: "rgba(0,0,0,.3)"
+            backgroundColor: 'rgba(0,0,0,.3)'
           },
           dragHandle: {
             zIndex: 1,
-            position: "fixed",
+            position: 'fixed',
             top: 0,
             bottom: 0
           }
-        }}
-      >
+        }}>
         <MessageNotFound
           initialModalState={showMessageNotFound}
           toggleShowMessageNotFound={this.toggleShowMessageNotFound}
@@ -551,7 +612,7 @@ export class Main extends Component {
             getLabelMessages={this.getLabelMessages}
             searchQuery={this.props.searchQuery}
           />
-          <section className="main hbox space-between">
+          <section className='main hbox space-between'>
             <Sidebar
               sideBarCollapsed={leftSideBar.collapsed}
               sideBarToggle={this.toggleSideBar}
@@ -561,12 +622,12 @@ export class Main extends Component {
               onLabelClick={this.loadLabelMessages}
               selectedLabel={this.props.labelsResult.labelInbox}
             />
-            <article className="d-flex flex-column position-relative">
+            <article className='d-flex flex-column position-relative'>
               <Switch>
                 {this.renderLabelRoutes()}
                 <Route
                   exact
-                  path="/compose"
+                  path='/compose'
                   component={() => (
                     <ComposeMessage
                       history={this.props.history}
@@ -574,21 +635,23 @@ export class Main extends Component {
                       sideBarToggle={this.toggleSideBar}
                       casefile={lexon.idCaseFile}
                       bbdd={lexon.bbdd}
-                      mailContacts ={lexon.mailContacts}
+                      mailContacts={lexon.mailContacts}
                       loadLabelMessages={this.loadLabelMessages}
                       labelsResult={this.props.labelsResult}
                     />
                   )}
                 />
-                <Route exact path="/notfound" component={NotFound} />
+                <Route exact path='/notfound' component={NotFound} />
                 <Route
                   exact
-                  path="/:id([a-zA-Z0-9!@#$%^&+=_-]+)"
+                  path='/:id([a-zA-Z0-9!@#$%^&+=_-]+)'
                   component={() => (
                     <MessageContent
                       sideBarCollapsed={leftSideBar.collapsed}
                       sideBarToggle={this.toggleSideBar}
-                      refresh={()=> { this.refreshLabels(); }}
+                      refresh={() => {
+                        this.refreshLabels();
+                      }}
                       notFoundModal={0}
                     />
                   )}
@@ -596,29 +659,27 @@ export class Main extends Component {
               </Switch>
             </article>
 
-            <div className="productpanel">
-              <span className="productsbutton">
+            <div className='productpanel'>
+              <span className='productsbutton'>
                 {lexon.user ? (
                   <div onClick={() => this.onSetSidebarOpenLexon(true)}>
                     <img
-                      className="imgproduct"
-                      border="0"
-                      alt="Lex-On"
-                      src="/assets/img/icon-lexon.png"
-                    ></img>
+                      className='imgproduct'
+                      border='0'
+                      alt='Lex-On'
+                      src='/assets/img/icon-lexon.png'></img>
                   </div>
                 ) : (
                   <div>
                     <img
-                      className="imgproductdisable"
-                      border="0"
-                      alt="Lex-On"
-                      src="/assets/img/icon-lexon.png"
-                    ></img>
+                      className='imgproductdisable'
+                      border='0'
+                      alt='Lex-On'
+                      src='/assets/img/icon-lexon.png'></img>
                   </div>
                 )}
               </span>
-                        {/* <span className="productsbutton">
+              {/* <span className="productsbutton">
                  <div onClick={() => this.onSetSidebarOpenQMemento(true)}> 
                 <div>
                   <img
@@ -709,3 +770,13 @@ export default compose(
   withRouter,
   connect(mapStateToProps, mapDispatchToProps)
 )(Main);
+
+function isEmpty(obj) {
+  for (var prop in obj) {
+    if (obj.hasOwnProperty(prop)) {
+      return false;
+    }
+  }
+
+  return JSON.stringify(obj) === JSON.stringify({});
+}
