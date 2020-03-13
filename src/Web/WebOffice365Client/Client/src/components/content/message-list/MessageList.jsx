@@ -224,7 +224,6 @@ export class MessageList extends Component {
 }
 
 const mapStateToProps = state => {
-  debugger;
   return {
     selectedMessages: state.messageList.selectedMessages,
     selectedFolder:

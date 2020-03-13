@@ -105,20 +105,20 @@ export class MessageToolbar extends PureComponent {
           <span
             className={
               collapsed ? 'action-btn mr-2' : 'action-btn mr-2 with-side-bar'
-            }
-          >
+            }>
             <Button
               onClick={this.props.sideBarToggle}
-              className='btn-transparent'
-            >
+              className='btn-transparent'>
               <FontAwesomeIcon icon={faBars} size='1x' />
             </Button>
           </span>
           <div
             className='action-btn mr-2'
-            title={t('message-toolbar.move-to-trash')}
-          >
-            <button className='btn' onClick={this.trashHandler}>
+            title={t('message-toolbar.move-to-trash')}>
+            <button
+              className='btn'
+              onClick={this.trashHandler}
+              style={{ backgroundColor: 'transparent' }}>
               <FontAwesomeIcon icon={faTrash} size='lg' />
             </button>
           </div>
@@ -130,8 +130,7 @@ export class MessageToolbar extends PureComponent {
                 sideBarCollapsed: this.props.sideBarCollapsed,
                 sideBarToggle: this.props.sideBarToggle,
                 state: { composeProps }
-              }}
-            >
+              }}>
               <FontAwesomeIcon icon={faReply} size='lg' />
             </Link>
           </div>
@@ -143,8 +142,7 @@ export class MessageToolbar extends PureComponent {
                 sideBarCollapsed: this.props.sideBarCollapsed,
                 sideBarToggle: this.props.sideBarToggle,
                 state: { composeProps: composePropsFwd }
-              }}
-            >
+              }}>
               <FontAwesomeIcon icon={faShare} size='lg' />
             </Link>
           </div>

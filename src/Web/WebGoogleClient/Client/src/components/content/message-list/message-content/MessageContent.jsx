@@ -166,7 +166,6 @@ export class MessageContent extends Component {
   componentWillUnmount() {
     this.props.setOpenMessage('');
     window.dispatchEvent(new CustomEvent('ResetList'));
-    debugger;
     for (let i = 0; i < this.props.selectedMessages.length; i++) {
       const detail = {
         id: this.props.selectedMessages[i].id,
@@ -202,7 +201,6 @@ export class MessageContent extends Component {
         this.props.emailMessageResult.result
       ) {
         const msgId = this.props.emailMessageResult.result.id;
-        debugger;
         const detail = {
           id: msgId,
           extMessageId: getHeader(
@@ -434,8 +432,7 @@ export class MessageContent extends Component {
 
         <div
           className='d-flex justify-content-center align-items-center message-content'
-          style={{ top: 160 }}
-        >
+          style={{ top: 160 }}>
           {this.props.emailMessageResult.loading ? this.renderSpinner() : null}
           {this.state.errorMessage ? (
             this.renderErrorModal()
