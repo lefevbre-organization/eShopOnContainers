@@ -80,7 +80,8 @@ class MenuUser extends Component {
   }
 
   onSignClick() {
-    alert('Clicked');
+    const { showSign } = this.state;
+    this.setState({ showSign: !showSign });
   }
 
   render() {
@@ -106,7 +107,7 @@ class MenuUser extends Component {
     }
 
     return (
-      <div className={`menu-user ${this.state.showSign ? 'show-sign' : ''}`}>
+      <div className='menu-user'>
         <Nav className='ml-auto' navbar>
           <NavItem className='d-md-down-none'>
             <NavLink href='#'>
@@ -121,72 +122,81 @@ class MenuUser extends Component {
                 alt={fullName}
               />
             </DropdownToggle>
-            <DropdownMenu right id='user-box'>
-              <DropdownItem header tag='div' className='user-image-and-name'>
-                <span className='dropdown-menu-arrow'></span>
-                <a
-                  href='#/'
-                  className='text-right d-block pr-3 pt-3'
-                  id='userInfo'
-                  data-toggle='dropdown'
-                  aria-haspopup='true'
-                  aria-expanded='false'>
-                  <span
-                    className='lf-icon-close'
-                    onClick={() => this.toggle()}></span>
-                </a>
-                <div className='content'>
-                  <div className='menu-title mb-5'>
-                    <span>{i18n.t('menu-user.user')}</span>
-                  </div>
+            <div
+              className={
+                this.state.showSign
+                  ? 'show-sign .menu-container '
+                  : '.menu-container '
+              }>
+              <DropdownMenu right id='user-box'>
+                <DropdownItem header tag='div' className='user-image-and-name'>
+                  <span className='dropdown-menu-arrow'></span>
+                  <a
+                    href='#/'
+                    className='text-right d-block pr-3 pt-3'
+                    id='userInfo'
+                    data-toggle='dropdown'
+                    aria-haspopup='true'
+                    aria-expanded='false'>
+                    <span
+                      className='lf-icon-close'
+                      onClick={() => this.toggle()}></span>
+                  </a>
+                  <div className='content'>
+                    <div className='menu-title mb-5'>
+                      <span>{i18n.t('menu-user.user')}</span>
+                    </div>
 
-                  <div className='user-image-and-name text-center'>
-                    <div className='user-image'>
-                      <a href='#/'>
-                        {acronym === undefined ? (
-                          <img src={picUrl} alt={fullName} />
-                        ) : (
-                          <strong>{acronym}</strong>
-                        )}
-                      </a>
+                    <div className='user-image-and-name text-center'>
+                      <div className='user-image'>
+                        <a href='#/'>
+                          {acronym === undefined ? (
+                            <img src={picUrl} alt={fullName} />
+                          ) : (
+                            <strong>{acronym}</strong>
+                          )}
+                        </a>
+                      </div>
+                      <span className='user-name'>{fullName}</span>
+                      <span className='company-name'>
+                        Lefebvre-El Derecho, S.A.
+                      </span>
+                      <div className='add-sign' onClick={this.onSignClick}>
+                        <span className='lf-icon lf-icon-feather'></span>
+                        <p>Firma de correo electrónico</p>
+                      </div>
+                      <PerfectScrollbar>
+                        <ul className='other-accounts'>
+                          {accounts.map(account => (
+                            <AccountUser key={account.id} account={account} />
+                          ))}
+                        </ul>
+                      </PerfectScrollbar>
+                      {lexon.user ? (
+                        <a
+                          href='#/'
+                          className='d-flex align-items-center add-more-accounts'
+                          onClick={this._handleOnClick}>
+                          <span className='lf-icon-add-round'></span>
+                          <strong>
+                            {i18n.t('menu-user.add-other-account')}
+                          </strong>
+                        </a>
+                      ) : null}
+                      <button
+                        type='button'
+                        className='col-6 btn btn-primary mt-3 mb-3'
+                        onClick={onSignout}>
+                        {i18n.t('menu-user.close-session')}
+                      </button>
                     </div>
-                    <span className='user-name'>{fullName}</span>
-                    <span className='company-name'>
-                      Lefebvre-El Derecho, S.A.
-                    </span>
-                    <div className='add-sign' onClick={this.onSignClick}>
-                      <span className='lf-icon lf-icon-feather'></span>
-                      <p>Firma de correo electrónico</p>
-                    </div>
-                    <PerfectScrollbar>
-                      <ul className='other-accounts'>
-                        {accounts.map(account => (
-                          <AccountUser key={account.id} account={account} />
-                        ))}
-                      </ul>
-                    </PerfectScrollbar>
-                    {lexon.user ? (
-                      <a
-                        href='#/'
-                        className='d-flex align-items-center add-more-accounts'
-                        onClick={this._handleOnClick}>
-                        <span className='lf-icon-add-round'></span>
-                        <strong>{i18n.t('menu-user.add-other-account')}</strong>
-                      </a>
-                    ) : null}
-                    <button
-                      type='button'
-                      className='col-6 btn btn-primary mt-3 mb-3'
-                      onClick={onSignout}>
-                      {i18n.t('menu-user.close-session')}
-                    </button>
                   </div>
+                </DropdownItem>
+                <div disabled className='version'>
+                  {i18n.t('menu-user.version')}: {window.RELEASE}
                 </div>
-              </DropdownItem>
-              <div disabled className='version'>
-                {i18n.t('menu-user.version')}: {window.RELEASE}
-              </div>
-            </DropdownMenu>
+              </DropdownMenu>
+            </div>
           </Dropdown>
         </Nav>
 
@@ -211,6 +221,18 @@ class MenuUser extends Component {
             padding: 0;
             margin: 0;
             margin-left: 5px;
+          }
+
+          .menu-container {
+            transition: all 2s;
+          }
+          .show-sign {
+            z-index: 1;
+          }
+
+          .menu-user {
+            padding-right: 60px;
+            z-index: 1;
           }
         `}</style>
       </div>
