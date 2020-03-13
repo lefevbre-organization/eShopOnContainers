@@ -267,11 +267,6 @@ export class ConnectingEmailsStep2 extends React.Component {
               margin: 30px;
             }
 
-            .e-rowcell.e-templatecell {
-              width: 160px;
-              display: flex;
-            }
-
             .section-border {
               position: sticky;
               border: 1px solid #d2d2d2;

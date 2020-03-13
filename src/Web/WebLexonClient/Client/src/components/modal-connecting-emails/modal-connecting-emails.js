@@ -187,6 +187,8 @@ class ModalConnectingEmails extends Component {
     let sc = null;
 
     sc = await this.saveClassifications();
+    console.log('SC');
+    console.log(sc);
 
     if (
       sc &&
