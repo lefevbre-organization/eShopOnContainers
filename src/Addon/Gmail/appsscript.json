@@ -1,0 +1,36 @@
+{
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/gmail.addons.execute",
+    "https://www.googleapis.com/auth/gmail.addons.current.message.metadata",
+    "https://www.googleapis.com/auth/script.external_request"
+  ],
+  "urlFetchWhitelist": [
+    "https://lexbox-test-apigwlex.lefebvre.es/api/v1/mysql/LexonMySql"
+  ],
+ "addOns": {
+  "common": {
+    "name": "Lefebvre Gmail",
+    "logoUrl": "https://www.gstatic.com/images/icons/material/system/1x/label_googblue_24dp.png",
+    "universalActions": [{
+       "label": "logout",
+       "runFunction": "logout"
+     }]
+  },
+   "gmail": {
+     "openLinkUrlPrefixes": [
+       "http://localhost:3000/",
+       "https://mail.google.com/"
+     ],
+     "contextualTriggers": [{
+       "unconditional": {
+       },
+       "onTriggerFunction": "buildAddOn"
+     }],
+     "primaryColor": "#4285F4",
+     "secondaryColor": "#4285F4"
+   }
+ }
+ 
+}
+
+
