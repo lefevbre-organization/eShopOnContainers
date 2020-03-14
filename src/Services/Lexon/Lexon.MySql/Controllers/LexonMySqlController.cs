@@ -68,6 +68,36 @@ namespace Lexon.MySql.Controllers
             return  Ok(result);
         }
 
+        /// <summary>
+        /// Permite obtener los token necesarios para operar con los microservicios de envio de correo
+        /// </summary>
+        /// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>
+        /// <returns></returns>
+        [HttpPost("token")]
+        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> TokenPostAsync(
+            [FromBody] TokenModelView tokenRequest
+            , bool addTerminatorToToken = true
+            )
+        {
+            if (string.IsNullOrEmpty(tokenRequest.idClienteNavision)
+                && (string.IsNullOrEmpty(tokenRequest.login) && string.IsNullOrEmpty(tokenRequest.password)))
+                return BadRequest("id value invalid. Must be a valid user code in the enviroment or login and password");
+
+            var result = await _lexonService.GetUserAsync(
+                tokenRequest.idClienteNavision, tokenRequest.bbdd,
+                tokenRequest.provider, tokenRequest.mailAccount, tokenRequest.idMail, tokenRequest.folder,
+                tokenRequest.idEntityType, tokenRequest.idEntity,
+                tokenRequest.mailContacts, tokenRequest.login, tokenRequest.password,
+                addTerminatorToToken);
+
+            if (result?.data != null)
+                result.data.companies = null;
+
+            return Ok(result);
+        }
+
         [HttpGet("companies")]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
