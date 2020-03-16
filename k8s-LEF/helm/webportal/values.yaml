@@ -4,7 +4,7 @@ pathBase: /webportal
 
 image:
   repository: elefebvreoncontainers/webportalclient
-  tag: latest
+  tag: linux-lef-main-containers
   pullPolicy: IfNotPresent
 
 service:
