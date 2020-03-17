@@ -176,6 +176,19 @@ namespace Lexon.MySql.Controllers
             return Ok(result);
         }
 
+        [HttpPost("entities/contact/getbyid")]
+        [ProducesResponseType(typeof(Result<LexEntity>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexEntity>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ContactByIdAsync([FromBody] EntitySearchById entitySearch)
+        {
+            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null)
+                return BadRequest("values invalid. Must be a valid user, bbdd, idType and idEntity to get de Entity");
+
+            var result = await _lexonService.GetEntityAsync(entitySearch);
+            return Ok(result);
+        }
+
         [HttpPost("entities/folders/nested")]
         [ProducesResponseType(typeof(Result<LexNestedEntity>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexNestedEntity>), (int)HttpStatusCode.BadRequest)]
