@@ -5,7 +5,8 @@
     "https://www.googleapis.com/auth/script.external_request"
   ],
   "urlFetchWhitelist": [
-    "https://lexbox-test-apigwlex.lefebvre.es/api/v1/mysql/LexonMySql"
+    "https://lexbox-test-apigwlex.lefebvre.es/api/v1/mysql/LexonMySql/",
+    "https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Lexon/"
   ],
  "addOns": {
   "common": {
@@ -26,8 +27,8 @@
        },
        "onTriggerFunction": "buildAddOn"
      }],
-     "primaryColor": "#4285F4",
-     "secondaryColor": "#4285F4"
+     "primaryColor": "#001978",
+     "secondaryColor": "#001978"
    }
  }
  

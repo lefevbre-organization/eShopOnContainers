@@ -5,15 +5,16 @@ const LoginComponents = (children) => (
     <div className="row">
      <div className="col-md-7 offset-md-4">
        <div className="login-box">
-         <div className="text-center">
-           <h2 className="login botton-title-space">Sign In</h2>
+         <div className="text-center login-title-space">
+           <h2 className="login-title-lefebvre botton-title-space">LEFEBVRE</h2>
+           <h2 className="login-title-lex-on botton-title-space">LEX-ON</h2>
          </div>
            <div className="row">
              <div className="col-md-8 offset-md-2 mb-5">
                <div className="ml-n4 mb-4">
-                 <div class="input-group login-input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="inputGroupPrepend">
+                 <div className="input-group login-input-group">
+                  <div className="input-group-prepend">
+                    <span className="input-group-text" id="inputGroupPrepend">
                       <img src={children.iconUser}/>
                     </span>
                   </div>
@@ -22,9 +23,9 @@ const LoginComponents = (children) => (
                  </div>
                </div>
                <div className="ml-n4 mb-4">
-                 <div class="input-group login-input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="inputGroupPrepend">
+                 <div className="input-group login-input-group">
+                  <div className="input-group-prepend">
+                    <span className="input-group-text" id="inputGroupPrepend">
                       <img src={children.iconLock}/>
                     </span>
                   </div>

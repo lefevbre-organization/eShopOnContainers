@@ -71,12 +71,7 @@ module.exports = async (env, options) => {
                     to: "assets",
                     from: "./assets"
                 }
-            ]),
-            
-            new webpack.ProvidePlugin({
-                $: 'jquery',
-                jQuery: 'jquery'
-              })
+            ])
         ]
     };
 

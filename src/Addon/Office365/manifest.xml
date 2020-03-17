@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xsi:type="MailApp">
-  <Id>744671d7-3324-4d13-8b9d-1916bfc7c3b0</Id>
+  <Id>da11355f-4d81-4abf-a535-9948cd7435ff</Id>
   <Version>1.0.0.0</Version>
-  <ProviderName>Contoso</ProviderName>
+  <ProviderName>Contoso0</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="lefebvre-addin-outlook"/>
+  <DisplayName DefaultValue="lefebvre-addin"/>
   <Description DefaultValue="An add-in that shows how to use SSO, and to fallback to interactive login when SSO is not available."/>
-  <IconUrl DefaultValue="https://localhost:3025/assets/icon-32.png"/>
-  <HighResolutionIconUrl DefaultValue="https://localhost:3025/assets/icon-80.png"/>
+  <IconUrl DefaultValue="https://localhost:3020/assets/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://localhost:3020/assets/icon-80.png"/>
   <SupportUrl DefaultValue="https://www.contoso.com/help"/>
   <Hosts>
     <Host Name="Mailbox"/>
@@ -20,7 +20,7 @@
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
-        <SourceLocation DefaultValue="https://localhost:3025/index.html"/>
+        <SourceLocation DefaultValue="https://localhost:3020/index.html"/>
         <RequestedHeight>250</RequestedHeight>
       </DesktopSettings>
     </Form>
@@ -62,18 +62,18 @@
       </Hosts>
       <Resources>
         <bt:Images>
-          <bt:Image id="Icon.16x16" DefaultValue="https://localhost:3025/assets/icon-16.png"/>
-          <bt:Image id="Icon.32x32" DefaultValue="https://localhost:3025/assets/icon-32.png"/>
-          <bt:Image id="Icon.80x80" DefaultValue="https://localhost:3025/assets/icon-80.png"/>
+          <bt:Image id="Icon.16x16" DefaultValue="https://localhost:3020/assets/icon-16.png"/>
+          <bt:Image id="Icon.32x32" DefaultValue="https://localhost:3020/assets/icon-32.png"/>
+          <bt:Image id="Icon.80x80" DefaultValue="https://localhost:3020/assets/icon-80.png"/>
         </bt:Images>
         <bt:Urls>
-          <bt:Url id="Commands.Url" DefaultValue="https://localhost:3025/commands.html"/>
-          <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:3025/taskpane.html"/>
+          <bt:Url id="Commands.Url" DefaultValue="https://localhost:3020/commands.html"/>
+          <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:3020/taskpane.html"/>
         </bt:Urls>
         <bt:ShortStrings>
           <bt:String id="GetStarted.Title" DefaultValue="Get started with your sample add-in!"/>
           <bt:String id="CommandsGroup.Label" DefaultValue="Commands Group"/>
-          <bt:String id="TaskpaneButton.Label" DefaultValue="Show"/>
+          <bt:String id="TaskpaneButton.Label" DefaultValue="Show Taskpane"/>
         </bt:ShortStrings>
         <bt:LongStrings>
           <bt:String id="GetStarted.Description" DefaultValue="Your sample add-in loaded succesfully. Go to the HOME tab and click the 'Show Taskpane' button to get started."/>
@@ -81,8 +81,8 @@
         </bt:LongStrings>
       </Resources>
       <WebApplicationInfo>
-        <Id>2c58e2ac-fdaa-420f-b8d6-8077d23bd528</Id>
-        <Resource>api://localhost:3025/2c58e2ac-fdaa-420f-b8d6-8077d23bd528</Resource>
+        <Id>a266801b-24e1-4301-994e-0950c519b498</Id>
+        <Resource>api://localhost:3020/a266801b-24e1-4301-994e-0950c519b498</Resource>
         <Scopes>
           <Scope>Files.Read.All</Scope>
           <Scope>profile</Scope>
@@ -91,6 +91,3 @@
     </VersionOverrides>
   </VersionOverrides>
 </OfficeApp>
-<!-- 8yhVII7KO]iCGH7wPSCWLdOK2utBs=@[ -->
-
-<!-- 2c58e2ac-fdaa-420f-b8d6-8077d23bd528 -->

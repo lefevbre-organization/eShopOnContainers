@@ -10,7 +10,7 @@ var loginDialog;
 
 export function dialogFallback() {
   // We fall back to Dialog API for any error.
-  const url = "https://localhost:3000/login";
+  const url = "/fallbackauthdialog.html";
   showLoginPopup(url);
 }
 
@@ -23,7 +23,7 @@ async function processMessage(arg) {
   if (messageFromDialog.status === "success") {
     // We now have a valid access token.
     loginDialog.close();
-    const response = makeGraphApiCall(messageFromDialog.result);
+    const response = await sso.makeGraphApiCall(messageFromDialog.result);
     documentHelper.writeDataToOfficeDocument(response);
   } else {
     // Something went wrong with authentication or the authorization of the web application.
@@ -34,9 +34,7 @@ async function processMessage(arg) {
 
 // Use the Office dialog API to open a pop-up and display the sign-in page for the identity provider.
 function showLoginPopup(url) {
-  // var fullUrl = location.protocol + "//" + location.hostname + (location.port ? ":" + location.port : "") + url;
-  var fullUrl = url;
-  console.log('fullUrl', fullUrl);
+  var fullUrl = location.protocol + "//" + location.hostname + (location.port ? ":" + location.port : "") + url;
 
   // height and width are percentages of the size of the parent Office application, e.g., PowerPoint, Excel, Word, etc.
   Office.context.ui.displayDialogAsync(

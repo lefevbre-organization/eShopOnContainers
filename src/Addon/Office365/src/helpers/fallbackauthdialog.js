@@ -33,11 +33,10 @@ Office.initialize = function() {
 
 const msalConfig = {
   auth: {
-    clientId: "2c58e2ac-fdaa-420f-b8d6-8077d23bd528", //This is your client ID
-    authority: "https://localhost:3000/login",
-    redirectUri: "https://localhost:3025/fallbackauthdialog.html",
-    navigateToLoginRequestUrl: false,
-    response_type: "access_token"
+    clientId: "a266801b-24e1-4301-994e-0950c519b498", //This is your client ID
+    // authority: "https://localhost:3000/login",
+    redirectUri: "https://localhost:3020/fallbackauthdialog.html",
+    navigateToLoginRequestUrl: false
   },
   cache: {
     cacheLocation: "localStorage", // Needed to avoid "User login is required" error.

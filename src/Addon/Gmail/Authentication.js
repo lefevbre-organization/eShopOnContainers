@@ -61,22 +61,13 @@ var scopes = [
   
   
   function buildAddOn(e) {
+    console.log(e);
     var accessToken = e.messageMetadata.accessToken;
     GmailApp.setCurrentMessageAccessToken(accessToken);
-  
     checkAuth()
-    var section = CardService.newCardSection()
-    var textWidget = CardService.newTextParagraph().setText('Bienvenido')
+    console.log('aqui entra')
+   return buildHomeCard();
   
-    section.addWidget(textWidget);
-  
-    var card = CardService.newCardBuilder()
-      .setHeader(CardService.newCardHeader()
-      .setTitle('Lefebvre Gmail'))
-      .addSection(section)
-      .build();
-  
-    return [card];
   }
 
   function logout() {

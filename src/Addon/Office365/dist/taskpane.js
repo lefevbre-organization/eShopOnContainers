@@ -14104,9 +14104,9 @@ __export(__webpack_require__(/*! ./msgraph-helper */ "./node_modules/office-addi
   !*** ./node_modules/office-addin-sso/lib/message-helper.js ***!
   \*************************************************************/
 /*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-/* WEBPACK VAR INJECTION */(function($) {/*
+/*
  * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.
  * See LICENSE in the project root for license information.
  */
@@ -14119,7 +14119,6 @@ function showMessage(text) {
 }
 exports.showMessage = showMessage;
 //# sourceMappingURL=message-helper.js.map
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")))
 
 /***/ }),
 
@@ -19504,64 +19503,132 @@ __webpack_require__.r(__webpack_exports__);
 
 /* global Excel, Office, OfficeExtension, Word */
 function writeDataToOfficeDocument(result) {
-  return new OfficeExtension.Promise(function (resolve, reject) {
+  return new Promise(function (resolve, reject) {
     try {
-      writeDataToOutlook(result);
+      switch (Office.context.host) {
+        case Office.HostType.Excel:
+          writeDataToExcel(result);
+          break;
+
+        case Office.HostType.Outlook:
+          writeDataToOutlook(result);
+          break;
+
+        case Office.HostType.PowerPoint:
+          writeDataToPowerPoint(result);
+          break;
+
+        case Office.HostType.Word:
+          writeDataToWord(result);
+          break;
+
+        default:
+          throw "Unsupported Office host application: This add-in only runs on Excel, PowerPoint, or Word.";
+      }
+
       resolve();
     } catch (error) {
-      reject(Error("Unable to write data to message. " + error.toString()));
+      reject(Error("Unable to write data to document. " + error.toString()));
     }
   });
 }
 
-function filterOneDriveInfo(result) {
-  var itemNames = [];
-  var oneDriveItems = result['value'];
-  var _iteratorNormalCompletion = true;
-  var _didIteratorError = false;
-  var _iteratorError = undefined;
+function filterUserProfileInfo(result) {
+  var userProfileInfo = [];
+  userProfileInfo.push(result["displayName"]);
+  userProfileInfo.push(result["jobTitle"]);
+  userProfileInfo.push(result["mail"]);
+  userProfileInfo.push(result["mobilePhone"]);
+  userProfileInfo.push(result["officeLocation"]);
+  return userProfileInfo;
+}
 
-  try {
-    for (var _iterator = oneDriveItems[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-      var item = _step.value;
-      itemNames.push(item['name']);
-    }
-  } catch (err) {
-    _didIteratorError = true;
-    _iteratorError = err;
-  } finally {
-    try {
-      if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-        _iterator["return"]();
-      }
-    } finally {
-      if (_didIteratorError) {
-        throw _iteratorError;
+function writeDataToExcel(result) {
+  return Excel.run(function (context) {
+    var sheet = context.workbook.worksheets.getActiveWorksheet();
+    var data = [];
+    var userProfileInfo = filterUserProfileInfo(result);
+
+    for (var i = 0; i < userProfileInfo.length; i++) {
+      if (userProfileInfo[i] !== null) {
+        var innerArray = [];
+        innerArray.push(userProfileInfo[i]);
+        data.push(innerArray);
       }
     }
-  }
 
-  return itemNames;
+    var rangeAddress = "B5:B".concat(5 + (data.length - 1));
+    var range = sheet.getRange(rangeAddress);
+    range.values = data;
+    range.format.autofitColumns();
+    return context.sync();
+  });
 }
 
 function writeDataToOutlook(result) {
   var data = [];
-  var oneDriveInfo = filterOneDriveInfo(result);
+  var userProfileInfo = filterUserProfileInfo(result);
 
-  for (var i = 0; i < oneDriveInfo.length; i++) {
-    if (oneDriveInfo[i] !== null) {
-      data.push(oneDriveInfo[i]);
+  for (var i = 0; i < userProfileInfo.length; i++) {
+    if (userProfileInfo[i] !== null) {
+      data.push(userProfileInfo[i]);
     }
   }
 
-  var objectNames = "";
+  var userInfo = "";
 
   for (var _i = 0; _i < data.length; _i++) {
-    objectNames += data[_i] + "<br/>";
+    userInfo += data[_i] + "\n";
   }
 
-  Office.context.mailbox.item.body.setSelectedDataAsync(objectNames, {
+  Office.context.mailbox.item.body.setSelectedDataAsync(userInfo, {
     coercionType: Office.CoercionType.Html
+  });
+}
+
+function writeDataToPowerPoint(result) {
+  var data = [];
+  var userProfileInfo = filterUserProfileInfo(result);
+
+  for (var i = 0; i < userProfileInfo.length; i++) {
+    if (userProfileInfo[i] !== null) {
+      data.push(userProfileInfo[i]);
+    }
+  }
+
+  var userInfo = "";
+
+  for (var _i2 = 0; _i2 < data.length; _i2++) {
+    userInfo += data[_i2] + "\n";
+  }
+
+  Office.context.document.setSelectedDataAsync(userInfo, function (asyncResult) {
+    if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+      throw asyncResult.error.message;
+    }
+  });
+}
+
+function writeDataToWord(result) {
+  return Word.run(function (context) {
+    var data = [];
+    var userProfileInfo = filterUserProfileInfo(result);
+
+    for (var i = 0; i < userProfileInfo.length; i++) {
+      if (userProfileInfo[i] !== null) {
+        data.push(userProfileInfo[i]);
+      }
+    }
+
+    var documentBody = context.document.body;
+
+    for (var _i3 = 0; _i3 < data.length; _i3++) {
+      if (data[_i3] !== null) {
+        documentBody.insertParagraph(data[_i3], "End");
+      }
+    }
+
+    return context.sync();
   });
 }
 
@@ -19594,7 +19661,7 @@ var sso = __webpack_require__(/*! office-addin-sso */ "./node_modules/office-add
 var loginDialog;
 function dialogFallback() {
   // We fall back to Dialog API for any error.
-  var url = "https://localhost:3000/login";
+  var url = "/fallbackauthdialog.html";
   showLoginPopup(url);
 } // This handler responds to the success or failure message that the pop-up dialog receives from the identity provider
 // and access token provider.
@@ -19616,18 +19683,28 @@ function _processMessage() {
             console.log("Message received in processMessage: " + JSON.stringify(arg));
             messageFromDialog = JSON.parse(arg.message);
 
-            if (messageFromDialog.status === "success") {
-              // We now have a valid access token.
-              loginDialog.close();
-              response = makeGraphApiCall(messageFromDialog.result);
-              documentHelper.writeDataToOfficeDocument(response);
-            } else {
-              // Something went wrong with authentication or the authorization of the web application.
-              loginDialog.close();
-              sso.showMessage(JSON.stringify(messageFromDialog.error.toString()));
+            if (!(messageFromDialog.status === "success")) {
+              _context.next = 10;
+              break;
             }
 
-          case 3:
+            // We now have a valid access token.
+            loginDialog.close();
+            _context.next = 6;
+            return sso.makeGraphApiCall(messageFromDialog.result);
+
+          case 6:
+            response = _context.sent;
+            documentHelper.writeDataToOfficeDocument(response);
+            _context.next = 12;
+            break;
+
+          case 10:
+            // Something went wrong with authentication or the authorization of the web application.
+            loginDialog.close();
+            sso.showMessage(JSON.stringify(messageFromDialog.error.toString()));
+
+          case 12:
           case "end":
             return _context.stop();
         }
@@ -19638,8 +19715,7 @@ function _processMessage() {
 }
 
 function showLoginPopup(url) {
-  var fullUrl = url;
-  console.log('fullUrl', fullUrl); // height and width are percentages of the size of the parent Office application, e.g., PowerPoint, Excel, Word, etc.
+  var fullUrl = location.protocol + "//" + location.hostname + (location.port ? ":" + location.port : "") + url; // height and width are percentages of the size of the parent Office application, e.g., PowerPoint, Excel, Word, etc.
 
   Office.context.ui.displayDialogAsync(fullUrl, {
     height: 60,
@@ -19662,7 +19738,7 @@ function showLoginPopup(url) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* WEBPACK VAR INJECTION */(function($) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getGraphData", function() { return getGraphData; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getGraphData", function() { return getGraphData; });
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
@@ -19688,7 +19764,7 @@ function _getGraphData() {
   _getGraphData = _asyncToGenerator(
   /*#__PURE__*/
   regeneratorRuntime.mark(function _callee() {
-    var bootstrapToken, exchangeResponse, mfaBootstrapToken;
+    var bootstrapToken, exchangeResponse, mfaBootstrapToken, response;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -19696,145 +19772,84 @@ function _getGraphData() {
             _context.prev = 0;
             _context.next = 3;
             return OfficeRuntime.auth.getAccessToken({
-              allowSignInPrompt: true,
-              forceAddAccount: true
+              allowSignInPrompt: true
             });
 
           case 3:
             bootstrapToken = _context.sent;
             _context.next = 6;
-            return getGraphToken(bootstrapToken);
+            return sso.getGraphToken(bootstrapToken);
 
           case 6:
             exchangeResponse = _context.sent;
-            console.log('exchangeResponse', exchangeResponse);
 
             if (!exchangeResponse.claims) {
-              _context.next = 15;
+              _context.next = 12;
               break;
             }
 
-            _context.next = 11;
+            _context.next = 10;
             return OfficeRuntime.auth.getAccessToken({
               authChallenge: exchangeResponse.claims
             });
 
-          case 11:
+          case 10:
             mfaBootstrapToken = _context.sent;
-            _context.next = 14;
-            return getGraphToken(mfaBootstrapToken);
+            exchangeResponse = sso.getGraphToken(mfaBootstrapToken);
 
-          case 14:
-            exchangeResponse = _context.sent;
-
-          case 15:
-            if (exchangeResponse.error) {
-              handleAADErrors(exchangeResponse);
-            } else {
-              makeGraphApiCall(exchangeResponse.access_token);
+          case 12:
+            if (!exchangeResponse.error) {
+              _context.next = 16;
+              break;
             }
 
+            // AAD errors are returned to the client with HTTP code 200, so they do not trigger
+            // the catch block below.
+            handleAADErrors(exchangeResponse);
             _context.next = 21;
             break;
 
+          case 16:
+            _context.next = 18;
+            return sso.makeGraphApiCall(exchangeResponse.access_token);
+
           case 18:
-            _context.prev = 18;
+            response = _context.sent;
+            documentHelper.writeDataToOfficeDocument(response);
+            sso.showMessage("Your data has been added to the document.");
+
+          case 21:
+            _context.next = 26;
+            break;
+
+          case 23:
+            _context.prev = 23;
             _context.t0 = _context["catch"](0);
 
             if (_context.t0.code) {
-              handleClientSideErrors(_context.t0);
+              if (sso.handleClientSideErrors(_context.t0)) {
+                fallbackAuthHelper.dialogFallback();
+              }
             } else {
               sso.showMessage("EXCEPTION: " + JSON.stringify(_context.t0));
             }
 
-          case 21:
+          case 26:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[0, 18]]);
+    }, _callee, null, [[0, 23]]);
   }));
   return _getGraphData.apply(this, arguments);
 }
 
-function getGraphToken(_x) {
-  return _getGraphToken.apply(this, arguments);
-}
-
-function _getGraphToken() {
-  _getGraphToken = _asyncToGenerator(
-  /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee2(bootstrapToken) {
-    var response;
-    return regeneratorRuntime.wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
-            _context2.next = 2;
-            return $.ajax({
-              type: "GET",
-              url: "/auth",
-              headers: {
-                "Authorization": "Bearer " + bootstrapToken
-              },
-              cache: false
-            });
-
-          case 2:
-            response = _context2.sent;
-            return _context2.abrupt("return", response);
-
-          case 4:
-          case "end":
-            return _context2.stop();
-        }
-      }
-    }, _callee2);
-  }));
-  return _getGraphToken.apply(this, arguments);
-}
-
-function handleClientSideErrors(error) {
-  switch (error.code) {
-    case 13001:
-      // No one is signed into Office. If the add-in cannot be effectively used when no one 
-      // is logged into Office, then the first call of getAccessToken should pass the 
-      // `allowSignInPrompt: true` option. Since this add-in does that, you should not see
-      // this error. 
-      sso.showMessage("No one is signed into Office. But you can use many of the add-ins functions anyway. If you want to log in, press the Get OneDrive File Names button again.");
-      break;
-
-    case 13002:
-      // OfficeRuntime.auth.getAccessToken was called with the allowConsentPrompt 
-      // option set to true. But, the user aborted the consent prompt. 
-      sso.showMessage("You can use many of the add-ins functions even though you have not granted consent. If you want to grant consent, press the Get OneDrive File Names button again.");
-      break;
-
-    case 13006:
-      // Only seen in Office on the Web.
-      sso.showMessage("Office on the Web is experiencing a problem. Please sign out of Office, close the browser, and then start again.");
-      break;
-
-    case 13008:
-      // The OfficeRuntime.auth.getAccessToken method has already been called and 
-      // that call has not completed yet. Only seen in Office on the web.
-      sso.showMessage("Office is still working on the last operation. When it completes, try this operation again.");
-      break;
-
-    case 13010:
-      // Only seen in Office on the web.
-      sso.showMessage("Follow the instructions to change your browser's zone configuration.");
-      break;
-
-    default:
-      // For all other errors, including 13000, 13003, 13005, 13007, 13012, 
-      // and 50001, fall back to non-SSO sign-in.
-      fallbackAuthHelper.dialogFallback();
-      break;
-  }
-}
-
 function handleAADErrors(exchangeResponse) {
+  // On rare occasions the bootstrap token is unexpired when Office validates it,
+  // but expires by the time it is sent to AAD for exchange. AAD will respond
+  // with "The provided value for the 'assertion' is not valid. The assertion has expired."
+  // Retry the call of getAccessToken (no more than once). This time Office will return a
+  // new unexpired bootstrap token.
   if (exchangeResponse.error_description.indexOf("AADSTS500133") !== -1 && retryGetAccessToken <= 0) {
     retryGetAccessToken++;
     getGraphData();
@@ -19842,7 +19857,6 @@ function handleAADErrors(exchangeResponse) {
     fallbackAuthHelper.dialogFallback();
   }
 }
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js")))
 
 /***/ }),
 
