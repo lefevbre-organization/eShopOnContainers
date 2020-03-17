@@ -73,14 +73,20 @@ namespace Lexon.MySql.Controllers
         /// </summary>
         /// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>
         /// <returns></returns>
-        [HttpPost("token")]
+        [HttpPost("token"), Consumes("application/json","application/xml","application/x-www-form-urlencoded","multipart/form-data","text/plain; charset=utf-8","text/html")]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> TokenPostAsync(
-            [FromBody] TokenModelView tokenRequest
-            , bool addTerminatorToToken = true
+              [FromForm] string login
+             ,[FromForm] string password
+             ,[FromForm] bool addTerminatorToToken = true
             )
         {
+            var tokenRequest = new TokenModelView
+            {
+                login = login,
+                password = password
+            };
             if (string.IsNullOrEmpty(tokenRequest.idClienteNavision)
                 && (string.IsNullOrEmpty(tokenRequest.login) && string.IsNullOrEmpty(tokenRequest.password)))
                 return BadRequest("id value invalid. Must be a valid user code in the enviroment or login and password");
@@ -90,7 +96,7 @@ namespace Lexon.MySql.Controllers
                 tokenRequest.provider, tokenRequest.mailAccount, tokenRequest.idMail, tokenRequest.folder,
                 tokenRequest.idEntityType, tokenRequest.idEntity,
                 tokenRequest.mailContacts, tokenRequest.login, tokenRequest.password,
-                addTerminatorToToken);
+                true);
 
             if (result?.data != null)
                 result.data.companies = null;
