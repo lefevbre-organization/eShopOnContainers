@@ -134,6 +134,9 @@ services:
   webaccountapigw:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - LexonApiUrlHC=http://lexon.api/hc
+      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
+      - AccountApiUrlHC=http://account.api/hc
     ports:
       - "8083:80"   
     volumes:
@@ -178,6 +181,9 @@ services:
   weblexonapigw:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - LexonApiUrlHC=http://lexon.api/hc
+      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
+      - AccountApiUrlHC=http://account.api/hc
     ports:
       - "8086:80"   
     volumes:
