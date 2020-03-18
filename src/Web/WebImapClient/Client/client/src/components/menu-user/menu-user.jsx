@@ -160,7 +160,7 @@ class MenuUser extends Component {
     const { lexon } = this.props;
     const { sign } = this.state;
     const newAccount = {
-      provider: 'OUTLOOK',
+      provider: 'IMAP',
       email: fullName,
       guid: lexon.guid,
       sign

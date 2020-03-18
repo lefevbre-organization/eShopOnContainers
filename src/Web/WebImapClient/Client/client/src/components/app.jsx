@@ -525,10 +525,10 @@ class App extends Component {
         idCaseFile !== undefined &&
         idEmail == undefined
       ) {
-        this.props.newMessage();
+        this.props.newMessage([], sign);
         this.onSetSidebarOpenLexon(true);
       } else if (mailContacts) {
-        this.props.newMessage(mailContacts.split(','));
+        this.props.newMessage(mailContacts.split(','), sign);
         this.onSetSidebarOpenLexon(true);
       } else if (idEmail) {
         console.log('**************** Ha llegado un id de email');
@@ -868,7 +868,7 @@ const mapDispatchToProps = dispatch => ({
   reloadFolders: credentials => getFolders(dispatch, credentials, true),
   reloadMessageCache: (user, folder) =>
     resetFolderMessagesCache(dispatch, user, folder),
-  newMessage: to => editNewMessage(dispatch, to),
+  newMessage: (to, sign) => editNewMessage(dispatch, to, sign),
   selectFolder: (folder, user) => {
     dispatch(selectFolder(folder));
     clearSelectedMessage(dispatch);
