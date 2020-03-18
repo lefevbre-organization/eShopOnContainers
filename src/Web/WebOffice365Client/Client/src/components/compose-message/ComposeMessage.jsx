@@ -1,68 +1,120 @@
-import React, { PureComponent } from "react";
+import React, { PureComponent } from 'react';
 import * as uuid from 'uuid/v4';
-import { sendMessage, getMessageByInternetMessageId } from "../../api_graph";
-import { getValidEmails } from "../../utils";
-import i18n from "i18next";
-import { Button, InputGroup, InputGroupAddon, Input } from "reactstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faTrash, faPaperclip } from "@fortawesome/free-solid-svg-icons";
-import ReactQuill from "react-quill";
-import "../../../node_modules/react-quill/dist/quill.snow.css";
-import "./composeMessage.scss";
-import ACTIONS from "../../actions/lexon";
-import { connect } from "react-redux";
-import { prettySize } from "../../utils/prettify";
+import { sendMessage, getMessageByInternetMessageId } from '../../api_graph';
+import { getValidEmails } from '../../utils';
+import i18n from 'i18next';
+import { Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faBars,
+  faTrash,
+  faPaperclip
+} from '@fortawesome/free-solid-svg-icons';
+import ReactQuill from 'react-quill';
+import '../../../node_modules/react-quill/dist/quill.snow.css';
+import './composeMessage.scss';
+import ACTIONS from '../../actions/lexon';
+import { connect } from 'react-redux';
+import { prettySize } from '../../utils/prettify';
 import { Notification, Confirmation } from '../notification/';
-import HeaderAddress from "./header-address";
-import { getUser, classifyEmail } from "../../api_graph/accounts";
+import HeaderAddress from './header-address';
+import { getUser, classifyEmail } from '../../api_graph/accounts';
+import ComposeMessageEditor from './composeMessageEditor';
 
-const Uppy = require("@uppy/core");
-const Tus = require("@uppy/tus");
+const Uppy = require('@uppy/core');
+const Tus = require('@uppy/tus');
 const MAX_TOTAL_ATTACHMENTS_SIZE = 26214400;
-const FORBIDDEN_EXTENSIONS = ["ade", "adp", "apk", "appx", "appxbundle", "bat", "cab", "chm", "cmd", "com", "cpl", "dll", "dmg", "exe", "hta", "ins", "isp", "iso", "jar", "js", "jse", "lib", "lnk", "mde", "msc", "msi", "msix", "msixbundle", "msp", "mst", "nsh", "pif", "ps1", "scr", "sct", "shb", "sys", "vb", "vbe", "vbs", "vxd", "wsc", "wsf", "wsh"];
+const FORBIDDEN_EXTENSIONS = [
+  'ade',
+  'adp',
+  'apk',
+  'appx',
+  'appxbundle',
+  'bat',
+  'cab',
+  'chm',
+  'cmd',
+  'com',
+  'cpl',
+  'dll',
+  'dmg',
+  'exe',
+  'hta',
+  'ins',
+  'isp',
+  'iso',
+  'jar',
+  'js',
+  'jse',
+  'lib',
+  'lnk',
+  'mde',
+  'msc',
+  'msi',
+  'msix',
+  'msixbundle',
+  'msp',
+  'mst',
+  'nsh',
+  'pif',
+  'ps1',
+  'scr',
+  'sct',
+  'shb',
+  'sys',
+  'vb',
+  'vbe',
+  'vbs',
+  'vxd',
+  'wsc',
+  'wsf',
+  'wsh'
+];
 
 export class ComposeMessage extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       to:
-        (props.mailContacts && props.mailContacts !== null) 
-        ? props.mailContacts 
-        : (
-            (props.history.location.state && props.history.location.state.composeProps.to) 
-            ? props.history.location.state.composeProps.to
-            : ""
-          ),
-      to2: 
-        (props.mailContacts && props.mailContacts !== null) 
-          ? props.mailContacts.split(',') 
-          : (
-              (props.history.location.state && props.history.location.state.composeProps.to) 
-              ? props.history.location.state.composeProps.to.split(',')
-              :[]
-            ),       
+        props.mailContacts && props.mailContacts !== null
+          ? props.mailContacts
+          : props.history.location.state &&
+            props.history.location.state.composeProps.to
+          ? props.history.location.state.composeProps.to
+          : '',
+      to2:
+        props.mailContacts && props.mailContacts !== null
+          ? props.mailContacts.split(',')
+          : props.history.location.state &&
+            props.history.location.state.composeProps.to
+          ? props.history.location.state.composeProps.to.split(',')
+          : [],
       cc:
         (props.history.location.state &&
           props.history.location.state.composeProps.cc) ||
-        "",
+        '',
       cc2:
-        (props.history.location.state &&
-          props.history.location.state.composeProps.cc) ? props.history.location.state.composeProps.cc.split(',') : [],
+        props.history.location.state &&
+        props.history.location.state.composeProps.cc
+          ? props.history.location.state.composeProps.cc.split(',')
+          : [],
       bcc:
         (props.history.location.state &&
           props.history.location.state.composeProps.bcc) ||
-        "",
+        '',
       bcc2:
-        (props.history.location.state &&
-          props.history.location.state.composeProps.bcc) ? props.history.location.state.composeProps.bcc.split(',') : [],
+        props.history.location.state &&
+        props.history.location.state.composeProps.bcc
+          ? props.history.location.state.composeProps.bcc.split(',')
+          : [],
       subject:
         (props.history.location.state &&
           props.history.location.state.composeProps.subject) ||
-        "",
+        '',
       content:
         (props.history.location.state &&
           props.history.location.state.composeProps.content) ||
-        "",
+        '',
       showInlineDashboard: false,
       open: false,
       uppyPreviews: [],
@@ -78,15 +130,15 @@ export class ComposeMessage extends PureComponent {
     this.closeModal = this.closeModal.bind(this);
     this.setField = this.setField.bind(this);
     this.uppy = new Uppy({
-      id: "uppy1",
+      id: 'uppy1',
       autoProceed: false,
       debug: true,
       onBeforeFileAdded: (currentFile, files) => {
         let totalSize = currentFile.size;
 
         // Check file extension
-        if(this.typeAllowed(currentFile.data) === false) {
-          this.showNotification(i18n.t("compose-message.forbidden-extension"));
+        if (this.typeAllowed(currentFile.data) === false) {
+          this.showNotification(i18n.t('compose-message.forbidden-extension'));
           return false;
         }
 
@@ -98,32 +150,31 @@ export class ComposeMessage extends PureComponent {
         }
 
         if (totalSize > MAX_TOTAL_ATTACHMENTS_SIZE) {
-          this.showNotification(i18n.t("compose-message.max-file-size"), false);
+          this.showNotification(i18n.t('compose-message.max-file-size'), false);
           return false;
         } else {
           return true;
         }
       }
-    })
-      .use(Tus, { endpoint: "https://master.tus.io/files/" })
+    }).use(Tus, { endpoint: 'https://master.tus.io/files/' });
     this.uploadFile = this.uploadFile.bind(this);
     this.showAttachActions = false;
 
-    this.uppy.on("file-added", file => {
-      console.log("Added file", file);
+    this.uppy.on('file-added', file => {
+      console.log('Added file', file);
 
       // Define this onload every time to get file and base64 every time
       this.reader = new FileReader();
-      
-      if(file.data.size <= 3145728) {
+
+      if (file.data.size <= 3145728) {
         this.reader.readAsDataURL(file.data);
       } else {
         this.reader.readAsArrayBuffer(file.data);
-      } 
+      }
 
       this.reader.onload = readerEvt =>
         this.addFileToState({ file, base64: readerEvt.target.result });
-      this.showAttachActions = true
+      this.showAttachActions = true;
     });
 
     this.onAttachButton = this.onAttachButton.bind(this);
@@ -137,8 +188,16 @@ export class ComposeMessage extends PureComponent {
   }
 
   componentDidMount() {
-    if(this.fileInput) {
-      this.fileInput.onchange = this.onAttachSelected
+    const { lexon } = this.props;
+
+    if (this.fileInput) {
+      this.fileInput.onchange = this.onAttachSelected;
+    }
+
+    if (lexon.sign && lexon.sign !== '') {
+      const { content } = this.state;
+
+      this.setState({ content: `<br/><br/><p>${lexon.sign}</p>` + content });
     }
   }
 
@@ -147,7 +206,7 @@ export class ComposeMessage extends PureComponent {
     const re = /(?:\.([^.]+))?$/;
     const ext = re.exec(file.name)[1];
 
-    if(ext && FORBIDDEN_EXTENSIONS.find(f => f === ext )) {
+    if (ext && FORBIDDEN_EXTENSIONS.find(f => f === ext)) {
       res = false;
     }
 
@@ -159,7 +218,7 @@ export class ComposeMessage extends PureComponent {
     this.addFileToState();
   }
 
-  closeModal() { 
+  closeModal() {
     if (
       this.props.lexon.idCaseFile === null ||
       this.props.lexon.idCaseFile === undefined
@@ -167,14 +226,14 @@ export class ComposeMessage extends PureComponent {
       this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
     } else {
       if (this.props.casefile !== null && this.props.casefile !== undefined) {
-        window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
+        window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
         this.props.setCaseFile({
           casefile: null,
           bbdd: null,
           company: null
         });
-      } 
-      if(this.props.labelsResult) {
+      }
+      if (this.props.labelsResult) {
         this.props.loadLabelMessages(this.props.labelsResult.labelInbox);
       }
     }
@@ -182,7 +241,7 @@ export class ComposeMessage extends PureComponent {
 
   goBack() {
     if (this.props.casefile !== null && this.props.casefile !== undefined) {
-      window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
+      window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
       this.props.setCaseFile({
         casefile: null,
         bbdd: null,
@@ -191,39 +250,50 @@ export class ComposeMessage extends PureComponent {
     } else if (this.props.mailContacts) {
       this.props.setMailContacts(null);
     }
-    //this.resetFields();  
+    //this.resetFields();
     this.closeModal();
   }
 
   sentEmail(email) {
-    const emailDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
-    
+    const emailDate = new Date()
+      .toISOString()
+      .replace(/T/, ' ')
+      .replace(/\..+/, '');
+
     this.props.setMailContacts(null);
 
     window.dispatchEvent(
-      new CustomEvent("SentMessage", {
+      new CustomEvent('SentMessage', {
         detail: {
           idEmail: email.internetMessageId,
           subject: email.subject,
           date: emailDate,
-          provider: "OUTLOOK",
+          provider: 'OUTLOOK',
           account: this.props.lexon.account,
-          folder: "SENT"
+          folder: 'SENT'
         }
       })
     );
 
-    setTimeout(async ()=>{
-      if(this.props.lexon.bbdd && this.props.lexon.account) {
+    setTimeout(async () => {
+      if (this.props.lexon.bbdd && this.props.lexon.account) {
         try {
-          const user = await getUser(this.props.lexon.userId);   
-          if(user && user.data && user.data.configUser) {
-            if(user.data.configUser.getContacts) {
-              await classifyEmail(email.internetMessageId, email.subject, emailDate, this.state.to2, this.props.lexon.provider, this.props.lexon.account, this.props.lexon.bbdd, user.data.lexonUserId);
+          const user = await getUser(this.props.lexon.userId);
+          if (user && user.data && user.data.configUser) {
+            if (user.data.configUser.getContacts) {
+              await classifyEmail(
+                email.internetMessageId,
+                email.subject,
+                emailDate,
+                this.state.to2,
+                this.props.lexon.provider,
+                this.props.lexon.account,
+                this.props.lexon.bbdd,
+                user.data.lexonUserId
+              );
             }
           }
-
-        } catch(err) {
+        } catch (err) {
           //throw err;
         }
       }
@@ -261,25 +331,25 @@ export class ComposeMessage extends PureComponent {
   }
 
   onSendEmail() {
-    this.setState({showEmptySubjectWarning: false}, ()=>{
+    this.setState({ showEmptySubjectWarning: false }, () => {
       this._sendEmail();
-    })
+    });
   }
 
   onCancel() {
-    this.setState({showEmptySubjectWarning: false})
+    this.setState({ showEmptySubjectWarning: false });
   }
 
   sendEmail() {
     const validTo = getValidEmails(this.state.to);
 
-    if (!validTo.length){
-      this.showNotification(i18n.t('compose-message.min-dest-alert'))
+    if (!validTo.length) {
+      this.showNotification(i18n.t('compose-message.min-dest-alert'));
       return;
     }
-    
-    if (this.state.subject.trim() === ""){
-      this.setState({showEmptySubjectWarning: true})
+
+    if (this.state.subject.trim() === '') {
+      this.setState({ showEmptySubjectWarning: true });
       return;
     }
 
@@ -290,44 +360,49 @@ export class ComposeMessage extends PureComponent {
     const validTo = getValidEmails(this.state.to);
 
     const headers = {
-      To: validTo.join(", "),
+      To: validTo.join(', '),
       Subject: this.state.subject,
       attachments: this.state.uppyPreviews
     };
 
     const validCc = getValidEmails(this.state.cc);
     if (validCc.length) {
-      headers.Cc = validCc.join(", ");
+      headers.Cc = validCc.join(', ');
     }
 
     const validBcc = getValidEmails(this.state.bcc);
     if (validBcc.length) {
-      headers.Bcc = validBcc.join(", ");
+      headers.Bcc = validBcc.join(', ');
     }
 
     const Fileattached = this.state.uppyPreviews;
 
-    const email = Object.assign({}, this.state, { subject: this.state.subject , internetMessageId: `<${uuid()}-${uuid()}@lefebvre.es>`})
+    const email = Object.assign({}, this.state, {
+      subject: this.state.subject,
+      internetMessageId: `<${uuid()}-${uuid()}@lefebvre.es>`
+    });
 
     sendMessage({
       data: email,
       attachments: Fileattached
-    }).then(_ => {
-      this.sentEmail(email);
-    }).catch((err) => {
-      console.log(err)
     })
+      .then(_ => {
+        this.sentEmail(email);
+      })
+      .catch(err => {
+        console.log(err);
+      });
     this.resetFields();
-    this.closeModal();      
+    this.closeModal();
   }
 
   resetFields() {
     this.setState({
-      to: this.props.to || "",
-      cc: this.props.cc || "",
-      bcc: this.props.bcc || "",
-      subject: this.props.subject || "",
-      content: this.props.content || "",
+      to: this.props.to || '',
+      cc: this.props.cc || '',
+      bcc: this.props.bcc || '',
+      subject: this.props.subject || '',
+      content: this.props.content || '',
       uppyPreviews: []
     });
   }
@@ -347,26 +422,39 @@ export class ComposeMessage extends PureComponent {
 
   modules = {
     toolbar: [
-      [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
+      [{ header: '1' }, { header: '2' }, { font: [] }],
       [{ size: [] }],
       ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [{ 'list': 'ordered' }, { 'list': 'bullet' },
-      { 'indent': '-1' }, { 'indent': '+1' }],
+      [
+        { list: 'ordered' },
+        { list: 'bullet' },
+        { indent: '-1' },
+        { indent: '+1' }
+      ],
       ['link'],
       ['clean']
     ],
     clipboard: {
       // toggle to add extra line breaks when pasting HTML:
-      matchVisual: false,
+      matchVisual: false
     }
-  }
+  };
 
   formats = [
-    'header', 'font', 'size',
-    'bold', 'italic', 'underline', 'strike', 'blockquote',
-    'list', 'bullet', 'indent', 'image',
+    'header',
+    'font',
+    'size',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'blockquote',
+    'list',
+    'bullet',
+    'indent',
+    'image',
     'link'
-  ]
+  ];
 
   /* Drag and drop events */
   onDrop(event) {
@@ -381,7 +469,7 @@ export class ComposeMessage extends PureComponent {
         type: file.type,
         source: 'Local',
         isRemote: false,
-        data: file,
+        data: file
       };
 
       uppy.addFile(newAttachment);
@@ -396,7 +484,7 @@ export class ComposeMessage extends PureComponent {
     event.preventDefault();
     if (
       event.dataTransfer.types &&
-      Array.from(event.dataTransfer.types).includes("Files")
+      Array.from(event.dataTransfer.types).includes('Files')
     ) {
       this.setState({ dropZoneActive: true });
     }
@@ -408,130 +496,135 @@ export class ComposeMessage extends PureComponent {
   }
 
   showNotification(message, error = false) {
-    this.setState({messageNotification: message, errorNotification: error, showNotification: true});
+    this.setState({
+      messageNotification: message,
+      errorNotification: error,
+      showNotification: true
+    });
   }
 
   closeNotification() {
     const showNotification = !this.state.showNotification;
-    this.setState({showNotification: showNotification});
+    this.setState({ showNotification: showNotification });
   }
 
-    /**
-    * Adds an address to the list matching the id.
-    *
-    * @param id
-    * @param address
-    */
-    addAddress(id, address) {      
-      if (address.length > 0) {
-        if(id === 'to') {
-          const to2 = [...this.state.to2];
-          to2.push(address);
-          const to = to2.join(",");  
-          this.setState({to2, to})
-        } else if(id === 'cc') {
-          const cc2 = [...this.state.cc2];
-          cc2.push(address);
-          const cc = cc2.join(",");  
-          this.setState({cc2, cc})
-        } else if(id === 'bcc2') {
-          const bcc2 = [...this.state.bcc2];
-          bcc2.push(address);
-          const bcc = bcc2.join(",");  
-          this.setState({bcc2, bcc})
-        }
-      }
-    }
-
-    /**
-     * Removes the address from the under the field matching the id.
-     *
-     * @param id
-     * @param address
-     */
-    removeAddress(id, address) {
-      if(id === "to") {
+  /**
+   * Adds an address to the list matching the id.
+   *
+   * @param id
+   * @param address
+   */
+  addAddress(id, address) {
+    if (address.length > 0) {
+      if (id === 'to') {
         const to2 = [...this.state.to2];
-        to2.splice(to2.indexOf(address), 1);
-        const to = to2.join(",");
-        this.setState({to2, to})
-        this.props.setMailContacts(to);
-      } else if (id === "cc") {
+        to2.push(address);
+        const to = to2.join(',');
+        this.setState({ to2, to });
+      } else if (id === 'cc') {
         const cc2 = [...this.state.cc2];
-        cc2.splice(cc2.indexOf(address), 1);
-        const cc = cc2.join(",");
-        this.setState({cc2, cc})
-      } else if(id === "bcc2") {
+        cc2.push(address);
+        const cc = cc2.join(',');
+        this.setState({ cc2, cc });
+      } else if (id === 'bcc2') {
         const bcc2 = [...this.state.bcc2];
-        bcc2.splice(bcc2.indexOf(address), 1);
-        const bcc = bcc2.join(",");
-        this.setState({bcc2, bcc})
+        bcc2.push(address);
+        const bcc = bcc2.join(',');
+        this.setState({ bcc2, bcc });
       }
+    }
+  }
 
-        // const updatedMessage = { ...this.props.editedMessage };
-        // updatedMessage[id] = [...updatedMessage[id]];
-        // updatedMessage[id].splice(updatedMessage[id].indexOf(address), 1);
-        // this.props.editMessage(updatedMessage);
+  /**
+   * Removes the address from the under the field matching the id.
+   *
+   * @param id
+   * @param address
+   */
+  removeAddress(id, address) {
+    if (id === 'to') {
+      const to2 = [...this.state.to2];
+      to2.splice(to2.indexOf(address), 1);
+      const to = to2.join(',');
+      this.setState({ to2, to });
+      this.props.setMailContacts(to);
+    } else if (id === 'cc') {
+      const cc2 = [...this.state.cc2];
+      cc2.splice(cc2.indexOf(address), 1);
+      const cc = cc2.join(',');
+      this.setState({ cc2, cc });
+    } else if (id === 'bcc2') {
+      const bcc2 = [...this.state.bcc2];
+      bcc2.splice(bcc2.indexOf(address), 1);
+      const bcc = bcc2.join(',');
+      this.setState({ bcc2, bcc });
     }
 
-    /**
-     * Moves an address from the address list under the field matching the fromId to the address field
-     * matching the toId.
-     *
-     * @param fromId
-     * @param toId
-     * @param address
-     */
-    moveAddress(fromId, toId, address) {
-        // const updatedMessage = { ...this.props.editedMessage };
-        // // Remove
-        // updatedMessage[fromId].splice(updatedMessage[fromId].indexOf(address), 1);
-        // // Add
-        // updatedMessage[toId] = [...updatedMessage[toId], address];
-        // this.props.editMessage(updatedMessage);
-    }
+    // const updatedMessage = { ...this.props.editedMessage };
+    // updatedMessage[id] = [...updatedMessage[id]];
+    // updatedMessage[id].splice(updatedMessage[id].indexOf(address), 1);
+    // this.props.editMessage(updatedMessage);
+  }
 
-    onAttachButton() {
-      console.log(this.fileInput);
-      this.fileInput && this.fileInput.click()
-    }
-  
-    onAttachSelected(event) {
-      event.preventDefault();
-      event.stopPropagation();
-      const uppy = this.uppy;
-      const addAttachment = (file, dataUrl) => {
-        const newAttachment = {
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          source: 'Local',
-          isRemote: false,
-          data: file,
-          //content: dataUrl.currentTarget.result.replace(/^data:[^;]*;base64,/, "")
-        };
-  
-        uppy.addFile(newAttachment);
+  /**
+   * Moves an address from the address list under the field matching the fromId to the address field
+   * matching the toId.
+   *
+   * @param fromId
+   * @param toId
+   * @param address
+   */
+  moveAddress(fromId, toId, address) {
+    // const updatedMessage = { ...this.props.editedMessage };
+    // // Remove
+    // updatedMessage[fromId].splice(updatedMessage[fromId].indexOf(address), 1);
+    // // Add
+    // updatedMessage[toId] = [...updatedMessage[toId], address];
+    // this.props.editMessage(updatedMessage);
+  }
+
+  onAttachButton() {
+    console.log(this.fileInput);
+    this.fileInput && this.fileInput.click();
+  }
+
+  onAttachSelected(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const uppy = this.uppy;
+    const addAttachment = (file, dataUrl) => {
+      const newAttachment = {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        source: 'Local',
+        isRemote: false,
+        data: file
+        //content: dataUrl.currentTarget.result.replace(/^data:[^;]*;base64,/, "")
       };
-  
-      Array.from(event.target.files).forEach(file => {
-        //const fileReader = new FileReader();
-        //fileReader.onload = addAttachment.bind(this, file);
-        //fileReader.readAsDataURL(file);
-        addAttachment(file);
-      });
-      return true;
-    }
+
+      uppy.addFile(newAttachment);
+    };
+
+    Array.from(event.target.files).forEach(file => {
+      //const fileReader = new FileReader();
+      //fileReader.onload = addAttachment.bind(this, file);
+      //fileReader.readAsDataURL(file);
+      addAttachment(file);
+    });
+    return true;
+  }
 
   render() {
     const collapsed = this.props.sideBarCollapsed;
-    const { showNotification, messageNotification, showEmptySubjectWarning, errorNotification } = this.state;
-
     const {
-       to,
-       cc,
-       bcc
-    } = this.props;
+      showNotification,
+      messageNotification,
+      showEmptySubjectWarning,
+      errorNotification
+    } = this.state;
+
+    const { to, cc, bcc } = this.props;
 
     const { to2, cc2, bcc2 } = this.state;
 
@@ -539,110 +632,129 @@ export class ComposeMessage extends PureComponent {
       <React.Fragment>
         <Notification
           initialModalState={showNotification}
-          toggleNotification={() => { this.closeNotification() }}
+          toggleNotification={() => {
+            this.closeNotification();
+          }}
           message={messageNotification}
           error={errorNotification}
         />
-        <Confirmation 
+        <Confirmation
           initialModalState={showEmptySubjectWarning}
-          onAccept={() => { this.onSendEmail() }}
-          onCancel={()=>{ this.setState({showEmptySubjectWarning: false})}}
+          onAccept={() => {
+            this.onSendEmail();
+          }}
+          onCancel={() => {
+            this.setState({ showEmptySubjectWarning: false });
+          }}
           message={i18n.t('compose-message.no-subject-warning')}
         />
-        <div className="compose-dialog">
-          <div className="compose-panel">
-            <div className="d-flex justify-content-center align-items-center message-toolbar">
-              <div className="action-btns">
+        <div className='compose-dialog'>
+          <div className='compose-panel'>
+            <div className='d-flex justify-content-center align-items-center message-toolbar'>
+              <div className='action-btns'>
                 <span
                   className={
                     collapsed
-                      ? "action-btn mr-2"
-                      : "action-btn mr-2 with-side-bar"
-                  }
-                >
+                      ? 'action-btn mr-2'
+                      : 'action-btn mr-2 with-side-bar'
+                  }>
                   <Button
                     onClick={this.props.sideBarToggle}
-                    className="btn-transparent"
-                  >
-                    <FontAwesomeIcon icon={faBars} size="1x" />
+                    className='btn-transparent'>
+                    <FontAwesomeIcon icon={faBars} size='1x' />
                   </Button>
                 </span>
               </div>
             </div>
           </div>
-          <div className="container-panel"
-            onDrop={(event) => { this.onDrop(event) }}
-            onDragOver={(event) => { this.onDragOver(event) }}
-            onDragLeave={(event) => { this.onDragLeave(event) }}>
+          <div
+            className='container-panel'
+            onDrop={event => {
+              this.onDrop(event);
+            }}
+            onDragOver={event => {
+              this.onDragOver(event);
+            }}
+            onDragLeave={event => {
+              this.onDragLeave(event);
+            }}>
             {this.state.dropZoneActive ? (
-              <div className="dropZone">
-                <div className="dropZoneMessage">
-                  <i className={"material-icons"}></i>
-                  {i18n.t("compose-message.drag-and-drop")}
+              <div className='dropZone'>
+                <div className='dropZoneMessage'>
+                  <i className={'material-icons'}></i>
+                  {i18n.t('compose-message.drag-and-drop')}
                 </div>
               </div>
             ) : null}
-            <div className="compose-message">                        
-              <div className="message-fields">
-              <HeaderAddress
-                    id={"to"}
-                    addresses={to2}
-                    onAddressAdd={this.handleAddAddress}
-                    onAddressRemove={this.handleRemoveAddress}
-                    onAddressMove={this.handleMoveAddress}
-                    getAddresses={this.props.getAddresses}
-                    label={i18n.t("compose-message.to")}
+            <div className='compose-message'>
+              <div className='message-fields'>
+                <HeaderAddress
+                  id={'to'}
+                  addresses={to2}
+                  onAddressAdd={this.handleAddAddress}
+                  onAddressRemove={this.handleRemoveAddress}
+                  onAddressMove={this.handleMoveAddress}
+                  getAddresses={this.props.getAddresses}
+                  label={i18n.t('compose-message.to')}
                 />
                 <HeaderAddress
-                    id={"cc"}
-                    addresses={cc2}
-                    onAddressAdd={this.handleAddAddress}
-                    onAddressRemove={this.handleRemoveAddress}
-                    onAddressMove={this.handleMoveAddress}
-                    getAddresses={this.props.getAddresses}
-                    label={'Cc:'}
-                />                
+                  id={'cc'}
+                  addresses={cc2}
+                  onAddressAdd={this.handleAddAddress}
+                  onAddressRemove={this.handleRemoveAddress}
+                  onAddressMove={this.handleMoveAddress}
+                  getAddresses={this.props.getAddresses}
+                  label={'Cc:'}
+                />
                 <HeaderAddress
-                  id={"bcc2"}
+                  id={'bcc2'}
                   addresses={bcc2}
                   onAddressAdd={this.handleAddAddress}
                   onAddressRemove={this.handleRemoveAddress}
                   onAddressMove={this.handleMoveAddress}
                   getAddresses={this.props.getAddresses}
-                  label={i18n.t("compose-message.bcc")}
-              />
-                
+                  label={i18n.t('compose-message.bcc')}
+                />
+
                 <InputGroup>
-                  <InputGroupAddon addonType="prepend"  tabIndex={-1}>
-                    {i18n.t("compose-message.subject")}
+                  <InputGroupAddon addonType='prepend' tabIndex={-1}>
+                    {i18n.t('compose-message.subject')}
                   </InputGroupAddon>
                   <Input
-                    placeholder=""
+                    placeholder=''
                     value={this.state.subject}
-                    onChange={this.setField("subject", false)}
+                    onChange={this.setField('subject', false)}
                   />
                 </InputGroup>
               </div>
-              <div className="editor-wrapper">
-                <ReactQuill
+              <div className='editor-wrapper'>
+                <ComposeMessageEditor
+                  onChange={this.handleChange}
+                  defaultValue={this.state.content}
+                />
+
+                {/* <ReactQuill
                   tabIndex={0}
                   value={this.state.content}
                   onChange={this.handleChange}
-                  className=""
+                  className=''
                   modules={this.modules}
                   formats={this.formats}
-                />
-                <div className="ImagePreviewContainer compose-dropcontainer attachments">
+                /> */}
+                <div className='ImagePreviewContainer compose-dropcontainer attachments'>
                   {this.state.uppyPreviews.map(item => {
                     return (
-                      <div key={item.id} className={"attachment"}>
-                        <span className={"fileName"}>{item.name}</span>
-                        <span className={"size"}>({prettySize(item.size, 0)})</span>
+                      <div key={item.id} className={'attachment'}>
+                        <span className={'fileName'}>{item.name}</span>
+                        <span className={'size'}>
+                          ({prettySize(item.size, 0)})
+                        </span>
                         <Button
-                          onClick={() => { this.removeAttachment(item) }}
-                          className={"delete"}
-                        >
-                          <FontAwesomeIcon icon={faTrash} size="1x" />
+                          onClick={() => {
+                            this.removeAttachment(item);
+                          }}
+                          className={'delete'}>
+                          <FontAwesomeIcon icon={faTrash} size='1x' />
                         </Button>
                       </div>
                     );
@@ -650,41 +762,49 @@ export class ComposeMessage extends PureComponent {
                 </div>
               </div>
             </div>
-            <div className="footer compose-footer">
+            <div className='footer compose-footer'>
               <Button
-                className="mr-auto font-weight-bold"
-                color="primary"
+                className='mr-auto font-weight-bold'
+                color='primary'
                 onClick={this.sendEmail}
-                title={i18n.t("compose-message.send-message")}
-              >
-                {i18n.t("compose-message.send")}
+                title={i18n.t('compose-message.send-message')}>
+                {i18n.t('compose-message.send')}
               </Button>
               &nbsp;
               <Button
-                className="mr-left font-weight-bold btn-outline-primary"
-                title={i18n.t("compose-message.discard")}
-                color="secondary"
+                className='mr-left font-weight-bold btn-outline-primary'
+                title={i18n.t('compose-message.discard')}
+                color='secondary'
                 onClick={() => {
                   this.goBack();
-                }}
-              >
-                {i18n.t("compose-message.discard")}
+                }}>
+                {i18n.t('compose-message.discard')}
               </Button>
-              <Button onClick={this.onAttachButton}
-                      className={"attach-button"}>
-                <FontAwesomeIcon icon={faPaperclip} size="1x" />
-                <span>{i18n.t("compose-message.attach")}</span>
-                <input ref={r => this.fileInput = r} id="file-input" type="file" name="name" style={{display: "none"}} multiple="true"/>
-              </Button>              
+              <Button onClick={this.onAttachButton} className={'attach-button'}>
+                <FontAwesomeIcon icon={faPaperclip} size='1x' />
+                <span>{i18n.t('compose-message.attach')}</span>
+                <input
+                  ref={r => (this.fileInput = r)}
+                  id='file-input'
+                  type='file'
+                  name='name'
+                  style={{ display: 'none' }}
+                  multiple='true'
+                />
+              </Button>
             </div>
           </div>
         </div>
         <style jsx>{`
+          .editor-wrapper {
+            display: flex;
+            flex-direction: column;
+          }
+
           .attach-button,
           .attach-button:hover,
           .attach-button:focus,
-          .attach-button:active
-           {
+          .attach-button:active {
             outline: none !important;
             box-shadow: none !important;
             margin-left: 20px !important;
@@ -698,7 +818,6 @@ export class ComposeMessage extends PureComponent {
             font-size: 20px;
             margin-right: 5px;
           }
-
         `}</style>
       </React.Fragment>
     );
@@ -711,7 +830,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
-  setMailContacts: mailContacts => dispatch(ACTIONS.setMailContacts(mailContacts))
+  setMailContacts: mailContacts =>
+    dispatch(ACTIONS.setMailContacts(mailContacts))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ComposeMessage);

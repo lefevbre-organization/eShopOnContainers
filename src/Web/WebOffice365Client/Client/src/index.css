@@ -14,7 +14,7 @@ a {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
 
@@ -65,81 +65,81 @@ header .tools-bar a:hover {
 
 /* Configuration box: BOC */
 .lex-on-configuration {
-	position: relative;
-	height: 1px;
-	z-index: 1;
+  position: relative;
+  height: 1px;
+  z-index: 1;
 }
 .lex-on-configuration .lex-on-configuration-trigger {
-	position: absolute;
-	color: #001978;
-	right: 17px;
-	top: 5px;
+  position: absolute;
+  color: #001978;
+  right: 17px;
+  top: 5px;
 }
 .lex-on-configuration .lex-on-configuration-trigger span {
-	color: #001978;
-	font-size: 20px;
-	width: 34px;
-	height: 34px;
-	padding: 7px;
-	transition: background-color 0.3ms;
-	border-radius: 50%;
+  color: #001978;
+  font-size: 20px;
+  width: 34px;
+  height: 34px;
+  padding: 7px;
+  transition: background-color 0.3ms;
+  border-radius: 50%;
 }
 .lex-on-configuration .lex-on-configuration-trigger:hover span {
-	background-color: #E5E8F1;
+  background-color: #e5e8f1;
 }
 .lex-on-configuration-title {
-	font-size: 12px;
-	color: #7F8CBB;
-	text-transform: uppercase;
-	border-bottom: solid 2px #001978;
-	padding-bottom: 5px;
-	margin-bottom: 35px;
+  font-size: 12px;
+  color: #7f8cbb;
+  text-transform: uppercase;
+  border-bottom: solid 2px #001978;
+  padding-bottom: 5px;
+  margin-bottom: 35px;
 }
-.lex-on-configuration-title [class^="lf-icon"],
-.lex-on-configuration-title [class*=" lf-icon"] {
-	font-size: 20px;
-	color: #001978;
-	margin-right: 15px;
+.lex-on-configuration-title [class^='lf-icon'],
+.lex-on-configuration-title [class*=' lf-icon'] {
+  font-size: 20px;
+  color: #001978;
+  margin-right: 15px;
 }
 .lex-on-configuration-options {
-	padding: 0;
+  padding: 0;
 }
 .lex-on-configuration-options li {
-	padding-left: 35px;
-	position: relative;
+  padding-left: 35px;
+  position: relative;
 }
 .lex-on-configuration-options label {
-	color: #001978;
-	font-family: MTTMilano-Medium, Lato, Arial, sans-serif;
-	font-size: 14px;
+  color: #001978;
+  font-family: MTTMilano-Medium, Lato, Arial, sans-serif;
+  font-size: 14px;
 }
 /* Configuration box: EOC */
 
 /* Expediente relacionado: BOC */
 .lex-on-related-file-title {
-	font-size: 12px;
-	color: #7F8CBB;
-	text-transform: uppercase;
-	border-bottom: dotted 1px #001978;
-	padding: 20px 0 5px 0;
+  font-size: 12px;
+  color: #7f8cbb;
+  text-transform: uppercase;
+  border-bottom: dotted 1px #001978;
+  padding: 20px 0 5px 0;
 }
-.lex-on-related-file-title [class^="lf-icon"],
-.lex-on-related-file-title [class*=" lf-icon"] {
-	font-size: 20px;
-	color: #001978;
-	margin-right: 10px;
+.lex-on-related-file-title [class^='lf-icon'],
+.lex-on-related-file-title [class*=' lf-icon'] {
+  font-size: 20px;
+  color: #001978;
+  margin-right: 10px;
 }
 .lex-on-related-file-details {
-	padding: 15px 0;
+  padding: 15px 0;
   border-bottom: dotted 1px #001978;
   font-family: MTTMilano-Medium, Lato, Arial, sans-serif;
   font-size: 14px;
 }
 .lex-on-related-file-details li {
-	margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 .lex-on-related-file-details strong {
-	color: #001978;
+  color: #001978;
 }
 /* Expediente relacionado: EOC */
 
@@ -171,8 +171,8 @@ header .tools-bar a:hover {
 /* form-selection-business: EOC */
 
 /* Form components: BOC */
-input[type="checkbox"],
-input[type="radio"] {
+input[type='checkbox'],
+input[type='radio'] {
   position: absolute !important;
   width: 1px;
   height: 1px;
@@ -180,15 +180,15 @@ input[type="radio"] {
   clip: rect(1px, 1px, 1px, 1px);
   font-size: 0.1em;
 }
-input[type="checkbox"] + label,
-input[type="radio"] + label {
+input[type='checkbox'] + label,
+input[type='radio'] + label {
   padding-left: 25px;
   display: inline-block;
   position: relative;
   margin: 5px 20px 5px 0;
 }
-input[type="checkbox"] + label:before {
-  content: "";
+input[type='checkbox'] + label:before {
+  content: '';
   display: block;
   width: 20px;
   height: 20px;
@@ -198,8 +198,8 @@ input[type="checkbox"] + label:before {
   border: 1px solid #4a4a4a;
   background: #fff;
 }
-input[type="checkbox"]:checked + label:after {
-  content: "";
+input[type='checkbox']:checked + label:after {
+  content: '';
   display: block;
   width: 10px;
   height: 10px;
@@ -210,8 +210,8 @@ input[type="checkbox"]:checked + label:after {
   top: 5px;
   left: 5px;
 }
-input[type="radio"] + label:before {
-  content: "";
+input[type='radio'] + label:before {
+  content: '';
   display: block;
   width: 18px;
   height: 18px;
@@ -222,8 +222,8 @@ input[type="radio"] + label:before {
   background: #fff;
   border-radius: 50%;
 }
-input[type="radio"]:checked + label:after {
-  content: "";
+input[type='radio']:checked + label:after {
+  content: '';
   display: block;
   width: 12px;
   height: 12px;
@@ -510,8 +510,8 @@ input[type="radio"]:checked + label:after {
   color: #333333;
   font-weight: normal;
 }
-.lexon-documentation-list [class^="lf-icon"],
-.lexon-documentation-list [class*=" lf-icon"] {
+.lexon-documentation-list [class^='lf-icon'],
+.lexon-documentation-list [class*=' lf-icon'] {
   font-size: 20px;
   margin-right: 10px;
 }
@@ -569,7 +569,7 @@ input[type="radio"]:checked + label:after {
   position: relative;
 }
 .lexon-documentation-breadcrumb:before {
-  font-family: "lf-font" !important;
+  font-family: 'lf-font' !important;
   speak: none;
   font-size: 20px;
   font-style: normal;
@@ -578,7 +578,7 @@ input[type="radio"]:checked + label:after {
   text-transform: none;
   line-height: 1;
   -webkit-font-smoothing: antialiased;
-  content: "\e997";
+  content: '\e997';
   position: absolute;
   display: inline-block;
   left: 10px;
@@ -591,7 +591,7 @@ input[type="radio"]:checked + label:after {
   padding-right: 12px;
 }
 .lexon-documentation-breadcrumb li:after {
-  content: ">";
+  content: '>';
   position: absolute;
   display: inline-block;
   right: 0;
@@ -610,29 +610,29 @@ input[type="radio"]:checked + label:after {
 
 /* Items list: BOC */
 .connexion-status {
-    font-size: 13px;
-    color: #ffffff;
-    font-weight: 300;
-    padding: 11px 40px 15px 20px;
-    position: relative;
-    margin-left: 1px;
-    font-family: MTTMilano, Lato, Arial, sans-serif;
-    line-height: 22px;
+  font-size: 13px;
+  color: #ffffff;
+  font-weight: 300;
+  padding: 11px 40px 15px 20px;
+  position: relative;
+  margin-left: 1px;
+  font-family: MTTMilano, Lato, Arial, sans-serif;
+  line-height: 22px;
 }
 
-    .connexion-status span {
-        font-size: 20px;
-        position: absolute;
-        right: 20px;
-        top: 20px;
-    }
+.connexion-status span {
+  font-size: 20px;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+}
 
 .connexion-status-ko {
-    background-color: #c43741;
+  background-color: #c43741;
 }
 
 .connexion-status-ok {
-    background-color: #417505;
+  background-color: #417505;
 }
 
 .selected-messages {
@@ -667,7 +667,7 @@ input[type="radio"]:checked + label:after {
   background-color: #e5e8f1;
   height: 76px;
   width: 10px;
-  content: "";
+  content: '';
   display: block;
   position: absolute;
   top: -20px;
@@ -726,7 +726,7 @@ input[type="radio"]:checked + label:after {
 .menu-lexon-actions a:after {
   border-top: 32px solid #ffffff;
   border-left: 32px solid #e5e8f1;
-  content: "";
+  content: '';
   position: absolute;
   right: 0;
   top: 0;
@@ -953,7 +953,7 @@ input[type="radio"]:checked + label:after {
 .form-box li:last-of-type {
   border-bottom: 1px solid #ccd1e4;
 }
-.form-box li [class^="lf-icon"] {
+.form-box li [class^='lf-icon'] {
   font-size: 30px;
   margin-left: 0;
   margin-right: 4px;
@@ -1050,7 +1050,7 @@ input[type="radio"]:checked + label:after {
   text-transform: uppercase;
 }
 
-.user-options ul li [class^="lf-icon"] {
+.user-options ul li [class^='lf-icon'] {
   font-size: 28px;
   margin-right: 10px;
   font-weight: normal;
@@ -1088,7 +1088,6 @@ input[type="radio"]:checked + label:after {
 .user-image-and-name .other-accounts span {
   display: block;
   margin-bottom: 5px;
-  color: #7c868c !important;
 }
 
 .user-image-and-name .user-name {
@@ -1201,7 +1200,7 @@ input[type="radio"]:checked + label:after {
   font-family: MTTMilano-Bold, Lato, Arial, sans-serif;
 }
 
-.product-list [class^="lf-icon"] {
+.product-list [class^='lf-icon'] {
   color: #fff;
   font-size: 27px;
   font-weight: normal;
@@ -1217,7 +1216,7 @@ input[type="radio"]:checked + label:after {
   padding: 3%;
 }
 
-.product-list [class^="lf-icon"]:hover {
+.product-list [class^='lf-icon']:hover {
   background: #888eba;
 }
 
@@ -1242,7 +1241,7 @@ input[type="radio"]:checked + label:after {
   border-bottom: 1px dotted black;
 }
 
-.collapse-link span[class^="lf-icon"] {
+.collapse-link span[class^='lf-icon'] {
   margin-right: 10px;
   font-size: 20px;
 }
@@ -1309,7 +1308,7 @@ input[type="radio"]:checked + label:after {
 
 .dropdown-menu-arrow:before,
 .dropdown-menu-arrow:after {
-  content: "";
+  content: '';
   position: absolute;
   display: block;
   width: 0;
@@ -1345,7 +1344,7 @@ input[type="radio"]:checked + label:after {
   color: #001978 !important;
 }
 
-.dropdown-menu [class^="lf-icon-close"] {
+.dropdown-menu [class^='lf-icon-close'] {
   font-size: 13px;
 }
 

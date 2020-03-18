@@ -1,4 +1,4 @@
-import { ActionTypes } from "./action-types";
+import { ActionTypes } from './action-types';
 
 export const setUser = user => ({
   type: ActionTypes.LEXON_USER,
@@ -20,26 +20,35 @@ export const setDataBase = database => ({
   payload: database
 });
 
-export const setIdEmail = emailInfo=> ({
+export const setIdEmail = emailInfo => ({
   type: ActionTypes.LEXON_EMAIL,
   payload: emailInfo
 });
 
-export const setEmailShown = (flag) => ({
+export const setEmailShown = flag => ({
   type: ActionTypes.LEXON_EMAIL_SET_SHOWN,
   payload: flag
-})
+});
 
-export const resetIdEmail = (emailInfo) => ({
+export const resetIdEmail = emailInfo => ({
   type: ActionTypes.LEXON_RESET_EMAIL,
   payload: emailInfo
-})
+});
 
 export const setMailContacts = mailContacts => ({
   type: ActionTypes.LEXON_MAILCONTACTS,
   payload: mailContacts
-})
+});
 
+export const setGUID = guid => ({
+  type: ActionTypes.LEXON_ACCOUNT_GUID,
+  payload: guid
+});
+
+export const setSign = sign => ({
+  type: ActionTypes.LEXON_ACCOUNT_SIGN,
+  payload: sign
+});
 
 export default {
   setUser,
@@ -49,5 +58,7 @@ export default {
   setAccount,
   setCaseFile,
   resetIdEmail,
-  setMailContacts
+  setMailContacts,
+  setGUID,
+  setSign
 };

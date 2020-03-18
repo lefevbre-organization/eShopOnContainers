@@ -155,13 +155,7 @@ class MenuUser extends Component {
 
   render() {
     const { dropdownOpen, accounts } = this.state;
-    const {
-      picUrl,
-      fullName,
-      onSignout,
-      onSignoutDisconnect,
-      lexon
-    } = this.props;
+    const { picUrl, fullName, onSignout, lexon } = this.props;
     const { showSign, sign } = this.state;
 
     let acronym = undefined;
