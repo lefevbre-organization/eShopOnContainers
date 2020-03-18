@@ -1,19 +1,19 @@
-import React, { Component } from "react";
-import Main from "./components/main/Main";
-import Login from "./components/login/Login";
-import Authenticating from "./components/authenticating/Authenticating";
-import { connect } from "react-redux";
-import "react-perfect-scrollbar/dist/css/styles.css";
-import { signIn, checkSignInStatus } from "./api/authentication";
-import { mountScripts } from "./api/scripts";
+import React, { Component } from 'react';
+import Main from './components/main/Main';
+import Login from './components/login/Login';
+import Authenticating from './components/authenticating/Authenticating';
+import { connect } from 'react-redux';
+import 'react-perfect-scrollbar/dist/css/styles.css';
+import { signIn, checkSignInStatus } from './api/authentication';
+import { mountScripts } from './api/scripts';
 import {
   SIGNED_OUT,
   AUTH_SUCCESS,
   AUTH_FAIL,
   AUTH_IN_PROGRESS
-} from "./constants";
-import { getStateStorage } from "./localstorage";
-import ACTIONS from "./actions/lexon";
+} from './constants';
+import { getStateStorage } from './localstorage';
+import ACTIONS from './actions/lexon';
 
 class AppContainer extends Component {
   constructor(props) {
@@ -53,16 +53,15 @@ class AppContainer extends Component {
       mountScripts().then(this.init);
     }
 
-    if (this.props.match.params.idMail){
-      this.setState({openEmail: this.props.match.params.idMail});
-    }
-    else {
-      this.props.location.pathname = "/inbox";
+    if (this.props.match.params.idMail) {
+      this.setState({ openEmail: this.props.match.params.idMail });
+    } else {
+      this.props.location.pathname = '/inbox';
     }
   }
 
   init() {
-    window.gapi.load("client:auth2", this.initClient);
+    window.gapi.load('client:auth2', this.initClient);
   }
 
   initClient() {
@@ -105,7 +104,7 @@ class AppContainer extends Component {
     } else if (signInStatus === AUTH_IN_PROGRESS) {
       return <Authenticating />;
     } else {
-        return <Login lexon={this.props.lexon} onSignIn={this.onSignIn} />;
+      return <Login lexon={this.props.lexon} onSignIn={this.onSignIn} />;
     }
   }
 

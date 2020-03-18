@@ -18,6 +18,7 @@ import { prettySize } from '../../utils/prettify';
 import { Notification, Confirmation } from '../notification/';
 import HeaderAddress from './header-address';
 import { getUser, classifyEmail } from '../../api/accounts';
+import ComposeMessageEditor from './composeMessageEditor';
 
 const Uppy = require('@uppy/core');
 const Tus = require('@uppy/tus');
@@ -122,6 +123,7 @@ export class ComposeMessage extends PureComponent {
       messageNotification: '',
       showEmptySubjectWarning: false
     };
+
     this.handleChange = this.handleChange.bind(this);
     this.sendEmail = this.sendEmail.bind(this);
     this.goBack = this.goBack.bind(this);
@@ -181,8 +183,15 @@ export class ComposeMessage extends PureComponent {
   }
 
   componentDidMount() {
+    const { lexon } = this.props;
+
     if (this.fileInput) {
       this.fileInput.onchange = this.onAttachSelected;
+    }
+
+    if (lexon.sign && lexon.sign !== '') {
+      const { content } = this.state;
+      this.setState({ content: content + `<br/><br/><p>${lexon.sign}</p>` });
     }
   }
 
@@ -354,6 +363,7 @@ export class ComposeMessage extends PureComponent {
 
     const Fileattached = this.state.uppyPreviews;
 
+    debugger;
     sendMessage({
       headers,
       body: this.state.content,
@@ -652,12 +662,10 @@ export class ComposeMessage extends PureComponent {
                     collapsed
                       ? 'action-btn mr-2'
                       : 'action-btn mr-2 with-side-bar'
-                  }
-                >
+                  }>
                   <Button
                     onClick={this.props.sideBarToggle}
-                    className='btn-transparent'
-                  >
+                    className='btn-transparent'>
                     <FontAwesomeIcon icon={faBars} size='1x' />
                   </Button>
                 </span>
@@ -674,8 +682,7 @@ export class ComposeMessage extends PureComponent {
             }}
             onDragLeave={event => {
               this.onDragLeave(event);
-            }}
-          >
+            }}>
             {this.state.dropZoneActive ? (
               <div className='dropZone'>
                 <div className='dropZoneMessage'>
@@ -723,15 +730,21 @@ export class ComposeMessage extends PureComponent {
                   />
                 </InputGroup>
               </div>
+
               <div className='editor-wrapper'>
-                <ReactQuill
+                <ComposeMessageEditor
+                  onChange={this.handleChange}
+                  defaultValue={this.state.content}
+                />
+
+                {/* <ReactQuill
                   tabIndex={0}
                   value={this.state.content}
                   onChange={this.handleChange}
                   className=''
                   modules={this.modules}
                   formats={this.formats}
-                />
+                /> */}
                 <div className='ImagePreviewContainer compose-dropcontainer attachments'>
                   {this.state.uppyPreviews.map(item => {
                     return (
@@ -744,8 +757,7 @@ export class ComposeMessage extends PureComponent {
                           onClick={() => {
                             this.removeAttachment(item);
                           }}
-                          className={'delete'}
-                        >
+                          className={'delete'}>
                           <FontAwesomeIcon icon={faTrash} size='1x' />
                         </Button>
                       </div>
@@ -784,8 +796,7 @@ export class ComposeMessage extends PureComponent {
                 className='mr-auto font-weight-bold'
                 color='primary'
                 onClick={this.sendEmail}
-                title={i18n.t('compose-message.send-message')}
-              >
+                title={i18n.t('compose-message.send-message')}>
                 {i18n.t('compose-message.send')}
               </Button>
               &nbsp;
@@ -795,8 +806,7 @@ export class ComposeMessage extends PureComponent {
                 color='secondary'
                 onClick={() => {
                   this.goBack();
-                }}
-              >
+                }}>
                 {i18n.t('compose-message.discard')}
               </Button>
               <Button onClick={this.onAttachButton} className={'attach-button'}>
@@ -815,6 +825,11 @@ export class ComposeMessage extends PureComponent {
           </div>
         </div>
         <style jsx>{`
+          .editor-wrapper {
+            display: flex;
+            flex-direction: column;
+          }
+
           .attach-button,
           .attach-button:hover,
           .attach-button:focus,
