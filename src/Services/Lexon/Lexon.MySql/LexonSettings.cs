@@ -25,6 +25,7 @@
         public string RemoveRelation { get; set; }
         public string AddContactRelations { get; set; }
         public string GetEntity { get; set; }
+        public string GetContact { get; set; }
 
     }
 }

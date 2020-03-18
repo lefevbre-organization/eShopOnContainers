@@ -47,5 +47,4 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         public string email { get; set; }
 
     }
-
 }

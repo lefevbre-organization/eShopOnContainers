@@ -47,6 +47,8 @@ namespace Lexon.MySql.Infrastructure.Services
 
         public async Task<Result<LexEntity>> GetEntityAsync(EntitySearchById entitySearch) => await _lexonRepository.GetEntityAsync(entitySearch);
 
+        public async Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch) => await _lexonRepository.GetContactAsync(entitySearch);
+
         public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync() => await _lexonRepository.GetMasterEntitiesAsync();
 
         #endregion Entities
@@ -256,5 +258,7 @@ namespace Lexon.MySql.Infrastructure.Services
             };
             //limit -= 1;
         }
+
+
     }
 }

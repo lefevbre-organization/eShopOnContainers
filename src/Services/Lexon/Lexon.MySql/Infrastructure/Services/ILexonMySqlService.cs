@@ -38,5 +38,6 @@ namespace Lexon.MySql.Infrastructure.Services
         Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder);
 
         Result<LexNestedEntity> GetNestedFolderAsync(FolderNestedView entityFolder);
+        Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch);
     }
 }

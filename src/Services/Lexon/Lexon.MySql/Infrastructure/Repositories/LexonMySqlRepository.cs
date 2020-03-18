@@ -183,6 +183,54 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return result;
         }
 
+        public async Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch)
+        {
+            //set @p_filter = '{"BBDD":"lexon_admin_02","IdEntityType":"12", "IdRelation":1}';
+            //call PROC_CONN_CONTACT_GET(@p_filter,10,1,'ts','desc',1344,@P_ERROR,@P_TOTAL);
+            //var resultMySql = new MySqlCompany(_settings.Value.SP.GetContact, 1, 1, entitySearch.bbdd, entitySearch.idType);
+
+            var result = new Result<LexContact>(new LexContact());
+
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    var filtro = GiveMeEntityFilter(entitySearch);
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetContact, conn))
+                    {
+                        AddCommonParameters(entitySearch.idUser, command, "P_FILTER", filtro);
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                            if (EvaluateErrorCommand(result.errors, command) == 0)
+                                while (reader.Read())
+                                {
+                                    var rawResult = reader.GetValue(0).ToString();
+                                    if (!string.IsNullOrEmpty(rawResult))
+                                    {
+                                        result.data = (JsonConvert.DeserializeObject<LexContact>(rawResult));
+                                       // resultMySql.AddData(resultado);
+                                    }
+                                    else
+                                    {
+                                        TraceOutputMessage(result.errors, "2004", "MySql get and empty string with this search");
+                                       
+                                    }
+                                }
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    TraceMessage(result.errors, ex);
+                }
+            }
+
+            return result;
+        }
+
         public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync()
         {
             var resultMySql = new MySqlList<JosEntityTypeList, JosEntityType>(new JosEntityTypeList(), _settings.Value.SP.GetMasterEntities, 1, 0);
@@ -196,6 +244,9 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetMasterEntities, conn))
                     {
                         AddCommonParameters("0", command, "P_FILTER", filtro);
+                        command.Parameters.Add(new MySqlParameter("P_TS", MySqlDbType.String) { Value = "ts"});
+                        command.Parameters.Add(new MySqlParameter("P_ORDER", MySqlDbType.String) { Value = "DESC"});
+
                         AddListSearchParameters(resultMySql.PageSize, resultMySql.PageIndex, command);
                         var r = command.ExecuteNonQuery();
                         resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
@@ -553,6 +604,8 @@ namespace Lexon.MySql.Infrastructure.Repositories
             var comma = withComma ? ", " : "";
             return !string.IsNullOrEmpty(value) ? $"{comma}\"{name}\":\"{value}\"" : string.Empty;
         }
+
+
 
         #endregion Common
     }

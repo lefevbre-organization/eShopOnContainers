@@ -177,15 +177,15 @@ namespace Lexon.MySql.Controllers
         }
 
         [HttpPost("entities/contact/getbyid")]
-        [ProducesResponseType(typeof(Result<LexEntity>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<LexEntity>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<LexContact>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexContact>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ContactByIdAsync([FromBody] EntitySearchById entitySearch)
         {
             if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null)
                 return BadRequest("values invalid. Must be a valid user, bbdd, idType and idEntity to get de Entity");
 
-            var result = await _lexonService.GetEntityAsync(entitySearch);
+            Result<LexContact> result = await _lexonService.GetContactAsync(entitySearch);
             return Ok(result);
         }
 
