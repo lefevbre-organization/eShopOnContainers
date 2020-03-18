@@ -4,7 +4,7 @@ pathBase: /webgraph
 
 image:
   repository: elefebvreoncontainers/webofficeclient
-  tag: latest
+  tag: linux-lef-main-containers
   pullPolicy: IfNotPresent
 
 service:
