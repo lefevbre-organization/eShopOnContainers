@@ -736,15 +736,6 @@ export class ComposeMessage extends PureComponent {
                   onChange={this.handleChange}
                   defaultValue={this.state.content}
                 />
-
-                {/* <ReactQuill
-                  tabIndex={0}
-                  value={this.state.content}
-                  onChange={this.handleChange}
-                  className=''
-                  modules={this.modules}
-                  formats={this.formats}
-                /> */}
                 <div className='ImagePreviewContainer compose-dropcontainer attachments'>
                   {this.state.uppyPreviews.map(item => {
                     return (

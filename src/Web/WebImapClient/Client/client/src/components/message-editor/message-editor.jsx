@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
 import PropTypes from 'prop-types';
-import { Editor } from '@tinymce/tinymce-react';
 import EDITOR_BUTTONS from './editor-buttons';
-import EDITOR_CONFIG from './editor-config';
 import Button from '../buttons/button';
 import HeaderAddress from './header-address';
 import MceButton from './mce-button';
@@ -19,9 +17,7 @@ import styles from './message-editor.scss';
 import mainCss from '../../styles/main.scss';
 import i18n from 'i18next';
 import ACTIONS from '../../actions/lexon';
-import { getUser, classifyEmail } from '../../services/accounts';
-
-const EDITOR_PERSISTED_AFTER_CHARACTERS_ADDED = 50;
+import ComposeMessageEditor from './composeMessageEditor.jsx';
 
 class MessageEditor extends Component {
   constructor(props) {
@@ -36,8 +32,8 @@ class MessageEditor extends Component {
     };
 
     this.fileInput = null;
+    this.editorRef = null;
     this.headerFormRef = React.createRef();
-    this.editorRef = React.createRef();
     this.handleSetState = patchedState => this.setState(patchedState);
     this.handleSubmit = this.submit.bind(this);
     // Global events
@@ -52,27 +48,14 @@ class MessageEditor extends Component {
     this.handleOnSubjectChange = this.onSubjectChange.bind(this);
     // Editor events
     this.handleEditorChange = this.editorChange.bind(this);
-    this.handleEditorBlur = this.editorBlur.bind(this);
-    this.handleSelectionChange = this.selectionChange.bind(this);
-    this.handleEditorInsertLink = this.editorInsertLink.bind(this);
     this.onAttachButton = this.onAttachButton.bind(this);
     this.onAttachSelected = this.onAttachSelected.bind(this);
   }
 
   componentDidMount() {
-    const { lexon, content } = this.props;
-
     if (this.fileInput) {
       this.fileInput.onchange = this.onAttachSelected;
     }
-
-    // // debugger;
-    // if (lexon.sign && lexon.sign !== '') {
-    //   const ct = lexon.sign;
-
-    //   this.props.editMessage({ ...this.props.editedMessage, ct });
-    //   persistApplicationNewMessageContent(this.props.application, ct);
-    // }
   }
 
   removeMessageEditor(aplication) {
@@ -98,7 +81,6 @@ class MessageEditor extends Component {
     const {
       t,
       className,
-      close,
       application,
       to,
       cc,
@@ -177,22 +159,12 @@ class MessageEditor extends Component {
           className={styles['editor-wrapper']}
           onClick={() => this.editorWrapperClick()}>
           <div className={styles['editor-container']}>
-            <Editor
-              ref={this.editorRef}
-              initialValue={content}
-              onEditorChange={this.handleEditorChange}
-              onSelectionChange={this.handleSelectionChange}
-              // Force initial content (reply messages) to be persisted in IndexedDB with base64/datauri embedded images
-              onInit={() =>
-                this.getEditor()
-                  .uploadImages()
-                  .then(() => this.getEditor().fire('Change'))
-              }
-              onBlur={this.handleEditorBlur}
-              onPaste={event => this.editorPaste(event)}
-              inline={true}
-              init={EDITOR_CONFIG}
+            <ComposeMessageEditor
+              ref={ref => (this.editorRef = ref)}
+              onChange={this.handleEditorChange}
+              defaultValue={content}
             />
+
             <div className={styles.attachments}>
               {attachments.map((a, index) => (
                 <div key={index} className={styles.attachment}>
@@ -207,7 +179,6 @@ class MessageEditor extends Component {
               ))}
             </div>
           </div>
-          {this.renderEditorButtons()}
         </div>
         <div className={styles['action-buttons']}>
           <button
@@ -238,7 +209,6 @@ class MessageEditor extends Component {
           </button>
           <button
             className={`material-icons ${mainCss['mdc-icon-button']} ${styles['action-button']} ${styles.cancel}`}
-            // onClick={() => close(application)}
             onClick={() => this.removeMessageEditor(application)}>
             delete
           </button>
@@ -399,7 +369,7 @@ class MessageEditor extends Component {
   }
 
   onAttachButton() {
-    this.fileInput && this.fileInput.click();
+    return this.fileInput && this.fileInput.click();
   }
 
   onAttachSelected(event) {
@@ -428,14 +398,14 @@ class MessageEditor extends Component {
   }
 
   getEditor() {
-    if (this.editorRef.current && this.editorRef.current.editor) {
-      return this.editorRef.current.editor;
+    if (this.editorRef && this.editorRef.refEditor) {
+      return this.editorRef.refEditor;
     }
     return null;
   }
 
   editorWrapperClick() {
-    this.getEditor().focus();
+    this.getEditor().focusIn();
   }
 
   /**
@@ -446,103 +416,8 @@ class MessageEditor extends Component {
    * @param content
    */
   editorChange(content) {
-    // Commit changes every 50 keystrokes
-    if (
-      Math.abs(this.props.content.length - content.length) >
-      EDITOR_PERSISTED_AFTER_CHARACTERS_ADDED
-    ) {
-      this.props.editMessage({ ...this.props.editedMessage, content });
-      // noinspection JSIgnoredPromiseFromCall
-      persistApplicationNewMessageContent(this.props.application, content);
-    }
-  }
-
-  /**
-   * Persist whatever is in the editor as changes are only persisted every EDITOR_PERSISTED_AFTER_CHARACTERS_ADDED
-   */
-  editorBlur() {
-    const content = this.getEditor().getContent();
     this.props.editMessage({ ...this.props.editedMessage, content });
-    // noinspection JSIgnoredPromiseFromCall
     persistApplicationNewMessageContent(this.props.application, content);
-  }
-
-  editorPaste(pasteEvent) {
-    if (pasteEvent.clipboardData) {
-      const editor = this.getEditor();
-      const items = pasteEvent.clipboardData.items;
-
-      const insertBlob = (type, e) => {
-        const objectUrl = URL.createObjectURL(
-          new Blob([e.target.result], { type })
-        );
-        editor.execCommand(
-          'mceInsertContent',
-          false,
-          `<img alt="" src="${objectUrl}"/>`
-        );
-      };
-
-      for (let i = 0; i < items.length; i++) {
-        const item = items[i];
-        if (item.type.indexOf('image/') === 0) {
-          pasteEvent.preventDefault();
-          // Although item.getAsFile() is effectively a Blob, in some Linux Desktop environments, mime type of the
-          // File/Blob is lost when creating the object URL. This workaround prevents mime type from being lost
-          // Data is Pasted as File(Blob), it's read with FileReader again, and reconverted to Blob to create ObjectUrl
-          const blobReader = new FileReader();
-          const type = item.type;
-
-          blobReader.onload = insertBlob.bind(null, [type]);
-          blobReader.readAsArrayBuffer(item.getAsFile());
-        }
-      }
-    }
-  }
-
-  editorInsertLink() {
-    let href = this.state.linkDialogUrl;
-    if (href.indexOf('://') < 0 && href.indexOf('mailto:') < 0) {
-      href = `http://${href}`;
-    }
-    const editor = this.getEditor();
-    const selection = editor.selection;
-    if (
-      !selection ||
-      (selection.getContent().length === 0 &&
-        selection.getNode().tagName !== 'A' &&
-        selection.getNode().parentNode.tagName !== 'A')
-    ) {
-      // Insert new Link
-      editor.execCommand(
-        'mceInsertContent',
-        false,
-        `<a href="${href}">${href}</a>`
-      );
-    } else {
-      // Edit existing link in current node or create link with current selection
-      editor.execCommand('mceInsertLink', false, href);
-    }
-    this.setState({ linkDialogVisible: false });
-  }
-
-  selectionChange() {
-    const editorState = {};
-    const editor = this.getEditor();
-    if (!editor || !editor.selection) {
-      return;
-    }
-    const node = editor.selection.getNode();
-    Object.entries(EDITOR_BUTTONS).forEach(([k, button]) => {
-      editorState[k] = button.activeFunction({ editor, key: k, button, node });
-    });
-    // Trigger state change only if values of the selection have changed
-    for (const [k, v] of Object.entries(editorState)) {
-      if (v !== this.state.editorState[k]) {
-        this.setState({ editorState });
-        break;
-      }
-    }
   }
 }
 

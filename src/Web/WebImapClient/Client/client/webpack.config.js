@@ -1,6 +1,6 @@
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const getLocalIdent = require('css-loader/lib/getLocalIdent');
@@ -23,7 +23,7 @@ const GLOBAL_STYLES = 'styles/main.scss';
  */
 function isComponentCss(resourcePath) {
   // All external libraries should have class names untouched
-  if(resourcePath.indexOf('../node_modules/') === 0) {
+  if (resourcePath.indexOf('../node_modules/') === 0) {
     return false;
   }
   // Our main.scss file should remain untouched
@@ -50,9 +50,12 @@ const CSS_LOADER = {
      * @returns {*}
      */
     getLocalIdent: (loaderContext, localIdentName, exportName, options) => {
-      const resourcePath = path.relative(SRC_DIR, loaderContext.resourcePath).replace(/\\/g, '/');
-      return !isComponentCss(resourcePath) ? exportName :
-        getLocalIdent(loaderContext, localIdentName, exportName, options);
+      const resourcePath = path
+        .relative(SRC_DIR, loaderContext.resourcePath)
+        .replace(/\\/g, '/');
+      return !isComponentCss(resourcePath)
+        ? exportName
+        : getLocalIdent(loaderContext, localIdentName, exportName, options);
     }
   }
 };
@@ -91,7 +94,7 @@ module.exports = {
         vendors: {
           priority: -10,
           test: /[\\/]node_modules[\\/]/,
-          name: "vendor",
+          name: 'vendor',
           chunks: chunk => chunk.name === 'main' // Unless specified in annotation, import will be named 'main'
         }
       }
@@ -138,7 +141,7 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: 'html-loader',
-          options: {minimize: true}
+          options: { minimize: true }
         }
       }
     ]
@@ -154,16 +157,27 @@ module.exports = {
     }),
     new MiniCssExtractPlugin({
       filename: devMode ? '[name].css' : '[name].[hash].css',
-      chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+      chunkFilename: devMode ? '[id].css' : '[id].[hash].css'
     }),
-    new CopyWebpackPlugin([
-      {from: ASSETS_DIR, fromArgs: {cache: false}, to: `assets`, force: true},
-      {from: `${SRC_DIR}/favicon.ico`, to: '', force: true}
-    ], {
-      copyUnmodified: true
-    })
+    new CopyWebpackPlugin(
+      [
+        {
+          from: ASSETS_DIR,
+          fromArgs: { cache: false },
+          to: `assets`,
+          force: true
+        },
+        { from: `${SRC_DIR}/favicon.ico`, to: '', force: true }
+      ],
+      {
+        copyUnmodified: true
+      }
+    )
   ],
-  devtool: "source-map",
+  node: {
+    fs: 'empty'
+  },
+  devtool: 'source-map',
   devServer: {
     contentBase: DIST_DIR,
     historyApiFallback: true,
@@ -173,7 +187,7 @@ module.exports = {
     proxy: {
       '/api': {
         target: 'http://localhost:9010',
-        pathRewrite: {'^/api' : ''},
+        pathRewrite: { '^/api': '' },
         xfwd: true,
         headers: {
           'X-Forwarded-Prefix': '/api'

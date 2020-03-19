@@ -187,18 +187,32 @@ const toolbarSettings = {
   items: items
 };
 
-const UserSign = props => {
-  const { onChange, defaultValue = '' } = props;
-  return (
-    <Fragment>
-      <div style={{ border: '1px solid rgba(0, 0, 0, 0.12)' }}>
+class ComposeMessageEditor extends React.Component {
+  constructor(props) {
+    super(props);
+    this.refEditor = null;
+  }
+
+  getContent() {
+    debugger;
+    if (this.refEditor) {
+      return this.refEditor.getContent();
+    }
+
+    return '';
+  }
+
+  render() {
+    const { onChange, defaultValue = '' } = this.props;
+    return (
+      <Fragment>
         <RichTextEditorComponent
-          id='toolsRTE'
-          height={250}
+          id='toolsRTE_2'
+          ref={ref => (this.refEditor = ref)}
           showCharCount={false}
           locale={'es-ES'}
-          toolbarSettings={toolbarSettings}
           insertImageSettings={{ saveFormat: 'Base64' }}
+          toolbarSettings={toolbarSettings}
           value={defaultValue}
           change={content => {
             onChange && onChange(content.value);
@@ -215,9 +229,17 @@ const UserSign = props => {
             ]}
           />
         </RichTextEditorComponent>
-      </div>
-    </Fragment>
-  );
-};
+        <style jsx>{`
+          .e-richtexteditor.e-rte-tb-expand {
+            border: none;
+          }
+          .e-richtexteditor.e-rte-tb-expand .e-rte-content {
+            border-bottom: none;
+          }
+        `}</style>
+      </Fragment>
+    );
+  }
+}
 
-export default UserSign;
+export default ComposeMessageEditor;
