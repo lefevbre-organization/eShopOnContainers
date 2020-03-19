@@ -58,7 +58,17 @@ services:
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
     depends_on:
-      - rabbitmq      
+      - rabbitmq
+
+  WebLoginAddonLexon:
+    image: ${REGISTRY:-elefebvreoncontainers}/WebLoginAddonLexon:${PLATFORM:-linux}-${TAG:-dev}
+    build:
+      context: .
+      dockerfile: src/Web/WebLoginAddonLexon/Dockerfile    
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
+    depends_on:
+      - rabbitmq     
 
   account.api:
     image: ${REGISTRY:-elefebvreoncontainers}/account.api:${PLATFORM:-linux}-${TAG:-dev}

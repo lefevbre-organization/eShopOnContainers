@@ -89,6 +89,87 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Addons", "Addons", "{B9554B
 		src\Addon\here addons .txt = src\Addon\here addons .txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebLoginAddonLexon", "src\Web\WebLoginAddonLexon\WebLoginAddonLexon.csproj", "{BC937CF0-BCEC-4105-98EC-B4E62C372B65}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lexon", "Lexon", "{7573E3BD-A012-483C-97C2-C59A5ACCF433}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gmail", "Gmail", "{20D448BB-073A-4F7A-81DD-B944FF6BF64E}"
+	ProjectSection(SolutionItems) = preProject
+		src\Addon\Lexon\Gmail\appsscript.json = src\Addon\Lexon\Gmail\appsscript.json
+		src\Addon\Lexon\Gmail\Authentication.js = src\Addon\Lexon\Gmail\Authentication.js
+		src\Addon\Lexon\Gmail\Home.js = src\Addon\Lexon\Gmail\Home.js
+		src\Addon\Lexon\Gmail\OAuth2.js = src\Addon\Lexon\Gmail\OAuth2.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Office365", "Office365", "{BC70303C-4648-4199-A68F-43E1AB596F98}"
+	ProjectSection(SolutionItems) = preProject
+		src\Addon\Lexon\Office365\Contributing.md = src\Addon\Lexon\Office365\Contributing.md
+		src\Addon\Lexon\Office365\LICENSE = src\Addon\Lexon\Office365\LICENSE
+		src\Addon\Lexon\Office365\manifest.xml = src\Addon\Lexon\Office365\manifest.xml
+		src\Addon\Lexon\Office365\package-lock.json = src\Addon\Lexon\Office365\package-lock.json
+		src\Addon\Lexon\Office365\package.json = src\Addon\Lexon\Office365\package.json
+		src\Addon\Lexon\Office365\README.md = src\Addon\Lexon\Office365\README.md
+		src\Addon\Lexon\Office365\tsconfig.json = src\Addon\Lexon\Office365\tsconfig.json
+		src\Addon\Lexon\Office365\webpack.config.js = src\Addon\Lexon\Office365\webpack.config.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{22899B12-1A0E-4985-B0B7-A161F7C0300B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "commands", "commands", "{28FF94A0-0825-47E6-8AFF-77BC6D61124D}"
+	ProjectSection(SolutionItems) = preProject
+		src\Addon\Lexon\Office365\src\commands\commands.html = src\Addon\Lexon\Office365\src\commands\commands.html
+		src\Addon\Lexon\Office365\src\commands\commands.js = src\Addon\Lexon\Office365\src\commands\commands.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "helpers", "helpers", "{E6FE0B03-E3E0-40B4-AFE7-259E6E4FBF28}"
+	ProjectSection(SolutionItems) = preProject
+		src\Addon\Lexon\Office365\src\helpers\documentHelper.js = src\Addon\Lexon\Office365\src\helpers\documentHelper.js
+		src\Addon\Lexon\Office365\src\helpers\fallbackauthdialog.html = src\Addon\Lexon\Office365\src\helpers\fallbackauthdialog.html
+		src\Addon\Lexon\Office365\src\helpers\fallbackauthdialog.js = src\Addon\Lexon\Office365\src\helpers\fallbackauthdialog.js
+		src\Addon\Lexon\Office365\src\helpers\fallbackauthhelper.js = src\Addon\Lexon\Office365\src\helpers\fallbackauthhelper.js
+		src\Addon\Lexon\Office365\src\helpers\ssoauthhelper.js = src\Addon\Lexon\Office365\src\helpers\ssoauthhelper.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "taskpane", "taskpane", "{9E9EC3B2-1EA8-462F-888D-0B708D36AEC4}"
+	ProjectSection(SolutionItems) = preProject
+		src\Addon\Lexon\Office365\src\taskpane\taskpane.css = src\Addon\Lexon\Office365\src\taskpane\taskpane.css
+		src\Addon\Lexon\Office365\src\taskpane\taskpane.html = src\Addon\Lexon\Office365\src\taskpane\taskpane.html
+		src\Addon\Lexon\Office365\src\taskpane\taskpane.js = src\Addon\Lexon\Office365\src\taskpane\taskpane.js
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{AEE90144-5027-4349-BDEE-82D5A5D967AD}"
+	ProjectSection(SolutionItems) = preProject
+		src\Addon\Lexon\Office365\assets\icon-16.png = src\Addon\Lexon\Office365\assets\icon-16.png
+		src\Addon\Lexon\Office365\assets\icon-32.png = src\Addon\Lexon\Office365\assets\icon-32.png
+		src\Addon\Lexon\Office365\assets\icon-80.png = src\Addon\Lexon\Office365\assets\icon-80.png
+		src\Addon\Lexon\Office365\assets\logo-filled.png = src\Addon\Lexon\Office365\assets\logo-filled.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dist", "dist", "{42F56CC0-A056-43F0-8F5E-562097CE5627}"
+	ProjectSection(SolutionItems) = preProject
+		src\Addon\Lexon\Office365\dist\7f313c06a52dabe7267420021403d038.png = src\Addon\Lexon\Office365\dist\7f313c06a52dabe7267420021403d038.png
+		src\Addon\Lexon\Office365\dist\commands.html = src\Addon\Lexon\Office365\dist\commands.html
+		src\Addon\Lexon\Office365\dist\commands.js = src\Addon\Lexon\Office365\dist\commands.js
+		src\Addon\Lexon\Office365\dist\commands.js.map = src\Addon\Lexon\Office365\dist\commands.js.map
+		src\Addon\Lexon\Office365\dist\fallbackauthdialog.html = src\Addon\Lexon\Office365\dist\fallbackauthdialog.html
+		src\Addon\Lexon\Office365\dist\fallbackauthdialog.js = src\Addon\Lexon\Office365\dist\fallbackauthdialog.js
+		src\Addon\Lexon\Office365\dist\fallbackauthdialog.js.map = src\Addon\Lexon\Office365\dist\fallbackauthdialog.js.map
+		src\Addon\Lexon\Office365\dist\polyfill.js = src\Addon\Lexon\Office365\dist\polyfill.js
+		src\Addon\Lexon\Office365\dist\polyfill.js.map = src\Addon\Lexon\Office365\dist\polyfill.js.map
+		src\Addon\Lexon\Office365\dist\taskpane.css = src\Addon\Lexon\Office365\dist\taskpane.css
+		src\Addon\Lexon\Office365\dist\taskpane.html = src\Addon\Lexon\Office365\dist\taskpane.html
+		src\Addon\Lexon\Office365\dist\taskpane.js = src\Addon\Lexon\Office365\dist\taskpane.js
+		src\Addon\Lexon\Office365\dist\taskpane.js.map = src\Addon\Lexon\Office365\dist\taskpane.js.map
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{B25BC786-BCCF-4E5D-9CEC-DBE8AE84EF5B}"
+	ProjectSection(SolutionItems) = preProject
+		src\Addon\Lexon\Office365\dist\assets\icon-16.png = src\Addon\Lexon\Office365\dist\assets\icon-16.png
+		src\Addon\Lexon\Office365\dist\assets\icon-32.png = src\Addon\Lexon\Office365\dist\assets\icon-32.png
+		src\Addon\Lexon\Office365\dist\assets\icon-80.png = src\Addon\Lexon\Office365\dist\assets\icon-80.png
+		src\Addon\Lexon\Office365\dist\assets\logo-filled.png = src\Addon\Lexon\Office365\dist\assets\logo-filled.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU
@@ -1029,6 +1110,54 @@ Global
 		{F4B87F97-FA78-432B-85A0-6EA7B78225EA}.Release|x64.Build.0 = Release|Any CPU
 		{F4B87F97-FA78-432B-85A0-6EA7B78225EA}.Release|x86.ActiveCfg = Release|Any CPU
 		{F4B87F97-FA78-432B-85A0-6EA7B78225EA}.Release|x86.Build.0 = Release|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Ad-Hoc|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Ad-Hoc|Any CPU.Build.0 = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Ad-Hoc|ARM.ActiveCfg = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Ad-Hoc|ARM.Build.0 = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Ad-Hoc|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Ad-Hoc|x64.ActiveCfg = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Ad-Hoc|x64.Build.0 = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Ad-Hoc|x86.ActiveCfg = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Ad-Hoc|x86.Build.0 = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.AppStore|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.AppStore|Any CPU.Build.0 = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.AppStore|ARM.ActiveCfg = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.AppStore|ARM.Build.0 = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.AppStore|iPhone.ActiveCfg = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.AppStore|iPhone.Build.0 = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.AppStore|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.AppStore|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.AppStore|x64.ActiveCfg = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.AppStore|x64.Build.0 = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.AppStore|x86.ActiveCfg = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.AppStore|x86.Build.0 = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Debug|ARM.Build.0 = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Debug|x64.Build.0 = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Debug|x86.Build.0 = Debug|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Release|ARM.ActiveCfg = Release|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Release|ARM.Build.0 = Release|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Release|iPhone.Build.0 = Release|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Release|x64.ActiveCfg = Release|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Release|x64.Build.0 = Release|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Release|x86.ActiveCfg = Release|Any CPU
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1067,6 +1196,17 @@ Global
 		{D7B0B8E5-5B1E-41AA-A103-ED3061C50084} = {DB0EFB20-B024-4E5E-A75C-52143C131D25}
 		{F4B87F97-FA78-432B-85A0-6EA7B78225EA} = {D7B0B8E5-5B1E-41AA-A103-ED3061C50084}
 		{B9554B09-4489-4930-A54D-E9C2C1A803DE} = {932D8224-11F6-4D07-B109-DA28AD288A63}
+		{BC937CF0-BCEC-4105-98EC-B4E62C372B65} = {E279BF0F-7F66-4F3A-A3AB-2CDA66C1CD04}
+		{7573E3BD-A012-483C-97C2-C59A5ACCF433} = {B9554B09-4489-4930-A54D-E9C2C1A803DE}
+		{20D448BB-073A-4F7A-81DD-B944FF6BF64E} = {7573E3BD-A012-483C-97C2-C59A5ACCF433}
+		{BC70303C-4648-4199-A68F-43E1AB596F98} = {7573E3BD-A012-483C-97C2-C59A5ACCF433}
+		{22899B12-1A0E-4985-B0B7-A161F7C0300B} = {BC70303C-4648-4199-A68F-43E1AB596F98}
+		{28FF94A0-0825-47E6-8AFF-77BC6D61124D} = {22899B12-1A0E-4985-B0B7-A161F7C0300B}
+		{E6FE0B03-E3E0-40B4-AFE7-259E6E4FBF28} = {22899B12-1A0E-4985-B0B7-A161F7C0300B}
+		{9E9EC3B2-1EA8-462F-888D-0B708D36AEC4} = {22899B12-1A0E-4985-B0B7-A161F7C0300B}
+		{AEE90144-5027-4349-BDEE-82D5A5D967AD} = {BC70303C-4648-4199-A68F-43E1AB596F98}
+		{42F56CC0-A056-43F0-8F5E-562097CE5627} = {BC70303C-4648-4199-A68F-43E1AB596F98}
+		{B25BC786-BCCF-4E5D-9CEC-DBE8AE84EF5B} = {42F56CC0-A056-43F0-8F5E-562097CE5627}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {25728519-5F0F-4973-8A64-0A81EB4EA8D9}

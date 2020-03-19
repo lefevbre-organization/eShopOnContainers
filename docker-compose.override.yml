@@ -116,6 +116,22 @@ services:
     ports:
       - "3005:80"
 
+  WebLoginAddonLexon:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - UseCustomizationData=True
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
+      - LexonApiUrlHC=http://lexon.api/hc
+      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
+      - AccountApiUrlHC=http://account.api/hc
+      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+    ports:
+      - "3006:80"
+
   account.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
