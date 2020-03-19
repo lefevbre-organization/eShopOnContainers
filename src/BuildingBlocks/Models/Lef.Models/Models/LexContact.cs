@@ -3,7 +3,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
     public class LexContact
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string Dni { get; set; }
         public string Fax { get; set; }
         public string Uid { get; set; }
@@ -14,10 +14,10 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         public string Phone { get; set; }
         public string Address { get; set; }
         public string Country { get; set; }
-        public int IdFolder { get; set; }
-        public int IdPortal { get; set; }
+        public int? IdFolder { get; set; }
+        public int? IdPortal { get; set; }
         public string Province { get; set; }
-        public int IdProvince { get; set; }
+        public int? IdProvince { get; set; }
         public string PostalCode { get; set; }
         public string MobilePhone { get; set; }
 

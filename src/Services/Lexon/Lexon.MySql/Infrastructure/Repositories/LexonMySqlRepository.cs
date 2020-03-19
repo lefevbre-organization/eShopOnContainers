@@ -185,11 +185,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         public async Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch)
         {
-            //set @p_filter = '{"BBDD":"lexon_admin_02","IdEntityType":"12", "IdRelation":1}';
-            //call PROC_CONN_CONTACT_GET(@p_filter,10,1,'ts','desc',1344,@P_ERROR,@P_TOTAL);
-            //var resultMySql = new MySqlCompany(_settings.Value.SP.GetContact, 1, 1, entitySearch.bbdd, entitySearch.idType);
-
-            var result = new Result<LexContact>(new LexContact());
+              var result = new Result<LexContact>(new LexContact());
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -212,8 +208,8 @@ namespace Lexon.MySql.Infrastructure.Repositories
                                     var rawResult = reader.GetValue(0).ToString();
                                     if (!string.IsNullOrEmpty(rawResult))
                                     {
-                                        result.data = (JsonConvert.DeserializeObject<LexContact>(rawResult));
-                                       // resultMySql.AddData(resultado);
+                                        var lista = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
+                                        result.data = lista?.FirstOrDefault();
                                     }
                                     else
                                     {
@@ -465,7 +461,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         private void AddListSearchParameters(int pageSize, int pageIndex, string fieldOrder, string order,  MySqlCommand command)
         {
-            TraceLog(parameters: new string[] { $"pageSize:{pageSize} - pageIndex:{pageIndex}" });
+            TraceLog(parameters: new string[] { $"P_PAGE_SIZE:{pageSize} - P_PAGE_NUMBER:{pageIndex} - P_ORDER:{fieldOrder} - P_TYPE_ORDER:{order}" });
 
             command.Parameters.Add(new MySqlParameter("P_PAGE_SIZE", MySqlDbType.Int32) { Value = pageSize });
             command.Parameters.Add(new MySqlParameter("P_PAGE_NUMBER", MySqlDbType.Int32) { Value = pageIndex });
