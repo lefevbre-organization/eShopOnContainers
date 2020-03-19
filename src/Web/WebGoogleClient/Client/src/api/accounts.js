@@ -55,6 +55,7 @@ export const classifyEmail = async (
   subject,
   date,
   to,
+  folder,
   provider,
   account,
   bbdd,
@@ -69,7 +70,8 @@ export const classifyEmail = async (
       mailAccount: account,
       uid: id,
       subject: subject,
-      date: m
+      date: m,
+      folder
     },
     bbdd: bbdd,
     idUser: userId

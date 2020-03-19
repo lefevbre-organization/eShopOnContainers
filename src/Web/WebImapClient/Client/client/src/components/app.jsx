@@ -508,6 +508,7 @@ class App extends Component {
       if (!newAccount.configAccount.imapPass) {
         delete newAccount.configAccount;
       }
+      debugger
       addOrUpdateAccount(userId, newAccount)
         .then(() => {
           this.setState({ isUpdatedDefaultAccount: true });
@@ -666,17 +667,27 @@ class App extends Component {
       if (this.props.lexon.bbdd && this.props.email) {
         try {
           const user = await getUser(this.props.lexon.userId);
+
           if (user && user.data && user.data.configUser) {
-            if (user.data.configUser.getContacts) {
+            console.log(user)
+            
+            if (user.data.configUser.getContacts === true) {
               const emailDate = new Date()
                 .toISOString()
                 .replace(/T/, ' ')
                 .replace(/\..+/, '');
+
+
+              const folder = findSentFolder(this.props.folders);
+
+              console.log(folder.fullName)
+              debugger;
               await classifyEmail(
                 this.props.outbox.idMessage,
                 this.props.outbox.message.subject,
                 emailDate,
                 this.props.outbox.message.recipients.map(rec => rec.address),
+                folder.fullName,
                 this.props.lexon.provider,
                 this.props.email,
                 this.props.lexon.bbdd,
@@ -685,6 +696,8 @@ class App extends Component {
             }
           }
         } catch (err) {
+          console.log(err)
+          debugger
           //throw err;
         }
       }
@@ -705,7 +718,6 @@ class App extends Component {
   }
 
   sentEmail(id, subject) {
-    console.log('***** NOTIFICANDO MENSAJE ENVIADO *****');
     const sentFolder = findSentFolder(this.props.folders);
 
     window.dispatchEvent(
@@ -724,14 +736,7 @@ class App extends Component {
         }
       })
     );
-    console.log(
-      'SentEmail output - Id: ' +
-        id +
-        ' Subject:' +
-        subject +
-        ' CurrentSentFolderName:' +
-        sentFolder.fullName
-    );
+    
   }
 
   startPoll() {
