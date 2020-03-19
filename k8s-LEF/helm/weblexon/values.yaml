@@ -4,7 +4,7 @@ pathBase: /weblexon
 
 image:
   repository: elefebvreoncontainers/weblexonclient
-  tag: latest
+  tag: linux-lef-main-containers
   pullPolicy: IfNotPresent
 
 service:
