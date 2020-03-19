@@ -221,6 +221,27 @@ namespace Lexon.API.Controllers
             return BadRequest(result);
         }
 
+        [HttpPost("entities/files/get")]
+        [ProducesResponseType(typeof(Result<String>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> FileGet(
+            [FromBody] EntitySearchById fileMail
+            )
+        {
+            var resultFile = new Result<string>(null);
+            var result = await _usersService.FileGetAsync(fileMail);
+
+            if (result.errors.Count == 0)
+            {
+                resultFile.errors = result.errors;
+                resultFile.infos = result.infos;
+                return StatusCode(201, resultFile);
+
+            }
+
+            return BadRequest(result);
+        }
+
         //[HttpGet("entities/files/{filename}", Name = "myFile")]
         //[ProducesResponseType(typeof(FileContentResult), (int)HttpStatusCode.OK)]
         //[ProducesResponseType(typeof(NotFoundResult), (int)HttpStatusCode.NotFound)]
