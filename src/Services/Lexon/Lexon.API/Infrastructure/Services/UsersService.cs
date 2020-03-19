@@ -7,7 +7,6 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -307,7 +306,7 @@ namespace Lexon.Infrastructure.Services
                 {
                     fileName = fileMail.Name,
                     idAction = fileMail.IdActuation ?? 0,
-                    idCompany = await GetIdCompany(fileMail.idUser,fileMail.bbdd),
+                    idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd),
                     idUser = fileMail.idUser,
                     idFolder = fileMail.IdParent ?? 0,
                     idEntity = fileMail.idEntity ?? 0,
@@ -322,20 +321,22 @@ namespace Lexon.Infrastructure.Services
 
                 using (var response = await _clientFiles.PutAsync(url, data))
                 {
+                    var responseText = await response.Content.ReadAsStringAsync();
                     if (response.IsSuccessStatusCode)
                     {
                         result.data = true;
-                        TraceInfo(result.infos, $"Se guarda el fichero {fileMail.Name}");
+                        TraceInfo(result.infos, $"Se guarda el fichero {fileMail.Name} - {responseText}");
                     }
                     else
-                        TraceOutputMessage(result.errors, $"Response not ok with lexon-dev with code-> {response.StatusCode} - {response.ReasonPhrase}", 2003);
+                    {
+                        TraceOutputMessage(result.errors, $"Response not ok : {responseText} with lexon-dev with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", 2003);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 //TraceMessage(result.errors, ex);
                 TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message}", "590");
-
             }
 
             return result;
@@ -570,7 +571,6 @@ namespace Lexon.Infrastructure.Services
 
             byteArrayContent = new ByteArrayContent(newBytes);
             byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("application/bson");
-
         }
     }
 }
