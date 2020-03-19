@@ -60,15 +60,15 @@ services:
     depends_on:
       - rabbitmq
 
-  webloginaddonlexon:
-    image: ${REGISTRY:-elefebvreoncontainers}/webloginaddonlexon:${PLATFORM:-linux}-${TAG:-dev}
-    build:
-      context: .
-      dockerfile: src/Web/WebLoginAddonLexon/Dockerfile    
-      args:
-        NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
-    depends_on:
-      - rabbitmq     
+ # webloginaddonlexon:
+ #   image: ${REGISTRY:-elefebvreoncontainers}/webloginaddonlexon:${PLATFORM:-linux}-${TAG:-dev}
+ #   build:
+ #     context: .
+ #     dockerfile: src/Web/WebLoginAddonLexon/Dockerfile    
+ #     args:
+ #       NODE_IMAGE: ${NODE_IMAGE:-node:8.11}
+ #   depends_on:
+ #     - rabbitmq     
 
   account.api:
     image: ${REGISTRY:-elefebvreoncontainers}/account.api:${PLATFORM:-linux}-${TAG:-dev}
