@@ -108,7 +108,8 @@
     "text-confirm-remove": "If you delete this link, you will stop viewing the email in the corresponding Lex-on classification. Do you want to continue?"
   },
   "select-action": {
-    "connect-messages": "Classify messages"
+    "connect-messages": "Classify messages",
+    "attach-documents": "Attach documents"
   },
   "tab-document": {
     "select-mail": "Select one or more messages and save them as a separate copy in the Lex-on documentation."
