@@ -4,7 +4,7 @@ pathBase: /lexon-api
 
 image:
   repository: elefebvreoncontainers/lexon.api
-  tag: latest
+  tag: linux-lef-main-containers
   pullPolicy: IfNotPresent
 
 service:
