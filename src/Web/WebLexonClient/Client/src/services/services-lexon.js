@@ -388,7 +388,7 @@ export const uploadFile = async (
 ) => {
   const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/entities/files/post`;
   const body = {
-    idFolder,
+    idParent: idFolder,
     idEntity,
     idType,
     bbdd,
