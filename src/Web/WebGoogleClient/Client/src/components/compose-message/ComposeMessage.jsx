@@ -267,6 +267,7 @@ export class ComposeMessage extends PureComponent {
                 message.subject,
                 message.sentDateTime,
                 this.state.to2,
+                '[GMAIL]/Enviados',
                 this.props.lexon.provider,
                 this.props.lexon.account,
                 this.props.lexon.bbdd,
@@ -363,7 +364,6 @@ export class ComposeMessage extends PureComponent {
 
     const Fileattached = this.state.uppyPreviews;
 
-    debugger;
     sendMessage({
       headers,
       body: this.state.content,

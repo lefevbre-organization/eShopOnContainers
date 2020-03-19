@@ -286,6 +286,7 @@ export class ComposeMessage extends PureComponent {
                 email.subject,
                 emailDate,
                 this.state.to2,
+                'SENT',
                 this.props.lexon.provider,
                 this.props.lexon.account,
                 this.props.lexon.bbdd,

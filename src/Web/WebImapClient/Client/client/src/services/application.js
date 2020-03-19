@@ -121,7 +121,7 @@ export function editNewMessage(dispatch, to = [], sign = '') {
       bcc: [],
       attachments: [],
       subject: '',
-      content: `<br/><br/><br/><br/>${sign}`
+      content: `<br/><br/><br/><br/>${sign?sign:''}`
     })
   );
 }
@@ -176,7 +176,7 @@ export function replyMessage(dispatch, originalMessage, sign = '') {
   const t = i18n.t.bind(i18n);
   let content = '';
 
-  if (sign !== '') {
+  if (sign && sign !== '') {
     content = `
     <br/><br/><br/><br/>
     ${sign}
@@ -247,7 +247,7 @@ export function forwardMessage(dispatch, originalMessage, sign = '') {
       : '';
 
   let content = '';
-  if (sign !== '') {
+  if (sign && sign !== '') {
     content = `
     <br/><br/><br/><br/>
     ${sign}
