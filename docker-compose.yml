@@ -60,8 +60,8 @@ services:
     depends_on:
       - rabbitmq
 
-  WebLoginAddonLexon:
-    image: ${REGISTRY:-elefebvreoncontainers}/WebLoginAddonLexon:${PLATFORM:-linux}-${TAG:-dev}
+  webloginaddonlexon:
+    image: ${REGISTRY:-elefebvreoncontainers}/webloginaddonlexon:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
       dockerfile: src/Web/WebLoginAddonLexon/Dockerfile    

@@ -116,7 +116,7 @@ services:
     ports:
       - "3005:80"
 
-  WebLoginAddonLexon:
+  webloginaddonlexon:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
