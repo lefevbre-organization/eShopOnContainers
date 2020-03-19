@@ -695,7 +695,7 @@ class ModalConnectingEmails extends Component {
           }
 
           .modal-footer .btn-primary:hover {
-            // background-color: #e5e8f1 !important;
+            /* background-color: #e5e8f1 !important; */
           }
 
           .modal-footer .btn-primary {

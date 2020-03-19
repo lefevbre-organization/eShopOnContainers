@@ -1,22 +1,23 @@
 import sjcl from 'sjcl';
-import {URLS} from './url';
+import { URLS } from './url';
 import {
   backendRequest,
   backendRequestCompleted,
   editMessage,
-  selectFolder, selectMessage,
+  selectFolder,
+  selectMessage,
   setError,
   setUserCredentials
 } from '../actions/application';
-import {abortControllerWrappers, abortFetch, toJson} from './fetch';
-import {FolderTypes, getFolders} from './folder';
+import { abortControllerWrappers, abortFetch, toJson } from './fetch';
+import { FolderTypes, getFolders } from './folder';
 import i18n from './i18n';
-import {recoverState} from './indexed-db';
-import {setFolders} from '../actions/folders';
-import {setCache} from '../actions/messages';
-import {resetFolderMessagesCache} from './message';
+import { recoverState } from './indexed-db';
+import { setFolders } from '../actions/folders';
+import { setCache } from '../actions/messages';
+import { resetFolderMessagesCache } from './message';
 import sanitize from './sanitize';
-import {setFormValues} from '../actions/login';
+import { setFormValues } from '../actions/login';
 
 export const DEFAULT_IMAP_PORT = 993;
 export const DEFAULT_IMAP_SSL = true;
@@ -53,10 +54,14 @@ export async function login(dispatch, credentials) {
   const url = URLS.LOGIN;
   // Will be used as the key in the IndexedDB
   const userId = sjcl.codec.hex.fromBits(
-    sjcl.hash.sha256.hash(`${credentials.serverHost}|${credentials.user}`));
+    sjcl.hash.sha256.hash(`${credentials.serverHost}|${credentials.user}`)
+  );
   // Will be used as the encryption password to store state in the IndexedDB
   const hash = sjcl.codec.hex.fromBits(
-    sjcl.hash.sha256.hash(`${credentials.serverHost}|${credentials.user}|${credentials.password}`));
+    sjcl.hash.sha256.hash(
+      `${credentials.serverHost}|${credentials.user}|${credentials.password}`
+    )
+  );
 
   const response = await fetch(url, {
     method: 'POST',
@@ -74,12 +79,20 @@ export async function login(dispatch, credentials) {
     if (recoveredState !== null) {
       await dispatch(setCache(recoveredState.messages.cache));
       await dispatch(setFolders(recoveredState.folders.items));
-      dispatch(selectFolder({folderId: recoveredState.application.selectedFolderId}));
+      dispatch(
+        selectFolder({ folderId: recoveredState.application.selectedFolderId })
+      );
     } else {
       // Retrieve first level folders to show something ASAP
-      const setFoldersDispatchAction = await getFolders(dispatch, validatedCredentials, false);
+      const setFoldersDispatchAction = await getFolders(
+        dispatch,
+        validatedCredentials,
+        false
+      );
       // Retrieve and select INBOX folder so that user has something in the screen
-      const inbox = setFoldersDispatchAction.payload.find(f => f.type === FolderTypes.INBOX);
+      const inbox = setFoldersDispatchAction.payload.find(
+        f => f.type === FolderTypes.INBOX
+      );
       if (inbox) {
         dispatch(selectFolder(inbox));
         const user = {
@@ -93,40 +106,80 @@ export async function login(dispatch, credentials) {
   } else {
     const error = await response.text();
     dispatch(setError('authentication', error));
-    setTimeout(() => dispatch(setError('authentication', null)), LOGIN_SNACKBAR_DURATION);
+    setTimeout(
+      () => dispatch(setError('authentication', null)),
+      LOGIN_SNACKBAR_DURATION
+    );
   }
 }
 
-export function editNewMessage(dispatch, to = []) {
-  dispatch(editMessage({to: to, cc: [], bcc: [], attachments: [], subject: '', content: ''}));
+export function editNewMessage(dispatch, to = [], sign = '') {
+  dispatch(
+    editMessage({
+      to: to,
+      cc: [],
+      bcc: [],
+      attachments: [],
+      subject: '',
+      content: `<br/><br/><br/><br/>${sign}`
+    })
+  );
 }
 
 export function editMessageAsNew(dispatch, message) {
   const recipientMapper = r => r.address;
-  const to = message.recipients.filter(r => r.type === 'To').map(recipientMapper);
-  const cc = message.recipients.filter(r => r.type === 'Cc').map(recipientMapper);
-  const bcc = message.recipients.filter(r => r.type === 'Bcc').map(recipientMapper);
-  dispatch(editMessage({...message, to, cc, bcc}));
+  const to = message.recipients
+    .filter(r => r.type === 'To')
+    .map(recipientMapper);
+  const cc = message.recipients
+    .filter(r => r.type === 'Cc')
+    .map(recipientMapper);
+  const bcc = message.recipients
+    .filter(r => r.type === 'Bcc')
+    .map(recipientMapper);
+  dispatch(editMessage({ ...message, to, cc, bcc }));
 }
 
-export function replyMessage(dispatch, originalMessage) {
+export function replyMessage(dispatch, originalMessage, sign = '') {
   const recipients = [...originalMessage.recipients];
   const recipientMapper = r => r.address;
   const inReplyTo = [originalMessage.messageId];
-  const references = originalMessage.references.concat([originalMessage.messageId]);
-  const replyTo = originalMessage.replyTo && originalMessage.replyTo.length > 0 ?
-    originalMessage.replyTo : originalMessage.from;
-  const to = recipients.filter(r => r.type === 'To').map(recipientMapper).concat(replyTo);
+  const references = originalMessage.references.concat([
+    originalMessage.messageId
+  ]);
+  const replyTo =
+    originalMessage.replyTo && originalMessage.replyTo.length > 0
+      ? originalMessage.replyTo
+      : originalMessage.from;
+  const to = recipients
+    .filter(r => r.type === 'To')
+    .map(recipientMapper)
+    .concat(replyTo);
   const cc = recipients.filter(r => r.type === 'Cc').map(recipientMapper);
   const bcc = recipients.filter(r => r.type === 'Bcc').map(recipientMapper);
   const attachments = [];
-  const subject = `${originalMessage.subject.toLowerCase().indexOf('re:') === 0 ? '' : 'Re: '}${originalMessage.subject}`;
-  const formattedDate = new Date(originalMessage.receivedDate).toLocaleString(navigator.language, {
-    year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'
-  });
+  const subject = `${
+    originalMessage.subject.toLowerCase().indexOf('re:') === 0 ? '' : 'Re: '
+  }${originalMessage.subject}`;
+  const formattedDate = new Date(originalMessage.receivedDate).toLocaleString(
+    navigator.language,
+    {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }
+  );
 
   const t = i18n.t.bind(i18n);
-  const content = `
+  let content = '';
+
+  if (sign !== '') {
+    content = `
+    <br/><br/><br/><br/>
+    ${sign}
     <p></p>
     <hr/>
     <p>
@@ -137,25 +190,67 @@ export function replyMessage(dispatch, originalMessage) {
     <br/>
     ${sanitize.sanitize(originalMessage.content)}
   `;
+  } else {
+    content = `
+      <p></p>
+      <hr/>
+      <p>
+        <b>${t('replyAction.From')}:</b> ${originalMessage.from.join(', ')}<br/>
+        <b>${t('replyAction.Date')}:</b> ${formattedDate}<br/>
+        <b>${t('replyAction.Subject')}:</b> ${originalMessage.subject}<br/>
+      </p>
+      <br/>
+      ${sanitize.sanitize(originalMessage.content)}
+    `;
+  }
 
-  dispatch(editMessage({inReplyTo, references, to, cc, bcc, attachments, subject, content
-  }));
+  dispatch(
+    editMessage({
+      inReplyTo,
+      references,
+      to,
+      cc,
+      bcc,
+      attachments,
+      subject,
+      content
+    })
+  );
 }
 
-export function forwardMessage(dispatch, originalMessage) {
+export function forwardMessage(dispatch, originalMessage, sign = '') {
   const t = i18n.t.bind(i18n);
-  const attachments = originalMessage.attachments ? [...originalMessage.attachments] : [];
-  const subject = `${originalMessage.subject.toLowerCase().indexOf('fwd:') === 0 ? '' : 'Fwd: '}${originalMessage.subject}`;
-  const formattedDate = new Date(originalMessage.receivedDate).toLocaleString(navigator.language, {
-    year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'
-  });
+  const attachments = originalMessage.attachments
+    ? [...originalMessage.attachments]
+    : [];
+  const subject = `${
+    originalMessage.subject.toLowerCase().indexOf('fwd:') === 0 ? '' : 'Fwd: '
+  }${originalMessage.subject}`;
+  const formattedDate = new Date(originalMessage.receivedDate).toLocaleString(
+    navigator.language,
+    {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }
+  );
   const recipients = [...originalMessage.recipients];
   const recipientMapper = r => r.address;
   const to = recipients.filter(r => r.type === 'To').map(recipientMapper);
   const cc = recipients.filter(r => r.type === 'Cc').map(recipientMapper);
-  const optionalCc = cc.length > 0 ? `<b>${t('forwardAction.Cc')}:</b> ${cc.join(', ')}<br/>` : '';
+  const optionalCc =
+    cc.length > 0
+      ? `<b>${t('forwardAction.Cc')}:</b> ${cc.join(', ')}<br/>`
+      : '';
 
-  const content = `
+  let content = '';
+  if (sign !== '') {
+    content = `
+    <br/><br/><br/><br/>
+    ${sign}
     <p></p>
     <hr/>
     <p>
@@ -168,7 +263,24 @@ export function forwardMessage(dispatch, originalMessage) {
     <br/>
     ${sanitize.sanitize(originalMessage.content)}
   `;
-  dispatch(editMessage({to: [], cc: [], bcc: [], attachments, subject, content}));
+  } else {
+    content = `
+    <p></p>
+    <hr/>
+    <p>
+      <b>${t('forwardAction.From')}:</b> ${originalMessage.from.join(', ')}<br/>
+      <b>${t('forwardAction.To')}:</b> ${to.join(', ')}<br/>
+      ${optionalCc}
+      <b>${t('forwardAction.Date')}:</b> ${formattedDate}<br/>
+      <b>${t('forwardAction.Subject')}:</b> ${originalMessage.subject}<br/>
+    </p>
+    <br/>
+    ${sanitize.sanitize(originalMessage.content)}
+  `;
+  }
+  dispatch(
+    editMessage({ to: [], cc: [], bcc: [], attachments, subject, content })
+  );
 }
 
 /**

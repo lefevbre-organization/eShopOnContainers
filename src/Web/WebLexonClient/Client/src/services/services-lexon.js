@@ -228,6 +228,10 @@ export const getResults = async (
       body: JSON.stringify(body)
     });
 
+    if (response.status === 404) {
+      return { results: { data: [], count: 0 } };
+    }
+
     const result = await response.json();
     if (response.status === 400) {
       throw result;

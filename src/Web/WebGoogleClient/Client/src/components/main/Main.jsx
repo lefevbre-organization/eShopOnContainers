@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
 import * as uuid from 'uuid/v4';
 import * as base64 from 'base-64';
+import ACTIONS from '../../actions/lexon';
 
 import {
   diff,
@@ -42,7 +43,11 @@ import SidebarCnn from 'react-sidebar';
 import LexonComponent from '../../apps/lexon_content';
 import CalendarComponent from '../../apps/calendar_content';
 import 'react-reflex/styles.css';
-import { addOrUpdateAccount, resetDefaultAccount } from '../../api/accounts';
+import {
+  addOrUpdateAccount,
+  resetDefaultAccount,
+  getUser
+} from '../../api/accounts';
 import { PROVIDER } from '../../constants';
 import { getMessageListWithRFC } from '../../api/';
 
@@ -238,7 +243,7 @@ export class Main extends Component {
     return true;
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     /* Label list is fetched from here 
     so that we can declare Routes by labelId 
     before rendering anything else */
@@ -298,12 +303,21 @@ export class Main extends Component {
     const email = googleUser.Rt.Au;
 
     if (userId !== null && email !== null) {
+      const user = await getUser(userId);
+      console.log(user);
+
+      let sign = '';
+      const account = user.data.accounts.filter(a => a.email === email);
+      if (account.length >= 1) {
+        sign = account[0].sign;
+      }
+
       const GUID = uuid();
       const newAccount = {
         provider: PROVIDER,
         email: email,
         guid: GUID,
-        sign: '',
+        sign,
         defaultAccount: true,
         configAccount: null,
         mails: []
@@ -312,6 +326,8 @@ export class Main extends Component {
         Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, {
           domain: 'lefebvre.es'
         });
+        this.props.setGUID(GUID);
+        this.props.setSign(sign);
         if (idEmail != null && idEmail !== undefined) {
           if (
             (idCaseFile != null && idCaseFile != undefined) ||
@@ -766,7 +782,9 @@ const mapDispatchToProps = dispatch =>
       addInitialPageToken,
       clearPageTokens,
       setSearchQuery,
-      deleteMessage
+      deleteMessage,
+      setGUID: ACTIONS.setGUID,
+      setSign: ACTIONS.setSign
     },
     dispatch
   );

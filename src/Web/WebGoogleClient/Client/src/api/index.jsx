@@ -1,12 +1,12 @@
-import { MAX_RESULTS } from "../constants";
-import { getBody, isHTML, base64MimeType, base64Data } from "./utils";
-import base64url from "base64url";
+import { MAX_RESULTS } from '../constants';
+import { getBody, isHTML, base64MimeType, base64Data } from './utils';
+import base64url from 'base64url';
 
 const getLabelDetailPromise = labelId => {
   return new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.labels
       .get({
-        userId: "me",
+        userId: 'me',
         id: labelId
       })
       .then(response => resolve(response));
@@ -27,14 +27,13 @@ export const getLabelList = () =>
   new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.labels
       .list({
-        userId: "me"
+        userId: 'me'
       })
       .then(getLabelDetails)
       .then(response => {
         resolve(response.map(el => el.result));
       });
   });
-
 
 export const getMessageList = ({ labelIds, maxResults, q, pageToken }) =>
   new Promise((resolve, reject) => {
@@ -71,7 +70,7 @@ export const flattenMessagesWithLabel = (messages, labelIds) =>
 
     window.gapi.client.gmail.users.labels
       .get({
-        userId: "me",
+        userId: 'me',
         id: labelIds[0]
       })
       .then(response =>
@@ -82,11 +81,11 @@ export const flattenMessagesWithLabel = (messages, labelIds) =>
       );
   });
 
-const getMessageRawList = ({ labelIds, maxResults, pageToken, q = "" }) =>
+const getMessageRawList = ({ labelIds, maxResults, pageToken, q = '' }) =>
   new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.messages
       .list({
-        userId: "me",
+        userId: 'me',
         q,
         maxResults: maxResults || MAX_RESULTS,
         ...(labelIds && { labelIds }),
@@ -98,11 +97,11 @@ const getMessageRawList = ({ labelIds, maxResults, pageToken, q = "" }) =>
       });
   });
 
-export const getMessageListWithRFC = (q) =>
+export const getMessageListWithRFC = q =>
   new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.messages
       .list({
-        userId: "me",
+        userId: 'me',
         q: `rfc822msgid:${q}`,
         maxResults: 1
       })
@@ -113,30 +112,27 @@ export const getMessageListWithRFC = (q) =>
   });
 
 /**
-* Load Google People client library. List Contact requested info
-*/
+ * Load Google People client library. List Contact requested info
+ */
 export const getContacts = () =>
-
   new Promise((resolve, reject) => {
-    window.gapi.client.people.people.connections.list({
-      'resourceName': 'people/me',
-      'pageSize': 100,
-      'personFields': 'names,emailAddresses'
-    })
+    window.gapi.client.people.people.connections
+      .list({
+        resourceName: 'people/me',
+        pageSize: 100,
+        personFields: 'names,emailAddresses'
+      })
       .then(response => {
         let arr = response.result.connections;
         let contacts = [];
-        arr.map(function (item) {
+        arr.map(function(item) {
           if (typeof item.emailAddresses !== 'undefined') {
             contacts.push(item.emailAddresses[0].value);
           }
-        })
+        });
         resolve(contacts);
       });
-
   });
-
-
 
 const getMessageHeaders = response => {
   const messageResult = response.result;
@@ -174,28 +170,28 @@ export const getMessageHeader = id => {
   return new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.messages
       .get({
-        userId: "me",
+        userId: 'me',
         id: id,
-        format: "metadata",
+        format: 'metadata',
         metadataHeaders: [
-          "Delivered-To",
-          "X-Received",
-          "To",
-          "Message-ID",
-          "Date",
-          "Content-Type",
-          "MIME-Version",
-          "Reply-To",
-          "From",
-          "Subject",
-          "Return-Path"
+          'Delivered-To',
+          'X-Received',
+          'To',
+          'Message-ID',
+          'Date',
+          'Content-Type',
+          'MIME-Version',
+          'Reply-To',
+          'From',
+          'Subject',
+          'Return-Path'
           // See https://www.iana.org/assignments/message-headers/message-headers.xhtml
           // for more headers
         ]
       })
       .then(response => {
         // console.log("response.result.payload.headers ->", response.result.payload.headers);
-        resolve(response.result)
+        resolve(response.result);
       });
   });
 };
@@ -204,29 +200,29 @@ export const getMessage = (messageId, format) => {
   return new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.messages
       .get({
-        userId: "me",
+        userId: 'me',
         id: messageId,
-        format: format || "full"
+        format: format || 'full'
       })
       .then(response => {
         const { result } = response;
 
-        if (format === "raw") {
+        if (format === 'raw') {
           resolve({
             result: base64url.decode(result.raw)
           });
         } else {
-          let body = getBody(result.payload, "text/html");
+          let body = getBody(result.payload, 'text/html');
           let attach = result.payload.parts;
 
-          if (body === "") {
-            body = getBody(result.payload, "text/plain");
+          if (body === '') {
+            body = getBody(result.payload, 'text/plain');
             body = body
               .replace(/(\r\n)+/g, '<br data-break="rn-1">')
               .replace(/[\n\r]+/g, '<br data-break="nr">');
           }
 
-          if (body !== "" && !isHTML(body)) {
+          if (body !== '' && !isHTML(body)) {
             body = body
               .replace(
                 /(\r\n)+/g,
@@ -254,11 +250,11 @@ export const getMessage = (messageId, format) => {
 };
 
 export const sendMessage = async ({ headers, body, attachments }) => {
-  let email = "";
+  let email = '';
 
   const headersClone = { ...headers };
-  headersClone["MIME-Version"] = "1.0";
-  headersClone["Content-Type"] = `multipart/mixed; boundary=alternative`;
+  headersClone['MIME-Version'] = '1.0';
+  headersClone['Content-Type'] = `multipart/mixed; boundary=alternative`;
 
   for (let header in headersClone) {
     email += `${header}: ${headersClone[header]}\r\n`;
@@ -303,34 +299,38 @@ export const sendMessage = async ({ headers, body, attachments }) => {
 
   email += `--alternative--\r\n`;
 
-  return fetch("https://www.googleapis.com/upload/gmail/v1/users/me/messages/send?uploadType=multipart", {
-    method: 'POST',
-    body: email,
-    headers: {
-      'Authorization': `Bearer ${window.gapi.auth.getToken().access_token}`,
-      'Content-Type': 'message/rfc822'
-    },
-  });
+  return fetch(
+    'https://www.googleapis.com/upload/gmail/v1/users/me/messages/send?uploadType=multipart',
+    {
+      method: 'POST',
+      body: email,
+      headers: {
+        Authorization: `Bearer ${window.gapi.auth.getToken().access_token}`,
+        'Content-Type': 'message/rfc822'
+      }
+    }
+  );
 };
 
-export const setMessageAsRead = async messageId => new Promise((resolve, reject) => {
-  window.gapi.client.gmail.users.messages
-    .modify({
-      userId: "me",
-      id: messageId,
-      addLabelIds: [],
-      removeLabelIds: ['UNREAD']
-    })
-    .then(response => {
-      resolve(messageId);
-    });
-});
+export const setMessageAsRead = async messageId =>
+  new Promise((resolve, reject) => {
+    window.gapi.client.gmail.users.messages
+      .modify({
+        userId: 'me',
+        id: messageId,
+        addLabelIds: [],
+        removeLabelIds: ['UNREAD']
+      })
+      .then(response => {
+        resolve(messageId);
+      });
+  });
 
 export const batchModify = ({ ids, addLabelIds = [], removeLabelIds = [] }) =>
   new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.messages
       .batchModify({
-        userId: "me",
+        userId: 'me',
         ids,
         addLabelIds,
         removeLabelIds

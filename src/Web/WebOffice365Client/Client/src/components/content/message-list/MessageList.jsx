@@ -92,7 +92,7 @@ export class MessageList extends Component {
       subject: msg.subject,
       sentDateTime: msg.sentDateTime,
       folder: this.props.selectedFolder,
-      provider: 'GOOGLE',
+      provider: 'OUTLOOK',
       account: this.props.lexon.account,
       chkselected: selected,
       raw: null

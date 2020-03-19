@@ -96,18 +96,15 @@ export class ConnectingEmailsStep3 extends React.Component {
     console.log(node);
 
     // Show children of selected node
-    const entities =
-      node && node.subChild
-        ? node.subChild.map(sc => {
-            return {
-              origin: i18n.t(`classification.${this.props.entity.idType}`),
-              name: sc.code || sc.description || '',
-              type: 'dir',
-              modified: '26/09/2019 16:57',
-              id: sc.idRelated
-            };
-          })
-        : [];
+    const entities = node.subChild.map(sc => {
+      return {
+        origin: i18n.t(`classification.${this.props.entity.idType}`),
+        name: sc.code || sc.description || '',
+        type: 'dir',
+        modified: '26/09/2019 16:57',
+        id: sc.idRelated
+      };
+    });
 
     this.setState({ entities });
   }
@@ -399,6 +396,11 @@ export class ConnectingEmailsStep3 extends React.Component {
 
             .e-treeview .e-ul {
               overflow: hidden !important;
+            }
+
+            .e-rowcell.e-templatecell {
+              width: auto;
+              display: table-cell;
             }
 
             .panel-left {

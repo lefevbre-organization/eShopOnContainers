@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
 import * as uuid from 'uuid/v4';
+import ACTIONS from '../../actions/lexon';
 import Cookies from 'js-cookie';
 import {
   diff,
@@ -40,7 +41,8 @@ import ComposeMessage from '../compose-message/ComposeMessage';
 import 'react-reflex/styles.css';
 import {
   addOrUpdateAccount,
-  resetDefaultAccount
+  resetDefaultAccount,
+  getUser
 } from '../../api_graph/accounts';
 import { PROVIDER } from '../../constants';
 import MessageNotFound from '../message-not-found/MessageNotFound';
@@ -250,7 +252,7 @@ export class Main extends Component {
     return true;
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.getLabelList();
     this.getLabelInbox();
 
@@ -269,7 +271,7 @@ export class Main extends Component {
             subject: event.detail.subject,
             sentDateTime: event.detail.sentDateTime,
             folder: event.detail.folder,
-            provider: 'GOOGLE',
+            provider: 'OUTLOOK',
             account: this.props.lexon.account,
             chkselected: false
           }
@@ -281,12 +283,21 @@ export class Main extends Component {
     const { email } = this.props.User;
     const idEmail = this.props.idEmail;
     if (userId !== null && email !== null) {
+      const user = await getUser(userId);
+      console.log(user);
+
+      let sign = '';
+      const account = user.data.accounts.filter(a => a.email === email);
+      if (account.length >= 1) {
+        sign = account[0].sign;
+      }
+
       const GUID = uuid();
       const newAccount = {
         provider: PROVIDER,
         email: email,
         guid: GUID,
-        sign: '',
+        sign,
         defaultAccount: true,
         configAccount: null,
         mails: []
@@ -296,6 +307,9 @@ export class Main extends Component {
           Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, {
             domain: 'lefebvre.es'
           });
+          this.props.setGUID(GUID);
+          this.props.setSign(sign);
+
           if (
             idEmail != null &&
             idEmail !== undefined &&
@@ -761,7 +775,9 @@ const mapDispatchToProps = dispatch =>
       addInitialPageToken,
       clearPageTokens,
       setSearchQuery,
-      deleteMessage
+      deleteMessage,
+      setGUID: ACTIONS.setGUID,
+      setSign: ACTIONS.setSign
     },
     dispatch
   );

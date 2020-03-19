@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import "./account-user.css";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { removeStateExLexon, removeState } from "../../../services/state";
-import { clearUserCredentials } from "../../../actions/application";
+import React, { Component, Fragment } from 'react';
+import './account-user.css';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { removeStateExLexon, removeState } from '../../../services/state';
+import { clearUserCredentials } from '../../../actions/application';
 import * as base64 from 'base-64';
 
 class AccountUser extends Component {
@@ -17,36 +17,41 @@ class AccountUser extends Component {
     const { userId } = this.props.lexon;
 
     switch (provider) {
-      case "GOOGLE":
-        window.open(`${window.URL_MF_GOOGLE}/GO0${userId}`, "_self");
+      case 'GOOGLE':
+        window.open(`${window.URL_MF_GOOGLE}/GO0${userId}`, '_self');
         break;
 
-      case "OUTLOOK":
-        window.open(`${window.URL_MF_OUTLOOK}/OU0${userId}`, "_self");
+      case 'OUTLOOK':
+        window.open(`${window.URL_MF_OUTLOOK}/OU0${userId}`, '_self');
         break;
 
-        default:
-          removeState();
-          this.props.logout(); 
-          //const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0&account=${base64.encode(account)}`;
-          //window.open(urlRedirect, "_self");
-          window.open(`${window.URL_MF_IMAP}/IM0${userId}?account=${base64.encode(account)}`, "_self");
-         
-          //removeStateExLexon();
-          //window.location.reload();           
+      default:
+        removeState();
+        this.props.logout();
+        //const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0&account=${base64.encode(account)}`;
+        //window.open(urlRedirect, "_self");
+        window.open(
+          `${window.URL_MF_IMAP}/IM0${userId}?account=${base64.encode(
+            account
+          )}`,
+          '_self'
+        );
+
+        //removeStateExLexon();
+        //window.location.reload();
         break;
     }
   }
 
   getImage(provider) {
     switch (provider) {
-      case "GOOGLE":
-        return "/assets/images/logoGoogle.png";
-      case "OUTLOOK":
-        return "/assets/images/logoMicrosoft.png";
+      case 'GOOGLE':
+        return '/assets/images/logoGoogle.png';
+      case 'OUTLOOK':
+        return '/assets/images/logoMicrosoft.png';
 
       default:
-        return "/assets/images/logoImap.png";
+        return '/assets/images/logoImap.png';
     }
   }
 
@@ -54,19 +59,30 @@ class AccountUser extends Component {
     const { account } = this.props;
 
     return (
-      <li>
-        <a
-          href="#/"
-          className="d-flex align-items-center account-text"
-          onClick={() => this._handleOnClick(account.provider, account.email)}
-        >
-          <span>
-            <img src={this.getImage(account.provider)} alt={account.provider} />
-          </span>
-          <span>{account.email}</span>
-          <span className="lf-icon-arrow-exchange"></span>
-        </a>
-      </li>
+      <Fragment>
+        <li>
+          <a
+            href='#/'
+            className='d-flex align-items-center account-text'
+            onClick={() =>
+              this._handleOnClick(account.provider, account.email)
+            }>
+            <span>
+              <img
+                src={this.getImage(account.provider)}
+                alt={account.provider}
+              />
+            </span>
+            <span>{account.email}</span>
+            <span className='lf-icon-arrow-exchange'></span>
+          </a>
+        </li>
+        <style jsx>{`
+          .account-text span {
+            color: #7c868c !important;
+          }
+        `}</style>
+      </Fragment>
     );
   }
 }

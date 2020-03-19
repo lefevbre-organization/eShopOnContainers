@@ -81,6 +81,7 @@ export class ConnectingEmailsStep2 extends React.Component {
           currentPage
         );
 
+        console.log(response);
         if (response && response.results && response.results.data) {
           let lastPage = response.results.count < 6;
           this.setState(

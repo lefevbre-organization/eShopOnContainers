@@ -4,6 +4,7 @@ module.exports = {
   plugins: [
     '@babel/plugin-transform-runtime',
     '@babel/plugin-proposal-object-rest-spread',
-    '@babel/plugin-syntax-dynamic-import'
+    '@babel/plugin-syntax-dynamic-import',
+    'styled-jsx/babel'
   ]
 };

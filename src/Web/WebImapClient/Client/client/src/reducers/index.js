@@ -1,4 +1,4 @@
-import {combineReducers} from 'redux';
+import { combineReducers } from 'redux';
 import application from './application';
 import folders from './folders';
 import login from './login';
@@ -50,7 +50,9 @@ export const INITIAL_STATE = {
     idCaseFile: null,
     idEmail: null,
     idFolder: null,
-    emailShown: null
+    emailShown: null,
+    sign: null,
+    guid: null
   }
 };
 

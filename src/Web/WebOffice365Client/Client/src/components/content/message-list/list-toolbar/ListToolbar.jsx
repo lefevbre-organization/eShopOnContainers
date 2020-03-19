@@ -76,7 +76,7 @@ export class MessageToolbar extends PureComponent {
             id: msg.extMessageId,
             account: this.props.lexon.account,
             folder: this.props.selectedFolder,
-            provider: 'GOOGLE'
+            provider: 'OUTLOOK'
           })),
           chkselected: checked
         }
@@ -133,15 +133,13 @@ export class MessageToolbar extends PureComponent {
             collapsed
               ? 'pl-2 py-2 pr-4 d-flex align-items-center bd-highlight'
               : 'pl-2 py-2 pr-4 d-flex align-items-center bd-highlight margin-top-5'
-          }
-        >
+          }>
           <div className='d-flex align-content-center align-items-center'>
             <div className='padding-top-10'>
               <span className={collapsed ? '' : 'with-side-bar'}>
                 <Button
                   onClick={this.props.sideBarToggle}
-                  className='btn-transparent margin-right-10 margin-bottom-10'
-                >
+                  className='btn-transparent margin-right-10 margin-bottom-10'>
                   <FontAwesomeIcon icon={faBars} size='1x' />
                 </Button>
               </span>

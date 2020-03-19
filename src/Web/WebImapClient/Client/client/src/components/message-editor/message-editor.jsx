@@ -1,25 +1,25 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { translate } from "react-i18next";
-import PropTypes from "prop-types";
-import { Editor } from "@tinymce/tinymce-react";
-import EDITOR_BUTTONS from "./editor-buttons";
-import EDITOR_CONFIG from "./editor-config";
-import Button from "../buttons/button";
-import HeaderAddress from "./header-address";
-import MceButton from "./mce-button";
-import InsertLinkDialog from "./insert-link-dialog";
-import { getCredentials } from "../../selectors/application";
-import { editMessage } from "../../actions/application";
-import { sendMessage } from "../../services/smtp";
-import { prettySize } from "../../services/prettify";
-import { getAddresses } from "../../services/message-addresses";
-import { persistApplicationNewMessageContent } from "../../services/indexed-db";
-import styles from "./message-editor.scss";
-import mainCss from "../../styles/main.scss";
-import i18n from "i18next";
-import ACTIONS from "../../actions/lexon";
-import { getUser, classifyEmail } from "../../services/accounts";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { translate } from 'react-i18next';
+import PropTypes from 'prop-types';
+import { Editor } from '@tinymce/tinymce-react';
+import EDITOR_BUTTONS from './editor-buttons';
+import EDITOR_CONFIG from './editor-config';
+import Button from '../buttons/button';
+import HeaderAddress from './header-address';
+import MceButton from './mce-button';
+import InsertLinkDialog from './insert-link-dialog';
+import { getCredentials } from '../../selectors/application';
+import { editMessage } from '../../actions/application';
+import { sendMessage } from '../../services/smtp';
+import { prettySize } from '../../services/prettify';
+import { getAddresses } from '../../services/message-addresses';
+import { persistApplicationNewMessageContent } from '../../services/indexed-db';
+import styles from './message-editor.scss';
+import mainCss from '../../styles/main.scss';
+import i18n from 'i18next';
+import ACTIONS from '../../actions/lexon';
+import { getUser, classifyEmail } from '../../services/accounts';
 
 const EDITOR_PERSISTED_AFTER_CHARACTERS_ADDED = 50;
 
@@ -28,7 +28,7 @@ class MessageEditor extends Component {
     super(props);
     this.state = {
       linkDialogVisible: false,
-      linkDialogUrl: "",
+      linkDialogUrl: '',
       dropZoneActive: false,
       // Stores state of current selection in the dialog (is title, underlined... H1, H2, ..., italic, underline)
       // Used in editor buttons to activate/deactivate them
@@ -60,16 +60,26 @@ class MessageEditor extends Component {
   }
 
   componentDidMount() {
+    const { lexon, content } = this.props;
+
     if (this.fileInput) {
-      this.fileInput.onchange = this.onAttachSelected
+      this.fileInput.onchange = this.onAttachSelected;
     }
+
+    // // debugger;
+    // if (lexon.sign && lexon.sign !== '') {
+    //   const ct = lexon.sign;
+
+    //   this.props.editMessage({ ...this.props.editedMessage, ct });
+    //   persistApplicationNewMessageContent(this.props.application, ct);
+    // }
   }
 
   removeMessageEditor(aplication) {
     const { close, lexon } = this.props;
 
     if (lexon.idCaseFile !== null && lexon.idCaseFile !== undefined) {
-      window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
+      window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
       this.props.setCaseFile({
         casefile: null,
         bbdd: null,
@@ -100,23 +110,22 @@ class MessageEditor extends Component {
 
     return (
       <div
-        className={`${className} ${styles["message-editor"]}`}
+        className={`${className} ${styles['message-editor']}`}
         onDrop={this.handleOnDrop}
         onDragOver={this.handleOnDragOver}
-        onDragLeave={this.handleOnDragLeave}
-      >
+        onDragLeave={this.handleOnDragLeave}>
         {this.state.dropZoneActive ? (
           <div className={styles.dropZone}>
             <div className={styles.dropZoneMessage}>
-              <i className={"material-icons"}>attach_file</i>
-              {t("messageEditor.dropZoneMessage")}
+              <i className={'material-icons'}>attach_file</i>
+              {t('messageEditor.dropZoneMessage')}
             </div>
           </div>
         ) : null}
         <div className={styles.header}>
           <form ref={this.headerFormRef}>
             <HeaderAddress
-              id={"to"}
+              id={'to'}
               addresses={to}
               onAddressAdd={this.handleAddAddress}
               onAddressRemove={this.handleRemoveAddress}
@@ -126,10 +135,10 @@ class MessageEditor extends Component {
               autoSuggestClassName={styles.autoSuggest}
               autoSuggestMenuClassName={styles.autoSuggestMenu}
               getAddresses={this.props.getAddresses}
-              label={i18n.t("messageEditor.to")}
+              label={i18n.t('messageEditor.to')}
             />
             <HeaderAddress
-              id={"cc"}
+              id={'cc'}
               addresses={cc}
               onAddressAdd={this.handleAddAddress}
               onAddressRemove={this.handleRemoveAddress}
@@ -139,10 +148,10 @@ class MessageEditor extends Component {
               autoSuggestClassName={styles.autoSuggest}
               autoSuggestMenuClassName={styles.autoSuggestMenu}
               getAddresses={this.props.getAddresses}
-              label={t("messageEditor.cc")}
+              label={t('messageEditor.cc')}
             />
             <HeaderAddress
-              id={"bcc"}
+              id={'bcc'}
               addresses={bcc}
               onAddressAdd={this.handleAddAddress}
               onAddressRemove={this.handleRemoveAddress}
@@ -152,12 +161,12 @@ class MessageEditor extends Component {
               autoSuggestClassName={styles.autoSuggest}
               autoSuggestMenuClassName={styles.autoSuggestMenu}
               getAddresses={this.props.getAddresses}
-              label={t("messageEditor.bcc")}
+              label={t('messageEditor.bcc')}
             />
             <div className={styles.subject}>
               <input
-                type={"text"}
-                placeholder={t("messageEditor.subject")}
+                type={'text'}
+                placeholder={t('messageEditor.subject')}
                 value={subject}
                 onChange={this.handleOnSubjectChange}
               />
@@ -165,10 +174,9 @@ class MessageEditor extends Component {
           </form>
         </div>
         <div
-          className={styles["editor-wrapper"]}
-          onClick={() => this.editorWrapperClick()}
-        >
-          <div className={styles["editor-container"]}>
+          className={styles['editor-wrapper']}
+          onClick={() => this.editorWrapperClick()}>
+          <div className={styles['editor-container']}>
             <Editor
               ref={this.editorRef}
               initialValue={content}
@@ -178,7 +186,7 @@ class MessageEditor extends Component {
               onInit={() =>
                 this.getEditor()
                   .uploadImages()
-                  .then(() => this.getEditor().fire("Change"))
+                  .then(() => this.getEditor().fire('Change'))
               }
               onBlur={this.handleEditorBlur}
               onPaste={event => this.editorPaste(event)}
@@ -192,7 +200,7 @@ class MessageEditor extends Component {
                   <span className={styles.size}>({prettySize(a.size, 0)})</span>
                   <Button
                     className={styles.delete}
-                    icon={"delete"}
+                    icon={'delete'}
                     onClick={() => this.removeAttachment(a)}
                   />
                 </div>
@@ -201,27 +209,37 @@ class MessageEditor extends Component {
           </div>
           {this.renderEditorButtons()}
         </div>
-        <div className={styles["action-buttons"]}>
+        <div className={styles['action-buttons']}>
           <button
-            className={`${mainCss["mdc-button"]} ${mainCss["mdc-button--unelevated"]}
-            ${styles["action-button"]} ${styles.send}`}
+            className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']}
+            ${styles['action-button']} ${styles.send}`}
             disabled={to.length + cc.length + bcc.length === 0}
-            onClick={this.handleSubmit}
-          >
-            {t("messageEditor.send")}
-          </button>
-          <button className={`${styles["action-button"]} ${styles.attach}`} onClick={this.onAttachButton}>
-            <div className={`material-icons ${mainCss['mdc-list-item__graphic']} ${styles.icon}`}>
-              attach_file
-              </div>
-            <div><span>{i18n.t("messageEditor.attach")}</span></div>
-            <input ref={r => this.fileInput = r} id="file-input" type="file" name="name" style={{ display: "none" }} multiple="true" />
+            onClick={this.handleSubmit}>
+            {t('messageEditor.send')}
           </button>
           <button
-            className={`material-icons ${mainCss["mdc-icon-button"]} ${styles["action-button"]} ${styles.cancel}`}
+            className={`${styles['action-button']} ${styles.attach}`}
+            onClick={this.onAttachButton}>
+            <div
+              className={`material-icons ${mainCss['mdc-list-item__graphic']} ${styles.icon}`}>
+              attach_file
+            </div>
+            <div>
+              <span>{i18n.t('messageEditor.attach')}</span>
+            </div>
+            <input
+              ref={r => (this.fileInput = r)}
+              id='file-input'
+              type='file'
+              name='name'
+              style={{ display: 'none' }}
+              multiple='true'
+            />
+          </button>
+          <button
+            className={`material-icons ${mainCss['mdc-icon-button']} ${styles['action-button']} ${styles.cancel}`}
             // onClick={() => close(application)}
-            onClick={() => this.removeMessageEditor(application)}
-          >
+            onClick={() => this.removeMessageEditor(application)}>
             delete
           </button>
         </div>
@@ -230,7 +248,7 @@ class MessageEditor extends Component {
           closeDialog={() =>
             this.setState({
               linkDialogVisible: false,
-              linkDialogInitialUrl: ""
+              linkDialogInitialUrl: ''
             })
           }
           onChange={e => this.setState({ linkDialogUrl: e.target.value })}
@@ -243,7 +261,7 @@ class MessageEditor extends Component {
 
   renderEditorButtons() {
     return (
-      <div className={`${mainCss["mdc-card"]} ${styles["button-container"]}`}>
+      <div className={`${mainCss['mdc-card']} ${styles['button-container']}`}>
         {Object.entries(EDITOR_BUTTONS).map(([k, b]) => (
           <MceButton
             key={k}
@@ -339,7 +357,7 @@ class MessageEditor extends Component {
         fileName: file.name,
         size: file.size,
         contentType: file.type,
-        content: dataUrl.currentTarget.result.replace(/^data:[^;]*;base64,/, "")
+        content: dataUrl.currentTarget.result.replace(/^data:[^;]*;base64,/, '')
       };
       const updatedMessage = { ...this.props.editedMessage };
       updatedMessage.attachments = updatedMessage.attachments
@@ -359,7 +377,7 @@ class MessageEditor extends Component {
     event.preventDefault();
     if (
       event.dataTransfer.types &&
-      Array.from(event.dataTransfer.types).includes("Files")
+      Array.from(event.dataTransfer.types).includes('Files')
     ) {
       this.setState({ dropZoneActive: true });
     }
@@ -381,7 +399,7 @@ class MessageEditor extends Component {
   }
 
   onAttachButton() {
-    this.fileInput && this.fileInput.click()
+    this.fileInput && this.fileInput.click();
   }
 
   onAttachSelected(event) {
@@ -393,7 +411,7 @@ class MessageEditor extends Component {
         fileName: file.name,
         size: file.size,
         contentType: file.type,
-        content: dataUrl.currentTarget.result.replace(/^data:[^;]*;base64,/, "")
+        content: dataUrl.currentTarget.result.replace(/^data:[^;]*;base64,/, '')
       };
       const updatedMessage = { ...this.props.editedMessage };
       updatedMessage.attachments = updatedMessage.attachments
@@ -459,7 +477,7 @@ class MessageEditor extends Component {
           new Blob([e.target.result], { type })
         );
         editor.execCommand(
-          "mceInsertContent",
+          'mceInsertContent',
           false,
           `<img alt="" src="${objectUrl}"/>`
         );
@@ -467,7 +485,7 @@ class MessageEditor extends Component {
 
       for (let i = 0; i < items.length; i++) {
         const item = items[i];
-        if (item.type.indexOf("image/") === 0) {
+        if (item.type.indexOf('image/') === 0) {
           pasteEvent.preventDefault();
           // Although item.getAsFile() is effectively a Blob, in some Linux Desktop environments, mime type of the
           // File/Blob is lost when creating the object URL. This workaround prevents mime type from being lost
@@ -484,7 +502,7 @@ class MessageEditor extends Component {
 
   editorInsertLink() {
     let href = this.state.linkDialogUrl;
-    if (href.indexOf("://") < 0 && href.indexOf("mailto:") < 0) {
+    if (href.indexOf('://') < 0 && href.indexOf('mailto:') < 0) {
       href = `http://${href}`;
     }
     const editor = this.getEditor();
@@ -492,18 +510,18 @@ class MessageEditor extends Component {
     if (
       !selection ||
       (selection.getContent().length === 0 &&
-        selection.getNode().tagName !== "A" &&
-        selection.getNode().parentNode.tagName !== "A")
+        selection.getNode().tagName !== 'A' &&
+        selection.getNode().parentNode.tagName !== 'A')
     ) {
       // Insert new Link
       editor.execCommand(
-        "mceInsertContent",
+        'mceInsertContent',
         false,
         `<a href="${href}">${href}</a>`
       );
     } else {
       // Edit existing link in current node or create link with current selection
-      editor.execCommand("mceInsertLink", false, href);
+      editor.execCommand('mceInsertLink', false, href);
     }
     this.setState({ linkDialogVisible: false });
   }
@@ -534,7 +552,7 @@ MessageEditor.propTypes = {
 };
 
 MessageEditor.defaultProps = {
-  className: ""
+  className: ''
 };
 
 const mapStateToProps = state => ({
@@ -557,7 +575,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(editMessage(null));
     // Clear content (editorBlur may be half way through -> force a message in the service worker to clear content after)
     // noinspection JSIgnoredPromiseFromCall
-    persistApplicationNewMessageContent(application, "");
+    persistApplicationNewMessageContent(application, '');
   },
   editMessage: message => {
     dispatch(editMessage(message));
@@ -577,7 +595,8 @@ const mapDispatchToProps = dispatch => ({
       content
     }),
   setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
-  setMailContacts: mailContacts => dispatch(ACTIONS.setMailContacts(mailContacts))
+  setMailContacts: mailContacts =>
+    dispatch(ACTIONS.setMailContacts(mailContacts))
 });
 
 export default connect(
