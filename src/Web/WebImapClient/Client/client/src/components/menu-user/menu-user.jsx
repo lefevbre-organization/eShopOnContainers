@@ -167,6 +167,7 @@ class MenuUser extends Component {
     };
 
     this.props.setSign(sign);
+    debugger
     await addOrUpdateAccount(lexon.userId, newAccount);
     this.onBack();
   }
