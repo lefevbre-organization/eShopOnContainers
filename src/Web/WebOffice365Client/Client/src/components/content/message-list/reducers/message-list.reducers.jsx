@@ -20,14 +20,17 @@ import {
   DELETE_LIST_MESSAGES,
   CLEAR_LIST_MESSAGES,
   SET_OPEN_MESSAGE,
-  ADD_LIST_MESSAGES
-} from "../actions/message-list.actions";
+  ADD_LIST_MESSAGES,
+  ADD_OPEN_MESSAGE_ATTACHMENT,
+  CLEAR_OPEN_MESSAGE_ATTACHMENT
+} from '../actions/message-list.actions';
 
 const defaultMessagesState = {
   messages: [],
   loading: true,
   pageTokens: [],
-  paginatioDirectionSelected: null
+  paginatioDirectionSelected: null,
+  openMessageAttachments: []
 };
 
 export const messagesResult = (state = defaultMessagesState, action) => {
@@ -36,12 +39,12 @@ export const messagesResult = (state = defaultMessagesState, action) => {
       const stateClone = { ...state };
       stateClone.nextPageToken = null;
       const pageTokens = [...stateClone.pageTokens];
-      const nextPageToken = action.payload["@odata.nextLink"];
+      const nextPageToken = action.payload['@odata.nextLink'];
 
       if (nextPageToken && pageTokens.indexOf(nextPageToken) === -1) {
         pageTokens.push(nextPageToken);
       }
-      console.log("pageTokens ->", pageTokens);
+      console.log('pageTokens ->', pageTokens);
       return {
         ...stateClone,
         ...action.payload,
@@ -93,23 +96,34 @@ export const messagesResult = (state = defaultMessagesState, action) => {
         )
       };
 
-      case SET_OPEN_MESSAGE:
-        if(state.openMessage === action.payload) {
-          return state;
-        }
-  
-        return {
-          ...state,
-          openMessage: action.payload
-        }
-        
+    case SET_OPEN_MESSAGE:
+      if (state.openMessage === action.payload) {
+        return state;
+      }
+
+      return {
+        ...state,
+        openMessage: action.payload
+      };
+
+    case ADD_OPEN_MESSAGE_ATTACHMENT:
+      const attachments = state.openMessageAttachments;
+      return {
+        ...state,
+        openMessageAttachments: [...attachments, action.payload]
+      };
+    case CLEAR_OPEN_MESSAGE_ATTACHMENT:
+      return {
+        ...state,
+        openMessageAttachments: []
+      };
     default:
       return state;
   }
 };
 
 export const pageTokens = (
-  state = { prevPageToken: "", nextPageToken: "" },
+  state = { prevPageToken: '', nextPageToken: '' },
   action
 ) => {
   switch (action.type) {
@@ -121,7 +135,7 @@ export const pageTokens = (
 };
 
 const defaultEmailMessageResult = {
-  body: "",
+  body: '',
   loading: false,
   failed: false
 };
@@ -133,7 +147,7 @@ export const emailMessageResult = (
   switch (action.type) {
     case GET_MESSAGES_LOAD_IN_PROGRESS:
     case MESSAGE_LOAD_IN_PROGRESS:
-      return { ...state, body: "", loading: true, failed: false };
+      return { ...state, body: '', loading: true, failed: false };
     case MESSAGE_LOAD_SUCCESS:
       return {
         ...state,
@@ -186,7 +200,7 @@ export const emailHeaderMessageResult = (
   }
 };
 
-export const searchQuery = (state = "", action) => {
+export const searchQuery = (state = '', action) => {
   switch (action.type) {
     case SET_SEARCH_QUERY:
       return action.payload;
@@ -234,14 +248,15 @@ export function messageList(state = defaultMessageList, action) {
       }
       return {
         ...state,
-        selectedMessages: [ ...state.selectedMessages ]
+        selectedMessages: [...state.selectedMessages]
       };
     }
 
     case ADD_LIST_MESSAGES: {
       for (let i = 0; i < action.listMessages.length; i++) {
         const index = state.selectedMessages.findIndex(
-          message => message.extMessageId === action.listMessages[i].extMessageId
+          message =>
+            message.extMessageId === action.listMessages[i].extMessageId
         );
         if (index === -1) {
           const data = {
@@ -255,7 +270,7 @@ export function messageList(state = defaultMessageList, action) {
       }
       return {
         ...state,
-        selectedMessages: [ ...state.selectedMessages ]
+        selectedMessages: [...state.selectedMessages]
       };
     }
 
@@ -265,7 +280,7 @@ export function messageList(state = defaultMessageList, action) {
         selectedMessages: []
       };
     }
-    
+
     default:
       return state;
   }

@@ -111,6 +111,10 @@ export class ComposeMessage extends PureComponent {
         (props.history.location.state &&
           props.history.location.state.composeProps.subject) ||
         '',
+      isForward:
+        (props.history.location.state &&
+          props.history.location.state.composeProps.isForward) ||
+        false,
       content:
         (props.history.location.state &&
           props.history.location.state.composeProps.content) ||
@@ -163,18 +167,33 @@ export class ComposeMessage extends PureComponent {
     this.uppy.on('file-added', file => {
       console.log('Added file', file);
 
-      // Define this onload every time to get file and base64 every time
-      this.reader = new FileReader();
+      if (file.source.startsWith('Attachment:') === false) {
+        // Define this onload every time to get file and base64 every time
+        this.reader = new FileReader();
 
-      if (file.data.size <= 3145728) {
-        this.reader.readAsDataURL(file.data);
+        if (file.data.size <= 3145728) {
+          this.reader.readAsDataURL(file.data);
+        } else {
+          this.reader.readAsArrayBuffer(file.data);
+        }
+
+        this.reader.onload = readerEvt =>
+          this.addFileToState({ file, base64: readerEvt.target.result });
+        this.showAttachActions = true;
       } else {
-        this.reader.readAsArrayBuffer(file.data);
+        const size = file.source.split(':')[1];
+        file.size = parseInt(size);
+        const base64 = `data:${file.type};base64,${file.data}`;
+        file.data = {
+          name: file.name,
+          size: file.size,
+          type: file.type
+        };
+        this.addFileToState({
+          file,
+          base64
+        });
       }
-
-      this.reader.onload = readerEvt =>
-        this.addFileToState({ file, base64: readerEvt.target.result });
-      this.showAttachActions = true;
     });
 
     this.onAttachButton = this.onAttachButton.bind(this);
@@ -185,6 +204,28 @@ export class ComposeMessage extends PureComponent {
     this.handleAddAddress = this.addAddress.bind(this);
     this.handleRemoveAddress = this.removeAddress.bind(this);
     this.handleMoveAddress = this.moveAddress.bind(this);
+
+    setTimeout(() => {
+      // If forwarding, add original attachments files
+      if (this.state.isForward) {
+        for (
+          let i = 0;
+          i < this.props.messagesResult.openMessageAttachments.length;
+          i++
+        ) {
+          const cm = this.props.messagesResult.openMessageAttachments[i];
+          this.uppy.addFile({
+            name: cm.filename,
+            type: cm.mimeType,
+            data: cm.attachment.data,
+            size: cm.attachment.size,
+            source: `Attachment:${cm.attachment.size}`,
+            isRemote: false
+          });
+        }
+        // call  to addFileToState
+      }
+    }, 500);
   }
 
   componentDidMount() {
@@ -826,7 +867,8 @@ export class ComposeMessage extends PureComponent {
 }
 
 const mapStateToProps = state => ({
-  lexon: state.lexon
+  lexon: state.lexon,
+  messagesResult: state.messagesResult
 });
 
 const mapDispatchToProps = dispatch => ({

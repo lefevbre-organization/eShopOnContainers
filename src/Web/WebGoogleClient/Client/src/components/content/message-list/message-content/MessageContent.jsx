@@ -8,7 +8,9 @@ import {
   modifyMessages,
   toggleSelected,
   clearListMessages,
-  setOpenMessage
+  setOpenMessage,
+  addOpenMessageAttachment,
+  clearOpenMessageAttachment
 } from '../actions/message-list.actions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
@@ -246,9 +248,11 @@ export class MessageContent extends Component {
         this.markEmailAsRead(emailMessageResult.result);
         if (this.state.attachment === true) {
           const { body } = this.iframeRef.current.contentWindow.document;
-          body.style.margin = '0px';
-          body.style.fontFamily = 'Arial, Helvetica, sans-serif';
-          body.style.fontSize = '13px';
+          if (body && body.style) {
+            body.style.margin = '0px';
+            body.style.fontFamily = 'Arial, Helvetica, sans-serif';
+            body.style.fontSize = '13px';
+          }
           // body.innerHTML = this.props.emailMessageResult.body;
 
           //Adding attach files
@@ -263,6 +267,7 @@ export class MessageContent extends Component {
             var Divider = addDivDivider();
             iframe.contentDocument.body.appendChild(Divider);
 
+            this.props.clearOpenMessageAttachment();
             for (var i = 0; i < attach.length; i++) {
               if (attach[i].filename && attach[i].filename.length > 0) {
                 const athc = attach[i];
@@ -270,6 +275,7 @@ export class MessageContent extends Component {
                   const msgid =
                     emailMessageResult.id || emailMessageResult.result.id;
                   this.attachments[attach[i].partId] = '1';
+
                   getAttachments(
                     msgid,
                     attach[i],
@@ -277,6 +283,15 @@ export class MessageContent extends Component {
                       let dataBase64Rep = attachment.data
                         .replace(/-/g, '+')
                         .replace(/_/g, '/');
+                      this.props.addOpenMessageAttachment({
+                        filename,
+                        mimeType,
+                        attachment: {
+                          size: attachment.result.size,
+                          data: dataBase64Rep
+                        }
+                      });
+
                       let urlBlob = b64toBlob(
                         dataBase64Rep,
                         mimeType,
@@ -478,7 +493,9 @@ const mapDispatchToProps = dispatch =>
       getEmailHeaderMessage,
       modifyMessages,
       clearListMessages,
-      setOpenMessage
+      setOpenMessage,
+      addOpenMessageAttachment,
+      clearOpenMessageAttachment
     },
     dispatch
   );

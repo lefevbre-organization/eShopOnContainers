@@ -158,7 +158,6 @@ class MenuUser extends Component {
         const { picUrl, fullName, onSignout, lexon } = this.props;
         const { showSign, sign } = this.state;
 
-        debugger;
         let acronym;
         if (!picUrl) {
             if (fullName) {

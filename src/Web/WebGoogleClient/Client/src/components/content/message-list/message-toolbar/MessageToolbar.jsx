@@ -85,16 +85,11 @@ export class MessageToolbar extends PureComponent {
       ...(cc && { cc: cc.value })
     };
 
-    const forwardHeader = `<p>${t(
-      'composemessage-toobar.on'
-    )} ${parsedDate.format('MMMM Do YYYY, h:mm:ss a')} < ${
-      nameEmail.email
-    } > ${t('composemessage-toobar.wrote')}:</p>`;
-
     const composePropsFwd = {
       ...composeProps,
       subject: `Fwd: ${subject.value}`,
-      to: ''
+      to: '',
+      isForward: true
     };
 
     const collapsed = this.props.sideBarCollapsed;

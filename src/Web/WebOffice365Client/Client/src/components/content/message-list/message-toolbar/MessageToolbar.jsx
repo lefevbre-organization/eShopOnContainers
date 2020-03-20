@@ -67,16 +67,11 @@ export class MessageToolbar extends PureComponent {
       ...(cc && { cc: cc.value })
     };
 
-    const forwardHeader = `<p>${t(
-      'composemessage-toobar.on'
-    )} ${parsedDate.format('MMMM Do YYYY, h:mm:ss a')} < ${
-      nameEmail.email
-    } > ${t('composemessage-toobar.wrote')}:</p>`;
-
     const composePropsFwd = {
       ...composeProps,
       subject: `Fwd: ${subject}`,
-      to: ''
+      to: '',
+      isForward: true
     };
 
     const collapsed = this.props.sideBarCollapsed;
@@ -87,12 +82,10 @@ export class MessageToolbar extends PureComponent {
           <span
             className={
               collapsed ? 'action-btn mr-2' : 'action-btn mr-2 with-side-bar'
-            }
-          >
+            }>
             <Button
               onClick={this.props.sideBarToggle}
-              className='btn-transparent'
-            >
+              className='btn-transparent'>
               <FontAwesomeIcon icon={faBars} size='1x' />
             </Button>
           </span>
@@ -104,8 +97,7 @@ export class MessageToolbar extends PureComponent {
                 sideBarCollapsed: this.props.sideBarCollapsed,
                 sideBarToggle: this.props.sideBarToggle,
                 state: { composeProps }
-              }}
-            >
+              }}>
               <FontAwesomeIcon
                 // title={t('message-toolbar.reply')}
                 icon={faReply}
@@ -121,8 +113,7 @@ export class MessageToolbar extends PureComponent {
                 sideBarCollapsed: this.props.sideBarCollapsed,
                 sideBarToggle: this.props.sideBarToggle,
                 state: { composeProps: composePropsFwd }
-              }}
-            >
+              }}>
               <FontAwesomeIcon
                 // title={t('message-toolbar.resend')}
                 icon={faShare}

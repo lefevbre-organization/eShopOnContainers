@@ -7,7 +7,9 @@ import {
   modifyMessages,
   toggleSelected,
   clearListMessages,
-  setOpenMessage
+  setOpenMessage,
+  addOpenMessageAttachment,
+  clearOpenMessageAttachment
 } from '../actions/message-list.actions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
@@ -227,6 +229,8 @@ export class MessageContent extends Component {
             var iframe = document.getElementById('message-iframe');
             var Divider = addDivDivider();
             iframe.contentDocument.body.appendChild(Divider);
+
+            this.props.clearOpenMessageAttachment();
             for (var i = 0; i < attach.length; i++) {
               if (attach[i].contentBytes) {
                 let dataBase64Rep = attach[i].contentBytes
@@ -239,6 +243,15 @@ export class MessageContent extends Component {
                 );
 
                 if (attach[i].isInline === false) {
+                  this.props.addOpenMessageAttachment({
+                    filename: attach[i].name,
+                    mimeType: attach[i].contentType,
+                    attachment: {
+                      size: attach[i].size,
+                      data: dataBase64Rep
+                    }
+                  });
+
                   var blobUrl = URL.createObjectURL(urlBlob);
                   var Attachment = addAttachmentElement(
                     blobUrl,
@@ -376,7 +389,9 @@ const mapDispatchToProps = dispatch =>
       getEmailMessage,
       modifyMessages,
       clearListMessages,
-      setOpenMessage
+      setOpenMessage,
+      addOpenMessageAttachment,
+      clearOpenMessageAttachment
     },
     dispatch
   );

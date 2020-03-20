@@ -28,6 +28,8 @@ export const DELETE_LIST_MESSAGES = 'DELETE_LIST_MESSAGES';
 export const ADD_LIST_MESSAGES = 'ADD_LIST_MESSAGES';
 export const CLEAR_LIST_MESSAGES = 'CLEAR_LIST_MESSAGES';
 export const SET_OPEN_MESSAGE = 'SET_OPEN_MESSAGE';
+export const ADD_OPEN_MESSAGE_ATTACHMENT = 'ADD_OPEN_MESSAGE_ATTACHMENT';
+export const CLEAR_OPEN_MESSAGE_ATTACHMENT = 'CLEAR_OPEN_MESSAGE_ATTACHMENT';
 
 export const getLabelMessages = ({ labelIds, q = '', pageToken }) => (
   dispatch,
@@ -255,5 +257,18 @@ export const setOpenMessage = message => dispatch => {
   dispatch({
     type: SET_OPEN_MESSAGE,
     payload: message
+  });
+};
+
+export const addOpenMessageAttachment = attchment => dispatch => {
+  dispatch({
+    type: ADD_OPEN_MESSAGE_ATTACHMENT,
+    payload: attchment
+  });
+};
+
+export const clearOpenMessageAttachment = () => dispatch => {
+  dispatch({
+    type: CLEAR_OPEN_MESSAGE_ATTACHMENT
   });
 };
