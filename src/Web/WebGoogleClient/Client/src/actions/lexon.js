@@ -4,7 +4,9 @@ export const ActionTypes = {
   LEXON_ACCOUNT: 'LEXON_ACCOUNT',
   LEXON_MAILCONTACTS: 'LEXON_MAILCONTACTS',
   LEXON_ACCOUNT_GUID: 'LEXON_ACCOUNT_GUID',
-  LEXON_ACCOUNT_SIGN: 'LEXON_ACCOUNT_SIGN'
+  LEXON_ACCOUNT_SIGN: 'LEXON_ACCOUNT_SIGN',
+  LEXON_IDMAIL: 'LEXON_IDMAIL',
+  LEXON_TOKEN: 'LEXON_TOKEN'
 };
 
 export const setUser = user => ({
@@ -37,11 +39,23 @@ export const setSign = sign => ({
   payload: sign
 });
 
+export const setIdMail = idMail => ({
+    type: ActionTypes.LEXON_IDMAIL,
+    payload: idMail
+})
+
+export const setToken = token => ({
+    type: ActionTypes.LEXON_TOKEN,
+    payload: token
+})
+
 export default {
   setUser,
   setCaseFile,
   setAccount,
   setMailContacts,
   setGUID,
-  setSign
+  setSign,
+  setIdMail,
+  setToken
 };

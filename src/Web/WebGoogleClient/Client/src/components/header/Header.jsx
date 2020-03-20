@@ -34,11 +34,11 @@ export class Header extends PureComponent {
   }
 
   _handleOnClick(e) {
-    const { userId } = this.props.lexon;
+    const { userId, token } = this.props.lexon;
     if (userId !== null) {
       resetDefaultAccount(userId)
         .then(() => {
-          const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+          const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
           window.open(urlRedirect, '_self');
         })
         .catch(error => {

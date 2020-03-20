@@ -527,13 +527,13 @@ export class Main extends Component {
 
   onSignout() {
     console.log('IN ... onSignout');
-    const { userId } = this.props.lexon;
+    const { userId, token } = this.props.lexon;
     resetDefaultAccount(userId)
       .then(result => {
         signOut();
       })
       .then(_ => {
-        const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+        const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
         window.open(urlRedirect, '_self');
       });
 
@@ -543,13 +543,13 @@ export class Main extends Component {
 
   onSignoutDisconnect() {
     console.log('IN ... onSignoutDisconnect');
-    const { userId } = this.props.lexon;
+    const { userId, token } = this.props.lexon;
     resetDefaultAccount(userId)
       .then(result => {
         signOutDisconnect();
       })
       .then(_ => {
-        const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+        const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
         window.open(urlRedirect, '_self');
       });
 
@@ -739,6 +739,8 @@ export class Main extends Component {
   render() {
     if (this.state.googleDown) {
       const { showNotification, messageNotification } = this.state;
+      const { token } = this.state.lexon;
+      const baseUrl = window.URL_MF_GOOGLE.replace("/user", "");
 
       return (
         <div className='d-flex h-100 align-items-center justify-content-center'>
@@ -746,10 +748,7 @@ export class Main extends Component {
             initialModalState={showNotification}
             toggleNotification={() => {
               messageNotification === 'El mensaje no está en el servidor'
-                ? window.open(
-                    `${window.URL_MF_GOOGLE}/GO0${this.props.lexon.userId}`,
-                    '_self'
-                  )
+                ? ((token) ? window.open(`${baseUrl}/access/${token}?prov=GO0`, "_self") : window.open(`${window.URL_MF_GOOGLE}/GO0${this.props.lexon.userId}`, '_self'))
                 : this.onSignoutDisconnect();
             }}
             message={messageNotification}
