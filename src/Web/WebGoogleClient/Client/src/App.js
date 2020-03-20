@@ -17,6 +17,11 @@ class App extends Component {
         <Switch>
           <Route
             exact
+            path="/access/:token"
+            component={UserLexon}
+          />
+          <Route
+            exact
             path='/user/:idUser/editMail/:idMail/casefile/:idCaseFile/bbdd/:bbdd'
             component={UserLexon}
           />

@@ -10,11 +10,11 @@ export class Login extends Component {
 
 goBack() {
    if (typeof this.props.lexon !== 'undefined') {
-      const { userId } = this.props.lexon;
+      const { userId, token } = this.props.lexon;
       if (userId !== null) {
           resetDefaultAccount(userId)
           .then(result => {
-              const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+              const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
               window.open(urlRedirect, "_self");
           })
           .catch(error => {

@@ -3,6 +3,7 @@ import "./account-user.css";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { signOut } from "../../../api/authentication";
+import * as base64 from 'base-64';
 
 class AccountUser extends Component {
   constructor(props) {
@@ -12,21 +13,27 @@ class AccountUser extends Component {
       
   }
 
-  _handleOnClick(provider) {
-    const { userId } = this.props.lexon;
+  _handleOnClick(provider, email) {
+    const { userId, token, account } = this.props.lexon;
+    let baseUrl;
+    let url;
 
     switch (provider) {
-      case "GOOGLE":
-      
+      case "GOOGLE":  
         signOut();
-        window.open(`${window.URL_MF_GOOGLE}/GO0${userId}`, "_self");
+        baseUrl = window.URL_MF_GOOGLE.replace("/user", "");
+        url = (token) ? `${baseUrl}/access/${token}/?prov=GO0` : `${window.URL_MF_GOOGLE}/GO0${userId}`
+        window.open(url, "_self");
         break;
       case "OUTLOOK":
-        window.open(`${window.URL_MF_OUTLOOK}/OU0${userId}`, "_self");
+        baseUrl = window.URL_MF_OUTLOOK.replace("/user", "");
+        url = (token) ? `${baseUrl}/access/${token}/?prov=OU0` : `${window.URL_MF_OUTLOOK}/OU0${userId}`
+        window.open(url, "_self");
         break;
-
       default:
-        window.open(`${window.URL_MF_IMAP}/IM0${userId}`, "_self");
+        baseUrl = window.URL_MF_IMAP.replace("/user", "")
+        url = (token) ? `${baseUrl}/access/${token}/?account=${base64.encode(email)}&prov=IM0` : `${window.URL_MF_IMAP}/IM0${userId}?account=${base64.encode(email)}`
+        window.open(url, "_self");
         break;
     }
   }
@@ -51,7 +58,7 @@ class AccountUser extends Component {
         <a
           href="#/"
           className="d-flex align-items-center account-text"
-          onClick={() => this._handleOnClick(account.provider)}
+          onClick={() => this._handleOnClick(account.provider, account.email)}
         >
           <span>
             <img src={this.getImage(account.provider)} alt={account.provider} />

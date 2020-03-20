@@ -25,6 +25,8 @@ import {
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import i18n from 'i18next';
+import jwt from "njwt";
+import { signOut } from "../../api/authentication";
 
 class MenuUser extends Component {
   constructor(props) {
@@ -110,11 +112,13 @@ class MenuUser extends Component {
   }
 
   _handleOnClick() {
-    const { userId } = this.props.lexon;
+    const { userId, token, account } = this.props.lexon;
+    console.log('Token: ' + token);
     if (userId !== null) {
       resetDefaultAccount(userId)
         .then(result => {
-          const urlRedirect = `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+          signOut();
+          const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
           window.open(urlRedirect, '_self');
         })
         .catch(error => {
