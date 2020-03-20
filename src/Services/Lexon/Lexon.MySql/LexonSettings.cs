@@ -19,6 +19,7 @@
         public string GetCompanies { get; set; }
         public string GetMasterEntities { get; set; }
         public string SearchEntities { get; set; }
+        public string SearchFoldersFiles { get; set; }
         public string SearchRelations { get; set; }
         public string AddRelation { get; set; }
         public string AddEntityFolder { get; set; }

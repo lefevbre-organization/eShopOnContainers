@@ -488,13 +488,20 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<MySqlCompany> GetEntitiesFoldersAsync(EntitySearchFoldersView entitySearch)
         {
-            return await GetEntitiesCommon(entitySearch, "/entities/folders/search");
+            var result = await GetEntitiesCommon(entitySearch, "/entities/folders/search");
+
+            if(entitySearch.idType == (short?)LexonAdjunctionType.files || entitySearch.idType == (short?)LexonAdjunctionType.folders)
+            {
+                result.Data = result.Data.FindAll(entity => entity.idType == entitySearch.idType);
+                result.Count = result.Data.Count();
+            };
+            return result;
         }
 
-        public async Task<MySqlCompany> GetEntitiesDocumentsAsync(EntitySearchDocumentsView entitySearch)
-        {
-            return await GetEntitiesCommon(entitySearch, "/entities/documents/search");
-        }
+        //public async Task<MySqlCompany> GetEntitiesDocumentsAsync(EntitySearchDocumentsView entitySearch)
+        //{
+        //    return await GetEntitiesCommon(entitySearch, "/entities/documents/search");
+        //}
 
         #endregion Entities
 

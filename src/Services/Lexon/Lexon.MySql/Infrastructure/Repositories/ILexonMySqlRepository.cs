@@ -12,6 +12,8 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         Task<MySqlCompany> GetEntitiesAsync(IEntitySearchView entitySearch);
 
+        Task<MySqlCompany> GetFoldersFilesEntitiesAsync(IEntitySearchView entitySearch);
+
         Task<Result<LexEntity>> GetEntityAsync(EntitySearchById entitySearch);
 
         Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch);

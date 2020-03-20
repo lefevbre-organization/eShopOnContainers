@@ -144,24 +144,24 @@ namespace Lexon.MySql.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetEntitiesFoldersAsync([FromBody] EntitySearchFoldersView entitySearch)
         {
-            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null)
-                return BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
+            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd))
+                return BadRequest("values invalid. Must be a valid user and bbdd to search the folders and files");
 
-            var result = await _lexonService.GetEntitiesAsync(entitySearch);
+            var result = await _lexonService.GetFoldersFilesEntitiesAsync(entitySearch);
             return Ok(result);
         }
 
-        [HttpPost("entities/documents/search")]
-        [ProducesResponseType(typeof(MySqlCompany), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetEntitiesDocumentsAsync([FromBody] EntitySearchDocumentsView entitySearch)
-        {
-            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null)
-                return BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
+        //[HttpPost("entities/documents/search")]
+        //[ProducesResponseType(typeof(MySqlCompany), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        //public async Task<IActionResult> GetEntitiesDocumentsAsync([FromBody] EntitySearchDocumentsView entitySearch)
+        //{
+        //    if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null)
+        //        return BadRequest("values invalid. Must be a valid user, idType and bbdd to search the entities");
 
-            var result = await _lexonService.GetEntitiesAsync(entitySearch);
-            return Ok(result);
-        }
+        //    var result = await _lexonService.GetEntitiesAsync(entitySearch);
+        //    return Ok(result);
+        //}
 
         [HttpPost("entities/getbyid")]
         [ProducesResponseType(typeof(Result<LexEntity>), (int)HttpStatusCode.OK)]

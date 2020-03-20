@@ -136,6 +136,53 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return resultMySql;
         }
 
+        public async Task<MySqlCompany> GetFoldersFilesEntitiesAsync(IEntitySearchView entitySearch)
+        {
+            var resultMySql = new MySqlCompany(_settings.Value.SP.SearchFoldersFiles, entitySearch.pageIndex, entitySearch.pageSize, ((EntitySearchView)entitySearch).bbdd, ((EntitySearchView)entitySearch).idType);
+
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    var filtro = GiveMeSearchEntitiesFilter(entitySearch);
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.SearchFoldersFiles, conn))
+                    {
+                        AddCommonParameters(((EntitySearchView)entitySearch).idUser, command, "P_FILTER", filtro);
+                        AddListSearchParameters(entitySearch.pageSize, entitySearch.pageIndex, null, null, command);
+                        var r = command.ExecuteNonQuery();
+                        resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                var rawResult = reader.GetValue(0).ToString();
+                                if (!string.IsNullOrEmpty(rawResult))
+                                {
+                                    var resultado = (JsonConvert.DeserializeObject<LexCompany>(rawResult));
+                                    resultMySql.AddData(resultado);
+                                }
+                                else
+                                {
+                                    if (resultMySql.Infos.Count > 1)
+                                        TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
+                                    else
+                                        resultMySql.Infos.Add(new Info() { code = "515", message = "MySql get and empty string with this search" });
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TraceMessage(resultMySql.Errors, ex);
+                }
+            }
+
+            return resultMySql;
+        }
+
         public async Task<Result<LexEntity>> GetEntityAsync(EntitySearchById entitySearch)
         {
             var resultMySql = new MySqlCompany(_settings.Value.SP.GetEntity, 1, 1, entitySearch.bbdd, entitySearch.idType);
@@ -579,7 +626,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         private string GetFolderDocumentFilter(IEntitySearchView search)
         {
-            if (search is EntitySearchFoldersView)
+            if (search is EntitySearchFoldersView || search == null)
                 return $"{GetLongFilter("IdParent", (search as EntitySearchFoldersView)?.idParent)}{GetLongFilter("IdFolder", (search as EntitySearchFoldersView)?.idFolder)}";
             else if (search is EntitySearchDocumentsView)
                 return $"{GetLongFilter("IdFolder", (search as EntitySearchDocumentsView)?.idFolder)}";
