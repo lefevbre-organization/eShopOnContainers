@@ -3,9 +3,7 @@ variables:
 trigger:
   branches:
     include:
-    - master
-    - dev
-    - latest
+    - lef-main-containers    
   paths:
     include:
     - src/BuildingBlocks/*
