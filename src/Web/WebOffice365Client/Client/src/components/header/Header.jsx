@@ -121,7 +121,7 @@ export class Header extends PureComponent {
                     {/*<div className="header-logo justify-content-center">
                         <Link to="/inbox"><img className="logo-ext" border="0" alt="otulook" src="assets/img/gmail.png"></img></Link>                       
                     </div>*/}
-                    testing CI 1
+                    testing CI 5
                     <MenuUser
                         email={email}
                         fullName={fullName}
