@@ -3,7 +3,9 @@ variables:
 trigger:
   branches:
     include:
-    - lef-main-containers
+    - master
+    - dev
+    - latest
   paths:
     include:
     - src/BuildingBlocks/*
@@ -16,3 +18,8 @@ jobs:
     registryEndpoint: $(registryEndpoint)          
     helmfrom: $(Build.SourcesDirectory)/k8s-LEF/helm
     helmto: $(Build.ArtifactStagingDirectory)/k8s-LEF/helm      
+- template: ../multiarch.yaml
+  parameters:
+    image: webgoogleclient
+    branch: $(Build.SourceBranchName)
+    registryEndpoint: $(registryEndpoint)
