@@ -8,6 +8,7 @@ trigger:
     include:
     - src/BuildingBlocks/*
     - src/Web/WebGoogleClient/*
+    - src/Web/WebGoogleClient/client/*
     - k8s-LEF/helm/webgoogle/*            
 jobs:
 - template: ../buildimages.yaml
