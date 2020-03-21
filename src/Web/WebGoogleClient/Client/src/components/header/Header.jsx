@@ -128,7 +128,7 @@ export class Header extends PureComponent {
             onSignout={this.props.onSignout}
             onSignoutDisconnect={this.props.onSignoutDisconnect}
           />
-            Testing 1
+            Testing 2
           <div>
             <Nav className='ml-auto' navbar>
               <NavItem className='d-md-down-none'>
