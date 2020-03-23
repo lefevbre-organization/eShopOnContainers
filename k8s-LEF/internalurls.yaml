@@ -6,12 +6,6 @@ metadata:
     app: eshop  
 data:
 # Internal Services & healthchecks
-  lexon: http://lexon.api
-  lexon__hc: http://lexon.api/hc
-  lexonmysql: http://lexon.mysql.api
-  lexonmysql__hc: http://lexon.mysql.api/hc
-  account: http://account.api
-  account__hc: http://account.api/hc
   basket: http://basket
   basket__hc: http://basket/hc
   catalog: http://catalog

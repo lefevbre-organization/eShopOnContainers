@@ -30,12 +30,6 @@ env:
   urls:
   # configmap declares variables which value is taken from the config map defined in template configmap.yaml (name is name of var and key the key in configmap).
   configmap:
-    - name: LexonApiUrlHC
-      key: internalurls__lexon__hc
-    - name: LexonMySqlApiUrlHC
-      key: internalurls__lexonmysql__hc
-    - name: AccountApiUrlHC
-      key: internalurls__account__hc
     - name: IdentityUrl
       key: internalurls__identity
     - name: CatalogUrlHC
