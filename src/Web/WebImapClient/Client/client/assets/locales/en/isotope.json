@@ -9,6 +9,7 @@
     "ImapSSL": "IMAP SSL",
     "SMTP": "SMTP",
     "SmtpSSL": "SMTP SSL",
+    "SmtpTLS": "SMTP TLS",
     "actions": {
       "Login": "Login",
       "Cancel": "Cancel"

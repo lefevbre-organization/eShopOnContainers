@@ -146,6 +146,12 @@ $port-field-width: 180px;
                 color: #001978;
                 letter-spacing: 0.7px;
             }
+
+            .SslOptions {
+                margin-top: $default-spacing;
+                /*margin-right: auto !important;*/
+                margin-right: 20px;
+            }
         }
     }
 }

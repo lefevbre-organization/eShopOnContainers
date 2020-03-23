@@ -164,8 +164,12 @@ export class Login extends Component {
                                             value={smtpPort} onChange={this.onFieldChange}
                                             focused={this.isFocused('smtpPort')} label={t('login.Port')} />
                                     </div>
-                                    <Switch id='smtpSsl' checked={smtpSsl} label={t('login.SmtpSSL')}
-                                        onToggle={() => this.onToggle('smtpSsl')} />
+                                    <span className={`${styles.SslOptions}`}>
+                                        <Switch id='smtpSsl' checked={smtpSsl} label={t('login.SmtpSSL')} onToggle={() => this.onToggle('smtpSsl')} />
+                                    </span>
+                                    <span className={`${styles.SslOptions}`}>       
+                                        <Switch id='smtpTls' checked={!smtpSsl} label={t('login.SmtpTLS')} onToggle={() => this.onToggle('smtpSsl')} />
+                                    </span>   
                                 </div>
                             }
                             <Button type={'submit'}
