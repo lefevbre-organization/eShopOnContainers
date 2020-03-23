@@ -4,7 +4,7 @@
     {
         public EntitySearchFoldersView()
         {
-            this.idType = (short?)LexonAdjunctionType.folders;
+            //this.idType = (short?)LexonAdjunctionType.folders;
         }
         public EntitySearchFoldersView(string bbdd, string idUser):this()
         {

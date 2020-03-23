@@ -40,7 +40,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexMailActuation">
-    <Position X="2.5" Y="5.25" Width="1.5" />
+    <Position X="1.5" Y="5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAEAAQAABAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA=</HashCode>
       <FileName>Models\LexMailActuation.cs</FileName>
@@ -79,6 +79,13 @@
     <TypeIdentifier>
       <HashCode>AAAAAAAIAAAAAAAIIAAAAAAAAAAEAAAAAAAQAQAAQQA=</HashCode>
       <FileName>Models\LexActuation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexContact">
+    <Position X="3.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAECAAAAgiAIQAAAIFAAAAYAAAIAAEACAAAAIgAAAAA=</HashCode>
+      <FileName>Models\LexContact.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

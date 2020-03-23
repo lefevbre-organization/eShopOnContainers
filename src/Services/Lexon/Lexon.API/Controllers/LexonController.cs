@@ -221,6 +221,27 @@ namespace Lexon.API.Controllers
             return BadRequest(result);
         }
 
+        [HttpPost("entities/files/get")]
+        [ProducesResponseType(typeof(Result<String>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> FileGet(
+            [FromBody] EntitySearchById fileMail
+            )
+        {
+            var resultFile = new Result<string>(null);
+            var result = await _usersService.FileGetAsync(fileMail);
+
+            if (result.errors.Count == 0)
+            {
+                resultFile.errors = result.errors;
+                resultFile.infos = result.infos;
+                return StatusCode(201, resultFile);
+
+            }
+
+            return BadRequest(result);
+        }
+
         //[HttpGet("entities/files/{filename}", Name = "myFile")]
         //[ProducesResponseType(typeof(FileContentResult), (int)HttpStatusCode.OK)]
         //[ProducesResponseType(typeof(NotFoundResult), (int)HttpStatusCode.NotFound)]
@@ -259,10 +280,10 @@ namespace Lexon.API.Controllers
         [FromBody] EntitySearchFoldersView entitySearch
         )
         {
-            if (entitySearch.idType != (short?)LexonAdjunctionType.folders)
-                entitySearch.idType = (short)LexonAdjunctionType.folders;
+            //if (entitySearch.idType != (short?)LexonAdjunctionType.folders)
+            //    entitySearch.idType = (short)LexonAdjunctionType.folders;
 
-            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0)
+            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd))
                 return BadRequest("values invalid. Must be a valid user, bbdd ands idType to serach folders");
 
             var entities = await _usersService.GetEntitiesFoldersAsync(entitySearch);
@@ -270,24 +291,24 @@ namespace Lexon.API.Controllers
             return ResponseEntities(entities);
         }
 
-        [HttpPost("entities/documents")]
-        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetEntitiesDocumentsAsync(
-            [FromBody] EntitySearchDocumentsView entitySearch
-)
-        {
-            if (entitySearch.idType != (short?)LexonAdjunctionType.documents)
-                entitySearch.idType = (short)LexonAdjunctionType.documents;
+        //[HttpPost("entities/documents")]
+        //[ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.BadRequest)]
+        //public async Task<IActionResult> GetEntitiesDocumentsAsync(
+        //    [FromBody] EntitySearchDocumentsView entitySearch
+        //)
+        //{
+        //    if (entitySearch.idType != (short?)LexonAdjunctionType.documents)
+        //        entitySearch.idType = (short)LexonAdjunctionType.documents;
 
-            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0
-                || entitySearch.idFolder == null)
-                return BadRequest("values invalid. Must be a valid user, idCompany, type and idFolder to search documents");
+        //    if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0
+        //        || entitySearch.idFolder == null)
+        //        return BadRequest("values invalid. Must be a valid user, idCompany, type and idFolder to search documents");
 
-            var entities = await _usersService.GetEntitiesDocumentsAsync(entitySearch);
+        //    var entities = await _usersService.GetEntitiesDocumentsAsync(entitySearch);
 
-            return ResponseEntities(entities);
-        }
+        //    return ResponseEntities(entities);
+        //}
 
         private IActionResult ResponseEntities(MySqlCompany entities)
         {

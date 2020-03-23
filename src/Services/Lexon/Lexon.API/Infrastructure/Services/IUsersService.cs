@@ -17,7 +17,7 @@ namespace Lexon.Infrastructure.Services
         Task<Result<LexEntity>> GetEntityById(EntitySearchById entitySearch);
 
         Task<MySqlCompany> GetEntitiesFoldersAsync(EntitySearchFoldersView entitySearch);
-        Task<MySqlCompany> GetEntitiesDocumentsAsync(EntitySearchDocumentsView entitySearch);
+        //Task<MySqlCompany> GetEntitiesDocumentsAsync(EntitySearchDocumentsView entitySearch);
 
         Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync();
 
@@ -32,5 +32,6 @@ namespace Lexon.Infrastructure.Services
         Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder);
         Task<Result<LexNestedEntity>> GetNestedFolderAsync(FolderNestedView entityFolder);
         Task<Result<bool>> FilePostAsync(MailFileView fileMail);
+        Task<Result<string>> FileGetAsync(EntitySearchById fileMail);
     }
 }

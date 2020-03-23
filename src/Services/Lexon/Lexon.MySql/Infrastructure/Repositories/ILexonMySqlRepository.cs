@@ -12,7 +12,11 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         Task<MySqlCompany> GetEntitiesAsync(IEntitySearchView entitySearch);
 
+        Task<MySqlCompany> GetFoldersFilesEntitiesAsync(IEntitySearchView entitySearch);
+
         Task<Result<LexEntity>> GetEntityAsync(EntitySearchById entitySearch);
+
+        Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch);
 
         Task<Result<int>> RemoveRelationMailAsync(ClassificationRemoveView classification);
 
@@ -25,6 +29,5 @@ namespace Lexon.MySql.Infrastructure.Repositories
         Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification);
 
         Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder);
-        //Task<Result<LexNestedEntity>> GetNestedFolderAsync(FolderNestedView entityFolder);
     }
 }

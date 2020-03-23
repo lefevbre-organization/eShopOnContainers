@@ -52,7 +52,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
             using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetCompanies, conn))
             {
                 AddCommonParameters("0", command, "P_FILTER", filtro);
-                AddListSearchParameters(0, 1, command);
+                AddListSearchParameters(0, 1, null, null, command);
                 using (var reader = await command.ExecuteReaderAsync())
                 {
                     TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
@@ -102,7 +102,54 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.SearchEntities, conn))
                     {
                         AddCommonParameters(((EntitySearchView)entitySearch).idUser, command, "P_FILTER", filtro);
-                        AddListSearchParameters(entitySearch.pageSize, entitySearch.pageIndex, command);
+                        AddListSearchParameters(entitySearch.pageSize, entitySearch.pageIndex, null, null, command);
+                        var r = command.ExecuteNonQuery();
+                        resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                var rawResult = reader.GetValue(0).ToString();
+                                if (!string.IsNullOrEmpty(rawResult))
+                                {
+                                    var resultado = (JsonConvert.DeserializeObject<LexCompany>(rawResult));
+                                    resultMySql.AddData(resultado);
+                                }
+                                else
+                                {
+                                    if (resultMySql.Infos.Count > 1)
+                                        TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
+                                    else
+                                        resultMySql.Infos.Add(new Info() { code = "515", message = "MySql get and empty string with this search" });
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TraceMessage(resultMySql.Errors, ex);
+                }
+            }
+
+            return resultMySql;
+        }
+
+        public async Task<MySqlCompany> GetFoldersFilesEntitiesAsync(IEntitySearchView entitySearch)
+        {
+            var resultMySql = new MySqlCompany(_settings.Value.SP.SearchFoldersFiles, entitySearch.pageIndex, entitySearch.pageSize, ((EntitySearchView)entitySearch).bbdd, ((EntitySearchView)entitySearch).idType);
+
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    var filtro = GiveMeSearchEntitiesFilter(entitySearch);
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.SearchFoldersFiles, conn))
+                    {
+                        AddCommonParameters(((EntitySearchView)entitySearch).idUser, command, "P_FILTER", filtro);
+                        AddListSearchParameters(entitySearch.pageSize, entitySearch.pageIndex, null, null, command);
                         var r = command.ExecuteNonQuery();
                         resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
 
@@ -183,6 +230,53 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return result;
         }
 
+        public async Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch)
+        {
+              var result = new Result<LexContact>(new LexContact());
+
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    var filtro = GiveMeEntityFilter(entitySearch);
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetContact, conn))
+                    {
+                        AddCommonParameters(entitySearch.idUser, command, "P_FILTER", filtro);
+                        AddListSearchParameters(1, 1, "ts", "desc", command);
+
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                            if (EvaluateErrorCommand(result.errors, command) == 0)
+                                while (reader.Read())
+                                {
+                                    var rawResult = reader.GetValue(0).ToString();
+                                    if (!string.IsNullOrEmpty(rawResult))
+                                    {
+                                        var lista = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
+                                        result.data = lista?.FirstOrDefault();
+                                    }
+                                    else
+                                    {
+                                        TraceOutputMessage(result.errors, "2004", "MySql get and empty string with this search");
+                                       
+                                    }
+                                }
+                        }
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    TraceMessage(result.errors, ex);
+                }
+            }
+
+            return result;
+        }
+
         public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync()
         {
             var resultMySql = new MySqlList<JosEntityTypeList, JosEntityType>(new JosEntityTypeList(), _settings.Value.SP.GetMasterEntities, 1, 0);
@@ -196,7 +290,9 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetMasterEntities, conn))
                     {
                         AddCommonParameters("0", command, "P_FILTER", filtro);
-                        AddListSearchParameters(resultMySql.PageSize, resultMySql.PageIndex, command);
+
+
+                        AddListSearchParameters(resultMySql.PageSize, resultMySql.PageIndex, "ts", "DESC", command);
                         var r = command.ExecuteNonQuery();
                         resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
                         using (var reader = await command.ExecuteReaderAsync())
@@ -267,7 +363,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.SearchRelations, conn))
                     {
                         AddCommonParameters(classification.idUser, command, "P_FILTER", filtro);
-                        AddListSearchParameters(classification.pageSize, classification.pageIndex, command);
+                        AddListSearchParameters(classification.pageSize, classification.pageIndex, null, null, command);
                         var r = command.ExecuteNonQuery();
                         resultMySql.AddOutPutParameters(command.Parameters["P_IDERROR"].Value, command.Parameters["P_ERROR"].Value, command.Parameters["P_TOTAL_REG"].Value);
 
@@ -410,13 +506,17 @@ namespace Lexon.MySql.Infrastructure.Repositories
             TraceLog(parameters: new string[] { $"conn:{_conn}", $"SP:{command.CommandText} {nameFilter}='{filterValue}', P_UC={idUser}" });
         }
 
-        private void AddListSearchParameters(int pageSize, int pageIndex, MySqlCommand command)
+        private void AddListSearchParameters(int pageSize, int pageIndex, string fieldOrder, string order,  MySqlCommand command)
         {
-            TraceLog(parameters: new string[] { $"pageSize:{pageSize} - pageIndex:{pageIndex}" });
+            TraceLog(parameters: new string[] { $"P_PAGE_SIZE:{pageSize} - P_PAGE_NUMBER:{pageIndex} - P_ORDER:{fieldOrder} - P_TYPE_ORDER:{order}" });
 
             command.Parameters.Add(new MySqlParameter("P_PAGE_SIZE", MySqlDbType.Int32) { Value = pageSize });
             command.Parameters.Add(new MySqlParameter("P_PAGE_NUMBER", MySqlDbType.Int32) { Value = pageIndex });
             command.Parameters.Add(new MySqlParameter("P_TOTAL_REG", MySqlDbType.Int32) { Direction = ParameterDirection.Output });
+            if(!string.IsNullOrEmpty(fieldOrder))
+                command.Parameters.Add(new MySqlParameter("P_ORDER", MySqlDbType.String) { Value = fieldOrder });
+            if (!string.IsNullOrEmpty(order))
+                command.Parameters.Add(new MySqlParameter("P_TYPE_ORDER", MySqlDbType.String) { Value = order });
         }
 
         private int EvaluateErrorCommand(List<ErrorInfo> errors, MySqlCommand command)
@@ -526,7 +626,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         private string GetFolderDocumentFilter(IEntitySearchView search)
         {
-            if (search is EntitySearchFoldersView)
+            if (search is EntitySearchFoldersView || search == null)
                 return $"{GetLongFilter("IdParent", (search as EntitySearchFoldersView)?.idParent)}{GetLongFilter("IdFolder", (search as EntitySearchFoldersView)?.idFolder)}";
             else if (search is EntitySearchDocumentsView)
                 return $"{GetLongFilter("IdFolder", (search as EntitySearchDocumentsView)?.idFolder)}";
@@ -553,6 +653,8 @@ namespace Lexon.MySql.Infrastructure.Repositories
             var comma = withComma ? ", " : "";
             return !string.IsNullOrEmpty(value) ? $"{comma}\"{name}\":\"{value}\"" : string.Empty;
         }
+
+
 
         #endregion Common
     }

@@ -44,8 +44,11 @@ namespace Lexon.MySql.Infrastructure.Services
         #region Entities
 
         public async Task<MySqlCompany> GetEntitiesAsync(IEntitySearchView entitySearch) => await _lexonRepository.GetEntitiesAsync(entitySearch);
+        public async Task<MySqlCompany> GetFoldersFilesEntitiesAsync(IEntitySearchView entitySearch) => await _lexonRepository.GetFoldersFilesEntitiesAsync(entitySearch);
 
         public async Task<Result<LexEntity>> GetEntityAsync(EntitySearchById entitySearch) => await _lexonRepository.GetEntityAsync(entitySearch);
+
+        public async Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch) => await _lexonRepository.GetContactAsync(entitySearch);
 
         public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync() => await _lexonRepository.GetMasterEntitiesAsync();
 
@@ -78,10 +81,12 @@ namespace Lexon.MySql.Infrastructure.Services
         {
             idUser = ValidarUsuario(login, password, idUser);
             var resultado = await _lexonRepository.GetUserAsync(idUser);
+
             if (string.IsNullOrEmpty(resultado?.data?.idUser))
             {
                 resultado.errors.Add(new ErrorInfo() { code = "5000", message = "No se recupera un idUser desde Lexon" });
             }
+            await GetContactData(resultado?.data?.idUser, bbdd, idEntityType, idEntity, mailContacts);
 
             resultado.data.token = BuildTokenWithPayloadAsync(new TokenModel
             {
@@ -101,6 +106,28 @@ namespace Lexon.MySql.Infrastructure.Services
 
             resultado.data.token += addTerminatorToToken ? "/" : "";
             return resultado;
+        }
+
+        private async Task GetContactData(string idUser, string bbdd, short? idEntityType, int? idEntity, List<string> mailContacts)
+        {
+            if (idEntityType == (short?)LexonAdjunctionType.files
+                && idEntityType == (short?)LexonAdjunctionType.folders
+                && idEntityType == (short?)LexonAdjunctionType.others
+                && idEntityType == (short?)LexonAdjunctionType.documents)
+                return;
+
+            EntitySearchById search = new EntitySearchById
+            {
+                bbdd = bbdd,
+                idEntity = idEntity,
+                idType = idEntityType,
+                idUser = idUser
+            };
+            Result<LexContact> contacto = await _lexonRepository.GetContactAsync(search);
+            if (!string.IsNullOrEmpty(contacto?.data.Email))
+            {
+                mailContacts.Add(contacto?.data.Email);
+            }
         }
 
         private string ValidarUsuario(string login, string password, string idUser)
@@ -256,5 +283,7 @@ namespace Lexon.MySql.Infrastructure.Services
             };
             //limit -= 1;
         }
+
+
     }
 }

@@ -6,23 +6,12 @@ metadata:
     app: eshop  
 data:
 # Internal Services & healthchecks
-  basket: http://basket
-  basket__hc: http://basket/hc
-  catalog: http://catalog
-  catalog__hc: http://catalog/hc
-  identity: http://identity
-  identity__hc: http://identity/hc
-  ordering: http://ordering
-  ordering__hc: http://ordering/hc
-  ordering-background: http://ordering-background
-  ordering-background__hc: http://ordering-background/hc
-  marketing: http://marketing
-  marketing__hc: http://marketing/hc
-  locations: http://locations
-  locations__hc: http://locations/hc
-  payment__hc: http://payment/hc
-  mvc__hc: http://webmvc/hc
-  spa__hc: http://webspa/hc
+  lexon: http://lexon.api
+  lexon__hc: http://lexon.api/hc
+  lexonmysql: http://lexon.mysql.api
+  lexonmysql__hc: http://lexon.mysql.api/hc
+  account: http://account.api
+  account__hc: http://account.api/hc
 # Aggreggators
   mobileshoppingagg: http://mobileshoppingagg
   webshoppingagg: http://webshoppingagg

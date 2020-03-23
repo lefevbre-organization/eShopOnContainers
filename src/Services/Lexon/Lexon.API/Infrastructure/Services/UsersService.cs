@@ -7,7 +7,6 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -298,16 +297,59 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
+        public async Task<Result<string>> FileGetAsync(EntitySearchById fileMail)
+        {
+            var result = new Result<string>(null);
+            try
+            {
+                var lexonFile = new LexonGetFile
+                {
+                    idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd),
+                    idUser = fileMail.idUser,
+                    idDocument = fileMail.idEntity ?? 0
+                };
+
+                var json = JsonConvert.SerializeObject(lexonFile);
+                byte[] buffer = Encoding.UTF8.GetBytes(json);
+                var dataparameters = Convert.ToBase64String(buffer);
+
+                using (var response = await _clientFiles.GetAsync($"{_settings.Value.LexonFilesUrl}?option=com_lexon&task=hook.receive&type=repository&data={dataparameters}"))
+                {
+                    //await using var fs = File.Create(fileInfo.FullName);
+                    //ms.Seek(0, SeekOrigin.Begin);
+                    //ms.CopyTo(fs);
+                    var responseStream = await response.Content.ReadAsStreamAsync();
+                    var responseText = await response.Content.ReadAsStringAsync();
+                    if (response.IsSuccessStatusCode)
+                    {
+                        result.data = responseText;
+                        TraceInfo(result.infos, $"Se recupera el fichero {lexonFile.idDocument}");
+                    }
+                    else
+                    {
+                        TraceOutputMessage(result.errors, $"Response not ok : {responseText} with lexon-dev with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", 2003);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //TraceMessage(result.errors, ex);
+                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.idEntity}, -> {ex.Message}", "590");
+            }
+
+            return result;
+        }
+
         public async Task<Result<bool>> FilePostAsync(MailFileView fileMail)
         {
             var result = new Result<bool>(false);
             try
             {
-                LexonFile lexonFile = new LexonFile
+                LexonPostFile lexonFile = new LexonPostFile
                 {
                     fileName = fileMail.Name,
                     idAction = fileMail.IdActuation ?? 0,
-                    idCompany = await GetIdCompany(fileMail.idUser,fileMail.bbdd),
+                    idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd),
                     idUser = fileMail.idUser,
                     idFolder = fileMail.IdParent ?? 0,
                     idEntity = fileMail.idEntity ?? 0,
@@ -322,20 +364,22 @@ namespace Lexon.Infrastructure.Services
 
                 using (var response = await _clientFiles.PutAsync(url, data))
                 {
+                    var responseText = await response.Content.ReadAsStringAsync();
                     if (response.IsSuccessStatusCode)
                     {
                         result.data = true;
-                        TraceInfo(result.infos, $"Se guarda el fichero {fileMail.Name}");
+                        TraceInfo(result.infos, $"Se guarda el fichero {fileMail.Name} - {responseText}");
                     }
                     else
-                        TraceOutputMessage(result.errors, $"Response not ok with lexon-dev with code-> {response.StatusCode} - {response.ReasonPhrase}", 2003);
+                    {
+                        TraceOutputMessage(result.errors, $"Response not ok : {responseText} with lexon-dev with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", 2003);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 //TraceMessage(result.errors, ex);
                 TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message}", "590");
-
             }
 
             return result;
@@ -444,13 +488,20 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<MySqlCompany> GetEntitiesFoldersAsync(EntitySearchFoldersView entitySearch)
         {
-            return await GetEntitiesCommon(entitySearch, "/entities/folders/search");
+            var result = await GetEntitiesCommon(entitySearch, "/entities/folders/search");
+
+            if(entitySearch.idType == (short?)LexonAdjunctionType.files || entitySearch.idType == (short?)LexonAdjunctionType.folders)
+            {
+                result.Data = result.Data.FindAll(entity => entity.idType == entitySearch.idType);
+                result.Count = result.Data.Count();
+            };
+            return result;
         }
 
-        public async Task<MySqlCompany> GetEntitiesDocumentsAsync(EntitySearchDocumentsView entitySearch)
-        {
-            return await GetEntitiesCommon(entitySearch, "/entities/documents/search");
-        }
+        //public async Task<MySqlCompany> GetEntitiesDocumentsAsync(EntitySearchDocumentsView entitySearch)
+        //{
+        //    return await GetEntitiesCommon(entitySearch, "/entities/documents/search");
+        //}
 
         #endregion Entities
 
@@ -570,7 +621,6 @@ namespace Lexon.Infrastructure.Services
 
             byteArrayContent = new ByteArrayContent(newBytes);
             byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("application/bson");
-
         }
     }
 }
