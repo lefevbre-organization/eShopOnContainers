@@ -103,8 +103,8 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             {
                 foreach (var ent in Data)
                 {
-                    ent.idType = IdType;
-                    ent.entityType = IdType != null ? Enum.GetName(typeof(LexonAdjunctionType), IdType) : null;
+                   // ent.idType = IdType;
+                    ent.entityType = ent.idType != null ? Enum.GetName(typeof(LexonAdjunctionType), ent.idType) : null;
                 }
             }
             catch (Exception ex)
