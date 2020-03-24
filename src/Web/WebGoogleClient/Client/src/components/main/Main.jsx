@@ -533,7 +533,7 @@ export class Main extends Component {
         signOut();
       })
       .then(_ => {
-        const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+        const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}/` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
         window.open(urlRedirect, '_self');
       });
 
@@ -549,7 +549,7 @@ export class Main extends Component {
         signOutDisconnect();
       })
       .then(_ => {
-        const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+        const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}/` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
         window.open(urlRedirect, '_self');
       });
 
@@ -748,7 +748,7 @@ export class Main extends Component {
             initialModalState={showNotification}
             toggleNotification={() => {
               messageNotification === 'El mensaje no está en el servidor'
-                ? ((token) ? window.open(`${baseUrl}/access/${token}?prov=GO0`, "_self") : window.open(`${window.URL_MF_GOOGLE}/GO0${this.props.lexon.userId}`, '_self'))
+                ? ((token) ? window.open(`${baseUrl}/access/${token}/?prov=GO0`, "_self") : window.open(`${window.URL_MF_GOOGLE}/GO0${this.props.lexon.userId}`, '_self'))
                 : this.onSignoutDisconnect();
             }}
             message={messageNotification}

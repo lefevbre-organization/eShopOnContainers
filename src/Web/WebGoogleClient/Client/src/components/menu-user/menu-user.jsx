@@ -118,7 +118,7 @@ class MenuUser extends Component {
       resetDefaultAccount(userId)
         .then(result => {
           signOut();
-          const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+          const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}/` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
           window.open(urlRedirect, '_self');
         })
         .catch(error => {

@@ -38,7 +38,7 @@ export class Header extends PureComponent {
     if (userId !== null) {
       resetDefaultAccount(userId)
         .then(() => {
-          const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+          const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}/` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
           window.open(urlRedirect, '_self');
         })
         .catch(error => {
