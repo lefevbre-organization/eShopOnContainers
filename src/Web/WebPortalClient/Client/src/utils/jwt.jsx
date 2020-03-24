@@ -8,7 +8,7 @@ export const parseJwt = token => {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
     //verifyTokenSignature --> to be implemented
-    console.log(JSON.parse(jsonPayload));
+    //console.log(JSON.parse(jsonPayload));
     return JSON.parse(jsonPayload);
 }
 
