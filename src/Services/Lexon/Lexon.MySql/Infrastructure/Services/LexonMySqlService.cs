@@ -236,11 +236,13 @@ namespace Lexon.MySql.Infrastructure.Services
             var result = new Result<LexNestedEntity>(new LexNestedEntity());
             var entitySearch = new EntitySearchFoldersView(entityFolder.bbdd, entityFolder.idUser) 
             {
-                idFolder= entityFolder.idFolder ,
-                idType = (short?)LexonAdjunctionType.folders
+                idFolder= entityFolder.idFolder,
+                idParent = entityFolder.idFolder 
+                //idType = (short?)LexonAdjunctionType.folders
             };
             
-            var partialResultTop = _lexonRepository.GetEntitiesAsync(entitySearch).Result;
+            var partialResultTop = _lexonRepository.GetFoldersFilesEntitiesAsync(entitySearch).Result;
+            //var partialResultTop = _lexonRepository.GetEntitiesAsync(entitySearch).Result;
             result.errors.AddRange(partialResultTop.Errors);
             result.infos.AddRange(partialResultTop.Infos);
 
@@ -269,10 +271,12 @@ namespace Lexon.MySql.Infrastructure.Services
             var entitySearchSon = new EntitySearchFoldersView(entityFolder.bbdd, entityFolder.idUser)
             {
                 idParent = entity.idRelated,
-                idType = (short?)LexonAdjunctionType.folders
+                idFolder = entity.idRelated
+                //,
+                //idType = (short?)LexonAdjunctionType.folders
             };
 
-            var partialResult = _lexonRepository.GetEntitiesAsync(entitySearchSon).Result;
+            var partialResult = _lexonRepository.GetFoldersFilesEntitiesAsync(entitySearchSon).Result; 
             if (!partialResult.PossibleHasData())          
                 return;
             
