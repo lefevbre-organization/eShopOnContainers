@@ -96,15 +96,18 @@ export class ConnectingEmailsStep3 extends React.Component {
     console.log(node);
 
     // Show children of selected node
-    const entities = node.subChild.map(sc => {
-      return {
-        origin: i18n.t(`classification.${this.props.entity.idType}`),
-        name: sc.code || sc.description || '',
-        type: 'dir',
-        modified: '26/09/2019 16:57',
-        id: sc.idRelated
-      };
-    });
+    const entities =
+      node && node.subChild
+        ? node.subChild.map(sc => {
+            return {
+              origin: i18n.t(`classification.${this.props.entity.idType}`),
+              name: sc.code || sc.description || '',
+              type: 'dir',
+              modified: '26/09/2019 16:57',
+              id: sc.idRelated
+            };
+          })
+        : [];
 
     this.setState({ entities });
   }
@@ -139,6 +142,7 @@ export class ConnectingEmailsStep3 extends React.Component {
             this.props.bbdd.bbdd,
             this.props.user.idUser
           );
+
           const tree = normalizeTree(
             this.props.entity,
             response.result.data,
@@ -518,7 +522,12 @@ function normalizeNodes(nodes, preselectId = 0) {
     if (n.subChild.length > 0) {
       n.subChild = normalizeNodes(n.subChild);
     }
-    children.push(n);
+
+    if (n.idType === 13) {
+      children.push(n);
+    } else {
+      console.log('Se trata de un documento');
+    }
   }
 
   return children;

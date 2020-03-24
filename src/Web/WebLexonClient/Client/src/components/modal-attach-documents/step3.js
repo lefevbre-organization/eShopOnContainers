@@ -45,7 +45,8 @@ export class AttachDocumentsStep3 extends React.Component {
         const response = await getFolderTree(
           this.props.entity.idFolder,
           this.props.bbdd.bbdd,
-          this.props.user.idUser
+          this.props.user.idUser,
+          true
         );
         const tree = normalizeTree(this.props.entity, response.result.data);
         const childs = getChilds(tree, 0);
@@ -140,7 +141,8 @@ export class AttachDocumentsStep3 extends React.Component {
           const response = await getFolderTree(
             idFolder,
             this.props.bbdd.bbdd,
-            this.props.user.idUser
+            this.props.user.idUser,
+            true
           );
           const tree = normalizeTree(
             this.props.entity,
@@ -521,7 +523,12 @@ function normalizeNodes(nodes, preselectId = 0) {
     if (n.subChild.length > 0) {
       n.subChild = normalizeNodes(n.subChild);
     }
-    children.push(n);
+
+    if (n.idType === 13) {
+      children.push(n);
+    } else {
+      console.log('Se trata de un documento');
+    }
   }
 
   return children;
