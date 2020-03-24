@@ -10,12 +10,8 @@
   ],
  "addOns": {
   "common": {
-    "name": "Lefebvre Gmail",
-    "logoUrl": "https://www.gstatic.com/images/icons/material/system/1x/label_googblue_24dp.png",
-    "universalActions": [{
-       "label": "logout",
-       "runFunction": "logout"
-     }]
+    "name": "LEX-ON",
+    "logoUrl": "https://www.gstatic.com/images/icons/material/system/1x/label_googblue_24dp.png"
   },
    "gmail": {
      "openLinkUrlPrefixes": [
@@ -33,5 +29,3 @@
  }
  
 }
-
-

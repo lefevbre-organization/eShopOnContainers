@@ -81,8 +81,8 @@
         </bt:LongStrings>
       </Resources>
       <WebApplicationInfo>
-        <Id>a266801b-24e1-4301-994e-0950c519b498</Id>
-        <Resource>api://localhost:3020/a266801b-24e1-4301-994e-0950c519b498</Resource>
+        <Id>a8c9f1a1-3472-4a83-8725-4dfa74bac24d</Id>
+        <Resource>api://localhost:3020/a8c9f1a1-3472-4a83-8725-4dfa74bac24d</Resource>
         <Scopes>
           <Scope>Files.Read.All</Scope>
           <Scope>profile</Scope>

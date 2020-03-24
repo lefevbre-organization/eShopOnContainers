@@ -6236,7 +6236,7 @@ Office.initialize = function () {
 
 var msalConfig = {
   auth: {
-    clientId: "a266801b-24e1-4301-994e-0950c519b498",
+    clientId: "a8c9f1a1-3472-4a83-8725-4dfa74bac24d",
     //This is your client ID
     // authority: "https://localhost:3000/login",
     redirectUri: "https://localhost:3020/fallbackauthdialog.html",
