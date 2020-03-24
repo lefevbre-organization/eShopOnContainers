@@ -4,7 +4,13 @@ import i18n from "i18next";
 import translationEN from '../locales/en/isotope.json';
 import translationES from '../locales/es/isotope.json';
 
-const userLanguage = () => navigator.language;
+const userLanguage = () => {
+  if (navigator.language.toLowerCase() !== 'en' && navigator.language.toLowerCase() !== 'es'){
+    return 'es'
+  } else {
+    return navigator.language;
+  }
+};
 
 // translation catalog
 const resources = {
