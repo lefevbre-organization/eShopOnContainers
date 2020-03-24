@@ -348,7 +348,7 @@ namespace Lexon.Infrastructure.Services
                 LexonPostFile lexonFile = new LexonPostFile
                 {
                     fileName = fileMail.Name,
-                    idAction = fileMail.IdActuation ?? 0,
+                    //idAction = fileMail.IdActuation ?? 0,
                     idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd),
                     idUser = fileMail.idUser,
                     idFolder = fileMail.IdParent ?? 0,

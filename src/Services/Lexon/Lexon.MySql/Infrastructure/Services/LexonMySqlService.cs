@@ -236,7 +236,8 @@ namespace Lexon.MySql.Infrastructure.Services
             var result = new Result<LexNestedEntity>(new LexNestedEntity());
             var entitySearch = new EntitySearchFoldersView(entityFolder.bbdd, entityFolder.idUser) 
             {
-                idFolder= entityFolder.idFolder 
+                idFolder= entityFolder.idFolder ,
+                idType = (short?)LexonAdjunctionType.folders
             };
             
             var partialResultTop = _lexonRepository.GetEntitiesAsync(entitySearch).Result;
