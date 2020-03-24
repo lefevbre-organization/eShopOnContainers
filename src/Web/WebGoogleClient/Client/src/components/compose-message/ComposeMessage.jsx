@@ -505,8 +505,26 @@ export class ComposeMessage extends PureComponent {
     this.setState({ dropZoneActive: false });
     const uppy = this.uppy;
     const addAttachment = (file, dataUrl) => {
+      let repeated = 0;
+
+      // Check if is repeated
+      let extension = '';
+      const fls = this.uppy.getFiles();
+      for (let i = 0; i < fls.length; i++) {
+        // Hay que quitar la extensión del fichero
+        const [fn, ex] = fileNameAndExt(fls[i].name);
+        const [fn2, _] = fileNameAndExt(file.name);
+        extension = ex;
+
+        if (fn.startsWith(fn2)) {
+          repeated++;
+        }
+      }
+
+      let fileName =
+        repeated === 0 ? file.name : `${file.name} (${repeated}).${extension}`;
       const newAttachment = {
-        name: file.name,
+        name: fileName,
         size: file.size,
         type: file.type,
         source: 'Local',
@@ -892,3 +910,11 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ComposeMessage);
+
+function fileNameAndExt(str) {
+  var file = str.split('/').pop();
+  return [
+    file.substr(0, file.lastIndexOf('.')),
+    file.substr(file.lastIndexOf('.') + 1, file.length)
+  ];
+}
