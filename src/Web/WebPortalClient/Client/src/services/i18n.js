@@ -5,7 +5,8 @@ import translationEN from '../locales/en/isotope.json';
 import translationES from '../locales/es/isotope.json';
 
 const userLanguage = () => {
-  if (navigator.language.toLowerCase() !== 'en' && navigator.language.toLowerCase() !== 'es'){
+  if (navigator.language.toLowerCase() !== 'en' && navigator.language.toLowerCase() !== 'es' 
+      && navigator.language.toLowerCase() !== 'en-en' && navigator.language.toLowerCase() !== 'es-es'){
     return 'es'
   } else {
     return navigator.language;
