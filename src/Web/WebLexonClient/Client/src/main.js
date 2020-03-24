@@ -1,17 +1,21 @@
-import React, { Component, Fragment } from "react";
-import { connect } from "react-redux";
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 
-import ACTIONS from "./actions/email";
-import APPLICATION_ACTIONS from "./actions/applicationAction";
-import SELECTION_ACTIONS from "./actions/selections";
-import "./main.css";
-import i18n from "i18next";
+import ACTIONS from './actions/email';
+import APPLICATION_ACTIONS from './actions/applicationAction';
+import SELECTION_ACTIONS from './actions/selections';
+import './main.css';
+import i18n from 'i18next';
 
 // import Header from "./components/header/header";
-import Routing from "./components/routing/routing";
-import Spinner from "./components/spinner/spinner";
-import Notification from "./components/notification/notification";
-import { getCompanies, getUser, addClassification } from "./services/services-lexon";
+import Routing from './components/routing/routing';
+import Spinner from './components/spinner/spinner';
+import Notification from './components/notification/notification';
+import {
+  getCompanies,
+  getUser,
+  addClassification
+} from './services/services-lexon';
 
 class Main extends Component {
   constructor(props) {
@@ -40,14 +44,21 @@ class Main extends Component {
     );
 
     this.toggleNotification = this.toggleNotification.bind(this);
+    this.handleOpenComposer = this.handleOpenComposer.bind(this);
+    this.handleCloseComposer = this.handleCloseComposer.bind(this);
   }
 
   componentDidMount() {
-    window.addEventListener("Checkclick", this.handleKeyPress);
-    window.addEventListener("CheckAllclick", this.handleCheckAllclick);
-    window.addEventListener("SentMessage", this.handleSentMessage);
-    window.addEventListener("ResetList", this.handleResetList);
-    window.addEventListener("PutUserFromLexonConnector", this.handlePutUserFromLexonConnector);
+    window.addEventListener('Checkclick', this.handleKeyPress);
+    window.addEventListener('CheckAllclick', this.handleCheckAllclick);
+    window.addEventListener('SentMessage', this.handleSentMessage);
+    window.addEventListener('ResetList', this.handleResetList);
+    window.addEventListener(
+      'PutUserFromLexonConnector',
+      this.handlePutUserFromLexonConnector
+    );
+    window.addEventListener('OpenComposer', this.handleOpenComposer);
+    window.addEventListener('CloseComposer', this.handleCloseComposer);
 
     this.sendMessageGetUser();
   }
@@ -64,67 +75,101 @@ class Main extends Component {
   // }
 
   componentWillUnmount() {
-    window.removeEventListener("SentMessage", this.handleSentMessage);
-    window.removeEventListener("Checkclick", this.handleKeyPress);
-    window.removeEventListener("CheckAllclick", this.handleCheckAllclick);
-    window.removeEventListener("ResetList", this.handleResetList);
-    window.removeEventListener("PutUserFromLexonConnector", this.handlePutUserFromLexonConnector);
+    window.removeEventListener('SentMessage', this.handleSentMessage);
+    window.removeEventListener('Checkclick', this.handleKeyPress);
+    window.removeEventListener('CheckAllclick', this.handleCheckAllclick);
+    window.removeEventListener('ResetList', this.handleResetList);
+    window.removeEventListener(
+      'PutUserFromLexonConnector',
+      this.handlePutUserFromLexonConnector
+    );
+    window.removeEventListener('OpenComposer', this.handleOpenComposer);
+    window.removeEventListener('CloseComposer', this.handleCloseComposer);
+  }
+
+  handleOpenComposer() {
+    console.log('handleOpenComposer');
+    this.props.setComposerOpen(true);
+  }
+
+  handleCloseComposer() {
+    console.log('handleCloseComposer');
+    this.props.setComposerOpen(false);
   }
 
   async handleResetList(event) {
     this.props.resetListMessages();
   }
 
+  // async handleSentMessage(event) {
+  //   const { user, idCaseFile, bbdd } = this.state;
+  //   const { idEmail, subject, date } = event.detail;
+
+  //   await addClassification(
+  //     user,
+  //     { bbdd },
+  //     [
+  //       {
+  //         id: idEmail,
+  //         subject,
+  //         sentDateTime: date
+  //       }
+  //     ],
+  //     idCaseFile,
+  //     1
+  //   );
+
+  //   window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
+  //   // this.props.setCaseFile({
+  //   //   casefile: null,
+  //   //   bbdd: null,
+  //   //   company: null
+  //   // });
+  // }
+
   async handleSentMessage(event) {
     const { user, idCaseFile, bbdd } = this.state;
     const { idEmail, subject, date } = event.detail;
 
-    await addClassification(user, { bbdd }, [{
-      id: idEmail, subject, sentDateTime: date
-    }], idCaseFile, 1)
+    await addClassification(
+      user,
+      { bbdd },
+      [
+        {
+          id: idEmail,
+          subject,
+          sentDateTime: date
+        }
+      ],
+      idCaseFile,
+      1
+    );
 
-    window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
-    // this.props.setCaseFile({
-    //   casefile: null,
-    //   bbdd: null,
-    //   company: null
-    // });
-  }
-
-  async handleSentMessage(event) {
-    const { user, idCaseFile, bbdd } = this.state;
-    const { idEmail, subject, date } = event.detail;
-
-    await addClassification(user, { bbdd }, [{
-      id: idEmail, subject, sentDateTime: date
-    }], idCaseFile, 1)
-
-    window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
+    window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
     this.props.setCaseFile({
       casefile: null,
       bbdd: null,
       company: null
     });
-
   }
 
   handleKeyPress(event) {
-    console.log("HandleEvent Client -> Lexon - Checkclick");
+    console.log('HandleEvent Client -> Lexon - Checkclick');
 
     event.detail.chkselected
       ? this.props.addMessage({
-        id: event.detail.extMessageId,
-        //extMessageId: event.detail.extMessageId,
-        subject: event.detail.subject,
-        folder: event.detail.folder,
-        sentDateTime: event.detail.sentDateTime,
-        raw: event.detail.raw
-      })
+          id: event.detail.extMessageId,
+          //extMessageId: event.detail.extMessageId,
+          subject: event.detail.subject,
+          folder: event.detail.folder,
+          sentDateTime: event.detail.sentDateTime,
+          raw: event.detail.raw
+        })
       : this.props.deleteMessage(event.detail.extMessageId);
   }
 
   handleCheckAllclick(event) {
-    console.log("HandleEvent Client -> Lexon - CheckAllclick");
+    console.log('HandleEvent Client -> Lexon - CheckAllclick');
 
     event.detail.chkselected
       ? this.props.addListMessages(event.detail.listMessages)
@@ -132,7 +177,7 @@ class Main extends Component {
   }
 
   sendMessageGetUser() {
-    window.dispatchEvent(new CustomEvent("GetUserFromLexonConnector"));
+    window.dispatchEvent(new CustomEvent('GetUserFromLexonConnector'));
   }
 
   async getCompanies(user) {
@@ -140,7 +185,7 @@ class Main extends Component {
   }
 
   async handlePutUserFromLexonConnector(event) {
-    console.log("HandleEvent Client -> Lexon - PutUserFromLexonConnector");
+    console.log('HandleEvent Client -> Lexon - PutUserFromLexonConnector');
     console.log(event.detail);
 
     const {
@@ -149,8 +194,8 @@ class Main extends Component {
       idCaseFile,
       bbdd,
       idCompany,
-      provider = "DEFAULT",
-      account = "default@default.def",
+      provider = 'DEFAULT',
+      account = 'default@default.def'
     } = event.detail;
     if (idCaseFile != null && idCaseFile !== undefined) {
       this.setState({
@@ -172,13 +217,18 @@ class Main extends Component {
 
     getUser(user)
       .then(result => {
-        const newUser = Object.assign({}, result.user, { account, provider, config: result.config });
+        const newUser = Object.assign({}, result.user, {
+          account,
+          provider,
+          config: result.config
+        });
         this.setState({ user: newUser });
         getCompanies(newUser)
           .then(result => {
-
             if (Array.isArray(result.errors)) {
-              result.errors.forEach(error => this.props.addError(JSON.stringify(error)));
+              result.errors.forEach(error =>
+                this.props.addError(JSON.stringify(error))
+              );
             } else {
               this.props.addError(JSON.stringify(result.errors));
             }
@@ -204,7 +254,7 @@ class Main extends Component {
             } else {
               this.props.addError(JSON.stringify(errors));
             }
-            console.log("errors ->", this.props.errors);
+            console.log('errors ->', this.props.errors);
           });
       })
       .catch(errors => {
@@ -214,7 +264,7 @@ class Main extends Component {
         } else {
           this.props.addError(JSON.stringify(errors));
         }
-        console.log("errors ->", this.props.errors);
+        console.log('errors ->', this.props.errors);
       });
   }
 
@@ -238,9 +288,11 @@ class Main extends Component {
       }
 
       return (
-        <p className="connexion-status connexion-status-ko">
-          {bbddError === true ? i18n.t("main.bbdd_error") : i18n.t("main.error_connection")}
-          <span className="lf-icon-warning"></span>
+        <p className='connexion-status connexion-status-ko'>
+          {bbddError === true
+            ? i18n.t('main.bbdd_error')
+            : i18n.t('main.error_connection')}
+          <span className='lf-icon-warning'></span>
         </p>
       );
     }
@@ -264,7 +316,7 @@ class Main extends Component {
       return <Spinner />;
     }
 
-    console.log("Rendering initial DDBB: " + bbdd)
+    console.log('Rendering initial DDBB: ' + bbdd);
 
     return (
       <Fragment>
@@ -277,7 +329,7 @@ class Main extends Component {
           error={errorNotification}
         />
 
-        {errors && errors.length === 0 &&
+        {errors && errors.length === 0 && (
           <Routing
             user={user}
             companies={companies}
@@ -286,7 +338,7 @@ class Main extends Component {
             bbdd={bbdd}
             company={idCompany}
           />
-        }
+        )}
       </Fragment>
     );
   }
@@ -308,7 +360,8 @@ const mapDispatchToProps = dispatch => ({
   deleteListMessages: listMessages =>
     dispatch(ACTIONS.deleteListMessages(listMessages)),
   resetListMessages: () => dispatch(ACTIONS.resetListMessages()),
-  addError: error => dispatch(APPLICATION_ACTIONS.addError(error))
+  addError: error => dispatch(APPLICATION_ACTIONS.addError(error)),
+  setComposerOpen: open => dispatch(APPLICATION_ACTIONS.setComposerOpen(open))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

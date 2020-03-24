@@ -114,6 +114,10 @@
   "tab-connect": {
     "select-mail": "Selecciona uno o más mensajes y clasifícalos con Lex-on. Las clasificaciones realizadas se mostrarán individualmente en cada mensaje."
   },
+  "tab-attachment": {
+    "select-docs": "Busca en los expedientes y contactos de LEX-ON y adjunta a tus correos los archivos que necesites.",
+    "select-link": "Selecciona los archivos en LEX-ON"
+  },
   "save-copy": {
     "save-copy": "Nueva clasificación"
   },
@@ -129,6 +133,12 @@
   },
   "modal-conecting-emails": {
     "save-copy": "Clasificar mensajes en Lex-on"
+  },
+  "modal-attach-documents": {
+    "title": "Adjuntar archivos desde LEX-ON",
+    "explore-files": "Explorar expedientes",
+    "explore-contacts": "Explorar contactos",
+    "search": "Buscar"
   },
   "case-file": {
     "casefile-related": "Expediente relacionado",

@@ -193,6 +193,8 @@ export class ComposeMessage extends PureComponent {
       const { content } = this.state;
       this.setState({ content: `<br/><br/><p>${lexon.sign}</p>` + content });
     }
+
+    window.dispatchEvent(new CustomEvent('OpenComposer'));
   }
 
   typeAllowed(file) {
@@ -307,7 +309,9 @@ export class ComposeMessage extends PureComponent {
   }
 
   componentWillUnmount() {
+    window.dispatchEvent(new CustomEvent('CloseComposer'));
     window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
+
     this.uppy.close();
   }
 
@@ -363,7 +367,6 @@ export class ComposeMessage extends PureComponent {
 
     const Fileattached = this.state.uppyPreviews;
 
-    debugger;
     sendMessage({
       headers,
       body: this.state.content,

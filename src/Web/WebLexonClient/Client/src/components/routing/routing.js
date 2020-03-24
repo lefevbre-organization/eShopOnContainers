@@ -1,16 +1,16 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   PAGE_SELECT_COMPANY,
   PAGE_SELECT_ACTION,
   PAGE_CASEFILE,
   PAGE_CONFIGURATION
-} from "../../constants";
-import SelectCompany from "../select-company/select-company";
-import CaseFile from "../case-file/case-file";
-import SelectAction from "../select-action/select-action";
-import Configuration from "../configuration/configuration";
-import { connect } from "react-redux";
+} from '../../constants';
+import SelectCompany from '../select-company/select-company';
+import CaseFile from '../case-file/case-file';
+import SelectAction from '../select-action/select-action';
+import Configuration from '../configuration/configuration';
+import { connect } from 'react-redux';
 
 class Routing extends Component {
   constructor(props) {
@@ -34,7 +34,15 @@ class Routing extends Component {
 
   renderPage() {
     const { actualPage } = this.state;
-    const { user, companies, toggleNotification, casefile, bbdd, company } = this.props;
+    const {
+      user,
+      companies,
+      toggleNotification,
+      casefile,
+      bbdd,
+      company,
+      composerOpen
+    } = this.props;
 
     switch (actualPage) {
       case PAGE_SELECT_COMPANY:
@@ -58,21 +66,22 @@ class Routing extends Component {
       case PAGE_SELECT_ACTION:
         return (
           <SelectAction
+            composerOpen={composerOpen}
             user={user}
             companies={companies}
             changePage={this.changePage}
             toggleNotification={toggleNotification}
           />
         );
-        case PAGE_CONFIGURATION:
-          return (
-            <Configuration
-              user={user}
-              companies={companies}
-              changePage={this.changePage}
-              toggleNotification={toggleNotification}
-            />
-          );
+      case PAGE_CONFIGURATION:
+        return (
+          <Configuration
+            user={user}
+            companies={companies}
+            changePage={this.changePage}
+            toggleNotification={toggleNotification}
+          />
+        );
       default:
         return <SelectCompany changePage={this.changePage} />;
     }
@@ -81,18 +90,23 @@ class Routing extends Component {
   render() {
     return (
       <React.Fragment>
-        { this.state.actualPage === PAGE_SELECT_ACTION && 
-         <div className="lex-on-configuration" onClick={()=>{this.changePage(PAGE_CONFIGURATION)}}>
-          <a href="#/" className="lex-on-configuration-trigger">
-            <strong className="sr-only sr-only-focusable">
-              Opciones de configuración 
-            </strong>
-            <span className="lf-icon-configuration"></span>
-          </a>
-        </div> }
+        {this.state.actualPage === PAGE_SELECT_ACTION && (
+          <div
+            className='lex-on-configuration'
+            onClick={() => {
+              this.changePage(PAGE_CONFIGURATION);
+            }}>
+            <a href='#/' className='lex-on-configuration-trigger'>
+              <strong className='sr-only sr-only-focusable'>
+                Opciones de configuración
+              </strong>
+              <span className='lf-icon-configuration'></span>
+            </a>
+          </div>
+        )}
         {this.renderPage()}
       </React.Fragment>
-    )
+    );
   }
 }
 
@@ -104,7 +118,8 @@ Routing.propTypes = {
 
 const mapStateToProps = state => {
   return {
-    errors: state.applicationReducer.errors
+    errors: state.applicationReducer.errors,
+    composerOpen: state.applicationReducer.isComposerOpen
   };
 };
 

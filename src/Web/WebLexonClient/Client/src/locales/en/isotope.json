@@ -114,6 +114,10 @@
   "tab-document": {
     "select-mail": "Select one or more messages and save them as a separate copy in the Lex-on documentation."
   },
+  "tab-attachment": {
+    "select-docs": "Search the LEX-ON files and contacts and attach the files you need to your emails.",
+    "select-link": "Select document on LEX-ON"
+  },
   "save-copy": {
     "save-copy": "New conection"
   },
@@ -129,6 +133,12 @@
   },
   "modal-conecting-emails": {
     "save-copy": "Classify messages on Lex-on"
+  },
+  "modal-attach-documents": {
+    "title": "Adjuntar archivos desde LEX-ON",
+    "explore-files": "Explore casefiles",
+    "explore-contacts": "Explore contacts",
+    "search": "Search"
   },
   "case-file": {
     "casefile-related": "Related Casefile",
