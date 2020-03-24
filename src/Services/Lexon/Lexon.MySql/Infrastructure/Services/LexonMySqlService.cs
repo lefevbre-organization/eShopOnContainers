@@ -268,7 +268,8 @@ namespace Lexon.MySql.Infrastructure.Services
 
             var entitySearchSon = new EntitySearchFoldersView(entityFolder.bbdd, entityFolder.idUser)
             {
-                idParent = entity.idRelated
+                idParent = entity.idRelated,
+                idType = (short?)LexonAdjunctionType.folders
             };
 
             var partialResult = _lexonRepository.GetEntitiesAsync(entitySearchSon).Result;
