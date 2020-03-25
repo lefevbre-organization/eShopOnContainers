@@ -79,15 +79,36 @@
  }
  
 .ms-Button.ms-Button--hero .ms-Button-label {
-  color: #0078d7;
+  color: #001978;
 }
 
 .ms-Button.ms-Button--hero:hover .ms-Button-label,
 .ms-Button.ms-Button--hero:focus .ms-Button-label{
-  color: #005a9e;
+  color: #001978;
   cursor: pointer;
 }
 
 b {
     font-weight: bold;
 }
+.btn-login {
+  width: 230px !important;
+  height: 30px;
+  background-color: #001978 !important;
+}
+
+.btn-login:focus {
+  border: none;
+  outline: none;
+}
+  
+.btn-label {
+  font-size: 12px;
+  font-weight: 500;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.5;
+  letter-spacing: 3px;
+  color: #ffffff !important;
+}
+  
