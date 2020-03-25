@@ -351,9 +351,11 @@ namespace Lexon.Infrastructure.Services
                     //idAction = fileMail.IdActuation ?? 0,
                     idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd),
                     idUser = fileMail.idUser,
-                    idFolder = fileMail.IdParent ?? 0,
-                    idEntity = fileMail.idEntity ?? 0,
-                    idTypeEntity = fileMail.idType ?? 0
+                    //idFolder = fileMail.IdParent ?? 0,
+                    idFolder = 0,
+                    //idEntity = fileMail.idEntity ?? 0,
+                    idEntity = fileMail.IdActuation ?? 0,
+                    idEntityType = fileMail.idType ?? 0
                 };
 
                 var json = JsonConvert.SerializeObject(lexonFile);

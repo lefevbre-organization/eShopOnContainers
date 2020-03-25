@@ -6,7 +6,7 @@
         public int idFolder { get; set; }
 
       //  public long idAction { get; set; }
-        public short idTypeEntity { get; set; }
+        public short idEntityType { get; set; }
         public long idEntity { get; set; }
 
     }
