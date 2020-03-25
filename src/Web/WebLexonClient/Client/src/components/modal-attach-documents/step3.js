@@ -61,7 +61,7 @@ export class AttachDocumentsStep3 extends React.Component {
           {
             loadingTree: false,
             fields: {
-              dataSource: tree,
+              dataSource: [removeFileNodes(tree[0])],
               id: 'id',
               text: 'name',
               child: 'subChild'
@@ -163,7 +163,7 @@ export class AttachDocumentsStep3 extends React.Component {
             {
               loadingTree: false,
               fields: {
-                dataSource: tree,
+                dataSource: [removeFileNodes(tree[0])],
                 id: 'id',
                 text: 'name',
                 child: 'subChild'
@@ -550,5 +550,17 @@ function findNode(node, id) {
   }
 
   return null;
+}
+
+
+function removeFileNodes(node) {
+
+  node.subChild = node.subChild.filter(n => n.idType === 13)
+
+  for (let i = 0; i < node.subChild.length; i++) {
+    node.subChild[i] = removeFileNodes(node.subChild[i])
+  }
+
+  return node;
 }
 
