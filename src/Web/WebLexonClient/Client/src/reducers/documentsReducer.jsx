@@ -1,5 +1,5 @@
-import { INITIAL_STATE } from "./index";
-import ACTIONS from "../actions/documentsAction";
+import { INITIAL_STATE } from './index';
+import ACTIONS from '../actions/documentsAction';
 
 const documentsReducer = (state = INITIAL_STATE.documents, action) => {
   switch (action.type) {
@@ -7,6 +7,12 @@ const documentsReducer = (state = INITIAL_STATE.documents, action) => {
       return {
         ...state,
         showModalDocuments: !state.showModalDocuments
+      };
+    }
+    case ACTIONS.Types.TOGGLE_MODAL_ATTACH_DOCUMENTS: {
+      return {
+        ...state,
+        showAttachDocuments: !state.showAttachDocuments
       };
     }
 

@@ -1,12 +1,12 @@
-import { INITIAL_STATE } from "./index";
-import ACTIONS from "../actions/applicationAction";
+import { INITIAL_STATE } from './index';
+import ACTIONS from '../actions/applicationAction';
 
 const applicationReducer = (state = INITIAL_STATE.application, action) => {
   switch (action.type) {
     case ACTIONS.Types.ADD_ERROR: {
       return {
         ...state,
-        errors: [...state.errors, action.payload]   
+        errors: [...state.errors, action.payload]
       };
     }
     case ACTIONS.Types.REMOVE_ERRORS: {
@@ -29,9 +29,15 @@ const applicationReducer = (state = INITIAL_STATE.application, action) => {
         config: {
           ...action.payload
         }
-      }
+      };
     }
 
+    case ACTIONS.Types.SET_COMPOSER_OPEN: {
+      return {
+        ...state,
+        isComposerOpen: action.payload
+      };
+    }
     default:
       return state;
   }
