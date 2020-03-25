@@ -228,35 +228,11 @@ namespace Lexon.API.Controllers
             [FromBody] EntitySearchById fileMail
             )
         {
-            var resultFile = new Result<string>(null);
+
             var result = await _usersService.FileGetAsync(fileMail);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
 
-            if (result.errors.Count == 0)
-            {
-                resultFile.errors = result.errors;
-                resultFile.infos = result.infos;
-                return StatusCode(201, resultFile);
-
-            }
-
-            return BadRequest(result);
         }
-
-        //[HttpGet("entities/files/{filename}", Name = "myFile")]
-        //[ProducesResponseType(typeof(FileContentResult), (int)HttpStatusCode.OK)]
-        //[ProducesResponseType(typeof(NotFoundResult), (int)HttpStatusCode.NotFound)]
-        //public async Task<IActionResult> Get([FromRoute] string filename)
-        //{
-        //    var folderName = "files";
-        //    var folderPath = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-
-        //    var filePath = Path.Combine(folderPath, filename);
-        //    if (System.IO.File.Exists(filePath))
-        //    {
-        //        return File(await System.IO.File.ReadAllBytesAsync(filePath), "application/octet-stream", filename);
-        //    }
-        //    return NotFound();
-        //}
 
         [HttpPost("entities")]
         [ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.OK)]
@@ -280,8 +256,6 @@ namespace Lexon.API.Controllers
         [FromBody] EntitySearchFoldersView entitySearch
         )
         {
-            //if (entitySearch.idType != (short?)LexonAdjunctionType.folders)
-            //    entitySearch.idType = (short)LexonAdjunctionType.folders;
 
             if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd))
                 return BadRequest("values invalid. Must be a valid user, bbdd ands idType to serach folders");
@@ -290,25 +264,6 @@ namespace Lexon.API.Controllers
 
             return ResponseEntities(entities);
         }
-
-        //[HttpPost("entities/documents")]
-        //[ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.OK)]
-        //[ProducesResponseType(typeof(Result<PaginatedItemsViewModel<LexEntity>>), (int)HttpStatusCode.BadRequest)]
-        //public async Task<IActionResult> GetEntitiesDocumentsAsync(
-        //    [FromBody] EntitySearchDocumentsView entitySearch
-        //)
-        //{
-        //    if (entitySearch.idType != (short?)LexonAdjunctionType.documents)
-        //        entitySearch.idType = (short)LexonAdjunctionType.documents;
-
-        //    if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0
-        //        || entitySearch.idFolder == null)
-        //        return BadRequest("values invalid. Must be a valid user, idCompany, type and idFolder to search documents");
-
-        //    var entities = await _usersService.GetEntitiesDocumentsAsync(entitySearch);
-
-        //    return ResponseEntities(entities);
-        //}
 
         private IActionResult ResponseEntities(MySqlCompany entities)
         {
@@ -355,7 +310,7 @@ namespace Lexon.API.Controllers
                 return BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
 
             var result = await _usersService.GetEntityById(entitySearch);
-            //  return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+    
             if (result.errors.Count() > 0 && result.data == null)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, result);

@@ -312,29 +312,28 @@ namespace Lexon.Infrastructure.Services
                 var json = JsonConvert.SerializeObject(lexonFile);
                 byte[] buffer = Encoding.UTF8.GetBytes(json);
                 var dataparameters = Convert.ToBase64String(buffer);
-
-                using (var response = await _clientFiles.GetAsync($"{_settings.Value.LexonFilesUrl}?option=com_lexon&task=hook.receive&type=repository&data={dataparameters}"))
+                var url = $"{_settings.Value.LexonFilesUrl}?option=com_lexon&task=hook.receive&type=repository&data={dataparameters}";
+                using (var response = await _clientFiles.GetAsync(url))
                 {
-                    //await using var fs = File.Create(fileInfo.FullName);
-                    //ms.Seek(0, SeekOrigin.Begin);
-                    //ms.CopyTo(fs);
-                    var responseStream = await response.Content.ReadAsStreamAsync();
-                    var responseText = await response.Content.ReadAsStringAsync();
+
                     if (response.IsSuccessStatusCode)
                     {
-                        result.data = responseText;
+                        var arrayFile = await response.Content.ReadAsByteArrayAsync();
+                        var stringFile = Convert.ToBase64String(arrayFile);
+                        var fileName = response.Content.Headers.ContentDisposition.FileName;
+                        result.data = stringFile;
                         TraceInfo(result.infos, $"Se recupera el fichero {lexonFile.idDocument}");
                     }
                     else
                     {
+                        var responseText = await response.Content.ReadAsStringAsync();
                         TraceOutputMessage(result.errors, $"Response not ok : {responseText} with lexon-dev with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", 2003);
                     }
                 }
             }
             catch (Exception ex)
             {
-                //TraceMessage(result.errors, ex);
-                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.idEntity}, -> {ex.Message}", "590");
+                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.idEntity}, -> {ex.Message}", "599");
             }
 
             return result;
@@ -381,7 +380,7 @@ namespace Lexon.Infrastructure.Services
             catch (Exception ex)
             {
                 //TraceMessage(result.errors, ex);
-                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message}", "590");
+                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message}", "598");
             }
 
             return result;
