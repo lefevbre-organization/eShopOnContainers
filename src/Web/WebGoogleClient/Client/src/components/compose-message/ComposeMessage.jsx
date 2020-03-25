@@ -378,13 +378,18 @@ export class ComposeMessage extends PureComponent {
     this._sendEmail();
   }
 
+  b64EncodeUnicode(str) {
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+        return String.fromCharCode(parseInt(p1, 16))
+    }))
+  }
+
   _sendEmail() {
     const validTo = getValidEmails(this.state.to);
-
+    
     const headers = {
       To: validTo.join(', '),
-      //Subject: this.state.subject,
-      Subject: '=?UTF-8?B?' + window.btoa(this.state.subject) + '?=',
+      Subject: '=?UTF-8?B?' + this.b64EncodeUnicode(this.state.subject) + '?=',
       attachments: this.state.uppyPreviews
     };
 
