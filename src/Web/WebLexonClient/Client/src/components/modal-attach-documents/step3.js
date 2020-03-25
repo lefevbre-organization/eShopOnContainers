@@ -9,16 +9,21 @@ import {
   Search,
   Sort
 } from '@syncfusion/ej2-react-grids';
-import Spinner from '../../components/spinner/spinner';
+import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
+
+import Spinner from '../spinner/spinner';
 import ClassificationListSearch from '../classify-emails/classification-list-search/classification-list-search';
 import { getFolderTree, createFolder } from '../../services/services-lexon';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
-export class ConnectingEmailsStep3 extends React.Component {
+let flatNodes = [];
+
+export class AttachDocumentsStep3 extends React.Component {
   constructor() {
     super();
 
     this.state = {
+      flatNodes: [],
       fields: { dataSource: [], id: 'id', text: 'name', child: 'subChild' },
       entities: [],
       selected: null,
@@ -45,15 +50,18 @@ export class ConnectingEmailsStep3 extends React.Component {
         const response = await getFolderTree(
           this.props.entity.idFolder,
           this.props.bbdd.bbdd,
-          this.props.user.idUser
+          this.props.user.idUser,
+          true
         );
-        const tree = normalizeTree(this.props.entity, response.result.data);
+
+        let tree = normalizeTree(this.props.entity, response.result.data, false);
         const childs = getChilds(tree, 0);
+
         this.setState(
           {
             loadingTree: false,
             fields: {
-              dataSource: tree,
+              dataSource: [removeFileNodes(tree[0])],
               id: 'id',
               text: 'name',
               child: 'subChild'
@@ -92,19 +100,23 @@ export class ConnectingEmailsStep3 extends React.Component {
       onSelectedDirectory &&
         onSelectedDirectory({ selected: parseInt(event.nodeData.id) });
     });
-    const node = findNode(this.state.fields.dataSource[0], event.nodeData.id);
-    console.log(node);
+    //const node = findNode(this.state.fields.dataSource[0], event.nodeData.id);
+    // console.log(node);
+    const node = flatNodes[event.nodeData.id]
 
     // Show children of selected node
-    const entities = (node && node.subChild) ? node.subChild.map(sc => {
-      return {
-        origin: i18n.t(`classification.${this.props.entity.idType}`),
-        name: sc.code || sc.description || '',
-        type: 'dir',
-        modified: '26/09/2019 16:57',
-        id: sc.idRelated
-      };
-    }) : [];
+    const entities =
+      node && node.subChild
+        ? node.subChild.map(sc => {
+          return {
+            origin: i18n.t(`classification.${this.props.entity.idType}`),
+            name: sc.code || sc.description || '',
+            type: sc.idType === 13 ? 'dir' : 'file',
+            modified: '26/09/2019 16:57',
+            id: sc.idRelated
+          };
+        })
+        : [];
 
     this.setState({ entities });
   }
@@ -137,20 +149,21 @@ export class ConnectingEmailsStep3 extends React.Component {
           const response = await getFolderTree(
             idFolder,
             this.props.bbdd.bbdd,
-            this.props.user.idUser
+            this.props.user.idUser,
+            true
           );
-
-          const tree = normalizeTree(
+          let tree = normalizeTree(
             this.props.entity,
             response.result.data,
-            res.result.data
+            res.result.data,
+            false
           );
           const childs = getChilds(tree, 0);
           this.setState(
             {
               loadingTree: false,
               fields: {
-                dataSource: tree,
+                dataSource: [removeFileNodes(tree[0])],
                 id: 'id',
                 text: 'name',
                 child: 'subChild'
@@ -188,7 +201,7 @@ export class ConnectingEmailsStep3 extends React.Component {
   }
 
   renderType(props) {
-    const icon = props.type === 'dir' ? 'lf-icon-folder' : '';
+    const icon = props.type === 'dir' ? 'lf-icon-folder' : 'lf-icon-document';
     return <span className={`pager-icon ${icon} new-folder-icon`} />;
   }
 
@@ -197,12 +210,18 @@ export class ConnectingEmailsStep3 extends React.Component {
     console.log(props);
     return (
       <div>
+        <span><CheckBoxComponent label="" cssClass="e-small" /></span>
         <span
-          style={{ marginRight: 10 }}
+          style={{ marginRight: 10, marginLeft: 10 }}
           className={`pager-icon ${icon} new-folder-icon`}></span>
         <span>Expediente</span>
       </div>
     );
+  }
+
+  nodeTemplate(data) {
+    console.log(data)
+    return null;
   }
 
   render() {
@@ -212,23 +231,10 @@ export class ConnectingEmailsStep3 extends React.Component {
         <div className='step3-container'>
           <ol style={{ textAlign: 'center' }}>
             <li className='index-4'>
-              <span>{i18n.t(`connecting.q4`)}</span>
+              <span>Selecciona los archivos que quieras adjuntar al correo</span>
             </li>
           </ol>
-          <div className='new-folder'>
-            <div className={`new-folder-container ${disabled}`}>
-              <a
-                href='#'
-                class='add-more'
-                onClick={this.onCreateFolder}
-                className={disabled}>
-                <span className='pager-icon lf-icon-folder-new new-folder-icon' />
-                <span className='new-folder-text'>
-                  {i18n.t(`connecting.new-folder`)}
-                </span>
-              </a>
-            </div>
-          </div>
+
           <section className='panel section-border'>
             <div className='panel-left'>
               {this.state.loadingTree === true && (
@@ -302,8 +308,7 @@ export class ConnectingEmailsStep3 extends React.Component {
             </div>
           </section>
         </div>
-        <style jsx>
-          {`
+        <style jsx>{`
             .step3-container {
               margin: 30px;
             }
@@ -435,20 +440,15 @@ export class ConnectingEmailsStep3 extends React.Component {
               vertical-align: text-top;
             }
 
-            ol > li.index-4::before {
-              content: '4';
-              color: #001978;
-              display: inline-block;
-              width: 1em;
-              margin-left: -1em;
-              background-color: #e5e8f1;
-              border-radius: 50%;
-              height: 32px;
-              width: 32px;
-              text-align: center;
+            .index-4 span {
+              margin-left: 8px;
+              height: 20px;
+              width: 442px;
+              color: #7f8cbb;
               font-family: 'MTTMilano-Medium';
-              font-size: 16px;
-              font-weight: bold;
+              font-size: 20px;
+              font-weight: 500;
+              line-height: 24px;
             }
 
             .e-treeview .e-ul,
@@ -476,14 +476,14 @@ export class ConnectingEmailsStep3 extends React.Component {
             .e-treeview .e-icon-expandable {
               color: #001978;
             }
-          `}
-        </style>
+          `}</style>
       </Fragment>
     );
   }
 }
 
-function normalizeTree(entity, data, preselectId) {
+function normalizeTree(entity, data, preselectId, removeFiles = true) {
+  flatNodes = [];
   let preselectRoot = true;
   if (preselectId && preselectId != data.idRelated) {
     preselectRoot = false;
@@ -499,13 +499,13 @@ function normalizeTree(entity, data, preselectId) {
   if (entity.idType === 1) {
     root.imageUrl = `${window.URL_MF_LEXON_BASE}/assets/img/icon-law.png`;
   }
-  root.subChild = normalizeNodes(root.subChild, preselectId);
+  root.subChild = normalizeNodes(root.subChild, preselectId, removeFiles);
 
   console.log(root);
   return [root];
 }
 
-function normalizeNodes(nodes, preselectId = 0) {
+function normalizeNodes(nodes, preselectId, removeFiles) {
   const children = [];
   for (let i = 0; i < nodes.length; i++) {
     const n = {
@@ -514,17 +514,14 @@ function normalizeNodes(nodes, preselectId = 0) {
       expanded: true,
       selected: preselectId == nodes[i].idRelated,
       name: nodes[i].code,
-      imageUrl: `${window.URL_MF_LEXON_BASE}/assets/img/icon-folder.png`
+      imageUrl: nodes[i].idType === 13 ? `${window.URL_MF_LEXON_BASE}/assets/img/icon-folder.png` : `${window.URL_MF_LEXON_BASE}/assets/img/icon-document.svg`
     };
     if (n.subChild.length > 0) {
       n.subChild = normalizeNodes(n.subChild);
     }
 
-    if (n.idType === 13) {
-      children.push(n);
-    } else {
-      console.log('Se trata de un documento');
-    }
+    flatNodes[n.id] = Object.assign({}, n)
+    children.push(n);
   }
 
   return children;
@@ -553,5 +550,17 @@ function findNode(node, id) {
   }
 
   return null;
+}
+
+
+function removeFileNodes(node) {
+
+  node.subChild = node.subChild.filter(n => n.idType === 13)
+
+  for (let i = 0; i < node.subChild.length; i++) {
+    node.subChild[i] = removeFileNodes(node.subChild[i])
+  }
+
+  return node;
 }
 

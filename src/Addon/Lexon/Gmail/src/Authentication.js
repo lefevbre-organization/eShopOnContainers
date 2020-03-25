@@ -27,7 +27,7 @@ function create3PAuthorizationUi() {
     //     .setAuthorizationAction(CardService.newAuthorizationAction()
     //         .setAuthorizationUrl(authUrl))
 
-    var promptText = 'Please login first'
+    // var promptText = 'Please login first'
 
     var loginButton = CardService.newImage()
     .setAltText("Login")
@@ -37,8 +37,8 @@ function create3PAuthorizationUi() {
 
     var card = CardService.newCardBuilder()
         .addSection(CardService.newCardSection()
-            .addWidget(CardService.newTextParagraph()
-                .setText(promptText))
+            // .addWidget(CardService.newTextParagraph()
+            //     .setText(promptText))
             .addWidget(loginButton)
             ).build()
     return [card]

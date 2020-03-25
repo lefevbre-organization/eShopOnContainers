@@ -1,17 +1,17 @@
-import React, { Component } from "react";
-import "./select-action.css";
-import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import './select-action.css';
+import PropTypes from 'prop-types';
 
-import SelectActionHeader from "../select-action/select-action-header/select-action-header";
-import SelectActionTab from "../select-action/select-action-tab/select-action-tab";
-import { PAGE_SELECT_COMPANY } from "../../constants";
+import SelectActionHeader from '../select-action/select-action-header/select-action-header';
+import SelectActionTab from '../select-action/select-action-tab/select-action-tab';
+import { PAGE_SELECT_COMPANY } from '../../constants';
 
 class SelectAction extends Component {
   constructor(props) {
     super(props);
     this.state = {
       showDocuments: true
-    }
+    };
 
     this._handelOnClick = this._handelOnClick.bind(this);
     this.onShowDocuments = this.onShowDocuments.bind(this);
@@ -22,26 +22,31 @@ class SelectAction extends Component {
   }
 
   onShowDocuments(show) {
-    this.setState({showDocuments: show})
+    this.setState({ showDocuments: show });
   }
 
-
   render() {
-    const { user, companies, toggleNotification } = this.props;
+    const {
+      user,
+      companies,
+      toggleNotification,
+      composerOpen = false
+    } = this.props;
     const { showDocuments } = this.state;
     return (
-      <div className="container-fluid">
+      <div className='container-fluid'>
         <SelectActionHeader
           companies={companies}
           changePage={this.props.changePage}
           onChange={this.onShowDocuments}
         />
-        { showDocuments === true &&
+        {showDocuments === true && (
           <SelectActionTab
+            composerOpen={composerOpen}
             user={user}
             toggleNotification={toggleNotification}
           />
-        }
+        )}
       </div>
     );
   }

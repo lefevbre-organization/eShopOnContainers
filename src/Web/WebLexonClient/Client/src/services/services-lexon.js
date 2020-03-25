@@ -314,12 +314,17 @@ export const saveUserConfig = (config, userId) => {
   });
 };
 
-export const getFolderTree = async (idFolder, bbdd, idUser) => {
+export const getFolderTree = async (
+  idFolder,
+  bbdd,
+  idUser,
+  includeFiles = false
+) => {
   const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/entities/folders/nested`;
   const body = {
     idFolder,
-    nestedLimit: 1,
-    includeFiles: false,
+    nestedLimit: 0,
+    includeFiles,
     bbdd,
     idUser
   };

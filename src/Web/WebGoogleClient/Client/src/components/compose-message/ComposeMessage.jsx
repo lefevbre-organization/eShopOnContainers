@@ -229,6 +229,8 @@ export class ComposeMessage extends PureComponent {
       const { content } = this.state;
       this.setState({ content: `<br/><br/><p>${lexon.sign}</p>` + content });
     }
+
+    window.dispatchEvent(new CustomEvent('OpenComposer'));
   }
 
   typeAllowed(file) {
@@ -344,7 +346,9 @@ export class ComposeMessage extends PureComponent {
   }
 
   componentWillUnmount() {
+    window.dispatchEvent(new CustomEvent('CloseComposer'));
     window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
+
     this.uppy.close();
   }
 
@@ -378,13 +382,18 @@ export class ComposeMessage extends PureComponent {
     this._sendEmail();
   }
 
+  b64EncodeUnicode(str) {
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+        return String.fromCharCode(parseInt(p1, 16))
+    }))
+  }
+
   _sendEmail() {
     const validTo = getValidEmails(this.state.to);
-
+    
     const headers = {
       To: validTo.join(', '),
-      //Subject: this.state.subject,
-      Subject: '=?UTF-8?B?' + window.btoa(this.state.subject) + '?=',
+      Subject: '=?UTF-8?B?' + this.b64EncodeUnicode(this.state.subject) + '?=',
       attachments: this.state.uppyPreviews
     };
 
@@ -505,8 +514,26 @@ export class ComposeMessage extends PureComponent {
     this.setState({ dropZoneActive: false });
     const uppy = this.uppy;
     const addAttachment = (file, dataUrl) => {
+      let repeated = 0;
+
+      // Check if is repeated
+      let extension = '';
+      const fls = this.uppy.getFiles();
+      for (let i = 0; i < fls.length; i++) {
+        // Hay que quitar la extensión del fichero
+        const [fn, ex] = fileNameAndExt(fls[i].name);
+        const [fn2, _] = fileNameAndExt(file.name);
+        extension = ex;
+
+        if (fn.startsWith(fn2)) {
+          repeated++;
+        }
+      }
+
+      let fileName =
+        repeated === 0 ? file.name : `${file.name} (${repeated}).${extension}`;
       const newAttachment = {
-        name: file.name,
+        name: fileName,
         size: file.size,
         type: file.type,
         source: 'Local',
@@ -892,3 +919,11 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ComposeMessage);
+
+function fileNameAndExt(str) {
+  var file = str.split('/').pop();
+  return [
+    file.substr(0, file.lastIndexOf('.')),
+    file.substr(file.lastIndexOf('.') + 1, file.length)
+  ];
+}
