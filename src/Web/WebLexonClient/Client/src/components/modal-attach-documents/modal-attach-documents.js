@@ -401,7 +401,7 @@ class ModalAttachDocuments extends Component {
                   show={this.state.step === 2}
                   user={user}
                   bbdd={companySelected}
-                  entity={1}
+                  entity={this.state.entity}
                   toggleNotification={toggleNotification}
                   onSelectedEntity={data =>
                     this.changeStep2Data(data)
@@ -417,7 +417,7 @@ class ModalAttachDocuments extends Component {
                   bbdd={companySelected}
                   entity={this.state.step2Data}
                   toggleNotification={toggleNotification}
-                  onSelectedDirectory={data => {}}></AttachDocumentsStep3>
+                  onSelectedDirectory={data => { }}></AttachDocumentsStep3>
               </div>
               <div
                 style={{

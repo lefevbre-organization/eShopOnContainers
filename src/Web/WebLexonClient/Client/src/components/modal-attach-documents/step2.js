@@ -91,7 +91,7 @@ export class AttachDocumentsStep2 extends React.Component {
               lastPage,
               showSpinner: false
             },
-            () => {}
+            () => { }
           );
         }
       } catch (err) {
@@ -166,6 +166,12 @@ export class AttachDocumentsStep2 extends React.Component {
     return (
       <Fragment>
         <div className='step2-container'>
+          <ol style={{ textAlign: 'center' }}>
+            <li className='index-3'>
+              <span>¿Desde donde quieres adjuntar los archivos?</span>
+            </li>
+          </ol>
+
           <section className='section-border'>
             <p className='section-title'>
               {i18n.t(`classification.${entity}`)}
@@ -236,7 +242,7 @@ export class AttachDocumentsStep2 extends React.Component {
                 <div
                   className={`prevButton ${
                     this.state.currentPage === 1 ? 'disabled' : ''
-                  }`}
+                    }`}
                   onClick={() => this.prevPage()}>
                   <span className='pager-icon lf-icon-angle-left' />
                   <span>Anterior</span>
@@ -245,7 +251,7 @@ export class AttachDocumentsStep2 extends React.Component {
                 <div
                   className={`nextButton ${
                     this.state.lastPage === true ? 'disabled' : ''
-                  }`}
+                    }`}
                   onClick={() => this.nextPage()}>
                   <span>Siguiente</span>
                   <span className='pager-icon lf-icon-angle-right' />
@@ -359,21 +365,17 @@ export class AttachDocumentsStep2 extends React.Component {
               cursor: pointer !important;
             }
 
-            ol > li.index-3::before {
-              content: '3';
-              color: #001978;
-              display: inline-block;
-              width: 1em;
-              margin-left: -1em;
-              background-color: #e5e8f1;
-              border-radius: 50%;
-              height: 32px;
-              width: 32px;
-              text-align: center;
+            .index-3 span {
+              margin-left: 8px;
+              height: 20px;
+              width: 442px;
+              color: #7f8cbb;
               font-family: 'MTTMilano-Medium';
-              font-size: 16px;
-              font-weight: bold;
+              font-size: 20px;
+              font-weight: 500;
+              line-height: 24px;
             }
+
             .e-rowcell {
               outline: none;
             }

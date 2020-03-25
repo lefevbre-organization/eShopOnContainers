@@ -99,24 +99,24 @@ export class ConnectingEmailsStep3 extends React.Component {
     const entities =
       node && node.subChild
         ? node.subChild.map(sc => {
-            return {
-              origin: i18n.t(`classification.${this.props.entity.idType}`),
-              name: sc.code || sc.description || '',
-              type: 'dir',
-              modified: '26/09/2019 16:57',
-              id: sc.idRelated
-            };
-          })
+          return {
+            origin: i18n.t(`classification.${this.props.entity.idType}`),
+            name: sc.code || sc.description || '',
+            type: 'dir',
+            modified: '26/09/2019 16:57',
+            id: sc.idRelated
+          };
+        })
         : [];
 
     this.setState({ entities });
   }
 
-  onNodeSelecting(event) {}
+  onNodeSelecting(event) { }
 
-  onNextPage() {}
+  onNextPage() { }
 
-  onPrevPage() {}
+  onPrevPage() { }
 
   async onCreateFolder() {
     if (this.state.selected === null) {
@@ -165,7 +165,7 @@ export class ConnectingEmailsStep3 extends React.Component {
             }
           );
         });
-      } catch (err) {}
+      } catch (err) { }
     }
   }
 

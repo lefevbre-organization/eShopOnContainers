@@ -4,7 +4,7 @@ import { getTypes } from '../../services/services-lexon';
 import { Button } from 'react-bootstrap';
 
 export class AttachDocumentsStep1 extends React.Component {
-  async componentDidMount() {}
+  async componentDidMount() { }
 
   render() {
     const { onClickCasefiles, onClickContacts } = this.props;
@@ -14,18 +14,20 @@ export class AttachDocumentsStep1 extends React.Component {
           <div className=''>
             <p className='subtitle'>
               Usa el buscador o explora tus expedientes y contactos para
-              loclaizar los archivos de Lex-on
+              localizar los archivos de Lex-on
             </p>
             <p>
               Haz una búsqueda directa de los archivos que quieres adjuntar.
               (Próximamente)
             </p>
           </div>
-          <div>
-            <input disabled placeholder='Busca tu archivo'></input>
+          <div className='input-wrapper'>
+            <span className='lf-icon-search'></span>
+            <input placeholder='Busca tu archivo'></input>
+            <span className='lf-icon-close'></span>
           </div>
           <div className='button-container'>
-            <Button bsPrefix='btn btn-primary' onClick={() => {}}>
+            <Button bsPrefix='btn btn-primary' onClick={() => { }}>
               {i18n.t('modal-attach-documents.search')}
             </Button>
           </div>
@@ -63,13 +65,40 @@ export class AttachDocumentsStep1 extends React.Component {
             </div>
           </div>
         </div>
-        <style jsx>
-          {`
+        <style jsx>{`
             .step1-container {
               margin: 50px;
             }
-            input {
+
+            .input-wrapper {
+              background-color: #e5e8f1;
+              height: 45px;
+              display: flex;
+              padding: 10px;
+            }
+            .input-wrapper span {
+              color: #001978;
+              font-size: 18px;
+              display: flex;
+              align-items: center;
+            }
+            .input-wrapper input {
               width: 100%;
+              background-color: transparent;
+              border: none !important;
+              font-size: 14px;
+              color: #001978;
+              padding: 0 10px;
+            }
+            .input-wrapper input:focus {
+              border: none !important;
+              outline: none;
+            }
+            .input-wrapper input::placeholder {
+              /* Chrome, Firefox, Opera, Safari 10.1+ */
+              color: #001978;
+              opacity: 1; /* Firefox */
+              font-size: 14px;
             }
             p {
               color: #333333 !important;
@@ -95,8 +124,7 @@ export class AttachDocumentsStep1 extends React.Component {
             .buttons p {
               color: #001978 !important;
             }
-          `}
-        </style>
+          `}</style>
       </Fragment>
     );
   }
