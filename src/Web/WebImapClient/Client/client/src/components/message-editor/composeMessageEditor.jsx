@@ -213,6 +213,7 @@ class ComposeMessageEditor extends React.Component {
           insertImageSettings={{ saveFormat: 'Base64' }}
           toolbarSettings={toolbarSettings}
           value={defaultValue}
+          iframe={true}
           change={content => {
             onChange && onChange(content.value);
           }}>
@@ -236,7 +237,6 @@ class ComposeMessageEditor extends React.Component {
           .e-richtexteditor.e-rte-tb-expand .e-rte-content {
             border-bottom: none;
           }
-
         `}</style>
       </Fragment>
     );

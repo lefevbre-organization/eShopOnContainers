@@ -120,6 +120,7 @@ export class ComposeMessage extends PureComponent {
         '',
       showInlineDashboard: false,
       open: false,
+      defaultContent: '',
       uppyPreviews: [],
       dropZoneActive: false,
       showNotification: false,
@@ -224,6 +225,7 @@ export class ComposeMessage extends PureComponent {
         // call  to addFileToState
       }
     }, 500);
+    this.state.defaultContent = this.state.content;
   }
 
   componentDidMount() {
@@ -232,7 +234,9 @@ export class ComposeMessage extends PureComponent {
     if (lexon.sign && lexon.sign !== '') {
       const { content } = this.state;
 
-      this.setState({ content: `<br/><br/><p>${lexon.sign}</p>` + content });
+      this.setState({
+        defaultContent: `<br/><br/><p>${lexon.sign}</p>` + content
+      });
     }
   }
 
@@ -813,7 +817,7 @@ export class ComposeMessage extends PureComponent {
               <div className='editor-wrapper'>
                 <ComposeMessageEditor
                   onChange={this.handleChange}
-                  defaultValue={this.state.content}
+                  defaultValue={this.state.defaultContent}
                 />
 
                 {/* <ReactQuill
