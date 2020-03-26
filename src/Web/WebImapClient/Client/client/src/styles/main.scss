@@ -56,15 +56,16 @@
   position: static !important;
 }
 
+.e-popup.e-dialog {
+  top: 10px !important;
+}
+
 .e-rte-toolbar.e-control[class*='e-toolbar'],
 .e-richtexteditor
   .e-rte-toolbar.e-toolbar.e-extended-toolbar.e-control[class*='e-toolbar'] {
   z-index: 1;
 }
 
-.e-popup.e-dialog {
-  top: 10px !important;
-}
 .e-btn.e-flat.e-primary {
   color: #001978 !important;
 }
