@@ -56,23 +56,24 @@
   position: static !important;
 }
 
+.e-popup.e-dialog {
+  top: 10px !important;
+}
+
 .e-rte-toolbar.e-control[class*='e-toolbar'],
 .e-richtexteditor
   .e-rte-toolbar.e-toolbar.e-extended-toolbar.e-control[class*='e-toolbar'] {
   z-index: 1;
 }
 
-  .e-popup.e-dialog {
-    top: 100px !important;
-  }          
-  .e-btn.e-flat.e-primary {
-    color: #001978 !important;
-  }
-  
-  .e-btn.e-flat.e-primary:hover {
-    background-color: rgba(0, 25, 120, 0.2) !important;
-  }
+.e-btn.e-flat.e-primary {
+  color: #001978 !important;
+}
 
-  .e-btn.e-flat.e-primary:active {
-    background-color: rgba(0, 25, 120, 0.5) !important;
-  }
+.e-btn.e-flat.e-primary:hover {
+  background-color: rgba(0, 25, 120, 0.2) !important;
+}
+
+.e-btn.e-flat.e-primary:active {
+  background-color: rgba(0, 25, 120, 0.5) !important;
+}
