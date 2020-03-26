@@ -65,6 +65,8 @@ public class Credentials extends AbstractAuthenticationToken implements Serializ
     @NotNull(groups=Login.class)
     private Boolean smtpSsl;
     private ZonedDateTime expiryDate;
+    @NotNull(groups=Login.class)
+    private Boolean smtpTls;
 
     @JsonCreator
     public Credentials() {
@@ -161,6 +163,15 @@ public class Credentials extends AbstractAuthenticationToken implements Serializ
     public void setSmtpSsl(Boolean smtpSsl) {
         this.smtpSsl = smtpSsl;
     }
+
+    public Boolean getSmtpTls() {
+        return smtpTls;
+    }
+
+    public void setSmtpTls(Boolean smtpTls) {
+        this.smtpTls = smtpTls;
+    }
+
 
     public ZonedDateTime getExpiryDate() {
         return expiryDate;

@@ -194,7 +194,6 @@ class ComposeMessageEditor extends React.Component {
   }
 
   getContent() {
-    debugger;
     if (this.refEditor) {
       return this.refEditor.getContent();
     }

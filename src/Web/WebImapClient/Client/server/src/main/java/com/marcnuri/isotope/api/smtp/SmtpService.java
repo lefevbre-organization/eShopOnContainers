@@ -432,7 +432,7 @@ public class SmtpService {
         ret.put("mail.smtp.ssl.enable", credentials.getSmtpSsl());
         ret.put("mail.smtp.connectiontimeout", DEFAULT_CONNECTION_TIMEOUT);
         ret.put("mail.smtp.ssl.socketFactory", socketFactory);
-        ret.put("mail.smtp.starttls.enable", true);
+        ret.put("mail.smtp.starttls.enable", credentials.getSmtpTls());
         ret.put("mail.smtp.starttls.required", false);
         ret.put("mail.smtps.connectiontimeout", DEFAULT_CONNECTION_TIMEOUT);
         ret.put("mail.smtps.socketFactory", socketFactory);
