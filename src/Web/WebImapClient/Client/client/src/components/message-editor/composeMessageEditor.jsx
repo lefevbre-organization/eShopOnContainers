@@ -194,7 +194,6 @@ class ComposeMessageEditor extends React.Component {
   }
 
   getContent() {
-    debugger;
     if (this.refEditor) {
       return this.refEditor.getContent();
     }
@@ -232,10 +231,12 @@ class ComposeMessageEditor extends React.Component {
         <style jsx>{`
           .e-richtexteditor.e-rte-tb-expand {
             border: none;
+            position: static !important;
           }
           .e-richtexteditor.e-rte-tb-expand .e-rte-content {
             border-bottom: none;
           }
+
         `}</style>
       </Fragment>
     );
