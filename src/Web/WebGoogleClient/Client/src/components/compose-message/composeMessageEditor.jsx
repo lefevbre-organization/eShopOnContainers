@@ -195,9 +195,15 @@ const ComposeMessageEditor = props => {
         id='toolsRTE_2'
         showCharCount={false}
         locale={'es-ES'}
+        // enablePersistence={true}
+        enableTabKey={true}
         insertImageSettings={{ saveFormat: 'Base64' }}
         toolbarSettings={toolbarSettings}
         value={defaultValue}
+        inline={true}
+        blur={content => {
+          // onChange && onChange(content.value);
+        }}
         change={content => {
           onChange && onChange(content.value);
         }}>

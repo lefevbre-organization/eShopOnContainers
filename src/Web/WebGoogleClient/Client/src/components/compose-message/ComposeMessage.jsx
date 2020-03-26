@@ -9,7 +9,6 @@ import {
   faTrash,
   faPaperclip
 } from '@fortawesome/free-solid-svg-icons';
-import ReactQuill from 'react-quill';
 import '../../../node_modules/react-quill/dist/quill.snow.css';
 import './composeMessage.scss';
 import ACTIONS from '../../actions/lexon';
@@ -120,6 +119,7 @@ export class ComposeMessage extends PureComponent {
         '',
       showInlineDashboard: false,
       open: false,
+      defaultContent: '',
       uppyPreviews: [],
       dropZoneActive: false,
       showNotification: false,
@@ -139,8 +139,6 @@ export class ComposeMessage extends PureComponent {
     this.handleAddAddress = this.addAddress.bind(this);
     this.handleRemoveAddress = this.removeAddress.bind(this);
     this.handleMoveAddress = this.moveAddress.bind(this);
-
-    this.fileInput = null;
 
     this.uppy = new Uppy({
       id: 'uppy1',
@@ -216,18 +214,18 @@ export class ComposeMessage extends PureComponent {
         // call  to addFileToState
       }
     }, 500);
+
+    this.state.defaultContent = this.state.content;
   }
 
   componentDidMount() {
     const { lexon } = this.props;
 
-    if (this.fileInput) {
-      this.fileInput.onchange = this.onAttachSelected;
-    }
-
     if (lexon.sign && lexon.sign !== '') {
       const { content } = this.state;
-      this.setState({ content: `<br/><br/><p>${lexon.sign}</p>` + content });
+      this.setState({
+        defaultContent: `<br/><br/><p>${lexon.sign}</p>` + content
+      });
     }
 
     window.dispatchEvent(new CustomEvent('OpenComposer'));
@@ -383,14 +381,16 @@ export class ComposeMessage extends PureComponent {
   }
 
   b64EncodeUnicode(str) {
-    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
-        return String.fromCharCode(parseInt(p1, 16))
-    }))
+    return btoa(
+      encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+        return String.fromCharCode(parseInt(p1, 16));
+      })
+    );
   }
 
   _sendEmail() {
     const validTo = getValidEmails(this.state.to);
-    
+
     const headers = {
       To: validTo.join(', '),
       Subject: '=?UTF-8?B?' + this.b64EncodeUnicode(this.state.subject) + '?=',
@@ -652,9 +652,19 @@ export class ComposeMessage extends PureComponent {
     // this.props.editMessage(updatedMessage);
   }
 
-  onAttachButton() {
-    console.log(this.fileInput);
-    this.fileInput && this.fileInput.click();
+  onAttachButton(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Create a new input file
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.style = 'display: none;';
+    input.id = '' + Date.now();
+    input.multiple = true;
+    input.onchange = this.onAttachSelected;
+    document.getElementById('inputfileWrapper').appendChild(input);
+    document.getElementById(input.id).click();
   }
 
   onAttachSelected(event) {
@@ -662,8 +672,26 @@ export class ComposeMessage extends PureComponent {
     event.stopPropagation();
     const uppy = this.uppy;
     const addAttachment = (file, dataUrl) => {
+      let repeated = 0;
+
+      // Check if is repeated
+      let extension = '';
+      const fls = this.uppy.getFiles();
+      for (let i = 0; i < fls.length; i++) {
+        // Hay que quitar la extensión del fichero
+        const [fn, ex] = fileNameAndExt(fls[i].name);
+        const [fn2, _] = fileNameAndExt(file.name);
+        extension = ex;
+
+        if (fn.startsWith(fn2)) {
+          repeated++;
+        }
+      }
+
+      let fileName =
+        repeated === 0 ? file.name : `${file.name} (${repeated}).${extension}`;
       const newAttachment = {
-        name: file.name,
+        name: fileName,
         size: file.size,
         type: file.type,
         source: 'Local',
@@ -797,7 +825,7 @@ export class ComposeMessage extends PureComponent {
               <div className='editor-wrapper'>
                 <ComposeMessageEditor
                   onChange={this.handleChange}
-                  defaultValue={this.state.content}
+                  defaultValue={this.state.defaultContent}
                 />
                 <div className='ImagePreviewContainer compose-dropcontainer attachments'>
                   {this.state.uppyPreviews.map(item => {
@@ -866,15 +894,8 @@ export class ComposeMessage extends PureComponent {
               <Button onClick={this.onAttachButton} className={'attach-button'}>
                 <FontAwesomeIcon icon={faPaperclip} size='1x' />
                 <span>{i18n.t('compose-message.attach')}</span>
-                <input
-                  ref={r => (this.fileInput = r)}
-                  id='file-input'
-                  type='file'
-                  name='name'
-                  style={{ display: 'none' }}
-                  multiple='true'
-                />
               </Button>
+              <div id='inputfileWrapper'></div>
             </div>
           </div>
         </div>

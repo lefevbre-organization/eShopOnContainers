@@ -194,7 +194,6 @@ class ComposeMessageEditor extends React.Component {
   }
 
   getContent() {
-    debugger;
     if (this.refEditor) {
       return this.refEditor.getContent();
     }
@@ -214,6 +213,7 @@ class ComposeMessageEditor extends React.Component {
           insertImageSettings={{ saveFormat: 'Base64' }}
           toolbarSettings={toolbarSettings}
           value={defaultValue}
+          iframe={true}
           change={content => {
             onChange && onChange(content.value);
           }}>
@@ -232,6 +232,7 @@ class ComposeMessageEditor extends React.Component {
         <style jsx>{`
           .e-richtexteditor.e-rte-tb-expand {
             border: none;
+            position: static !important;
           }
           .e-richtexteditor.e-rte-tb-expand .e-rte-content {
             border-bottom: none;

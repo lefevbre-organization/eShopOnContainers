@@ -508,7 +508,6 @@ class App extends Component {
       if (!newAccount.configAccount.imapPass) {
         delete newAccount.configAccount;
       }
-      debugger
       addOrUpdateAccount(userId, newAccount)
         .then(() => {
           this.setState({ isUpdatedDefaultAccount: true });
@@ -681,7 +680,6 @@ class App extends Component {
               const folder = findSentFolder(this.props.folders);
 
               console.log(folder.fullName)
-              debugger;
               await classifyEmail(
                 this.props.outbox.idMessage,
                 this.props.outbox.message.subject,
@@ -697,7 +695,6 @@ class App extends Component {
           }
         } catch (err) {
           console.log(err)
-          debugger
           //throw err;
         }
       }

@@ -18,7 +18,6 @@ export const getUser = async userId => {
 export const addOrUpdateAccount = async (userId, account) => {
   const url = `${window.URL_GET_ACCOUNTS}/${userId}/account/addorupdate`;
 
-  debugger;
   console.log(account);
   try {
     const res = await fetch(url, {
