@@ -78,3 +78,11 @@
 .e-btn.e-flat.e-primary:active {
   background-color: rgba(0, 25, 120, 0.5) !important;
 }
+
+.e-checkbox-wrapper .e-frame.e-check {
+  background-color: #001978 !important;
+}
+
+.e-control input.e-input:focus {
+  border-color: #001978 !important;
+}
