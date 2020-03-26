@@ -270,11 +270,11 @@ namespace Lexon.API.Controllers
             var paginatedEntities = new PaginatedItemsViewModel<LexEntity>(entities.PageIndex, entities.PageSize, entities.Count, entities.Data);
             var result = new Result<PaginatedItemsViewModel<LexEntity>>(paginatedEntities, entities.Errors) { infos = entities.Infos };
 
-            if (result.errors.Count() > 0 && result.data.Count == 0)
+            if (result.errors.Count() > 0 && entities.Data?.Count == 0)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
-            else if (result.errors.Count() == 0 && result.data.Count == 0)
+            else if (result.errors.Count() == 0 && (entities.Data == null || entities.Data?.Count == 0 ))
             {
                 return NotFound(result);
             }

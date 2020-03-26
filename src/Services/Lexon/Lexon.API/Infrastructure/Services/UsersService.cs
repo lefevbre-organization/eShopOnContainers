@@ -322,7 +322,7 @@ namespace Lexon.Infrastructure.Services
                         var stringFile = Convert.ToBase64String(arrayFile);
                         var fileName = response.Content.Headers.ContentDisposition.FileName;
                         result.data = stringFile;
-                        TraceInfo(result.infos, $"Se recupera el fichero {lexonFile.idDocument}");
+                        TraceInfo(result.infos, $"Se recupera el fichero:  {fileName}", lexonFile.idDocument.ToString());
                     }
                     else
                     {
@@ -344,24 +344,7 @@ namespace Lexon.Infrastructure.Services
             var result = new Result<bool>(false);
             try
             {
-                var lexonFile = new LexonPostFile
-                {
-                    idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd),
-                    fileName = fileMail.Name,
-                    idUser = fileMail.idUser,
-                    idEntityType = fileMail.idType ?? 0
-                };
-                if (fileMail.IdActuation == null || fileMail.IdActuation == 0)
-                {
-                    lexonFile.idFolder = fileMail.IdParent ?? 0;
-                    lexonFile.idEntity = fileMail.idEntity ?? 0;
-                }
-                else
-                {
-                    lexonFile.idFolder = 0;
-                    lexonFile.idEntity = (long)fileMail.IdActuation;
-                };
-
+                var lexonFile = await GetFileDataByTypeActuation(fileMail);
 
                 var json = JsonConvert.SerializeObject(lexonFile);
                 byte[] buffer = Encoding.UTF8.GetBytes(json);
@@ -390,6 +373,28 @@ namespace Lexon.Infrastructure.Services
             }
 
             return result;
+        }
+
+        private async Task<LexonPostFile> GetFileDataByTypeActuation(MailFileView fileMail)
+        {
+            var lexonFile = new LexonPostFile
+            {
+                idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd),
+                fileName = fileMail.Name,
+                idUser = fileMail.idUser,
+                idEntityType = fileMail.idType ?? 0
+            };
+            if (fileMail.IdActuation == null || fileMail.IdActuation == 0)
+            {
+                lexonFile.idFolder = fileMail.IdParent ?? 0;
+                lexonFile.idEntity = fileMail.idEntity ?? 0;
+            }
+            else
+            {
+                lexonFile.idFolder = 0;
+                lexonFile.idEntity = (long)fileMail.IdActuation;
+            };
+            return lexonFile;
         }
 
         private async Task<long> GetIdCompany(string idUser, string bbdd)
@@ -495,26 +500,22 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<MySqlCompany> GetEntitiesFoldersAsync(EntitySearchFoldersView entitySearch)
         {
-            //si no se marcar nada o se marca idParent solo se buscan carpetas
+            //si no se marcar nada o se marca idParent solo se buscan carpetas, si se pide idFolder e idPArent nunca sera carpetas
             if ((entitySearch.idFolder == null && entitySearch.idParent == null) 
                 || (entitySearch.idParent != null && entitySearch.idFolder == null))
                 entitySearch.idType = (short?)LexonAdjunctionType.folders;
-
+            else if(entitySearch.idFolder != null && entitySearch.idParent != null)
+                entitySearch.idType = (short?)LexonAdjunctionType.documents;
 
             var result = await GetEntitiesCommon(entitySearch, "/entities/folders/search");
 
             if(entitySearch.idType == (short?)LexonAdjunctionType.files || entitySearch.idType == (short?)LexonAdjunctionType.folders)
             {
-                result.Data = result.Data.FindAll(entity => entity.idType == entitySearch.idType);
-                result.Count = result.Data.Count();
+                result.Data = result.Data?.FindAll(entity => entity.idType == entitySearch.idType);
+                result.Count = result.Data?.Count();
             };
             return result;
         }
-
-        //public async Task<MySqlCompany> GetEntitiesDocumentsAsync(EntitySearchDocumentsView entitySearch)
-        //{
-        //    return await GetEntitiesCommon(entitySearch, "/entities/documents/search");
-        //}
 
         #endregion Entities
 

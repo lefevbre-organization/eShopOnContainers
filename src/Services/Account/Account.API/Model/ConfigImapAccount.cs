@@ -15,6 +15,7 @@
         public string smtp { get; set; }
         public short? smtpPort { get; set; }
         public bool? smtpSsl { get; set; }
+        public bool? smtpTls { get; set; }
 
     }
 }
