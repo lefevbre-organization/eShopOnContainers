@@ -235,7 +235,11 @@ namespace Lexon.MySql.Infrastructure.Services
             var limit = entityFolder.nestedLimit <= 0 ? 2 : entityFolder.nestedLimit;
 
             var result = new Result<LexNestedEntity>(new LexNestedEntity());
-            var search = new EntitySearchFoldersView(entityFolder.bbdd, entityFolder.idUser) { idParent = entityFolder.idFolder };
+            var search = new EntitySearchFoldersView(entityFolder.bbdd, entityFolder.idUser) 
+            { 
+                idParent = entityFolder.idFolder, 
+                search = entityFolder.search 
+            };
             if (entityFolder.includeFiles)
             {
                 search.idFolder = entityFolder.idFolder;

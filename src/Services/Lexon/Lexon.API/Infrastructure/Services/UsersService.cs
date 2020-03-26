@@ -344,18 +344,24 @@ namespace Lexon.Infrastructure.Services
             var result = new Result<bool>(false);
             try
             {
-                LexonPostFile lexonFile = new LexonPostFile
+                var lexonFile = new LexonPostFile
                 {
-                    fileName = fileMail.Name,
-                    //idAction = fileMail.IdActuation ?? 0,
                     idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd),
+                    fileName = fileMail.Name,
                     idUser = fileMail.idUser,
-                    //idFolder = fileMail.IdParent ?? 0,
-                    idFolder = 0,
-                    //idEntity = fileMail.idEntity ?? 0,
-                    idEntity = fileMail.IdActuation ?? 0,
                     idEntityType = fileMail.idType ?? 0
                 };
+                if (fileMail.IdActuation == null || fileMail.IdActuation == 0)
+                {
+                    lexonFile.idFolder = fileMail.IdParent ?? 0;
+                    lexonFile.idEntity = fileMail.idEntity ?? 0;
+                }
+                else
+                {
+                    lexonFile.idFolder = 0;
+                    lexonFile.idEntity = (long)fileMail.IdActuation;
+                };
+
 
                 var json = JsonConvert.SerializeObject(lexonFile);
                 byte[] buffer = Encoding.UTF8.GetBytes(json);
@@ -489,6 +495,12 @@ namespace Lexon.Infrastructure.Services
 
         public async Task<MySqlCompany> GetEntitiesFoldersAsync(EntitySearchFoldersView entitySearch)
         {
+            //si no se marcar nada o se marca idParent solo se buscan carpetas
+            if ((entitySearch.idFolder == null && entitySearch.idParent == null) 
+                || (entitySearch.idParent != null && entitySearch.idFolder == null))
+                entitySearch.idType = (short?)LexonAdjunctionType.folders;
+
+
             var result = await GetEntitiesCommon(entitySearch, "/entities/folders/search");
 
             if(entitySearch.idType == (short?)LexonAdjunctionType.files || entitySearch.idType == (short?)LexonAdjunctionType.folders)
