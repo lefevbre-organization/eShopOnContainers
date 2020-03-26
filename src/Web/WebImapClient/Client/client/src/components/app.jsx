@@ -474,6 +474,7 @@ class App extends Component {
       smtpHost,
       smtpPort,
       smtpSsl,
+      smtpTls,
       user,
       password
     } = this.props.all.login.formValues;
@@ -502,12 +503,14 @@ class App extends Component {
           imapSsl: imapSsl,
           smtp: smtpHost,
           smtpPort: smtpPort,
-          smtpSsl: smtpSsl
+          smtpSsl: smtpSsl,
+          smtpTls: smtpTls
         }
       };
       if (!newAccount.configAccount.imapPass) {
         delete newAccount.configAccount;
       }
+      
       addOrUpdateAccount(userId, newAccount)
         .then(() => {
           this.setState({ isUpdatedDefaultAccount: true });
@@ -695,6 +698,7 @@ class App extends Component {
           }
         } catch (err) {
           console.log(err)
+          debugger
           //throw err;
         }
       }
