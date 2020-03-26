@@ -526,7 +526,6 @@ export const uploadFile = async (emailId, fileName, file, content) => {
 
   const data = content.split('base64,')[1];
 
-  debugger;
   const attachment = {
     '@odata.type': '#microsoft.graph.fileAttachment',
     name: fileName,
@@ -554,7 +553,6 @@ export const uploadFileWithUploadSession = async (
   const accessToken = await getAccessTokenSilent();
   const client = await getAuthenticatedClient(accessToken);
 
-  debugger;
   const uploadSession = {
     AttachmentItem: {
       attachmentType: 'file',
