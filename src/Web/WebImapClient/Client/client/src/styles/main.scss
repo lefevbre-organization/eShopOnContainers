@@ -62,17 +62,17 @@
   z-index: 1;
 }
 
-  .e-popup.e-dialog {
-    top: 100px !important;
-  }          
-  .e-btn.e-flat.e-primary {
-    color: #001978 !important;
-  }
-  
-  .e-btn.e-flat.e-primary:hover {
-    background-color: rgba(0, 25, 120, 0.2) !important;
-  }
+.e-popup.e-dialog {
+  top: 10px !important;
+}
+.e-btn.e-flat.e-primary {
+  color: #001978 !important;
+}
 
-  .e-btn.e-flat.e-primary:active {
-    background-color: rgba(0, 25, 120, 0.5) !important;
-  }
+.e-btn.e-flat.e-primary:hover {
+  background-color: rgba(0, 25, 120, 0.2) !important;
+}
+
+.e-btn.e-flat.e-primary:active {
+  background-color: rgba(0, 25, 120, 0.5) !important;
+}
