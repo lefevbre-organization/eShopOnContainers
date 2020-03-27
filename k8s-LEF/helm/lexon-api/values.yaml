@@ -54,6 +54,8 @@ env:
       value: Development
     - name: LexonMySqlUrl
       value: 'http://lexonmysql-api/api/v1/LexonMySql'
+    - name: LexonFilesUrl
+      value: 'https://10.38.6.18/index.php'
     - name: OrchestratorType
       value: 'K8S'
 
