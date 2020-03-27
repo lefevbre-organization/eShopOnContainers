@@ -1,0 +1,77 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: apigwlex
+spec:
+  paused: true
+  template:
+    metadata:
+      labels:
+        app: elefebvre
+        component: apigwlex
+    spec:
+      containers:
+      - name: apigwlex
+        image: elefebvre/ocelotapigw
+        imagePullPolicy: Always
+        env:
+        - name: PATH_BASE
+          value: /weblexonapigw
+        - name: IdentityUrl
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: identity            
+        ports:
+        - containerPort: 80   
+        volumeMounts:
+        - name: config
+          mountPath: /app/configuration            
+      volumes:
+      - name: config
+        configMap:
+          name: ocelot
+          items:
+          - key: lex
+            path: configuration.json
+      imagePullSecrets:
+      - name: registry-key
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: apigwacc
+spec:
+  paused: true
+  template:
+    metadata:
+      labels:
+        app: elefebvre
+        component: apigwacc
+    spec:
+      containers:
+      - name: apigwacc
+        image: elefebvre/ocelotapigw
+        imagePullPolicy: Always
+        env:
+        - name: PATH_BASE
+          value: /webaccountapigw        
+        - name: IdentityUrl
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: identity                
+        ports:
+        - containerPort: 80   
+        volumeMounts:
+        - name: config
+          mountPath: /app/configuration            
+      volumes:
+      - name: config
+        configMap:
+          name: ocelot
+          items:
+          - key: ms
+            path: configuration.json
+      imagePullSecrets:
+      - name: registry-key

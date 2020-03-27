@@ -101,7 +101,7 @@ if ($pushImages) {
     foreach ($service in $servicesToPush) {
         $imageFqdn = if ($useDockerHub)  {"$dockerOrg/${service}"} else {"$registry/$dockerOrg/${service}"}
         docker tag $dockerOrg/${service}:$imageTag ${imageFqdn}:$imageTag
-        Write-Host "imagen -> $dockerOrg/${service}:$imageTag con tag ${imageFqdn}:$imageTag" -ForegroundColor Magenta
+        Write-Host "la imagen -> $dockerOrg/${service}:$imageTag añade el tag ${imageFqdn}:$imageTag" -ForegroundColor Magenta
 
         docker push ${imageFqdn}:$imageTag  
         Write-Host "Push image to ${imageFqdn}:$imageTag" -ForegroundColor Magenta
@@ -142,54 +142,52 @@ if ($deployKubernetes){
 
     # Removing previous services & deployments
     Write-Host "Removing existing services & deployments.." -ForegroundColor Yellow
+    Write-Host "Delete the ingress-lef.yaml paths" -ForegroundColor Red
     ExecKube -cmd 'delete deployments --all'
     ExecKube -cmd 'delete services --all'
     ExecKube -cmd 'delete configmap internalurls'
     ExecKube -cmd 'delete configmap urls'
     ExecKube -cmd 'delete configmap externalcfg'
     ExecKube -cmd 'delete configmap ocelot'
-    ExecKube -cmd 'delete -f ingress.yaml'
+    ExecKube -cmd 'delete -f ingress-lef.yaml'
 
     # start sql, rabbitmq, frontend deployments
     if ($deployInfrastructure) {
         Write-Host 'Deploying infrastructure deployments (databases, redis, RabbitMQ...)' -ForegroundColor Yellow
-        ExecKube -cmd 'create -f sql-data.yaml -f basket-data.yaml -f keystore-data.yaml -f rabbitmq.yaml -f nosql-data.yaml'
+        Write-Host "Create the sql-data-lef.yaml rabbitmq-lef.yaml -nosql-data-lef.yaml" -ForegroundColor Red
+        ExecKube -cmd 'create -f sql-data-lef.yaml -f rabbitmq-lef.yaml -f nosql-data-lef.yaml'
     }
 
 
-    Write-Host 'Deploying ocelot APIGW' -ForegroundColor Yellow
+    Write-Host 'Deploying ocelot APIGW from ocelot/deployment-lef.yaml y ocelot/service-lef.yaml ans config files' -ForegroundColor Yellow
 
-    ExecKube "create configmap ocelot --from-file=mm=ocelot/configuration-mobile-marketing.json --from-file=ms=ocelot/configuration-mobile-shopping.json --from-file=wm=ocelot/configuration-web-marketing.json --from-file=ws=ocelot/configuration-web-shopping.json "
-    ExecKube -cmd "apply -f ocelot/deployment.yaml"
-    ExecKube -cmd "apply -f ocelot/service.yaml"
+    ExecKube "create configmap ocelot --from-file=mm=ocelot/configuration-web-account.json --from-file=ws=ocelot/configuration-web-lexon.json "
+    ExecKube -cmd "apply -f ocelot/deployment-lef.yaml"
+    ExecKube -cmd "apply -f ocelot/service-lef.yaml"
 
     Write-Host 'Deploying code deployments (Web APIs, Web apps, ...)' -ForegroundColor Yellow
-    ExecKube -cmd 'create -f services.yaml'
+    Write-Host "Create services-lef.yaml" -ForegroundColor Red
+    ExecKube -cmd 'create -f services-lef.yaml'
 
-    ExecKube -cmd 'create -f internalurls.yaml'
+    Write-Host "Create internalurls-lef.yaml" -ForegroundColor Red
+    ExecKube -cmd 'create -f internalurls-lef.yaml'
+
+    Write-Host "Create configmap urls" -ForegroundColor Red
     ExecKube -cmd 'create configmap urls `
-        --from-literal=PicBaseUrl=http://$($externalDns)/webshoppingapigw/api/v1/c/catalog/items/[0]/pic/ `
-        --from-literal=Marketing_PicBaseUrl=http://$($externalDns)/webmarketingapigw/api/v1/m/campaigns/[0]/pic/ `
-        --from-literal=mvc_e=http://$($externalDns)/webmvc `
-        --from-literal=marketingapigw_e=http://$($externalDns)/webmarketingapigw `
-        --from-literal=webshoppingapigw_e=http://$($externalDns)/webshoppingapigw `
-        --from-literal=mobileshoppingagg_e=http://$($externalDns)/mobileshoppingagg `
-        --from-literal=webshoppingagg_e=http://$($externalDns)/webshoppingagg `
-        --from-literal=identity_e=http://$($externalDns)/identity `
-        --from-literal=spa_e=http://$($externalDns) `
-        --from-literal=locations_e=http://$($externalDns)/locations-api `
-        --from-literal=marketing_e=http://$($externalDns)/marketing-api `
-        --from-literal=basket_e=http://$($externalDns)/basket-api `
-        --from-literal=ordering_e=http://$($externalDns)/ordering-api `
-        --from-literal=xamarin_callback_e=http://$($externalDns)/xamarincallback' 
+        --from-literal=weblexonapigw_e=http://$($externalDns)/weblexonapigw `
+        --from-literal=webaccountapigw_e=http://$($externalDns)/webaccountapigw `
+        --from-literal=lexon_e=http://$($externalDns)/lexon-api `
+        --from-literal=account_e=http://$($externalDns)/account-api `
+        --from-literal=lexonapi_e=http://$($externalDns)/lexon-mysql-api `
+        --from-literal=ordering_e=http://$($externalDns)/ordering-api' 
 
-    ExecKube -cmd 'label configmap urls app=eshop'
+    ExecKube -cmd 'label configmap urls app=elefebvre'
 
     Write-Host "Deploying configuration from $configFile" -ForegroundColor Yellow
     ExecKube -cmd "create -f $configFile"
 
-    Write-Host "Creating deployments..." -ForegroundColor Yellow
-    ExecKube -cmd 'create -f deployments.yaml'
+    Write-Host "Creating deployments with deployments-lef.yaml..." -ForegroundColor Yellow
+    ExecKube -cmd 'create -f deployments-lef.yaml'
 
     # update deployments with the correct image (with tag and/or registry)
     $registryPath = ""

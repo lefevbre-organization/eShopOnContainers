@@ -2,58 +2,62 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   labels:
-    app: eshop
+    app: elefebvre
     component: frontend
-  name: eshop-ingress
+  name: elefebvre-ingress
   annotations:
     ingress.kubernetes.io/ssl-redirect: "false"  
 spec:
   rules:
   - http:
       paths:
-      - path: /identity
+      - path: /webloginaddonlexon
         backend:
-          serviceName: identity
+          serviceName: webloginaddonlexon
           servicePort: 80
-      - path: /webmvc
+      - path: /webgoogleclient
         backend:
-          serviceName: webmvc
+          serviceName: webgoogleclient
+          servicePort: 80
+      - path: /webofficeclient
+        backend:
+          serviceName: webofficeclient
+          servicePort: 80
+      - path: /weblexonclient
+        backend:
+          serviceName: weblexonclient
+          servicePort: 80
+      - path: /webimapclient
+        backend:
+          serviceName: webimapclient
           servicePort: 80
       - path: /webstatus
         backend:
           serviceName: webstatus
           servicePort: 80
-      - path: /webshoppingapigw 
+      - path: /webaccountapigw 
         backend:
-          serviceName: ocelotapigw-ws
+          serviceName: ocelotapigw-account
           servicePort: 80          
-      - path: /webmarketingapigw
+      - path: /weblexonapigw
         backend:
-          serviceName: ocelotapigw-wm
+          serviceName: ocelotapigw-lexon
+          servicePort: 80                          
+      - path: /lexon.api
+        backend:
+          serviceName: lexon.api
           servicePort: 80
-      - path: /mobilemarketingapigw
+      - path: /lexon.mysql.api
         backend:
-          serviceName: ocelotapigw-mm
-          servicePort: 80                    
-      - path: /mobileshoppingapigw
-        backend:
-          serviceName: ocelotapigw-ms
-          servicePort: 80          
-      - path: /webshoppingagg
-        backend:
-          serviceName: webshoppingagg
+          serviceName: lexon.mysql.api
           servicePort: 80
-      - path: /mobileshoppingagg
+      - path: /account.api
         backend:
-          serviceName: mobileshoppingagg
-          servicePort: 80
-      - path: /payment-api
-        backend:
-          serviceName: payment
+          serviceName: account.api
           servicePort: 80                      
       - path: /
         backend:
-          serviceName: webspa
+          serviceName: webportalclient
           servicePort: 80
                     
 

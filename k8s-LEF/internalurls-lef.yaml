@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: internalurls
+  labels:
+    app: eshop  
+data:
+# Internal Services & healthchecks
+  lexon: http://lexon.api
+  lexon__hc: http://lexon.api/hc
+  lexonmysql: http://lexon.mysql.api
+  lexonmysql__hc: http://lexon.mysql.api/hc
+  account: http://account.api
+  account__hc: http://account.api/hc
+# API GWs
+  apigwacc: http://ocelotapigw-acc
+  apigwlex: http://ocelotapigw-lex
