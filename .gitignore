@@ -292,3 +292,6 @@ src/**/inf.yaml
 /src/Web/WebPortalClient/node_modules_
 /src/Web/WebImapClient/Client/server/.settings
 /src/Web/WebImapClient/Client/server/.classpath
+/src/Web/WebImapClient/Client/server/build/reports/jacoco/test/html/com.marcnuri.isotope.api.smtp/SmtpService$2.html
+/src/Web/WebImapClient/Client/server/build/tmp/test
+src/Web/WebImapClient/Client/server/build/jacoco/test.exec

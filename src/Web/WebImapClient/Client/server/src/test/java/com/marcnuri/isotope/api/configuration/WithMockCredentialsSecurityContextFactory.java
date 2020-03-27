@@ -46,6 +46,7 @@ public class WithMockCredentialsSecurityContextFactory implements WithSecurityCo
         credentials.setSmtpHost(mockCredentials.smtpHost());
         credentials.setSmtpPort(mockCredentials.smtpPort());
         credentials.setSmtpSsl(mockCredentials.smtpSsl());
+        credentials.setSmtpTls(mockCredentials.smtpTls());
         credentials.setExpiryDate(ZonedDateTime.now().plus(Duration.ofMinutes(15L)));
         return securityContext;
     }
