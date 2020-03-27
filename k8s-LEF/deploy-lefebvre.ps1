@@ -2,20 +2,19 @@ Param(
     [parameter(Mandatory=$false)][string]$registry=$null,
     [parameter(Mandatory=$false)][string]$dockerUser="avalverdelefebvre",
     [parameter(Mandatory=$false)][string]$dockerPassword="Alberto1971.-",
+    [parameter(Mandatory=$false)][string]$dockerOrg="elefebvreoncontainers",
+    [parameter(Mandatory=$false)][bool]$cleanDocker=$true,
     [parameter(Mandatory=$false)][string]$execPath,
     [parameter(Mandatory=$false)][string]$kubeconfigPath,
     [parameter(Mandatory=$false)][string]$configFile,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "account.api", "lexon.api","lexon.mysql.api", "ocelotapigw", "webstatus"),
-    [parameter(Mandatory=$false)][string]$imageTagPlatform="linux",
-    [parameter(Mandatory=$false)][string]$imageTag="dev",
-    [parameter(Mandatory=$false)][bool]$deployCI=$false,
+    [parameter(Mandatory=$false)][string]$imageTag="linux-dev",
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
-    [parameter(Mandatory=$false)][bool]$cleanDocker=$true,
+    [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
-    [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
-    [parameter(Mandatory=$false)][string]$dockerOrg="elefebvreoncontainers"
+    [parameter(Mandatory=$false)][bool]$deployCI=$false,
 )
 
 function ExecKube($cmd) {    
@@ -50,7 +49,7 @@ if ($deployKubernetes){
 if(-not $deployCI) {
     $requiredCommands = ("docker", "docker-compose", "kubectl")
     foreach ($command in $requiredCommands) {
-        if ((Get-Command $command -ErrorAction SilentlyContinue) -eq $null) {
+        if ($null -eq (Get-Command $command -ErrorAction SilentlyContinue)) {
             Write-Host "$command must be on path" -ForegroundColor Red
             exit
         }
@@ -101,13 +100,11 @@ if ($pushImages) {
 
     foreach ($service in $servicesToPush) {
         $imageFqdn = if ($useDockerHub)  {"$dockerOrg/${service}"} else {"$registry/$dockerOrg/${service}"}
-        $tagComplete = "$imageTagPlatform-$imageTag"
-        # docker tag eshop/${service}:$tagComplete ${imageFqdn}:$tagComplete
-        docker tag $dockerOrg/${service}:$tagComplete ${imageFqdn}:$tagComplete
-        Write-Host "imagen -> $dockerOrg/${service}:$tagComplete con tag ${imageFqdn}:$tagComplete" -ForegroundColor Magenta
+        docker tag $dockerOrg/${service}:$imageTag ${imageFqdn}:$imageTag
+        Write-Host "imagen -> $dockerOrg/${service}:$imageTag con tag ${imageFqdn}:$imageTag" -ForegroundColor Magenta
 
-        docker push ${imageFqdn}:$tagComplete  
-        Write-Host "Push image to ${imageFqdn}:$tagComplete" -ForegroundColor Magenta
+        docker push ${imageFqdn}:$imageTag  
+        Write-Host "Push image to ${imageFqdn}:$imageTag" -ForegroundColor Magenta
                   
     }
 
