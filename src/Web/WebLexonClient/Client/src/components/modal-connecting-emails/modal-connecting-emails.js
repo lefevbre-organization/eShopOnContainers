@@ -73,35 +73,51 @@ class ModalConnectingEmails extends Component {
   }
 
   nextStep() {
-    if (this.state.step === 1) {
+    const { step, step1Data } = this.state;
+
+
+    if (step === 1) {
       this.setState({ step: 2 });
-    } else if (this.state.step === 2) {
+    } else if (step === 2) {
       if (
-        this.state.step1Data.copyDocuments === false &&
-        this.state.step1Data.saveDocuments === false
+        step1Data.copyDocuments === false &&
+        step1Data.saveDocuments === false
       ) {
         this.setState({ step: 4 });
       } else {
-        this.setState({ step: 3 });
+        if (step1Data.actuation === true) {
+          this.setState({ step: 4 });
+
+        } else {
+          this.setState({ step: 3 });
+
+        }
       }
-    } else if (this.state.step === 3) {
+    } else if (step === 3) {
       this.setState({ step: 4 });
     }
   }
 
   prevStep() {
-    if (this.state.step === 2) {
+    const { step, step1Data } = this.state;
+
+    if (step === 2) {
       this.setState({ step: 1 });
-    } else if (this.state.step === 3) {
+    } else if (step === 3) {
       this.setState({ step: 2 });
-    } else if (this.state.step === 4) {
+    } else if (step === 4) {
       if (
-        this.state.step1Data.copyDocuments === false &&
-        this.state.step1Data.saveDocuments === false
+        step1Data.copyDocuments === false &&
+        step1Data.saveDocuments === false
       ) {
         this.setState({ step: 2 });
       } else {
-        this.setState({ step: 3 });
+        if (step1Data.actuation === true) {
+          this.setState({ step: 2 });
+        } else {
+          this.setState({ step: 3 });
+
+        }
       }
     }
   }
@@ -152,7 +168,6 @@ class ModalConnectingEmails extends Component {
   }
 
   onSave() {
-    console.log('onSave');
     if (this.state.step === 2) {
       this.onSaveStep2();
     } else if (this.state.step === 4) {
@@ -201,10 +216,10 @@ class ModalConnectingEmails extends Component {
 
         if (step1Data.copyDocuments === true) {
           await uploadFile(
-            step3Data.selected,
-            step2Data.id,
-            step2Data.idType,
-            sc[i],
+            step1Data.actuation === false ? step3Data.selected : undefined,
+            step1Data.actuation === false ? step2Data.id : undefined,
+            step1Data.actuation === false ? step2Data.idType : undefined,
+            step1Data.actuation === true ? sc[i] : undefined,
             this.props.companySelected.bbdd,
             this.props.user.idUser,
             subject + '.eml',
@@ -226,10 +241,10 @@ class ModalConnectingEmails extends Component {
               );
               const rawAttach = Base64.encode(data);
               await uploadFile(
-                step3Data.selected,
-                step2Data.id,
-                step2Data.idType,
-                sc[i],
+                step1Data.actuation === false ? step3Data.selected : undefined,
+                step1Data.actuation === false ? step2Data.id : undefined,
+                step1Data.actuation === false ? step2Data.idType : undefined,
+                step1Data.actuation === true ? sc[i] : undefined,
                 this.props.companySelected.bbdd,
                 this.props.user.idUser,
                 mime.childNodes[j].contentType.params.name,
@@ -278,10 +293,11 @@ class ModalConnectingEmails extends Component {
   }
 
   renderButtons() {
-    const { step } = this.state;
+    const { step, step1Data } = this.state;
 
     switch (step) {
       case 1:
+        const dsbl = (step1Data.actuation === false && step1Data.copyDocuments === false && step1Data.saveDocuments === false)
         return (
           <Fragment>
             <Button
@@ -292,6 +308,7 @@ class ModalConnectingEmails extends Component {
               {i18n.t('classify-emails.cancel')}
             </Button>
             <Button
+              disabled={dsbl}
               bsPrefix='btn btn-primary'
               onClick={() => {
                 this.nextStep();
@@ -392,7 +409,7 @@ class ModalConnectingEmails extends Component {
       showModalDocuments,
       toggleNotification
     } = this.props;
-    const { messages, step1Data } = this.state;
+    const { messages, step1Data, step } = this.state;
 
     return (
       <div className='modal-connection-emails'>
@@ -414,7 +431,7 @@ class ModalConnectingEmails extends Component {
                 border='0'
                 alt='Lex-On'
                 src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
-              <span>{i18n.t('modal-conecting-emails.save-copy')}</span>
+              <span>{i18n.t('modal-conecting-emails.save-copy')} - {step}</span>
             </h5>
           </Modal.Header>
           <Modal.Body className='mimodal'>
@@ -457,7 +474,7 @@ class ModalConnectingEmails extends Component {
                   show={this.state.step === 4}
                   step={
                     step1Data.copyDocuments === false &&
-                    step1Data.saveDocuments === false
+                      step1Data.saveDocuments === false
                       ? 4
                       : 5
                   }
