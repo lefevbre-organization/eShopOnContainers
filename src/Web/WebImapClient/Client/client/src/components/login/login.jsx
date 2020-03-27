@@ -7,6 +7,7 @@ import {
     DEFAULT_IMAP_SSL,
     DEFAULT_SMTP_PORT,
     DEFAULT_SMTP_SSL,
+    DEFAULT_SMTP_TLS,
     login
 } from '../../services/application';
 import Button from '../buttons/button';
@@ -36,7 +37,8 @@ const stateFromParams = params => ({
         imapSsl: params.has('imapSsl') ? params.get('imapSsl') === 'true' : DEFAULT_IMAP_SSL,
         smtpHost: params.has('smtpHost') ? params.get('smtpHost') : '',
         smtpPort: params.has('smtpPort') ? params.get('smtpPort').replace(/[^0-9]*/g, '') : DEFAULT_SMTP_PORT,
-        smtpSsl: params.has('smtpSsl') ? params.get('smtpSsl') === 'true' : DEFAULT_SMTP_SSL
+        smtpSsl: params.has('smtpSsl') ? params.get('smtpSsl') === 'true' : DEFAULT_SMTP_SSL,
+        smtpTls: params.has('smtpTls') ? params.get('smtpTls') === 'true' : DEFAULT_SMTP_TLS
     },
     advanced: false
 });
@@ -54,7 +56,8 @@ const stateFromAccount = account => ({
         imapSsl: account.imapSsl || DEFAULT_IMAP_SSL,
         smtpHost: account.smtp || '',
         smtpPort: account.smtpPort || DEFAULT_SMTP_PORT,
-        smtpSsl: (account && account.smtpSsl !== undefined && account.smtpSsl !== null) ? account.smtpSsl : DEFAULT_SMTP_SSL
+        smtpSsl: (account && account.smtpSsl !== undefined && account.smtpSsl !== null) ? account.smtpSsl : DEFAULT_SMTP_SSL,
+        smtpTls: (account && account.smtpTls !== undefined && account.smtpTls !== null) ? account.smtpTls : DEFAULT_SMTP_TLS
     },
     advanced: false
 });
@@ -112,7 +115,7 @@ export class Login extends Component {
 
     render() {
         const t = this.props.t;
-        const { serverHost, serverPort, user, password, imapSsl, smtpHost, smtpPort, smtpSsl } = this.state.values;
+        const { serverHost, serverPort, user, password, imapSsl, smtpHost, smtpPort, smtpSsl, smtpTls} = this.state.values;
         const { advanced } = this.state;
         if (this.props.application.user.credentials) {
             return <Redirect to="/" />;
@@ -165,11 +168,11 @@ export class Login extends Component {
                                             focused={this.isFocused('smtpPort')} label={t('login.Port')} />
                                     </div>
                                     <span className={`${styles.SslOptions}`}>
-                                        <Switch id='smtpSsl' checked={smtpSsl} label={t('login.SmtpSSL')} onToggle={() => this.onToggle('smtpSsl')} />
+                                        <Switch id='smtpSsl' checked={(smtpSsl)} label={t('login.SmtpSSL')} onToggle={() => this.onToggle('smtpSsl')} />
                                     </span>
                                     <span className={`${styles.SslOptions}`}>       
-                                        <Switch id='smtpTls' checked={!smtpSsl} label={t('login.SmtpTLS')} onToggle={() => this.onToggle('smtpSsl')} />
-                                    </span>   
+                                        <Switch id='smtpTls' checked={smtpTls} label={t('login.SmtpTLS')} onToggle={() => this.onToggle('smtpTls')} />
+                                    </span>
                                 </div>
                             }
                             <Button type={'submit'}
@@ -196,6 +199,11 @@ export class Login extends Component {
             const newState = { ...prevState };
             newState.values = { ...prevState.values };
             newState.values[id] = !newState.values[id];
+            if (id === "smtpSsl" && newState.values[id] === true){
+                newState.values['smtpTls'] = false;
+            } else if (id === "smtpTls" && newState.values[id] === true){
+                newState.values['smtpSsl'] = false;
+            }
             return newState;
         });
     }
@@ -240,7 +248,8 @@ export class Login extends Component {
     }
 
     async saveLoginConfig() {
-        const { userId = '', account = '' } = this.props.lexon;
+        var { userId = '', account = this.state.values.user } = this.props.lexon;        
+        if (account === '' || account === null){account = this.state.values.user;}
         const url = `${window.API_ACC_GATEWAY}/api/v2/accounts/usermail/${userId}/account/${PROVIDER}/${account}/config/addorupdate`;
         await fetch(url, {
             method: 'POST',
@@ -255,7 +264,8 @@ export class Login extends Component {
                 imapSsl: this.state.values.imapSsl,
                 smtp: this.state.values.smtpHost,
                 smtpPort: this.state.values.smtpPort,
-                smtpSsl: this.state.values.smtpSsl
+                smtpSsl: this.state.values.smtpSsl,
+                smtpTls: this.state.values.smtpTls
             })
         });
     }

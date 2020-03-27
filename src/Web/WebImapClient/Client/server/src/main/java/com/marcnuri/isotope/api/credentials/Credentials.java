@@ -65,6 +65,8 @@ public class Credentials extends AbstractAuthenticationToken implements Serializ
     @NotNull(groups=Login.class)
     private Boolean smtpSsl;
     private ZonedDateTime expiryDate;
+    @NotNull(groups=Login.class)
+    private Boolean smtpTls;
 
     @JsonCreator
     public Credentials() {
@@ -162,6 +164,15 @@ public class Credentials extends AbstractAuthenticationToken implements Serializ
         this.smtpSsl = smtpSsl;
     }
 
+    public Boolean getSmtpTls() {
+        return smtpTls;
+    }
+
+    public void setSmtpTls(Boolean smtpTls) {
+        this.smtpTls = smtpTls;
+    }
+
+
     public ZonedDateTime getExpiryDate() {
         return expiryDate;
     }
@@ -186,13 +197,14 @@ public class Credentials extends AbstractAuthenticationToken implements Serializ
                 Objects.equals(smtpHost, that.smtpHost) &&
                 Objects.equals(smtpPort, that.smtpPort) &&
                 Objects.equals(smtpSsl, that.smtpSsl) &&
-                Objects.equals(expiryDate, that.expiryDate);
+                Objects.equals(expiryDate, that.expiryDate) &&
+                Objects.equals(smtpTls, that.smtpTls);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(super.hashCode(), encrypted, salt, serverHost, serverPort, user, password, imapSsl, smtpHost, smtpPort, smtpSsl, expiryDate);
+        return Objects.hash(super.hashCode(), encrypted, salt, serverHost, serverPort, user, password, imapSsl, smtpHost, smtpPort, smtpSsl, expiryDate, smtpTls);
     }
 
     /**

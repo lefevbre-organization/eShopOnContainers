@@ -120,6 +120,7 @@ public class SmtpServiceTest {
         credentials.setUser("valid");
         credentials.setServerHost("email.com");
         credentials.setSmtpSsl(true);
+        credentials.setSmtpTls(true);
         credentials.setSmtpPort(1);
 
         // When
@@ -136,6 +137,7 @@ public class SmtpServiceTest {
         credentials.setUser("invalid");
         credentials.setServerHost("email.com");
         credentials.setSmtpSsl(true);
+        credentials.setSmtpTls(true);
         credentials.setSmtpPort(1);
         doThrow(new MessagingException()).when(mockedTransport).connect(
                 Mockito.eq(credentials.getServerHost()), Mockito.eq(credentials.getSmtpPort()),

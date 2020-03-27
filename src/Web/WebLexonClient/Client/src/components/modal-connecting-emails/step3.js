@@ -96,7 +96,7 @@ export class ConnectingEmailsStep3 extends React.Component {
     console.log(node);
 
     // Show children of selected node
-    const entities = (node && node.subChild)?node.subChild.map(sc => {
+    const entities = (node && node.subChild) ? node.subChild.map(sc => {
       return {
         origin: i18n.t(`classification.${this.props.entity.idType}`),
         name: sc.code || sc.description || '',
@@ -104,16 +104,16 @@ export class ConnectingEmailsStep3 extends React.Component {
         modified: '26/09/2019 16:57',
         id: sc.idRelated
       };
-    }):[];
+    }) : [];
 
     this.setState({ entities });
   }
 
-  onNodeSelecting(event) {}
+  onNodeSelecting(event) { }
 
-  onNextPage() {}
+  onNextPage() { }
 
-  onPrevPage() {}
+  onPrevPage() { }
 
   async onCreateFolder() {
     if (this.state.selected === null) {
@@ -139,6 +139,7 @@ export class ConnectingEmailsStep3 extends React.Component {
             this.props.bbdd.bbdd,
             this.props.user.idUser
           );
+
           const tree = normalizeTree(
             this.props.entity,
             response.result.data,
@@ -161,7 +162,7 @@ export class ConnectingEmailsStep3 extends React.Component {
             }
           );
         });
-      } catch (err) {}
+      } catch (err) { }
     }
   }
 
@@ -518,7 +519,12 @@ function normalizeNodes(nodes, preselectId = 0) {
     if (n.subChild.length > 0) {
       n.subChild = normalizeNodes(n.subChild);
     }
-    children.push(n);
+
+    if (n.idType === 13) {
+      children.push(n);
+    } else {
+      console.log('Se trata de un documento');
+    }
   }
 
   return children;
@@ -548,3 +554,4 @@ function findNode(node, id) {
 
   return null;
 }
+

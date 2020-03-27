@@ -1,14 +1,15 @@
-import { combineReducers } from "redux";
-import email from "./email";
-import selections from "./selections";
-import documentsReducer from "./documentsReducer";
-import applicationReducer from "./applicationReducer";
+import { combineReducers } from 'redux';
+import email from './email';
+import selections from './selections';
+import documentsReducer from './documentsReducer';
+import applicationReducer from './applicationReducer';
 
 export const INITIAL_STATE = {
   application: {
     errors: [],
     idCaseFile: null,
-    config: {}
+    config: {},
+    isComposerOpen: false
   },
   email: {
     selectedMessages: []
@@ -19,7 +20,8 @@ export const INITIAL_STATE = {
     initialBBDD: null
   },
   documents: {
-    showModalDocuments: false
+    showModalDocuments: false,
+    showAttachDocuments: false
   }
 };
 

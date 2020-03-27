@@ -1,15 +1,15 @@
-import React, { Component, Fragment } from "react";
-import "./tab-connect-message.css";
-import PropTypes from "prop-types";
-import SaveDocument from "../save-document/save-document";
-import ListDocuments from "../list-documents/list-documents";
-import i18n from "i18next";
-import { connect } from "react-redux";
-import { getClassifications } from "../../../services/services-lexon";
-import ModalConnectingEmails from "../../modal-connecting-emails/modal-connecting-emails";
-import ListClassifications from "../list-classifications/list-classifications";
-import ConfirmRemoveClassification from "../../confirm-remove-classification/confirm-remove-classification";
-import Spinner from "../../../components/spinner/spinner";
+import React, { Component, Fragment } from 'react';
+import './tab-connect-message.css';
+import PropTypes from 'prop-types';
+import SaveDocument from '../save-document/save-document';
+import ListDocuments from '../list-documents/list-documents';
+import i18n from 'i18next';
+import { connect } from 'react-redux';
+import { getClassifications } from '../../../services/services-lexon';
+import ModalConnectingEmails from '../../modal-connecting-emails/modal-connecting-emails';
+import ListClassifications from '../list-classifications/list-classifications';
+import ConfirmRemoveClassification from '../../confirm-remove-classification/confirm-remove-classification';
+import Spinner from '../../../components/spinner/spinner';
 
 class TabConnectMessage extends Component {
   constructor(props) {
@@ -18,9 +18,11 @@ class TabConnectMessage extends Component {
     this.state = {
       loading: false,
       showClassifications: false,
-      showConfirmRemoveClassification: false,
+      showConfirmRemoveClassification: false
     };
-    this.toggleConfirmRemoveClassification = this.toggleConfirmRemoveClassification.bind(this);
+    this.toggleConfirmRemoveClassification = this.toggleConfirmRemoveClassification.bind(
+      this
+    );
     this.getClassifications = this.getClassifications.bind(this);
     this.onShowLoader = this.onShowLoader.bind(this);
     this.onHideLoader = this.onHideLoader.bind(this);
@@ -29,8 +31,8 @@ class TabConnectMessage extends Component {
   componentDidMount() {
     const { selectedMessages } = this.props;
 
-    window.addEventListener("LoadingMessage", this.onShowLoader);
-    window.addEventListener("LoadedMessage", this.onHideLoader);
+    window.addEventListener('LoadingMessage', this.onShowLoader);
+    window.addEventListener('LoadedMessage', this.onHideLoader);
 
     if (selectedMessages.length > 0) {
       this.setState({ showNewClassification: true });
@@ -46,8 +48,8 @@ class TabConnectMessage extends Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener("LoadingMessage", this.onShowLoader);
-    window.removeEventListener("LoadedMessage", this.onHideLoader);
+    window.removeEventListener('LoadingMessage', this.onShowLoader);
+    window.removeEventListener('LoadedMessage', this.onHideLoader);
   }
 
   componentDidUpdate(prevProps) {
@@ -67,11 +69,11 @@ class TabConnectMessage extends Component {
   }
 
   onShowLoader() {
-    this.setState({loading: true})
+    this.setState({ loading: true });
   }
 
   onHideLoader() {
-    this.setState({loading: false})
+    this.setState({ loading: false });
   }
 
   toggleConfirmRemoveClassification(classification) {
@@ -84,7 +86,12 @@ class TabConnectMessage extends Component {
   getClassifications(mailId) {
     const { user, companySelected } = this.props;
 
-    getClassifications(user, companySelected.idCompany, companySelected.bbdd, mailId)
+    getClassifications(
+      user,
+      companySelected.idCompany,
+      companySelected.bbdd,
+      mailId
+    )
       .then(result => {
         this.setState({
           classifications: result.classifications,
@@ -92,7 +99,7 @@ class TabConnectMessage extends Component {
         });
       })
       .catch(error => {
-        console.log("error ->", error);
+        console.log('error ->', error);
       });
   }
 
@@ -120,13 +127,9 @@ class TabConnectMessage extends Component {
     const { user, selectedMessages } = this.props;
 
     if (selectedMessages.length > 0) {
-      return (
-        <SaveDocument
-          user={user}
-        />
-      );
+      return <SaveDocument user={user} />;
     } else {
-      return <strong>{i18n.t("tab-connect.select-mail")}</strong>;
+      return <strong>{i18n.t('tab-connect.select-mail')}</strong>;
     }
   }
 
@@ -137,16 +140,17 @@ class TabConnectMessage extends Component {
       classificationToRemove
     } = this.state;
 
-    if(this.state.loading === true) {
-      return <Spinner/>
+    if (this.state.loading === true) {
+      return <Spinner />;
     }
-    
+
     return (
-      <Fragment>        
-        <ModalConnectingEmails 
-          user={user} 
+      <Fragment>
+        <ModalConnectingEmails
+          user={user}
           updateClassifications={this.getClassifications}
-          toggleNotification={toggleNotification}/>
+          toggleNotification={toggleNotification}
+        />
         <ConfirmRemoveClassification
           user={user}
           initialModalState={showConfirmRemoveClassification}
@@ -154,7 +158,7 @@ class TabConnectMessage extends Component {
             this.toggleConfirmRemoveClassification
           }
           classification={classificationToRemove}
-          updateClassifications={this.getClassifications}      
+          updateClassifications={this.getClassifications}
           toggleNotification={toggleNotification}
         />
 

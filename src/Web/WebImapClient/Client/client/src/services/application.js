@@ -23,6 +23,7 @@ export const DEFAULT_IMAP_PORT = 993;
 export const DEFAULT_IMAP_SSL = true;
 export const DEFAULT_SMTP_PORT = 465;
 export const DEFAULT_SMTP_SSL = true;
+export const DEFAULT_SMTP_TLS = false;
 
 const LOGIN_SNACKBAR_DURATION = 4000;
 

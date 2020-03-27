@@ -46,4 +46,5 @@ public @interface WithMockCredentials {
     String smtpHost() default "smtp.localhost";
     int smtpPort() default 587;
     boolean smtpSsl() default true;
+    boolean smtpTls() default true;
 }

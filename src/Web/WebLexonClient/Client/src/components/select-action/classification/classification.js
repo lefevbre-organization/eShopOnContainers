@@ -1,10 +1,10 @@
-import React, { Component } from "react";
-import "./classification.css";
-import PropTypes from "prop-types";
-import i18n from "i18next";
-import { connect } from "react-redux";
+import React, { Component } from 'react';
+import './classification.css';
+import PropTypes from 'prop-types';
+import i18n from 'i18next';
+import { connect } from 'react-redux';
 
-import { removeClassification } from "../../../services/services-lexon";
+import { removeClassification } from '../../../services/services-lexon';
 
 class Classification extends Component {
   constructor(props) {
@@ -12,7 +12,7 @@ class Classification extends Component {
 
     this.state = {
       data: null
-    }
+    };
     this._handleOnclick = this._handleOnclick.bind(this);
 
     this.getClassificationData();
@@ -23,7 +23,7 @@ class Classification extends Component {
     const response = await fetch(url, {
       method: 'POST',
       headers: {
-        "Content-Type":"application/json"
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         idType: this.props.classification.entityIdType,
@@ -33,7 +33,7 @@ class Classification extends Component {
       })
     });
     const data = await response.json();
-    this.setState({data: data.data})
+    this.setState({ data: data.data });
   }
 
   _handleOnclick(classification) {
@@ -57,34 +57,29 @@ class Classification extends Component {
         updateClassifications(mail);
       })
       .catch(error => {
-        console.log("error ->", error);
+        console.log('error ->', error);
       });
   }
 
- renderCaseFile() {
-   const { name, description, idType, intervening} = this.state.data
+  renderCaseFile() {
+    const { name, description, idType, intervening } = this.state.data;
     return (
-      <li className="col-xl-12 lexon-item">
+      <li className='col-xl-12 lexon-item'>
         <p>
-          <strong>{i18n.t(`classification.${idType}`)}: </strong> 
+          <strong>{i18n.t(`classification.${idType}`)}: </strong>
           <span>{name}</span>
         </p>
-        <p>
-        {description}
-        </p>
-        <p>
-        {intervening}
-        </p>
-        <p className="text-right tools-bar">
+        <p>{description}</p>
+        <p>{intervening}</p>
+        <p className='text-right tools-bar'>
           <a
-            href="#/"
-            title={i18n.t("classification.remove-document")}
-            onClick={() => this._handleOnclick(this.props.classification)}
-          >
-            <strong className="sr-only sr-only-focusable">
-              {i18n.t("classification.remove-document")}
+            href='#/'
+            title={i18n.t('classification.remove-document')}
+            onClick={() => this._handleOnclick(this.props.classification)}>
+            <strong className='sr-only sr-only-focusable'>
+              {i18n.t('classification.remove-document')}
             </strong>
-            <span className="lf-icon-trash"></span>
+            <span className='lf-icon-trash'></span>
           </a>
         </p>
       </li>
@@ -92,35 +87,36 @@ class Classification extends Component {
   }
 
   renderPerson() {
-    const { description, idType} = this.state.data
+    const { description, idType } = this.state.data;
 
-    return <li className="col-xl-12 lexon-item">
-      <p>
-        <strong>{i18n.t(`classification.${idType}`)}: </strong> 
-        <span>{description}</span>
-      </p>
-      <p className="text-right tools-bar">
+    return (
+      <li className='col-xl-12 lexon-item'>
+        <p>
+          <strong>{i18n.t(`classification.${idType}`)}: </strong>
+          <span>{description}</span>
+        </p>
+        <p className='text-right tools-bar'>
           <a
-            href="#/"
-            title={i18n.t("classification.remove-document")}
-            onClick={() => this._handleOnclick(this.props.classification)}
-          >
-            <strong className="sr-only sr-only-focusable">
-              {i18n.t("classification.remove-document")}
+            href='#/'
+            title={i18n.t('classification.remove-document')}
+            onClick={() => this._handleOnclick(this.props.classification)}>
+            <strong className='sr-only sr-only-focusable'>
+              {i18n.t('classification.remove-document')}
             </strong>
-            <span className="lf-icon-trash"></span>
+            <span className='lf-icon-trash'></span>
           </a>
         </p>
-    </li>
+      </li>
+    );
   }
 
   render() {
     const { name, entityIdType } = this.props.classification;
-    if(!this.state.data) {
+    if (!this.state.data) {
       return null;
     }
 
-    if(this.state.data.idType === 1) {
+    if (this.state.data.idType === 1) {
       return this.renderCaseFile();
     } else {
       return this.renderPerson();

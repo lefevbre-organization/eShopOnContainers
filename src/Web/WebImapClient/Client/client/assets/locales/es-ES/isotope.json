@@ -9,6 +9,7 @@
     "ImapSSL": "IMAP SSL",
     "SMTP": "SMTP",
     "SmtpSSL": "SMTP SSL",
+    "SmtpUnsecured": "SMTP SIN SEGURIDAD",
     "actions": {
       "Login": "Acceder",
       "Cancel": "Cancelar"

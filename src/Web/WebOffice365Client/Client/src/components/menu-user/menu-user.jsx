@@ -238,6 +238,7 @@ class MenuUser extends Component {
                                                         ))}
                                                     </ul>
                                                 </PerfectScrollbar>
+                                                <div className="version">{i18n.t("menu-user.version")}: {window.RELEASE}</div>
                                             </div>
                                             {lexon.user ? (
                                                 <a

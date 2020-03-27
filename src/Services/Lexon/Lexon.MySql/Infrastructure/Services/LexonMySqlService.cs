@@ -44,6 +44,7 @@ namespace Lexon.MySql.Infrastructure.Services
         #region Entities
 
         public async Task<MySqlCompany> GetEntitiesAsync(IEntitySearchView entitySearch) => await _lexonRepository.GetEntitiesAsync(entitySearch);
+
         public async Task<MySqlCompany> GetFoldersFilesEntitiesAsync(IEntitySearchView entitySearch) => await _lexonRepository.GetFoldersFilesEntitiesAsync(entitySearch);
 
         public async Task<Result<LexEntity>> GetEntityAsync(EntitySearchById entitySearch) => await _lexonRepository.GetEntityAsync(entitySearch);
@@ -135,7 +136,7 @@ namespace Lexon.MySql.Infrastructure.Services
             //TODO: validar usuario
             if (!string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password) && string.IsNullOrEmpty(idUser))
                 idUser = "E1621396";
-                        
+
             return idUser;
         }
 
@@ -199,8 +200,8 @@ namespace Lexon.MySql.Infrastructure.Services
             var usuarioValido = !string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password);
             if (!string.IsNullOrEmpty(idClienteNavision) && usuarioValido)
                 return new List<string>() { "lexonconnector", "centinelaconnector", "gmailpanel", "outlookpanel" };
-            else if(!string.IsNullOrEmpty(idClienteNavision))
-                return new List<string>() { "lexonconnector", "centinelaconnector"};
+            else if (!string.IsNullOrEmpty(idClienteNavision))
+                return new List<string>() { "lexonconnector", "centinelaconnector" };
 
             return new List<string>() { };
         }
@@ -234,13 +235,21 @@ namespace Lexon.MySql.Infrastructure.Services
             var limit = entityFolder.nestedLimit <= 0 ? 2 : entityFolder.nestedLimit;
 
             var result = new Result<LexNestedEntity>(new LexNestedEntity());
-            var entitySearch = new EntitySearchFoldersView(entityFolder.bbdd, entityFolder.idUser) 
-            {
-                idFolder= entityFolder.idFolder ,
-                idType = (short?)LexonAdjunctionType.folders
+            var search = new EntitySearchFoldersView(entityFolder.bbdd, entityFolder.idUser) 
+            { 
+                idParent = entityFolder.idFolder, 
+                search = entityFolder.search 
             };
-            
-            var partialResultTop = _lexonRepository.GetEntitiesAsync(entitySearch).Result;
+            if (entityFolder.includeFiles)
+            {
+                search.idFolder = entityFolder.idFolder;
+            }
+            else
+            {
+                search.idType = (short?)LexonAdjunctionType.folders;
+            }
+
+            var partialResultTop = _lexonRepository.GetFoldersFilesEntitiesAsync(search).Result;
             result.errors.AddRange(partialResultTop.Errors);
             result.infos.AddRange(partialResultTop.Infos);
 
@@ -260,22 +269,19 @@ namespace Lexon.MySql.Infrastructure.Services
 
         private void GetRecursiveEntities(FolderNestedView entityFolder, Result<LexNestedEntity> result, LexNestedEntity entity, ref int limit)
         {
-            //if (limit == 0)
-            //{
-            //    result.infos.Add(new Info { code = "limited_rebase", message = $"{entity.idRelated} ha llegado al limnite de anidamiento" });
-            //    return;
-            //}
-
-            var entitySearchSon = new EntitySearchFoldersView(entityFolder.bbdd, entityFolder.idUser)
+            var search = new EntitySearchFoldersView(entityFolder.bbdd, entityFolder.idUser) { idParent = entity.idRelated };
+            if (entityFolder.includeFiles)
             {
-                idParent = entity.idRelated,
-                idType = (short?)LexonAdjunctionType.folders
-            };
+                search.idFolder = entity.idRelated;
+            }
+            else
+            {
+                search.idType = (short?)LexonAdjunctionType.folders;
+            }
 
-            var partialResult = _lexonRepository.GetEntitiesAsync(entitySearchSon).Result;
-            if (!partialResult.PossibleHasData())          
+            var partialResult = _lexonRepository.GetFoldersFilesEntitiesAsync(search).Result;
+            if (!partialResult.PossibleHasData())
                 return;
-            
 
             foreach (var item in partialResult.Data)
             {
@@ -285,7 +291,5 @@ namespace Lexon.MySql.Infrastructure.Services
             };
             //limit -= 1;
         }
-
-
     }
 }

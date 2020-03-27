@@ -108,10 +108,15 @@
     "text-confirm-remove": "If you delete this link, you will stop viewing the email in the corresponding Lex-on classification. Do you want to continue?"
   },
   "select-action": {
-    "connect-messages": "Classify messages"
+    "connect-messages": "Classify messages",
+    "attach-documents": "Attach documents"
   },
   "tab-document": {
     "select-mail": "Select one or more messages and save them as a separate copy in the Lex-on documentation."
+  },
+  "tab-attachment": {
+    "select-docs": "Search the LEX-ON files and contacts and attach the files you need to your emails.",
+    "select-link": "Select document on LEX-ON"
   },
   "save-copy": {
     "save-copy": "New conection"
@@ -128,6 +133,12 @@
   },
   "modal-conecting-emails": {
     "save-copy": "Classify messages on Lex-on"
+  },
+  "modal-attach-documents": {
+    "title": "Adjuntar archivos desde LEX-ON",
+    "explore-files": "Explore casefiles",
+    "explore-contacts": "Explore contacts",
+    "search": "Search"
   },
   "case-file": {
     "casefile-related": "Related Casefile",

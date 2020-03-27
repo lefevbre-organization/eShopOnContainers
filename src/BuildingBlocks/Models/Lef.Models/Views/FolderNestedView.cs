@@ -7,5 +7,7 @@
         public short nestedLimit { get; set; }
 
         public bool includeFiles { get; set; }
+
+        public string search { get; set; }
     }
 }
