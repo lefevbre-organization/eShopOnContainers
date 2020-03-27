@@ -121,7 +121,9 @@ class ProviderInbox extends Component {
                     const account64 = base64.encode(email);
                     (token) ? linkHref += `?account=${account64}&prov=${user.slice(0, 3)}` : linkHref += `?account=${account64}`;
                 } else {
-                    linkHref += `?prov=${user.slice(0, 3)}`;
+                    if (token) {
+                        linkHref += `?prov=${user.slice(0, 3)}`;
+                    }
                 }
 
                 return (
