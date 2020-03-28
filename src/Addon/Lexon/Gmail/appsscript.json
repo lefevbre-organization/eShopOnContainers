@@ -1,5 +1,8 @@
 {
   "oauthScopes": [
+    "https://mail.google.com/",
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/gmail.addons.current.action.compose",
     "https://www.googleapis.com/auth/gmail.addons.execute",
     "https://www.googleapis.com/auth/gmail.addons.current.message.metadata",
     "https://www.googleapis.com/auth/script.external_request"
@@ -11,7 +14,7 @@
  "addOns": {
   "common": {
     "name": "LEX-ON",
-    "logoUrl": "https://www.gstatic.com/images/icons/material/system/1x/label_googblue_24dp.png"
+    "logoUrl": "https://www.gstatic.com/images/icons/material/system/1x/label_googblue_24dp.png"  
   },
    "gmail": {
      "openLinkUrlPrefixes": [
@@ -23,6 +26,7 @@
        },
        "onTriggerFunction": "buildAddOn"
      }],
+    
      "primaryColor": "#001978",
      "secondaryColor": "#001978"
    }
