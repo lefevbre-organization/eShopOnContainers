@@ -108,11 +108,11 @@ namespace Lexon.API.Controllers
                 infos = result.Infos
             };
 
-            if (actuaciones.errors.Count() > 0 && result.DataActuation.Count == 0)
+            if (actuaciones.errors.Count() > 0 && result.DataActuation?.Count == 0)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, actuaciones);
             }
-            else if (actuaciones.errors.Count() == 0 && result.DataActuation.Count == 0)
+            else if (actuaciones.errors.Count() == 0 && (result.DataActuation == null || result.DataActuation?.Count == 0))
             {
                 return NotFound(actuaciones);
             }
