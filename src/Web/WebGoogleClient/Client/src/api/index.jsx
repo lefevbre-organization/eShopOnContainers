@@ -339,3 +339,12 @@ export const batchModify = ({ ids, addLabelIds = [], removeLabelIds = [] }) =>
         resolve(ids);
       });
   });
+
+
+
+    //let request = gapi.client.calendar.calendarList.list();
+
+
+    //let request = gapi.client.calendar.events.list(requestParams);
+
+    

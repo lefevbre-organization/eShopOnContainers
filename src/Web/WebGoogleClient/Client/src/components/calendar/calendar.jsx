@@ -56,7 +56,7 @@ import {
     Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, DragEventArgs
 } from '@syncfusion/ej2-react-schedule';
 //import './schedule-component.css';
-
+import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
 
 
 
@@ -66,17 +66,11 @@ export class Calendar extends Component {
         super(props);
 
         this.getLabelList = this.getLabelList.bind(this);
-        this.getLabelMessages = this.getLabelMessages.bind(this);
-        this.renderLabelRoutes = this.renderLabelRoutes.bind(this);
-        this.loadLabelMessages = this.loadLabelMessages.bind(this);
-        this.navigateToNextPage = this.navigateToNextPage.bind(this);
-        this.navigateToPrevPage = this.navigateToPrevPage.bind(this);
+       
         this.addInitialPageToken = this.addInitialPageToken.bind(this);
         this.onSignout = this.onSignout.bind(this);
         this.onSignoutDisconnect = this.onSignoutDisconnect.bind(this);
-        this.loadLabelMessageSingle = this.loadLabelMessageSingle.bind(this);
-
-        //this.leftSidebarOpen = leftSidebarOpen;
+      
 
         this.state = {
             isVisible: true,
@@ -110,7 +104,46 @@ export class Calendar extends Component {
         );
 
         this.toggleSideBar = this.toggleSideBar.bind(this);
+
+
+        //super(...arguments);
+        this.calendarId = '5105trob9dasha31vuqek6qgp0@group.calendar.google.com';
+        this.publicKey = 'AIzaSyD76zjMDsL_jkenM5AAnNsORypS1Icuqxg';
+        this.dataManger = new DataManager({
+            url: 'https://www.googleapis.com/calendar/v3/calendars/' + this.calendarId + '/events?key=' + this.publicKey,
+            adaptor: new WebApiAdaptor,
+            crossDomain: true
+        });
     }
+
+
+    onDataBinding(e) {
+      
+        let items = e.result.items;
+        let scheduleData = [];
+        if (items.length > 0) {
+            for (let i = 0; i < items.length; i++) {
+                let event = items[i];
+                let when = event.start.dateTime;
+                let start = event.start.dateTime;
+                let end = event.end.dateTime;
+                if (!when) {
+                    when = event.start.date;
+                    start = event.start.date;
+                    end = event.end.date;
+                }
+                scheduleData.push({
+                    Id: event.id,
+                    Subject: event.summary,
+                    StartTime: new Date(start),
+                    EndTime: new Date(end),
+                    IsAllDay: !event.start.dateTime
+                });
+            }
+        }
+        e.result = scheduleData;
+    }
+
 
     toggleSideBar() {
         const toggleCollapsed = !this.state.leftSideBar.collapsed;
@@ -647,7 +680,9 @@ export class Calendar extends Component {
                                 <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
-                                            <ScheduleComponent height='650px' ref={schedule => this.scheduleObj = schedule} selectedDate={new Date(2019, 0, 10)} eventSettings={{ dataSource: this.data }} >
+                                            <ScheduleComponent ref={schedule => this.scheduleObj = schedule} width='100%'
+                                                height='650px' selectedDate={new Date(2018, 10, 14)} readonly={true}
+                                                eventSettings={{ dataSource: this.dataManger }} dataBinding={this.onDataBinding.bind(this)}>
                                                 <ViewsDirective>
                                                     <ViewDirective option='Day' />
                                                     <ViewDirective option='Week' />

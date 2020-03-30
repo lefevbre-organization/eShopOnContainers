@@ -120,7 +120,7 @@ export class Sidebar extends PureComponent {
 
     return (
       <React.Fragment>       
-            <div className='calendar-control-section' style={{ overflow: 'auto' }}>
+            <div className='calendar-control-section' style={{ overflow: 'auto' }, { innerWidth: '70%' }}>
                 <CalendarComponent change={this.onchange} ></CalendarComponent>
                 <label id='date_label'>Selected Value:</label>
             </div>
