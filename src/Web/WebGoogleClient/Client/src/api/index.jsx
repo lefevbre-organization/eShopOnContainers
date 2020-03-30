@@ -340,7 +340,34 @@ export const batchModify = ({ ids, addLabelIds = [], removeLabelIds = [] }) =>
       });
   });
 
+/**
+ * Load Google Calendar Events
+ */
+export const getEventList = ({ idCalendar }) =>
+    new Promise((resolve, reject) => {
+        window.gapi.client.calendar.events
+            .list({
+                calendarId: 'primary',
+                timeMin: (new Date()).toISOString(),
+                maxResults: 10,
+                singleEvents: true,
+                orderBy: 'startTime',
+            })
+            .then(response => {
+                resolve(response);
+            });
+    });
 
+/**
+ * Load Google Calendar List
+ */
+export const getCalendarList = () =>
+    new Promise((resolve, reject) => {
+        window.gapi.client.calendar.calendarList.list()
+            .then(response => {
+                resolve(response);
+            });
+    }); 
 
     //let request = gapi.client.calendar.calendarList.list();
 

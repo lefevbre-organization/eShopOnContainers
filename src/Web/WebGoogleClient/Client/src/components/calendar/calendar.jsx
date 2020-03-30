@@ -109,6 +109,7 @@ export class Calendar extends Component {
         //super(...arguments);
         this.calendarId = '5105trob9dasha31vuqek6qgp0@group.calendar.google.com';
         this.publicKey = 'AIzaSyD76zjMDsL_jkenM5AAnNsORypS1Icuqxg';
+        //AIzaSyBeFMkCiP0Ld2ExOsvAhksK0AsRqtmD1XQ
         this.dataManger = new DataManager({
             url: 'https://www.googleapis.com/calendar/v3/calendars/' + this.calendarId + '/events?key=' + this.publicKey,
             adaptor: new WebApiAdaptor,
@@ -681,7 +682,7 @@ export class Calendar extends Component {
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
                                             <ScheduleComponent ref={schedule => this.scheduleObj = schedule} width='100%'
-                                                height='650px' selectedDate={new Date(2018, 10, 14)} readonly={true}
+                                                height='650px' selectedDate={new Date(2018, 10, 14)} 
                                                 eventSettings={{ dataSource: this.dataManger }} dataBinding={this.onDataBinding.bind(this)}>
                                                 <ViewsDirective>
                                                     <ViewDirective option='Day' />
