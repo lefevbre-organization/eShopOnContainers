@@ -65,7 +65,6 @@ export class ConnectingEmailsStep1 extends React.Component {
               <ul className='list-checks'>
                 <li>
                   <CheckBoxComponent
-                    disabled
                     checked={this.state.actuation}
                     label={i18n.t('connecting.create')}
                     change={event => {

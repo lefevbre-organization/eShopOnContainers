@@ -663,6 +663,16 @@ export class Main extends Component {
             </article>
 
             <div className='productpanel'>
+              <span className="productsbutton">
+                 <div onClick={() => this.onSetSidebarOpenCalendar(true)}>               
+                  <img
+                    className="imgproduct"
+                    border="0"
+                    alt="Calendar"
+                    src="assets/img/icon-calendar.png"
+                  ></img>
+                </div>
+              </span>
               <span className='productsbutton'>
                 {lexon.user ? (
                   <div onClick={() => this.onSetSidebarOpenLexon(true)}>
@@ -682,18 +692,8 @@ export class Main extends Component {
                   </div>
                 )}
               </span>
-              {/* <span className="productsbutton">
-                 <div onClick={() => this.onSetSidebarOpenCalendar(true)}> 
-                <div>
-                  <img
-                    className="imgproductdisable"
-                    border="0"
-                    alt="Calendar"
-                    src="assets/img/icon-calendar.png"
-                  ></img>
-                </div>
-              </span>
-              <span className="productsbutton">
+              
+             {/* <span className="productsbutton">
                  <div onClick={() => this.onSetSidebarOpenQMemento(true)}> 
                 <div>
                   <img
