@@ -74,5 +74,15 @@
   "message-not-found": {
     "body": "No se encuentra el mensaje en el servidor",
     "ok": "Continuar"
+  },
+  "calendar-sidebar": {
+    "folders": "Gmail",
+    "inbox": "Inbox",
+    "sent": "Sent",
+    "trash": "Trash",
+    "spam": "Spam",
+    "compose": "Nuevo evento",
+    "labels": "LABELS"
   }
+
 }
