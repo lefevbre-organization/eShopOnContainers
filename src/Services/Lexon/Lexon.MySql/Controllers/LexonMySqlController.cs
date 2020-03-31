@@ -39,14 +39,14 @@ namespace Lexon.MySql.Controllers
         }
 
         [HttpGet("user/apps")]
-        [ProducesResponseType(typeof(Result<LexApp[]>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<LexApp[]>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<List<LexApp>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<List<LexApp>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UserMiniHubAsync(string idNavisionUser = "E1621396")
         {
             if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
-            var result = await _lexonService.GetUserAsync(idNavisionUser);
+            var result = await _lexonService.GetUserMiniHubAsync(idNavisionUser);
             return Ok(result);
         }
 

@@ -4,9 +4,12 @@ using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -15,6 +18,8 @@ namespace Lexon.MySql.Infrastructure.Services
     public partial class LexonMySqlService : ILexonMySqlService
     {
         public readonly ILexonMySqlRepository _lexonRepository;
+        private readonly IHttpClientFactory _clientFactory;
+        private readonly HttpClient _client;
         private readonly IOptions<LexonSettings> _settings;
         internal readonly ILogger<LexonMySqlService> _logger;
 
@@ -22,10 +27,13 @@ namespace Lexon.MySql.Infrastructure.Services
             IOptions<LexonSettings> settings
             , ILogger<LexonMySqlService> logger
             , ILexonMySqlRepository lexonRepository
+            , IHttpClientFactory clientFactory
             )
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _lexonRepository = lexonRepository ?? throw new ArgumentNullException(nameof(lexonRepository));
+            _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
+            _client = _clientFactory.CreateClient();
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -102,7 +110,7 @@ namespace Lexon.MySql.Infrastructure.Services
                 idEntityType = idEntityType,
                 idEntity = idEntity,
                 mailContacts = mailContacts,
-                roles = GetRolesOfUser(idUser, login, password)
+                roles = await GetRolesOfUserAsync(idUser, login, password)
             }).Result;
 
             resultado.data.token += addTerminatorToToken ? "/" : "";
@@ -194,16 +202,24 @@ namespace Lexon.MySql.Infrastructure.Services
             }
         }
 
-        private static List<string> GetRolesOfUser(string idClienteNavision, string login, string password)
+        private async Task<List<string>> GetRolesOfUserAsync(string idClienteNavision, string login, string password)
         {
-            //TODO: connect to external service to obtain de data
+            var apps = await GetUserMiniHubAsync(idClienteNavision);
+            var appsWithAccess = new List<string>() { "lexonconnector", "centinelaconnector" };
+            foreach (var app in apps.data)
+            {
+                if (app.indAcceso > 0)
+                    appsWithAccess.Add(app.descHerramienta);
+            }
+
             var usuarioValido = !string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password);
             if (!string.IsNullOrEmpty(idClienteNavision) && usuarioValido)
-                return new List<string>() { "lexonconnector", "centinelaconnector", "gmailpanel", "outlookpanel" };
-            else if (!string.IsNullOrEmpty(idClienteNavision))
-                return new List<string>() { "lexonconnector", "centinelaconnector" };
+            {
+                appsWithAccess.Add("gmailpanel");
+                appsWithAccess.Add("outlookpanel");
+            }
 
-            return new List<string>() { };
+            return appsWithAccess;
         }
 
         private void AddClaimNumberToPayload(JwtPayload payload, long? valorClaim, string nombreClaim)
@@ -235,10 +251,10 @@ namespace Lexon.MySql.Infrastructure.Services
             var limit = entityFolder.nestedLimit <= 0 ? 2 : entityFolder.nestedLimit;
 
             var result = new Result<LexNestedEntity>(new LexNestedEntity());
-            var search = new EntitySearchFoldersView(entityFolder.bbdd, entityFolder.idUser) 
-            { 
-                idParent = entityFolder.idFolder, 
-                search = entityFolder.search 
+            var search = new EntitySearchFoldersView(entityFolder.bbdd, entityFolder.idUser)
+            {
+                idParent = entityFolder.idFolder,
+                search = entityFolder.search
             };
             if (entityFolder.includeFiles)
             {
@@ -290,6 +306,52 @@ namespace Lexon.MySql.Infrastructure.Services
                 entity.subChild.Add(nestedentity);
             };
             //limit -= 1;
+        }
+
+        public async Task<Result<List<LexApp>>> GetUserMiniHubAsync(string idNavisionUser)
+        {
+            var result = new Result<List<LexApp>>(new List<LexApp>());
+            try
+            {
+                //TODO: hacer llamada a usuario encriptado;
+                string usuarioEncriptado = "f3NrcnZs";
+                string user = "E0383956";
+                //http://led-pre-servicehub/Herramientas/Get?IdUsuarioPro=E0383956&IdUsuarioProEncriptado=f3NrcnZs&indMinuHub=1
+                var url = $"{_settings.Value.LexonHubUrl}?IdUsuarioPro={user}&IdUsuarioProEncriptado={usuarioEncriptado}&indMinuHub=1";
+
+                using (var response = await _client.GetAsync(url))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<LexApp[]>(rawResult));
+                            result.data = resultado.ToList();
+                        }
+                    }
+                    else
+                    {
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "533",
+                            detail = $"Error in callnto {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "534",
+                    detail = $"General error in call Minihub data",
+                    message = ex.Message
+                });
+            }
+
+            return result;
         }
     }
 }
