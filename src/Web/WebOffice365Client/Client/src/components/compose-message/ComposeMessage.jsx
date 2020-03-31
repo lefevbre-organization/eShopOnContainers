@@ -234,8 +234,10 @@ export class ComposeMessage extends PureComponent {
     if (lexon.sign && lexon.sign !== '') {
       const { content } = this.state;
 
+      const dc = `<br/><br/><p>${lexon.sign}</p>` + content;
       this.setState({
-        defaultContent: `<br/><br/><p>${lexon.sign}</p>` + content
+        defaultContent: dc,
+        content: dc
       });
     }
   }
