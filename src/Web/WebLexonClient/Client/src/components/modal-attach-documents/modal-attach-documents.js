@@ -7,6 +7,7 @@ import parse from 'emailjs-mime-parser';
 import { AttachDocumentsStep1 } from './step1';
 import { AttachDocumentsStep2 } from './step2';
 import { AttachDocumentsStep3 } from './step3';
+import { AttachDocumentsStep4 } from './step4';
 
 import { addClassification, uploadFile } from '../../services/services-lexon';
 import ACTIONS from '../../actions/documentsAction';
@@ -17,6 +18,7 @@ class ModalAttachDocuments extends Component {
     super();
 
     this.state = {
+      search: '',
       step: 1,
       entity: 0,
       step2Data: {
@@ -83,6 +85,8 @@ class ModalAttachDocuments extends Component {
       this.setState({ step: 1 });
     } else if (this.state.step === 3) {
       this.setState({ step: 2 });
+    } else if (this.state.step === 4) {
+      this.setState({ step: 1 });
     }
   }
 
@@ -386,6 +390,9 @@ class ModalAttachDocuments extends Component {
                 style={{ display: this.state.step === 1 ? 'block' : 'none' }}>
                 <AttachDocumentsStep1
                   show={this.state.step === 1}
+                  onClickSearch={(search) => {
+                    this.setState({ step: 4, search });
+                  }}
                   onClickCasefiles={() => {
                     this.setState({ entity: 1, step: 2 });
                   }}
@@ -422,7 +429,16 @@ class ModalAttachDocuments extends Component {
               <div
                 style={{
                   display: this.state.step === 4 ? 'block' : 'none'
-                }}></div>
+                }}>
+                <AttachDocumentsStep4
+                  show={this.state.step === 4}
+                  user={user}
+                  bbdd={companySelected}
+                  defaultSearch={this.state.search}
+                  entity={this.state.step2Data}
+                  toggleNotification={toggleNotification}
+                  onSelectedDirectory={data => { }}></AttachDocumentsStep4>
+              </div>
             </Container>
           </Modal.Body>
           <Modal.Footer>{this.renderButtons()}</Modal.Footer>

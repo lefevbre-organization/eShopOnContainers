@@ -19,8 +19,8 @@ class ClassificationListSearch extends Component {
   }
 
   _handleOnclick() {
-    if(this.state.showSearch === true) {
-      this.setState({search: ""}, ()=>{
+    if (this.state.showSearch === true) {
+      this.setState({ search: "" }, () => {
         this._handleOnclickSearch();
       })
     }
@@ -45,6 +45,12 @@ class ClassificationListSearch extends Component {
     }
   }
 
+  Search(text) {
+    this.setState({ search: text }, () => {
+      this._handleOnclickSearch()
+    })
+  }
+
   render() {
     const { countResults, closeClassName = "" } = this.props;
     const { showSearch } = this.state;
@@ -59,11 +65,11 @@ class ClassificationListSearch extends Component {
     return (
       <div className="lexon-clasification-list-search">
         <div className="lexon-clasification-list-results">
-          { countResults > -1 &&
-          <p>
-            {i18n.t("classification-list-search.results-total")}
-            <strong>{countResults}</strong>
-          </p>
+          {countResults > -1 &&
+            <p>
+              {i18n.t("classification-list-search.results-total")}
+              <strong>{countResults}</strong>
+            </p>
           }
           <a
             href="#/"

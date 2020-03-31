@@ -25,8 +25,8 @@ import {
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import i18n from 'i18next';
-import jwt from "njwt";
-import { signOut } from "../../api/authentication";
+import jwt from 'njwt';
+import { signOut } from '../../api/authentication';
 
 class MenuUser extends Component {
   constructor(props) {
@@ -118,7 +118,9 @@ class MenuUser extends Component {
       resetDefaultAccount(userId)
         .then(result => {
           signOut();
-          const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}/` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+          const urlRedirect = token
+            ? `${window.URL_SELECT_ACCOUNT}/access/${token}/`
+            : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
           window.open(urlRedirect, '_self');
         })
         .catch(error => {
@@ -242,7 +244,9 @@ class MenuUser extends Component {
                             ))}
                           </ul>
                         </PerfectScrollbar>
-                        <div className="version">{i18n.t("menu-user.version")}: {window.RELEASE}</div>
+                        <div className='version'>
+                          {i18n.t('menu-user.version')}: {window.RELEASE}
+                        </div>
                       </div>
                       {lexon.user ? (
                         <a
@@ -293,6 +297,10 @@ class MenuUser extends Component {
           </div>
         )}
         <style jsx>{`
+          .e-rte-content span {
+            display: inline !important;
+          }
+
           header h1 {
             color: black;
           }
