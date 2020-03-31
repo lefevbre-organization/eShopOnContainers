@@ -36,12 +36,16 @@ namespace Lexon.Infrastructure.Services
             _usersRepository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
-
             _client = _clientFactory.CreateClient();
             _client.BaseAddress = new Uri(_settings.Value.LexonMySqlUrl);
             _client.DefaultRequestHeaders.Add("Accept", "text/plain");
 
-            _clientFiles = _clientFactory.CreateClient();
+            var handler = new HttpClientHandler()
+            {
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+
+            _clientFiles = _clientFactory.CreateClient(handler);
             _clientFiles.BaseAddress = new Uri(_settings.Value.LexonFilesUrl);
             _clientFiles.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
