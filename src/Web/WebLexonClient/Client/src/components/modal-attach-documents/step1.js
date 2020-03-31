@@ -4,10 +4,18 @@ import { getTypes } from '../../services/services-lexon';
 import { Button } from 'react-bootstrap';
 
 export class AttachDocumentsStep1 extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      searchText: ''
+    }
+  }
   async componentDidMount() { }
 
   render() {
     const { onClickCasefiles, onClickContacts } = this.props;
+    const searchDisabled = (this.state.searchText === '')
     return (
       <Fragment>
         <div className='step1-container'>
@@ -18,16 +26,20 @@ export class AttachDocumentsStep1 extends React.Component {
             </p>
             <p>
               Haz una búsqueda directa de los archivos que quieres adjuntar.
-              (Próximamente)
             </p>
           </div>
           <div className='input-wrapper'>
             <span className='lf-icon-search'></span>
-            <input placeholder='Busca tu archivo'></input>
+            <input placeholder='Busca tu archivo' onChange={(event) => {
+              this.setState({ searchText: event.target.value })
+            }}></input>
             <span className='lf-icon-close'></span>
           </div>
           <div className='button-container'>
-            <Button bsPrefix='btn btn-primary' onClick={() => { }}>
+            <Button bsPrefix='btn btn-primary' disabled={searchDisabled} onClick={() => {
+              this.props.onClickSearch(this.state.searchText)
+            }
+            }>
               {i18n.t('modal-attach-documents.search')}
             </Button>
           </div>
