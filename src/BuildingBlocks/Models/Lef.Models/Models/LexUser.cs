@@ -27,5 +27,8 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         public short version { get; set; }
 
         public LexCompany[] companies { get; set; }
+
+        [BsonIgnore]
+        public LexApp[] aplicaciones { get; set; }
     }
 }

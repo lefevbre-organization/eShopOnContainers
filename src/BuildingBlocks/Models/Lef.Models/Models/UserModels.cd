@@ -8,18 +8,21 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexUser">
-    <Position X="2.5" Y="2.25" Width="1.5" />
+    <Position X="3.25" Y="2.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAEAACAAAAAAAAgAAAAAACAAAAAEAAAAAAAAAEAAAgA=</HashCode>
       <FileName>Models\LexUser.cs</FileName>
     </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="aplicaciones" />
+    </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexCompany">
-    <Position X="4.5" Y="2.5" Width="1.5" />
+    <Position X="5" Y="2.5" Width="1.5" />
     <AssociationLine Name="entities" Type="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexEntity" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="5.523" Y="4.31" />
-        <Point X="5.523" Y="6.063" />
+        <Point X="6.023" Y="4.31" />
+        <Point X="6.023" Y="6.063" />
         <Point X="6.25" Y="6.063" />
       </Path>
     </AssociationLine>
@@ -75,7 +78,7 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexActuation">
-    <Position X="7" Y="2" Width="1.5" />
+    <Position X="7.5" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAIAAAAAAAIIAAAAAAAAAAEAAAAAAAQAQAAQQA=</HashCode>
       <FileName>Models\LexActuation.cs</FileName>
@@ -86,6 +89,13 @@
     <TypeIdentifier>
       <HashCode>AAECAAAAgiAIQAAAIFAAAAYAAAIAAEACAAAAIgAAAAA=</HashCode>
       <FileName>Models\LexContact.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexApp">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAEAAAQAAIAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Models\LexApp.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

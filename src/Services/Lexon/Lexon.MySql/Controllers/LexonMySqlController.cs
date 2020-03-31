@@ -38,6 +38,18 @@ namespace Lexon.MySql.Controllers
             return Ok(result);
         }
 
+        [HttpGet("user/apps")]
+        [ProducesResponseType(typeof(Result<LexApp[]>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexApp[]>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UserMiniHubAsync(string idNavisionUser = "E1621396")
+        {
+            if (string.IsNullOrEmpty(idNavisionUser))
+                return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
+
+            var result = await _lexonService.GetUserAsync(idNavisionUser);
+            return Ok(result);
+        }
+
         /// <summary>
         /// Permite obtener los token necesarios para operar con los microservicios de envio de correo
         /// </summary>
