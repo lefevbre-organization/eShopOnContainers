@@ -193,8 +193,8 @@ ClientBin/
 node_modules/
 bower_components/
 wwwroot/
-
-
+package-lock.json
+yarn.lock
 orleans.codegen.cs
 
 # RIA/Silverlight projects
