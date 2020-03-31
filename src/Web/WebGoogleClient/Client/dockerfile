@@ -1,5 +1,5 @@
 # Stage 1
-FROM node:11 as react-build
+FROM node:12 as react-build
 WORKDIR /app
 COPY . ./
 RUN yarn
