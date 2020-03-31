@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { Base64 } from 'js-base64';
 import parse from 'emailjs-mime-parser';
 import { AttachDocumentsStep1 } from './step1';
+import { AttachDocumentsStep1b } from './step1b';
 import { AttachDocumentsStep2 } from './step2';
 import { AttachDocumentsStep3 } from './step3';
 import { AttachDocumentsStep4 } from './step4';
@@ -397,8 +398,14 @@ class ModalAttachDocuments extends Component {
                     this.setState({ entity: 1, step: 2 });
                   }}
                   onClickContacts={() => {
-                    this.setState({ entity: 2, step: 2 });
+                    this.setState({ entity: 2, step: 11 });
                   }}></AttachDocumentsStep1>
+              </div>
+              <div
+                style={{ display: this.state.step === 11 ? 'block' : 'none' }}>
+                <AttachDocumentsStep1b
+                  show={this.state.step === 1}
+                ></AttachDocumentsStep1b>
               </div>
               <div
                 style={{
