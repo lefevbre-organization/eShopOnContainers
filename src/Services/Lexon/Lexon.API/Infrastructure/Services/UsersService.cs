@@ -45,8 +45,10 @@ namespace Lexon.Infrastructure.Services
                 ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
             };
 
-            _clientFiles = _clientFactory.CreateClient(handler);
-            _clientFiles.BaseAddress = new Uri(_settings.Value.LexonFilesUrl);
+            _clientFiles = new HttpClient(handler)
+            {
+                BaseAddress = new Uri(_settings.Value.LexonFilesUrl)
+            };
             _clientFiles.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
