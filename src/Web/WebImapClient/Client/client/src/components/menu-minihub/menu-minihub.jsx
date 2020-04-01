@@ -29,6 +29,8 @@ class MenuMinihub extends Component {
 
   handleClickOutside(event) {
     const { showSign } = this.state;
+    const { onToggleDialog } = this.props;
+
     if (showSign === true) {
       event.stopPropagation();
       return;
@@ -39,16 +41,32 @@ class MenuMinihub extends Component {
       !this.wrapperRef.contains(event.target) &&
       !this.buttonRef.contains(event.target)
     ) {
-      this.setState({
-        dropdownOpen: false
-      });
+      this.setState(
+        {
+          dropdownOpen: false
+        },
+        () => {
+          if (onToggleDialog) {
+            onToggleDialog(this.state.dropdownOpen);
+          }
+        }
+      );
     }
   }
 
   toggle() {
-    this.setState({
-      dropdownOpen: !this.state.dropdownOpen
-    });
+    const { onToggleDialog } = this.props;
+
+    this.setState(
+      {
+        dropdownOpen: !this.state.dropdownOpen
+      },
+      () => {
+        if (onToggleDialog) {
+          onToggleDialog(this.state.dropdownOpen);
+        }
+      }
+    );
   }
 
   render() {
@@ -115,7 +133,6 @@ class MenuMinihub extends Component {
             cursor: pointer;
           }
 
-
           .add-more-accounts > span {
             color: #001978 !important;
           }
@@ -144,14 +161,14 @@ class MenuMinihub extends Component {
           }
 
           .dropdown-menu-minihub-arrow:before {
-            bottom: -13px;
-            right: -100px;
+            bottom: 8px;
+            right: -111px;
             border-bottom-color: rgba(0, 0, 0, 0.15);
           }
 
           .dropdown-menu-minihub-arrow:after {
-            bottom: -13px;
-            right: -100px;
+            bottom: 8px;
+            right: -111px;
             border-bottom-color: #fff;
           }
 
@@ -164,6 +181,8 @@ class MenuMinihub extends Component {
           }
           .menu-minihub-container {
             text-align: center;
+            top: 40px !important;
+            right: -2px !important;
           }
 
           .user-image-and-name {
