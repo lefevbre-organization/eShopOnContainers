@@ -22,11 +22,31 @@ spec:
            configMapKeyRef:
              name: externalcfg
              key: lexon__ConnectionString
+        - name: LexonMySqlUrl
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: lexon__LexonMySqlUrl
+        - name: LexonFilesUrl
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: lexon__LexonFilesUrl
         - name: EventBusConnection
           valueFrom:
            configMapKeyRef:
              name: externalcfg
              key: all__EventBusConnection
+        - name: EventBusUserName
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EventBusUserName
+        - name: EventBusPassword
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EventBusPassword
         - name: AzureServiceBusEnabled
           valueFrom:
            configMapKeyRef:
@@ -37,11 +57,6 @@ spec:
            configMapKeyRef:
              name: externalcfg
              key: all__InstrumentationKey
-        - name: IdentityUrl
-          valueFrom:
-           configMapKeyRef:
-             name: urls
-             key: identity_e
         - name: UseLoadTest
           valueFrom:
            configMapKeyRef:
@@ -79,28 +94,33 @@ spec:
            configMapKeyRef:
              name: externalcfg
              key: lexonmysql__ConnectionString
-        - name: PicBaseUrl
-          valueFrom:
-           configMapKeyRef:
-             name: urls
-             key: PicBaseUrl
-        - name: AzureStorageEnabled
-          valueFrom:
-           configMapKeyRef:
-             name: externalcfg
-             key: catalog__AzureStorageEnabled
         - name: EventBusConnection
           valueFrom:
            configMapKeyRef:
              name: externalcfg
              key: all__EventBusConnection
+        - name: EventBusUserName
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EventBusUserName
+        - name: EventBusPassword
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EventBusPassword
         - name: ApplicationInsights__InstrumentationKey
           valueFrom:
            configMapKeyRef:
              name: externalcfg
              key: all__InstrumentationKey
+        - name: UseLoadTest
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EnableLoadTest
         - name: OrchestratorType
-          value: 'K8S' 
+          value: 'K8S'
         ports:
         - containerPort: 80
         
@@ -136,26 +156,21 @@ spec:
            configMapKeyRef:
              name: externalcfg
              key: all__EventBusConnection
+        - name: EventBusUserName
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EventBusUserName
+        - name: EventBusPassword
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EventBusPassword
         - name: AzureServiceBusEnabled
           valueFrom:
            configMapKeyRef:
              name: externalcfg
              key: all__UseAzureServiceBus
-        - name: IdentityUrl
-          valueFrom:
-           configMapKeyRef:
-             name: urls
-             key: identity_e
-        - name: CheckUpdateTime
-          valueFrom:
-           configMapKeyRef:
-             name: externalcfg
-             key: GracePeriodManager__CheckUpdateTime
-        - name: GracePeriodTime
-          valueFrom:
-           configMapKeyRef:
-             name: externalcfg
-             key: GracePeriodManager__GracePeriodTime  
         - name: ApplicationInsights__InstrumentationKey
           valueFrom:
            configMapKeyRef:
@@ -177,44 +192,419 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: payment
+  name: webportalclient
 spec:
   paused: true
   template:
     metadata:
       labels:
-        app: eshop
-        component: payment
+        app: elefebvre
+        component: webportalclient
     spec:
       containers:
-      - name: payment
-        image: eshop/payment.api
+      - name: webportalclient
+        image: elefebvre/webportalclient
         imagePullPolicy: Always
         env:
         - name: PATH_BASE
-          value: /payment-api
-        - name: AzureServiceBusEnabled
+          value: /
+        - name: LexonApiUrlHC
           valueFrom:
            configMapKeyRef:
-             name: externalcfg
-             key: all__UseAzureServiceBus
-        - name: EventBusConnection
+             name: internalurls
+             key: lexon
+        - name: LexonMySqlApiUrlHC
           valueFrom:
            configMapKeyRef:
-             name: externalcfg
-             key: all__EventBusConnection
+             name: internalurls
+             key: lexonmysql
+        - name: LexonApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: apigwlex     
+        - name: ExternalLexonApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: urls
+             key: apigwlex_e
+        - name: AccountApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: apigwacc     
+        - name: ExternalAccountApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: urls
+             key: apigwacc_e          
+        - name: AccountApiUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: account 
         - name: ApplicationInsights__InstrumentationKey
           valueFrom:
            configMapKeyRef:
              name: externalcfg
              key: all__InstrumentationKey
+        - name: UseLoadTest
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EnableLoadTest
         - name: OrchestratorType
-          value: 'K8S'
+          value: 'K8S'       
         ports:
         - containerPort: 80
         
       imagePullSecrets:
-      - name: registry-key      
+      - name: registry-key
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: webgoogleclient
+spec:
+  paused: true
+  template:
+    metadata:
+      labels:
+        app: elefebvre
+        component: webgoogleclient
+    spec:
+      containers:
+      - name: webgoogleclient
+        image: elefebvre/webgoogleclient
+        imagePullPolicy: Always
+        env:
+        - name: PATH_BASE
+          value: /webgoogleclient
+        - name: LexonApiUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: lexon
+        - name: LexonMySqlApiUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: lexonmysql
+        - name: LexonApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: apigwlex     
+        - name: ExternalLexonApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: urls
+             key: apigwlex_e
+        - name: AccountApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: apigwacc     
+        - name: ExternalAccountApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: urls
+             key: apigwacc_e          
+        - name: AccountApiUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: account 
+        - name: ApplicationInsights__InstrumentationKey
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__InstrumentationKey
+        - name: UseLoadTest
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EnableLoadTest
+        - name: OrchestratorType
+          value: 'K8S'       
+        ports:
+        - containerPort: 80
+        
+      imagePullSecrets:
+      - name: registry-key
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: webofficeclient
+spec:
+  paused: true
+  template:
+    metadata:
+      labels:
+        app: elefebvre
+        component: webofficeclient
+    spec:
+      containers:
+      - name: webofficeclient
+        image: elefebvre/webofficeclient
+        imagePullPolicy: Always
+        env:
+        - name: PATH_BASE
+          value: /webofficeclient
+        - name: LexonApiUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: lexon
+        - name: LexonMySqlApiUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: lexonmysql
+        - name: LexonApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: apigwlex     
+        - name: ExternalLexonApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: urls
+             key: apigwlex_e
+        - name: AccountApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: apigwacc     
+        - name: ExternalAccountApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: urls
+             key: apigwacc_e          
+        - name: AccountApiUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: account 
+        - name: ApplicationInsights__InstrumentationKey
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__InstrumentationKey
+        - name: UseLoadTest
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EnableLoadTest
+        - name: OrchestratorType
+          value: 'K8S'       
+        ports:
+        - containerPort: 80
+        
+      imagePullSecrets:
+      - name: registry-key
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: weblexonclient
+spec:
+  paused: true
+  template:
+    metadata:
+      labels:
+        app: elefebvre
+        component: weblexonclient
+    spec:
+      containers:
+      - name: weblexonclient
+        image: elefebvre/weblexonclient
+        imagePullPolicy: Always
+        env:
+        - name: PATH_BASE
+          value: /weblexonclient
+        - name: LexonApiUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: lexon
+        - name: LexonMySqlApiUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: lexonmysql
+        - name: LexonApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: apigwlex     
+        - name: ExternalLexonApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: urls
+             key: apigwlex_e
+        - name: AccountApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: apigwacc     
+        - name: ExternalAccountApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: urls
+             key: apigwacc_e          
+        - name: AccountApiUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: account 
+        - name: ApplicationInsights__InstrumentationKey
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__InstrumentationKey
+        - name: UseLoadTest
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EnableLoadTest
+        - name: OrchestratorType
+          value: 'K8S'       
+        ports:
+        - containerPort: 80
+        
+      imagePullSecrets:
+      - name: registry-key
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: webloginaddonlexon
+spec:
+  paused: true
+  template:
+    metadata:
+      labels:
+        app: elefebvre
+        component: webloginaddonlexon
+    spec:
+      containers:
+      - name: webloginaddonlexon
+        image: elefebvre/webloginaddonlexon
+        imagePullPolicy: Always
+        env:
+        - name: PATH_BASE
+          value: /webloginaddonlexon
+        - name: LexonApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: apigwlex     
+        - name: ExternalLexonApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: urls
+             key: apigwlex_e
+        - name: AccountApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: apigwacc     
+        - name: ExternalAccountApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: urls
+             key: apigwacc_e      
+        - name: ApplicationInsights__InstrumentationKey
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__InstrumentationKey
+        - name: UseLoadTest
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EnableLoadTest
+        - name: OrchestratorType
+          value: 'K8S'       
+        ports:
+        - containerPort: 80
+        
+      imagePullSecrets:
+      - name: registry-key
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: webimapclient
+spec:
+  paused: true
+  template:
+    metadata:
+      labels:
+        app: elefebvre
+        component: webimapclient
+    spec:
+      containers:
+      - name: webimapclient
+        image: elefebvre/webimapclient
+        imagePullPolicy: Always
+        env:
+        - name: PATH_BASE
+          value: /webimapclient
+        - name: LexonApiUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: lexon
+        - name: LexonMySqlApiUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: lexonmysql
+        - name: LexonApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: apigwlex     
+        - name: ExternalLexonApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: urls
+             key: apigwlex_e
+        - name: AccountApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: webaccountapigw     
+        - name: ExternalAccountApiGatewayUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: urls
+             key: webaccountapigw_e          
+        - name: AccountApiUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: account 
+        - name: ApplicationInsights__InstrumentationKey
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__InstrumentationKey
+        - name: UseLoadTest
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EnableLoadTest
+        - name: OrchestratorType
+          value: 'K8S'       
+        ports:
+        - containerPort: 80
+        
+      imagePullSecrets:
+      - name: registry-key
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -225,46 +615,46 @@ spec:
   template:
     metadata:
       labels:
-        app: eshop
+        app: elefebvre
         component: webstatus
     spec:
       containers:
       - name: webstatus
-        image: eshop/webstatus
+        image: elefebvre/webstatus
         imagePullPolicy: Always
         env:
         - name: PATH_BASE
           value: /webstatus
-        - name: BasketUrl
+        - name: WebpPortalClient
           valueFrom:
            configMapKeyRef:
              name: internalurls
-             key: basket__hc
-        - name: CatalogUrl
+             key: webportalclient__hc
+        - name: WebGoogleClient
           valueFrom:
            configMapKeyRef:
              name: internalurls
-             key: catalog__hc
-        - name: IdentityUrl
+             key: webgoogleclient__hc
+        - name: WebOfficeClient
           valueFrom:
            configMapKeyRef:
              name: internalurls
-             key: identity__hc
-        - name: OrderingUrl
+             key: webofficeclient__hc
+        - name: WebImapClient
           valueFrom:
            configMapKeyRef:
              name: internalurls
-             key: ordering__hc
-        - name: OrderingBackgroundTasksUrl
+             key: webimapclient__hc
+        - name: WebLexonClient
           valueFrom:
            configMapKeyRef:
              name: internalurls
-             key: ordering-background__hc
-        - name: LocationsUrl
+             key: weblexonclient__hc
+        - name: AccountApi
           valueFrom:
            configMapKeyRef:
              name: internalurls
-             key: locations__hc
+             key: account__hc
         - name: MarketingUrl
           valueFrom:
            configMapKeyRef:
@@ -280,11 +670,6 @@ spec:
            configMapKeyRef:
              name: internalurls
              key: spa__hc
-        - name: PaymentUrl
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: payment__hc 
         - name: ApplicationInsights__InstrumentationKey
           valueFrom:
            configMapKeyRef:

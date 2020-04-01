@@ -174,12 +174,11 @@ if ($deployKubernetes){
 
     Write-Host "Create configmap urls" -ForegroundColor Red
     ExecKube -cmd 'create configmap urls `
-        --from-literal=weblexonapigw_e=http://$($externalDns)/weblexonapigw `
-        --from-literal=webaccountapigw_e=http://$($externalDns)/webaccountapigw `
+        --from-literal=apigwlex_e=http://$($externalDns)/weblexonapigw `
+        --from-literal=apigwacc_e=http://$($externalDns)/webaccountapigw `
         --from-literal=lexon_e=http://$($externalDns)/lexon-api `
         --from-literal=account_e=http://$($externalDns)/account-api `
-        --from-literal=lexonapi_e=http://$($externalDns)/lexon-mysql-api `
-        --from-literal=ordering_e=http://$($externalDns)/ordering-api' 
+        --from-literal=lexonapi_e=http://$($externalDns)/lexon-mysql-api' 
 
     ExecKube -cmd 'label configmap urls app=elefebvre'
 
@@ -197,51 +196,38 @@ if ($deployKubernetes){
 
     Write-Host "Update Image containers to use prefix '$registry$dockerOrg' and tag '$imageTag'" -ForegroundColor Yellow
 
-    ExecKube -cmd 'set image deployments/basket basket=${registryPath}${dockerOrg}/basket.api:$imageTag'
-    ExecKube -cmd 'set image deployments/catalog catalog=${registryPath}${dockerOrg}/catalog.api:$imageTag'
-    ExecKube -cmd 'set image deployments/identity identity=${registryPath}${dockerOrg}/identity.api:$imageTag'
-    ExecKube -cmd 'set image deployments/ordering ordering=${registryPath}${dockerOrg}/ordering.api:$imageTag'
-    ExecKube -cmd 'set image deployments/ordering-backgroundtasks ordering-backgroundtasks=${registryPath}${dockerOrg}/ordering.backgroundtasks:$imageTag'
-    ExecKube -cmd 'set image deployments/marketing marketing=${registryPath}${dockerOrg}/marketing.api:$imageTag'
-    ExecKube -cmd 'set image deployments/locations locations=${registryPath}${dockerOrg}/locations.api:$imageTag'
-    ExecKube -cmd 'set image deployments/payment payment=${registryPath}${dockerOrg}/payment.api:$imageTag'
-    ExecKube -cmd 'set image deployments/webmvc webmvc=${registryPath}${dockerOrg}/webmvc:$imageTag'
+    ExecKube -cmd 'set image deployments/lexon lexon=${registryPath}${dockerOrg}/lexon.api:$imageTag'
+    ExecKube -cmd 'set image deployments/lexonmysql lexonmysql=${registryPath}${dockerOrg}/lexonmysql.api:$imageTag'
+    ExecKube -cmd 'set image deployments/account account=${registryPath}${dockerOrg}/account.api:$imageTag'
+    ExecKube -cmd 'set image deployments/webportalclient webportalclient=${registryPath}${dockerOrg}/webportalclient.api:$imageTag'
+    ExecKube -cmd 'set image deployments/webgoogleclient webgoogleclient=${registryPath}${dockerOrg}/webgoogleclient:$imageTag'
+    ExecKube -cmd 'set image deployments/webofficeclient webofficeclient=${registryPath}${dockerOrg}/webofficeclient:$imageTag'
+    ExecKube -cmd 'set image deployments/weblexonclient weblexonclient=${registryPath}${dockerOrg}/weblexonclient:$imageTag'
+    ExecKube -cmd 'set image deployments/webloginaddonlexon webloginaddonlexon=${registryPath}${dockerOrg}/webloginaddonlexon:$imageTag'
+    ExecKube -cmd 'set image deployments/webimapclient webimapclient=${registryPath}${dockerOrg}/webimapclient:$imageTag'
     ExecKube -cmd 'set image deployments/webstatus webstatus=${registryPath}${dockerOrg}/webstatus:$imageTag'
-    ExecKube -cmd 'set image deployments/webspa webspa=${registryPath}${dockerOrg}/webspa:$imageTag'
-    ExecKube -cmd 'set image deployments/ordering-signalrhub ordering-signalrhub=${registryPath}${dockerOrg}/ordering.signalrhub:$imageTag'
 
-    ExecKube -cmd 'set image deployments/mobileshoppingagg mobileshoppingagg=${registryPath}${dockerOrg}/mobileshoppingagg:$imageTag'
-    ExecKube -cmd 'set image deployments/webshoppingagg webshoppingagg=${registryPath}${dockerOrg}/webshoppingagg:$imageTag'
-
-    ExecKube -cmd 'set image deployments/apigwmm apigwmm=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
-    ExecKube -cmd 'set image deployments/apigwms apigwms=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
-    ExecKube -cmd 'set image deployments/apigwwm apigwwm=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
-    ExecKube -cmd 'set image deployments/apigwws apigwws=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
+    ExecKube -cmd 'set image deployments/apigwlex apigwlex=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
+    ExecKube -cmd 'set image deployments/apigwacc apigwacc=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
 
     Write-Host "Execute rollout..." -ForegroundColor Yellow
-    ExecKube -cmd 'rollout resume deployments/basket'
-    ExecKube -cmd 'rollout resume deployments/catalog'
-    ExecKube -cmd 'rollout resume deployments/identity'
-    ExecKube -cmd 'rollout resume deployments/ordering'
-    ExecKube -cmd 'rollout resume deployments/ordering-backgroundtasks'
-    ExecKube -cmd 'rollout resume deployments/marketing'
-    ExecKube -cmd 'rollout resume deployments/locations'
-    ExecKube -cmd 'rollout resume deployments/payment'
-    ExecKube -cmd 'rollout resume deployments/webmvc'
+    ExecKube -cmd 'rollout resume deployments/lexon'
+    ExecKube -cmd 'rollout resume deployments/lexonmysql'
+    ExecKube -cmd 'rollout resume deployments/account'
+    ExecKube -cmd 'rollout resume deployments/webportalclient'
+    ExecKube -cmd 'rollout resume deployments/webgoogleclient'
+    ExecKube -cmd 'rollout resume deployments/webofficeclient'
+    ExecKube -cmd 'rollout resume deployments/weblexonclient'
+    ExecKube -cmd 'rollout resume deployments/webloginaddonlexon'
+    ExecKube -cmd 'rollout resume deployments/webimapclient'
     ExecKube -cmd 'rollout resume deployments/webstatus'
-    ExecKube -cmd 'rollout resume deployments/webspa'
-    ExecKube -cmd 'rollout resume deployments/mobileshoppingagg'
-    ExecKube -cmd 'rollout resume deployments/webshoppingagg'
-    ExecKube -cmd 'rollout resume deployments/apigwmm'
-    ExecKube -cmd 'rollout resume deployments/apigwms'
-    ExecKube -cmd 'rollout resume deployments/apigwwm'
-    ExecKube -cmd 'rollout resume deployments/apigwws'
-    ExecKube -cmd 'rollout resume deployments/ordering-signalrhub'
+    ExecKube -cmd 'rollout resume deployments/apigwlex'
+    ExecKube -cmd 'rollout resume deployments/apigwacc'
 
-    Write-Host "Adding/Updating ingress resource..." -ForegroundColor Yellow
-    ExecKube -cmd 'apply -f ingress.yaml'
+    Write-Host "Adding/Updating ingress resource from ingress-lef.yalm..." -ForegroundColor Yellow
+    ExecKube -cmd 'apply -f ingress-lef.yaml'
 
-    Write-Host "WebSPA is exposed at http://$externalDns, WebMVC at http://$externalDns/webmvc, WebStatus at http://$externalDns/webstatus" -ForegroundColor Yellow
+    Write-Host "WebPortal is exposed at http://$externalDns, WebStatus at http://$externalDns/webstatus" -ForegroundColor Green
 }
 
 Write-Host "-------------------END PROCESS-------------" -ForegroundColor Green
