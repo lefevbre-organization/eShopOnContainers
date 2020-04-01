@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import {translate} from 'react-i18next';
 import ButtonModules from './button-modules';
 import ButtonUser from './button-user';
+import ButtonMinihub from './button-minihub';
 import mainCss from '../../styles/main.scss';
 import styles from './top-bar-message-list.scss';
 import {Link} from "react-router-dom";
@@ -59,7 +60,7 @@ export class TopBarMessageList extends React.Component{
             <section className={`${mainCss['mdc-top-app-bar__section']} ${mainCss['mdc-top-app-bar__section--align-end']}  ${styles['modules-item-custom']}`}>
                         <ButtonUser className={`${styles['modules-item-custom']}`} />
                         <div className={`${styles['modules-item-custom-space']}`}></div>
-                        <ButtonModules className={`${styles['modules-item-custom']}`} />
+                        <ButtonMinihub className={`${styles['modules-item-custom']}`} />
             </section>              
         </div>
       )       
