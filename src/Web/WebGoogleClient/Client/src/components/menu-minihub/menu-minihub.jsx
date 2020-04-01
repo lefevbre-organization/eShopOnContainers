@@ -113,7 +113,7 @@ class MenuMinihub extends Component {
             margin-right: 15px;
           }
 
-          .menu-user {
+          .menu-minihub {
             cursor: pointer;
           }
 
