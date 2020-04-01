@@ -115,6 +115,7 @@ class MenuMinihub extends Component {
             cursor: pointer;
           }
 
+
           .add-more-accounts > span {
             color: #001978 !important;
           }
