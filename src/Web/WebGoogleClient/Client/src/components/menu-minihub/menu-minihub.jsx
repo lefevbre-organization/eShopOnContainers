@@ -142,6 +142,18 @@ class MenuMinihub extends Component {
             height: 24px;
           }
 
+          .dropdown-menu-minihub-arrow:before {
+            bottom: -13px;
+            right: -100px;
+            border-bottom-color: rgba(0, 0, 0, 0.15);
+          }
+
+          .dropdown-menu-minihub-arrow:after {
+            bottom: -13px;
+            right: -100px;
+            border-bottom-color: #fff;
+          }
+
           .mu-subheader {
             font-family: MTTMilano, Lato, Arial, sans-serif;
             cursor: default;
