@@ -10,16 +10,16 @@ class MenuMinihub extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dropdownOpen: false,     
+      dropdownOpen: false
     };
     this.wrapperRef = null;
     this.buttonRef = null;
     this.toggle = this.toggle.bind(this);
-    this.handleClickOutside = this.handleClickOutside.bind(this);   
+    this.handleClickOutside = this.handleClickOutside.bind(this);
   }
 
   componentDidMount() {
-    const _this = this;  
+    const _this = this;
     document.addEventListener('mousedown', this.handleClickOutside);
   }
 
@@ -40,20 +40,20 @@ class MenuMinihub extends Component {
       !this.buttonRef.contains(event.target)
     ) {
       this.setState({
-        dropdownOpen: false,       
+        dropdownOpen: false
       });
     }
   }
 
   toggle() {
     this.setState({
-      dropdownOpen: !this.state.dropdownOpen,     
+      dropdownOpen: !this.state.dropdownOpen
     });
   }
 
   render() {
     const { dropdownOpen } = this.state;
-   
+
     return (
       <Fragment>
         <div
@@ -62,30 +62,28 @@ class MenuMinihub extends Component {
           ref={ref => (this.buttonRef = ref)}>
           <img
             className='mx-2 profile-pic'
-            src='assets/img/icon-products.png'           
-          />               
+            src='assets/img/icon-products.png'
+          />
         </div>
         {dropdownOpen === true && (
           <div>
-            <span class='dropdown-menu-minihub-arrow'></span>
+            <span className='dropdown-menu-arrow dropdown-menu-minihub-arrow'></span>
             <div
-              className= 'menu-minihub-container'              
+              className='menu-minihub-container'
               ref={ref => (this.wrapperRef = ref)}>
               <div className='content'>
                 <div className='header'>
                   <span className='lf-icon-close' onClick={this.toggle}></span>
-                  <div className='menu-title'>                    
-                  </div>                 
+                  <div className='menu-title'></div>
                 </div>
-                <div className='user-image-and-name'>                
-                    <Fragment>                      
-                      <div className='accounts-container'>
-                        <PerfectScrollbar options={{ suppressScrollX: true }}>
-                          <ul className='other-accounts'>                           
-                          </ul>
-                        </PerfectScrollbar>                       
-                      </div>                     
-                    </Fragment>   
+                <div className='user-image-and-name'>
+                  <Fragment>
+                    <div className='accounts-container'>
+                      <PerfectScrollbar options={{ suppressScrollX: true }}>
+                        <ul className='other-accounts'></ul>
+                      </PerfectScrollbar>
+                    </div>
+                  </Fragment>
                 </div>
               </div>
             </div>
@@ -151,19 +149,6 @@ class MenuMinihub extends Component {
             color: #333333 !important;
             font-size: 14px;
           }
-
-          .dropdown-menu-minihub-arrow:before {
-            bottom: -13px;
-            right: -8px;
-            border-bottom-color: rgba(0, 0, 0, 0.15);
-          }
-
-          .dropdown-menu-minihub-arrow:after {
-            bottom: -13px;
-            right: -8px;
-            border-bottom-color: #fff;
-          }
-
           .menu-minihub-container {
             text-align: center;
           }
