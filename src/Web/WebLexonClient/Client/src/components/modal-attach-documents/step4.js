@@ -28,12 +28,12 @@ export class AttachDocumentsStep4 extends React.Component {
     };
 
     this.searchResultsByType = this.searchResultsByType.bind(this);
-    this.onRowSelected = this.onRowSelected.bind(this);
     this.onNextPage = this.onNextPage.bind(this);
     this.onPrevPage = this.onPrevPage.bind(this);
     this.renderType = this.renderType.bind(this);
     this.renderOrigin = this.renderOrigin.bind(this);
     this.onDoubleClick = this.onDoubleClick.bind(this);
+    this.onChangeFile = this.onChangeFile.bind(this);
     this.searchRef = React.createRef();
   }
 
@@ -70,16 +70,6 @@ export class AttachDocumentsStep4 extends React.Component {
 
   onPrevPage() { }
 
-
-  onRowSelected(event) {
-    const { onSelectedDirectory } = this.props;
-
-    this.setState({ selected: event.data }, () => {
-      onSelectedDirectory &&
-        onSelectedDirectory({ selected: parseInt(event.data.id) });
-    });
-  }
-
   onDoubleClick(event) {
     this.treeRef && (this.treeRef.selectedNodes = [event.rowData.id]);
   }
@@ -115,12 +105,16 @@ export class AttachDocumentsStep4 extends React.Component {
     return <span className={`pager-icon ${icon} new-folder-icon`} />;
   }
 
+  onChangeFile(event) {
+    console.log(event)
+  }
+
   renderOrigin(props) {
     const icon = this.props.entity.idType === 1 ? 'lf-icon-law' : '';
     console.log(props);
     return (
       <div>
-        <span><CheckBoxComponent label="" cssClass="e-small" /></span>
+        <span><CheckBoxComponent label="" cssClass="e-small" change={this.onChangeFile} /></span>
         <span
           style={{ marginRight: 10, marginLeft: 10 }}
           className={`pager-icon ${icon} new-folder-icon`}></span>
@@ -173,7 +167,6 @@ export class AttachDocumentsStep4 extends React.Component {
                   mode: 'Row',
                   enableToggle: false
                 }}
-                rowSelected={this.onRowSelected}
                 allowSorting={true}
                 hideScroll={true}
                 selected={1}
@@ -284,7 +277,7 @@ export class AttachDocumentsStep4 extends React.Component {
 
             .panel-right {
               flex: 2;
-              // border-left: 1px solid #001978;
+              border-left: 1px solid #e0e0e0;
             }
             .panel-right-top {
               color: red;

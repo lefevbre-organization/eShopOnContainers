@@ -9,8 +9,6 @@ import { AttachDocumentsStep1b } from './step1b';
 import { AttachDocumentsStep2 } from './step2';
 import { AttachDocumentsStep3 } from './step3';
 import { AttachDocumentsStep4 } from './step4';
-
-import { addClassification, uploadFile } from '../../services/services-lexon';
 import ACTIONS from '../../actions/documentsAction';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 
@@ -32,7 +30,7 @@ class ModalAttachDocuments extends Component {
       messages: []
     };
 
-    this.changeSubject = this.changeSubject.bind(this);
+    this.onSelectedFiles = this.onSelectedFiles.bind(this);
     this.changeStep1Data = this.changeStep1Data.bind(this);
   }
 
@@ -52,20 +50,17 @@ class ModalAttachDocuments extends Component {
   closeDialog() {
     setTimeout(() => {
       this.setState({
+        search: '',
         step: 1,
-        step1Data: {
-          entity: 1,
-          actuation: false,
-          copyDocuments: false,
-          saveDocuments: false
-        },
+        entity: 0,
         step2Data: {
           id: -1,
           idType: -1
         },
         step3Data: {
           selected: -1
-        }
+        },
+        messages: []
       });
     }, 1000);
     this.props.toggleModalAttachDocuments &&
@@ -100,7 +95,6 @@ class ModalAttachDocuments extends Component {
   changeStep1Data(entity) {
     if (this.state.entity !== entity) {
       this.setState({ entity });
-
     }
   }
 
@@ -110,15 +104,6 @@ class ModalAttachDocuments extends Component {
 
   changeStep3Data(data) {
     this.setState({ step3Data: data });
-  }
-
-  changeSubject(id, subject) {
-    const { messages } = this.state;
-    for (let i = 0; i < messages.length; i++) {
-      if (messages[i].id === id) {
-        messages[i].subject = subject;
-      }
-    }
   }
 
   saveDisabled() {
@@ -140,6 +125,10 @@ class ModalAttachDocuments extends Component {
     return true;
   }
 
+  onSelectedFiles() {
+
+  }
+
   onSave() {
     console.log('onSave');
     if (this.state.step === 2) {
@@ -147,123 +136,6 @@ class ModalAttachDocuments extends Component {
     } else if (this.state.step === 4) {
       this.onSaveStep3();
     }
-  }
-
-  onSaveStep2() {
-    const { step1Data, step2Data } = this.state;
-    const { toggleNotification } = this.props;
-
-    if (step2Data.id === -1 || step2Data.idType === -1) {
-      toggleNotification(i18n.t('classify-emails.classification-selection-ko'));
-      return;
-    }
-
-    if (
-      step1Data.copyDocuments === false &&
-      step1Data.saveDocuments === false
-    ) {
-      this.closeDialog();
-      this.saveClassifications();
-    } else {
-      this.nextStep();
-    }
-  }
-
-  async onSaveStep3() {
-    const { step1Data, step2Data, step3Data } = this.state;
-    const { selectedMessages } = this.props;
-    this.closeDialog();
-    let sc = null;
-
-    sc = await this.saveClassifications();
-    console.log('SC');
-    console.log(sc);
-
-    if (
-      sc &&
-      (step1Data.copyDocuments === true || step1Data.saveDocuments === true)
-    ) {
-      // Save email as eml format
-      for (let i = 0; i < selectedMessages.length; i++) {
-        const raw = Base64.encode(selectedMessages[i].raw);
-        const subject = selectedMessages[i].subject;
-
-        if (step1Data.copyDocuments === true) {
-          await uploadFile(
-            step3Data.selected,
-            step2Data.id,
-            step2Data.idType,
-            sc[i],
-            this.props.companySelected.bbdd,
-            this.props.user.idUser,
-            subject + '.eml',
-            raw
-          );
-        }
-
-        if (step1Data.saveDocuments === true) {
-          // Save attachments
-          const mime = parse(selectedMessages[i].raw);
-          for (let j = 0; j < mime.childNodes.length; j++) {
-            if (
-              mime.childNodes[j].raw.indexOf(
-                'Content-Disposition: attachment;'
-              ) > -1
-            ) {
-              const data = new TextDecoder('utf-8').decode(
-                mime.childNodes[j].content
-              );
-              const rawAttach = Base64.encode(data);
-              await uploadFile(
-                step3Data.selected,
-                step2Data.id,
-                step2Data.idType,
-                sc[i],
-                this.props.companySelected.bbdd,
-                this.props.user.idUser,
-                mime.childNodes[j].contentType.params.name,
-                rawAttach
-              );
-            }
-          }
-        }
-      }
-    }
-  }
-
-  async saveClassifications() {
-    const { step2Data } = this.state;
-    const {
-      user,
-      companySelected,
-      selectedMessages,
-      toggleNotification
-    } = this.props;
-
-    try {
-      const res = await addClassification(
-        user,
-        companySelected,
-        selectedMessages,
-        step2Data.id,
-        step2Data.idType
-      );
-
-      if (selectedMessages.length === 1) {
-        this.props.updateClassifications &&
-          this.props.updateClassifications(selectedMessages[0].id);
-      }
-      toggleNotification(i18n.t('classify-emails.classification-saved-ok'));
-
-      return res.classifications;
-    } catch (err) {
-      toggleNotification(
-        i18n.t('classify-emails.classification-saved-ko'),
-        true
-      );
-    }
-
-    return null;
   }
 
   renderButtons() {
@@ -365,7 +237,6 @@ class ModalAttachDocuments extends Component {
       showAttachDocuments,
       toggleNotification
     } = this.props;
-    const { messages, step1Data } = this.state;
 
     return (
       <div className='modal-connection-emails'>
@@ -451,7 +322,7 @@ class ModalAttachDocuments extends Component {
                   defaultSearch={this.state.search}
                   entity={this.state.step2Data}
                   toggleNotification={toggleNotification}
-                  onSelectedDirectory={data => { }}></AttachDocumentsStep4>
+                  onChange={this.onSelectedFiles}></AttachDocumentsStep4>
               </div>
             </Container>
           </Modal.Body>
