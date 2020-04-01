@@ -23,3 +23,8 @@
     font-family: MTTMilano, Lato, Arial, sans-serif;
     font-size: 0.9em !important;
 }
+
+.menu-user {
+    margin-right: 60px;
+    cursor: pointer;
+}

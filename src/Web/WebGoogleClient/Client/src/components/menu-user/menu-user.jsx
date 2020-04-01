@@ -318,10 +318,6 @@ class MenuUser extends Component {
             margin-right: 15px;
           }
 
-          .menu-user {
-            cursor: pointer;
-          }
-
           .add-more-accounts > span {
             color: #001978 !important;
           }

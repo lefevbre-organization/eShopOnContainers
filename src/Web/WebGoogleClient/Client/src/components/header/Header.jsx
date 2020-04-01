@@ -15,6 +15,7 @@ import { connect } from 'react-redux';
 import MenuUser from '../menu-user/menu-user';
 import i18n from 'i18next';
 import { resetDefaultAccount } from '../../api/accounts';
+import MenuMinihub from '../menu-minihub/menu-minihub';
 
 export class Header extends PureComponent {
   constructor(props) {
@@ -127,49 +128,9 @@ export class Header extends PureComponent {
             fullName={fullName}
             onSignout={this.props.onSignout}
             onSignoutDisconnect={this.props.onSignoutDisconnect}
-          />
-          <div>
-            <Nav className='ml-auto' navbar>
-              <NavItem className='d-md-down-none'>
-                <NavLink href='#'>
-                  <i className='icon-location-pin'></i>
-                </NavLink>
-              </NavItem>
-              <Dropdown
-                nav
-                isOpen={this.state.dropdownMenuOpen}
-                toggle={this.toggleMenu}>
-                <DropdownToggle nav>
-                  <img src='assets/img/icon-products.png' alt='' />
-                </DropdownToggle>
-                <DropdownMenu right>
-                  {/* <DropdownItem>
-                    <i className="fa fa-shield"></i> Calendar
-                  </DropdownItem>
-                  <DropdownItem>
-                    <i className="fa fa-shield"></i> File Manager
-                  </DropdownItem>
-                  <DropdownItem>
-                    <i className="fa fa-shield"></i>
-                    <span onClick={this._handleOnClick}>
-                      {" "}
-                      Configure New Account
-                    </span>
-                  </DropdownItem>
-                  <DropdownItem divider /> */}
-                  <DropdownItem>
-                    <span
-                      onClick={() =>
-                        window.open('https://www.lex-on.es/', '_self')
-                      }>
-                      <i className='fa fa-lock'></i>{' '}
-                      {i18n.t('header.returnlexon')}
-                    </span>
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            </Nav>
-          </div>
+           />
+           <MenuMinihub/>
+          
         </div>
       </header>
     );
