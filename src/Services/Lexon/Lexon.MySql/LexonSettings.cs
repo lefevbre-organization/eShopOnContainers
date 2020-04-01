@@ -4,6 +4,7 @@
     {
         public int UserApp { get; set; }
         public string ConnectionString { get; set; }
+        public string LexonHubUrl { get; set; }
 
         public StoreProcedures SP { get; set; }
 

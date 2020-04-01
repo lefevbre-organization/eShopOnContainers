@@ -182,6 +182,7 @@ services:
       - ConnectionStringHc=${ESHOP_MONGO_DB:-mongodb://nosql.data}
       - ConnectionString=${ESHOP_MYSQL_LEXONMYSQL_DB:-database=lexon_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5}
 #      - ConnectionString=${ESHOP_MYSQL_LEXONMYSQL_DB:-database=lexon_conecta;server=ES006-PPDDB003;port=3315;user id=led-ext-freyes;password=DSFkds4+46DSF}
+      - LexonHubUrl=http://led-pre-servicehub/Herramientas/Get
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}          

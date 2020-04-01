@@ -36,13 +36,19 @@ namespace Lexon.Infrastructure.Services
             _usersRepository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
-
             _client = _clientFactory.CreateClient();
             _client.BaseAddress = new Uri(_settings.Value.LexonMySqlUrl);
             _client.DefaultRequestHeaders.Add("Accept", "text/plain");
 
-            _clientFiles = _clientFactory.CreateClient();
-            _clientFiles.BaseAddress = new Uri(_settings.Value.LexonFilesUrl);
+            var handler = new HttpClientHandler()
+            {
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+
+            _clientFiles = new HttpClient(handler)
+            {
+                BaseAddress = new Uri(_settings.Value.LexonFilesUrl)
+            };
             _clientFiles.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
@@ -313,10 +319,10 @@ namespace Lexon.Infrastructure.Services
                 byte[] buffer = Encoding.UTF8.GetBytes(json);
                 var dataparameters = Convert.ToBase64String(buffer);
                 var url = $"{_settings.Value.LexonFilesUrl}?option=com_lexon&task=hook.receive&type=repository&data={dataparameters}";
-                WriteLine($"Se hace llamada a {url} a las {DateTime.Now}");
+                WriteError($"Se hace llamada a {url} a las {DateTime.Now}");
                 using (var response = await _clientFiles.GetAsync(url))
                 {
-                    WriteLine($"Se recibe contestación {DateTime.Now}");
+                    WriteError($"Se recibe contestación {DateTime.Now}");
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -338,7 +344,7 @@ namespace Lexon.Infrastructure.Services
                 TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.idEntity}, -> {ex.Message}", "599");
             }
 
-            WriteLine($"Salimos de FileGetAsync a las {DateTime.Now}");
+            WriteError($"Salimos de FileGetAsync a las {DateTime.Now}");
             return result;
         }
 
@@ -355,10 +361,10 @@ namespace Lexon.Infrastructure.Services
 
                 SerializeObjectToPut(fileMail.ContentFile, $"?option=com_lexon&task=hook.receive&type=repository&data={dataparameters}", out string url, out ByteArrayContent data);
 
-                WriteLine($"Se hace llamada a {url} a las {DateTime.Now}");
+                WriteError($"Se hace llamada a {url} a las {DateTime.Now}");
                 using (var response = await _clientFiles.PutAsync(url, data))
                 {
-                    WriteLine($"Se recibe contestación {DateTime.Now}");
+                    WriteError($"Se recibe contestación {DateTime.Now}");
 
                     var responseText = await response.Content.ReadAsStringAsync();
                     if (response.IsSuccessStatusCode)
@@ -377,7 +383,7 @@ namespace Lexon.Infrastructure.Services
                 //TraceMessage(result.errors, ex);
                 TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message}", "598");
             }
-            WriteLine($"Salimos de FilePostAsync a las {DateTime.Now}");
+            WriteError($"Salimos de FilePostAsync a las {DateTime.Now}");
 
             return result;
         }
