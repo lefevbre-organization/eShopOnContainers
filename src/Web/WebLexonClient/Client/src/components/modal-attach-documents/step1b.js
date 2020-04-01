@@ -6,15 +6,12 @@ import {
 import i18n from 'i18next';
 import { getTypes } from '../../services/services-lexon';
 
-export class ConnectingEmailsStep1b extends React.Component {
+export class AttachDocumentsStep1b extends React.Component {
   constructor() {
     super();
     this.state = {
       types: [],
-      actuation: true,
-      copyDocuments: false,
-      saveDocuments: false,
-      entity: 1
+      entity: 2
     };
   }
 
@@ -35,75 +32,24 @@ export class ConnectingEmailsStep1b extends React.Component {
   onChangeData() {
     const { onChange } = this.props;
     onChange &&
-      onChange({
-        actuation: this.state.actuation,
-        copyDocuments: this.state.copyDocuments,
-        saveDocuments: this.state.saveDocuments,
-        entity: this.state.entity
-      });
-  }
-
-  changeCheck1(event) {
-    this.setState({ copyDocuments: event.checked }, () => {
-      this.onChangeData();
-    });
-  }
-
-  changeCheck2(event) {
-    this.setState({ saveDocuments: event.checked }, () => {
-      this.onChangeData();
-    });
+      onChange(this.state.entity);
   }
 
   render() {
     return (
       <Fragment>
-        <div className='step1-container'>
+        <div className='step1b-container'>
           <ol>
             <li>
-              <span>{i18n.t('connecting.q1')}</span>
-              <ul className='list-checks'>
-                <li>
-                  <CheckBoxComponent
-                    checked={this.state.actuation}
-                    label={i18n.t('connecting.create')}
-                    change={event => {
-                      this.setState({ actuation: event.checked }, () => {
-                        this.onChangeData();
-                      });
-                    }}
-                  />
-                </li>
-                <li>
-                  <CheckBoxComponent
-                    label={i18n.t('connecting.copy')}
-                    checked={this.state.copyDocuments}
-                    change={data => {
-                      this.changeCheck1(data);
-                    }}
-                  />
-                </li>
-                <li>
-                  <CheckBoxComponent
-                    label={i18n.t('connecting.save')}
-                    checked={this.state.saveDocuments}
-                    change={data => {
-                      this.changeCheck2(data);
-                    }}
-                  />
-                </li>
-              </ul>
-            </li>
-            <li>
-              <span>{i18n.t('connecting.q2')}</span>
+              <span>{i18n.t('attaching.q2')}</span>
               <ul className='two-columns'>
-                {this.state.types.map(item => (
+                {this.state.types.filter(item => item.idEntity !== 1).map(item => (
                   <li key={item.idEntity}>
                     <RadioButtonComponent
                       cssClass='e-primary'
                       label={i18n.t('classification.' + item.idEntity)}
                       name='entity'
-                      checked={item.idEntity === 1}
+                      checked={item.idEntity === 2}
                       change={() => {
                         this.setState({ entity: item.idEntity }, () => {
                           this.onChangeData();
@@ -118,7 +64,7 @@ export class ConnectingEmailsStep1b extends React.Component {
         </div>
         <style jsx>
           {`
-            .step1-container {
+            .step1b-container {
               margin: 50px;
             }
             ol {
@@ -128,21 +74,7 @@ export class ConnectingEmailsStep1b extends React.Component {
             .list-checks li {
               margin-top: 10px;
             }
-            ol > li::before {
-              content: counter(li);
-              color: #001978;
-              display: inline-block;
-              width: 1em;
-              margin-left: -1em;
-              background-color: #e5e8f1;
-              border-radius: 50%;
-              height: 32px;
-              width: 32px;
-              text-align: center;
-              font-family: 'MTTMilano-Medium';
-              font-size: 16px;
-              font-weight: bold;
-            }
+            
             ol > li {
               counter-increment: li;
               color: #001978;
@@ -163,6 +95,7 @@ export class ConnectingEmailsStep1b extends React.Component {
               -webkit-columns: 2;
               -moz-columns: 2;
               min-height: 180px;
+              margin-top: 60px;
             }
           `}
         </style>

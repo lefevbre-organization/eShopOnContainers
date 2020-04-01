@@ -33,6 +33,7 @@ class ModalAttachDocuments extends Component {
     };
 
     this.changeSubject = this.changeSubject.bind(this);
+    this.changeStep1Data = this.changeStep1Data.bind(this);
   }
 
   componentDidMount() {
@@ -72,7 +73,7 @@ class ModalAttachDocuments extends Component {
   }
 
   nextStep() {
-    if (this.state.step === 1) {
+    if (this.state.step === 1 || this.state.step === 11) {
       this.setState({ step: 2 });
     } else if (this.state.step === 2) {
       this.setState({ step: 3 });
@@ -82,8 +83,13 @@ class ModalAttachDocuments extends Component {
   }
 
   prevStep() {
-    if (this.state.step === 2) {
-      this.setState({ step: 1 });
+    if (this.state.step === 2 || this.state.step === 11) {
+      if (this.state.step === 2 && this.state.entity !== 1) {
+        this.setState({ step: 11, });
+      } else {
+        this.setState({ step: 1 });
+      }
+      this.setState({ step2Data: { ...this.state.step2Data, id: -1 } })
     } else if (this.state.step === 3) {
       this.setState({ step: 2 });
     } else if (this.state.step === 4) {
@@ -91,16 +97,11 @@ class ModalAttachDocuments extends Component {
     }
   }
 
-  changeStep1Data(data) {
-    let step2Data = this.state.step2Data;
-    if (this.state.step1Data.entity !== data.entity) {
-      step2Data = {
-        id: -1,
-        idType: -1
-      };
-    }
+  changeStep1Data(entity) {
+    if (this.state.entity !== entity) {
+      this.setState({ entity });
 
-    this.setState({ step1Data: data, step2Data });
+    }
   }
 
   changeStep2Data(data) {
@@ -121,6 +122,9 @@ class ModalAttachDocuments extends Component {
   }
 
   saveDisabled() {
+    if (this.state.step === 11) {
+      return false;
+    }
     if (this.state.step2Data.idType !== -1 && this.state.step2Data.id !== -1) {
       return false;
     }
@@ -268,6 +272,7 @@ class ModalAttachDocuments extends Component {
     switch (step) {
       case 1:
         return <Fragment></Fragment>;
+      case 11:
       case 2:
         return (
           <Fragment>
@@ -383,6 +388,7 @@ class ModalAttachDocuments extends Component {
                 alt='Lex-On'
                 src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
               <span>{i18n.t('modal-attach-documents.title')}</span>
+              <span>{this.state.step}</span>
             </h5>
           </Modal.Header>
           <Modal.Body className='mimodal'>
@@ -405,6 +411,7 @@ class ModalAttachDocuments extends Component {
                 style={{ display: this.state.step === 11 ? 'block' : 'none' }}>
                 <AttachDocumentsStep1b
                   show={this.state.step === 1}
+                  onChange={this.changeStep1Data}
                 ></AttachDocumentsStep1b>
               </div>
               <div
