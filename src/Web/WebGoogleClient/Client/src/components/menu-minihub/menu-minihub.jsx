@@ -5,23 +5,54 @@ import { bindActionCreators } from 'redux';
 import ACTIONS from '../../actions/lexon';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
+import {
+    getProducts,
+} from '../../api/minihub';
 
 class MenuMinihub extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dropdownOpen: false
+        dropdownOpen: false,
+        products: []
     };
     this.wrapperRef = null;
     this.buttonRef = null;
     this.toggle = this.toggle.bind(this);
     this.handleClickOutside = this.handleClickOutside.bind(this);
-  }
+    }
 
-  componentDidMount() {
-    const _this = this;
-    document.addEventListener('mousedown', this.handleClickOutside);
-  }
+   
+    componentDidMount() {
+        const { lexon } = this.props;
+        const _this = this;
+        if (lexon.userId) {
+            getProducts(lexon.userId)
+                .then(result => {
+                    if (result.errors.length === 0) {
+                        _this.setState({
+                           
+                            products: result.data.filter(                              
+                                product => product.indAcceso !== '1'
+                            )
+                           
+                        });
+                    } else {
+                        let errors;
+                        result.errors.forEach(function (error) {
+                            errors = `${error} `;
+                        });
+                        console.log('error ->', errors);
+                    }
+                })
+                .catch(error => {
+                    console.log('error ->', error);
+                });
+        }
+
+        document.addEventListener('mousedown', this.handleClickOutside);
+    }
+
 
   componentWillUnmount() {
     document.removeEventListener('mousedown', this.handleClickOutside);
@@ -52,7 +83,8 @@ class MenuMinihub extends Component {
   }
 
   render() {
-    const { dropdownOpen } = this.state;
+     
+    const { dropdownOpen, products } = this.state;
 
     return (
       <Fragment>
@@ -71,16 +103,24 @@ class MenuMinihub extends Component {
             <div
               className='menu-minihub-container'
               ref={ref => (this.wrapperRef = ref)}>
-              <div className='content'>
-                <div className='header'>
-                  <span className='lf-icon-close' onClick={this.toggle}></span>
-                  <div className='menu-title'></div>
-                </div>
+              <div className='content'>                
                 <div className='user-image-and-name'>
                   <Fragment>
                     <div className='accounts-container'>
                       <PerfectScrollbar options={{ suppressScrollX: true }}>
-                        <ul className='other-accounts'></ul>
+                        <ul className='other-accounts'>
+                          {products.map(product => (
+                            <li>                                  
+                               <a
+                                 href={product.url}
+                                 target="_blank"
+                                 className="d-flex align-items-center account-text"                                     
+                               >
+                               {product.descHerramienta}
+                               </a>
+                            </li>
+                          ))}
+                        </ul>
                       </PerfectScrollbar>
                     </div>
                   </Fragment>
