@@ -218,7 +218,7 @@ class ModalConnectingEmails extends Component {
           await uploadFile(
             step1Data.actuation === false ? step3Data.selected : undefined,
             step1Data.actuation === false ? step2Data.id : undefined,
-            step1Data.actuation === false ? step2Data.idType : undefined,
+            step1Data.actuation === false ? step2Data.idType : 45,
             step1Data.actuation === true ? sc[i] : undefined,
             this.props.companySelected.bbdd,
             this.props.user.idUser,
@@ -243,7 +243,7 @@ class ModalConnectingEmails extends Component {
               await uploadFile(
                 step1Data.actuation === false ? step3Data.selected : undefined,
                 step1Data.actuation === false ? step2Data.id : undefined,
-                step1Data.actuation === false ? step2Data.idType : undefined,
+                step1Data.actuation === false ? step2Data.idType : 45,
                 step1Data.actuation === true ? sc[i] : undefined,
                 this.props.companySelected.bbdd,
                 this.props.user.idUser,
