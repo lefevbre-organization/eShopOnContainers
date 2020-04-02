@@ -105,8 +105,11 @@ export class AttachDocumentsStep4 extends React.Component {
     return <span className={`pager-icon ${icon} new-folder-icon`} />;
   }
 
-  onChangeFile(event) {
-    console.log(event)
+  onChangeFile(event, data) {
+    const { checked } = event;
+    const { idType, idRelated } = data
+    const { onChange } = this.props;
+    onChange && onChange({ idType, idRelated, checked })
   }
 
   renderOrigin(props) {
@@ -114,7 +117,7 @@ export class AttachDocumentsStep4 extends React.Component {
     console.log(props);
     return (
       <div>
-        <span><CheckBoxComponent label="" cssClass="e-small" change={this.onChangeFile} /></span>
+        <span><CheckBoxComponent label="" cssClass="e-small" change={(evt) => { this.onChangeFile(evt, props) }} /></span>
         <span
           style={{ marginRight: 10, marginLeft: 10 }}
           className={`pager-icon ${icon} new-folder-icon`}></span>
@@ -342,4 +345,5 @@ export class AttachDocumentsStep4 extends React.Component {
       </Fragment>
     );
   }
+
 }

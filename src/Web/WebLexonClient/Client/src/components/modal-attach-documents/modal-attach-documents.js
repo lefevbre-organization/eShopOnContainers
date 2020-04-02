@@ -3,7 +3,7 @@ import i18n from 'i18next';
 import { Button, Modal, Container } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { Base64 } from 'js-base64';
-import parse from 'emailjs-mime-parser';
+import { downloadFile } from '../../services/services-lexon';
 import { AttachDocumentsStep1 } from './step1';
 import { AttachDocumentsStep1b } from './step1b';
 import { AttachDocumentsStep2 } from './step2';
@@ -27,11 +27,13 @@ class ModalAttachDocuments extends Component {
       step3Data: {
         selected: -1
       },
-      messages: []
+      messages: [],
+      files: []
     };
 
     this.onSelectedFiles = this.onSelectedFiles.bind(this);
     this.changeStep1Data = this.changeStep1Data.bind(this);
+    this.onSave = this.onSave.bind(this);
   }
 
   componentDidMount() {
@@ -125,16 +127,34 @@ class ModalAttachDocuments extends Component {
     return true;
   }
 
-  onSelectedFiles() {
+  onSelectedFiles(fileSelected) {
+    const { files } = this.state;
+    let nf = [];
 
+    if (fileSelected.checked === true) {
+      nf = [...files, fileSelected]
+    } else {
+      nf = [...files.filter(f => (f.idRelated !== fileSelected.idRelated))]
+    }
+
+    this.setState({ files: nf })
   }
 
-  onSave() {
+  async onSave() {
+    const { files } = this.state;
     console.log('onSave');
-    if (this.state.step === 2) {
-      this.onSaveStep2();
-    } else if (this.state.step === 4) {
-      this.onSaveStep3();
+
+    const prs = [];
+    for (let i = 0; i < files.length; i++) {
+      const pr = downloadFile(files[i].idRelated, this.props.companySelected.bbdd,
+        this.props.user.idUser,
+      )
+      prs.push(pr)
+    }
+
+    if (prs.length > 0) {
+      const res = await Promise.all(prs)
+      console.log(res)
     }
   }
 
