@@ -91,7 +91,7 @@ export class ConnectingEmailsStep2 extends React.Component {
               lastPage,
               showSpinner: false
             },
-            () => {}
+            () => { }
           );
         }
       } catch (err) {
@@ -241,7 +241,7 @@ export class ConnectingEmailsStep2 extends React.Component {
                 <div
                   className={`prevButton ${
                     this.state.currentPage === 1 ? 'disabled' : ''
-                  }`}
+                    }`}
                   onClick={() => this.prevPage()}>
                   <span className='pager-icon lf-icon-angle-left' />
                   <span>Anterior</span>
@@ -250,7 +250,7 @@ export class ConnectingEmailsStep2 extends React.Component {
                 <div
                   className={`nextButton ${
                     this.state.lastPage === true ? 'disabled' : ''
-                  }`}
+                    }`}
                   onClick={() => this.nextPage()}>
                   <span>Siguiente</span>
                   <span className='pager-icon lf-icon-angle-right' />

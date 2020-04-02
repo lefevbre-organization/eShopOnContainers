@@ -21,6 +21,9 @@
   "new-classification": {
     "new-classification": "New classification"
   },
+  "attaching": {
+    "q2": "In what type of contact do you want to search?"
+  },
   "connecting": {
     "q1": "What do you want to do with the selected messages? (Available soon)",
     "q2": "What type of entity do you want to classify with? (Available soon)",

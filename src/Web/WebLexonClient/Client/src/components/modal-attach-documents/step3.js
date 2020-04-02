@@ -46,6 +46,7 @@ export class AttachDocumentsStep3 extends React.Component {
     if (
       JSON.stringify(prevProps.entity) !== JSON.stringify(this.props.entity)
     ) {
+      console.log("Entity data")
       this.setState({ loadingTree: true }, async () => {
         const response = await getFolderTree(
           this.props.entity.idFolder,
@@ -54,26 +55,38 @@ export class AttachDocumentsStep3 extends React.Component {
           true
         );
 
-        let tree = normalizeTree(this.props.entity, response.result.data, false);
-        const childs = getChilds(tree, 0);
+        if (response.result.status === 400) {
+          // No existe la carpeta para esta entidad.
+          // La creamos
+          const response = await createFolder(null, "nombre", this.props.entity.id, this.props.entity.idType, this.props.bbdd.bbdd,
+            this.props.user.idUser
+          )
 
-        this.setState(
-          {
-            loadingTree: false,
-            fields: {
-              dataSource: [removeFileNodes(tree[0])],
-              id: 'id',
-              text: 'name',
-              child: 'subChild'
+          console.log(response)
+        } else {
+          let tree = normalizeTree(this.props.entity, response.result.data, false);
+          const childs = getChilds(tree, 0);
+
+          this.setState(
+            {
+              loadingTree: false,
+              fields: {
+                dataSource: [removeFileNodes(tree[0])],
+                id: 'id',
+                text: 'name',
+                child: 'subChild'
+              },
+              entities: childs
             },
-            entities: childs
-          },
-          () => {
-            this.onNodeSelected({
-              nodeData: { id: this.props.entity.idFolder }
-            });
-          }
-        );
+            () => {
+              this.onNodeSelected({
+                nodeData: { id: this.props.entity.idFolder }
+              });
+            }
+          );
+        }
+
+
       });
     }
 

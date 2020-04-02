@@ -418,3 +418,31 @@ export const uploadFile = async (
     throw err;
   }
 };
+
+export const downloadFile = async (
+  idEntity,
+  bbdd,
+  idUser
+) => {
+  const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/entities/files/get`;
+  const body = {
+    idEntity,
+    bbdd,
+    idUser
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/text',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    return { response };
+  } catch (err) {
+    throw err;
+  }
+};

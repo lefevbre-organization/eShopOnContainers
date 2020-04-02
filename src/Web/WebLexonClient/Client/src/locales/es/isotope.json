@@ -47,6 +47,9 @@
     "actuation-title": "Título de la actuación",
     "new-folder": "Nueva carpeta"
   },
+  "attaching": {
+    "q2": "¿En que tipo de contacto quieres realizar la búsqueda?"
+  },
   "classification": {
     "type": "Tipo: ",
     "assigned": "Asignado a: ",
