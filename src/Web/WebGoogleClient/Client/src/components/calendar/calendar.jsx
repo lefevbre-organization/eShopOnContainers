@@ -301,24 +301,7 @@ export class Calendar extends Component {
             'GetUserFromLexonConnector',
             this.handleGetUserFromLexonConnector
         );
-        window.addEventListener('RemoveSelectedDocument', event => {
-            this.props.deleteMessage(event.detail.id);
-            dispatchEvent(
-                new CustomEvent('Checkclick', {
-                    detail: {
-                        id: event.detail.id,
-                        extMessageId: event.detail.id,
-                        name: event.detail.id,
-                        subject: event.detail.subject,
-                        sentDateTime: event.detail.sentDateTime,
-                        folder: event.detail.folder,
-                        provider: 'GOOGLE',
-                        account: this.props.lexon.account,
-                        chkselected: false
-                    }
-                })
-            );
-        });
+   
 
         const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
         const { userId, idCaseFile, bbdd, mailContacts } = this.props.lexon;
