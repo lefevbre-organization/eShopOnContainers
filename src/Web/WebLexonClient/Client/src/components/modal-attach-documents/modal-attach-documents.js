@@ -2,21 +2,24 @@ import React, { Component, Fragment } from 'react';
 import i18n from 'i18next';
 import { Button, Modal, Container } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import { Base64 } from 'js-base64';
 import { downloadFile } from '../../services/services-lexon';
 import { AttachDocumentsStep1 } from './step1';
 import { AttachDocumentsStep1b } from './step1b';
 import { AttachDocumentsStep2 } from './step2';
 import { AttachDocumentsStep3 } from './step3';
 import { AttachDocumentsStep4 } from './step4';
+import { AttachDocumentsStep5 } from './step5';
 import ACTIONS from '../../actions/documentsAction';
 import 'react-perfect-scrollbar/dist/css/styles.css';
+import Spinner from '../spinner/spinner';
 
 class ModalAttachDocuments extends Component {
   constructor() {
     super();
 
     this.state = {
+      showSpinner: false,
+      complete: false,
       search: '',
       step: 1,
       entity: 0,
@@ -33,7 +36,8 @@ class ModalAttachDocuments extends Component {
 
     this.onSelectedFiles = this.onSelectedFiles.bind(this);
     this.changeStep1Data = this.changeStep1Data.bind(this);
-    this.onSave = this.onSave.bind(this);
+    this.downloadComplete = this.downloadComplete.bind(this);
+    this.step5Ref = React.createRef();
   }
 
   componentDidMount() {
@@ -41,28 +45,25 @@ class ModalAttachDocuments extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (
-      JSON.stringify(prevProps.selectedMessages) !==
-      JSON.stringify(this.props.selectedMessages)
-    ) {
-      this.setState({ messages: this.props.selectedMessages });
-    }
+  }
+
+  downloadComplete() {
+    this.setState({ downloading: false, complete: true });
   }
 
   closeDialog() {
+    if (this.state.downloading === true) {
+      return;
+    }
     setTimeout(() => {
       this.setState({
         search: '',
         step: 1,
         entity: 0,
-        step2Data: {
-          id: -1,
-          idType: -1
-        },
-        step3Data: {
-          selected: -1
-        },
-        messages: []
+        messages: [],
+        files: [],
+        downloading: false,
+        complete: false
       });
     }, 1000);
     this.props.toggleModalAttachDocuments &&
@@ -70,12 +71,11 @@ class ModalAttachDocuments extends Component {
   }
 
   nextStep() {
-    if (this.state.step === 1 || this.state.step === 11) {
+    const { step } = this.state;
+    if (step === 1 || step === 11) {
       this.setState({ step: 2 });
-    } else if (this.state.step === 2) {
-      this.setState({ step: 3 });
-    } else if (this.state.step === 3) {
-      this.setState({ step: 4 });
+    } else {
+      this.setState({ step: step + 1 })
     }
   }
 
@@ -91,6 +91,8 @@ class ModalAttachDocuments extends Component {
       this.setState({ step: 2 });
     } else if (this.state.step === 4) {
       this.setState({ step: 1 });
+    } else if (this.state.step === 5) {
+      this.setState({ step: 4 });
     }
   }
 
@@ -120,11 +122,8 @@ class ModalAttachDocuments extends Component {
   }
 
   save3Disabled() {
-    if (this.state.step3Data.selected !== -1) {
-      return false;
-    }
-
-    return true;
+    const { files } = this.state;
+    return files.length === 0
   }
 
   onSelectedFiles(fileSelected) {
@@ -132,7 +131,7 @@ class ModalAttachDocuments extends Component {
     let nf = [];
 
     if (fileSelected.checked === true) {
-      nf = [...files, fileSelected]
+      nf = [...files.filter(f => (f.idRelated !== fileSelected.idRelated)), fileSelected]
     } else {
       nf = [...files.filter(f => (f.idRelated !== fileSelected.idRelated))]
     }
@@ -140,26 +139,29 @@ class ModalAttachDocuments extends Component {
     this.setState({ files: nf })
   }
 
-  async onSave() {
-    const { files } = this.state;
-    console.log('onSave');
+  // onSave() {
+  //   const { files } = this.state;
+  //   console.log('onSave');
+  //   this.setState({ showSpinner: true }, async () => {
+  //     const prs = [];
+  //     for (let i = 0; i < files.length; i++) {
+  //       const pr = downloadFile(files[i].idRelated, this.props.companySelected.bbdd,
+  //         this.props.user.idUser,
+  //       )
+  //       prs.push(pr)
+  //     }
 
-    const prs = [];
-    for (let i = 0; i < files.length; i++) {
-      const pr = downloadFile(files[i].idRelated, this.props.companySelected.bbdd,
-        this.props.user.idUser,
-      )
-      prs.push(pr)
-    }
+  //     if (prs.length > 0) {
+  //       const res = await Promise.all(prs)
+  //       console.log(res)
+  //     }
 
-    if (prs.length > 0) {
-      const res = await Promise.all(prs)
-      console.log(res)
-    }
-  }
+  //     this.setState({ showSpinner: false })
+  //   })
+  // }
 
   renderButtons() {
-    const { step } = this.state;
+    const { step, complete } = this.state;
 
     switch (step) {
       case 1:
@@ -239,10 +241,55 @@ class ModalAttachDocuments extends Component {
             <Button
               bsPrefix='btn btn-primary'
               onClick={() => {
-                this.onSave();
+                this.nextStep();
               }}>
-              {i18n.t('classify-emails.save')}
+              {i18n.t('classify-emails.continue')}
             </Button>
+          </Fragment>
+        );
+      case 5:
+        return (
+          <Fragment>
+            {complete === true &&
+              <Button
+                disabled={this.state.downloading === true}
+                bsPrefix='btn btn-primary'
+                onClick={() => {
+                  this.closeDialog();
+                }}>
+                {i18n.t('classify-emails.close')}
+              </Button>
+            }
+            {complete === false &&
+              <Fragment>
+                <Button
+                  disabled={this.state.downloading === true}
+                  bsPrefix='btn btn-outline-primary'
+                  onClick={() => {
+                    this.closeDialog();
+                  }}>
+                  {i18n.t('classify-emails.cancel')}
+                </Button>
+                <Button
+                  disabled={this.state.downloading === true}
+                  bsPrefix='btn btn-outline-primary'
+                  onClick={() => {
+                    this.prevStep();
+                  }}>
+                  {i18n.t('classify-emails.back')}
+                </Button>
+                <Button
+                  disabled={this.state.downloading === true}
+                  bsPrefix='btn btn-primary'
+                  onClick={() => {
+                    this.setState({ downloading: true }, () => {
+                      this.step5Ref.current.StartDownload();
+                    })
+                  }}>
+                  {i18n.t('classify-emails.attach')}
+                </Button>
+              </Fragment>
+            }
           </Fragment>
         );
       default:
@@ -257,6 +304,8 @@ class ModalAttachDocuments extends Component {
       showAttachDocuments,
       toggleNotification
     } = this.props;
+
+    const { showSpinner } = this.state;
 
     return (
       <div className='modal-connection-emails'>
@@ -274,76 +323,96 @@ class ModalAttachDocuments extends Component {
               className='modal-title d-flex align-items-center'
               id='documentarGuardardocumentacionLabel'>
               <img
-                class='imgproduct'
+                className='imgproduct'
                 border='0'
                 alt='Lex-On'
                 src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
               <span>{i18n.t('modal-attach-documents.title')}</span>
-              <span>{this.state.step}</span>
             </h5>
           </Modal.Header>
           <Modal.Body className='mimodal'>
             <Container>
-              <div
-                style={{ display: this.state.step === 1 ? 'block' : 'none' }}>
-                <AttachDocumentsStep1
-                  show={this.state.step === 1}
-                  onClickSearch={(search) => {
-                    this.setState({ step: 4, search });
-                  }}
-                  onClickCasefiles={() => {
-                    this.setState({ entity: 1, step: 2 });
-                  }}
-                  onClickContacts={() => {
-                    this.setState({ entity: 2, step: 11 });
-                  }}></AttachDocumentsStep1>
-              </div>
-              <div
-                style={{ display: this.state.step === 11 ? 'block' : 'none' }}>
-                <AttachDocumentsStep1b
-                  show={this.state.step === 1}
-                  onChange={this.changeStep1Data}
-                ></AttachDocumentsStep1b>
-              </div>
-              <div
-                style={{
-                  display: this.state.step === 2 ? 'block' : 'none'
-                }}>
-                <AttachDocumentsStep2
-                  show={this.state.step === 2}
-                  user={user}
-                  bbdd={companySelected}
-                  entity={this.state.entity}
-                  toggleNotification={toggleNotification}
-                  onSelectedEntity={data =>
-                    this.changeStep2Data(data)
-                  }></AttachDocumentsStep2>
-              </div>
-              <div
-                style={{
-                  display: this.state.step === 3 ? 'block' : 'none'
-                }}>
-                <AttachDocumentsStep3
-                  show={this.state.step === 3}
-                  user={user}
-                  bbdd={companySelected}
-                  entity={this.state.step2Data}
-                  toggleNotification={toggleNotification}
-                  onSelectedDirectory={data => { }}></AttachDocumentsStep3>
-              </div>
-              <div
-                style={{
-                  display: this.state.step === 4 ? 'block' : 'none'
-                }}>
-                <AttachDocumentsStep4
-                  show={this.state.step === 4}
-                  user={user}
-                  bbdd={companySelected}
-                  defaultSearch={this.state.search}
-                  entity={this.state.step2Data}
-                  toggleNotification={toggleNotification}
-                  onChange={this.onSelectedFiles}></AttachDocumentsStep4>
-              </div>
+              {showSpinner === true &&
+                <Spinner />
+              }
+              {showSpinner === false &&
+                <Fragment>
+                  < div
+                    style={{ display: this.state.step === 1 ? 'block' : 'none' }}>
+                    <AttachDocumentsStep1
+                      show={this.state.step === 1}
+                      onClickSearch={(search) => {
+                        this.setState({ step: 4, search });
+                      }}
+                      onClickCasefiles={() => {
+                        this.setState({ entity: 1, step: 2 });
+                      }}
+                      onClickContacts={() => {
+                        this.setState({ entity: 2, step: 11 });
+                      }}></AttachDocumentsStep1>
+                  </div>
+                  <div
+                    style={{ display: this.state.step === 11 ? 'block' : 'none' }}>
+                    <AttachDocumentsStep1b
+                      show={this.state.step === 1}
+                      onChange={this.changeStep1Data}
+                    ></AttachDocumentsStep1b>
+                  </div>
+                  <div
+                    style={{
+                      display: this.state.step === 2 ? 'block' : 'none'
+                    }}>
+                    <AttachDocumentsStep2
+                      show={this.state.step === 2}
+                      user={user}
+                      bbdd={companySelected}
+                      entity={this.state.entity}
+                      toggleNotification={toggleNotification}
+                      onSelectedEntity={data =>
+                        this.changeStep2Data(data)
+                      }></AttachDocumentsStep2>
+                  </div>
+                  <div
+                    style={{
+                      display: this.state.step === 3 ? 'block' : 'none'
+                    }}>
+                    <AttachDocumentsStep3
+                      show={this.state.step === 3}
+                      user={user}
+                      bbdd={companySelected}
+                      entity={this.state.step2Data}
+                      toggleNotification={toggleNotification}
+                      onChange={this.onSelectedFiles}
+                      onSelectedDirectory={data => { }}></AttachDocumentsStep3>
+                  </div>
+                  <div
+                    style={{
+                      display: this.state.step === 4 ? 'block' : 'none'
+                    }}>
+                    <AttachDocumentsStep4
+                      show={this.state.step === 4}
+                      user={user}
+                      bbdd={companySelected}
+                      defaultSearch={this.state.search}
+                      entity={this.state.step2Data}
+                      toggleNotification={toggleNotification}
+                      onChange={this.onSelectedFiles}></AttachDocumentsStep4>
+                  </div>
+                  <div
+                    style={{
+                      display: this.state.step === 5 ? 'block' : 'none'
+                    }}>
+                    <AttachDocumentsStep5
+                      user={user}
+                      bbdd={companySelected}
+                      ref={this.step5Ref}
+                      show={this.state.step === 5}
+                      files={this.state.files}
+                      downloadComplete={this.downloadComplete}
+                    ></AttachDocumentsStep5>
+                  </div>
+                </Fragment>
+              }
             </Container>
           </Modal.Body>
           <Modal.Footer>{this.renderButtons()}</Modal.Footer>
@@ -862,7 +931,7 @@ class ModalAttachDocuments extends Component {
             }
           }
         `}</style>
-      </div>
+      </div >
     );
   }
 }

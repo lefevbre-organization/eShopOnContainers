@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react';
 import i18n from 'i18next';
-import { TreeViewComponent } from '@syncfusion/ej2-react-navigations';
 import {
   GridComponent,
   ColumnsDirective,
@@ -11,10 +10,8 @@ import {
 } from '@syncfusion/ej2-react-grids';
 import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
 import { getResults } from '../../services/services-lexon';
-
 import Spinner from '../spinner/spinner';
 import ClassificationListSearch from '../classify-emails/classification-list-search/classification-list-search';
-
 
 export class AttachDocumentsStep4 extends React.Component {
   constructor() {
@@ -24,7 +21,8 @@ export class AttachDocumentsStep4 extends React.Component {
       entities: [],
       selected: null,
       defaultSearch: '',
-      search: ''
+      search: '',
+      showSpinner: false
     };
 
     this.searchResultsByType = this.searchResultsByType.bind(this);
@@ -107,9 +105,9 @@ export class AttachDocumentsStep4 extends React.Component {
 
   onChangeFile(event, data) {
     const { checked } = event;
-    const { idType, idRelated } = data
+    const { idType, idRelated, code, description } = data
     const { onChange } = this.props;
-    onChange && onChange({ idType, idRelated, checked })
+    onChange && onChange({ idType, idRelated, checked, code, description })
   }
 
   renderOrigin(props) {
