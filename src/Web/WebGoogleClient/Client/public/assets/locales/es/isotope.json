@@ -45,7 +45,7 @@
     "resend": "Reenviar"
   },
   "message-footer": {
-    "messages": "Mensajes",
+    "messages": "Mensajes"
   },
   "composemessage-toobar": {
     "on": "En",
@@ -61,7 +61,7 @@
   },
   "menu-minihub": {
     "products": "Productos Lefebvre",
-    "footer": "Utiliza este menú para iniciar directamente otro producto de Lefebvre."
+    "footer": "Use este menú para acceder a los productos de Lefebvre."
   },
   "header": {
     "search": "Buscar",
