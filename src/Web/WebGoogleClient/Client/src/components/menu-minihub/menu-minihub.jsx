@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import ACTIONS from '../../actions/lexon';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
+import i18n from 'i18next';
 import {
     getProducts,
 } from '../../api/minihub';
@@ -103,28 +104,39 @@ class MenuMinihub extends Component {
             <div
               className='menu-minihub-container'
               ref={ref => (this.wrapperRef = ref)}>
-              <div className='content'>                
-                <div className='user-image-and-name'>
+              <div className='content'>   
+                <div className='header'>
+                  <span className='lf-icon-close' onClick={this.toggle}></span>
+                  <div className='menu-title'>
+                    <span>{i18n.t('menu-minihub.products')}</span>
+                  </div>                                
+                </div> 
                   <Fragment>
-                    <div className='accounts-container'>
+                    <div className='accounts-container menu-main-panel'>
                       <PerfectScrollbar options={{ suppressScrollX: true }}>
-                        <ul className='other-accounts'>
+                        <div className="menu-header__body-generic">
+                          <ul class="menu-header__blocks menu-header__blocks--products">
                           {products.map(product => (
-                            <li>                                  
-                               <a
+                            <li class="menu-header__block-product ng-scope">                                                   
+                              <a className="menu-header__block-icon-product menu-header__block-icon-product--product-1"
                                  href={product.url}
-                                 target="_blank"
-                                 className="d-flex align-items-center account-text"                                     
+                                 target="_blank"                                     
                                >
-                               {product.descHerramienta}
-                               </a>
-                            </li>
+                                  <i className={product.icono}></i>
+                              </a>
+                              <div className="menu-header__block-name-product">
+                                      <span className="ng-binding">{product.descHerramienta}</span>
+                              </div>
+                            </li>                                                   
                           ))}
-                        </ul>
+                          </ul>
+                        </div>                     
                       </PerfectScrollbar>
+                                </div>
+                    <div class="menu-header__blocks">
+                      <span class="menu-header__text-products" data-translate="menu-header.paragraph-products">{i18n.t('menu-minihub.footer')}</span>
                     </div>
-                  </Fragment>
-                </div>
+                  </Fragment>               
               </div>
             </div>
           </div>

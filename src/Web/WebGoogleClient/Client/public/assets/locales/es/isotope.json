@@ -45,7 +45,7 @@
     "resend": "Reenviar"
   },
   "message-footer": {
-    "messages": "Mensajes"
+    "messages": "Mensajes",
   },
   "composemessage-toobar": {
     "on": "En",
@@ -58,6 +58,10 @@
     "add-other-account": "AÑADIR OTRA CUENTA",
     "close-session": "CERRAR SESIÓN",
     "version": "Versión"
+  },
+  "menu-minihub": {
+    "products": "Productos Lefebvre",
+    "footer": "Utiliza este menú para iniciar directamente otro producto de Lefebvre."
   },
   "header": {
     "search": "Buscar",
