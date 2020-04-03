@@ -1,14 +1,16 @@
 import React, { Component, Fragment } from 'react';
-import './menu-minihub.css';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import i18n from "i18next";
 import ACTIONS from '../../actions/lexon';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
-import i18n from 'i18next';
+
 import {
     getProducts,
 } from '../../api/minihub';
+
+import './menu-minihub.css';
 
 class MenuMinihub extends Component {
   constructor(props) {

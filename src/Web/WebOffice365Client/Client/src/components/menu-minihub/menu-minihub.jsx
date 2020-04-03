@@ -1,27 +1,61 @@
 import React, { Component, Fragment } from 'react';
-import './menu-minihub.css';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import i18n from "i18next";
 import ACTIONS from '../../actions/lexon';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
+
+import {
+    getProducts,
+} from '../../api_graph/minihub';
+
+import './menu-minihub.css';
 
 class MenuMinihub extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dropdownOpen: false
+        dropdownOpen: false,
+        products: []
     };
     this.wrapperRef = null;
     this.buttonRef = null;
     this.toggle = this.toggle.bind(this);
     this.handleClickOutside = this.handleClickOutside.bind(this);
-  }
+    }
 
-  componentDidMount() {
-    const _this = this;
-    document.addEventListener('mousedown', this.handleClickOutside);
-  }
+   
+    componentDidMount() {
+        const { lexon } = this.props;
+        const _this = this;
+        if (lexon.userId) {
+            getProducts(lexon.userId)
+                .then(result => {
+                    if (result.errors.length === 0) {
+                        _this.setState({
+                           
+                            products: result.data.filter(                              
+                                product => product.indAcceso !== '1'
+                            )
+                           
+                        });
+                    } else {
+                        let errors;
+                        result.errors.forEach(function (error) {
+                            errors = `${error} `;
+                        });
+                        console.log('error ->', errors);
+                    }
+                })
+                .catch(error => {
+                    console.log('error ->', error);
+                });
+        }
+
+        document.addEventListener('mousedown', this.handleClickOutside);
+    }
+
 
   componentWillUnmount() {
     document.removeEventListener('mousedown', this.handleClickOutside);
@@ -52,7 +86,8 @@ class MenuMinihub extends Component {
   }
 
   render() {
-    const { dropdownOpen } = this.state;
+     
+    const { dropdownOpen, products } = this.state;
 
     return (
       <Fragment>
@@ -71,20 +106,39 @@ class MenuMinihub extends Component {
             <div
               className='menu-minihub-container'
               ref={ref => (this.wrapperRef = ref)}>
-              <div className='content'>
+              <div className='content'>   
                 <div className='header'>
                   <span className='lf-icon-close' onClick={this.toggle}></span>
-                  <div className='menu-title'></div>
-                </div>
-                <div className='user-image-and-name'>
+                  <div className='menu-title'>
+                    <span>{i18n.t('menu-minihub.products')}</span>
+                  </div>                                
+                </div> 
                   <Fragment>
-                    <div className='accounts-container'>
+                    <div className='accounts-container menu-main-panel'>
                       <PerfectScrollbar options={{ suppressScrollX: true }}>
-                        <ul className='other-accounts'></ul>
+                        <div className="menu-header__body-generic">
+                          <ul class="menu-header__blocks menu-header__blocks--products">
+                          {products.map(product => (
+                            <li class="menu-header__block-product ng-scope">                                                   
+                              <a className="menu-header__block-icon-product menu-header__block-icon-product--product-1"
+                                 href={product.url}
+                                 target="_blank"                                     
+                               >
+                                  <i className={product.icono}></i>
+                              </a>
+                              <div className="menu-header__block-name-product">
+                                      <span className="ng-binding">{product.descHerramienta}</span>
+                              </div>
+                            </li>                                                   
+                          ))}
+                          </ul>
+                        </div>                     
                       </PerfectScrollbar>
+                                </div>
+                    <div class="menu-header__blocks">
+                      <span class="menu-header__text-products" data-translate="menu-header.paragraph-products">{i18n.t('menu-minihub.footer')}</span>
                     </div>
-                  </Fragment>
-                </div>
+                  </Fragment>               
               </div>
             </div>
           </div>

@@ -59,6 +59,10 @@
     "close-session": "CLOSE SESSION",
     "version": "Version"
   },
+  "menu-minihub": {
+    "products": "Lefebvre Products",
+    "footer": "Use this menu to directly launch another Lefebvre product."
+  },
   "header": {
     "search": "Search",
     "returnlexon": "Return to Lex-on"
