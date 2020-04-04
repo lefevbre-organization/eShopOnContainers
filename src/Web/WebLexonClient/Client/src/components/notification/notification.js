@@ -5,7 +5,7 @@ import { Modal } from "react-bootstrap";
 
 class Notification extends Component {
   render() {
-    const { initialModalState, toggleNotification, message, error = false  } = this.props;
+    const { initialModalState, toggleNotification, message, error = false } = this.props;
 
     return (
       <Modal
@@ -14,7 +14,7 @@ class Notification extends Component {
         size="lg"
         aria-labelledby="contained-modal-title-vcenter"
         centered
-        dialogClassName={`modal notification ${error?'error':''}`}
+        dialogClassName={`modal notification ${error ? 'error' : ''}`}
         animation={false}
       >
         <Modal.Header className="align-items-center" closeButton>
@@ -24,12 +24,12 @@ class Notification extends Component {
                 className="modal-title d-flex align-items-center"
                 id="clasificarNuevaclasificacionLabel"
               >
-                { error === false && <span className="lf-icon-bookmarks"></span> }
-                { error === true &&  <img
-                      className="img-warning"
-                      alt=""
-                      src="/assets/img/icon-warning.png"
-                    ></img>}
+                {error === false && <span className="lf-icon-bookmarks"></span>}
+                {error === true && <img
+                  className="img-warning"
+                  alt=""
+                  src="/assets/img/icon-warning.png"
+                ></img>}
                 {message}
               </h5>
             </div>
@@ -46,6 +46,11 @@ class Notification extends Component {
 
         .notification .modal-header .modal-title {
           min-height: 150px;
+        }
+
+        .modal-header .close {
+          position: relative;
+          top: -50px;
         }
         `}</style>
       </Modal>

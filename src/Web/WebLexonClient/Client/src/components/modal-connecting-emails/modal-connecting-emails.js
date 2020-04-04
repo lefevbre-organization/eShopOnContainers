@@ -11,6 +11,7 @@ import { ConnectingEmailsStep4 } from './step4';
 import { addClassification, uploadFile } from '../../services/services-lexon';
 import ACTIONS from '../../actions/documentsAction';
 import 'react-perfect-scrollbar/dist/css/styles.css';
+const base64js = require('base64-js')
 
 class ModalConnectingEmails extends Component {
   constructor() {
@@ -211,7 +212,8 @@ class ModalConnectingEmails extends Component {
     ) {
       // Save email as eml format
       for (let i = 0; i < selectedMessages.length; i++) {
-        const raw = Base64.encode(selectedMessages[i].raw);
+        const raw = Base64.encode(selectedMessages[i].raw, false);
+
         const subject = selectedMessages[i].subject;
 
         if (step1Data.copyDocuments === true) {
@@ -228,6 +230,7 @@ class ModalConnectingEmails extends Component {
         }
 
         if (step1Data.saveDocuments === true) {
+          debugger
           // Save attachments
           const mime = parse(selectedMessages[i].raw);
           for (let j = 0; j < mime.childNodes.length; j++) {
@@ -236,10 +239,7 @@ class ModalConnectingEmails extends Component {
                 'Content-Disposition: attachment;'
               ) > -1
             ) {
-              const data = new TextDecoder('utf-8').decode(
-                mime.childNodes[j].content
-              );
-              const rawAttach = Base64.encode(data);
+              let rawAttach = base64js.fromByteArray(mime.childNodes[j].content);
               await uploadFile(
                 step1Data.actuation === false ? step3Data.selected : undefined,
                 step1Data.actuation === false ? step2Data.id : undefined,
@@ -431,7 +431,7 @@ class ModalConnectingEmails extends Component {
                 border='0'
                 alt='Lex-On'
                 src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
-              <span>{i18n.t('modal-conecting-emails.save-copy')} - {step}</span>
+              <span>{i18n.t('modal-conecting-emails.save-copy')}</span>
             </h5>
           </Modal.Header>
           <Modal.Body className='mimodal'>
