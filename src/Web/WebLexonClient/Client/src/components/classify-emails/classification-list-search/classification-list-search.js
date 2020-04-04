@@ -16,6 +16,12 @@ class ClassificationListSearch extends Component {
     this._handleOnclickSearch = this._handleOnclickSearch.bind(this);
     this._handleOnChange = this._handleOnChange.bind(this);
     this._handleKeyPress = this._handleKeyPress.bind(this);
+
+    // Generate random id name
+
+    this.id = generateUUID();
+
+    console.log("MOUNTING LIST SEARCH")
   }
 
   _handleOnclick() {
@@ -46,7 +52,7 @@ class ClassificationListSearch extends Component {
   }
 
   Search(text) {
-    this.setState({ search: text }, () => {
+    this.setState({ search: text, showSearch: true }, () => {
       this._handleOnclickSearch()
     })
   }
@@ -71,8 +77,7 @@ class ClassificationListSearch extends Component {
               <strong>{countResults}</strong>
             </p>
           }
-          <a
-            href="#/"
+          <span
             className={classTriggerShow}
             title={i18n.t("classification-list-search.show-search")}
             onClick={this._handleOnclick}
@@ -81,7 +86,7 @@ class ClassificationListSearch extends Component {
               {i18n.t("classification-list-search.show-search")}
             </strong>
             <span className="lf-icon-search"></span>
-          </a>
+          </span>
         </div>
         <div className={classListSearcher}>
           <label htmlFor="search">
@@ -96,13 +101,12 @@ class ClassificationListSearch extends Component {
           <input
             type="text"
             className="form-control"
-            id="search"
+            id={this.id}
             value={this.state.search}
             onChange={this._handleOnChange}
             onKeyDown={this._handleKeyPress}
           />
-          <a
-            href="#/"
+          <span
             className={`search-trigger-hide ${closeClassName}`}
             title={i18n.t("classification-list-search.hide-search")}
             onClick={this._handleOnclick}
@@ -111,9 +115,32 @@ class ClassificationListSearch extends Component {
               {i18n.t("classification-list-search.hide-search")}
             </strong>
             <span className="lf-icon-close"></span>
-          </a>
+          </span>
         </div>
         <style jsx>{`
+
+        .lexon-clasification-list-searcher input:focus {
+          outline: none !important;
+          box-shadow: none !important;
+          background: none !important;
+          border: none !important;        
+          }
+
+          .search-trigger-show {
+            color: #001978;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 45px;
+            margin-right: 5px;
+          }
+
+          .search-trigger-hide {
+            color: #001978;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 45px;
+          }
+
           .lexon-clasification-list-search .lexon-clasification-list-results {
             text-align: right;
           }
@@ -135,3 +162,20 @@ ClassificationListSearch.propTypes = {
 };
 
 export default ClassificationListSearch;
+
+
+function generateUUID() { // Public Domain/MIT
+  var d = new Date().getTime();//Timestamp
+  var d2 = (performance && performance.now && (performance.now() * 1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    var r = Math.random() * 16;//random number between 0 and 16
+    if (d > 0) {//Use timestamp until depleted
+      r = (d + r) % 16 | 0;
+      d = Math.floor(d / 16);
+    } else {//Use microseconds since page-load if supported
+      r = (d2 + r) % 16 | 0;
+      d2 = Math.floor(d2 / 16);
+    }
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}

@@ -139,6 +139,7 @@ export class ComposeMessage extends PureComponent {
     this.handleAddAddress = this.addAddress.bind(this);
     this.handleRemoveAddress = this.removeAddress.bind(this);
     this.handleMoveAddress = this.moveAddress.bind(this);
+    this.attachFromLexon = this.attachFromLexon.bind(this);
 
     this.uppy = new Uppy({
       id: 'uppy1',
@@ -231,6 +232,23 @@ export class ComposeMessage extends PureComponent {
     }
 
     window.dispatchEvent(new CustomEvent('OpenComposer'));
+    window.addEventListener('AttachDocument', this.attachFromLexon);
+  }
+
+  attachFromLexon(event) {
+    const { detail } = event;
+    console.log('attachFromLexon');
+    console.log(event.detail);
+    const length = detail.content.length;
+
+    this.uppy.addFile({
+      name: detail.document.code,
+      //      type: cm.mimeType,
+      data: detail.content,
+      size: length,
+      source: `Attachment:${length}`,
+      isRemote: false
+    });
   }
 
   typeAllowed(file) {
@@ -348,6 +366,7 @@ export class ComposeMessage extends PureComponent {
   componentWillUnmount() {
     window.dispatchEvent(new CustomEvent('CloseComposer'));
     window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
+    window.removeEventListener('AttachDocument', this.attachFromLexon);
 
     this.uppy.close();
   }

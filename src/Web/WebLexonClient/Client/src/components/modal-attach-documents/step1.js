@@ -10,8 +10,22 @@ export class AttachDocumentsStep1 extends React.Component {
     this.state = {
       searchText: ''
     }
+
+    this.onKeyPress = this.onKeyPress.bind(this);
   }
   async componentDidMount() { }
+
+  setSearch(search) {
+    this.setState({ searchText: search })
+  }
+
+  onKeyPress(e) {
+    const { onClickSearch } = this.props;
+
+    if (e.charCode === 13) {
+      onClickSearch && onClickSearch(this.state.searchText.trim());
+    }
+  }
 
   render() {
     const { onClickCasefiles, onClickContacts } = this.props;
@@ -30,14 +44,17 @@ export class AttachDocumentsStep1 extends React.Component {
           </div>
           <div className='input-wrapper'>
             <span className='lf-icon-search'></span>
-            <input placeholder='Busca tu archivo' onChange={(event) => {
-              this.setState({ searchText: event.target.value })
-            }}></input>
-            <span className='lf-icon-close'></span>
+            <input placeholder='Busca tu archivo'
+              value={this.state.searchText}
+              onKeyPress={this.onKeyPress}
+              onChange={(event) => {
+                this.setState({ searchText: event.target.value.trim() })
+              }}></input>
+            <span className='lf-icon-close ' onClick={() => { this.setState({ searchText: '' }) }}></span>
           </div>
           <div className='button-container'>
             <Button bsPrefix='btn btn-primary' disabled={searchDisabled} onClick={() => {
-              this.props.onClickSearch(this.state.searchText)
+              this.props.onClickSearch(this.state.searchText.trim());
             }
             }>
               {i18n.t('modal-attach-documents.search')}
@@ -87,6 +104,9 @@ export class AttachDocumentsStep1 extends React.Component {
               height: 45px;
               display: flex;
               padding: 10px;
+            }
+            .input-wrapper span.lf-icon-close {
+              cursor: pointer;
             }
             .input-wrapper span {
               color: #001978;

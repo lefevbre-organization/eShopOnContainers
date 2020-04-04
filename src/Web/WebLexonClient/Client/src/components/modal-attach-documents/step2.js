@@ -83,7 +83,8 @@ export class AttachDocumentsStep2 extends React.Component {
 
         console.log(response);
         if (response && response.results && response.results.data) {
-          let lastPage = response.results.count < 6;
+          const lastPage = (currentPage * 6) >= response.results.count;
+
           this.setState(
             {
               entities: [...response.results.data],

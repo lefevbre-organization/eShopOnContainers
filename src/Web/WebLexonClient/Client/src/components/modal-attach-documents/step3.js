@@ -27,29 +27,30 @@ export class AttachDocumentsStep3 extends React.Component {
       fields: { dataSource: [], id: 'id', text: 'name', child: 'subChild' },
       entities: [],
       selected: null,
-      loadingTree: false
+      loadingTree: false,
+      folderCreated: null
     };
 
     this.searchResultsByType = this.searchResultsByType.bind(this);
     this.nodeSelected = this.onNodeSelected.bind(this);
     this.nodeSelecting = this.onNodeSelecting.bind(this);
-    this.onRowSelected = this.onRowSelected.bind(this);
     this.onNextPage = this.onNextPage.bind(this);
     this.onPrevPage = this.onPrevPage.bind(this);
     this.onCreateFolder = this.onCreateFolder.bind(this);
     this.renderType = this.renderType.bind(this);
     this.renderOrigin = this.renderOrigin.bind(this);
     this.onDoubleClick = this.onDoubleClick.bind(this);
+    this.onChangeFile = this.onChangeFile.bind(this);
   }
 
   async componentDidUpdate(prevProps, prevState) {
     if (
-      JSON.stringify(prevProps.entity) !== JSON.stringify(this.props.entity)
+      JSON.stringify(prevProps.entity) !== JSON.stringify(this.props.entity) ||
+      prevState.folderCreated !== this.state.folderCreated
     ) {
-      console.log("Entity data")
       this.setState({ loadingTree: true }, async () => {
         const response = await getFolderTree(
-          this.props.entity.idFolder,
+          this.state.folderCreated ? this.state.folderCreated : this.props.entity.idFolder,
           this.props.bbdd.bbdd,
           this.props.user.idUser,
           true
@@ -58,11 +59,14 @@ export class AttachDocumentsStep3 extends React.Component {
         if (response.result.status === 400) {
           // No existe la carpeta para esta entidad.
           // La creamos
-          const response = await createFolder(null, "nombre", this.props.entity.id, this.props.entity.idType, this.props.bbdd.bbdd,
+          const addResp = await createFolder(null, "", this.props.entity.id, this.props.entity.idType, this.props.bbdd.bbdd,
             this.props.user.idUser
           )
 
-          console.log(response)
+          console.log(addResp.result.data)
+          this.setState({ folderCreated: addResp.result.data })
+
+          // Ahora hay que volver a cargar el árbol
         } else {
           let tree = normalizeTree(this.props.entity, response.result.data, false);
           const childs = getChilds(tree, 0);
@@ -192,14 +196,15 @@ export class AttachDocumentsStep3 extends React.Component {
     }
   }
 
-  onRowSelected(event) {
-    const { onSelectedDirectory } = this.props;
-
-    this.setState({ selected: event.data }, () => {
-      onSelectedDirectory &&
-        onSelectedDirectory({ selected: parseInt(event.data.id) });
-    });
+  onChangeFile(event, data) {
+    const { checked } = event;
+    const { id, name, type } = data
+    const { onChange } = this.props;
+    if (type === "file") {
+      onChange && onChange({ idType: 14, idRelated: id, checked, code: name, description: "" })
+    }
   }
+
 
   onDoubleClick(event) {
     this.treeRef && (this.treeRef.selectedNodes = [event.rowData.id]);
@@ -223,7 +228,7 @@ export class AttachDocumentsStep3 extends React.Component {
     console.log(props);
     return (
       <div>
-        <span><CheckBoxComponent label="" cssClass="e-small" /></span>
+        <span><CheckBoxComponent label="" cssClass="e-small" change={(evt) => { this.onChangeFile(evt, props) }} /></span>
         <span
           style={{ marginRight: 10, marginLeft: 10 }}
           className={`pager-icon ${icon} new-folder-icon`}></span>
@@ -294,7 +299,6 @@ export class AttachDocumentsStep3 extends React.Component {
                   mode: 'Row',
                   enableToggle: false
                 }}
-                rowSelected={this.onRowSelected}
                 allowSorting={true}
                 hideScroll={true}
                 selected={1}
