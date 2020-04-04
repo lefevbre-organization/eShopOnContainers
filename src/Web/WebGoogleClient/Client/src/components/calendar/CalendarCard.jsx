@@ -8,8 +8,6 @@ import {
 import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
 
 
-
-
 export class CalendarCard extends Component {
     constructor(props) {
         super(props);
@@ -22,9 +20,7 @@ export class CalendarCard extends Component {
             url: 'https://www.googleapis.com/calendar/v3/calendars/' + this.calendarId + '/events?key=' + this.publicKey,
             adaptor: new WebApiAdaptor,
             crossDomain: true
-        });
-
-      
+        });      
     }
 
 
