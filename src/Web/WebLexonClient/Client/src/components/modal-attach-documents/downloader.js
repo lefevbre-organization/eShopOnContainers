@@ -1,7 +1,7 @@
 import React from 'react'
 import { ProgressBar } from './progressbar'
 import { downloadFile } from '../../services/services-lexon'
-import * as prettyBytes from 'pretty-bytes';
+const prettyBytes = require('../../services/pretty-bytes');
 
 export class Downloader extends React.Component {
     constructor(props) {
