@@ -28,7 +28,7 @@
   ],
   "GlobalConfiguration": {
     "RequestIdKey": "OcRequestId",
-    "AdministrationPath": "/administration",
+    "AdministrationPath": "/administration"
   }
 }
   

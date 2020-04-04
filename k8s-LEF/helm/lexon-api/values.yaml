@@ -4,7 +4,7 @@ pathBase: /lexon-api
 
 image:
   repository: elefebvreoncontainers/lexon.api
-  tag: linux-lef-main-containers
+  tag: latest
   pullPolicy: IfNotPresent
 
 service:
@@ -45,15 +45,17 @@ env:
     - name: IdentityUrlExternal
       key: urls__IdentityUrlExternal
     - name: ConnectionString
-      key: locations__ConnectionString
+      key: lexon__ConnectionString
     - name: Database
-      key: locations__Database
+      key: lexon__Database
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
     - name: LexonMySqlUrl
       value: 'http://lexonmysql-api/api/v1/LexonMySql'
+    - name: LexonFilesUrl
+      value: 'http://led-dev-lexon/index.php'
     - name: OrchestratorType
       value: 'K8S'
 

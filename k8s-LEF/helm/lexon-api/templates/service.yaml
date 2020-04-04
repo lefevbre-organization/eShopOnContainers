@@ -3,8 +3,8 @@ kind: Service
 metadata:
   name: {{ .Values.app.svc.lexonapi }}
   labels:
-    app: {{ template "webhooks-api.name" . }}
-    chart: {{ template "webhooks-api.chart" . }}
+    app: {{ template "{{ .Values.app.svc.lexonapi }}.name" . }}
+    chart: {{ template "lexon-api.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
@@ -15,5 +15,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app: {{ template "webhooks-api.name" . }}
+    app: {{ template "lexn-api.name" . }}
     release: {{ .Release.Name }}

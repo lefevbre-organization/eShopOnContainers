@@ -5,8 +5,8 @@ kind: ConfigMap
 metadata:
   name: "ocelot-{{ $name }}"
   labels:
-    app: {{ template "apigwmm.name" . }}
-    chart: {{ template "apigwmm.chart" .}}
+    app: {{ template "apigwlex.name" . }}
+    chart: {{ template "apigwlex.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:

@@ -3,7 +3,7 @@ clusterName: eshop-aks
 pathBase: /accountapigw
 
 image:
-  repository: elefebvre/ocelotapigw
+  repository: elefebvreoncontainers/ocelotapigw
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -39,7 +39,7 @@ env:
     - name: LexonUrlHC
       key: internalurls__lexon__hc
     - name: LexonMysqlUrlHC
-      key: internalurls__lxonmysql__hc
+      key: internalurls__lexonmysql__hc
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
