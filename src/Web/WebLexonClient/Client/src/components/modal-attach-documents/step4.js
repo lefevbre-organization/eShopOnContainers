@@ -20,14 +20,14 @@ export class AttachDocumentsStep4 extends React.Component {
     this.state = {
       entities: [],
       selected: null,
-      defaultSearch: '',
-      search: '',
-      showSpinner: false
+      showSpinner: false,
+      lastPage: false,
+      totalResults: -1
     };
 
     this.searchResultsByType = this.searchResultsByType.bind(this);
-    this.onNextPage = this.onNextPage.bind(this);
-    this.onPrevPage = this.onPrevPage.bind(this);
+    this.nextPage = this.nextPage.bind(this);
+    this.nextPage = this.nextPage.bind(this);
     this.renderType = this.renderType.bind(this);
     this.renderOrigin = this.renderOrigin.bind(this);
     this.onDoubleClick = this.onDoubleClick.bind(this);
@@ -36,66 +36,108 @@ export class AttachDocumentsStep4 extends React.Component {
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    if (this.props.defaultSearch &&
-      prevProps.defaultSearch !== this.props.defaultSearch
-    ) {
+    const { show, user, bbdd, entity } = this.props;
+    const { currentPage } = this.state;
 
-      if (this.props.defaultSearch !== this.state.search) {
-        this.setState({ entities: [], defaultSearch: this.props.defaultSearch }, () => {
-          this.searchRef.current.Search(this.state.defaultSearch)
-        })
-      }
+    if (entity !== 14) {
+      return;
     }
 
     if (prevProps.show === false && this.props.show === true) {
-      const opened = document.getElementsByClassName(
-        'lexon-clasification-list-searcher search-close-3 opened'
-      );
-      if (opened && opened.length > 0) {
-        const closeButton = document.getElementsByClassName(
-          'search-trigger-hide search-close-3'
-        )[0];
-        if (closeButton) {
-          closeButton.click();
-        }
-      }
-      return;
+      this.setState({ currentPage: 1 }, () => {
+        this.searchRef.current.Search(this.props.search)
+      });
     }
+
+    // if (this.props.search && prevProps.search !== this.props.search) {
+    //   this.searchRef.current.Search(this.props.search)
+    // }
+
+    // if (prevProps.show === false && this.props.show === true) {
+    //   const opened = document.getElementsByClassName(
+    //     'lexon-clasification-list-searcher search-close-3 opened'
+    //   );
+    //   if (opened && opened.length > 0) {
+    //     const closeButton = document.getElementsByClassName(
+    //       'search-trigger-hide search-close-3'
+    //     )[0];
+    //     if (closeButton) {
+    //       closeButton.click();
+    //     }
+    //   }
+
+    //   // this.setState({ currentPage: -1 }, () => {
+    //   this.setState({ currentPage: 1 });
+    //   // });
+
+    //   return;
+    // }
+
+    // if (
+    //   (prevProps.show === false && this.props.show === true) ||
+    //   prevProps.entity !== this.props.entity ||
+    //   prevState.search !== this.state.search ||
+    //   (prevState.currentPage !== this.state.currentPage &&
+    //     this.state.currentPage > -1)
+    // ) {
+    //   this.searchResultsByType(14, this.props.search);
+    // }
   }
 
 
-  onNextPage() { }
+  nextPage() {
+    if (this.state.lastPage === false) {
+      const np = this.state.currentPage + 1;
+      this.setState({ currentPage: np }, () => {
+        this.searchResultsByType(14, this.props.search)
+      });
+    }
+  }
 
-  onPrevPage() { }
+  prevPage() {
+    if (this.state.currentPage > 1) {
+      const np = this.state.currentPage - 1;
+      this.setState({ currentPage: np }, () => {
+        this.searchResultsByType(14, this.props.search)
+      });
+    }
+  }
+
 
   onDoubleClick(event) {
     this.treeRef && (this.treeRef.selectedNodes = [event.rowData.id]);
   }
 
   searchResultsByType(type, search) {
-    const { user, bbdd } = this.props;
-    const { currentPage } = this.state;
-
-
-    if (this.state.search !== search) {
-      this.setState({
-        search: search || '',
-        showSpinner: true,
-        currentPage: 1,
-        counter: 0
-      }, async () => {
-        const response = await getResults(
-          user,
-          bbdd,
-          14,
-          search,
-          6,
-          currentPage
-        );
-
-        this.setState({ entities: response.results.data, showSpinner: false });
-      });
+    const { user, bbdd, onSearchChange } = this.props;
+    const { currentPage, showSpinner } = this.state;
+    if (showSpinner) {
+      return
     }
+
+    if (search !== this.props.search) {
+      onSearchChange && onSearchChange(search)
+    }
+
+    console.log("SearchResultsByType: CurrentPage: " + this.state.currentPage)
+    this.setState({
+      search: search || '',
+      showSpinner: true,
+      currentPage,
+      counter: 0
+    }, async () => {
+      const response = await getResults(
+        user,
+        bbdd,
+        14,
+        search,
+        6,
+        currentPage
+      );
+
+      const lastPage = (currentPage * 6) > response.results.count;
+      this.setState({ entities: response.results.data, showSpinner: false, totalResults: response.results.count, lastPage });
+    });
   }
 
   renderType(props) {
@@ -110,12 +152,19 @@ export class AttachDocumentsStep4 extends React.Component {
     onChange && onChange({ idType, idRelated, checked, code, description })
   }
 
+  isFileSelected(data) {
+    const { idRelated } = data
+
+    const fd = this.props.files.find(item => item.idRelated === idRelated);
+    return fd !== undefined
+  }
+
   renderOrigin(props) {
     const icon = this.props.entity.idType === 1 ? 'lf-icon-law' : '';
     console.log(props);
     return (
       <div>
-        <span><CheckBoxComponent label="" cssClass="e-small" change={(evt) => { this.onChangeFile(evt, props) }} /></span>
+        <span><CheckBoxComponent label="" checked={this.isFileSelected(props)} cssClass="e-small" change={(evt) => { this.onChangeFile(evt, props) }} /></span>
         <span
           style={{ marginRight: 10, marginLeft: 10 }}
           className={`pager-icon ${icon} new-folder-icon`}></span>
@@ -130,7 +179,8 @@ export class AttachDocumentsStep4 extends React.Component {
   }
 
   render() {
-    const disabled = this.state.selected === null ? 'disabled' : '';
+    const { currentPage, totalResults } = this.state;
+
     return (
       <Fragment>
         <div className='step3-container'>
@@ -150,7 +200,7 @@ export class AttachDocumentsStep4 extends React.Component {
                   ref={this.searchRef}
                   closeClassName='search-close-3'
                   searchResultsByType={this.searchResultsByType}
-                  countResults={-1}></ClassificationListSearch>
+                  countResults={totalResults}></ClassificationListSearch>
               </div>
               {this.state.showSpinner === true && (
                 <div className='spinner'>
@@ -191,10 +241,33 @@ export class AttachDocumentsStep4 extends React.Component {
                 </ColumnsDirective>
                 <Inject services={[Search, Sort]} />
               </GridComponent>
+              <section className='pager'>
+                <div
+                  className={`prevButton ${
+                    this.state.currentPage === 1 ? 'disabled' : ''
+                    }`}
+                  onClick={() => this.prevPage()}>
+                  <span className='pager-icon lf-icon-angle-left' />
+                  <span>Anterior</span>
+                </div>
+                <div className='currentPage'>{currentPage}</div>
+                <div
+                  className={`nextButton ${
+                    this.state.lastPage === true ? 'disabled' : ''
+                    }`}
+                  onClick={() => this.nextPage()}>
+                  <span>Siguiente</span>
+                  <span className='pager-icon lf-icon-angle-right' />
+                </div>
+              </section>
             </div>
           </section>
         </div>
         <style jsx>{`
+          .lexon-clasification-list-search .lexon-clasification-list-results {
+            margin-top: -6px;
+          }
+
             .step3-container {
               margin: 30px;
             }

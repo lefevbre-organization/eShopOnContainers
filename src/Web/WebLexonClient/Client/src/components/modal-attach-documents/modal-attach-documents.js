@@ -38,6 +38,7 @@ class ModalAttachDocuments extends Component {
     this.changeStep1Data = this.changeStep1Data.bind(this);
     this.downloadComplete = this.downloadComplete.bind(this);
     this.step5Ref = React.createRef();
+    this.step1Ref = React.createRef();
   }
 
   componentDidMount() {
@@ -74,31 +75,40 @@ class ModalAttachDocuments extends Component {
     const { step } = this.state;
     if (step === 1 || step === 11) {
       this.setState({ step: 2 });
-    } else {
+    } else if (step === 3) {
+      this.setState({ step: 5 })
+    }
+    else {
       this.setState({ step: step + 1 })
     }
   }
 
   prevStep() {
-    if (this.state.step === 2 || this.state.step === 11) {
-      if (this.state.step === 2 && this.state.entity !== 1) {
+    const { step, entity, search } = this.state;
+    if (step === 2 || step === 11) {
+      if (step === 2 && entity !== 1) {
         this.setState({ step: 11, });
       } else {
         this.setState({ step: 1 });
       }
       this.setState({ step2Data: { ...this.state.step2Data, id: -1 } })
-    } else if (this.state.step === 3) {
+    } else if (step === 3) {
       this.setState({ step: 2 });
-    } else if (this.state.step === 4) {
+    } else if (step === 4) {
       this.setState({ step: 1 });
-    } else if (this.state.step === 5) {
-      this.setState({ step: 4 });
+    } else if (step === 5) {
+      if (search.trim() === '') {
+        this.setState({ step: 3 });
+      } else {
+        this.setState({ step: 4 });
+      }
+
     }
   }
 
   changeStep1Data(entity) {
     if (this.state.entity !== entity) {
-      this.setState({ entity });
+      this.setState({ entity, search: '' });
     }
   }
 
@@ -161,7 +171,7 @@ class ModalAttachDocuments extends Component {
   // }
 
   renderButtons() {
-    const { step, complete } = this.state;
+    const { step, complete, files } = this.state;
 
     switch (step) {
       case 1:
@@ -239,6 +249,7 @@ class ModalAttachDocuments extends Component {
               {i18n.t('classify-emails.back')}
             </Button>
             <Button
+              disabled={files.length === 0}
               bsPrefix='btn btn-primary'
               onClick={() => {
                 this.nextStep();
@@ -305,7 +316,7 @@ class ModalAttachDocuments extends Component {
       toggleNotification
     } = this.props;
 
-    const { showSpinner } = this.state;
+    const { showSpinner, step, search } = this.state;
 
     return (
       <div className='modal-connection-emails'>
@@ -340,15 +351,16 @@ class ModalAttachDocuments extends Component {
                   < div
                     style={{ display: this.state.step === 1 ? 'block' : 'none' }}>
                     <AttachDocumentsStep1
+                      ref={this.step1Ref}
                       show={this.state.step === 1}
                       onClickSearch={(search) => {
-                        this.setState({ step: 4, search });
+                        this.setState({ step: 4, search, entity: 14 });
                       }}
                       onClickCasefiles={() => {
-                        this.setState({ entity: 1, step: 2 });
+                        this.setState({ entity: 1, step: 2, search: '' });
                       }}
                       onClickContacts={() => {
-                        this.setState({ entity: 2, step: 11 });
+                        this.setState({ entity: 2, step: 11, search: '' });
                       }}></AttachDocumentsStep1>
                   </div>
                   <div
@@ -393,8 +405,14 @@ class ModalAttachDocuments extends Component {
                       show={this.state.step === 4}
                       user={user}
                       bbdd={companySelected}
-                      defaultSearch={this.state.search}
-                      entity={this.state.step2Data}
+                      files={this.state.files}
+                      search={this.state.search}
+                      onSearchChange={(search) => {
+                        this.setState({ search }, () => {
+                          this.step1Ref.current.setSearch(this.state.search);
+                        })
+                      }}
+                      entity={this.state.entity}
                       toggleNotification={toggleNotification}
                       onChange={this.onSelectedFiles}></AttachDocumentsStep4>
                   </div>
