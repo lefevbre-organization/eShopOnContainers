@@ -48,40 +48,6 @@ export class AttachDocumentsStep4 extends React.Component {
         this.searchRef.current.Search(this.props.search)
       });
     }
-
-    // if (this.props.search && prevProps.search !== this.props.search) {
-    //   this.searchRef.current.Search(this.props.search)
-    // }
-
-    // if (prevProps.show === false && this.props.show === true) {
-    //   const opened = document.getElementsByClassName(
-    //     'lexon-clasification-list-searcher search-close-3 opened'
-    //   );
-    //   if (opened && opened.length > 0) {
-    //     const closeButton = document.getElementsByClassName(
-    //       'search-trigger-hide search-close-3'
-    //     )[0];
-    //     if (closeButton) {
-    //       closeButton.click();
-    //     }
-    //   }
-
-    //   // this.setState({ currentPage: -1 }, () => {
-    //   this.setState({ currentPage: 1 });
-    //   // });
-
-    //   return;
-    // }
-
-    // if (
-    //   (prevProps.show === false && this.props.show === true) ||
-    //   prevProps.entity !== this.props.entity ||
-    //   prevState.search !== this.state.search ||
-    //   (prevState.currentPage !== this.state.currentPage &&
-    //     this.state.currentPage > -1)
-    // ) {
-    //   this.searchResultsByType(14, this.props.search);
-    // }
   }
 
 
@@ -135,7 +101,7 @@ export class AttachDocumentsStep4 extends React.Component {
         currentPage
       );
 
-      const lastPage = (currentPage * 6) > response.results.count;
+      const lastPage = (currentPage * 6) >= response.results.count;
       this.setState({ entities: response.results.data, showSpinner: false, totalResults: response.results.count, lastPage });
     });
   }

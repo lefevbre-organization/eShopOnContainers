@@ -149,27 +149,6 @@ class ModalAttachDocuments extends Component {
     this.setState({ files: nf })
   }
 
-  // onSave() {
-  //   const { files } = this.state;
-  //   console.log('onSave');
-  //   this.setState({ showSpinner: true }, async () => {
-  //     const prs = [];
-  //     for (let i = 0; i < files.length; i++) {
-  //       const pr = downloadFile(files[i].idRelated, this.props.companySelected.bbdd,
-  //         this.props.user.idUser,
-  //       )
-  //       prs.push(pr)
-  //     }
-
-  //     if (prs.length > 0) {
-  //       const res = await Promise.all(prs)
-  //       console.log(res)
-  //     }
-
-  //     this.setState({ showSpinner: false })
-  //   })
-  // }
-
   renderButtons() {
     const { step, complete, files } = this.state;
 
@@ -339,6 +318,7 @@ class ModalAttachDocuments extends Component {
                 alt='Lex-On'
                 src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
               <span>{i18n.t('modal-attach-documents.title')}</span>
+              {/* <span>{this.state.step}</span> */}
             </h5>
           </Modal.Header>
           <Modal.Body className='mimodal'>

@@ -27,7 +27,8 @@ export class AttachDocumentsStep3 extends React.Component {
       fields: { dataSource: [], id: 'id', text: 'name', child: 'subChild' },
       entities: [],
       selected: null,
-      loadingTree: false
+      loadingTree: false,
+      folderCreated: null
     };
 
     this.searchResultsByType = this.searchResultsByType.bind(this);
@@ -44,12 +45,12 @@ export class AttachDocumentsStep3 extends React.Component {
 
   async componentDidUpdate(prevProps, prevState) {
     if (
-      JSON.stringify(prevProps.entity) !== JSON.stringify(this.props.entity)
+      JSON.stringify(prevProps.entity) !== JSON.stringify(this.props.entity) ||
+      prevState.folderCreated !== this.state.folderCreated
     ) {
-      console.log("Entity data")
       this.setState({ loadingTree: true }, async () => {
         const response = await getFolderTree(
-          this.props.entity.idFolder,
+          this.state.folderCreated ? this.state.folderCreated : this.props.entity.idFolder,
           this.props.bbdd.bbdd,
           this.props.user.idUser,
           true
@@ -58,11 +59,14 @@ export class AttachDocumentsStep3 extends React.Component {
         if (response.result.status === 400) {
           // No existe la carpeta para esta entidad.
           // La creamos
-          const response = await createFolder(null, "nombre", this.props.entity.id, this.props.entity.idType, this.props.bbdd.bbdd,
+          const addResp = await createFolder(null, "", this.props.entity.id, this.props.entity.idType, this.props.bbdd.bbdd,
             this.props.user.idUser
           )
 
-          console.log(response)
+          console.log(addResp.result.data)
+          this.setState({ folderCreated: addResp.result.data })
+
+          // Ahora hay que volver a cargar el árbol
         } else {
           let tree = normalizeTree(this.props.entity, response.result.data, false);
           const childs = getChilds(tree, 0);
