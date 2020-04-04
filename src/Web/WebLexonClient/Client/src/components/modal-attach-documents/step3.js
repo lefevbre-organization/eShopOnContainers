@@ -94,20 +94,20 @@ export class AttachDocumentsStep3 extends React.Component {
       });
     }
 
-    if (prevProps.show === false && this.props.show === true) {
-      const opened = document.getElementsByClassName(
-        'lexon-clasification-list-searcher search-close-3 opened'
-      );
-      if (opened && opened.length > 0) {
-        const closeButton = document.getElementsByClassName(
-          'search-trigger-hide search-close-3'
-        )[0];
-        if (closeButton) {
-          closeButton.click();
-        }
-      }
-      return;
-    }
+    // if (prevProps.show === false && this.props.show === true) {
+    //   const opened = document.getElementsByClassName(
+    //     'lexon-clasification-list-searcher search-close-3 opened'
+    //   );
+    //   if (opened && opened.length > 0) {
+    //     const closeButton = document.getElementsByClassName(
+    //       'search-trigger-hide search-close-3'
+    //     )[0];
+    //     if (closeButton) {
+    //       closeButton.click();
+    //     }
+    //   }
+    //   return;
+    // }
   }
 
   onNodeSelected(event) {
@@ -223,12 +223,22 @@ export class AttachDocumentsStep3 extends React.Component {
     return <span className={`pager-icon ${icon} new-folder-icon`} />;
   }
 
+  isFileSelected(data) {
+    const { id } = data
+
+    const fd = this.props.files.find(item => item.idRelated === id);
+    return fd !== undefined
+  }
+
   renderOrigin(props) {
     const icon = this.props.entity.idType === 1 ? 'lf-icon-law' : '';
+
     console.log(props);
     return (
       <div>
-        <span><CheckBoxComponent label="" cssClass="e-small" change={(evt) => { this.onChangeFile(evt, props) }} /></span>
+        {
+          props.type !== 'dir' && <span><CheckBoxComponent label="" checked={this.isFileSelected(props)} cssClass="e-small" change={(evt) => { this.onChangeFile(evt, props) }} /></span>
+        }
         <span
           style={{ marginRight: 10, marginLeft: 10 }}
           className={`pager-icon ${icon} new-folder-icon`}></span>
