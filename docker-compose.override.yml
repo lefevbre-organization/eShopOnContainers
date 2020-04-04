@@ -5,6 +5,8 @@ version: '3.4'
 #     ESHOP_EXTERNAL_DNS_NAME_OR_IP=localhost
 # but values present in the environment vars at runtime will always override those defined inside the .env file
 # An external IP or DNS name has to be used (instead localhost and the 10.0.75.1 IP) when testing the Web apps and the Xamarin apps from remote machines/devices using the same WiFi, for instance.
+# Important: In a production environment your should remove the externals ports
+# The API Gateways redirects and access through the internal port (80).
 
 services:
   seq:
@@ -15,11 +17,11 @@ services:
 
   nosql.data:
     ports:
-      - "27017:27017"  # Important: In a production environment your should remove the external port
+      - "27017:27017" 
 
   rabbitmq:
     ports:
-      - "15672:15672"  # Important: In a production environment your should remove the external port
+      - "15672:15672"  
       - "5672:5672"   
 
   webstatus:
@@ -120,14 +122,14 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - UseCustomizationData=True
-      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
-      - OrchestratorType=${ORCHESTRATOR_TYPE}
  #     - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
- #     - LexonApiUrlHC=http://lexon.api/hc
- #     - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
- #     - AccountApiUrlHC=http://account.api/hc
+      - LexonApiUrlHC=http://lexon.api/hc
+      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
+      - AccountApiUrlHC=http://account.api/hc
       - LexonApiGatewayUrlHC=http://weblexonapigw/hc
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
     ports:
       - "3006:80"
 
@@ -135,7 +137,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - ConnectionString=${ESHOP_MONGO_DB:-mongodb://nosql.data}
+      - ConnectionString=${ELEF_MONGO_CONN:-mongodb://nosql.data}
+      - MongoDatabase=MailAccounts
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}        
@@ -143,8 +146,7 @@ services:
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
     ports:
-      - "8082:80"   # Important: In a production environment your should remove the external port (5110) kept here for microservice debugging purposes. 
-                    # The API Gateway redirects and access through the internal port (80).
+      - "8082:80"   
 
   webaccountapigw:
     environment:
@@ -158,26 +160,26 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - ConnectionString=${ESHOP_MONGO_DB:-mongodb://nosql.data}
+      - ConnectionString=${ELEF_MONGO_CONN:-mongodb://nosql.data}
       - MongoDatabase=LexonApiDB
-      - LexonMySqlUrl=http://lexon.mysql.api/api/v1/LexonMySql
-      - LexonFilesUrl=http://led-dev-lexon/index.php
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}        
+      - LexonMySqlUrl=http://lexon.mysql.api/api/v1/LexonMySql
+      - LexonFilesUrl=http://led-dev-lexon/index.php
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
     ports:
-      - "8084:80"   # Important: In a production environment your should remove the external port (5110) kept here for microservice debugging purposes. 
-                    # The API Gateway redirects and access through the internal port (80).
+      - "8084:80"   
 
   lexon.mysql.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - ConnectionString=${ESHOP_MYSQL_LEXONMYSQL_DB:-database=lexon_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5}
+      - ConnectionString=${ELEF_MYSQL_LEXONMYSQL_DB:-database=lexon_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90}
 #      - ConnectionString=${ESHOP_MYSQL_LEXONMYSQL_DB:-database=lexon_conecta;server=ES006-PPDDB003;port=3315;user id=led-ext-freyes;password=DSFkds4+46DSF}
+      - LexonHubUrl=http://led-pre-servicehub/Herramientas/Get
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}          
@@ -185,8 +187,7 @@ services:
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
     ports:
-      - "8085:80"   # Important: In a production environment your should remove the external port (5110) kept here for microservice debugging purposes. 
-                    # The API Gateway redirects and access through the internal port (80).
+      - "8085:80"   
 
   weblexonapigw:
     environment:
@@ -201,7 +202,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - UseCustomizationData=True
-      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
+#      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
       - LexonApiUrlHC=http://lexon.api/hc
       - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
       - AccountApiUrlHC=http://account.api/hc

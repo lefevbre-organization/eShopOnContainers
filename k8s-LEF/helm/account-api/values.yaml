@@ -20,7 +20,6 @@ ingress:
 
 resources: {}
 
-
 nodeSelector: {}
 
 tolerations: []
@@ -45,9 +44,9 @@ env:
     - name: IdentityUrlExternal
       key: urls__IdentityUrlExternal
     - name: ConnectionString
-      key: locations__ConnectionString
+      key: account__ConnectionString
     - name: Database
-      key: locations__Database
+      key: account__Database
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT

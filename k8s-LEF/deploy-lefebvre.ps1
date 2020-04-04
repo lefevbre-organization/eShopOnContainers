@@ -158,7 +158,6 @@ if ($deployKubernetes){
         ExecKube -cmd 'create -f sql-data-lef.yaml -f rabbitmq-lef.yaml -f nosql-data-lef.yaml'
     }
 
-
     Write-Host 'Deploying ocelot APIGW from ocelot/deployment-lef.yaml y ocelot/service-lef.yaml ans config files' -ForegroundColor Yellow
 
     ExecKube "create configmap ocelot --from-file=mm=ocelot/configuration-web-account.json --from-file=ws=ocelot/configuration-web-lexon.json "

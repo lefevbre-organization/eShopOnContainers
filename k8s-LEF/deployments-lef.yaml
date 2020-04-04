@@ -655,21 +655,16 @@ spec:
            configMapKeyRef:
              name: internalurls
              key: account__hc
-        - name: MarketingUrl
+        - name: LexonApi
           valueFrom:
            configMapKeyRef:
              name: internalurls
-             key: marketing__hc
-        - name: mvc
+             key: lexon__hc
+        - name: LexonMysqlApi
           valueFrom:
            configMapKeyRef:
              name: internalurls
-             key: mvc__hc
-        - name: spa
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: spa__hc
+             key: lexonmysql__hc
         - name: ApplicationInsights__InstrumentationKey
           valueFrom:
            configMapKeyRef:
