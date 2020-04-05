@@ -4,7 +4,7 @@ pathBase: /webimap
 
 image:
   repository: elefebvreoncontainers/webimapclient
-  tag: linux-lef-main-containers
+  tag: latest
   pullPolicy: IfNotPresent
 
 service:

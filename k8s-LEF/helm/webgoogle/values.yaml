@@ -4,7 +4,7 @@ pathBase: /webgoogle
 
 image:
   repository: elefebvreoncontainers/webgoogleclient
-  tag: linux-lef-main-containers
+  tag: latest
   pullPolicy: IfNotPresent
 
 service:
