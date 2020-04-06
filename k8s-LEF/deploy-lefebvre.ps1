@@ -1,21 +1,20 @@
 Param(
-    [parameter(Mandatory=$false)][string]$dockerOrg="elefebvreoncontainers",
+    [parameter(Mandatory=$false)][string]$registry=$null,
     [parameter(Mandatory=$false)][string]$dockerUser="avalverdelefebvre",
     [parameter(Mandatory=$false)][string]$dockerPassword="Alberto1971.-",
-    [parameter(Mandatory=$false)][string]$registry=$null,
+    [parameter(Mandatory=$false)][string]$dockerOrg="elefebvreoncontainers",
     [parameter(Mandatory=$false)][bool]$cleanDocker=$true,
+    [parameter(Mandatory=$false)][string]$execPath,
+    [parameter(Mandatory=$false)][string]$kubeconfigPath,
+    [parameter(Mandatory=$false)][string]$configFile,
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "webloginaddonlexon", "account.api", "lexon.api","lexon.mysql.api", "webaccountapigw", "weblexonapigw", "webstatus"),
-    # [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webgoogleclient"),
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "webloginaddonlexon", "account.api", "lexon.api","lexon.mysql.api", "ocelotapigw", "webstatuslef"),
     [parameter(Mandatory=$false)][string]$imageTag="linux-dev",
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
-    [parameter(Mandatory=$false)][string]$kubeconfigPath,
-    [parameter(Mandatory=$false)][string]$execPath,
-    [parameter(Mandatory=$false)][string]$configFile,
     [parameter(Mandatory=$false)][bool]$deployCI=$false
 )
 
@@ -69,9 +68,9 @@ if ([string]::IsNullOrEmpty($imageTag)) {
 Write-Host "=====================================" -ForegroundColor DarkCyan
 Write-Host "Docker image Tag: $imageTag" -ForegroundColor DarkCyan
 Write-Host "Se usa DockeHub: $useDockerHub" -ForegroundColor DarkCyan 
+Write-Host "Deploy Kubernetes: $deployKubernetes" -ForegroundColor DarkCyan 
 Write-Host "Docker: Build $buildImages all[$buildAll] and Clean $cleanDocker" -ForegroundColor DarkCyan 
-Write-Host "Docker: Push images $pushImages" -ForegroundColor DarkCyan 
-Write-Host "Kubernetes: Deploy $deployKubernetes with Infraestructure $deployInfrastructure" -ForegroundColor DarkCyan 
+Write-Host "Kubernetes: $deployKubernetes with Infraestructure $cleanDocker" -ForegroundColor DarkCyan 
 Write-Host "=====================================" -ForegroundColor DarkCyan
 
 # building  docker images if needed
@@ -118,7 +117,7 @@ if ($deployKubernetes){
     if (-not [string]::IsNullOrEmpty($dockerUser)) {
         $registryFDQN =  if (-not $useDockerHub) {$registry} else {"index.docker.io/v1/"}
 
-        Write-Host "DeployKubernetes 01: Logging in to $registryFDQN as user $dockerUser" -ForegroundColor Yellow
+        Write-Host "Logging in to $registryFDQN as user $dockerUser" -ForegroundColor Yellow
         if ($useDockerHub) {
             docker login -u $dockerUser -p $dockerPassword
         }
@@ -130,13 +129,11 @@ if ($deployKubernetes){
             Write-Host "Login failed" -ForegroundColor Red
             exit
         }
-        
+
         # Try to delete the Docker registry key secret
-        Write-Host "DeployKubernetes 02: delete secret docker-registry" -ForegroundColor Yellow
         ExecKube -cmd 'delete secret docker-registry registry-key'
 
         # Create the Docker registry key secret
-        Write-Host "DeployKubernetes 03: create secret docker-registry" -ForegroundColor Yellow
         ExecKube -cmd 'create secret docker-registry registry-key `
         --docker-server=$registryFDQN `
         --docker-username=$dockerUser `
@@ -145,19 +142,19 @@ if ($deployKubernetes){
     }
 
     # Removing previous services & deployments
-    Write-Host "DeployKubernetes 04: Removing existing services & deployments.." -ForegroundColor Yellow
+    Write-Host "Removing existing services & deployments.." -ForegroundColor Yellow
+    Write-Host "Delete the ingress-lef.yaml paths" -ForegroundColor Red
     ExecKube -cmd 'delete deployments --all'
     ExecKube -cmd 'delete services --all'
     ExecKube -cmd 'delete configmap internalurls'
     ExecKube -cmd 'delete configmap urls'
     ExecKube -cmd 'delete configmap externalcfg'
     ExecKube -cmd 'delete configmap ocelot'
-    Write-Host "Delete the ingress-lef.yaml paths" -ForegroundColor Red
     ExecKube -cmd 'delete -f ingress-lef.yaml'
 
     # start sql, rabbitmq, frontend deployments
     if ($deployInfrastructure) {
-        Write-Host 'DeployKubernetesInfra 01: Deploying infrastructure deployments (databases, redis, RabbitMQ...)' -ForegroundColor Yellow
+        Write-Host 'Deploying infrastructure deployments (databases, redis, RabbitMQ...)' -ForegroundColor Yellow
         Write-Host "Create the sql-data-lef.yaml rabbitmq-lef.yaml -nosql-data-lef.yaml" -ForegroundColor Red
         ExecKube -cmd 'create -f sql-data-lef.yaml -f rabbitmq-lef.yaml -f nosql-data-lef.yaml'
     }
