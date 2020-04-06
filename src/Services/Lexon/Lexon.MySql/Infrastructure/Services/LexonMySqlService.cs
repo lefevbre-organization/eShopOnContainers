@@ -208,8 +208,7 @@ namespace Lexon.MySql.Infrastructure.Services
             var appsWithAccess = new List<string>() { "lexonconnector", "centinelaconnector" };
             foreach (var app in apps.data)
             {
-                if (app.indAcceso > 0)
-                    appsWithAccess.Add(app.descHerramienta);
+                appsWithAccess.Add(app.descHerramienta);
             }
 
             var usuarioValido = !string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password);
@@ -308,16 +307,16 @@ namespace Lexon.MySql.Infrastructure.Services
             //limit -= 1;
         }
 
-        public async Task<Result<List<LexApp>>> GetUserMiniHubAsync(string idNavisionUser)
+        public async Task<Result<List<LexApp>>> GetUserMiniHubAsync(string idNavisionUser, bool onlyActives = true)
         {
             var result = new Result<List<LexApp>>(new List<LexApp>());
             try
             {
-                //TODO: hacer llamada a usuario encriptado;
-                string usuarioEncriptado = "f3NrcnZs";
-                string user = "E0383956";
+               
+                //string usuarioEncriptado = "f3NrcnZs";
+                //string user = "E0383956";
                 //http://led-pre-servicehub/Herramientas/Get?IdUsuarioPro=E0383956&IdUsuarioProEncriptado=f3NrcnZs&indMinuHub=1
-                var url = $"{_settings.Value.LexonHubUrl}?IdUsuarioPro={user}&IdUsuarioProEncriptado={usuarioEncriptado}&indMinuHub=1";
+                var url = $"{_settings.Value.LexonHubUrl}?IdUsuarioPro={idNavisionUser}&IdUsuarioProEncriptado={idNavisionUser}&indMinuHub=1";
 
                 using (var response = await _client.GetAsync(url))
                 {
@@ -328,7 +327,8 @@ namespace Lexon.MySql.Infrastructure.Services
                         if (!string.IsNullOrEmpty(rawResult))
                         {
                             var resultado = (JsonConvert.DeserializeObject<LexApp[]>(rawResult));
-                            result.data = resultado.ToList();
+                            var listAll = resultado.ToList();
+                            result.data = onlyActives ? listAll.Where(x => x.indAcceso > 0).ToList() : listAll.ToList();
                         }
                     }
                     else
