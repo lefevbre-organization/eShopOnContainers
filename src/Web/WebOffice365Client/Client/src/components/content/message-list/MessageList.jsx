@@ -16,7 +16,7 @@ import { getMessage, getLabelSentItems } from '../../../api_graph';
 const ViewMode = {
   LIST: 1,
   CONTENT: 2,
-  EDIT: 3
+  EDIT: 3,
 };
 
 export class MessageList extends Component {
@@ -27,7 +27,7 @@ export class MessageList extends Component {
       firstPage: false,
       viewMode: ViewMode.LIST,
       contentMessageId: undefined,
-      currentLabel: ''
+      currentLabel: '',
     };
 
     this.onSelectionChange = this.onSelectionChange.bind(this);
@@ -49,7 +49,7 @@ export class MessageList extends Component {
 
     this.props.getLabelMessages({
       ...(labelIds && { labelIds }),
-      pageToken: token
+      pageToken: token,
     });
 
     const response = await getLabelSentItems();
@@ -77,7 +77,7 @@ export class MessageList extends Component {
 
       this.props.getLabelMessages({
         ...(labelIds && { labelIds }),
-        pageToken: token
+        pageToken: token,
       });
     }
   }
@@ -95,7 +95,7 @@ export class MessageList extends Component {
       provider: 'OUTLOOK',
       account: this.props.lexon.account,
       chkselected: selected,
-      raw: null
+      raw: null,
     };
 
     selected
@@ -110,7 +110,7 @@ export class MessageList extends Component {
 
     window.dispatchEvent(
       new CustomEvent('Checkclick', {
-        detail: message
+        detail: message,
       })
     );
 
@@ -137,8 +137,8 @@ export class MessageList extends Component {
       );
     }
 
-    return this.props.messagesResult.messages.map(el => {
-      if (_this.props.selectedMessages.find(x => x.id === el.id)) {
+    return this.props.messagesResult.messages.map((el) => {
+      if (_this.props.selectedMessages.find((x) => x.id === el.id)) {
         el.selected = true;
       } else {
         el.selected = false;
@@ -172,6 +172,15 @@ export class MessageList extends Component {
     if (this.props.messagesResult.loading) {
       return { nextToken: false, prevToken: false };
     }
+
+    console.log(
+      'this.props.pageTokens.nextPageToken: ' +
+        this.props.pageTokens.nextPageToken
+    );
+    console.log(
+      'this.props.pageTokens.prevPageToken: ' +
+        this.props.pageTokens.prevPageToken
+    );
 
     let nextToken = false;
     let prevToken = false;
@@ -223,22 +232,22 @@ export class MessageList extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     selectedMessages: state.messageList.selectedMessages,
     selectedFolder:
       state.messagesResult && state.labelsResult.labels
         ? getSelectedFolder(state.labelsResult.labels)
         : '',
-    lexon: state.lexon
+    lexon: state.lexon,
   };
 };
 
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       addMessage,
-      deleteMessage
+      deleteMessage,
     },
     dispatch
   );
@@ -250,7 +259,7 @@ export default compose(
 )(MessageList);
 
 function getSelectedFolder(labels) {
-  const lbl = labels.filter(lbl => lbl.selected === true);
+  const lbl = labels.filter((lbl) => lbl.selected === true);
   if (lbl.length > 0) {
     return lbl[0].displayName;
   }
