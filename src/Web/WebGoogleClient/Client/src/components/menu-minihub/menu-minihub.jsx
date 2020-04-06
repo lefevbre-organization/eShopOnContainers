@@ -117,9 +117,9 @@ class MenuMinihub extends Component {
                     <div className='accounts-container menu-main-panel'>
                       <PerfectScrollbar options={{ suppressScrollX: true }}>
                         <div className="menu-header__body-generic">
-                          <ul class="menu-header__blocks menu-header__blocks--products">
+                          <ul className="menu-header__blocks menu-header__blocks--products">
                           {products.map(product => (
-                            <li class="menu-header__block-product ng-scope">                                                   
+                            <li classname="menu-header__block-product ng-scope">                                                   
                               <a className="menu-header__block-icon-product menu-header__block-icon-product--product-1"
                                  href={product.url}
                                  target="_blank"                                     
@@ -135,8 +135,8 @@ class MenuMinihub extends Component {
                         </div>                     
                       </PerfectScrollbar>
                                 </div>
-                    <div class="menu-header__blocks">
-                      <span class="menu-header__text-products" data-translate="menu-header.paragraph-products">{i18n.t('menu-minihub.footer')}</span>
+                    <div className="menu-header__blocks">
+                      <span className="menu-header__text-products" data-translate="menu-header.paragraph-products">{i18n.t('menu-minihub.footer')}</span>
                     </div>
                   </Fragment>               
               </div>
@@ -255,6 +255,13 @@ class MenuMinihub extends Component {
             right: 7px;
             width: 385px;
             z-index: 110;
+          }
+
+          .menu-header__text-products {
+            color: #9A9898;
+            font-family: MTTMilano;
+            font-size: 14px;
+            line-height: 20px;
           }
 
           .menu-title {

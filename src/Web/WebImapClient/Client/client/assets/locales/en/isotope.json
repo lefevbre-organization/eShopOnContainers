@@ -135,6 +135,10 @@
     "close-session": "CLOSE SESSION",
     "version": "Version"
   },
+  "menu-minihub": {
+    "products": "Lefebvre Products",
+    "footer": "Use this menu to directly launch another Lefebvre products."
+  },
   "msgNotFoundSnackbar": {
     "error": "Message not found in server"
   }
