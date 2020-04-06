@@ -135,6 +135,10 @@
     "close-session": "CERRAR SESIÓN",
     "version": "Versión"
   },
+  "menu-minihub": {
+    "products": "Productos Lefebvre",
+    "footer": "Utilizar este menú para acceder a los productos de Lefebvre."
+  },
   "msgNotFoundSnackbar": {
     "error": "Mensaje no encontrado en el servidor"
   }

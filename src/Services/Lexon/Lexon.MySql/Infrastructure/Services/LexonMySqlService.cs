@@ -95,7 +95,7 @@ namespace Lexon.MySql.Infrastructure.Services
             {
                 resultado.errors.Add(new ErrorInfo() { code = "5000", message = "No se recupera un idUser desde Lexon" });
             }
-            await GetContactData(resultado?.data?.idUser, bbdd, idEntityType, idEntity, mailContacts);
+            mailContacts = await GetContactData(resultado?.data?.idUser, bbdd, idEntityType, idEntity, mailContacts);
 
             resultado.data.token = BuildTokenWithPayloadAsync(new TokenModel
             {
@@ -117,13 +117,13 @@ namespace Lexon.MySql.Infrastructure.Services
             return resultado;
         }
 
-        private async Task GetContactData(string idUser, string bbdd, short? idEntityType, int? idEntity, List<string> mailContacts)
+        private async Task<List<string>> GetContactData(string idUser, string bbdd, short? idEntityType, int? idEntity,  List<string> mailContacts)
         {
             if (idEntityType == (short?)LexonAdjunctionType.files
                 && idEntityType == (short?)LexonAdjunctionType.folders
                 && idEntityType == (short?)LexonAdjunctionType.others
                 && idEntityType == (short?)LexonAdjunctionType.documents)
-                return;
+                return mailContacts;
 
             EntitySearchById search = new EntitySearchById
             {
@@ -135,8 +135,13 @@ namespace Lexon.MySql.Infrastructure.Services
             Result<LexContact> contacto = await _lexonRepository.GetContactAsync(search);
             if (!string.IsNullOrEmpty(contacto?.data.Email))
             {
+                if (mailContacts == null)
+                    mailContacts = new List<string>();
                 mailContacts.Add(contacto?.data.Email);
             }
+
+            return mailContacts;
+
         }
 
         private string ValidarUsuario(string login, string password, string idUser)
@@ -208,8 +213,7 @@ namespace Lexon.MySql.Infrastructure.Services
             var appsWithAccess = new List<string>() { "lexonconnector", "centinelaconnector" };
             foreach (var app in apps.data)
             {
-                if (app.indAcceso > 0)
-                    appsWithAccess.Add(app.descHerramienta);
+                appsWithAccess.Add(app.descHerramienta);
             }
 
             var usuarioValido = !string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password);
@@ -308,16 +312,16 @@ namespace Lexon.MySql.Infrastructure.Services
             //limit -= 1;
         }
 
-        public async Task<Result<List<LexApp>>> GetUserMiniHubAsync(string idNavisionUser)
+        public async Task<Result<List<LexApp>>> GetUserMiniHubAsync(string idNavisionUser, bool onlyActives = true)
         {
             var result = new Result<List<LexApp>>(new List<LexApp>());
             try
             {
-                //TODO: hacer llamada a usuario encriptado;
-                string usuarioEncriptado = "f3NrcnZs";
-                string user = "E0383956";
+               
+                //string usuarioEncriptado = "f3NrcnZs";
+                //string user = "E0383956";
                 //http://led-pre-servicehub/Herramientas/Get?IdUsuarioPro=E0383956&IdUsuarioProEncriptado=f3NrcnZs&indMinuHub=1
-                var url = $"{_settings.Value.LexonHubUrl}?IdUsuarioPro={user}&IdUsuarioProEncriptado={usuarioEncriptado}&indMinuHub=1";
+                var url = $"{_settings.Value.LexonHubUrl}?IdUsuarioPro={idNavisionUser}&IdUsuarioProEncriptado={idNavisionUser}&indMinuHub=1";
 
                 using (var response = await _client.GetAsync(url))
                 {
@@ -328,7 +332,8 @@ namespace Lexon.MySql.Infrastructure.Services
                         if (!string.IsNullOrEmpty(rawResult))
                         {
                             var resultado = (JsonConvert.DeserializeObject<LexApp[]>(rawResult));
-                            result.data = resultado.ToList();
+                            var listAll = resultado.ToList();
+                            result.data = onlyActives ? listAll.Where(x => x.indAcceso > 0).ToList() : listAll.ToList();
                         }
                     }
                     else

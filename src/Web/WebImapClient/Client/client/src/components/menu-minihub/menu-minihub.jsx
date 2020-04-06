@@ -1,16 +1,21 @@
 import React, { Component, Fragment } from 'react';
-import './menu-minihub.css';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import i18n from "i18next";
 import ACTIONS from '../../actions/lexon';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
+import {
+    getProducts,
+} from '../../services/minihub';
+import './menu-minihub.css';
 
 class MenuMinihub extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dropdownOpen: false
+      dropdownOpen: false,
+      products: []
     };
     this.wrapperRef = null;
     this.buttonRef = null;
@@ -18,10 +23,35 @@ class MenuMinihub extends Component {
     this.handleClickOutside = this.handleClickOutside.bind(this);
   }
 
-  componentDidMount() {
-    const _this = this;
-    document.addEventListener('mousedown', this.handleClickOutside);
-  }
+    componentDidMount() {
+        const { lexon } = this.props;
+        const _this = this;
+        if (lexon.userId) {
+            getProducts(lexon.userId)
+                .then(result => {
+                    if (result.errors.length === 0) {
+                        _this.setState({
+
+                            products: result.data.filter(
+                                product => product.indAcceso !== '1'
+                            )
+
+                        });
+                    } else {
+                        let errors;
+                        result.errors.forEach(function (error) {
+                            errors = `${error} `;
+                        });
+                        console.log('error ->', errors);
+                    }
+                })
+                .catch(error => {
+                    console.log('error ->', error);
+                });
+        }
+
+        document.addEventListener('mousedown', this.handleClickOutside);
+    }
 
   componentWillUnmount() {
     document.removeEventListener('mousedown', this.handleClickOutside);
@@ -70,7 +100,7 @@ class MenuMinihub extends Component {
   }
 
   render() {
-    const { dropdownOpen } = this.state;
+    const { dropdownOpen, products } = this.state;
 
     return (
       <Fragment>
@@ -89,23 +119,43 @@ class MenuMinihub extends Component {
             <div
               className='menu-minihub-container'
               ref={ref => (this.wrapperRef = ref)}>
-              <div className='content'>
+              <div className='content'>   
                 <div className='header'>
                   <span className='lf-icon-close' onClick={this.toggle}></span>
-                  <div className='menu-title'></div>
-                </div>
-                <div className='user-image-and-name'>
+                  <div className='menu-title'>
+                    <span>{i18n.t('menu-minihub.products')}</span>
+                  </div>                                
+                </div> 
                   <Fragment>
-                    <div className='accounts-container'>
+                    <div className='accounts-container menu-main-panel'>
                       <PerfectScrollbar options={{ suppressScrollX: true }}>
-                        <ul className='other-accounts'></ul>
+                        <div className="menu-header__body-generic">
+                          <ul className="menu-header__blocks menu-header__blocks--products">
+                          {products.map(product => (
+                            <li className="menu-header__block-product ng-scope">                                                   
+                              <a className="menu-header__block-icon-product menu-header__block-icon-product--product-1"
+                                 href={product.url}
+                                 target="_blank"                                     
+                               >
+                                  <i className={product.icono}></i>
+                              </a>
+                              <div className="menu-header__block-name-product">
+                                      <span className="ng-binding">{product.descHerramienta}</span>
+                              </div>
+                            </li>                                                   
+                          ))}
+                          </ul>
+                        </div>                     
                       </PerfectScrollbar>
+                                </div>
+                    <div className="menu-header__blocks">
+                      <span className="menu-header__text-products" >{i18n.t('menu-minihub.footer')}</span>
                     </div>
-                  </Fragment>
+                  </Fragment>     
                 </div>
               </div>
             </div>
-          </div>
+         
         )}
         <style jsx>{`
           .e-rte-content span {
@@ -179,6 +229,7 @@ class MenuMinihub extends Component {
             color: #333333 !important;
             font-size: 14px;
           }
+
           .menu-minihub-container {
             text-align: center;
             top: 40px !important;
@@ -192,17 +243,18 @@ class MenuMinihub extends Component {
           .lf-icon-add-round {
             color: #001978;
           }
+
           .content .header {
             background-color: white;
             text-align: right;
             border: none;
             display: block;
-            padding: 24px;
-            margin-bottom: 2.5rem;
+            padding: 24px;            
             font-size: 0.875rem;
             color: #6c757d;
             white-space: nowrap;
           }
+
           .content .header > span {
             color: #001978;
             font-size: 13px;
@@ -230,10 +282,82 @@ class MenuMinihub extends Component {
             text-align: left;
             color: #001978;
           }
+
           .menu-title .mb-5 {
             text-decoration: none;
             color: #001978 !important;
           }
+
+          .menu-header__text-products {
+            color: #9A9898;
+            font-family: MTTMilano;
+            font-size: 14px;
+            line-height: 20px;
+          }
+
+          .menu-header__blocks {
+            text-align: center;   
+            padding-left: 20px;
+            padding-right: 20px;
+            font-size: 11px;
+          }
+        
+          .menu-header__blocks {
+            text-align: center;
+            padding-left: 20px;
+            padding-right: 20px;
+            font-size: 11px;
+            float: left;
+            position: relative;
+            width: 100%;
+          }
+         
+          .menu-header__body-generic {
+            position: relative;
+            float: left;
+            width: 100%;
+            text-align: left;
+            padding-top: 20px;
+          }
+
+          .menu-header__block-product {
+            width: 50%;
+            position: relative;
+            float: left;
+            text-align: center;
+            margin-bottom: 31px;
+            text-transform: uppercase;
+            color: #001978;
+            font-family: MTTMilano;
+            font-size: 12px;
+            font-weight: 700;
+          }
+          
+          product:visited {
+            color: #FFFFFF;
+            text-decoration: none;
+          }
+
+          .menu-header__block-icon-product:hover, .menu-header__block-icon-product:visited {
+            color: #FFFFFF;
+            text-decoration: none;
+          }
+
+          .menu-header__block-icon-product {
+            height: 50px;
+            line-height: 52px;
+            width: 50px;
+            margin: 0 auto 9px auto;
+            background-color: #001978;
+            border-radius: 50px;
+            color: #FFFFFF;
+            font-size: 27px;
+            border: none;
+            outline: none;
+            display: block;
+            text-decoration: none;
+            cursor: pointer;
+        }
 
           .add-sign {
             display: flex;
