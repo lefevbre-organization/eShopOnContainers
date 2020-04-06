@@ -212,8 +212,8 @@ namespace Lexon.Infrastructure.Services
                 await _usersRepository.UpsertRelationsAsync(classificationSearch, resultMySql);
             else
             {
-                var resultMongo = await _usersRepository.GetRelationsAsync(classificationSearch);
-                resultMySql.DataActuation = resultMongo.DataActuation;
+                //var resultMongo = await _usersRepository.GetRelationsAsync(classificationSearch);
+                //resultMySql.DataActuation = resultMongo.DataActuation;
             }
 
             return resultMySql;
@@ -504,8 +504,8 @@ namespace Lexon.Infrastructure.Services
                 await _usersRepository.UpsertEntitiesAsync(entitySearch, resultMySql);
             else
             {
-                var resultMongo = await _usersRepository.GetEntitiesAsync(entitySearch);
-                resultMySql.Data = resultMongo.Data;
+                //var resultMongo = await _usersRepository.GetEntitiesAsync(entitySearch);
+                //resultMySql.Data = resultMongo.Data;
             }
 
             return resultMySql;

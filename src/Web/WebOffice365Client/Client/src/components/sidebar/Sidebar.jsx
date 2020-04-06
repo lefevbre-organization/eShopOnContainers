@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
 import i18n from 'i18next';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import sortBy from 'lodash/sortBy';
@@ -9,6 +10,7 @@ import { Button } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 import './sidebar.scss';
+import { setPageTokens } from '../content/message-list/actions/message-list.actions';
 
 export class Sidebar extends Component {
   constructor(props) {
@@ -17,7 +19,7 @@ export class Sidebar extends Component {
     this.state = {
       selectedLabel: props.pathname,
       selectedFolder: this.props.selectedFolder,
-      leftSideBarOpen: true
+      leftSideBarOpen: true,
     };
 
     //this.renderLabels = this.renderLabels.bind(this);
@@ -41,7 +43,13 @@ export class Sidebar extends Component {
   }
 
   navigateToList(evt, labelId) {
-    const label = this.props.labelsResult.labels.find(el => el.id === labelId);
+    const label = this.props.labelsResult.labels.find(
+      (el) => el.id === labelId
+    );
+    this.props.setPageTokens({
+      prevPageToken: undefined,
+      nextPageToken: undefined,
+    });
     this.setState({ selectedFolder: labelId });
     this.props.onLabelClick(label || { id: '' });
   }
@@ -154,15 +162,14 @@ export class Sidebar extends Component {
             className='logo-ext'
             border='0'
             alt='otulook'
-            src='/assets/img/office365.png'
-          ></img>
+            src='/assets/img/office365.png'></img>
           {i18n.t('sidebar.folders')}
         </li>
-        {labels.map(el => {
+        {labels.map((el) => {
           const iconProps = {
             icon: faFolderOpen,
             color: '#001978',
-            size: 'lg'
+            size: 'lg',
           };
           if (folder === '') {
             folder = el.id;
@@ -189,7 +196,7 @@ export class Sidebar extends Component {
     const composeProps = {
       subject: '',
       to: '',
-      content: ''
+      content: '',
     };
 
     return (
@@ -199,8 +206,7 @@ export class Sidebar extends Component {
           collapsed
             ? 'd-flex flex-column text-truncate left-panel sidebar-close'
             : 'd-flex flex-column text-truncate left-panel sidebar-open'
-        }
-      >
+        }>
         <div className='compose-panel'>
           <div className='d-flex justify-content-center p-2 compose-btn'>
             <div className='compose-div'>
@@ -209,21 +215,18 @@ export class Sidebar extends Component {
                 to={{
                   pathname: '/compose',
                   search: '',
-                  state: { composeProps }
-                }}
-              >
+                  state: { composeProps },
+                }}>
                 <img
                   className='ImgLf'
                   border='0'
                   alt='otulook'
-                  src='/assets/img/plus.png'
-                ></img>
+                  src='/assets/img/plus.png'></img>
                 {i18n.t('sidebar.compose')}
               </Link>
               <Button
                 onClick={this.props.sideBarToggle}
-                className='btn-transparent margin-right-20 float-right margin-top-10'
-              >
+                className='btn-transparent margin-right-20 float-right margin-top-10'>
                 <FontAwesomeIcon icon={faChevronLeft} size='1x' />
               </Button>
             </div>
@@ -231,8 +234,7 @@ export class Sidebar extends Component {
         </div>
         <PerfectScrollbar
           component='ul'
-          className='d-flex flex-column border-0 m-0 sidebar'
-        >
+          className='d-flex flex-column border-0 m-0 sidebar'>
           {this.renderItems(this.props.labelsResult.labels)}
         </PerfectScrollbar>
       </nav>
@@ -240,22 +242,30 @@ export class Sidebar extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      setPageTokens,
+    },
+    dispatch
+  );
+
+const mapStateToProps = (state) => {
   return {
     labelsResult: state.labelsResult,
     selectedFolder:
       state.messagesResult && state.labelsResult.labels
         ? getSelectedFolder(state.labelsResult.labels)
-        : ''
+        : '',
   };
 };
 
-export default connect(mapStateToProps)(Sidebar);
+export default connect(mapStateToProps, mapDispatchToProps)(Sidebar);
 
 //export default withTranslation()(Sidebar);
 
 function getSelectedFolder(labels) {
-  const lbl = labels.filter(lbl => lbl.selected === true);
+  const lbl = labels.filter((lbl) => lbl.selected === true);
   if (lbl.length > 0) {
     return lbl[0].displayName;
   }
