@@ -119,7 +119,7 @@ class MenuMinihub extends Component {
                         <div className="menu-header__body-generic">
                           <ul className="menu-header__blocks menu-header__blocks--products">
                           {products.map(product => (
-                            <li classname="menu-header__block-product ng-scope">                                                   
+                            <li className="menu-header__block-product ng-scope">                                                   
                               <a className="menu-header__block-icon-product menu-header__block-icon-product--product-1"
                                  href={product.url}
                                  target="_blank"                                     

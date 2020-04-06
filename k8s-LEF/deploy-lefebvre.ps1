@@ -9,7 +9,7 @@ Param(
     [parameter(Mandatory=$false)][string]$configFile,
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
-    [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "webloginaddonlexon", "account.api", "lexon.api","lexon.mysql.api", "webaccountapigw", "weblexonapigw", "webstatus"),
+    [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webimapclient", "webloginaddonlexon", "account.api", "lexon.api","lexon.mysql.api", "webaccountapigw", "weblexonapigw", "webstatus"),
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "webloginaddonlexon", "account.api", "lexon.api","lexon.mysql.api", "ocelotapigw", "webstatuslef"),
     [parameter(Mandatory=$false)][string]$imageTag="linux-dev",

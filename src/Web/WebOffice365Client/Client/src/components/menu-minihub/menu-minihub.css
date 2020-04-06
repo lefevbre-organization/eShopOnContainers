@@ -108,9 +108,16 @@ product:visited {
 
 .menu-header__blocks {
     text-align: center;   
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 5px;
+    padding-right:5px;
     font-size: 11px;
 }
+.menu-header__text-products {
+    color: #9A9898;
+    font-family: MTTMilano;
+    font-size: 14px;
+    line-height: 20px;
+}
+
 
 
