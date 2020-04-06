@@ -12,7 +12,7 @@ import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
-  DropdownToggle
+  DropdownToggle,
 } from 'reactstrap';
 
 import AccountUser from './account-user/account-user';
@@ -20,7 +20,7 @@ import UserSign from './menu-user-sign';
 import {
   getUser,
   resetDefaultAccount,
-  addOrUpdateAccount
+  addOrUpdateAccount,
 } from '../../api/accounts';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
@@ -37,7 +37,7 @@ class MenuUser extends Component {
       accounts: [],
       disconnect: true,
       showSign: false,
-      sign: ''
+      sign: '',
     };
 
     this.wrapperRef = null;
@@ -57,23 +57,23 @@ class MenuUser extends Component {
     const _this = this;
     if (lexon.userId) {
       getUser(lexon.userId)
-        .then(result => {
+        .then((result) => {
           if (result.errors.length === 0) {
             _this.setState({
               sign: result.data.accounts[0].sign,
               accounts: result.data.accounts.filter(
-                account => account.defaultAccount !== true
-              )
+                (account) => account.defaultAccount !== true
+              ),
             });
           } else {
             let errors;
-            result.errors.forEach(function(error) {
+            result.errors.forEach(function (error) {
               errors = `${error} `;
             });
             console.log('error ->', errors);
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log('error ->', error);
         });
     }
@@ -99,7 +99,7 @@ class MenuUser extends Component {
     ) {
       this.setState({
         dropdownOpen: false,
-        showSign: false
+        showSign: false,
       });
     }
   }
@@ -107,7 +107,7 @@ class MenuUser extends Component {
   toggle() {
     this.setState({
       dropdownOpen: !this.state.dropdownOpen,
-      showSign: false
+      showSign: false,
     });
   }
 
@@ -116,14 +116,14 @@ class MenuUser extends Component {
     console.log('Token: ' + token);
     if (userId !== null) {
       resetDefaultAccount(userId)
-        .then(result => {
+        .then((result) => {
           signOut();
           const urlRedirect = token
             ? `${window.URL_SELECT_ACCOUNT}/access/${token}/`
             : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
           window.open(urlRedirect, '_self');
         })
-        .catch(error => {
+        .catch((error) => {
           console.log('error =>', error);
         });
     }
@@ -136,7 +136,7 @@ class MenuUser extends Component {
 
   onBack() {
     this.setState({
-      showSign: false
+      showSign: false,
     });
   }
 
@@ -151,7 +151,7 @@ class MenuUser extends Component {
       provider: 'GOOGLE',
       email: lexon.account,
       guid: lexon.guid,
-      sign
+      sign,
     };
 
     this.props.setSign(sign);
@@ -181,7 +181,7 @@ class MenuUser extends Component {
         <div
           className='menu-user'
           onClick={this.toggle}
-          ref={ref => (this.buttonRef = ref)}>
+          ref={(ref) => (this.buttonRef = ref)}>
           <img
             className='mx-2 profile-pic'
             src='assets/img/icon-user.png'
@@ -195,7 +195,7 @@ class MenuUser extends Component {
               className={
                 showSign ? 'show-sign menu-container ' : 'menu-container '
               }
-              ref={ref => (this.wrapperRef = ref)}>
+              ref={(ref) => (this.wrapperRef = ref)}>
               <div className='content'>
                 <div className='header'>
                   <span className='lf-icon-close' onClick={this.toggle}></span>
@@ -239,7 +239,7 @@ class MenuUser extends Component {
                       <div className='accounts-container'>
                         <PerfectScrollbar options={{ suppressScrollX: true }}>
                           <ul className='other-accounts'>
-                            {accounts.map(account => (
+                            {accounts.map((account) => (
                               <AccountUser key={account.id} account={account} />
                             ))}
                           </ul>
@@ -259,7 +259,7 @@ class MenuUser extends Component {
                           </strong>
                         </a>
                       ) : null}
-                      <div className='text-center'>
+                      <div className='text-center close-session-button'>
                         <button
                           type='button'
                           className='col-6 btn btn-primary mt-3 mb-3'
@@ -370,7 +370,7 @@ class MenuUser extends Component {
           }
 
           .user-image-and-name {
-            padding: 24px;
+            padding: 0 24px !important;
           }
 
           .lf-icon-add-round {
@@ -381,8 +381,8 @@ class MenuUser extends Component {
             text-align: right;
             border: none;
             display: block;
-            padding: 24px;
-            margin-bottom: 2.5rem;
+            padding: 10px 24px !important;
+            margin-bottom: 14px !important;
             font-size: 0.875rem;
             color: #6c757d;
             white-space: nowrap;
@@ -395,6 +395,10 @@ class MenuUser extends Component {
 
           .user-image-and-name .scrollbar-container {
             width: 100%;
+          }
+
+          .close-session-button {
+            margin-bottom: 15px;
           }
 
           .menu-container {
@@ -454,14 +458,14 @@ MenuUser.propTypes = {
   email: PropTypes.string.isRequired,
   fullName: PropTypes.string.isRequired,
   onSignout: PropTypes.func.isRequired,
-  onSignoutDisconnect: PropTypes.func.isRequired
+  onSignoutDisconnect: PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators({ setSign: ACTIONS.setSign }, dispatch);
 
-const mapStateToProps = state => ({
-  lexon: state.lexon
+const mapStateToProps = (state) => ({
+  lexon: state.lexon,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MenuUser);
