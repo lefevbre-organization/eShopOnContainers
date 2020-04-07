@@ -25,8 +25,8 @@
     "q2": "In what type of contact do you want to search?"
   },
   "connecting": {
-    "q1": "What do you want to do with the selected messages? (Available soon)",
-    "q2": "What type of entity do you want to classify with? (Available soon)",
+    "q1": "What do you want to do with the selected messages?",
+    "q2": "What type of entity do you want to classify with?",
     "create": "Create performance",
     "copy": "Save copy of the messages in documentation",
     "save": "Save attachments in documentation",

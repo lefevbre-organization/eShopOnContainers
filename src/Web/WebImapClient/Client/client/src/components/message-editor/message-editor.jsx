@@ -54,7 +54,6 @@ class MessageEditor extends Component {
   }
 
   componentDidMount() {
-    console.log('****** COMPONENT_DID_MOUNT *********');
     if (this.fileInput) {
       this.fileInput.onchange = this.onAttachSelected;
     }
