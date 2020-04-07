@@ -156,15 +156,16 @@ class Main extends Component {
   handleKeyPress(event) {
     console.log('HandleEvent Client -> Lexon - Checkclick');
 
+    debugger
     event.detail.chkselected
       ? this.props.addMessage({
-          id: event.detail.extMessageId,
-          //extMessageId: event.detail.extMessageId,
-          subject: event.detail.subject,
-          folder: event.detail.folder,
-          sentDateTime: event.detail.sentDateTime,
-          raw: event.detail.raw
-        })
+        id: event.detail.extMessageId,
+        //extMessageId: event.detail.extMessageId,
+        subject: event.detail.subject,
+        folder: event.detail.folder,
+        sentDateTime: event.detail.sentDateTime,
+        raw: event.detail.raw
+      })
       : this.props.deleteMessage(event.detail.extMessageId);
   }
 

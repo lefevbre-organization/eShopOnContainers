@@ -28,13 +28,13 @@ class MessageEditor extends Component {
       dropZoneActive: false,
       // Stores state of current selection in the dialog (is title, underlined... H1, H2, ..., italic, underline)
       // Used in editor buttons to activate/deactivate them
-      editorState: {}
+      editorState: {},
     };
 
     this.fileInput = null;
     this.editorRef = null;
     this.headerFormRef = React.createRef();
-    this.handleSetState = patchedState => this.setState(patchedState);
+    this.handleSetState = (patchedState) => this.setState(patchedState);
     this.handleSubmit = this.submit.bind(this);
     // Global events
     this.handleOnDrop = this.onDrop.bind(this);
@@ -50,12 +50,44 @@ class MessageEditor extends Component {
     this.handleEditorChange = this.editorChange.bind(this);
     this.onAttachButton = this.onAttachButton.bind(this);
     this.onAttachSelected = this.onAttachSelected.bind(this);
+    this.attachFromLexon = this.attachFromLexon.bind(this);
   }
 
   componentDidMount() {
+    console.log('****** COMPONENT_DID_MOUNT *********');
     if (this.fileInput) {
       this.fileInput.onchange = this.onAttachSelected;
     }
+
+    window.dispatchEvent(new CustomEvent('OpenComposer'));
+    window.addEventListener('AttachDocument', this.attachFromLexon);
+  }
+
+  componentWillUnmount() {
+    window.dispatchEvent(new CustomEvent('CloseComposer'));
+    window.removeEventListener('AttachDocument', this.attachFromLexon);
+  }
+
+  attachFromLexon(event) {
+    const { detail } = event;
+    console.log('attachFromLexon');
+    console.log(event.detail);
+    const length = detail.content.length;
+
+    const addAttachment = (detail) => {
+      const newAttachment = {
+        fileName: detail.document.code,
+        size: length,
+        // contentType: file.type,
+        content: detail.content,
+      };
+      const updatedMessage = { ...this.props.editedMessage };
+      updatedMessage.attachments = updatedMessage.attachments
+        ? [...updatedMessage.attachments, newAttachment]
+        : [newAttachment];
+      this.props.editMessage(updatedMessage);
+    };
+    addAttachment(event.detail);
   }
 
   removeMessageEditor(aplication) {
@@ -66,7 +98,7 @@ class MessageEditor extends Component {
       this.props.setCaseFile({
         casefile: null,
         bbdd: null,
-        company: null
+        company: null,
       });
     }
 
@@ -87,7 +119,7 @@ class MessageEditor extends Component {
       bcc,
       attachments,
       subject,
-      content
+      content,
     } = this.props;
 
     return (
@@ -160,7 +192,7 @@ class MessageEditor extends Component {
           onClick={() => this.editorWrapperClick()}>
           <div className={styles['editor-container']}>
             <ComposeMessageEditor
-              ref={ref => (this.editorRef = ref)}
+              ref={(ref) => (this.editorRef = ref)}
               onChange={this.handleEditorChange}
               defaultValue={content}
             />
@@ -199,7 +231,7 @@ class MessageEditor extends Component {
               <span>{i18n.t('messageEditor.attach')}</span>
             </div>
             <input
-              ref={r => (this.fileInput = r)}
+              ref={(r) => (this.fileInput = r)}
               id='file-input'
               type='file'
               name='name'
@@ -218,10 +250,10 @@ class MessageEditor extends Component {
           closeDialog={() =>
             this.setState({
               linkDialogVisible: false,
-              linkDialogInitialUrl: ''
+              linkDialogInitialUrl: '',
             })
           }
-          onChange={e => this.setState({ linkDialogUrl: e.target.value })}
+          onChange={(e) => this.setState({ linkDialogUrl: e.target.value })}
           url={this.state.linkDialogUrl}
           insertLink={this.handleEditorInsertLink}
         />
@@ -263,7 +295,7 @@ class MessageEditor extends Component {
         cc,
         bcc,
         subject,
-        content
+        content,
       });
       this.props.close(this.props.application);
     }
@@ -327,7 +359,10 @@ class MessageEditor extends Component {
         fileName: file.name,
         size: file.size,
         contentType: file.type,
-        content: dataUrl.currentTarget.result.replace(/^data:[^;]*;base64,/, '')
+        content: dataUrl.currentTarget.result.replace(
+          /^data:[^;]*;base64,/,
+          ''
+        ),
       };
       const updatedMessage = { ...this.props.editedMessage };
       updatedMessage.attachments = updatedMessage.attachments
@@ -335,7 +370,7 @@ class MessageEditor extends Component {
         : [newAttachment];
       this.props.editMessage(updatedMessage);
     };
-    Array.from(event.dataTransfer.files).forEach(file => {
+    Array.from(event.dataTransfer.files).forEach((file) => {
       const fileReader = new FileReader();
       fileReader.onload = addAttachment.bind(this, file);
       fileReader.readAsDataURL(file);
@@ -362,7 +397,7 @@ class MessageEditor extends Component {
     const updatedMessage = { ...this.props.editedMessage };
     if (updatedMessage.attachments && updatedMessage.attachments.length) {
       updatedMessage.attachments = updatedMessage.attachments.filter(
-        a => a !== attachment
+        (a) => a !== attachment
       );
       this.props.editMessage(updatedMessage);
     }
@@ -381,7 +416,10 @@ class MessageEditor extends Component {
         fileName: file.name,
         size: file.size,
         contentType: file.type,
-        content: dataUrl.currentTarget.result.replace(/^data:[^;]*;base64,/, '')
+        content: dataUrl.currentTarget.result.replace(
+          /^data:[^;]*;base64,/,
+          ''
+        ),
       };
       const updatedMessage = { ...this.props.editedMessage };
       updatedMessage.attachments = updatedMessage.attachments
@@ -389,7 +427,7 @@ class MessageEditor extends Component {
         : [newAttachment];
       this.props.editMessage(updatedMessage);
     };
-    Array.from(event.target.files).forEach(file => {
+    Array.from(event.target.files).forEach((file) => {
       const fileReader = new FileReader();
       fileReader.onload = addAttachment.bind(this, file);
       fileReader.readAsDataURL(file);
@@ -423,14 +461,14 @@ class MessageEditor extends Component {
 
 MessageEditor.propTypes = {
   className: PropTypes.string,
-  t: PropTypes.func.isRequired
+  t: PropTypes.func.isRequired,
 };
 
 MessageEditor.defaultProps = {
-  className: ''
+  className: '',
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   application: state.application,
   credentials: getCredentials(state),
   editedMessage: state.application.newMessage,
@@ -441,18 +479,18 @@ const mapStateToProps = state => ({
   subject: state.application.newMessage.subject,
   editor: state.application.newMessage.editor,
   content: state.application.newMessage.content,
-  getAddresses: value => getAddresses(value, state.messages.cache),
-  lexon: state.lexon
+  getAddresses: (value) => getAddresses(value, state.messages.cache),
+  lexon: state.lexon,
 });
 
-const mapDispatchToProps = dispatch => ({
-  close: application => {
+const mapDispatchToProps = (dispatch) => ({
+  close: (application) => {
     dispatch(editMessage(null));
     // Clear content (editorBlur may be half way through -> force a message in the service worker to clear content after)
     // noinspection JSIgnoredPromiseFromCall
     persistApplicationNewMessageContent(application, '');
   },
-  editMessage: message => {
+  editMessage: (message) => {
     dispatch(editMessage(message));
   },
   sendMessage: (
@@ -467,11 +505,11 @@ const mapDispatchToProps = dispatch => ({
       bcc,
       attachments,
       subject,
-      content
+      content,
     }),
-  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
-  setMailContacts: mailContacts =>
-    dispatch(ACTIONS.setMailContacts(mailContacts))
+  setCaseFile: (casefile) => dispatch(ACTIONS.setCaseFile(casefile)),
+  setMailContacts: (mailContacts) =>
+    dispatch(ACTIONS.setMailContacts(mailContacts)),
 });
 
 export default connect(
