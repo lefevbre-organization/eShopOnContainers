@@ -41,7 +41,7 @@ jobs:
       qualifyImageNames: true
       projectName: ""
       dockerComposeFileArgs: |
-        TAG=linux-dev 
+        TAG=${{ variables['Build.SourceBranchName'] }} 
   - task: CopyFiles@2
     inputs:
       sourceFolder: ${{ parameters.helmfrom }}
