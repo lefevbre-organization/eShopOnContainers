@@ -1,4 +1,5 @@
+
 # for PowerShell Core
 steps:
+- pwsh: Set-Location -Path ./k8s-LEF
 - pwsh: ./k8s-LEF/deploy-lefebvre.ps1
-
