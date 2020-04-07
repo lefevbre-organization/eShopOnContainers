@@ -1,3 +1,4 @@
 # for PowerShell Core
 steps:
-- pwsh: /k8s-LEF/deploy-lefebvre.ps1
+- pwsh: ./k8s-LEF/deploy-lefebvre.ps1
+
