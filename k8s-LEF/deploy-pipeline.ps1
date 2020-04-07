@@ -106,7 +106,7 @@ if ($buildImages) {
     Write-Host "BuildDocker 02: Docker-Compose" -ForegroundColor DarkBlue
     Get-ChildItem -Path $parentLocation -Filter $fileCompose -Recurse | ForEach-Object{$_.FullName}
 
-    $pathFileCompose = "$parentLocation\$fileCompose"
+    $pathFileCompose = "$parentLocation/$fileCompose"
     Write-Host "BuildDocker 04: $pathFileCompose" -ForegroundColor DarkBlue
 
     if($buildAll){
