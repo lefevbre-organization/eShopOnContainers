@@ -1,5 +1,3 @@
-- task: PowerShell@2
-  inputs:
-    filePath: './k8s-LEF/deploy-lefebvre.ps1'
-
-
+# for PowerShell Core
+steps:
+- pwsh: ./k8s-LEF/deploy-lefebvre.ps1
