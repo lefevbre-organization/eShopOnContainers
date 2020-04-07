@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: apigwlex
-        image: elefebvre/ocelotapigw
+        image: elefebvreoncotainers/ocelotapigw
         imagePullPolicy: Always
         env:
         - name: PATH_BASE
@@ -51,7 +51,7 @@ spec:
     spec:
       containers:
       - name: apigwacc
-        image: elefebvre/ocelotapigw
+        image: elefebvreoncotainers/ocelotapigw
         imagePullPolicy: Always
         env:
         - name: PATH_BASE
@@ -71,7 +71,7 @@ spec:
         configMap:
           name: ocelot
           items:
-          - key: ms
+          - key: acc
             path: configuration.json
       imagePullSecrets:
       - name: registry-key

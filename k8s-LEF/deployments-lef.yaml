@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: lexon
-        image: elefebvre/lexon.api
+        image: elefebvreoncotainers/lexon.api
         imagePullPolicy: Always
         env:
         - name: PATH_BASE
@@ -83,8 +83,8 @@ spec:
         component: lexonmysql
     spec:
       containers:
-      - name: lexon
-        image: elefebvre/lexonmysql.api
+      - name: lexonmysql
+        image: elefebvreoncotainers/lexonmysql.api
         imagePullPolicy: Always
         env:
         - name: PATH_BASE
@@ -140,8 +140,8 @@ spec:
         component: accounts
     spec:
       containers:
-      - name: ordering
-        image: elefebvre/accounts.api
+      - name: accounts
+        image: elefebvreoncotainers/accounts.api
         imagePullPolicy: Always
         env:
         - name: PATH_BASE
@@ -203,7 +203,7 @@ spec:
     spec:
       containers:
       - name: webportalclient
-        image: elefebvre/webportalclient
+        image: elefebvreoncotainers/webportalclient
         imagePullPolicy: Always
         env:
         - name: PATH_BASE
@@ -275,7 +275,7 @@ spec:
     spec:
       containers:
       - name: webgoogleclient
-        image: elefebvre/webgoogleclient
+        image: elefebvreoncotainers/webgoogleclient
         imagePullPolicy: Always
         env:
         - name: PATH_BASE
@@ -347,7 +347,7 @@ spec:
     spec:
       containers:
       - name: webofficeclient
-        image: elefebvre/webofficeclient
+        image: elefebvreoncotainers/webofficeclient
         imagePullPolicy: Always
         env:
         - name: PATH_BASE
@@ -419,7 +419,7 @@ spec:
     spec:
       containers:
       - name: weblexonclient
-        image: elefebvre/weblexonclient
+        image: elefebvreoncotainers/weblexonclient
         imagePullPolicy: Always
         env:
         - name: PATH_BASE
@@ -491,7 +491,7 @@ spec:
     spec:
       containers:
       - name: webloginaddonlexon
-        image: elefebvre/webloginaddonlexon
+        image: elefebvreoncotainers/webloginaddonlexon
         imagePullPolicy: Always
         env:
         - name: PATH_BASE
@@ -548,7 +548,7 @@ spec:
     spec:
       containers:
       - name: webimapclient
-        image: elefebvre/webimapclient
+        image: elefebvreoncotainers/webimapclient
         imagePullPolicy: Always
         env:
         - name: PATH_BASE
@@ -620,7 +620,7 @@ spec:
     spec:
       containers:
       - name: webstatus
-        image: elefebvre/webstatus
+        image: elefebvreoncotainers/webstatuslef
         imagePullPolicy: Always
         env:
         - name: PATH_BASE

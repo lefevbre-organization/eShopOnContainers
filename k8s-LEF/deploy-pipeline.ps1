@@ -4,18 +4,18 @@ Param(
     [parameter(Mandatory=$false)][string]$dockerPassword="Alberto1971.-",
     [parameter(Mandatory=$false)][string]$registry=$null,
     [parameter(Mandatory=$false)][bool]$cleanDocker=$false,
-    [parameter(Mandatory=$false)][bool]$buildImages=$false,
+    [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "webloginaddonlexon", "account.api", "lexon.api","lexon.mysql.api", "webaccountapigw", "weblexonapigw", "webstatus"),
     # [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webgoogleclient"),
     [parameter(Mandatory=$false)][bool]$pushImages=$false,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "webloginaddonlexon", "account.api", "lexon.api","lexon.mysql.api", "ocelotapigw", "webstatuslef"),
-    [parameter(Mandatory=$false)][string]$imageTag="slasher",
+    [parameter(Mandatory=$false)][string]$imageTag="linux-dev",
     [parameter(Mandatory=$false)][string]$tagToRetag="linux-dev",
-    [parameter(Mandatory=$false)][bool]$deployKubernetes=$true,
-    [parameter(Mandatory=$false)][bool]$deployInfrastructure=$true,
+    [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
+    [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
     [parameter(Mandatory=$false)][string]$kubeconfigPath,
-    [parameter(Mandatory=$false)][string]$execPath,
+    [parameter(Mandatory=$false)][string]$execPath="c:\azure-devops\git\eShopOnContainers\",
     [parameter(Mandatory=$false)][string]$configFile,
     [parameter(Mandatory=$false)][bool]$deployCI=$false
 )
@@ -33,6 +33,13 @@ function ExecKube($cmd) {
 }
 
 # Initialization
+$location = (Get-Location)
+Write-Host "The path of execution: $location" -ForegroundColor Red 
+
+if (-not [string]::IsNullOrEmpty($execPath)) {
+    Set-Location -Path $execPath -Verbose
+    Write-Host "The path of execution is set to: $execPath" -ForegroundColor Yellow 
+}
 
 $debugMode = $PSCmdlet.MyInvocation.BoundParameters["Debug"].IsPresent
 $useDockerHub = [string]::IsNullOrEmpty($registry)
@@ -74,6 +81,7 @@ if (-not [string]::IsNullOrEmpty($tagToRetag)) {
 }
 
 Write-Host "=====================================" -ForegroundColor DarkCyan
+Write-Host "Docker location: $location" -ForegroundColor DarkCyan
 Write-Host "Docker image Tag: $imageTag" -ForegroundColor DarkCyan
 Write-Host "Se usa DockeHub: $useDockerHub" -ForegroundColor DarkCyan 
 Write-Host "Docker: Build $buildImages all[$buildAll] and Clean $cleanDocker" -ForegroundColor DarkCyan 
@@ -91,14 +99,27 @@ if ($buildImages) {
     }
     
     # $env:TAG=$imageTag
+    Write-Host "BuildDocker 01: Files" -ForegroundColor DarkBlue
+    Get-ChildItem -Path $location -Filter $fileCompose -Recurse | ForEach-Object{$_.FullName}
+
+    # $parentLocation = (get-item $location).parent.FullName
+    $fileCompose = "docker-compose.yml"
+    # Write-Host "BuildDocker 02: Docker-Compose" -ForegroundColor DarkBlue
+    # Get-ChildItem -Path $parentLocation -Filter $fileCompose -Recurse | ForEach-Object{$_.FullName}
+
+    $pathFileCompose = "$location/$fileCompose"
+    Write-Host "BuildDocker 04: $pathFileCompose" -ForegroundColor DarkBlue
+
     if($buildAll){
-        Write-Host "BuildDockers 01A: Building All Docker images tagged with '$imageTag'" -ForegroundColor DarkBlue
-        docker-compose -p .. -f ../docker-compose.yml build      
+        Write-Host "BuildDockers 05A: Building All Docker images tagged with '$imageTag'" -ForegroundColor DarkBlue
+        docker-compose -p .. -f $pathFileCompose build      
+        # docker-compose -p .. -f ../docker-compose.yml build      
     }else{
 
         foreach ($service in $servicesToBuild) {
-            Write-Host "BuildDockers 01B: Building Docker image '$service' tagged with '$imageTag'" -ForegroundColor DarkBlue
-            docker-compose -p .. -f ../docker-compose.yml build $service
+            Write-Host "BuildDockers 05B: Building Docker image '$service' tagged with '$imageTag'" -ForegroundColor DarkBlue
+            # docker-compose -p .. -f ../docker-compose.yml build $service
+            docker-compose -p .. -f $pathFileCompose build $service
         }
     }
 }
