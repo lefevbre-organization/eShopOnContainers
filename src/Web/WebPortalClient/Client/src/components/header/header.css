@@ -1,0 +1,22 @@
+.header {
+  border-bottom: 1px solid #d9dfe2;
+  background-color: #001978;
+  height: 65px;
+  justify-content: flex-end;
+  color: #fff;
+}
+
+.header-user {
+  justify-content: right;
+  display: flex;
+  align-items: center;
+}
+
+.header-user .lf-icon-user {
+  font-size: 24px;
+  margin-right: 10px;
+}
+
+.header-left {
+  flex: 0 0 100px;
+}
