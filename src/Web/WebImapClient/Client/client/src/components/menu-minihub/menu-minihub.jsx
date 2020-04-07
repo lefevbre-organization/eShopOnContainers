@@ -283,6 +283,11 @@ class MenuMinihub extends Component {
             color: #001978;
           }
 
+          .menu-main-panel {
+            height: 60vh;    
+            position: relative; 
+          }
+
           .menu-title .mb-5 {
             text-decoration: none;
             color: #001978 !important;
