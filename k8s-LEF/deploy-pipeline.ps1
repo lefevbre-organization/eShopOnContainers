@@ -15,7 +15,7 @@ Param(
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
     [parameter(Mandatory=$false)][string]$kubeconfigPath,
-    [parameter(Mandatory=$false)][string]$execPath="c:\azure-devops\git\eShopOnContainers\",
+    [parameter(Mandatory=$false)][string]$execPath=$null,
     [parameter(Mandatory=$false)][string]$configFile,
     [parameter(Mandatory=$false)][bool]$deployCI=$false
 )
@@ -34,8 +34,9 @@ function ExecKube($cmd) {
 
 # Initialization
 $location = (Get-Location)
+Write-Host "The path of execution: $location" -ForegroundColor Red 
+
 if (-not [string]::IsNullOrEmpty($execPath)) {
-    Write-Host "The old path of execution: $location" -ForegroundColor Red 
     Set-Location -Path $execPath -Verbose
     Write-Host "The path of execution is set to: $execPath" -ForegroundColor Yellow 
 }
@@ -99,14 +100,14 @@ if ($buildImages) {
     
     # $env:TAG=$imageTag
     Write-Host "BuildDocker 01: Files" -ForegroundColor DarkBlue
-    Get-ChildItem -Path $location
+    Get-ChildItem -Path $location -Filter $fileCompose -Recurse | ForEach-Object{$_.FullName}
 
-    $parentLocation = (get-item $location).parent.FullName
+    # $parentLocation = (get-item $location).parent.FullName
     $fileCompose = "docker-compose.yml"
-    Write-Host "BuildDocker 02: Docker-Compose" -ForegroundColor DarkBlue
-    Get-ChildItem -Path $parentLocation -Filter $fileCompose -Recurse | ForEach-Object{$_.FullName}
+    # Write-Host "BuildDocker 02: Docker-Compose" -ForegroundColor DarkBlue
+    # Get-ChildItem -Path $parentLocation -Filter $fileCompose -Recurse | ForEach-Object{$_.FullName}
 
-    $pathFileCompose = "$parentLocation\$fileCompose"
+    $pathFileCompose = "$location/$fileCompose"
     Write-Host "BuildDocker 04: $pathFileCompose" -ForegroundColor DarkBlue
 
     if($buildAll){
