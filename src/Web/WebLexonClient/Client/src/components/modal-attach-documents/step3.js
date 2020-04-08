@@ -56,6 +56,7 @@ export class AttachDocumentsStep3 extends React.Component {
           true
         );
 
+        debugger
         if (response.result.status === 400) {
           // No existe la carpeta para esta entidad.
           // La creamos
@@ -89,8 +90,6 @@ export class AttachDocumentsStep3 extends React.Component {
             }
           );
         }
-
-
       });
     }
 
@@ -237,7 +236,7 @@ export class AttachDocumentsStep3 extends React.Component {
     return (
       <div>
         {
-          props.type !== 'dir' && <span><CheckBoxComponent label="" checked={this.isFileSelected(props)} cssClass="e-small" change={(evt) => { this.onChangeFile(evt, props) }} /></span>
+          props.type !== 'dir' && <span><CheckBoxComponent label="" cssClass="e-small" change={(evt) => { this.onChangeFile(evt, props) }} /></span>
         }
         <span
           style={{ marginRight: 10, marginLeft: 10 }}
@@ -561,7 +560,7 @@ function getChilds(tree, id) {
     children[i].type = children[i].idType === 13 ? 'dir' : 'file';
     children[i].modified = '26/09/2018 16:57';
   }
-  return tree.subChilds;
+  return root.subChild;
 }
 
 function findNode(node, id) {
