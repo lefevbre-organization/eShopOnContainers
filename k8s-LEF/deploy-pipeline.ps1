@@ -8,14 +8,14 @@ Param(
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "webloginaddonlexon", "account.api", "lexon.api","lexon.mysql.api", "webaccountapigw", "weblexonapigw", "webstatus"),
     # [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webgoogleclient"),
-    [parameter(Mandatory=$false)][bool]$pushImages=$false,
+    [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "webloginaddonlexon", "account.api", "lexon.api","lexon.mysql.api", "ocelotapigw", "webstatuslef"),
     [parameter(Mandatory=$false)][string]$imageTag="linux-dev",
     [parameter(Mandatory=$false)][string]$tagToRetag="linux-dev",
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
     [parameter(Mandatory=$false)][string]$kubeconfigPath,
-    [parameter(Mandatory=$false)][string]$execPath="c:\azure-devops\git\eShopOnContainers\",
+    [parameter(Mandatory=$false)][string]$execPath=$null,
     [parameter(Mandatory=$false)][string]$configFile,
     [parameter(Mandatory=$false)][bool]$deployCI=$false
 )
@@ -34,8 +34,9 @@ function ExecKube($cmd) {
 
 # Initialization
 $location = (Get-Location)
+Write-Host "The path of execution: $location" -ForegroundColor Red 
+
 if (-not [string]::IsNullOrEmpty($execPath)) {
-    Write-Host "The old path of execution: $location" -ForegroundColor Red 
     Set-Location -Path $execPath -Verbose
     Write-Host "The path of execution is set to: $execPath" -ForegroundColor Yellow 
 }
@@ -99,24 +100,24 @@ if ($buildImages) {
     
     # $env:TAG=$imageTag
     Write-Host "BuildDocker 01: Files" -ForegroundColor DarkBlue
-    Get-ChildItem -Path $location
+    Get-ChildItem -Path $location -Filter $fileCompose | ForEach-Object{$_.FullName}
 
-    $parentLocation = (get-item $location).parent.FullName
+    # $parentLocation = (get-item $location).parent.FullName
     $fileCompose = "docker-compose.yml"
-    Write-Host "BuildDocker 02: Docker-Compose" -ForegroundColor DarkBlue
-    Get-ChildItem -Path $parentLocation -Filter $fileCompose -Recurse | ForEach-Object{$_.FullName}
+    # Write-Host "BuildDocker 02: Docker-Compose" -ForegroundColor DarkBlue
+    # Get-ChildItem -Path $parentLocation -Filter $fileCompose -Recurse | ForEach-Object{$_.FullName}
 
-    $pathFileCompose = "$parentLocation/$fileCompose"
-    Write-Host "BuildDocker 04: $pathFileCompose" -ForegroundColor DarkBlue
+    $pathFileCompose = "$location/$fileCompose"
+    Write-Host "BuildDocker 02: $pathFileCompose" -ForegroundColor DarkBlue
 
     if($buildAll){
-        Write-Host "BuildDockers 05A: Building All Docker images tagged with '$imageTag'" -ForegroundColor DarkBlue
+        Write-Host "BuildDockers 03A: Building All Docker images tagged with '$imageTag'" -ForegroundColor DarkBlue
         docker-compose -p .. -f $pathFileCompose build      
         # docker-compose -p .. -f ../docker-compose.yml build      
     }else{
 
         foreach ($service in $servicesToBuild) {
-            Write-Host "BuildDockers 05B: Building Docker image '$service' tagged with '$imageTag'" -ForegroundColor DarkBlue
+            Write-Host "BuildDockers 03B: Building Docker image '$service' tagged with '$imageTag'" -ForegroundColor DarkBlue
             # docker-compose -p .. -f ../docker-compose.yml build $service
             docker-compose -p .. -f $pathFileCompose build $service
         }

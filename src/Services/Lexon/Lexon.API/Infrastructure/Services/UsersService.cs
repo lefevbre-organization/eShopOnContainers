@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -354,6 +355,13 @@ namespace Lexon.Infrastructure.Services
             try
             {
                 var lexonFile = await GetFileDataByTypeActuation(fileMail);
+                lexonFile.fileName = RemoveProblematicChars(lexonFile.fileName);
+                var name = Path.GetFileNameWithoutExtension(lexonFile.fileName);
+  
+                name = string.Concat(name.Split(Path.GetInvalidFileNameChars()));
+                name = string.Concat(name.Split(Path.GetInvalidPathChars()));
+                var maxlenght = name.Length > 55 ? 55 : name.Length -1;
+                lexonFile.fileName = $"{name.Substring(0, maxlenght)}{Path.GetExtension(lexonFile.fileName)}";
 
                 var json = JsonConvert.SerializeObject(lexonFile);
                 byte[] buffer = Encoding.UTF8.GetBytes(json);

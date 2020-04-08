@@ -9,7 +9,7 @@ import {
   Count,
   QuickToolbar,
   Table,
-  ToolbarSettingsModel
+  ToolbarSettingsModel,
 } from '@syncfusion/ej2-react-richtexteditor';
 import i18n from 'i18next';
 import { L10n } from '@syncfusion/ej2-base';
@@ -46,7 +46,7 @@ const items = [
   'FullScreen',
   '|',
   'Undo',
-  'Redo'
+  'Redo',
 ];
 
 L10n.load({
@@ -177,14 +177,14 @@ L10n.load({
       plainText: 'Texto sin formato',
       cleanFormat: 'Limpiar',
       keepFormat: 'Mantener',
-      paragraph: 'Párrafo'
-    }
-  }
+      paragraph: 'Párrafo',
+    },
+  },
 });
 
 //RichTextEditor ToolbarSettings
 const toolbarSettings = {
-  items: items
+  items: items,
 };
 
 class ComposeMessageEditor extends React.Component {
@@ -207,14 +207,14 @@ class ComposeMessageEditor extends React.Component {
       <Fragment>
         <RichTextEditorComponent
           id='toolsRTE_2'
-          ref={ref => (this.refEditor = ref)}
+          ref={(ref) => (this.refEditor = ref)}
           showCharCount={false}
           locale={'es-ES'}
-          insertImageSettings={{ saveFormat: 'Base64' }}
+          insertImageSettings={{ saveFormat: 'Blob' }}
           toolbarSettings={toolbarSettings}
           value={defaultValue}
           iframe={true}
-          change={content => {
+          change={(content) => {
             onChange && onChange(content.value);
           }}>
           <Inject
@@ -225,7 +225,7 @@ class ComposeMessageEditor extends React.Component {
               HtmlEditor,
               Count,
               QuickToolbar,
-              Table
+              Table,
             ]}
           />
         </RichTextEditorComponent>
