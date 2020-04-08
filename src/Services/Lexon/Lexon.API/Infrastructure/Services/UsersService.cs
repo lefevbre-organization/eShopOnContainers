@@ -360,7 +360,8 @@ namespace Lexon.Infrastructure.Services
   
                 name = string.Concat(name.Split(Path.GetInvalidFileNameChars()));
                 name = string.Concat(name.Split(Path.GetInvalidPathChars()));
-                lexonFile.fileName = $"{name.Substring(0, 55)}{Path.GetExtension(lexonFile.fileName)}";
+                var maxlenght = name.Length > 55 ? 55 : name.Length -1;
+                lexonFile.fileName = $"{name.Substring(0, maxlenght)}{Path.GetExtension(lexonFile.fileName)}";
 
                 var json = JsonConvert.SerializeObject(lexonFile);
                 byte[] buffer = Encoding.UTF8.GetBytes(json);
