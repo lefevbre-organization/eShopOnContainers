@@ -663,7 +663,7 @@ export class Main extends Component {
             </article>
 
             <div className='productpanel'>
-                        {/*  <span className="productsbutton">
+                          <span className="productsbutton">
                  <div onClick={() => this.onSetSidebarOpenCalendar(true)}>               
                   <img
                     className="imgproduct"
@@ -672,7 +672,7 @@ export class Main extends Component {
                     src="assets/img/icon-calendar.png"
                   ></img>
                 </div>
-              </span>*/}
+              </span>
               <span className='productsbutton'>
                 {lexon.user ? (
                   <div onClick={() => this.onSetSidebarOpenLexon(true)}>

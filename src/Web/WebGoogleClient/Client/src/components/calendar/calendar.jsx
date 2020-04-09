@@ -58,6 +58,8 @@ import {
 //import './schedule-component.css';
 import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
 
+import { getCalendarList, getEventList } from '../../api/index';
+
 
 
 
@@ -88,7 +90,8 @@ export class Calendar extends Component {
             },
             sidebarComponent: (
                 <img border='0' alt='Lefebvre' src='assets/img/lexon-fake.png'></img>
-            )
+            ),
+            Calendars: []
         };
 
         this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
@@ -108,19 +111,21 @@ export class Calendar extends Component {
 
         //super(...arguments);
         this.calendarId = '5105trob9dasha31vuqek6qgp0@group.calendar.google.com';
-        this.publicKey = 'AIzaSyD76zjMDsL_jkenM5AAnNsORypS1Icuqxg';
+        this.publicKey = 'AIzaSyBeFMkCiP0Ld2ExOsvAhksK0AsRqtmD1XQ';
         //AIzaSyBeFMkCiP0Ld2ExOsvAhksK0AsRqtmD1XQ
-        this.dataManger = new DataManager({
-            url: 'https://www.googleapis.com/calendar/v3/calendars/' + this.calendarId + '/events?key=' + this.publicKey,
-            adaptor: new WebApiAdaptor,
-            crossDomain: true
-        });
+        //this.dataManger = new DataManager({
+        //    url: 'https://www.googleapis.com/calendar/v3/calendars/' + this.calendarId + '/events?key=' + this.publicKey,
+        //    adaptor: new WebApiAdaptor,
+        //    crossDomain: true
+        //});
+
+       
+           
     }
 
 
     onDataBinding(e) {
-      
-        let items = e.result.items;
+        let items = this.dataManger.result.items;
         let scheduleData = [];
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
@@ -291,6 +296,30 @@ export class Calendar extends Component {
         /* Label list is fetched from here 
         so that we can declare Routes by labelId 
         before rendering anything else */
+
+        getCalendarList()
+            .then(result => {
+               
+               //this.setState({
+               //   Calendars: result,                        
+               //});
+                var Calendars = result.items.map(function (calendar) {
+                    console.log(calendar.summary);
+                });
+               
+            })
+            .catch(error => {
+                console.log('error ->', error);
+            });
+
+        getEventList('alberto.valverde.escribano@gmail.com')
+            .then(result => {
+                this.dataManger = result;
+            })
+            .catch(error => {
+                console.log('error ->', error);
+            });
+       
 
         this.getLabelList();
 
@@ -665,7 +694,7 @@ export class Calendar extends Component {
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
                                             <ScheduleComponent ref={schedule => this.scheduleObj = schedule} width='100%'
-                                                height='650px' selectedDate={new Date(2018, 10, 14)} 
+                                                height='650px' 
                                                 eventSettings={{ dataSource: this.dataManger }} dataBinding={this.onDataBinding.bind(this)}>
                                                 <ViewsDirective>
                                                     <ViewDirective option='Day' />
