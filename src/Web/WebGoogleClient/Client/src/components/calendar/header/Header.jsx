@@ -79,7 +79,8 @@ export class Header extends PureComponent {
   }
 
   render() {
-    const userInfo = this.props.googleUser.Rt;
+      //const userInfo = this.props.googleUser.Rt;
+    const userInfo = this.props.googleUser.Qt;
     const email = userInfo.Au;
     const fullName = userInfo.Ad;
     const picUrl = userInfo.kL;

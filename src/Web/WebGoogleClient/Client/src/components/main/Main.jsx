@@ -129,7 +129,7 @@ export class Main extends Component {
           bbdd: this.props.lexon.bbdd,
           idCompany: this.props.lexon.idCompany,
           provider: this.props.lexon.provider,
-          account: googleUser.Rt.Au
+          account: googleUser.Qt.Au
         }
       })
     );
@@ -280,7 +280,7 @@ export class Main extends Component {
     const { userId, idCaseFile, bbdd, mailContacts } = this.props.lexon;
     const { googleUser } = this.props;
 
-    if (!googleUser || !googleUser.Rt) {
+    if (!googleUser || !googleUser.Qt) {
       this.setState({
         googleDown: true,
         showNotification: true,
@@ -300,7 +300,7 @@ export class Main extends Component {
       idEmail = base64.decode(idEmail);
     }
 
-    const email = googleUser.Rt.Au;
+    const email = googleUser.Qt.Au;
 
     if (userId !== null && email !== null) {
       const user = await getUser(userId);

@@ -1,20 +1,20 @@
-import { GET_LABELS, SELECT_LABEL } from "./sidebar.actions";
+import { GET_CALENDARS, SELECT_CALENDAR } from "./sidebar.actions";
 
-const defaultLabelState = {
-  labels: []
+const defaultCalendarState = {
+  calendars: []
 };
 
-export const labelsResult = (state = defaultLabelState, action) => {
+export const calendarsResult = (state = defaultCalendarState, action) => {
   switch (action.type) {
-    case GET_LABELS:
+    case GET_CALENDARS:
       return {
         ...state,
-        labels: action.payload
+        calendars: action.payload
       };
-    case SELECT_LABEL:
+    case SELECT_CALENDAR:
       return {
         ...state,
-        labels: state.labels.map(el => {
+        calendars: state.calendars.map(el => {
           if (el.id === action.payload) {
             return {
               ...el,

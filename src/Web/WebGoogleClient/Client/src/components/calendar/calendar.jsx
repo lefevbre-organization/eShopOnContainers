@@ -21,7 +21,7 @@ import './calendar.scss';
 import MessageList from '../content/message-list/MessageList';
 import MessageContent from '../content/message-list/message-content/MessageContent';
 import { Route, Switch, withRouter } from 'react-router-dom';
-import { getLabels } from '../sidebar/sidebar.actions';
+import { getCalendars } from './sidebar/sidebar.actions';
 import ComposeMessage from '../compose-message/ComposeMessage';
 import {
     getLabelMessages,
@@ -58,7 +58,7 @@ import {
 //import './schedule-component.css';
 import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
 
-import { getCalendarList, getEventList } from '../../api/index';
+import {  getEventList } from '../../api/index';
 
 
 
@@ -67,7 +67,7 @@ export class Calendar extends Component {
     constructor(props) {
         super(props);
 
-        this.getLabelList = this.getLabelList.bind(this);
+        this.getCalendarList = this.getCalendarList.bind(this);
        
         this.addInitialPageToken = this.addInitialPageToken.bind(this);
         this.onSignout = this.onSignout.bind(this);
@@ -178,7 +178,7 @@ export class Calendar extends Component {
                     bbdd: this.props.lexon.bbdd,
                     idCompany: this.props.lexon.idCompany,
                     provider: this.props.lexon.provider,
-                    account: googleUser.Rt.Au
+                    account: googleUser.Qt.Au
                 }
             })
         );
@@ -297,20 +297,20 @@ export class Calendar extends Component {
         so that we can declare Routes by labelId 
         before rendering anything else */
 
-        getCalendarList()
-            .then(result => {
+        //getCalendarList()
+        //    .then(result => {
                
-               //this.setState({
-               //   Calendars: result,                        
-               //});
-                var Calendars = result.items.map(function (calendar) {
-                    console.log(calendar.summary);
-                });
+        //       //this.setState({
+        //       //   Calendars: result,                        
+        //       //});
+        //        var Calendars = result.items.map(function (calendar) {
+        //            console.log(calendar.summary);
+        //        });
                
-            })
-            .catch(error => {
-                console.log('error ->', error);
-            });
+        //    })
+        //    .catch(error => {
+        //        console.log('error ->', error);
+        //    });
 
         getEventList('alberto.valverde.escribano@gmail.com')
             .then(result => {
@@ -321,7 +321,7 @@ export class Calendar extends Component {
             });
        
 
-        this.getLabelList();
+        this.getCalendarList();
 
         window.addEventListener('toggleClock', function (event) {
             alert(event.detail.name);
@@ -336,7 +336,7 @@ export class Calendar extends Component {
         const { userId, idCaseFile, bbdd, mailContacts } = this.props.lexon;
         const { googleUser } = this.props;
 
-        if (!googleUser || !googleUser.Rt) {
+        if (!googleUser || !googleUser.Qt) {
             this.setState({
                 googleDown: true,
                 showNotification: true,
@@ -356,7 +356,7 @@ export class Calendar extends Component {
             idEmail = base64.decode(idEmail);
         }
 
-        const email = googleUser.Rt.Au;
+        const email = googleUser.Qt.Au;
 
         if (userId !== null && email !== null) {
             const user = await getUser(userId);
@@ -460,10 +460,10 @@ export class Calendar extends Component {
             });
         }
 
-        const { labels } = this.props.labelsResult;
+        const { calendars } = this.props.calendarsResult;
         const { pathname } = this.props.location;
-        const selectedLabel = labels.find(el => el.selected);
-        const labelPathMatch = labels.find(
+        const selectedLabel = calendars.find(el => el.selected);
+        const labelPathMatch = calendars.find(
             el => el.id.toLowerCase() === pathname.slice(1)
         );
         if (!selectedLabel) {
@@ -478,15 +478,15 @@ export class Calendar extends Component {
     }
 
     refreshLabels() {
-        this.getLabelList();
+        this.getCalendarList();
         this.renderLabelRoutes();
     }
 
     loadLabelMessageSingle() {
-        this.getLabelList();
+        this.getCalendarList();
         this.renderLabelRoutes();
-        const { labels } = this.props.labelsResult;
-        const selectedLabel = labels.find(el => el.selected);
+        const { calendars } = this.props.calendarsResult;
+        const selectedLabel = calendars.find(el => el.selected);
         this.getLabelMessages({ labelIds: [selectedLabel.id] });
     }
 
@@ -523,8 +523,8 @@ export class Calendar extends Component {
         this.props.history.push(`/${label.id.toLowerCase()}`);
     }
 
-    getLabelList() {
-        this.props.getLabels();
+    getCalendarList() {
+        this.props.getCalendars();
     }
 
     getLabelMessages({ labelIds, q, pageToken }) {
@@ -617,7 +617,7 @@ export class Calendar extends Component {
         const { leftSideBar } = this.state;
         const { lexon } = this.props;
 
-        if (this.props.labelsResult.labels.length < 1) {
+        if (this.props.calendarsResult.calendars.length < 1) {
             return this.renderSpinner();
         }
 
@@ -678,9 +678,9 @@ export class Calendar extends Component {
                         <Sidebar
                             sideBarCollapsed={leftSideBar.collapsed}
                             sideBarToggle={this.toggleSideBar}
-                            getLabelList={this.getLabelList}
+                            getCalendarList={this.getCalendarList}
                             pathname={this.props.location.pathname}
-                            labelsResult={this.props.labelsResult}
+                            calendarResult={this.props.calendarsResult}
                             onLabelClick={this.loadLabelMessages}
                             onSidebarCloseClick={this.handleShowLeftSidebarClick}
                         />
@@ -831,7 +831,7 @@ export class Calendar extends Component {
 }
 
 const mapStateToProps = state => ({
-    labelsResult: state.labelsResult,
+    calendarsResult: state.calendarsResult,
     messagesResult: state.messagesResult,
     pageTokens: state.pageTokens,
     searchQuery: state.searchQuery,
@@ -842,7 +842,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch =>
     bindActionCreators(
         {
-            getLabels,
+            getCalendars,
             getLabelMessages,
             emptyLabelMessages,
             toggleSelected,
