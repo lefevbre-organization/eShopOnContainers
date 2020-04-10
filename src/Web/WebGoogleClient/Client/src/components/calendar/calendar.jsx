@@ -809,7 +809,7 @@ export class Calendar extends Component {
     render() {
         if (this.state.googleDown) {
             const { showNotification, messageNotification } = this.state;
-            const { token } = this.state.lexon;
+            const { token } = this.props.lexon;
             const baseUrl = window.URL_MF_GOOGLE.replace("/user", "");
 
             return (
