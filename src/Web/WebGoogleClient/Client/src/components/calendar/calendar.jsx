@@ -809,22 +809,22 @@ export class Calendar extends Component {
     render() {
         if (this.state.googleDown) {
             const { showNotification, messageNotification } = this.state;
-            const { token } = this.state.lexon;
-            const baseUrl = window.URL_MF_GOOGLE.replace("/user", "");
+            //const { token } = this.state.lexon;
+            //const baseUrl = window.URL_MF_GOOGLE.replace("/user", "");
 
-            return (
-                <div className='d-flex h-100 align-items-center justify-content-center'>
-                    <Notification
-                        initialModalState={showNotification}
-                        toggleNotification={() => {
-                            messageNotification === 'El mensaje no está en el servidor'
-                                ? ((token) ? window.open(`${baseUrl}/access/${token}/?prov=GO0`, "_self") : window.open(`${window.URL_MF_GOOGLE}/GO0${this.props.lexon.userId}`, '_self'))
-                                : this.onSignoutDisconnect();
-                        }}
-                        message={messageNotification}
-                    />
-                </div>
-            );
+            //return (
+            //    <div className='d-flex h-100 align-items-center justify-content-center'>
+            //        <Notification
+            //            initialModalState={showNotification}
+            //            toggleNotification={() => {
+            //                messageNotification === 'El mensaje no está en el servidor'
+            //                    ? ((token) ? window.open(`${baseUrl}/access/${token}/?prov=GO0`, "_self") : window.open(`${window.URL_MF_GOOGLE}/GO0${this.props.lexon.userId}`, '_self'))
+            //                    : this.onSignoutDisconnect();
+            //            }}
+            //            message={messageNotification}
+            //        />
+            //    </div>
+            //);
         }
         return this.renderInboxViewport();
     }
