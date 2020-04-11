@@ -343,11 +343,11 @@ export const batchModify = ({ ids, addLabelIds = [], removeLabelIds = [] }) =>
 /**
  * Load Google Calendar Events
  */
-export const getEventList = ( idCalendar ) =>
+export const getEventList = (idCalendar) =>
     new Promise((resolve, reject) => {
         window.gapi.client.calendar.events
             .list({
-                calendarId:  idCalendar ,
+                calendarId: idCalendar,
                 timeMin: (new Date()).toISOString(),
                 maxResults: 10,
                 singleEvents: true,

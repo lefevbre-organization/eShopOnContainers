@@ -40,9 +40,9 @@ export class Sidebar extends PureComponent {
         this.props.history.push("/compose");
     }
 
-    navigateToList(evt, labelId) {
-        const label = this.props.labelsResult.labels.find(el => el.id === labelId);
-        this.props.onLabelClick(label || { id: "" });
+    navigateToList(evt, calendarId) {
+        const calendar = this.props.calendarResult.calendars.find(el => el.id === calendarId);
+        this.props.onCalendarClick(calendar.id);
     }
 
     sidebarAction() {

@@ -72,6 +72,8 @@ export class Calendar extends Component {
         this.addInitialPageToken = this.addInitialPageToken.bind(this);
         this.onSignout = this.onSignout.bind(this);
         this.onSignoutDisconnect = this.onSignoutDisconnect.bind(this);
+
+        this.loadCalendarEvents = this.loadCalendarEvents.bind(this);
       
 
         this.state = {
@@ -109,23 +111,20 @@ export class Calendar extends Component {
         this.toggleSideBar = this.toggleSideBar.bind(this);
 
 
-        //super(...arguments);
-        this.calendarId = '5105trob9dasha31vuqek6qgp0@group.calendar.google.com';
-        this.publicKey = 'AIzaSyBeFMkCiP0Ld2ExOsvAhksK0AsRqtmD1XQ';
-        //AIzaSyBeFMkCiP0Ld2ExOsvAhksK0AsRqtmD1XQ
-        //this.dataManger = new DataManager({
-        //    url: 'https://www.googleapis.com/calendar/v3/calendars/' + this.calendarId + '/events?key=' + this.publicKey,
-        //    adaptor: new WebApiAdaptor,
-        //    crossDomain: true
-        //});
+        this.dataManger = new DataManager();
+        
 
-       
+        
            
     }
 
 
     onDataBinding(e) {
-        let items = this.dataManger.result.items;
+        //let items = this.dataManger.result.items;
+        let items = this.dataManger.items;
+
+        //let items = e.result.items;
+
         let scheduleData = [];
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
@@ -148,8 +147,14 @@ export class Calendar extends Component {
             }
         }
         e.result = scheduleData;
-    }
+       
+        //this.scheduleObj.DataSource.Reload(); // reload the scheduler Hope there is something I can write to handle the reload or other way
+       // this.scheduleObj.Refresh();
 
+        //this.eventSettings.dataSource = this.events  
+        //let scheduleObj = document.getElementById("Schedule"); 
+        //scheduleObj.Refresh();
+    }
 
     toggleSideBar() {
         const toggleCollapsed = !this.state.leftSideBar.collapsed;
@@ -314,7 +319,7 @@ export class Calendar extends Component {
 
         getEventList('alberto.valverde.escribano@gmail.com')
             .then(result => {
-                this.dataManger = result;
+                this.dataManger = result.result;
             })
             .catch(error => {
                 console.log('error ->', error);
@@ -504,24 +509,44 @@ export class Calendar extends Component {
         this.props.history.push(token);
     }
 
-    loadLabelMessages(label) {
-        const currentSearchQuery = this.props.searchQuery;
-        this.props.clearPageTokens();
-        this.props.selectLabel(label.id);
+    //loadLabelMessages(label) {
+    //    const currentSearchQuery = this.props.searchQuery;
+    //    this.props.clearPageTokens();
+    //    this.props.selectLabel(label.id);
 
-        const newPathToPush = `/${label.id.toLowerCase()}`;
+    //    const newPathToPush = `/${label.id.toLowerCase()}`;
 
-        if (currentSearchQuery && currentSearchQuery !== '') {
-            this.props.setSearchQuery('');
-            const { pathname } = this.props.location;
-            if (newPathToPush === pathname) {
-                this.getLabelMessages({ labelIds: [label.id] });
-                return;
-            }
-        }
+    //    if (currentSearchQuery && currentSearchQuery !== '') {
+    //        this.props.setSearchQuery('');
+    //        const { pathname } = this.props.location;
+    //        if (newPathToPush === pathname) {
+    //            this.getLabelMessages({ labelIds: [label.id] });
+    //            return;
+    //        }
+    //    }
 
-        this.props.history.push(`/${label.id.toLowerCase()}`);
-    }
+    //    this.props.history.push(`/${label.id.toLowerCase()}`);
+    //}
+
+    
+    loadCalendarEvents(calendar) {
+        this.scheduleObj.showSpinner();
+        getEventList(calendar)
+            .then(result => {
+                this.dataManger = result.result;
+                this.onDataBinding(this.dataManger);
+                this.scheduleObj.refreshEvents();
+                //this.scheduleObj.render();
+               // scheduleObj.DataSource.Reload(); // reload the scheduler Hope there is something I can write to handle the reload or other way
+                //scheduleObj.Refresh();
+            })
+            .catch(error => {
+                console.log('error ->', error);
+            }) 
+        //this.scheduleObj.hideSpinner();
+      
+    }  
+
 
     getCalendarList() {
         this.props.getCalendars();
@@ -681,7 +706,7 @@ export class Calendar extends Component {
                             getCalendarList={this.getCalendarList}
                             pathname={this.props.location.pathname}
                             calendarResult={this.props.calendarsResult}
-                            onLabelClick={this.loadLabelMessages}
+                            onCalendarClick={this.loadCalendarEvents}
                             onSidebarCloseClick={this.handleShowLeftSidebarClick}
                         />
                         <article className='d-flex flex-column position-relative'>
@@ -694,6 +719,7 @@ export class Calendar extends Component {
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
                                             <ScheduleComponent ref={schedule => this.scheduleObj = schedule} width='100%'
+                                               
                                                 height='650px' 
                                                 eventSettings={{ dataSource: this.dataManger }} dataBinding={this.onDataBinding.bind(this)}>
                                                 <ViewsDirective>
