@@ -81,7 +81,8 @@
   },
   "calendar-sidebar": {
     "compose": "Nuevo Evento",
-    "mycalendars": "Mis calendarios"
+    "mycalendars": "Mis calendarios",
+    "othercalendars": "Otros calendarios"
   }
 
 }

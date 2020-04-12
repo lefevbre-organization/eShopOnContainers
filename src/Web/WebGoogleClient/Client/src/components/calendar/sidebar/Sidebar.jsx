@@ -31,13 +31,13 @@ export class Sidebar extends PureComponent {
 
         //this.renderLabels = this.renderLabels.bind(this);
         this.navigateToList = this.navigateToList.bind(this);
-        this.composeClick = this.composeClick.bind(this);
+        this.newEventClick = this.newEventClick.bind(this);
         this.sidebarAction = this.sidebarAction.bind(this);
     }
 
    
-    composeClick() {
-        this.props.history.push("/compose");
+    newEventClick() {
+        //this.props.history.push("/compose");
     }
 
     navigateToList(evt, calendarId) {
@@ -59,12 +59,12 @@ export class Sidebar extends PureComponent {
             return acc;
         }, []);
 
-        const labelGroups = groupBy(calendars, "type");
+        const labelGroups = groupBy(calendars, "accessRole");
         var visibleLabels = [];
         var sortedLabels = [];
 
-        if (labelGroups.user != null) {
-            visibleLabels = labelGroups.user.filter(
+        if (labelGroups.owner != null) {
+            visibleLabels = labelGroups.owner.filter(
                 el =>
                     //el.labelListVisibility === "labelShow" ||
                     //el.labelListVisibility === "labelShowIfUnread" ||
@@ -75,32 +75,23 @@ export class Sidebar extends PureComponent {
 
         return (
             <React.Fragment>
-                {this.renderCalendarView()}
-                {this.renderCalendars(labelGroups.undefined)}
+                {this.renderMyCalendarView(labelGroups.owner)}
+                {this.renderOtherCalendars(labelGroups.reader)}
             </React.Fragment>
         );
     }
 
-    renderCalendarView() { 
-        return (
-            <React.Fragment>
-                <div className='calendar-control-section' style={{ overflow: 'auto' }, { innerWidth: '70%' }}>
-                    <CalendarComponent change={this.onchange} ></CalendarComponent>                   
-                </div>              
-            </React.Fragment>
-        );
-    }
-
-    renderCalendars(calendars) {
+    renderMyCalendarView(calendarsOwner) { 
         const { t } = this.props;
-
         return (
             <React.Fragment>
-               
+                <div className='calendar-control-section' style={{ overflow: 'auto' }, { innerWidth: '40%' }, { Height: '40%' }}>
+                    <CalendarComponent change={this.onchange} ></CalendarComponent>                   
+                </div>  
                 <li key="olders-nav-title" className="pl-2 nav-title">
                     {t("calendar-sidebar.mycalendars")}
                 </li>
-                {calendars.map(el => {
+                {calendarsOwner.map(el => {
                     const iconProps = {
                         icon: faCalendar,
                         color: "#001978",
@@ -112,7 +103,41 @@ export class Sidebar extends PureComponent {
                             onClick={this.navigateToList}
                             name={el.summary}
                             id={el.id}
-                            messagesUnread={el.messagesUnread}
+                            accessRole={el.accessRole}
+                            iconProps={iconProps}
+                            selected={el.selected}
+                        />
+                    );
+                })}
+                
+            </React.Fragment>
+
+
+        );
+    }
+
+    renderOtherCalendars(calendarsOthers) {
+        const { t } = this.props;
+
+        return (
+            <React.Fragment>
+               
+                <li key="olders-nav-title" className="pl-2 nav-title">
+                    {t("calendar-sidebar.othercalendars")}
+                </li>
+                {calendarsOthers.map(el => {
+                    const iconProps = {
+                        icon: faCalendar,
+                        color: "#001978",
+                        size: "lg"
+                    };
+                    return (
+                        <CalendarItem
+                            key={el.id + "_label"}
+                            onClick={this.navigateToList}
+                            name={el.summary}
+                            id={el.id}
+                            accessRole={el.accessRole}
                             iconProps={iconProps}
                             selected={el.selected}
                         />

@@ -34,7 +34,7 @@ import {
     deleteMessage
 } from '../content/message-list/actions/message-list.actions';
 
-import { selectLabel } from '../sidebar/sidebar.actions';
+import { selectCalendar } from './sidebar/sidebar.actions';
 import { signOut } from '../../api/authentication';
 import { signOutDisconnect } from '../../api/authentication';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -473,11 +473,11 @@ export class Calendar extends Component {
         );
         if (!selectedLabel) {
             if (labelPathMatch && this.props.searchQuery === '') {
-                this.props.selectLabel(labelPathMatch.id);
+                this.props.selectCalendar(labelPathMatch.id);
             }
         } else {
             if (labelPathMatch && selectedLabel.id !== labelPathMatch.id) {
-                this.props.selectLabel(labelPathMatch.id);
+                this.props.selectCalendar(labelPathMatch.id);
             }
         }
     }
@@ -544,6 +544,22 @@ export class Calendar extends Component {
                 console.log('error ->', error);
             }) 
         //this.scheduleObj.hideSpinner();
+        this.props.selectCalendar(calendar);
+        //const { calendars } = this.props.calendarsResult;
+        //const { pathname } = this.props.location;
+        //const selectedLabel = calendars.find(el => el.selected);
+        //const labelPathMatch = calendars.find(
+        //    el => el.id.toLowerCase() === pathname.slice(1)
+        //);
+        //if (!selectedLabel) {
+        //    if (labelPathMatch && this.props.searchQuery === '') {
+        //        this.props.selectCalendar(labelPathMatch.id);
+        //    }
+        //} else {
+        //    if (labelPathMatch && selectedLabel.id !== labelPathMatch.id) {
+        //        this.props.selectCalendar(labelPathMatch.id);
+        //    }
+        //}
       
     }  
 
@@ -719,7 +735,7 @@ export class Calendar extends Component {
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
                                             <ScheduleComponent ref={schedule => this.scheduleObj = schedule} width='100%'
-                                               
+                                                currentView="Month"
                                                 height='650px' 
                                                 eventSettings={{ dataSource: this.dataManger }} dataBinding={this.onDataBinding.bind(this)}>
                                                 <ViewsDirective>
@@ -872,7 +888,7 @@ const mapDispatchToProps = dispatch =>
             getLabelMessages,
             emptyLabelMessages,
             toggleSelected,
-            selectLabel,
+            selectCalendar,
             setPageTokens,
             addInitialPageToken,
             clearPageTokens,

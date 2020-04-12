@@ -1,17 +1,15 @@
 import React, { PureComponent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export class LabelItem extends PureComponent {
+export class CalendarItem extends PureComponent {
 
   constructor(props) {
     super(props);
-
     this.onClick = this.onClick.bind(this);
 
   }
 
-  onClick(evt) {
-    window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
+  onClick(evt) {   
     this.props.onClick(evt, this.props.id);
   }
 
@@ -39,4 +37,4 @@ export class LabelItem extends PureComponent {
   }
 }
 
-export default LabelItem;
+export default CalendarItem;

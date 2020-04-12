@@ -348,8 +348,8 @@ export const getEventList = (idCalendar) =>
         window.gapi.client.calendar.events
             .list({
                 calendarId: idCalendar,
-                timeMin: (new Date()).toISOString(),
-                maxResults: 10,
+                //timeMin: (new Date()).toISOString(),
+                //maxResults: 10,
                 singleEvents: true,
                 orderBy: 'startTime',
             })
