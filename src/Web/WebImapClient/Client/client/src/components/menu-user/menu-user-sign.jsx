@@ -196,7 +196,7 @@ const UserSign = props => {
           id='toolsRTE'
           height={250}
           showCharCount={false}
-          locale={'es-ES'}
+          locale={i18n.language.startsWith('es') ? 'es-ES' : i18n.language}
           toolbarSettings={toolbarSettings}
           insertImageSettings={{ saveFormat: 'Base64' }}
           value={defaultValue}

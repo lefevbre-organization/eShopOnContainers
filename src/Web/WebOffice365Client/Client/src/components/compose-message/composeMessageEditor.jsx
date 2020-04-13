@@ -194,7 +194,7 @@ const ComposeMessageEditor = props => {
       <RichTextEditorComponent
         id='toolsRTE_2'
         showCharCount={false}
-        locale={'es-ES'}
+        locale={i18n.language.startsWith('es') ? 'es-ES' : i18n.language}
         insertImageSettings={{ saveFormat: 'Base64' }}
         toolbarSettings={toolbarSettings}
         value={defaultValue}
