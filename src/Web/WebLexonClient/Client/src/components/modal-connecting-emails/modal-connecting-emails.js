@@ -206,10 +206,7 @@ class ModalConnectingEmails extends Component {
       sc = await this.saveClassifications();
     }
 
-    if (
-      sc &&
-      (step1Data.copyDocuments === true || step1Data.saveDocuments === true)
-    ) {
+    if (step1Data.copyDocuments === true || step1Data.saveDocuments === true) {
       // Save email as eml format
       for (let i = 0; i < selectedMessages.length; i++) {
         const raw = Base64.encode(selectedMessages[i].raw, false);
