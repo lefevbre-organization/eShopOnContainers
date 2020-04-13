@@ -171,7 +171,7 @@ class ModalConnectingEmails extends Component {
   onSave() {
     if (this.state.step === 2) {
       this.onSaveStep2();
-    } else if (this.state.step === 4) {
+    } else if (this.state.step === 4 || this.state.step === 3) {
       this.onSaveStep3();
     }
   }
@@ -202,9 +202,9 @@ class ModalConnectingEmails extends Component {
     this.closeDialog();
     let sc = null;
 
-    sc = await this.saveClassifications();
-    console.log('SC');
-    console.log(sc);
+    if (step1Data.actuation === true) {
+      sc = await this.saveClassifications();
+    }
 
     if (
       sc &&
@@ -361,14 +361,24 @@ class ModalConnectingEmails extends Component {
               }}>
               {i18n.t('classify-emails.back')}
             </Button>
-            <Button
-              disabled={this.save3Disabled()}
-              bsPrefix='btn btn-primary'
-              onClick={() => {
-                this.nextStep();
-              }}>
-              {i18n.t('classify-emails.continue')}
-            </Button>
+            {step1Data.actuation === true &&
+              <Button
+                disabled={this.save3Disabled()}
+                bsPrefix='btn btn-primary'
+                onClick={() => {
+                  this.nextStep();
+                }}>
+                {i18n.t('classify-emails.continue')}
+              </Button>}
+            {step1Data.actuation === false &&
+              <Button
+                disabled={this.save3Disabled()}
+                bsPrefix='btn btn-primary'
+                onClick={() => {
+                  this.onSave();
+                }}>
+                {i18n.t('classify-emails.continue')}
+              </Button>}
           </Fragment>
         );
       case 4:
@@ -432,6 +442,7 @@ class ModalConnectingEmails extends Component {
                 alt='Lex-On'
                 src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
               <span>{i18n.t('modal-conecting-emails.save-copy')}</span>
+              <span>{step}</span>
             </h5>
           </Modal.Header>
           <Modal.Body className='mimodal'>
