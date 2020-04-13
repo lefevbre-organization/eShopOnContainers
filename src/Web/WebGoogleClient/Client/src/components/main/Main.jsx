@@ -129,7 +129,7 @@ export class Main extends Component {
           bbdd: this.props.lexon.bbdd,
           idCompany: this.props.lexon.idCompany,
           provider: this.props.lexon.provider,
-          account: googleUser.Qt.Au
+          account: googleUser.Qt.zu
         }
       })
     );
@@ -300,7 +300,7 @@ export class Main extends Component {
       idEmail = base64.decode(idEmail);
     }
 
-    const email = googleUser.Qt.Au;
+    const email = googleUser.Qt.zu;
 
     if (userId !== null && email !== null) {
       const user = await getUser(userId);
