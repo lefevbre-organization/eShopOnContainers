@@ -24,6 +24,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             intervening = entity.intervening;
             entityType = entity.entityType;
             code = entity.code;
+            name = entity.name;
             description = entity.description;
             email = entity.email;
         }
@@ -34,11 +35,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             idFolder = entity.idFolder;
             idRelated = entity.idFolder;
             idType = (short?)LexonAdjunctionType.folders;
-            intervening = null;
             entityType = Enum.GetName(typeof(LexonAdjunctionType), (short?)LexonAdjunctionType.folders);
-            code = null;
-            description = null;
-            email = null;
         }
 
         public List<LexNestedEntity> subChild { get; set; }

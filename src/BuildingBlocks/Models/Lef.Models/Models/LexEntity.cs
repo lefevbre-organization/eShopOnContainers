@@ -28,6 +28,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         /// el codigo o nombre que identifica a la entidad
         /// </summary>
         public string code { get; set; }
+        public string name { get; set; }
 
         //public string name { get; set; }
 
