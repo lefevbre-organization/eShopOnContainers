@@ -9,7 +9,7 @@ import {
   Count,
   QuickToolbar,
   Table,
-  ToolbarSettingsModel
+  ToolbarSettingsModel,
 } from '@syncfusion/ej2-react-richtexteditor';
 import i18n from 'i18next';
 import { L10n } from '@syncfusion/ej2-base';
@@ -46,7 +46,7 @@ const items = [
   'FullScreen',
   '|',
   'Undo',
-  'Redo'
+  'Redo',
 ];
 
 L10n.load({
@@ -177,28 +177,28 @@ L10n.load({
       plainText: 'Texto sin formato',
       cleanFormat: 'Limpiar',
       keepFormat: 'Mantener',
-      paragraph: 'Párrafo'
-    }
-  }
+      paragraph: 'Párrafo',
+    },
+  },
 });
 
 //RichTextEditor ToolbarSettings
 const toolbarSettings = {
-  items: items
+  items: items,
 };
 
-const UserSign = props => {
+const UserSign = (props) => {
   const { onChange, defaultValue = '' } = props;
   return (
     <RichTextEditorComponent
       id='toolsRTE'
       height={250}
       showCharCount={false}
-      locale={'es-ES'}
+      locale={i18n.language.startsWith('es') ? 'es-ES' : i18n.language}
       toolbarSettings={toolbarSettings}
       insertImageSettings={{ saveFormat: 'Base64' }}
       value={defaultValue}
-      change={content => {
+      change={(content) => {
         onChange && onChange(content.value);
       }}>
       <Inject
@@ -209,7 +209,7 @@ const UserSign = props => {
           HtmlEditor,
           Count,
           QuickToolbar,
-          Table
+          Table,
         ]}
       />
     </RichTextEditorComponent>

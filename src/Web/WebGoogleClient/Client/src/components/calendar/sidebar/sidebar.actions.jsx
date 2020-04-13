@@ -1,22 +1,22 @@
-import { getLabelList } from "../../api";
+import { getCalendarList } from "../../../api";
 //import { setSearchQuery } from "../content/message-list/actions/message-list.actions";
 
-export const GET_LABELS = "GET_LABELS";
-export const SELECT_LABEL = "SELECT_LABEL";
+export const GET_CALENDARS = "GET_CALENDARS";
+export const SELECT_CALENDAR = "SELECT_CALENDAR";
 
-export const getLabels = () => dispatch => {
-  getLabelList().then(labelList => {
+export const getCalendars = () => dispatch => {
+  getCalendarList().then(calendarList => {
     dispatch({
-      type: GET_LABELS,
-      payload: labelList
+      type: GET_CALENDARS,
+      payload: calendarList.items
     });
   });
 };
 
-export const selectLabel = labelId => dispatch => {
+export const selectCalendar = calendarId => dispatch => {
   //dispatch(setSearchQuery(""));
   dispatch({
-    type: SELECT_LABEL,
-    payload: labelId
+    type: SELECT_CALENDAR,
+    payload: calendarId
   });
 };

@@ -89,8 +89,6 @@ export class AttachDocumentsStep3 extends React.Component {
             }
           );
         }
-
-
       });
     }
 
@@ -127,7 +125,7 @@ export class AttachDocumentsStep3 extends React.Component {
         ? node.subChild.map(sc => {
           return {
             origin: i18n.t(`classification.${this.props.entity.idType}`),
-            name: sc.code || sc.description || '',
+            name: sc.name || sc.code || sc.description || '',
             type: sc.idType === 13 ? 'dir' : 'file',
             modified: '26/09/2019 16:57',
             id: sc.idRelated
@@ -226,8 +224,12 @@ export class AttachDocumentsStep3 extends React.Component {
   isFileSelected(data) {
     const { id } = data
 
-    const fd = this.props.files.find(item => item.idRelated === id);
-    return fd !== undefined
+    if (this.props.files) {
+      const fd = this.props.files.find(item => item.idRelated === id);
+      return fd !== undefined
+    } else {
+      return false
+    }
   }
 
   renderOrigin(props) {
@@ -540,7 +542,7 @@ function normalizeNodes(nodes, preselectId, removeFiles) {
       id: nodes[i].idRelated,
       expanded: true,
       selected: preselectId == nodes[i].idRelated,
-      name: nodes[i].code,
+      name: nodes[i].name || nodes[i].code,
       imageUrl: nodes[i].idType === 13 ? `${window.URL_MF_LEXON_BASE}/assets/img/icon-folder.png` : `${window.URL_MF_LEXON_BASE}/assets/img/icon-document.svg`
     };
     if (n.subChild.length > 0) {
@@ -561,7 +563,7 @@ function getChilds(tree, id) {
     children[i].type = children[i].idType === 13 ? 'dir' : 'file';
     children[i].modified = '26/09/2018 16:57';
   }
-  return tree.subChilds;
+  return root.subChild;
 }
 
 function findNode(node, id) {

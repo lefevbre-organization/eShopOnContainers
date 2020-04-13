@@ -43,6 +43,19 @@
 //     box-shadow: none;
 // }
 
+/*@media all and (min-width: (540px)) {
+    nav.sidebar-open {
+        min-width: 245px !important;
+        flex: 1 1;
+    }
+}*/
+
+.e-calendar, .e-bigger.e-small .e-calendar {
+    max-width: none !important;
+    min-width: unset !important;    
+    padding: 0;
+}
+
 
 .logo-ext {
     height: 22px;

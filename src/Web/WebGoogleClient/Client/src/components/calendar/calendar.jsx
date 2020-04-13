@@ -21,7 +21,7 @@ import './calendar.scss';
 import MessageList from '../content/message-list/MessageList';
 import MessageContent from '../content/message-list/message-content/MessageContent';
 import { Route, Switch, withRouter } from 'react-router-dom';
-import { getLabels } from '../sidebar/sidebar.actions';
+import { getCalendars } from './sidebar/sidebar.actions';
 import ComposeMessage from '../compose-message/ComposeMessage';
 import {
     getLabelMessages,
@@ -34,7 +34,7 @@ import {
     deleteMessage
 } from '../content/message-list/actions/message-list.actions';
 
-import { selectLabel } from '../sidebar/sidebar.actions';
+import { selectCalendar } from './sidebar/sidebar.actions';
 import { signOut } from '../../api/authentication';
 import { signOutDisconnect } from '../../api/authentication';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -50,13 +50,13 @@ import {
 } from '../../api/accounts';
 import { PROVIDER } from '../../constants';
 import { getMessageListWithRFC } from '../../api/';
-
 import {
     ScheduleComponent, ViewsDirective, ViewDirective,
     Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, DragEventArgs
 } from '@syncfusion/ej2-react-schedule';
 //import './schedule-component.css';
 import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
+import {  getEventList } from '../../api/index';
 
 
 
@@ -65,11 +65,13 @@ export class Calendar extends Component {
     constructor(props) {
         super(props);
 
-        this.getLabelList = this.getLabelList.bind(this);
+        this.getCalendarList = this.getCalendarList.bind(this);
        
         this.addInitialPageToken = this.addInitialPageToken.bind(this);
         this.onSignout = this.onSignout.bind(this);
         this.onSignoutDisconnect = this.onSignoutDisconnect.bind(this);
+
+        this.loadCalendarEvents = this.loadCalendarEvents.bind(this);
       
 
         this.state = {
@@ -88,7 +90,8 @@ export class Calendar extends Component {
             },
             sidebarComponent: (
                 <img border='0' alt='Lefebvre' src='assets/img/lexon-fake.png'></img>
-            )
+            ),
+            Calendars: []
         };
 
         this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
@@ -106,21 +109,16 @@ export class Calendar extends Component {
         this.toggleSideBar = this.toggleSideBar.bind(this);
 
 
-        //super(...arguments);
-        this.calendarId = '5105trob9dasha31vuqek6qgp0@group.calendar.google.com';
-        this.publicKey = 'AIzaSyD76zjMDsL_jkenM5AAnNsORypS1Icuqxg';
-        //AIzaSyBeFMkCiP0Ld2ExOsvAhksK0AsRqtmD1XQ
-        this.dataManger = new DataManager({
-            url: 'https://www.googleapis.com/calendar/v3/calendars/' + this.calendarId + '/events?key=' + this.publicKey,
-            adaptor: new WebApiAdaptor,
-            crossDomain: true
-        });
+        this.dataManger = new DataManager();
+        
+
+        
+           
     }
 
 
-    onDataBinding(e) {
-      
-        let items = e.result.items;
+    onDataBinding(e) {      
+        let items = this.dataManger.items;
         let scheduleData = [];
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
@@ -144,7 +142,6 @@ export class Calendar extends Component {
         }
         e.result = scheduleData;
     }
-
 
     toggleSideBar() {
         const toggleCollapsed = !this.state.leftSideBar.collapsed;
@@ -173,7 +170,7 @@ export class Calendar extends Component {
                     bbdd: this.props.lexon.bbdd,
                     idCompany: this.props.lexon.idCompany,
                     provider: this.props.lexon.provider,
-                    account: googleUser.Rt.Au
+                    account: googleUser.Qt.zu
                 }
             })
         );
@@ -292,7 +289,31 @@ export class Calendar extends Component {
         so that we can declare Routes by labelId 
         before rendering anything else */
 
-        this.getLabelList();
+        //getCalendarList()
+        //    .then(result => {
+               
+        //       //this.setState({
+        //       //   Calendars: result,                        
+        //       //});
+        //        var Calendars = result.items.map(function (calendar) {
+        //            console.log(calendar.summary);
+        //        });
+               
+        //    })
+        //    .catch(error => {
+        //        console.log('error ->', error);
+        //    });
+
+        getEventList('primary')
+            .then(result => {
+                this.dataManger = result.result;
+            })
+            .catch(error => {
+                console.log('error ->', error);
+        });
+       
+
+        this.getCalendarList();
 
         window.addEventListener('toggleClock', function (event) {
             alert(event.detail.name);
@@ -307,7 +328,7 @@ export class Calendar extends Component {
         const { userId, idCaseFile, bbdd, mailContacts } = this.props.lexon;
         const { googleUser } = this.props;
 
-        if (!googleUser || !googleUser.Rt) {
+        if (!googleUser || !googleUser.Qt) {
             this.setState({
                 googleDown: true,
                 showNotification: true,
@@ -327,7 +348,7 @@ export class Calendar extends Component {
             idEmail = base64.decode(idEmail);
         }
 
-        const email = googleUser.Rt.Au;
+        const email = googleUser.Qt.zu;
 
         if (userId !== null && email !== null) {
             const user = await getUser(userId);
@@ -431,33 +452,33 @@ export class Calendar extends Component {
             });
         }
 
-        const { labels } = this.props.labelsResult;
+        const { calendars } = this.props.calendarsResult;
         const { pathname } = this.props.location;
-        const selectedLabel = labels.find(el => el.selected);
-        const labelPathMatch = labels.find(
+        const selectedLabel = calendars.find(el => el.selected);
+        const labelPathMatch = calendars.find(
             el => el.id.toLowerCase() === pathname.slice(1)
         );
         if (!selectedLabel) {
             if (labelPathMatch && this.props.searchQuery === '') {
-                this.props.selectLabel(labelPathMatch.id);
+                this.props.selectCalendar(labelPathMatch.id);
             }
         } else {
             if (labelPathMatch && selectedLabel.id !== labelPathMatch.id) {
-                this.props.selectLabel(labelPathMatch.id);
+                this.props.selectCalendar(labelPathMatch.id);
             }
         }
     }
 
     refreshLabels() {
-        this.getLabelList();
+        this.getCalendarList();
         this.renderLabelRoutes();
     }
 
     loadLabelMessageSingle() {
-        this.getLabelList();
+        this.getCalendarList();
         this.renderLabelRoutes();
-        const { labels } = this.props.labelsResult;
-        const selectedLabel = labels.find(el => el.selected);
+        const { calendars } = this.props.calendarsResult;
+        const selectedLabel = calendars.find(el => el.selected);
         this.getLabelMessages({ labelIds: [selectedLabel.id] });
     }
 
@@ -475,27 +496,47 @@ export class Calendar extends Component {
         this.props.history.push(token);
     }
 
-    loadLabelMessages(label) {
-        const currentSearchQuery = this.props.searchQuery;
-        this.props.clearPageTokens();
-        this.props.selectLabel(label.id);
+    //loadLabelMessages(label) {
+    //    const currentSearchQuery = this.props.searchQuery;
+    //    this.props.clearPageTokens();
+    //    this.props.selectLabel(label.id);
 
-        const newPathToPush = `/${label.id.toLowerCase()}`;
+    //    const newPathToPush = `/${label.id.toLowerCase()}`;
 
-        if (currentSearchQuery && currentSearchQuery !== '') {
-            this.props.setSearchQuery('');
-            const { pathname } = this.props.location;
-            if (newPathToPush === pathname) {
-                this.getLabelMessages({ labelIds: [label.id] });
-                return;
-            }
-        }
+    //    if (currentSearchQuery && currentSearchQuery !== '') {
+    //        this.props.setSearchQuery('');
+    //        const { pathname } = this.props.location;
+    //        if (newPathToPush === pathname) {
+    //            this.getLabelMessages({ labelIds: [label.id] });
+    //            return;
+    //        }
+    //    }
 
-        this.props.history.push(`/${label.id.toLowerCase()}`);
-    }
+    //    this.props.history.push(`/${label.id.toLowerCase()}`);
+    //}
 
-    getLabelList() {
-        this.props.getLabels();
+    
+    loadCalendarEvents(calendar) {
+        this.scheduleObj.showSpinner();
+        getEventList(calendar)
+            .then(result => {
+                this.dataManger = result.result;
+                this.onDataBinding(this.dataManger);
+                this.scheduleObj.refreshEvents();
+               
+            })
+            .catch(error => {
+                console.log('error ->', error);
+            }) 
+       
+        this.props.selectCalendar(calendar);
+        
+      
+    }  
+
+
+    getCalendarList() {
+        this.props.getCalendars();
     }
 
     getLabelMessages({ labelIds, q, pageToken }) {
@@ -588,7 +629,7 @@ export class Calendar extends Component {
         const { leftSideBar } = this.state;
         const { lexon } = this.props;
 
-        if (this.props.labelsResult.labels.length < 1) {
+        if (this.props.calendarsResult.calendars.length < 1) {
             return this.renderSpinner();
         }
 
@@ -649,10 +690,10 @@ export class Calendar extends Component {
                         <Sidebar
                             sideBarCollapsed={leftSideBar.collapsed}
                             sideBarToggle={this.toggleSideBar}
-                            getLabelList={this.getLabelList}
+                            getCalendarList={this.getCalendarList}
                             pathname={this.props.location.pathname}
-                            labelsResult={this.props.labelsResult}
-                            onLabelClick={this.loadLabelMessages}
+                            calendarResult={this.props.calendarsResult}
+                            onCalendarClick={this.loadCalendarEvents}
                             onSidebarCloseClick={this.handleShowLeftSidebarClick}
                         />
                         <article className='d-flex flex-column position-relative'>
@@ -665,7 +706,8 @@ export class Calendar extends Component {
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
                                             <ScheduleComponent ref={schedule => this.scheduleObj = schedule} width='100%'
-                                                height='650px' selectedDate={new Date(2018, 10, 14)} 
+                                                currentView="Month"
+                                                height='650px' 
                                                 eventSettings={{ dataSource: this.dataManger }} dataBinding={this.onDataBinding.bind(this)}>
                                                 <ViewsDirective>
                                                     <ViewDirective option='Day' />
@@ -780,7 +822,7 @@ export class Calendar extends Component {
     render() {
         if (this.state.googleDown) {
             const { showNotification, messageNotification } = this.state;
-            const { token } = this.state.lexon;
+            const { token } = this.props.lexon;
             const baseUrl = window.URL_MF_GOOGLE.replace("/user", "");
 
             return (
@@ -802,7 +844,7 @@ export class Calendar extends Component {
 }
 
 const mapStateToProps = state => ({
-    labelsResult: state.labelsResult,
+    calendarsResult: state.calendarsResult,
     messagesResult: state.messagesResult,
     pageTokens: state.pageTokens,
     searchQuery: state.searchQuery,
@@ -813,11 +855,11 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch =>
     bindActionCreators(
         {
-            getLabels,
+            getCalendars,
             getLabelMessages,
             emptyLabelMessages,
             toggleSelected,
-            selectLabel,
+            selectCalendar,
             setPageTokens,
             addInitialPageToken,
             clearPageTokens,

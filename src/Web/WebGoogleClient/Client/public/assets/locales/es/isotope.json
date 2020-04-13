@@ -80,13 +80,9 @@
     "ok": "Continuar"
   },
   "calendar-sidebar": {
-    "folders": "Gmail",
-    "inbox": "Inbox",
-    "sent": "Sent",
-    "trash": "Trash",
-    "spam": "Spam",
-    "compose": "Nuevo evento",
-    "labels": "LABELS"
+    "compose": "Nuevo Evento",
+    "mycalendars": "Mis calendarios",
+    "othercalendars": "Otros calendarios"
   }
 
 }

@@ -129,7 +129,7 @@ export class Main extends Component {
           bbdd: this.props.lexon.bbdd,
           idCompany: this.props.lexon.idCompany,
           provider: this.props.lexon.provider,
-          account: googleUser.Rt.Au
+          account: googleUser.Qt.zu
         }
       })
     );
@@ -280,7 +280,7 @@ export class Main extends Component {
     const { userId, idCaseFile, bbdd, mailContacts } = this.props.lexon;
     const { googleUser } = this.props;
 
-    if (!googleUser || !googleUser.Rt) {
+    if (!googleUser || !googleUser.Qt) {
       this.setState({
         googleDown: true,
         showNotification: true,
@@ -300,7 +300,7 @@ export class Main extends Component {
       idEmail = base64.decode(idEmail);
     }
 
-    const email = googleUser.Rt.Au;
+    const email = googleUser.Qt.zu;
 
     if (userId !== null && email !== null) {
       const user = await getUser(userId);
@@ -663,7 +663,7 @@ export class Main extends Component {
             </article>
 
             <div className='productpanel'>
-              <span className="productsbutton">
+                          <span className="productsbutton">
                  <div onClick={() => this.onSetSidebarOpenCalendar(true)}>               
                   <img
                     className="imgproduct"
@@ -739,7 +739,7 @@ export class Main extends Component {
   render() {
     if (this.state.googleDown) {
       const { showNotification, messageNotification } = this.state;
-      const { token } = this.state.lexon;
+      const { token } = this.props.lexon;
       const baseUrl = window.URL_MF_GOOGLE.replace("/user", "");
 
       return (

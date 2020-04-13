@@ -53,7 +53,7 @@ env:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
     - name: LexonFilesUrl
-      value: 'https://10.38.6.18/index.php'
+      value: 'https://www.lex-on.es/index.php'
     - name: LexonMySqlUrl
       value: 'http://lexonmysql-api/api/v1/LexonMySql'
     - name: OrchestratorType

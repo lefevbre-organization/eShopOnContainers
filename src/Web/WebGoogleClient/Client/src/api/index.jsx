@@ -343,31 +343,55 @@ export const batchModify = ({ ids, addLabelIds = [], removeLabelIds = [] }) =>
 /**
  * Load Google Calendar Events
  */
-export const getEventList = ({ idCalendar }) =>
+export const getEventList = (idCalendar) =>
     new Promise((resolve, reject) => {
         window.gapi.client.calendar.events
             .list({
-                calendarId: 'primary',
-                timeMin: (new Date()).toISOString(),
-                maxResults: 10,
+                calendarId: idCalendar,
+                //timeMin: (new Date()).toISOString(),
+                //maxResults: 10,
                 singleEvents: true,
                 orderBy: 'startTime',
             })
             .then(response => {
-                resolve(response);
+                resolve(response)
+            })
+            .catch(error => {
+              reject(error);
             });
     });
 
 /**
  * Load Google Calendar List
  */
+//export const getCalendarList = () =>
+//    new Promise((resolve, reject) => {
+//        window.gapi.client.calendar.calendarList.list()
+//            .then(response => {
+//                resolve(response);
+
+//            })
+//         .catch(error => {
+//             reject(error);
+//         });
+
+//    }); 
+
 export const getCalendarList = () =>
     new Promise((resolve, reject) => {
-        window.gapi.client.calendar.calendarList.list()
+        window.gapi.client.calendar.calendarList
+            .list({
+               
+            })
+           
             .then(response => {
-                resolve(response);
+                resolve(response.result);
+            })
+            .catch(err => {
+                reject(err);
             });
-    }); 
+            
+    });
 
     //let request = gapi.client.calendar.calendarList.list();
 
