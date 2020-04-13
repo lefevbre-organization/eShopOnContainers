@@ -64,13 +64,10 @@ export class CalendarCard extends Component {
                             height='650px'  currentView="Day"
                             eventSettings={{ dataSource: this.dataManger }} dataBinding={this.onDataBinding.bind(this)}>
                             <ViewsDirective>
-                                <ViewDirective option='Day' />
-                                <ViewDirective option='Week' />
-                                <ViewDirective option='WorkWeek' />
-                                <ViewDirective option='Month' />
+                                <ViewDirective option='Day' />                               
                                 <ViewDirective option='Agenda' />
                             </ViewsDirective>
-                            <Inject services={[Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop]} />
+                            <Inject services={[Day, Agenda, Resize, DragAndDrop]} />
                         </ScheduleComponent>
                     </div>
                 </div>
