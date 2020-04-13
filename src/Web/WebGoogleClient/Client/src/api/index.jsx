@@ -354,7 +354,10 @@ export const getEventList = (idCalendar) =>
                 orderBy: 'startTime',
             })
             .then(response => {
-                resolve(response);
+                resolve(response)
+            })
+            .catch(error => {
+              reject(error);
             });
     });
 

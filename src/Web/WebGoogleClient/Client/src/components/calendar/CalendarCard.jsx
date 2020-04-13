@@ -6,27 +6,31 @@ import {
 } from '@syncfusion/ej2-react-schedule';
 //import './schedule-component.css';
 import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
+import { getEventList } from '../../api/index';
 
 
 export class CalendarCard extends Component {
     constructor(props) {
         super(props);
 
-        //super(...arguments);
-        this.calendarId = '5105trob9dasha31vuqek6qgp0@group.calendar.google.com';
-        this.publicKey = 'AIzaSyD76zjMDsL_jkenM5AAnNsORypS1Icuqxg';
-        //AIzaSyBeFMkCiP0Ld2ExOsvAhksK0AsRqtmD1XQ
-        this.dataManger = new DataManager({
-            url: 'https://www.googleapis.com/calendar/v3/calendars/' + this.calendarId + '/events?key=' + this.publicKey,
-            adaptor: new WebApiAdaptor,
-            crossDomain: true
-        });      
+        this.dataManger = new DataManager(); 
+
+        getEventList('primary')
+            .then(result => {
+                this.dataManger = result.result;
+
+                this.onDataBinding(this.dataManger);
+                this.scheduleObj.refreshEvents();
+            })
+            .catch(error => {
+                console.log('error ->', error);
+            });
+
     }
 
 
     onDataBinding(e) {
-
-        let items = e.result.items;
+        let items = this.dataManger.items;
         let scheduleData = [];
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
@@ -50,14 +54,14 @@ export class CalendarCard extends Component {
         }
         e.result = scheduleData;
     }
-
+  
     render() {
         return (
             <div className='schedule-control-section'>
                 <div className='col-lg-12 control-section'>
                     <div className='control-wrapper'>
                         <ScheduleComponent ref={schedule => this.scheduleObj = schedule} width='100%'
-                            height='650px' selectedDate={new Date(2018, 10, 14)} currentView="Day"
+                            height='650px'  currentView="Day"
                             eventSettings={{ dataSource: this.dataManger }} dataBinding={this.onDataBinding.bind(this)}>
                             <ViewsDirective>
                                 <ViewDirective option='Day' />

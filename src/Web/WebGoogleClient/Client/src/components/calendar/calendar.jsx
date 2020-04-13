@@ -50,14 +50,12 @@ import {
 } from '../../api/accounts';
 import { PROVIDER } from '../../constants';
 import { getMessageListWithRFC } from '../../api/';
-
 import {
     ScheduleComponent, ViewsDirective, ViewDirective,
     Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, DragEventArgs
 } from '@syncfusion/ej2-react-schedule';
 //import './schedule-component.css';
 import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
-
 import {  getEventList } from '../../api/index';
 
 
@@ -119,12 +117,8 @@ export class Calendar extends Component {
     }
 
 
-    onDataBinding(e) {
-        //let items = this.dataManger.result.items;
+    onDataBinding(e) {      
         let items = this.dataManger.items;
-
-        //let items = e.result.items;
-
         let scheduleData = [];
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
@@ -147,13 +141,6 @@ export class Calendar extends Component {
             }
         }
         e.result = scheduleData;
-       
-        //this.scheduleObj.DataSource.Reload(); // reload the scheduler Hope there is something I can write to handle the reload or other way
-       // this.scheduleObj.Refresh();
-
-        //this.eventSettings.dataSource = this.events  
-        //let scheduleObj = document.getElementById("Schedule"); 
-        //scheduleObj.Refresh();
     }
 
     toggleSideBar() {
@@ -317,13 +304,13 @@ export class Calendar extends Component {
         //        console.log('error ->', error);
         //    });
 
-        getEventList('alberto.valverde.escribano@gmail.com')
+        getEventList('primary')
             .then(result => {
                 this.dataManger = result.result;
             })
             .catch(error => {
                 console.log('error ->', error);
-            });
+        });
        
 
         this.getCalendarList();
@@ -536,30 +523,14 @@ export class Calendar extends Component {
                 this.dataManger = result.result;
                 this.onDataBinding(this.dataManger);
                 this.scheduleObj.refreshEvents();
-                //this.scheduleObj.render();
-               // scheduleObj.DataSource.Reload(); // reload the scheduler Hope there is something I can write to handle the reload or other way
-                //scheduleObj.Refresh();
+               
             })
             .catch(error => {
                 console.log('error ->', error);
             }) 
-        //this.scheduleObj.hideSpinner();
+       
         this.props.selectCalendar(calendar);
-        //const { calendars } = this.props.calendarsResult;
-        //const { pathname } = this.props.location;
-        //const selectedLabel = calendars.find(el => el.selected);
-        //const labelPathMatch = calendars.find(
-        //    el => el.id.toLowerCase() === pathname.slice(1)
-        //);
-        //if (!selectedLabel) {
-        //    if (labelPathMatch && this.props.searchQuery === '') {
-        //        this.props.selectCalendar(labelPathMatch.id);
-        //    }
-        //} else {
-        //    if (labelPathMatch && selectedLabel.id !== labelPathMatch.id) {
-        //        this.props.selectCalendar(labelPathMatch.id);
-        //    }
-        //}
+        
       
     }  
 
