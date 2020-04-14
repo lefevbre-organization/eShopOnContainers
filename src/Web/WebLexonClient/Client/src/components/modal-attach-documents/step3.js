@@ -69,7 +69,6 @@ export class AttachDocumentsStep3 extends React.Component {
           // Ahora hay que volver a cargar el árbol
         } else {
           let tree = normalizeTree(this.props.entity, response.result.data, false);
-          debugger
           const childs = getChilds(tree, 0);
 
           this.setState(
@@ -298,7 +297,6 @@ export class AttachDocumentsStep3 extends React.Component {
               </div>
               {this.state.showSpinner === true && (
                 <div className='spinner'>
-                  {' '}
                   <Spinner />
                 </div>
               )}
@@ -306,14 +304,14 @@ export class AttachDocumentsStep3 extends React.Component {
               <GridComponent
                 ref={g => (this.gridRef = g)}
                 dataSource={this.state.entities}
-                height={'300px'}
+                height={'359px'}
                 selectionSettings={{
                   type: 'Single',
                   mode: 'Row',
                   enableToggle: false
                 }}
                 allowSorting={true}
-                hideScroll={true}
+                hideScroll={false}
                 selected={1}
                 recordDoubleClick={this.onDoubleClick}
                 locale='es-ES'>
@@ -481,6 +479,10 @@ export class AttachDocumentsStep3 extends React.Component {
               line-height: 24px;
             }
 
+            .e-grid .e-content {
+              overflow-y: scroll !important;
+            }
+
             .e-treeview .e-ul,
             .e-treeview .e-text-content {
               padding: 0 0 0 18px;
@@ -559,7 +561,6 @@ function normalizeNodes(nodes, preselectId, removeFiles) {
 }
 
 function getChilds(tree, id) {
-  debugger
   const root = tree[0];
   const children = root.subChild;
   for (let i = 0; i < children.length; i++) {
