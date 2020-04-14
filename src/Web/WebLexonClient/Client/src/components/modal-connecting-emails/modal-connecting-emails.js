@@ -439,7 +439,6 @@ class ModalConnectingEmails extends Component {
                 alt='Lex-On'
                 src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
               <span>{i18n.t('modal-conecting-emails.save-copy')}</span>
-              <span>{step}</span>
             </h5>
           </Modal.Header>
           <Modal.Body className='mimodal'>
