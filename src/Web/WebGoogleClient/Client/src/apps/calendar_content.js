@@ -40,7 +40,7 @@ const calendarContent = props => {
       sidebarDocked={sidebarDocked}
     >
       <div style={styles.content}>
-              {/* <img border="0" alt="Lefebvre" src="assets/img/calendar-fake.png"></img>*/} 
+              {/* <img border="0" alt="Lefebvre" src="/assets/img/calendar-fake.png"></img>*/} 
      <CalendarCard />
                    
       </div>

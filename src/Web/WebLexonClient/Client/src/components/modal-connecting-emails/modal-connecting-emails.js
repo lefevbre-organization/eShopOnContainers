@@ -198,58 +198,78 @@ class ModalConnectingEmails extends Component {
 
   async onSaveStep3() {
     const { step1Data, step2Data, step3Data } = this.state;
+    const { toggleNotification } = this.props;
     const { selectedMessages } = this.props;
+    let notification = 0;
+
     this.closeDialog();
     let sc = null;
 
-    if (step1Data.actuation === true) {
-      sc = await this.saveClassifications();
-    }
+    try {
+      if (step1Data.actuation === true) {
+        sc = await this.saveClassifications();
+        notification = 1;
+      }
 
-    if (step1Data.copyDocuments === true || step1Data.saveDocuments === true) {
-      // Save email as eml format
-      for (let i = 0; i < selectedMessages.length; i++) {
-        const raw = Base64.encode(selectedMessages[i].raw, false);
+      if (step1Data.copyDocuments === true || step1Data.saveDocuments === true) {
+        notification += 2;
+        // Save email as eml format
+        for (let i = 0; i < selectedMessages.length; i++) {
+          const raw = Base64.encode(selectedMessages[i].raw, false);
 
-        const subject = selectedMessages[i].subject;
+          const subject = selectedMessages[i].subject;
 
-        if (step1Data.copyDocuments === true) {
-          await uploadFile(
-            step1Data.actuation === false ? step3Data.selected : undefined,
-            step1Data.actuation === false ? step2Data.id : undefined,
-            step1Data.actuation === false ? step2Data.idType : 45,
-            step1Data.actuation === true ? sc[i] : undefined,
-            this.props.companySelected.bbdd,
-            this.props.user.idUser,
-            subject + '.eml',
-            raw
-          );
-        }
+          if (step1Data.copyDocuments === true) {
+            await uploadFile(
+              step1Data.actuation === false ? step3Data.selected : undefined,
+              step1Data.actuation === false ? step2Data.id : undefined,
+              step1Data.actuation === false ? step2Data.idType : 45,
+              step1Data.actuation === true ? sc[i] : undefined,
+              this.props.companySelected.bbdd,
+              this.props.user.idUser,
+              subject + '.eml',
+              raw
+            );
+          }
 
-        if (step1Data.saveDocuments === true) {
-          debugger
-          // Save attachments
-          const mime = parse(selectedMessages[i].raw);
-          for (let j = 0; j < mime.childNodes.length; j++) {
-            if (
-              mime.childNodes[j].raw.indexOf(
-                'Content-Disposition: attachment;'
-              ) > -1
-            ) {
-              let rawAttach = base64js.fromByteArray(mime.childNodes[j].content);
-              await uploadFile(
-                step1Data.actuation === false ? step3Data.selected : undefined,
-                step1Data.actuation === false ? step2Data.id : undefined,
-                step1Data.actuation === false ? step2Data.idType : 45,
-                step1Data.actuation === true ? sc[i] : undefined,
-                this.props.companySelected.bbdd,
-                this.props.user.idUser,
-                mime.childNodes[j].contentType.params.name,
-                rawAttach
-              );
+          if (step1Data.saveDocuments === true) {
+            // Save attachments
+            const mime = parse(selectedMessages[i].raw);
+            for (let j = 0; j < mime.childNodes.length; j++) {
+              if (
+                mime.childNodes[j].raw.indexOf(
+                  'Content-Disposition: attachment;'
+                ) > -1
+              ) {
+                let rawAttach = base64js.fromByteArray(mime.childNodes[j].content);
+                await uploadFile(
+                  step1Data.actuation === false ? step3Data.selected : undefined,
+                  step1Data.actuation === false ? step2Data.id : undefined,
+                  step1Data.actuation === false ? step2Data.idType : 45,
+                  step1Data.actuation === true ? sc[i] : undefined,
+                  this.props.companySelected.bbdd,
+                  this.props.user.idUser,
+                  mime.childNodes[j].contentType.params.name,
+                  rawAttach
+                );
+              }
             }
           }
         }
+      }
+
+      if (notification === 1) {
+        toggleNotification(i18n.t('classify-emails.classification-saved-ok'));
+      } else if (notification === 2) {
+        toggleNotification(i18n.t('classify-emails.documents-saved-ok'));
+      } else if (notification === 3) {
+        toggleNotification(i18n.t('classify-emails.classification-docs-saved-ok'));
+      }
+    } catch (err) {
+      if (notification === 1) {
+        toggleNotification(i18n.t('classify-emails.classification-saved-ko'), true);
+      } else if (notification > 1) {
+        toggleNotification(i18n.t('classify-emails.documents-saved-ko'), true);
       }
     }
   }
@@ -276,8 +296,6 @@ class ModalConnectingEmails extends Component {
         this.props.updateClassifications &&
           this.props.updateClassifications(selectedMessages[0].id);
       }
-      toggleNotification(i18n.t('classify-emails.classification-saved-ok'));
-
       return res.classifications;
     } catch (err) {
       toggleNotification(
@@ -374,7 +392,7 @@ class ModalConnectingEmails extends Component {
                 onClick={() => {
                   this.onSave();
                 }}>
-                {i18n.t('classify-emails.continue')}
+                {i18n.t('classify-emails.save')}
               </Button>}
           </Fragment>
         );
@@ -439,7 +457,6 @@ class ModalConnectingEmails extends Component {
                 alt='Lex-On'
                 src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
               <span>{i18n.t('modal-conecting-emails.save-copy')}</span>
-              <span>{step}</span>
             </h5>
           </Modal.Header>
           <Modal.Body className='mimodal'>
@@ -480,12 +497,7 @@ class ModalConnectingEmails extends Component {
                 style={{ display: this.state.step === 4 ? 'block' : 'none' }}>
                 <ConnectingEmailsStep4
                   show={this.state.step === 4}
-                  step={
-                    step1Data.copyDocuments === false &&
-                      step1Data.saveDocuments === false
-                      ? 4
-                      : 5
-                  }
+                  step={4}
                   messages={messages}
                   onChange={this.changeSubject}></ConnectingEmailsStep4>
               </div>

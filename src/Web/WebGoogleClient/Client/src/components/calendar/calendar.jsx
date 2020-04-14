@@ -58,21 +58,25 @@ import {
 import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
 import {  getEventList } from '../../api/index';
 
-
-
-
 export class Calendar extends Component {
     constructor(props) {
         super(props);
 
-        this.getCalendarList = this.getCalendarList.bind(this);
-       
+        this.getCalendarList = this.getCalendarList.bind(this);       
         this.addInitialPageToken = this.addInitialPageToken.bind(this);
         this.onSignout = this.onSignout.bind(this);
-        this.onSignoutDisconnect = this.onSignoutDisconnect.bind(this);
-
+        this.onSignoutDisconnect = this.onSignoutDisconnect.bind(this);     
+        this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
+        this.onSetSidebarOpenCalendar = this.onSetSidebarOpenCalendar.bind(this);
+        this.onSetSidebarOpenLexon = this.onSetSidebarOpenLexon.bind(this);
+        this.onSetSidebarOpenQMemento = this.onSetSidebarOpenQMemento.bind(this);
+        this.onSetSidebarOpenCompliance = this.onSetSidebarOpenCompliance.bind(this);
+        this.onSetSidebarOpenDatabase = this.onSetSidebarOpenDatabase.bind(this);
+        this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(this);
+        this.toggleSideBar = this.toggleSideBar.bind(this);
         this.loadCalendarEvents = this.loadCalendarEvents.bind(this);
-      
+        this.handleScheduleDate = this.handleScheduleDate.bind(this);
+        this.handleScheduleOpenEditor = this.handleScheduleOpenEditor.bind(this);
 
         this.state = {
             isVisible: true,
@@ -89,30 +93,12 @@ export class Calendar extends Component {
                 collapsed: false
             },
             sidebarComponent: (
-                <img border='0' alt='Lefebvre' src='assets/img/lexon-fake.png'></img>
+                <img border='0' alt='Lefebvre' src='/assets/img/lexon-fake.png'></img>
             ),
-            Calendars: []
+
         };
 
-        this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
-        this.onSetSidebarOpenCalendar = this.onSetSidebarOpenCalendar.bind(this);
-        this.onSetSidebarOpenLexon = this.onSetSidebarOpenLexon.bind(this);
-        this.onSetSidebarOpenQMemento = this.onSetSidebarOpenQMemento.bind(this);
-        this.onSetSidebarOpenCompliance = this.onSetSidebarOpenCompliance.bind(
-            this
-        );
-        this.onSetSidebarOpenDatabase = this.onSetSidebarOpenDatabase.bind(this);
-        this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
-            this
-        );
-
-        this.toggleSideBar = this.toggleSideBar.bind(this);
-
-
-        this.dataManger = new DataManager();
-        
-
-        
+        this.dataManger = new DataManager();          
            
     }
 
@@ -170,7 +156,8 @@ export class Calendar extends Component {
                     bbdd: this.props.lexon.bbdd,
                     idCompany: this.props.lexon.idCompany,
                     provider: this.props.lexon.provider,
-                    account: googleUser.Qt.zu
+                    //account: googleUser.Qt.zu
+                    account: googleUser.getBasicProfile().getEmail()
                 }
             })
         );
@@ -208,7 +195,7 @@ export class Calendar extends Component {
 
     onSetSidebarOpenQMemento(open) {
         let lexon = (
-            <img border='0' alt='Lefebvre' src='assets/img/lexon-fake-null.png'></img>
+            <img border='0' alt='Lefebvre' src='/assets/img/lexon-fake-null.png'></img>
         );
         this.setState({ sidebarComponent: lexon });
         this.setState({ sidebarDocked: open });
@@ -216,7 +203,7 @@ export class Calendar extends Component {
 
     onSetSidebarOpenCompliance(open) {
         let lexon = (
-            <img border='0' alt='Lefebvre' src='assets/img/lexon-fake-null.png'></img>
+            <img border='0' alt='Lefebvre' src='/assets/img/lexon-fake-null.png'></img>
         );
         this.setState({ sidebarComponent: lexon });
         this.setState({ sidebarDocked: open });
@@ -224,7 +211,7 @@ export class Calendar extends Component {
 
     onSetSidebarOpenDatabase(open) {
         let lexon = (
-            <img border='0' alt='Lefebvre' src='assets/img/lexon-fake-null.png'></img>
+            <img border='0' alt='Lefebvre' src='/assets/img/lexon-fake-null.png'></img>
         );
         this.setState({ sidebarComponent: lexon });
         this.setState({ sidebarDocked: open });
@@ -328,7 +315,8 @@ export class Calendar extends Component {
         const { userId, idCaseFile, bbdd, mailContacts } = this.props.lexon;
         const { googleUser } = this.props;
 
-        if (!googleUser || !googleUser.Qt) {
+        //if (!googleUser || !googleUser.Qt) {
+        if (!googleUser || !googleUser.getBasicProfile()) {
             this.setState({
                 googleDown: true,
                 showNotification: true,
@@ -348,7 +336,8 @@ export class Calendar extends Component {
             idEmail = base64.decode(idEmail);
         }
 
-        const email = googleUser.Qt.zu;
+        //const email = googleUser.Qt.zu;
+        const email = googleUser.getBasicProfile().getEmail();
 
         if (userId !== null && email !== null) {
             const user = await getUser(userId);
@@ -523,6 +512,7 @@ export class Calendar extends Component {
                 this.dataManger = result.result;
                 this.onDataBinding(this.dataManger);
                 this.scheduleObj.refreshEvents();
+                //this.scheduleObj.dataBind();
                
             })
             .catch(error => {
@@ -533,6 +523,19 @@ export class Calendar extends Component {
         
       
     }  
+
+    handleScheduleDate(args) {
+        this.scheduleObj.selectedDate = args.value;
+        this.scheduleObj.dataBind();       
+    }
+
+    handleScheduleOpenEditor() {   
+        let cellData = {
+            startTime: new Date(Date.now()),
+            endTime: new Date(Date.now()),
+        };
+        this.scheduleObj.openEditor(cellData, 'Add');   
+    }
 
 
     getCalendarList() {
@@ -695,11 +698,13 @@ export class Calendar extends Component {
                             calendarResult={this.props.calendarsResult}
                             onCalendarClick={this.loadCalendarEvents}
                             onSidebarCloseClick={this.handleShowLeftSidebarClick}
-                        />
+                            onCalendarChange={this.handleScheduleDate}
+                            onCalendarOpenEditor={this.handleScheduleOpenEditor}
+                    />
                         <article className='d-flex flex-column position-relative'>
                             <Switch>
                                 {/* <div>
-                                    <img className="callayout" border="0" alt="Lefebvre" src="assets/img/main-calendar.png"></img>
+                                    <img className="callayout" border="0" alt="Lefebvre" src="/assets/img/main-calendar.png"></img>
                                 </div>*/}
 
                                 <div className='schedule-control-section'>
@@ -763,7 +768,7 @@ export class Calendar extends Component {
                                             className='imgproduct'
                                             border='0'
                                             alt='Lex-On'
-                                            src='assets/img/icon-lexon.png'></img>
+                                            src='/assets/img/icon-lexon.png'></img>
                                     </div>
                                 ) : (
                                         <div>
@@ -771,7 +776,7 @@ export class Calendar extends Component {
                                                 className='imgproductdisable'
                                                 border='0'
                                                 alt='Lex-On'
-                                                src='assets/img/icon-lexon.png'></img>
+                                                src='/assets/img/icon-lexon.png'></img>
                                         </div>
                                     )}
                             </span>
@@ -783,7 +788,7 @@ export class Calendar extends Component {
                     className="imgproductdisable"
                     border="0"
                     alt="Calendar"
-                    src="assets/img/icon-qmemento.png"
+                    src="/assets/img/icon-qmemento.png"
                   ></img>
                 </div>
               </span>
@@ -794,7 +799,7 @@ export class Calendar extends Component {
                     className="imgproductdisable"
                     border="0"
                     alt="Calendar"
-                    src="assets/img/icon-compliance.png"
+                    src="/assets/img/icon-compliance.png"
                   ></img>
                 </div>
               </span>
@@ -807,7 +812,7 @@ export class Calendar extends Component {
                     className=""
                     border="0"
                     alt="Calendar"
-                    src="assets/img/icon-close-empty.png"
+                    src="/assets/img/icon-close-empty.png"
                   ></img>
                 </button>
               </span> 

@@ -94,7 +94,8 @@ class AppContainer extends Component {
     });
 
    // this.props.setAccount(googleUser.Rt.Au);
-      this.props.setAccount(googleUser.Qt.Au);
+   // this.props.setAccount(googleUser.Qt.Au);
+   this.props.setAccount(googleUser.getBasicProfile().getEmail());
   }
 
   renderView() {

@@ -95,12 +95,12 @@ export class Header extends PureComponent {
             <img
               border='0'
               alt='lefebvre'
-              src='assets/img/LogoLefebvre.png'></img>
+              src='/assets/img/LogoLefebvre.png'></img>
           </Link>
         </div>
         <div className='header-logo justify-content-center'>
-          {/*<Link to="/inbox"><img border="0" alt="gmail" src="assets/img/logo-elderecho.png"></img></Link>
-                    <Link to="/inbox"><img className="logo-ext" border="0" alt="otulook" src="assets/img/gmail.png"></img></Link> */}
+          {/*<Link to="/inbox"><img border="0" alt="gmail" src="/assets/img/logo-elderecho.png"></img></Link>
+                    <Link to="/inbox"><img className="logo-ext" border="0" alt="otulook" src="/assets/img/gmail.png"></img></Link> */}
         </div>
         <div className='header-search'>
           <div className='input-group w-75 ml-1 mr-auto'>
@@ -122,7 +122,7 @@ export class Header extends PureComponent {
             </div>
           </div>
           {/*<div className="header-logo justify-content-center">
-                        <Link to="/inbox"><img className="logo-ext" border="0" alt="otulook" src="assets/img/gmail.png"></img></Link>                       
+                        <Link to="/inbox"><img className="logo-ext" border="0" alt="otulook" src="/assets/img/gmail.png"></img></Link>                       
                     </div>*/}
 
           <MenuUser

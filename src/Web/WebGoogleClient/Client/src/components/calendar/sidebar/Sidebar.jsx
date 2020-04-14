@@ -35,9 +35,12 @@ export class Sidebar extends PureComponent {
         this.sidebarAction = this.sidebarAction.bind(this);
     }
 
+    calendarChange(args) { 
+        this.props.onCalendarChange(args);       
+    }
    
-    newEventClick() {
-        //this.props.history.push("/compose");
+    newEventClick() {       
+        this.props.onCalendarOpenEditor();
     }
 
     navigateToList(evt, calendarId) {
@@ -86,7 +89,7 @@ export class Sidebar extends PureComponent {
         return (
             <React.Fragment>
                 <div className='calendar-control-section' style={{ overflow: 'auto' }, { innerWidth: '40%' }, { Height: '40%' }}>
-                    <CalendarComponent change={this.onchange} ></CalendarComponent>                   
+                    <CalendarComponent change={this.calendarChange.bind(this)} ></CalendarComponent>                   
                 </div>  
                 <li key="olders-nav-title" className="pl-2 nav-title">
                     {t("calendar-sidebar.mycalendars")}
@@ -165,18 +168,19 @@ export class Sidebar extends PureComponent {
                 <div className="compose-panel">
                     <div className="d-flex justify-content-center p-2 compose-btn">
                         <div className="compose-div">
-                            <Link
+                            <span
                                 className="btn font-weight-bold BtnLfcolor uppercase compose-btn"
-                                to='/calendar'
+                                onClick={this.newEventClick}
                             >
                                 <img
                                     className="ImgLf"
                                     border="0"
                                     alt="otulook"
-                                    src="assets/img/plus.png"
+                                    src="/assets/img/plus.png"
+                                    onClick={this.newEventClick}
                                 ></img>
                                 {t("calendar-sidebar.compose")}
-                            </Link>
+                            </span>
                             <Button
                                 onClick={this.props.sideBarToggle}
                                 className="btn-transparent margin-right-20 float-right margin-top-10"
