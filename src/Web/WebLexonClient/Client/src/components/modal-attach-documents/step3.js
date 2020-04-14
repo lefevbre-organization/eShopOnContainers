@@ -297,7 +297,6 @@ export class AttachDocumentsStep3 extends React.Component {
               </div>
               {this.state.showSpinner === true && (
                 <div className='spinner'>
-                  {' '}
                   <Spinner />
                 </div>
               )}
@@ -305,14 +304,14 @@ export class AttachDocumentsStep3 extends React.Component {
               <GridComponent
                 ref={g => (this.gridRef = g)}
                 dataSource={this.state.entities}
-                height={'300px'}
+                height={'359px'}
                 selectionSettings={{
                   type: 'Single',
                   mode: 'Row',
                   enableToggle: false
                 }}
                 allowSorting={true}
-                hideScroll={true}
+                hideScroll={false}
                 selected={1}
                 recordDoubleClick={this.onDoubleClick}
                 locale='es-ES'>
@@ -480,6 +479,10 @@ export class AttachDocumentsStep3 extends React.Component {
               line-height: 24px;
             }
 
+            .e-grid .e-content {
+              overflow-y: scroll !important;
+            }
+
             .e-treeview .e-ul,
             .e-treeview .e-text-content {
               padding: 0 0 0 18px;
@@ -528,6 +531,7 @@ function normalizeTree(entity, data, preselectId, removeFiles = true) {
   if (entity.idType === 1) {
     root.imageUrl = `${window.URL_MF_LEXON_BASE}/assets/img/icon-law.png`;
   }
+  flatNodes[root.id] = Object.assign({}, root);
   root.subChild = normalizeNodes(root.subChild, preselectId, removeFiles);
 
   console.log(root);
