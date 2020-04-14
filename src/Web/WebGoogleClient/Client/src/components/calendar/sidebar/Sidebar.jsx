@@ -35,6 +35,9 @@ export class Sidebar extends PureComponent {
         this.sidebarAction = this.sidebarAction.bind(this);
     }
 
+    calendarChange(args) { 
+        this.props.onCalendarChange(args);       
+    }
    
     newEventClick() {
         //this.props.history.push("/compose");
@@ -86,7 +89,7 @@ export class Sidebar extends PureComponent {
         return (
             <React.Fragment>
                 <div className='calendar-control-section' style={{ overflow: 'auto' }, { innerWidth: '40%' }, { Height: '40%' }}>
-                    <CalendarComponent change={this.onchange} ></CalendarComponent>                   
+                    <CalendarComponent change={this.calendarChange.bind(this)} ></CalendarComponent>                   
                 </div>  
                 <li key="olders-nav-title" className="pl-2 nav-title">
                     {t("calendar-sidebar.mycalendars")}

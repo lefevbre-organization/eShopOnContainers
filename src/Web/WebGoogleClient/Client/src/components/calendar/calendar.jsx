@@ -65,14 +65,12 @@ export class Calendar extends Component {
     constructor(props) {
         super(props);
 
-        this.getCalendarList = this.getCalendarList.bind(this);
-       
+        this.getCalendarList = this.getCalendarList.bind(this);       
         this.addInitialPageToken = this.addInitialPageToken.bind(this);
         this.onSignout = this.onSignout.bind(this);
         this.onSignoutDisconnect = this.onSignoutDisconnect.bind(this);
-
         this.loadCalendarEvents = this.loadCalendarEvents.bind(this);
-      
+        this.handleScheduleDate = this.handleScheduleDate.bind(this);
 
         this.state = {
             isVisible: true,
@@ -526,6 +524,7 @@ export class Calendar extends Component {
                 this.dataManger = result.result;
                 this.onDataBinding(this.dataManger);
                 this.scheduleObj.refreshEvents();
+                //this.scheduleObj.dataBind();
                
             })
             .catch(error => {
@@ -536,6 +535,11 @@ export class Calendar extends Component {
         
       
     }  
+
+    handleScheduleDate(args) {
+        this.scheduleObj.selectedDate = args.value;
+        this.scheduleObj.dataBind();       
+    }
 
 
     getCalendarList() {
@@ -698,6 +702,7 @@ export class Calendar extends Component {
                             calendarResult={this.props.calendarsResult}
                             onCalendarClick={this.loadCalendarEvents}
                             onSidebarCloseClick={this.handleShowLeftSidebarClick}
+                            onCalendarChange={this.handleScheduleDate}
                         />
                         <article className='d-flex flex-column position-relative'>
                             <Switch>
