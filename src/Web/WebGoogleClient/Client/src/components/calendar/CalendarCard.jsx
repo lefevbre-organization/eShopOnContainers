@@ -21,6 +21,34 @@ export class CalendarCard extends Component {
 
                 this.onDataBinding(this.dataManger);
                 this.scheduleObj.refreshEvents();
+
+
+                let items = this.dataManger.items;
+                let scheduleData = [];
+                if (items.length > 0) {
+                    for (let i = 0; i < items.length; i++) {
+                        let event = items[i];
+                        let when = event.start.dateTime;
+                        let start = event.start.dateTime;
+                        let end = event.end.dateTime;
+                        if (!when) {
+                            when = event.start.date;
+                            start = event.start.date;
+                            end = event.end.date;
+                        }
+                        scheduleData.push({
+                            Id: event.id,
+                            Subject: event.summary,
+                            StartTime: new Date(start+1),
+                            EndTime: new Date(end),
+                            IsAllDay: !event.start.dateTime
+                        });
+                    }
+                    this.scheduleObj.addResource(scheduleData, 'calebdar', 1);
+                    this.scheduleObj.refreshEvents();
+                }
+               
+               
             })
             .catch(error => {
                 console.log('error ->', error);
