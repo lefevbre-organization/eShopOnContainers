@@ -69,6 +69,7 @@ export class AttachDocumentsStep3 extends React.Component {
           // Ahora hay que volver a cargar el árbol
         } else {
           let tree = normalizeTree(this.props.entity, response.result.data, false);
+          debugger
           const childs = getChilds(tree, 0);
 
           this.setState(
@@ -557,6 +558,7 @@ function normalizeNodes(nodes, preselectId, removeFiles) {
 }
 
 function getChilds(tree, id) {
+  debugger
   const root = tree[0];
   const children = root.subChild;
   for (let i = 0; i < children.length; i++) {
