@@ -227,7 +227,6 @@ class ModalConnectingEmails extends Component {
         }
 
         if (step1Data.saveDocuments === true) {
-          debugger
           // Save attachments
           const mime = parse(selectedMessages[i].raw);
           for (let j = 0; j < mime.childNodes.length; j++) {
@@ -374,7 +373,7 @@ class ModalConnectingEmails extends Component {
                 onClick={() => {
                   this.onSave();
                 }}>
-                {i18n.t('classify-emails.continue')}
+                {i18n.t('classify-emails.save')}
               </Button>}
           </Fragment>
         );
@@ -479,12 +478,7 @@ class ModalConnectingEmails extends Component {
                 style={{ display: this.state.step === 4 ? 'block' : 'none' }}>
                 <ConnectingEmailsStep4
                   show={this.state.step === 4}
-                  step={
-                    step1Data.copyDocuments === false &&
-                      step1Data.saveDocuments === false
-                      ? 4
-                      : 5
-                  }
+                  step={4}
                   messages={messages}
                   onChange={this.changeSubject}></ConnectingEmailsStep4>
               </div>
