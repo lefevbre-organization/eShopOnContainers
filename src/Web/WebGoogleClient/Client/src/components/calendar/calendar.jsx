@@ -529,11 +529,15 @@ export class Calendar extends Component {
         this.scheduleObj.dataBind();       
     }
 
-    handleScheduleOpenEditor() {   
+    handleScheduleOpenEditor() { 
+        var endTimeDate = new Date();
+        endTimeDate.setMinutes(endTimeDate.getMinutes() + 60);
+
         let cellData = {
             startTime: new Date(Date.now()),
-            endTime: new Date(Date.now()),
+            endTime: endTimeDate,
         };
+
         this.scheduleObj.openEditor(cellData, 'Add');   
     }
 
