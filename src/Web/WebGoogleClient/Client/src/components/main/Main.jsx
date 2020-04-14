@@ -83,7 +83,7 @@ export class Main extends Component {
         collapsed: false
       },
       sidebarComponent: (
-        <img border='0' alt='Lefebvre' src='assets/img/lexon-fake.png'></img>
+        <img border='0' alt='Lefebvre' src='/assets/img/lexon-fake.png'></img>
       )
     };
 
@@ -119,7 +119,9 @@ export class Main extends Component {
 
   sendMessagePutUser(user) {
     const { selectedMessages, googleUser } = this.props;
-
+    console.log("*******************");
+    console.log('Account:' + googleUser.getBasicProfile().getEmail());
+    console.log("*******************");
     window.dispatchEvent(
       new CustomEvent('PutUserFromLexonConnector', {
         detail: {
@@ -129,7 +131,8 @@ export class Main extends Component {
           bbdd: this.props.lexon.bbdd,
           idCompany: this.props.lexon.idCompany,
           provider: this.props.lexon.provider,
-          account: googleUser.Qt.zu
+          //account: googleUser.Qt.zu
+          account: googleUser.getBasicProfile().getEmail()
         }
       })
     );
@@ -167,7 +170,7 @@ export class Main extends Component {
 
   onSetSidebarOpenQMemento(open) {
     let lexon = (
-      <img border='0' alt='Lefebvre' src='assets/img/lexon-fake-null.png'></img>
+      <img border='0' alt='Lefebvre' src='/assets/img/lexon-fake-null.png'></img>
     );
     this.setState({ sidebarComponent: lexon });
     this.setState({ sidebarDocked: open });
@@ -175,7 +178,7 @@ export class Main extends Component {
 
   onSetSidebarOpenCompliance(open) {
     let lexon = (
-      <img border='0' alt='Lefebvre' src='assets/img/lexon-fake-null.png'></img>
+      <img border='0' alt='Lefebvre' src='/assets/img/lexon-fake-null.png'></img>
     );
     this.setState({ sidebarComponent: lexon });
     this.setState({ sidebarDocked: open });
@@ -183,7 +186,7 @@ export class Main extends Component {
 
   onSetSidebarOpenDatabase(open) {
     let lexon = (
-      <img border='0' alt='Lefebvre' src='assets/img/lexon-fake-null.png'></img>
+      <img border='0' alt='Lefebvre' src='/assets/img/lexon-fake-null.png'></img>
     );
     this.setState({ sidebarComponent: lexon });
     this.setState({ sidebarDocked: open });
@@ -280,7 +283,8 @@ export class Main extends Component {
     const { userId, idCaseFile, bbdd, mailContacts } = this.props.lexon;
     const { googleUser } = this.props;
 
-    if (!googleUser || !googleUser.Qt) {
+    //if (!googleUser || !googleUser.Qt) {
+    if (!googleUser || !googleUser.getBasicProfile()) {
       this.setState({
         googleDown: true,
         showNotification: true,
@@ -300,7 +304,8 @@ export class Main extends Component {
       idEmail = base64.decode(idEmail);
     }
 
-    const email = googleUser.Qt.zu;
+    //const email = googleUser.Qt.zu;
+    const email = googleUser.getBasicProfile().getEmail();
 
     if (userId !== null && email !== null) {
       const user = await getUser(userId);
@@ -669,7 +674,7 @@ export class Main extends Component {
                     className="imgproduct"
                     border="0"
                     alt="Calendar"
-                    src="assets/img/icon-calendar.png"
+                    src="/assets/img/icon-calendar.png"
                   ></img>
                 </div>
               </span>
@@ -680,7 +685,7 @@ export class Main extends Component {
                       className='imgproduct'
                       border='0'
                       alt='Lex-On'
-                      src='assets/img/icon-lexon.png'></img>
+                      src='/assets/img/icon-lexon.png'></img>
                   </div>
                 ) : (
                   <div>
@@ -688,7 +693,7 @@ export class Main extends Component {
                       className='imgproductdisable'
                       border='0'
                       alt='Lex-On'
-                      src='assets/img/icon-lexon.png'></img>
+                      src='/assets/img/icon-lexon.png'></img>
                   </div>
                 )}
               </span>
@@ -700,7 +705,7 @@ export class Main extends Component {
                     className="imgproductdisable"
                     border="0"
                     alt="Calendar"
-                    src="assets/img/icon-qmemento.png"
+                    src="/assets/img/icon-qmemento.png"
                   ></img>
                 </div>
               </span>
@@ -711,7 +716,7 @@ export class Main extends Component {
                     className="imgproductdisable"
                     border="0"
                     alt="Calendar"
-                    src="assets/img/icon-compliance.png"
+                    src="/assets/img/icon-compliance.png"
                   ></img>
                 </div>
               </span>
@@ -724,7 +729,7 @@ export class Main extends Component {
                     className=""
                     border="0"
                     alt="Calendar"
-                    src="assets/img/icon-close-empty.png"
+                    src="/assets/img/icon-close-empty.png"
                   ></img>
                 </button>
               </span> 

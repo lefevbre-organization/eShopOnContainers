@@ -84,7 +84,7 @@ export class Header extends PureComponent {
         const userInfo = this.props.microsoftUser;
         const email = userInfo.email;
         const fullName = userInfo.displayName;
-        // const picUrl = "assets/img/icon-user.png";
+        // const picUrl = "/assets/img/icon-user.png";
 
         return (
             <header className='d-flex p-3 align-content-center align-items-center header '>
@@ -97,8 +97,8 @@ export class Header extends PureComponent {
                     </Link>
                 </div>
                 <div className='header-logo justify-content-center'>
-                    {/*<Link to="/inbox"><img border="0" alt="gmail" src="assets/img/logo-elderecho.png"></img></Link>
-                    <Link to="/inbox"><img className="logo-ext" border="0" alt="office 365" src="assets/img/office365.png"></img></Link>*/}
+                    {/*<Link to="/inbox"><img border="0" alt="gmail" src="/assets/img/logo-elderecho.png"></img></Link>
+                    <Link to="/inbox"><img className="logo-ext" border="0" alt="office 365" src="/assets/img/office365.png"></img></Link>*/}
                 </div>
                 <div className='header-search'>
                     <div className='input-group w-75 ml-1 mr-auto'>
@@ -120,7 +120,7 @@ export class Header extends PureComponent {
                         </div>
                     </div>
                     {/*<div className="header-logo justify-content-center">
-                        <Link to="/inbox"><img className="logo-ext" border="0" alt="otulook" src="assets/img/gmail.png"></img></Link>                       
+                        <Link to="/inbox"><img className="logo-ext" border="0" alt="otulook" src="/assets/img/gmail.png"></img></Link>                       
                     </div>*/}
                    
                     <MenuUser

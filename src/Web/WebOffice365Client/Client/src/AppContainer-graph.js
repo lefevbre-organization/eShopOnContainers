@@ -54,7 +54,14 @@ class AppContainerGraph extends Component {
                 this.props.setIdMail(userLexon.idMail);
                 this.props.setToken(userLexon.token);
             }
+            console.log("user:" + (userLexon.user));
+            console.log("token:" + (userLexon.token));
         }
+        //debugger;
+        // if (this.props.location.search.indexOf('id') > -1) {
+        //     let parametros = new URLSearchParams(this.props.location.search);
+        //     window.open(`https://lexbox-test.lefebvre.es/user/${parametros.get('id')}/encrypt/0`, '_self');
+        // }
 
         const { isNewAccount } = this.props.lexon;
         if (!isNewAccount) {
