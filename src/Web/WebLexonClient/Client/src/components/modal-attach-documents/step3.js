@@ -529,6 +529,7 @@ function normalizeTree(entity, data, preselectId, removeFiles = true) {
   if (entity.idType === 1) {
     root.imageUrl = `${window.URL_MF_LEXON_BASE}/assets/img/icon-law.png`;
   }
+  flatNodes[root.id] = Object.assign({}, root);
   root.subChild = normalizeNodes(root.subChild, preselectId, removeFiles);
 
   console.log(root);
