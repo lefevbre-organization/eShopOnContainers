@@ -35,7 +35,7 @@ const MaterialTitlePanel = props => {
           className="headerButtons"
           alt={props.title}
           border="0"
-          src="assets/img/buttons.png"
+          src="/assets/img/buttons.png"
           onClick={() => _handleOnClick()}
         ></img>
       </div>

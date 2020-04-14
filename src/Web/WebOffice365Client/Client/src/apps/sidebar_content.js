@@ -47,7 +47,7 @@ const SidebarContent = props => {
         </a>
         <div style={styles.divider} />
         {links}*/}
-        <img border="0" alt="Lefebvre" src="assets/img/calendarfake.png"></img>
+        <img border="0" alt="Lefebvre" src="/assets/img/calendarfake.png"></img>
       </div>
     </MaterialTitlePanel>
   );

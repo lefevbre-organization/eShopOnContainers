@@ -17,7 +17,7 @@ function WelcomeContent(props) {
   alert("7");
   return (
     <a href="#/" onClick={props.authButtonMethod}>
-      <img border="0" alt="Microsoft" src="assets/img/singinms.png"></img>
+      <img border="0" alt="Microsoft" src="/assets/img/singinms.png"></img>
     </a>
   );
 }

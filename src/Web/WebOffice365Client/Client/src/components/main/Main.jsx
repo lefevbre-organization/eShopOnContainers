@@ -698,7 +698,7 @@ export class Main extends Component {
                     className="imgproductdisable"
                     border="0"
                     alt="Calendar"
-                    src="assets/img/icon-qmemento.png"
+                    src="/assets/img/icon-qmemento.png"
                   ></img>
                 </div>
               </span>
@@ -709,7 +709,7 @@ export class Main extends Component {
                     className="imgproductdisable"
                     border="0"
                     alt="Calendar"
-                    src="assets/img/icon-compliance.png"
+                    src="/assets/img/icon-compliance.png"
                   ></img>
                 </div>
               </span>
@@ -720,7 +720,7 @@ export class Main extends Component {
                     className="imgproductdisable"
                     border="0"
                     alt="Calendar"
-                    src="assets/img/icon-calendar.png"
+                    src="/assets/img/icon-calendar.png"
                   ></img>
                 </div>
               </span>
@@ -733,7 +733,7 @@ export class Main extends Component {
                     className=""
                     border="0"
                     alt="Calendar"
-                    src="assets/img/icon-close-empty.png"
+                    src="/assets/img/icon-close-empty.png"
                   ></img>
                 </button>
               </span> 

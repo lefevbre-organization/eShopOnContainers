@@ -97,7 +97,7 @@ class MenuMinihub extends Component {
           ref={ref => (this.buttonRef = ref)}>
           <img
             className='mx-2 profile-pic'
-            src='assets/img/icon-products.png'
+            src='/assets/img/icon-products.png'
           />
         </div>
         {dropdownOpen === true && (
