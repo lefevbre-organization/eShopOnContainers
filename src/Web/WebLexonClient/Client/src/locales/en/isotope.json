@@ -78,11 +78,14 @@
     "close": "CLOSE",
     "title": "New classification",
     "body": "Select classification type to load the corresponding list and assign the messages to one of the items in the list.",
-    "classification-saved-ok": "The classification saved correctly",
-    "classification-saved-ko": "There was an error saving the classification",
-    "classification-removed-ok": "The classification removed correctly",
+    "classification-saved-ok": "The classification has been saved correctly",
+    "classification-saved-ko": "There was an error has been saving the classification",
+    "classification-removed-ok": "The classification has beenremoved correctly",
     "classification-removed-ko": "There was an error removing the classification",
-    "classification-selection-ko": "You must select a Type and Entity to qualify"
+    "classification-selection-ko": "You must select a Type and Entity to qualify",
+    "classification-docs-saved-ok": "The classification and documents are been saved correctly",
+    "documents-saved-ok": "The documents has been saved correctly",
+    "documents-saved-ko": "There was an error saving the documents"
   },
   "classification-type": {
     "type": "Type",

@@ -87,13 +87,14 @@ class AppContainer extends Component {
   }
 
   onSignInSuccess(googleUser) {
+
     this.setState({
       signInStatus: AUTH_SUCCESS,
       googleUser: googleUser,
       openEmail: this.props.match.params.idMail
     });
 
-      this.props.setAccount(googleUser.Qt.Au);
+      this.props.setAccount(googleUser.getBasicProfile().getEmail());
     //this.props.setAccount(googleUser.Rt.Au);
   }
 

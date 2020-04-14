@@ -184,7 +184,7 @@ class MenuUser extends Component {
           ref={(ref) => (this.buttonRef = ref)}>
           <img
             className='mx-2 profile-pic'
-            src='assets/img/icon-user.png'
+            src='/assets/img/icon-user.png'
             alt={fullName}
           />
         </div>

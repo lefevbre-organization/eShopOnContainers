@@ -80,12 +80,16 @@ export class Header extends PureComponent {
 
   render() {
     //const userInfo = this.props.googleUser.Rt;
-    const userInfo = this.props.googleUser.Qt;
+    //const userInfo = this.props.googleUser.Qt;
+    const userInfo = this.props.googleUser.getBasicProfile();
     //const email = userInfo.Au;
-    const email = userInfo.zu;
-    const fullName = userInfo.Ad;
+    //const email = userInfo.zu;
+    const email = this.props.googleUser.getBasicProfile().getEmail();
+    //const fullName = userInfo.Ad;
+    const fullName = this.props.googleUser.getBasicProfile().getName();
     //const picUrl = userInfo.kL;
-    const picUrl = userInfo.gL;
+    //const picUrl = userInfo.gL;
+    const picUrl = this.props.googleUser.getBasicProfile().getImageUrl();
 
     return (
       <header className='d-flex p-3 align-content-center align-items-center header '>
@@ -94,12 +98,12 @@ export class Header extends PureComponent {
             <img
               border='0'
               alt='lefebvre'
-              src='assets/img/LogoLefebvre.png'></img>
+              src='/assets/img/LogoLefebvre.png'></img>
           </Link>
         </div>
         <div className='header-logo justify-content-center'>
-          {/*<Link to="/inbox"><img border="0" alt="gmail" src="assets/img/logo-elderecho.png"></img></Link>
-                    <Link to="/inbox"><img className="logo-ext" border="0" alt="otulook" src="assets/img/gmail.png"></img></Link> */}
+          {/*<Link to="/inbox"><img border="0" alt="gmail" src="/assets/img/logo-elderecho.png"></img></Link>
+                    <Link to="/inbox"><img className="logo-ext" border="0" alt="otulook" src="/assets/img/gmail.png"></img></Link> */}
         </div>
         <div className='header-search'>
           <div className='input-group w-75 ml-1 mr-auto'>
@@ -121,7 +125,7 @@ export class Header extends PureComponent {
             </div>
           </div>
           {/*<div className="header-logo justify-content-center">
-                        <Link to="/inbox"><img className="logo-ext" border="0" alt="otulook" src="assets/img/gmail.png"></img></Link>                       
+                        <Link to="/inbox"><img className="logo-ext" border="0" alt="otulook" src="/assets/img/gmail.png"></img></Link>                       
                     </div>*/}
 
           <MenuUser
@@ -143,7 +147,7 @@ export class Header extends PureComponent {
                 isOpen={this.state.dropdownMenuOpen}
                 toggle={this.toggleMenu}>
                 <DropdownToggle nav>
-                  <img src='assets/img/icon-products.png' alt='' />
+                  <img src='/assets/img/icon-products.png' alt='' />
                 </DropdownToggle>
                 <DropdownMenu right>
                   {/* <DropdownItem>

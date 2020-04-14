@@ -38,7 +38,7 @@ const MaterialTitlePanel = props => {
           className="headerButtons"
           alt={props.title}
           border="0"
-          src="assets/img/close.png"
+          src="/assets/img/close.png"
           onClick={() => _handleOnClick()}
         ></img>
                 <Link to="chart" target="_blank" to="calendar" >
@@ -46,7 +46,7 @@ const MaterialTitlePanel = props => {
                       className="headerButtons"
                       alt={props.title}
                       border="0"
-                      src="assets/img/expand.png"
+                      src="/assets/img/expand.png"
 
                   ></img>
              </Link>

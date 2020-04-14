@@ -90,22 +90,22 @@ function addAttachmentImg(mimeType) {
 
   switch (mimeType) {
     case 'image/png':
-      imgPath = '../assets/img/file-extensions/png.png';
+      imgPath = '/assets/img/file-extensions/png.png';
       break;
     case 'image/jpeg':
-      imgPath = '../assets/img/file-extensions/jpg.png';
+      imgPath = '/assets/img/file-extensions/jpg.png';
       break;
     case 'application/pdf':
-      imgPath = '../assets/img/file-extensions/pdf.png';
+      imgPath = '/assets/img/file-extensions/pdf.png';
       break;
     case 'text/plain':
-      imgPath = '../assets/img/file-extensions/txt.png';
+      imgPath = '/assets/img/file-extensions/txt.png';
       break;
     case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-      imgPath = '../assets/img/file-extensions/doc.png';
+      imgPath = '/assets/img/file-extensions/doc.png';
       break;
     default:
-      imgPath = '../assets/img/file-extensions/default.png';
+      imgPath = '/assets/img/file-extensions/default.png';
       break;
     // code block
   }

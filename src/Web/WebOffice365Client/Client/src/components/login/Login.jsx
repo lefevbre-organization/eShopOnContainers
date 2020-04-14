@@ -35,6 +35,18 @@ export class Login extends React.Component {
         }
     }
 
+    // componentDidMount() {
+    //     if (window.location.search.indexOf('redirect') > -1) {
+    //         debugger;
+    //         if (typeof this.props.lexon !== 'undefined') {
+    //             const { userId, token } = this.props.lexon;
+    //             (token) 
+    //                 ? window.open(`https://lexbox-test.lefebvre.es/access/${token}/`, '_self')
+    //                 : window.open(`https://lexbox-test.lefebvre.es/user/${userId}/encrypt/0`, '_self');
+    //         }
+    //     }
+    // }
+
     render() {
         const { t } = this.props;
         return (

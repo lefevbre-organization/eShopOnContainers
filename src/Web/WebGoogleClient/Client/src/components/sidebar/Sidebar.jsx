@@ -119,7 +119,7 @@ export class Sidebar extends PureComponent {
             className="logo-ext"
             border="0"
             alt="otulook"
-            src="assets/img/gmail.png"
+            src="/assets/img/gmail.png"
           ></img>
           {t("sidebar.folders")}
         </li>
@@ -207,7 +207,7 @@ export class Sidebar extends PureComponent {
                   className="ImgLf"
                   border="0"
                   alt="otulook"
-                  src="assets/img/plus.png"
+                  src="/assets/img/plus.png"
                 ></img>
                 {t("sidebar.compose")}
               </Link>

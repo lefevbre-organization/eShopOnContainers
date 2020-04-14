@@ -176,7 +176,7 @@ export class Sidebar extends PureComponent {
                                     className="ImgLf"
                                     border="0"
                                     alt="otulook"
-                                    src="assets/img/plus.png"
+                                    src="/assets/img/plus.png"
                                 ></img>
                                 {t("calendar-sidebar.compose")}
                             </Link>

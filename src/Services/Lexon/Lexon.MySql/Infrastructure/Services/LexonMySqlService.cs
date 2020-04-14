@@ -117,7 +117,7 @@ namespace Lexon.MySql.Infrastructure.Services
             return resultado;
         }
 
-        private async Task<List<string>> GetContactData(string idUser, string bbdd, short? idEntityType, int? idEntity,  List<string> mailContacts)
+        private async Task<List<string>> GetContactData(string idUser, string bbdd, short? idEntityType, int? idEntity, List<string> mailContacts)
         {
             if (idEntityType == (short?)LexonAdjunctionType.files
                 && idEntityType == (short?)LexonAdjunctionType.folders
@@ -141,7 +141,6 @@ namespace Lexon.MySql.Infrastructure.Services
             }
 
             return mailContacts;
-
         }
 
         private string ValidarUsuario(string login, string password, string idUser)
@@ -279,11 +278,17 @@ namespace Lexon.MySql.Infrastructure.Services
                 return result;
             }
 
-            var entity = new LexNestedEntity(partialResultTop.Data[0]);
+            var itemParent = new LexNestedEntity(entityFolder);
 
-            GetRecursiveEntities(entityFolder, result, entity, ref limit);
+            foreach (var item in partialResultTop.Data)
+            {
+                var entity = new LexNestedEntity(item);
+                if (item.idType == (short?)LexonAdjunctionType.folders)
+                    GetRecursiveEntities(entityFolder, result, entity, ref limit);
+                itemParent.subChild.Add(entity);
+            }
 
-            result.data = entity;
+            result.data = itemParent;
             return result;
         }
 
@@ -317,7 +322,6 @@ namespace Lexon.MySql.Infrastructure.Services
             var result = new Result<List<LexApp>>(new List<LexApp>());
             try
             {
-               
                 //string usuarioEncriptado = "f3NrcnZs";
                 //string user = "E0383956";
                 //http://led-pre-servicehub/Herramientas/Get?IdUsuarioPro=E0383956&IdUsuarioProEncriptado=f3NrcnZs&indMinuHub=1
