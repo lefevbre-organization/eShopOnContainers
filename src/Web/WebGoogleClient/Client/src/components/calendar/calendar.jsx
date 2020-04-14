@@ -58,9 +58,6 @@ import {
 import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
 import {  getEventList } from '../../api/index';
 
-
-
-
 export class Calendar extends Component {
     constructor(props) {
         super(props);
@@ -68,9 +65,18 @@ export class Calendar extends Component {
         this.getCalendarList = this.getCalendarList.bind(this);       
         this.addInitialPageToken = this.addInitialPageToken.bind(this);
         this.onSignout = this.onSignout.bind(this);
-        this.onSignoutDisconnect = this.onSignoutDisconnect.bind(this);
+        this.onSignoutDisconnect = this.onSignoutDisconnect.bind(this);     
+        this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
+        this.onSetSidebarOpenCalendar = this.onSetSidebarOpenCalendar.bind(this);
+        this.onSetSidebarOpenLexon = this.onSetSidebarOpenLexon.bind(this);
+        this.onSetSidebarOpenQMemento = this.onSetSidebarOpenQMemento.bind(this);
+        this.onSetSidebarOpenCompliance = this.onSetSidebarOpenCompliance.bind(this);
+        this.onSetSidebarOpenDatabase = this.onSetSidebarOpenDatabase.bind(this);
+        this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(this);
+        this.toggleSideBar = this.toggleSideBar.bind(this);
         this.loadCalendarEvents = this.loadCalendarEvents.bind(this);
         this.handleScheduleDate = this.handleScheduleDate.bind(this);
+        this.handleScheduleOpenEditor = this.handleScheduleOpenEditor.bind(this);
 
         this.state = {
             isVisible: true,
@@ -89,28 +95,10 @@ export class Calendar extends Component {
             sidebarComponent: (
                 <img border='0' alt='Lefebvre' src='/assets/img/lexon-fake.png'></img>
             ),
-            Calendars: []
+
         };
 
-        this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
-        this.onSetSidebarOpenCalendar = this.onSetSidebarOpenCalendar.bind(this);
-        this.onSetSidebarOpenLexon = this.onSetSidebarOpenLexon.bind(this);
-        this.onSetSidebarOpenQMemento = this.onSetSidebarOpenQMemento.bind(this);
-        this.onSetSidebarOpenCompliance = this.onSetSidebarOpenCompliance.bind(
-            this
-        );
-        this.onSetSidebarOpenDatabase = this.onSetSidebarOpenDatabase.bind(this);
-        this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
-            this
-        );
-
-        this.toggleSideBar = this.toggleSideBar.bind(this);
-
-
-        this.dataManger = new DataManager();
-        
-
-        
+        this.dataManger = new DataManager();          
            
     }
 
@@ -541,6 +529,18 @@ export class Calendar extends Component {
         this.scheduleObj.dataBind();       
     }
 
+    handleScheduleOpenEditor() { 
+        var endTimeDate = new Date();
+        endTimeDate.setMinutes(endTimeDate.getMinutes() + 60);
+
+        let cellData = {
+            startTime: new Date(Date.now()),
+            endTime: endTimeDate,
+        };
+
+        this.scheduleObj.openEditor(cellData, 'Add');   
+    }
+
 
     getCalendarList() {
         this.props.getCalendars();
@@ -703,7 +703,8 @@ export class Calendar extends Component {
                             onCalendarClick={this.loadCalendarEvents}
                             onSidebarCloseClick={this.handleShowLeftSidebarClick}
                             onCalendarChange={this.handleScheduleDate}
-                        />
+                            onCalendarOpenEditor={this.handleScheduleOpenEditor}
+                    />
                         <article className='d-flex flex-column position-relative'>
                             <Switch>
                                 {/* <div>
