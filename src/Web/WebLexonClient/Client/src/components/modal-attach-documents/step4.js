@@ -196,7 +196,7 @@ export class AttachDocumentsStep4 extends React.Component {
                     width='100'
                     template={this.renderOrigin}></ColumnDirective>
                   <ColumnDirective
-                    field='code'
+                    field='name'
                     headerText='Nombre'
                     width='150'></ColumnDirective>
                   <ColumnDirective

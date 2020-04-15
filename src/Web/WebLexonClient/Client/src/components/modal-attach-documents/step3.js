@@ -44,7 +44,20 @@ export class AttachDocumentsStep3 extends React.Component {
   }
 
   async componentDidUpdate(prevProps, prevState) {
+    if (prevProps.show === true && this.props.show === false) {
+      this.setState({
+        flatNodes: [],
+        fields: { dataSource: [], id: 'id', text: 'name', child: 'subChild' },
+        entities: [],
+        selected: null,
+        loadingTree: false,
+        folderCreated: null
+      })
+      return
+    }
+
     if (
+      (prevProps.show === false && this.props.show === true) ||
       JSON.stringify(prevProps.entity) !== JSON.stringify(this.props.entity) ||
       prevState.folderCreated !== this.state.folderCreated
     ) {
@@ -91,21 +104,6 @@ export class AttachDocumentsStep3 extends React.Component {
         }
       });
     }
-
-    // if (prevProps.show === false && this.props.show === true) {
-    //   const opened = document.getElementsByClassName(
-    //     'lexon-clasification-list-searcher search-close-3 opened'
-    //   );
-    //   if (opened && opened.length > 0) {
-    //     const closeButton = document.getElementsByClassName(
-    //       'search-trigger-hide search-close-3'
-    //     )[0];
-    //     if (closeButton) {
-    //       closeButton.click();
-    //     }
-    //   }
-    //   return;
-    // }
   }
 
   onNodeSelected(event) {
