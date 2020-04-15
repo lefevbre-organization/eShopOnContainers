@@ -10,8 +10,8 @@ import {
 } from '../constants';
 
 import * as encodings from 'text-encoding';
-if (!TextDecoder) {
-  TextDecoder = encodings.TextDecoder;
+if (!global.TextDecoder) {
+  global.TextDecoder = encodings.TextDecoder;
 }
 export const getCompanies = user => {
   return new Promise((resolve, reject) => {
