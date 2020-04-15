@@ -56,7 +56,7 @@ import {
 } from '@syncfusion/ej2-react-schedule';
 //import './schedule-component.css';
 import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
-import { getEventList, addCalendarEvent } from '../../api/index';
+import { getEventList, addCalendarEvent, deleteCalendarEvent } from '../../api/index';
 
 export class Calendar extends Component {
     constructor(props) {
@@ -536,18 +536,30 @@ export class Calendar extends Component {
                 break;
 
             case 'eventCreated':
-
                
                 const event = this.buildEventoGoogle(args.data[0]);
 
                 //call function to add event
-                addCalendarEvent(event)
+                addCalendarEvent("primary",event)
                     .then(result => {                       
                         this.loadCalendarEvents(this.defaultCalendar);
                     })
                     .catch(error => {
                         console.log('error ->', error);
                     }) 
+
+                break;
+
+            case 'eventRemoved':
+                //call function to add event
+                deleteCalendarEvent("primary", args.data[0].Id)
+                    .then(result => {
+                        this.loadCalendarEvents(this.defaultCalendar);
+                    })
+                    .catch(error => {
+                        console.log('error ->', error);
+                    })
+
                 break;
         }
 
