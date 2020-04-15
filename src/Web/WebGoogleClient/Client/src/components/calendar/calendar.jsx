@@ -513,7 +513,7 @@ export class Calendar extends Component {
                 'timeZone': 'Europe/Madrid',
             },
             'end': {
-                'dateTime': values.StartTime ,
+                'dateTime': values.EndTime ,
                 'timeZone': 'Europe/Madrid',
             },
             'reminders': {
