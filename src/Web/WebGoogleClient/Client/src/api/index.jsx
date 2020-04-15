@@ -393,9 +393,22 @@ export const getCalendarList = () =>
             
     });
 
-    //let request = gapi.client.calendar.calendarList.list();
+export const addCalendarEvent = (event) =>
+    new Promise((resolve, reject) => {
+        window.gapi.client.calendar.events
+            .insert({
+                calendarId: "primary",
+                resource: event
+            })
 
+            .then(response => {
+                resolve(response.result);
+            })
+            .catch(err => {
+                reject(err);
+            });
 
-    //let request = gapi.client.calendar.events.list(requestParams);
+    });
+
 
     

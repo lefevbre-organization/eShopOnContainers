@@ -56,7 +56,7 @@ import {
 } from '@syncfusion/ej2-react-schedule';
 //import './schedule-component.css';
 import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
-import {  getEventList } from '../../api/index';
+import { getEventList, addCalendarEvent } from '../../api/index';
 
 export class Calendar extends Component {
     constructor(props) {
@@ -77,6 +77,8 @@ export class Calendar extends Component {
         this.loadCalendarEvents = this.loadCalendarEvents.bind(this);
         this.handleScheduleDate = this.handleScheduleDate.bind(this);
         this.handleScheduleOpenEditor = this.handleScheduleOpenEditor.bind(this);
+        this.onEventRendered = this.onEventRendered.bind(this);
+       
 
         this.state = {
             isVisible: true,
@@ -98,7 +100,8 @@ export class Calendar extends Component {
 
         };
 
-        this.dataManger = new DataManager();          
+        this.dataManger = new DataManager(); 
+        this.defaultCalendar="";
            
     }
 
@@ -138,11 +141,7 @@ export class Calendar extends Component {
         });
     }
 
-    //handleShowLeftSidebarClick() {
-    //    this.setState({
-    //        leftSidebarOpen: !this.leftSidebarOpen
-    //    })
-    //}
+   
 
     sendMessagePutUser(user) {
         const { selectedMessages, googleUser } = this.props;
@@ -503,24 +502,75 @@ export class Calendar extends Component {
 
     //    this.props.history.push(`/${label.id.toLowerCase()}`);
     //}
+    buildEventoGoogle(values) {  
 
-    
+        var event = {
+            'summary': values.Subject ,
+            'location': '',
+            'description': '',
+            'start': {
+                'dateTime': values.StartTime,
+                'timeZone': 'Europe/Madrid',
+            },
+            'end': {
+                'dateTime': values.StartTime ,
+                'timeZone': 'Europe/Madrid',
+            },
+            'reminders': {
+                'useDefault': false,
+                'overrides': [
+                    { 'method': 'email', 'minutes': 24 * 60 },
+                    { 'method': 'popup', 'minutes': 10 },
+                ],
+            },
+        };
+
+        return event
+    }
+
+    onEventRendered(args) {
+
+        switch (args.requestType) {
+
+            case 'eventChanged':
+                break;
+
+            case 'eventCreated':
+
+               
+                const event = this.buildEventoGoogle(args.data[0]);
+
+                //call function to add event
+                addCalendarEvent(event)
+                    .then(result => {                       
+                        this.loadCalendarEvents(this.defaultCalendar);
+                    })
+                    .catch(error => {
+                        console.log('error ->', error);
+                    }) 
+                break;
+        }
+
+
+    }
+
     loadCalendarEvents(calendar) {
+        
         this.scheduleObj.showSpinner();
         getEventList(calendar)
             .then(result => {
                 this.dataManger = result.result;
                 this.onDataBinding(this.dataManger);
                 this.scheduleObj.refreshEvents();
-                //this.scheduleObj.dataBind();
+               
                
             })
             .catch(error => {
                 console.log('error ->', error);
             }) 
-       
-        this.props.selectCalendar(calendar);
-        
+
+        this.defaultCalendar = calendar;
+        this.props.selectCalendar(calendar);       
       
     }  
 
@@ -630,7 +680,7 @@ export class Calendar extends Component {
 
         //sessionStorage.clear();
         //localStorage.clear();
-    }
+    }   
 
     renderInboxViewport() {
         const { leftSideBar } = this.state;
@@ -715,6 +765,8 @@ export class Calendar extends Component {
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
                                             <ScheduleComponent ref={schedule => this.scheduleObj = schedule} width='100%'
+                                               
+                                                actionComplete={this.onEventRendered.bind(this)}
                                                 currentView="Month"
                                                 height='650px' 
                                                 eventSettings={{ dataSource: this.dataManger }} dataBinding={this.onDataBinding.bind(this)}>
@@ -784,43 +836,6 @@ export class Calendar extends Component {
                                         </div>
                                     )}
                             </span>
-
-                            {/* <span className="productsbutton">
-                 <div onClick={() => this.onSetSidebarOpenQMemento(true)}> 
-                <div>
-                  <img
-                    className="imgproductdisable"
-                    border="0"
-                    alt="Calendar"
-                    src="/assets/img/icon-qmemento.png"
-                  ></img>
-                </div>
-              </span>
-              <span className="productsbutton">
-                <div onClick={() => this.onSetSidebarOpenCompliance(true)}> 
-                <div>
-                  <img
-                    className="imgproductdisable"
-                    border="0"
-                    alt="Calendar"
-                    src="/assets/img/icon-compliance.png"
-                  ></img>
-                </div>
-              </span>
-              <span className="productsbutton">
-                <button
-                  onClick={() => this.onSetSidebarDocked(false)}
-                  className="btn compose-btn"
-                >
-                  <img
-                    className=""
-                    border="0"
-                    alt="Calendar"
-                    src="/assets/img/icon-close-empty.png"
-                  ></img>
-                </button>
-              </span> 
-                        <span className="spaceproduct"></span>*/}
                         </div>
                     </section>
                 </Fragment>

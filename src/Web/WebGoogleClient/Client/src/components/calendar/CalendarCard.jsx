@@ -6,12 +6,15 @@ import {
 } from '@syncfusion/ej2-react-schedule';
 //import './schedule-component.css';
 import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
+import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
 import { getEventList } from '../../api/index';
 
 
 export class CalendarCard extends Component {
     constructor(props) {
         super(props);
+
+        this.onCalendarChange = this.onCalendarChange.bind(this);
 
         this.dataManger = new DataManager(); 
 
@@ -21,7 +24,6 @@ export class CalendarCard extends Component {
 
                 this.onDataBinding(this.dataManger);
                 this.scheduleObj.refreshEvents();
-
 
                 let items = this.dataManger.items;
                 let scheduleData = [];
@@ -82,6 +84,16 @@ export class CalendarCard extends Component {
         }
         e.result = scheduleData;
     }
+
+    onCalendarChange(args) {
+        let value = parseInt(args.event.target.getAttribute('value'), 10);
+        if (args.checked) {
+            this.scheduleObj.addResource(this.dataManger, 'items', value - 1);
+        }
+        else {
+            this.scheduleObj.removeResource(value, 'Calendars');
+        }
+    }
   
     render() {
         return (
@@ -93,13 +105,45 @@ export class CalendarCard extends Component {
                             eventSettings={{ dataSource: this.dataManger }} dataBinding={this.onDataBinding.bind(this)}>
                             <ViewsDirective>
                                 <ViewDirective option='Day' />                               
-                                <ViewDirective option='Agenda' />
+                                <ViewDirective option='Agenda' />                               
                             </ViewsDirective>
                             <Inject services={[Day, Agenda, Resize, DragAndDrop]} />
                         </ScheduleComponent>
                     </div>
                 </div>
-            </div>    
+
+                {/* <div className='col-lg-3 property-section'>
+                    <table id='property' title='Show / Hide Resource' className='property-panel-table' style={{ width: '100%' }}>
+                        <tbody>
+                            <tr style={{ height: '50px' }}>
+                                <td style={{ width: '100%' }}>
+                                    <CheckBoxComponent value='1' id='personal' cssClass='personal' checked={true} label='My Calendar' disabled={true} change={this.onCalendarChange.bind(this)}></CheckBoxComponent>
+                                </td>
+                            </tr>
+                            <tr style={{ height: '50px' }}>
+                                <td style={{ width: '100%' }}>
+                                    <CheckBoxComponent value='2' id='company' cssClass='company' checked={false} label='Company' change={this.onCalendarChange.bind(this)}></CheckBoxComponent>
+                                </td>
+                            </tr>
+                            <tr style={{ height: '50px' }}>
+                                <td style={{ width: '100%' }}>
+                                    <CheckBoxComponent value='3' id='birthdays' cssClass='birthday' checked={false} label='Birthday' change={this.onCalendarChange.bind(this)}></CheckBoxComponent>
+                                </td>
+                            </tr>
+                            <tr style={{ height: '50px' }}>
+                                <td style={{ width: '100%' }}>
+                                    <CheckBoxComponent value='4' id='holidays' cssClass='holiday' checked={false} label='Holiday' change={this.onCalendarChange.bind(this)}></CheckBoxComponent>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>*/}
+            </div>
+
+           
+ 
+
         );
     }
 }
