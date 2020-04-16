@@ -4,7 +4,7 @@ build:
   context: ..\..\..\..\
   dockerfile: ..\..\..\..\ApiGateways\ApiGw-Base\Dockerfile
 install:
-  chart: ../../../../k8s/helm/apigwacc
+  chart: ../../../../k8s-LEF/helm/apigwcen
   set:
     replicaCount: 1
     image:
