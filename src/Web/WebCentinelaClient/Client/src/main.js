@@ -101,32 +101,6 @@ class Main extends Component {
     this.props.resetListMessages();
   }
 
-  // async handleSentMessage(event) {
-  //   const { user, idCaseFile, bbdd } = this.state;
-  //   const { idEmail, subject, date } = event.detail;
-
-  //   await addClassification(
-  //     user,
-  //     { bbdd },
-  //     [
-  //       {
-  //         id: idEmail,
-  //         subject,
-  //         sentDateTime: date
-  //       }
-  //     ],
-  //     idCaseFile,
-  //     1
-  //   );
-
-  //   window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
-  //   // this.props.setCaseFile({
-  //   //   casefile: null,
-  //   //   bbdd: null,
-  //   //   company: null
-  //   // });
-  // }
-
   async handleSentMessage(event) {
     const { user, idCaseFile, bbdd } = this.state;
     const { idEmail, subject, date } = event.detail;
@@ -158,13 +132,13 @@ class Main extends Component {
 
     event.detail.chkselected
       ? this.props.addMessage({
-        id: event.detail.extMessageId,
-        //extMessageId: event.detail.extMessageId,
-        subject: event.detail.subject,
-        folder: event.detail.folder,
-        sentDateTime: event.detail.sentDateTime,
-        raw: event.detail.raw
-      })
+          id: event.detail.extMessageId,
+          //extMessageId: event.detail.extMessageId,
+          subject: event.detail.subject,
+          folder: event.detail.folder,
+          sentDateTime: event.detail.sentDateTime,
+          raw: event.detail.raw
+        })
       : this.props.deleteMessage(event.detail.extMessageId);
   }
 
@@ -328,17 +302,6 @@ class Main extends Component {
           message={messageNotification}
           error={errorNotification}
         />
-
-        {errors && errors.length === 0 && (
-          <Routing
-            user={user}
-            companies={companies}
-            toggleNotification={this.toggleNotification}
-            casefile={idCaseFile}
-            bbdd={bbdd}
-            company={idCompany}
-          />
-        )}
       </Fragment>
     );
   }
