@@ -84,6 +84,7 @@
     "bcc": "bcc",
     "subject": "Asunto",
     "send": "Enviar",
+    "max-file-size": "El tamaño total de los adjuntos debe ser menor que 20MB para este proveedor.",
     "dropZoneMessage": "Deposita aquí ficheros",
     "attach": "ADJUNTAR",
     "insertLinkDialog": {

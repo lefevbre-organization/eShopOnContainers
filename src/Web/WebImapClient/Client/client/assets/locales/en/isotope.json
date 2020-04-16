@@ -84,6 +84,7 @@
     "bcc": "bcc",
     "subject": "Subject",
     "send": "Send",
+    "max-file-size": "The maximum attachment size must be less than 20MB for this provider",
     "dropZoneMessage": "Drop files here",
     "attach": "ATTACH",
     "insertLinkDialog": {
