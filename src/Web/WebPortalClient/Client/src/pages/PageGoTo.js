@@ -100,7 +100,7 @@ export class PageGoTo extends Component {
                     if (account.provider.toUpperCase() === 'IMAP') {
                       imapAutoLog =  base64.encode(account.email);
                     }
-                    found = true;
+                    return true;
                     break;
                   }
                 }
