@@ -417,7 +417,8 @@ export class ComposeMessage extends PureComponent {
     const headers = {
       To: validTo.join(', '),
       Subject: '=?UTF-8?B?' + this.b64EncodeUnicode(this.state.subject) + '?=',
-      attachments: this.state.uppyPreviews
+      attachments: this.state.uppyPreviews,
+      From: this.props.googleUser.getBasicProfile()
     };
 
     const validCc = getValidEmails(this.state.cc);
@@ -959,8 +960,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
-  setMailContacts: mailContacts =>
-    dispatch(ACTIONS.setMailContacts(mailContacts))
+  setMailContacts: mailContacts => dispatch(ACTIONS.setMailContacts(mailContacts))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ComposeMessage);
