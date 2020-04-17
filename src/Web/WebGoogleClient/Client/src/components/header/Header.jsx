@@ -81,12 +81,16 @@ export class Header extends PureComponent {
 
   render() {
     //const userInfo = this.props.googleUser.Rt;
-    const userInfo = this.props.googleUser.Qt;
+    //const userInfo = this.props.googleUser.Qt;
+    const userInfo = this.props.googleUser.getBasicProfile();
     //const email = userInfo.Au;
-    const email = userInfo.zu;
-    const fullName = userInfo.Ad;
+    //const email = userInfo.zu;
+    const email = this.props.googleUser.getBasicProfile().getEmail();
+    //const fullName = userInfo.Ad;
+    const fullName = this.props.googleUser.getBasicProfile().getName();
     //const picUrl = userInfo.kL;
-    const picUrl = userInfo.gL;
+    //const picUrl = userInfo.gL;
+    const picUrl = this.props.googleUser.getBasicProfile().getImageUrl();
 
     return (
       <header className='d-flex p-3 align-content-center align-items-center header '>
