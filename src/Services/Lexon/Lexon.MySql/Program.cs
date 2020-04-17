@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Serilog;
 
-namespace Lexon.MySql
+namespace Centinela.MySql
 {
     public class Program
     {

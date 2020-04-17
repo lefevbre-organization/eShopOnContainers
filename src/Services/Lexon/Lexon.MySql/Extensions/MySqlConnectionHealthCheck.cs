@@ -4,7 +4,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Lexon.MySql.Extensions
+namespace Centinela.MySql.Extensions
 {
     public class MySqlConnectionHealthCheck : IHealthCheck
     {

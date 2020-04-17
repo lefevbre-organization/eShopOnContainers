@@ -1,4 +1,4 @@
-﻿using Lexon.API.Model;
+﻿using Centinela.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
@@ -13,7 +13,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Lexon.API.Infrastructure
+namespace Centinela.API.Infrastructure
 {
     //mirar https://www.mongodb.com/blog/post/working-with-mongodb-transactions-with-c-and-the-net-framework
     public class LexonContext : IMongoDbContext, IIntegrationEventLogContextMongoDB

@@ -5,7 +5,7 @@ using Serilog;
 using System;
 using System.IO;
 
-namespace Lexon.API
+namespace Centinela.API
 {
     public class Program
     {

@@ -1,5 +1,5 @@
 ﻿using Centinela.API.IntegrationsEvents.Events;
-using Centinela.API.Model;
+using Centinela.API.Models;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
@@ -19,18 +19,18 @@ namespace Centinela.API.Infrastructure.Repositories
 {
     public class CentinelaRepository : BaseClass<CentinelaRepository>, ICentinelaRepository
     {
-        private readonly LexonContext _context;
-        private readonly IOptions<LexonSettings> _settings;
+        private readonly CentinelaContext _context;
+        private readonly IOptions<CentinelaSettings> _settings;
 
         public CentinelaRepository(
-              IOptions<LexonSettings> settings
+              IOptions<CentinelaSettings> settings
             , IEventBus eventBus
             , ILogger<CentinelaRepository> logger
 
             ) : base(logger)
         {
             _settings = settings;
-            _context = new LexonContext(settings, eventBus);
+            _context = new CentinelaContext(settings, eventBus);
         }
 
         public async Task<Result<List<LexCompany>>> GetCompaniesListAsync(string idUser)
@@ -40,20 +40,21 @@ namespace Centinela.API.Infrastructure.Repositories
             var filter = GetFilterLexUser(idUser);
 
             var fields = Builders<CenUser>.Projection
-                .Include(x => x.companies)
-                .Include(x => x.idUser);
+                //.Include(x => x.companies)
+                //.Include(x => x.idUser)
+                ;
 
             TraceLog(parameters: new string[] { $"fields:{fields.ToString()} ->filter:{filter.ToString()}" });
 
             try
             {
-                var user = await _context.LexUsers
+                var user = await _context.CenUsers
                             .Find(filter)
-                            .Project<CenUser>(fields)
+                            //.Project<CenUser>(fields)
                             .FirstOrDefaultAsync();
 
-                var companies = user?.companies?.ToList();
-                result.data = companies ?? new List<LexCompany>();
+                //var companies = user?.companies?.ToList();
+                //result.data = companies ?? new List<LexCompany>();
             }
             catch (Exception ex)
             {
@@ -67,11 +68,8 @@ namespace Centinela.API.Infrastructure.Repositories
         {
             return
                 Builders<CenUser>.Filter.And(
-                    Builders<CenUser>.Filter.Gte(u => u.version, 11),
-                    Builders<CenUser>.Filter.Or(
-                        Builders<CenUser>.Filter.Eq(u => u.idUser, idUser),
-                        Builders<CenUser>.Filter.Eq(u => u.idNavision, idUser)
-                        )
+                    Builders<CenUser>.Filter.Gte(u => u.version, 1),
+                    Builders<CenUser>.Filter.Eq(u => u.idNavision, idUser)
                 );
         }
 
@@ -88,7 +86,7 @@ namespace Centinela.API.Infrastructure.Repositories
             var filter = GetFilterLexUser(idUser);
             try
             {
-                result.data = await _context.LexUsers.Find(filter).SingleAsync();
+                result.data = await _context.CenUsers.Find(filter).SingleAsync();
             }
             catch (Exception ex)
             {
@@ -106,18 +104,18 @@ namespace Centinela.API.Infrastructure.Repositories
                 var filterUser = GetFilterLexUser(((EntitySearchView)search).idUser);
                 TraceLog(parameters: new string[] { $"filter:{filterUser.ToString()}" });
 
-                var user = await _context.LexUsers
+                var user = await _context.CenUsers
                     .Find(filterUser)
                     .FirstOrDefaultAsync();
 
-                var company = user.companies.FirstOrDefault(x => x.bbdd.Contains(((EntitySearchView)search).bbdd));
+                //var company = user.companies.FirstOrDefault(x => x.bbdd.Contains(((EntitySearchView)search).bbdd));
 
-                var entitiesSearch = GetEntitiesSearch(search, company);
+                //var entitiesSearch = GetEntitiesSearch(search, company);
 
-                var entidades = entitiesSearch.ToArray();
+                //var entidades = entitiesSearch.ToArray();
 
-                company.entities = entidades;
-                result.AddData(company);
+                //company.entities = entidades;
+                //result.AddData(company);
             }
             catch (Exception ex)
             {
@@ -166,24 +164,24 @@ namespace Centinela.API.Infrastructure.Repositories
             {
                 var filterUser = GetFilterLexUser(search.idUser);
 
-                var user = await _context.LexUsers
+                var user = await _context.CenUsers
                     .Find(filterUser)
                     .FirstOrDefaultAsync();
 
-                var company = user.companies.FirstOrDefault(x => x.bbdd.Contains(search.bbdd));
+                //var company = user.evaluations.FirstOrDefault(x => x.bbdd.Contains(search.bbdd));
 
-                var relationsSearch = company.actuations.Where(ent => ent.idMail == search.idMail);
+               // var relationsSearch = company.actuations.Where(ent => ent.idMail == search.idMail);
 
-                var relations = relationsSearch.ToArray();
+                //var relations = relationsSearch.ToArray();
 
                 // company.actuations = relations;
                 // resultMongo.AddData(company);
-                var lexMailActuacion = new LexMailActuation
-                {
-                    uid = search.idMail,
-                    actuaciones = relations
-                };
-                result.AddRelationsMail(lexMailActuacion);
+                //var lexMailActuacion = new LexMailActuation
+                //{
+                //    uid = search.idMail,
+                //    actuaciones = relations
+                //};
+                //result.AddRelationsMail(lexMailActuacion);
             }
             catch (Exception ex)
             {
@@ -202,7 +200,7 @@ namespace Centinela.API.Infrastructure.Repositories
             {
                 var arrayFiltersSimple = GetFilterFromEntities(((EntitySearchView)search).bbdd);
 
-                var resultUpdate = await _context.LexUsers.UpdateOneAsync(
+                var resultUpdate = await _context.CenUsers.UpdateOneAsync(
                     filterUser,
                     Builders<CenUser>.Update
                         .AddToSetEach($"companies.$[i].entities", resultMySql.Data.ToArray()),
@@ -233,7 +231,7 @@ namespace Centinela.API.Infrastructure.Repositories
             {
                 var arrayFiltersSimple = GetFilterFromEntities(search.bbdd);
 
-                var resultUpdate = await _context.LexUsers.UpdateOneAsync(
+                var resultUpdate = await _context.CenUsers.UpdateOneAsync(
                     filterUser,
                     Builders<CenUser>.Update
                         .AddToSetEach($"companies.$[i].actuations", resultMySql.DataActuation.ToArray()),
@@ -285,27 +283,7 @@ namespace Centinela.API.Infrastructure.Repositories
             };
         }
 
-        public async Task<Result<List<LexonEntityType>>> GetClassificationMasterListAsync()
-        {
-            var result = new Result<List<LexonEntityType>>(new List<LexonEntityType>());
-            var filter = Builders<LexonMaster>.Filter.And(Builders<LexonMaster>.Filter.Gte(u => u.version, 9), Builders<LexonMaster>.Filter.Eq(u => u.type, "Entities"));
-            TraceLog(parameters: new string[] { $"filter:{filter.ToString()}" });
-
-            try
-            {
-                var master = await _context.LexonMasters
-                    .Find(filter)
-                    .FirstOrDefaultAsync();
-
-                result.data = master?.list?.ToList();
-            }
-            catch (Exception ex)
-            {
-                TraceInfo(result.infos, $"fallo al  obtener lista de tipos de entidad: {ex.Message}");
-            }
-            return result;
-        }
-
+       
         public async Task<Result<long>> AddClassificationToListAsync(ClassificationAddView actuation)
         {
             var result = new Result<long>(0);
@@ -343,7 +321,7 @@ namespace Centinela.API.Infrastructure.Repositories
                     idRelated = (long)actuation.idRelated
                 };
 
-                var resultUpdate = await _context.LexUsersTransaction(session).UpdateOneAsync(
+                var resultUpdate = await _context.CenUsersTransaction(session).UpdateOneAsync(
                      GetFilterLexUser(actuation.idUser),
                      Builders<CenUser>.Update.AddToSet($"companies.$[i].actuations", actua),
                      new UpdateOptions { ArrayFilters = GetFilterFromEntities(actuation.bbdd) }
@@ -354,8 +332,8 @@ namespace Centinela.API.Infrastructure.Repositories
                     TraceInfo(result.infos, $"Se modifica el usuario {actuation.idUser} añadiendo actuación");
                     result.data += 1;
 
-                    var eventAssoc = new AssociateMailToEntityIntegrationEvent(_settings.Value.IdAppNavision, actuation.idUser, actua.entityType, actua.idRelated, mailData.Provider, mailData.MailAccount, mailData.Uid, mailData.Subject, mailData.Date);
-                    await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
+                    //var eventAssoc = new AssociateMailToEntityIntegrationEvent(_settings.Value.IdAppNavision, actuation.idUser, actua.entityType, actua.idRelated, mailData.Provider, mailData.MailAccount, mailData.Uid, mailData.Subject, mailData.Date);
+                    //await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
                 }
             }
         }
@@ -388,7 +366,7 @@ namespace Centinela.API.Infrastructure.Repositories
         {
             var typeName = Enum.GetName(typeof(LexonAdjunctionType), actuation.idType);
 
-            var resultUpdate = await _context.LexUsersTransaction(session).UpdateOneAsync(
+            var resultUpdate = await _context.CenUsersTransaction(session).UpdateOneAsync(
                 GetFilterLexUser(actuation.idUser),
                 Builders<CenUser>.Update.Pull($"companies.$[i].actuations.$[j]", actuation.idMail),
                     new UpdateOptions
@@ -406,8 +384,8 @@ namespace Centinela.API.Infrastructure.Repositories
                 TraceInfo(result.infos, $"Se modifica el usuario {actuation.idUser} eliminando actuación");
                 result.data = resultUpdate.ModifiedCount;
 
-                var eventAssoc = new DissociateMailFromEntityIntegrationEvent(_settings.Value.IdAppNavision, actuation.idUser, typeName, (long)actuation.idRelated, actuation.Provider, actuation.MailAccount, actuation.idMail);
-                await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
+                //var eventAssoc = new DissociateMailFromEntityIntegrationEvent(_settings.Value.IdAppNavision, actuation.idUser, typeName, (long)actuation.idRelated, actuation.Provider, actuation.MailAccount, actuation.idMail);
+                //await CreateAndPublishIntegrationEventLogEntry(session, eventAssoc);
             }
         }
 
@@ -508,9 +486,9 @@ namespace Centinela.API.Infrastructure.Repositories
 
                 TraceLog(parameters: new string[] { $"pipeline:{pipeline.ToString()}", $"options:{options.ToString()}" });
 
-                var resultado = await _context.LexUsers.AggregateAsync(pipeline, options);
+                var resultado = await _context.CenUsers.AggregateAsync(pipeline, options);
 
-                using (var cursor = await _context.LexUsers.AggregateAsync(pipeline, options))
+                using (var cursor = await _context.CenUsers.AggregateAsync(pipeline, options))
                 {
                     while (await cursor.MoveNextAsync())
                     {
@@ -532,39 +510,38 @@ namespace Centinela.API.Infrastructure.Repositories
             return result;
         }
 
-        public async Task<Result<bool>> UpsertUserAsync(Result<CenUser> lexUser)
+        public async Task<Result<bool>> UpsertUserAsync(Result<CenUser> user)
         {
             var result = new Result<bool>();
 
-            var filterUser = GetFilterLexUser(lexUser.data.idUser);
+            var filterUser = GetFilterLexUser(user.data.idNavision);
 
             try
             {
                 var update = Builders<CenUser>.Update
-                    .Set(x => x.idUser, lexUser.data.idUser)
-                    .Set(x => x.idNavision, lexUser.data.idNavision)
+                    .Set(x => x.idNavision, user.data.idNavision)
                     .Set(x => x.version, 12)
-                    .Set(x => x.name, lexUser.data.name);
+                    .Set(x => x.name, user.data.name);
                 //.AddToSetEach(x => x.companies, lexUser.data.companies);
 
-                var resultUpdate = await _context.LexUsers.UpdateOneAsync(
+                var resultUpdate = await _context.CenUsers.UpdateOneAsync(
                     filterUser, update, new UpdateOptions { IsUpsert = true }
                 );
 
                 if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
                 {
-                    TraceInfo(result.infos, $"Se modifica el usuario {lexUser.data.idUser}");
+                    TraceInfo(result.infos, $"Se modifica el usuario {user.data.idNavision}");
                     result.data = resultUpdate.ModifiedCount > 0;
                 }
                 else if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.UpsertedId != null)
                 {
-                    TraceInfo(result.infos, $"Se crea un usuario {lexUser.data.idUser}");
+                    TraceInfo(result.infos, $"Se crea un usuario {user.data.idNavision}");
                     result.data = resultUpdate.UpsertedId != null;
                 }
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"fallo al  actualizar usuario de {lexUser.data.idUser}: {ex.Message}");
+                TraceInfo(result.infos, $"fallo al  actualizar usuario de {user.data.idNavision}: {ex.Message}");
             }
 
             return result;
@@ -573,37 +550,37 @@ namespace Centinela.API.Infrastructure.Repositories
         public async Task<Result<bool>> UpsertCompaniesAsync(Result<CenUser> lexUser)
         {
             var result = new Result<bool>();
-            var companiesToInsert = new List<LexCompany>();
-            var filterUser = GetFilterLexUser(lexUser.data.idUser);
+            var companiesToInsert = new List<CenEvaluation>();
+            var filterUser = GetFilterLexUser(lexUser.data.idNavision);
 
             try
             {
-                var user = await _context.LexUsers.Find(filterUser).FirstOrDefaultAsync();
+                var user = await _context.CenUsers.Find(filterUser).FirstOrDefaultAsync();
 
                 if (user != null)
                 {
-                    foreach (var comp in lexUser.data.companies)
+                    foreach (var comp in lexUser.data.evaluations)
                     {
-                        var companySearch = user.companies.Where(x => x.bbdd.Equals(comp.bbdd) && x.idCompany == comp.idCompany).Count();
-                        if (companySearch == 0)
-                        {
-                            companiesToInsert.Add(comp);
-                        }
+                        //var companySearch = user.companies.Where(x => x.bbdd.Equals(comp.bbdd) && x.idCompany == comp.idCompany).Count();
+                        //if (companySearch == 0)
+                        //{
+                        //    companiesToInsert.Add(comp);
+                        //}
                     }
                 }
 
-                var update = Builders<CenUser>.Update.AddToSetEach(x => x.companies, companiesToInsert?.ToArray());
-                var resultUpdate = await _context.LexUsers.UpdateOneAsync(filterUser, update);
+                var update = Builders<CenUser>.Update.AddToSetEach(x => x.evaluations, companiesToInsert?.ToArray());
+                var resultUpdate = await _context.CenUsers.UpdateOneAsync(filterUser, update);
 
                 if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
                 {
-                    TraceInfo(result.infos, $"Se modifica el usuario {lexUser.data.idUser} añadiendo {companiesToInsert.Count} empresas");
+                    TraceInfo(result.infos, $"Se modifica el usuario {lexUser.data.idNavision} añadiendo {companiesToInsert.Count} empresas");
                     result.data = true;
                 }
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"fallo al  insertar o actualizar compañias para {lexUser.data.idUser}: {ex.Message}");
+                TraceInfo(result.infos, $"fallo al  insertar o actualizar compañias para {lexUser.data.idNavision}: {ex.Message}");
             }
 
             return result;

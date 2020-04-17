@@ -1,4 +1,4 @@
-﻿namespace Lexon.API
+﻿namespace Centinela.API
 {
     public class LexonSettings
     {

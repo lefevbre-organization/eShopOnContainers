@@ -1,6 +1,6 @@
 ﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 
-namespace Lexon.API.IntegrationsEvents.Events
+namespace Centinela.API.IntegrationsEvents.Events
 {
     public class AddFileToUserIntegrationEvent : IntegrationEvent
     {

@@ -1,4 +1,4 @@
-﻿namespace Lexon.API.Model
+﻿namespace Centinela.API.Model
 {
     internal interface ILexonList<T>
     {

@@ -1,5 +1,6 @@
 ﻿using Centinela.API;
 using Centinela.API.Infrastructure.Repositories;
+using Centinela.API.Models;
 using Centinela.Infrastructure.Services;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
@@ -15,7 +16,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lexon.Infrastructure.Services
+namespace Centinela.Infrastructure.Services
 {
     public class CentinelaService : BaseClass<CentinelaService>, ICentinelaService
     {
@@ -27,8 +28,8 @@ namespace Lexon.Infrastructure.Services
         private readonly IOptions<CentinelaSettings> _settings;
 
         public CentinelaService(
-                IOptions<LexonSettings> settings
-                , ICentnelaRepository usersRepository
+                IOptions<CentinelaSettings> settings
+                , ICentinelaRepository usersRepository
                 , IEventBus eventBus
                 , IHttpClientFactory clientFactory
                 , ILogger<CentinelaService> logger
@@ -39,7 +40,7 @@ namespace Lexon.Infrastructure.Services
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
             _client = _clientFactory.CreateClient();
-            _client.BaseAddress = new Uri(_settings.Value.LexonMySqlUrl);
+            _client.BaseAddress = new Uri(_settings.Value.CentinelaUrl);
             _client.DefaultRequestHeaders.Add("Accept", "text/plain");
 
             var handler = new HttpClientHandler()
@@ -71,8 +72,8 @@ namespace Lexon.Infrastructure.Services
 
                         if (result.data?.Count == 0)
                             TraceOutputMessage(result.errors, "Mysql don´t create the classification", 2001);
-                        else
-                            await AddClassificationToListMongoAsync(classificationAdd, result);
+                        //else
+                        //    await AddClassificationToListMongoAsync(classificationAdd, result);
                     }
                     else
                     {
@@ -88,26 +89,26 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        private async Task AddClassificationToListMongoAsync(ClassificationAddView classificationAdd, Result<List<int>> result)
-        {
-            try
-            {
-                var resultMongo = await _usersRepository.AddClassificationToListAsync(classificationAdd);
+        //private async Task AddClassificationToListMongoAsync(ClassificationAddView classificationAdd, Result<List<int>> result)
+        //{
+        //    try
+        //    {
+        //        var resultMongo = await _usersRepository.AddClassificationToListAsync(classificationAdd);
 
-                if (resultMongo.infos.Count > 0)
-                    result.infos.AddRange(resultMongo.infos);
-                else if (resultMongo.data == 0)
-                    result.infos.Add(new Info() { code = "error_actuation_mongo", message = "error when add classification" });
-                else
-                    result.infos.Add(new Info() { code = "add_actuations_mong", message = "add classification to mongo" });
+        //        if (resultMongo.infos.Count > 0)
+        //            result.infos.AddRange(resultMongo.infos);
+        //        else if (resultMongo.data == 0)
+        //            result.infos.Add(new Info() { code = "error_actuation_mongo", message = "error when add classification" });
+        //        else
+        //            result.infos.Add(new Info() { code = "add_actuations_mong", message = "add classification to mongo" });
 
-                //    result.data.Add((int)resultMongo.data);
-            }
-            catch (Exception ex)
-            {
-                TraceInfo(result.infos, $"Error al añadir actuaciones para  {classificationAdd.idRelated}: {ex.Message}");
-            }
-        }
+        //        //    result.data.Add((int)resultMongo.data);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TraceInfo(result.infos, $"Error al añadir actuaciones para  {classificationAdd.idRelated}: {ex.Message}");
+        //    }
+        //}
 
         public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification)
         {
@@ -154,8 +155,8 @@ namespace Lexon.Infrastructure.Services
 
                         if (result.data == 0)
                             TraceOutputMessage(result.errors, "Mysql don´t remove the classification", 2001);
-                        else
-                            await RemoveClassificationFromListMongoAsync(classificationRemove, result);
+                        //else
+                        //    await RemoveClassificationFromListMongoAsync(classificationRemove, result);
                     }
                     else
                     {
@@ -171,24 +172,24 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        private async Task RemoveClassificationFromListMongoAsync(ClassificationRemoveView classificationRemove, Result<long> result)
-        {
-            try
-            {
-                var resultMongo = await _usersRepository.RemoveClassificationFromListAsync(classificationRemove);
+        //private async Task RemoveClassificationFromListMongoAsync(ClassificationRemoveView classificationRemove, Result<long> result)
+        //{
+        //    try
+        //    {
+        //        var resultMongo = await _usersRepository.RemoveClassificationFromListAsync(classificationRemove);
 
-                if (resultMongo.infos.Count > 0)
-                    result.infos.AddRange(resultMongo.infos);
-                else if (resultMongo.data == 0)
-                    result.infos.Add(new Info() { code = "error_actuation_mongo", message = "error when remove classification" });
-                else
-                    result.data = resultMongo.data;
-            }
-            catch (Exception ex)
-            {
-                TraceInfo(result.infos, $"Error al eliminar actuaciones para  {classificationRemove.idRelated}: {ex.Message}");
-            }
-        }
+        //        if (resultMongo.infos.Count > 0)
+        //            result.infos.AddRange(resultMongo.infos);
+        //        else if (resultMongo.data == 0)
+        //            result.infos.Add(new Info() { code = "error_actuation_mongo", message = "error when remove classification" });
+        //        else
+        //            result.data = resultMongo.data;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TraceInfo(result.infos, $"Error al eliminar actuaciones para  {classificationRemove.idRelated}: {ex.Message}");
+        //    }
+        //}
 
         public async Task<MySqlCompany> GetClassificationsFromMailAsync(ClassificationSearchView classificationSearch)
         {
@@ -210,13 +211,13 @@ namespace Lexon.Infrastructure.Services
                 TraceMessage(resultMySql.Errors, ex);
             }
 
-            if (resultMySql.TengoActuaciones())
-                await _usersRepository.UpsertRelationsAsync(classificationSearch, resultMySql);
-            else
-            {
-                //var resultMongo = await _usersRepository.GetRelationsAsync(classificationSearch);
-                //resultMySql.DataActuation = resultMongo.DataActuation;
-            }
+            //if (resultMySql.TengoActuaciones())
+            //   // await _usersRepository.UpsertRelationsAsync(classificationSearch, resultMySql);
+            //else
+            //{
+            //    //var resultMongo = await _usersRepository.GetRelationsAsync(classificationSearch);
+            //    //resultMySql.DataActuation = resultMongo.DataActuation;
+            //}
 
             return resultMySql;
         }
@@ -228,7 +229,7 @@ namespace Lexon.Infrastructure.Services
         public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync()
         {
             var resultMySql = new MySqlList<JosEntityTypeList, JosEntityType>();
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/entities/masters");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.CentinelaUrl}/entities/masters");
             TraceLog(parameters: new string[] { $"request:{request}" });
 
             try
@@ -312,7 +313,7 @@ namespace Lexon.Infrastructure.Services
             {
                 var lexonFile = new LexonGetFile
                 {
-                    idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd),
+                    idCompany = 449, //await GetIdCompany(fileMail.idUser, fileMail.bbdd),
                     idUser = fileMail.idUser,
                     idDocument = fileMail.idEntity ?? 0
                 };
@@ -401,7 +402,7 @@ namespace Lexon.Infrastructure.Services
         {
             var lexonFile = new LexonPostFile
             {
-                idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd),
+                idCompany = 449, // await GetIdCompany(fileMail.idUser, fileMail.bbdd),
                 fileName = fileMail.Name,
                 idUser = fileMail.idUser,
                 idEntityType = fileMail.idType ?? 0
@@ -419,13 +420,13 @@ namespace Lexon.Infrastructure.Services
             return lexonFile;
         }
 
-        private async Task<long> GetIdCompany(string idUser, string bbdd)
-        {
-            var resultadoCompanies = await GetCompaniesFromUserAsync(idUser);
-            var companies = resultadoCompanies.data.Where(x => x.bbdd.ToLower().Contains(bbdd.ToLower()));
-            var idCompany = companies?.FirstOrDefault()?.idCompany;
-            return idCompany ?? 0; // "88";
-        }
+        //private async Task<long> GetIdCompany(string idUser, string bbdd)
+        //{
+        //    var resultadoCompanies = await GetCompaniesFromUserAsync(idUser);
+        //    var companies = resultadoCompanies.data.Where(x => x.bbdd.ToLower().Contains(bbdd.ToLower()));
+        //    var idCompany = companies?.FirstOrDefault()?.idCompany;
+        //    return idCompany ?? 0; // "88";
+        //}
 
         public async Task<Result<LexNestedEntity>> GetNestedFolderAsync(FolderNestedView entityFolder)
         {
@@ -509,13 +510,13 @@ namespace Lexon.Infrastructure.Services
                 TraceMessage(resultMySql.Errors, ex);
             }
 
-            if (resultMySql.TengoLista())
-                await _usersRepository.UpsertEntitiesAsync(entitySearch, resultMySql);
-            else
-            {
-                //var resultMongo = await _usersRepository.GetEntitiesAsync(entitySearch);
-                //resultMySql.Data = resultMongo.Data;
-            }
+            //if (resultMySql.TengoLista())
+            //    await _usersRepository.UpsertEntitiesAsync(entitySearch, resultMySql);
+            //else
+            //{
+            //    //var resultMongo = await _usersRepository.GetEntitiesAsync(entitySearch);
+            //    //resultMySql.Data = resultMongo.Data;
+            //}
 
             return resultMySql;
         }
@@ -547,7 +548,7 @@ namespace Lexon.Infrastructure.Services
         {
             var result = new Result<CenUser>(new CenUser());
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/user?idNavisionUser={idNavisionUser}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.CentinelaUrl}/user?idNavisionUser={idNavisionUser}");
             TraceLog(parameters: new string[] { $"request:{request}" });
 
             try
@@ -570,16 +571,16 @@ namespace Lexon.Infrastructure.Services
                 TraceMessage(result.errors, ex);
             }
 
-            if (!string.IsNullOrEmpty(result.data?.name))
-            {
-                await _usersRepository.UpsertUserAsync(result);
-            }
-            else
-            {
-                TraceOutputMessage(result.errors, "Mysql don´t recover the user", 2001);
-                var resultMongo = await _usersRepository.GetUserAsync(idNavisionUser);
-                AddToFinalResult(result, resultMongo);
-            }
+            //if (!string.IsNullOrEmpty(result.data?.name))
+            //{
+            //    //await _usersRepository.UpsertUserAsync(result);
+            //}
+            //else
+            //{
+            //    TraceOutputMessage(result.errors, "Mysql don´t recover the user", 2001);
+            //    var resultMongo = await _usersRepository.GetUserAsync(idNavisionUser);
+            //    AddToFinalResult(result, resultMongo);
+            //}
 
             return result;
         }
@@ -591,59 +592,59 @@ namespace Lexon.Infrastructure.Services
             result.data = resultPreview.data;
         }
 
-        public async Task<Result<List<LexCompany>>> GetCompaniesFromUserAsync(string idUser)
-        {
-            var resultCompany = new Result<CenUser>(new CenUser());
-            var result = new Result<List<LexCompany>>(new List<LexCompany>());
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/companies?idUser={idUser}");
-            TraceLog(parameters: new string[] { $"request:{request}" });
+        //public async Task<Result<List<CenUser>>> GetCompaniesFromUserAsync(string idUser)
+        //{
+        //    var resultCompany = new Result<CenUser>(new CenUser());
+        //    var result = new Result<CenUser>(new CenUser());
+        //    var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.CentinelaUrl}/companies?idUser={idUser}");
+        //    TraceLog(parameters: new string[] { $"request:{request}" });
 
-            try
-            {
-                using (var response = await _client.SendAsync(request))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        resultCompany = await response.Content.ReadAsAsync<Result<CenUser>>();
-                        AddToFinalResult(result, resultCompany);
-                    }
-                    else
-                    {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
+        //    try
+        //    {
+        //        using (var response = await _client.SendAsync(request))
+        //        {
+        //            if (response.IsSuccessStatusCode)
+        //            {
+        //                resultCompany = await response.Content.ReadAsAsync<Result<CenUser>>();
+        //                AddToFinalResult(result, resultCompany);
+        //            }
+        //            else
+        //            {
+        //                TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TraceMessage(result.errors, ex);
+        //    }
 
-            if (!string.IsNullOrEmpty(resultCompany.data?.name))
-            {
-                await _usersRepository.UpsertCompaniesAsync(resultCompany);
-            }
-            else
-            {
-                TraceOutputMessage(result.errors, "Mysql don´t recover the user with companies", 2001);
-                var resultMongo = await _usersRepository.GetUserAsync(idUser);
-                AddToFinalResult(result, resultMongo);
-            }
+        //    //if (!string.IsNullOrEmpty(resultCompany.data?.name))
+        //    //{
+        //    //    await _usersRepository.UpsertCompaniesAsync(resultCompany);
+        //    //}
+        //    //else
+        //    //{
+        //    //    TraceOutputMessage(result.errors, "Mysql don´t recover the user with companies", 2001);
+        //    //    var resultMongo = await _usersRepository.GetUserAsync(idUser);
+        //    //    AddToFinalResult(result, resultMongo);
+        //    //}
 
-            return result;
-        }
+        //    return result;
+        //}
 
-        private static void AddToFinalResult(Result<List<LexCompany>> result, Result<CenUser> resultPreliminar)
+        private static void AddToFinalResult(Result<List<CenEvaluation>> result, Result<CenUser> resultPreliminar)
         {
             result.errors.AddRange(resultPreliminar.errors);
             result.infos.AddRange(resultPreliminar.infos);
-            result.data = resultPreliminar.data?.companies?.ToList();
+            result.data = resultPreliminar.data?.evaluations?.ToList();
         }
 
         #endregion User and Companies
 
         private void SerializeObjectToPost(object parameters, string path, out string url, out StringContent data)
         {
-            url = $"{_settings.Value.LexonMySqlUrl}{path}";
+            url = $"{_settings.Value.CentinelaUrl}{path}";
             TraceLog(parameters: new string[] { $"url={url}" });
             var json = JsonConvert.SerializeObject(parameters);
             data = new StringContent(json, Encoding.UTF8, "application/json");
@@ -651,7 +652,7 @@ namespace Lexon.Infrastructure.Services
 
         private void SerializeObjectToPut(string textInBase64, string path, out string url, out ByteArrayContent byteArrayContent)
         {
-            url = $"{_settings.Value.LexonFilesUrl}{path}";
+            url = $"{_settings.Value.CentinelaUrl}{path}";
             TraceLog(parameters: new string[] { $"url={url}" });
             byte[] newBytes = Convert.FromBase64String(textInBase64);
 
@@ -685,6 +686,16 @@ namespace Lexon.Infrastructure.Services
         }
 
         public Task<Result<string>> FileGetAsync(string idNavisionUser, string idFile)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<Result<CenUser>> ICentinelaService.GetEvaluationsAsync(string idNavisionUser)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<Result<List<CenUser>>> ICentinelaService.GetEvaluationTreeAsync(string idNavisionUser, string idEvaluation)
         {
             throw new NotImplementedException();
         }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
-using Lexon.API.Infrastructure.Repositories;
-using Lexon.API.IntegrationsEvents.Events;
+using Centinela.API.Infrastructure.Repositories;
+using Centinela.API.IntegrationsEvents.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.Extensions.Logging;
 using Serilog.Context;
 
-namespace Lexon.API.IntegrationsEvents.EventHandling
+namespace Centinela.API.IntegrationsEvents.EventHandling
 {
     public class AddFileToUserIntegrationEventHandler: IIntegrationEventHandler<AddFileToUserIntegrationEvent>
     {

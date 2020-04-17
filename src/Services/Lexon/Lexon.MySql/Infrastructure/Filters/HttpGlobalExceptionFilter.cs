@@ -1,5 +1,5 @@
-﻿using Lexon.MySql.Infrastructure.ActionResults;
-using Lexon.MySql.Infrastructure.Exceptions;
+﻿using Centinela.MySql.Infrastructure.ActionResults;
+using Centinela.MySql.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using System.Net;
 
-namespace Lexon.MySql.Infrastructure.Filters
+namespace Centinela.MySql.Infrastructure.Filters
 {
     public class HttpGlobalExceptionFilter : IExceptionFilter
     {

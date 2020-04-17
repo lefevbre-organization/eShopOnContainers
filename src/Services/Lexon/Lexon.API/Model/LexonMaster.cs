@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Lexon.API.Model
+namespace Centinela.API.Model
 {
     [BsonIgnoreExtraElements]
     public class LexonMaster: MongoModel, ILexonList<LexonEntityType>

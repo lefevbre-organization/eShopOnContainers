@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 
-namespace Lexon.MySql.Infrastructure
+namespace Centinela.MySql.Infrastructure
 {
     public partial class LexonMySqlContext : DbContext
     {

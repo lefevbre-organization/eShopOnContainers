@@ -1,6 +1,6 @@
-﻿using Lexon.MySql.Infrastructure.Filters;
-using Lexon.MySql.Infrastructure.Repositories;
-using Lexon.MySql.Infrastructure.Services;
+﻿using Centinela.MySql.Infrastructure.Filters;
+using Centinela.MySql.Infrastructure.Repositories;
+using Centinela.MySql.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -9,7 +9,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Lexon.MySql.Extensions
+namespace Centinela.MySql.Extensions
 {
     public static class CustomExtensionsMethods
     {

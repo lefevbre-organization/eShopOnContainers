@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Lexon.MySql.Model
+namespace Centinela.MySql.Model
 {
     public class TokenModelView
     {

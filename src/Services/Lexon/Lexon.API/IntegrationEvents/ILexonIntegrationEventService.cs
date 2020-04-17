@@ -1,7 +1,7 @@
 ﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using System.Threading.Tasks;
 
-namespace Lexon.API.IntegrationsEvents
+namespace Centinela.API.IntegrationsEvents
 {
     public interface ILexonIntegrationEventService
     {

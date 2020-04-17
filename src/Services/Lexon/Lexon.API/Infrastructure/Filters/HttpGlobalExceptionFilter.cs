@@ -1,5 +1,5 @@
-﻿using Lexon.API.Infrastructure.ActionResults;
-using Lexon.API.Infrastructure.Exceptions;
+﻿using Centinela.API.Infrastructure.ActionResults;
+using Centinela.API.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using System.Net;
 
-namespace Lexon.API.Infrastructure.Filters
+namespace Centinela.API.Infrastructure.Filters
 {
     public class HttpGlobalExceptionFilter : IExceptionFilter
     {
