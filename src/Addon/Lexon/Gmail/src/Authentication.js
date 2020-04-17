@@ -9,7 +9,7 @@ var scopes = [
 
 
 function getService() {
-  return OAuth2.createService('Demo Auth')
+  return OAuth2.createService('auth-lexon')
     .setAuthorizationBaseUrl('http://localhost:3000/login')
     .setTokenUrl('https://lexbox-test-apigwlex.lefebvre.es/api/v1/mysql/LexonMySql/token')
     .setClientId('835159453859-mrrokdm9qdihjlv6f117k999qe8kvito.apps.googleusercontent.com')
@@ -69,6 +69,13 @@ function buildAddOn(e) {
   var accessToken = e.messageMetadata.accessToken;
   GmailApp.setCurrentMessageAccessToken(accessToken);
   checkAuth();
+
+  var data = cache.get('company');
+
+  var company = JSON.parse(data);
+  if(company) {
+    return buildMessageClassificationCard();
+  }
  return buildHomeCard();
 
 }
