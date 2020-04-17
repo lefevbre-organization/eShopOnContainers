@@ -535,6 +535,11 @@ export class Calendar extends Component {
         return event
     }
 
+
+    onEventDragStart(args) {
+      args.navigation.enable = true;
+    }
+
     onEventRendered(args) {
         let event;
 
@@ -797,12 +802,11 @@ export class Calendar extends Component {
                                 <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
-                                            <ScheduleComponent ref={schedule => this.scheduleObj = schedule} width='100%'
-                                               
+                                            <ScheduleComponent ref={schedule => this.scheduleObj = schedule} width='100%'                                               
                                                 actionComplete={this.onEventRendered.bind(this)}
                                                 currentView="Month"
                                                 height='650px' 
-                                                eventSettings={{ dataSource: this.dataManger }} dataBinding={this.onDataBinding.bind(this)}>
+                                                eventSettings={{ dataSource: this.dataManger }} dataBinding={this.onDataBinding.bind(this)} dragStart={(this.onEventDragStart.bind(this))}>
                                                 <ViewsDirective>
                                                     <ViewDirective option='Day' />
                                                     <ViewDirective option='Week' />
