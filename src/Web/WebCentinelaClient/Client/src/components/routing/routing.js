@@ -6,10 +6,6 @@ import {
   PAGE_CASEFILE,
   PAGE_CONFIGURATION
 } from '../../constants';
-import SelectCompany from '../select-company/select-company';
-import CaseFile from '../case-file/case-file';
-import SelectAction from '../select-action/select-action';
-import Configuration from '../configuration/configuration';
 import { connect } from 'react-redux';
 
 class Routing extends Component {
@@ -46,44 +42,15 @@ class Routing extends Component {
 
     switch (actualPage) {
       case PAGE_SELECT_COMPANY:
-        return (
-          <SelectCompany
-            user={user}
-            companies={companies}
-            changePage={this.changePage}
-          />
-        );
+        return <div>PAGE_SELECT_COMPANY</div>;
       case PAGE_CASEFILE:
-        return (
-          <CaseFile
-            user={user}
-            changePage={this.changePage}
-            idCaseFile={casefile}
-            bbdd={bbdd}
-            idCompany={company}
-          />
-        );
+        return <div>PAGE_CASEFILE</div>;
       case PAGE_SELECT_ACTION:
-        return (
-          <SelectAction
-            composerOpen={composerOpen}
-            user={user}
-            companies={companies}
-            changePage={this.changePage}
-            toggleNotification={toggleNotification}
-          />
-        );
+        return <div>PAGE_SELECT_ACTION</div>;
       case PAGE_CONFIGURATION:
-        return (
-          <Configuration
-            user={user}
-            companies={companies}
-            changePage={this.changePage}
-            toggleNotification={toggleNotification}
-          />
-        );
+        return <div>PAGE_CONFIGURATION</div>;
       default:
-        return <SelectCompany changePage={this.changePage} />;
+        return <div>default</div>;
     }
   }
 
