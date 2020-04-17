@@ -83,27 +83,27 @@ export class PageGoTo extends Component {
             ) {
               // Token trae info de un email para abrir. Se busca primero cuenta y cliente para tratar de abrirlo con el mismo que se hizo la clasificación.
               // Esto se pone así porque puede haber una misma cuenta configurada por gmail y por imap por ejemplo.
-              found = data.accounts.some(
-                (account) => {
-                  if (account.email === payload.mailAccount && account.provider.substring(0,2).toUpperCase() === payload.provider.toUpperCase()){
-                    if (account.provider.substring(0,2).toUpperCase() === 'IM') {
+              for (let i = 0; i < data.accounts.length; i++) {
+                const account = data.accounts[i];
+                if (account.email === payload.mailAccount && account.provider.toUpperCase() === payload.provider.toUpperCase()){
+                  if (account.provider.toUpperCase() === 'IMAP') {
+                    imapAutoLog =  base64.encode(account.email);
+                  }
+                  found = true;
+                  break;
+                }
+              }
+              if (!found) {
+                for (let i = 0; i < data.accounts.length; i++) {
+                  const account = data.accounts[i];
+                  if (account.email === payload.mailAccount){
+                    if (account.provider.toUpperCase() === 'IMAP') {
                       imapAutoLog =  base64.encode(account.email);
                     }
                     return true;
+                    break;
                   }
                 }
-              );
-              if (!found) {
-                found = data.accounts.some(
-                  (account) => {
-                    if (account.email === payload.mailAccount){
-                      if (account.provider.substring(0,2).toUpperCase() === 'IM') {
-                        imapAutoLog =  base64.encode(account.email);
-                      }
-                      return true;
-                    }
-                  }
-                );
                 if (!found){
                   alert(
                     'No tiene configurada la cuenta asociada al email que quiere visualizar. Configúrela y pruebe de nuevo'

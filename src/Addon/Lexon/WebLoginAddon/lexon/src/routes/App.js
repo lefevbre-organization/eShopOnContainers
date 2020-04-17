@@ -7,7 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css"
 
  const App = () => (
    <BrowserRouter>
-    <Route exact path="/login" component={Login}></Route>
+     <Route exact path="/login" component={Login}></Route>
     <Layout>
      <Switch>
       <Route exact path="/home" component={Home}></Route>

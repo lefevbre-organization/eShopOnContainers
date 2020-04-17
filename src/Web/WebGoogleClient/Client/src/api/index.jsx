@@ -309,13 +309,21 @@ function removeHtmlTags(body, imgList){
 
 // Gets all the <img src> tags of the email
 function getEmbeddedImages(body){
+  let res = [];
   let images = body.match(/<img [^>]*src="[^"]*"[^>]*>/gm);  
+  for (let i = 0; i < images.length; i++) {
+    const image = images[i];
+    if (!image.match(/src="http[^>]*/g)){
+      res.push(image);
+    }
+  }
   console.log('getEmbeddedImages:');
   console.log(images);
   let imagesData = images.map(x => x.replace(/.*src="([^"]*)".*/, '$1'));
   console.log('imagesData');
   console.log(imagesData);
-  return images;
+  //return images;
+  return res
 }
 
 // Receives the list of images and generates a unique id for each of them.
@@ -387,8 +395,10 @@ export const sendMessage = async ({ headers, body, attachments }) => {
   let plainTextBody;
 
   if (body.search("<img src=") !== -1){
-    embeddedImages = true;
     embeddedImagesList = getEmbeddedImages(body);
+    if (embeddedImagesList.length > 0){
+      embeddedImages = true;
+    }
     for (let index = 0; index < embeddedImagesList.length; index++) {
       const element = embeddedImagesList[index];
       formattedBody = formattedBody.replace(`${element}`, `${element.replace('>', ' nosend="1">')}`);
@@ -458,7 +468,7 @@ export const sendMessage = async ({ headers, body, attachments }) => {
         email += `--${guidGlobal}\r\n`
       }
       email += `Content-type: ${imgType}; name="${imgName}"\r\n`;
-      email += `Content-Disposition: attachment; filename="${imgName}"\r\n`;
+      email += `Content-Disposition: inline; filename="${imgName}"\r\n`;
       email += `Content-Transfer-Encoding: base64\r\n`;  
       email += `X-Attachment-Id: ${embeddedImagesIds[i]}\r\n`;
       email += `Content-ID: <${embeddedImagesIds[i]}>\r\n`;
