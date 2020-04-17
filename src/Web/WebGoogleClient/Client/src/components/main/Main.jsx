@@ -646,6 +646,7 @@ export class Main extends Component {
                       sideBarToggle={this.toggleSideBar}
                       casefile={lexon.idCaseFile}
                       mailContacts={lexon.mailContacts}
+                      googleUser={this.props.googleUser}
                     />
                   )}
                 />

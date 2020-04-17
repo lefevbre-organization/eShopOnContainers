@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBars,
   faTrash,
-  faPaperclip,
+  faPaperclip
 } from '@fortawesome/free-solid-svg-icons';
 import '../../../node_modules/react-quill/dist/quill.snow.css';
 import './composeMessage.scss';
@@ -21,7 +21,9 @@ import ComposeMessageEditor from './composeMessageEditor';
 
 const Uppy = require('@uppy/core');
 const Tus = require('@uppy/tus');
-const MAX_TOTAL_ATTACHMENTS_SIZE = 26214400;
+// const MAX_TOTAL_ATTACHMENTS_SIZE = 26214400;
+const MAX_TOTAL_ATTACHMENTS_SIZE = 20971520;
+
 const FORBIDDEN_EXTENSIONS = [
   'ade',
   'adp',
@@ -66,7 +68,7 @@ const FORBIDDEN_EXTENSIONS = [
   'vxd',
   'wsc',
   'wsf',
-  'wsh',
+  'wsh'
 ];
 
 export class ComposeMessage extends PureComponent {
@@ -125,7 +127,7 @@ export class ComposeMessage extends PureComponent {
       showNotification: false,
       errorNotification: false,
       messageNotification: '',
-      showEmptySubjectWarning: false,
+      showEmptySubjectWarning: false
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -167,12 +169,12 @@ export class ComposeMessage extends PureComponent {
         } else {
           return true;
         }
-      },
+      }
     }).use(Tus, { endpoint: 'https://master.tus.io/files/' });
     this.uploadFile = this.uploadFile.bind(this);
     this.showAttachActions = false;
 
-    this.uppy.on('file-added', (file) => {
+    this.uppy.on('file-added', file => {
       console.log('Added file', file);
 
       // Define this onload every time to get file and base64 every time
@@ -180,7 +182,7 @@ export class ComposeMessage extends PureComponent {
         this.reader = new FileReader();
         this.reader.readAsDataURL(file.data);
 
-        this.reader.onload = (readerEvt) =>
+        this.reader.onload = readerEvt =>
           this.addFileToState({ file, base64: readerEvt.target.result });
         this.showAttachActions = true;
       } else {
@@ -189,7 +191,7 @@ export class ComposeMessage extends PureComponent {
 
         this.addFileToState({
           file,
-          base64: `data:${file.type};base64,${file.data}`,
+          base64: `data:${file.type};base64,${file.data}`
         });
       }
     });
@@ -209,7 +211,7 @@ export class ComposeMessage extends PureComponent {
             data: cm.attachment.data,
             size: cm.attachment.size,
             source: `Attachment:${cm.attachment.size}`,
-            isRemote: false,
+            isRemote: false
           });
         }
         // call  to addFileToState
@@ -227,7 +229,7 @@ export class ComposeMessage extends PureComponent {
       const dc = `<br/><br/><p>${lexon.sign}</p>` + content;
       this.setState({
         defaultContent: dc,
-        content: dc,
+        content: dc
       });
     }
 
@@ -247,7 +249,7 @@ export class ComposeMessage extends PureComponent {
       data: detail.content,
       size: length,
       source: `Attachment:${length}`,
-      isRemote: false,
+      isRemote: false
     });
   }
 
@@ -256,7 +258,7 @@ export class ComposeMessage extends PureComponent {
     const re = /(?:\.([^.]+))?$/;
     const ext = re.exec(file.name)[1];
 
-    if (ext && FORBIDDEN_EXTENSIONS.find((f) => f === ext)) {
+    if (ext && FORBIDDEN_EXTENSIONS.find(f => f === ext)) {
       res = false;
     }
 
@@ -278,7 +280,7 @@ export class ComposeMessage extends PureComponent {
       this.props.setCaseFile({
         casefile: null,
         bbdd: null,
-        company: null,
+        company: null
       });
     } else if (this.props.mailContacts) {
       this.props.setMailContacts(null);
@@ -307,8 +309,8 @@ export class ComposeMessage extends PureComponent {
           date: message.emailDate,
           folder: '[GMAIL]/Enviados',
           account: this.props.lexon.account,
-          provider: 'GOOGLE',
-        },
+          provider: 'GOOGLE'
+        }
       })
     );
 
@@ -354,7 +356,7 @@ export class ComposeMessage extends PureComponent {
     }
 
     this.setState({
-      uppyPreviews: fls,
+      uppyPreviews: fls
     });
   }
 
@@ -416,6 +418,7 @@ export class ComposeMessage extends PureComponent {
       To: validTo.join(', '),
       Subject: '=?UTF-8?B?' + this.b64EncodeUnicode(this.state.subject) + '?=',
       attachments: this.state.uppyPreviews,
+      From: this.props.googleUser.getBasicProfile()
     };
 
     const validCc = getValidEmails(this.state.cc);
@@ -434,24 +437,24 @@ export class ComposeMessage extends PureComponent {
     sendMessage({
       headers,
       body: this.state.content,
-      attachments: Fileattached,
+      attachments: Fileattached
     })
       .then(function (response) {
         return response.json();
       })
-      .then((email) => {
+      .then(email => {
         //this.sentEmail(email.id, this.state.subject);
         getMessageHeader(email.id)
-          .then((headers) => {
+          .then(headers => {
             console.log('Headers:' + headers);
             const message = {
               id: this.getContentByHeader(headers, 'Message-Id'),
               subject: this.getContentByHeader(headers, 'Subject'),
-              sentDateTime: this.getContentByHeader(headers, 'Date'),
+              sentDateTime: this.getContentByHeader(headers, 'Date')
             };
             this.sentEmail(message);
           })
-          .catch((err) => console.log('Error getting Headers:' + err));
+          .catch(err => console.log('Error getting Headers:' + err));
       });
     this.resetFields();
     this.closeModal();
@@ -477,14 +480,14 @@ export class ComposeMessage extends PureComponent {
       bcc2: [],
       subject: this.props.subject || '',
       content: this.props.content || '',
-      uppyPreviews: [],
+      uppyPreviews: []
     });
   }
 
   setField(field, trimValue = true) {
-    return (evt) => {
+    return evt => {
       this.setState({
-        [field]: trimValue ? evt.target.value.trim() : evt.target.value,
+        [field]: trimValue ? evt.target.value.trim() : evt.target.value
       });
     };
   }
@@ -503,15 +506,15 @@ export class ComposeMessage extends PureComponent {
         { list: 'ordered' },
         { list: 'bullet' },
         { indent: '-1' },
-        { indent: '+1' },
+        { indent: '+1' }
       ],
       ['link'],
-      ['clean'],
+      ['clean']
     ],
     clipboard: {
       // toggle to add extra line breaks when pasting HTML:
-      matchVisual: false,
-    },
+      matchVisual: false
+    }
   };
 
   formats = [
@@ -526,7 +529,7 @@ export class ComposeMessage extends PureComponent {
     'list',
     'bullet',
     'indent',
-    'link',
+    'link'
   ];
 
   /* Drag and drop events */
@@ -560,13 +563,13 @@ export class ComposeMessage extends PureComponent {
         type: file.type,
         source: 'Local',
         isRemote: false,
-        data: file,
+        data: file
         //content: dataUrl.currentTarget.result.replace(/^data:[^;]*;base64,/, "")
       };
 
       uppy.addFile(newAttachment);
     };
-    Array.from(event.dataTransfer.files).forEach((file) => {
+    Array.from(event.dataTransfer.files).forEach(file => {
       //const fileReader = new FileReader();
       //fileReader.onload = addAttachment.bind(this, file);
       //fileReader.readAsDataURL(file);
@@ -594,7 +597,7 @@ export class ComposeMessage extends PureComponent {
     this.setState({
       messageNotification: message,
       errorNotification: isError,
-      showNotification: true,
+      showNotification: true
     });
   }
 
@@ -718,14 +721,14 @@ export class ComposeMessage extends PureComponent {
         type: file.type,
         source: 'Local',
         isRemote: false,
-        data: file,
+        data: file
         //content: dataUrl.currentTarget.result.replace(/^data:[^;]*;base64,/, "")
       };
 
       uppy.addFile(newAttachment);
     };
 
-    Array.from(event.target.files).forEach((file) => {
+    Array.from(event.target.files).forEach(file => {
       //const fileReader = new FileReader();
       //fileReader.onload = addAttachment.bind(this, file);
       //fileReader.readAsDataURL(file);
@@ -740,7 +743,7 @@ export class ComposeMessage extends PureComponent {
       showNotification,
       messageNotification,
       showEmptySubjectWarning,
-      errorNotification,
+      errorNotification
     } = this.state;
     const { to2, cc2, bcc2 } = this.state;
 
@@ -787,13 +790,13 @@ export class ComposeMessage extends PureComponent {
           </div>
           <div
             className='container-panel'
-            onDrop={(event) => {
+            onDrop={event => {
               this.onDrop(event);
             }}
-            onDragOver={(event) => {
+            onDragOver={event => {
               this.onDragOver(event);
             }}
-            onDragLeave={(event) => {
+            onDragLeave={event => {
               this.onDragLeave(event);
             }}>
             {this.state.dropZoneActive ? (
@@ -850,7 +853,7 @@ export class ComposeMessage extends PureComponent {
                   defaultValue={this.state.defaultContent}
                 />
                 <div className='ImagePreviewContainer compose-dropcontainer attachments'>
-                  {this.state.uppyPreviews.map((item) => {
+                  {this.state.uppyPreviews.map(item => {
                     return (
                       <div key={item.id} className={'attachment'}>
                         <span className={'fileName'}>{item.name}</span>
@@ -950,15 +953,14 @@ export class ComposeMessage extends PureComponent {
   }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   lexon: state.lexon,
-  messagesResult: state.messagesResult,
+  messagesResult: state.messagesResult
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  setCaseFile: (casefile) => dispatch(ACTIONS.setCaseFile(casefile)),
-  setMailContacts: (mailContacts) =>
-    dispatch(ACTIONS.setMailContacts(mailContacts)),
+const mapDispatchToProps = dispatch => ({
+  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
+  setMailContacts: mailContacts => dispatch(ACTIONS.setMailContacts(mailContacts))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ComposeMessage);
@@ -967,6 +969,6 @@ function fileNameAndExt(str) {
   var file = str.split('/').pop();
   return [
     file.substr(0, file.lastIndexOf('.')),
-    file.substr(file.lastIndexOf('.') + 1, file.length),
+    file.substr(file.lastIndexOf('.') + 1, file.length)
   ];
 }

@@ -182,7 +182,7 @@
   </ItemGroup>
 
   <ProjectExtensions>
-    <VisualStudio><UserProperties package_1json__JSONSchema="http://json.schemastore.org/project-1.0.0-beta4" /></VisualStudio>
+    <VisualStudio><UserProperties /></VisualStudio>
   </ProjectExtensions>
 
 </Project>
