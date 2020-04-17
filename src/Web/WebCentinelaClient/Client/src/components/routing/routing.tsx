@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import {
   PAGE_SELECT_COMPANY,
   PAGE_SELECT_ACTION,
@@ -8,14 +7,19 @@ import {
 } from '../../constants';
 import { connect } from 'react-redux';
 
-class Routing extends Component {
-  constructor(props) {
+interface State {
+  actualPage: string;
+}
+
+interface Props {
+  toggleNotification: () => void;
+}
+
+class Routing extends Component<Props, State> {
+  constructor(props: Props) {
     super(props);
 
     let actualPage = PAGE_SELECT_COMPANY;
-    if (props.casefile != null && props.casefile !== undefined) {
-      actualPage = PAGE_CASEFILE;
-    }
 
     this.state = {
       actualPage: actualPage
@@ -30,15 +34,7 @@ class Routing extends Component {
 
   renderPage() {
     const { actualPage } = this.state;
-    const {
-      user,
-      companies,
-      toggleNotification,
-      casefile,
-      bbdd,
-      company,
-      composerOpen
-    } = this.props;
+    const { toggleNotification } = this.props;
 
     switch (actualPage) {
       case PAGE_SELECT_COMPANY:
@@ -76,12 +72,6 @@ class Routing extends Component {
     );
   }
 }
-
-Routing.propTypes = {
-  user: PropTypes.string.isRequired,
-  companies: PropTypes.array.isRequired,
-  toggleNotification: PropTypes.func.isRequired
-};
 
 const mapStateToProps = state => {
   return {

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import MaterialTitlePanel from './material_title_panel';
 import * as singleSpa from 'single-spa';
-import { registerLexonApp } from './lexonconn-app';
+import { registerCentinelaApp } from './centinelaconn-app';
 
 const styles = {
   sidebar: {
@@ -28,7 +28,7 @@ const styles = {
   }
 };
 
-export class LexonComponent extends Component {
+export class CentinelaComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -41,16 +41,16 @@ export class LexonComponent extends Component {
 
   componentDidMount() {
     try {
-      const status = singleSpa.getAppStatus('lexon-app');
+      const status = singleSpa.getAppStatus('centinela-app');
       if (status === 'MOUNTED') {
-        singleSpa.unloadApplication('lexon-app', false);
+        singleSpa.unloadApplication('centinela-app', false);
         singleSpa.start();
       } else {
-        registerLexonApp();
+        registerCentinelaApp();
         singleSpa.start();
       }
     } catch (error) {
-      singleSpa.unloadApplication('lexon-app', false);
+      singleSpa.unloadApplication('centinela-app', false);
       console.error(error);
     }
   }
@@ -61,19 +61,19 @@ export class LexonComponent extends Component {
 
     return (
       <MaterialTitlePanel
-        title='LEX-ON'
+        title='CENTINELA'
         style={style}
         sidebarDocked={sidebarDocked}>
         <div style={styles.content}>
-          <div id='lexon-app'></div>
+          <div id='centinela-app'></div>
         </div>
       </MaterialTitlePanel>
     );
   }
 }
 
-LexonComponent.propTypes = {
+CentinelaComponent.propTypes = {
   style: PropTypes.object
 };
 
-export default LexonComponent;
+export default CentinelaComponent;

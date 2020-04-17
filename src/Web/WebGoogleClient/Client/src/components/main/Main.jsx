@@ -42,6 +42,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import SidebarCnn from 'react-sidebar';
 import LexonComponent from '../../apps/lexon_content';
 import CalendarComponent from '../../apps/calendar_content';
+import CentinelaComponent from '../../apps/centinela_content';
 import 'react-reflex/styles.css';
 import {
   addOrUpdateAccount,
@@ -90,6 +91,7 @@ export class Main extends Component {
     this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
     this.onSetSidebarOpenCalendar = this.onSetSidebarOpenCalendar.bind(this);
     this.onSetSidebarOpenLexon = this.onSetSidebarOpenLexon.bind(this);
+    this.onSetSidebarOpenCentinela = this.onSetSidebarOpenCentinela.bind(this);
     this.onSetSidebarOpenQMemento = this.onSetSidebarOpenQMemento.bind(this);
     this.onSetSidebarOpenCompliance = this.onSetSidebarOpenCompliance.bind(
       this
@@ -119,9 +121,9 @@ export class Main extends Component {
 
   sendMessagePutUser(user) {
     const { selectedMessages, googleUser } = this.props;
-    console.log("*******************");
+    console.log('*******************');
     console.log('Account:' + googleUser.getBasicProfile().getEmail());
-    console.log("*******************");
+    console.log('*******************');
     window.dispatchEvent(
       new CustomEvent('PutUserFromLexonConnector', {
         detail: {
@@ -168,9 +170,21 @@ export class Main extends Component {
     this.setState({ sidebarDocked: open });
   }
 
+  onSetSidebarOpenCentinela(open) {
+    this.setState({
+      sidebarComponent: (
+        <CentinelaComponent sidebarDocked={this.onSetSidebarDocked} />
+      )
+    });
+    this.setState({ sidebarDocked: open });
+  }
+
   onSetSidebarOpenQMemento(open) {
     let lexon = (
-      <img border='0' alt='Lefebvre' src='/assets/img/lexon-fake-null.png'></img>
+      <img
+        border='0'
+        alt='Lefebvre'
+        src='/assets/img/lexon-fake-null.png'></img>
     );
     this.setState({ sidebarComponent: lexon });
     this.setState({ sidebarDocked: open });
@@ -178,7 +192,10 @@ export class Main extends Component {
 
   onSetSidebarOpenCompliance(open) {
     let lexon = (
-      <img border='0' alt='Lefebvre' src='/assets/img/lexon-fake-null.png'></img>
+      <img
+        border='0'
+        alt='Lefebvre'
+        src='/assets/img/lexon-fake-null.png'></img>
     );
     this.setState({ sidebarComponent: lexon });
     this.setState({ sidebarDocked: open });
@@ -186,7 +203,10 @@ export class Main extends Component {
 
   onSetSidebarOpenDatabase(open) {
     let lexon = (
-      <img border='0' alt='Lefebvre' src='/assets/img/lexon-fake-null.png'></img>
+      <img
+        border='0'
+        alt='Lefebvre'
+        src='/assets/img/lexon-fake-null.png'></img>
     );
     this.setState({ sidebarComponent: lexon });
     this.setState({ sidebarDocked: open });
@@ -253,7 +273,7 @@ export class Main extends Component {
 
     this.getLabelList();
 
-    window.addEventListener('toggleClock', function(event) {
+    window.addEventListener('toggleClock', function (event) {
       alert(event.detail.name);
     });
     window.addEventListener(
@@ -538,7 +558,9 @@ export class Main extends Component {
         signOut();
       })
       .then(_ => {
-        const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}/` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+        const urlRedirect = token
+          ? `${window.URL_SELECT_ACCOUNT}/access/${token}/`
+          : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
         window.open(urlRedirect, '_self');
       });
 
@@ -554,7 +576,9 @@ export class Main extends Component {
         signOutDisconnect();
       })
       .then(_ => {
-        const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}/` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+        const urlRedirect = token
+          ? `${window.URL_SELECT_ACCOUNT}/access/${token}/`
+          : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
         window.open(urlRedirect, '_self');
       });
 
@@ -668,14 +692,13 @@ export class Main extends Component {
             </article>
 
             <div className='productpanel'>
-                          <span className="productsbutton">
-                 <div onClick={() => this.onSetSidebarOpenCalendar(true)}>               
+              <span className='productsbutton'>
+                <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
                   <img
-                    className="imgproduct"
-                    border="0"
-                    alt="Calendar"
-                    src="/assets/img/icon-calendar.png"
-                  ></img>
+                    className='imgproduct'
+                    border='0'
+                    alt='Calendar'
+                    src='/assets/img/icon-calendar.png'></img>
                 </div>
               </span>
               <span className='productsbutton'>
@@ -697,8 +720,12 @@ export class Main extends Component {
                   </div>
                 )}
               </span>
-              
-             {/* <span className="productsbutton">
+              <span className='productsbutton'>
+                <div onClick={() => this.onSetSidebarOpenCentinela(true)}>
+                  <span className='lf-icon-compliance product-icon'></span>
+                </div>
+              </span>
+              {/* <span className="productsbutton">
                  <div onClick={() => this.onSetSidebarOpenQMemento(true)}> 
                 <div>
                   <img
@@ -736,6 +763,13 @@ export class Main extends Component {
                         <span className="spaceproduct"></span>*/}
             </div>
           </section>
+          <style jsx>{`
+            .product-icon {
+              color: #001978;
+              font-size: 22px;
+              cursor: pointer;
+            }
+          `}</style>
         </Fragment>
       </SidebarCnn>
     );
@@ -745,7 +779,7 @@ export class Main extends Component {
     if (this.state.googleDown) {
       const { showNotification, messageNotification } = this.state;
       const { token } = this.props.lexon;
-      const baseUrl = window.URL_MF_GOOGLE.replace("/user", "");
+      const baseUrl = window.URL_MF_GOOGLE.replace('/user', '');
 
       return (
         <div className='d-flex h-100 align-items-center justify-content-center'>
@@ -753,7 +787,12 @@ export class Main extends Component {
             initialModalState={showNotification}
             toggleNotification={() => {
               messageNotification === 'El mensaje no está en el servidor'
-                ? ((token) ? window.open(`${baseUrl}/access/${token}/?prov=GO0`, "_self") : window.open(`${window.URL_MF_GOOGLE}/GO0${this.props.lexon.userId}`, '_self'))
+                ? token
+                  ? window.open(`${baseUrl}/access/${token}/?prov=GO0`, '_self')
+                  : window.open(
+                      `${window.URL_MF_GOOGLE}/GO0${this.props.lexon.userId}`,
+                      '_self'
+                    )
                 : this.onSignoutDisconnect();
             }}
             message={messageNotification}

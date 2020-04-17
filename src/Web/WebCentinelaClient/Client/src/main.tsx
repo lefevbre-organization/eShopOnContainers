@@ -10,15 +10,27 @@ import Routing from './components/routing/routing';
 import Spinner from './components/spinner/spinner';
 import Notification from './components/notification/notification';
 
-class Main extends Component {
-  constructor(props) {
+interface State {
+  user: any;
+  isLoading: boolean;
+  showNotification: boolean;
+  messageNotification: string;
+  errorNotification: boolean;
+}
+
+interface Props {
+  errors: any;
+}
+
+class Main extends Component<Props, State> {
+  constructor(props: Props) {
     super(props);
 
     this.state = {
       user: null,
       isLoading: true,
       showNotification: false,
-      messageNotification: null,
+      messageNotification: '',
       errorNotification: false
     };
 
@@ -29,11 +41,11 @@ class Main extends Component {
 
   componentWillUnmount() {}
 
-  toggleNotification(message, error = false) {
+  toggleNotification(message?: string, error?: boolean) {
     this.setState(state => ({
       showNotification: !state.showNotification,
-      messageNotification: message,
-      errorNotification: error
+      messageNotification: message || '',
+      errorNotification: error || false
     }));
   }
 
@@ -86,14 +98,14 @@ class Main extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: any) => {
   return {
     selectedMessages: state.email.selectedMessages,
     errors: state.applicationReducer.errors
   };
 };
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch: any) => ({
   addError: error => dispatch(APPLICATION_ACTIONS.addError(error))
 });
 
