@@ -56,7 +56,7 @@ import {
 } from '@syncfusion/ej2-react-schedule';
 //import './schedule-component.css';
 import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
-import { getEventList, addCalendarEvent, deleteCalendarEvent } from '../../api/index';
+import { getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent } from '../../api/calendar';
 
 export class Calendar extends Component {
     constructor(props) {
@@ -507,7 +507,7 @@ export class Calendar extends Component {
         var event = {
             'summary': values.Subject ,
             'location': '',
-            'description': '',
+            'description': values.Description,
             'start': {
                 'dateTime': values.StartTime,
                 'timeZone': 'Europe/Madrid',
@@ -536,15 +536,29 @@ export class Calendar extends Component {
     }
 
     onEventRendered(args) {
+        let event;
 
         switch (args.requestType) {
 
             case 'eventChanged':
+
+                event = this.buildEventoGoogle(args.data);
+
+                //call function to update event
+                updateCalendarEvent("primary", args.data.Id, event)
+                    .then(result => {
+                        this.loadCalendarEvents(this.defaultCalendar);
+                    })
+                    .catch(error => {
+                        console.log('error ->', error);
+                    })
+
+                
                 break;
 
             case 'eventCreated':
                
-                const event = this.buildEventoGoogle(args.data[0]);
+                event = this.buildEventoGoogle(args.data[0]);
 
                 //call function to add event
                 addCalendarEvent("primary",event)
@@ -558,7 +572,7 @@ export class Calendar extends Component {
                 break;
 
             case 'eventRemoved':
-                //call function to add event
+                //call function to delete event
                 deleteCalendarEvent("primary", args.data[0].Id)
                     .then(result => {
                         this.loadCalendarEvents(this.defaultCalendar);
