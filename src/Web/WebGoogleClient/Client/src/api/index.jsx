@@ -468,7 +468,7 @@ export const sendMessage = async ({ headers, body, attachments }) => {
         email += `--${guidGlobal}\r\n`
       }
       email += `Content-type: ${imgType}; name="${imgName}"\r\n`;
-      email += `Content-Disposition: attachment; filename="${imgName}"\r\n`;
+      email += `Content-Disposition: inline; filename="${imgName}"\r\n`;
       email += `Content-Transfer-Encoding: base64\r\n`;  
       email += `X-Attachment-Id: ${embeddedImagesIds[i]}\r\n`;
       email += `Content-ID: <${embeddedImagesIds[i]}>\r\n`;
