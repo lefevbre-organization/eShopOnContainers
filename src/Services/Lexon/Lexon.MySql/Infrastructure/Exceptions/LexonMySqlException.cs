@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Centinela.MySql.Infrastructure.Exceptions
+namespace Lexon.MySql.Infrastructure.Exceptions
 {
     /// <summary>
     /// Exception type for app exceptions

@@ -1,6 +1,6 @@
 ﻿using HealthChecks.UI.Client;
-using Centinela.MySql.Extensions;
-using Centinela.MySql.Infrastructure;
+using Lexon.MySql.Extensions;
+using Lexon.MySql.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -11,7 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Centinela.MySql
+namespace Lexon.MySql
 {
     public class Startup
     {

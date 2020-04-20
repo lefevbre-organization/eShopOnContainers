@@ -1,5 +1,5 @@
-﻿using Centinela.MySql.Infrastructure.Services;
-using Centinela.MySql.Model;
+﻿using Lexon.MySql.Model;
+using Lexon.MySql.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Centinela.MySql.Controllers
+namespace Lexon.MySql.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]

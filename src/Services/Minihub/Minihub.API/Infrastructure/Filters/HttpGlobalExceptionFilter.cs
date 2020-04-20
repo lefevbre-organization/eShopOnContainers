@@ -1,5 +1,5 @@
-﻿using Lexon.MySql.Infrastructure.ActionResults;
-using Lexon.MySql.Infrastructure.Exceptions;
+﻿using Minihub.API.Infrastructure.ActionResults;
+using Minihub.API.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using System.Net;
 
-namespace Lexon.MySql.Infrastructure.Filters
+namespace Minihub.API.Infrastructure.Filters
 {
     public class HttpGlobalExceptionFilter : IExceptionFilter
     {
@@ -26,7 +26,7 @@ namespace Lexon.MySql.Infrastructure.Filters
                 context.Exception,
                 context.Exception.Message);
 
-            if (context.Exception.GetType() == typeof(LexonMySqlException))
+            if (context.Exception.GetType() == typeof(MinihubDomainException))
             {
                 var problemDetails = new ValidationProblemDetails()
                 {

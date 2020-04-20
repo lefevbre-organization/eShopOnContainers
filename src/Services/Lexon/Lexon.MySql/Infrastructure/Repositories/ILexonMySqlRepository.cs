@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Centinela.MySql.Infrastructure.Repositories
+namespace Lexon.MySql.Infrastructure.Repositories
 {
     public interface ILexonMySqlRepository
     {

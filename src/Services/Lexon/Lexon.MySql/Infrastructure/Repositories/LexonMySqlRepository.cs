@@ -9,7 +9,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Centinela.MySql.Infrastructure.Repositories
+namespace Lexon.MySql.Infrastructure.Repositories
 {
     public class LexonMySqlRepository : BaseClass<LexonMySqlRepository>, ILexonMySqlRepository
     {

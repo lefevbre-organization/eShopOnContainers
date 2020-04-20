@@ -1,4 +1,4 @@
-﻿namespace Centinela.MySql
+﻿namespace Lexon.MySql
 {
     public class LexonSettings
     {

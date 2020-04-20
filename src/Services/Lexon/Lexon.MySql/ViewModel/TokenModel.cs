@@ -1,19 +1,18 @@
 ﻿using System.Collections.Generic;
 
-namespace Centinela.MySql.Model
+namespace Lexon.MySql.Model
 {
     /// <summary>
     /// Modelo de token para trbajar con entradas de usuario
     /// </summary>
     public class TokenModel : TokenModelView
     {
-
         public string name { get; set; }
+
         /// <summary>
         /// Id del usuario en la aplicación donde este logado
         /// </summary>
         public long? idUserApp { get; set; }
-
 
         public List<string> roles { get; set; }
 

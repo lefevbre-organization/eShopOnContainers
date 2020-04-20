@@ -3,13 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Minihub.Infrastructure.Services;
 
 namespace Minihub.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class MinihubController : ControllerBase
     {
+        private IMinihubService _service;
+        private readonly IOptions<MinihubSettings> _settings;
+
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
