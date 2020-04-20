@@ -39,7 +39,6 @@ COPY src/Web/WebOffice365Client/WebOffice365Client.csproj src/Web/WebOffice365Cl
 COPY src/Web/WebPortalClient/WebPortalClient.csproj src/Web/WebPortalClient/
 COPY src/Web/WebImapClient/WebImapClient.csproj src/Web/WebImapClient/
 COPY src/Web/WebStatusLef/WebStatusLef.csproj src/Web/WebStatusLef/
-COPY src/Web/WebLexonClient/WebLoginAddonLexon.csproj src/Web/WebLoginAddonLexon/
 
 RUN dotnet restore eLefebvreOnContainers-ServicesAndWebApps.sln
 
