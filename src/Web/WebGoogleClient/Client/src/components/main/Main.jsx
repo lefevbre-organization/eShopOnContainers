@@ -646,6 +646,7 @@ export class Main extends Component {
                       sideBarToggle={this.toggleSideBar}
                       casefile={lexon.idCaseFile}
                       mailContacts={lexon.mailContacts}
+                      googleUser={this.props.googleUser}
                     />
                   )}
                 />
@@ -668,7 +669,7 @@ export class Main extends Component {
             </article>
 
             <div className='productpanel'>
-          {/* <span className="productsbutton">
+                        {/*<span className="productsbutton">
                  <div onClick={() => this.onSetSidebarOpenCalendar(true)}>               
                   <img
                     className="imgproduct"

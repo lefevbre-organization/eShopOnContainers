@@ -7,7 +7,7 @@ import {
 //import './schedule-component.css';
 import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
 import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
-import { getEventList } from '../../api/index';
+import { getEventList } from '../../api/calendar-api';
 
 
 export class CalendarCard extends Component {

@@ -19,6 +19,7 @@ import {
   getAccounts,
   deleteAccountByUserAndEmail,
 } from '../services/user-accounts';
+import * as base64 from 'base-64';
 
 export class PageGoTo extends Component {
   constructor(props) {
@@ -59,6 +60,8 @@ export class PageGoTo extends Component {
     getAccounts(userId, encrypt)
       .then((data) => {
         var url = '';
+        let found;
+        let imapAutoLog = null;
 
         if (data.user === undefined || data.user === null) {
           this.setState({ loading: false, redirect: true });
@@ -78,44 +81,56 @@ export class PageGoTo extends Component {
               payload.mailAccount !== undefined &&
               payload.mailAccount !== null
             ) {
-              //Token trae info de un email para abrir
-              const found = data.accounts.some(
-                (account) => account.email === payload.mailAccount
-              );
+              // Token trae info de un email para abrir. Se busca primero cuenta y cliente para tratar de abrirlo con el mismo que se hizo la clasificación.
+              // Esto se pone así porque puede haber una misma cuenta configurada por gmail y por imap por ejemplo.
+              for (let i = 0; i < data.accounts.length; i++) {
+                const account = data.accounts[i];
+                if (account.email === payload.mailAccount && account.provider.toUpperCase() === payload.provider.toUpperCase()){
+                  if (account.provider.toUpperCase() === 'IMAP') {
+                    imapAutoLog =  base64.encode(account.email);
+                  }
+                  found = true;
+                  break;
+                }
+              }
               if (!found) {
-                alert(
-                  'No tiene configurada la cuenta asociada al email que quiere visualizar. Configúrela y pruebe de nuevo'
-                );
+                for (let i = 0; i < data.accounts.length; i++) {
+                  const account = data.accounts[i];
+                  if (account.email === payload.mailAccount){
+                    if (account.provider.toUpperCase() === 'IMAP') {
+                      imapAutoLog =  base64.encode(account.email);
+                    }
+                    found = true;
+                    break;
+                  }
+                }
+                if (!found){
+                  alert(
+                    'No tiene configurada la cuenta asociada al email que quiere visualizar. Configúrela y pruebe de nuevo'
+                  );
+                }
               } else {
-                if (
-                  account.defaultAccount &&
-                  payload.mailAccount == account.email
-                ) {
-                  url = this.state.token
-                    ? `${buildClientUrlToken(
-                        account.provider,
-                        this.state.token
-                      )}?prov=${account.provider.substring(0, 2)}0`
-                    : buildClientUrl(
-                        account.provider,
-                        `${account.provider.substring(0, 2)}0${userId}`,
-                        this.state.payload
-                      );
+                if (account.defaultAccount && payload.mailAccount == account.email) {
+                  if (this.state.token){
+                    url = `${buildClientUrlToken(account.provider, this.state.token)}?prov=${account.provider.substring(0, 2)}0`;
+                    url = (imapAutoLog) ? `${url}&account=${imapAutoLog}` : url;
+                  } else {
+                    url = buildClientUrl(account.provider,`${account.provider.substring(0, 2)}0${userId}`,this.state.payload);
+                    url = (imapAutoLog) ? `${url}?account=${imapAutoLog}` : url;
+                  }
                   console.log('TOKEN 1*****************: ' + this.state.token);
+                  console.log(url);
                 } else {
-                  url = this.state.token
-                    ? `${buildClientUrlToken(
-                        payload.provider.toUpperCase(),
-                        this.state.token
-                      )}?prov=${account.provider.substring(0, 2)}0`
-                    : buildClientUrl(
-                        payload.provider.toUpperCase(),
-                        `${payload.provider
-                          .substring(0, 2)
-                          .toUpperCase()}0${userId}`,
-                        this.state.payload
-                      );
+                  if (this.state.token){
+                    url = `${buildClientUrlToken(payload.provider.toUpperCase(), this.state.token)}?prov=${payload.provider.substring(0, 2)}0`;
+                    url = (imapAutoLog) ? `${url}&account=${imapAutoLog}` : url;
+                  }
+                  else {
+                    url = buildClientUrl(payload.provider.toUpperCase(),`${payload.provider.substring(0, 2).toUpperCase()}0${userId}`,this.state.payload);
+                    url = (imapAutoLog) ? `${url}?account=${imapAutoLog}` : url;
+                  }
                   console.log('TOKEN 2*****************: ' + this.state.token);
+                  console.log(url);
                 }
               }
             } else {

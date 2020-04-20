@@ -56,7 +56,8 @@ import {
 } from '@syncfusion/ej2-react-schedule';
 //import './schedule-component.css';
 import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
-import { getEventList, addCalendarEvent, deleteCalendarEvent } from '../../api/index';
+import { getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent } from '../../api/calendar-api';
+
 
 export class Calendar extends Component {
     constructor(props) {
@@ -296,10 +297,12 @@ export class Calendar extends Component {
             })
             .catch(error => {
                 console.log('error ->', error);
-        });
+        });      
        
 
         this.getCalendarList();
+
+       // Sidebar.LoaddefaultCalendar();
 
         window.addEventListener('toggleClock', function (event) {
             alert(event.detail.name);
@@ -462,13 +465,13 @@ export class Calendar extends Component {
         this.renderLabelRoutes();
     }
 
-    loadLabelMessageSingle() {
-        this.getCalendarList();
-        this.renderLabelRoutes();
-        const { calendars } = this.props.calendarsResult;
-        const selectedLabel = calendars.find(el => el.selected);
-        this.getLabelMessages({ labelIds: [selectedLabel.id] });
-    }
+    //loadLabelMessageSingle() {
+    //    this.getCalendarList();
+    //    this.renderLabelRoutes();
+    //    const { calendars } = this.props.calendarsResult;
+    //    const selectedLabel = calendars.find(el => el.selected);
+    //    this.getLabelMessages({ labelIds: [selectedLabel.id] });
+    //}
 
     navigateToNextPage(token) {
         const searchParam = this.props.location.search;
@@ -507,7 +510,7 @@ export class Calendar extends Component {
         var event = {
             'summary': values.Subject ,
             'location': '',
-            'description': '',
+            'description': values.Description,
             'start': {
                 'dateTime': values.StartTime,
                 'timeZone': 'Europe/Madrid',
@@ -535,16 +538,35 @@ export class Calendar extends Component {
         return event
     }
 
+
+    onEventDragStart(args) {
+      args.navigation.enable = true;
+    }
+
     onEventRendered(args) {
+        let event;
 
         switch (args.requestType) {
 
             case 'eventChanged':
+
+                event = this.buildEventoGoogle(args.data);
+
+                //call function to update event
+                updateCalendarEvent("primary", args.data.Id, event)
+                    .then(result => {
+                        this.loadCalendarEvents(this.defaultCalendar);
+                    })
+                    .catch(error => {
+                        console.log('error ->', error);
+                    })
+
+                
                 break;
 
             case 'eventCreated':
                
-                const event = this.buildEventoGoogle(args.data[0]);
+                event = this.buildEventoGoogle(args.data[0]);
 
                 //call function to add event
                 addCalendarEvent("primary",event)
@@ -558,7 +580,7 @@ export class Calendar extends Component {
                 break;
 
             case 'eventRemoved':
-                //call function to add event
+                //call function to delete event
                 deleteCalendarEvent("primary", args.data[0].Id)
                     .then(result => {
                         this.loadCalendarEvents(this.defaultCalendar);
@@ -783,12 +805,11 @@ export class Calendar extends Component {
                                 <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
-                                            <ScheduleComponent ref={schedule => this.scheduleObj = schedule} width='100%'
-                                               
+                                            <ScheduleComponent ref={schedule => this.scheduleObj = schedule} width='100%'                                               
                                                 actionComplete={this.onEventRendered.bind(this)}
                                                 currentView="Month"
                                                 height='650px' 
-                                                eventSettings={{ dataSource: this.dataManger }} dataBinding={this.onDataBinding.bind(this)}>
+                                                eventSettings={{ dataSource: this.dataManger }} dataBinding={this.onDataBinding.bind(this)} dragStart={(this.onEventDragStart.bind(this))}>
                                                 <ViewsDirective>
                                                     <ViewDirective option='Day' />
                                                     <ViewDirective option='Week' />

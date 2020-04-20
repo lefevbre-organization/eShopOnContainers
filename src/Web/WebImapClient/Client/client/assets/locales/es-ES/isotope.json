@@ -83,6 +83,7 @@
     "subject": "Asunto",
     "send": "Enviar",
     "dropZoneMessage": "Deposita aquí ficheros",
+    "max-file-size": "El tamaño total de los adjuntos debe ser menor que 20MB para este proveedor.",
     "attach": "ADJUNTAR",
     "insertLinkDialog": {
       "title": "Insertar Enlace",

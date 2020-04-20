@@ -280,61 +280,63 @@ export class MessageContent extends Component {
                     msgid,
                     attach[i],
                     (filename, mimeType, attachment) => {
-                      let dataBase64Rep = attachment.data
+                      if (attachment.code !== 400) {
+                        let dataBase64Rep = attachment.data
                         .replace(/-/g, '+')
                         .replace(/_/g, '/');
-                      this.props.addOpenMessageAttachment({
-                        filename,
-                        mimeType,
-                        attachment: {
-                          size: attachment.result.size,
-                          data: dataBase64Rep
-                        }
-                      });
+                        this.props.addOpenMessageAttachment({
+                          filename,
+                          mimeType,
+                          attachment: {
+                            size: attachment.result.size,
+                            data: dataBase64Rep
+                          }
+                        });
 
-                      let urlBlob = b64toBlob(
-                        dataBase64Rep,
-                        mimeType,
-                        attachment.size
-                      );
-                      //console.log(urlBlob);
-                      const contentDisposition = getHeader(
-                        athc.headers,
-                        'content-disposition'
-                      );
-                      if (
-                        contentDisposition &&
-                        contentDisposition.indexOf('inline;') === -1
-                      ) {
-                        var blobUrl = URL.createObjectURL(urlBlob);
-                        var Attachment = addAttachmentElement(
-                          blobUrl,
-                          filename
+                        let urlBlob = b64toBlob(
+                          dataBase64Rep,
+                          mimeType,
+                          attachment.size
                         );
-                        var AttachmentDiv = addAttachmentContainer(mimeType);
-                        AttachmentDiv.appendChild(Attachment);
-                        var iframe = document.getElementById('message-iframe');
-                        iframe &&
-                          iframe.contentDocument &&
-                          iframe.contentDocument.body.appendChild(
-                            AttachmentDiv
-                          );
-                      } else {
-                        console.log(
-                          this.iframeRef.current.contentWindow.document
-                        );
-                        const contentId = getHeader(
+                        //console.log(urlBlob);
+                        const contentDisposition = getHeader(
                           athc.headers,
-                          'x-attachment-id'
+                          'content-disposition'
                         );
-                        var iframe = document.getElementById('message-iframe');
-                        var Divider = addDivDivider();
-                        iframe.contentDocument.body.appendChild(Divider);
-                        const bd = iframe.contentDocument.body.innerHTML.replace(
-                          `cid:${contentId}`,
-                          'data:image/png;base64, ' + dataBase64Rep
-                        );
-                        iframe.contentDocument.body.innerHTML = bd;
+                        if (
+                          contentDisposition &&
+                          contentDisposition.indexOf('inline;') === -1
+                        ) {
+                          var blobUrl = URL.createObjectURL(urlBlob);
+                          var Attachment = addAttachmentElement(
+                            blobUrl,
+                            filename
+                          );
+                          var AttachmentDiv = addAttachmentContainer(mimeType);
+                          AttachmentDiv.appendChild(Attachment);
+                          var iframe = document.getElementById('message-iframe');
+                          iframe &&
+                            iframe.contentDocument &&
+                            iframe.contentDocument.body.appendChild(
+                              AttachmentDiv
+                            );
+                        } else {
+                          console.log(
+                            this.iframeRef.current.contentWindow.document
+                          );
+                          const contentId = getHeader(
+                            athc.headers,
+                            'x-attachment-id'
+                          );
+                          var iframe = document.getElementById('message-iframe');
+                          var Divider = addDivDivider();
+                          iframe.contentDocument.body.appendChild(Divider);
+                          const bd = iframe.contentDocument.body.innerHTML.replace(
+                            `cid:${contentId}`,
+                            'data:image/png;base64, ' + dataBase64Rep
+                          );
+                          iframe.contentDocument.body.innerHTML = bd;
+                        }
                       }
                     }
                   );
