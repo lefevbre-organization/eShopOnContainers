@@ -26,13 +26,15 @@ export class Sidebar extends PureComponent {
 
         this.state = {
             selectedLabel: props.pathname,
-            leftSideBarOpen: true
+            leftSideBarOpen: true           
         };
 
         //this.renderLabels = this.renderLabels.bind(this);
         this.navigateToList = this.navigateToList.bind(this);
         this.newEventClick = this.newEventClick.bind(this);
         this.sidebarAction = this.sidebarAction.bind(this);
+
+        this.DefaultCalendar = "";
     }
 
     calendarChange(args) { 
@@ -52,16 +54,27 @@ export class Sidebar extends PureComponent {
         this.props.onSidebarCloseClick(this.state.leftSideBarOpen);
     }
 
+    LoaddefaultCalendar() {
+        this.navigateToList(0, this.DefaultCalendar);
+    }
+
     renderItems(calendarList) {
         if (calendarList.length === 0) {
             return <div />;
         }
 
+        // find selected calendar to load first
+       
+
         const calendars = calendarList.reduce((acc, el) => {
             acc.push(el);
             return acc;
-        }, []);
+        }, []);      
 
+        let CalendarGroupSelected = groupBy(calendars, "selected");
+        this.DefaultCalendar = CalendarGroupSelected.true[0].id        
+      
+       
         const labelGroups = groupBy(calendars, "accessRole");
         var visibleLabels = [];
         var sortedLabels = [];
@@ -82,6 +95,9 @@ export class Sidebar extends PureComponent {
                 {this.renderOtherCalendars(labelGroups.reader)}
             </React.Fragment>
         );
+
+
+
     }
 
     renderMyCalendarView(calendarsOwner) { 

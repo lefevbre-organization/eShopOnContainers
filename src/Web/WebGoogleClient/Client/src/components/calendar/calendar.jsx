@@ -56,7 +56,8 @@ import {
 } from '@syncfusion/ej2-react-schedule';
 //import './schedule-component.css';
 import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
-import { getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent } from '../../api/calendar';
+import { getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent } from '../../api/calendar-api';
+
 
 export class Calendar extends Component {
     constructor(props) {
@@ -296,10 +297,12 @@ export class Calendar extends Component {
             })
             .catch(error => {
                 console.log('error ->', error);
-        });
+        });      
        
 
         this.getCalendarList();
+
+       // Sidebar.LoaddefaultCalendar();
 
         window.addEventListener('toggleClock', function (event) {
             alert(event.detail.name);
@@ -462,13 +465,13 @@ export class Calendar extends Component {
         this.renderLabelRoutes();
     }
 
-    loadLabelMessageSingle() {
-        this.getCalendarList();
-        this.renderLabelRoutes();
-        const { calendars } = this.props.calendarsResult;
-        const selectedLabel = calendars.find(el => el.selected);
-        this.getLabelMessages({ labelIds: [selectedLabel.id] });
-    }
+    //loadLabelMessageSingle() {
+    //    this.getCalendarList();
+    //    this.renderLabelRoutes();
+    //    const { calendars } = this.props.calendarsResult;
+    //    const selectedLabel = calendars.find(el => el.selected);
+    //    this.getLabelMessages({ labelIds: [selectedLabel.id] });
+    //}
 
     navigateToNextPage(token) {
         const searchParam = this.props.location.search;
