@@ -81,6 +81,25 @@ namespace Lexon.MySql.Controllers
         }
 
         /// <summary>
+        /// Permite validar el token a los clientes
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut("token/validation")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> TokenValidationAsync(
+            [FromBody] string token
+
+            )
+        {
+            if (string.IsNullOrEmpty(token))
+                return BadRequest("Must be a valid token code");
+
+            var result = new Result<bool>(true);
+
+            return Ok(result);
+        }
+        /// <summary>
         /// Permite obtener los token necesarios para operar con los microservicios de envio de correo
         /// </summary>
         /// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>
