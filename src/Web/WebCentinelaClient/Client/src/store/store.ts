@@ -1,8 +1,21 @@
-import rootReducer from '../reducers';
-import { createStore, compose, applyMiddleware } from 'redux';
+import { ApplicationState } from './application/types';
+import { MessagesState } from './messages/types';
+import messagesReducer from './messages/reducer';
+import applicationReducer from './application/reducer';
+import { createStore, compose, applyMiddleware, combineReducers } from 'redux';
 
 // Logger with default options
 import logger from 'redux-logger';
+
+const rootReducer = combineReducers({
+  messages: messagesReducer,
+  application: applicationReducer
+});
+
+export interface AppState {
+  messages: MessagesState;
+  application: ApplicationState;
+}
 
 export default function configureStore() {
   const composeEnhancers =

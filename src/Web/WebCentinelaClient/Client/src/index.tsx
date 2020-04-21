@@ -7,7 +7,7 @@ const reactLifecycles = singleSpaReact({
   React,
   ReactDOM,
   rootComponent,
-  domElementGetter: () => document.getElementById('centinela-app'),
+  domElementGetter: () => document.getElementById('centinela-app') as any,
   suppressComponentDidCatchWarning: true
 });
 

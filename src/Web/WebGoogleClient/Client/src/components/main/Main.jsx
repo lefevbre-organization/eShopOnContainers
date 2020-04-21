@@ -66,6 +66,9 @@ export class Main extends Component {
     this.onSignout = this.onSignout.bind(this);
     this.onSignoutDisconnect = this.onSignoutDisconnect.bind(this);
     this.loadLabelMessageSingle = this.loadLabelMessageSingle.bind(this);
+    this.handleGetUserFromCentinelaConnector = this.handleGetUserFromCentinelaConnector.bind(
+      this
+    );
 
     //this.leftSidebarOpen = leftSidebarOpen;
 
@@ -128,7 +131,10 @@ export class Main extends Component {
       new CustomEvent('PutUserFromLexonConnector', {
         detail: {
           user,
-          selectedMessages: selectedMessages,
+          selectedMessages: selectedMessages.map(m => ({
+            ...m,
+            id: m.extMessageId
+          })),
           idCaseFile: this.props.lexon.idCaseFile,
           bbdd: this.props.lexon.bbdd,
           idCompany: this.props.lexon.idCompany,
@@ -273,13 +279,18 @@ export class Main extends Component {
 
     this.getLabelList();
 
-    window.addEventListener('toggleClock', function (event) {
+    window.addEventListener('toggleClock', function(event) {
       alert(event.detail.name);
     });
     window.addEventListener(
       'GetUserFromLexonConnector',
       this.handleGetUserFromLexonConnector
     );
+    window.addEventListener(
+      'GetUserFromCentinelaConnector',
+      this.handleGetUserFromCentinelaConnector
+    );
+
     window.addEventListener('RemoveSelectedDocument', event => {
       this.props.deleteMessage(event.detail.id);
       dispatchEvent(
@@ -412,6 +423,33 @@ export class Main extends Component {
     window.removeEventListener(
       'GetUserFromLexonConnector',
       this.handleGetUserFromLexonConnector
+    );
+    window.removeEventListener(
+      'GetUserFromCentinelaConnector',
+      this.handleGetUserFromCentinelaConnector
+    );
+  }
+
+  handleGetUserFromCentinelaConnector() {
+    const { userId } = this.props.lexon;
+    console.log('Centinela GetUserFromCentinela received');
+    this.sendMessageCentinelaPutUser(userId);
+  }
+
+  sendMessageCentinelaPutUser(user) {
+    const { selectedMessages, googleUser } = this.props;
+    window.dispatchEvent(
+      new CustomEvent('PutUserFromCentinelaConnector', {
+        detail: {
+          user,
+          selectedMessages: selectedMessages.map(m => ({
+            ...m,
+            id: m.extMessageId
+          })),
+          provider: this.props.lexon.provider,
+          account: googleUser.getBasicProfile().getEmail()
+        }
+      })
     );
   }
 

@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import {
   PAGE_SELECT_COMPANY,
   PAGE_SELECT_ACTION,
-  PAGE_CASEFILE,
-  PAGE_CONFIGURATION
+  PAGE_CONFIGURATION,
+  PAGE_ARCHIVEFILE
 } from '../../constants';
 import { connect } from 'react-redux';
+import SelectAction from '../select-action/select-action';
+import { AppState } from '../../store/store';
 
 interface State {
   actualPage: string;
@@ -19,7 +21,7 @@ class Routing extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    let actualPage = PAGE_SELECT_COMPANY;
+    let actualPage = PAGE_SELECT_ACTION;
 
     this.state = {
       actualPage: actualPage
@@ -28,7 +30,7 @@ class Routing extends Component<Props, State> {
     this.changePage = this.changePage.bind(this);
   }
 
-  changePage(page) {
+  changePage(page: string) {
     this.setState({ actualPage: page });
   }
 
@@ -39,10 +41,15 @@ class Routing extends Component<Props, State> {
     switch (actualPage) {
       case PAGE_SELECT_COMPANY:
         return <div>PAGE_SELECT_COMPANY</div>;
-      case PAGE_CASEFILE:
-        return <div>PAGE_CASEFILE</div>;
+      case PAGE_ARCHIVEFILE:
+        return <div>PAGE_SELECT_COMPANY</div>;
       case PAGE_SELECT_ACTION:
-        return <div>PAGE_SELECT_ACTION</div>;
+        return (
+          <SelectAction
+            changePage={this.changePage}
+            toggleNotification={toggleNotification}
+          />
+        );
       case PAGE_CONFIGURATION:
         return <div>PAGE_CONFIGURATION</div>;
       default:
@@ -53,7 +60,7 @@ class Routing extends Component<Props, State> {
   render() {
     return (
       <React.Fragment>
-        {this.state.actualPage === PAGE_SELECT_ACTION && (
+        {/* {this.state.actualPage === PAGE_SELECT_ACTION && (
           <div
             className='lex-on-configuration'
             onClick={() => {
@@ -65,18 +72,17 @@ class Routing extends Component<Props, State> {
               </strong>
               <span className='lf-icon-configuration'></span>
             </a>
-          </div>
-        )}
+        )} */}
         {this.renderPage()}
       </React.Fragment>
     );
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: AppState) => {
   return {
-    errors: state.applicationReducer.errors,
-    composerOpen: state.applicationReducer.isComposerOpen
+    errors: state.application.errors
+    //composerOpen: state.applicationReducer.isComposerOpen
   };
 };
 
