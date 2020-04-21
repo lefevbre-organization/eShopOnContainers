@@ -8,7 +8,7 @@
         public string CollectionEvents { get; set; }
 
         public string MinihubUrl { get; set; }
-        public string LexonFilesUrl { get; set; }
+        public string OnlineUrl { get; set; }
 
         public string EventBusConnection { get; set; }
         public string EventBusUserName { get; set; }
@@ -20,5 +20,8 @@
 
         public bool AzureStorageEnabled { get; set; }
         public long IdAppNavision { get; set; }
+        public long TokenCaducity { get; set; }
+
+        public string TokenKey { get; set; }
     }
 }

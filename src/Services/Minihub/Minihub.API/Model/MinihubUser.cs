@@ -22,6 +22,6 @@ namespace Minihub.API.Models
         [JsonIgnore]
         public short version { get; set; }
 
-        //public CenEvaluation[] evaluations { get; set; }
     }
+
 }

@@ -7,17 +7,11 @@ namespace Minihub.Infrastructure.Services
 {
     public interface IMinihubService
     {
-        Task<Result<MinihubUser>> GetMinihubAsync(string idNavisionUser);
-
         Task<Result<string>> GetEncodeUserAsync(string idNavisionUser);
         Task<Result<string>> GetDecodeUserAsync(string idEncodeNavisionUser);
+        Task<Result<List<LexApp>>> GetUserMiniHubAsync(string idNavisionUser, bool onlyActives);
+        Task<Result<TokenData>> GetTokenAsync(TokenModelBase tokenRequest, bool addTerminatorToToken);
+        Task<Result<TokenData>> VadidateTokenAsync(TokenData tokenRequest);
 
-        //Task<MySqlCompany> GetConceptAsync(string idNavisionUser, string idConcept);
-
-        //Task<MySqlCompany> GetDocumentsAsync(string idNavisionUser, string search);
-
-        //Task<Result<bool>> FilePostAsync(string idNavisionUser, string idConcept);
-
-        //Task<Result<string>> FileGetAsync(string idNavisionUser, string idFile);
     }
 }

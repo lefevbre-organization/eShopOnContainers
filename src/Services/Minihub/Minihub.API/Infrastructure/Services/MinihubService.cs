@@ -1,19 +1,18 @@
-﻿using Minihub.API;
-using Minihub.API.Infrastructure.Repositories;
-using Minihub.API.Models;
-using Minihub.Infrastructure.Services;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Minihub.API;
+using Minihub.API.Infrastructure.Repositories;
+using Minihub.API.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Minihub.Infrastructure.Services
@@ -23,9 +22,10 @@ namespace Minihub.Infrastructure.Services
         public readonly IMinihubRepository _repository;
         private readonly IEventBus _eventBus;
         private readonly IHttpClientFactory _clientFactory;
-        private readonly HttpClient _client;
-        private readonly HttpClient _clientFiles;
+        private readonly HttpClient _clientMinihub;
+        private readonly HttpClient _clientOnline;
         private readonly IOptions<MinihubSettings> _settings;
+        internal readonly ILogger<MinihubService> _logger;
 
         public MinihubService(
                 IOptions<MinihubSettings> settings
@@ -39,680 +39,313 @@ namespace Minihub.Infrastructure.Services
             _repository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
             _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
-            _client = _clientFactory.CreateClient();
-            _client.BaseAddress = new Uri(_settings.Value.MinihubUrl);
-            _client.DefaultRequestHeaders.Add("Accept", "text/plain");
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+            _clientMinihub = _clientFactory.CreateClient();
+            _clientMinihub.BaseAddress = new Uri(_settings.Value.MinihubUrl);
+            _clientMinihub.DefaultRequestHeaders.Add("Accept", "text/plain");
 
             var handler = new HttpClientHandler()
             {
                 ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
             };
 
-            _clientFiles = new HttpClient(handler)
+            _clientOnline = new HttpClient(handler)
             {
-                BaseAddress = new Uri(_settings.Value.LexonFilesUrl)
+                BaseAddress = new Uri(_settings.Value.OnlineUrl)
             };
-            _clientFiles.DefaultRequestHeaders.Add("Accept", "text/plain");
+            _clientOnline.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
-        #region Classifications
-
-        public async Task<Result<List<int>>> AddClassificationToListAsync(ClassificationAddView classificationAdd)
+        public async Task<Result<string>> GetEncodeUserAsync(string idNavisionUser)
         {
-            var result = new Result<List<int>>(new List<int>());
-
-            SerializeObjectToPost(classificationAdd, "/classifications/add", out string url, out StringContent data);
+            var result = new Result<string>(string.Empty);
             try
             {
-                using (var response = await _client.PostAsync(url, data))
+                //https://online.elderecho.com/ws/encriptarEntrada.do?nEntrada=E1654569
+                var url = $"{_settings.Value.OnlineUrl}/encriptarEntrada.do?nEntrada={idNavisionUser}";
+
+                using (var response = await _clientMinihub.GetAsync(url))
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        result = await response.Content.ReadAsAsync<Result<List<int>>>();
+                        var rawResult = await response.Content.ReadAsStringAsync();
 
-                        if (result.data?.Count == 0)
-                            TraceOutputMessage(result.errors, "Mysql don´t create the classification", 2001);
-                        //else
-                        //    await AddClassificationToListMongoAsync(classificationAdd, result);
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<OnlineEntrada>(rawResult));
+                            result.data = resultado.ENTRADA_ENCRIPTADA;
+                        }
                     }
                     else
                     {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "553",
+                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
                     }
                 }
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "554",
+                    detail = $"General error when call online service",
+                    message = ex.Message
+                });
             }
 
             return result;
         }
 
-        //private async Task AddClassificationToListMongoAsync(ClassificationAddView classificationAdd, Result<List<int>> result)
-        //{
-        //    try
-        //    {
-        //        var resultMongo = await _usersRepository.AddClassificationToListAsync(classificationAdd);
-
-        //        if (resultMongo.infos.Count > 0)
-        //            result.infos.AddRange(resultMongo.infos);
-        //        else if (resultMongo.data == 0)
-        //            result.infos.Add(new Info() { code = "error_actuation_mongo", message = "error when add classification" });
-        //        else
-        //            result.infos.Add(new Info() { code = "add_actuations_mong", message = "add classification to mongo" });
-
-        //        //    result.data.Add((int)resultMongo.data);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceInfo(result.infos, $"Error al añadir actuaciones para  {classificationAdd.idRelated}: {ex.Message}");
-        //    }
-        //}
-
-        public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification)
+        public async Task<Result<string>> GetDecodeUserAsync(string idEncodeNavisionUser)
         {
-            var result = new Result<int>(0);
-
-            SerializeObjectToPost(classification, "/classifications/contacts/add", out string url, out StringContent data);
+            var result = new Result<string>(string.Empty);
             try
             {
-                using (var response = await _client.PostAsync(url, data))
+                //https://online.elderecho.com/ws/desencriptarEntrada.do?entradaEncriptada=eHRscn1hYA%3D%3D
+                var url = $"{_settings.Value.OnlineUrl}/desencriptarEntrada.do?entradaEncriptada={idEncodeNavisionUser}";
+
+                using (var response = await _clientMinihub.GetAsync(url))
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        result = await response.Content.ReadAsAsync<Result<int>>();
+                        var rawResult = await response.Content.ReadAsStringAsync();
 
-                        if (result.data == 0)
-                            TraceOutputMessage(result.errors, "Mysql don´t create the classification of contacts", 2001);
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<OnlineEntrada>(rawResult));
+                            result.data = resultado.ENTRADA_ENCRIPTADA;
+                        }
                     }
                     else
                     {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "553",
+                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
                     }
                 }
             }
             catch (Exception ex)
             {
-                TraceMessage(result.errors, ex);
-            }
-            //  await AddClassificationToListMongoAsync(idUser, bbdd, listaMails, idRelated, idType, result);
-            return result;
-        }
-
-        public async Task<Result<long>> RemoveClassificationFromListAsync(ClassificationRemoveView classificationRemove)
-        {
-            var result = new Result<long>(0);
-            SerializeObjectToPost(classificationRemove, "/classifications/delete", out string url, out StringContent data);
-
-            try
-            {
-                using (var response = await _client.PostAsync(url, data))
+                result.errors.Add(new ErrorInfo
                 {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        result = await response.Content.ReadAsAsync<Result<long>>();
-
-                        if (result.data == 0)
-                            TraceOutputMessage(result.errors, "Mysql don´t remove the classification", 2001);
-                        //else
-                        //    await RemoveClassificationFromListMongoAsync(classificationRemove, result);
-                    }
-                    else
-                    {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceInfo(result.infos, $"Error al eliminar actuaciones para  {classificationRemove.idRelated}: {ex.Message}");
+                    code = "554",
+                    detail = $"General error when call online service",
+                    message = ex.Message
+                });
             }
 
             return result;
         }
 
-        //private async Task RemoveClassificationFromListMongoAsync(ClassificationRemoveView classificationRemove, Result<long> result)
-        //{
-        //    try
-        //    {
-        //        var resultMongo = await _usersRepository.RemoveClassificationFromListAsync(classificationRemove);
-
-        //        if (resultMongo.infos.Count > 0)
-        //            result.infos.AddRange(resultMongo.infos);
-        //        else if (resultMongo.data == 0)
-        //            result.infos.Add(new Info() { code = "error_actuation_mongo", message = "error when remove classification" });
-        //        else
-        //            result.data = resultMongo.data;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceInfo(result.infos, $"Error al eliminar actuaciones para  {classificationRemove.idRelated}: {ex.Message}");
-        //    }
-        //}
-
-        public async Task<MySqlCompany> GetClassificationsFromMailAsync(ClassificationSearchView classificationSearch)
+        public async Task<Result<List<LexApp>>> GetUserMiniHubAsync(string idNavisionUser, bool onlyActives)
         {
-            var resultMySql = new MySqlCompany();
-            SerializeObjectToPost(classificationSearch, "/classifications/search", out string url, out StringContent data);
-
+            var result = new Result<List<LexApp>>(new List<LexApp>());
             try
             {
-                using (var response = await _client.PostAsync(url, data))
-                {
-                    if (response.IsSuccessStatusCode)
-                        resultMySql = await response.Content.ReadAsAsync<MySqlCompany>();
-                    else
-                        TraceOutputMessage(resultMySql.Errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", 2003);
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(resultMySql.Errors, ex);
-            }
+                var usuarioEncriptado = await GetEncodeUserAsync(idNavisionUser); // "f3NrcnZs";
 
-            //if (resultMySql.TengoActuaciones())
-            //   // await _usersRepository.UpsertRelationsAsync(classificationSearch, resultMySql);
-            //else
-            //{
-            //    //var resultMongo = await _usersRepository.GetRelationsAsync(classificationSearch);
-            //    //resultMySql.DataActuation = resultMongo.DataActuation;
-            //}
+                //http://led-pre-servicehub/Herramientas/Get?IdUsuarioPro=E0383956&IdUsuarioProEncriptado=f3NrcnZs&indMinuHub=1
+                var url = $"{_settings.Value.MinihubUrl}?IdUsuarioPro={idNavisionUser}&IdUsuarioProEncriptado={usuarioEncriptado}&indMinuHub=1";
 
-            return resultMySql;
-        }
-
-        #endregion Classifications
-
-        #region Entities
-
-        public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync()
-        {
-            var resultMySql = new MySqlList<JosEntityTypeList, JosEntityType>();
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.MinihubUrl}/entities/masters");
-            TraceLog(parameters: new string[] { $"request:{request}" });
-
-            try
-            {
-                using (var response = await _client.SendAsync(request))
+                using (var response = await _clientMinihub.GetAsync(url))
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        resultMySql = await response.Content.ReadAsAsync<MySqlList<JosEntityTypeList, JosEntityType>>();
-                        resultMySql.result = null;
-                        if (!resultMySql.TengoLista())
-                            TraceOutputMessage(resultMySql.Errors, "Mysql don´t recover the master´s entities", 2001);
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<LexApp[]>(rawResult));
+                            var listAll = resultado.ToList();
+                            result.data = onlyActives ? listAll.Where(x => x.indAcceso > 0).ToList() : listAll.ToList();
+                        }
                     }
                     else
                     {
-                        TraceOutputMessage(resultMySql.Errors, $"Response not ok with mysql.api with code->{response.StatusCode} - {response.ReasonPhrase}", 2003);
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "533",
+                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
                     }
                 }
             }
             catch (Exception ex)
             {
-                TraceMessage(resultMySql.Errors, ex);
-            }
-            //await GetMasterEntitiesMongoAsync(result);
-            return resultMySql;
-        }
-
-        //private async Task GetMasterEntitiesMongoAsync(Result<List<LexonEntityType>> result)
-        //{
-        //    try
-        //    {
-        //        var resultMongo = await _usersRepository.GetClassificationMasterListAsync();
-
-        //        if (resultMongo.errors.Count > 0)
-        //            result.errors.AddRange(resultMongo.errors);
-        //        else if (resultMongo.data.Count == 0)
-        //            TraceOutputMessage(result.errors, "MongoDb don´t recover the master´s entities", 2002);
-        //        else
-        //            result.data = resultMongo.data;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(result.errors, ex);
-        //    }
-        //}
-
-        public async Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder)
-        {
-            var result = new Result<long>(0);
-
-            SerializeObjectToPost(entityFolder, "/entities/folders/add", out string url, out StringContent data);
-            try
-            {
-                using (var response = await _client.PostAsync(url, data))
+                result.errors.Add(new ErrorInfo
                 {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        result = await response.Content.ReadAsAsync<Result<long>>();
-
-                        if (result.data == 0)
-                            TraceOutputMessage(result.errors, "Mysql don´t create the folder", 2001);
-                    }
-                    else
-                    {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
+                    code = "534",
+                    detail = $"General error in call Minihub data",
+                    message = ex.Message
+                });
             }
 
             return result;
         }
 
-        public async Task<Result<string>> FileGetAsync(EntitySearchById fileMail)
+        private string ValidarUsuario(string login, string password, string idUser)
         {
-            var result = new Result<string>(null);
-            try
-            {
-                var lexonFile = new LexonGetFile
-                {
-                    idCompany = 449, //await GetIdCompany(fileMail.idUser, fileMail.bbdd),
-                    idUser = fileMail.idUser,
-                    idDocument = fileMail.idEntity ?? 0
-                };
+            //TODO: validar usuario
+            if (!string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password) && string.IsNullOrEmpty(idUser))
+                idUser = "E1621396";
 
-                var json = JsonConvert.SerializeObject(lexonFile);
-                byte[] buffer = Encoding.UTF8.GetBytes(json);
-                var dataparameters = Convert.ToBase64String(buffer);
-                var url = $"{_settings.Value.LexonFilesUrl}?option=com_lexon&task=hook.receive&type=repository&data={dataparameters}";
-                WriteError($"Se hace llamada a {url} a las {DateTime.Now}");
-                using (var response = await _clientFiles.GetAsync(url))
-                {
-                    WriteError($"Se recibe contestación {DateTime.Now}");
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var arrayFile = await response.Content.ReadAsByteArrayAsync();
-                        var stringFile = Convert.ToBase64String(arrayFile);
-                        var fileName = response.Content.Headers.ContentDisposition.FileName;
-                        result.data = stringFile;
-                        TraceInfo(result.infos, $"Se recupera el fichero:  {fileName}", lexonFile.idDocument.ToString());
-                    }
-                    else
-                    {
-                        var responseText = await response.Content.ReadAsStringAsync();
-                        TraceOutputMessage(result.errors, $"Response not ok : {responseText} with lexon-dev with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", 2003);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.idEntity}, -> {ex.Message}", "599");
-            }
-
-            WriteError($"Salimos de FileGetAsync a las {DateTime.Now}");
-            return result;
+            return idUser;
         }
 
-        public async Task<Result<bool>> FilePostAsync(MailFileView fileMail)
+        public async Task<Result<TokenData>> GetTokenAsync(TokenModelBase tokenRequest, bool addTerminatorToToken)
         {
-            var result = new Result<bool>(false);
-            try
+            tokenRequest.roles = await GetRolesOfUserAsync(tokenRequest.idClienteNavision, tokenRequest.login, tokenRequest.password);
+            var resultado = new Result<TokenData>(new TokenData());
+
+            resultado.data.token = BuildTokenWithPayloadAsync(tokenRequest).Result;
+
+            resultado.data.token += addTerminatorToToken ? "/" : "";
+            resultado.data.valid = true;
+            return resultado;
+        }
+
+
+        private TokenValidationParameters GetValidationParameters()
+        {
+            return new TokenValidationParameters()
             {
-                var lexonFile = await GetFileDataByTypeActuation(fileMail);
-                lexonFile.fileName = RemoveProblematicChars(lexonFile.fileName);
-                var name = Path.GetFileNameWithoutExtension(lexonFile.fileName);
+                ValidateLifetime = true, // Because there is no expiration in the generated token
+                ValidateAudience = false, // Because there is no audiance in the generated token
+                ValidateIssuer = false,   // Because there is no issuer in the generated token
+                ValidIssuer = "Lexon",
+                ValidAudience = "Lexones",
+                IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_settings.Value.TokenKey)) // The same key as the one that generate the token
+            };
+        }
+        public async Task<Result<TokenData>> VadidateTokenAsync(TokenData tokenRequest)
+        {
+            var result = new Result<TokenData>(tokenRequest);
   
-                name = string.Concat(name.Split(Path.GetInvalidFileNameChars()));
-                name = string.Concat(name.Split(Path.GetInvalidPathChars()));
-                var maxlenght = name.Length > 55 ? 55 : name.Length;
-                lexonFile.fileName = $"{name.Substring(0, maxlenght)}{Path.GetExtension(lexonFile.fileName)}";
+            var validationParameters = GetValidationParameters();
 
-                var json = JsonConvert.SerializeObject(lexonFile);
-                byte[] buffer = Encoding.UTF8.GetBytes(json);
-                var dataparameters = Convert.ToBase64String(buffer);
-
-                SerializeObjectToPut(fileMail.ContentFile, $"?option=com_lexon&task=hook.receive&type=repository&data={dataparameters}", out string url, out ByteArrayContent data);
-
-                WriteError($"Se hace llamada a {url} a las {DateTime.Now}");
-                using (var response = await _clientFiles.PutAsync(url, data))
+            var tokenHandler = new JwtSecurityTokenHandler();
+            SecurityToken validatedToken = null;
+            try
+            {
+                tokenHandler.ValidateToken(tokenRequest.token, validationParameters, out validatedToken);
+                result.data.valid = validatedToken != null;
+            }
+            catch (SecurityTokenException ex)
+            {
+                result.errors.Add(new ErrorInfo
                 {
-                    WriteError($"Se recibe contestación {DateTime.Now}");
-
-                    var responseText = await response.Content.ReadAsStringAsync();
-                    if (response.IsSuccessStatusCode)
-                    {
-                        result.data = true;
-                        TraceInfo(result.infos, $"Se guarda el fichero {fileMail.Name} - {responseText}");
-                    }
-                    else
-                    {
-                        TraceOutputMessage(result.errors, $"Response not ok : {responseText} with lexon-dev with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", 2003);
-                    }
-                }
+                    code = "574",
+                    detail = $"Security error with token",
+                    message = ex.Message
+                });
+                result.data.valid = false;
             }
             catch (Exception ex)
             {
-                //TraceMessage(result.errors, ex);
-                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message}", "598");
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "575",
+                    detail = $"General error with token",
+                    message = ex.Message
+                });
+                result.data.valid = false;
             }
-            WriteError($"Salimos de FilePostAsync a las {DateTime.Now}");
-
+            //... manual validations return false if anything untoward is discovered
             return result;
         }
 
-        private async Task<LexonPostFile> GetFileDataByTypeActuation(MailFileView fileMail)
+        /// <summary>
+        ///   Se crea el claim a pelo como en el ejemplo https://stackoverflow.com/questions/29715178/complex-json-web-token-array-in-webapi-with-owin
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task<string> BuildTokenWithPayloadAsync(TokenModelBase token)
         {
-            var lexonFile = new LexonPostFile
+            var accion = await Task.Run(() =>
             {
-                idCompany = 449, // await GetIdCompany(fileMail.idUser, fileMail.bbdd),
-                fileName = fileMail.Name,
-                idUser = fileMail.idUser,
-                idEntityType = fileMail.idType ?? 0
-            };
-            if (fileMail.IdActuation == null || fileMail.IdActuation == 0)
+                _logger.LogInformation("START --> {0} con tiempo {1} y caducidad token {2}", nameof(BuildTokenWithPayloadAsync), DateTime.Now, DateTime.Now.AddSeconds(_settings.Value.TokenCaducity));
+
+                var exp = DateTime.UtcNow.AddSeconds(_settings.Value.TokenCaducity);
+                var payload = new JwtPayload(null, "", new List<Claim>(), null, exp);
+
+                AddValuesToPayload(payload, token);
+
+                var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_settings.Value.TokenKey));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                var jwtToken = new JwtSecurityToken(new JwtHeader(creds), payload);
+                return new JwtSecurityTokenHandler().WriteToken(jwtToken);
+            });
+
+            _logger.LogInformation("END --> {0} con token: {1}", nameof(BuildTokenWithPayloadAsync), accion);
+
+            return accion;
+        }
+
+        private void AddValuesToPayload(JwtPayload payload, TokenModelBase modelo)
+        {
+            if (modelo is TokenModelBase clienteModel)
             {
-                lexonFile.idFolder = fileMail.IdParent ?? 0;
-                lexonFile.idEntity = fileMail.idEntity ?? 0;
+                AddClaimToPayload(payload, clienteModel.idClienteNavision, nameof(clienteModel.idClienteNavision));
+                AddClaimToPayload(payload, clienteModel.roles, nameof(clienteModel.roles));
+                AddClaimToPayload(payload, clienteModel.login, nameof(clienteModel.login));
             }
             else
             {
-                lexonFile.idFolder = 0;
-                lexonFile.idEntity = (long)fileMail.IdActuation;
-            };
-            return lexonFile;
+                //AddClaimToPayload(payload, clienteModel.idUserApp, nameof(clienteModel.idUserApp));
+                //AddClaimToPayload(payload, clienteModel.name, nameof(clienteModel.name));
+
+                //AddClaimToPayload(payload, clienteModel.bbdd, nameof(clienteModel.bbdd));
+                //AddClaimToPayload(payload, clienteModel.provider, nameof(clienteModel.provider));
+                //AddClaimToPayload(payload, clienteModel.mailAccount, nameof(clienteModel.mailAccount));
+                //AddClaimToPayload(payload, clienteModel.folder, nameof(clienteModel.folder));
+                //AddClaimToPayload(payload, clienteModel.idMail, nameof(clienteModel.idMail));
+                //AddClaimToPayload(payload, clienteModel.idEntityType, nameof(clienteModel.idEntityType));
+                //AddClaimToPayload(payload, clienteModel.idEntity, nameof(clienteModel.idEntity));
+            }
         }
 
-        //private async Task<long> GetIdCompany(string idUser, string bbdd)
-        //{
-        //    var resultadoCompanies = await GetCompaniesFromUserAsync(idUser);
-        //    var companies = resultadoCompanies.data.Where(x => x.bbdd.ToLower().Contains(bbdd.ToLower()));
-        //    var idCompany = companies?.FirstOrDefault()?.idCompany;
-        //    return idCompany ?? 0; // "88";
-        //}
-
-        public async Task<Result<LexNestedEntity>> GetNestedFolderAsync(FolderNestedView entityFolder)
+        private async Task<List<string>> GetRolesOfUserAsync(string idClienteNavision, string login, string password)
         {
-            var result = new Result<LexNestedEntity>(new LexNestedEntity());
-
-            SerializeObjectToPost(entityFolder, "/entities/folders/nested", out string url, out StringContent data);
-            try
+            var apps = await GetUserMiniHubAsync(idClienteNavision, true);
+            var appsWithAccess = new List<string>() { "lexonconnector", "centinelaconnector" };
+            foreach (var app in apps.data)
             {
-                using (var response = await _client.PostAsync(url, data))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        result = await response.Content.ReadAsAsync<Result<LexNestedEntity>>();
-
-                        if (result.data == null)
-                            TraceOutputMessage(result.errors, "Mysql don´t get the nested folders", 2001);
-                    }
-                    else
-                    {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
+                appsWithAccess.Add(app.descHerramienta);
             }
 
-            return result;
-        }
-
-        public async Task<Result<LexEntity>> GetEntityById(EntitySearchById entitySearch)
-        {
-            var result = new Result<LexEntity>(new LexEntity());
-            SerializeObjectToPost(entitySearch, "/entities/getbyid", out string url, out StringContent data);
-
-            try
+            var usuarioValido = !string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password);
+            if (!string.IsNullOrEmpty(idClienteNavision) && usuarioValido)
             {
-                using (var response = await _client.PostAsync(url, data))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        result = await response.Content.ReadAsAsync<Result<LexEntity>>();
-                    }
-                    else
-                    {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
+                appsWithAccess.Add("gmailpanel");
+                appsWithAccess.Add("outlookpanel");
             }
 
-            return result;
+            return appsWithAccess;
         }
 
-        public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch)
+        private void AddClaimNumberToPayload(JwtPayload payload, long? valorClaim, string nombreClaim)
         {
-            return await GetEntitiesCommon(entitySearch, "/entities/search");
+            if (valorClaim == null) return;
+
+            _logger.LogInformation("Claim númerico {0} --> {1}", nombreClaim, valorClaim);
+            payload.Add(nombreClaim, valorClaim);
         }
 
-        private async Task<MySqlCompany> GetEntitiesCommon(EntitySearchView entitySearch, string path)
+        private void AddClaimToPayload(JwtPayload payload, object valorClaim, string nombreClaim)
         {
-            var resultMySql = new MySqlCompany();
+            if (valorClaim == null) return;
 
-            try
-            {
-                SerializeObjectToPost(entitySearch, path, out string url, out StringContent data);
-                using (var response = await _client.PostAsync(url, data))
-                {
-                    if (response.IsSuccessStatusCode)
-                        resultMySql = await response.Content.ReadAsAsync<MySqlCompany>();
-                    else
-                        TraceOutputMessage(resultMySql.Errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", 2003);
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(resultMySql.Errors, ex);
-            }
-
-            //if (resultMySql.TengoLista())
-            //    await _usersRepository.UpsertEntitiesAsync(entitySearch, resultMySql);
-            //else
-            //{
-            //    //var resultMongo = await _usersRepository.GetEntitiesAsync(entitySearch);
-            //    //resultMySql.Data = resultMongo.Data;
-            //}
-
-            return resultMySql;
-        }
-
-        public async Task<MySqlCompany> GetEntitiesFoldersAsync(EntitySearchFoldersView entitySearch)
-        {
-            //si no se marcar nada o se marca idParent solo se buscan carpetas, si se pide idFolder e idPArent nunca sera carpetas
-            if ((entitySearch.idFolder == null && entitySearch.idParent == null) 
-                || (entitySearch.idParent != null && entitySearch.idFolder == null))
-                entitySearch.idType = (short?)LexonAdjunctionType.folders;
-            else if(entitySearch.idFolder != null && entitySearch.idParent != null)
-                entitySearch.idType = (short?)LexonAdjunctionType.documents;
-
-            var result = await GetEntitiesCommon(entitySearch, "/entities/folders/search");
-
-            if(entitySearch.idType == (short?)LexonAdjunctionType.files || entitySearch.idType == (short?)LexonAdjunctionType.folders)
-            {
-                result.Data = result.Data?.FindAll(entity => entity.idType == entitySearch.idType);
-                result.Count = result.Data?.Count();
-            };
-            return result;
-        }
-
-        #endregion Entities
-
-        #region User and Companies
-
-        public async Task<Result<MinihubUser>> GetUserAsync(string idNavisionUser)
-        {
-            var result = new Result<MinihubUser>(new MinihubUser());
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.MinihubUrl}/user?idNavisionUser={idNavisionUser}");
-            TraceLog(parameters: new string[] { $"request:{request}" });
-
-            try
-            {
-                using (var response = await _client.SendAsync(request))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        result = await response.Content.ReadAsAsync<Result<MinihubUser>>();
-                        result.data.idNavision = idNavisionUser;
-                    }
-                    else
-                    {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
-
-            //if (!string.IsNullOrEmpty(result.data?.name))
-            //{
-            //    //await _usersRepository.UpsertUserAsync(result);
-            //}
-            //else
-            //{
-            //    TraceOutputMessage(result.errors, "Mysql don´t recover the user", 2001);
-            //    var resultMongo = await _usersRepository.GetUserAsync(idNavisionUser);
-            //    AddToFinalResult(result, resultMongo);
-            //}
-
-            return result;
-        }
-
-        private static void AddToFinalResult(Result<MinihubUser> result, Result<MinihubUser> resultPreview)
-        {
-            result.errors.AddRange(resultPreview.errors);
-            result.infos.AddRange(resultPreview.infos);
-            result.data = resultPreview.data;
-        }
-
-        //public async Task<Result<List<CenUser>>> GetCompaniesFromUserAsync(string idUser)
-        //{
-        //    var resultCompany = new Result<CenUser>(new CenUser());
-        //    var result = new Result<CenUser>(new CenUser());
-        //    var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.MinihubUrl}/companies?idUser={idUser}");
-        //    TraceLog(parameters: new string[] { $"request:{request}" });
-
-        //    try
-        //    {
-        //        using (var response = await _client.SendAsync(request))
-        //        {
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                resultCompany = await response.Content.ReadAsAsync<Result<CenUser>>();
-        //                AddToFinalResult(result, resultCompany);
-        //            }
-        //            else
-        //            {
-        //                TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(result.errors, ex);
-        //    }
-
-        //    //if (!string.IsNullOrEmpty(resultCompany.data?.name))
-        //    //{
-        //    //    await _usersRepository.UpsertCompaniesAsync(resultCompany);
-        //    //}
-        //    //else
-        //    //{
-        //    //    TraceOutputMessage(result.errors, "Mysql don´t recover the user with companies", 2001);
-        //    //    var resultMongo = await _usersRepository.GetUserAsync(idUser);
-        //    //    AddToFinalResult(result, resultMongo);
-        //    //}
-
-        //    return result;
-        //}
-
-        //private static void AddToFinalResult(Result<List<CenEvaluation>> result, Result<MinihubUser> resultPreliminar)
-        //{
-        //    result.errors.AddRange(resultPreliminar.errors);
-        //    result.infos.AddRange(resultPreliminar.infos);
-        //    result.data = resultPreliminar.data?.evaluations?.ToList();
-        //}
-
-        #endregion User and Companies
-
-        private void SerializeObjectToPost(object parameters, string path, out string url, out StringContent data)
-        {
-            url = $"{_settings.Value.MinihubUrl}{path}";
-            TraceLog(parameters: new string[] { $"url={url}" });
-            var json = JsonConvert.SerializeObject(parameters);
-            data = new StringContent(json, Encoding.UTF8, "application/json");
-        }
-
-        private void SerializeObjectToPut(string textInBase64, string path, out string url, out ByteArrayContent byteArrayContent)
-        {
-            url = $"{_settings.Value.MinihubUrl}{path}";
-            TraceLog(parameters: new string[] { $"url={url}" });
-            byte[] newBytes = Convert.FromBase64String(textInBase64);
-
-            byteArrayContent = new ByteArrayContent(newBytes);
-            byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("application/bson");
-        }
-
-        public Task<Result<MinihubUser>> GetEvaluationsAsync(string idNavisionUser)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Result<List<LexCompany>>> GetEvaluationTreeAsync(string idNavisionUser, string idEvaluation)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<MySqlCompany> GetConceptAsync(string idNavisionUser, string idConcept)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<MySqlCompany> GetDocumentsAsync(string idNavisionUser, string search)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Result<bool>> FilePostAsync(string idNavisionUser, string idConcept)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Result<string>> FileGetAsync(string idNavisionUser, string idFile)
-        {
-            throw new NotImplementedException();
-        }
-
-        //Task<Result<MinihubUser>> IMinihubService.GetEvaluationsAsync(string idNavisionUser)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //Task<Result<List<MinihubUser>>> IMinihubService.GetEvaluationTreeAsync(string idNavisionUser, string idEvaluation)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        public Task<Result<MinihubUser>> GetMinihubAsync(string idNavisionUser)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Result<string>> GetEncodeUserAsync(string idNavisionUser)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Result<string>> GetDecodeUserAsync(string idEncodeNavisionUser)
-        {
-            throw new NotImplementedException();
+            _logger.LogInformation("Claim {0} --> {1}", nombreClaim, valorClaim);
+            payload.Add(nombreClaim, valorClaim);
         }
     }
+
+    
 }
