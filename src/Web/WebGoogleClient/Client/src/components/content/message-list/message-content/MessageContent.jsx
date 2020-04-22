@@ -304,9 +304,19 @@ export class MessageContent extends Component {
                           'content-disposition'
                         );
                         if (
-                          contentDisposition &&
-                          contentDisposition.indexOf('inline;') === -1
+                          contentDisposition
                         ) {
+                          var contentId = getHeader(athc.headers,'Content-ID');
+                          if (contentId !== undefined){
+                            contentId = contentId.replace('<', '').replace('>','');
+                          }                          
+                          var iframe = document.getElementById('message-iframe');
+                          const bd = iframe.contentDocument.body.innerHTML.replace(
+                            `cid:${contentId}`,
+                            'data:image/png;base64, ' + dataBase64Rep
+                          );
+                          iframe.contentDocument.body.innerHTML = bd;
+
                           var blobUrl = URL.createObjectURL(urlBlob);
                           var Attachment = addAttachmentElement(
                             blobUrl,
@@ -314,29 +324,12 @@ export class MessageContent extends Component {
                           );
                           var AttachmentDiv = addAttachmentContainer(mimeType);
                           AttachmentDiv.appendChild(Attachment);
-                          var iframe = document.getElementById('message-iframe');
                           iframe &&
                             iframe.contentDocument &&
                             iframe.contentDocument.body.appendChild(
                               AttachmentDiv
                             );
-                        } else {
-                          console.log(
-                            this.iframeRef.current.contentWindow.document
-                          );
-                          const contentId = getHeader(
-                            athc.headers,
-                            'x-attachment-id'
-                          );
-                          var iframe = document.getElementById('message-iframe');
-                          var Divider = addDivDivider();
-                          iframe.contentDocument.body.appendChild(Divider);
-                          const bd = iframe.contentDocument.body.innerHTML.replace(
-                            `cid:${contentId}`,
-                            'data:image/png;base64, ' + dataBase64Rep
-                          );
-                          iframe.contentDocument.body.innerHTML = bd;
-                        }
+                         } 
                       }
                     }
                   );
