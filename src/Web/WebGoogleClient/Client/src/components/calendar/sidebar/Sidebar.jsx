@@ -29,7 +29,6 @@ export class Sidebar extends PureComponent {
             leftSideBarOpen: true           
         };
 
-        //this.renderLabels = this.renderLabels.bind(this);
         this.navigateToList = this.navigateToList.bind(this);
         this.newEventClick = this.newEventClick.bind(this);
         this.sidebarAction = this.sidebarAction.bind(this);
@@ -63,8 +62,7 @@ export class Sidebar extends PureComponent {
             return <div />;
         }
 
-        // find selected calendar to load first
-       
+        // find selected calendar to load first  
 
         const calendars = calendarList.reduce((acc, el) => {
             acc.push(el);
@@ -75,24 +73,24 @@ export class Sidebar extends PureComponent {
         this.DefaultCalendar = CalendarGroupSelected.true[0].id        
       
        
-        const labelGroups = groupBy(calendars, "accessRole");
-        var visibleLabels = [];
-        var sortedLabels = [];
+        const calendarGroups = groupBy(calendars, "accessRole");
+        var visibleCalendars = [];
+        var sortedCalendars = [];
 
-        if (labelGroups.owner != null) {
-            visibleLabels = labelGroups.owner.filter(
+        if (calendarGroups.owner != null) {
+            visibleCalendars = calendarGroups.owner.filter(
                 el =>
                     //el.labelListVisibility === "labelShow" ||
                     //el.labelListVisibility === "labelShowIfUnread" ||
                     !el.labelListVisibility || true
             );
-            sortedLabels = sortBy(visibleLabels, "name");
+            sortedCalendars = sortBy(visibleCalendars, "name");
         }
 
         return (
             <React.Fragment>
-                {this.renderMyCalendarView(labelGroups.owner)}
-                {this.renderOtherCalendars(labelGroups.reader)}
+                {this.renderMyCalendarView(calendarGroups.owner)}
+                {this.renderOtherCalendars(calendarGroups.reader)}
             </React.Fragment>
         );
 
