@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Lexon.MySql.Model
+namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
     /// <summary>
     /// Modelo de token para trbajar con entradas de usuario

@@ -358,5 +358,30 @@ namespace UserUtils.API.Infrastructure.Services
             _logger.LogInformation("Claim {0} --> {1}", nombreClaim, valorClaim);
             payload.Add(nombreClaim, valorClaim);
         }
+
+        public Task<Result<TokenData>> GetUserFromLoginAsync(int? idApp, string login, string password, bool addTerminatorToToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<TokenData>> GetLexonUserSimpleAsync(string idClienteNavision, bool addTerminatorToToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<TokenData>> GetLexonNewMailAsync(TokenRequestNewMail tokenRequest, bool addTerminatorToToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<TokenData>> GetLexonOpenMailAsync(TokenRequestOpenMail tokenRequest, bool addTerminatorToToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<TokenData>> GetLexonUserDbAsync(TokenRequestDataBase tokenRequest, bool addTerminatorToToken)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
