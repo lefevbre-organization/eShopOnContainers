@@ -1,19 +1,13 @@
 import { createReducer } from 'deox';
 import * as _ from 'lodash';
 import { MessagesActions } from './actions';
-import {
-  MessagesState,
-  AddMessagePayload,
-  DeleteMessagePayload,
-  AddListMessagesPayload,
-  DeleteListMessagePayload
-} from './types';
+import { MessagesState } from './types';
 
 const InitialMessagesState: MessagesState = {
   selected: []
 };
 
-const reducer = createReducer(InitialMessagesState, handleAction => [
+const reducer = createReducer(InitialMessagesState, (handleAction) => [
   handleAction(MessagesActions.addMessage, handleAddMessageAction()),
   handleAction(MessagesActions.deleteMessage, handleDeleteMessageAction()),
   handleAction(MessagesActions.resetListMessages, handleResetListAction()),
@@ -26,7 +20,6 @@ const reducer = createReducer(InitialMessagesState, handleAction => [
 
 function handleAddMessageAction() {
   return (state: MessagesState, action: any) => {
-    debugger;
     const sel = _.uniqBy(_.concat(state.selected, action.payload), 'id');
     return {
       ...state,
@@ -55,7 +48,6 @@ function handleResetListAction() {
 
 function handleAddListMessagesAction() {
   return (state: MessagesState, action: any) => {
-    debugger;
     const sel = _.uniqBy(_.concat(state.selected, action.payload), 'id');
 
     return {

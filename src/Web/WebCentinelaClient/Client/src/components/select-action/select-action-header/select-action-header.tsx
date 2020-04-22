@@ -3,7 +3,6 @@ import { bindActionCreators } from 'redux';
 import { connect, ConnectedProps } from 'react-redux';
 import i18n from 'i18next';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import './select-action-header.css';
 import MessageCounter from './message-counter';
 import { MessagesActions } from '../../../store/messages/actions';
 import SelectedMessage from './selected-message';
@@ -62,7 +61,6 @@ class SelectActionHeader extends Component<Props, State> {
 
   // TODO: Check msg type
   onDeleteMessage(msg: any) {
-    debugger;
     const { deleteMessage } = this.props;
     deleteMessage(msg);
   }
@@ -75,13 +73,13 @@ class SelectActionHeader extends Component<Props, State> {
 
     return (
       <Fragment>
-        <p className="selected-messages">
+        <div className='selected-messages'>
           {i18n.t('select-action-header.messages-selected')}
           <br />
           <MessageCounter onChange={this.onShowDocuments}>
             {selected.length}
           </MessageCounter>
-        </p>
+        </div>
 
         {/* {showDocuments && (
           <p className='company-id'>
@@ -98,13 +96,12 @@ class SelectActionHeader extends Component<Props, State> {
         )}
         */}
         {showDocuments === false && (
-          <div className="messages-list-container">
+          <div className='messages-list-container'>
             <PerfectScrollbar>
               {selected.map((sm: Message) => (
                 <SelectedMessage
                   message={sm}
-                  onDeleteMessage={this.onDeleteMessage}
-                ></SelectedMessage>
+                  onDeleteMessage={this.onDeleteMessage}></SelectedMessage>
               ))}
             </PerfectScrollbar>
           </div>

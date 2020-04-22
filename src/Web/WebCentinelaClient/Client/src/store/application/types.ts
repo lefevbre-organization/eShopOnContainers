@@ -5,6 +5,8 @@ export interface ApplicationState {
   errors: string[];
   config: any;
   isLoading: boolean;
+  user: any;
+  showArchiveModal: boolean;
 }
 
 export type AddErrorPayload = {

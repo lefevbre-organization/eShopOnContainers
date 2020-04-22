@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import './select-action.css';
 
 import SelectActionHeader from './select-action-header/select-action-header';
 import { PAGE_SELECT_COMPANY } from '../../constants';
+import SelectActionTab from './select-action-tab/select-action-tab';
 
 interface Props {
   changePage: (page: string) => void;
@@ -41,9 +41,9 @@ class SelectAction extends Component<Props, State> {
           changePage={this.props.changePage}
           onChange={this.onShowDocuments}
         />
-        {/* {showDocuments === true && (
+        {showDocuments === true && (
           <SelectActionTab toggleNotification={toggleNotification} />
-        )} */}
+        )}
       </div>
     );
   }

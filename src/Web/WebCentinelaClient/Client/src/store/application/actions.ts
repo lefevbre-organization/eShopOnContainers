@@ -10,5 +10,10 @@ export const ApplicationActions = {
   setLoadingStatus: createAction(
     `${PREFIX}/SET_LOADING_STATUS`,
     (resolve: any) => (status: boolean) => resolve(status)
-  )
+  ),
+  setCurrentUser: createAction(
+    `${PREFIX}/SET_CURRENT_USER`,
+    (resolve: any) => (user: string) => resolve(user)
+  ),
+  toggleArchiveModal: createAction(`${PREFIX}/TOGGLE_MODAL_ARCHIVE_DOCUMENTS`)
 };
