@@ -9,12 +9,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Minihub.API.Infrastructure.Filters;
-using Minihub.API.Infrastructure.Repositories;
-using Minihub.Infrastructure.Services;
+using UserUtils.API.Infrastructure.Filters;
+using UserUtils.API.Infrastructure.Repositories;
+using UserUtils.API.Infrastructure.Services;
 using RabbitMQ.Client;
 
-namespace Minihub.API.Extensions
+namespace UserUtils.API.Extensions
 {
     public static class CustomExtensionsMethods
     {
@@ -42,8 +42,8 @@ namespace Minihub.API.Extensions
                     .AllowCredentials());
             });
 
-            services.AddTransient<IMinihubService, MinihubService>();
-            services.AddTransient<IMinihubRepository, MinihubRepository>();
+            services.AddTransient<IUserUtilsService, UserUtilsService>();
+            services.AddTransient<IUserUtilsRepository, UserUtilsRepository>();
             return services;
         }
 
@@ -59,13 +59,13 @@ namespace Minihub.API.Extensions
                 .AddCheck("self", () => HealthCheckResult.Healthy())
                 .AddMongoDb(
                     configuration["ConnectionString"],
-                    name: "Minihub-mongodb-check",
+                    name: "UserUtils-mongodb-check",
                     tags: new string[] { "mongodb" });
 
             hcBuilder
                 .AddRabbitMQ(
                     $"amqp://{configuration["EventBusConnection"]}",
-                    name: "Minihub-rabbitmqbus-check",
+                    name: "UserUtils-rabbitmqbus-check",
                     tags: new string[] { "rabbitmqbus" });
 
             return services;
@@ -78,7 +78,7 @@ namespace Minihub.API.Extensions
 
         public static IServiceCollection AddCustomOptions(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<MinihubSettings>(configuration);
+            services.Configure<UserUtilsSettings>(configuration);
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.InvalidModelStateResponseFactory = context =>
@@ -127,7 +127,7 @@ namespace Minihub.API.Extensions
             {
                 services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
                 {
-                    var settings = sp.GetRequiredService<IOptions<MinihubSettings>>().Value;
+                    var settings = sp.GetRequiredService<IOptions<UserUtilsSettings>>().Value;
                     var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
                     var factory = new ConnectionFactory
                     {

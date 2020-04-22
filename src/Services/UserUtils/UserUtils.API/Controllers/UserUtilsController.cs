@@ -6,21 +6,21 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
-using Minihub.API.Models;
-using Minihub.Infrastructure.Services;
+using UserUtils.API.Models;
+using UserUtils.API.Infrastructure.Services;
 
-namespace Minihub.API.Controllers
+namespace UserUtils.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class MinihubController : ControllerBase
+    public class UserUtilsController : ControllerBase
     {
-        private IMinihubService _service;
-        private readonly IOptions<MinihubSettings> _settings;
+        private IUserUtilsService _service;
+        private readonly IOptions<UserUtilsSettings> _settings;
 
-        public MinihubController(
-          IMinihubService service
-          , IOptions<MinihubSettings> settings
+        public UserUtilsController(
+          IUserUtilsService service
+          , IOptions<UserUtilsSettings> settings
           )
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
@@ -43,11 +43,11 @@ namespace Minihub.API.Controllers
             if (string.IsNullOrEmpty(idClienteNavision))
                 return BadRequest("id value invalid. Must be a valid user code in the enviroment or login and password");
 
-            var token = new TokenModelBase() { idClienteNavision = idClienteNavision};
-            
+            var token = new TokenModelBase() { idClienteNavision = idClienteNavision };
+
             var result = await _service.GetTokenAsync(token, addTerminatorToToken);
 
-            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result) ;
+            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
 
         }
 
@@ -68,7 +68,7 @@ namespace Minihub.API.Controllers
 
             var tokenRequest = new TokenData() { token = token, valid = false };
             var result = await _service.VadidateTokenAsync(tokenRequest);
-            return result.data.valid ? Ok(result): (IActionResult)BadRequest(result);
+            return result.data.valid ? Ok(result) : (IActionResult)BadRequest(result);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace Minihub.API.Controllers
                 return BadRequest("id value invalid. Must be a valid user code in the enviroment or login and password");
 
             var result = await _service.GetTokenAsync(tokenRequest, addTerminatorToToken);
-       
+
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
@@ -102,12 +102,12 @@ namespace Minihub.API.Controllers
         [HttpGet("user/apps")]
         [ProducesResponseType(typeof(Result<List<LexApp>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<List<LexApp>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UserMiniHubAsync(string idNavisionUser = "E1621396", bool onlyActives = true)
+        public async Task<IActionResult> UserAppsAsync(string idNavisionUser = "E1621396", bool onlyActives = true)
         {
             if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
-            var result = await _service.GetUserMiniHubAsync(idNavisionUser, onlyActives);
+            var result = await _service.GetUserUtilsAsync(idNavisionUser, onlyActives);
             return Ok(result);
         }
 

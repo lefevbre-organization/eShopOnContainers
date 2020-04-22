@@ -3,9 +3,6 @@ using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Minihub.API;
-using Minihub.API.Infrastructure.Repositories;
-using Minihub.API.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,25 +12,27 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using UserUtils.API.Infrastructure.Repositories;
+using UserUtils.API.Models;
 
-namespace Minihub.Infrastructure.Services
+namespace UserUtils.API.Infrastructure.Services
 {
-    public class MinihubService : BaseClass<MinihubService>, IMinihubService
+    public class UserUtilsService : BaseClass<UserUtilsService>, IUserUtilsService
     {
-        public readonly IMinihubRepository _repository;
+        public readonly IUserUtilsRepository _repository;
         private readonly IEventBus _eventBus;
         private readonly IHttpClientFactory _clientFactory;
         private readonly HttpClient _clientMinihub;
         private readonly HttpClient _clientOnline;
-        private readonly IOptions<MinihubSettings> _settings;
-        internal readonly ILogger<MinihubService> _logger;
+        private readonly IOptions<UserUtilsSettings> _settings;
+        internal readonly ILogger<UserUtilsService> _logger;
 
-        public MinihubService(
-                IOptions<MinihubSettings> settings
-                , IMinihubRepository usersRepository
+        public UserUtilsService(
+                IOptions<UserUtilsSettings> settings
+                , IUserUtilsRepository usersRepository
                 , IEventBus eventBus
                 , IHttpClientFactory clientFactory
-                , ILogger<MinihubService> logger
+                , ILogger<UserUtilsService> logger
             ) : base(logger)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
@@ -46,21 +45,20 @@ namespace Minihub.Infrastructure.Services
             _clientMinihub.BaseAddress = new Uri(_settings.Value.MinihubUrl);
             _clientMinihub.DefaultRequestHeaders.Add("Accept", "text/plain");
 
-            var handler = new HttpClientHandler()
-            {
-                AllowAutoRedirect = false,
-                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-            };
+            //var handler = new HttpClientHandler()
+            //{
+            //    AllowAutoRedirect = false,
+            //    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            //};
 
-
-            _clientOnline = new HttpClient(handler)
-            {
-                BaseAddress = new Uri(_settings.Value.OnlineUrl)
-            };
+            //_clientOnline = new HttpClient(handler)
+            //{
+            //    BaseAddress = new Uri(_settings.Value.OnlineUrl)
+            //};
 
             //var authData = "d3M6MjJsY3FzcDExbHN3";
-            //_clientOnline = _clientFactory.CreateClient();
-            //_clientOnline.BaseAddress = new Uri(_settings.Value.OnlineUrl);
+            _clientOnline = _clientFactory.CreateClient();
+            _clientOnline.BaseAddress = new Uri(_settings.Value.OnlineUrl);
 
             var authData = Convert.ToBase64String(
                         System.Text.Encoding.ASCII.GetBytes($"{_settings.Value.OnlineLogin}:{_settings.Value.OnlinePassword}"));
@@ -156,7 +154,7 @@ namespace Minihub.Infrastructure.Services
             return result;
         }
 
-        public async Task<Result<List<LexApp>>> GetUserMiniHubAsync(string idNavisionUser, bool onlyActives)
+        public async Task<Result<List<LexApp>>> GetUserUtilsAsync(string idNavisionUser, bool onlyActives)
         {
             var result = new Result<List<LexApp>>(new List<LexApp>());
             try
@@ -225,7 +223,6 @@ namespace Minihub.Infrastructure.Services
             return resultado;
         }
 
-
         private TokenValidationParameters GetValidationParameters()
         {
             return new TokenValidationParameters()
@@ -238,10 +235,11 @@ namespace Minihub.Infrastructure.Services
                 IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_settings.Value.TokenKey)) // The same key as the one that generate the token
             };
         }
+
         public async Task<Result<TokenData>> VadidateTokenAsync(TokenData tokenRequest)
         {
             var result = new Result<TokenData>(tokenRequest);
-  
+
             var validationParameters = GetValidationParameters();
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -328,7 +326,7 @@ namespace Minihub.Infrastructure.Services
 
         private async Task<List<string>> GetRolesOfUserAsync(string idClienteNavision, string login, string password)
         {
-            var apps = await GetUserMiniHubAsync(idClienteNavision, true);
+            var apps = await GetUserUtilsAsync(idClienteNavision, true);
             var appsWithAccess = new List<string>() { "lexonconnector", "centinelaconnector" };
             foreach (var app in apps.data)
             {
@@ -361,6 +359,4 @@ namespace Minihub.Infrastructure.Services
             payload.Add(nombreClaim, valorClaim);
         }
     }
-
-    
 }

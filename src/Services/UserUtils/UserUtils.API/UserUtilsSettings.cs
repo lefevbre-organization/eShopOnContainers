@@ -1,6 +1,6 @@
-﻿namespace Minihub.API
+﻿namespace UserUtils.API
 {
-    public class MinihubSettings
+    public class UserUtilsSettings
     {
         public string ConnectionString { get; set; }
         public string Database { get; set; }
