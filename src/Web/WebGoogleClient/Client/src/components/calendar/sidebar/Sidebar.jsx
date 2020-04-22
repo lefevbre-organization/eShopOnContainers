@@ -69,8 +69,8 @@ export class Sidebar extends PureComponent {
             return acc;
         }, []);      
 
-        let CalendarGroupSelected = groupBy(calendars, "selected");
-        this.DefaultCalendar = CalendarGroupSelected.true[0].id        
+        //let CalendarGroupSelected = groupBy(calendars, "selected");
+        //this.DefaultCalendar = CalendarGroupSelected.true[0].id        
       
        
         const calendarGroups = groupBy(calendars, "accessRole");

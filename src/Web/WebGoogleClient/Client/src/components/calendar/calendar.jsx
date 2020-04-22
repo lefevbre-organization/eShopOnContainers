@@ -179,8 +179,9 @@ export class Calendar extends Component {
     }
  
     buildEventoGoogle(values) {  
+        
         var event = {
-            'summary': values.Subject ,
+            'summary': values.Subject,
             'location': values.Location,
             'description': values.Description,
             'start': {
@@ -188,13 +189,13 @@ export class Calendar extends Component {
                 'timeZone': 'Europe/Madrid',
             },
             'end': {
-                'dateTime': values.EndTime ,
+                'dateTime': values.EndTime,
                 'timeZone': 'Europe/Madrid',
-            },            
-            //'recurrence': [
-            //    'RRULE:'+ values.RecurrenceRule,
-               
-            //],
+            },           
+        }
+
+        if (values.RecurrenceRule != undefined) { event.recurrence = ['RRULE:' + values.RecurrenceRule]};
+      
             //'attendees': [
             //    { 'email': 'lpage@example.com' },
             //    { 'email': 'sbrin@example.com' },
@@ -205,8 +206,7 @@ export class Calendar extends Component {
             //        { 'method': 'email', 'minutes': 24 * 60 },
             //        { 'method': 'popup', 'minutes': 10 },
             //    ],
-            //},
-        };
+            //},       
 
         return event
     }
@@ -272,8 +272,9 @@ export class Calendar extends Component {
             .then(result => {
                 this.dataManger = result.result;
                // this.data = extend([], this.dataManger, null, true);
-                this.onDataBinding(this.dataManger);
-                this.scheduleObj.refreshEvents();               
+               // this.onDataBinding(this.dataManger);
+                this.scheduleObj.refreshEvents();  
+                //this.scheduleObj.refresh();
                
             })
             .catch(error => {
@@ -418,7 +419,7 @@ export class Calendar extends Component {
                             onCalendarOpenEditor={this.handleScheduleOpenEditor}
                     />
                         <article className='d-flex flex-column position-relative'>
-                            <Switch>
+                            {/*<Switch>*/}
                                 <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
@@ -439,7 +440,7 @@ export class Calendar extends Component {
                                         </div>
                                     </div>                                   
                                 </div>
-                            </Switch>
+                            {/*</Switch>*/}
                         </article>
 
                         <div className='productpanel'>                           
