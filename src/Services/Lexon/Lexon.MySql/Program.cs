@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Serilog;
+using System;
+using System.IO;
 
 namespace Lexon.MySql
 {
@@ -54,7 +50,6 @@ namespace Lexon.MySql
             {
                 Log.CloseAndFlush();
             }
-
         }
 
         private static Serilog.ILogger CreateSerilogLogger(IConfiguration configuration)
@@ -103,6 +98,5 @@ namespace Lexon.MySql
                  .UseConfiguration(configuration)
                  .UseSerilog()
                  .Build();
-
     }
 }
