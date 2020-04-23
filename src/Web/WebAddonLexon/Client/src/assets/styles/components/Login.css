@@ -1,0 +1,239 @@
+.wrapper {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+}
+ 
+.login-header {
+  height: 60px;
+  width: 100%;
+  display: block;
+  overflow: hidden;
+  background-color: #001978;
+}
+
+.front-login__go-home {
+  margin-top: 16px;
+  float: left;
+  margin-left: 100px;
+  position: absolute !important;
+}
+
+.front-login__go-shop {
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: 13px;
+  margin-left: 87%;
+  letter-spacing: 1px;
+  position: absolute;
+}
+
+.front-login__go-shop-icon {
+  font-size: 27px;
+  position: relative;
+  top: -5px;
+  padding-right: 11px;
+}
+ 
+.botton-img-space{
+  margin-bottom: 32px !important;
+  margin-top: 40px;
+}
+  
+.botton-title-space {
+  margin-bottom: 30px !important;
+}
+   
+.footer-space {
+  margin-bottom: 80px !important;
+}
+  
+.login-box {
+  margin: 48px auto 49px;
+  display: block;
+  width: 450px;
+  min-height: 502px;
+  border: 1px solid #7f8cbb;
+  background-color: #FFFFFF;
+}
+
+.logo-lexon {
+  max-width: 41%;
+  margin: 10px auto 40px;
+  display: block;
+  margin-top: 16px;
+}
+  
+.login-title-space{
+  margin-bottom: 39px !important;
+}
+  
+.login-title-lex-on {
+  font-size: 40px;
+  font-family: "MTT Milano";
+  font-weight: 500;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 0;
+  letter-spacing: -0.35px;
+  color: #001978;
+  margin-top: -18px;
+}
+  
+
+.login-title-lefebvre {
+  padding-top: 26px;
+  font-size: 24px;
+  margin-left: -32px;
+  color: #001978;
+  font-family: "MTT Milano";
+}
+  
+
+.label-login {
+  font-size: 14px;
+  font-weight: 500;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: 1.5;
+  letter-spacing: -0.35px;
+  color: #868686;
+  font-family: "MTT Milano";
+}
+
+.input-group-text {
+  border-radius: inherit !important;
+}
+
+.login-input-group {
+  width: 340px !important;
+}
+
+.login-input {
+  height: 40px !important;
+  border-radius: inherit !important;
+}
+
+.btn-login {
+  width: 340px !important;
+  height: 42px;
+  background-color: #001978 !important;
+  border-radius: inherit !important;
+}
+
+.btn-label {
+  border: none;
+  text-transform: uppercase;
+  color: #FFFFFF !important;
+  font-family: "MTTMilano";
+  font-size: 13px !important;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+
+.btn-label:hover {
+  color: #ffffff
+}
+
+.login-shop {
+  font-family: "MTTMilano";
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: 6px;
+  margin-left: 87%;
+  letter-spacing: 1px;
+  color: #fff;
+  position: absolute;
+}
+
+.not-client-login {
+  height: 16px;
+  width: 243px;
+  color: #333333;
+  font-family: "MTT Milano";
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 19px;
+  text-align: center;
+}
+.front-login__info-block {
+  color: #333333;
+  font-family: "MTTMilano";
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.front-login__info-block-link {
+  color: #001978 !important;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.login-help {
+  height: 95px;
+  width: 448px;
+  border: 0 solid #000000;
+  background-color: #E5E8F1;
+  margin-top: -16px;
+}
+
+.need-help {
+  color: #001978 !important;
+  font-family: "MTTMilano";
+  margin: 0 0 4px;
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.separate {
+ border: #6675AE 1px solid;
+ margin-left: 6px;
+}
+
+.client {
+  color: #6675AE;
+  font-family: "MTT Milano";
+  font-size: 17px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.front-login__information-contact-email {
+  color: #001978 !important;
+  font-weight: 600;
+}
+
+.login-footer {
+  height: 200px;
+  background: #001978;
+}
+.compliance-footer__icon-logo {
+  float: left;
+  padding: 0;
+}
+
+.pull-right {
+  float: right !important;
+}
+
+.compliance-footer__button-icon {
+  float: right;
+  border: none;
+  background: none;
+  color: #fff;
+  font-size: 30px;
+  margin: 0px 7px 0;
+  outline: none;
+}
+
+.rights-reserved-login {
+  font-size: 13.4px;
+  color: #FFFFFF;
+  font-family: "MTTMilano";
+  margin: 35px 0 0;
+  font-weight: 500;
+  text-decoration: none;
+}
