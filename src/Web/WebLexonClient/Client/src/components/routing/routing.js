@@ -4,19 +4,23 @@ import {
   PAGE_SELECT_COMPANY,
   PAGE_SELECT_ACTION,
   PAGE_CASEFILE,
-  PAGE_CONFIGURATION
+  PAGE_CONFIGURATION,
+  PAGE_MESSAGE_CLASSIFICATIONS
 } from '../../constants';
 import SelectCompany from '../select-company/select-company';
 import CaseFile from '../case-file/case-file';
 import SelectAction from '../select-action/select-action';
 import Configuration from '../configuration/configuration';
+import MessageClassifications from '../addon-conecting-emails/addon-conecting-emails';
 import { connect } from 'react-redux';
 
 class Routing extends Component {
   constructor(props) {
     super(props);
+  
+    let actualPage = props.addonData != null ? PAGE_MESSAGE_CLASSIFICATIONS  
+     : PAGE_SELECT_COMPANY;
 
-    let actualPage = PAGE_SELECT_COMPANY;
     if (props.casefile != null && props.casefile !== undefined) {
       actualPage = PAGE_CASEFILE;
     }
@@ -35,6 +39,7 @@ class Routing extends Component {
   renderPage() {
     const { actualPage } = this.state;
     const {
+      addonData,
       user,
       companies,
       toggleNotification,
@@ -43,7 +48,7 @@ class Routing extends Component {
       company,
       composerOpen
     } = this.props;
-
+    
     switch (actualPage) {
       case PAGE_SELECT_COMPANY:
         return (
@@ -82,6 +87,16 @@ class Routing extends Component {
             toggleNotification={toggleNotification}
           />
         );
+
+      case PAGE_MESSAGE_CLASSIFICATIONS:
+        return (
+          <MessageClassifications 
+            user={user} 
+            bbddAddon={bbdd}
+            addonData={addonData}
+          />
+        );
+
       default:
         return <SelectCompany changePage={this.changePage} />;
     }

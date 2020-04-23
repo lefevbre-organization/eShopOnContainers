@@ -45,17 +45,16 @@ export class AttachDocumentsStep4 extends React.Component {
 
     if (prevProps.show === false && this.props.show === true) {
       this.setState({ currentPage: 1 }, () => {
-        this.searchRef.current.Search(this.props.search)
+        this.searchRef.current.Search(this.props.search);
       });
     }
   }
-
 
   nextPage() {
     if (this.state.lastPage === false) {
       const np = this.state.currentPage + 1;
       this.setState({ currentPage: np }, () => {
-        this.searchResultsByType(14, this.props.search)
+        this.searchResultsByType(14, this.props.search);
       });
     }
   }
@@ -64,11 +63,10 @@ export class AttachDocumentsStep4 extends React.Component {
     if (this.state.currentPage > 1) {
       const np = this.state.currentPage - 1;
       this.setState({ currentPage: np }, () => {
-        this.searchResultsByType(14, this.props.search)
+        this.searchResultsByType(14, this.props.search);
       });
     }
   }
-
 
   onDoubleClick(event) {
     this.treeRef && (this.treeRef.selectedNodes = [event.rowData.id]);
@@ -78,32 +76,40 @@ export class AttachDocumentsStep4 extends React.Component {
     const { user, bbdd, onSearchChange } = this.props;
     const { currentPage, showSpinner } = this.state;
     if (showSpinner) {
-      return
+      return;
     }
 
     if (search !== this.props.search) {
-      onSearchChange && onSearchChange(search)
+      onSearchChange && onSearchChange(search);
     }
 
-    console.log("SearchResultsByType: CurrentPage: " + this.state.currentPage)
-    this.setState({
-      search: search || '',
-      showSpinner: true,
-      currentPage,
-      counter: 0
-    }, async () => {
-      const response = await getResults(
-        user,
-        bbdd,
-        14,
-        search,
-        6,
-        currentPage
-      );
+    console.log('SearchResultsByType: CurrentPage: ' + this.state.currentPage);
+    this.setState(
+      {
+        search: search || '',
+        showSpinner: true,
+        currentPage,
+        counter: 0
+      },
+      async () => {
+        const response = await getResults(
+          user,
+          bbdd,
+          14,
+          search,
+          6,
+          currentPage
+        );
 
-      const lastPage = (currentPage * 6) >= response.results.count;
-      this.setState({ entities: response.results.data, showSpinner: false, totalResults: response.results.count, lastPage });
-    });
+        const lastPage = currentPage * 6 >= response.results.count;
+        this.setState({
+          entities: response.results.data,
+          showSpinner: false,
+          totalResults: response.results.count,
+          lastPage
+        });
+      }
+    );
   }
 
   renderType(props) {
@@ -113,16 +119,17 @@ export class AttachDocumentsStep4 extends React.Component {
 
   onChangeFile(event, data) {
     const { checked } = event;
-    const { idType, idRelated, code, description } = data
+    const { idType, idRelated, code, description, name } = data;
     const { onChange } = this.props;
-    onChange && onChange({ idType, idRelated, checked, code, description })
+    onChange &&
+      onChange({ idType, idRelated, checked, code: name, description });
   }
 
   isFileSelected(data) {
-    const { idRelated } = data
+    const { idRelated } = data;
 
     const fd = this.props.files.find(item => item.idRelated === idRelated);
-    return fd !== undefined
+    return fd !== undefined;
   }
 
   renderOrigin(props) {
@@ -130,7 +137,16 @@ export class AttachDocumentsStep4 extends React.Component {
     console.log(props);
     return (
       <div>
-        <span><CheckBoxComponent label="" checked={this.isFileSelected(props)} cssClass="e-small" change={(evt) => { this.onChangeFile(evt, props) }} /></span>
+        <span>
+          <CheckBoxComponent
+            label=''
+            checked={this.isFileSelected(props)}
+            cssClass='e-small'
+            change={evt => {
+              this.onChangeFile(evt, props);
+            }}
+          />
+        </span>
         <span
           style={{ marginRight: 10, marginLeft: 10 }}
           className={`pager-icon ${icon} new-folder-icon`}></span>
@@ -140,7 +156,7 @@ export class AttachDocumentsStep4 extends React.Component {
   }
 
   nodeTemplate(data) {
-    console.log(data)
+    console.log(data);
     return null;
   }
 
@@ -152,7 +168,9 @@ export class AttachDocumentsStep4 extends React.Component {
         <div className='step3-container'>
           <ol style={{ textAlign: 'center' }}>
             <li className='index-4'>
-              <span>Selecciona los archivos que quieras adjuntar al correo</span>
+              <span>
+                Selecciona los archivos que quieras adjuntar al correo
+              </span>
             </li>
           </ol>
 
@@ -211,7 +229,7 @@ export class AttachDocumentsStep4 extends React.Component {
                 <div
                   className={`prevButton ${
                     this.state.currentPage === 1 ? 'disabled' : ''
-                    }`}
+                  }`}
                   onClick={() => this.prevPage()}>
                   <span className='pager-icon lf-icon-angle-left' />
                   <span>Anterior</span>
@@ -220,7 +238,7 @@ export class AttachDocumentsStep4 extends React.Component {
                 <div
                   className={`nextButton ${
                     this.state.lastPage === true ? 'disabled' : ''
-                    }`}
+                  }`}
                   onClick={() => this.nextPage()}>
                   <span>Siguiente</span>
                   <span className='pager-icon lf-icon-angle-right' />
@@ -234,153 +252,152 @@ export class AttachDocumentsStep4 extends React.Component {
             margin-top: -6px;
           }
 
-            .step3-container {
-              margin: 30px;
-            }
+          .step3-container {
+            margin: 30px;
+          }
 
-            .e-selectionbackground {
-              background-color: #e5e8f1 !important;
-            }
+          .e-selectionbackground {
+            background-color: #e5e8f1 !important;
+          }
 
-            .e-row:hover {
-              background-color: #e5e8f1 !important;
-            }
+          .e-row:hover {
+            background-color: #e5e8f1 !important;
+          }
 
-            .e-list-text {
-              text-transform: none !important;
-            }
+          .e-list-text {
+            text-transform: none !important;
+          }
 
-            .btn-primary:disabled {
-              background-color: #001978 !important;
-              border-color: #001978 !important;
-              color: white !important;
-            }
+          .btn-primary:disabled {
+            background-color: #001978 !important;
+            border-color: #001978 !important;
+            color: white !important;
+          }
 
-            .new-folder {
-              text-align: right;
-              font-size: 14px;
-              color: #001978 !important;
-              height: 26px;
-            }
+          .new-folder {
+            text-align: right;
+            font-size: 14px;
+            color: #001978 !important;
+            height: 26px;
+          }
 
-            .new-folder-container {
-              cursor: pointer;
-              display: inline-block;
-              margin-bottom: 5px;
-              padding-bottom: 0;
-              box-sizing: border-box;
-              -moz-box-sizing: border-box;
-              -webkit-box-sizing: border-box;
-            }
+          .new-folder-container {
+            cursor: pointer;
+            display: inline-block;
+            margin-bottom: 5px;
+            padding-bottom: 0;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+          }
 
-            a.disabled,
-            a.disabled span,
-            .new-folder-container.disabled,
-            a.disabled .new-folder-text {
-              color: #d2d2d2 !important;
-              cursor: default !important;
-            }
+          a.disabled,
+          a.disabled span,
+          .new-folder-container.disabled,
+          a.disabled .new-folder-text {
+            color: #d2d2d2 !important;
+            cursor: default !important;
+          }
 
-            .new-folder-icon {
-              margin-right: 0px;
-            }
+          .new-folder-icon {
+            margin-right: 0px;
+          }
 
-            .new-folder-text {
-              font-family: 'MTTMilano-Medium' !important;
-              text-decoration: underline;
-              line-height: 19px !important;
-              font-size: 14px !important;
-              color: #001978 !important;
-            }
+          .new-folder-text {
+            font-family: 'MTTMilano-Medium' !important;
+            text-decoration: underline;
+            line-height: 19px !important;
+            font-size: 14px !important;
+            color: #001978 !important;
+          }
 
-            .add-more:hover .new-folder-text {
-              background: none !important;
-            }
+          .add-more:hover .new-folder-text {
+            background: none !important;
+          }
 
-            .new-folder-text:hover {
-              background: none !important;
-            }
+          .new-folder-text:hover {
+            background: none !important;
+          }
 
-            .panel {
-              display: flex;
-              height: 450px;
-            }
+          .panel {
+            display: flex;
+            height: 450px;
+          }
 
-            .e-rowcell.e-templatecell {
-              width: auto;
-              display: table-cell;
-            }
+          .e-rowcell.e-templatecell {
+            width: auto;
+            display: table-cell;
+          }
 
-            .panel-left {
-              flex: 1;
-            }
+          .panel-left {
+            flex: 1;
+          }
 
-            .panel-right {
-              flex: 2;
-              border-left: 1px solid #e0e0e0;
-            }
-            .panel-right-top {
-              color: red;
-              border-bottom: 1px solid #001978;
-              height: 46px;
-            }
+          .panel-right {
+            flex: 2;
+            border-left: 1px solid #e0e0e0;
+          }
+          .panel-right-top {
+            color: red;
+            border-bottom: 1px solid #001978;
+            height: 46px;
+          }
 
-            .section-border {
-              position: sticky;
-              border: 1px solid #d2d2d2;
-              height: 450px;
-            }
+          .section-border {
+            position: sticky;
+            border: 1px solid #d2d2d2;
+            height: 450px;
+          }
 
-            .section-title {
-              color: #7c868c;
-              font-family: 'MTTMilano-Medium' !important;
-              font-size: 14px;
-              font-weight: 500;
-              margin-left: 10px;
-              margin-top: 10px;
-              text-transform: none;
-              vertical-align: text-top;
-            }
+          .section-title {
+            color: #7c868c;
+            font-family: 'MTTMilano-Medium' !important;
+            font-size: 14px;
+            font-weight: 500;
+            margin-left: 10px;
+            margin-top: 10px;
+            text-transform: none;
+            vertical-align: text-top;
+          }
 
-            .index-4 span {
-              margin-left: 8px;
-              height: 20px;
-              width: 442px;
-              color: #7f8cbb;
-              font-family: 'MTTMilano-Medium';
-              font-size: 20px;
-              font-weight: 500;
-              line-height: 24px;
-            }
+          .index-4 span {
+            margin-left: 8px;
+            height: 20px;
+            width: 442px;
+            color: #7f8cbb;
+            font-family: 'MTTMilano-Medium';
+            font-size: 20px;
+            font-weight: 500;
+            line-height: 24px;
+          }
 
-            .e-treeview .e-ul,
-            .e-treeview .e-text-content {
-              padding: 0 0 0 18px;
-            }
+          .e-treeview .e-ul,
+          .e-treeview .e-text-content {
+            padding: 0 0 0 18px;
+          }
 
-            .e-list-text {
-              text-transform: uppercase;
-              color: #001978;
-              margin-left: 5px;
-            }
-            .e-treeview .e-list-item > .e-text-content .e-list-text,
-            .e-treeview .e-list-item.e-active > .e-text-content .e-list-text,
-            .e-treeview .e-list-item.e-hover > .e-text-content .e-list-text,
-            .e-treeview .e-list-item.e-active,
-            .e-treeview .e-list-item.e-hover {
-              color: #001978 !important;
-            }
-            .e-treeview .e-list-icon,
-            .e-treeview .e-list-img {
-              height: auto;
-            }
-            .e-treeview .e-icon-collapsible,
-            .e-treeview .e-icon-expandable {
-              color: #001978;
-            }
-          `}</style>
+          .e-list-text {
+            text-transform: uppercase;
+            color: #001978;
+            margin-left: 5px;
+          }
+          .e-treeview .e-list-item > .e-text-content .e-list-text,
+          .e-treeview .e-list-item.e-active > .e-text-content .e-list-text,
+          .e-treeview .e-list-item.e-hover > .e-text-content .e-list-text,
+          .e-treeview .e-list-item.e-active,
+          .e-treeview .e-list-item.e-hover {
+            color: #001978 !important;
+          }
+          .e-treeview .e-list-icon,
+          .e-treeview .e-list-img {
+            height: auto;
+          }
+          .e-treeview .e-icon-collapsible,
+          .e-treeview .e-icon-expandable {
+            color: #001978;
+          }
+        `}</style>
       </Fragment>
     );
   }
-
 }
