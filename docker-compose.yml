@@ -78,8 +78,6 @@ services:
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:12}
     depends_on:
-      - rabbitmq     
-
       - rabbitmq
       
   webimapclient:
@@ -158,7 +156,6 @@ services:
     depends_on:
       - nosql.data
       - rabbitmq
-      - lexon.api
 
   webcentinelaapigw:
     image: ${REGISTRY:-elefebvreoncontainers}/ocelotapigw:${PLATFORM:-linux}-${TAG:-dev}
