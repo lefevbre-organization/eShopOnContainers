@@ -25,7 +25,7 @@ import {
 } from '@syncfusion/ej2-react-schedule';
 import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
 import { extend } from '@syncfusion/ej2-base';
-import { getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent } from '../../api/calendar-api';
+import { getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent } from '../../api/calendar-api';
 
 
 export class Calendar extends Component {
@@ -69,14 +69,14 @@ export class Calendar extends Component {
         this.dataManger = new DataManager(); 
         this.defaultCalendar = "";
 
-        this.data = [{
-                    Id: 2,
-                    Subject: 'Paris',
-                    StartTime: new Date(Date.now()),
-                    EndTime: new Date(Date.now()),
-                    IsAllDay: false,
-                    RecurrenceRule: 'FREQ=DAILY;INTERVAL=1;COUNT=5',
-                }];
+        //this.dataManger = [{
+        //            Id: 2,
+        //            Subject: 'Paris',
+        //            StartTime: new Date(Date.now()),
+        //            EndTime: new Date(Date.now()),
+        //            IsAllDay: false,
+        //            RecurrenceRule: 'FREQ=DAILY;INTERVAL=1;COUNT=5',
+        //        }];
        
 
       
@@ -84,7 +84,8 @@ export class Calendar extends Component {
     }
 
 
-    onDataBinding(e) {      
+    onDataBinding(e) { 
+       
         let items = this.dataManger.items;
         let scheduleData = [];
         if (items.length > 0) {
@@ -98,21 +99,49 @@ export class Calendar extends Component {
                     start = event.start.date;
                     end = event.end.date;
                 }
-                scheduleData.push({
-                    Id: event.id,
-                    Subject: event.summary,
-                    Location: event.location,
-                    Description: event.description,
-                    StartTime: new Date(start),
-                    EndTime: new Date(end),
-                    IsAllDay: !event.start.dateTime,
-                    RecurrenceRule: event.RecurrenceRule,
-                });
+
+               // let recurrenceRule = null;
+
+                //if (event.recurringEventId != undefined) {
+
+                    //call function to get event recurrence
+                    //await requestRecurringEvent('primary', event.recurringEventId)
+                    //    .then(result => {
+                    //       // recurrenceRule = result.recurrence[0].replace('RRULE:', '');
+                    //        //scheduleData.push({
+                    //        //    Id: event.id,
+                    //        //    Subject: event.summary,
+                    //        //    Location: event.location,
+                    //        //    Description: event.description,
+                    //        //    StartTime: new Date(start),
+                    //        //    EndTime: new Date(end),
+                    //        //    IsAllDay: !event.start.dateTime,
+                    //        //   // RecurrenceRule: 'FREQ=DAILY;INTERVAL=1;COUNT=5'
+                    //        //});
+
+                    //    })
+                    //    .catch(error => {
+                    //        console.log('error ->', error);
+                    //    });                   
+                //}
+                //else {
+                    scheduleData.push({
+                        Id: event.id,
+                        Subject: event.summary,
+                        Location: event.location,
+                        Description: event.description,
+                        StartTime: new Date(start),
+                        EndTime: new Date(end),
+                        IsAllDay: !event.start.dateTime,
+                        //RecurrenceRule: event.recurrenceRule
+                    });
+                //}               
             }
         }
         e.result = scheduleData;
     }
 
+    
     toggleSideBar() {
         const toggleCollapsed = !this.state.leftSideBar.collapsed;
         this.setState({
@@ -291,7 +320,7 @@ export class Calendar extends Component {
                // this.data = extend([], this.dataManger, null, true);
                // this.onDataBinding(this.dataManger);
                 this.scheduleObj.refreshEvents();  
-                //this.scheduleObj.refresh();
+                this.scheduleObj.refresh();
                
             })
             .catch(error => {

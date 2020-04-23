@@ -87,3 +87,35 @@ export const deleteCalendarEvent = (calendar, eventId) =>
             });
 
     });
+
+export const requestRecurringEvent = (calendar, eventId) =>
+    new Promise((resolve, reject) => {
+        window.gapi.client.calendar.events
+            .get({
+                calendarId: "primary",
+                eventId: eventId
+            })
+
+            .then(response => {
+                resolve(response.result);
+            })
+            .catch(err => {
+                reject(err);
+            });
+
+    });
+
+
+//var requestRecurringEvent = window.gapi.client.calendar.events.get({
+//    'calendarId': 'primary',
+//    'eventId': payload
+//});
+//requestRecurringEvent.execute(function (resp) {
+//    console.log('requestRecurringEvent = ' + resp);
+//    console.log('requestRecurringEvent.recurrence = ' + resp.recurrence);
+//    recurrence = resp.recurrence;
+
+//    console.log('recurrence (inside execute)= ' + recurrence); //NO ISSUE (YET): recurrence (inside execute) = RRULE:FREQ=WEEKLY;COUNT=10
+
+//    return recurrence;
+//});
