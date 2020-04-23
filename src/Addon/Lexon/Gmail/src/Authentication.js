@@ -10,7 +10,7 @@ var scopes = [
 
 function getService() {
   return OAuth2.createService('auth-lexon')
-    .setAuthorizationBaseUrl('http://localhost:3000/login')
+    .setAuthorizationBaseUrl('https://localhost:3001/login')
     .setTokenUrl('https://lexbox-test-apigwlex.lefebvre.es/api/v1/mysql/LexonMySql/token')
     .setClientId('835159453859-mrrokdm9qdihjlv6f117k999qe8kvito.apps.googleusercontent.com')
     .setClientSecret('c8UNcaPhx5utB60d8qmJ42Cx')
@@ -28,20 +28,27 @@ function create3PAuthorizationUi() {
     //     .setText('Login')
     //     .setAuthorizationAction(CardService.newAuthorizationAction()
     //         .setAuthorizationUrl(authUrl))
-
-    // var promptText = 'Please login first'
-
+    var logo = CardService.newImage()
+    .setAltText("Logo")
+    .setImageUrl("https://www.dropbox.com/s/csqs86p9kjgy80w/Screenshot%202020-04-20%2009.44.01.png?raw=1");
+    var icon = CardService.newImage()
+    .setAltText("Icon")
+    .setImageUrl("https://www.dropbox.com/s/sspa471xfkibxvs/Screenshot%202020-04-20%2010.03.08.png?raw=1");
     var loginButton = CardService.newImage()
     .setAltText("Login")
-     .setImageUrl("https://i.ibb.co/Wp5bBtK/Screen-Shot-2020-03-19-at-1-45-02-PM.png")
+     .setImageUrl("https://www.dropbox.com/s/otg9e2qyo99vs9h/Screenshot%202020-04-20%2010.12.01.png?raw=1")
      .setAuthorizationAction(CardService.newAuthorizationAction()
             .setAuthorizationUrl(authUrl));
+   var reserved = CardService.newImage()
+    .setAltText("©2020 Lefebvre. Todos los derechos reservados.")
+    .setImageUrl("https://www.dropbox.com/s/sksg0u2iezrywje/Screenshot%202020-04-20%2011.01.43.png?raw=1");
 
     var card = CardService.newCardBuilder()
         .addSection(CardService.newCardSection()
-            // .addWidget(CardService.newTextParagraph()
-            //     .setText(promptText))
+            .addWidget(logo)
+            .addWidget(icon)
             .addWidget(loginButton)
+            .addWidget(reserved)
             ).build()
     return [card]
 }
@@ -69,11 +76,8 @@ function buildAddOn(e) {
   var accessToken = e.messageMetadata.accessToken;
   GmailApp.setCurrentMessageAccessToken(accessToken);
   checkAuth();
-
-  var data = cache.get('company');
-
-  var company = JSON.parse(data);
-  if(company) {
+  var addonData = JSON.parse(cache.get('getAddonData'));
+  if(addonData) {
     return buildMessageClassificationCard();
   }
  return buildHomeCard();

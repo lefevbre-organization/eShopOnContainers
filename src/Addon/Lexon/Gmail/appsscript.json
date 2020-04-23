@@ -10,7 +10,7 @@
   "urlFetchWhitelist": [
     "https://lexbox-test-apigwlex.lefebvre.es/api/v1/mysql/LexonMySql/",
     "https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Lexon/",
-    "https://d7baf484.ngrok.io/"
+    "https://28c249aa.ngrok.io/"
   ],
  "addOns": {
   "common": {

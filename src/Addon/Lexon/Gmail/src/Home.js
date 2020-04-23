@@ -84,6 +84,7 @@ function buildHomeCard(selectCompany) {
     var thread = GmailApp.getMessageById(messageId).getThread();
     var subject = thread.getFirstMessageSubject();
     var messageDate = thread.getLastMessageDate();
+    
     var getAddonData = {
       idCompany: companyObj.idCompany,
       bbdd: companyObj.bbdd,
@@ -97,8 +98,9 @@ function buildHomeCard(selectCompany) {
       idUser: user.data.idUser,
       userName: user.data.name
     }
+  
+    cache.put('getAddonData', JSON.stringify(getAddonData), 21600);
 
-    cache.put('company', JSON.stringify(getAddonData), 21600);
     var homeCard = buildHomeCard(companyObj);
     return CardService.newActionResponseBuilder()
     .setNavigation(CardService.newNavigation().updateCard(homeCard))

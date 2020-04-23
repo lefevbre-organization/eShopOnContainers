@@ -4,12 +4,12 @@ var scopes = [
 
 function showNewConection() {
   
-  var company = cache.get('company');
+  var addonData = cache.get('getAddonData');
 
   return ClassifyMessages.createService('lexon')
     .setAuthorizationBaseUrl('https://localhost:3001/lexon')
-    .setTokenUrl('https://d7baf484.ngrok.io/token')
-    .setBbdd(company)
+    .setTokenUrl('https://28c249aa.ngrok.io/token')
+    .setBbdd(addonData)
     .setCallbackFunction('newConectionCallback')
     .setCache(CacheService.getUserCache())
     .setPropertyStore(PropertiesService.getUserProperties())
@@ -24,9 +24,9 @@ function newConectionCallback(callbackRequest) {
 
 function buildMessageClassificationCard(e) {
   
-  var company = JSON.parse(cache.get('company'));
+  var addonData = JSON.parse(cache.get('getAddonData'));
 
-  getClassifications(company.messageId, company.bbdd, company.idUser);
+  getClassifications(addonData.messageId, addonData.bbdd, addonData.idUser);
 
   var service = showNewConection()
   var authUrl = service.getAuthorizationUrl()
@@ -45,7 +45,7 @@ function buildMessageClassificationCard(e) {
   setText('Empresa Identificada: ');
 
   var companyText = CardService.newTextParagraph().
-  setText('<font color="#001978">' + company.name + '</font>');
+  setText('<font color="#001978">' + addonData.name + '</font>');
 
   var classifyMessages = CardService.newImage()
   .setAltText("Clasificar mensajes")
@@ -75,7 +75,7 @@ function buildMessageClassificationCard(e) {
 
   var imgClassificationsWhitoutMessage = CardService.newImage()
   .setAltText("Clasificaciones")
-  .setImageUrl("https://uc7a4217a193d1dc6439a86b9c8e.dl.dropboxusercontent.com/cd/0/inline/A1-jwog0MWWK-4GoNmadjXUm13cSVXkYGfGvpDY48fPSSTUWdbUXrJwtrtUlLmiAJ_-W6ZIlppJkh9-WrPYGtw7wljsZBFbVvIyfPs5uWf5KGn2n3bvwyHDlv1LojBonUdM/file#")
+  .setImageUrl("https://www.dropbox.com/s/8v4mif3u439jdbg/Screen%20Shot%202020-04-15%20at%2010.14.58%20AM.png?raw=1")
 
   var selectionCompany = CardService.newCardSection()
   .addWidget(companyIdentifiedText)
@@ -89,16 +89,37 @@ function buildMessageClassificationCard(e) {
  } else {
    selectionCompany.addWidget(imgClassificationsWhitoutMessage);
    for (var i = 0; i < classificationsResponse.data.length; i++) {
-    getNameEntityType(classificationsResponse.data[i].entityType);
+    var classification = classificationsResponse.data[i];
+
+    getClassificationData(classification.entityIdType, classification.idRelated, 
+      addonData.bbdd, addonData.idUser) 
+
+    getNameEntityType(classification.entityType);
+
     selectionCompany.addWidget(CardService.newTextParagraph().
     setText('<font color="#001978">' + nameEntityType + ':</font>'));
+
     selectionCompany.addWidget(CardService.newTextParagraph().
-    setText(classificationsResponse.data[i].name));
+    setText(classificationsDataResponse.data.description));
+
+    selectionCompany.addWidget(CardService.newTextParagraph().
+    setText(classificationsDataResponse.data.intervening != null ? 
+      classificationsDataResponse.data.intervening : ''));
+    
+    var actionRemoveClassification = CardService.newAction()
+    .setFunctionName('onRemoveClassification')
+    .setParameters({idMail: classification.idMail, 
+      idType: classification.entityIdType.toString(), 
+      idRelated: classification.idRelated.toString() });
+
     selectionCompany.addWidget(CardService.newImage()
     .setAltText("Eliminar")
-    .setImageUrl("https://uc5108c57dbbcb8eda02136e1859.dl.dropboxusercontent.com/cd/0/inline/A19pwNR1jhzRJ4bUFKvWQMJezGwKcsW5FYZSh59ebzeTA96UK9O-Q3yB3jIZLCEpo7GKlYgg1fnEB9VxMUDZbuN6Es533dRfs8owcVj46Tn7k_-ZxP_sFdxxtMnB7F06_T8/file#"));
+    .setImageUrl("https://www.dropbox.com/s/bqp5lxy00ag7bbm/Screenshot%202020-04-15%2013.40.09.png?raw=1")
+    .setOnClickAction(actionRemoveClassification));
+
     selectionCompany.addWidget(CardService.newTextParagraph()
     .setText('<font color="#001978">-------------------------------------------------------------</font>'));
+
    }
   
  }
@@ -112,9 +133,19 @@ function buildMessageClassificationCard(e) {
     return card.build();
 }
 
+function onRemoveClassification(e) {
+  var addonData = JSON.parse(cache.get('getAddonData'));
+  deleteClassification(e.parameters.idMail, e.parameters.idType, 
+    addonData.bbdd, addonData, e.parameters.idRelated, addonData.idCompany);
+  var MessageClassificationCard = buildMessageClassificationCard(e);
+   return CardService.newActionResponseBuilder()
+   .setNavigation(CardService.newNavigation().updateCard(MessageClassificationCard))
+   .build()
+}
+
 function onChangeCompany(e) {
 
-  cache.remove('company');
+  cache.remove('getAddonData');
 
   return buildAddOn(e);
 }
