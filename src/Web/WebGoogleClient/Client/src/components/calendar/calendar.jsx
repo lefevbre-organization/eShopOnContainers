@@ -69,6 +69,16 @@ export class Calendar extends Component {
         this.dataManger = new DataManager(); 
         this.defaultCalendar = "";
 
+        this.data = [{
+                    Id: 2,
+                    Subject: 'Paris',
+                    StartTime: new Date(Date.now()),
+                    EndTime: new Date(Date.now()),
+                    IsAllDay: false,
+                    RecurrenceRule: 'FREQ=DAILY;INTERVAL=1;COUNT=5',
+                }];
+       
+
       
            
     }
@@ -159,10 +169,13 @@ export class Calendar extends Component {
         this.setState({ sidebarDocked: open });
     }   
 
-    async componentDidMount() {        
+    async componentDidMount() {    
+
+        
         getEventList('primary')
             .then(result => {
-                this.dataManger = result.result;
+                this.dataManger = result.result;                
+
             })
             .catch(error => {
                 console.log('error ->', error);
@@ -194,7 +207,10 @@ export class Calendar extends Component {
             },           
         }
 
-        if (values.RecurrenceRule != undefined) { event.recurrence = ['RRULE:' + values.RecurrenceRule]};
+        if (values.RecurrenceRule != undefined) { event.recurrence = ['RRULE:' + values.RecurrenceRule] };
+        //if (values.IsAllDay != undefined) { event.isallday = values.IsAllDay };
+
+        
       
             //'attendees': [
             //    { 'email': 'lpage@example.com' },
@@ -271,6 +287,7 @@ export class Calendar extends Component {
         getEventList(calendar)
             .then(result => {
                 this.dataManger = result.result;
+                
                // this.data = extend([], this.dataManger, null, true);
                // this.onDataBinding(this.dataManger);
                 this.scheduleObj.refreshEvents();  
