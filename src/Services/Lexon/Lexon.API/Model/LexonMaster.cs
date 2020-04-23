@@ -1,7 +1,8 @@
-﻿using MongoDB.Bson;
+﻿using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Centinela.API.Model
+namespace Lexon.API.Model
 {
     [BsonIgnoreExtraElements]
     public class LexonMaster: MongoModel, ILexonList<LexonEntityType>

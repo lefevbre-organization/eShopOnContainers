@@ -1,5 +1,5 @@
-﻿using Centinela.API.IntegrationsEvents.Events;
-using Centinela.API.Model;
+﻿using Lexon.API.IntegrationsEvents.Events;
+using Lexon.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
@@ -15,7 +15,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Centinela.API.Infrastructure.Repositories
+namespace Lexon.API.Infrastructure.Repositories
 {
     public class UsersRepository : BaseClass<UsersRepository>, IUsersRepository
     {

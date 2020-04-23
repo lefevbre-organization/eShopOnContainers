@@ -1,5 +1,4 @@
 ﻿using Lexon.MySql.Infrastructure.Repositories;
-using Lexon.MySql.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

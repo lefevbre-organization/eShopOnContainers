@@ -1,9 +1,9 @@
-﻿using Centinela.API.Model;
+﻿using Lexon.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Centinela.Infrastructure.Services
+namespace Lexon.Infrastructure.Services
 {
     public interface IUsersService
     {

@@ -1,4 +1,4 @@
-﻿namespace Centinela.API.IntegrationsEvents.Events
+﻿namespace Lexon.API.IntegrationsEvents.Events
 {
     public class DissociateMailFromEntityIntegrationEvent: LexonBaseIntegrationEvent
     {

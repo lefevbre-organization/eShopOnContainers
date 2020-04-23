@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Centinela.API.Extensions
+namespace Lexon.API.Extensions
 {
     public static class LinqSelectExtensions
     {

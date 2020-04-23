@@ -1,4 +1,4 @@
-﻿using Centinela.Infrastructure.Services;
+﻿using Lexon.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
@@ -12,7 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Centinela.API.Controllers
+namespace Lexon.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]

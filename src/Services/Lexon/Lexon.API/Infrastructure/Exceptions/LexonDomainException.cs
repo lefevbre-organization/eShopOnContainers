@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Centinela.API.Infrastructure.Exceptions
+namespace Lexon.API.Infrastructure.Exceptions
 {
     /// <summary>
     /// Exception type for app exceptions

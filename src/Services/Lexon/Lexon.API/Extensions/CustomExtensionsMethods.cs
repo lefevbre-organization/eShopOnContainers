@@ -1,8 +1,8 @@
 ﻿using Autofac;
-using Centinela.API.Infrastructure.Filters;
-using Centinela.API.Infrastructure.Repositories;
-using Centinela.API.IntegrationsEvents.EventHandling;
-using Centinela.Infrastructure.Services;
+using Lexon.API.Infrastructure.Filters;
+using Lexon.API.Infrastructure.Repositories;
+using Lexon.API.IntegrationsEvents.EventHandling;
+using Lexon.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 
-namespace Centinela.API.Extensions
+namespace Lexon.API.Extensions
 {
     public static class CustomExtensionsMethods
     {
