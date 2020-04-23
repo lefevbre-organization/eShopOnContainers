@@ -24,6 +24,8 @@ COPY src/BuildingBlocks/EventBus/IntegrationEventLogMongoDB/IntegrationEventLogM
 COPY src/Services/Account/Account.API/Account.API.csproj src/Services/Account/Account.API/
 COPY src/Services/Lexon/Lexon.API/Lexon.API.csproj src/Services/Lexon/Lexon.API/
 COPY src/Services/Lexon/Lexon.MySql/Lexon.MySql.csproj src/Services/Lexon/Lexon.MySql/
+COPY src/Services/UserUtils/UserUtils.API/UserUtils.API.csproj src/Services/UserUtils/UserUtils.API/
+COPY src/Services/Centinela/Centinela.API/Centinela.API.csproj src/Services/Centinela/Centinela.API/
 COPY src/Web/WebGoogleClient/WebGoogleClient.csproj src/Web/WebGoogleClient/
 COPY src/Web/WebLexonClient/WebLexonClient.csproj src/Web/WebLexonClient/
 COPY src/Web/WebLoginAddonLexon/WebLoginAddonLexon.csproj src/Web/WebLoginAddonLexon/
@@ -42,9 +44,9 @@ RUN dotnet publish --no-restore -c Release -o /app
 #FROM build as unittest
 #WORKDIR /src/src/Services/Lexon/Lexon.UnitTests
 
-FROM build as functionaltest
-WORKDIR /src/src/Services/Lexon/Lexon.FunctionalTests
-
+#FROM build as functionaltest
+#WORKDIR /src/src/Services/Lexon/Lexon.FunctionalTests
+#
 FROM build AS publish
 
 FROM base AS final

@@ -1,5 +1,4 @@
 ﻿using Lexon.MySql.Infrastructure.Services;
-using Lexon.MySql.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;

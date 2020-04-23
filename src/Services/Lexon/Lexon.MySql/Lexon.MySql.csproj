@@ -35,6 +35,7 @@
 
   <ItemGroup>
     <Folder Include="Model\" />
+    <Folder Include="ViewModel\" />
   </ItemGroup>
 
   <ProjectExtensions>
