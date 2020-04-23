@@ -43,9 +43,9 @@ RUN dotnet publish --no-restore -c Release -o /app
 #FROM build as unittest
 #WORKDIR /src/src/Services/UserUtils/UserUtils.UnitTests
 
-FROM build as functionaltest
-WORKDIR /src/src/Services/UserUtils/UserUtils.FunctionalTests
-
+#FROM build as functionaltest
+#WORKDIR /src/src/Services/UserUtils/UserUtils.FunctionalTests
+#
 FROM build AS publish
 
 FROM base AS final
