@@ -9,6 +9,7 @@
 
         public string MinihubUrl { get; set; }
         public string OnlineUrl { get; set; }
+        public string LoginUrl { get; set; }
 
         public string EventBusConnection { get; set; }
         public string EventBusUserName { get; set; }

@@ -24,6 +24,7 @@ namespace UserUtils.API.Infrastructure.Services
         private readonly IHttpClientFactory _clientFactory;
         private readonly HttpClient _clientMinihub;
         private readonly HttpClient _clientOnline;
+        private readonly HttpClient _clientLogin;
         private readonly IOptions<UserUtilsSettings> _settings;
         internal readonly ILogger<UserUtilsService> _logger;
 
@@ -45,18 +46,13 @@ namespace UserUtils.API.Infrastructure.Services
             _clientMinihub.BaseAddress = new Uri(_settings.Value.MinihubUrl);
             _clientMinihub.DefaultRequestHeaders.Add("Accept", "text/plain");
 
-            //var handler = new HttpClientHandler()
-            //{
-            //    AllowAutoRedirect = false,
-            //    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-            //};
+            // /Login/RecuperarUsuarioPorEntrada?idUsuarioPro=e0384919
+            // /Login/RecuperarUsuario?strLogin=f.reyes-ext@lefebvreelderecho.com&strPass=etEb9221
+            _clientLogin = _clientFactory.CreateClient();
+            _clientLogin.BaseAddress = new Uri(_settings.Value.LoginUrl);
+            _clientLogin.DefaultRequestHeaders.Add("Accept", "text/plain");
 
-            //_clientOnline = new HttpClient(handler)
-            //{
-            //    BaseAddress = new Uri(_settings.Value.OnlineUrl)
-            //};
 
-            //var authData = "d3M6MjJsY3FzcDExbHN3";
             _clientOnline = _clientFactory.CreateClient();
             _clientOnline.BaseAddress = new Uri(_settings.Value.OnlineUrl);
 
@@ -380,6 +376,16 @@ namespace UserUtils.API.Infrastructure.Services
         }
 
         public Task<Result<TokenData>> GetLexonUserDbAsync(TokenRequestDataBase tokenRequest, bool addTerminatorToToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<ServiceComUser>> GetUserDataWithLoginAsync(string login, string pass)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<ServiceComUser>> GetUserDataWithEntryAsync(string idNavisionUser)
         {
             throw new NotImplementedException();
         }
