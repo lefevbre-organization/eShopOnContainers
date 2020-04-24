@@ -19,5 +19,6 @@ namespace UserUtils.API.Infrastructure.Services
         Task<Result<TokenData>> GetLexonUserDbAsync(TokenRequestDataBase tokenRequest, bool addTerminatorToToken);
         Task<Result<ServiceComUser>> GetUserDataWithLoginAsync(string login, string pass);
         Task<Result<ServiceComUser>> GetUserDataWithEntryAsync(string idNavisionUser);
+        Task<Result<LexUser>> GetLexonGenericAsync(TokenModelView tokenRequest, bool addTerminatorToToken);
     }
 }

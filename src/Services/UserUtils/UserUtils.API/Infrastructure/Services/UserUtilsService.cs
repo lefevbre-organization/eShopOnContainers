@@ -64,6 +64,8 @@ namespace UserUtils.API.Infrastructure.Services
             _clientOnline.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
         }
 
+        #region Generic
+
         public async Task<Result<string>> GetEncodeUserAsync(string idNavisionUser)
         {
             var result = new Result<string>(string.Empty);
@@ -198,188 +200,6 @@ namespace UserUtils.API.Infrastructure.Services
             return result;
         }
 
-        private string ValidarUsuario(string login, string password, string idUser)
-        {
-            //TODO: validar usuario
-            if (!string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password) && string.IsNullOrEmpty(idUser))
-                idUser = "E1621396";
-
-            return idUser;
-        }
-
-        public async Task<Result<TokenData>> GetTokenAsync(TokenModelBase tokenRequest, bool addTerminatorToToken)
-        {
-            tokenRequest.roles = await GetRolesOfUserAsync(tokenRequest.idClienteNavision, tokenRequest.login, tokenRequest.password);
-            var resultado = new Result<TokenData>(new TokenData());
-
-            resultado.data.token = BuildTokenWithPayloadAsync(tokenRequest).Result;
-
-            resultado.data.token += addTerminatorToToken ? "/" : "";
-            resultado.data.valid = true;
-            return resultado;
-        }
-
-        private TokenValidationParameters GetValidationParameters()
-        {
-            return new TokenValidationParameters()
-            {
-                ValidateLifetime = true, // Because there is no expiration in the generated token
-                ValidateAudience = false, // Because there is no audiance in the generated token
-                ValidateIssuer = false,   // Because there is no issuer in the generated token
-                ValidIssuer = "Lexon",
-                ValidAudience = "Lexones",
-                IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_settings.Value.TokenKey)) // The same key as the one that generate the token
-            };
-        }
-
-        public async Task<Result<TokenData>> VadidateTokenAsync(TokenData tokenRequest)
-        {
-            var result = new Result<TokenData>(tokenRequest);
-
-            var validationParameters = GetValidationParameters();
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            SecurityToken validatedToken = null;
-            try
-            {
-                tokenHandler.ValidateToken(tokenRequest.token, validationParameters, out validatedToken);
-                result.data.valid = validatedToken != null;
-            }
-            catch (SecurityTokenException ex)
-            {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "574",
-                    detail = $"Security error with token",
-                    message = ex.Message
-                });
-                result.data.valid = false;
-            }
-            catch (Exception ex)
-            {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "575",
-                    detail = $"General error with token",
-                    message = ex.Message
-                });
-                result.data.valid = false;
-            }
-            //... manual validations return false if anything untoward is discovered
-            return result;
-        }
-
-        /// <summary>
-        ///   Se crea el claim a pelo como en el ejemplo https://stackoverflow.com/questions/29715178/complex-json-web-token-array-in-webapi-with-owin
-        /// </summary>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        public async Task<string> BuildTokenWithPayloadAsync(TokenModelBase token)
-        {
-            var accion = await Task.Run(() =>
-            {
-                _logger.LogInformation("START --> {0} con tiempo {1} y caducidad token {2}", nameof(BuildTokenWithPayloadAsync), DateTime.Now, DateTime.Now.AddSeconds(_settings.Value.TokenCaducity));
-
-                var exp = DateTime.UtcNow.AddSeconds(_settings.Value.TokenCaducity);
-                var payload = new JwtPayload(null, "", new List<Claim>(), null, exp);
-
-                AddValuesToPayload(payload, token);
-
-                var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_settings.Value.TokenKey));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-                var jwtToken = new JwtSecurityToken(new JwtHeader(creds), payload);
-                return new JwtSecurityTokenHandler().WriteToken(jwtToken);
-            });
-
-            _logger.LogInformation("END --> {0} con token: {1}", nameof(BuildTokenWithPayloadAsync), accion);
-
-            return accion;
-        }
-
-        private void AddValuesToPayload(JwtPayload payload, TokenModelBase modelo)
-        {
-            if (modelo is TokenModelBase clienteModel)
-            {
-                AddClaimToPayload(payload, clienteModel.idClienteNavision, nameof(clienteModel.idClienteNavision));
-                AddClaimToPayload(payload, clienteModel.roles, nameof(clienteModel.roles));
-                AddClaimToPayload(payload, clienteModel.login, nameof(clienteModel.login));
-            }
-            else
-            {
-                //AddClaimToPayload(payload, clienteModel.idUserApp, nameof(clienteModel.idUserApp));
-                //AddClaimToPayload(payload, clienteModel.name, nameof(clienteModel.name));
-
-                //AddClaimToPayload(payload, clienteModel.bbdd, nameof(clienteModel.bbdd));
-                //AddClaimToPayload(payload, clienteModel.provider, nameof(clienteModel.provider));
-                //AddClaimToPayload(payload, clienteModel.mailAccount, nameof(clienteModel.mailAccount));
-                //AddClaimToPayload(payload, clienteModel.folder, nameof(clienteModel.folder));
-                //AddClaimToPayload(payload, clienteModel.idMail, nameof(clienteModel.idMail));
-                //AddClaimToPayload(payload, clienteModel.idEntityType, nameof(clienteModel.idEntityType));
-                //AddClaimToPayload(payload, clienteModel.idEntity, nameof(clienteModel.idEntity));
-            }
-        }
-
-        private async Task<List<string>> GetRolesOfUserAsync(string idClienteNavision, string login, string password)
-        {
-            var apps = await GetUserUtilsAsync(idClienteNavision, true);
-            var appsWithAccess = new List<string>() { "lexonconnector", "centinelaconnector" };
-            foreach (var app in apps.data)
-            {
-                appsWithAccess.Add(app.descHerramienta);
-            }
-
-            var usuarioValido = !string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password);
-            if (!string.IsNullOrEmpty(idClienteNavision) && usuarioValido)
-            {
-                appsWithAccess.Add("gmailpanel");
-                appsWithAccess.Add("outlookpanel");
-            }
-
-            return appsWithAccess;
-        }
-
-        private void AddClaimNumberToPayload(JwtPayload payload, long? valorClaim, string nombreClaim)
-        {
-            if (valorClaim == null) return;
-
-            _logger.LogInformation("Claim númerico {0} --> {1}", nombreClaim, valorClaim);
-            payload.Add(nombreClaim, valorClaim);
-        }
-
-        private void AddClaimToPayload(JwtPayload payload, object valorClaim, string nombreClaim)
-        {
-            if (valorClaim == null) return;
-
-            _logger.LogInformation("Claim {0} --> {1}", nombreClaim, valorClaim);
-            payload.Add(nombreClaim, valorClaim);
-        }
-
-        public Task<Result<TokenData>> GetUserFromLoginAsync(int? idApp, string login, string password, bool addTerminatorToToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Result<TokenData>> GetLexonUserSimpleAsync(string idClienteNavision, bool addTerminatorToToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Result<TokenData>> GetLexonNewMailAsync(TokenRequestNewMail tokenRequest, bool addTerminatorToToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Result<TokenData>> GetLexonOpenMailAsync(TokenRequestOpenMail tokenRequest, bool addTerminatorToToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Result<TokenData>> GetLexonUserDbAsync(TokenRequestDataBase tokenRequest, bool addTerminatorToToken)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<Result<ServiceComUser>> GetUserDataWithLoginAsync(string login, string pass)
         {
             var result = new Result<ServiceComUser>(new ServiceComUser());
@@ -466,6 +286,273 @@ namespace UserUtils.API.Infrastructure.Services
             }
 
             return result;
+        }
+
+        #endregion Generic
+
+        private string ValidarUsuario(string login, string password, string idUser)
+        {
+            //TODO: validar usuario
+            if (!string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password) && string.IsNullOrEmpty(idUser))
+                idUser = "E1621396";
+
+            return idUser;
+        }
+
+        public async Task<Result<TokenData>> GetTokenAsync(TokenModelBase tokenRequest, bool addTerminatorToToken)
+        {
+            tokenRequest.roles = await GetRolesOfUserAsync(tokenRequest.idClienteNavision, tokenRequest.login, tokenRequest.password);
+            var resultado = new Result<TokenData>(new TokenData());
+
+            resultado.data.token = BuildTokenWithPayloadAsync(tokenRequest).Result;
+
+            resultado.data.token += addTerminatorToToken ? "/" : "";
+            resultado.data.valid = true;
+            return resultado;
+        }
+
+        private TokenValidationParameters GetValidationParameters()
+        {
+            return new TokenValidationParameters()
+            {
+                ValidateLifetime = true, // Because there is no expiration in the generated token
+                ValidateAudience = false, // Because there is no audiance in the generated token
+                ValidateIssuer = false,   // Because there is no issuer in the generated token
+                ValidIssuer = "Lexon",
+                ValidAudience = "Lexones",
+                IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_settings.Value.TokenKey)) // The same key as the one that generate the token
+            };
+        }
+
+        public async Task<Result<TokenData>> VadidateTokenAsync(TokenData tokenRequest)
+        {
+            var result = new Result<TokenData>(tokenRequest);
+
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                tokenHandler.ValidateToken(tokenRequest.token, GetValidationParameters(), out SecurityToken validatedToken);
+                result.data.valid = validatedToken != null;
+            }
+            catch (SecurityTokenException ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "574",
+                    detail = $"Security error with token",
+                    message = ex.Message
+                });
+                result.data.valid = false;
+            }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "575",
+                    detail = $"General error with token",
+                    message = ex.Message
+                });
+                result.data.valid = false;
+            }
+            //... manual validations return false if anything untoward is discovered
+            return result;
+        }
+
+        /// <summary>
+        ///   Se crea el claim a pelo como en el ejemplo https://stackoverflow.com/questions/29715178/complex-json-web-token-array-in-webapi-with-owin
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task<string> BuildTokenWithPayloadAsync(TokenModelBase token)
+        {
+            var accion = await Task.Run(() =>
+            {
+                _logger.LogInformation("START --> {0} con tiempo {1} y caducidad token {2}", nameof(BuildTokenWithPayloadAsync), DateTime.Now, DateTime.Now.AddSeconds(_settings.Value.TokenCaducity));
+
+                var exp = DateTime.UtcNow.AddSeconds(_settings.Value.TokenCaducity);
+                var payload = new JwtPayload(null, "", new List<Claim>(), null, exp);
+
+                AddValuesToPayload(payload, token);
+
+                var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_settings.Value.TokenKey));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                var jwtToken = new JwtSecurityToken(new JwtHeader(creds), payload);
+                return new JwtSecurityTokenHandler().WriteToken(jwtToken);
+            });
+
+            _logger.LogInformation("END --> {0} con token: {1}", nameof(BuildTokenWithPayloadAsync), accion);
+
+            return accion;
+        }
+
+        private void AddValuesToPayload(JwtPayload payload, TokenModelBase modelo)
+        {
+            if (modelo is TokenModelBase clienteModel)
+            {
+                AddClaimToPayload(payload, clienteModel.idClienteNavision, nameof(clienteModel.idClienteNavision));
+                AddClaimToPayload(payload, clienteModel.roles, nameof(clienteModel.roles));
+                AddClaimToPayload(payload, clienteModel.login, nameof(clienteModel.login));
+
+                if (modelo is TokenModelLexon clienteModelLexon)
+                {
+                    AddClaimToPayload(payload, clienteModelLexon.idUserApp, nameof(clienteModelLexon.idUserApp));
+                    AddClaimToPayload(payload, clienteModelLexon.name, nameof(clienteModelLexon.name));
+                    AddClaimToPayload(payload, clienteModelLexon.bbdd, nameof(clienteModelLexon.bbdd));
+                    AddClaimToPayload(payload, clienteModelLexon.provider, nameof(clienteModelLexon.provider));
+                    AddClaimToPayload(payload, clienteModelLexon.mailAccount, nameof(clienteModelLexon.mailAccount));
+                    AddClaimToPayload(payload, clienteModelLexon.folder, nameof(clienteModelLexon.folder));
+                    AddClaimToPayload(payload, clienteModelLexon.idMail, nameof(clienteModelLexon.idMail));
+                    AddClaimToPayload(payload, clienteModelLexon.idEntityType, nameof(clienteModelLexon.idEntityType));
+                    AddClaimToPayload(payload, clienteModelLexon.idEntity, nameof(clienteModelLexon.idEntity));
+                }
+
+            }
+
+        }
+
+        private async Task<List<string>> GetRolesOfUserAsync(string idClienteNavision, string login, string password)
+        {
+            var apps = await GetUserUtilsAsync(idClienteNavision, true);
+            var appsWithAccess = new List<string>() { "lexonconnector", "centinelaconnector" };
+            foreach (var app in apps.data)
+            {
+                appsWithAccess.Add(app.descHerramienta);
+            }
+
+            var usuarioValido = !string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password);
+            if (!string.IsNullOrEmpty(idClienteNavision) && usuarioValido)
+            {
+                appsWithAccess.Add("gmailpanel");
+                appsWithAccess.Add("outlookpanel");
+            }
+
+            return appsWithAccess;
+        }
+
+        private void AddClaimNumberToPayload(JwtPayload payload, long? valorClaim, string nombreClaim)
+        {
+            if (valorClaim == null) return;
+
+            _logger.LogInformation("Claim númerico {0} --> {1}", nombreClaim, valorClaim);
+            payload.Add(nombreClaim, valorClaim);
+        }
+
+        private void AddClaimToPayload(JwtPayload payload, object valorClaim, string nombreClaim)
+        {
+            if (valorClaim == null) return;
+
+            _logger.LogInformation("Claim {0} --> {1}", nombreClaim, valorClaim);
+            payload.Add(nombreClaim, valorClaim);
+        }
+
+        public Task<Result<TokenData>> GetUserFromLoginAsync(int? idApp, string login, string password, bool addTerminatorToToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<TokenData>> GetLexonUserSimpleAsync(string idClienteNavision, bool addTerminatorToToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<TokenData>> GetLexonNewMailAsync(TokenRequestNewMail tokenRequest, bool addTerminatorToToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<TokenData>> GetLexonOpenMailAsync(TokenRequestOpenMail tokenRequest, bool addTerminatorToToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<TokenData>> GetLexonUserDbAsync(TokenRequestDataBase tokenRequest, bool addTerminatorToToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<Result<LexUser>> GetLexonGenericAsync(TokenModelView tokenRequest, bool addTerminatorToToken)
+        {
+
+            tokenRequest.idClienteNavision = ValidarUsuario(tokenRequest.login, tokenRequest.password, tokenRequest.idClienteNavision);
+            Result<LexUser> resultado = new Result<LexUser>(new LexUser()); // await _lexonRepository.GetUserAsync(idUser);
+
+            if (string.IsNullOrEmpty(resultado?.data?.idUser))
+            {
+                resultado.errors.Add(new ErrorInfo() { code = "5000", message = "No se recupera un idUser desde Lexon" });
+            }
+            tokenRequest.mailContacts = await GetContactDataFromLexon(resultado?.data?.idUser, tokenRequest.bbdd, tokenRequest.idEntityType, tokenRequest.idEntity, tokenRequest.mailContacts);
+
+            resultado.data.token = BuildTokenWithPayloadAsync(new TokenModelLexon
+            {
+                idClienteNavision = tokenRequest.idClienteNavision,
+                name = resultado?.data?.name,
+                idUserApp = GetLongIdUser(resultado?.data?.idUser),
+                bbdd = tokenRequest.bbdd,
+                provider = tokenRequest.provider,
+                mailAccount = tokenRequest.mailAccount,
+                folder = tokenRequest.folder,
+                idMail = tokenRequest.idMail,
+                idEntityType = tokenRequest.idEntityType,
+                idEntity = tokenRequest.idEntity,
+                mailContacts = tokenRequest.mailContacts,
+                roles = await GetRolesOfUserAsync(tokenRequest.idClienteNavision, tokenRequest.login, tokenRequest.password)
+            }).Result;
+
+            resultado.data.token += addTerminatorToToken ? "/" : "";
+            return resultado;
+        }
+
+        private long? GetLongIdUser(string idUser)
+        {
+            throw new NotImplementedException();
+        }
+
+        private async  Task<List<string>> GetContactDataFromLexon(string idUser, string bbdd, short? idEntityType, int? idEntity, List<string> mailContacts)
+        {
+            var result = new Result<List<string>>(new List<string>());
+
+            //using (MySqlConnection conn = new MySqlConnection(_conn))
+            //{
+            //    try
+            //    {
+            //        var filtro = GiveMeEntityFilter(entitySearch);
+            //        conn.Open();
+            //        using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetContact, conn))
+            //        {
+            //            AddCommonParameters(entitySearch.idUser, command, "P_FILTER", filtro);
+            //            AddListSearchParameters(1, 1, "ts", "desc", command);
+
+
+            //            using (var reader = await command.ExecuteReaderAsync())
+            //            {
+            //                TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+            //                if (EvaluateErrorCommand(result.errors, command) == 0)
+            //                    while (reader.Read())
+            //                    {
+            //                        var rawResult = reader.GetValue(0).ToString();
+            //                        if (!string.IsNullOrEmpty(rawResult))
+            //                        {
+            //                            var lista = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
+            //                            result.data = lista?.FirstOrDefault();
+            //                        }
+            //                        else
+            //                        {
+            //                            TraceOutputMessage(result.errors, "2004", "MySql get and empty string with this search");
+
+            //                        }
+            //                    }
+            //            }
+            //        }
+
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        TraceMessage(result.errors, ex);
+            //    }
+            //}
+
+            return new List<string>();
         }
     }
 }
