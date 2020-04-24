@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Web;
 using UserUtils.API.Infrastructure.Repositories;
 using UserUtils.API.Models;
 
@@ -51,7 +52,6 @@ namespace UserUtils.API.Infrastructure.Services
             _clientLogin = _clientFactory.CreateClient();
             _clientLogin.BaseAddress = new Uri(_settings.Value.LoginUrl);
             _clientLogin.DefaultRequestHeaders.Add("Accept", "text/plain");
-
 
             _clientOnline = _clientFactory.CreateClient();
             _clientOnline.BaseAddress = new Uri(_settings.Value.OnlineUrl);
@@ -380,14 +380,92 @@ namespace UserUtils.API.Infrastructure.Services
             throw new NotImplementedException();
         }
 
-        public Task<Result<ServiceComUser>> GetUserDataWithLoginAsync(string login, string pass)
+        public async Task<Result<ServiceComUser>> GetUserDataWithLoginAsync(string login, string pass)
         {
-            throw new NotImplementedException();
+            var result = new Result<ServiceComUser>(new ServiceComUser());
+            try
+            {
+                var loginClean = HttpUtility.UrlEncode(login);
+                //Http://led-servicecomtools/Login/RecuperarUsuario?strLogin=f.reyes-ext@lefebvreelderecho.com&strPass=etEb9221
+                var url = $"{_settings.Value.LoginUrl}/Login/RecuperarUsuario?strLogin={login}&strPass={pass}";
+
+                using (var response = await _clientLogin.GetAsync(url))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<ServiceComUser>(rawResult));
+                            result.data = resultado;
+                        }
+                    }
+                    else
+                    {
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "573",
+                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "574",
+                    detail = $"General error when call commontool service",
+                    message = ex.Message
+                });
+            }
+
+            return result;
         }
 
-        public Task<Result<ServiceComUser>> GetUserDataWithEntryAsync(string idNavisionUser)
+        public async Task<Result<ServiceComUser>> GetUserDataWithEntryAsync(string idNavisionUser)
         {
-            throw new NotImplementedException();
+            var result = new Result<ServiceComUser>(new ServiceComUser());
+            try
+            {
+                //http://led-pre-servicecomtools/Login/RecuperarUsuarioPorEntrada?idUsuarioPro=e0384919
+                //http://led-servicecomtools/Login/RecuperarUsuarioPorEntrada?idUsuarioPro=E1621396
+                var url = $"{_settings.Value.LoginUrl}/Login/RecuperarUsuarioPorEntrada?idUsuarioPro={idNavisionUser}";
+
+                using (var response = await _clientLogin.GetAsync(url))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<ServiceComUser>(rawResult));
+                            result.data = resultado;
+                        }
+                    }
+                    else
+                    {
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "573",
+                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "574",
+                    detail = $"General error when call commontool service",
+                    message = ex.Message
+                });
+            }
+
+            return result;
         }
     }
 }

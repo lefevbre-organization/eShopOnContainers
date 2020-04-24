@@ -116,8 +116,8 @@ namespace UserUtils.API.Controllers
         [ProducesResponseType(typeof(Result<ServiceComUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<ServiceComUser>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUserWithLoginAsync(
-            string login = "f.reyes-ext@lefebvreelderecho.com"
-            , string pass = "etEb9221"
+            string login = "i.molina-ext@lefebvreelderecho.com"
+            , string pass = "imolina2"
             )
         {
             if (string.IsNullOrEmpty(login))
@@ -132,7 +132,7 @@ namespace UserUtils.API.Controllers
         [HttpPut("user/get/entrada")]
         [ProducesResponseType(typeof(Result<ServiceComUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<ServiceComUser>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetUserWithEntradaAsync(string idNavisionUser = "E1639056")
+        public async Task<IActionResult> GetUserWithEntradaAsync(string idNavisionUser = "E1621396")
         {
             if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("id encoded value invalid. Must be a valid encoded user");
