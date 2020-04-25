@@ -24,9 +24,11 @@ import {
     Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, DragEventArgs
 } from '@syncfusion/ej2-react-schedule';
 import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
-import { extend } from '@syncfusion/ej2-base';
+import { extend, createElement } from '@syncfusion/ej2-base';
 import { getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent } from '../../api/calendar-api';
 
+import { DropDownList } from '@syncfusion/ej2-dropdowns';
+import moment from 'moment';
 
 export class Calendar extends Component {
     constructor(props) {
@@ -90,7 +92,39 @@ export class Calendar extends Component {
         let scheduleData = [];
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
+               
                 let event = items[i];
+
+
+                if (event.status === 'cancelled') {
+
+                    var d = new Date(event.originalStartTime.dateTime); 
+                    var n = d.toISOString().replace(/[:.-]/g, "");
+                    var dateString = moment(d).seconds(0).toISOString().split('.')[0] + "Z";
+                    var ExcRecurenceDate = dateString.replace(/[:.-]/g, "");
+                    //document.write(n);
+
+                    var ParentscheduleException = "";
+                    var coma=""
+                    if (scheduleData.find(x => x.Id == event.recurringEventId).RecurrenceException != undefined) {
+                        ParentscheduleException = scheduleData.find(x => x.Id == event.recurringEventId).RecurrenceException;
+                        coma = ","
+                    }
+                    scheduleData.find(x => x.Id == event.recurringEventId).RecurrenceException = ParentscheduleException + coma + ExcRecurenceDate
+                   
+                   // scheduleData.find(x => x.Id == event.recurringEventId).RecurrenceException ="20200330T220000Z";
+                    //scheduleData.find(x => x.Id == event.recurringEventId).RecurrenceException = n;
+                  //  129mqi94g9pvt24sde1h35gn44_20200330T220000Z
+                  //                             20200330T220000000Z
+                    //20200425T165750626Z
+                    //20200425T170300Z
+
+                   // 3muc6unkvhl6jvceefi3mf3aug_20200422T083000Z
+
+                   
+
+                    continue;
+                }
                 let when = event.start.dateTime;
                 let start = event.start.dateTime;
                 let end = event.end.dateTime;
@@ -125,6 +159,10 @@ export class Calendar extends Component {
                     //    });                   
                 //}
                 //else {
+                let recurrenceRule
+                if (event.recurrence != undefined) {
+                    recurrenceRule = event.recurrence[0].replace('RRULE:', '');
+                }
                     scheduleData.push({
                         Id: event.id,
                         Subject: event.summary,
@@ -133,7 +171,9 @@ export class Calendar extends Component {
                         StartTime: new Date(start),
                         EndTime: new Date(end),
                         IsAllDay: !event.start.dateTime,
-                        //RecurrenceRule: event.recurrenceRule
+                        RecurrenceRule: recurrenceRule,
+                      
+                       
                     });
                 //}               
             }
@@ -261,6 +301,35 @@ export class Calendar extends Component {
       args.navigation.enable = true;
     }
 
+    onPopupOpen(args) {
+        if (args.type === 'Editor') {
+            if (!args.element.querySelector('.custom-field-row')) {
+                let row = createElement('div', { className: 'custom-field-row' });
+                let formElement = args.element.querySelector('.e-schedule-form');
+                formElement.firstChild.insertBefore(row, formElement.firstChild.firstChild);
+                let container = createElement('div', { className: 'custom-field-container' });
+                let inputEle = createElement('input', {
+                    className: 'e-field', attrs: { name: 'EventType' }
+                });
+                container.appendChild(inputEle);
+                row.appendChild(container);
+                let drowDownList = new DropDownList({
+                    dataSource: [
+                        { text: 'Public Event', value: 'public-event' },
+                        { text: 'Maintenance', value: 'maintenance' },
+                        { text: 'Commercial Event', value: 'commercial-event' },
+                        { text: 'Family Event', value: 'family-event' }
+                    ],
+                    fields: { text: 'text', value: 'value' },
+                    value: args.data.EventType,
+                    floatLabelType: 'Always', placeholder: 'Event Type'
+                });
+                drowDownList.appendTo(inputEle);
+                inputEle.setAttribute('name', 'EventType');
+            }
+        }
+    }
+
     onEventRendered(args) {
         let event;
 
@@ -298,7 +367,17 @@ export class Calendar extends Component {
 
             case 'eventRemoved':
                 //call function to delete event
-                deleteCalendarEvent("primary", args.data[0].Id)
+                let item = args.data[0].Id
+                if (args.data[0].occurrence != undefined) {
+
+                    var d = new Date(args.data[0].occurrence.StartTime);                   
+                    var dateString = moment(d).seconds(0).toISOString().split('.')[0] + "Z";
+                    var ExcRecurenceDate = dateString.replace(/[:.-]/g, "");
+                    item = args.data[0].parent.Id + '_' + ExcRecurenceDate; 
+                   // item = args.data[0].parent.Id + '_' + args.data[0].parent.RecurrenceException; 
+                }
+
+                deleteCalendarEvent("primary", item)
                     .then(result => {
                         this.loadCalendarEvents(this.defaultCalendar);
                     })
@@ -349,7 +428,9 @@ export class Calendar extends Component {
 
     getCalendarList() {
         this.props.getCalendars();
-    }      
+    }     
+
+
    
     renderSpinner() {
         return (
@@ -473,6 +554,7 @@ export class Calendar extends Component {
                                                 actionComplete={this.onEventRendered.bind(this)}
                                                 currentView="Month"
                                                 height='650px' 
+                                                popupOpen={this.onPopupOpen.bind(this)}
                                                 eventSettings={{ dataSource: this.dataManger }} dataBinding={this.onDataBinding.bind(this)} dragStart={(this.onEventDragStart.bind(this))}>
                                                 <ViewsDirective>
                                                     <ViewDirective option='Day' />
