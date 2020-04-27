@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/href-no-hash */
 import React, { Fragment } from 'react';
 import i18n from 'i18next';
 import { TreeViewComponent } from '@syncfusion/ej2-react-navigations';
@@ -13,6 +14,7 @@ import Spinner from '../../components/spinner/spinner';
 import ClassificationListSearch from '../classify-emails/classification-list-search/classification-list-search';
 import { getFolderTree, createFolder } from '../../services/services-lexon';
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import Prompt from '../prompt/prompt';
 
 export class ConnectingEmailsStep3 extends React.Component {
   constructor() {
@@ -22,7 +24,8 @@ export class ConnectingEmailsStep3 extends React.Component {
       fields: { dataSource: [], id: 'id', text: 'name', child: 'subChild' },
       entities: [],
       selected: null,
-      loadingTree: false
+      loadingTree: false,
+      showPrompt: false
     };
 
     this.searchResultsByType = this.searchResultsByType.bind(this);
@@ -35,6 +38,7 @@ export class ConnectingEmailsStep3 extends React.Component {
     this.renderType = this.renderType.bind(this);
     this.renderOrigin = this.renderOrigin.bind(this);
     this.onDoubleClick = this.onDoubleClick.bind(this);
+    this.onNewFolderOk = this.onNewFolderOk.bind(this);
   }
 
   async componentDidUpdate(prevProps, prevState) {
@@ -96,31 +100,23 @@ export class ConnectingEmailsStep3 extends React.Component {
     console.log(node);
 
     // Show children of selected node
-    const entities = (node && node.subChild) ? node.subChild.map(sc => {
-      return {
-        origin: i18n.t(`classification.${this.props.entity.idType}`),
-        name: sc.code || sc.description || '',
-        type: 'dir',
-        modified: '26/09/2019 16:57',
-        id: sc.idRelated
-      };
-    }) : [];
+    const entities =
+      node && node.subChild
+        ? node.subChild.map(sc => {
+            return {
+              origin: i18n.t(`classification.${this.props.entity.idType}`),
+              name: sc.code || sc.description || '',
+              type: 'dir',
+              modified: '26/09/2019 16:57',
+              id: sc.idRelated
+            };
+          })
+        : [];
 
     this.setState({ entities });
   }
 
-  onNodeSelecting(event) { }
-
-  onNextPage() { }
-
-  onPrevPage() { }
-
-  async onCreateFolder() {
-    if (this.state.selected === null) {
-      return;
-    }
-
-    const folderName = prompt('Nombre de la carpeta');
+  async onNewFolderOk(folderName) {
     if (folderName) {
       const { idType, idRelated, idFolder } = this.props.entity;
       try {
@@ -162,8 +158,17 @@ export class ConnectingEmailsStep3 extends React.Component {
             }
           );
         });
-      } catch (err) { }
+      } catch (err) {}
     }
+  }
+
+  onCreateFolder() {
+    if (this.state.selected === null) {
+      return;
+    }
+
+    const folderName = '';
+    this.setState({ showPrompt: true });
   }
 
   onRowSelected(event) {
@@ -206,6 +211,7 @@ export class ConnectingEmailsStep3 extends React.Component {
   }
 
   render() {
+    const { showPrompt } = this.state;
     const disabled = this.state.selected === null ? 'disabled' : '';
     return (
       <Fragment>
@@ -302,6 +308,14 @@ export class ConnectingEmailsStep3 extends React.Component {
             </div>
           </section>
         </div>
+        <Prompt
+          initialModalState={showPrompt}
+          title='Nueva carpeta'
+          onOk={this.onNewFolderOk}
+          toggleConfirmRemoveClassification={() => {
+            this.setState({ showPrompt: !showPrompt });
+          }}
+          placeholder='Nombre de la carpeta'></Prompt>
         <style jsx>
           {`
             .step3-container {
@@ -554,4 +568,3 @@ function findNode(node, id) {
 
   return null;
 }
-
