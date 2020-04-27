@@ -8,6 +8,11 @@ import { bindActionCreators } from 'redux';
 import { ApplicationActions } from '../../../store/application/actions';
 import Spinner from '../../spinner/spinner';
 import { Step1 } from './step1';
+import { Step2 } from './step2';
+import { Step3 } from './step3';
+import { Implantation, Phase } from '../../../services/services-centinela';
+const parse = require('emailjs-mime-parser').default;
+const base64js = require('base64-js');
 
 const mapStateToProps = (state: AppState) => {
   return {
@@ -34,12 +39,16 @@ interface Props extends ReduxProps {}
 
 interface State {
   showSpinner: boolean;
+  implantation: Implantation | null;
+  phase: Phase | null;
   complete: boolean;
   search: string;
   step: number;
   entity: number;
   messages: any;
   files: any;
+  copyEmail: boolean;
+  copyAttachments: boolean;
 }
 
 class ModalArchiveDocuments extends Component<Props, State> {
@@ -49,23 +58,76 @@ class ModalArchiveDocuments extends Component<Props, State> {
     this.state = {
       showSpinner: false,
       complete: false,
+      implantation: null,
+      phase: null,
       search: '',
       step: 1,
       entity: 0,
       messages: [],
-      files: []
+      files: [],
+      copyEmail: true,
+      copyAttachments: true
     };
 
     this.onCopyAttachments = this.onCopyAttachments.bind(this);
     this.onCopyEmail = this.onCopyEmail.bind(this);
+    this.onImplantation = this.onImplantation.bind(this);
+    this.onPhase = this.onPhase.bind(this);
   }
 
   componentDidMount() {
-    const { selected } = this.props;
-    this.setState({ messages: selected });
+    this.initMessages();
   }
 
-  componentDidUpdate(prevProps: Props) {}
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.selected !== this.props.selected) {
+      this.initMessages();
+    }
+  }
+
+  initMessages() {
+    const { selected } = this.props;
+    const messages = [];
+
+    // Parsing messages
+    for (let i = 0; i < selected.length; i++) {
+      const attchs = this.parseMessage(selected[i]);
+      const nm = Object.assign({}, selected[i], { attachments: attchs });
+      messages.push(nm);
+    }
+
+    this.setState({ messages });
+  }
+
+  parseMessage(message: any) {
+    const attachments = [];
+    if (message.raw) {
+      let mime = null;
+      try {
+        //console.log(message.raw)
+        mime = parse(message.raw);
+      } catch (err) {
+        console.log(err);
+      }
+
+      if (mime) {
+        for (let j = 0; j < mime.childNodes.length; j++) {
+          if (
+            mime.childNodes[j].raw.indexOf('Content-Disposition: attachment;') >
+            -1
+          ) {
+            const rawAttach = base64js.fromByteArray(
+              mime.childNodes[j].content
+            );
+            const name = mime.childNodes[j].contentType.params.name;
+            attachments.push({ name, checked: true });
+          }
+        }
+      }
+    }
+
+    return attachments;
+  }
 
   closeDialog() {
     const { toggleArchiveModal } = this.props;
@@ -84,23 +146,25 @@ class ModalArchiveDocuments extends Component<Props, State> {
 
   nextStep() {
     const { step } = this.state;
-    // if (step === 1 || step === 11) {
-    //   this.setState({ step: 2 });
-    // } else if (step === 3) {
-    //   this.setState({ step: 5 });
-    // } else {
+    if (step === 1) {
+      this.setState({ step: 2 });
+    } else if (step === 2) {
+      this.setState({ step: 3 });
+    } else if (step === 3) {
+      this.setState({ step: 4 });
+    } // else {
     //   this.setState({ step: step + 1 });
     // }
   }
 
   prevStep() {
-    const { step, entity, search } = this.state;
-    // if (step === 2 || step === 11) {
-    //   if (step === 2 && entity !== 1) {
-    //     this.setState({ step: 11 });
-    //   } else {
-    //     this.setState({ step: 1 });
-    //   }
+    const { step } = this.state;
+    if (step === 2) {
+      this.setState({ step: 1 });
+    } else if (step === 3) {
+      this.setState({ step: 2 });
+    }
+
     // } else if (step === 3) {
     //   this.setState({ step: 2 });
     // } else if (step === 4) {
@@ -115,6 +179,14 @@ class ModalArchiveDocuments extends Component<Props, State> {
   }
 
   saveDisabled() {
+    const { step, copyAttachments, copyEmail, implantation } = this.state;
+    if (step === 1 && (copyAttachments === true || copyEmail === true)) {
+      return false;
+    }
+    if (step === 2 && implantation && implantation.Id > 0) {
+      return false;
+    }
+
     return true;
   }
 
@@ -123,6 +195,25 @@ class ModalArchiveDocuments extends Component<Props, State> {
 
     switch (step) {
       case 1:
+        return (
+          <Fragment>
+            <Button
+              bsPrefix='btn btn-outline-primary'
+              onClick={() => {
+                this.closeDialog();
+              }}>
+              {i18n.t('modal-archive.cancel')}
+            </Button>
+            <Button
+              disabled={this.saveDisabled()}
+              bsPrefix='btn btn-primary'
+              onClick={() => {
+                this.nextStep();
+              }}>
+              {i18n.t('modal-archive.continue')}
+            </Button>
+          </Fragment>
+        );
       case 2:
         return (
           <Fragment>
@@ -173,7 +264,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
               onClick={() => {
                 this.nextStep();
               }}>
-              {i18n.t('modal-archive.continue')}
+              {i18n.t('modal-archive.save')}
             </Button>
           </Fragment>
         );
@@ -210,14 +301,38 @@ class ModalArchiveDocuments extends Component<Props, State> {
     }
   }
 
-  onCopyEmail(check: boolean) {}
+  onCopyEmail(check: boolean) {
+    const { copyEmail } = this.state;
+    if (copyEmail !== check) {
+      this.setState({ copyEmail: check });
+    }
+  }
 
-  onCopyAttachments(check: boolean) {}
+  onCopyAttachments(check: boolean) {
+    const { copyAttachments } = this.state;
+    if (copyAttachments !== check) {
+      this.setState({ copyAttachments: check });
+    }
+  }
+
+  onImplantation(imp: Implantation) {
+    const { implantation } = this.state;
+    if (implantation?.Id !== imp.Id) {
+      this.setState({ implantation: imp });
+    }
+  }
+
+  onPhase(ph: Phase) {
+    const { phase } = this.state;
+    if (phase?.Id !== ph.Id) {
+      this.setState({ phase: ph });
+    }
+  }
 
   render() {
-    const { showAttachDocuments, selected } = this.props;
+    const { showAttachDocuments } = this.props;
 
-    const { showSpinner } = this.state;
+    const { showSpinner, messages, step, implantation } = this.state;
 
     return (
       <div className='modal-connection-emails'>
@@ -237,6 +352,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
               <span className='lf-icon-compliance'></span>
 
               <span>{i18n.t('modal-archive.title')}</span>
+              <span>{step}</span>
             </h5>
           </Modal.Header>
           <Modal.Body className='mimodal'>
@@ -249,7 +365,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
                       display: this.state.step === 1 ? 'block' : 'none'
                     }}>
                     <Step1
-                      selected={selected}
+                      selected={messages}
                       onCopyEmail={this.onCopyEmail}
                       onCopyAttachments={this.onCopyAttachments}
                     />
@@ -258,13 +374,23 @@ class ModalArchiveDocuments extends Component<Props, State> {
                     style={{
                       display: this.state.step === 2 ? 'block' : 'none'
                     }}>
-                    <div>Step 2</div>
+                    <Step2
+                      user={'messages'}
+                      show={step === 2}
+                      implantation={''}
+                      onImplantation={this.onImplantation}
+                    />
                   </div>
                   <div
                     style={{
                       display: this.state.step === 3 ? 'block' : 'none'
                     }}>
-                    <div>Step 3</div>
+                    <Step3
+                      user={'messages'}
+                      show={step === 3}
+                      implantation={implantation}
+                      onPhase={this.onPhase}
+                    />{' '}
                   </div>
                   <div
                     style={{

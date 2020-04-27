@@ -8,3 +8,4 @@ declare global {
 }
 
 declare var window: Window;
+declare module 'emailjs-mime-parser';

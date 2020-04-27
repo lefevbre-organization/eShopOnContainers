@@ -6,6 +6,10 @@ export interface Message {
   folder: string;
   sentDateTime: string;
   raw: string;
+  attachments?: {
+    name: string;
+    checked: boolean;
+  }[];
 }
 
 export interface MessagesState {

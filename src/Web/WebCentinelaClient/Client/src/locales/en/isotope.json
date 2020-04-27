@@ -19,6 +19,18 @@
     "title": "Store messages on CENTINELA",
     "cancel": "Cancel",
     "back": "Back",
-    "continue": "Continue"
+    "continue": "Continue",
+    "save": "Save",
+    "copy-email": "Archive an email copy",
+    "copy-attachments": "Archive the attachments",
+    "q1": "What do you want to do with the selected messages?",
+    "q1b": "Check which attachments you want to save",
+    "q3": "In which implementation do you want to archive the selected messages?"
+  },
+  "implantation-list-search": {
+    "results-total": "TOTAL RESULTS: ",
+    "show-search": "Show search",
+    "search-by": "Search by:",
+    "hide-search": "Hide search"
   }
 }

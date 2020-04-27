@@ -20,9 +20,17 @@
     "cancel": "Cancelar",
     "back": "Anterior",
     "continue": "Continuar",
+    "save": "Guardar",
     "copy-email": "Guardar copia del correo",
     "copy-attachments": "Guardar archivos adjuntos",
     "q1": "¿Qué quieres hacer con los mensajes seleccionados?",
-    "q1b": "Verifica qué adjuntos quieres guardar"
+    "q1b": "Verifica qué adjuntos quieres guardar",
+    "q3": "¿En qué implantación quieres archivar los mensajes seleccionados?"
+  },
+  "implantation-list-search": {
+    "results-total": "TOTAL RESULTADOS: ",
+    "show-search": "Mostrar buscador",
+    "search-by": "Buscar por:",
+    "hide-search": "Ocultar buscador"
   }
 }
