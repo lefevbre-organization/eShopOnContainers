@@ -1,4 +1,4 @@
-eLefebvre Lexon API installed.
+eLefebvre Centinela API installed.
 -----------------------------
 
 This API is not directly exposed outside cluster. If need to access it use:
