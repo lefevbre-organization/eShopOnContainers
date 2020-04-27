@@ -86,6 +86,20 @@ namespace UserUtils.API.Controllers
             return Ok(result);
         }
 
+        [HttpPut("user/areas")]
+        [ProducesResponseType(typeof(Result<ServiceComArea[]>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<ServiceComArea[]>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetAreasByUserAsync(string idNavisionUser = "E1621396")
+        {
+            if (string.IsNullOrEmpty(idNavisionUser))
+                return (IActionResult)BadRequest("id user value invalid. Must be a valid iduser");
+
+            Result<ServiceComArea[]> result = await _service.GetAreasByUserAsync(idNavisionUser);
+            return Ok(result);
+            //http://led-servicecomtools/Areas/GetUsuariosProAreas?idUsuarioPro=E0384919
+
+        }
+
         [HttpGet("user/encode")]
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]

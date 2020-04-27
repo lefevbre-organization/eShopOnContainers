@@ -20,5 +20,6 @@ namespace UserUtils.API.Infrastructure.Services
         Task<Result<ServiceComUser>> GetUserDataWithLoginAsync(string login, string pass);
         Task<Result<ServiceComUser>> GetUserDataWithEntryAsync(string idNavisionUser);
         Task<Result<LexUser>> GetLexonGenericAsync(TokenModelView tokenRequest, bool addTerminatorToToken);
+        Task<Result<ServiceComArea[]>> GetAreasByUserAsync(string idNavisionUser);
     }
 }

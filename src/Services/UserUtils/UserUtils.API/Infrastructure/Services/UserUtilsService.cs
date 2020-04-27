@@ -288,6 +288,49 @@ namespace UserUtils.API.Infrastructure.Services
             return result;
         }
 
+        public async Task<Result<ServiceComArea[]>> GetAreasByUserAsync(string idNavisionUser)
+        {
+            var result = new Result<ServiceComArea[]>(null);
+            try
+            {
+                //http://led-servicecomtools/Areas/GetUsuariosProAreas?idUsuarioPro=E0384919
+                var url = $"{_settings.Value.LoginUrl}/Areas/GetUsuariosProAreas?idUsuarioPro={idNavisionUser}";
+
+                using (var response = await _clientOnline.GetAsync(url))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<ServiceComArea[]>(rawResult));
+                            result.data = resultado;
+                        }
+                    }
+                    else
+                    {
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "553",
+                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "554",
+                    detail = $"General error when call online service",
+                    message = ex.Message
+                });
+            }
+
+            return result;
+        }
+
         #endregion Generic
 
         private string ValidarUsuario(string login, string password, string idUser)
@@ -414,11 +457,18 @@ namespace UserUtils.API.Infrastructure.Services
         private async Task<List<string>> GetRolesOfUserAsync(string idClienteNavision, string login, string password)
         {
             var apps = await GetUserUtilsAsync(idClienteNavision, true);
+            var areas =  await GetAreasByUserAsync(idClienteNavision);
             var appsWithAccess = new List<string>() { "lexonconnector", "centinelaconnector" };
             foreach (var app in apps.data)
             {
                 appsWithAccess.Add(app.descHerramienta);
             }
+
+            foreach (var area in areas.data)
+            {
+                appsWithAccess.Add(area.descArea);
+            }
+
 
             var usuarioValido = !string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password);
             if (!string.IsNullOrEmpty(idClienteNavision) && usuarioValido)
