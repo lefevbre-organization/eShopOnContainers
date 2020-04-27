@@ -32,15 +32,15 @@ env:
   configmap:
     - name: IdentityUrl
       key: internalurls__identity
-    - name: CatalogUrlHC
+    - name: CentinelaUrlHC
       key: internalurls__centinelaapi__hc
-    - name: BasketUrlHC
+    - name: UserUtilsUrlHC
       key: internalurls__userutilsapi__hc
-    - name: IdentityUrlHC
+    - name: LexonUrlHC
       key: internalurls__lexonapi__hc
-    - name: OrderingUrlHC
+    - name: LexonMySqlUrlHC
       key: internalurls__lexonmysqlapi__hc
-    - name: MarketingUrlHC
+    - name: AccountsUrlHC
       key: internalurls__accountapi__hc
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
