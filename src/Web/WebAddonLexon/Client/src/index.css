@@ -6,6 +6,7 @@ body {
 
 .step1-container {
   margin: 50px;
+  width: 72%;
 }
 
 ol {
@@ -37,6 +38,7 @@ ol > li {
   counter-increment: li;
   color: #001978;
   margin-top: 30px;
+  text-align: inherit !important;
 }
 
 ol > li > span {
@@ -485,18 +487,26 @@ ol>li.index-5::before {
   padding-left: 11px;
 }
 
-.lf-icon-angle-left {
-  font-family: 'lf-font' !important;
+.btn-primary {
+  border-radius: 0 !important;
+  height: 42px;
+  width: 12%;
 }
 
-.lf-icon-angle-right {
-  font-family: 'lf-font' !important;
+.btn-outline-primary {
+  text-transform: uppercase;
+  font-size: 13px !important;
+  font-family: "MTTMilano-Bold,Lato,Arial,sans-serif";
+  letter-spacing: .7px;
+  color: #001978 !important;
+  padding: 10px !important;
+  border-radius: 0 !important;
+  border: 2px solid #001978 !important;
+  height: 42px;
+  width: 12%;
+  margin-left: 10px;
 }
 
-.lf-icon-angle-left:before {
-  content: "\e90c";
-}
-
-.lf-icon-angle-right:before {
-  content: "\e90d";
+.panel-4 {
+  margin-bottom: 30px !important;
 }

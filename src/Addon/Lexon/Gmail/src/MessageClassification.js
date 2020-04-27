@@ -7,9 +7,8 @@ function showNewConection() {
   var addonData = cache.get('getAddonData');
 
   return ClassifyMessages.createService('lexon')
-    .setAuthorizationBaseUrl('https://localhost:3001/lexon')
-    .setTokenUrl('https://28c249aa.ngrok.io/token')
-    .setBbdd(addonData)
+    .setAuthorizationBaseUrl(urlFrontend + 'lexon')
+    .setAddonData(addonData)
     .setCallbackFunction('newConectionCallback')
     .setCache(CacheService.getUserCache())
     .setPropertyStore(PropertiesService.getUserProperties())
