@@ -7,16 +7,18 @@ namespace Centinela.Infrastructure.Services
 {
     public interface ICentinelaService
     {
-        Task<Result<CenUser>> GetEvaluationsAsync(string idNavisionUser);
+        Task<Result<CenUser>> GetUserAsync(string idNavisionUser);
 
-        Task<Result<List<CenUser>>> GetEvaluationTreeAsync(string idNavisionUser, string idEvaluation);
+        Task<Result<List<CenEvaluation>>> GetEvaluationsAsync(string idNavisionUser);
+        Task<Result<CenEvaluation>> GetEvaluationByIdAsync(string idNavisionUser, int idEvaluation);
 
-        Task<MySqlCompany> GetConceptAsync(string idNavisionUser, string idConcept);
+        Task<Result<List<CenDocument>>> GetDocumentsAsync(string idNavisionUser, string search);
 
-        Task<MySqlCompany> GetDocumentsAsync(string idNavisionUser, string search);
-
-        Task<Result<bool>> FilePostAsync(string idNavisionUser, string idConcept);
+        Task<Result<bool>> FilePostAsync(ConceptFile file);
 
         Task<Result<string>> FileGetAsync(string idNavisionUser, string idFile);
+
+        Task<Result<CenEvaluationTree>> GetEvaluationTreeByIdAsync(string idNavisionUser, int idEvaluation);
+        Task<Result<List<CenConcept>>> GetConceptsByTypeAsync(string idNavisionUser, int idConcept);
     }
 }

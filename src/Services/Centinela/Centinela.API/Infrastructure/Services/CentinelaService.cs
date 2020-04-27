@@ -1,7 +1,6 @@
 ﻿using Centinela.API;
 using Centinela.API.Infrastructure.Repositories;
 using Centinela.API.Models;
-using Centinela.Infrastructure.Services;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
@@ -20,291 +19,38 @@ namespace Centinela.Infrastructure.Services
 {
     public class CentinelaService : BaseClass<CentinelaService>, ICentinelaService
     {
-        public readonly ICentinelaRepository _usersRepository;
+        public readonly ICentinelaRepository _centinelaRepository;
         private readonly IEventBus _eventBus;
         private readonly IHttpClientFactory _clientFactory;
         private readonly HttpClient _client;
-        private readonly HttpClient _clientFiles;
         private readonly IOptions<CentinelaSettings> _settings;
 
         public CentinelaService(
                 IOptions<CentinelaSettings> settings
-                , ICentinelaRepository usersRepository
+                , ICentinelaRepository centinelaRepository
                 , IEventBus eventBus
                 , IHttpClientFactory clientFactory
                 , ILogger<CentinelaService> logger
             ) : base(logger)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            _usersRepository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
+            _centinelaRepository = centinelaRepository ?? throw new ArgumentNullException(nameof(centinelaRepository));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
+
             _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
             _client = _clientFactory.CreateClient();
             _client.BaseAddress = new Uri(_settings.Value.CentinelaUrl);
+
+            var authData = Convert.ToBase64String(
+                System.Text.Encoding.ASCII.GetBytes($"{_settings.Value.CentinelaLogin}:{_settings.Value.CentinelaPassword}"));
+
             _client.DefaultRequestHeaders.Add("Accept", "text/plain");
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authData);
 
-            var handler = new HttpClientHandler()
-            {
-                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-            };
-
-            _clientFiles = new HttpClient(handler)
-            {
-                BaseAddress = new Uri(_settings.Value.LexonFilesUrl)
-            };
-            _clientFiles.DefaultRequestHeaders.Add("Accept", "text/plain");
+            //_client.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
         }
 
-        #region Classifications
-
-        public async Task<Result<List<int>>> AddClassificationToListAsync(ClassificationAddView classificationAdd)
-        {
-            var result = new Result<List<int>>(new List<int>());
-
-            SerializeObjectToPost(classificationAdd, "/classifications/add", out string url, out StringContent data);
-            try
-            {
-                using (var response = await _client.PostAsync(url, data))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        result = await response.Content.ReadAsAsync<Result<List<int>>>();
-
-                        if (result.data?.Count == 0)
-                            TraceOutputMessage(result.errors, "Mysql don´t create the classification", 2001);
-                        //else
-                        //    await AddClassificationToListMongoAsync(classificationAdd, result);
-                    }
-                    else
-                    {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
-
-            return result;
-        }
-
-        //private async Task AddClassificationToListMongoAsync(ClassificationAddView classificationAdd, Result<List<int>> result)
-        //{
-        //    try
-        //    {
-        //        var resultMongo = await _usersRepository.AddClassificationToListAsync(classificationAdd);
-
-        //        if (resultMongo.infos.Count > 0)
-        //            result.infos.AddRange(resultMongo.infos);
-        //        else if (resultMongo.data == 0)
-        //            result.infos.Add(new Info() { code = "error_actuation_mongo", message = "error when add classification" });
-        //        else
-        //            result.infos.Add(new Info() { code = "add_actuations_mong", message = "add classification to mongo" });
-
-        //        //    result.data.Add((int)resultMongo.data);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceInfo(result.infos, $"Error al añadir actuaciones para  {classificationAdd.idRelated}: {ex.Message}");
-        //    }
-        //}
-
-        public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification)
-        {
-            var result = new Result<int>(0);
-
-            SerializeObjectToPost(classification, "/classifications/contacts/add", out string url, out StringContent data);
-            try
-            {
-                using (var response = await _client.PostAsync(url, data))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        result = await response.Content.ReadAsAsync<Result<int>>();
-
-                        if (result.data == 0)
-                            TraceOutputMessage(result.errors, "Mysql don´t create the classification of contacts", 2001);
-                    }
-                    else
-                    {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
-            //  await AddClassificationToListMongoAsync(idUser, bbdd, listaMails, idRelated, idType, result);
-            return result;
-        }
-
-        public async Task<Result<long>> RemoveClassificationFromListAsync(ClassificationRemoveView classificationRemove)
-        {
-            var result = new Result<long>(0);
-            SerializeObjectToPost(classificationRemove, "/classifications/delete", out string url, out StringContent data);
-
-            try
-            {
-                using (var response = await _client.PostAsync(url, data))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        result = await response.Content.ReadAsAsync<Result<long>>();
-
-                        if (result.data == 0)
-                            TraceOutputMessage(result.errors, "Mysql don´t remove the classification", 2001);
-                        //else
-                        //    await RemoveClassificationFromListMongoAsync(classificationRemove, result);
-                    }
-                    else
-                    {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceInfo(result.infos, $"Error al eliminar actuaciones para  {classificationRemove.idRelated}: {ex.Message}");
-            }
-
-            return result;
-        }
-
-        //private async Task RemoveClassificationFromListMongoAsync(ClassificationRemoveView classificationRemove, Result<long> result)
-        //{
-        //    try
-        //    {
-        //        var resultMongo = await _usersRepository.RemoveClassificationFromListAsync(classificationRemove);
-
-        //        if (resultMongo.infos.Count > 0)
-        //            result.infos.AddRange(resultMongo.infos);
-        //        else if (resultMongo.data == 0)
-        //            result.infos.Add(new Info() { code = "error_actuation_mongo", message = "error when remove classification" });
-        //        else
-        //            result.data = resultMongo.data;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceInfo(result.infos, $"Error al eliminar actuaciones para  {classificationRemove.idRelated}: {ex.Message}");
-        //    }
-        //}
-
-        public async Task<MySqlCompany> GetClassificationsFromMailAsync(ClassificationSearchView classificationSearch)
-        {
-            var resultMySql = new MySqlCompany();
-            SerializeObjectToPost(classificationSearch, "/classifications/search", out string url, out StringContent data);
-
-            try
-            {
-                using (var response = await _client.PostAsync(url, data))
-                {
-                    if (response.IsSuccessStatusCode)
-                        resultMySql = await response.Content.ReadAsAsync<MySqlCompany>();
-                    else
-                        TraceOutputMessage(resultMySql.Errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", 2003);
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(resultMySql.Errors, ex);
-            }
-
-            //if (resultMySql.TengoActuaciones())
-            //   // await _usersRepository.UpsertRelationsAsync(classificationSearch, resultMySql);
-            //else
-            //{
-            //    //var resultMongo = await _usersRepository.GetRelationsAsync(classificationSearch);
-            //    //resultMySql.DataActuation = resultMongo.DataActuation;
-            //}
-
-            return resultMySql;
-        }
-
-        #endregion Classifications
-
-        #region Entities
-
-        public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync()
-        {
-            var resultMySql = new MySqlList<JosEntityTypeList, JosEntityType>();
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.CentinelaUrl}/entities/masters");
-            TraceLog(parameters: new string[] { $"request:{request}" });
-
-            try
-            {
-                using (var response = await _client.SendAsync(request))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        resultMySql = await response.Content.ReadAsAsync<MySqlList<JosEntityTypeList, JosEntityType>>();
-                        resultMySql.result = null;
-                        if (!resultMySql.TengoLista())
-                            TraceOutputMessage(resultMySql.Errors, "Mysql don´t recover the master´s entities", 2001);
-                    }
-                    else
-                    {
-                        TraceOutputMessage(resultMySql.Errors, $"Response not ok with mysql.api with code->{response.StatusCode} - {response.ReasonPhrase}", 2003);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(resultMySql.Errors, ex);
-            }
-            //await GetMasterEntitiesMongoAsync(result);
-            return resultMySql;
-        }
-
-        //private async Task GetMasterEntitiesMongoAsync(Result<List<LexonEntityType>> result)
-        //{
-        //    try
-        //    {
-        //        var resultMongo = await _usersRepository.GetClassificationMasterListAsync();
-
-        //        if (resultMongo.errors.Count > 0)
-        //            result.errors.AddRange(resultMongo.errors);
-        //        else if (resultMongo.data.Count == 0)
-        //            TraceOutputMessage(result.errors, "MongoDb don´t recover the master´s entities", 2002);
-        //        else
-        //            result.data = resultMongo.data;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(result.errors, ex);
-        //    }
-        //}
-
-        public async Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder)
-        {
-            var result = new Result<long>(0);
-
-            SerializeObjectToPost(entityFolder, "/entities/folders/add", out string url, out StringContent data);
-            try
-            {
-                using (var response = await _client.PostAsync(url, data))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        result = await response.Content.ReadAsAsync<Result<long>>();
-
-                        if (result.data == 0)
-                            TraceOutputMessage(result.errors, "Mysql don´t create the folder", 2001);
-                    }
-                    else
-                    {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
-
-            return result;
-        }
+        #region Review
 
         public async Task<Result<string>> FileGetAsync(EntitySearchById fileMail)
         {
@@ -321,9 +67,9 @@ namespace Centinela.Infrastructure.Services
                 var json = JsonConvert.SerializeObject(lexonFile);
                 byte[] buffer = Encoding.UTF8.GetBytes(json);
                 var dataparameters = Convert.ToBase64String(buffer);
-                var url = $"{_settings.Value.LexonFilesUrl}?option=com_lexon&task=hook.receive&type=repository&data={dataparameters}";
+                var url = $"{_settings.Value.CentinelaUrl}?option=com_lexon&task=hook.receive&type=repository&data={dataparameters}";
                 WriteError($"Se hace llamada a {url} a las {DateTime.Now}");
-                using (var response = await _clientFiles.GetAsync(url))
+                using (var response = await _client.GetAsync(url))
                 {
                     WriteError($"Se recibe contestación {DateTime.Now}");
 
@@ -359,7 +105,7 @@ namespace Centinela.Infrastructure.Services
                 var lexonFile = await GetFileDataByTypeActuation(fileMail);
                 lexonFile.fileName = RemoveProblematicChars(lexonFile.fileName);
                 var name = Path.GetFileNameWithoutExtension(lexonFile.fileName);
-  
+
                 name = string.Concat(name.Split(Path.GetInvalidFileNameChars()));
                 name = string.Concat(name.Split(Path.GetInvalidPathChars()));
                 var maxlenght = name.Length > 55 ? 55 : name.Length;
@@ -372,7 +118,7 @@ namespace Centinela.Infrastructure.Services
                 SerializeObjectToPut(fileMail.ContentFile, $"?option=com_lexon&task=hook.receive&type=repository&data={dataparameters}", out string url, out ByteArrayContent data);
 
                 WriteError($"Se hace llamada a {url} a las {DateTime.Now}");
-                using (var response = await _clientFiles.PutAsync(url, data))
+                using (var response = await _client.PutAsync(url, data))
                 {
                     WriteError($"Se recibe contestación {DateTime.Now}");
 
@@ -420,228 +166,6 @@ namespace Centinela.Infrastructure.Services
             return lexonFile;
         }
 
-        //private async Task<long> GetIdCompany(string idUser, string bbdd)
-        //{
-        //    var resultadoCompanies = await GetCompaniesFromUserAsync(idUser);
-        //    var companies = resultadoCompanies.data.Where(x => x.bbdd.ToLower().Contains(bbdd.ToLower()));
-        //    var idCompany = companies?.FirstOrDefault()?.idCompany;
-        //    return idCompany ?? 0; // "88";
-        //}
-
-        public async Task<Result<LexNestedEntity>> GetNestedFolderAsync(FolderNestedView entityFolder)
-        {
-            var result = new Result<LexNestedEntity>(new LexNestedEntity());
-
-            SerializeObjectToPost(entityFolder, "/entities/folders/nested", out string url, out StringContent data);
-            try
-            {
-                using (var response = await _client.PostAsync(url, data))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        result = await response.Content.ReadAsAsync<Result<LexNestedEntity>>();
-
-                        if (result.data == null)
-                            TraceOutputMessage(result.errors, "Mysql don´t get the nested folders", 2001);
-                    }
-                    else
-                    {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
-
-            return result;
-        }
-
-        public async Task<Result<LexEntity>> GetEntityById(EntitySearchById entitySearch)
-        {
-            var result = new Result<LexEntity>(new LexEntity());
-            SerializeObjectToPost(entitySearch, "/entities/getbyid", out string url, out StringContent data);
-
-            try
-            {
-                using (var response = await _client.PostAsync(url, data))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        result = await response.Content.ReadAsAsync<Result<LexEntity>>();
-                    }
-                    else
-                    {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
-
-            return result;
-        }
-
-        public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch)
-        {
-            return await GetEntitiesCommon(entitySearch, "/entities/search");
-        }
-
-        private async Task<MySqlCompany> GetEntitiesCommon(EntitySearchView entitySearch, string path)
-        {
-            var resultMySql = new MySqlCompany();
-
-            try
-            {
-                SerializeObjectToPost(entitySearch, path, out string url, out StringContent data);
-                using (var response = await _client.PostAsync(url, data))
-                {
-                    if (response.IsSuccessStatusCode)
-                        resultMySql = await response.Content.ReadAsAsync<MySqlCompany>();
-                    else
-                        TraceOutputMessage(resultMySql.Errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", 2003);
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(resultMySql.Errors, ex);
-            }
-
-            //if (resultMySql.TengoLista())
-            //    await _usersRepository.UpsertEntitiesAsync(entitySearch, resultMySql);
-            //else
-            //{
-            //    //var resultMongo = await _usersRepository.GetEntitiesAsync(entitySearch);
-            //    //resultMySql.Data = resultMongo.Data;
-            //}
-
-            return resultMySql;
-        }
-
-        public async Task<MySqlCompany> GetEntitiesFoldersAsync(EntitySearchFoldersView entitySearch)
-        {
-            //si no se marcar nada o se marca idParent solo se buscan carpetas, si se pide idFolder e idPArent nunca sera carpetas
-            if ((entitySearch.idFolder == null && entitySearch.idParent == null) 
-                || (entitySearch.idParent != null && entitySearch.idFolder == null))
-                entitySearch.idType = (short?)LexonAdjunctionType.folders;
-            else if(entitySearch.idFolder != null && entitySearch.idParent != null)
-                entitySearch.idType = (short?)LexonAdjunctionType.documents;
-
-            var result = await GetEntitiesCommon(entitySearch, "/entities/folders/search");
-
-            if(entitySearch.idType == (short?)LexonAdjunctionType.files || entitySearch.idType == (short?)LexonAdjunctionType.folders)
-            {
-                result.Data = result.Data?.FindAll(entity => entity.idType == entitySearch.idType);
-                result.Count = result.Data?.Count();
-            };
-            return result;
-        }
-
-        #endregion Entities
-
-        #region User and Companies
-
-        public async Task<Result<CenUser>> GetUserAsync(string idNavisionUser)
-        {
-            var result = new Result<CenUser>(new CenUser());
-
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.CentinelaUrl}/user?idNavisionUser={idNavisionUser}");
-            TraceLog(parameters: new string[] { $"request:{request}" });
-
-            try
-            {
-                using (var response = await _client.SendAsync(request))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        result = await response.Content.ReadAsAsync<Result<CenUser>>();
-                        result.data.idNavision = idNavisionUser;
-                    }
-                    else
-                    {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
-
-            //if (!string.IsNullOrEmpty(result.data?.name))
-            //{
-            //    //await _usersRepository.UpsertUserAsync(result);
-            //}
-            //else
-            //{
-            //    TraceOutputMessage(result.errors, "Mysql don´t recover the user", 2001);
-            //    var resultMongo = await _usersRepository.GetUserAsync(idNavisionUser);
-            //    AddToFinalResult(result, resultMongo);
-            //}
-
-            return result;
-        }
-
-        private static void AddToFinalResult(Result<CenUser> result, Result<CenUser> resultPreview)
-        {
-            result.errors.AddRange(resultPreview.errors);
-            result.infos.AddRange(resultPreview.infos);
-            result.data = resultPreview.data;
-        }
-
-        //public async Task<Result<List<CenUser>>> GetCompaniesFromUserAsync(string idUser)
-        //{
-        //    var resultCompany = new Result<CenUser>(new CenUser());
-        //    var result = new Result<CenUser>(new CenUser());
-        //    var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.CentinelaUrl}/companies?idUser={idUser}");
-        //    TraceLog(parameters: new string[] { $"request:{request}" });
-
-        //    try
-        //    {
-        //        using (var response = await _client.SendAsync(request))
-        //        {
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                resultCompany = await response.Content.ReadAsAsync<Result<CenUser>>();
-        //                AddToFinalResult(result, resultCompany);
-        //            }
-        //            else
-        //            {
-        //                TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(result.errors, ex);
-        //    }
-
-        //    //if (!string.IsNullOrEmpty(resultCompany.data?.name))
-        //    //{
-        //    //    await _usersRepository.UpsertCompaniesAsync(resultCompany);
-        //    //}
-        //    //else
-        //    //{
-        //    //    TraceOutputMessage(result.errors, "Mysql don´t recover the user with companies", 2001);
-        //    //    var resultMongo = await _usersRepository.GetUserAsync(idUser);
-        //    //    AddToFinalResult(result, resultMongo);
-        //    //}
-
-        //    return result;
-        //}
-
-        private static void AddToFinalResult(Result<List<CenEvaluation>> result, Result<CenUser> resultPreliminar)
-        {
-            result.errors.AddRange(resultPreliminar.errors);
-            result.infos.AddRange(resultPreliminar.infos);
-            result.data = resultPreliminar.data?.evaluations?.ToList();
-        }
-
-        #endregion User and Companies
-
         private void SerializeObjectToPost(object parameters, string path, out string url, out StringContent data)
         {
             url = $"{_settings.Value.CentinelaUrl}{path}";
@@ -660,44 +184,224 @@ namespace Centinela.Infrastructure.Services
             byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("application/bson");
         }
 
-        public Task<Result<CenUser>> GetEvaluationsAsync(string idNavisionUser)
-        {
-            throw new NotImplementedException();
-        }
+        #endregion Review
 
-        public Task<Result<List<LexCompany>>> GetEvaluationTreeAsync(string idNavisionUser, string idEvaluation)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<MySqlCompany> GetConceptAsync(string idNavisionUser, string idConcept)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<MySqlCompany> GetDocumentsAsync(string idNavisionUser, string search)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Result<bool>> FilePostAsync(string idNavisionUser, string idConcept)
-        {
-            throw new NotImplementedException();
-        }
+        #region Centinela
 
         public Task<Result<string>> FileGetAsync(string idNavisionUser, string idFile)
         {
             throw new NotImplementedException();
         }
 
-        Task<Result<CenUser>> ICentinelaService.GetEvaluationsAsync(string idNavisionUser)
+        public async Task<Result<CenUser>> GetUserAsync(string idNavisionUser)
         {
-            throw new NotImplementedException();
+            var result = new Result<CenUser>(new CenUser());
+            result.data.idNavision = idNavisionUser;
+            result.data.version = 1;
+            result.data.name = "Nombre de usuario";
+            var resultEvaluations = await GetEvaluationsAsync(idNavisionUser);
+            result.data.evaluations = resultEvaluations.data.ToArray();
+
+            result.errors = resultEvaluations.errors;
+            result.infos = resultEvaluations.infos;
+
+            return result;
         }
 
-        Task<Result<List<CenUser>>> ICentinelaService.GetEvaluationTreeAsync(string idNavisionUser, string idEvaluation)
+        public async Task<Result<CenEvaluation>> GetEvaluationByIdAsync(string idNavisionUser, int idEvaluation)
+        {
+            var result = new Result<CenEvaluation>(new CenEvaluation());
+            var resultEvaluations = await GetEvaluationsAsync(idNavisionUser);
+
+            result.errors = resultEvaluations.errors;
+            result.infos = resultEvaluations.infos;
+            var evaluacion = resultEvaluations.data.Where(eva => eva.evaluationId == idEvaluation).ToList().FirstOrDefault();
+            result.data = evaluacion;
+
+            return result;
+        }
+
+        public async Task<Result<List<CenEvaluation>>> GetEvaluationsAsync(string idNavisionUser)
+        {
+            var result = new Result<List<CenEvaluation>>(new List<CenEvaluation>());
+            try
+            {
+                //api/secure/conectamail/evaluations/user/E1654569
+                var url = $"{_settings.Value.CentinelaUrl}/evaluations/user/{idNavisionUser}";
+
+                using (var response = await _client.GetAsync(url))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<CenEvaluation[]>(rawResult));
+                            result.data = resultado.ToList();
+                        }
+                    }
+                    else
+                    {
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "593",
+                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "594",
+                    detail = $"General error when call centinela service",
+                    message = ex.Message
+                });
+            }
+
+            return result;
+        }
+
+        public async Task<Result<List<CenDocument>>> GetDocumentsAsync(string idNavisionUser, string search)
+        {
+            var result = new Result<List<CenDocument>>(new List<CenDocument>());
+            try
+            {
+                // /api/secure/conectamail/search/documents?text=TEXTO&IdEntrada=ID_ENTRADA
+
+                var url = $"{_settings.Value.CentinelaUrl}/search/documents?text={search}&IdEntrada={idNavisionUser}";
+
+                using (var response = await _client.GetAsync(url))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<CenDocument[]>(rawResult));
+                            result.data = resultado.ToList();
+                        }
+                    }
+                    else
+                    {
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "593",
+                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "594",
+                    detail = $"General error when call centinela service",
+                    message = ex.Message
+                });
+            }
+
+            return result;
+        }
+
+        public async Task<Result<bool>> FilePostAsync(ConceptFile file)
         {
             throw new NotImplementedException();
+            // /document/conceptobject/CONCEPTOBJECT_ID?idEntrada=ID_EN
         }
+
+        public async Task<Result<CenEvaluationTree>> GetEvaluationTreeByIdAsync(string idNavisionUser, int idEvaluation)
+        {
+            var result = new Result<CenEvaluationTree>(new CenEvaluationTree());
+            try
+            {
+                // /api/secure/conectamail/tree/evaluation/EVALUATION_ID?IdEntrada=ID_ENTRADA
+
+                var url = $"{_settings.Value.CentinelaUrl}/tree/evaluation/{idEvaluation}?IdEntrada={idNavisionUser}";
+
+                using (var response = await _client.GetAsync(url))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<CenEvaluationTree>(rawResult));
+                            result.data = resultado;
+                        }
+                    }
+                    else
+                    {
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "593",
+                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "594",
+                    detail = $"General error when call centinela service",
+                    message = ex.Message
+                });
+            }
+
+            return result;
+        }
+
+        public async Task<Result<List<CenConcept>>> GetConceptsByTypeAsync(string idNavisionUser, int idConcept)
+        {
+            var result = new Result<List<CenConcept>>(new List<CenConcept>());
+            try
+            {
+                // /api/secure/conectamail/conceptobjects/concept/CONCEPT_ID?IdEntrada=ID_ENTRADA
+
+                var url = $"{_settings.Value.CentinelaUrl}/conceptobjects/concept/{idConcept}?IdEntrada={idNavisionUser}";
+
+                using (var response = await _client.GetAsync(url))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<CenConcept[]>(rawResult));
+                            result.data = resultado.ToList();
+                        }
+                    }
+                    else
+                    {
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "593",
+                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "594",
+                    detail = $"General error when call centinela service",
+                    message = ex.Message
+                });
+            }
+
+            return result;
+        }
+
+        #endregion Centinela
     }
 }
