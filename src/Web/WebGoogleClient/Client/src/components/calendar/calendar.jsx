@@ -332,15 +332,27 @@ export class Calendar extends Component {
 
     onEventRendered(args) {
         let event;
-
+        
         switch (args.requestType) {
-
+           
             case 'eventChanged':
 
                 event = this.buildEventoGoogle(args.data);
+                let itemToModify = args.data.Id
+                if (args.data.occurrence != undefined) {
+                    var d = new Date(args.data.occurrence.StartTime);
+                    var dateString = moment(d).seconds(0).toISOString().split('.')[0] + "Z";
+                    var ExcRecurenceDate = dateString.replace(/[:.-]/g, "");
+                    itemToModify = args.data.parent.Id + '_' + ExcRecurenceDate;   
+                    event = this.buildEventoGoogle(args.data.occurrence);
+                }
+                if (args.changedRecords[0] != undefined) {                   
+                    itemToModify = args.changedRecords[0].Id;
+                    event = this.buildEventoGoogle(args.changedRecords[0]);
+                }
 
                 //call function to update event
-                updateCalendarEvent("primary", args.data.Id, event)
+                updateCalendarEvent("primary", itemToModify, event)
                     .then(result => {
                         this.loadCalendarEvents(this.defaultCalendar);
                     })
@@ -369,7 +381,6 @@ export class Calendar extends Component {
                 //call function to delete event
                 let item = args.data[0].Id
                 if (args.data[0].occurrence != undefined) {
-
                     var d = new Date(args.data[0].occurrence.StartTime);                   
                     var dateString = moment(d).seconds(0).toISOString().split('.')[0] + "Z";
                     var ExcRecurenceDate = dateString.replace(/[:.-]/g, "");
@@ -399,7 +410,7 @@ export class Calendar extends Component {
                // this.data = extend([], this.dataManger, null, true);
                // this.onDataBinding(this.dataManger);
                 this.scheduleObj.refreshEvents();  
-                this.scheduleObj.refresh();
+                //this.scheduleObj.refresh();
                
             })
             .catch(error => {

@@ -53,9 +53,9 @@ export class Sidebar extends PureComponent {
         this.props.onSidebarCloseClick(this.state.leftSideBarOpen);
     }
 
-    LoaddefaultCalendar() {
-        this.navigateToList(0, this.DefaultCalendar);
-    }
+    //LoaddefaultCalendar() {
+    //    this.navigateToList(0, this.DefaultCalendar);
+    //}
 
     renderItems(calendarList) {
         if (calendarList.length === 0) {

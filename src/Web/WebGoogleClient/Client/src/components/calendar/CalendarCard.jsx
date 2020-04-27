@@ -46,7 +46,7 @@ export class CalendarCard extends Component {
                             IsAllDay: !event.start.dateTime
                         });
                     }
-                    this.scheduleObj.addResource(scheduleData, 'calebdar', 1);
+                    this.scheduleObj.addResource(scheduleData, 'calendar', 1);
                     this.scheduleObj.refreshEvents();
                 }
                
@@ -101,7 +101,8 @@ export class CalendarCard extends Component {
                 <div className='col-lg-12 control-section'>
                     <div className='control-wrapper'>
                         <ScheduleComponent ref={schedule => this.scheduleObj = schedule} width='100%'
-                            height='650px'  currentView="Day"
+                            height='650px' currentView="Day"
+                            readonly={true}
                             eventSettings={{ dataSource: this.dataManger }} dataBinding={this.onDataBinding.bind(this)}>
                             <ViewsDirective>
                                 <ViewDirective option='Day' />                               
