@@ -10,7 +10,6 @@ import {
   Sort
 } from '@syncfusion/ej2-react-grids';
 import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
-
 import Spinner from '../spinner/spinner';
 import ClassificationListSearch from '../classify-emails/classification-list-search/classification-list-search';
 import { getFolderTree, createFolder } from '../../services/services-lexon';
@@ -36,7 +35,6 @@ export class AttachDocumentsStep3 extends React.Component {
     this.nodeSelecting = this.onNodeSelecting.bind(this);
     this.onNextPage = this.onNextPage.bind(this);
     this.onPrevPage = this.onPrevPage.bind(this);
-    this.onCreateFolder = this.onCreateFolder.bind(this);
     this.renderType = this.renderType.bind(this);
     this.renderOrigin = this.renderOrigin.bind(this);
     this.onDoubleClick = this.onDoubleClick.bind(this);
@@ -52,8 +50,8 @@ export class AttachDocumentsStep3 extends React.Component {
         selected: null,
         loadingTree: false,
         folderCreated: null
-      })
-      return
+      });
+      return;
     }
 
     if (
@@ -63,7 +61,9 @@ export class AttachDocumentsStep3 extends React.Component {
     ) {
       this.setState({ loadingTree: true }, async () => {
         const response = await getFolderTree(
-          this.state.folderCreated ? this.state.folderCreated : this.props.entity.idFolder,
+          this.state.folderCreated
+            ? this.state.folderCreated
+            : this.props.entity.idFolder,
           this.props.bbdd.bbdd,
           this.props.user.idUser,
           true
@@ -72,16 +72,25 @@ export class AttachDocumentsStep3 extends React.Component {
         if (response.result.status === 400) {
           // No existe la carpeta para esta entidad.
           // La creamos
-          const addResp = await createFolder(null, "", this.props.entity.id, this.props.entity.idType, this.props.bbdd.bbdd,
+          const addResp = await createFolder(
+            null,
+            '',
+            this.props.entity.id,
+            this.props.entity.idType,
+            this.props.bbdd.bbdd,
             this.props.user.idUser
-          )
+          );
 
-          console.log(addResp.result.data)
-          this.setState({ folderCreated: addResp.result.data })
+          console.log(addResp.result.data);
+          this.setState({ folderCreated: addResp.result.data });
 
           // Ahora hay que volver a cargar el árbol
         } else {
-          let tree = normalizeTree(this.props.entity, response.result.data, false);
+          let tree = normalizeTree(
+            this.props.entity,
+            response.result.data,
+            false
+          );
           const childs = getChilds(tree, 0);
 
           this.setState(
@@ -115,92 +124,46 @@ export class AttachDocumentsStep3 extends React.Component {
     });
     //const node = findNode(this.state.fields.dataSource[0], event.nodeData.id);
     // console.log(node);
-    const node = flatNodes[event.nodeData.id]
+    const node = flatNodes[event.nodeData.id];
 
     // Show children of selected node
     const entities =
       node && node.subChild
         ? node.subChild.map(sc => {
-          return {
-            origin: i18n.t(`classification.${this.props.entity.idType}`),
-            name: sc.name || sc.code || sc.description || '',
-            type: sc.idType === 13 ? 'dir' : 'file',
-            modified: '26/09/2019 16:57',
-            id: sc.idRelated
-          };
-        })
+            return {
+              origin: i18n.t(`classification.${this.props.entity.idType}`),
+              name: sc.name || sc.code || sc.description || '',
+              type: sc.idType === 13 ? 'dir' : 'file',
+              modified: '26/09/2019 16:57',
+              id: sc.idRelated
+            };
+          })
         : [];
 
     this.setState({ entities });
   }
 
-  onNodeSelecting(event) { }
+  onNodeSelecting(event) {}
 
-  onNextPage() { }
+  onNextPage() {}
 
-  onPrevPage() { }
-
-  async onCreateFolder() {
-    if (this.state.selected === null) {
-      return;
-    }
-
-    const folderName = prompt('Nombre de la carpeta');
-    if (folderName) {
-      const { idType, idRelated, idFolder } = this.props.entity;
-      try {
-        this.setState({ loadingTree: true }, async () => {
-          const selectedId = this.state.selected.id;
-          const res = await createFolder(
-            selectedId,
-            folderName,
-            idRelated,
-            idType,
-            this.props.bbdd.bbdd,
-            this.props.user.idUser
-          );
-          const response = await getFolderTree(
-            idFolder,
-            this.props.bbdd.bbdd,
-            this.props.user.idUser,
-            true
-          );
-          let tree = normalizeTree(
-            this.props.entity,
-            response.result.data,
-            res.result.data,
-            false
-          );
-          const childs = getChilds(tree, 0);
-          this.setState(
-            {
-              loadingTree: false,
-              fields: {
-                dataSource: [removeFileNodes(tree[0])],
-                id: 'id',
-                text: 'name',
-                child: 'subChild'
-              },
-              entities: childs
-            },
-            () => {
-              this.onNodeSelected({ nodeData: { id: res.result.data } });
-            }
-          );
-        });
-      } catch (err) { }
-    }
-  }
+  onPrevPage() {}
 
   onChangeFile(event, data) {
     const { checked } = event;
-    const { id, name, type } = data
+    const { id, name, type } = data;
     const { onChange } = this.props;
-    if (type === "file") {
-      onChange && onChange({ idType: 14, idRelated: id, checked, code: name, description: "" })
+    if (type === 'file') {
+      onChange &&
+        onChange({
+          idType: 14,
+          idRelated: id,
+          checked,
+          code: name,
+          description: ''
+        });
     }
   }
-
 
   onDoubleClick(event) {
     this.treeRef && (this.treeRef.selectedNodes = [event.rowData.id]);
@@ -220,13 +183,13 @@ export class AttachDocumentsStep3 extends React.Component {
   }
 
   isFileSelected(data) {
-    const { id } = data
+    const { id } = data;
 
     if (this.props.files) {
       const fd = this.props.files.find(item => item.idRelated === id);
-      return fd !== undefined
+      return fd !== undefined;
     } else {
-      return false
+      return false;
     }
   }
 
@@ -236,9 +199,18 @@ export class AttachDocumentsStep3 extends React.Component {
     console.log(props);
     return (
       <div>
-        {
-          props.type !== 'dir' && <span><CheckBoxComponent label="" checked={this.isFileSelected(props)} cssClass="e-small" change={(evt) => { this.onChangeFile(evt, props) }} /></span>
-        }
+        {props.type !== 'dir' && (
+          <span>
+            <CheckBoxComponent
+              label=''
+              checked={this.isFileSelected(props)}
+              cssClass='e-small'
+              change={evt => {
+                this.onChangeFile(evt, props);
+              }}
+            />
+          </span>
+        )}
         <span
           style={{ marginRight: 10, marginLeft: 10 }}
           className={`pager-icon ${icon} new-folder-icon`}></span>
@@ -248,7 +220,7 @@ export class AttachDocumentsStep3 extends React.Component {
   }
 
   nodeTemplate(data) {
-    console.log(data)
+    console.log(data);
     return null;
   }
 
@@ -259,7 +231,9 @@ export class AttachDocumentsStep3 extends React.Component {
         <div className='step3-container'>
           <ol style={{ textAlign: 'center' }}>
             <li className='index-4'>
-              <span>Selecciona los archivos que quieras adjuntar al correo</span>
+              <span>
+                Selecciona los archivos que quieras adjuntar al correo
+              </span>
             </li>
           </ol>
 
@@ -335,178 +309,178 @@ export class AttachDocumentsStep3 extends React.Component {
           </section>
         </div>
         <style jsx>{`
-            .step3-container {
-              margin: 30px;
-            }
+          .step3-container {
+            margin: 30px;
+          }
 
-            .e-selectionbackground {
-              background-color: #e5e8f1 !important;
-            }
+          .e-selectionbackground {
+            background-color: #e5e8f1 !important;
+          }
 
-            .e-row:hover {
-              background-color: #e5e8f1 !important;
-            }
+          .e-row:hover {
+            background-color: #e5e8f1 !important;
+          }
 
-            .e-list-text {
-              text-transform: none !important;
-            }
+          .e-list-text {
+            text-transform: none !important;
+          }
 
-            .e-treeview .e-list-item.e-active > .e-fullrow {
-              background-color: #e5e8f1;
-              border-color: #e5e8f1;
-            }
+          .e-treeview .e-list-item.e-active > .e-fullrow {
+            background-color: #e5e8f1;
+            border-color: #e5e8f1;
+          }
 
-            .e-treeview .e-list-item.e-active > .e-fullrow:hover {
-              background-color: #e5e8f1;
-              border-color: #e5e8f1;
-            }
+          .e-treeview .e-list-item.e-active > .e-fullrow:hover {
+            background-color: #e5e8f1;
+            border-color: #e5e8f1;
+          }
 
-            .panel-left-spinner-container {
-              width: 100%;
-              height: 100%;
-            }
+          .panel-left-spinner-container {
+            width: 100%;
+            height: 100%;
+          }
 
-            .panel-left .preloader-holder-blue {
-              z-index: 1;
-              position: relative;
-              top: 250px;
-            }
+          .panel-left .preloader-holder-blue {
+            z-index: 1;
+            position: relative;
+            top: 250px;
+          }
 
-            .new-folder {
-              text-align: right;
-              font-size: 14px;
-              color: #001978 !important;
-              height: 26px;
-            }
+          .new-folder {
+            text-align: right;
+            font-size: 14px;
+            color: #001978 !important;
+            height: 26px;
+          }
 
-            .new-folder-container {
-              cursor: pointer;
-              display: inline-block;
-              margin-bottom: 5px;
-              padding-bottom: 0;
-              box-sizing: border-box;
-              -moz-box-sizing: border-box;
-              -webkit-box-sizing: border-box;
-            }
+          .new-folder-container {
+            cursor: pointer;
+            display: inline-block;
+            margin-bottom: 5px;
+            padding-bottom: 0;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+          }
 
-            a.disabled,
-            a.disabled span,
-            .new-folder-container.disabled,
-            a.disabled .new-folder-text {
-              color: #d2d2d2 !important;
-              cursor: default !important;
-            }
+          a.disabled,
+          a.disabled span,
+          .new-folder-container.disabled,
+          a.disabled .new-folder-text {
+            color: #d2d2d2 !important;
+            cursor: default !important;
+          }
 
-            .new-folder-icon {
-              margin-right: 0px;
-            }
+          .new-folder-icon {
+            margin-right: 0px;
+          }
 
-            .new-folder-text {
-              font-family: 'MTTMilano-Medium' !important;
-              text-decoration: underline;
-              line-height: 19px !important;
-              font-size: 14px !important;
-              color: #001978 !important;
-            }
+          .new-folder-text {
+            font-family: 'MTTMilano-Medium' !important;
+            text-decoration: underline;
+            line-height: 19px !important;
+            font-size: 14px !important;
+            color: #001978 !important;
+          }
 
-            .add-more:hover .new-folder-text {
-              background: none !important;
-            }
+          .add-more:hover .new-folder-text {
+            background: none !important;
+          }
 
-            .new-folder-text:hover {
-              background: none !important;
-            }
+          .new-folder-text:hover {
+            background: none !important;
+          }
 
-            .panel {
-              display: flex;
-              height: 450px;
-            }
+          .panel {
+            display: flex;
+            height: 450px;
+          }
 
-            .e-treeview {
-              width: 250px !important;
-            }
+          .e-treeview {
+            width: 250px !important;
+          }
 
-            .e-treeview .e-ul {
-              overflow: hidden !important;
-            }
+          .e-treeview .e-ul {
+            overflow: hidden !important;
+          }
 
-            .e-rowcell.e-templatecell {
-              width: auto;
-              display: table-cell;
-            }
+          .e-rowcell.e-templatecell {
+            width: auto;
+            display: table-cell;
+          }
 
-            .panel-left {
-              flex: 1;
-            }
+          .panel-left {
+            flex: 1;
+          }
 
-            .panel-right {
-              flex: 2;
-              border-left: 1px solid #001978;
-            }
-            .panel-right-top {
-              color: red;
-              border-bottom: 1px solid #001978;
-              height: 46px;
-            }
+          .panel-right {
+            flex: 2;
+            border-left: 1px solid #001978;
+          }
+          .panel-right-top {
+            color: red;
+            border-bottom: 1px solid #001978;
+            height: 46px;
+          }
 
-            .section-border {
-              position: sticky;
-              border: 1px solid #d2d2d2;
-              height: 450px;
-            }
+          .section-border {
+            position: sticky;
+            border: 1px solid #d2d2d2;
+            height: 450px;
+          }
 
-            .section-title {
-              color: #7c868c;
-              font-family: 'MTTMilano-Medium' !important;
-              font-size: 14px;
-              font-weight: 500;
-              margin-left: 10px;
-              margin-top: 10px;
-              text-transform: none;
-              vertical-align: text-top;
-            }
+          .section-title {
+            color: #7c868c;
+            font-family: 'MTTMilano-Medium' !important;
+            font-size: 14px;
+            font-weight: 500;
+            margin-left: 10px;
+            margin-top: 10px;
+            text-transform: none;
+            vertical-align: text-top;
+          }
 
-            .index-4 span {
-              margin-left: 8px;
-              height: 20px;
-              width: 442px;
-              color: #7f8cbb;
-              font-family: 'MTTMilano-Medium';
-              font-size: 20px;
-              font-weight: 500;
-              line-height: 24px;
-            }
+          .index-4 span {
+            margin-left: 8px;
+            height: 20px;
+            width: 442px;
+            color: #7f8cbb;
+            font-family: 'MTTMilano-Medium';
+            font-size: 20px;
+            font-weight: 500;
+            line-height: 24px;
+          }
 
-            .e-grid .e-content {
-              overflow-y: scroll !important;
-            }
+          .e-grid .e-content {
+            overflow-y: scroll !important;
+          }
 
-            .e-treeview .e-ul,
-            .e-treeview .e-text-content {
-              padding: 0 0 0 18px;
-            }
+          .e-treeview .e-ul,
+          .e-treeview .e-text-content {
+            padding: 0 0 0 18px;
+          }
 
-            .e-list-text {
-              text-transform: uppercase;
-              color: #001978;
-              margin-left: 5px;
-            }
-            .e-treeview .e-list-item > .e-text-content .e-list-text,
-            .e-treeview .e-list-item.e-active > .e-text-content .e-list-text,
-            .e-treeview .e-list-item.e-hover > .e-text-content .e-list-text,
-            .e-treeview .e-list-item.e-active,
-            .e-treeview .e-list-item.e-hover {
-              color: #001978 !important;
-            }
-            .e-treeview .e-list-icon,
-            .e-treeview .e-list-img {
-              height: auto;
-            }
-            .e-treeview .e-icon-collapsible,
-            .e-treeview .e-icon-expandable {
-              color: #001978;
-            }
-          `}</style>
+          .e-list-text {
+            text-transform: uppercase;
+            color: #001978;
+            margin-left: 5px;
+          }
+          .e-treeview .e-list-item > .e-text-content .e-list-text,
+          .e-treeview .e-list-item.e-active > .e-text-content .e-list-text,
+          .e-treeview .e-list-item.e-hover > .e-text-content .e-list-text,
+          .e-treeview .e-list-item.e-active,
+          .e-treeview .e-list-item.e-hover {
+            color: #001978 !important;
+          }
+          .e-treeview .e-list-icon,
+          .e-treeview .e-list-img {
+            height: auto;
+          }
+          .e-treeview .e-icon-collapsible,
+          .e-treeview .e-icon-expandable {
+            color: #001978;
+          }
+        `}</style>
       </Fragment>
     );
   }
@@ -545,13 +519,16 @@ function normalizeNodes(nodes, preselectId, removeFiles) {
       expanded: true,
       selected: preselectId == nodes[i].idRelated,
       name: nodes[i].name || nodes[i].code,
-      imageUrl: nodes[i].idType === 13 ? `${window.URL_MF_LEXON_BASE}/assets/img/icon-folder.png` : `${window.URL_MF_LEXON_BASE}/assets/img/icon-document.svg`
+      imageUrl:
+        nodes[i].idType === 13
+          ? `${window.URL_MF_LEXON_BASE}/assets/img/icon-folder.png`
+          : `${window.URL_MF_LEXON_BASE}/assets/img/icon-document.svg`
     };
     if (n.subChild.length > 0) {
       n.subChild = normalizeNodes(n.subChild);
     }
 
-    flatNodes[n.id] = Object.assign({}, n)
+    flatNodes[n.id] = Object.assign({}, n);
     children.push(n);
   }
 
@@ -583,15 +560,12 @@ function findNode(node, id) {
   return null;
 }
 
-
 function removeFileNodes(node) {
-
-  node.subChild = node.subChild.filter(n => n.idType === 13)
+  node.subChild = node.subChild.filter(n => n.idType === 13);
 
   for (let i = 0; i < node.subChild.length; i++) {
-    node.subChild[i] = removeFileNodes(node.subChild[i])
+    node.subChild[i] = removeFileNodes(node.subChild[i]);
   }
 
   return node;
 }
-
