@@ -44,9 +44,9 @@ export class Sidebar extends PureComponent {
         this.props.onCalendarOpenEditor();
     }
 
-    navigateToList(evt, calendarId) {
+    navigateToList(evt, calendarId, checked) {
         const calendar = this.props.calendarResult.calendars.find(el => el.id === calendarId);
-        this.props.onCalendarClick(calendar.id);
+        this.props.onCalendarClick(calendar.id, checked);
     }
 
     sidebarAction() {

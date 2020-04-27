@@ -1,5 +1,6 @@
 import React, { PureComponent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
 
 export class CalendarItem extends PureComponent {
 
@@ -9,8 +10,9 @@ export class CalendarItem extends PureComponent {
 
   }
 
-  onClick(evt) {   
-    this.props.onClick(evt, this.props.id);
+  onClick(evt) {       
+     
+      this.props.onClick(evt, this.props.id, this.ownerObj.checked );
   }
 
   render() {
@@ -20,19 +22,23 @@ export class CalendarItem extends PureComponent {
     let selected = this.props.selected ? " selected" : "";
 
    // const messagesUnreadLocale = messagesUnread.toLocaleString();
-    return (
-      <li
-        className={`text-truncate text-left text-dark pl-4 pr-5 py-2 border-0 ${selected}`}
-        title={
-          name 
-        }
-        onClick={this.onClick}
-      >
-        <FontAwesomeIcon size="sm" {...iconProps} />
-        {name}
-
-        
-      </li>
+      return (        
+      <div>
+          <li
+            className={`text-truncate text-left text-dark pl-4 pr-5 py-2 border-0 ${selected}`}
+            title={
+              name 
+            }
+           
+          >
+              <CheckBoxComponent ref={checkboxObj => this.ownerObj = checkboxObj}
+                value={this.props.id}
+                id={this.props.id}
+                label={name}
+                change={this.onClick}>
+              </CheckBoxComponent>  
+           </li>             
+      </div>
     );
   }
 }
