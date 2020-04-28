@@ -75,3 +75,42 @@ spec:
             path: configuration.json
       imagePullSecrets:
       - name: registry-key
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: apigwcen
+spec:
+  paused: true
+  template:
+    metadata:
+      labels:
+        app: elefebvre
+        component: apigwcen
+    spec:
+      containers:
+      - name: apigwcen
+        image: elefebvreoncotainers/ocelotapigw
+        imagePullPolicy: Always
+        env:
+        - name: PATH_BASE
+          value: /webcentinelaapigw        
+        - name: IdentityUrl
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: identity                
+        ports:
+        - containerPort: 80   
+        volumeMounts:
+        - name: config
+          mountPath: /app/configuration            
+      volumes:
+      - name: config
+        configMap:
+          name: ocelot
+          items:
+          - key: cen
+            path: configuration.json
+      imagePullSecrets:
+      - name: registry-key

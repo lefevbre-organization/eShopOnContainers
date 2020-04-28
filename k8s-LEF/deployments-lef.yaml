@@ -88,12 +88,17 @@ spec:
         imagePullPolicy: Always
         env:
         - name: PATH_BASE
-          value: /lexon-mysql-api
+          value: /lexonmysql-api
         - name: ConnectionString
           valueFrom:
            configMapKeyRef:
              name: externalcfg
              key: lexonmysql__ConnectionString
+        - name: LexonHubUrl
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: lexonmysql__LexonHubUrl
         - name: EventBusConnection
           valueFrom:
            configMapKeyRef:

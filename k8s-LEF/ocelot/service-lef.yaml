@@ -25,5 +25,19 @@ spec:
   selector:
     app: elefebvre
     component: apigwacc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: elefebvre
+    component: ocelotapigw-cen
+  name: ocelotapigw-cen
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: elefebvre
+    component: apigwcen
 
 

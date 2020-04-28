@@ -54,4 +54,32 @@ spec:
     app: elefebvre
     component: webstatus
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: elefebvre
+    component: userutils
+  name: userutils
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: elefebvre
+    component: userutils
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: elefebvre
+    component: centinela
+  name: centinela
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: elefebvre
+    component: centinela
+
 # se necesita poner la aplucacion web?

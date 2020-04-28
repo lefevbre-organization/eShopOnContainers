@@ -1,0 +1,19 @@
+{{- $name := include "apigwmm.fullname" . -}}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "cfg-{{ $name }}"
+  labels:
+    app: {{ template "apigwcen.name" . }}
+    chart: {{ template "apigwcen.chart" .}}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  internalurls__identity: http://{{ .Values.app.svc.identity }}
+  internalurls__lexonapi__hc: http://{{ .Values.app.svc.lexonapi }}/hc
+  internalurls__lexonmysqlapi__hc: http://{{ .Values.app.svc.lexonmysqlapi }}/hc
+  internalurls__accountapi__hc: http://{{ .Values.app.svc.accountapi }}/hc
+  internalurls__centinelaapi__hc: http://{{ .Values.app.svc.centinelaapi }}/hc
+  internalurls__userutils__hc: http://{{ .Values.app.svc.userutilsapi }}/hc
+

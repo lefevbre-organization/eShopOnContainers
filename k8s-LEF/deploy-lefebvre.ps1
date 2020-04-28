@@ -6,10 +6,9 @@ Param(
     [parameter(Mandatory=$false)][bool]$cleanDocker=$false,
     [parameter(Mandatory=$false)][bool]$buildImages=$false,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
-    [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "webloginaddonlexon", "account.api", "lexon.api","lexon.mysql.api", "webaccountapigw", "weblexonapigw", "webstatus"),
-    # [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webgoogleclient"),
+    [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "webloginaddonlexon", "webaddonlexon", "account.api", "lexon.api","lexon.mysql.api", "centinela.api", "userutils.api", "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "webstatus"),
     [parameter(Mandatory=$false)][bool]$pushImages=$false,
-    [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "webloginaddonlexon", "account.api", "lexon.api","lexon.mysql.api", "ocelotapigw", "webstatuslef"),
+    [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "webloginaddonlexon", "webaddonlexon", "account.api", "lexon.api","lexon.mysql.api", "centinela.api", "userutils.api", "ocelotapigw", "webstatuslef"),
     [parameter(Mandatory=$false)][string]$imageTag="slasher",
     [parameter(Mandatory=$false)][string]$tagToRetag="linux-dev",
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$true,
@@ -169,8 +168,8 @@ if ($deployKubernetes){
         ExecKube -cmd 'create -f sql-data-lef.yaml -f rabbitmq-lef.yaml -f nosql-data-lef.yaml'
     }
 
-    Write-Host 'DeployKubernetes 06: Deploying ocelot APIGW from ocelot/deployment-lef.yaml y ocelot/service-lef.yaml ans config files' -ForegroundColor Yellow
-    ExecKube "create configmap ocelot --from-file=acc=ocelot/configuration-web-account.json --from-file=lex=ocelot/configuration-web-lexon.json "
+    Write-Host 'DeployKubernetes 06: Deploying ocelot APIGW from ocelot/deployment-lef.yaml y ocelot/service-lef.yaml and config files' -ForegroundColor Yellow
+    ExecKube "create configmap ocelot --from-file=acc=ocelot/configuration-web-account.json --from-file=lex=ocelot/configuration-web-lexon.json  --from-file=lex=ocelot/configuration-web-centinela.json"
     ExecKube -cmd "apply -f ocelot/deployment-lef.yaml"
     ExecKube -cmd "apply -f ocelot/service-lef.yaml"
 
@@ -184,9 +183,12 @@ if ($deployKubernetes){
     ExecKube -cmd 'create configmap urls `
         --from-literal=apigwlex_e=http://$($externalDns)/weblexonapigw `
         --from-literal=apigwacc_e=http://$($externalDns)/webaccountapigw `
+        --from-literal=apigwcen_e=http://$($externalDns)/webcentinelaapigw `
         --from-literal=lexon_e=http://$($externalDns)/lexon-api `
+        --from-literal=userutils_e=http://$($externalDns)/userutils-api `
+        --from-literal=centinela_e=http://$($externalDns)/centinela-api `
         --from-literal=account_e=http://$($externalDns)/account-api `
-        --from-literal=lexonapi_e=http://$($externalDns)/lexon-mysql-api' 
+        --from-literal=lexonmysql_e=http://$($externalDns)/lexon-mysql-api' 
 
     ExecKube -cmd 'label configmap urls app=elefebvre'
 
