@@ -28,13 +28,12 @@ export class CalendarItem extends PureComponent {
             className={`text-truncate text-left text-dark pl-4 pr-5 py-2 border-0 ${selected}`}
             title={
               name 
-            }
-           
+            }           
           >
               <CheckBoxComponent ref={checkboxObj => this.ownerObj = checkboxObj}
                 value={this.props.id}
                 id={this.props.id}
-                label={name}
+                label={name}                
                 change={this.onClick}>
               </CheckBoxComponent>  
            </li>             

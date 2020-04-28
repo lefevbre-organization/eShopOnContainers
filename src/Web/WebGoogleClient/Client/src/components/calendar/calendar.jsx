@@ -23,20 +23,13 @@ import {
     ScheduleComponent, ViewsDirective, ViewDirective,
     Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, DragEventArgs, ResourcesDirective, ResourceDirective,
 } from '@syncfusion/ej2-react-schedule';
-import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
-import { extend, createElement } from '@syncfusion/ej2-base';
+import { DataManager, Query, Predicate } from '@syncfusion/ej2-data';
 import { getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent } from '../../api/calendar-api';
-
-import { DropDownList } from '@syncfusion/ej2-dropdowns';
 import moment from 'moment';
-import { Query, Predicate } from '@syncfusion/ej2-data';
-
-
 
 export class Calendar extends Component {
     constructor(props) {
         super(props);
-
         this.getCalendarList = this.getCalendarList.bind(this);       
         this.onSignout = this.onSignout.bind(this);
         this.onSignoutDisconnect = this.onSignoutDisconnect.bind(this);     
@@ -49,45 +42,30 @@ export class Calendar extends Component {
         this.handleScheduleDate = this.handleScheduleDate.bind(this);
         this.handleScheduleOpenEditor = this.handleScheduleOpenEditor.bind(this);
         this.onEventRendered = this.onEventRendered.bind(this);
-       
-
-        this.state = {
-            isVisible: true,
-            fluid: true,
-            customAnimation: false,
-            slow: false,
-            size: 0.25,
-            sidebarOpen: false,
-            sidebarDocked: false,
-            googleDown: false,
-            showNotification: false,
-            messageNotification: '',
-            leftSideBar: {
-                collapsed: false
-            },
-            sidebarComponent: (
-                <img border='0' alt='Lefebvre' src='/assets/img/lexon-fake.png'></img>
-            ),
-
-        };
-
-        this.dataManger = new DataManager(); 
-        this.defaultCalendar = undefined;
-
-        this.resourceData = [
-            { Text: 'alberto.valverde.escribano@gmail.com', Id: 1, Color: '#ea7a57' },
-            { Text: 'Calendario de AV', Id: 2, Color: '#df5286' },           
-        ];
-
+        this.dataManger = new DataManager();
+        this.defaultCalendar = undefined;  
         this.scheduleData = [];
         this.CalendarList = [];
 
+        // fake to remove
+        this.resourceData = [
+            { Text: 'alberto.valverde.escribano@gmail.com', Id: 1, Color: '#ea7a57' },
+            { Text: 'Calendario de AV', Id: 2, Color: '#df5286' },
+        ];
+
+        this.state = {
+            isVisible: true, 
+            sidebarOpen: false,
+            sidebarDocked: false,  
+            leftSideBar: {
+                collapsed: false
+            },           
+        };
        
     }
 
     onDataBinding(e, calendarId ) {
-        let items = this.dataManger.items;
-        //let scheduleData = [];
+        let items = this.dataManger.items;       
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
                 let event = items[i];
@@ -126,6 +104,8 @@ export class Calendar extends Component {
                     EndTime: new Date(end),
                     IsAllDay: !event.start.dateTime,
                     RecurrenceRule: recurrenceRule,
+
+                    //Fake to remove
                     resources: [{
                         field: "calendarId",
                         title: "Calendar",
@@ -150,71 +130,6 @@ export class Calendar extends Component {
         e.result = this.scheduleData;
     }
 
-    //onDataBinding(e) {        
-    //    let items = this.dataManger.items;
-    //    //let scheduleData = [];
-    //    if (items.length > 0) {
-    //        for (let i = 0; i < items.length; i++) {               
-    //            let event = items[i];
-    //            if (event.status === 'cancelled') {
-    //                var dateStartTime = new Date(event.originalStartTime.dateTime);                    
-    //                var dateString = moment(dateStartTime).seconds(0).toISOString().split('.')[0] + "Z";
-    //                var ExcRecurenceDate = dateString.replace(/[:.-]/g, "");                  
-    //                var ParentscheduleException = "";
-    //                var coma=""
-    //                if (scheduleData.find(x => x.Id == event.recurringEventId).RecurrenceException != undefined) {
-    //                    ParentscheduleException = scheduleData.find(x => x.Id == event.recurringEventId).RecurrenceException;
-    //                    coma = ","
-    //                }
-    //                scheduleData.find(x => x.Id == event.recurringEventId).RecurrenceException = ParentscheduleException + coma + ExcRecurenceDate                   
-    //                continue;
-    //            }
-    //            let when = event.start.dateTime;
-    //            let start = event.start.dateTime;
-    //            let end = event.end.dateTime;
-    //            if (!when) {
-    //                when = event.start.date;
-    //                start = event.start.date;
-    //                end = event.end.date;
-    //            }
-    //            let recurrenceRule
-    //            if (event.recurrence != undefined) {
-    //                recurrenceRule = event.recurrence[0].replace('RRULE:', '');
-    //            }
-    //                scheduleData.push({
-    //                    Id: event.id,
-    //                    Subject: event.summary,
-    //                    Location: event.location,
-    //                    Description: event.description,
-    //                    StartTime: new Date(start),
-    //                    EndTime: new Date(end),
-    //                    IsAllDay: !event.start.dateTime,
-    //                    RecurrenceRule: recurrenceRule,  
-    //                    resources: [{
-    //                        field: "calendarId",
-    //                        title: "Calendar",
-    //                        resourceSettings: {
-    //                            dataSource: [{
-    //                                CalendarText: "alberto",
-    //                                id: 1,
-    //                                CalendarColor: "#f8a398"
-    //                            }, {
-    //                                CalnendarText: "Steven",
-    //                                id: 2,
-    //                                CalendarColor: "#56ca95"
-    //                            }],
-    //                            text: "calnedarText",
-    //                            id: "id",
-    //                            color: "calendarColor"
-    //                        }
-    //                    }],
-    //                });                            
-    //        }
-    //    }
-    //    e.result = scheduleData;
-    //}
-
-    
     toggleSideBar() {
         const toggleCollapsed = !this.state.leftSideBar.collapsed;
         this.setState({
@@ -271,8 +186,7 @@ export class Calendar extends Component {
         this.setState({ sidebarDocked: open });
     }   
 
-    async componentDidMount() {    
-
+    componentDidMount() {  
         
         //getEventList('primary')
         //    .then(result => {
@@ -310,9 +224,7 @@ export class Calendar extends Component {
         }
 
         if (values.RecurrenceRule != undefined) { event.recurrence = ['RRULE:' + values.RecurrenceRule] };
-        //if (values.IsAllDay != undefined) { event.isallday = values.IsAllDay };
-
-        
+        //if (values.IsAllDay != undefined) { event.isallday = values.IsAllDay };        
       
             //'attendees': [
             //    { 'email': 'lpage@example.com' },
@@ -328,7 +240,6 @@ export class Calendar extends Component {
 
         return event
     }
-
 
     onEventDragStart(args) {
       args.navigation.enable = true;
@@ -431,60 +342,46 @@ export class Calendar extends Component {
 
                 break;
         }
-
     }
 
     waiting(ms) {
        return new Promise(resolve => setTimeout(resolve, ms))
     }
 
-   async loadCalendarEvents(calendar, checked) {  
-        
+    async loadCalendarEvents(calendar, checked) {  
+      
         this.scheduleObj.showSpinner(); 
-
         let predicate;
 
        getEventList(calendar)
-
-            .then(result => {               
-
+            .then(result => {  
                 var calendarCheck = this.CalendarList.indexOf(calendar);
-
-
                 if (calendarCheck === -1 & checked) {
                     this.dataManger = result.result;
-                    // Adding nuew calendar to the main list
+                    // Adding nuew calendar to the main list                    
                     this.CalendarList.push(calendar);
                     this.onDataBinding(this.dataManger, calendar);
                 }
-                else {
-                    //this.scheduleDataIndex.splice(calendar);
-                   // this.scheduleDataIndex.filter(CalendarId => CalendarId != calendar);
-
+                else { 
                     this.CalendarList = this.CalendarList.filter(function (obj) {
                         return obj !== calendar;
                     });
-
-
                     this.scheduleData = this.scheduleData.filter(function (obj) {
                         return obj.CalendarId !== calendar;
                     });
                 }
                 
                 this.CalendarList.forEach(function (valor, indice) {
-
                     if (predicate) {
+                       
                         predicate = predicate.or('CalendarId', 'equal', valor);
                     }
                     else {
                         predicate = new Predicate('CalendarId', 'equal', valor);
                     }
-
                 });
 
-                this.scheduleObj.eventSettings.query = new Query().where(predicate);
-              
-               
+                this.scheduleObj.eventSettings.query = new Query().where(predicate); 
             })
             .catch(error => {
                 console.log('error ->', error);
@@ -509,12 +406,9 @@ export class Calendar extends Component {
         this.scheduleObj.openEditor(cellData, 'Add');   
     }
 
-
     getCalendarList() {
         this.props.getCalendars();
-    }     
-
-
+    } 
    
     renderSpinner() {
         return (
@@ -535,7 +429,6 @@ export class Calendar extends Component {
                 const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}/` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
                 window.open(urlRedirect, '_self');
             });
-
         //sessionStorage.clear();
         //localStorage.clear();
     }
@@ -551,7 +444,6 @@ export class Calendar extends Component {
                 const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}/` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
                 window.open(urlRedirect, '_self');
             });
-
         //sessionStorage.clear();
         //localStorage.clear();
     }   
