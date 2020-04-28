@@ -60,7 +60,7 @@ namespace Centinela.API.Controllers
         [HttpGet("evaluations/getbyid")]
         [ProducesResponseType(typeof(Result<CenEvaluation>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<CenEvaluation>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetEvaluationByIdAsync(string idNavisionUser = "E1621396", int idEvaluation = 1)
+        public async Task<IActionResult> GetEvaluationByIdAsync(string idNavisionUser = "E1621396", int idEvaluation = 4509)
         {
             if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("id user value invalid. Must be a valid iduser");
@@ -70,14 +70,14 @@ namespace Centinela.API.Controllers
         }
 
         [HttpGet("evaluations/tree/getbyid")]
-        [ProducesResponseType(typeof(Result<CenEvaluationTree>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<CenEvaluationTree>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetEvaluationTreeByIdAsync(string idNavisionUser = "E1621396", int idEvaluation = 1)
+        [ProducesResponseType(typeof(Result<List<CenEvaluationTree>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<List<CenEvaluationTree>>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetEvaluationTreeByIdAsync(string idNavisionUser = "E1621396", int idEvaluation = 4509)
         {
             if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("id user value invalid. Must be a valid iduser");
 
-            Result<CenEvaluationTree> result = await _service.GetEvaluationTreeByIdAsync(idNavisionUser, idEvaluation);
+            Result<List<CenEvaluationTree>> result = await _service.GetEvaluationTreeByIdAsync(idNavisionUser, idEvaluation);
             return result.errors?.Count() > 0 ? Ok(result) : (IActionResult)BadRequest(result);
             // /api/secure/conectamail/tree/evaluation/EVALUATION_ID?IdEntrada=ID_ENTRADA
 

@@ -45,8 +45,7 @@ namespace Centinela.Infrastructure.Services
                 System.Text.Encoding.ASCII.GetBytes($"{_settings.Value.CentinelaLogin}:{_settings.Value.CentinelaPassword}"));
 
             _client.DefaultRequestHeaders.Add("Accept", "text/plain");
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authData);
-
+           // _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authData);
             //_client.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
         }
 
@@ -314,9 +313,9 @@ namespace Centinela.Infrastructure.Services
             // /document/conceptobject/CONCEPTOBJECT_ID?idEntrada=ID_EN
         }
 
-        public async Task<Result<CenEvaluationTree>> GetEvaluationTreeByIdAsync(string idNavisionUser, int idEvaluation)
+        public async Task<Result<List<CenEvaluationTree>>> GetEvaluationTreeByIdAsync(string idNavisionUser, int idEvaluation)
         {
-            var result = new Result<CenEvaluationTree>(new CenEvaluationTree());
+            var result = new Result<List<CenEvaluationTree>>(new List<CenEvaluationTree>());
             try
             {
                 // /api/secure/conectamail/tree/evaluation/EVALUATION_ID?IdEntrada=ID_ENTRADA
@@ -331,8 +330,8 @@ namespace Centinela.Infrastructure.Services
 
                         if (!string.IsNullOrEmpty(rawResult))
                         {
-                            var resultado = (JsonConvert.DeserializeObject<CenEvaluationTree>(rawResult));
-                            result.data = resultado;
+                            var resultado = (JsonConvert.DeserializeObject<CenEvaluationTree[]>(rawResult));
+                            result.data = resultado.ToList();
                         }
                     }
                     else
@@ -364,6 +363,8 @@ namespace Centinela.Infrastructure.Services
             try
             {
                 // /api/secure/conectamail/conceptobjects/concept/CONCEPT_ID?IdEntrada=ID_ENTRADA
+                //var authData = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_settings.Value.CentinelaLogin}:{_settings.Value.CentinelaPassword}"));
+                //_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authData);
 
                 var url = $"{_settings.Value.CentinelaUrl}/conceptobjects/concept/{idConcept}?IdEntrada={idNavisionUser}";
 

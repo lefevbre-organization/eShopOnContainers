@@ -10,6 +10,7 @@ namespace Centinela.Infrastructure.Services
         Task<Result<CenUser>> GetUserAsync(string idNavisionUser);
 
         Task<Result<List<CenEvaluation>>> GetEvaluationsAsync(string idNavisionUser);
+
         Task<Result<CenEvaluation>> GetEvaluationByIdAsync(string idNavisionUser, int idEvaluation);
 
         Task<Result<List<CenDocument>>> GetDocumentsAsync(string idNavisionUser, string search);
@@ -18,7 +19,8 @@ namespace Centinela.Infrastructure.Services
 
         Task<Result<string>> FileGetAsync(string idNavisionUser, string idFile);
 
-        Task<Result<CenEvaluationTree>> GetEvaluationTreeByIdAsync(string idNavisionUser, int idEvaluation);
+        Task<Result<List<CenEvaluationTree>>> GetEvaluationTreeByIdAsync(string idNavisionUser, int idEvaluation);
+
         Task<Result<List<CenConcept>>> GetConceptsByTypeAsync(string idNavisionUser, int idConcept);
     }
 }

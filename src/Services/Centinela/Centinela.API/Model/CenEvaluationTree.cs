@@ -2,14 +2,12 @@
 {
     public class CenEvaluationTree
     {
-        //{
         //"folderId": 82615,
-        public int folderId { get; set; }
+        public long folderId { get; set; }
 
         //"parentId": null,
-        public int? parentId { get; set; }
+        public long? parentId { get; set; }
 
-        //"name": "FASE 0. FASE INICIAL",
         public string name { get; set; }
 
         //"description": null,
@@ -29,7 +27,6 @@
 
         //"documents": null,
         //"propertyVisibleValues": [],
-        //"totalConcepts": 3,
         public int? totalConcepts { get; set; }
 
         public bool? isFront { get; set; }

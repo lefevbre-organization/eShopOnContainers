@@ -2,7 +2,6 @@
 {
     public class CenConcept
     {
-        //"conceptId": 106987,
         public long conceptId { get; set; }
 
         //"conceptObjectId": 0,
@@ -11,10 +10,8 @@
         //"evaluated": false,
         public bool? evaluated { get; set; }
 
-        //"title": "DATOS DE LA EMPRESA",
         public string title { get; set; }
 
-        //"description": "",
         public string description { get; set; }
 
         public bool? published { get; set; }
@@ -22,21 +19,20 @@
         public bool? allowPublicShare { get; set; }
         public bool? publicShared { get; set; }
 
-        //"publicUrl": "",
         public string publicUrl { get; set; }
 
         public bool? isFront { get; set; }
 
         //"processId": null,
-        public string processId { get; set; }
+        //public string processId { get; set; }
 
         //"processBaseId": null,
-        public string processBaseId { get; set; }
+        //public string processBaseId { get; set; }
 
         public bool? hasProcessOps { get; set; }
 
         //"identifierFieldId": null,
-        public string identifierFieldId { get; set; }
+        //public string identifierFieldId { get; set; }
 
         public bool? hidden { get; set; }
         public bool? singleInstance { get; set; }
