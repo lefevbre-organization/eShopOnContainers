@@ -1,4 +1,3 @@
-var apiEndpoint = "https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Lexon/";
 var nameEntityType = "";
 var companyResponse = [];
 var classificationsResponse = [];
@@ -6,7 +5,7 @@ var classificationsDataResponse = null;
 var classificationsDeleteResponse = null;
 
 function getCompanyList() {
-    var url = this.apiEndpoint + "companies";
+    var url = apiEndpoint + "companies";
       var response = UrlFetchApp.fetch(url, {
         method: "get",
         // headers: headers,
@@ -17,7 +16,7 @@ function getCompanyList() {
 }
 
 function getClassifications(messageId, bbdd, idUser) {
-    var url = this.apiEndpoint + "classifications";
+    var url = apiEndpoint + "classifications";
     var data = {
         'idMail': messageId,
         'pageSize': 0,
@@ -37,7 +36,7 @@ function getClassifications(messageId, bbdd, idUser) {
 }
 
 function getClassificationData(idType, idEntity, bbdd, idUser) {
-  var url = this.apiEndpoint + "entities/getbyid";
+  var url = apiEndpoint + "entities/getbyid";
   var data = {
       'idType': idType,
       'idEntity': idEntity,
@@ -61,7 +60,7 @@ function deleteClassification(idMail,
   user,
   idRelated,
   idCompany) {
-  var url = this.apiEndpoint + "classifications/remove";
+  var url = apiEndpoint + "classifications/remove";
     var data = {
         'idMail': idMail,
         'idType': parseInt(idType),

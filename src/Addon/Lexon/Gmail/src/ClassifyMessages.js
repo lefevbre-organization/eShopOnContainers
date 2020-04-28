@@ -68,11 +68,6 @@
   *     to the script ID of the script being executed.
   * @return {string} The redirect URI.
   */
-//  function getRedirectUri(optScriptId) {
-//    var scriptId = optScriptId || ScriptApp.getScriptId();
-//    return 'https://script.google.com/macros/d/' + encodeURIComponent(scriptId) +
-//        '/usercallback';
-//  }
  
  if (typeof module === 'object') {
    module.exports = {
@@ -154,11 +149,7 @@
   * @param {string} tokenUrl The token endpoint URL.
   * @return {Service_} This service, for chaining.
   */
- Service_.prototype.setTokenUrl = function(tokenUrl) {
-   this.tokenUrl_ = tokenUrl;
-   return this;
- };
- 
+
  /**
   * Sets the service's refresh URL. Some OAuth providers require a different URL
   * to be used when generating access tokens from a refresh token.
@@ -236,12 +227,12 @@
   * access it by click on the menu item "Resources > Advanced Google services" in
   * the Script Editor, and then click on the link "Google Developers Console" in
   * the resulting dialog.
-  * @param {string} bbdd The Bbdd to use for the OAuth flow.
+  * @param {string} addonData The AddonData to use for the OAuth flow.
   * @return {Service_} This service, for chaining.
   */
 
-Service_.prototype.setBbdd = function(bbdd) {
-     this.bbdd_ = bbdd;
+Service_.prototype.setAddonData = function(addonData) {
+     this.addonData_ = addonData;
      return this;
    };
  
@@ -405,7 +396,7 @@ Service_.prototype.setBbdd = function(bbdd) {
   */
  Service_.prototype.getAuthorizationUrl = function(optAdditionalParameters) {
    validate_({
-     'Bbdd': this.bbdd_,
+     'addonData': this.addonData_,
      'Callback function name': this.callbackFunctionName_,
      'Authorization base URL': this.authorizationBaseUrl_
    });
@@ -421,7 +412,7 @@ Service_.prototype.setBbdd = function(bbdd) {
    }
    var params = {
     state: stateTokenBuilder.createToken(),
-    bbdd: this.bbdd_,
+    bbdd: this.addonData_,
     //  response_type: 'code',
     //  redirect_uri: this.getRedirectUri(),
    };
@@ -448,20 +439,9 @@ Service_.prototype.setBbdd = function(bbdd) {
      }
    }
    validate_({
-     'Bbdd': this.bbdd_,
-    //  'Client Secret': this.clientSecret_,
-     'Token URL': this.tokenUrl_
+     'addonData': this.addonData_
    });
-   var payload = {
-    //  login: login,
-    //  password: password,
-    bbdd: this.bbdd_,
-    //  client_secret: this.clientSecret_,
-    //  redirect_uri: this.getRedirectUri(),
-    //  grant_type: 'authorization_code'
-   };
-   var token = this.fetchToken_(payload);
-   this.saveToken_(token);
+  
    return true;
  };
  
@@ -540,114 +520,12 @@ Service_.prototype.setBbdd = function(bbdd) {
  };
  
  /**
-  * Fetches a new token from the OAuth server.
-  * @param {Object} payload The token request payload.
-  * @param {string} [optUrl] The URL of the token endpoint.
-  * @return {Object} The parsed token.
-  */
- Service_.prototype.fetchToken_ = function(payload, optUrl) {
-   // Use the configured token URL unless one is specified.
-   var url = optUrl || this.tokenUrl_;
-   var headers = {
-     'Accept': this.tokenFormat_
-   };
-   if (this.tokenHeaders_) {
-     headers = extend_(headers, this.tokenHeaders_);
-   }
-   if (this.tokenPayloadHandler_) {
-     tokenPayload = this.tokenPayloadHandler_(payload);
-   }
-   var response = UrlFetchApp.fetch(url, {
-     method: 'post',
-     headers: headers,
-     payload: payload,
-     muteHttpExceptions: true
-   });
-   console.log(response);
-   return this.getTokenFromResponse_(response);
- };
- 
- /**
-  * Gets the token from a UrlFetchApp response.
-  * @param {UrlFetchApp.HTTPResponse} response The response object.
-  * @return {Object} The parsed token.
-  * @throws If the token cannot be parsed or the response contained an error.
-  * @private
-  */
- Service_.prototype.getTokenFromResponse_ = function(response) {
-   var token = this.parseToken_(response.getContentText());
-   var resCode = response.getResponseCode();
-   if ( resCode < 200 || resCode >= 300 || token.error) {
-     var reason = [
-       token.error,
-       token.message,
-       token.error_description,
-       token.error_uri
-     ].filter(Boolean).map(function(part) {
-       return typeof(part) == 'string' ? part : JSON.stringify(part);
-     }).join(', ');
-     if (!reason) {
-       reason = resCode + ': ' + JSON.stringify(token);
-     }
-     throw new Error('Error retrieving token: ' + reason);
-   }
-   return token;
- };
- 
- /**
-  * Parses the token using the service's token format.
-  * @param {string} content The serialized token content.
-  * @return {Object} The parsed token.
-  * @private
-  */
- Service_.prototype.parseToken_ = function(content) {
-   var token;
-   if (this.tokenFormat_ == TOKEN_FORMAT.JSON) {
-     try {
-       token = JSON.parse(content); 
-     } catch (e) {
-       throw new Error('Token response not valid JSON: ' + e);
-     }
-   } else if (this.tokenFormat_ == TOKEN_FORMAT.FORM_URL_ENCODED) {
-     token = content.split('&').reduce(function(result, pair) {
-       var parts = pair.split('=');
-       result[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1]);
-       return result;
-     }, {});
-   } else {
-     throw new Error('Unknown token format: ' + this.tokenFormat_);
-   }
-   token.granted_time = getTimeInSeconds_(new Date());
-   return token;
- };
- 
- /**
   * Refreshes a token that has expired. This is only possible if offline access
   * was requested when the token was authorized.
   */
  Service_.prototype.refresh = function() {
    validate_({
-     'bbdd': this.bbdd_,
-    //  'Client Secret': this.clientSecret_,
-     'Token URL': this.tokenUrl_
-   });
- 
-   this.lockable_(function() {
-     var token = this.getToken();
-     if (!token.refresh_token) {
-       throw new Error('Offline access is required.');
-     }
-     var payload = {
-         refresh_token: token.refresh_token,
-         bbdd: this.bbdd_,
-        //  client_secret: this.clientSecret_,
-        //  grant_type: 'refresh_token'
-     };
-     var newToken = this.fetchToken_(payload, this.refreshUrl_);
-     if (!newToken.refresh_token) {
-       newToken.refresh_token = token.refresh_token;
-     }
-     this.saveToken_(newToken);
+     'addonData': this.addonData_
    });
  };
  
@@ -674,9 +552,9 @@ Service_.prototype.setBbdd = function(bbdd) {
   * @param {Object} token The token to save.
   * @private
   */
- Service_.prototype.saveToken_ = function(token) {
-   this.getStorage().setValue(null, token);
- };
+//  Service_.prototype.saveToken_ = function(token) {
+//    this.getStorage().setValue(null, token);
+//  };
  
  /**
   * Gets the token from the service's property store or cache.
@@ -684,10 +562,10 @@ Service_.prototype.setBbdd = function(bbdd) {
   *     when fetching the token.
   * @return {Object} The token, or null if no token was found.
   */
- Service_.prototype.getToken = function(optSkipMemoryCheck) {
-   // Gets the stored value under the null key, which is reserved for the token.
-   return this.getStorage().getValue(null, optSkipMemoryCheck);
- };
+//  Service_.prototype.getToken = function(optSkipMemoryCheck) {
+//    // Gets the stored value under the null key, which is reserved for the token.
+//    return this.getStorage().getValue(null, optSkipMemoryCheck);
+//  };
  
  /**
   * Determines if a retrieved token is still valid.
@@ -725,63 +603,6 @@ Service_.prototype.setBbdd = function(bbdd) {
  };
  
  /**
-  * Uses the service account flow to exchange a signed JSON Web Token (JWT) for
-  * an access token.
-  * @private
-  */
- Service_.prototype.exchangeJwt_ = function() {
-   validate_({
-     'Token URL': this.tokenUrl_
-   });
-   var jwt = this.createJwt_();
-   var payload = {
-     assertion: jwt,
-     grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer'
-   };
-   var token = this.fetchToken_(payload);
-   this.saveToken_(token);
- };
- 
- /**
-  * Creates a signed JSON Web Token (JWT) for use with Service Account
-  * authorization.
-  * @return {string} The signed JWT.
-  * @private
-  */
- Service_.prototype.createJwt_ = function() {
-   validate_({
-     'Private key': this.privateKey_,
-     'Token URL': this.tokenUrl_,
-     'Issuer or Bbdd': this.issuer_ || this.bbdd_
-   });
-   var header = {
-     alg: 'RS256',
-     typ: 'JWT'
-   };
-   var now = new Date();
-   var expires = new Date(now.getTime());
-   expires.setMinutes(expires.getMinutes() + this.expirationMinutes_);
-   var claimSet = {
-     iss: this.issuer_ || this.bbdd_,
-     aud: this.tokenUrl_,
-     exp: Math.round(expires.getTime() / 1000),
-     iat: Math.round(now.getTime() / 1000)
-   };
-   if (this.subject_) {
-     claimSet.sub = this.subject_;
-   }
-   if (this.params_.scope) {
-     claimSet.scope = this.params_.scope;
-   }
-   var toSign = Utilities.base64EncodeWebSafe(JSON.stringify(header)) + '.' +
-       Utilities.base64EncodeWebSafe(JSON.stringify(claimSet));
-   var signatureBytes =
-       Utilities.computeRsaSha256Signature(toSign, this.privateKey_);
-   var signature = Utilities.base64EncodeWebSafe(signatureBytes);
-   return toSign + '.' + signature;
- };
- 
- /**
   * Locks access to a block of code if a lock has been set on this service.
   * @param {function} func The code to execute.
   * @return {*} The result of the code block.
@@ -798,35 +619,6 @@ Service_.prototype.setBbdd = function(bbdd) {
      this.lock_.releaseLock();
    }
    return result;
- };
- 
- /**
-  * Obtain an access token using the custom grant type specified. Most often
-  * this will be "client_credentials", and a client ID and secret are set an
-  * "Authorization: Basic ..." header will be added using those values.
-  */
- Service_.prototype.exchangeGrant_ = function() {
-   validate_({
-    //  'Grant Type': this.grantType_,
-     'Token URL': this.tokenUrl_
-   });
-   var payload = {
-    //  grant_type: this.grantType_
-   };
-   payload = extend_(payload, this.params_);
- 
-   // For the client_credentials grant type, add a basic authorization header:
-   // - If the client ID and client secret are set.
-   // - No authorization header has been set yet.
-   var lowerCaseHeaders = toLowerCaseKeys_(this.tokenHeaders_);
-   if (this.bbdd_ && (!lowerCaseHeaders || !lowerCaseHeaders.authorization)) {
-     this.tokenHeaders_ = this.tokenHeaders_ || {};
-     this.tokenHeaders_.authorization = 'Basic ' +
-         Utilities.base64Encode(this.bbdd_);
-   }
- 
-   var token = this.fetchToken_(payload);
-   this.saveToken_(token);
  };
  
  // Copyright 2017 Google Inc. All Rights Reserved.

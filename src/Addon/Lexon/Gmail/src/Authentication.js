@@ -10,10 +10,10 @@ var scopes = [
 
 function getService() {
   return OAuth2.createService('auth-lexon')
-    .setAuthorizationBaseUrl('https://localhost:3001/login')
-    .setTokenUrl('https://lexbox-test-apigwlex.lefebvre.es/api/v1/mysql/LexonMySql/token')
-    .setClientId('835159453859-mrrokdm9qdihjlv6f117k999qe8kvito.apps.googleusercontent.com')
-    .setClientSecret('c8UNcaPhx5utB60d8qmJ42Cx')
+    .setAuthorizationBaseUrl(urlFrontend + 'login')
+    .setTokenUrl(urlAuth + 'token')
+    .setClientId(clientId)
+    .setClientSecret(clientSecret)
     .setScope(scopes.join(' '))
     .setCallbackFunction('authCallback')
     .setCache(CacheService.getUserCache())

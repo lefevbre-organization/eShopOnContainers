@@ -53,25 +53,13 @@ class AddonConnectingEmails extends Component {
   }
 
   closeDialog() {
-    setTimeout(() => {
-      this.setState({
-        step: 1,
-        step1Data: {
-          entity: 1,
-          actuation: false,
-          copyDocuments: false,
-          saveDocuments: false
-        },
-        step2Data: {
-          id: -1,
-          idType: -1
-        },
-        step3Data: {
-          selected: -1
-        }
-      });
-    }, 1000);
-    this.props.toggleModalDocuments && this.props.toggleModalDocuments();
+    const values = queryString.parse(window.location.search);
+      window.location.replace(
+        'https://script.google.com/macros/d/1rzrejrBXzshc4OWW_8xqAwOBJ4avJocCqN9HUBtDSo7U1KZjpqKnXyXo/usercallback' +
+          '?success=1' +
+          '&state=' +
+          values.state 
+      );
   }
 
   nextStep() {
@@ -271,9 +259,7 @@ class AddonConnectingEmails extends Component {
         'https://script.google.com/macros/d/1rzrejrBXzshc4OWW_8xqAwOBJ4avJocCqN9HUBtDSo7U1KZjpqKnXyXo/usercallback' +
           '?success=1' +
           '&state=' +
-          values.state +
-          '&bbdd=' +
-          values.bbdd
+          values.state
       );
     } catch (err) {
       console.log(err);
@@ -332,13 +318,13 @@ class AddonConnectingEmails extends Component {
           step1Data.saveDocuments === false;
         return (
           <Fragment>
-            {/* <Button
+            <Button
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
                 this.closeDialog();
               }}>
               {i18n.t('classify-emails.cancel')}
-            </Button> */}
+            </Button>
             <Button
               disabled={dsbl}
               bsPrefix='btn btn-primary'
@@ -352,13 +338,13 @@ class AddonConnectingEmails extends Component {
       case 2:
         return (
           <Fragment>
-            {/* <Button
+            <Button
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
                 this.closeDialog();
               }}>
               {i18n.t('classify-emails.cancel')}
-            </Button> */}
+            </Button>
             <Button
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
@@ -379,13 +365,13 @@ class AddonConnectingEmails extends Component {
       case 3:
         return (
           <Fragment>
-            {/* <Button
+            <Button
             bsPrefix='btn btn-outline-primary'
             onClick={() => {
               this.closeDialog();
             }}>
             {i18n.t('classify-emails.cancel')}
-          </Button> */}
+          </Button>
             <Button
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
@@ -418,13 +404,13 @@ class AddonConnectingEmails extends Component {
       case 4:
         return (
           <Fragment>
-            {/* <Button
+            <Button
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
                 this.closeDialog();
               }}>
               {i18n.t('classify-emails.cancel')}
-            </Button> */}
+            </Button>
             <Button
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
