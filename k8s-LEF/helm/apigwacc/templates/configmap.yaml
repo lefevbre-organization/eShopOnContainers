@@ -15,4 +15,6 @@ data:
   internalurls__account__hc: http://{{ .Values.app.svc.account }}/hc
   internalurls__lexon__hc: http://{{ .Values.app.svc.lexon }}/hc
   internalurls__lexonmysql__hc: http://{{ .Values.app.svc.lexonmysql }}/hc
+  internalurls__centinela__hc: http://{{ .Values.app.svc.centinela }}/hc
+  internalurls__userutils__hc: http://{{ .Values.app.svc.userutils }}/hc
 

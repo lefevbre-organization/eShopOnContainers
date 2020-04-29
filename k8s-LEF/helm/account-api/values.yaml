@@ -31,7 +31,7 @@ env:
   urls:
   # configmap declares variables which value is taken from the config map defined in template configmap.yaml (name is name of var and key the key in configmap).
   configmap:
-    - name: ConnectionString
+    - name: WebhooksConnectionString
       key: webhooks__ConnectionString
     - name: ApplicationInsights__InstrumentationKey
       key: all__InstrumentationKey
@@ -45,7 +45,7 @@ env:
       key: urls__IdentityUrlExternal
     - name: ConnectionString
       key: account__ConnectionString
-    - name: Database
+    - name: MongoDatabase
       key: account__Database
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:

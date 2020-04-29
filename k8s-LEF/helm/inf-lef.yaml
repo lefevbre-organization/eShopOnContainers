@@ -18,7 +18,10 @@ inf:
       database: MailAccounts
     lexon:                  # inf.mongo.ccount: settings for the account-api nosql (user, pwd, db)
       database: LexonApiDb  
-
+    centinela:                  # inf.mongo.ccount: settings for the account-api nosql (user, pwd, db)
+      database: CentinelaApiDb
+    usertils:                  # inf.mongo.ccount: settings for the account-api nosql (user, pwd, db)
+      database: UserUtilsApiDb
   eventbus:
     svc: rabbitmq           # inf.eventbus.svc Name of k8s svc for rabbitmq
     constr: rabbitmq        # inf.eventbus.constr Event bus connection string

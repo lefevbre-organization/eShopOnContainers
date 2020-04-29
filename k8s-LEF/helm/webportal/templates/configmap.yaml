@@ -23,12 +23,19 @@ data:
   internalurls__lexonmysqlapi__hc: http://{{ .Values.app.svc.lexonmysqlapi }}/hc
   internalurls__accountapi: http://{{ .Values.app.svc.accountapi }}
   internalurls__accountapi__hc: http://{{ .Values.app.svc.accountapi }}/hc
+  internalurls__centinelaapi: http://{{ .Values.app.svc.centinelaapi }}
+  internalurls__centinelaapi__hc: http://{{ .Values.app.svc.centinelaapi }}/hc
+  internalurls__userutilsapi: http://{{ .Values.app.svc.userutilsapi }}
+  internalurls__userutilsapi__hc: http://{{ .Values.app.svc.userutilsapi }}/hc
   internalurls__lexonapigw: http://{{ .Values.app.svc.lexonapigw }}
   internalurls__lexonapigw__hc: http://{{ .Values.app.svc.lexonapigw }}/hc
   internalurls__accountapigw: http://{{ .Values.app.svc.accountapigw }}
   internalurls__accountapigw__hc: http://{{ .Values.app.svc.accountapigw }}/hc
+  internalurls__centinelaapigw: http://{{ .Values.app.svc.centinelaapigw }}
+  internalurls__centinelaapigw__hc: http://{{ .Values.app.svc.centinelaapigw }}/hc
   internalurls__identity__hc: http://{{ .Values.app.svc.identity }}/hc
   urls__IdentityUrl: http://{{ $identity }}  
   urls__apigwacc: http://{{ $accountapigw }}
-  urls__apigwlex: http://{{ $lexonapigw }}  
+  urls__apigwlex: http://{{ $lexonapigw }}
+  urls__apigwcen: http://{{ $centinelaapigw }}
   config.js: {{ toYaml .Values.configValues | indent 4 }}

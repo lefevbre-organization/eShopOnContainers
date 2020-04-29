@@ -4,7 +4,7 @@ pathBase: /centinela-api
 
 image:
   repository: elefebvreoncontainers/centinela.api
-  tag: linux-lef-main-containers
+  tag: latest
   pullPolicy: IfNotPresent
 
 service:
@@ -32,8 +32,6 @@ env:
   urls:
   # configmap declares variables which value is taken from the config map defined in template configmap.yaml (name is name of var and key the key in configmap).
   configmap:
-    - name: ConnectionString
-      key: webhooks__ConnectionString
     - name: ApplicationInsights__InstrumentationKey
       key: all__InstrumentationKey
     - name: EventBusConnection
@@ -53,7 +51,11 @@ env:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
     - name: CentinelaUrl
-      value: 'https://led-pre-centinela/api/secure/conectamail'
+      value: 'https://compliance-api.affin.es/api/secure/conectamail'
+    - name: CentinelaPassword
+      value: 'led.2018'
+    - name: CentinelaLogin
+      value: 'centinelaAPI'
     - name: OrchestratorType
       value: 'K8S'
 

@@ -4,7 +4,7 @@ pathBase: /userutils-api
 
 image:
   repository: elefebvreoncontainers/userutils.api
-  tag: linux-lef-main-containers
+  tag: latest
   pullPolicy: IfNotPresent
 
 service:
@@ -60,4 +60,13 @@ env:
       value: 'http://led-pre-servicecomtools'
     - name: OrchestratorType
       value: 'K8S'
+    - name: OnlineLogin
+      value: 'ws'
+    - name: OnlinePasssword
+      value: '22lcqsp11lsw'
+    - name: TokenCaducity
+      value: 150
+    - name: TokenKey
+      value: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9'
+
 

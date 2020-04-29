@@ -1,4 +1,4 @@
-{{- $name := include "webhooks-api.fullname" . -}}
+{{- $name := include "lexon-api.fullname" . -}}
 {{- $sqlsrv := include "sql-name" . -}}
 {{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
 {{- $mongo := include "mongo-name" . -}}

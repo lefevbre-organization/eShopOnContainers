@@ -8,7 +8,7 @@ Param(
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$true,
     [parameter(Mandatory=$false)][string[]]$infras=("sql-data", "nosql-data", "rabbitmq"),
     [parameter(Mandatory=$false)][bool]$deployCharts=$true,
-    [parameter(Mandatory=$false)][string[]]$charts=("apigwlex", "lexon-api", "lexonmysql-api", "apigwacc", "account-api" , "webgoogle", "webgraph", "weblexon", "webportal", "webimap", "webimapserver", "webstatus"),
+    [parameter(Mandatory=$false)][string[]]$charts=("apigwlex", "lexon-api", "lexonmysql-api", "apigwacc", "account-api", "apigwcen", "centinela-api", "userutils-api" , "webgoogle", "webgraph", "weblexon", "webportal", "webimap", "webimapserver", "webstatus"),
     [parameter(Mandatory=$false)][string]$aksName="",
     [parameter(Mandatory=$false)][string]$aksRg="",
     [parameter(Mandatory=$false)][string]$imageTag="latest",
@@ -20,12 +20,12 @@ $dns = $externalDns
 
 
 if ($useLocalk8s -eq $true) {
-    Write-Host "select useLocalk8s configure with  ingress_values_dockerk8s-lef.yaml" -ForegroundColor Green
-    $ingressValuesFile="ingress_values_dockerk8s-lef.yaml"
+    Write-Host "select useLocalk8s configure with  ingress_values_dockerk8s.yaml" -ForegroundColor Green
+    $ingressValuesFile="ingress_values_dockerk8s.yaml"
     $dns="localhost"
 } else{
-    Write-Host "select external kubernetes configure with ingress_values-lef.yaml" -ForegroundColor Green
-    $ingressValuesFile="ingress_values-lef.yaml"
+    Write-Host "select external kubernetes configure with ingress_values.yaml" -ForegroundColor Green
+    $ingressValuesFile="ingress_values.yaml"
 
 }
 
@@ -76,10 +76,11 @@ if (-not [string]::IsNullOrEmpty($registry)) {
 Write-Host "Begin eLefebvreOnContainers installation using Helm" -ForegroundColor Green
 
 if ($deployInfrastructure) {
+    Write-Host "eLefebvreOnContainers infrastructure with app-lef.yaml and inf-lef.yaml" -ForegroundColor Yellow
     foreach ($infra in $infras) {
         Write-Host "Installing infrastructure: $infra" -ForegroundColor Green
         Write-Host "Inject app.name, inf.k8s.dns, ingress.hosts - the final name = $appName-$infra" -ForegroundColor Green
-        helm install --values app.yaml --values inf.yaml --values $ingressValuesFile --set app.name=$appName --set inf.k8s.dns=$dns --set "ingress.hosts={$dns}" --name="$appName-$infra" $infra     
+        helm install --values app-lef.yaml --values inf-lef.yaml --values $ingressValuesFile --set app.name=$appName --set inf.k8s.dns=$dns --set "ingress.hosts={$dns}" --name="$appName-$infra" $infra     
     }
 }
 else {
@@ -87,18 +88,19 @@ else {
 }
 
 if ($deployCharts) {
+    Write-Host "eLefebvreOnContainers charts with app-lef.yaml and inf-lef.yaml" -ForegroundColor Yellow
     foreach ($chart in $charts) {
         Write-Host "Installing: $chart" -ForegroundColor Green
         if ($useCustomRegistry) {
             Write-Host "useCustomRegistry -> inject inf.registry.server, inf.registry.login, inf.registry.pwd, inf.registry.secretName" -ForegroundColor Green
             Write-Host "useCustomRegistry -> Inject app.name, inf.k8s.dns, ingress.hosts, image.tag=$imageTag, image.pullPolicy=Always - the final name = $appName-$chart" -ForegroundColor Green
             
-            helm install --set inf.registry.server=$registry --set inf.registry.login=$dockerUser --set inf.registry.pwd=$dockerPassword --set inf.registry.secretName=elef-docker-secret --values app.yaml --values inf.yaml --values $ingressValuesFile --set app.name=$appName --set inf.k8s.dns=$dns --set "ingress.hosts={$dns}" --set image.tag=$imageTag --set image.pullPolicy=Always --name="$appName-$chart" $chart 
+            helm install --set inf.registry.server=$registry --set inf.registry.login=$dockerUser --set inf.registry.pwd=$dockerPassword --set inf.registry.secretName=elef-docker-secret --values app-lef.yaml --values inf-lef.yaml --values $ingressValuesFile --set app.name=$appName --set inf.k8s.dns=$dns --set "ingress.hosts={$dns}" --set image.tag=$imageTag --set image.pullPolicy=Always --name="$appName-$chart" $chart 
         }
         else {
             if ($chart -ne "eshop-common")  {       # eshop-common is ignored when no secret must be deployed
                 Write-Host "install $chart -> Inject app.name, inf.k8s.dns, ingress.hosts, image.tag=$imageTag, image.pullPolicy=Always - the final name = $appName-$chart" -ForegroundColor Green
-                helm install --values app.yaml --values inf.yaml --values $ingressValuesFile --set app.name=$appName --set inf.k8s.dns=$dns  --set "ingress.hosts={$dns}" --set image.tag=$imageTag --set image.pullPolicy=$pullPolicy --name="$appName-$chart" $chart 
+                helm install --values app-lef.yaml --values inf-lef.yaml --values $ingressValuesFile --set app.name=$appName --set inf.k8s.dns=$dns  --set "ingress.hosts={$dns}" --set image.tag=$imageTag --set image.pullPolicy=$pullPolicy --name="$appName-$chart" $chart 
             }
         }
     }

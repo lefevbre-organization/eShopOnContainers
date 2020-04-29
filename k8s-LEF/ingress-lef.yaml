@@ -9,8 +9,12 @@ metadata:
     ingress.kubernetes.io/ssl-redirect: "false"  
 spec:
   rules:
-  - http:
+  - http: 
       paths:
+      - path: /webaddonlexon
+        backend:
+          serviceName: webaddonlexon
+          servicePort: 80
       - path: /webloginaddonlexon
         backend:
           serviceName: webloginaddonlexon
@@ -37,11 +41,15 @@ spec:
           servicePort: 80
       - path: /webaccountapigw 
         backend:
-          serviceName: ocelotapigw-account
+          serviceName: ocelotapigw-acc
           servicePort: 80          
       - path: /weblexonapigw
         backend:
-          serviceName: ocelotapigw-lexon
+          serviceName: ocelotapigw-lex
+          servicePort: 80                          
+      - path: /webcentinelaapigw
+        backend:
+          serviceName: ocelotapigw-cen
           servicePort: 80                          
       - path: /lexon.api
         backend:
@@ -54,6 +62,14 @@ spec:
       - path: /account.api
         backend:
           serviceName: account.api
+          servicePort: 80                      
+      - path: /centinela.api
+        backend:
+          serviceName: centinela.api
+          servicePort: 80                      
+      - path: /userutils.api
+        backend:
+          serviceName: userutils.api
           servicePort: 80                      
       - path: /
         backend:
