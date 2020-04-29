@@ -24,6 +24,7 @@ import {
     Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, DragEventArgs, ResourcesDirective, ResourceDirective,
 } from '@syncfusion/ej2-react-schedule';
 import { DataManager, Query, Predicate } from '@syncfusion/ej2-data';
+import { ToastComponent, ToastCloseArgs } from '@syncfusion/ej2-react-notifications';
 import { getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent } from '../../api/calendar-api';
 import moment from 'moment';
 
@@ -42,15 +43,17 @@ export class Calendar extends Component {
         this.handleScheduleDate = this.handleScheduleDate.bind(this);
         this.handleScheduleOpenEditor = this.handleScheduleOpenEditor.bind(this);
         this.onEventRendered = this.onEventRendered.bind(this);
-        this.dataManger = new DataManager();
+        this.dataManager = new DataManager();
         this.defaultCalendar = undefined;  
         this.scheduleData = [];
         this.CalendarList = [];
+        this.position = { X: 'Center', Y: 'Bottom' };
 
         // fake to remove
         this.resourceData = [
-            { Text: 'alberto.valverde.escribano@gmail.com', Id: 1, Color: '#ea7a57' },
-            { Text: 'Calendario de AV', Id: 2, Color: '#df5286' },
+           // { Text: 'alberto.valverde.escribano@gmail.com', Id: "alberto.valverde.escribano@gmail.com", Color: '#ea7a57' },
+            { Text: 'belenpelaez1981@gmail.com', Id: "belenpelaez1981@gmail.com", Color: '#ea7a57' },
+            { Text: 'Calendario de prueba', Id: "fqqcim8hd5vqllcn02gcb5b7b8@group.calendar.google.com", Color: '#00197875' },
         ];
 
         this.state = {
@@ -64,8 +67,21 @@ export class Calendar extends Component {
        
     }
 
+    //toastShow(timeOutDelay) {
+    //    setTimeout(function () {
+    //        this.toastObj.show();
+    //    }.bind(this), timeOutDelay);
+    //}
+
+    //Toastcreated() {
+    //    setTimeout(function () {
+    //        this.toastShow(200);
+    //        this.initialWid = this.toastObj.width.toString();
+    //    }.bind(this), 200);
+    //}
+
     onDataBinding(e, calendarId ) {
-        let items = this.dataManger.items;       
+        let items = this.dataManager.items;       
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
                 let event = items[i];
@@ -296,9 +312,9 @@ export class Calendar extends Component {
                 }
 
                 //call function to update event
-                updateCalendarEvent("primary", itemToModify, event)
+                updateCalendarEvent(args.data.CalendarId, itemToModify, event)
                     .then(result => {
-                        this.loadCalendarEvents(this.defaultCalendar);
+                        this.toastObj.show(); 
                     })
                     .catch(error => {
                         console.log('error ->', error);
@@ -312,8 +328,8 @@ export class Calendar extends Component {
 
                 //call function to add event
                 addCalendarEvent("primary",event)
-                    .then(result => {                       
-                        this.loadCalendarEvents(this.defaultCalendar);
+                    .then(result => { 
+                        this.toastObj.show();                  
                     })
                     .catch(error => {
                         console.log('error ->', error);
@@ -334,7 +350,7 @@ export class Calendar extends Component {
 
                 deleteCalendarEvent("primary", item)
                     .then(result => {
-                        this.loadCalendarEvents(this.defaultCalendar);
+                        this.toastObj.show(); 
                     })
                     .catch(error => {
                         console.log('error ->', error);
@@ -342,33 +358,84 @@ export class Calendar extends Component {
 
                 break;
         }
+
+      
     }
 
     waiting(ms) {
        return new Promise(resolve => setTimeout(resolve, ms))
     }
 
-    async loadCalendarEvents(calendar, checked) {  
+
+
+    RefreshCalendarEvents(calendar) {
+
+        this.scheduleObj.showSpinner();
+        let predicate;
+
+        getEventList(calendar, this.scheduleObj.selectedDate)
+            .then(result => {
+
+               
+               
+                this.scheduleData = this.scheduleData.filter(function (obj) {
+                    return obj.CalendarId !== calendar;
+                });
+                
+                this.dataManager = result.result;
+                    // Adding nuew calendar to the main list                    
+                   
+                this.onDataBinding(this.dataManager, calendar);
+               
+                   
+
+               
+
+                this.CalendarList.forEach(function (valor, indice) {
+                    if (predicate) {
+
+                        predicate = predicate.or('CalendarId', 'equal', valor);
+                    }
+                    else {
+                        predicate = new Predicate('CalendarId', 'equal', valor);
+                    }
+                });
+
+                this.scheduleObj.eventSettings.query = new Query().where(predicate);
+            })
+            .catch(error => {
+                console.log('error ->', error);
+            })
+
+        this.defaultCalendar = calendar;
+        this.props.selectCalendar(calendar);
+    }  
+
+    
+
+   loadCalendarEvents(calendar, checked) {  
       
         this.scheduleObj.showSpinner(); 
         let predicate;
 
-       getEventList(calendar)
+        getEventList(calendar, this.scheduleObj.selectedDate)
             .then(result => {  
                 var calendarCheck = this.CalendarList.indexOf(calendar);
                 if (calendarCheck === -1 & checked) {
-                    this.dataManger = result.result;
+                    this.dataManager = result.result;
                     // Adding nuew calendar to the main list                    
                     this.CalendarList.push(calendar);
-                    this.onDataBinding(this.dataManger, calendar);
+                    this.onDataBinding(this.dataManager, calendar);
                 }
                 else { 
+
                     this.CalendarList = this.CalendarList.filter(function (obj) {
                         return obj !== calendar;
                     });
                     this.scheduleData = this.scheduleData.filter(function (obj) {
                         return obj.CalendarId !== calendar;
                     });
+                    
                 }
                 
                 this.CalendarList.forEach(function (valor, indice) {
@@ -379,7 +446,7 @@ export class Calendar extends Component {
                     else {
                         predicate = new Predicate('CalendarId', 'equal', valor);
                     }
-                });
+                });                               
 
                 this.scheduleObj.eventSettings.query = new Query().where(predicate); 
             })
@@ -388,7 +455,8 @@ export class Calendar extends Component {
             }) 
 
         this.defaultCalendar = calendar;
-        this.props.selectCalendar(calendar); 
+       this.props.selectCalendar(calendar); 
+       
     }  
 
     handleScheduleDate(args) {
@@ -549,7 +617,13 @@ export class Calendar extends Component {
                                             </ScheduleComponent>
                                         </div>
                                     </div>                                   
-                                </div>
+                            </div>
+                            <ToastComponent ref={(toast) => { this.toastObj = toast; }}
+                                id='toast_pos'
+                                content='Action successfully completed.'
+                                position={this.position}
+                                target={this.target}                                
+                                ></ToastComponent>
                             {/*</Switch>*/}
                         </article>
 

@@ -1,12 +1,14 @@
 ﻿/**
  * Load Google Calendar Events
  */
-export const getEventList = (idCalendar) =>
+export const getEventList = (idCalendar, selectedDate) =>
     new Promise((resolve, reject) => {
         window.gapi.client.calendar.events
             .list({
                 calendarId: idCalendar,
-               // timeMin: (new Date()).toISOString(),
+               // timeMin: (new Date()).toISOString()
+               // timeMin: (new Date(selectedDate.getFullYear(), selectedDate.getMonth(), -1)).toISOString(),
+               // timeMax: (new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 2)).toISOString(),
                 //showDeleted: false,
                 //singleEvents: true,
                 //maxResults: 10,
@@ -41,7 +43,7 @@ export const addCalendarEvent = (calendar, event) =>
     new Promise((resolve, reject) => {
         window.gapi.client.calendar.events
             .insert({
-                calendarId: "primary",
+                calendarId: calendar ,
                 resource: event
             })
 
@@ -58,7 +60,7 @@ export const updateCalendarEvent = (calendar, eventId, event) =>
     new Promise((resolve, reject) => {
         window.gapi.client.calendar.events
             .update({
-                calendarId: "primary",
+                calendarId: calendar,
                 eventId: eventId,
                 resource: event
             })
@@ -76,7 +78,7 @@ export const deleteCalendarEvent = (calendar, eventId) =>
     new Promise((resolve, reject) => {
         window.gapi.client.calendar.events
             .delete({
-                calendarId: "primary",
+                calendarId: calendar,
                 eventId: eventId
             })
 
@@ -93,7 +95,7 @@ export const requestRecurringEvent = (calendar, eventId) =>
     new Promise((resolve, reject) => {
         window.gapi.client.calendar.events
             .get({
-                calendarId: "primary",
+                calendarId: calendar,
                 eventId: eventId
             })
 

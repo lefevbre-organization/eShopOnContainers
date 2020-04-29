@@ -9,6 +9,7 @@
     "@syncfusion/ej2-data": "^17.4.51",
     "@syncfusion/ej2-react-buttons": "^18.1.43",
     "@syncfusion/ej2-react-calendars": "^17.4.51",
+    "@syncfusion/ej2-react-notifications": "^18.1.42",
     "@syncfusion/ej2-react-richtexteditor": "^17.4.55",
     "@syncfusion/ej2-react-schedule": "^17.4.55",
     "@uppy/core": "^0.26.0",

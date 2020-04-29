@@ -28,6 +28,7 @@ app:                                                  # app global settings
       google: webgoogle
       graph: webgraph
       lexon: weblexon
+      addonlexon: webaddonlexon
       imap: webimap
       imapserver: webimapserver
       accountapigw: accountapigw
@@ -59,6 +60,7 @@ app:                                                  # app global settings
       google: webgoogle
       graph: webgraph
       lexon: weblexon
+      addonlexon: webaddonlexon
       imap: webimap
       imapserver: webimapserver
       accountapigw: accountapigw
