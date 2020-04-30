@@ -61,9 +61,11 @@ class AddonConnectingEmails extends Component {
           values.state 
       );
   }
-
+  
   nextStep() {
     const { step, step1Data, messages } = this.state;
+    // const msgRaw = getMessage(messages[0].id, 'raw');
+    // console.log(msgRaw);
     if (step === 1) {
       this.setState({ step: 2 });
     } else if (step === 2) {
@@ -83,6 +85,7 @@ class AddonConnectingEmails extends Component {
       this.setState({ step: 4 });
     }
   }
+
 
   prevStep() {
     const { step, step1Data } = this.state;
@@ -173,6 +176,9 @@ class AddonConnectingEmails extends Component {
       step1Data.copyDocuments === false &&
       step1Data.saveDocuments === false
     ) {
+      setTimeout(() => {
+        this.closeDialog()
+      }, 2000);
       this.saveClassifications();
     } else {
       this.nextStep();
@@ -181,6 +187,7 @@ class AddonConnectingEmails extends Component {
 
   async onSaveStep3() {
     const { step1Data, step2Data, step3Data } = this.state;
+    const { toggleNotification } = this.props;
     const { selectedMessages } = this.props;
     let notification = 0;
 
@@ -247,26 +254,28 @@ class AddonConnectingEmails extends Component {
       }
 
       if (notification === 1) {
-        // toggleNotification(i18n.t('classify-emails.classification-saved-ok'));
+        toggleNotification(i18n.t('classify-emails.classification-saved-ok'));
+        // setTimeout(() => {
+        //   this.closeDialog()
+        // }, 2000);
       } else if (notification === 2) {
-        // toggleNotification(i18n.t('classify-emails.documents-saved-ok'));
+        toggleNotification(i18n.t('classify-emails.documents-saved-ok'));
+        setTimeout(() => {
+          this.closeDialog()
+        }, 2000);
       } else if (notification === 3) {
-        // toggleNotification(i18n.t('classify-emails.classification-docs-saved-ok'));
+        setTimeout(() => {
+          this.closeDialog()
+        }, 2000);
+        toggleNotification(i18n.t('classify-emails.classification-docs-saved-ok'));
       }
 
-      const values = queryString.parse(window.location.search);
-      window.location.replace(
-        'https://script.google.com/macros/d/1rzrejrBXzshc4OWW_8xqAwOBJ4avJocCqN9HUBtDSo7U1KZjpqKnXyXo/usercallback' +
-          '?success=1' +
-          '&state=' +
-          values.state
-      );
     } catch (err) {
       console.log(err);
       if (notification === 1) {
-        // toggleNotification(i18n.t('classify-emails.classification-saved-ko'), true);
+        toggleNotification(i18n.t('classify-emails.classification-saved-ko'), true);
       } else if (notification > 1) {
-        // toggleNotification(i18n.t('classify-emails.documents-saved-ko'), true);
+        toggleNotification(i18n.t('classify-emails.documents-saved-ko'), true);
       }
     }
   }
@@ -294,14 +303,13 @@ class AddonConnectingEmails extends Component {
         this.props.updateClassifications &&
           this.props.updateClassifications(selectedMessages[0].id);
       }
-      // toggleNotification(i18n.t('classify-emails.classification-saved-ok'));
 
       return res.classifications;
     } catch (err) {
-      // toggleNotification(
-      //   i18n.t('classify-emails.classification-saved-ko'),
-      //   true
-      // );
+      toggleNotification(
+        i18n.t('classify-emails.classification-saved-ko'),
+        true
+      );
     }
 
     return null;
@@ -453,7 +461,7 @@ class AddonConnectingEmails extends Component {
               class='imgproduct'
               border='0'
               alt='Lex-On'
-              src={`http://localhost:3004/assets/img/icon-lexon.png`}></img>
+              src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
             <span className='title-space'>
               {i18n.t('modal-conecting-emails.save-copy')}
             </span>

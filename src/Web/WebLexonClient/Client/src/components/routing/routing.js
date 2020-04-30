@@ -94,6 +94,7 @@ class Routing extends Component {
             user={user} 
             bbddAddon={bbdd}
             addonData={addonData}
+            toggleNotification={toggleNotification}
           />
         );
 

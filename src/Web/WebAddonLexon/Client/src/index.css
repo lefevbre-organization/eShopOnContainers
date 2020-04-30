@@ -506,7 +506,27 @@ ol>li.index-5::before {
   width: 12%;
   margin-left: 10px;
 }
-
 .panel-4 {
   margin-bottom: 30px !important;
+}
+
+.modal-content .modal-header {
+  background-color: #C43741 !important;
+}
+
+.modal.error {
+  background-color: #C43741 !important;
+}
+
+.modal.error .modal-content .modal-header .close span:first-child {
+  color: transparent !important;
+}
+
+.notification .modal-header .modal-title {
+  min-height: 150px;
+}
+
+.modal-header .close {
+  position: relative;
+  top: -50px;
 }
