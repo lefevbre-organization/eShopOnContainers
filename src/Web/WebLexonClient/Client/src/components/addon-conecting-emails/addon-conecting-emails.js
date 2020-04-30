@@ -178,7 +178,7 @@ class AddonConnectingEmails extends Component {
     ) {
       setTimeout(() => {
         this.closeDialog()
-      }, 4000);
+      }, 2000);
       this.saveClassifications();
     } else {
       this.nextStep();
@@ -255,18 +255,18 @@ class AddonConnectingEmails extends Component {
 
       if (notification === 1) {
         toggleNotification(i18n.t('classify-emails.classification-saved-ok'));
-        setTimeout(() => {
-          this.closeDialog()
-        }, 4000);
+        // setTimeout(() => {
+        //   this.closeDialog()
+        // }, 2000);
       } else if (notification === 2) {
         toggleNotification(i18n.t('classify-emails.documents-saved-ok'));
         setTimeout(() => {
           this.closeDialog()
-        }, 4000);
+        }, 2000);
       } else if (notification === 3) {
         setTimeout(() => {
           this.closeDialog()
-        }, 4000);
+        }, 2000);
         toggleNotification(i18n.t('classify-emails.classification-docs-saved-ok'));
       }
 
@@ -303,7 +303,6 @@ class AddonConnectingEmails extends Component {
         this.props.updateClassifications &&
           this.props.updateClassifications(selectedMessages[0].id);
       }
-      toggleNotification(i18n.t('classify-emails.classification-saved-ok'));
 
       return res.classifications;
     } catch (err) {
