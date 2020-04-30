@@ -25,8 +25,11 @@ import {
 } from '@syncfusion/ej2-react-schedule';
 import { DataManager, Query, Predicate } from '@syncfusion/ej2-data';
 import { ToastComponent, ToastCloseArgs } from '@syncfusion/ej2-react-notifications';
-import { getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent } from '../../api/calendar-api';
+import { getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, getCalendarList } from '../../api/calendar-api';
 import moment from 'moment';
+import groupBy from "lodash/groupBy";
+
+
 
 export class Calendar extends Component {
     constructor(props) {
@@ -50,11 +53,18 @@ export class Calendar extends Component {
         this.position = { X: 'Center', Y: 'Bottom' };
 
         // fake to remove
-        this.resourceData = [
-           // { Text: 'alberto.valverde.escribano@gmail.com', Id: "alberto.valverde.escribano@gmail.com", Color: '#ea7a57' },
-            { Text: 'belenpelaez1981@gmail.com', Id: "belenpelaez1981@gmail.com", Color: '#ea7a57' },
-            { Text: 'Calendario de prueba', Id: "fqqcim8hd5vqllcn02gcb5b7b8@group.calendar.google.com", Color: '#00197875' },
+        this.resourceCalendarData = [
+           //// { Text: 'alberto.valverde.escribano@gmail.com', Id: "alberto.valverde.escribano@gmail.com", Color: '#ea7a57' },
+           // { Text: 'belenpelaez1981@gmail.com', Id: "belenpelaez1981@gmail.com", Color: '#ea7a57' },
+           // { Text: 'Calendario de prueba', Id: "fqqcim8hd5vqllcn02gcb5b7b8@group.calendar.google.com", Color: '#00197875' },
         ];
+
+         this.toasts =  [
+        { title: 'Warning!', content: 'There was a problem with your network connection.', cssClass: 'e-toast-warning', icon: 'e-warning toast-icons' },
+        { title: 'Success!', content: 'The event has been created successfully.', cssClass: 'e-toast-success', icon: 'e-success toast-icons' },
+        { title: 'Error!', content: 'A problem has been occurred while submitting your data.', cssClass: 'e-toast-danger', icon: 'e-error toast-icons' },
+        { title: 'Information!', content: 'Please read the comments carefully.', cssClass: 'e-toast-info', icon: 'e-info toast-icons' }
+                  ];
 
         this.state = {
             isVisible: true, 
@@ -79,6 +89,11 @@ export class Calendar extends Component {
     //        this.initialWid = this.toastObj.width.toString();
     //    }.bind(this), 200);
     //}
+
+    toastCusAnimation = {
+    //hide: { effect: 'SlideBottomOut' },
+    show: { effect: 'SlideBottomIn' }
+      };
 
     onDataBinding(e, calendarId ) {
         let items = this.dataManager.items;       
@@ -203,15 +218,23 @@ export class Calendar extends Component {
     }   
 
     componentDidMount() {  
-        
-        //getEventList('primary')
-        //    .then(result => {
-        //        this.dataManger = result.result;                
 
-        //    })
-        //    .catch(error => {
-        //        console.log('error ->', error);
-        //    }); 
+        //getCalendarList().then(calendarList => {
+        //    dispatch({
+        //        type: GET_CALENDARS,
+        //        payload: calendarList.items
+        //    });
+        //});
+        
+        getCalendarList()
+            .then(result => {
+                //const calendarGroups = groupBy(result.items, "accessRole");
+                //this.resourceCalendarData = calendarGroups.owner; 
+                this.resourceCalendarData = result.items; 
+            })
+            .catch(error => {
+                console.log('error ->', error);
+            }); 
 
         this.getCalendarList();      
     }
@@ -314,9 +337,10 @@ export class Calendar extends Component {
                 //call function to update event
                 updateCalendarEvent(args.data.CalendarId, itemToModify, event)
                     .then(result => {
-                        this.toastObj.show(); 
+                        this.toastObj.show(this.toasts[1]);
                     })
                     .catch(error => {
+                        this.toastObj.show(this.toasts[2]);
                         console.log('error ->', error);
                     })
                 
@@ -329,9 +353,10 @@ export class Calendar extends Component {
                 //call function to add event
                 addCalendarEvent("primary",event)
                     .then(result => { 
-                        this.toastObj.show();                  
+                        this.toastObj.show(this.toasts[1]);                 
                     })
                     .catch(error => {
+                        this.toastObj.show(this.toasts[2]);
                         console.log('error ->', error);
                     }) 
 
@@ -350,9 +375,10 @@ export class Calendar extends Component {
 
                 deleteCalendarEvent("primary", item)
                     .then(result => {
-                        this.toastObj.show(); 
+                        this.toastObj.show(this.toasts[1]); 
                     })
                     .catch(error => {
+                        this.toastObj.show(this.toasts[2]);
                         console.log('error ->', error);
                     })
 
@@ -610,7 +636,7 @@ export class Calendar extends Component {
                                                     <ViewDirective option='Agenda' />
                                                 </ViewsDirective>
                                                 <ResourcesDirective>
-                                                    <ResourceDirective field='CalendarId' title='My Calendars' name='Calendars' allowMultiple={false} dataSource={this.resourceData} textField='Text' idField='Id' colorField='Color'>
+                                                    <ResourceDirective field='CalendarId' title='My Calendars' name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor'>
                                                     </ResourceDirective>
                                                 </ResourcesDirective>
                                                 <Inject services={[Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop]} />
@@ -622,7 +648,9 @@ export class Calendar extends Component {
                                 id='toast_pos'
                                 content='Action successfully completed.'
                                 position={this.position}
-                                target={this.target}                                
+                                target={this.target}  
+                                animation={this.toastCusAnimation} 
+                                timeOut={1500}
                                 ></ToastComponent>
                             {/*</Switch>*/}
                         </article>

@@ -3,7 +3,7 @@ clusterName: eshop-aks
 pathBase: /webaddonlexon
 
 image:
-  repository: elefebvreoncontainers/webaddonlexonclient
+  repository: elefebvreoncontainers/webaddonlexon
   tag: linux-lef-main-containers
   pullPolicy: IfNotPresent
 
