@@ -38,6 +38,8 @@ namespace OcelotApiGw
                 .AddUrlGroup(new Uri(_cfg["LexonUrlHC"]), name: "lexonapi-check", tags: new string[] { "lexonapi" })
                 .AddUrlGroup(new Uri(_cfg["LexonMySqlUrlHC"]), name: "lexonmysqlapi-check", tags: new string[] { "lexonmysqlapi" })
                 .AddUrlGroup(new Uri(_cfg["AccountsUrlHC"]), name: "accountsapi-check", tags: new string[] { "accountsapi" })
+                .AddUrlGroup(new Uri(_cfg["CentinelaUrlHC"]), name: "centinelaapi-check", tags: new string[] { "centinelaapi" })
+                .AddUrlGroup(new Uri(_cfg["UserUtilsUrlHC"]), name: "userutilsapi-check", tags: new string[] { "userutilsapi" })
                 ;
 
             services.AddCors(options =>

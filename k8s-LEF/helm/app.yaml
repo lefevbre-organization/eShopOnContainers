@@ -36,6 +36,9 @@ app:                                                  # app global settings
       lexonapigw: lexonapigw
       lexonapi: lexon-api
       lexonmysqlapi: lexonmysql-api
+      centinelaapi: centinela-api
+      userutilsapi: userutils-api
+      centinelaapigw: centinelaapigw
       
   svc:
       basket: basket-api                              # ingress entry for basket api
@@ -68,3 +71,6 @@ app:                                                  # app global settings
       lexonapigw: lexonapigw
       lexonapi: lexon-api
       lexonmysqlapi: lexonmysql-api
+      centinelaapi: centinela-api
+      userutilsapi: userutils-api
+      centinelaapigw: centinelaapigw

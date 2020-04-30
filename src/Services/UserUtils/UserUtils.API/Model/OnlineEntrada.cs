@@ -8,6 +8,4 @@
         //{"ID_ENTRADA":1037352,"N_ENTRADA":"E1621500"}
         // {"ENTRADA_ENCRIPTADA":"eHRncH9gaw%3D%3D"}
     }
-
-
 }

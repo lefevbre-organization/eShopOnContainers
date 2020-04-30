@@ -27,17 +27,41 @@
       "UpstreamHttpMethod": [ "POST", "PUT", "GET" ]
     },
     {
+      "DownstreamPathTemplate": "/api/{version}/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "account.api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/accounts/{everything}",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE" ]
+    },
+    {
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamPathTemplate": "/api/{version}/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "minihub.api",
+          "Host": "userutils.api",
           "Port": 80
         }
       ],
-      "UpstreamPathTemplate": "/api/{version}/hub/{everything}",
+      "UpstreamPathTemplate": "/api/{version}/util/{everything}",
       "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/{version}/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "centinela.api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/cen/{everything}",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE" ]
     }
   ],
   "GlobalConfiguration": {

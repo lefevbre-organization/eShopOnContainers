@@ -8,7 +8,8 @@
         public string CollectionEvents { get; set; }
 
         public string CentinelaUrl { get; set; }
-        public string LexonFilesUrl { get; set; }
+        public string CentinelaLogin { get; set; }
+        public string CentinelaPassword { get; set; }
 
         public string EventBusConnection { get; set; }
         public string EventBusUserName { get; set; }

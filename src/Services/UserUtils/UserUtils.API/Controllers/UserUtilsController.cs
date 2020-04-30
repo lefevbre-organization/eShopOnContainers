@@ -86,6 +86,20 @@ namespace UserUtils.API.Controllers
             return Ok(result);
         }
 
+        [HttpPut("user/areas")]
+        [ProducesResponseType(typeof(Result<ServiceComArea[]>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<ServiceComArea[]>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetAreasByUserAsync(string idNavisionUser = "E1621396")
+        {
+            if (string.IsNullOrEmpty(idNavisionUser))
+                return (IActionResult)BadRequest("id user value invalid. Must be a valid iduser");
+
+            Result<ServiceComArea[]> result = await _service.GetAreasByUserAsync(idNavisionUser);
+            return Ok(result);
+            //http://led-servicecomtools/Areas/GetUsuariosProAreas?idUsuarioPro=E0384919
+
+        }
+
         [HttpGet("user/encode")]
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
@@ -108,6 +122,41 @@ namespace UserUtils.API.Controllers
 
             var result = await _service.GetDecodeUserAsync(idEncodedNavisionUser);
             return Ok(result);
+            //http://led-servicecomtools/Login/RecuperarUsuario?login=e0384919&password=asasd
+
         }
+
+        [HttpPut("user/get/login")]
+        [ProducesResponseType(typeof(Result<ServiceComUser>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<ServiceComUser>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetUserWithLoginAsync(
+            string login = "i.molina-ext@lefebvreelderecho.com"
+            , string pass = "imolina2"
+            )
+        {
+            if (string.IsNullOrEmpty(login))
+                return (IActionResult)BadRequest("id encoded value invalid. Must be a valid encoded user");
+
+            Result<ServiceComUser> result = await _service.GetUserDataWithLoginAsync(login, pass);
+            return Ok(result);
+            //Http://led-servicecomtools/Login/RecuperarUsuario?strLogin=f.reyes-ext@lefebvreelderecho.com&strPass=etEb9221
+
+        }
+
+        [HttpPut("user/get/entrada")]
+        [ProducesResponseType(typeof(Result<ServiceComUser>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<ServiceComUser>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetUserWithEntradaAsync(string idNavisionUser = "E1621396")
+        {
+            if (string.IsNullOrEmpty(idNavisionUser))
+                return (IActionResult)BadRequest("id encoded value invalid. Must be a valid encoded user");
+
+            Result<ServiceComUser> result = await _service.GetUserDataWithEntryAsync(idNavisionUser);
+            return Ok(result);
+            //http://led-servicecomtools/Login/RecuperarUsuarioPorEntrada?idUsuarioPro=E1621396
+
+        }
+
+
     }
 }

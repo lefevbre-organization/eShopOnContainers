@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Web;
 using UserUtils.API.Infrastructure.Repositories;
 using UserUtils.API.Models;
 
@@ -24,6 +25,7 @@ namespace UserUtils.API.Infrastructure.Services
         private readonly IHttpClientFactory _clientFactory;
         private readonly HttpClient _clientMinihub;
         private readonly HttpClient _clientOnline;
+        private readonly HttpClient _clientLogin;
         private readonly IOptions<UserUtilsSettings> _settings;
         internal readonly ILogger<UserUtilsService> _logger;
 
@@ -45,18 +47,12 @@ namespace UserUtils.API.Infrastructure.Services
             _clientMinihub.BaseAddress = new Uri(_settings.Value.MinihubUrl);
             _clientMinihub.DefaultRequestHeaders.Add("Accept", "text/plain");
 
-            //var handler = new HttpClientHandler()
-            //{
-            //    AllowAutoRedirect = false,
-            //    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-            //};
+            // /Login/RecuperarUsuarioPorEntrada?idUsuarioPro=e0384919
+            // /Login/RecuperarUsuario?strLogin=f.reyes-ext@lefebvreelderecho.com&strPass=etEb9221
+            _clientLogin = _clientFactory.CreateClient();
+            _clientLogin.BaseAddress = new Uri(_settings.Value.LoginUrl);
+            _clientLogin.DefaultRequestHeaders.Add("Accept", "text/plain");
 
-            //_clientOnline = new HttpClient(handler)
-            //{
-            //    BaseAddress = new Uri(_settings.Value.OnlineUrl)
-            //};
-
-            //var authData = "d3M6MjJsY3FzcDExbHN3";
             _clientOnline = _clientFactory.CreateClient();
             _clientOnline.BaseAddress = new Uri(_settings.Value.OnlineUrl);
 
@@ -67,6 +63,8 @@ namespace UserUtils.API.Infrastructure.Services
 
             _clientOnline.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
         }
+
+        #region Generic
 
         public async Task<Result<string>> GetEncodeUserAsync(string idNavisionUser)
         {
@@ -202,6 +200,139 @@ namespace UserUtils.API.Infrastructure.Services
             return result;
         }
 
+        public async Task<Result<ServiceComUser>> GetUserDataWithLoginAsync(string login, string pass)
+        {
+            var result = new Result<ServiceComUser>(new ServiceComUser());
+            try
+            {
+                var loginClean = HttpUtility.UrlEncode(login);
+                //Http://led-servicecomtools/Login/RecuperarUsuario?strLogin=f.reyes-ext@lefebvreelderecho.com&strPass=etEb9221
+                var url = $"{_settings.Value.LoginUrl}/Login/RecuperarUsuario?strLogin={login}&strPass={pass}";
+
+                using (var response = await _clientLogin.GetAsync(url))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<ServiceComUser>(rawResult));
+                            result.data = resultado;
+                        }
+                    }
+                    else
+                    {
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "573",
+                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "574",
+                    detail = $"General error when call commontool service",
+                    message = ex.Message
+                });
+            }
+
+            return result;
+        }
+
+        public async Task<Result<ServiceComUser>> GetUserDataWithEntryAsync(string idNavisionUser)
+        {
+            var result = new Result<ServiceComUser>(new ServiceComUser());
+            try
+            {
+                //http://led-pre-servicecomtools/Login/RecuperarUsuarioPorEntrada?idUsuarioPro=e0384919
+                //http://led-servicecomtools/Login/RecuperarUsuarioPorEntrada?idUsuarioPro=E1621396
+                var url = $"{_settings.Value.LoginUrl}/Login/RecuperarUsuarioPorEntrada?idUsuarioPro={idNavisionUser}";
+
+                using (var response = await _clientLogin.GetAsync(url))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<ServiceComUser>(rawResult));
+                            result.data = resultado;
+                        }
+                    }
+                    else
+                    {
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "573",
+                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "574",
+                    detail = $"General error when call commontool service",
+                    message = ex.Message
+                });
+            }
+
+            return result;
+        }
+
+        public async Task<Result<ServiceComArea[]>> GetAreasByUserAsync(string idNavisionUser)
+        {
+            var result = new Result<ServiceComArea[]>(null);
+            try
+            {
+                //http://led-servicecomtools/Areas/GetUsuariosProAreas?idUsuarioPro=E0384919
+                var url = $"{_settings.Value.LoginUrl}/Areas/GetUsuariosProAreas?idUsuarioPro={idNavisionUser}";
+
+                using (var response = await _clientOnline.GetAsync(url))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<ServiceComArea[]>(rawResult));
+                            result.data = resultado;
+                        }
+                    }
+                    else
+                    {
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "553",
+                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "554",
+                    detail = $"General error when call online service",
+                    message = ex.Message
+                });
+            }
+
+            return result;
+        }
+
+        #endregion Generic
+
         private string ValidarUsuario(string login, string password, string idUser)
         {
             //TODO: validar usuario
@@ -240,13 +371,10 @@ namespace UserUtils.API.Infrastructure.Services
         {
             var result = new Result<TokenData>(tokenRequest);
 
-            var validationParameters = GetValidationParameters();
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            SecurityToken validatedToken = null;
             try
             {
-                tokenHandler.ValidateToken(tokenRequest.token, validationParameters, out validatedToken);
+                var tokenHandler = new JwtSecurityTokenHandler();
+                tokenHandler.ValidateToken(tokenRequest.token, GetValidationParameters(), out SecurityToken validatedToken);
                 result.data.valid = validatedToken != null;
             }
             catch (SecurityTokenException ex)
@@ -308,30 +436,39 @@ namespace UserUtils.API.Infrastructure.Services
                 AddClaimToPayload(payload, clienteModel.idClienteNavision, nameof(clienteModel.idClienteNavision));
                 AddClaimToPayload(payload, clienteModel.roles, nameof(clienteModel.roles));
                 AddClaimToPayload(payload, clienteModel.login, nameof(clienteModel.login));
-            }
-            else
-            {
-                //AddClaimToPayload(payload, clienteModel.idUserApp, nameof(clienteModel.idUserApp));
-                //AddClaimToPayload(payload, clienteModel.name, nameof(clienteModel.name));
 
-                //AddClaimToPayload(payload, clienteModel.bbdd, nameof(clienteModel.bbdd));
-                //AddClaimToPayload(payload, clienteModel.provider, nameof(clienteModel.provider));
-                //AddClaimToPayload(payload, clienteModel.mailAccount, nameof(clienteModel.mailAccount));
-                //AddClaimToPayload(payload, clienteModel.folder, nameof(clienteModel.folder));
-                //AddClaimToPayload(payload, clienteModel.idMail, nameof(clienteModel.idMail));
-                //AddClaimToPayload(payload, clienteModel.idEntityType, nameof(clienteModel.idEntityType));
-                //AddClaimToPayload(payload, clienteModel.idEntity, nameof(clienteModel.idEntity));
+                if (modelo is TokenModelLexon clienteModelLexon)
+                {
+                    AddClaimToPayload(payload, clienteModelLexon.idUserApp, nameof(clienteModelLexon.idUserApp));
+                    AddClaimToPayload(payload, clienteModelLexon.name, nameof(clienteModelLexon.name));
+                    AddClaimToPayload(payload, clienteModelLexon.bbdd, nameof(clienteModelLexon.bbdd));
+                    AddClaimToPayload(payload, clienteModelLexon.provider, nameof(clienteModelLexon.provider));
+                    AddClaimToPayload(payload, clienteModelLexon.mailAccount, nameof(clienteModelLexon.mailAccount));
+                    AddClaimToPayload(payload, clienteModelLexon.folder, nameof(clienteModelLexon.folder));
+                    AddClaimToPayload(payload, clienteModelLexon.idMail, nameof(clienteModelLexon.idMail));
+                    AddClaimToPayload(payload, clienteModelLexon.idEntityType, nameof(clienteModelLexon.idEntityType));
+                    AddClaimToPayload(payload, clienteModelLexon.idEntity, nameof(clienteModelLexon.idEntity));
+                }
+
             }
+
         }
 
         private async Task<List<string>> GetRolesOfUserAsync(string idClienteNavision, string login, string password)
         {
             var apps = await GetUserUtilsAsync(idClienteNavision, true);
+            var areas =  await GetAreasByUserAsync(idClienteNavision);
             var appsWithAccess = new List<string>() { "lexonconnector", "centinelaconnector" };
             foreach (var app in apps.data)
             {
                 appsWithAccess.Add(app.descHerramienta);
             }
+
+            foreach (var area in areas.data)
+            {
+                appsWithAccess.Add(area.descArea);
+            }
+
 
             var usuarioValido = !string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password);
             if (!string.IsNullOrEmpty(idClienteNavision) && usuarioValido)
@@ -382,6 +519,90 @@ namespace UserUtils.API.Infrastructure.Services
         public Task<Result<TokenData>> GetLexonUserDbAsync(TokenRequestDataBase tokenRequest, bool addTerminatorToToken)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<Result<LexUser>> GetLexonGenericAsync(TokenModelView tokenRequest, bool addTerminatorToToken)
+        {
+
+            tokenRequest.idClienteNavision = ValidarUsuario(tokenRequest.login, tokenRequest.password, tokenRequest.idClienteNavision);
+            Result<LexUser> resultado = new Result<LexUser>(new LexUser()); // await _lexonRepository.GetUserAsync(idUser);
+
+            if (string.IsNullOrEmpty(resultado?.data?.idUser))
+            {
+                resultado.errors.Add(new ErrorInfo() { code = "5000", message = "No se recupera un idUser desde Lexon" });
+            }
+            tokenRequest.mailContacts = await GetContactDataFromLexon(resultado?.data?.idUser, tokenRequest.bbdd, tokenRequest.idEntityType, tokenRequest.idEntity, tokenRequest.mailContacts);
+
+            resultado.data.token = BuildTokenWithPayloadAsync(new TokenModelLexon
+            {
+                idClienteNavision = tokenRequest.idClienteNavision,
+                name = resultado?.data?.name,
+                idUserApp = GetLongIdUser(resultado?.data?.idUser),
+                bbdd = tokenRequest.bbdd,
+                provider = tokenRequest.provider,
+                mailAccount = tokenRequest.mailAccount,
+                folder = tokenRequest.folder,
+                idMail = tokenRequest.idMail,
+                idEntityType = tokenRequest.idEntityType,
+                idEntity = tokenRequest.idEntity,
+                mailContacts = tokenRequest.mailContacts,
+                roles = await GetRolesOfUserAsync(tokenRequest.idClienteNavision, tokenRequest.login, tokenRequest.password)
+            }).Result;
+
+            resultado.data.token += addTerminatorToToken ? "/" : "";
+            return resultado;
+        }
+
+        private long? GetLongIdUser(string idUser)
+        {
+            throw new NotImplementedException();
+        }
+
+        private async  Task<List<string>> GetContactDataFromLexon(string idUser, string bbdd, short? idEntityType, int? idEntity, List<string> mailContacts)
+        {
+            var result = new Result<List<string>>(new List<string>());
+
+            //using (MySqlConnection conn = new MySqlConnection(_conn))
+            //{
+            //    try
+            //    {
+            //        var filtro = GiveMeEntityFilter(entitySearch);
+            //        conn.Open();
+            //        using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetContact, conn))
+            //        {
+            //            AddCommonParameters(entitySearch.idUser, command, "P_FILTER", filtro);
+            //            AddListSearchParameters(1, 1, "ts", "desc", command);
+
+
+            //            using (var reader = await command.ExecuteReaderAsync())
+            //            {
+            //                TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+            //                if (EvaluateErrorCommand(result.errors, command) == 0)
+            //                    while (reader.Read())
+            //                    {
+            //                        var rawResult = reader.GetValue(0).ToString();
+            //                        if (!string.IsNullOrEmpty(rawResult))
+            //                        {
+            //                            var lista = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
+            //                            result.data = lista?.FirstOrDefault();
+            //                        }
+            //                        else
+            //                        {
+            //                            TraceOutputMessage(result.errors, "2004", "MySql get and empty string with this search");
+
+            //                        }
+            //                    }
+            //            }
+            //        }
+
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        TraceMessage(result.errors, ex);
+            //    }
+            //}
+
+            return new List<string>();
         }
     }
 }
