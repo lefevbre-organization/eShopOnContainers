@@ -88,6 +88,10 @@ services:
       - nosql.data
       - rabbitmq
       - account.api
+      - lexon.api
+      - lexon.mysql.api
+      - userutils.api
+      - centinela.api
 
   lexon.api:
     image: ${REGISTRY:-elefebvreoncontainers}/lexon.api:${PLATFORM:-linux}-${TAG:-dev}
@@ -116,8 +120,11 @@ services:
     depends_on:
       - nosql.data
       - rabbitmq
+      - account.api
       - lexon.api
       - lexon.mysql.api
+      - userutils.api
+      - centinela.api
       
   webimapclient:
     image: ${REGISTRY:-elefebvreoncontainers}/webimapclient:${PLATFORM:-linux}-${TAG:-dev}
@@ -156,3 +163,4 @@ services:
       - nosql.data
       - rabbitmq
       - centinela.api
+      - userutils.api
