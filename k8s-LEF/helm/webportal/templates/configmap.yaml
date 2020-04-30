@@ -3,6 +3,7 @@
 {{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
 {{- $lexonapigw := include "url-of" (list .Values.app.ingress.entries.lexonapigw .) -}}
 {{- $accountapigw := include "url-of" (list .Values.app.ingress.entries.accountapigw .) -}}
+{{- $centinelaapigw := include "url-of" (list .Values.app.ingress.entries.centinelaapigw .) -}}
 
 apiVersion: v1
 kind: ConfigMap

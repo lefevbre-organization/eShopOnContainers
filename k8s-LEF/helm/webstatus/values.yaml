@@ -4,7 +4,7 @@ pathBase: /webstatus
 
 image:
   repository: elefebvreoncontainers/webstatuslef
-  tag: latests
+  tag: latest
   pullPolicy: IfNotPresent
 
 service:

@@ -66,15 +66,15 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-#      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
-      - LexonApiUrlHC=http://lexon.api/hc
-      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
-      - AccountApiUrlHC=http://account.api/hc
-      - UserUtilsApiUrlHC=http://userutils.api/hc
-      - CentinelaApiUrlHC=http://centinela.api/hc
-      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
+#      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
+#      - LexonApiUrlHC=http://lexon.api/hc
+#      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
+#      - AccountApiUrlHC=http://account.api/hc
+#      - UserUtilsApiUrlHC=http://userutils.api/hc
+#      - CentinelaApiUrlHC=http://centinela.api/hc
+#      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+#      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
     ports:
       - "3003:80"
 
@@ -85,15 +85,15 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-#      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
-      - LexonApiUrlHC=http://lexon.api/hc
-      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
-      - AccountApiUrlHC=http://account.api/hc
-      - UserUtilsApiUrlHC=http://userutils.api/hc
-      - CentinelaApiUrlHC=http://centinela.api/hc
-      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
+#      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
+#      - LexonApiUrlHC=http://lexon.api/hc
+#      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
+#      - AccountApiUrlHC=http://account.api/hc
+#      - UserUtilsApiUrlHC=http://userutils.api/hc
+#      - CentinelaApiUrlHC=http://centinela.api/hc
+#      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+#      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
     ports:
       - "3000:80"
 
@@ -104,15 +104,15 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-#      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
-      - LexonApiUrlHC=http://lexon.api/hc
-      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
-      - AccountApiUrlHC=http://account.api/hc
-      - UserUtilsApiUrlHC=http://userutils.api/hc
-      - CentinelaApiUrlHC=http://centinela.api/hc
-      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
+#      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
+#      - LexonApiUrlHC=http://lexon.api/hc
+#      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
+#      - AccountApiUrlHC=http://account.api/hc
+#      - UserUtilsApiUrlHC=http://userutils.api/hc
+#      - CentinelaApiUrlHC=http://centinela.api/hc
+#      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+#      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
     ports:
       - "3001:80"
 
@@ -123,36 +123,34 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-#      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
-      - LexonApiUrlHC=http://lexon.api/hc
-      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
-      - AccountApiUrlHC=http://account.api/hc
-      - UserUtilsApiUrlHC=http://userutils.api/hc
-      - CentinelaApiUrlHC=http://centinela.api/hc
       - LexonApiGatewayUrlHC=http://weblexonapigw/hc
-      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
+#      - LexonApiUrlHC=http://lexon.api/hc
+#      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
+#      - AccountApiUrlHC=http://account.api/hc
+#      - UserUtilsApiUrlHC=http://userutils.api/hc
+#      - CentinelaApiUrlHC=http://centinela.api/hc
+#      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+#      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
     ports:
       - "3005:80"
 
-  webloginaddonlexon:
+  webaddonlexon:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-#      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
-      - LexonApiUrlHC=http://lexon.api/hc
-      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
-      - AccountApiUrlHC=http://account.api/hc
-      - UserUtilsApiUrlHC=http://userutils.api/hc
-      - CentinelaApiUrlHC=http://centinela.api/hc
       - LexonApiGatewayUrlHC=http://weblexonapigw/hc
-      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
+#      - LexonApiUrlHC=http://lexon.api/hc
+#      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
+#      - AccountApiUrlHC=http://account.api/hc
+#      - UserUtilsApiUrlHC=http://userutils.api/hc
+#      - CentinelaApiUrlHC=http://centinela.api/hc
+#      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+#      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
     ports:
-      - "3006:80"
+      - "3007:80"
 
   webimapclient:
     environment:
@@ -161,15 +159,15 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
-      - LexonApiUrlHC=http://lexon.api/hc
-      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
-      - AccountApiUrlHC=http://account.api/hc
-      - UserUtilsApiUrlHC=http://userutils.api/hc
-      - CentinelaApiUrlHC=http://centinela.api/hc
-      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
+#      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
+#      - LexonApiUrlHC=http://lexon.api/hc
+#      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
+#      - AccountApiUrlHC=http://account.api/hc
+#      - UserUtilsApiUrlHC=http://userutils.api/hc
+#      - CentinelaApiUrlHC=http://centinela.api/hc
+#      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+#      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
     ports:
       - "9000:80"
 
@@ -218,7 +216,6 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionString=${ELEF_MYSQL_LEXONMYSQL_DB:-database=lexon_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90}
-#      - ConnectionString=${ESHOP_MYSQL_LEXONMYSQL_DB:-database=lexon_conecta;server=ES006-PPDDB003;port=3315;user id=led-ext-freyes;password=DSFkds4+46DSF}
       - LexonHubUrl=http://led-pre-servicehub/Herramientas/Get
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
@@ -254,8 +251,8 @@ services:
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
     ports:
-      - "8087:80"   # Important: In a production environment your should remove the external port (5110) kept here for microservice debugging purposes. 
-                    # The API Gateway redirects and access through the internal port (80).
+      - "8087:80"   # Important: In a production environment your should remove the external port kept here for microservice debugging purposes. 
+
 
   userutils.api:
     environment:
@@ -279,8 +276,7 @@ services:
       - UseLoadTest=${USE_LOADTEST:-False}
 
     ports:
-      - "8088:80"   # Important: In a production environment your should remove the external port (5110) kept here for microservice debugging purposes. 
-                    # The API Gateway redirects and access through the internal port (80).
+      - "8088:80"   # Important: In a production environment your should remove the external port kept here for microservice debugging purposes.
 
   webcentinelaapigw:
     environment:
