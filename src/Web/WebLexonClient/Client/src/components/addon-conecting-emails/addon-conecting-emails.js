@@ -55,7 +55,7 @@ class AddonConnectingEmails extends Component {
   closeDialog() {
     const values = queryString.parse(window.location.search);
       window.location.replace(
-        'https://script.google.com/macros/d/1rzrejrBXzshc4OWW_8xqAwOBJ4avJocCqN9HUBtDSo7U1KZjpqKnXyXo/usercallback' +
+        `${window.GOOGLE_SCRIPT}` +
           '?success=1' +
           '&state=' +
           values.state 
@@ -178,7 +178,7 @@ class AddonConnectingEmails extends Component {
     ) {
       setTimeout(() => {
         this.closeDialog()
-      }, 2000);
+      }, 1000);
       this.saveClassifications();
     } else {
       this.nextStep();
@@ -255,18 +255,18 @@ class AddonConnectingEmails extends Component {
 
       if (notification === 1) {
         toggleNotification(i18n.t('classify-emails.classification-saved-ok'));
-        // setTimeout(() => {
-        //   this.closeDialog()
-        // }, 2000);
+        setTimeout(() => {
+          this.closeDialog()
+        }, 1000);
       } else if (notification === 2) {
         toggleNotification(i18n.t('classify-emails.documents-saved-ok'));
         setTimeout(() => {
           this.closeDialog()
-        }, 2000);
+        }, 1000);
       } else if (notification === 3) {
         setTimeout(() => {
           this.closeDialog()
-        }, 2000);
+        }, 1000);
         toggleNotification(i18n.t('classify-emails.classification-docs-saved-ok'));
       }
 
