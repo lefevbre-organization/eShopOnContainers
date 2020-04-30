@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -21,7 +22,7 @@ namespace Centinela.Infrastructure.Services
     {
         public readonly ICentinelaRepository _centinelaRepository;
         private readonly IEventBus _eventBus;
-        private readonly IHttpClientFactory _clientFactory;
+        //private readonly IHttpClientFactory _clientFactory;
         private readonly HttpClient _client;
         private readonly IOptions<CentinelaSettings> _settings;
 
@@ -29,7 +30,7 @@ namespace Centinela.Infrastructure.Services
                 IOptions<CentinelaSettings> settings
                 , ICentinelaRepository centinelaRepository
                 , IEventBus eventBus
-                , IHttpClientFactory clientFactory
+                //, IHttpClientFactory clientFactory
                 , ILogger<CentinelaService> logger
             ) : base(logger)
         {
@@ -37,17 +38,33 @@ namespace Centinela.Infrastructure.Services
             _centinelaRepository = centinelaRepository ?? throw new ArgumentNullException(nameof(centinelaRepository));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
 
-            _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
-            _client = _clientFactory.CreateClient();
-            _client.BaseAddress = new Uri(_settings.Value.CentinelaUrl);
+            //_clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
+            //_client = _clientFactory.CreateClient();
+            
+            var uri = new Uri(_settings.Value.CentinelaUrl);
+            var credentialsCache = new CredentialCache { { uri, "NTLM", new NetworkCredential(_settings.Value.CentinelaLogin, _settings.Value.CentinelaPassword) } };
+            var handler = new HttpClientHandler { Credentials = credentialsCache };
+            _client = new HttpClient(handler) { BaseAddress = uri, Timeout = new TimeSpan(0, 0, 10) };
+            //_client.BaseAddress = uri;
 
-            var authData = Convert.ToBase64String(
-                System.Text.Encoding.ASCII.GetBytes($"{_settings.Value.CentinelaLogin}:{_settings.Value.CentinelaPassword}"));
+            //var authData = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_settings.Value.CentinelaLogin}:{_settings.Value.CentinelaPassword}"));
 
-            _client.DefaultRequestHeaders.Add("Accept", "text/plain");
-           // _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authData);
+            //_client.DefaultRequestHeaders.Add("Accept", "text/plain");
+            //_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authData);
             //_client.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            //var response = httpClient.GetAsync("api/MyMethod").Result;
         }
+
+        //services.AddHttpClient("myName").ConfigurePrimaryHttpMessageHandler(_ => new HttpClientHandler
+        //{
+        //    Credentials = new CredentialCache {
+        //    {
+        //        new Uri("url"), "NTLM", new NetworkCredential("username", "password", "domain")
+        //    }
+        //}
+        //});
+    
 
         #region Review
 
@@ -225,7 +242,7 @@ namespace Centinela.Infrastructure.Services
             var result = new Result<List<CenEvaluation>>(new List<CenEvaluation>());
             try
             {
-                //api/secure/conectamail/evaluations/user/E1654569
+                //https://compliance-api.affin.es/api/secure/conectamail/evaluations/user/E1621396
                 var url = $"{_settings.Value.CentinelaUrl}/evaluations/user/{idNavisionUser}";
 
                 using (var response = await _client.GetAsync(url))
@@ -269,7 +286,6 @@ namespace Centinela.Infrastructure.Services
             try
             {
                 // /api/secure/conectamail/search/documents?text=TEXTO&IdEntrada=ID_ENTRADA
-
                 var url = $"{_settings.Value.CentinelaUrl}/search/documents?text={search}&IdEntrada={idNavisionUser}";
 
                 using (var response = await _client.GetAsync(url))
@@ -280,8 +296,8 @@ namespace Centinela.Infrastructure.Services
 
                         if (!string.IsNullOrEmpty(rawResult))
                         {
-                            var resultado = (JsonConvert.DeserializeObject<CenDocument[]>(rawResult));
-                            result.data = resultado.ToList();
+                            var resultado = (JsonConvert.DeserializeObject<ListaDocumentos>(rawResult));
+                            result.data = resultado?.Documents?.Results?.ToList();
                         }
                     }
                     else
@@ -362,10 +378,7 @@ namespace Centinela.Infrastructure.Services
             var result = new Result<List<CenConcept>>(new List<CenConcept>());
             try
             {
-                // /api/secure/conectamail/conceptobjects/concept/CONCEPT_ID?IdEntrada=ID_ENTRADA
-                //var authData = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_settings.Value.CentinelaLogin}:{_settings.Value.CentinelaPassword}"));
-                //_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authData);
-
+        
                 var url = $"{_settings.Value.CentinelaUrl}/conceptobjects/concept/{idConcept}?IdEntrada={idNavisionUser}";
 
                 using (var response = await _client.GetAsync(url))

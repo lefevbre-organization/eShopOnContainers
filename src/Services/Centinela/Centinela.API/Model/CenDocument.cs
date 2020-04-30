@@ -1,5 +1,6 @@
 ﻿namespace Centinela.API.Models
 {
+    
     public class CenDocument
     {
         //"ProductId": "affin01",
@@ -80,10 +81,19 @@
         //"Status": "Borrador",
         public string Status { get; set; }
 
-        //"Author": "LOLA TALAVERA ",
         public string Author { get; set; }
 
         //"CreationDate": "2020-03-18T10:35:28.093",
         public string CreationDate { get; set; }
+    }
+
+    public class ListaDocumentos
+    {
+        public CenDocumentsList Documents { get; set; }
+    }
+
+    public class CenDocumentsList
+    {
+        public CenDocument[] Results { get; set; }
     }
 }
