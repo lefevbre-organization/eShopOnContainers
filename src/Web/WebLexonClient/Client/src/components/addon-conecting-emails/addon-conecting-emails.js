@@ -9,7 +9,7 @@ import { ConnectingEmailsStep1 } from '../modal-connecting-emails/step1';
 import { ConnectingEmailsStep2 } from '../modal-connecting-emails/step2';
 import { ConnectingEmailsStep3 } from '../modal-connecting-emails/step3';
 import { ConnectingEmailsStep4 } from '../modal-connecting-emails/step4';
-import { addClassification, uploadFile } from '../../services/services-lexon';
+import { addClassification, uploadFile, getMessage } from '../../services/services-lexon';
 import ACTIONS from '../../actions/documentsAction';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 const base64js = require('base64-js');
@@ -64,8 +64,6 @@ class AddonConnectingEmails extends Component {
   
   nextStep() {
     const { step, step1Data, messages } = this.state;
-    // const msgRaw = getMessage(messages[0].id, 'raw');
-    // console.log(msgRaw);
     if (step === 1) {
       this.setState({ step: 2 });
     } else if (step === 2) {
@@ -192,6 +190,7 @@ class AddonConnectingEmails extends Component {
     let notification = 0;
 
     let sc = null;
+    const msgRaw = await getMessage(selectedMessages[0].id, 'raw');
 
     try {
       if (step1Data.actuation === true) {
@@ -206,7 +205,7 @@ class AddonConnectingEmails extends Component {
         notification += 2;
         // Save email as eml format
         for (let i = 0; i < selectedMessages.length; i++) {
-          const raw = Base64.encode(selectedMessages[i].raw, false);
+          const raw = Base64.encode(msgRaw.result, false);
 
           const subject = selectedMessages[i].subject;
 
@@ -225,7 +224,7 @@ class AddonConnectingEmails extends Component {
 
           if (step1Data.saveDocuments === true) {
             // Save attachments
-            const mime = parse(selectedMessages[i].raw);
+            const mime = parse(msgRaw.result);
             for (let j = 0; j < mime.childNodes.length; j++) {
               if (
                 mime.childNodes[j].raw.indexOf(
