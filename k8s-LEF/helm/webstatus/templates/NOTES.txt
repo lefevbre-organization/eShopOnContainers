@@ -1,2 +1,2 @@
-eLefebvre WebStatus installed.
+eShop WebStatus installed.
 --------------------------

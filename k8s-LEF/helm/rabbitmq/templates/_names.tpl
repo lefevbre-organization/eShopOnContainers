@@ -3,6 +3,6 @@
 {{- if .Values.inf.mongo.host -}}
 {{- .Values.inf.mongo.host -}}
 {{- else -}}
-{{- printf "%s" "nosql-data" -}}
+{{- printf "%s" "rabbitmq" -}}
 {{- end -}}
 {{- end -}}

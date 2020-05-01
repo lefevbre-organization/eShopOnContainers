@@ -4,7 +4,7 @@ pathBase: /lexon-api
 
 image:
   repository: elefebvreoncontainers/lexon.api
-  tag: latest
+  tag: linux-lef-main-containers
   pullPolicy: IfNotPresent
 
 service:
@@ -32,6 +32,8 @@ env:
   urls:
   # configmap declares variables which value is taken from the config map defined in template configmap.yaml (name is name of var and key the key in configmap).
   configmap:
+    - name: ConnectionString
+      key: webhooks__ConnectionString
     - name: ApplicationInsights__InstrumentationKey
       key: all__InstrumentationKey
     - name: EventBusConnection
@@ -43,9 +45,9 @@ env:
     - name: IdentityUrlExternal
       key: urls__IdentityUrlExternal
     - name: ConnectionString
-      key: lexon__ConnectionString
+      key: locations__ConnectionString
     - name: Database
-      key: lexon__Database
+      key: locations__Database
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT

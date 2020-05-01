@@ -1,12 +1,12 @@
-{{- $name := include "apigwlex.fullname" . -}}
+{{- $name := include "apigwmm.fullname" . -}}
 
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: "ocelot-{{ $name }}"
   labels:
-    app: {{ template "apigwlex.name" . }}
-    chart: {{ template "apigwlex.chart" .}}
+    app: {{ template "apigwmm.name" . }}
+    chart: {{ template "apigwmm.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:

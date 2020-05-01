@@ -1,25 +1,25 @@
-{{- $name := include "lexonmysql-api.fullname" . -}}
+{{- $name := include "webhooks-api.fullname" . -}}
 {{- $cfgname := printf "%s-%s" "cfg" $name -}}
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ template "lexonmysql-api.fullname" . }}
+  name: {{ template "webhooks-api.fullname" . }}
   labels:
     ufo: {{ $cfgname}}
-    app: {{ template "lexonmysql-api.name" . }}
-    chart: {{ template "lexonmysql-api.chart" . }}
+    app: {{ template "webhooks-api.name" . }}
+    chart: {{ template "webhooks-api.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ template "lexonmysql-api.name" . }}
+      app: {{ template "webhooks-api.name" . }}
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ template "lexonmysql-api.name" . }}
+        app: {{ template "webhooks-api.name" . }}
         release: {{ .Release.Name }}
     spec:
       {{ if .Values.inf.registry -}}

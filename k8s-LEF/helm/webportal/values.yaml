@@ -4,7 +4,7 @@ pathBase: /webportal
 
 image:
   repository: elefebvreoncontainers/webportalclient
-  tag: latest
+  tag: linux-lef-main-containers
   pullPolicy: IfNotPresent
 
 service:
@@ -35,25 +35,21 @@ env:
     - name: UseLoadTest
       key: all_EnableLoadTest
     - name: LexonApiUrlHC
-      key: internalurls__lexonapi__hc
+      key: internalurls__lexonapi
     - name: LexonMySqlApiUrlHC
-      key: internalurls__lexonmysqlapi_hc
+      key: internalurls__lexonmysqlapi
     - name: AccountApiUrlHC
-      key: internalurls__accountapi__hc
+      key: internalurls__accountapi
     - name: LexonApiGatewayUrlHC
-      key: internalurls__lexonapigw__hc
+      key: internalurls__lexonapigw
     - name: AccountApiGatewayUrlHC
-      key: internalurls__accountapigw__hc
-    - name: CentinelaUrlHC
-      key: internalurls__centinela__hc
-    - name: UserUtilsUrlHC
-      key: internalurls__userutils__hc
-    - name: CentinelaApiGatewayUrlHC
-      key: internalurls__centinelaapigw__hc
+      key: internalurls__accountapigw
     - name: IdentityUrlHC
       key: internalurls__identity__hc      
     - name: IdentityUrl
       key: urls__IdentityUrl 
+    - name: SignalrHubUrl
+      key: urls__apigwws
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT

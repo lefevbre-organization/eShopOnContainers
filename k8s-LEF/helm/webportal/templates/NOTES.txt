@@ -1,2 +1,2 @@
-eLefebvre WebPortal installed.
+eShop WebPortal installed.
 -----------------------

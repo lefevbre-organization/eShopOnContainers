@@ -24,14 +24,6 @@ inf:
       database: LocationsDb
     marketing:
       database: MarketingDb
-    account:
-      database: MailAccounts
-    lexon:
-      database: LexonApiDb
-    centinela:
-      database: CentinelaApiDb
-    userutils:
-      database: UserUtilsApiDb
   redis:                    # inf.redis defines the redis' connection strings
     basket:     
       svc: basket-data      # Name of k8s svc for basket redis     

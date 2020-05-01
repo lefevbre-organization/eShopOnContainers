@@ -1,4 +1,4 @@
-{{- $name := include "lexonmysql-api.fullname" . -}}
+{{- $name := include "webhooks-api.fullname" . -}}
 {{- $sqlsrv := include "sql-name" . -}}
 {{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
 {{- $mongo := include "mongo-name" . -}}
@@ -8,8 +8,8 @@ kind: ConfigMap
 metadata:
   name: "cfg-{{ $name }}"
   labels:
-    app: {{ template "lexonmysql-api.name" . }}
-    chart: {{ template "lexonmysql-api.chart" .}}
+    app: {{ template "webhooks-api.name" . }}
+    chart: {{ template "webhooks-api.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:

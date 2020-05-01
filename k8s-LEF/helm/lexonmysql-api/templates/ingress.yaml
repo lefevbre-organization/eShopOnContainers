@@ -4,10 +4,10 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "lexonmysql-api.fullname" . }}
+  name: {{ template "webhooks-api.fullname" . }}
   labels:
-    app: {{ template "lexonmysql-api.name" . }}
-    chart: {{ template "lexonmysql-api.chart" . }}
+    app: {{ template "webhooks-api.name" . }}
+    chart: {{ template "webhooks-api.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- with .Values.ingress.annotations }}

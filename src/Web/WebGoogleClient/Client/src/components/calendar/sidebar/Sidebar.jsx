@@ -2,7 +2,8 @@ import React, { PureComponent } from "react";
 import { withTranslation } from "react-i18next";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import groupBy from "lodash/groupBy";
-import sortBy from "lodash/sortBy";
+import sortBy  from "lodash/sortBy";
+import orderBy  from "lodash/orderBy";
 import {
     faInbox,
     faEnvelopeSquare,
@@ -67,13 +68,12 @@ export class Sidebar extends PureComponent {
         const calendars = calendarList.reduce((acc, el) => {
             acc.push(el);
             return acc;
-        }, []);      
-
-        //let CalendarGroupSelected = groupBy(calendars, "selected");
-        //this.DefaultCalendar = CalendarGroupSelected.true[0].id        
+        }, []); 
+          
       
-       
-        const calendarGroups = groupBy(calendars, "accessRole");
+        let calendarOrderBy = orderBy(calendars, "primary")
+        const calendarGroups = groupBy(calendarOrderBy, "accessRole");
+        
         var visibleCalendars = [];
         var sortedCalendars = [];
 
@@ -90,11 +90,10 @@ export class Sidebar extends PureComponent {
         return (
             <React.Fragment>
                 {this.renderMyCalendarView(calendarGroups.owner)}
-                {this.renderOtherCalendars(calendarGroups.reader)}
+               
+               
             </React.Fragment>
         );
-
-
 
     }
 

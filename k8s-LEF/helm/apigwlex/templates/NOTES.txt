@@ -1,2 +1,2 @@
-eLefebvre Lexon API Gateway for LEX-ON services installed
+eShop API Gateway for LEX-ON services installed
 ----------------------------------------------------------

@@ -1,26 +1,26 @@
-{{- $name := include "apigwlex.fullname" . -}}
+{{- $name := include "apigwmm.fullname" . -}}
 {{- $cfgname := printf "%s-%s" "cfg" $name -}}
 {{- $ocelotcfgname := printf "%s-%s" "ocelot" $name -}}
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ template "apigwlex.fullname" . }}
+  name: {{ template "apigwmm.fullname" . }}
   labels:
     ufo: {{ $cfgname}}
-    app: {{ template "apigwlex.name" . }}
-    chart: {{ template "apigwlex.chart" . }}
+    app: {{ template "apigwmm.name" . }}
+    chart: {{ template "apigwmm.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ template "apigwlex.name" . }}
+      app: {{ template "apigwmm.name" . }}
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ template "apigwlex.name" . }}
+        app: {{ template "apigwmm.name" . }}
         release: {{ .Release.Name }}
     spec:
       {{ if .Values.inf.registry -}}

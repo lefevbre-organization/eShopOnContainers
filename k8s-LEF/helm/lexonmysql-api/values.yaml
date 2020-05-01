@@ -46,7 +46,7 @@ env:
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
-      value: Development
+      value: Staging
     - name: ConnectionString
       value: 'database=lexon_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=porfjr8Fgk9w;Connection Timeout=100'
     - name: LexonHubUrl
