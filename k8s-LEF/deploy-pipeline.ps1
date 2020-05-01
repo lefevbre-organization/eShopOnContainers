@@ -74,7 +74,7 @@ if ([string]::IsNullOrEmpty($imageTag)) {
     Write-Host "Get from Git imageTag $imageTag" -ForegroundColor White
 }
 
-if (-not [string]::IsNullOrEmpty($tagToRetag)) {
+if ([string]::IsNullOrEmpty($tagToRetag)) {
     Write-Host "Rename tagToRetag $tagToRetag to $imageTag" -ForegroundColor White
     $tagToRetag =  $imageTag
 }

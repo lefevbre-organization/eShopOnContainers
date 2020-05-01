@@ -7,11 +7,11 @@ Param(
     [parameter(Mandatory=$false)][bool]$buildImages=$false,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
     [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "webaddonlexon", "account.api", "lexon.api","lexon.mysql.api", "centinela.api", "userutils.api", "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "webstatus"),
-    [parameter(Mandatory=$false)][bool]$pushImages=$false,
+    [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "webaddonlexon", "account.api", "lexon.api","lexon.mysql.api", "centinela.api", "userutils.api", "ocelotapigw", "webstatuslef"),
     [parameter(Mandatory=$false)][string]$imageTag="slasher",
     [parameter(Mandatory=$false)][string]$tagToRetag="linux-dev",
-    [parameter(Mandatory=$false)][bool]$deployKubernetes=$true,
+    [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$true,
     [parameter(Mandatory=$false)][string]$kubeconfigPath,
     [parameter(Mandatory=$false)][string]$execPath,
@@ -67,7 +67,7 @@ if ([string]::IsNullOrEmpty($imageTag)) {
     Write-Host "Get from Git imageTag $imageTag" -ForegroundColor White
 }
 
-if (-not [string]::IsNullOrEmpty($tagToRetag)) {
+if ([string]::IsNullOrEmpty($tagToRetag)) {
     Write-Host "Rename tagToRetag $tagToRetag to $imageTag" -ForegroundColor White
     $tagToRetag =  $imageTag
 }
