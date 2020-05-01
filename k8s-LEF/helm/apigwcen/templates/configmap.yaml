@@ -1,4 +1,4 @@
-{{- $name := include "apigwmm.fullname" . -}}
+{{- $name := include "apigwcen.fullname" . -}}
 
 apiVersion: v1
 kind: ConfigMap

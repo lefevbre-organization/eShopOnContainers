@@ -1,2 +1,2 @@
-eefebvre API Gateway for Account API services installed
+eLefebvre Account API Gateway for LEX-ON services installed
 ----------------------------------------------------------

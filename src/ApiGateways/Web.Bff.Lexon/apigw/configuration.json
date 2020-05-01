@@ -48,7 +48,7 @@
           "Port": 80
         }
       ],
-      "UpstreamPathTemplate": "/api/{version}/util/{everything}",
+      "UpstreamPathTemplate": "/api/{version}/utils/{everything}",
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
@@ -63,11 +63,11 @@
       "UpstreamPathTemplate": "/api/{version}/cen/{everything}",
       "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE" ]
     }
+
   ],
   "GlobalConfiguration": {
     "RequestIdKey": "OcRequestId",
-    "AdministrationPath": "/administration",
-    "SkipSslValidation": true
+    "AdministrationPath": "/administration"
   }
-  }
+}
   

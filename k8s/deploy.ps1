@@ -122,7 +122,7 @@ if ($deployInfrastructure) {
 }
 
 
-Write-Host 'Deploying ocelot APIGW' -ForegroundColor Yellow
+Write-Host 'Deploying ocelot-lef APIGW' -ForegroundColor Yellow
 
 ExecKube "create configmap ocelot --from-file=mm=ocelot/configuration-mobile-marketing.json --from-file=ms=ocelot/configuration-mobile-shopping.json --from-file=wm=ocelot/configuration-web-marketing.json --from-file=ws=ocelot/configuration-web-shopping.json "
 ExecKube -cmd "apply -f ocelot/deployment.yaml"

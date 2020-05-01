@@ -69,16 +69,6 @@ services:
         NODE_IMAGE: ${NODE_IMAGE:-node:12}
     depends_on:
       - rabbitmq
-      
-  webimapclient:
-    image: ${REGISTRY:-elefebvreoncontainers}/webimapclient:${PLATFORM:-linux}-${TAG:-dev}
-    build:
-      context: .
-      dockerfile: src/Web/WebImapClient/Dockerfile    
-      args:
-        NODE_IMAGE: ${NODE_IMAGE:-node:12}
-    depends_on:
-      - rabbitmq      
 
   account.api:
     image: ${REGISTRY:-elefebvreoncontainers}/account.api:${PLATFORM:-linux}-${TAG:-dev}
@@ -135,7 +125,17 @@ services:
       - lexon.mysql.api
       - userutils.api
       - centinela.api
-
+      
+  webimapclient:
+    image: ${REGISTRY:-elefebvreoncontainers}/webimapclient:${PLATFORM:-linux}-${TAG:-dev}
+    build:
+      context: .
+      dockerfile: src/Web/WebImapClient/Dockerfile    
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+    depends_on:
+      - rabbitmq   
+      
   userutils.api:
     image: ${REGISTRY:-elefebvreoncontainers}/userutils.api:${PLATFORM:-linux}-${TAG:-dev}
     build:
@@ -164,4 +164,3 @@ services:
       - rabbitmq
       - centinela.api
       - userutils.api
-      
