@@ -150,7 +150,7 @@ services:
 #      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
 #      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
     ports:
-      - "3007:80"
+      - "3006:80"
 
   webimapclient:
     environment:
@@ -168,25 +168,6 @@ services:
 #      - CentinelaApiUrlHC=http://centinela.api/hc
 #      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
 #      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
-    ports:
-      - "3007:80"
-
-  webimapclient:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://0.0.0.0:80
-      - UseCustomizationData=True
-      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
-      - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
-      - LexonApiUrlHC=http://lexon.api/hc
-      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
-      - AccountApiUrlHC=http://account.api/hc
-      - UserUtilsApiUrlHC=http://userutils.api/hc
-      - CentinelaApiUrlHC=http://centinela.api/hc
-      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
-      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
     ports:
       - "9000:80"
 
@@ -252,8 +233,7 @@ services:
     ports:
       - "8086:80"   
     volumes:
-      - ./src/ApiGateways/Web.Bff.Lexon/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
-      
+      - ./src/ApiGateways/Web.Bff.Lexon/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration} 
 
   centinela.api:
     environment:
@@ -272,7 +252,6 @@ services:
       - UseLoadTest=${USE_LOADTEST:-False}
     ports:
       - "8087:80"   # Important: In a production environment your should remove the external port kept here for microservice debugging purposes. 
-
 
   userutils.api:
     environment:
@@ -294,7 +273,6 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - UseLoadTest=${USE_LOADTEST:-False}
-
     ports:
       - "8088:80"   # Important: In a production environment your should remove the external port kept here for microservice debugging purposes.
 
