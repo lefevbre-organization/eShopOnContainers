@@ -87,13 +87,13 @@ export class Sidebar extends PureComponent {
             sortedCalendars = sortBy(visibleCalendars, "name");
         }
 
+       
         return (
-            <React.Fragment>
-                {this.renderMyCalendarView(calendarGroups.owner)}
-               
-               
-            </React.Fragment>
-        );
+           <React.Fragment>
+             {this.renderMyCalendarView(calendarGroups.owner)}
+             {this.renderOtherCalendars(calendarGroups.reader)}
+           </React.Fragment>
+        ); 
 
     }
 
@@ -133,34 +133,38 @@ export class Sidebar extends PureComponent {
     }
 
     renderOtherCalendars(calendarsOthers) {
-        const { t } = this.props;
 
-        return (
-            <React.Fragment>
-               
-                <li key="olders-nav-title" className="pl-2 nav-title">
-                    {t("calendar-sidebar.othercalendars")}
-                </li>
-                {calendarsOthers.map(el => {
-                    const iconProps = {
-                        icon: faCalendar,
-                        color: "#001978",
-                        size: "lg"
-                    };
-                    return (
-                        <CalendarItem
-                            key={el.id + "_label"}
-                            onClick={this.navigateToList}
-                            name={el.summary}
-                            id={el.id}
-                            accessRole={el.accessRole}
-                            iconProps={iconProps}
-                            selected={el.selected}
-                        />
-                    );
-                })}
-            </React.Fragment>
-        );
+        if (calendarsOthers != undefined) {
+
+            const { t } = this.props;
+
+            return (
+                <React.Fragment>
+
+                    <li key="olders-nav-title" className="pl-2 nav-title">
+                        {t("calendar-sidebar.othercalendars")}
+                    </li>
+                    {calendarsOthers.map(el => {
+                        const iconProps = {
+                            icon: faCalendar,
+                            color: "#001978",
+                            size: "lg"
+                        };
+                        return (
+                            <CalendarItem
+                                key={el.id + "_label"}
+                                onClick={this.navigateToList}
+                                name={el.summary}
+                                id={el.id}
+                                accessRole={el.accessRole}
+                                iconProps={iconProps}
+                                selected={el.selected}
+                            />
+                        );
+                    })}
+                </React.Fragment>
+            );
+        }
     }
 
     render() {

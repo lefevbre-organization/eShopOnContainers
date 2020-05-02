@@ -31,9 +31,6 @@ import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
 
 
-
-
-
 export class Calendar extends Component {
 
     constructor(props) {
@@ -149,24 +146,24 @@ export class Calendar extends Component {
                     RecurrenceRule: recurrenceRule,
 
                     //Fake to remove
-                    resources: [{
-                        field: "calendarId",
-                        title: "Calendar",
-                        resourceSettings: {
-                            dataSource: [{
-                                CalendarText: "alberto",
-                                id: 1,
-                                CalendarColor: "#f8a398"
-                            }, {
-                                CalnendarText: "Steven",
-                                id: 2,
-                                CalendarColor: "#56ca95"
-                            }],
-                            text: "calnedarText",
-                            id: "id",
-                            color: "calendarColor"
-                        }
-                    }],
+                    //resources: [{
+                    //    field: "calendarId",
+                    //    title: "Calendar",
+                    //    resourceSettings: {
+                    //        dataSource: [{
+                    //            CalendarText: "alberto",
+                    //            id: 1,
+                    //            CalendarColor: "#f8a398"
+                    //        }, {
+                    //            CalnendarText: "Steven",
+                    //            id: 2,
+                    //            CalendarColor: "#56ca95"
+                    //        }],
+                    //        text: "calnedarText",
+                    //        id: "id",
+                    //        color: "calendarColor"
+                    //    }
+                    //}],
                 });
             }
         }
@@ -230,14 +227,7 @@ export class Calendar extends Component {
     }   
 
     componentDidMount() {  
-
-        //getCalendarList().then(calendarList => {
-        //    dispatch({
-        //        type: GET_CALENDARS,
-        //        payload: calendarList.items
-        //    });
-        //});
-        
+       
         getCalendarList()
             .then(result => {                
                 this.resourceCalendarData = orderBy(result.items, "primary");              
@@ -273,6 +263,8 @@ export class Calendar extends Component {
         }
 
         if (values.RecurrenceRule != undefined) { event.recurrence = ['RRULE:' + values.RecurrenceRule] };
+       // if (values.RecurrenceException != undefined) { event.RecurrenceException = [values.RecurrenceException] };
+        
         //if (values.IsAllDay != undefined) { event.isallday = values.IsAllDay };        
       
             //'attendees': [
@@ -291,7 +283,27 @@ export class Calendar extends Component {
     }
 
     onEventDragStart(args) {
-      args.navigation.enable = true;
+        //if (args.data.RecurrenceRule != undefined) {
+        //    args.navigation.enable = false;
+        //    //args.cancel = true; //cancels the drop action
+          
+        //}
+        //else {            
+        //    //enable the drop action
+        //    args.navigation.enable = true;
+        //}
+        ////setTimeout(function () {
+        ////    args.cancel = false;
+        ////}, 500);
+        
+    }
+
+    onEventDragStop(args) {
+        //args.cancel = false
+    }
+
+    onEventClick(args) {
+      let a = args
     }
 
     onPopupOpen(args) {
@@ -338,31 +350,24 @@ export class Calendar extends Component {
                 let itemToModify = args.data.Id
                 let calendarToModify = args.data.CalendarId
                 if (args.data.occurrence != undefined) {
-                    var d = new Date(args.data.occurrence.StartTime);
-                    var dateString = moment(d).seconds(0).toISOString().split('.')[0] + "Z";
-                    var ExcRecurenceDate = dateString.replace(/[:.-]/g, "");
-                    itemToModify = args.data.parent.Id + '_' + ExcRecurenceDate;   
-                    event = this.buildEventoGoogle(args.addedRecords);
 
+                    //call function to remvove event from serie
+                    let eventItemToModify
+                    var singleEventToRemove = args.changedRecords[0].RecurrenceException.split(",");  
+                    if (singleEventToRemove.length > 0) {
+                        eventItemToModify = args.data.parent.Id + '_' + singleEventToRemove[singleEventToRemove.length - 1];
+                    }
+                    else {
+                        eventItemToModify = args.data.parent.Id + '_' + singleEventToRemove[0];
+                    }
+                    this.deleteCalendarEventCRUD(args.data.parent.CalendarId, eventItemToModify, true);
+
+                    //call function to add new single event out of the serie
+                    args.addedRecords[0].RecurrenceRule = undefined
+                    let eventOcurrence = this.buildEventoGoogle(args.addedRecords[0]);
+                    this.addCalendarEventCRUD(args.data.parent.CalendarId, eventOcurrence); 
+                    break                   
                     
-                    addCalendarEvent(args.data.occurrence.CalendarId, event)
-                        .then(result => {
-                            this.toastObj.show(this.toasts[2]);
-                        })
-                        .catch(error => {
-                            this.toastObj.show(this.toasts[3]);
-                            console.log('error ->', error);
-                        })
-
-                    //deleteCalendarEvent(args.data.occurrence, itemToModify)
-                    //    .then(result => {
-                    //        this.toastObj.show(this.toasts[2]);
-                    //    })
-                    //    .catch(error => {
-                    //        this.toastObj.show(this.toasts[3]);
-                    //        console.log('error ->', error);
-                    //    })
-
                 }
                 if (args.changedRecords[0] != undefined) {                   
                     itemToModify = args.changedRecords[0].Id;
@@ -371,15 +376,8 @@ export class Calendar extends Component {
                 }
 
                 //call function to update event
-                updateCalendarEvent(calendarToModify, itemToModify, event)
-                    .then(result => {
-                        this.toastObj.show(this.toasts[2]);
-                    })
-                    .catch(error => {
-                        this.toastObj.show(this.toasts[3]);
-                        console.log('error ->', error);
-                    })
-                
+                this.updateCalendarEventCRUD(calendarToModify, itemToModify, event);
+                               
                 break;
 
             case 'eventCreated':
@@ -387,15 +385,8 @@ export class Calendar extends Component {
                 event = this.buildEventoGoogle(args.data[0]);
 
                 //call function to add event
-                addCalendarEvent(args.data[0].CalendarId, event)
-                    .then(result => { 
-                        this.toastObj.show(this.toasts[1]);                 
-                    })
-                    .catch(error => {
-                        this.toastObj.show(this.toasts[3]);
-                        console.log('error ->', error);
-                    }) 
-
+                this.addCalendarEventCRUD(args.data[0].CalendarId, event);
+               
                 break;
 
             case 'eventRemoved':
@@ -411,18 +402,53 @@ export class Calendar extends Component {
                    // item = args.data[0].parent.Id + '_' + args.data[0].parent.RecurrenceException; 
                 }
 
-                deleteCalendarEvent(calendarFromRemove, item)
-                    .then(result => {
-                        this.toastObj.show(this.toasts[2]); 
-                    })
-                    .catch(error => {
-                        this.toastObj.show(this.toasts[3]);
-                        console.log('error ->', error);
-                    })
+                //call function to remvove event
+                this.deleteCalendarEventCRUD(calendarFromRemove, item);                
 
                 break;
-        }      
-    }   
+        }  
+
+       
+    }  
+
+    addCalendarEventCRUD(CalendarId, event, hiddeMessage) {
+        addCalendarEvent(CalendarId, event)
+            .then(result => {
+                if (!hiddeMessage) {
+                    this.toastObj.show(this.toasts[1]);
+                }               
+            })
+            .catch(error => {
+                this.toastObj.show(this.toasts[3]);
+                console.log('error ->', error);
+            })
+    }
+
+    deleteCalendarEventCRUD(calendarId, item, hiddeMessage) {
+        deleteCalendarEvent(calendarId, item)
+            .then(result => {
+                if (!hiddeMessage) {
+                    this.toastObj.show(this.toasts[2]);
+                }
+            })
+            .catch(error => {
+                this.toastObj.show(this.toasts[3]);
+                console.log('error ->', error);
+            })
+    }
+
+    updateCalendarEventCRUD(calendarId, item, event, hiddeMessage) {
+        updateCalendarEvent(calendarId, item, event)
+            .then(result => {
+                if (!hiddeMessage) {
+                    this.toastObj.show(this.toasts[2]);
+                }
+            })
+            .catch(error => {
+                this.toastObj.show(this.toasts[3]);
+                console.log('error ->', error);
+            })
+    }
 
     loadCalendarEvents(calendar, checked) {  
       
@@ -623,7 +649,9 @@ export class Calendar extends Component {
                                                 actionComplete={this.onEventRendered.bind(this)}
                                                 popupOpen={this.onPopupOpen.bind(this)}                                           
                                                 eventSettings={{ dataSource: this.scheduleData }}
-                                                dragStart={(this.onEventDragStart.bind(this))}>
+                                                dragStart={(this.onEventDragStart.bind(this))}
+                                                eventClick={(this.onEventClick.bind(this))}
+                                                dragStop={(this.onEventDragStop.bind(this))}>
                                                 <ViewsDirective>
                                                     <ViewDirective option='Day' />
                                                     <ViewDirective option='Week' />
