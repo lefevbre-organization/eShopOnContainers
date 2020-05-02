@@ -90,7 +90,7 @@ function buildHomeCard(selectCompany) {
       bbdd: companyObj.bbdd,
       name: companyObj.name,
       account: account,
-      provider: 'GO',
+      provider: 'GOOGLE',
       messageId: messageId,
       subject: subject,
       folder: 'Inbox',
