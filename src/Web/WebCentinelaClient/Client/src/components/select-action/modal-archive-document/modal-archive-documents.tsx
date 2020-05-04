@@ -6,18 +6,17 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 import { AppState } from '../../../store/store';
 import { bindActionCreators } from 'redux';
 import { ApplicationActions } from '../../../store/application/actions';
-import Spinner from '../../spinner/spinner';
 import { Step1 } from './step1';
 import { Step2 } from './step2';
 import { Step3 } from './step3';
-import { Implantation, Phase } from '../../../services/services-centinela';
+import { Evaluation } from '../../../services/services-centinela';
 const parse = require('emailjs-mime-parser').default;
 const base64js = require('base64-js');
 
 const mapStateToProps = (state: AppState) => {
   return {
     showAttachDocuments: state.application.showArchiveModal,
-    selected: state.messages.selected
+    selected: state.messages.selected,
   };
 };
 
@@ -25,10 +24,10 @@ const mapDispatchToProps = (dispatch: any) => {
   return {
     ...bindActionCreators(
       {
-        toggleArchiveModal: ApplicationActions.toggleArchiveModal
+        toggleArchiveModal: ApplicationActions.toggleArchiveModal,
       },
       dispatch
-    )
+    ),
   };
 };
 
@@ -38,9 +37,7 @@ type ReduxProps = ConnectedProps<typeof connector>;
 interface Props extends ReduxProps {}
 
 interface State {
-  showSpinner: boolean;
-  implantation: Implantation | null;
-  phase: Phase | null;
+  implantation: Evaluation | null;
   complete: boolean;
   search: string;
   step: number;
@@ -56,23 +53,20 @@ class ModalArchiveDocuments extends Component<Props, State> {
     super(props);
 
     this.state = {
-      showSpinner: false,
       complete: false,
       implantation: null,
-      phase: null,
       search: '',
       step: 1,
       entity: 0,
       messages: [],
       files: [],
       copyEmail: true,
-      copyAttachments: true
+      copyAttachments: true,
     };
 
     this.onCopyAttachments = this.onCopyAttachments.bind(this);
     this.onCopyEmail = this.onCopyEmail.bind(this);
     this.onImplantation = this.onImplantation.bind(this);
-    this.onPhase = this.onPhase.bind(this);
   }
 
   componentDidMount() {
@@ -138,7 +132,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
         entity: 0,
         messages: [],
         files: [],
-        complete: false
+        complete: false,
       });
     }, 1000);
     toggleArchiveModal && toggleArchiveModal();
@@ -183,7 +177,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
     if (step === 1 && (copyAttachments === true || copyEmail === true)) {
       return false;
     }
-    if (step === 2 && implantation && implantation.Id > 0) {
+    if (step === 2 && implantation && implantation.evaluationId > 0) {
       return false;
     }
 
@@ -315,24 +309,17 @@ class ModalArchiveDocuments extends Component<Props, State> {
     }
   }
 
-  onImplantation(imp: Implantation) {
+  onImplantation(imp: Evaluation) {
     const { implantation } = this.state;
-    if (implantation?.Id !== imp.Id) {
+    if (implantation?.evaluationId !== imp.evaluationId) {
       this.setState({ implantation: imp });
-    }
-  }
-
-  onPhase(ph: Phase) {
-    const { phase } = this.state;
-    if (phase?.Id !== ph.Id) {
-      this.setState({ phase: ph });
     }
   }
 
   render() {
     const { showAttachDocuments } = this.props;
-
-    const { showSpinner, messages, step, implantation } = this.state;
+    const { messages, step, implantation } = this.state;
+    console.log();
 
     return (
       <div className='modal-connection-emails'>
@@ -357,49 +344,46 @@ class ModalArchiveDocuments extends Component<Props, State> {
           </Modal.Header>
           <Modal.Body className='mimodal'>
             <Container>
-              {showSpinner === true && <Spinner />}
-              {showSpinner === false && (
-                <Fragment>
-                  <div
-                    style={{
-                      display: this.state.step === 1 ? 'block' : 'none'
-                    }}>
-                    <Step1
-                      selected={messages}
-                      onCopyEmail={this.onCopyEmail}
-                      onCopyAttachments={this.onCopyAttachments}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      display: this.state.step === 2 ? 'block' : 'none'
-                    }}>
-                    <Step2
-                      user={'messages'}
-                      show={step === 2}
-                      implantation={''}
-                      onImplantation={this.onImplantation}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      display: this.state.step === 3 ? 'block' : 'none'
-                    }}>
-                    <Step3
-                      user={'messages'}
-                      show={step === 3}
-                      implantation={implantation}
-                      onPhase={this.onPhase}
-                    />{' '}
-                  </div>
-                  <div
-                    style={{
-                      display: this.state.step === 4 ? 'block' : 'none'
-                    }}>
-                    <div>Step 4</div>
-                  </div>
-                </Fragment>
-              )}
+              <Fragment>
+                <div
+                  style={{
+                    display: this.state.step === 1 ? 'block' : 'none',
+                  }}>
+                  <Step1
+                    selected={messages}
+                    onCopyEmail={this.onCopyEmail}
+                    onCopyAttachments={this.onCopyAttachments}
+                  />
+                </div>
+                <div
+                  style={{
+                    display: this.state.step === 2 ? 'block' : 'none',
+                  }}>
+                  <Step2
+                    user={'E16'}
+                    show={step === 2}
+                    implantation={''}
+                    onImplantation={this.onImplantation}
+                  />
+                </div>
+                <div
+                  style={{
+                    display: this.state.step === 3 ? 'block' : 'none',
+                  }}>
+                  <Step3
+                    user={'messages'}
+                    show={step === 3}
+                    implantation={implantation}
+                    //onPhase={() => {}}
+                  />
+                </div>
+                <div
+                  style={{
+                    display: this.state.step === 4 ? 'block' : 'none',
+                  }}>
+                  <div>Step 4</div>
+                </div>
+              </Fragment>
             </Container>
           </Modal.Body>
           <Modal.Footer>{this.renderButtons()}</Modal.Footer>

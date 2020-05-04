@@ -3,23 +3,26 @@ import {
   GridComponent,
   ColumnsDirective,
   ColumnDirective,
-  rowSelected
+  rowSelected,
 } from '@syncfusion/ej2-react-grids';
 import { L10n } from '@syncfusion/ej2-base';
 import i18n from 'i18next';
 import {
-  getImplantations,
-  Implantation
+  getUser,
+  Evaluation,
+  CentUser,
 } from '../../../services/services-centinela';
+import * as _ from 'lodash';
 import ImplantationListSearch from '../implantation-list-search/implantation-list-search';
+import Spinner from '../../spinner/spinner';
 //import ImplantationListSearch from '../implantation-list-search/implantation-list-search';
 
 L10n.load({
   'es-ES': {
     grid: {
-      EmptyRecord: 'No hay datos que mostrar'
-    }
-  }
+      EmptyRecord: 'No hay datos que mostrar',
+    },
+  },
 });
 
 interface Props {
@@ -27,7 +30,7 @@ interface Props {
   show: boolean;
   implantation: any;
   toggleNotification?: (msg: string, error: boolean) => void;
-  onImplantation: (id: Implantation) => void;
+  onImplantation: (id: Evaluation) => void;
 }
 interface State {
   implantations: any;
@@ -35,24 +38,26 @@ interface State {
   rowSelected: number;
   currentPage: number;
   search: string;
-  showSpinner: boolean;
   lastPage: boolean;
+  showSpinner: boolean;
 }
 
 export class Step2 extends React.Component<Props, State> {
   private toolbarOptions: any;
   private gridRef: any;
+  private allImplantations: any;
+  private searchImplantations: any;
 
   constructor(props: Props) {
     super(props);
     this.state = {
       implantations: [],
+      showSpinner: false,
       counter: 0,
       rowSelected: -1,
       currentPage: 1,
       search: '',
-      showSpinner: true,
-      lastPage: false
+      lastPage: false,
     };
     this.toolbarOptions = ['Search'];
     this.renderCheck = this.renderCheck.bind(this);
@@ -61,75 +66,99 @@ export class Step2 extends React.Component<Props, State> {
     this.searchResultsByType = this.searchResultsByType.bind(this);
   }
 
+  async componentDidMount() {}
+
   async componentDidUpdate(prevProps: Props, prevState: State) {
-    const { user, toggleNotification } = this.props;
-    const { currentPage, search } = this.state;
+    const { show, user } = this.props;
 
-    if (prevProps.show === false && this.props.show === true) {
-      const opened = document.getElementsByClassName(
-        'lexon-clasification-list-searcher search-close-2 opened'
-      );
-      if (opened && opened.length > 0) {
-        const closeButton: any = document.getElementsByClassName(
-          'search-trigger-hide search-close-2'
-        )[0];
-        if (closeButton) {
-          closeButton.click();
-        }
-      }
+    if (show === true && prevProps.show === false) {
+      this.setLoadingStatus(true);
+      const response = await getUser(user);
+      this.allImplantations = (response.data as CentUser).evaluations;
+      this.searchImplantations = this.allImplantations;
 
-      this.setState({ currentPage: -1, search: '', showSpinner: true }, () => {
-        this.setState({ currentPage: 1 });
+      this.setState({
+        currentPage: 1,
+        lastPage: this.searchImplantations.length <= 6,
+        implantations: _.slice(this.searchImplantations, 0, 6),
+        showSpinner: false,
       });
-      return;
-    }
-
-    if (prevProps.implantation !== this.props.implantation) {
-      this.setState({ rowSelected: -1 });
-    }
-
-    if (
-      (prevProps.show === false && this.props.show === true) ||
-      prevProps.implantation !== this.props.implantation ||
-      prevState.search !== this.state.search ||
-      (prevState.currentPage !== this.state.currentPage &&
-        this.state.currentPage > -1)
-    ) {
-      try {
-        this.setState({ showSpinner: true });
-        const response = await getImplantations(user, search, 6, currentPage);
-
-        if (response && response.results && response.results.data) {
-          let lastPage = response.results.count < 6;
-          this.setState(
-            {
-              implantations: [...response.results.data],
-              counter: response.results.count,
-              lastPage,
-              showSpinner: false
-            },
-            () => {}
-          );
-        }
-      } catch (err) {
-        toggleNotification &&
-          toggleNotification(
-            'Errores: ' + err.errors.map((e: any) => e.message).join('; '),
-            true
-          );
-        this.setState({
-          implantations: [],
-          counter: 0,
-          lastPage: false,
-          showSpinner: false
-        });
-      }
     }
   }
 
+  setLoadingStatus(show: boolean) {
+    this.setState({ showSpinner: show });
+  }
+
+  // async componentDidUpdate(prevProps: Props, prevState: State) {
+  //   debugger;
+  //   const { user, toggleNotification } = this.props;
+  //   const { currentPage, search } = this.state;
+
+  //   if (prevProps.show === false && this.props.show === true) {
+  //     const opened = document.getElementsByClassName(
+  //       'lexon-clasification-list-searcher search-close-2 opened'
+  //     );
+  //     if (opened && opened.length > 0) {
+  //       const closeButton: any = document.getElementsByClassName(
+  //         'search-trigger-hide search-close-2'
+  //       )[0];
+  //       if (closeButton) {
+  //         closeButton.click();
+  //       }
+  //     }
+
+  //     this.setState({ currentPage: -1, search: '', showSpinner: true }, () => {
+  //       this.setState({ currentPage: 1 });
+  //     });
+  //     return;
+  //   }
+
+  //   if (prevProps.implantation !== this.props.implantation) {
+  //     this.setState({ rowSelected: -1 });
+  //   }
+
+  //   if (
+  //     (prevProps.show === false && this.props.show === true) ||
+  //     prevProps.implantation !== this.props.implantation ||
+  //     prevState.search !== this.state.search ||
+  //     (prevState.currentPage !== this.state.currentPage &&
+  //       this.state.currentPage > -1)
+  //   ) {
+  //     try {
+  //       this.setState({ showSpinner: true });
+  //       const response = await getUser(user);
+
+  //       // if (response && response.results && response.results.data) {
+  //       //   let lastPage = response.results.count < 6;
+  //       //   this.setState(
+  //       //     {
+  //       //       implantations: [...response.results.data],
+  //       //       counter: response.results.count,
+  //       //       lastPage,
+  //       //       showSpinner: false
+  //       //     },
+  //       //     () => {}
+  //       //   );
+  //       // }
+  //     } catch (err) {
+  //       toggleNotification &&
+  //         toggleNotification(
+  //           'Errores: ' + err.errors.map((e: any) => e.message).join('; '),
+  //           true
+  //         );
+  //       this.setState({
+  //         implantations: [],
+  //         counter: 0,
+  //         lastPage: false,
+  //         showSpinner: false
+  //       });
+  //     }
+  //   }
+  // }
+
   renderCheck(item: any) {
-    console.log('RenderCheck');
-    const check = item.Id === this.state.rowSelected ? 'checked' : '';
+    const check = item.evaluationId === this.state.rowSelected ? 'checked' : '';
     return (
       <div className={`row-check ${check}`}>
         <div className={`row-check-inner ${check}`}></div>
@@ -138,43 +167,98 @@ export class Step2 extends React.Component<Props, State> {
   }
 
   nextPage() {
+    let lp = false;
     if (this.state.lastPage === false) {
       const np = this.state.currentPage + 1;
-      this.setState({ currentPage: np, showSpinner: true });
+      const fi = (np - 1) * 6;
+      if (fi + 6 >= this.searchImplantations.length) {
+        lp = true;
+      }
+      this.setState({
+        currentPage: np,
+        lastPage: lp,
+        implantations: _.slice(this.searchImplantations, (np - 1) * 6, fi + 6),
+      });
     }
   }
 
   prevPage() {
+    let lp = false;
+
     if (this.state.currentPage > 1) {
       const np = this.state.currentPage - 1;
-      this.setState({ currentPage: np, showSpinner: true });
+      const fi = (np - 1) * 6;
+      if (fi + 6 >= this.searchImplantations.length) {
+        lp = true;
+      }
+
+      this.setState({
+        currentPage: np,
+        lastPage: lp,
+        implantations: _.slice(this.searchImplantations, (np - 1) * 6, fi + 6),
+      });
     }
   }
 
   onRowSelected(event: any) {
     const { rowSelected } = this.state;
     const { onImplantation } = this.props;
-    if (rowSelected !== event.data.Id) {
-      this.setState({ rowSelected: event.data.Id }, () => {
-        onImplantation(event.data);
-      });
+    if (rowSelected !== event.data.evaluationId) {
+      this.setState(
+        {
+          rowSelected: event.data.evaluationId,
+        },
+        () => {
+          onImplantation(event.data);
+        }
+      );
     }
   }
 
   searchResultsByType(type: any, search: string) {
     if (this.state.search !== search) {
-      this.setState({
-        search: search || '',
-        showSpinner: true,
-        currentPage: 1,
-        counter: 0
-      });
+      this.setState(
+        {
+          search: search || '',
+          currentPage: 1,
+          counter: 0,
+          showSpinner: true,
+        },
+        () => {
+          var re = new RegExp(search, 'i');
+          this.searchImplantations = this.allImplantations.filter(
+            (item: Evaluation) => {
+              if (
+                item.name.search(re) != -1 ||
+                item.clientName.search(re) != -1
+              ) {
+                return true;
+              }
+              return false;
+            }
+          );
+
+          this.setState({
+            showSpinner: false,
+            lastPage: this.searchImplantations.length <= 6,
+            currentPage: 1,
+            counter: this.searchImplantations.length,
+            implantations: this.searchImplantations,
+          });
+        }
+      );
     }
   }
 
   render() {
     const { implantation } = this.props;
-    const { counter, implantations, currentPage, rowSelected } = this.state;
+    const {
+      showSpinner,
+      counter,
+      implantations,
+      currentPage,
+      rowSelected,
+    } = this.state;
 
     return (
       <Fragment>
@@ -185,6 +269,11 @@ export class Step2 extends React.Component<Props, State> {
             </li>
           </ol>
           <section className='section-border'>
+            {showSpinner === true && (
+              <div className='spinner-wrapper'>
+                <Spinner />
+              </div>
+            )}
             <p className='section-title'>{'FILTRAR POR PRODUCTO'}</p>
             <ImplantationListSearch
               closeClassName='search-close-2'
@@ -192,12 +281,12 @@ export class Step2 extends React.Component<Props, State> {
               countResults={counter}></ImplantationListSearch>
             <div style={{ height: 300 }}>
               <GridComponent
-                ref={g => (this.gridRef = g)}
+                ref={(g) => (this.gridRef = g)}
                 dataSource={implantations}
                 height={'300px'}
                 selectionSettings={{ type: 'Single', mode: 'Row' }}
                 locale='es-ES'
-                rowSelected={event => {
+                rowSelected={(event) => {
                   this.onRowSelected(event);
                 }}>
                 <ColumnsDirective>
@@ -208,10 +297,10 @@ export class Step2 extends React.Component<Props, State> {
                     template={this.renderCheck}
                   />
                   <ColumnDirective
-                    field='Description'
+                    field='name'
                     headerText='Implantación'></ColumnDirective>
                   <ColumnDirective
-                    field='Organization'
+                    field='clientName'
                     headerText='Organización'
                     width='150'></ColumnDirective>
                 </ColumnsDirective>
@@ -236,6 +325,7 @@ export class Step2 extends React.Component<Props, State> {
                 </div>
               </section>
             </div>
+            )
           </section>
         </div>
         <style jsx>
@@ -247,6 +337,11 @@ export class Step2 extends React.Component<Props, State> {
               margin: 30px;
             }
 
+            .spinner-wrapper {
+              background-color: rgba(252, 255, 255, 0.8);
+              position: absolute;
+              top: 0;
+            }
             .section-border {
               position: sticky;
               border: 1px solid #d2d2d2;

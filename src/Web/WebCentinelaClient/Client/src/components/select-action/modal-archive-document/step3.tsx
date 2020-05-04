@@ -3,20 +3,23 @@ import {
   GridComponent,
   ColumnsDirective,
   ColumnDirective,
-  rowSelected
+  rowSelected,
 } from '@syncfusion/ej2-react-grids';
 import { L10n } from '@syncfusion/ej2-base';
 import i18n from 'i18next';
-import { getPhases, Phase } from '../../../services/services-centinela';
+import {
+  getEvaluationById,
+  getEvaluationTree,
+} from '../../../services/services-centinela';
 import ImplantationListSearch from '../implantation-list-search/implantation-list-search';
 //import ImplantationListSearch from '../implantation-list-search/implantation-list-search';
 
 L10n.load({
   'es-ES': {
     grid: {
-      EmptyRecord: 'No hay datos que mostrar'
-    }
-  }
+      EmptyRecord: 'No hay datos que mostrar',
+    },
+  },
 });
 
 interface Props {
@@ -24,10 +27,12 @@ interface Props {
   show: boolean;
   implantation: any;
   toggleNotification?: (msg: string, error: boolean) => void;
-  onPhase: (id: Phase) => void;
+  // onPhase: (id: Evaluation) => void;
 }
 interface State {
   phases: any;
+  route: any;
+  currentNodes: any;
   rowSelected: number;
   showSpinner: boolean;
 }
@@ -40,12 +45,16 @@ export class Step3 extends React.Component<Props, State> {
     super(props);
     this.state = {
       phases: [],
+      route: [],
+      currentNodes: { items: [] },
       rowSelected: -1,
-      showSpinner: true
+      showSpinner: true,
     };
     this.toolbarOptions = ['Search'];
     this.onRowSelected = this.onRowSelected.bind(this);
     this.renderArrow = this.renderArrow.bind(this);
+    this.renderIcon = this.renderIcon.bind(this);
+    this.renderTitle = this.renderTitle.bind(this);
     this.gridRef = null;
   }
 
@@ -68,23 +77,27 @@ export class Step3 extends React.Component<Props, State> {
       return;
     }
 
-    if (prevProps.implantation !== this.props.implantation) {
-      this.setState({ rowSelected: -1 });
-    }
-
     if (
       (prevProps.show === false && this.props.show === true) ||
       prevProps.implantation !== this.props.implantation
     ) {
       try {
         this.setState({ showSpinner: true });
-        const response = await getPhases(user, implantation.Id);
+        const response = await getEvaluationTree(
+          user,
+          implantation.evaluationId
+        );
+        console.log(response);
 
-        if (response && response.results && response.results.data) {
+        if (response.errors.length === 0) {
           this.setState(
             {
-              phases: [...response.results.data],
-              showSpinner: false
+              phases: [...response.data],
+              currentNodes: {
+                node: 'root',
+                items: [...response.data],
+              },
+              showSpinner: false,
             },
             () => {}
           );
@@ -97,54 +110,104 @@ export class Step3 extends React.Component<Props, State> {
           );
         this.setState({
           phases: [],
-          showSpinner: false
+          showSpinner: false,
         });
       }
     }
   }
 
   onRowSelected(event: any) {
-    const { rowSelected } = this.state;
-    const { onPhase } = this.props;
-    if (rowSelected !== event.data.Id) {
-      this.setState({ rowSelected: event.data.Id }, () => {
-        onPhase(event.data.Id);
-      });
-    }
+    const { rowSelected, route } = this.state;
+    const nr = [...route, event.data];
+
+    this.setState({
+      route: nr,
+      currentNodes: {
+        node: 'id',
+        items: [...event.data.children, ...event.data.concepts],
+      },
+    });
+    // if (rowSelected !== event.data.Id) {
+    //   this.setState({ rowSelected: event.data.Id }, () => {
+    //     //onPhase(event.data.Id);
+    //   });
+    // }
   }
 
   renderArrow(row: any) {
     return <i className='lf-icon-angle-right row-arrow'></i>;
   }
 
+  renderIcon(row: any) {
+    if (!row.conceptId) {
+      return <i className='lf-icon-folder'></i>;
+    } else {
+      return <i className='lf-icon-compliance'></i>;
+    }
+  }
+
+  renderTitle(row: any) {
+    if (row.name) {
+      return <span>{row.name}</span>;
+    } else {
+      return <span>{row.title}</span>;
+    }
+  }
+
+  renderBreadcrumbs() {
+    const { route } = this.state;
+    return (
+      <div className='breadcrumb-link'>
+        {route.map((r: any, i: number) => {
+          if (i > 0) {
+            return (
+              <>
+                <span>{' > '}</span>
+                <span className='breadcrumb-link'>{r.name}</span>
+              </>
+            );
+          }
+          return r.name;
+        })}
+      </div>
+    );
+  }
+
   render() {
-    const { implantation } = this.props;
-    const { phases: implantations, rowSelected } = this.state;
+    const { implantation, show } = this.props;
+    const { phases: implantations, rowSelected, currentNodes } = this.state;
+    if (show === false) return null;
 
     return (
       <Fragment>
         <div className='step3-container'>
           <div className='titles-container'>
-            <div className='section-title'>{implantation?.Description}</div>
-            <div className='section-title'>{implantation?.Organization}</div>
+            <div className='section-title'>{implantation?.productName}</div>
+            <div className='section-title'>{implantation?.clientName}</div>
           </div>
 
           <section className='section-border'>
-            <div className='breadcrumbs'>{implantation?.Type}</div>
-            <div style={{ height: 400 }}>
+            <div className='breadcrumbs'>{this.renderBreadcrumbs()}</div>
+            <div style={{ height: 447 }}>
               <GridComponent
-                ref={g => (this.gridRef = g)}
-                dataSource={implantations}
-                height={'400px'}
+                ref={(g) => (this.gridRef = g)}
+                dataSource={currentNodes.items}
+                height={'447px'}
                 selectionSettings={{ type: 'Single', mode: 'Row' }}
                 locale='es-ES'
-                rowSelected={event => {
+                rowSelected={(event) => {
                   this.onRowSelected(event);
                 }}>
                 <ColumnsDirective>
                   <ColumnDirective
-                    field='Description'
-                    headerText={implantation?.Type}></ColumnDirective>
+                    width='50'
+                    field='conceptId'
+                    headerText={''}
+                    template={this.renderIcon}></ColumnDirective>
+                  <ColumnDirective
+                    field='name'
+                    headerText={implantation?.Type}
+                    template={this.renderTitle}></ColumnDirective>
                   <ColumnDirective
                     width='50'
                     template={this.renderArrow}></ColumnDirective>
@@ -155,6 +218,14 @@ export class Step3 extends React.Component<Props, State> {
         </div>
         <style jsx>
           {`
+            .breadcrumb-link {
+              color: #001978;
+              cursor: pointer;
+            }
+            .breadcrumb-link span:hover {
+              text-decoration: underline;
+            }
+
             .e-headercelldiv {
               outline: none !important;
             }
