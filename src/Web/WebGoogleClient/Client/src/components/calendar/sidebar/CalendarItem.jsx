@@ -19,8 +19,8 @@ export class CalendarItem extends PureComponent {
     const {name, messagesUnread} = this.props;
     const iconProps = this.props.iconProps;
 
-    let selected = this.props.selected ? " selected" : "";
-
+      let selected = this.props.selected ? " selected" : "";
+     
    // const messagesUnreadLocale = messagesUnread.toLocaleString();
       return (        
       <div>
@@ -34,7 +34,8 @@ export class CalendarItem extends PureComponent {
                 value={this.props.id}
                 id={this.props.id}
                 label={name}                
-                change={this.onClick}>
+                change={this.onClick}
+                checked={this.props.primary}>
               </CheckBoxComponent>  
            </li>             
       </div>

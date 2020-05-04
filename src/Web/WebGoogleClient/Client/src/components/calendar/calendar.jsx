@@ -227,17 +227,18 @@ export class Calendar extends Component {
     }   
 
     componentDidMount() {  
-       
+
+        this.getCalendarList();  
+
         getCalendarList()
-            .then(result => {                
-                this.resourceCalendarData = orderBy(result.items, "primary");              
+            .then(result => {               
+                this.resourceCalendarData = orderBy(result.items, "primary"); 
+                this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true; 
+                this.loadCalendarEvents(this.resourceCalendarData[0].id, true) ;               
             })
             .catch(error => {
                 console.log('error ->', error);
-            }); 
-
-        this.getCalendarList();     
-       
+            });        
     }
 
     componentWillUnmount() {
