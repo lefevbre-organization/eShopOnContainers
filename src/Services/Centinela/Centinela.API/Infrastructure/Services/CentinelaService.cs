@@ -373,9 +373,9 @@ namespace Centinela.Infrastructure.Services
             return result;
         }
 
-        public async Task<Result<List<CenConcept>>> GetConceptsByTypeAsync(string idNavisionUser, int idConcept)
+        public async Task<Result<List<CenConceptInstance>>> GetConceptsByTypeAsync(string idNavisionUser, int idConcept)
         {
-            var result = new Result<List<CenConcept>>(new List<CenConcept>());
+            var result = new Result<List<CenConceptInstance>>(new List<CenConceptInstance>());
             try
             {
         
@@ -389,7 +389,7 @@ namespace Centinela.Infrastructure.Services
 
                         if (!string.IsNullOrEmpty(rawResult))
                         {
-                            var resultado = (JsonConvert.DeserializeObject<CenConcept[]>(rawResult));
+                            var resultado = (JsonConvert.DeserializeObject<CenConceptInstance[]>(rawResult));
                             result.data = resultado.ToList();
                         }
                     }
