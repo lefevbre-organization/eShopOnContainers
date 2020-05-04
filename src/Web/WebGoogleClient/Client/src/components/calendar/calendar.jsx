@@ -50,7 +50,7 @@ export class Calendar extends Component {
         this.dataManager = new DataManager();
         this.defaultCalendar = undefined;  
         this.scheduleData = [];
-        this.CalendarList = [];
+        //this.CalendarList = [];
         this.position = { X: 'Center', Y: 'Bottom' };       
         this.resourceCalendarData = [];
 
@@ -236,7 +236,8 @@ export class Calendar extends Component {
                 console.log('error ->', error);
             }); 
 
-        this.getCalendarList();      
+        this.getCalendarList();     
+       
     }
 
     componentWillUnmount() {
@@ -385,8 +386,19 @@ export class Calendar extends Component {
                 event = this.buildEventoGoogle(args.data[0]);
 
                 //call function to add event
-                this.addCalendarEventCRUD(args.data[0].CalendarId, event);
-               
+               // this.addCalendarEventCRUD(args.data[0].CalendarId, event, args);   
+                addCalendarEvent(args.data[0].CalendarId, event)
+                    .then(result => {
+                        args.data[0].Id = result.id  
+                        this.scheduleObj.refreshEvents();
+                        this.toastObj.show(this.toasts[1]);                       
+                    })
+                    .catch(error => {
+                        this.toastObj.show(this.toasts[3]);
+                        console.log('error ->', error);
+                    })
+
+              
                 break;
 
             case 'eventRemoved':
@@ -407,13 +419,12 @@ export class Calendar extends Component {
 
                 break;
         }  
-
        
     }  
 
     addCalendarEventCRUD(CalendarId, event, hiddeMessage) {
         addCalendarEvent(CalendarId, event)
-            .then(result => {
+            .then(result => {  
                 if (!hiddeMessage) {
                     this.toastObj.show(this.toasts[1]);
                 }               
@@ -448,62 +459,75 @@ export class Calendar extends Component {
                 this.toastObj.show(this.toasts[3]);
                 console.log('error ->', error);
             })
-    }
+    }  
 
-    loadCalendarEvents(calendar, checked) {  
-      
-        this.scheduleObj.showSpinner(); 
+    loadCalendarEvents(calendar, checked) {
+        this.scheduleObj.showSpinner();
         let predicate;
 
+
         getEventList(calendar, this.scheduleObj.selectedDate)
-            .then(result => {  
-                var calendarCheck = this.CalendarList.indexOf(calendar);
-                if (calendarCheck === -1 & checked) {
-                    this.dataManager = result.result;
-                    // Adding nuew calendar to the main list                    
-                    this.CalendarList.push(calendar);
+            .then(result => {
+                this.defaultCalendar = calendar;
+                this.props.selectCalendar(calendar);
+
+                //Set checkedCalendarResourceData calendar items as cheked
+                this.resourceCalendarData.find(x => x.id == calendar).checked = checked              
+
+                // if calandar from left sidebar list is checked load the main event list
+                if (checked) {
+                    this.dataManager = result.result;                   
                     this.onDataBinding(this.dataManager, calendar);
                 }
-                else { 
-
-                    this.CalendarList = this.CalendarList.filter(function (obj) {
-                        return obj !== calendar;
-                    });
+                // if not remove from main event list
+                else {                   
                     this.scheduleData = this.scheduleData.filter(function (obj) {
                         return obj.CalendarId !== calendar;
                     });
-                    
                 }
 
-                if (this.CalendarList.length === 1) {                 
-                   
-                    this.resourceCalendarData.sort(function (a, b) {
-                        if (a.id === calendar) { return -1; }
-                        //if (a.firstname > b.firstname) { return 1; }
-                        return 0;
-                    })
-                }
+                // Filter selected calendar to pass to the query
+                let calendars = groupBy(this.resourceCalendarData, "checked");  
 
-                this.CalendarList.forEach(function (valor, indice) {
-                    if (predicate) {
-                       
-                        predicate = predicate.or('CalendarId', 'equal', valor);
-                    }
-                    else {
-                        predicate = new Predicate('CalendarId', 'equal', valor);
-                    }
-                });                               
+                // Set the calendar field as default when only one calendar is checked
+                this.setDefaultCalendarField(calendars.true, calendar)
 
-                this.scheduleObj.eventSettings.query = new Query().where(predicate); 
+                // Load selected calendar to pass to the query
+                this.predicateQueryEvents(calendars.true, predicate)
+                
             })
             .catch(error => {
                 console.log('error ->', error);
-            }) 
+            })
 
-        this.defaultCalendar = calendar;
-       this.props.selectCalendar(calendar); 
-       
-    }  
+    } 
+
+    setDefaultCalendarField(calendarList, calendar) {
+        if (calendarList != undefined) {
+            if (calendarList.length === 1) {
+                this.resourceCalendarData.sort(function (a, b) {
+                    if (a.id === calendar) { return -1; }
+                    //if (a.firstname > b.firstname) { return 1; }
+                    return 0;
+                })
+            }
+        }      
+    }
+
+    predicateQueryEvents(calendarList, predicate) {
+        if (calendarList != undefined) {
+            calendarList.forEach(function (valor, indice) {
+                if (predicate) {
+                    predicate = predicate.or('CalendarId', 'equal', valor.id);
+                }
+                else {
+                    predicate = new Predicate('CalendarId', 'equal', valor.id);
+                }
+            }); 
+        }      
+        this.scheduleObj.eventSettings.query = new Query().where(predicate);
+        this.scheduleObj.refreshEvents();
+    }
 
     handleScheduleDate(args) {
         this.scheduleObj.selectedDate = args.value;

@@ -54,6 +54,22 @@ export class Sidebar extends PureComponent {
         this.props.onSidebarCloseClick(this.state.leftSideBarOpen);
     }
 
+    componentDidUpdate(prevProps, prevState) {
+       
+        //if (this.state.selectedCalendar === '') {
+        //    if (this.props.selectedCalendar !== null) {
+        //        this.navigateToList(null, this.props.selectedCalendar.id);
+        //    }
+        //} else {
+        //    if (
+        //        prevProps.selectedCalendar !== this.props.selectedCalendar &&
+        //        this.props.selectedCalendar !== null
+        //    ) {
+        //        this.setState({ selectedFolder: this.props.selectedLabel.id });
+        //    }
+        //}
+    }
+
     //LoaddefaultCalendar() {
     //    this.navigateToList(0, this.DefaultCalendar);
     //}
