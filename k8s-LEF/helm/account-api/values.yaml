@@ -31,8 +31,6 @@ env:
   urls:
   # configmap declares variables which value is taken from the config map defined in template configmap.yaml (name is name of var and key the key in configmap).
   configmap:
-    - name: WebhooksConnectionString
-      key: webhooks__ConnectionString
     - name: ApplicationInsights__InstrumentationKey
       key: all__InstrumentationKey
     - name: EventBusConnection

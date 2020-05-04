@@ -27,12 +27,12 @@ data:
   internalurls__webimap__hc: http://{{ .Values.app.svc.imap }}/hc
   name__weblexon__hc: WebLexonClient HTTP Check
   internalurls__weblexon__hc: http://{{ .Values.app.svc.lexon }}/hc
-  name__accountapi__hc: Account API HTTP Check
-  internalurls__accountapi__hc: http://{{ .Values.app.svc.accountapi }}/hc
   name__accountapigw__hc: Account API GW HTTP Check
   internalurls__accountapigw__hc: http://{{ .Values.app.svc.accountapigw }}/hc
   name__lexonapigw__hc: Lexon API GW HTTP Check
   internalurls__lexonapigw__hc: http://{{ .Values.app.svc.lexonapigw }}/hc
+  name__accountapi__hc: Account API HTTP Check
+  internalurls__accountapi__hc: http://{{ .Values.app.svc.accountapi }}/hc
   name__lexonapi__hc: Lexon Api HTTP Check
   internalurls__lexonapi__hc: http://{{ .Values.app.svc.lexonapi }}/hc
   name__lexonmysqlapi__hc: Lexon MySql API HTTP Check
@@ -42,5 +42,5 @@ data:
   name__centinelaapi__hc: Centinela Api HTTP Check
   internalurls__centinelaapi__hc: http://{{ .Values.app.svc.centinelaapi }}/hc
   name__userutilsapi__hc: User Utils Api HTTP Check
-  internalurls__userutilsapi__hc: http://{{ .Values.app.svc.userutisapi }}/hc
+  internalurls__userutilsapi__hc: http://{{ .Values.app.svc.userutilsapi }}/hc
   internalurls__identity__hc: http://{{ .Values.app.svc.identity }}/hc

@@ -14,7 +14,7 @@ Param(
     [parameter(Mandatory=$false)][string]$imageTag="latest",
     [parameter(Mandatory=$false)][bool]$useLocalk8s=$false,
     [parameter(Mandatory=$false)][bool]$useLocalImages=$false,
-    [parameter(Mandatory=$false)][bool]$imagePullPolicy="Always"
+    [parameter(Mandatory=$false)][string]$imagePullPolicy="Always"
     )
 
 $dns = $externalDns
@@ -101,13 +101,13 @@ if ($deployCharts) {
         Write-Host "Installing: $chart" -ForegroundColor Green
         if ($useCustomRegistry) {
             Write-Host "useCustomRegistry -> inject inf.registry.server, inf.registry.login, inf.registry.pwd, inf.registry.secretName" -ForegroundColor Green
-            Write-Host "useCustomRegistry -> Inject app.name, inf.k8s.dns, ingress.hosts, image.tag=$imageTag, image.pullPolicy=Always - the final name = $appName-$chart" -ForegroundColor Green
+            Write-Host "useCustomRegistry -> Inject app.name, inf.k8s.dns, ingress.hosts, image.tag=$imageTag, image.pullPolicy=$pullPolicy - the final name = $appName-$chart" -ForegroundColor Green
             
             helm install --set inf.registry.server=$registry --set inf.registry.login=$dockerUser --set inf.registry.pwd=$dockerPassword --set inf.registry.secretName=elef-docker-secret --values app-lef.yaml --values inf-lef.yaml --values $ingressValuesFile --set app.name=$appName --set inf.k8s.dns=$dns --set "ingress.hosts={$dns}" --set image.tag=$imageTag --set image.pullPolicy=$pullPolicy --name="$appName-$chart" $chart 
         }
         else {
             if ($chart -ne "eshop-common")  {       # eshop-common is ignored when no secret must be deployed
-                Write-Host "install $chart -> Inject app.name, inf.k8s.dns, ingress.hosts, image.tag=$imageTag, image.pullPolicy=Always - the final name = $appName-$chart" -ForegroundColor Green
+                Write-Host "install $chart -> Inject app.name, inf.k8s.dns, ingress.hosts, image.tag=$imageTag, image.pullPolicy=$pullPolicy - the final name = $appName-$chart" -ForegroundColor Green
                 helm install --values app-lef.yaml --values inf-lef.yaml --values $ingressValuesFile --set app.name=$appName --set inf.k8s.dns=$dns  --set "ingress.hosts={$dns}" --set image.tag=$imageTag --set image.pullPolicy=$pullPolicy --name="$appName-$chart" $chart 
             }
         }

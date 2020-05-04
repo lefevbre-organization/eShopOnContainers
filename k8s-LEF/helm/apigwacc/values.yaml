@@ -38,7 +38,7 @@ env:
       key: internalurls__account__hc
     - name: LexonUrlHC
       key: internalurls__lexon__hc
-    - name: LexonMysqlUrlHC
+    - name: LexonMySqlUrlHC
       key: internalurls__lexonmysql__hc
     - name: CentinelaUrlHC
       key: internalurls__centinela__hc
