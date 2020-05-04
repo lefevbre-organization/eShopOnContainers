@@ -4,7 +4,6 @@
     {
         public long conceptId { get; set; }
 
-        //"conceptObjectId": 0,
         public long? conceptObjectId { get; set; }
 
         //"evaluated": false,

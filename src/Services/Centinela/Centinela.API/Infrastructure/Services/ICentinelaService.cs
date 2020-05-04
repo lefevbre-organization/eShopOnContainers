@@ -21,6 +21,6 @@ namespace Centinela.Infrastructure.Services
 
         Task<Result<List<CenEvaluationTree>>> GetEvaluationTreeByIdAsync(string idNavisionUser, int idEvaluation);
 
-        Task<Result<List<CenConcept>>> GetConceptsByTypeAsync(string idNavisionUser, int idConcept);
+        Task<Result<List<CenConceptInstance>>> GetConceptsByTypeAsync(string idNavisionUser, int idConcept);
     }
 }

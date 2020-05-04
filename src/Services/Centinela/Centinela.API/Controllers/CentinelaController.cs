@@ -66,7 +66,7 @@ namespace Centinela.API.Controllers
                 return (IActionResult)BadRequest("id user value invalid. Must be a valid iduser");
 
             var result = await _service.GetEvaluationByIdAsync(idNavisionUser, idEvaluation);
-            return result.errors?.Count() > 0 ? Ok(result) : (IActionResult)BadRequest(result);
+            return result.errors?.Count() > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpGet("evaluations/tree/getbyid")]
@@ -77,26 +77,21 @@ namespace Centinela.API.Controllers
             if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("id user value invalid. Must be a valid iduser");
 
-            Result<List<CenEvaluationTree>> result = await _service.GetEvaluationTreeByIdAsync(idNavisionUser, idEvaluation);
-            return result.errors?.Count() > 0 ? Ok(result) : (IActionResult)BadRequest(result);
-            // /api/secure/conectamail/tree/evaluation/EVALUATION_ID?IdEntrada=ID_ENTRADA
-
-            // /api/secure/conectamail/conceptobjects/concept/CONCEPT_ID?IdEntrada=ID_ENTRADA
+            var result = await _service.GetEvaluationTreeByIdAsync(idNavisionUser, idEvaluation);
+            return result.errors?.Count() > 0 ? (IActionResult)BadRequest(result) : Ok(result);
+  
         }
 
-        [HttpGet("concepts")]
+        [HttpGet("concepts/instances")]
         [ProducesResponseType(typeof(Result<List<CenConcept>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<List<CenConcept>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetConceptsByTypeAsync(string idNavisionUser = "E1621396", int idConcept = 1)
+        public async Task<IActionResult> GetConceptsByTypeAsync(string idNavisionUser = "E1621396", int idConcept = 107229)
         {
             if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("id user value invalid. Must be a valid iduser");
 
-            Result<List<CenConcept>> result = await _service.GetConceptsByTypeAsync(idNavisionUser, idConcept);
-            return result.errors?.Count() > 0 ? Ok(result) : (IActionResult)BadRequest(result);
-            // /api/secure/conectamail/tree/evaluation/EVALUATION_ID?IdEntrada=ID_ENTRADA
-
-            // /api/secure/conectamail/conceptobjects/concept/CONCEPT_ID?IdEntrada=ID_ENTRADA
+            var result = await _service.GetConceptsByTypeAsync(idNavisionUser, idConcept);
+            return result.errors?.Count() > 0 ? (IActionResult)BadRequest(result) : Ok(result) ;
         }
 
         [HttpGet("documents")]
@@ -107,11 +102,8 @@ namespace Centinela.API.Controllers
             if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("id user value invalid. Must be a valid iduser");
 
-            Result<List<CenDocument>> result = await _service.GetDocumentsAsync(idNavisionUser, search);
+            var result = await _service.GetDocumentsAsync(idNavisionUser, search);
             return result.errors?.Count() > 0 ? Ok(result) : (IActionResult)BadRequest(result);
-            // /api/secure/conectamail/tree/evaluation/EVALUATION_ID?IdEntrada=ID_ENTRADA
-
-            // /api/secure/conectamail/conceptobjects/concept/CONCEPT_ID?IdEntrada=ID_ENTRADA
         }
 
         [HttpPost("concepts/files/post")]

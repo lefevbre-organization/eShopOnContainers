@@ -1,6 +1,6 @@
 ﻿namespace Centinela.API.Models
 {
-    public class CenComcept
+    public class CenConceptInstance
     {
         public long conceptId { get; set; }
 
