@@ -4,6 +4,9 @@ import LoginHeader from '../components/LoginHeader';
 import LoginFooter from '../components/LoginFooter';
 import LoginComponents from '../components/LoginComponents';
 import { signIn } from '../api/authentication';
+import {
+  AUTH_SUCCESS,
+} from '../constants';
 
 import '../assets/styles/components/Login.css';
 import logoHeader from '../assets/img/LogoLefebvre.png';
@@ -35,27 +38,23 @@ class Login extends Component {
     } 
   }
   
-     componentDidMount() {
-     }
-
-     onSignIn() {
-      signIn().then(this.onSignInSuccess);
-    }
+  onSignIn() {
+    signIn().then(this.onSignInSuccess);
+  }
   
-    onSignInSuccess(googleUser) {
-        console.log(googleUser);
-      const values = queryString.parse(window.location.search);
-      if (values && values.bbdd) {
-          const addonData = JSON.parse(values.bbdd)
-          this.setState({
-              signInStatus: AUTH_SUCCESS,
-              googleUser: googleUser,
-              openEmail: addonData.messageId
-            });
-          
-      }  
+  onSignInSuccess(googleUser) {
+    const values = queryString.parse(window.location.search);
+    if (values && values.bbdd) {
+        const addonData = JSON.parse(values.bbdd)
+        this.setState({
+            signInStatus: AUTH_SUCCESS,
+            googleUser: googleUser,
+            openEmail: addonData.messageId
+       });
+        
+    }  
   //    this.props.setAccount(googleUser.getBasicProfile().getEmail());
-    }
+  }
 
      handleChange = e => {
       this.setState({
