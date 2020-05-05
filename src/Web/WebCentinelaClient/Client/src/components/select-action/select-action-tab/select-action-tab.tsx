@@ -21,7 +21,9 @@ class SelectActionTab extends Component<Props> {
               eventKey="connect"
               title={i18n.t('select-action.archive-messages')}
             >
-              <TabArchiveMessage></TabArchiveMessage>
+              <TabArchiveMessage
+                toggleNotification={toggleNotification}
+              ></TabArchiveMessage>
             </Tab>
           )}
           {composerOpen === true && (

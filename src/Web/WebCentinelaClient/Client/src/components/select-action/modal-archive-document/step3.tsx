@@ -1,25 +1,33 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, createRef } from 'react';
 import {
   GridComponent,
   ColumnsDirective,
   ColumnDirective,
   rowSelected,
+  Inject,
+  Sort,
+  Filter
 } from '@syncfusion/ej2-react-grids';
 import { L10n } from '@syncfusion/ej2-base';
 import i18n from 'i18next';
+import moment from 'moment';
+
 import {
   getEvaluationById,
   getEvaluationTree,
+  getInstances,
+  CentInstance
 } from '../../../services/services-centinela';
 import ImplantationListSearch from '../implantation-list-search/implantation-list-search';
+import Spinner from '../../spinner/spinner';
 //import ImplantationListSearch from '../implantation-list-search/implantation-list-search';
 
 L10n.load({
   'es-ES': {
     grid: {
-      EmptyRecord: 'No hay datos que mostrar',
-    },
-  },
+      EmptyRecord: 'No hay datos que mostrar'
+    }
+  }
 });
 
 interface Props {
@@ -27,39 +35,55 @@ interface Props {
   show: boolean;
   implantation: any;
   toggleNotification?: (msg: string, error: boolean) => void;
+  onInstanceSelected: (instance: CentInstance) => void;
   // onPhase: (id: Evaluation) => void;
 }
 interface State {
   phases: any;
   route: any;
+  gridHeight: number;
   currentNodes: any;
   rowSelected: number;
+  instances: any;
   showSpinner: boolean;
+  substep: number;
 }
 
+type IFilterOptions = {
+  type: 'Menu';
+};
 export class Step3 extends React.Component<Props, State> {
   private toolbarOptions: any;
   private gridRef: any;
-
+  private crumbRef: any;
+  private FilterOptions: IFilterOptions = { type: 'Menu' };
   constructor(props: Props) {
     super(props);
     this.state = {
       phases: [],
       route: [],
+      instances: [],
+      gridHeight: 0,
+      substep: 0,
       currentNodes: { items: [] },
       rowSelected: -1,
-      showSpinner: true,
+      showSpinner: true
     };
     this.toolbarOptions = ['Search'];
     this.onRowSelected = this.onRowSelected.bind(this);
     this.renderArrow = this.renderArrow.bind(this);
     this.renderIcon = this.renderIcon.bind(this);
     this.renderTitle = this.renderTitle.bind(this);
+    this.renderInstanceCheck = this.renderInstanceCheck.bind(this);
+    this.onInstanceSelected = this.onInstanceSelected.bind(this);
+
     this.gridRef = null;
+    this.crumbRef = createRef();
   }
 
   async componentDidUpdate(prevProps: Props, prevState: State) {
     const { user, toggleNotification, implantation } = this.props;
+    const { gridHeight } = this.state;
 
     if (prevProps.show === false && this.props.show === true) {
       const opened = document.getElementsByClassName(
@@ -77,6 +101,12 @@ export class Step3 extends React.Component<Props, State> {
       return;
     }
 
+    if (this.crumbRef && this.crumbRef.current) {
+      if (gridHeight !== this.crumbRef.current.offsetHeight) {
+        this.setState({ gridHeight: this.crumbRef.current.offsetHeight });
+      }
+    }
+
     if (
       (prevProps.show === false && this.props.show === true) ||
       prevProps.implantation !== this.props.implantation
@@ -92,12 +122,13 @@ export class Step3 extends React.Component<Props, State> {
         if (response.errors.length === 0) {
           this.setState(
             {
+              route: [],
               phases: [...response.data],
               currentNodes: {
                 node: 'root',
-                items: [...response.data],
+                items: [...response.data]
               },
-              showSpinner: false,
+              showSpinner: false
             },
             () => {}
           );
@@ -110,39 +141,53 @@ export class Step3 extends React.Component<Props, State> {
           );
         this.setState({
           phases: [],
-          showSpinner: false,
+          showSpinner: false
         });
       }
     }
   }
 
   onRowSelected(event: any) {
-    const { rowSelected, route } = this.state;
+    const { route } = this.state;
     const nr = [...route, event.data];
 
-    this.setState({
-      route: nr,
-      currentNodes: {
-        node: 'id',
-        items: [...event.data.children, ...event.data.concepts],
-      },
-    });
-    // if (rowSelected !== event.data.Id) {
-    //   this.setState({ rowSelected: event.data.Id }, () => {
-    //     //onPhase(event.data.Id);
-    //   });
-    // }
+    if (event.data.conceptId && event.data.conceptId > 0) {
+      this.setState(
+        {
+          route: nr,
+          substep: 1,
+          showSpinner: true
+        },
+        () => {
+          this.loadInstances(event.data.conceptId);
+        }
+      );
+    } else {
+      this.setState({
+        route: nr,
+        currentNodes: {
+          node: 'id',
+          items: [...event.data.children, ...event.data.concepts]
+        }
+      });
+    }
+  }
+
+  async loadInstances(conceptId: string) {
+    const { user } = this.props;
+    const response = await getInstances(user, conceptId);
+    this.setState({ showSpinner: false, instances: response.data });
   }
 
   renderArrow(row: any) {
-    return <i className='lf-icon-angle-right row-arrow'></i>;
+    return <i className="lf-icon-angle-right row-arrow"></i>;
   }
 
   renderIcon(row: any) {
     if (!row.conceptId) {
-      return <i className='lf-icon-folder'></i>;
+      return <i className="lf-icon-folder"></i>;
     } else {
-      return <i className='lf-icon-compliance'></i>;
+      return <i className="lf-icon-compliance"></i>;
     }
   }
 
@@ -154,76 +199,254 @@ export class Step3 extends React.Component<Props, State> {
     }
   }
 
+  onBreadcrumb(r?: any) {
+    const rts: any = [];
+    let index: number = 0;
+
+    if (!r) {
+      this.setState({
+        route: rts,
+        substep: 0,
+        currentNodes: {
+          node: 'root',
+          items: [...this.state.phases]
+        }
+      });
+      return;
+    }
+
+    for (let i = 0; i < this.state.route.length; i++) {
+      rts.push(this.state.route[i]);
+
+      if (this.state.route[i].folderId === r.folderId) {
+        index = i;
+        break;
+      }
+    }
+
+    let cn: any = null;
+    if (index >= 0) {
+      cn = this.state.route[index];
+    }
+
+    this.setState({
+      route: rts,
+      substep: 0,
+      currentNodes: {
+        node: cn,
+        items: [...cn.children, ...cn.concepts]
+      }
+    });
+  }
+
   renderBreadcrumbs() {
     const { route } = this.state;
+    if (route.length === 0) {
+      return null;
+    }
     return (
-      <div className='breadcrumb-link'>
-        {route.map((r: any, i: number) => {
-          if (i > 0) {
+      <div>
+        <span
+          className="breadcrumb-first"
+          onClick={() => {
+            this.onBreadcrumb();
+          }}
+        >
+          <i className="lf-icon-map-marker"></i>
+        </span>
+        {route.map((r: any, i: number, rt: any) => {
+          if (i >= 0 && i < rt.length - 1) {
             return (
               <>
-                <span>{' > '}</span>
-                <span className='breadcrumb-link'>{r.name}</span>
+                {i > 0 && <span>{' > '}</span>}
+                <span
+                  className="breadcrumb-link"
+                  onClick={() => {
+                    this.onBreadcrumb(r);
+                  }}
+                >
+                  {r.name || r.title}
+                </span>
+              </>
+            );
+          } else if (i === rt.length - 1) {
+            return (
+              <>
+                {i > 0 && <span>{' > '}</span>}
+                <span className="breadcrumb-last">{r.name || r.title}</span>
               </>
             );
           }
-          return r.name;
         })}
       </div>
     );
   }
 
+  renderCreationDate(row: CentInstance) {
+    const d = moment(row.creationDate);
+    return <div>{d.format('DD/MM/YYYY')}</div>;
+  }
+
+  renderModificationDate(row: CentInstance) {
+    const d = moment(row.creationDate);
+    return <div>{d.format('DD/MM/YYYY')}</div>;
+  }
+
+  renderInstanceCheck(row: CentInstance) {
+    const check = row.conceptId === this.state.rowSelected ? 'checked' : '';
+    return (
+      <div className={`row-check ${check}`}>
+        <div className={`row-check-inner ${check}`}></div>
+      </div>
+    );
+  }
+
+  onInstanceSelected(instance: CentInstance) {
+    this.setState({ rowSelected: instance.conceptId }, () => {
+      this.props.onInstanceSelected(instance);
+    });
+  }
+
   render() {
     const { implantation, show } = this.props;
-    const { phases: implantations, rowSelected, currentNodes } = this.state;
+    const {
+      phases: implantations,
+      rowSelected,
+      currentNodes,
+      gridHeight,
+      substep,
+      showSpinner,
+      instances
+    } = this.state;
+    let height = 447 - gridHeight;
     if (show === false) return null;
 
     return (
       <Fragment>
-        <div className='step3-container'>
-          <div className='titles-container'>
-            <div className='section-title'>{implantation?.productName}</div>
-            <div className='section-title'>{implantation?.clientName}</div>
+        <div className="step3-container">
+          <div className="titles-container">
+            <div className="section-title">{implantation?.productName}</div>
+            <div className="section-title">{implantation?.clientName}</div>
           </div>
 
-          <section className='section-border'>
-            <div className='breadcrumbs'>{this.renderBreadcrumbs()}</div>
-            <div style={{ height: 447 }}>
-              <GridComponent
-                ref={(g) => (this.gridRef = g)}
-                dataSource={currentNodes.items}
-                height={'447px'}
-                selectionSettings={{ type: 'Single', mode: 'Row' }}
-                locale='es-ES'
-                rowSelected={(event) => {
-                  this.onRowSelected(event);
-                }}>
-                <ColumnsDirective>
-                  <ColumnDirective
-                    width='50'
-                    field='conceptId'
-                    headerText={''}
-                    template={this.renderIcon}></ColumnDirective>
-                  <ColumnDirective
-                    field='name'
-                    headerText={implantation?.Type}
-                    template={this.renderTitle}></ColumnDirective>
-                  <ColumnDirective
-                    width='50'
-                    template={this.renderArrow}></ColumnDirective>
-                </ColumnsDirective>
-              </GridComponent>
+          <section className="section-border">
+            {showSpinner === true && (
+              <div className="spinner-wrapper">
+                <Spinner />
+              </div>
+            )}
+            <div ref={this.crumbRef} className="breadcrumbs">
+              {this.renderBreadcrumbs()}
             </div>
+            {substep === 0 && (
+              <div style={{ height }} className="substep0">
+                <GridComponent
+                  ref={(g) => (this.gridRef = g)}
+                  dataSource={currentNodes.items}
+                  height={`${height}px`}
+                  selectionSettings={{ type: 'Single', mode: 'Row' }}
+                  locale="es-ES"
+                  rowSelected={(event) => {
+                    this.onRowSelected(event);
+                  }}
+                >
+                  <ColumnsDirective>
+                    <ColumnDirective
+                      width="60"
+                      field="conceptId"
+                      headerText={''}
+                      template={this.renderIcon}
+                    ></ColumnDirective>
+                    <ColumnDirective
+                      field="name"
+                      headerText={implantation?.Type}
+                      template={this.renderTitle}
+                    ></ColumnDirective>
+                    <ColumnDirective
+                      width="50"
+                      template={this.renderArrow}
+                    ></ColumnDirective>
+                  </ColumnsDirective>
+                </GridComponent>
+              </div>
+            )}
+            {substep === 1 && (
+              <div style={{ height }} className="substep1">
+                <GridComponent
+                  ref={(g) => (this.gridRef = g)}
+                  dataSource={instances}
+                  allowSorting={true}
+                  allowFiltering={true}
+                  filterSettings={this.FilterOptions}
+                  height={`${height}px`}
+                  selectionSettings={{ type: 'Single', mode: 'Row' }}
+                  locale="es-ES"
+                  rowSelected={(event: any) => {
+                    this.onInstanceSelected(event.data as CentInstance);
+                  }}
+                >
+                  <ColumnsDirective>
+                    <ColumnDirective
+                      width="50"
+                      field={'' + rowSelected}
+                      headerText={''}
+                      template={this.renderInstanceCheck}
+                    ></ColumnDirective>
+                    <ColumnDirective
+                      field="title"
+                      headerText={i18n.t('modal-archive.table-title')}
+                    ></ColumnDirective>
+                    <ColumnDirective
+                      width="150"
+                      field="author"
+                      headerText={i18n.t('modal-archive.author')}
+                    ></ColumnDirective>
+                    <ColumnDirective
+                      width="120"
+                      field="creationDate"
+                      allowFiltering={false}
+                      headerText={i18n.t('modal-archive.creation')}
+                      template={this.renderCreationDate}
+                    ></ColumnDirective>
+                    <ColumnDirective
+                      width="130"
+                      allowFiltering={false}
+                      field="modificationDate"
+                      headerText={i18n.t('modal-archive.modification')}
+                      template={this.renderModificationDate}
+                    ></ColumnDirective>
+                  </ColumnsDirective>
+                  <Inject services={[Sort, Filter]} />
+                </GridComponent>
+              </div>
+            )}
           </section>
         </div>
         <style jsx>
           {`
-            .breadcrumb-link {
+            .breadcrumbs span {
+              color: #001978;
+            }
+
+            .breadcrumb-first {
               color: #001978;
               cursor: pointer;
             }
-            .breadcrumb-link span:hover {
+
+            .breadcrumb-link {
+              color: #001978;
+              cursor: pointer;
               text-decoration: underline;
+            }
+
+            .breadcrumb-last {
+            }
+
+            .breadcrumb-link:hover {
+              text-decoration: underline;
+            }
+            .breadcrumb-first .lf-icon-map-marker {
+              margin: 0 10px;
             }
 
             .e-headercelldiv {
@@ -248,7 +471,7 @@ export class Step3 extends React.Component<Props, State> {
               overflow: auto !important;
             }
 
-            table.e-table thead {
+            .substep0 table.e-table thead {
               display: none;
             }
 

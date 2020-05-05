@@ -162,7 +162,7 @@ class Main extends Component<Props, State> {
   }
 
   toggleNotification(message?: string, error?: boolean) {
-    this.setState(state => ({
+    this.setState((state) => ({
       showNotification: !state.showNotification,
       messageNotification: message || '',
       errorNotification: error || false
@@ -181,11 +181,11 @@ class Main extends Component<Props, State> {
       }
 
       return (
-        <p className='connexion-status connexion-status-ko'>
+        <p className="connexion-status connexion-status-ko">
           {bbddError === true
             ? i18n.t('main.bbdd_error')
             : i18n.t('main.error_connection')}
-          <span className='lf-icon-warning'></span>
+          <span className="lf-icon-warning"></span>
         </p>
       );
     }
@@ -209,7 +209,7 @@ class Main extends Component<Props, State> {
           error={errorNotification}
         />
         {isLoading && (
-          <div className='spinner-wrapper'>
+          <div className="spinner-wrapper">
             <Spinner />
           </div>
         )}

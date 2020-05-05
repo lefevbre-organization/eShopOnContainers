@@ -9,14 +9,14 @@ import { ApplicationActions } from '../../../store/application/actions';
 import { Step1 } from './step1';
 import { Step2 } from './step2';
 import { Step3 } from './step3';
-import { Evaluation } from '../../../services/services-centinela';
+import { Evaluation, CentInstance } from '../../../services/services-centinela';
 const parse = require('emailjs-mime-parser').default;
 const base64js = require('base64-js');
 
 const mapStateToProps = (state: AppState) => {
   return {
     showAttachDocuments: state.application.showArchiveModal,
-    selected: state.messages.selected,
+    selected: state.messages.selected
   };
 };
 
@@ -24,17 +24,19 @@ const mapDispatchToProps = (dispatch: any) => {
   return {
     ...bindActionCreators(
       {
-        toggleArchiveModal: ApplicationActions.toggleArchiveModal,
+        toggleArchiveModal: ApplicationActions.toggleArchiveModal
       },
       dispatch
-    ),
+    )
   };
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
 type ReduxProps = ConnectedProps<typeof connector>;
 
-interface Props extends ReduxProps {}
+interface Props extends ReduxProps {
+  toggleNotification: any;
+}
 
 interface State {
   implantation: Evaluation | null;
@@ -46,6 +48,7 @@ interface State {
   files: any;
   copyEmail: boolean;
   copyAttachments: boolean;
+  instance?: CentInstance;
 }
 
 class ModalArchiveDocuments extends Component<Props, State> {
@@ -62,11 +65,13 @@ class ModalArchiveDocuments extends Component<Props, State> {
       files: [],
       copyEmail: true,
       copyAttachments: true,
+      instance: undefined
     };
 
     this.onCopyAttachments = this.onCopyAttachments.bind(this);
     this.onCopyEmail = this.onCopyEmail.bind(this);
     this.onImplantation = this.onImplantation.bind(this);
+    this.onInstanceSelected = this.onInstanceSelected.bind(this);
   }
 
   componentDidMount() {
@@ -132,7 +137,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
         entity: 0,
         messages: [],
         files: [],
-        complete: false,
+        complete: false
       });
     }, 1000);
     toggleArchiveModal && toggleArchiveModal();
@@ -145,7 +150,8 @@ class ModalArchiveDocuments extends Component<Props, State> {
     } else if (step === 2) {
       this.setState({ step: 3 });
     } else if (step === 3) {
-      this.setState({ step: 4 });
+      this.closeDialog();
+      this.saveDocuments();
     } // else {
     //   this.setState({ step: step + 1 });
     // }
@@ -172,12 +178,27 @@ class ModalArchiveDocuments extends Component<Props, State> {
     // }
   }
 
+  saveDocuments() {
+    const { toggleNotification } = this.props;
+    toggleNotification(i18n.t('modal-archive.modal-save-ko'));
+  }
+
   saveDisabled() {
-    const { step, copyAttachments, copyEmail, implantation } = this.state;
+    const {
+      step,
+      copyAttachments,
+      copyEmail,
+      implantation,
+      instance
+    } = this.state;
     if (step === 1 && (copyAttachments === true || copyEmail === true)) {
       return false;
     }
     if (step === 2 && implantation && implantation.evaluationId > 0) {
+      return false;
+    }
+
+    if (step === 3 && instance) {
       return false;
     }
 
@@ -192,18 +213,20 @@ class ModalArchiveDocuments extends Component<Props, State> {
         return (
           <Fragment>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.closeDialog();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.cancel')}
             </Button>
             <Button
               disabled={this.saveDisabled()}
-              bsPrefix='btn btn-primary'
+              bsPrefix="btn btn-primary"
               onClick={() => {
                 this.nextStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.continue')}
             </Button>
           </Fragment>
@@ -212,25 +235,28 @@ class ModalArchiveDocuments extends Component<Props, State> {
         return (
           <Fragment>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.closeDialog();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.cancel')}
             </Button>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.prevStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.back')}
             </Button>
             <Button
               disabled={this.saveDisabled()}
-              bsPrefix='btn btn-primary'
+              bsPrefix="btn btn-primary"
               onClick={() => {
                 this.nextStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.continue')}
             </Button>
           </Fragment>
@@ -239,25 +265,28 @@ class ModalArchiveDocuments extends Component<Props, State> {
         return (
           <Fragment>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.closeDialog();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.cancel')}
             </Button>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.prevStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.back')}
             </Button>
             <Button
               disabled={this.saveDisabled()}
-              bsPrefix='btn btn-primary'
+              bsPrefix="btn btn-primary"
               onClick={() => {
                 this.nextStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.save')}
             </Button>
           </Fragment>
@@ -266,25 +295,28 @@ class ModalArchiveDocuments extends Component<Props, State> {
         return (
           <Fragment>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.closeDialog();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.cancel')}
             </Button>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.prevStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.back')}
             </Button>
             <Button
               disabled={files.length === 0}
-              bsPrefix='btn btn-primary'
+              bsPrefix="btn btn-primary"
               onClick={() => {
                 this.nextStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.continue')}
             </Button>
           </Fragment>
@@ -316,39 +348,46 @@ class ModalArchiveDocuments extends Component<Props, State> {
     }
   }
 
+  onInstanceSelected(inst: CentInstance) {
+    this.setState({ instance: inst });
+  }
+
   render() {
     const { showAttachDocuments } = this.props;
     const { messages, step, implantation } = this.state;
     console.log();
 
     return (
-      <div className='modal-connection-emails'>
+      <div className="modal-connection-emails">
         <Modal
           show={showAttachDocuments}
           onHide={() => {
             this.closeDialog();
           }}
-          size='lg'
-          aria-labelledby='contained-modal-title-vcenter'
+          size="lg"
+          aria-labelledby="contained-modal-title-vcenter"
           centered
-          dialogClassName='modal'>
-          <Modal.Header className='align-items-center' closeButton>
+          dialogClassName="modal"
+        >
+          <Modal.Header className="align-items-center" closeButton>
             <h5
-              className='modal-title d-flex align-items-center'
-              id='documentarGuardardocumentacionLabel'>
-              <span className='lf-icon-compliance'></span>
+              className="modal-title d-flex align-items-center"
+              id="documentarGuardardocumentacionLabel"
+            >
+              <span className="lf-icon-compliance"></span>
 
               <span>{i18n.t('modal-archive.title')}</span>
               <span>{step}</span>
             </h5>
           </Modal.Header>
-          <Modal.Body className='mimodal'>
+          <Modal.Body className="mimodal">
             <Container>
               <Fragment>
                 <div
                   style={{
-                    display: this.state.step === 1 ? 'block' : 'none',
-                  }}>
+                    display: this.state.step === 1 ? 'block' : 'none'
+                  }}
+                >
                   <Step1
                     selected={messages}
                     onCopyEmail={this.onCopyEmail}
@@ -357,8 +396,9 @@ class ModalArchiveDocuments extends Component<Props, State> {
                 </div>
                 <div
                   style={{
-                    display: this.state.step === 2 ? 'block' : 'none',
-                  }}>
+                    display: this.state.step === 2 ? 'block' : 'none'
+                  }}
+                >
                   <Step2
                     user={'E16'}
                     show={step === 2}
@@ -368,19 +408,21 @@ class ModalArchiveDocuments extends Component<Props, State> {
                 </div>
                 <div
                   style={{
-                    display: this.state.step === 3 ? 'block' : 'none',
-                  }}>
+                    display: this.state.step === 3 ? 'block' : 'none'
+                  }}
+                >
                   <Step3
                     user={'messages'}
                     show={step === 3}
                     implantation={implantation}
-                    //onPhase={() => {}}
+                    onInstanceSelected={this.onInstanceSelected}
                   />
                 </div>
                 <div
                   style={{
-                    display: this.state.step === 4 ? 'block' : 'none',
-                  }}>
+                    display: this.state.step === 4 ? 'block' : 'none'
+                  }}
+                >
                   <div>Step 4</div>
                 </div>
               </Fragment>

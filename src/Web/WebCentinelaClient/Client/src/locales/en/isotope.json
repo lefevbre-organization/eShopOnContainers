@@ -25,7 +25,13 @@
     "copy-attachments": "Archive the attachments",
     "q1": "What do you want to do with the selected messages?",
     "q1b": "Check which attachments you want to save",
-    "q3": "In which implementation do you want to archive the selected messages?"
+    "q3": "In which implementation do you want to archive the selected messages?",
+    "filter-by-product": "FILTRE BY PRODUCT",
+    "modal-save-ko": "The files are saved successfully",
+    "table-title": "Title",
+    "author": "Author",
+    "creation": "Created",
+    "modification": "Modified"
   },
   "implantation-list-search": {
     "results-total": "TOTAL RESULTS: ",

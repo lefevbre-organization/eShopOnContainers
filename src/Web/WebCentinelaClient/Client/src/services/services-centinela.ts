@@ -15,6 +15,23 @@ export interface CentUserResponse extends CentinelaResponse {
   data: CentUser;
 }
 
+export interface CentInstance {
+  conceptId: number;
+  conceptObjectId: number;
+  folderId: number;
+  evaluated: boolean;
+  title: string;
+  description: string;
+  author: string;
+  isArchived: boolean;
+  creationDate: string;
+  modificationDate: string;
+}
+
+export interface CentInstanceResponse extends CentinelaResponse {
+  data: CentInstance[];
+}
+
 export interface Evaluation {
   evaluationId: number;
   name: string;
@@ -93,7 +110,7 @@ export const getEvaluations = (navisionUser: string): EvaluationResponse => {
         evaluationId: 4509,
         name: 'Prueba compartir',
         productId: 'one',
-        productName: 'Centinela Protección de Datos',
+        productName: 'Centinela con Protección de Datos',
         clientId: 129,
         clientName: 'AFFIN Solutions S.L',
         modified: '2020-03-17T09:44:19.45',
@@ -204,6 +221,60 @@ export const getEvaluationTree = (
   });
 };
 
+export const getInstances = (
+  navisionUser: string,
+  conceptId: string
+): Promise<CentInstanceResponse> => {
+  return new Promise<CentInstanceResponse>((resolve, reject) => {
+    setTimeout(() => {
+      resolve(getInstanceMock);
+    }, 1000);
+  });
+};
+
+const getInstanceMock = {
+  errors: [],
+  infos: [],
+  data: [
+    {
+      conceptId: 107229,
+      conceptObjectId: 14302,
+      folderId: 82820,
+      evaluated: true,
+      title: 'CORRESPONSABLE DE TRATAMIENTOS DE DATOS',
+      description: '',
+      author: 'LOLA TALAVERA ',
+      isArchived: false,
+      creationDate: '2020-03-17T09:44:31.127',
+      modificationDate: '2020-03-17T09:45:13.107',
+    },
+    {
+      conceptId: 107230,
+      conceptObjectId: 14302,
+      folderId: 82820,
+      evaluated: true,
+      title: 'CORRESPONSABLE DE TRATAMIENTOS',
+      description: '',
+      author: 'LOLA TALAVERA ',
+      isArchived: false,
+      creationDate: '2020-03-17T09:44:31.127',
+      modificationDate: '2020-03-17T09:45:13.107',
+    },
+    {
+      conceptId: 107231,
+      conceptObjectId: 14302,
+      folderId: 82820,
+      evaluated: true,
+      title: 'CORRESPONSABLE DE DATOS',
+      description: '',
+      author: 'LOLA TALAVERA ',
+      isArchived: false,
+      creationDate: '2020-03-17T09:44:31.127',
+      modificationDate: '2020-03-17T09:45:13.107',
+    },
+  ],
+};
+
 const getUserMock = {
   errors: [],
   infos: [],
@@ -216,7 +287,8 @@ const getUserMock = {
         evaluationId: 4509,
         name: 'Prueba compartir',
         productId: 'one',
-        productName: 'Centinela Protección de Datos',
+        productName:
+          'Centinela con Protección de Datosfbthdbfghnfgnfnfhgnryunmryunryunrynrynruyjruynry',
         clientId: 129,
         clientName: 'AFFIN Solutions S.L',
         modified: '2020-03-17T09:44:19.45',

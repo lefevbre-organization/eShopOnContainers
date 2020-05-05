@@ -15,7 +15,9 @@ const mapStateToProps = (state: AppState) => {
 const connector = connect(mapStateToProps);
 type ReduxProps = ConnectedProps<typeof connector>;
 
-interface Props extends ReduxProps {}
+interface Props extends ReduxProps {
+  toggleNotification: any;
+}
 
 interface State {
   showClassifications: boolean;
@@ -61,9 +63,11 @@ class TabArchiveMessage extends Component<Props, State> {
   }
 
   render() {
+    const { toggleNotification } = this.props;
+
     return (
       <Fragment>
-        <ModalArchiveDocuments />
+        <ModalArchiveDocuments toggleNotification={toggleNotification} />
         {/* 
         <ConfirmRemoveClassification
           user={user}

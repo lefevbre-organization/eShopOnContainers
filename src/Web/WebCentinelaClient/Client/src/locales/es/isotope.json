@@ -25,7 +25,13 @@
     "copy-attachments": "Guardar archivos adjuntos",
     "q1": "¿Qué quieres hacer con los mensajes seleccionados?",
     "q1b": "Verifica qué adjuntos quieres guardar",
-    "q3": "¿En qué implantación quieres archivar los mensajes seleccionados?"
+    "q3": "¿En qué implantación quieres archivar los mensajes seleccionados?",
+    "filter-by-product": "FILTRAR POR PRODUCTO",
+    "modal-save-ko": "Los documentos se han enviado correctamente",
+    "table-title": "Título",
+    "author": "Autor",
+    "creation": "Creación",
+    "modification": "Modificación"
   },
   "implantation-list-search": {
     "results-total": "TOTAL RESULTADOS: ",
