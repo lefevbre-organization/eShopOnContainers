@@ -85,6 +85,10 @@ function buildAddOn(e) {
 }
 
 function logout() {
+  cache.remove('getAddonData');
+  cache.remove('dataUser');
+  cache.remove('messageId');
+  
   var service = getService();
   var login = create3PAuthorizationUi();
   service.reset();

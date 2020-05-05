@@ -32,20 +32,6 @@
     <link href="https://cdn.syncfusion.com/ej2/ej2-popups/styles/material.css" rel="stylesheet" />
     <link href="https://cdn.syncfusion.com/ej2/ej2-richtexteditor/styles/material.css" rel="stylesheet" />
 
-    <script>
-    var CLIENT_ID = "886908775003-5c4dk4khq2ing21ek5tjqpvlfoaml1ij.apps.googleusercontent.com";
-    var SCOPES = "https://mail.google.com/ https://www.googleapis.com/auth/gmail.addons.current.message.action https://www.googleapis.com/auth/gmail.addons.current.message.metadata https://www.googleapis.com/auth/gmail.addons.current.message.readonly https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/gmail.readonly"
-      function onLoad() {
-        gapi.load('auth2', function() {
-          gapi.auth2.init({
-            clientId: CLIENT_ID,
-            scope: SCOPES
-          });
-        });
-      }
-    </script>
-    
-    <script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.

@@ -190,7 +190,7 @@ class AddonConnectingEmails extends Component {
     let notification = 0;
 
     let sc = null;
-    const msgRaw = await getMessage(selectedMessages[0].id, 'raw');
+    // const msgRaw = await getMessage(selectedMessages[0].id, 'raw');
 
     try {
       if (step1Data.actuation === true) {
@@ -205,7 +205,7 @@ class AddonConnectingEmails extends Component {
         notification += 2;
         // Save email as eml format
         for (let i = 0; i < selectedMessages.length; i++) {
-          const raw = Base64.encode(msgRaw.result, false);
+          const raw = Base64.encode(selectedMessages[i].raw, false);
 
           const subject = selectedMessages[i].subject;
 
@@ -224,7 +224,7 @@ class AddonConnectingEmails extends Component {
 
           if (step1Data.saveDocuments === true) {
             // Save attachments
-            const mime = parse(msgRaw.result);
+            const mime = parse(selectedMessages[i].raw);
             for (let j = 0; j < mime.childNodes.length; j++) {
               if (
                 mime.childNodes[j].raw.indexOf(
