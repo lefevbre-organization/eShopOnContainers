@@ -25,7 +25,15 @@ import Spinner from '../../spinner/spinner';
 L10n.load({
   'es-ES': {
     grid: {
-      EmptyRecord: 'No hay datos que mostrar'
+      EmptyRecord: 'No hay datos que mostrar',
+      FilterButton: 'Filtrar',
+      ClearButton: 'Limpiar',
+      StartsWith: 'Comienza con',
+      EndsWith: 'Acaba con',
+      Contains: 'Contiene',
+      Equal: 'Igual',
+      NotEqual: 'Distinto',
+      EnterValue: 'Texto para filtrar'
     }
   }
 });
@@ -56,6 +64,7 @@ export class Step3 extends React.Component<Props, State> {
   private toolbarOptions: any;
   private gridRef: any;
   private crumbRef: any;
+  private locale: string;
   private FilterOptions: IFilterOptions = { type: 'Menu' };
   constructor(props: Props) {
     super(props);
@@ -78,6 +87,14 @@ export class Step3 extends React.Component<Props, State> {
     this.onInstanceSelected = this.onInstanceSelected.bind(this);
 
     this.gridRef = null;
+
+    const userLang = navigator.language;
+
+    if (userLang.startsWith('es-')) {
+      this.locale = '';
+    } else {
+      this.locale = '';
+    }
     this.crumbRef = createRef();
   }
 
@@ -345,7 +362,7 @@ export class Step3 extends React.Component<Props, State> {
                   dataSource={currentNodes.items}
                   height={`${height}px`}
                   selectionSettings={{ type: 'Single', mode: 'Row' }}
-                  locale="es-ES"
+                  locale={this.locale}
                   rowSelected={(event) => {
                     this.onRowSelected(event);
                   }}
@@ -380,7 +397,7 @@ export class Step3 extends React.Component<Props, State> {
                   filterSettings={this.FilterOptions}
                   height={`${height}px`}
                   selectionSettings={{ type: 'Single', mode: 'Row' }}
-                  locale="es-ES"
+                  locale={'es-ES'}
                   rowSelected={(event: any) => {
                     this.onInstanceSelected(event.data as CentInstance);
                   }}
