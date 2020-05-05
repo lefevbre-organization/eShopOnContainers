@@ -3,8 +3,8 @@ kind: Service
 metadata:
   name: {{ .Values.app.svc.lexonmysqlapi }}
   labels:
-    app: {{ template "webhooks-api.name" . }}
-    chart: {{ template "webhooks-api.chart" . }}
+    app: {{ template "lexonmysql-api.name" . }}
+    chart: {{ template "lexonmysql-api.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
@@ -15,5 +15,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app: {{ template "webhooks-api.name" . }}
+    app: {{ template "lexonmysql-api.name" . }}
     release: {{ .Release.Name }}

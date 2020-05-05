@@ -1,0 +1,74 @@
+replicaCount: 1
+clusterName: eshop-aks
+pathBase: /webgoogle
+
+image:
+  repository: elefebvreoncontainers/webgoogleclient
+  tag: linux-lef-main-containers
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  annotations: {}
+  tls: []
+
+resources: {}
+
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# env defines the environment variables that will be declared in the pod
+env:
+  urls:
+  # configmap declares variables which value is taken from the config map defined in template configmap.yaml (name is name of var and key the key in configmap).
+  configmap:
+    - name: ApplicationInsights__InstrumentationKey
+      key: all__InstrumentationKey
+    - name: UseLoadTest
+      key: all_EnableLoadTest
+    - name: LexonApiUrlHC
+      key: internalurls__lexonapi
+    - name: LexonMySqlApiUrlHC
+      key: internalurls__lexonmysqlapi
+    - name: AccountApiUrlHC
+      key: internalurls__accountapi
+    - name: LexonApiGatewayUrlHC
+      key: internalurls__lexonapigw
+    - name: AccountApiGatewayUrlHC
+      key: internalurls__accountapigw
+    - name: IdentityUrlHC
+      key: internalurls__identity__hc      
+    - name: IdentityUrl
+      key: urls__IdentityUrl 
+    - name: SignalrHubUrl
+      key: urls__apigwws
+      # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
+  values:
+    - name: ASPNETCORE_ENVIRONMENT
+      value: Development
+    - name: OrchestratorType
+      value: 'K8S'
+    - name: IsClusterEnv
+      value: 'True'
+configValues: |
+  window.REACT_APP_ENVIRONMENT='PRODUCTION'
+  window.URL_UPDATE_DEFAULTACCOUNT='https://lexbox-test-apigwacc.lefebvre.es/api/v1/accounts/emailuseraccount/updatedefaultaccount'
+  window.URL_RESET_DEFAULTACCOUNT='https://lexbox-test-apigwacc.lefebvre.es/api/v1/accounts/emailuseraccount/resetdefaultaccountbyuser'
+  window.URL_DELETE_ACCOUNT='https://lexbox-test-apigwacc.lefebvre.es/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider'
+  window.URL_SELECT_ACCOUNT='https://lexbox-test.lefebvre.es'
+  window.URL_GET_ACCOUNTS='https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail'
+  window.URL_MF_GOOGLE='https://lexbox-test-webgoogle.lefebvre.es/user'
+  window.URL_MF_OUTLOOK='https://lexbox-test-webgraph.lefebvre.es/user'
+  window.URL_MF_IMAP='https://lexbox-test-webimap.lefebvre.es/user'
+  window.URL_MF_LEXON='https://lexbox-test-weblexon.lefebvre.es/static/js/main.js'
+  window.API_GATEWAY='https://lexbox-test-apigwlex.lefebvre.es'
+  window.URL_MF_LEXON_BASE = 'https://lexbox-test-weblexon.lefebvre.es'
+  window.RELEASE = 'RC 0.21'

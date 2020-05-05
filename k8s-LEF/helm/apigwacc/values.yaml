@@ -3,7 +3,7 @@ clusterName: eshop-aks
 pathBase: /accountapigw
 
 image:
-  repository: eshop/ocelotapigw
+  repository: elefebvreoncontainers/ocelotapigw
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -38,7 +38,7 @@ env:
       key: internalurls__account__hc
     - name: LexonUrlHC
       key: internalurls__lexon__hc
-    - name: LexonMySqlUrlHC
+    - name: LexonMysqlUrlHC
       key: internalurls__lexonmysql__hc
     - name: CentinelaUrlHC
       key: internalurls__centinela__hc

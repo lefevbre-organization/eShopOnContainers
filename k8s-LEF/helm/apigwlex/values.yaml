@@ -3,7 +3,7 @@ clusterName: eshop-aks
 pathBase: /lexonapigw
 
 image:
-  repository: eshop/ocelotapigw
+  repository: elefebvreoncontainers/ocelotapigw
   tag: latest
   pullPolicy: IfNotPresent
 

@@ -1,7 +1,8 @@
 {{- $name := include "webaddonlexon.fullname" . -}}
 {{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
-{{- $webshoppingapigw := include "url-of" (list .Values.app.ingress.entries.webshoppingapigw .) -}}
-{{- $mvc := include "url-of" (list .Values.app.ingress.entries.mvc .) -}}
+{{- $lexonapigw := include "url-of" (list .Values.app.ingress.entries.lexonapigw .) -}}
+{{- $accountapigw := include "url-of" (list .Values.app.ingress.entries.accountapigw .) -}}
+{{- $centinelaapigw := include "url-of" (list .Values.app.ingress.entries.centinelaapigw .) -}}
 
 
 apiVersion: v1
@@ -17,12 +18,25 @@ data:
   all__InstrumentationKey: "{{ .Values.inf.appinsights.key }}"
   all__UseAzureServiceBus: "{{ .Values.inf.eventbus.useAzure }}"
   all_EnableLoadTest: "{{ .Values.inf.misc.useLoadTest }}"
-  webmvc__keystore: {{ .Values.inf.redis.keystore.constr }}
   internalurls__lexonapi: http://{{ .Values.app.svc.lexonapi }}
+  internalurls__lexonapi__hc: http://{{ .Values.app.svc.lexonapi }}/hc
   internalurls__lexonmysqlapi: http://{{ .Values.app.svc.lexonmysqlapi }}
-  internalurls__accountapi: http://{{ .Values.app.svc.accountapi }}/hc
-  internalurls__lexonapigw: http://{{ .Values.app.svc.lexonapigw }}/hc
-  internalurls__accountapigw: http://{{ .Values.app.svc.accountapigw }}/hc
+  internalurls__lexonmysqlapi__hc: http://{{ .Values.app.svc.lexonmysqlapi }}/hc
+  internalurls__accountapi: http://{{ .Values.app.svc.accountapi }}
+  internalurls__accountapi__hc: http://{{ .Values.app.svc.accountapi }}/hc
+  internalurls__centinelaapi: http://{{ .Values.app.svc.centinelaapi }}
+  internalurls__centinelaapi__hc: http://{{ .Values.app.svc.centinelaapi }}/hc
+  internalurls__userutilsapi: http://{{ .Values.app.svc.userutilsapi }}
+  internalurls__userutilsapi__hc: http://{{ .Values.app.svc.userutilsapi }}/hc
+  internalurls__lexonapigw: http://{{ .Values.app.svc.lexonapigw }}
+  internalurls__lexonapigw__hc: http://{{ .Values.app.svc.lexonapigw }}/hc
+  internalurls__accountapigw: http://{{ .Values.app.svc.accountapigw }}
+  internalurls__accountapigw__hc: http://{{ .Values.app.svc.accountapigw }}/hc
+  internalurls__centinelaapigw: http://{{ .Values.app.svc.centinelaapigw }}
+  internalurls__centinelaapigw__hc: http://{{ .Values.app.svc.centinelaapigw }}/hc
   internalurls__identity__hc: http://{{ .Values.app.svc.identity }}/hc
   urls__IdentityUrl: http://{{ $identity }}  
+  urls__apigwacc: http://{{ $accountapigw }}
+  urls__apigwlex: http://{{ $lexonapigw }}
+  urls__apigwcen: http://{{ $centinelaapigw }}
   config.js: {{ toYaml .Values.configValues | indent 4 }}

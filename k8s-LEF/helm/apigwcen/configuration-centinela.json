@@ -5,7 +5,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "centinela.api",
+          "Host": "centinela-api",
           "Port": 80
         }
       ],
@@ -18,7 +18,7 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
-          "Host": "userutils.api",
+          "Host": "userutils-api",
           "Port": 80
         }
       ],

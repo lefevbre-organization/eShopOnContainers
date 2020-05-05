@@ -1,0 +1,34 @@
+{
+  "ReRoutes": [
+    {
+      "DownstreamPathTemplate": "/api/{version}/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "lexon-api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/lex/{everything}",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ]
+    },
+	{
+   
+	  "DownstreamPathTemplate": "/api/{version}/{everything}",
+	  "DownstreamScheme": "http",
+	  "DownstreamHostAndPorts": [
+		{
+		  "Host": "lexonmysql-api",
+		  "Port": 80
+		}
+	  ],
+    "UpstreamPathTemplate": "/api/{version}/mysql/{everything}",
+    "UpstreamHttpMethod": [ "POST", "PUT", "GET" ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "RequestIdKey": "OcRequestId",
+    "AdministrationPath": "/administration",
+  }
+}
+  

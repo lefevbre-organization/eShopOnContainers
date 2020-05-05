@@ -92,7 +92,7 @@ services:
 #      - AccountApiUrlHC=http://account.api/hc
 #      - UserUtilsApiUrlHC=http://userutils.api/hc
 #      - CentinelaApiUrlHC=http://centinela.api/hc
-      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+#      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
 #      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
     ports:
       - "3000:80"

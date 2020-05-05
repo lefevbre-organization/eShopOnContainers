@@ -1,12 +1,12 @@
-{{- $name := include "apigwmm.fullname" . -}}
+{{- $name := include "apigwacc.fullname" . -}}
 
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: "cfg-{{ $name }}"
   labels:
-    app: {{ template "apigwmm.name" . }}
-    chart: {{ template "apigwmm.chart" .}}
+    app: {{ template "apigwacc.name" . }}
+    chart: {{ template "apigwacc.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:
