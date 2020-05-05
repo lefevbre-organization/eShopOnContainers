@@ -52,7 +52,7 @@ class AddonConnectingEmails extends Component {
     }
   }
 
-  closeDialog() {
+  goBackAddon() {
     const values = queryString.parse(window.location.search);
       window.location.replace(
         `${window.GOOGLE_SCRIPT}` +
@@ -175,7 +175,7 @@ class AddonConnectingEmails extends Component {
       step1Data.saveDocuments === false
     ) {
       setTimeout(() => {
-        this.closeDialog()
+        this.goBackAddon()
       }, 1000);
       this.saveClassifications();
     } else {
@@ -255,16 +255,16 @@ class AddonConnectingEmails extends Component {
       if (notification === 1) {
         toggleNotification(i18n.t('classify-emails.classification-saved-ok'));
         setTimeout(() => {
-          this.closeDialog()
+          this.goBackAddon()
         }, 1000);
       } else if (notification === 2) {
         toggleNotification(i18n.t('classify-emails.documents-saved-ok'));
         setTimeout(() => {
-          this.closeDialog()
+          this.goBackAddon()
         }, 1000);
       } else if (notification === 3) {
         setTimeout(() => {
-          this.closeDialog()
+          this.goBackAddon()
         }, 1000);
         toggleNotification(i18n.t('classify-emails.classification-docs-saved-ok'));
       }
@@ -328,7 +328,7 @@ class AddonConnectingEmails extends Component {
             <Button
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
-                this.closeDialog();
+                this.goBackAddon();
               }}>
               {i18n.t('classify-emails.cancel')}
             </Button>
@@ -348,7 +348,7 @@ class AddonConnectingEmails extends Component {
             <Button
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
-                this.closeDialog();
+                this.goBackAddon();
               }}>
               {i18n.t('classify-emails.cancel')}
             </Button>
@@ -375,7 +375,7 @@ class AddonConnectingEmails extends Component {
             <Button
             bsPrefix='btn btn-outline-primary'
             onClick={() => {
-              this.closeDialog();
+              this.goBackAddon();
             }}>
             {i18n.t('classify-emails.cancel')}
           </Button>
@@ -414,7 +414,7 @@ class AddonConnectingEmails extends Component {
             <Button
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
-                this.closeDialog();
+                this.goBackAddon();
               }}>
               {i18n.t('classify-emails.cancel')}
             </Button>

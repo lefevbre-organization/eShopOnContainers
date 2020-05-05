@@ -27,10 +27,10 @@ function buildHomeCard(selectCompany) {
        for (var i = 0; i < companyResponse.data.length; i++) {
         var company = companyResponse.data[i];
         company.selected = false
-        if(selectCompany && selectCompany.bbdd == company.bbdd){
+        if(selectCompany && selectCompany.bbdd == company.bbdd) {
           company.selected = true;
         }
-        checkboxGroup.addItem(company.name, company.bbdd, company.selected)
+        checkboxGroup.addItem(company.name, company.bbdd, company.selected);
        } 
  
     var action = CardService.newAction()
@@ -39,7 +39,7 @@ function buildHomeCard(selectCompany) {
                     bbdd: selectCompany ? selectCompany.bbdd : ''});
     var button = CardService.newImage()
     .setAltText("Entrar")
-       .setImageUrl("https://i.ibb.co/c2LcYk8/Screen-Shot-2020-03-20-at-7-17-27-AM.png")
+       .setImageUrl("https://www.dropbox.com/s/042ic4nutt5re85/Screen%20Shot%202020-03-20%20at%207.17.27%20AM.png?raw=1")
         .setOnClickAction(action);
 
     // var buttonSet = CardService.newButtonSet()
@@ -112,8 +112,12 @@ function buildHomeCard(selectCompany) {
     Logger.log(e.parameters.name, e.parameters.bbdd)
     var messageId = e.messageMetadata.messageId;
     cache.put('messageId', JSON.stringify(messageId), 21600);
-    var MessageClassificationCard = buildMessageClassificationCard(e);
-    return CardService.newActionResponseBuilder()
-    .setNavigation(CardService.newNavigation().pushCard(MessageClassificationCard))
-    .build()
+    var addonData = JSON.parse(cache.get('getAddonData'));
+    if(addonData) {
+     var MessageClassificationCard = buildMessageClassificationCard(e);
+      return CardService.newActionResponseBuilder()
+      .setNavigation(CardService.newNavigation().pushCard(MessageClassificationCard))
+      .build()
+    }
+    
   }
