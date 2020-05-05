@@ -1,6 +1,15 @@
-import React from 'react'
+import React from 'react';
 
-const LoginComponents = (children) => (
+ const LoginComponents = (children) =>  {
+   const verificationLogin = children.errorsMessage.login ? (
+     <div className="errorsMessage">{children.errorsMessage.login}</div>
+        ) : null;
+
+   const verificationPassword = children.errorsMessage.password ? (
+      <div className="errorsMessage">{children.errorsMessage.password}</div>
+        ) : null;
+
+   return (
     <div className="container box-space footer-space">
     <div className="row">
      <div className="offset-md-3 col-md-6">
@@ -19,7 +28,10 @@ const LoginComponents = (children) => (
                   </div>
                  <input type="text" name="login" className="form-control login-input" 
                   placeholder="Usuario" onChange={children.handleChange} />
+                  {verificationLogin ? <i className="lf-icon-close-round-full front-login__input-error-icon"></i> 
+                   : null} 
                  </div>
+                 { verificationLogin }
                </div>
                <div className="ml-n4 mb-4 pt-1">
                  <div className="input-group login-input-group">
@@ -30,10 +42,13 @@ const LoginComponents = (children) => (
                   </div>
                    <input type="password" name="password" className="form-control login-input" 
                     onChange={children.handleChange} placeholder="Contraseña" />
+                   {verificationPassword ?  <i className="lf-icon-close-round-full front-login__input-error-icon"></i> 
+                   : null} 
                  </div>
+                 { verificationPassword }
                </div>
                <div className="ml-n4 pt-4">
-                 <button onClick={children.handleEvent} className="btn btn-label btn-login"> INICIAR SESIÓN
+                 <button onClick={children.handleEventAddon} className="btn btn-label btn-login"> INICIAR SESIÓN
                 </button>
                </div>
                 <p className="mt-3 front-login__info-block">{children.notClient} <a className="front-login__info-block-link" 
@@ -45,7 +60,6 @@ const LoginComponents = (children) => (
               {children.needHelp}
              </p>
              <p className="client mt-n3">{children.phoneNumber}
-               {/* <span className="separate"></span> */}
                <a className="front-login__information-contact-email"> {children.client}</a>
             </p>
             </div>
@@ -54,6 +68,6 @@ const LoginComponents = (children) => (
       </div>
     </div>
 
-)
+  )}
 
 export default LoginComponents

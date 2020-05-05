@@ -32,6 +32,11 @@ function buildMessageClassificationCard(e) {
 
   var logoutAction = getLogout();
   
+  var user = JSON.parse(cache.get('dataUser'));
+  if (user == null) {
+    return logout();
+  }
+
   var cardChangeAction = CardService.newAction()
         .setFunctionName('onChangeCompany')
 
@@ -139,12 +144,13 @@ function onRemoveClassification(e) {
   var MessageClassificationCard = buildMessageClassificationCard(e);
    return CardService.newActionResponseBuilder()
    .setNavigation(CardService.newNavigation().updateCard(MessageClassificationCard))
-   .build()
+   .build();
 }
 
 function onChangeCompany(e) {
-
   cache.remove('getAddonData');
-
-  return buildAddOn(e);
+  var HomeCard = buildAddOn(e);
+  return CardService.newActionResponseBuilder()
+  .setNavigation(CardService.newNavigation().updateCard(HomeCard))
+  .build();
 }
