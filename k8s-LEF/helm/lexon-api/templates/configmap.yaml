@@ -13,7 +13,6 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:
-  webhooks__ConnectionString: Server={{ $sqlsrv }};Initial Catalog={{ .Values.inf.sql.webhooks.db }};User Id={{ .Values.inf.sql.common.user }};Password={{ .Values.inf.sql.common.pwd }};
   urls__IdentityUrl: http://{{ $identity }}
   urls__IdentityUrlExternal: http://{{ $identity }}
   all__EventBusConnection: {{ .Values.inf.eventbus.constr }}

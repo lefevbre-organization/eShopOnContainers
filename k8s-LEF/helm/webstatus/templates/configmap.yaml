@@ -33,7 +33,14 @@ data:
   internalurls__lexonapigw__hc: http://{{ .Values.app.svc.lexonapigw }}/hc
   name__accountapi__hc: Account API HTTP Check
   internalurls__accountapi__hc: http://{{ .Values.app.svc.accountapi }}/hc
-  name__lexonapi__hc: Lexon API HTTP Check
+  name__lexonapi__hc: Lexon Api HTTP Check
   internalurls__lexonapi__hc: http://{{ .Values.app.svc.lexonapi }}/hc
   name__lexonmysqlapi__hc: Lexon MySql API HTTP Check
   internalurls__lexonmysqlapi__hc: http://{{ .Values.app.svc.lexonmysqlapi }}/hc
+  name__centinelaapigw__hc: Centinela API GW HTTP Check
+  internalurls__centinelaapigw__hc: http://{{ .Values.app.svc.centinelaapigw }}/hc
+  name__centinelaapi__hc: Centinela Api HTTP Check
+  internalurls__centinelaapi__hc: http://{{ .Values.app.svc.centinelaapi }}/hc
+  name__userutilsapi__hc: User Utils Api HTTP Check
+  internalurls__userutilsapi__hc: http://{{ .Values.app.svc.userutilsapi }}/hc
+  internalurls__identity__hc: http://{{ .Values.app.svc.identity }}/hc
