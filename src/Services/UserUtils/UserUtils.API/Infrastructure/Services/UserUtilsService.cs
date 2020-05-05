@@ -45,10 +45,8 @@ namespace UserUtils.API.Infrastructure.Services
 
             _clientMinihub = _clientFactory.CreateClient();
             _clientMinihub.BaseAddress = new Uri(_settings.Value.MinihubUrl);
-            _clientMinihub.DefaultRequestHeaders.Add("Accept", "text/plain");
+            //_clientMinihub.DefaultRequestHeaders.Add("Accept", "text/plain");
 
-            // /Login/RecuperarUsuarioPorEntrada?idUsuarioPro=e0384919
-            // /Login/RecuperarUsuario?strLogin=f.reyes-ext@lefebvreelderecho.com&strPass=etEb9221
             _clientLogin = _clientFactory.CreateClient();
             _clientLogin.BaseAddress = new Uri(_settings.Value.LoginUrl);
             _clientLogin.DefaultRequestHeaders.Add("Accept", "text/plain");
