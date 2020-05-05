@@ -50,7 +50,7 @@ namespace eShopConContainers.WebSPA
                 //.AddUrlGroup(new Uri(Configuration["LexonMySqlApiUrlHC"]), name: "lexonmysqlapi-check", tags: new string[] { "lexonmysqlapi" })
                 //.AddUrlGroup(new Uri(Configuration["LexonApiGatewayUrlHC"]), name: "lexonapigw-check", tags: new string[] { "lexonapigw" })
                 //.AddUrlGroup(new Uri(Configuration["AccountApiUrlHC"]), name: "accountapi-check", tags: new string[] { "accountapigw" })
-                //.AddUrlGroup(new Uri(Configuration["AccountApiGatewayUrlHC"]), name: "accountapigw-check", tags: new string[] { "accountapigw" })
+                .AddUrlGroup(new Uri(Configuration["AccountApiGatewayUrlHC"]), name: "accountapigw-check", tags: new string[] { "accountapigw" })
                 //.AddUrlGroup(new Uri(Configuration["IdentityUrlHC"]), name: "identityapi-check", tags: new string[] { "identityapi" })
                 ;
 

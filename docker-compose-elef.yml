@@ -63,19 +63,19 @@ services:
       - rabbitmq
       - lexon.api
 
-  # weblexonapigw:
-  #   image: ${REGISTRY:-elefebvreoncontainers}/ocelotapigw:${PLATFORM:-linux}-${TAG:-dev}
-  #   build:
-  #     context: .
-  #     dockerfile: src/ApiGateways/ApiGw-Base/Dockerfile
-  #   depends_on:
-  #     - nosql.data
-  #     - rabbitmq
-  #     - account.api
-  #     - lexon.api
-  #     - lexon.mysql.api
-  #     - userutils.api
-  #     - centinela.api
+  weblexonapigw:
+    image: ${REGISTRY:-elefebvreoncontainers}/ocelotapigw:${PLATFORM:-linux}-${TAG:-dev}
+    build:
+      context: .
+      dockerfile: src/ApiGateways/ApiGw-Base/Dockerfile
+    depends_on:
+      - nosql.data
+      - rabbitmq
+      - account.api
+      - lexon.api
+      - lexon.mysql.api
+      - userutils.api
+      - centinela.api
            
   userutils.api:
     image: ${REGISTRY:-elefebvreoncontainers}/userutils.api:${PLATFORM:-linux}-${TAG:-dev}
@@ -95,13 +95,13 @@ services:
       - nosql.data
       - rabbitmq
 
-  # webcentinelaapigw:
-  #   image: ${REGISTRY:-elefebvreoncontainers}/ocelotapigw:${PLATFORM:-linux}-${TAG:-dev}
-  #   build:
-  #     context: .
-  #     dockerfile: src/ApiGateways/ApiGw-Base/Dockerfile
-  #   depends_on:
-  #     - nosql.data
-  #     - rabbitmq
-  #     - centinela.api
-  #     - userutils.api
+  webcentinelaapigw:
+    image: ${REGISTRY:-elefebvreoncontainers}/ocelotapigw:${PLATFORM:-linux}-${TAG:-dev}
+    build:
+      context: .
+      dockerfile: src/ApiGateways/ApiGw-Base/Dockerfile
+    depends_on:
+      - nosql.data
+      - rabbitmq
+      - centinela.api
+      - userutils.api
