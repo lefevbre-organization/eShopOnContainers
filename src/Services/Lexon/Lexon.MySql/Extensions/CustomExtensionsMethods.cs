@@ -51,41 +51,10 @@ namespace Lexon.MySql.Extensions
 
             hcBuilder
                 .AddCheck("self", () => HealthCheckResult.Healthy())
-                 .AddCheck(
+                .AddCheck(
                     name: "MySqlDatabase",
                     new MySqlConnectionHealthCheck(configuration["ConnectionString"]),
                     tags: new string[] { "mysql" });
-                //.AddMongoDb(
-                //    configuration["ConnectionStringHc"],
-                //    name: "lexon-mysql-mongodb-check",
-                //    tags: new string[] { "mongodb" });
-
-            //if (!string.IsNullOrEmpty(accountName) && !string.IsNullOrEmpty(accountKey))
-            //{
-            //    hcBuilder
-            //        .AddAzureBlobStorage(
-            //            $"DefaultEndpointsProtocol=https;AccountName={accountName};AccountKey={accountKey};EndpointSuffix=core.windows.net",
-            //            name: "catalog-storage-check",
-            //            tags: new string[] { "lexonmysqlstorage" });
-            //}
-
-            //if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
-            //{
-            //    hcBuilder
-            //        .AddAzureServiceBusTopic(
-            //            configuration["EventBusConnection"],
-            //            topicName: "lexon_mysql_event_bus",
-            //            name: "lexon-mysql-servicebus-check",
-            //            tags: new string[] { "servicebus" });
-            //}
-            //else
-            //{
-            //    hcBuilder
-            //        .AddRabbitMQ(
-            //            $"amqp://{configuration["EventBusConnection"]}",
-            //            name: "lexon-mysql-rabbitmqbus-check",
-            //            tags: new string[] { "rabbitmqbus" });
-            //}
 
             return services;
         }

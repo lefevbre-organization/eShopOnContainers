@@ -32,28 +32,38 @@ env:
   urls:
   # configmap declares variables which value is taken from the config map defined in template configmap.yaml (name is name of var and key the key in configmap).
   configmap:
-    - name: ConnectionString
-      key: webhooks__ConnectionString
     - name: ApplicationInsights__InstrumentationKey
       key: all__InstrumentationKey
     - name: EventBusConnection
       key: all__EventBusConnection
     - name: AzureServiceBusEnabled
       key: all__UseAzureServiceBus
+    - name: UseLoadTest
+      key: all_EnableLoadTest
+    - name: LexonApiUrlHC
+      key: internalurls__lexonapi__hc
+    - name: LexonMySqlApiUrlHC
+      key: internalurls__lexonmysqlapi_hc
+    - name: AccountApiUrlHC
+      key: internalurls__accountapi__hc
+    - name: LexonApiGatewayUrlHC
+      key: internalurls__lexonapigw__hc
+    - name: AccountApiGatewayUrlHC
+      key: internalurls__accountapigw__hc
+    - name: CentinelaUrlHC
+      key: internalurls__centinela__hc
+    - name: UserUtilsUrlHC
+      key: internalurls__userutils__hc
+    - name: CentinelaApiGatewayUrlHC
+      key: internalurls__centinelaapigw__hc
+    - name: IdentityUrlHC
+      key: internalurls__identity__hc      
     - name: IdentityUrl
-      key: urls__IdentityUrl
-    - name: IdentityUrlExternal
-      key: urls__IdentityUrlExternal
-    - name: ConnectionString
-      key: locations__ConnectionString
-    - name: Database
-      key: locations__Database
+      key: urls__IdentityUrl 
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
-    - name: LexonMySqlUrl
-      value: 'http://lexonmysql-api/api/v1/LexonMySql'
     - name: OrchestratorType
       value: 'K8S'
 

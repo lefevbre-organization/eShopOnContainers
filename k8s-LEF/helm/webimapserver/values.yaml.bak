@@ -1,16 +1,16 @@
 replicaCount: 1
 clusterName: eshop-aks
-pathBase: /lexon-api
+pathBase: /webimapserver
 
 image:
-  repository: elefebvreoncontainers/lexon.api
+  repository: elefebvreoncontainers/webimapserver
   tag: latest
   pullPolicy: IfNotPresent
 
 service:
   type: ClusterIP
   port: 80
-
+  
 ingress:
   enabled: true
   annotations: {}
@@ -38,26 +38,11 @@ env:
       key: all__EventBusConnection
     - name: AzureServiceBusEnabled
       key: all__UseAzureServiceBus
-    - name: IdentityUrl
-      key: urls__IdentityUrl
-    - name: IdentityUrlExternal
-      key: urls__IdentityUrlExternal
-    - name: ConnectionString
-      key: lexon__ConnectionString
-    - name: Database
-      key: lexon__Database
+
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
-    - name: LexonMySqlUrl
-      value: 'http://lexonmysql-api/api/v1/LexonMySql'
-    - name: LexonFilesUrl
-<<<<<<< HEAD
-      value: 'https://led-dev-lexon.eu.els.local/index.php'
-=======
-      value: 'http://led-dev-lexon/index.php'
->>>>>>> lef-i18-ocelot3
     - name: OrchestratorType
       value: 'K8S'
 

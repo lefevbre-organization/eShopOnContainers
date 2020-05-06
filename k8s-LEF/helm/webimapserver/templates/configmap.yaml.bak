@@ -1,15 +1,18 @@
-{{- $name := include "lexonmysql-api.fullname" . -}}
+{{- $name := include "webimapserver.fullname" . -}}
 {{- $sqlsrv := include "sql-name" . -}}
-{{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
 {{- $mongo := include "mongo-name" . -}}
+{{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
+{{- $lexonapigw := include "url-of" (list .Values.app.ingress.entries.lexonapigw .) -}}
+{{- $accountapigw := include "url-of" (list .Values.app.ingress.entries.accountapigw .) -}}
+{{- $centinelaapigw := include "url-of" (list .Values.app.ingress.entries.centinelaapigw .) -}}
 
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: "cfg-{{ $name }}"
   labels:
-    app: {{ template "lexonmysql-api.name" . }}
-    chart: {{ template "lexonmysql-api.chart" .}}
+    app: {{ template "webimapserver.name" . }}
+    chart: {{ template "webimapserver.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:

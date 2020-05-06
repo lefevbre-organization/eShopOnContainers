@@ -4,7 +4,7 @@ pathBase: /webstatus
 
 image:
   repository: elefebvreoncontainers/webstatuslef
-  tag: linux-lef-main-containers
+  tag: latest
   pullPolicy: IfNotPresent
 
 service:
@@ -74,6 +74,18 @@ env:
       key: name__lexonmysqlapi__hc
     - name: HealthChecksUI__HealthChecks__9__Uri
       key: internalurls__lexonmysqlapi__hc
+    - name: HealthChecksUI__HealthChecks__10__Name
+      key: name__centinelaapi__hc
+    - name: HealthChecksUI__HealthChecks__10__Uri
+      key: internalurls__centinelaapi__hc
+    - name: HealthChecksUI__HealthChecks__11__Name
+      key: name__userutilsapi__hc
+    - name: HealthChecksUI__HealthChecks__11__Uri
+      key: internalurls__userutilsapi__hc
+    - name: HealthChecksUI__HealthChecks__12__Name
+      key: name__centinelaapigw__hc
+    - name: HealthChecksUI__HealthChecks__12__Uri
+      key: internalurls__centinelaapigw__hc
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT

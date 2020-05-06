@@ -4,10 +4,10 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "apigwmm.fullname" . }}
+  name: {{ template "apigwacc.fullname" . }}
   labels:
-    app: {{ template "apigwmm.name" . }}
-    chart: {{ template "apigwmm.chart" . }}
+    app: {{ template "apigwacc.name" . }}
+    chart: {{ template "apigwacc.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- with .Values.ingress.annotations }}
