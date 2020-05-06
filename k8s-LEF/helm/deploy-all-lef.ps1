@@ -6,7 +6,7 @@ Param(
     [parameter(Mandatory=$false)][string]$appName="elefebvre",
     [parameter(Mandatory=$false)][bool]$clean=$true,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$true,
-    [parameter(Mandatory=$false)][string[]]$infras=("sql-data"),
+    [parameter(Mandatory=$false)][string[]]$infras=("nosql-data"),
     # [parameter(Mandatory=$false)][string[]]$infras=("sql-data", "nosql-data", "rabbitmq"),
     [parameter(Mandatory=$false)][bool]$deployCharts=$true,
     [parameter(Mandatory=$false)][string[]]$charts=("apigwlex", "lexon-api", "lexonmysql-api", "apigwacc", "account-api", "apigwcen", "centinela-api", "userutils-api", "webgoogle", "webgraph", "weblexon", "webaddonlexon", "webportal", "webimap", "webimapserver", "webstatus"),

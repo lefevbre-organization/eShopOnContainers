@@ -39,7 +39,7 @@ env:
     - name: AccountsUrlHC
       key: internalurls__accountapi__hc
     - name: CentinelaUrlHC
-      key: internalurls__centinela__hc
+      key: internalurls__centinelaapi__hc
     - name: UserUtilsUrlHC
       key: internalurls__userutils__hc
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
