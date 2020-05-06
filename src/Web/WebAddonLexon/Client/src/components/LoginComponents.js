@@ -10,7 +10,7 @@ import React from 'react';
         ) : null;
 
    return (
-    <div className="container box-space footer-space">
+    <div className="footer-space">
     <div className="row">
      <div className="offset-md-3 col-md-6">
        <div className="login-box">

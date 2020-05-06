@@ -18,15 +18,13 @@ const LoginFooter = (children) => (
   
            <img src={children.iconFacebook} alt="iconFacebook" 
            className="mr-3 compliance-footer__button-icon" />
-        
         </div>
     </div>
-
-    <div className="row">
-      <div className="col-md-8">
-        <p className="rights-reserved-login my-4 ml-5">©2019 Lefebvre. Todos los derechos reservados. Aviso legal 
+    <div className="row"> 
+      <div className="col-md-12 text-justify">
+        <p className="rights-reserved-login my-4">©2019 Lefebvre. Todos los derechos reservados. Aviso legal 
         | Política de privacidad | Política de Cookies</p>
-      </div>
+       </div>
     </div>
  </div>
 )

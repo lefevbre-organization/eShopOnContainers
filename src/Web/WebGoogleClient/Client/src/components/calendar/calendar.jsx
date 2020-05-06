@@ -491,7 +491,7 @@ export class Calendar extends Component {
                 let calendars = groupBy(this.resourceCalendarData, "checked");  
 
                 // Set the calendar field as default when only one calendar is checked
-                this.setDefaultCalendarField(calendars.true, calendar)
+               // this.setDefaultCalendarField(calendars.true, calendar)
 
                 // Load selected calendar to pass to the query
                 this.predicateQueryEvents(calendars.true, predicate)
@@ -503,17 +503,17 @@ export class Calendar extends Component {
 
     } 
 
-    setDefaultCalendarField(calendarList, calendar) {
-        if (calendarList != undefined) {
-            if (calendarList.length === 1) {
-                this.resourceCalendarData.sort(function (a, b) {
-                    if (a.id === calendar) { return -1; }
-                    //if (a.firstname > b.firstname) { return 1; }
-                    return 0;
-                })
-            }
-        }      
-    }
+    //setDefaultCalendarField(calendarList, calendar) {
+    //    if (calendarList != undefined) {
+    //        if (calendarList.length === 1) {
+    //            this.resourceCalendarData.sort(function (a, b) {
+    //                if (a.id === calendar) { return -1; }
+    //                //if (a.firstname > b.firstname) { return 1; }
+    //                return 0;
+    //            })
+    //        }
+    //    }      
+    //}
 
     predicateQueryEvents(calendarList, predicate) {
         if (calendarList != undefined) {

@@ -11,7 +11,7 @@ class Prompt extends Component {
 
     this.state = {
       modal: props.initialModalState,
-      text: ''
+      text: '',
     };
 
     this._handleOnClick = this._handleOnClick.bind(this);
@@ -33,7 +33,7 @@ class Prompt extends Component {
       title,
       placeholder,
       initialModalState,
-      toggleConfirmRemoveClassification
+      toggleConfirmRemoveClassification,
     } = this.props;
     const { text } = this.state;
 
@@ -58,7 +58,7 @@ class Prompt extends Component {
                 <div className='col col-12 p-0' style={{ textAlign: 'center' }}>
                   <TextBoxComponent
                     value={text}
-                    change={event => {
+                    change={(event) => {
                       this.setState({ text: event.value });
                     }}
                     cssClass='e-outline'
@@ -72,12 +72,12 @@ class Prompt extends Component {
             <Button
               variant='primary-white'
               onClick={() => this._handleOnClick(false)}>
-              {i18n.t('confirm-remove-classification.no')}
+              {i18n.t('new-folder-prompt.no')}
             </Button>
             <Button
               variant='outline-secondary-white'
               onClick={() => this._handleOnClick(true)}>
-              {i18n.t('confirm-remove-classification.yes')}
+              {i18n.t('new-folder-prompt.yes')}
             </Button>
           </Modal.Footer>
         </Modal>
@@ -138,12 +138,12 @@ Prompt.propTypes = {
   onOk: PropTypes.func,
   onCancel: PropTypes.func,
   title: PropTypes.string.isRequired,
-  placeholder: PropTypes.string
+  placeholder: PropTypes.string,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
-    companySelected: state.selections.companySelected
+    companySelected: state.selections.companySelected,
   };
 };
 

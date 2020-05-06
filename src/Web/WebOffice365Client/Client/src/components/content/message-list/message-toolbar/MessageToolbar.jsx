@@ -4,7 +4,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getNameEmail } from '../../../../utils';
 import moment from 'moment';
 import { Button } from 'reactstrap';
-import { faBars, faReply, faShare } from '@fortawesome/free-solid-svg-icons';
+import {
+  faBars,
+  faReply,
+  faShare,
+  faExclamation
+} from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import './messageToolbar.scss';
 
@@ -121,6 +126,16 @@ export class MessageToolbar extends PureComponent {
               />
             </Link>
           </div>
+          {message.importance === 'high' && (
+            <div className='action-btn mr-2 icon-priority' title={'Urgente'}>
+              <FontAwesomeIcon
+                // title={t('message-toolbar.resend')}
+                icon={faExclamation}
+                size='lg'
+                color='red'
+              />
+            </div>
+          )}
         </div>
       </div>
     );
