@@ -174,8 +174,8 @@ services:
       - ConnectionString=${ELEF_MONGO_CONN:-mongodb://nosql.data}
       - MongoDatabase=${ELEF_MONGO_LEXON_DB:-LexonApiDB}
       - LexonMySqlUrl=http://lexon.mysql.api/api/v1/LexonMySql
-#      - LexonFilesUrl=https:/led-dev-lexon/index.php
-      - LexonFilesUrl=https://10.38.6.18/index.php
+      - LexonFilesUrl=https:/led-dev-lexon/index.php
+#      - LexonFilesUrl=https://10.38.6.18/index.php
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}        

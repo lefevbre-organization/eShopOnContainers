@@ -57,8 +57,6 @@
 
         public static IServiceCollection AddCustomHealthCheck(this IServiceCollection services, IConfiguration configuration)
         {
-            //var accountName = configuration.GetValue<string>("AzureStorageAccountName");
-            //var accountKey = configuration.GetValue<string>("AzureStorageAccountKey");
 
             var hcBuilder = services.AddHealthChecks();
 
@@ -67,34 +65,11 @@
                 .AddMongoDb(
                     configuration["ConnectionString"],
                     name: "lexon-mongodb-check",
-                    tags: new string[] { "mongodb" });
-
-            //if (!string.IsNullOrEmpty(accountName) && !string.IsNullOrEmpty(accountKey))
-            //{
-            //    hcBuilder
-            //        .AddAzureBlobStorage(
-            //            $"DefaultEndpointsProtocol=https;AccountName={accountName};AccountKey={accountKey};EndpointSuffix=core.windows.net",
-            //            name: "catalog-storage-check",
-            //            tags: new string[] { "accountstorage" });
-            //}
-
-            //if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
-            //{
-            //    hcBuilder
-            //        .AddAzureServiceBusTopic(
-            //            configuration["EventBusConnection"],
-            //            topicName: "account_event_bus",
-            //            name: "lexon-servicebus-check",
-            //            tags: new string[] { "servicebus" });
-            //}
-            //else
-            //{
-                hcBuilder
-                    .AddRabbitMQ(
-                        $"amqp://{configuration["EventBusConnection"]}",
-                        name: "account-rabbitmqbus-check",
-                        tags: new string[] { "rabbitmqbus" });
-          //  }
+                    tags: new string[] { "mongodb" })
+                .AddRabbitMQ(
+                    $"amqp://{configuration["EventBusConnection"]}",
+                    name: "account-rabbitmqbus-check",
+                    tags: new string[] { "rabbitmqbus" });
 
             return services;
         }

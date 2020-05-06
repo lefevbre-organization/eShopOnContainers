@@ -49,10 +49,7 @@ namespace UserUtils.API.Extensions
 
         public static IServiceCollection AddCustomHealthCheck(this IServiceCollection services, IConfiguration configuration)
         {
-            //TODO: review and stimate comment or test services
-            //var accountName = configuration.GetValue<string>("AzureStorageAccountName");
-            //var accountKey = configuration.GetValue<string>("AzureStorageAccountKey");
-
+ 
             var hcBuilder = services.AddHealthChecks();
 
             hcBuilder
@@ -60,9 +57,7 @@ namespace UserUtils.API.Extensions
                 .AddMongoDb(
                     configuration["ConnectionString"],
                     name: "UserUtils-mongodb-check",
-                    tags: new string[] { "mongodb" });
-
-            hcBuilder
+                    tags: new string[] { "mongodb" })
                 .AddRabbitMQ(
                     $"amqp://{configuration["EventBusConnection"]}",
                     name: "UserUtils-rabbitmqbus-check",

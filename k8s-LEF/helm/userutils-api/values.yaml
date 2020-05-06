@@ -51,11 +51,11 @@ env:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
     - name: MinihubUrl
-      value: 'http://led-pre-servicehub/Herramientas/Get'
+      value: 'http://led-pre-servicehub.eu.els.local/Herramientas/Get'
     - name: OnlineUrl
-      value: 'https://herculesppd.lefebvre.es/webclient46/ws'
+      value: 'http://herculesppd.lefebvre.es/webclient46/ws'
     - name: LoginUrl
-      value: 'http://led-pre-servicecomtools'
+      value: 'http://led-pre-servicecomtools.eu.els.local'
     - name: OrchestratorType
       value: 'K8S'
     - name: OnlineLogin
