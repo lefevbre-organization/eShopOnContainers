@@ -117,9 +117,9 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - LexonApiGatewayUrlHC=http://weblexonapigw/hc
-      - LexonApiUrlHC=http://lexon.api/hc
+#      - LexonApiUrlHC=http://lexon.api/hc
 #      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
-      - AccountApiUrlHC=http://account.api/hc
+#      - AccountApiUrlHC=http://account.api/hc
 #      - UserUtilsApiUrlHC=http://userutils.api/hc
 #      - CentinelaApiUrlHC=http://centinela.api/hc
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
