@@ -45,7 +45,8 @@
     "q5": "¿Quieres renombrar las nuevas actuaciones?",
     "qs5": "Las actuaciones creadas toman por defecto como título el asunto de los mensajes clasificados. Si lo deseas, puedes editar estos títulos.",
     "actuation-title": "Título de la actuación",
-    "new-folder": "Nueva carpeta"
+    "new-folder": "Nueva carpeta",
+    "name-folder": "Nombre de la carpeta"
   },
   "attaching": {
     "q2": "¿En que tipo de contacto quieres realizar la búsqueda?"
@@ -159,5 +160,9 @@
     "version": "Versión",
     "configuration": "OPCIONES DE CONFIGURACIÓN",
     "classify-contacts": "Clasificar contactos automáticamente al enviar correo"
+  },
+  "new-folder-prompt": {
+    "yes": "Crear",
+    "no": "Cancelar"
   }
 }

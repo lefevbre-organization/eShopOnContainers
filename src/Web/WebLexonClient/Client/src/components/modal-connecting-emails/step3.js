@@ -314,13 +314,13 @@ export class ConnectingEmailsStep3 extends React.Component {
         </div>
         <Prompt
           initialModalState={showPrompt}
-          title='Nueva carpeta'
+          title={i18n.t('connecting.new-folder')}
           onOk={this.onNewFolderOk}
           toggleNotification={toggleNotification}
           toggleConfirmRemoveClassification={() => {
             this.setState({ showPrompt: !showPrompt });
           }}
-          placeholder='Nombre de la carpeta'></Prompt>
+          placeholder={i18n.t('connecting.name-folder')}></Prompt>
         <style jsx>
           {`
             .step3-container {
