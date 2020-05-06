@@ -265,3 +265,22 @@ $font-weight-bold: 700;
   background-color: #fff;
   border-color: #001978;
 }
+
+.priority-wrapper {
+  display: flex;
+
+  .icon-priority {
+    cursor: pointer;
+    font-size: 30px;
+    &.lf-icon-switch-right {
+      color: red !important;
+    }
+    &.lf-icon-switch-left {
+      color: #333333 !important;
+    }
+  }
+  .priority-text {
+    margin-left: 5px;
+    font-size: larger;
+  }
+}
