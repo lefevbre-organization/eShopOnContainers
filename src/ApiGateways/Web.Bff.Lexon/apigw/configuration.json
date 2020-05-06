@@ -24,6 +24,7 @@
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/mysql/{everything}",
+      "Priority": 0,
       "UpstreamHttpMethod": [ "POST", "PUT", "GET" ]
     },
     {

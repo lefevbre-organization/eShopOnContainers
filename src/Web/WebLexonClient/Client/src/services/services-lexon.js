@@ -1,5 +1,4 @@
 import * as moment from 'moment';
-import base64url from 'base64url';
 import {
   COMPANIES,
   CLASSIFICATIONS,
@@ -489,56 +488,4 @@ export const downloadFile = async (
   } catch (err) {
     throw err;
   }
-};
-
-export const getMessage = (messageId, format) => {
-  return new Promise((resolve, reject) => {
-    window.gapi.client.gmail.users.messages
-      .get({
-        userId: 'me',
-        id: messageId,
-        format: format || 'full'
-      })
-      .then(response => {
-        const { result } = response;
-        if (format === 'raw') {
-          resolve({
-            result: base64url.decode(result.raw)
-          });
-        } else {
-          let body = getBody(result.payload, 'text/html');
-          let attach = result.payload.parts;
-
-          if (body === '') {
-            body = getBody(result.payload, 'text/plain');
-            body = body
-              .replace(/(\r\n)+/g, '<br data-break="rn-1">')
-              .replace(/[\n\r]+/g, '<br data-break="nr">');
-          }
-
-          if (body !== '' && !isHTML(body)) {
-            body = body
-              .replace(
-                /(\r\n)+/g,
-                '<div data-break="rn-1" style="margin-bottom:10px"></div>'
-              )
-              .replace(/[\n\r]+/g, '<br data-break="nr">');
-          }
-
-          resolve({
-            body,
-            attach,
-            headers: response.headers,
-            result: {
-              ...result,
-              messageHeaders: response.result.payload.headers,
-              payload: undefined
-            }
-          });
-        }
-      })
-      .catch(error => {
-        reject(error);
-      });
-  });
 };

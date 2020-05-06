@@ -48,7 +48,8 @@
     "q5": "Do you want to rename the new performances?",
     "qs5": "The actions created take by default the subject of classified messages. If you wish, you can edit these titles.",
     "actuation-title": "Acting title",
-    "new-folder": "New folder"
+    "new-folder": "New folder",
+    "name-folder": "Folder name"
   },
   "classification": {
     "type": "Type: ",
@@ -157,5 +158,9 @@
   },
   "configuration": {
     "version": "Version"
+  },
+  "new-folder-prompt": {
+    "yes": "Create",
+    "no": "Cancel"
   }
 }

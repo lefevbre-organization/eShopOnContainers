@@ -410,6 +410,11 @@ export const emailToBccRecipients = data => {
   return email;
 };
 
+export const emailPriority = () => {
+  const priority = `"Importance": "High"\r\n`;
+  return priority;
+};
+
 export const emailAttachments = data => {
   var email = `"Attachments": [],`;
   var attachments = data.uppyPreviews;
@@ -439,6 +444,9 @@ export const sendMessage = async ({ data, attachments }) => {
   email += emailToRecipients(data);
   email += emailToCcRecipients(data);
   email += emailToBccRecipients(data);
+  if (data.isPriority) {
+    email += emailPriority(1);
+  }
   //email += emailAttachments(data);
   email += emailEnd();
 
@@ -458,6 +466,7 @@ export const sendMessage = async ({ data, attachments }) => {
     return response;
   } catch (err) {
     console.log(err);
+    debugger;
     throw err;
   }
 };

@@ -24,10 +24,7 @@ function getService() {
 function create3PAuthorizationUi() {
     var service = getService()
     var authUrl = service.getAuthorizationUrl()
-    // var loginButton = CardService.newTextButton()
-    //     .setText('Login')
-    //     .setAuthorizationAction(CardService.newAuthorizationAction()
-    //         .setAuthorizationUrl(authUrl))
+
     var logo = CardService.newImage()
     .setAltText("Logo")
     .setImageUrl("https://www.dropbox.com/s/csqs86p9kjgy80w/Screenshot%202020-04-20%2009.44.01.png?raw=1");
@@ -57,7 +54,6 @@ function authCallback(callbackRequest) {
     Logger.log("Run authcallback!")
     const authorized = getService().handleCallback(callbackRequest)
 
-    console.log(authorized)
     return HtmlService.createHtmlOutput('Success! <script>setTimeout(function() { top.window.close() }, 1)</script>')
 }
 
@@ -85,6 +81,10 @@ function buildAddOn(e) {
 }
 
 function logout() {
+  cache.remove('getAddonData');
+  cache.remove('dataUser');
+  cache.remove('messageId');
+  
   var service = getService();
   var login = create3PAuthorizationUi();
   service.reset();

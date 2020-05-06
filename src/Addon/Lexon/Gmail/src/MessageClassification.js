@@ -11,12 +11,11 @@ function showNewConection() {
     .setAddonData(addonData)
     .setCallbackFunction('newConectionCallback')
     .setCache(CacheService.getUserCache())
-    .setPropertyStore(PropertiesService.getUserProperties())
+    .setPropertyStore(PropertiesService.getUserProperties());
 }
 
 function newConectionCallback(callbackRequest) {
-  Logger.log("Run newConectionCallback!")
-  // const authorized = showNewConection().handleCallback(callbackRequest)
+  Logger.log("Run newConectionCallback!");
   
   return HtmlService.createHtmlOutput('Success! <script>setTimeout(function() { top.window.close() }, 1)</script>');
 }
@@ -32,12 +31,17 @@ function buildMessageClassificationCard(e) {
 
   var logoutAction = getLogout();
   
+  var user = JSON.parse(cache.get('dataUser'));
+  if (user == null) {
+    return logout();
+  }
+
   var cardChangeAction = CardService.newAction()
         .setFunctionName('onChangeCompany')
 
   var changeCard = CardService.newImage()
   .setAltText("Regresar a la lista de empresas")
-  .setImageUrl("https://i.ibb.co/VjKrPQY/Screen-Shot-2020-04-13-at-2-50-42-PM.png")
+  .setImageUrl("https://www.dropbox.com/s/745u4zo1x301m22/Screen%20Shot%202020-04-13%20at%202.50.42%20PM.png?raw=1")
   .setOnClickAction(cardChangeAction);
 
   var companyIdentifiedText = CardService.newTextParagraph().
@@ -48,7 +52,7 @@ function buildMessageClassificationCard(e) {
 
   var classifyMessages = CardService.newImage()
   .setAltText("Clasificar mensajes")
-  .setImageUrl("https://i.ibb.co/R0BgJsp/Screen-Shot-2020-03-24-at-2-18-20-PM.png");
+  .setImageUrl("https://www.dropbox.com/s/tt80ho1st9ei233/Screen%20Shot%202020-03-24%20at%202.18.20%20PM.png?raw=1");
 
   var messageDescription =  CardService.newTextParagraph().
   setText('Seleccione un mensaje y califíquelo en Lex-on. La relación establecida será visible en este panel.')
@@ -58,7 +62,7 @@ function buildMessageClassificationCard(e) {
 
   var button = CardService.newImage()
   .setAltText("Nueva conexión")
-     .setImageUrl("https://i.ibb.co/KVpQ1kZ/Screen-Shot-2020-03-26-at-6-44-32-PM.png")
+     .setImageUrl("https://www.dropbox.com/s/5mq9albce82msne/Screen%20Shot%202020-03-26%20at%206.44.32%20PM.png?raw=1")
      .setAuthorizationAction(CardService.newAuthorizationAction()
      .setAuthorizationUrl(authUrl));
      
@@ -70,7 +74,7 @@ function buildMessageClassificationCard(e) {
 
   var imgClassifications = CardService.newImage()
   .setAltText("Clasificaciones")
-  .setImageUrl("https://i.ibb.co/nP7CF8s/Screen-Shot-2020-03-26-at-7-02-50-PM.png")
+  .setImageUrl("https://www.dropbox.com/s/z1pntri2wwo57fu/Screen%20Shot%202020-03-26%20at%207.02.50%20PM.png?raw=1")
 
   var imgClassificationsWhitoutMessage = CardService.newImage()
   .setAltText("Clasificaciones")
@@ -139,12 +143,13 @@ function onRemoveClassification(e) {
   var MessageClassificationCard = buildMessageClassificationCard(e);
    return CardService.newActionResponseBuilder()
    .setNavigation(CardService.newNavigation().updateCard(MessageClassificationCard))
-   .build()
+   .build();
 }
 
 function onChangeCompany(e) {
-
   cache.remove('getAddonData');
-
-  return buildAddOn(e);
+  var HomeCard = buildAddOn(e);
+  return CardService.newActionResponseBuilder()
+  .setNavigation(CardService.newNavigation().updateCard(HomeCard))
+  .build();
 }

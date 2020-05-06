@@ -9,7 +9,11 @@ import { ConnectingEmailsStep1 } from '../modal-connecting-emails/step1';
 import { ConnectingEmailsStep2 } from '../modal-connecting-emails/step2';
 import { ConnectingEmailsStep3 } from '../modal-connecting-emails/step3';
 import { ConnectingEmailsStep4 } from '../modal-connecting-emails/step4';
-import { addClassification, uploadFile, getMessage } from '../../services/services-lexon';
+import {
+  addClassification,
+  uploadFile,
+  getMessage,
+} from '../../services/services-lexon';
 import ACTIONS from '../../actions/documentsAction';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 const base64js = require('base64-js');
@@ -24,16 +28,16 @@ class AddonConnectingEmails extends Component {
         actuation: false,
         copyDocuments: false,
         saveDocuments: false,
-        entity: 0
+        entity: 0,
       },
       step2Data: {
         id: -1,
-        idType: -1
+        idType: -1,
       },
       step3Data: {
-        selected: -1
+        selected: -1,
       },
-      messages: []
+      messages: [],
     };
 
     this.changeSubject = this.changeSubject.bind(this);
@@ -52,16 +56,13 @@ class AddonConnectingEmails extends Component {
     }
   }
 
-  closeDialog() {
+  goBackAddon() {
     const values = queryString.parse(window.location.search);
-      window.location.replace(
-        `${window.GOOGLE_SCRIPT}` +
-          '?success=1' +
-          '&state=' +
-          values.state 
-      );
+    window.location.replace(
+      `${window.GOOGLE_SCRIPT}` + '?success=1' + '&state=' + values.state
+    );
   }
-  
+
   nextStep() {
     const { step, step1Data, messages } = this.state;
     if (step === 1) {
@@ -83,7 +84,6 @@ class AddonConnectingEmails extends Component {
       this.setState({ step: 4 });
     }
   }
-
 
   prevStep() {
     const { step, step1Data } = this.state;
@@ -113,7 +113,7 @@ class AddonConnectingEmails extends Component {
     if (this.state.step1Data.entity !== data.entity) {
       step2Data = {
         id: -1,
-        idType: -1
+        idType: -1,
       };
     }
 
@@ -175,7 +175,7 @@ class AddonConnectingEmails extends Component {
       step1Data.saveDocuments === false
     ) {
       setTimeout(() => {
-        this.closeDialog()
+        this.goBackAddon();
       }, 1000);
       this.saveClassifications();
     } else {
@@ -190,7 +190,7 @@ class AddonConnectingEmails extends Component {
     let notification = 0;
 
     let sc = null;
-    const msgRaw = await getMessage(selectedMessages[0].id, 'raw');
+    // const msgRaw = await getMessage(selectedMessages[0].id, 'raw');
 
     try {
       if (step1Data.actuation === true) {
@@ -205,7 +205,7 @@ class AddonConnectingEmails extends Component {
         notification += 2;
         // Save email as eml format
         for (let i = 0; i < selectedMessages.length; i++) {
-          const raw = Base64.encode(msgRaw.result, false);
+          const raw = Base64.encode(selectedMessages[i].raw, false);
 
           const subject = selectedMessages[i].subject;
 
@@ -224,7 +224,7 @@ class AddonConnectingEmails extends Component {
 
           if (step1Data.saveDocuments === true) {
             // Save attachments
-            const mime = parse(msgRaw.result);
+            const mime = parse(selectedMessages[i].raw);
             for (let j = 0; j < mime.childNodes.length; j++) {
               if (
                 mime.childNodes[j].raw.indexOf(
@@ -255,24 +255,28 @@ class AddonConnectingEmails extends Component {
       if (notification === 1) {
         toggleNotification(i18n.t('classify-emails.classification-saved-ok'));
         setTimeout(() => {
-          this.closeDialog()
+          this.goBackAddon();
         }, 1000);
       } else if (notification === 2) {
         toggleNotification(i18n.t('classify-emails.documents-saved-ok'));
         setTimeout(() => {
-          this.closeDialog()
+          this.goBackAddon();
         }, 1000);
       } else if (notification === 3) {
         setTimeout(() => {
-          this.closeDialog()
+          this.goBackAddon();
         }, 1000);
-        toggleNotification(i18n.t('classify-emails.classification-docs-saved-ok'));
+        toggleNotification(
+          i18n.t('classify-emails.classification-docs-saved-ok')
+        );
       }
-
     } catch (err) {
       console.log(err);
       if (notification === 1) {
-        toggleNotification(i18n.t('classify-emails.classification-saved-ko'), true);
+        toggleNotification(
+          i18n.t('classify-emails.classification-saved-ko'),
+          true
+        );
       } else if (notification > 1) {
         toggleNotification(i18n.t('classify-emails.documents-saved-ko'), true);
       }
@@ -286,7 +290,7 @@ class AddonConnectingEmails extends Component {
       companySelected,
       bbddAddon,
       selectedMessages,
-      toggleNotification
+      toggleNotification,
     } = this.props;
 
     try {
@@ -328,7 +332,7 @@ class AddonConnectingEmails extends Component {
             <Button
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
-                this.closeDialog();
+                this.goBackAddon();
               }}>
               {i18n.t('classify-emails.cancel')}
             </Button>
@@ -348,7 +352,7 @@ class AddonConnectingEmails extends Component {
             <Button
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
-                this.closeDialog();
+                this.goBackAddon();
               }}>
               {i18n.t('classify-emails.cancel')}
             </Button>
@@ -373,12 +377,12 @@ class AddonConnectingEmails extends Component {
         return (
           <Fragment>
             <Button
-            bsPrefix='btn btn-outline-primary'
-            onClick={() => {
-              this.closeDialog();
-            }}>
-            {i18n.t('classify-emails.cancel')}
-          </Button>
+              bsPrefix='btn btn-outline-primary'
+              onClick={() => {
+                this.goBackAddon();
+              }}>
+              {i18n.t('classify-emails.cancel')}
+            </Button>
             <Button
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
@@ -414,7 +418,7 @@ class AddonConnectingEmails extends Component {
             <Button
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
-                this.closeDialog();
+                this.goBackAddon();
               }}>
               {i18n.t('classify-emails.cancel')}
             </Button>
@@ -446,7 +450,7 @@ class AddonConnectingEmails extends Component {
       addonData,
       companySelected,
       showModalDocuments,
-      toggleNotification
+      toggleNotification,
     } = this.props;
     const { messages, step1Data, step } = this.state;
     console.log('Data addon --->', addonData);
@@ -470,7 +474,7 @@ class AddonConnectingEmails extends Component {
           <div style={{ display: this.state.step === 1 ? 'block' : 'none' }}>
             <ConnectingEmailsStep1
               show={this.state.step === 1}
-              onChange={data => {
+              onChange={(data) => {
                 this.changeStep1Data(data);
               }}></ConnectingEmailsStep1>
           </div>
@@ -481,7 +485,7 @@ class AddonConnectingEmails extends Component {
               bbdd={bbddAddon}
               entity={this.state.step1Data.entity}
               toggleNotification={toggleNotification}
-              onSelectedEntity={data =>
+              onSelectedEntity={(data) =>
                 this.changeStep2Data(data)
               }></ConnectingEmailsStep2>
           </div>
@@ -492,7 +496,7 @@ class AddonConnectingEmails extends Component {
               bbdd={bbddAddon}
               entity={this.state.step2Data}
               toggleNotification={toggleNotification}
-              onSelectedDirectory={data =>
+              onSelectedDirectory={(data) =>
                 this.changeStep3Data(data)
               }></ConnectingEmailsStep3>
           </div>
@@ -572,7 +576,7 @@ class AddonConnectingEmails extends Component {
             height: 13px;
             color: #001978;
             font-family: MTTMilano-Medium;
-            font-size: 16px;
+            font-size: 16px !important;
             font-weight: 500;
             line-height: 16px;
           }
@@ -954,16 +958,16 @@ class AddonConnectingEmails extends Component {
 
 AddonConnectingEmails.propTypes = {};
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     showModalDocuments: state.documentsReducer.showModalDocuments,
     companySelected: state.selections.companySelected,
-    selectedMessages: state.email.selectedMessages
+    selectedMessages: state.email.selectedMessages,
   };
 };
 
-const mapDispatchToProps = dispatch => ({
-  toggleModalDocuments: () => dispatch(ACTIONS.toggleModalDocuments())
+const mapDispatchToProps = (dispatch) => ({
+  toggleModalDocuments: () => dispatch(ACTIONS.toggleModalDocuments()),
 });
 
 export default connect(

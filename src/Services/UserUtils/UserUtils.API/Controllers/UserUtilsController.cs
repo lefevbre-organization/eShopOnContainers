@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
-using UserUtils.API.Models;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 using UserUtils.API.Infrastructure.Services;
+using UserUtils.API.Models;
 
 namespace UserUtils.API.Controllers
 {
@@ -26,6 +25,7 @@ namespace UserUtils.API.Controllers
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _service = service ?? throw new ArgumentNullException(nameof(service));
         }
+
         /// <summary>
         /// Permite obtener los token necesarios para operar con los microservicios de envio de correo
         /// </summary>
@@ -73,7 +73,6 @@ namespace UserUtils.API.Controllers
             return result.data.valid ? Ok(result) : (IActionResult)BadRequest(result);
         }
 
-
         [HttpGet("user/apps")]
         [ProducesResponseType(typeof(Result<List<LexApp>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<List<LexApp>>), (int)HttpStatusCode.BadRequest)]
@@ -83,6 +82,7 @@ namespace UserUtils.API.Controllers
                 return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
             var result = await _service.GetUserUtilsAsync(idNavisionUser, onlyActives);
+            result.infos.Add(new Info() { code = "0000", message = "estoy en user utils" });
             return Ok(result);
         }
 
@@ -97,7 +97,6 @@ namespace UserUtils.API.Controllers
             Result<ServiceComArea[]> result = await _service.GetAreasByUserAsync(idNavisionUser);
             return Ok(result);
             //http://led-servicecomtools/Areas/GetUsuariosProAreas?idUsuarioPro=E0384919
-
         }
 
         [HttpGet("user/encode")]
@@ -123,7 +122,6 @@ namespace UserUtils.API.Controllers
             var result = await _service.GetDecodeUserAsync(idEncodedNavisionUser);
             return Ok(result);
             //http://led-servicecomtools/Login/RecuperarUsuario?login=e0384919&password=asasd
-
         }
 
         [HttpPut("user/get/login")]
@@ -140,7 +138,6 @@ namespace UserUtils.API.Controllers
             Result<ServiceComUser> result = await _service.GetUserDataWithLoginAsync(login, pass);
             return Ok(result);
             //Http://led-servicecomtools/Login/RecuperarUsuario?strLogin=f.reyes-ext@lefebvreelderecho.com&strPass=etEb9221
-
         }
 
         [HttpPut("user/get/entrada")]
@@ -154,9 +151,6 @@ namespace UserUtils.API.Controllers
             Result<ServiceComUser> result = await _service.GetUserDataWithEntryAsync(idNavisionUser);
             return Ok(result);
             //http://led-servicecomtools/Login/RecuperarUsuarioPorEntrada?idUsuarioPro=E1621396
-
         }
-
-
     }
 }

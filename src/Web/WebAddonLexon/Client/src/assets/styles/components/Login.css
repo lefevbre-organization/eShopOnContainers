@@ -1,7 +1,8 @@
 .wrapper {
-  min-height: 100%;
-  height: auto !important;
-  height: 100%;
+  overflow: hidden;
+  display: table;
+  height: 969px;
+  width: 100%;
 }
  
 .login-header {
@@ -46,7 +47,8 @@
 }
    
 .footer-space {
-  margin-bottom: 80px !important;
+  overflow: hidden;
+  min-height: calc(100% - 260px);
 }
   
 .login-box {
@@ -207,12 +209,19 @@
 }
 
 .login-footer {
+  width: 100%;
   height: 200px;
+  display: block;
+  overflow: hidden;
   background: #001978;
+  float: left;
+  position: relative;
 }
 .compliance-footer__icon-logo {
   float: left;
+  margin-left: 70px;
   padding: 0;
+  text-align: justify;
 }
 
 .pull-right {
@@ -236,4 +245,27 @@
   margin: 35px 0 0;
   font-weight: 500;
   text-decoration: none;
+  margin-left: 4rem!important;
+}
+
+.errorsMessage {
+  font-family: "MTTMilano";
+  font-size: 14px;
+  border: 0;
+  font-weight: 600;
+  background-color: transparent;
+  color: #D81F2A;
+  margin-left: 1px;
+  margin-top: -5px;
+  text-align: start;
+  margin-top: 1px;
+}
+
+.front-login__input-error-icon {
+  position: absolute;
+  left: 93%;
+  color: #D81F2A;
+  top: 11px;
+  font-size: 16px;
+
 }

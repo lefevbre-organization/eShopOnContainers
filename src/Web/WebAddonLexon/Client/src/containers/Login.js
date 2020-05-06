@@ -3,10 +3,6 @@ import queryString from 'query-string';
 import LoginHeader from '../components/LoginHeader';
 import LoginFooter from '../components/LoginFooter';
 import LoginComponents from '../components/LoginComponents';
-import { signIn } from '../api/authentication';
-import {
-  AUTH_SUCCESS,
-} from '../constants';
 
 import '../assets/styles/components/Login.css';
 import logoHeader from '../assets/img/LogoLefebvre.png';
@@ -29,6 +25,12 @@ class Login extends Component {
         login: '',
         password: ''
       },
+      isPermission: false,
+      errorsMessage: {
+        login: '',
+        password: ''
+      },
+
       shopTitle: 'TIENDA',
       notClient: 'No soy cliente.',
       requestInfo: 'Solicitar información',
@@ -37,80 +39,92 @@ class Login extends Component {
       client: 'clientes@lefebvre.es'
     } 
   }
-  
-  onSignIn() {
-    signIn().then(this.onSignInSuccess);
-  }
-  
-  onSignInSuccess(googleUser) {
-    const values = queryString.parse(window.location.search);
-    if (values && values.bbdd) {
-        const addonData = JSON.parse(values.bbdd)
-        this.setState({
-            signInStatus: AUTH_SUCCESS,
-            googleUser: googleUser,
-            openEmail: addonData.messageId
+
+  handleChange = (e) => {
+   this.setState({
+     form: {
+       ...this.state.form,
+       [e.target.name]: e.target.value,
+     },
+   });
+   if(this.state.form.login != '' && this.state.form.password != '' ) {
+    this.setState({
+      errorsMessage: {
+        login: null,
+        password: null
+      },
+    });
+   }
+  };
+
+  validateForm = () => {
+    if(this.state.form.login == '') {
+      this.setState({ 
+        errorsMessage: {
+          login: 'Este campo es obligatorio'
+        }
        });
-        
-    }  
-  //    this.props.setAccount(googleUser.getBasicProfile().getEmail());
+       return false;
+    }
+    if(this.state.form.password == '') {
+      this.setState({ 
+        errorsMessage: {
+          password: 'Este campo es obligatorio'
+        }
+       });
+       return false;
+    }
+   
+    return true;
   }
 
-     handleChange = e => {
-      this.setState({
-        form: {
-          ...this.state.form,
-          [e.target.name]: e.target.value,
-        },
-      });
+  goBackAddon = () => {
+    const values = queryString.parse(this.props.location.search);
+    window.location.replace(values.redirect_uri + '?success=1&response_type=' + 
+    values.response_type + '&state=' + values.state + '&login=' 
+    + this.state.form.login + '&password=' + this.state.form.password);
+  }
+
+  handleEventAddon = (e) => {
+    if (this.validateForm()) {
+       this.goBackAddon();
     };
+  }
 
-     handleEvent = (e) => {
-      //  this.onSignIn();
-      const values = queryString.parse(this.props.location.search);
-      window.location.replace(values.redirect_uri + '?success=1&response_type=' + 
-      values.response_type + '&state=' + values.state + '&login=' 
-      + this.state.form.login + '&password=' + this.state.form.password)
-     }
-     
-     render() {
-         return (
-          <div className="wrapper">
-            <LoginHeader 
-            logoHeader={logoHeader} 
-            shopHeader={shopHeader} 
-            shopTitle={this.state.shopTitle}
-            />
-
-            <LoginComponents 
-             iconUser={iconUser}
-             iconLock={iconLock}
-             logoLexon={logoLexon}
-             handleChange={this.handleChange}
-             handleEvent={this.handleEvent}
-             notClient={this.state.notClient}
-             requestInfo={this.state.requestInfo}
-             needHelp={this.state.needHelp}
-             phoneNumber={this.state.phoneNumber}
-             client={this.state.client}
-            />
-        
-            <LoginFooter 
-             logoFooter={logoFooter} 
-             iconFacebook={iconFacebook}
-             iconLinkedin={iconLinkedin}
-             iconTwitter={iconTwitter}
-             iconYoutube={iconYoutube}
-            />
-          </div>
+  render() {
+    return (
+      <div className="wrapper">
+        <LoginHeader 
+        logoHeader={logoHeader} 
+        shopHeader={shopHeader} 
+        shopTitle={this.state.shopTitle}
+        />
+        <LoginComponents 
+         iconUser={iconUser}
+         iconLock={iconLock}
+         logoLexon={logoLexon}
+         handleChange={this.handleChange}
+         errorsMessage={this.state.errorsMessage}
+         handleEventAddon={this.handleEventAddon}
+         notClient={this.state.notClient}
+         requestInfo={this.state.requestInfo}
+         needHelp={this.state.needHelp}
+         phoneNumber={this.state.phoneNumber}
+         client={this.state.client}
+        />
+    
+        <LoginFooter 
+         logoFooter={logoFooter} 
+         iconFacebook={iconFacebook}
+         iconLinkedin={iconLinkedin}
+         iconTwitter={iconTwitter}
+         iconYoutube={iconYoutube}
+        />
+      </div>
          
          
-         );
-     }
+    );
+  }
 }
- const mapStateToProps=(state)=>{
-  return state
- };
 
 export default Login
-// export default connect (mapStateToProps, actionCreators) (Login);
