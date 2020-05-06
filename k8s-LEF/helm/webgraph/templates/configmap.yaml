@@ -1,7 +1,5 @@
 {{- $name := include "webgraph.fullname" . -}}
 {{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
-{{- $webshoppingapigw := include "url-of" (list .Values.app.ingress.entries.webshoppingapigw .) -}}
-{{- $mvc := include "url-of" (list .Values.app.ingress.entries.mvc .) -}}
 
 
 apiVersion: v1

@@ -25,7 +25,9 @@ inf:
     account:
       database: MailAccounts
     lexon:
-      database: LexonApiDb  
+      database: LexonApiDb
+    centinela:
+      database: CentinelaApiDb    
 
   redis:                    # inf.redis defines the redis' connection strings
     basket:     
