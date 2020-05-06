@@ -447,7 +447,7 @@ class ModalAttachDocuments extends Component {
             height: 13px;
             color: #001978;
             font-family: MTTMilano-Medium;
-            font-size: 16px;
+            font-size: 16px !important;
             font-weight: 500;
             line-height: 16px;
           }

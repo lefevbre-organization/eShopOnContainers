@@ -8,7 +8,7 @@ import {
   ColumnDirective,
   Inject,
   Search,
-  Sort
+  Sort,
 } from '@syncfusion/ej2-react-grids';
 import Spinner from '../../components/spinner/spinner';
 import ClassificationListSearch from '../classify-emails/classification-list-search/classification-list-search';
@@ -25,7 +25,7 @@ export class ConnectingEmailsStep3 extends React.Component {
       entities: [],
       selected: null,
       loadingTree: false,
-      showPrompt: false
+      showPrompt: false,
     };
 
     this.searchResultsByType = this.searchResultsByType.bind(this);
@@ -60,13 +60,13 @@ export class ConnectingEmailsStep3 extends React.Component {
               dataSource: tree,
               id: 'id',
               text: 'name',
-              child: 'subChild'
+              child: 'subChild',
             },
-            entities: childs
+            entities: childs,
           },
           () => {
             this.onNodeSelected({
-              nodeData: { id: this.props.entity.idFolder }
+              nodeData: { id: this.props.entity.idFolder },
             });
           }
         );
@@ -102,19 +102,23 @@ export class ConnectingEmailsStep3 extends React.Component {
     // Show children of selected node
     const entities =
       node && node.subChild
-        ? node.subChild.map(sc => {
+        ? node.subChild.map((sc) => {
             return {
               origin: i18n.t(`classification.${this.props.entity.idType}`),
               name: sc.code || sc.description || '',
               type: 'dir',
               modified: '26/09/2019 16:57',
-              id: sc.idRelated
+              id: sc.idRelated,
             };
           })
         : [];
 
     this.setState({ entities });
   }
+
+  onNodeSelecting(event) {}
+  onNextPage() {}
+  onPrevPage() {}
 
   async onNewFolderOk(folderName) {
     if (folderName) {
@@ -149,9 +153,9 @@ export class ConnectingEmailsStep3 extends React.Component {
                 dataSource: tree,
                 id: 'id',
                 text: 'name',
-                child: 'subChild'
+                child: 'subChild',
               },
-              entities: childs
+              entities: childs,
             },
             () => {
               this.onNodeSelected({ nodeData: { id: res.result.data } });
@@ -212,6 +216,7 @@ export class ConnectingEmailsStep3 extends React.Component {
 
   render() {
     const { showPrompt } = this.state;
+    const { toggleNotification } = this.props;
     const disabled = this.state.selected === null ? 'disabled' : '';
     return (
       <Fragment>
@@ -225,9 +230,8 @@ export class ConnectingEmailsStep3 extends React.Component {
             <div className={`new-folder-container ${disabled}`}>
               <a
                 href='#'
-                class='add-more'
                 onClick={this.onCreateFolder}
-                className={disabled}>
+                className={'add-more ' + disabled}>
                 <span className='pager-icon lf-icon-folder-new new-folder-icon' />
                 <span className='new-folder-text'>
                   {i18n.t(`connecting.new-folder`)}
@@ -245,7 +249,7 @@ export class ConnectingEmailsStep3 extends React.Component {
               {this.state.loadingTree === false && (
                 <PerfectScrollbar style={{ height: '445px' }}>
                   <TreeViewComponent
-                    ref={t => (this.treeRef = t)}
+                    ref={(t) => (this.treeRef = t)}
                     fields={this.state.fields}
                     expandOn='Auto'
                     nodeSelected={this.nodeSelected}
@@ -273,13 +277,13 @@ export class ConnectingEmailsStep3 extends React.Component {
               )}
 
               <GridComponent
-                ref={g => (this.gridRef = g)}
+                ref={(g) => (this.gridRef = g)}
                 dataSource={this.state.entities}
                 height={'300px'}
                 selectionSettings={{
                   type: 'Single',
                   mode: 'Row',
-                  enableToggle: false
+                  enableToggle: false,
                 }}
                 rowSelected={this.onRowSelected}
                 allowSorting={true}
@@ -312,6 +316,7 @@ export class ConnectingEmailsStep3 extends React.Component {
           initialModalState={showPrompt}
           title='Nueva carpeta'
           onOk={this.onNewFolderOk}
+          toggleNotification={toggleNotification}
           toggleConfirmRemoveClassification={() => {
             this.setState({ showPrompt: !showPrompt });
           }}
@@ -507,7 +512,7 @@ function normalizeTree(entity, data, preselectId) {
     id: data.idRelated,
     selected: preselectRoot,
     name: i18n.t(`classification.${entity.idType}`),
-    expanded: true
+    expanded: true,
   };
 
   if (entity.idType === 1) {
@@ -528,7 +533,7 @@ function normalizeNodes(nodes, preselectId = 0) {
       expanded: true,
       selected: preselectId == nodes[i].idRelated,
       name: nodes[i].code,
-      imageUrl: `${window.URL_MF_LEXON_BASE}/assets/img/icon-folder.png`
+      imageUrl: `${window.URL_MF_LEXON_BASE}/assets/img/icon-folder.png`,
     };
     if (n.subChild.length > 0) {
       n.subChild = normalizeNodes(n.subChild);
