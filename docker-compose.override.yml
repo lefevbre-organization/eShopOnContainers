@@ -67,12 +67,6 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-#      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
-#      - LexonApiUrlHC=http://lexon.api/hc
-#      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
-#      - AccountApiUrlHC=http://account.api/hc
-#      - UserUtilsApiUrlHC=http://userutils.api/hc
-#      - CentinelaApiUrlHC=http://centinela.api/hc
 #      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
 #      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
     ports:
@@ -86,14 +80,7 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-#      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
-#      - LexonApiUrlHC=http://lexon.api/hc
-#      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
-#      - AccountApiUrlHC=http://account.api/hc
-#      - UserUtilsApiUrlHC=http://userutils.api/hc
-#      - CentinelaApiUrlHC=http://centinela.api/hc
 #      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
-#      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
     ports:
       - "3000:80"
 
@@ -105,14 +92,7 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-#      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
-#      - LexonApiUrlHC=http://lexon.api/hc
-#      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
-#      - AccountApiUrlHC=http://account.api/hc
-#      - UserUtilsApiUrlHC=http://userutils.api/hc
-#      - CentinelaApiUrlHC=http://centinela.api/hc
 #      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
-#      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
     ports:
       - "3001:80"
 
@@ -124,11 +104,6 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - LexonApiGatewayUrlHC=http://weblexonapigw/hc
-#      - LexonApiUrlHC=http://lexon.api/hc
-#      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
-#      - AccountApiUrlHC=http://account.api/hc
-#      - UserUtilsApiUrlHC=http://userutils.api/hc
-#      - CentinelaApiUrlHC=http://centinela.api/hc
 #      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
 #      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
     ports:
@@ -160,14 +135,7 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-#      - SignalrHubUrl=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202
-#      - LexonApiUrlHC=http://lexon.api/hc
-#      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
-#      - AccountApiUrlHC=http://account.api/hc
-#      - UserUtilsApiUrlHC=http://userutils.api/hc
-#      - CentinelaApiUrlHC=http://centinela.api/hc
 #      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
-#      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
     ports:
       - "9000:80"
 
