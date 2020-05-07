@@ -1,6 +1,17 @@
 import React, { PureComponent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
+import {
+    Menu,
+    MenuList,
+    MenuButton,
+    MenuItem,
+    MenuItems,
+    MenuPopover,
+    MenuLink,
+} from "@reach/menu-button";
+import "@reach/menu-button/styles.css";
+import "./calendaritem.scss";
 
 export class CalendarItem extends PureComponent {
 
@@ -23,22 +34,34 @@ export class CalendarItem extends PureComponent {
      
    // const messagesUnreadLocale = messagesUnread.toLocaleString();
       return (        
-      <div>
+          <div>
           <li
             className={`text-truncate text-left text-dark pl-4 pr-5 py-2 border-0 ${selected}`}
             title={
               name 
             }           
           >
-              <CheckBoxComponent ref={checkboxObj => this.ownerObj = checkboxObj}
+              <CheckBoxComponent  ref={checkboxObj => this.ownerObj = checkboxObj}
                 value={this.props.id}
                 id={this.props.id}
                 label={name}                
                 change={this.onClick}
-                checked={this.props.primary}>
-              </CheckBoxComponent>  
-           </li>             
-      </div>
+                checked={this.props.primary}                
+              >
+              </CheckBoxComponent>   
+
+                  <span class="closeb">
+                      <Menu>
+                          <MenuButton className="menubutton">...</MenuButton>
+                          <MenuList>
+                              <MenuItem>Download</MenuItem>
+                              <MenuLink to="view">View</MenuLink>
+                          </MenuList>
+                      </Menu>
+                  </span>
+              </li> 
+             
+       </div>
     );
   }
 }

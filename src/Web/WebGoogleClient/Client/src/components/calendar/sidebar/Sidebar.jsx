@@ -19,6 +19,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CalendarComponent, ChangedEventArgs } from '@syncfusion/ej2-react-calendars';
 
 
+
 import "./sidebar.scss";
 
 export class Sidebar extends PureComponent {
