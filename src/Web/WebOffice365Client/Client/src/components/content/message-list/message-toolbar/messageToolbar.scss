@@ -4,6 +4,7 @@
   background-color: #f4f4f4;
   .action-btns {
     width: 98%;
+    display: flex;
 
     .action-btn {
       cursor: pointer;
@@ -12,6 +13,9 @@
 
     .icon-priority {
       cursor: default;
+      color: #c43741;
+      font-size: 22px;
+      padding-top: 2px;
     }
   }
 }
