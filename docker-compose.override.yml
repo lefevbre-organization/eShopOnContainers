@@ -155,8 +155,8 @@ services:
       - LexonApiUrlHC=http://lexon.api/hc
       - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
       - AccountApiUrlHC=http://account.api/hc
-      - UserUtilsApiUrlHC=http://userutils.api/hc
       - CentinelaApiUrlHC=http://centinela.api/hc
+      - UserUtilsApiUrlHC=http://userutils.api/hc
     ports:
       - "8083:80"   
     volumes:
@@ -169,8 +169,8 @@ services:
       - ConnectionString=${ELEF_MONGO_CONN:-mongodb://nosql.data}
       - Database=${ELEF_MONGO_LEXON_DB:-LexonApiDB}
       - LexonMySqlUrl=http://lexon.mysql.api/api/v1/LexonMySql
-      - LexonFilesUrl=https:/led-dev-lexon/index.php
-#      - LexonFilesUrl=https://10.38.6.18/index.php
+#      - LexonFilesUrl=https:/led-dev-lexon/index.php
+      - LexonFilesUrl=https://10.38.6.18/index.php
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}        
@@ -201,8 +201,8 @@ services:
       - LexonApiUrlHC=http://lexon.api/hc
       - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
       - AccountApiUrlHC=http://account.api/hc
-      - UserUtilsApiUrlHC=http://userutils.api/hc
       - CentinelaApiUrlHC=http://centinela.api/hc
+      - UserUtilsApiUrlHC=http://userutils.api/hc
     ports:
       - "8086:80"   
     volumes:
@@ -255,8 +255,8 @@ services:
       - LexonApiUrlHC=http://lexon.api/hc
       - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
       - AccountApiUrlHC=http://account.api/hc
-      - UserUtilsApiUrlHC=http://userutils.api/hc
       - CentinelaApiUrlHC=http://centinela.api/hc
+      - UserUtilsApiUrlHC=http://userutils.api/hc
     ports:
       - "8089:80"   
     volumes:
