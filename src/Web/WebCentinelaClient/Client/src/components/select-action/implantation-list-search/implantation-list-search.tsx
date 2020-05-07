@@ -80,36 +80,38 @@ class ImplantationListSearch extends Component<Props, State> {
       : 'search-trigger-show';
 
     return (
-      <div className='lexon-clasification-list-search'>
-        <div className='lexon-clasification-list-results'>
+      <div className="lexon-clasification-list-search">
+        <div className="lexon-clasification-list-results">
           {countResults > -1 && (
             <p>
-              {i18n.t('implantation-list-search.results-total')}
+              {/* i18n.t('implantation-list-search.results-total') */}
               <strong>{countResults}</strong>
             </p>
           )}
           <span
             className={classTriggerShow}
             title={i18n.t('implantation-list-search.show-search')}
-            onClick={this._handleOnclick}>
-            <strong className='sr-only sr-only-focusable'>
+            onClick={this._handleOnclick}
+          >
+            <strong className="sr-only sr-only-focusable">
               {i18n.t('implantation-list-search.show-search')}
             </strong>
-            <span className='lf-icon-search'></span>
+            <span className="lf-icon-search"></span>
           </span>
         </div>
         <div className={classListSearcher}>
-          <label htmlFor='search'>
+          <label htmlFor="search">
             <span
-              className='lf-icon-search'
-              onClick={this._handleOnclickSearch}></span>
-            <strong className='sr-only sr-only-focusable'>
+              className="lf-icon-search"
+              onClick={this._handleOnclickSearch}
+            ></span>
+            <strong className="sr-only sr-only-focusable">
               {i18n.t('classificaction-list-search.assigned-to')}
             </strong>
           </label>
           <input
-            type='text'
-            className='form-control'
+            type="text"
+            className="form-control"
             id={this.id}
             value={this.state.search}
             onChange={this._handleOnChange}
@@ -118,11 +120,12 @@ class ImplantationListSearch extends Component<Props, State> {
           <span
             className={`search-trigger-hide ${closeClassName}`}
             title={i18n.t('implantation-list-search.hide-search')}
-            onClick={this._handleOnclick}>
-            <strong className='sr-only sr-only-focusable'>
+            onClick={this._handleOnclick}
+          >
+            <strong className="sr-only sr-only-focusable">
               {i18n.t('implantation-list-search.hide-search')}
             </strong>
-            <span className='lf-icon-close'></span>
+            <span className="lf-icon-close"></span>
           </span>
         </div>
         <style jsx>{`
@@ -168,7 +171,7 @@ function generateUUID() {
   // Public Domain/MIT
   var d = new Date().getTime(); //Timestamp
   var d2 = (performance && performance.now && performance.now() * 1000) || 0; //Time in microseconds since page-load or 0 if unsupported
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     var r = Math.random() * 16; //random number between 0 and 16
     if (d > 0) {
       //Use timestamp until depleted

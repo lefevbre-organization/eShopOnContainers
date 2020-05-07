@@ -296,7 +296,7 @@ export class Step2 extends React.Component<Props, State> {
       rowSelected
     } = this.state;
     const products = this.allImplantations
-      ? this.allImplantations.map((i: any) => i.productName)
+      ? _.uniq(this.allImplantations.map((i: any) => i.productName))
       : [];
 
     return (
@@ -314,7 +314,7 @@ export class Step2 extends React.Component<Props, State> {
               </div>
             )}
             <ProductFilter
-              products={products}
+              products={products as string[]}
               onFilter={this.onProductFilter}
             ></ProductFilter>
             <ImplantationListSearch
