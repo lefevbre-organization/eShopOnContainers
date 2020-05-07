@@ -32,6 +32,18 @@ namespace Lexon.API.Controllers
             _eventBus = eventBus;
         }
 
+        /// <summary>
+        /// Permite testar si se llega a la aplicación
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("test")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public IActionResult Test()
+        {
+            return Ok(new Result<bool>(true));
+        }
+
         [HttpGet]
         [Route("user")]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]

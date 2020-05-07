@@ -33,6 +33,18 @@
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
         }
 
+        /// <summary>
+        /// Permite testar si se llega a la aplicación
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("test")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public IActionResult Test()
+        {
+            return Ok(new Result<bool>(true));
+        }
+
         #region User
 
         [HttpGet("{user}")]

@@ -28,9 +28,20 @@ namespace Centinela.API.Controllers
         }
 
         /// <summary>
+        /// Permite testar si se llega a la aplicación
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("test")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public IActionResult Test()
+        {
+            return Ok(new Result<bool>(true));
+        }
+
+        /// <summary>
         /// Permite obtener el usuario de centinela junto con su contenido (evaluaciones)
         /// </summary>
-        /// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>
         /// <returns></returns>
         [HttpGet("user")]
         [ProducesResponseType(typeof(Result<CenUser>), (int)HttpStatusCode.OK)]
@@ -79,7 +90,6 @@ namespace Centinela.API.Controllers
 
             var result = await _service.GetEvaluationTreeByIdAsync(idNavisionUser, idEvaluation);
             return result.errors?.Count() > 0 ? (IActionResult)BadRequest(result) : Ok(result);
-  
         }
 
         [HttpGet("concepts/instances")]
@@ -91,7 +101,7 @@ namespace Centinela.API.Controllers
                 return (IActionResult)BadRequest("id user value invalid. Must be a valid iduser");
 
             var result = await _service.GetConceptsByTypeAsync(idNavisionUser, idConcept);
-            return result.errors?.Count() > 0 ? (IActionResult)BadRequest(result) : Ok(result) ;
+            return result.errors?.Count() > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpGet("documents")]

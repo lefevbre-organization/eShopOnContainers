@@ -27,6 +27,18 @@ namespace UserUtils.API.Controllers
         }
 
         /// <summary>
+        /// Permite testar si se llega a la aplicación
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("test")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public IActionResult Test()
+        {
+            return Ok(new Result<bool>(true));
+        }
+
+        /// <summary>
         /// Permite obtener los token necesarios para operar con los microservicios de envio de correo
         /// </summary>
         /// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>

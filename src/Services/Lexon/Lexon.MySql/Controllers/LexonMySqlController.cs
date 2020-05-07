@@ -25,6 +25,18 @@ namespace Lexon.MySql.Controllers
             _lexonService = lexonService ?? throw new ArgumentNullException(nameof(lexonService));
         }
 
+        /// <summary>
+        /// Permite testar si se llega a la aplicación
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("test")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public IActionResult Test()
+        {
+            return Ok(new Result<bool>(true));
+        }
+
         [HttpGet("user")]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
