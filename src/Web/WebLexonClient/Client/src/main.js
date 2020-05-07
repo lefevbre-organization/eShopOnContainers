@@ -6,7 +6,6 @@ import APPLICATION_ACTIONS from './actions/applicationAction';
 import SELECTION_ACTIONS from './actions/selections';
 import './main.css';
 import i18n from 'i18next';
-import queryString from 'query-string';
 // import Header from "./components/header/header";
 import Routing from './components/routing/routing';
 import Spinner from './components/spinner/spinner';
@@ -36,10 +35,6 @@ class Main extends Component {
       account: null
     };
 
-    this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
-      this
-    );
-
     this.handleSentMessage = this.handleSentMessage.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleCheckAllclick = this.handleCheckAllclick.bind(this);
@@ -54,11 +49,6 @@ class Main extends Component {
   }
 
   componentDidMount() {
-    window.addEventListener(
-      'GetUserFromLexonConnector',
-      this.handleGetUserFromLexonConnector
-   );
-
     window.addEventListener('Checkclick', this.handleKeyPress);
     window.addEventListener('CheckAllclick', this.handleCheckAllclick);
     window.addEventListener('SentMessage', this.handleSentMessage);
@@ -71,6 +61,7 @@ class Main extends Component {
     window.addEventListener('CloseComposer', this.handleCloseComposer);
 
     this.sendMessageGetUser();
+  
   }
 
   // componentDidUpdate(prevProps) {
@@ -85,11 +76,6 @@ class Main extends Component {
   // }
 
   componentWillUnmount() {
-    window.removeEventListener(
-      'GetUserFromLexonConnector',
-      this.handleGetUserFromLexonConnector
-   );
-
     window.removeEventListener('SentMessage', this.handleSentMessage);
     window.removeEventListener('Checkclick', this.handleKeyPress);
     window.removeEventListener('CheckAllclick', this.handleCheckAllclick);
@@ -101,41 +87,6 @@ class Main extends Component {
     window.removeEventListener('OpenComposer', this.handleOpenComposer);
     window.removeEventListener('CloseComposer', this.handleCloseComposer);
   }
-
-  sendMessagePutUser(user, addonData) {
-    window.dispatchEvent(
-      new CustomEvent('PutUserFromLexonConnector', {
-        detail: {
-          user,
-          selectedMessages: [{
-            id: addonData.messageId,
-            subject: addonData.subject,
-            folder: addonData.folder,
-            sentDateTime: addonData.sentDateTime,
-            raw: addonData.raw
-          }],
-          idCaseFile: undefined,
-          bbdd: undefined,
-          idCompany: undefined,
-          provider: addonData.provider,
-          account: addonData.account
-        }
-      })
-    );
-  }
-
-
-  handleGetUserFromLexonConnector() {
-    console.log('handleGetUserFromLexonConnector');
-    const userId = 'E1621396';
-    const values = queryString.parse(window.location.search);
-    if (Object.keys(values).length > 0) {
-      const addonData = JSON.parse(values.bbdd)
-      this.setState({ addonData: addonData, bbdd: { idCompany: addonData.idCompany, bbdd: addonData.bbdd }})
-      this.sendMessagePutUser(userId, addonData);
-    }
-  }
-
 
   handleOpenComposer() {
     console.log('handleOpenComposer');
@@ -237,6 +188,17 @@ class Main extends Component {
   async handlePutUserFromLexonConnector(event) {
     console.log('HandleEvent Client -> Lexon - PutUserFromLexonConnector');
     console.log(event.detail);
+
+    if(window.addonData) {
+      const addonData = window.addonData;
+      this.setState({
+        addonData: addonData, 
+        bbdd: { 
+          idCompany: addonData.idCompany, 
+          bbdd: addonData.bbdd 
+        } 
+      });
+    }
 
     const {
       user,

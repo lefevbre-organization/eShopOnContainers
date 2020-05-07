@@ -4,7 +4,7 @@ var scopes = [
 
 function showNewConection() {
   
-  var addonData = cache.get('getAddonData');
+  var addonData = cache.get('token');
 
   return ClassifyMessages.createService('lexon')
     .setAuthorizationBaseUrl(urlFrontend + 'lexon')

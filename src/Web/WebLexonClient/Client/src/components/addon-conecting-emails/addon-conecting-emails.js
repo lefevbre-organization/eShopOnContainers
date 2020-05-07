@@ -11,8 +11,7 @@ import { ConnectingEmailsStep3 } from '../modal-connecting-emails/step3';
 import { ConnectingEmailsStep4 } from '../modal-connecting-emails/step4';
 import {
   addClassification,
-  uploadFile,
-  getMessage,
+  uploadFile
 } from '../../services/services-lexon';
 import ACTIONS from '../../actions/documentsAction';
 import 'react-perfect-scrollbar/dist/css/styles.css';
