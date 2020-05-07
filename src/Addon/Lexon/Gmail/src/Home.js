@@ -6,6 +6,7 @@ var SPACES = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 var MESSAGESPACES = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 var companyObj = {};
 var cache = CacheService.getScriptCache();
+var key = "AddonLexonSecret"
 
 function getLogout() {
   var logoutAction = CardService.newCardAction()
@@ -42,9 +43,6 @@ function buildHomeCard(selectCompany) {
        .setImageUrl("https://www.dropbox.com/s/042ic4nutt5re85/Screen%20Shot%202020-03-20%20at%207.17.27%20AM.png?raw=1")
         .setOnClickAction(action);
 
-    // var buttonSet = CardService.newButtonSet()
-    //     .addButton(button);
-
     var logoutAction = getLogout();
  
     var sectionFormCompany = CardService.newCardSection()
@@ -79,12 +77,17 @@ function buildHomeCard(selectCompany) {
     }
 
     var user = JSON.parse(cache.get('dataUser'));
-    var account = Session.getActiveUser().getEmail()
+    var account = Session.getEffectiveUser().getEmail()
     var messageId = e.messageMetadata.messageId;
     var thread = GmailApp.getMessageById(messageId).getThread();
     var subject = thread.getFirstMessageSubject();
     var messageDate = thread.getLastMessageDate();
     
+    var header = {
+      alg: "HS256",
+      typ: "JWT",
+    }; 
+      
     var getAddonData = {
       idCompany: companyObj.idCompany,
       bbdd: companyObj.bbdd,
@@ -97,14 +100,24 @@ function buildHomeCard(selectCompany) {
       sentDateTime: messageDate,
       idUser: user.data.idUser,
       userName: user.data.name
-    }
-  
-    cache.put('getAddonData', JSON.stringify(getAddonData), 21600);
+    };
+    
+    var signature = Utilities.base64Encode(JSON.stringify(header)) + "." 
+      + Utilities.base64Encode(JSON.stringify(getAddonData));
+    
+    var jwt = signature + "." + 
+      Utilities.base64Encode(
+        Utilities.computeHmacSha256Signature(signature, key)
+      );
 
+    cache.put('getAddonData', JSON.stringify(getAddonData), 21600);
+    
+    cache.put('token', jwt, 21600);
+  
     var homeCard = buildHomeCard(companyObj);
     return CardService.newActionResponseBuilder()
     .setNavigation(CardService.newNavigation().updateCard(homeCard))
-    .build()
+    .build();
  
   }
 
@@ -117,7 +130,7 @@ function buildHomeCard(selectCompany) {
      var MessageClassificationCard = buildMessageClassificationCard(e);
       return CardService.newActionResponseBuilder()
       .setNavigation(CardService.newNavigation().pushCard(MessageClassificationCard))
-      .build()
+      .build();
     }
     
   }

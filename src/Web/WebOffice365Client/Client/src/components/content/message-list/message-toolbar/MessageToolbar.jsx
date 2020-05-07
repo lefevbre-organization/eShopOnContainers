@@ -8,7 +8,7 @@ import {
   faBars,
   faReply,
   faShare,
-  faExclamation
+  faExclamation,
 } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import './messageToolbar.scss';
@@ -20,7 +20,7 @@ export class MessageToolbar extends PureComponent {
   }
 
   getClickHandler(action) {
-    return evt => {
+    return (evt) => {
       this.props.onClick(action);
     };
   }
@@ -69,14 +69,14 @@ export class MessageToolbar extends PureComponent {
           <p>&nbsp;</p>
           ${replyHeader}
           <blockquote>${this.props.messageResult.body.content}</blockquote>`,
-      ...(cc && { cc: cc.value })
+      ...(cc && { cc: cc.value }),
     };
 
     const composePropsFwd = {
       ...composeProps,
       subject: `Fwd: ${subject}`,
       to: '',
-      isForward: true
+      isForward: true,
     };
 
     const collapsed = this.props.sideBarCollapsed;
@@ -101,7 +101,7 @@ export class MessageToolbar extends PureComponent {
                 search: '',
                 sideBarCollapsed: this.props.sideBarCollapsed,
                 sideBarToggle: this.props.sideBarToggle,
-                state: { composeProps }
+                state: { composeProps },
               }}>
               <FontAwesomeIcon
                 // title={t('message-toolbar.reply')}
@@ -117,7 +117,7 @@ export class MessageToolbar extends PureComponent {
                 search: '',
                 sideBarCollapsed: this.props.sideBarCollapsed,
                 sideBarToggle: this.props.sideBarToggle,
-                state: { composeProps: composePropsFwd }
+                state: { composeProps: composePropsFwd },
               }}>
               <FontAwesomeIcon
                 // title={t('message-toolbar.resend')}
@@ -128,12 +128,7 @@ export class MessageToolbar extends PureComponent {
           </div>
           {message.importance === 'high' && (
             <div className='action-btn mr-2 icon-priority' title={'Urgente'}>
-              <FontAwesomeIcon
-                // title={t('message-toolbar.resend')}
-                icon={faExclamation}
-                size='lg'
-                color='red'
-              />
+              <i className='lf-icon-bookmarks-active'></i>
             </div>
           )}
         </div>
