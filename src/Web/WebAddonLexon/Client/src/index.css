@@ -511,7 +511,8 @@ ol>li.index-5::before {
 }
 
 .modal-content .modal-header {
-  background-color: #C43741 !important;
+  background-color: #001978 !important;
+  color: #ffffff;
 }
 
 .modal.error {
@@ -520,6 +521,10 @@ ol>li.index-5::before {
 
 .modal.error .modal-content .modal-header .close span:first-child {
   color: transparent !important;
+}
+
+.modal.error .modal-content {
+  text-align: center;
 }
 
 .notification .modal-header .modal-title {

@@ -17,7 +17,6 @@ import { connect } from 'react-redux';
 class Routing extends Component {
   constructor(props) {
     super(props);
-  
     let actualPage = props.addonData != null ? PAGE_MESSAGE_CLASSIFICATIONS  
      : PAGE_SELECT_COMPANY;
 

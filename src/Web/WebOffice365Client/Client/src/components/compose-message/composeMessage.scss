@@ -273,14 +273,15 @@ $font-weight-bold: 700;
     cursor: pointer;
     font-size: 30px;
     &.lf-icon-switch-right {
-      color: red !important;
+      color: #001978 !important;
     }
     &.lf-icon-switch-left {
-      color: #333333 !important;
+      color: #7c868c !important;
     }
   }
   .priority-text {
     margin-left: 5px;
     font-size: larger;
+    color: #001978 !important;
   }
 }
