@@ -67,7 +67,7 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-#      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
 #      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
     ports:
       - "3003:80"
@@ -117,11 +117,6 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - LexonApiGatewayUrlHC=http://weblexonapigw/hc
-#      - LexonApiUrlHC=http://lexon.api/hc
-#      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
-#      - AccountApiUrlHC=http://account.api/hc
-#      - UserUtilsApiUrlHC=http://userutils.api/hc
-#      - CentinelaApiUrlHC=http://centinela.api/hc
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
 #      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
     ports:
@@ -144,7 +139,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionString=${ELEF_MONGO_CONN:-mongodb://nosql.data}
-      - MongoDatabase=${ELEF_MONGO_ACCOUNT_DB:-MailAccounts}
+      - Database=${ELEF_MONGO_ACCOUNT_DB:-MailAccounts}
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}        
@@ -172,7 +167,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionString=${ELEF_MONGO_CONN:-mongodb://nosql.data}
-      - MongoDatabase=${ELEF_MONGO_LEXON_DB:-LexonApiDB}
+      - Database=${ELEF_MONGO_LEXON_DB:-LexonApiDB}
       - LexonMySqlUrl=http://lexon.mysql.api/api/v1/LexonMySql
       - LexonFilesUrl=https:/led-dev-lexon/index.php
 #      - LexonFilesUrl=https://10.38.6.18/index.php
@@ -218,7 +213,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionString=${ESHOP_MONGO_DB:-mongodb://nosql.data}
-      - MongoDatabase=CentinelaApiDB
+      - Database=CentinelaApiDB
       - CentinelaUrl=https://compliance-api.affin.es/api/secure/conectamail
       - CentinelaLogin=centinelaAPI,
       - CentinelaPassword=led.2018,
@@ -236,7 +231,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionString=${ESHOP_MONGO_DB:-mongodb://nosql.data}
-      - MongoDatabase=UserUtilsApiDB
+      - Database=UserUtilsApiDB
       - MinihubUrl=http://led-pre-servicehub/Herramientas/Get
       - OnlineUrl=https://herculesppd.lefebvre.es/webclient46/ws
       - LoginUrl=http://led-pre-servicecomtools

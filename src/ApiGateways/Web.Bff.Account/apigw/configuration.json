@@ -2,8 +2,8 @@
   "ReRoutes": [
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
-      "DownstreamPathTemplate": "/api/{version}/{everything}",
       "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ],
       "DownstreamHostAndPorts": [
         {
           "Host": "lexon.api",
@@ -11,12 +11,12 @@
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/lex/{everything}",
-      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ]
+      "DownstreamPathTemplate": "/api/{version}/{everything}"
     },
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
-      "DownstreamPathTemplate": "/api/{version}/{everything}",
       "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ],
       "DownstreamHostAndPorts": [
         {
           "Host": "lexon.mysql.api",
@@ -24,13 +24,13 @@
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/mysql/{everything}",
-      "Priority": 0,
-      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ]
+      "DownstreamPathTemplate": "/api/{version}/{everything}",
+      "Priority": 0
     },
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
-      "DownstreamPathTemplate": "/api/{version}/UserUtils/user/apps",
       "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ],
       "DownstreamHostAndPorts": [
         {
           "Host": "userutils.api",
@@ -38,12 +38,12 @@
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/mysql/LexonMySql/user/apps",
-      "Priority": 1,
-      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ]
+      "DownstreamPathTemplate": "/api/{version}/UserUtils/user/apps",
+      "Priority": 1
     },
     {
-      "DownstreamPathTemplate": "/api/{version}/{everything}",
       "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE" ],
       "DownstreamHostAndPorts": [
         {
           "Host": "account.api",
@@ -51,12 +51,12 @@
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/accounts/{everything}",
-      "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE" ]
+      "DownstreamPathTemplate": "/api/{version}/{everything}"
     },
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
-      "DownstreamPathTemplate": "/api/{version}/{everything}",
       "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "GET" ],
       "DownstreamHostAndPorts": [
         {
           "Host": "userutils.api",
@@ -64,11 +64,11 @@
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/utils/{everything}",
-      "UpstreamHttpMethod": [ "GET" ]
+      "DownstreamPathTemplate": "/api/{version}/{everything}"
     },
     {
-      "DownstreamPathTemplate": "/api/{version}/{everything}",
       "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE" ],
       "DownstreamHostAndPorts": [
         {
           "Host": "centinela.api",
@@ -76,7 +76,7 @@
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/cen/{everything}",
-      "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE" ]
+      "DownstreamPathTemplate": "/api/{version}/{everything}"
     }
 
   ],

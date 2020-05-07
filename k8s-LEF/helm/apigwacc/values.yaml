@@ -34,15 +34,15 @@ env:
       key: internalurls__identity
     - name: IdentityUrlHC
       key: internalurls__identity__hc
-    - name: AccountUrlHC
+    - name: AccountApiUrlHC
       key: internalurls__account__hc
-    - name: LexonUrlHC
+    - name: LexonApiUrlHC
       key: internalurls__lexon__hc
-    - name: LexonMySqlUrlHC
+    - name: LexonMySqlApiUrlHC
       key: internalurls__lexonmysql__hc
-    - name: CentinelaUrlHC
+    - name: CentinelaApiUrlHC
       key: internalurls__centinela__hc
-    - name: UserUtilsUrlHC
+    - name: UserUtilsApiUrlHC
       key: internalurls__userutils__hc
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
