@@ -48,8 +48,7 @@ export class CalendarItem extends PureComponent {
                 change={this.onClick}
                 checked={this.props.primary}                
               >
-              </CheckBoxComponent>   
-
+              </CheckBoxComponent>
                   <span class="closeb">
                       <Menu>
                           <MenuButton className="menubutton">...</MenuButton>
