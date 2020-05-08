@@ -12,7 +12,7 @@ import {
     faExclamationTriangle,
     faChevronLeft
 } from "@fortawesome/free-solid-svg-icons";
-import CalendarItem from "./CalendarItem";
+import CalendarItem from "./calendaritem/CalendarItem";
 import { Link } from "react-router-dom";
 import { Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -176,8 +176,7 @@ export class Sidebar extends PureComponent {
                                 id={el.id}
                                 accessRole={el.accessRole}
                                 iconProps={iconProps}
-                                selected={el.selected}
-                               
+                                selected={el.selected}                               
                             />
                         );
                     })}

@@ -1,15 +1,7 @@
 import React, { PureComponent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
-import {
-    Menu,
-    MenuList,
-    MenuButton,
-    MenuItem,
-    MenuItems,
-    MenuPopover,
-    MenuLink,
-} from "@reach/menu-button";
+import CalendarMenu from '../calendarmenu/CalendarMenu';
 import "@reach/menu-button/styles.css";
 import "./calendaritem.scss";
 
@@ -17,9 +9,13 @@ export class CalendarItem extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.onClick = this.onClick.bind(this);
+      this.onClick = this.onClick.bind(this);
 
-  }
+     
+
+    }
+
+  
 
   onClick(evt) {       
      
@@ -49,17 +45,16 @@ export class CalendarItem extends PureComponent {
                 checked={this.props.primary}                
               >
               </CheckBoxComponent>
-                  <span class="closeb">
-                      <Menu>
-                          <MenuButton className="menubutton">...</MenuButton>
-                          <MenuList>
-                              <MenuItem>Download</MenuItem>
-                              <MenuLink to="view">View</MenuLink>
-                          </MenuList>
-                      </Menu>
-                  </span>
-              </li> 
-             
+              {(this.props.accessRole === 'owner') && 
+                      <CalendarMenu
+                          key={this.props.id}
+                          onClick={this.navigateToList}
+                          name={this.props.summary}
+                          id={this.props.id}
+                      />   
+              }
+                             
+          </li>              
        </div>
     );
   }

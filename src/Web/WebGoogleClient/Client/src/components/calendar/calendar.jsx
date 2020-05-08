@@ -17,6 +17,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import SidebarCnn from 'react-sidebar';
 import LexonComponent from '../../apps/lexon_content';
 import CalendarComponent from '../../apps/calendar_content';
+import { CalendarView } from './sidebar/calendarview/CalendarView';
 import 'react-reflex/styles.css';
 import { resetDefaultAccount} from '../../api/accounts';
 import {
@@ -29,6 +30,7 @@ import { getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEven
 import moment from 'moment';
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
+
 
 
 export class Calendar extends Component {
@@ -596,6 +598,7 @@ export class Calendar extends Component {
         }
 
         return (
+            <div id='target' className='col-lg-12 control-section'>
             <SidebarCnn
                 sidebar={this.state.sidebarComponent}
                 open={this.state.sidebarOpen}
@@ -704,6 +707,9 @@ export class Calendar extends Component {
                                 timeOut={1500}
                             >
                             </ToastComponent>
+
+                            <CalendarView />
+
                         {/*</Switch>*/}
                         </article>
 
@@ -730,7 +736,8 @@ export class Calendar extends Component {
                         </div>
                     </section>
                 </Fragment>
-            </SidebarCnn>
+                </SidebarCnn>
+            </div>
         );
     }
 
