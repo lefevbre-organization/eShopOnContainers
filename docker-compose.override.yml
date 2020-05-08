@@ -68,6 +68,7 @@ services:
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
       - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+      - PortalUrlHC=http://webportalclient/user
 #      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
     ports:
       - "3003:80"

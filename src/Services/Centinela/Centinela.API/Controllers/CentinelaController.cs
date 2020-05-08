@@ -2,6 +2,7 @@
 using Centinela.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -17,14 +18,17 @@ namespace Centinela.API.Controllers
     {
         private ICentinelaService _service;
         private readonly IOptions<CentinelaSettings> _settings;
+        internal readonly ILogger<CentinelaController> _log;
 
         public CentinelaController(
           ICentinelaService service
           , IOptions<CentinelaSettings> settings
+            , ILogger<CentinelaController> log
           )
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _service = service ?? throw new ArgumentNullException(nameof(service));
+            _log = log ?? throw new ArgumentNullException(nameof(log));
         }
 
         /// <summary>
@@ -36,6 +40,8 @@ namespace Centinela.API.Controllers
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public IActionResult Test()
         {
+            _log.LogDebug("test");
+            System.Diagnostics.Trace.WriteLine("test");
             return Ok(new Result<bool>(true));
         }
 

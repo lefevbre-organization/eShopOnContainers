@@ -1,3 +1,30 @@
+# Centinela gateway
+http://localhost:8089/api/v1/cen/test
+http://localhost:8089/api/v1/cen/user?idNavisionUser=E1621396
+http://localhost:8089/api/v1/cen/evaluations?idNavisionUser=E1621396
+http://localhost:8089/api/v1/cen/evaluations/getbyid?idNavisionUser=E1621396&idEvaluation=4509
+http://localhost:8089/api/v1/cen/evaluations/tree/getbyid?idNavisionUser=E1621396&idEvaluation=4509
+http://localhost:8089/api/v1/cen/documents?idNavisionUser=E1621396&search=af
+http://localhost:8089/api/v1/cen/concepts/instances?idNavisionUser=E1621396&idConcept=107229
+
+# Centinela direct
+http://localhost:8087/api/v1/Centinela/test
+http://localhost:8087/api/v1/Centinela/user?idNavisionUser=E1621396
+http://localhost:8087/api/v1/Centinela/evaluations?idNavisionUser=E1621396
+http://localhost:8087/api/v1/Centinela/evaluations/getbyid?idNavisionUser=E1621396&idEvaluation=4509
+http://localhost:8087/api/v1/Centinela/evaluations/tree/getbyid?idNavisionUser=E1621396&idEvaluation=4509
+http://localhost:8087/api/v1/Centinela/documents?idNavisionUser=E1621396&search=af
+http://localhost:8087/api/v1/Centinela/concepts/instances?idNavisionUser=E1621396&idConcept=107229
+
+# Centinela old call by gateway
+http://localhost:8089/api/v1/cen/Centinela/user?idNavisionUser=E1621396
+http://localhost:8089/api/v1/cen/Centinela/evaluations?idNavisionUser=E1621396
+http://localhost:8089/api/v1/cen/Centinela/evaluations/getbyid?idNavisionUser=E1621396&idEvaluation=4509
+http://localhost:8089/api/v1/cen/Centinela/evaluations/tree/getbyid?idNavisionUser=E1621396&idEvaluation=4509
+http://localhost:8089/api/v1/cen/Centinela/documents?idNavisionUser=E1621396&search=af
+http://localhost:8089/api/v1/cen/Centinela/concepts/instances?idNavisionUser=E1621396&idConcept=107229
+
+# Gateway account
 http://localhost:8083/api/v1/lex/Lexon/entities/types
 http://localhost:8083/api/v1/accounts/UserMail/test
 http://localhost:8082/api/v1/UserMail/test
@@ -12,6 +39,7 @@ http://localhost:8083/api/v1/mysql/LexonMySql/test
 http://localhost:8086/api/v1/mysql/LexonMySql/test
 http://localhost:8084/api/v1/Lexon/test
 http://localhost:8085/api/v1/LexonMySql/test
+
 
 http://localhost:8083/api/v1/mysql/LexonMySql/user?idNavisionUser=E1621396
 http://localhost:8086/api/v1/mysql/LexonMySql/user?idNavisionUser=E1621396

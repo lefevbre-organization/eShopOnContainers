@@ -55,5 +55,7 @@ FROM base AS final
 #ENV ASPNETCORE_Kestrel__Certificates__Default__AllowInvalid=true
 WORKDIR /app
 COPY --from=publish /app .
+RUN apt-get update && apt-get install -y --no-install-recommends apt-utils gss-ntlmssp
+# RUN apt-get install -y gss-ntlmssp
 #RUN ls -lha /app
 ENTRYPOINT ["dotnet", "Centinela.API.dll"]
