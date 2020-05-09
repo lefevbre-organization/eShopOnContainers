@@ -1,136 +1,102 @@
-var scopes = [
-  'https://mail.google.com/'
-]
-
-var SPACES = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-var MESSAGESPACES = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-var companyObj = {};
-var cache = CacheService.getScriptCache();
-var key = "AddonLexonSecret"
-
-function getLogout() {
-  var logoutAction = CardService.newCardAction()
-       .setText("logout").setOnClickAction(CardService.newAction()
-       .setFunctionName("logout"))
-
-  return logoutAction
-}
-
-function buildHomeCard(selectCompany) { 
-    getCompanyList();
-    var checkboxGroup = CardService.newSelectionInput()
-    .setType(CardService.SelectionInputType.RADIO_BUTTON)
-    .setTitle("Selecciona una Empresa:")
-    .setFieldName("selectCompany")
-    .setOnChangeAction(CardService.newAction()
-        .setFunctionName("handleCheckboxChange"));
-
-       for (var i = 0; i < companyResponse.data.length; i++) {
-        var company = companyResponse.data[i];
-        company.selected = false
-        if(selectCompany && selectCompany.bbdd == company.bbdd) {
-          company.selected = true;
-        }
-        checkboxGroup.addItem(company.name, company.bbdd, company.selected);
-       } 
- 
-    var action = CardService.newAction()
-        .setFunctionName('onSveCompany')
-    .setParameters({name: selectCompany ? selectCompany.name : '', 
-                    bbdd: selectCompany ? selectCompany.bbdd : ''});
-    var button = CardService.newImage()
-    .setAltText("Entrar")
-       .setImageUrl("https://www.dropbox.com/s/042ic4nutt5re85/Screen%20Shot%202020-03-20%20at%207.17.27%20AM.png?raw=1")
-        .setOnClickAction(action);
-
-    var logoutAction = getLogout();
- 
-    var sectionFormCompany = CardService.newCardSection()
-     .addWidget(checkboxGroup)
-     .addWidget(button);
-    var user = JSON.parse(cache.get('dataUser'));
-    if (user == null) {
-      return logout();
-    }
-    var homeCard = CardService.newCardBuilder()
-      .setHeader(CardService.newCardHeader()
-      .setTitle('Lista de Empresas'))
-      .addCardAction(logoutAction)
-      .addSection(sectionFormCompany);
+  var SPACES = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+  var MESSAGESPACES = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+  var companyObj = {};
+  var cache = CacheService.getScriptCache();
+  var key = "AddonLexonSecret"
   
-   return homeCard.build();
+  function getLogout() {
+    var logoutAction = CardService.newCardAction()
+         .setText("logout").setOnClickAction(CardService.newAction()
+         .setFunctionName("logout"))
+  
+    return logoutAction
+  }
+  
+  function buildHomeCard() { 
+      getCompanyList();
+      var checkboxGroup = CardService.newSelectionInput()
+      .setType(CardService.SelectionInputType.RADIO_BUTTON)
+      .setTitle("Selecciona una Empresa:")
+      .setFieldName("selectCompany")
+      .setOnChangeAction(CardService.newAction()
+          .setFunctionName("handleCheckboxChange"));
+  
+         for (var i = 0; i < companyResponse.data.length; i++) {
+          var company = companyResponse.data[i];
+          company.selected = true
+          checkboxGroup.addItem(company.name, company.bbdd, company.selected);
+         } 
    
-  }
-
+      var action = CardService.newAction()
+          .setFunctionName('onSveCompany');
+      var button = CardService.newImage()
+      .setAltText("Entrar")
+         .setImageUrl("https://www.dropbox.com/s/042ic4nutt5re85/Screen%20Shot%202020-03-20%20at%207.17.27%20AM.png?raw=1")
+          .setOnClickAction(action);
+  
+      var logoutAction = getLogout();
+   
+      var sectionFormCompany = CardService.newCardSection()
+       .addWidget(checkboxGroup)
+       .addWidget(button);
+      var user = JSON.parse(cache.get('dataUser'));
+      if (user == null) {
+        return logout();
+      }
+      var homeCard = CardService.newCardBuilder()
+        .setHeader(CardService.newCardHeader()
+        .setTitle('Lista de Empresas'))
+        .addCardAction(logoutAction)
+        .addSection(sectionFormCompany);
+    
+     return homeCard.build();
+     
+    }
+  
   function handleCheckboxChange(e){
-    var selectCompany = e.formInput.selectCompany
-    return getSelectCompany(e, selectCompany);
+    selectCompany = e.formInput.selectCompany
+    cache.put('selectCompany', JSON.stringify(selectCompany), 21600);
   }
   
-
-  function getSelectCompany(e, selectCompany) {
+  
+  function getSelectCompany(e) {
     getCompanyList();
+    var selectCompany = JSON.parse(cache.get('selectCompany'));
     for (var i = 0; i < companyResponse.data.length; i++) {
         if(selectCompany == companyResponse.data[i].bbdd){
+          var account = Session.getEffectiveUser().getEmail();
+          companyResponse.data[i].account = account;
           companyObj = companyResponse.data[i];
         }
     }
-
-    var user = JSON.parse(cache.get('dataUser'));
-    var account = Session.getEffectiveUser().getEmail()
-    var messageId = e.messageMetadata.messageId;
-    var thread = GmailApp.getMessageById(messageId).getThread();
-    var subject = thread.getFirstMessageSubject();
-    var messageDate = thread.getLastMessageDate();
-    
-    var header = {
-      alg: "HS256",
-      typ: "JWT",
-    }; 
-      
-    var getAddonData = {
-      idCompany: companyObj.idCompany,
-      bbdd: companyObj.bbdd,
-      name: companyObj.name,
-      account: account,
-      provider: 'GOOGLE',
-      messageId: messageId,
-      subject: subject,
-      folder: 'Inbox',
-      sentDateTime: messageDate,
-      idUser: user.data.idUser,
-      userName: user.data.name
-    };
-    
-    var signature = Utilities.base64Encode(JSON.stringify(header)) + "." 
-      + Utilities.base64Encode(JSON.stringify(getAddonData));
-    
-    var jwt = signature + "." + 
-      Utilities.base64Encode(
-        Utilities.computeHmacSha256Signature(signature, key)
-      );
-
-    cache.put('getAddonData', JSON.stringify(getAddonData), 21600);
-    
-    cache.put('token', jwt, 21600);
   
-    var homeCard = buildHomeCard(companyObj);
-    return CardService.newActionResponseBuilder()
-    .setNavigation(CardService.newNavigation().updateCard(homeCard))
-    .build();
- 
-  }
-
-  function onSveCompany(e) {
-    Logger.log(e.parameters.name, e.parameters.bbdd)
-    var messageId = e.messageMetadata.messageId;
-    cache.put('messageId', JSON.stringify(messageId), 21600);
-    var addonData = JSON.parse(cache.get('getAddonData'));
-    if(addonData) {
-     var MessageClassificationCard = buildMessageClassificationCard(e);
+    cache.put('companyData', JSON.stringify(companyObj), 21600);
+    
+   var MessageClassificationCard = buildMessageClassificationCard(e);
       return CardService.newActionResponseBuilder()
       .setNavigation(CardService.newNavigation().pushCard(MessageClassificationCard))
       .build();
+  
+  }
+  
+  function getFirstTimeCompany(e) {
+      getCompanyList();
+      var account = Session.getEffectiveUser().getEmail();
+      companyResponse.data[0].account = account;
+      cache.put('companyData', JSON.stringify(companyResponse.data[0]), 21600);
+      var MessageClassificationCard = buildMessageClassificationCard(e);
+      return CardService.newActionResponseBuilder()
+      .setNavigation(CardService.newNavigation().pushCard(MessageClassificationCard))
+      .build();
+  }
+  
+  function onSveCompany(e) {
+    //Logger.log(e.parameters.name, e.parameters.bbdd)
+    var selectCompany = JSON.parse(cache.get('selectCompany'));
+    if(selectCompany) {
+     return getSelectCompany(e);
+    } else {
+      return getFirstTimeCompany(e);
     }
     
   }

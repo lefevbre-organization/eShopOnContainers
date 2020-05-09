@@ -82,6 +82,58 @@ function deleteClassification(idMail,
       return classificationsDeleteResponse = JSON.parse(raw);
 }
 
+function getAddonData(e) {
+  var user = JSON.parse(cache.get('dataUser'));
+  var companyData = JSON.parse(cache.get('companyData'));
+  var account = Session.getEffectiveUser().getEmail();
+
+   if(account != companyData.account){
+    cache.remove('getAddonData');
+    cache.remove('companyData');
+    cache.remove('selectCompany');
+     var HomeCard = buildHomeCard();
+      return CardService.newActionResponseBuilder()
+      .setNavigation(CardService.newNavigation().updateCard(HomeCard))
+      .build();
+  }
+
+  var messageId = e.messageMetadata.messageId;
+  var thread = GmailApp.getMessageById(messageId).getThread();
+  var subject = thread.getFirstMessageSubject();
+  var messageDate = thread.getLastMessageDate();
+  
+  var header = {
+    alg: "HS256",
+    typ: "JWT",
+  }; 
+    
+  var addonData = {
+    idCompany: companyData.idCompany,
+    bbdd: companyData.bbdd,
+    name: companyData.name,
+    account: companyData.account,
+    provider: 'GOOGLE',
+    messageId: messageId,
+    subject: subject,
+    folder: 'Inbox',
+    sentDateTime: messageDate,
+    idUser: user.data.idUser,
+    userName: user.data.name
+  };
+  
+  var signature = Utilities.base64Encode(JSON.stringify(header)) + "." 
+    + Utilities.base64Encode(JSON.stringify(addonData));
+  
+  var jwt = signature + "." + 
+    Utilities.base64Encode(
+      Utilities.computeHmacSha256Signature(signature, key)
+    );
+
+  cache.put('getAddonData', JSON.stringify(addonData), 21600);
+  
+  cache.put('token', jwt, 21600);
+}
+
 function getNameEntityType(entityType) {
     switch (entityType) {
       case "files":
