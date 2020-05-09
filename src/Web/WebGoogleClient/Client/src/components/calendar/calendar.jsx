@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
 import ACTIONS from '../../actions/lexon';
-import Header from './header/Header';
+import Header from '../header/Header';
 import Sidebar from './sidebar/Sidebar';
 import { Notification } from '../notification/';
 import './calendar.scss';
@@ -17,7 +17,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import SidebarCnn from 'react-sidebar';
 import LexonComponent from '../../apps/lexon_content';
 import CalendarComponent from '../../apps/calendar_content';
-import { CalendarView } from './sidebar/calendarview/CalendarView';
+import { CalendarView } from './calendarview/CalendarView';
 import 'react-reflex/styles.css';
 import { resetDefaultAccount} from '../../api/accounts';
 import {
@@ -26,6 +26,7 @@ import {
 } from '@syncfusion/ej2-react-schedule';
 import { DataManager, Query, Predicate } from '@syncfusion/ej2-data';
 import { ToastComponent, ToastCloseArgs } from '@syncfusion/ej2-react-notifications';
+import { DialogComponent } from '@syncfusion/ej2-react-popups';
 import { getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, getCalendarList } from '../../api/calendar-api';
 import moment from 'moment';
 import groupBy from "lodash/groupBy";
@@ -48,6 +49,7 @@ export class Calendar extends Component {
         this.loadCalendarEvents = this.loadCalendarEvents.bind(this);
         this.handleScheduleDate = this.handleScheduleDate.bind(this);
         this.handleScheduleOpenEditor = this.handleScheduleOpenEditor.bind(this);
+        this.openCalendarView = this.openCalendarView.bind(this);       
         this.onEventRendered = this.onEventRendered.bind(this);
         this.dataManager = new DataManager();
         this.defaultCalendar = undefined;  
@@ -70,10 +72,92 @@ export class Calendar extends Component {
             sidebarDocked: false,  
             leftSideBar: {
                 collapsed: false
-            },           
+            }, 
+            hidePromptDialog: false,
+            calendarToEdit: undefined,
         };
+
+
+           // Calednar View Dialog
+        //this.promptButtonRef = element => {
+        //    this.promptButtonEle = element;
+        //};
+           // Calednar View Dialog
+        this.alertButtons = [{
+            // Click the footer buttons to hide the Dialog
+            click: () => {
+                this.setState({ hideAlertDialog: false });
+            },
+            buttonModel: { content: 'Dismiss', isPrimary: true }
+        }];
+           // Calednar View Dialog
+        this.confirmButton = [{
+            click: () => {
+                this.setState({ hideConfirmDialog: false });
+            },
+            buttonModel: { content: 'Yes', isPrimary: true }
+        },
+        {
+            click: () => {
+                this.setState({ hideConfirmDialog: false });
+            },
+            buttonModel: { content: 'No' }
+            }];
+           // Calednar View Dialog
+        this.promptButtons = [{
+            click: () => {
+                this.setState({ hidePromptDialog: false });
+            },
+            buttonModel: { content: 'Connect', isPrimary: true }
+        },
+        {
+            click: () => {
+                this.setState({ hidePromptDialog: false });
+            },
+            buttonModel: { content: 'Cancel' }
+            }];
+           // Calednar View Dialog
+        this.animationSettings = { effect: 'None' };
        
-    }  
+    } 
+
+    // Calednar View Dialog
+    openCalendarView(args) {
+        //if (args.target.innerHTML.toLowerCase() == 'alert') {
+        //    this.setState({ hideAlertDialog: true });
+        //}
+        //else if (args.target.innerHTML.toLowerCase() == 'confirm') {
+        //    this.setState({ hideConfirmDialog: true });
+        //}
+        //else if (args.target.innerHTML.toLowerCase() == 'prompt')
+
+        //this.promptDialogInstance.show(true);
+       
+        this.setState(
+            {
+                hidePromptDialog: true, calendarToEdit: args.currentTarget.id });
+            }
+     // Calednar View Dialog
+    dialogClose() {
+        this.setState({
+
+            hidePromptDialog: false
+        });
+
+        //this.promptButtonEle.style.display = 'inline-block';
+    }
+     // Calednar View Dialog
+    dialogOpen() {
+        //this.promptButtonEle.style.display = 'none';
+    }
+     // Calednar View Dialog
+    onFocus(args) {
+        //this.spanEle.classList.add('e-input-focus');
+    }
+     // Calednar View Dialog
+    onBlur(args) {
+        //this.spanEle.classList.remove('e-input-focus');
+    }
 
     toastCusAnimation = {
     //hide: { effect: 'SlideBottomOut' },
@@ -662,6 +746,8 @@ export class Calendar extends Component {
                             onSidebarCloseClick={this.handleShowLeftSidebarClick}
                             onCalendarChange={this.handleScheduleDate}
                             onCalendarOpenEditor={this.handleScheduleOpenEditor}
+                            onCalendarOpenCalnendarView={this.openCalendarView}
+
                     />
                         <article className='d-flex flex-column position-relative'>
                             {/*<Switch>*/}
@@ -708,7 +794,13 @@ export class Calendar extends Component {
                             >
                             </ToastComponent>
 
-                            <CalendarView />
+                                {/*  <button className="e-control e-btn dlgbtn" ref={this.promptButtonRef} onClick={this.openCalendarView.bind(this)} id="promptBtn">Prompt</button>*/}
+                            <DialogComponent id='dialogDraggable' isModal={true} header='Join Wi-Fi network' visible={this.state.hidePromptDialog} showCloseIcon={true} animationSettings={this.animationSettings} width='330px' ref={dialog => this.promptDialogInstance = dialog} target='#target' buttons={this.promptButtons} open={this.dialogOpen.bind(this)} close={this.dialogClose.bind(this)}>
+                                    <CalendarView
+                                        calendarToEdit={this.state.calendarToEdit}
+                                    />
+                            </DialogComponent>
+                           
 
                         {/*</Switch>*/}
                         </article>

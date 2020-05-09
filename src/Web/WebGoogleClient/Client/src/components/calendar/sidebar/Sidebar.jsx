@@ -139,7 +139,8 @@ export class Sidebar extends PureComponent {
                             accessRole={el.accessRole}
                             iconProps={iconProps}
                             selected={el.selected}
-                            primary={el.primary}
+                            primary={el.primary}    
+                            onCalendarOpenCalnendarView={this.props.onCalendarOpenCalnendarView}
                         />
                     );
                 })}

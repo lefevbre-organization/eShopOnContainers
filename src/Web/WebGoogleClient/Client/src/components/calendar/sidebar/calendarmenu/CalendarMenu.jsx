@@ -9,7 +9,9 @@ import {
     MenuLink,
 } from "@reach/menu-button";
 import "./calendarmenu.scss";
+//import { CalendarView } from "..calendarview/CalendarView";
 import { ColorPickerComponent } from '@syncfusion/ej2-react-inputs';
+//import { CalendarView , buttonClick } from "../calendarview/CalendarView";
 
 export class CalendarMenu extends PureComponent {
 
@@ -27,25 +29,30 @@ export class CalendarMenu extends PureComponent {
 
     
    
-    beforeRoundedTileRender(args) {
+  beforeRoundedTileRender(args) {
         args.element.classList.add('e-rounded-palette');
-    }
+  }
    
     // function to handle the ColorPicker change event
-    change(args) {
+  change(args) {
         document.getElementById('e-shirt-preview').style.backgroundColor = args.currentValue.hex;
-    }
-    roundedPaletteChange(args) {
+  }
+  roundedPaletteChange(args) {
         this.defaultObj.element.nextElementSibling.querySelector('.e-selected').style.boxShadow
             = args.currentValue.hex + ' 0 0 7px';
         document.getElementById('e-shirt-preview').style.backgroundColor = args.currentValue.hex;
-    }
+  }
     rendereComplete() {
-    }
+
+  }
 
   onClick(evt) { 
       this.props.onClick(evt, this.props.id, this.ownerObj.checked );
-  }
+    }
+
+    calendarView() {
+      
+   }
 
   render() {
     const {name, messagesUnread} = this.props;
@@ -58,10 +65,10 @@ export class CalendarMenu extends PureComponent {
                       <Menu>
                           <MenuButton className="menubutton">...</MenuButton>
                           <MenuList className="menupanel">
-                      <MenuItem className="e-controle-CalendarId e-field e-control e-dropdownlist">
-                          <span >Config and share</span>                          
-                          </MenuItem>
-                      <MenuItem className="e-controle-CalendarId e-field e-control e-dropdownlist">                          
+                      <MenuItem id={this.props.id} className="e-controle-CalendarId e-field e-control e-dropdownlist"  onClick={this.props.onCalendarOpenCalnendarView}>
+                              <span >Config and share</span>                          
+                              </MenuItem>
+                          <MenuItem className="e-controle-CalendarId e-field e-control e-dropdownlist" >                          
                               <span >Remove</span>
                           </MenuItem>
                               <div className='e-rounded-wrap'>

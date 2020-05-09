@@ -51,6 +51,7 @@ export class CalendarItem extends PureComponent {
                           onClick={this.navigateToList}
                           name={this.props.summary}
                           id={this.props.id}
+                          onCalendarOpenCalnendarView={this.props.onCalendarOpenCalnendarView}
                       />   
               }
                              
