@@ -3,7 +3,7 @@ using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Centinela.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Services
 {
     public interface ICentinelaService
     {

@@ -1,6 +1,7 @@
 ﻿using Centinela.API;
-using Centinela.API.Infrastructure.Repositories;
+//using Centinela.API.Infrastructure.Repositories;
 using Centinela.API.Models;
+using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Repositories;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
@@ -16,7 +17,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Centinela.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Services
 {
     public class CentinelaService : BaseClass<CentinelaService>, ICentinelaService
     {

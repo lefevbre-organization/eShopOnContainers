@@ -13,7 +13,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Centinela.API.Infrastructure
+namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure
 {
     //mirar https://www.mongodb.com/blog/post/working-with-mongodb-transactions-with-c-and-the-net-framework
     public class CentinelaContext : IMongoDbContext, IIntegrationEventLogContextMongoDB

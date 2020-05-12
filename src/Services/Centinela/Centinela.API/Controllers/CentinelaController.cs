@@ -1,5 +1,5 @@
 ﻿using Centinela.API.Models;
-using Centinela.Infrastructure.Services;
+using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Centinela.API.Controllers
+namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]

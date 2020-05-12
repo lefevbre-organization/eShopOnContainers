@@ -15,7 +15,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Centinela.API.Infrastructure.Repositories
+namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Repositories
 {
     public class CentinelaRepository : BaseClass<CentinelaRepository>, ICentinelaRepository
     {
