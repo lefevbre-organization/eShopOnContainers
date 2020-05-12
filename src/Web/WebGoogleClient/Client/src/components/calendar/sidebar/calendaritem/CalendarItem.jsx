@@ -10,15 +10,9 @@ export class CalendarItem extends PureComponent {
   constructor(props) {
     super(props);
       this.onClick = this.onClick.bind(this);
-
-     
-
     }
 
-  
-
-  onClick(evt) {       
-     
+  onClick(evt) {  
       this.props.onClick(evt, this.props.id, this.ownerObj.checked );
   }
 
@@ -52,6 +46,7 @@ export class CalendarItem extends PureComponent {
                           name={this.props.summary}
                           id={this.props.id}
                           onCalendarOpenCalnendarView={this.props.onCalendarOpenCalnendarView}
+                          onCalendarDelete={this.props.onCalendarDelete}
                       />   
               }
                              

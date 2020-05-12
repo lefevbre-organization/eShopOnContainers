@@ -27,7 +27,7 @@ import {
 import { DataManager, Query, Predicate } from '@syncfusion/ej2-data';
 import { ToastComponent, ToastCloseArgs } from '@syncfusion/ej2-react-notifications';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
-import { getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, getCalendarList } from '../../api/calendar-api';
+import { deleteCalendar, getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, listCalendarList } from '../../api/calendar-api';
 import moment from 'moment';
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
@@ -38,7 +38,7 @@ export class Calendar extends Component {
 
     constructor(props) {
         super(props);
-        this.getCalendarList = this.getCalendarList.bind(this);       
+        this.sidebarCalendarList = this.sidebarCalendarList.bind(this);       
         this.onSignout = this.onSignout.bind(this);
         this.onSignoutDisconnect = this.onSignoutDisconnect.bind(this);     
         this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
@@ -49,7 +49,8 @@ export class Calendar extends Component {
         this.loadCalendarEvents = this.loadCalendarEvents.bind(this);
         this.handleScheduleDate = this.handleScheduleDate.bind(this);
         this.handleScheduleOpenEditor = this.handleScheduleOpenEditor.bind(this);
-        this.openCalendarView = this.openCalendarView.bind(this);       
+        this.openCalendarView = this.openCalendarView.bind(this); 
+        this.deleteCalendar= this.deleteCalendar.bind(this); 
         this.onEventRendered = this.onEventRendered.bind(this);
         this.dataManager = new DataManager();
         this.defaultCalendar = undefined;  
@@ -59,10 +60,11 @@ export class Calendar extends Component {
         this.resourceCalendarData = [];
 
         this.toasts =  [
-        { title: 'Warning!', content: 'There was a problem with your network connection.', cssClass: 'e-toast-warning', icon: 'e-warning toast-icons' },
+        { content: 'Processing', cssClass: '', icon: '' },
         { content: 'The event has been created successfully.', cssClass: 'e-toast-success', icon: 'e-success toast-icons' },
         { content: 'The event has been modified successfully.', cssClass: 'e-toast-success', icon: 'e-success toast-icons' },
         { content: 'A problem has been occurred while submitting your data.', cssClass: 'e-toast-danger', icon: 'e-error toast-icons' },
+        { content: 'The calendar has been created successfully.', cssClass: 'e-toast-success', icon: 'e-success toast-icons' },
         //{ title: 'Information!', content: 'Please read the comments carefully.', cssClass: 'e-toast-info', icon: 'e-info toast-icons' }
                        ];
 
@@ -108,7 +110,7 @@ export class Calendar extends Component {
             click: () => {
                 this.setState({ hidePromptDialog: false });
             },
-            buttonModel: { content: 'Connect', isPrimary: true }
+            buttonModel: { content: 'Accept', isPrimary: true }
         },
         {
             click: () => {
@@ -121,7 +123,22 @@ export class Calendar extends Component {
        
     } 
 
-    // Calednar View Dialog
+    deleteCalendar(args) {  
+        this.toastObj.show(this.toasts[0]);
+      deleteCalendar(args.currentTarget.id )
+          .then(result => { 
+              this.sidebarCalendarList();  
+              this.toastObj.hide('All');
+              this.toastObj.show(this.toasts[1]);
+        })
+        .catch(error => {
+           console.log('error ->', error);                
+          this.toastObj.show(this.toasts[2]);              
+      });
+        
+    }
+
+    // Calendar View Dialog
     openCalendarView(args) {
         //if (args.target.innerHTML.toLowerCase() == 'alert') {
         //    this.setState({ hideAlertDialog: true });
@@ -132,18 +149,22 @@ export class Calendar extends Component {
         //else if (args.target.innerHTML.toLowerCase() == 'prompt')
 
         //this.promptDialogInstance.show(true);
-       
+
+        let calendarId = ""
+        if (args != undefined)
+            calendarId = args.currentTarget.id
         this.setState(
             {
-                hidePromptDialog: true, calendarToEdit: args.currentTarget.id });
-            }
+                hidePromptDialog: true, calendarToEdit: calendarId
+            });
+    }
      // Calednar View Dialog
     dialogClose() {
-        this.setState({
-
+        this.sidebarCalendarList();          
+        this.setState({           
             hidePromptDialog: false
         });
-
+        this.toastObj.show(this.toasts[4]); 
         //this.promptButtonEle.style.display = 'inline-block';
     }
      // Calednar View Dialog
@@ -314,17 +335,21 @@ export class Calendar extends Component {
 
     componentDidMount() {  
 
-        this.getCalendarList();  
+      this.sidebarCalendarList();  
+      this.LoadCalendarList();
+         
+    }
 
-        getCalendarList()
-            .then(result => {               
-                this.resourceCalendarData = orderBy(result.items, "primary"); 
-                this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true; 
-                this.loadCalendarEvents(this.resourceCalendarData[0].id, true) ;               
+    LoadCalendarList() {
+        listCalendarList()
+            .then(result => {
+                this.resourceCalendarData = orderBy(result.items, "primary");
+                this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;
+                this.loadCalendarEvents(this.resourceCalendarData[0].id, true);
             })
             .catch(error => {
                 console.log('error ->', error);
-            });        
+            });     
     }
 
     componentWillUnmount() {
@@ -631,7 +656,7 @@ export class Calendar extends Component {
         this.scheduleObj.openEditor(cellData, 'Add');   
     }
 
-    getCalendarList() {
+    sidebarCalendarList() {
         this.props.getCalendars();
     } 
    
@@ -739,7 +764,7 @@ export class Calendar extends Component {
                         <Sidebar
                             sideBarCollapsed={leftSideBar.collapsed}
                             sideBarToggle={this.toggleSideBar}
-                            getCalendarList={this.getCalendarList}
+                            getCalendarList={this.sidebarCalendarList}
                             pathname={this.props.location.pathname}
                             calendarResult={this.props.calendarsResult}
                             onCalendarClick={this.loadCalendarEvents}
@@ -747,6 +772,7 @@ export class Calendar extends Component {
                             onCalendarChange={this.handleScheduleDate}
                             onCalendarOpenEditor={this.handleScheduleOpenEditor}
                             onCalendarOpenCalnendarView={this.openCalendarView}
+                            onCalendarDelete={this.deleteCalendar}
 
                     />
                         <article className='d-flex flex-column position-relative'>
@@ -790,17 +816,26 @@ export class Calendar extends Component {
                                 close={this.toastOnclose.bind(this)}
                                 beforeOpen={this.toastOnbeforeOpen.bind(this)}
                                 animation={this.toastCusAnimation} 
-                                timeOut={1500}
+                                timeOut={2000}
                             >
                             </ToastComponent>
-
-                                {/*  <button className="e-control e-btn dlgbtn" ref={this.promptButtonRef} onClick={this.openCalendarView.bind(this)} id="promptBtn">Prompt</button>*/}
-                            <DialogComponent id='dialogDraggable' isModal={true} header='Join Wi-Fi network' visible={this.state.hidePromptDialog} showCloseIcon={true} animationSettings={this.animationSettings} width='330px' ref={dialog => this.promptDialogInstance = dialog} target='#target' buttons={this.promptButtons} open={this.dialogOpen.bind(this)} close={this.dialogClose.bind(this)}>
-                                    <CalendarView
-                                        calendarToEdit={this.state.calendarToEdit}
-                                    />
-                            </DialogComponent>
-                           
+                                <DialogComponent
+                                    id='dialogDraggable'
+                                    isModal={true}
+                                    header='Calendar Configuration'
+                                    visible={this.state.hidePromptDialog}
+                                    showCloseIcon={true}
+                                    animationSettings={this.animationSettings}
+                                    width='475px'
+                                    ref={dialog => this.promptDialogInstance = dialog}
+                                    target='#target'
+                                    open={this.dialogOpen.bind(this)}
+                                    close={this.dialogClose.bind(this)}>
+                                    <div>{(this.state.hidePromptDialog) ? <CalendarView
+                                        calendarToEdit={this.state.calendarToEdit} 
+                                        close={this.dialogClose.bind(this)}
+                                    /> : ''}</div>                                   
+                            </DialogComponent>                           
 
                         {/*</Switch>*/}
                         </article>

@@ -34,6 +34,7 @@ export class Sidebar extends PureComponent {
         this.navigateToList = this.navigateToList.bind(this);
         this.newEventClick = this.newEventClick.bind(this);
         this.sidebarAction = this.sidebarAction.bind(this);
+        this.newCalendarClick = this.newCalendarClick.bind(this);
 
         this.DefaultCalendar = "";
     }
@@ -44,6 +45,10 @@ export class Sidebar extends PureComponent {
    
     newEventClick() {       
         this.props.onCalendarOpenEditor();
+    }
+
+    newCalendarClick() {       
+        this.props.onCalendarOpenCalnendarView();
     }
 
     navigateToList(evt, calendarId, checked) {
@@ -122,7 +127,13 @@ export class Sidebar extends PureComponent {
                     <CalendarComponent change={this.calendarChange.bind(this)} ></CalendarComponent>                   
                 </div>  
                 <li key="olders-nav-title" className="pl-2 nav-title">
-                    {t("calendar-sidebar.mycalendars")}
+                    <span> {t("calendar-sidebar.mycalendars")}</span>
+                    <span
+                        className="newcalendar"
+                        onClick={this.newCalendarClick}
+                    > 
+                    New calendar
+                    </span>    
                 </li>
                 {calendarsOwner.map(el => {
                     const iconProps = {
@@ -141,6 +152,7 @@ export class Sidebar extends PureComponent {
                             selected={el.selected}
                             primary={el.primary}    
                             onCalendarOpenCalnendarView={this.props.onCalendarOpenCalnendarView}
+                            onCalendarDelete={this.props.onCalendarDelete}
                         />
                     );
                 })}

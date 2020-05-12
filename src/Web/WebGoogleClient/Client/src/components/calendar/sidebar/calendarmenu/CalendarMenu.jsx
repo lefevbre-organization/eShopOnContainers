@@ -57,7 +57,7 @@ export class CalendarMenu extends PureComponent {
   render() {
     const {name, messagesUnread} = this.props;
     const iconProps = this.props.iconProps;
-      let selected = this.props.selected ? " selected" : "";
+    let selected = this.props.selected ? " selected" : "";
      
    // const messagesUnreadLocale = messagesUnread.toLocaleString();
       return (
@@ -68,7 +68,7 @@ export class CalendarMenu extends PureComponent {
                       <MenuItem id={this.props.id} className="e-controle-CalendarId e-field e-control e-dropdownlist"  onClick={this.props.onCalendarOpenCalnendarView}>
                               <span >Config and share</span>                          
                               </MenuItem>
-                          <MenuItem className="e-controle-CalendarId e-field e-control e-dropdownlist" >                          
+                      <MenuItem id={this.props.id} className="e-controle-CalendarId e-field e-control e-dropdownlist" onClick={this.props.onCalendarDelete}>                          
                               <span >Remove</span>
                           </MenuItem>
                               <div className='e-rounded-wrap'>

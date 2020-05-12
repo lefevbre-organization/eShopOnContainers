@@ -23,7 +23,7 @@ export const getEventList = (idCalendar, selectedDate) =>
     });
 
 
-export const getCalendarList = () =>
+export const listCalendarList = () =>
     new Promise((resolve, reject) => {
         window.gapi.client.calendar.calendarList
             .list({
@@ -38,6 +38,88 @@ export const getCalendarList = () =>
             });
 
     });
+
+export const getCalendarList = (calendar) =>
+    new Promise((resolve, reject) => {
+        window.gapi.client.calendar.calendarList
+            .get({
+                calendarId: calendar,
+            })
+
+            .then(response => {
+                resolve(response.result);
+            })
+            .catch(err => {
+                reject(err);
+            });
+
+    });
+
+export const getCalendar = (calendar) =>
+    new Promise((resolve, reject) => {
+        window.gapi.client.calendar.calendars
+            .get({
+                calendarId: calendar,
+            })
+
+            .then(response => {
+                resolve(response.result);
+            })
+            .catch(err => {
+                reject(err);
+            });
+
+    });
+
+export const addCalendar = (event) =>
+    new Promise((resolve, reject) => {
+        window.gapi.client.calendar.calendars
+            .insert({               
+                resource: event
+            })
+
+            .then(response => {
+                resolve(response.result);
+            })
+            .catch(err => {
+                reject(err);
+            });
+
+    });
+
+export const deleteCalendar = (calendar) =>
+    new Promise((resolve, reject) => {
+        window.gapi.client.calendar.calendars
+            .delete({
+                calendarId: calendar,
+            })
+
+            .then(response => {
+                resolve(response.result);
+            })
+            .catch(err => {
+                reject(err);
+            });
+
+});
+
+export const updateCalendar = (calendar, event) =>
+    new Promise((resolve, reject) => {
+        window.gapi.client.calendar.calendars
+            .update({
+                calendarId: calendar,               
+                resource: event
+            })
+
+            .then(response => {
+                resolve(response.result);
+            })
+            .catch(err => {
+                reject(err);
+            });
+
+    });
+
 
 export const addCalendarEvent = (calendar, event) =>
     new Promise((resolve, reject) => {
@@ -55,6 +137,8 @@ export const addCalendarEvent = (calendar, event) =>
             });
 
     });
+
+
 
 export const updateCalendarEvent = (calendar, eventId, event) =>
     new Promise((resolve, reject) => {
