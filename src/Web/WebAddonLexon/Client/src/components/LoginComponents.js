@@ -3,14 +3,18 @@ import React from 'react';
  const LoginComponents = (children) =>  {
    const verificationLogin = children.errorsMessage.login ? (
      <div className="errorsMessage">{children.errorsMessage.login}</div>
-        ) : null;
+      ) : null;
+
+    const verificationEmail = children.errorsMessage.email ? (
+      <div className="errorsMessage">{children.errorsMessage.email}</div>
+    ) : null;
 
    const verificationPassword = children.errorsMessage.password ? (
       <div className="errorsMessage">{children.errorsMessage.password}</div>
         ) : null;
 
    return (
-    <div className="footer-space">
+    <div className="main-box">
     <div className="row">
      <div className="offset-md-3 col-md-6">
        <div className="login-box">
@@ -32,6 +36,7 @@ import React from 'react';
                    : null} 
                  </div>
                  { verificationLogin }
+                 { verificationEmail }
                </div>
                <div className="ml-n4 mb-4 pt-1">
                  <div className="input-group login-input-group">
@@ -56,7 +61,7 @@ import React from 'react';
              </div>
              </div>
             <div className="login-help">
-             <p className="pt-2 need-help mb-3">
+             <p className="pt-3 need-help mb-4">
               {children.needHelp}
              </p>
              <p className="client mt-n3">{children.phoneNumber}
