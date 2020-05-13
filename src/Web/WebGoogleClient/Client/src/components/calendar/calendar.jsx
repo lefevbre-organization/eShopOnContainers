@@ -27,7 +27,7 @@ import {
 import { DataManager, Query, Predicate } from '@syncfusion/ej2-data';
 import { ToastComponent, ToastCloseArgs } from '@syncfusion/ej2-react-notifications';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
-import { deleteCalendar, getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, listCalendarList } from '../../api/calendar-api';
+import { deleteCalendar, getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, listCalendarList, updateCalendarList } from '../../api/calendar-api';
 import moment from 'moment';
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
@@ -50,7 +50,8 @@ export class Calendar extends Component {
         this.handleScheduleDate = this.handleScheduleDate.bind(this);
         this.handleScheduleOpenEditor = this.handleScheduleOpenEditor.bind(this);
         this.openCalendarView = this.openCalendarView.bind(this); 
-        this.deleteCalendar= this.deleteCalendar.bind(this); 
+        this.deleteCalendar = this.deleteCalendar.bind(this);
+        this.calendarColorModify = this.calendarColorModify.bind(this);        
         this.onEventRendered = this.onEventRendered.bind(this);
         this.dataManager = new DataManager();
         this.defaultCalendar = undefined;  
@@ -123,11 +124,42 @@ export class Calendar extends Component {
        
     } 
 
+    calendarColorModify(calendarId, color) {
+
+        let calendarData = { 
+            "backgroundColor": color,
+            "foregroundColor": '#000000'
+        }      
+       
+
+        updateCalendarList(calendarId, calendarData)
+            .then(result => {
+                console.log(result)
+                this.toastObj.hide('All');
+                this.toastObj.showProgressBar = false
+                this.toastObj.show(this.toasts[1]);   
+                this.LoadCalendarList(true)
+                this.sidebarCalendarList();
+
+            })
+            .catch(error => {
+                console.log('error ->', error);
+                this.toastObj.showProgressBar = false
+                this.toastObj.hide('All');
+                this.toastObj.show(this.toasts[3]);                
+            });   
+        
+    }
+
+
     deleteCalendar(args) {  
         this.toastObj.show(this.toasts[0]);
       deleteCalendar(args.currentTarget.id )
           .then(result => { 
-              this.sidebarCalendarList();  
+
+              this.LoadCalendarList(true)
+              this.sidebarCalendarList();
+              
               this.toastObj.hide('All');
               this.toastObj.show(this.toasts[1]);
         })
@@ -137,7 +169,6 @@ export class Calendar extends Component {
       });
         
     }
-
     // Calendar View Dialog
     openCalendarView(args) {
         //if (args.target.innerHTML.toLowerCase() == 'alert') {
@@ -160,7 +191,8 @@ export class Calendar extends Component {
     }
      // Calednar View Dialog
     dialogClose() {
-        this.sidebarCalendarList();          
+        this.sidebarCalendarList(); 
+        this.LoadCalendarList(true)
         this.setState({           
             hidePromptDialog: false
         });
@@ -340,12 +372,16 @@ export class Calendar extends Component {
          
     }
 
-    LoadCalendarList() {
+    LoadCalendarList(DisableloadSchedule) {
+        this.resourceCalendarData=[]
         listCalendarList()
             .then(result => {
                 this.resourceCalendarData = orderBy(result.items, "primary");
                 this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;
-                this.loadCalendarEvents(this.resourceCalendarData[0].id, true);
+                if (!DisableloadSchedule) {
+                    this.loadCalendarEvents(this.resourceCalendarData[0].id, true);
+                }
+                  
             })
             .catch(error => {
                 console.log('error ->', error);
@@ -773,6 +809,7 @@ export class Calendar extends Component {
                             onCalendarOpenEditor={this.handleScheduleOpenEditor}
                             onCalendarOpenCalnendarView={this.openCalendarView}
                             onCalendarDelete={this.deleteCalendar}
+                            onCalendarColorModify={this.calendarColorModify}
 
                     />
                         <article className='d-flex flex-column position-relative'>

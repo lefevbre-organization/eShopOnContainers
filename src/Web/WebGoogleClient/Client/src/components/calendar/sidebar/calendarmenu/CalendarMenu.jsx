@@ -16,63 +16,44 @@ import { ColorPickerComponent } from '@syncfusion/ej2-react-inputs';
 export class CalendarMenu extends PureComponent {
 
   constructor(props) {
-    super(props);
-      this.onClick = this.onClick.bind(this);
+    super(props);    
       
       this.roundedPaletteColors = {
-          'custom1': ['#ff6900', '#fcb900', '#7bdcb5', '#00d084',
+          'custom1': [ '#fcb900', '#7bdcb5', '#00d084',
               '#8ed1fc', '#0693e3', '#abb8c3', '#eb144c',
               '#f78da7', '#9900ef']
-      };     
+      }; 
 
-    }
-
-    
+      this.roundedPaletteColors.custom1.push(this.props.color); 
+    }    
    
   beforeRoundedTileRender(args) {
         args.element.classList.add('e-rounded-palette');
   }
-   
-    // function to handle the ColorPicker change event
-  change(args) {
-        document.getElementById('e-shirt-preview').style.backgroundColor = args.currentValue.hex;
-  }
-  roundedPaletteChange(args) {
-        this.defaultObj.element.nextElementSibling.querySelector('.e-selected').style.boxShadow
-            = args.currentValue.hex + ' 0 0 7px';
-        document.getElementById('e-shirt-preview').style.backgroundColor = args.currentValue.hex;
-  }
-    rendereComplete() {
-
-  }
-
-  onClick(evt) { 
-      this.props.onClick(evt, this.props.id, this.ownerObj.checked );
+  
+    roundedPaletteChange(args) {     
+      //var color = this.colorObj.value.substr(0, 7);
+        this.props.onCalendarColorModify(this.props.id, args.currentValue.hex)
     }
-
-    calendarView() {
-      
-   }
 
   render() {
     const {name, messagesUnread} = this.props;
     const iconProps = this.props.iconProps;
-    let selected = this.props.selected ? " selected" : "";
-     
-   // const messagesUnreadLocale = messagesUnread.toLocaleString();
+    let selected = this.props.selected ? " selected" : "";     
+  
       return (
                    <span class="closeb">
                       <Menu>
                           <MenuButton className="menubutton">...</MenuButton>
                           <MenuList className="menupanel">
-                      <MenuItem id={this.props.id} className="e-controle-CalendarId e-field e-control e-dropdownlist"  onClick={this.props.onCalendarOpenCalnendarView}>
-                              <span >Config and share</span>                          
+                              <MenuItem id={this.props.id} className="e-controle-CalendarId e-field e-control e-dropdownlist"  onClick={this.props.onCalendarOpenCalnendarView}>
+                                   <span >Config and share</span>                          
                               </MenuItem>
-                      <MenuItem id={this.props.id} className="e-controle-CalendarId e-field e-control e-dropdownlist" onClick={this.props.onCalendarDelete}>                          
-                              <span >Remove</span>
-                          </MenuItem>
+                              <MenuItem id={this.props.id} className="e-controle-CalendarId e-field e-control e-dropdownlist" onClick={this.props.onCalendarDelete}>                          
+                                   <span >Remove</span>
+                              </MenuItem>
                               <div className='e-rounded-wrap'>
-                                  <ColorPickerComponent id='rounded-palette' mode='Palette' ref={(scope) => { this.defaultObj = scope; }} modeSwitcher={false} inline={true} showButtons={false} columns={5} presetColors={this.roundedPaletteColors} beforeTileRender={this.beforeRoundedTileRender.bind(this)} change={this.roundedPaletteChange.bind(this)}></ColorPickerComponent>
+                                   <ColorPickerComponent value={this.props.color} id='rounded-palette' mode='Palette' ref={(scope) => { this.colorObj = scope; }} modeSwitcher={false} inline={true} showButtons={false} columns={5} presetColors={this.roundedPaletteColors} beforeTileRender={this.beforeRoundedTileRender.bind(this)} change={this.roundedPaletteChange.bind(this)}></ColorPickerComponent>
                               </div>                    
                           </MenuList>
                       </Menu>

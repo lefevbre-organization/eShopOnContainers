@@ -147,12 +147,14 @@ export class Sidebar extends PureComponent {
                             onClick={this.navigateToList}
                             name={el.summary}
                             id={el.id}
+                            color={el.backgroundColor}
                             accessRole={el.accessRole}
                             iconProps={iconProps}
                             selected={el.selected}
                             primary={el.primary}    
                             onCalendarOpenCalnendarView={this.props.onCalendarOpenCalnendarView}
                             onCalendarDelete={this.props.onCalendarDelete}
+                            onCalendarColorModify={this.props.onCalendarColorModify}
                         />
                     );
                 })}
@@ -187,6 +189,7 @@ export class Sidebar extends PureComponent {
                                 onClick={this.navigateToList}
                                 name={el.summary}
                                 id={el.id}
+                                color={el.backgroundColor}
                                 accessRole={el.accessRole}
                                 iconProps={iconProps}
                                 selected={el.selected}                               

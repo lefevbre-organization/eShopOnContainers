@@ -101,7 +101,26 @@ export const deleteCalendar = (calendar) =>
                 reject(err);
             });
 
-});
+    });
+
+export const updateCalendarList = (calendarId, calendar) =>
+
+    new Promise((resolve, reject) => {       
+        window.gapi.client.calendar.calendarList
+            .update({
+                calendarId: calendarId,
+                colorRgbFormat: 'true',
+                resource: calendar
+            })
+
+            .then(response => {
+                resolve(response.result);
+            })
+            .catch(err => {
+                reject(err);
+            });
+
+    });
 
 export const updateCalendar = (calendar, event) =>
     new Promise((resolve, reject) => {
