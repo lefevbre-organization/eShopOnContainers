@@ -15,13 +15,13 @@
  "addOns": {
   "common": {
     "name": "LEX-ON",
-    "logoUrl": "https://www.gstatic.com/images/icons/material/system/1x/label_googblue_24dp.png"  
+    "logoUrl": "http://www.derechopractico.es/wp-content/uploads/2019/03/Logo-Lefebvre.jpg"  
   },
    "gmail": {
      "openLinkUrlPrefixes": [
        "https://lexbox-test-webaddonlexon.lefebvre.es/",
        "https://mail.google.com/"
-     ],
+     ], 
      "contextualTriggers": [{
        "unconditional": {
        },

@@ -577,7 +577,7 @@ Service_.prototype.fetchToken_ = function(payload, optUrl) {
  });
 
  var result = response.getContentText();
- var cache = CacheService.getScriptCache();
+ var cache = CacheService.getUserCache();
  cache.put('dataUser', result, 21600);
  return this.getTokenFromResponse_(response);
 };

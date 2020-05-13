@@ -59,10 +59,12 @@
     .setFunctionName('showNewConection');
   
     var button = CardService.newImage()
-    .setAltText("Nueva conexión")
-       .setImageUrl("https://www.dropbox.com/s/5mq9albce82msne/Screen%20Shot%202020-03-26%20at%206.44.32%20PM.png?raw=1")
-       .setAuthorizationAction(CardService.newAuthorizationAction()
-       .setAuthorizationUrl(authUrl));
+    .setAltText("Nueva clasificación")
+       .setImageUrl("https://www.dropbox.com/s/0xtlunun3n0niyl/Screenshot%202020-05-12%2014.12.12.png?raw=1")
+       .setOpenLink(CardService.newOpenLink()
+        .setUrl(authUrl)
+        .setOpenAs(CardService.OpenAs.FULL_SIZE)
+        .setOnClose(CardService.OnClose.RELOAD_ADD_ON));
        
     var messageId = e.messageMetadata.messageId;
     var thread = GmailApp.getMessageById(messageId).getThread();
@@ -123,10 +125,12 @@
      }
     
    }
-   
+   var account = Session.getEffectiveUser().getEmail();
     var card = CardService.newCardBuilder()
       .setHeader(CardService.newCardHeader()
-      .setTitle('Clasificar Mensajes'))
+      .setImageUrl("http://www.derechopractico.es/wp-content/uploads/2019/03/Logo-Lefebvre.jpg")
+      .setTitle(account)
+      .setSubtitle(addonData.userName))
       .addCardAction(logoutAction)
       .addSection(selectionCompany);
       
