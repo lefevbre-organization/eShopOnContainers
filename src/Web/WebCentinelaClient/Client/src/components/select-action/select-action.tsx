@@ -5,6 +5,7 @@ import { PAGE_SELECT_COMPANY } from '../../constants';
 import SelectActionTab from './select-action-tab/select-action-tab';
 
 interface Props {
+  composerOpen: boolean;
   changePage: (page: string) => void;
   toggleNotification: (message?: string, error?: boolean) => void;
 }
@@ -17,7 +18,7 @@ class SelectAction extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      showDocuments: true
+      showDocuments: true,
     };
 
     this._handleOnClick = this._handleOnClick.bind(this);
@@ -33,16 +34,19 @@ class SelectAction extends Component<Props, State> {
   }
 
   render() {
-    const { toggleNotification } = this.props;
+    const { toggleNotification, composerOpen } = this.props;
     const { showDocuments } = this.state;
     return (
-      <div className="container-fluid">
+      <div className='container-fluid'>
         <SelectActionHeader
           changePage={this.props.changePage}
           onChange={this.onShowDocuments}
         />
         {showDocuments === true && (
-          <SelectActionTab toggleNotification={toggleNotification} />
+          <SelectActionTab
+            toggleNotification={toggleNotification}
+            composerOpen={composerOpen}
+          />
         )}
       </div>
     );

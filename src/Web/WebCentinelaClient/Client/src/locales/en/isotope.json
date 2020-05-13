@@ -9,7 +9,9 @@
     "subject": "Subject"
   },
   "select-action": {
-    "archive-messages": "Store Messages"
+    "archive-messages": "Store Messages",
+    "attach-messages": "Attach Files",
+    "attach-documents": "Search the CENTINELA facilities and attach the files you need to your emails."
   },
   "tab-archive": {
     "select-mail": "Select one or more messages and save them in the CENTINELA documentation. Your location will be shown individually.",
@@ -38,5 +40,8 @@
     "show-search": "Show search",
     "search-by": "Search by:",
     "hide-search": "Hide search"
+  },
+  "modal-attach": {
+    "save-copy": "Selecciona los archivos en CENTINELA"
   }
 }

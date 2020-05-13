@@ -9,11 +9,13 @@
     "subject": "Asunto"
   },
   "select-action": {
-    "archive-messages": "Archivar Mensajes"
+    "archive-messages": "Archivar Mensajes",
+    "attach-documents": "Adjuntar archivos"
   },
   "tab-archive": {
     "select-mail": "Selecciona uno o más mensajes y guárdalos en la documentación de CENTINELA. Su ubicación se mostrará individualmente.",
-    "new-archive-location": "Nueva localización de archivo"
+    "new-archive-location": "Nueva localización de archivo",
+    "attach-documents": "Busca en las implantaciones de CENTINELA y adjunta a tus correos los archivos que necesites."
   },
   "modal-archive": {
     "title": "Archivar mensajes en CENTINELA",

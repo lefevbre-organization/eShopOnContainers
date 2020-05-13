@@ -7,6 +7,8 @@ export interface ApplicationState {
   isLoading: boolean;
   user: any;
   showArchiveModal: boolean;
+  showAttachModal: boolean;
+  composerStatus: string;
 }
 
 export type AddErrorPayload = {

@@ -23,7 +23,7 @@ const mapStateToProps = (state: any) => {
   return {
     selected: selected,
     errors: errors,
-    isLoading: isLoading
+    isLoading: isLoading,
   };
 };
 
@@ -36,10 +36,11 @@ const mapDispatchToProps = (dispatch: any) => {
         addListMessages: MessagesActions.addListMessages,
         deleteListMessages: MessagesActions.deleteListMessages,
         resetListMessages: MessagesActions.resetListMessages,
-        setLoadingStatus: ApplicationActions.setLoadingStatus
+        setLoadingStatus: ApplicationActions.setLoadingStatus,
+        setComposerStatus: ApplicationActions.setComposerStatus,
       },
       dispatch
-    )
+    ),
   };
 };
 
@@ -56,15 +57,15 @@ class Main extends Component<Props, State> {
       user: null,
       showNotification: false,
       messageNotification: '',
-      errorNotification: false
+      errorNotification: false,
     };
 
     this.toggleNotification = this.toggleNotification.bind(this);
-
     this.handleShowLoader = this.handleShowLoader.bind(this);
     this.handleHideLoader = this.handleHideLoader.bind(this);
     this.handleResetList = this.handleResetList.bind(this);
-
+    this.handleOpenComposer = this.handleOpenComposer.bind(this);
+    this.handleCloseComposer = this.handleCloseComposer.bind(this);
     this.handleMessageSelected = this.handleMessageSelected.bind(this);
     this.handlePutUserFromCentinelaConnector = this.handlePutUserFromCentinelaConnector.bind(
       this
@@ -80,6 +81,8 @@ class Main extends Component<Props, State> {
     window.addEventListener('Checkclick', this.handleMessageSelected);
     window.addEventListener('ResetList', this.handleResetList);
     window.addEventListener('CheckAllclick', this.handleListMessagesSelected);
+    window.addEventListener('OpenComposer', this.handleOpenComposer);
+    window.addEventListener('CloseComposer', this.handleCloseComposer);
     window.addEventListener(
       'PutUserFromCentinelaConnector',
       this.handlePutUserFromCentinelaConnector
@@ -93,6 +96,9 @@ class Main extends Component<Props, State> {
     window.removeEventListener('LoadedMessage', this.handleHideLoader);
     window.removeEventListener('ResetList', this.handleResetList);
     window.removeEventListener('Checkclick', this.handleMessageSelected);
+    window.removeEventListener('OpenComposer', this.handleOpenComposer);
+    window.removeEventListener('CloseComposer', this.handleCloseComposer);
+
     window.removeEventListener(
       'CheckAllclick',
       this.handleListMessagesSelected
@@ -101,6 +107,16 @@ class Main extends Component<Props, State> {
       'PutUserFromCentinelaConnector',
       this.handlePutUserFromCentinelaConnector
     );
+  }
+
+  handleOpenComposer() {
+    console.log('handleOpenComposer');
+    this.props.setComposerStatus('open');
+  }
+
+  handleCloseComposer() {
+    console.log('handleCloseComposer');
+    this.props.setComposerStatus('closed');
   }
 
   // TODO: Check this any type
@@ -148,7 +164,7 @@ class Main extends Component<Props, State> {
           subject: event.detail.subject,
           folder: event.detail.folder,
           sentDateTime: event.detail.sentDateTime,
-          raw: event.detail.raw
+          raw: event.detail.raw,
         })
       : deleteMessage(event.detail.extMessageId);
   }
@@ -165,7 +181,7 @@ class Main extends Component<Props, State> {
     this.setState((state) => ({
       showNotification: !state.showNotification,
       messageNotification: message || '',
-      errorNotification: error || false
+      errorNotification: error || false,
     }));
   }
 
@@ -181,11 +197,11 @@ class Main extends Component<Props, State> {
       }
 
       return (
-        <p className="connexion-status connexion-status-ko">
+        <p className='connexion-status connexion-status-ko'>
           {bbddError === true
             ? i18n.t('main.bbdd_error')
             : i18n.t('main.error_connection')}
-          <span className="lf-icon-warning"></span>
+          <span className='lf-icon-warning'></span>
         </p>
       );
     }
@@ -195,7 +211,7 @@ class Main extends Component<Props, State> {
     const {
       showNotification,
       messageNotification,
-      errorNotification
+      errorNotification,
     } = this.state;
     const { errors, isLoading } = this.props;
 
@@ -209,7 +225,7 @@ class Main extends Component<Props, State> {
           error={errorNotification}
         />
         {isLoading && (
-          <div className="spinner-wrapper">
+          <div className='spinner-wrapper'>
             <Spinner />
           </div>
         )}

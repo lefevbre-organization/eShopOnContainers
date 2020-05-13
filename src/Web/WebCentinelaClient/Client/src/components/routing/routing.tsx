@@ -3,7 +3,7 @@ import {
   PAGE_SELECT_COMPANY,
   PAGE_SELECT_ACTION,
   PAGE_CONFIGURATION,
-  PAGE_ARCHIVEFILE
+  PAGE_ARCHIVEFILE,
 } from '../../constants';
 import { connect } from 'react-redux';
 import SelectAction from '../select-action/select-action';
@@ -14,6 +14,7 @@ interface State {
 }
 
 interface Props {
+  composerOpen: boolean;
   toggleNotification: () => void;
 }
 
@@ -24,7 +25,7 @@ class Routing extends Component<Props, State> {
     let actualPage = PAGE_SELECT_ACTION;
 
     this.state = {
-      actualPage: actualPage
+      actualPage: actualPage,
     };
 
     this.changePage = this.changePage.bind(this);
@@ -36,7 +37,7 @@ class Routing extends Component<Props, State> {
 
   renderPage() {
     const { actualPage } = this.state;
-    const { toggleNotification } = this.props;
+    const { toggleNotification, composerOpen } = this.props;
 
     switch (actualPage) {
       case PAGE_SELECT_COMPANY:
@@ -48,6 +49,7 @@ class Routing extends Component<Props, State> {
           <SelectAction
             changePage={this.changePage}
             toggleNotification={toggleNotification}
+            composerOpen={composerOpen}
           />
         );
       case PAGE_CONFIGURATION:
@@ -81,8 +83,8 @@ class Routing extends Component<Props, State> {
 
 const mapStateToProps = (state: AppState) => {
   return {
-    errors: state.application.errors
-    //composerOpen: state.applicationReducer.isComposerOpen
+    errors: state.application.errors,
+    composerOpen: state.application.composerStatus === 'open',
   };
 };
 

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Tabs, Tab } from 'react-bootstrap';
 import i18n from 'i18next';
 import TabArchiveMessage from '../tab-archive-message/tab-archive-message';
+import TabAttachMessage from '../tab-attach-message/tab-attach-message';
 
 interface Props {
   user?: string;
@@ -15,22 +16,22 @@ class SelectActionTab extends Component<Props> {
 
     return (
       <>
-        <Tabs id="uncontrolled-tab-example" bsPrefix="menu-lexon-actions">
+        <Tabs id='uncontrolled-tab-example' bsPrefix='menu-lexon-actions'>
           {composerOpen === false && (
             <Tab
-              eventKey="connect"
-              title={i18n.t('select-action.archive-messages')}
-            >
+              eventKey='connect'
+              title={i18n.t('select-action.archive-messages')}>
               <TabArchiveMessage
-                toggleNotification={toggleNotification}
-              ></TabArchiveMessage>
+                toggleNotification={toggleNotification}></TabArchiveMessage>
             </Tab>
           )}
           {composerOpen === true && (
             <Tab
-              eventKey="attach"
-              title={i18n.t('select-action.attach-documents')}
-            ></Tab>
+              eventKey='attach'
+              title={i18n.t('select-action.attach-documents')}>
+              <TabAttachMessage
+                toggleNotification={toggleNotification}></TabAttachMessage>
+            </Tab>
           )}
         </Tabs>
         <style jsx>{`

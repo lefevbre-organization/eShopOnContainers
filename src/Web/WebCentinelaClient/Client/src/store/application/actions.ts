@@ -15,5 +15,10 @@ export const ApplicationActions = {
     `${PREFIX}/SET_CURRENT_USER`,
     (resolve: any) => (user: string) => resolve(user)
   ),
-  toggleArchiveModal: createAction(`${PREFIX}/TOGGLE_MODAL_ARCHIVE_DOCUMENTS`)
+  toggleArchiveModal: createAction(`${PREFIX}/TOGGLE_MODAL_ARCHIVE_DOCUMENTS`),
+  toggleAttachModal: createAction(`${PREFIX}/TOGGLE_MODAL_ATTACH_DOCUMENTS`),
+  setComposerStatus: createAction(
+    `${PREFIX}/SET_COMPOSER_STATUS`,
+    (resolve: any) => (composerStatus: string) => resolve(composerStatus)
+  ),
 };
