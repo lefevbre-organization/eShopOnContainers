@@ -128,7 +128,7 @@ export class Calendar extends Component {
 
         let calendarData = { 
             "backgroundColor": color,
-            "foregroundColor": '#000000'
+            "foregroundColor": '#ffffff'
         }      
        
 
@@ -190,13 +190,16 @@ export class Calendar extends Component {
             });
     }
      // Calednar View Dialog
-    dialogClose() {
-        this.sidebarCalendarList(); 
-        this.LoadCalendarList(true)
+    dialogClose(args) {
+        if (args == undefined) {
+            this.sidebarCalendarList();
+            this.LoadCalendarList(true)
+            this.toastObj.show(this.toasts[4]);
+        }       
         this.setState({           
             hidePromptDialog: false
         });
-        this.toastObj.show(this.toasts[4]); 
+        
         //this.promptButtonEle.style.display = 'inline-block';
     }
      // Calednar View Dialog
@@ -869,8 +872,8 @@ export class Calendar extends Component {
                                     open={this.dialogOpen.bind(this)}
                                     close={this.dialogClose.bind(this)}>
                                     <div>{(this.state.hidePromptDialog) ? <CalendarView
-                                        calendarToEdit={this.state.calendarToEdit} 
-                                        close={this.dialogClose.bind(this)}
+                                    calendarToEdit={this.state.calendarToEdit} 
+                                    close={this.dialogClose.bind(this)}
                                     /> : ''}</div>                                   
                             </DialogComponent>                           
 

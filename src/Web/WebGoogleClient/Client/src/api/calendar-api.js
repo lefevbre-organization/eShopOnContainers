@@ -211,17 +211,51 @@ export const requestRecurringEvent = (calendar, eventId) =>
 
     });
 
+export const addACL = (calendar, acl) =>
+    new Promise((resolve, reject) => {
+        window.gapi.client.calendar.acl
+            .insert({
+                calendarId: calendar,
+                sendNotifications: true,
+                resource: acl
+            })
+            .then(response => {
+                resolve(response.result);
+            })
+            .catch(err => {
+                reject(err);
+            });
 
-//var requestRecurringEvent = window.gapi.client.calendar.events.get({
-//    'calendarId': 'primary',
-//    'eventId': payload
-//});
-//requestRecurringEvent.execute(function (resp) {
-//    console.log('requestRecurringEvent = ' + resp);
-//    console.log('requestRecurringEvent.recurrence = ' + resp.recurrence);
-//    recurrence = resp.recurrence;
+    });
 
-//    console.log('recurrence (inside execute)= ' + recurrence); //NO ISSUE (YET): recurrence (inside execute) = RRULE:FREQ=WEEKLY;COUNT=10
 
-//    return recurrence;
-//});
+export const listACL = (calendar) =>
+    new Promise((resolve, reject) => {
+        window.gapi.client.calendar.acl
+            .list({
+                calendarId: calendar               
+            })
+            .then(response => {
+                resolve(response.result);
+            })
+            .catch(err => {
+                reject(err);
+            });
+
+    });
+
+export const deleteACL = (calendar, ruleId) =>
+    new Promise((resolve, reject) => {
+        window.gapi.client.calendar.acl
+            .delete({
+                calendarId: calendar,
+                ruleId: ruleId
+            })
+            .then(response => {
+                resolve(response.result);
+            })
+            .catch(err => {
+                reject(err);
+            });
+
+    });

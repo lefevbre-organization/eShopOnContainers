@@ -64,7 +64,7 @@ env:
       value: 'True'
 configValues: |
  window.REACT_APP_ENVIRONMENT='PRODUCTION'
- window.GOOGLE_SCRIPT = "https://script.google.com/macros/d/1rzrejrBXzshc4OWW_8xqAwOBJ4avJocCqN9HUBtDSo7U1KZjpqKnXyXo/usercallback"
+ window.GOOGLE_SCRIPT = "https://script.google.com/macros/d/1or72KSDFlMxEf7A2_r-jivwaEneEHXm3_KxJ7tYnVM2OFjthb7HDNEb5/usercallback"
  window.API_GATEWAY='https://lexbox-test-apigwlex.lefebvre.es'
  window.URL_MF_LEXON='https://lexbox-test-weblexon.lefebvre.es/static/js/main.js'
  window.URL_GET_ACCOUNTS='https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail'
