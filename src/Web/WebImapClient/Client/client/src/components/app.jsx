@@ -21,7 +21,7 @@ import {
   selectFolder,
   outboxEventNotified,
   editMessage,
-  setError
+  setError,
 } from '../actions/application';
 import { clearSelected, setSelected } from '../actions/messages';
 import {
@@ -29,7 +29,7 @@ import {
   resetIdEmail,
   setCaseFile,
   setGUID,
-  setSign
+  setSign,
 } from '../actions/lexon';
 
 import { getSelectedFolder } from '../selectors/folders';
@@ -44,7 +44,7 @@ import { persistApplicationNewMessageContent } from '../services/indexed-db';
 import {
   addOrUpdateAccount,
   getUser,
-  classifyEmail
+  classifyEmail,
 } from '../services/accounts';
 // import SplitPane from "react-split-pane";
 import styles from './app.scss';
@@ -83,7 +83,7 @@ class App extends Component {
       sidebarOpen: false,
       sidebarDocked: false,
       sideBar: {
-        collapsed: false
+        collapsed: false,
       },
       sidebarComponent: (
         <img
@@ -92,7 +92,7 @@ class App extends Component {
           src='/assets/images/lexon-fake.png'></img>
       ),
       actualSidebarComponent: 0,
-      isUpdatedDefaultAccount: false
+      isUpdatedDefaultAccount: false,
     };
 
     this.toggleSideBar = this.toggleSideBar.bind(this);
@@ -113,7 +113,7 @@ class App extends Component {
     this.setState({
       sidebarComponent: (
         <CalendarComponent sidebarDocked={this.onSetSidebarDocked} />
-      )
+      ),
     });
     this.setState({ sidebarDocked: open });
   }
@@ -122,7 +122,7 @@ class App extends Component {
     this.setState({
       sidebarComponent: (
         <LexonComponent sidebarDocked={this.onSetSidebarDocked} />
-      )
+      ),
     });
     this.setState({ sidebarDocked: open });
     this.setState({ actualSidebarComponent: 1 });
@@ -132,7 +132,7 @@ class App extends Component {
     this.setState({
       sidebarComponent: (
         <DataBaseComponent sidebarDocked={this.onSetSidebarDocked} />
-      )
+      ),
     });
     this.setState({ sidebarDocked: open });
   }
@@ -177,8 +177,8 @@ class App extends Component {
           idEmail: this.props.lexon.idEmail,
           idFolder: this.props.lexon.idFolder,
           account: this.props.all.login.formValues.user,
-          provider: 'IMAP'
-        }
+          provider: 'IMAP',
+        },
       })
     );
   }
@@ -215,7 +215,7 @@ class App extends Component {
             zIndex: 999,
             overflowY: 'hidden',
             WebkitTransition: '-webkit-transform 0s',
-            willChange: 'transform'
+            willChange: 'transform',
           },
           content: {
             position: 'absolute',
@@ -226,7 +226,7 @@ class App extends Component {
             overflowY: 'hidden',
             overflowX: 'hidden',
             WebkitOverflowScrolling: 'touch',
-            transition: 'left .0s ease-out, right .0s ease-out'
+            transition: 'left .0s ease-out, right .0s ease-out',
           },
           overlay: {
             zIndex: 1,
@@ -238,14 +238,14 @@ class App extends Component {
             opacity: 0,
             visibility: 'hidden',
             //transition: "opacity .3s ease-out, visibility .0s ease-out",
-            backgroundColor: 'rgba(0,0,0,.3)'
+            backgroundColor: 'rgba(0,0,0,.3)',
           },
           dragHandle: {
             zIndex: 1,
             position: 'fixed',
             top: 0,
-            bottom: 0
-          }
+            bottom: 0,
+          },
         }}>
         <div>
           <MainBar
@@ -465,7 +465,7 @@ class App extends Component {
       idEmail,
       idFolder,
       account,
-      mailContacts
+      mailContacts,
     } = this.props.lexon;
     const {
       imapSsl,
@@ -476,14 +476,15 @@ class App extends Component {
       smtpSsl,
       smtpTls,
       user,
-      password
+      password,
     } = this.props.all.login.formValues;
     const { email } = this.props;
     if (userId !== null && email !== null) {
       const userAux = await getUser(userId);
 
       let sign = '';
-      const ac = userAux.data.accounts.filter(a => a.email === email);
+      const ac = userAux.data.accounts.filter((a) => a.email === email);
+
       if (ac.length >= 1) {
         sign = ac[0].sign;
       }
@@ -504,23 +505,23 @@ class App extends Component {
           smtp: smtpHost,
           smtpPort: smtpPort,
           smtpSsl: smtpSsl,
-          smtpTls: smtpTls
-        }
+          smtpTls: smtpTls,
+        },
       };
       if (!newAccount.configAccount.imapPass) {
         delete newAccount.configAccount;
       }
-      
+
       addOrUpdateAccount(userId, newAccount)
         .then(() => {
           this.setState({ isUpdatedDefaultAccount: true });
           Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, {
-            domain: 'lefebvre.es'
+            domain: 'lefebvre.es',
           });
           this.props.setGUID(GUID);
           this.props.setSign(sign);
         })
-        .catch(error => {
+        .catch((error) => {
           console.log('error =>', error);
         });
       if (
@@ -545,7 +546,7 @@ class App extends Component {
             this.props.folders.explodedItems
           );
 
-          explodedItems.some(folder => {
+          explodedItems.some((folder) => {
             if (folder[1].fullName.toUpperCase() === idFolder.toUpperCase()) {
               console.log('*************** FOLDER FOUND');
               targetFolder = folder[1];
@@ -563,7 +564,7 @@ class App extends Component {
                   this.props.application.selectedFolderId
                 ].values()
               );
-              const message = messages.find(e => e.messageId === idEmail);
+              const message = messages.find((e) => e.messageId === idEmail);
               console.log({ messages });
 
               if (message) {
@@ -603,10 +604,10 @@ class App extends Component {
       this.handleGetUserFromLexonConnector
     );
 
-    window.addEventListener('RemoveSelectedDocument', event => {
-      const messages = [event.detail].map(msg => ({
+    window.addEventListener('RemoveSelectedDocument', (event) => {
+      const messages = [event.detail].map((msg) => ({
         ...msg,
-        messageId: msg.id
+        messageId: msg.id,
       }));
       this.props.setSelected(messages, false, event.detail.folder);
 
@@ -621,8 +622,8 @@ class App extends Component {
             folder: event.detail.folder,
             provider: 'GOOGLE',
             account: this.props.lexon.account,
-            chkselected: false
-          }
+            chkselected: false,
+          },
         })
       );
     });
@@ -645,13 +646,13 @@ class App extends Component {
       this.props.setCaseFile({
         casefile: null,
         bbdd: this.props.lexon.bbdd,
-        company: this.props.lexon.company
+        company: this.props.lexon.company,
       });
     }
   }
 
   sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   async componentDidUpdate() {
@@ -671,23 +672,22 @@ class App extends Component {
           const user = await getUser(this.props.lexon.userId);
 
           if (user && user.data && user.data.configUser) {
-            console.log(user)
-            
+            console.log(user);
+
             if (user.data.configUser.getContacts === true) {
               const emailDate = new Date()
                 .toISOString()
                 .replace(/T/, ' ')
                 .replace(/\..+/, '');
 
-
               const folder = findSentFolder(this.props.folders);
 
-              console.log(folder.fullName)
+              console.log(folder.fullName);
               await classifyEmail(
                 this.props.outbox.idMessage,
                 this.props.outbox.message.subject,
                 emailDate,
-                this.props.outbox.message.recipients.map(rec => rec.address),
+                this.props.outbox.message.recipients.map((rec) => rec.address),
                 folder.fullName,
                 this.props.lexon.provider,
                 this.props.email,
@@ -697,8 +697,8 @@ class App extends Component {
             }
           }
         } catch (err) {
-          console.log(err)
-          debugger
+          console.log(err);
+          debugger;
           //throw err;
         }
       }
@@ -726,18 +726,14 @@ class App extends Component {
         detail: {
           idEmail: id,
           subject: subject,
-          date: new Date()
-            .toISOString()
-            .replace(/T/, ' ')
-            .replace(/\..+/, ''),
+          date: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
           folder: sentFolder.fullName,
           //folder: this.props.application.selectedFolderId,
           account: this.props.all.login.formValues.user,
-          provider: 'IMAP'
-        }
+          provider: 'IMAP',
+        },
       })
     );
-    
   }
 
   startPoll() {
@@ -771,7 +767,7 @@ class App extends Component {
             this.props.folders.explodedItems
           );
 
-          explodedItems.some(folder => {
+          explodedItems.some((folder) => {
             if (
               folder[1].fullName.toUpperCase() ===
               this.props.lexon.idFolder.toUpperCase()
@@ -796,7 +792,7 @@ class App extends Component {
                 ].values()
               );
               const message = messages.find(
-                e => e.messageId === this.props.lexon.idEmail
+                (e) => e.messageId === this.props.lexon.idEmail
               );
               console.log({ messages });
 
@@ -842,8 +838,8 @@ class App extends Component {
     const toggleCollapsed = !this.state.sideBar.collapsed;
     this.setState({
       sideBar: {
-        collapsed: toggleCollapsed
-      }
+        collapsed: toggleCollapsed,
+      },
     });
   }
 }
@@ -856,10 +852,10 @@ App.propTypes = {
   reloadMessageCache: PropTypes.func,
   loadMessageByFolder: PropTypes.func,
   newMessage: PropTypes.func.isRequired,
-  resetIdEmail: PropTypes.func
+  resetIdEmail: PropTypes.func,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   application: state.application,
   outbox: state.application.outbox,
   folders: state.folders,
@@ -867,11 +863,11 @@ const mapStateToProps = state => ({
   messages: state.messages,
   lexon: state.lexon,
   email: state.login.formValues.user,
-  all: state
+  all: state,
 });
 
-const mapDispatchToProps = dispatch => ({
-  reloadFolders: credentials => getFolders(dispatch, credentials, true),
+const mapDispatchToProps = (dispatch) => ({
+  reloadFolders: (credentials) => getFolders(dispatch, credentials, true),
   reloadMessageCache: (user, folder) =>
     resetFolderMessagesCache(dispatch, user, folder),
   newMessage: (to, sign) => editNewMessage(dispatch, to, sign),
@@ -885,46 +881,46 @@ const mapDispatchToProps = dispatch => ({
     dispatch(selectMessage(message));
     readMessage(dispatch, credentials, downloadedMessages, folder, message);
   },
-  setEmailShown: flag => dispatch(setEmailShown(flag)),
+  setEmailShown: (flag) => dispatch(setEmailShown(flag)),
   outboxEventNotified: () => dispatch(outboxEventNotified()),
   logout: () => {
     dispatch(clearUserCredentials());
     history.push('/login');
   },
-  close: application => {
+  close: (application) => {
     dispatch(editMessage(null));
     //persistApplicationNewMessageContent(application, "");
   },
   setError: (err, msg) => dispatch(setError(err, msg)),
   resetIdEmail: () => dispatch(resetIdEmail()),
-  setCaseFile: casefile => dispatch(setCaseFile(casefile)),
+  setCaseFile: (casefile) => dispatch(setCaseFile(casefile)),
   setSelected: (messages, selected, shiftKey) =>
     dispatch(setSelected(messages, selected, shiftKey)),
-  setGUID: guid => dispatch(setGUID(guid)),
-  setSign: sign => dispatch(setSign(sign))
+  setGUID: (guid) => dispatch(setGUID(guid)),
+  setSign: (sign) => dispatch(setSign(sign)),
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
   Object.assign({}, stateProps, dispatchProps, ownProps, {
     reloadFolders: () =>
       dispatchProps.reloadFolders(stateProps.application.user.credentials),
-    reloadMessageCache: folder =>
+    reloadMessageCache: (folder) =>
       dispatchProps.reloadMessageCache(stateProps.application.user, folder),
-    selectFolder: folder =>
+    selectFolder: (folder) =>
       dispatchProps.selectFolder(folder, stateProps.application.user),
-    messageClicked: message =>
+    messageClicked: (message) =>
       dispatchProps.messageClicked(
         stateProps.application.user.credentials,
         stateProps.application.downloadedMessages,
         stateProps.receivedFolder,
         message
       ),
-    setEmailShown: flag => dispatchProps.setEmailShown(flag),
+    setEmailShown: (flag) => dispatchProps.setEmailShown(flag),
     outboxEventNotified: () => dispatchProps.outboxEventNotified(),
-    close: application => dispatchProps.close(stateProps.application),
+    close: (application) => dispatchProps.close(stateProps.application),
     setError: (err, msg) => dispatchProps.setError(err, msg),
     resetIdEmail: () => dispatchProps.resetIdEmail(),
-    setCaseFile: casefile => dispatchProps.setCaseFile(casefile)
+    setCaseFile: (casefile) => dispatchProps.setCaseFile(casefile),
   });
 
 export default connect(
