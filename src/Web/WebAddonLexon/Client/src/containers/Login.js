@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import queryString from 'query-string';
+import validator from 'email-validator';
 import LoginHeader from '../components/LoginHeader';
 import LoginFooter from '../components/LoginFooter';
 import LoginComponents from '../components/LoginComponents';
@@ -27,6 +28,7 @@ class Login extends Component {
       },
       isPermission: false,
       errorsMessage: {
+        email: '',
         login: '',
         password: ''
       },
@@ -50,6 +52,7 @@ class Login extends Component {
    if(this.state.form.login != '' && this.state.form.password != '' ) {
     this.setState({
       errorsMessage: {
+        email: null,
         login: null,
         password: null
       },
@@ -66,6 +69,16 @@ class Login extends Component {
        });
        return false;
     }
+
+    if(!validator.validate(this.state.form.login)) {
+      this.setState({
+        errorsMessage: {
+          email: 'Correo no valido'
+        }
+      });
+      return false;
+    }
+
     if(this.state.form.password == '') {
       this.setState({ 
         errorsMessage: {

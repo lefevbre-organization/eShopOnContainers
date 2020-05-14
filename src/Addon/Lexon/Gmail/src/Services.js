@@ -85,22 +85,11 @@ function deleteClassification(idMail,
 function getAddonData(e) {
   var user = JSON.parse(cache.get('dataUser'));
   var companyData = JSON.parse(cache.get('companyData'));
-  var account = Session.getEffectiveUser().getEmail();
-
-   if(account != companyData.account){
-    cache.remove('getAddonData');
-    cache.remove('companyData');
-    cache.remove('selectCompany');
-     var HomeCard = buildHomeCard();
-      return CardService.newActionResponseBuilder()
-      .setNavigation(CardService.newNavigation().updateCard(HomeCard))
-      .build();
-  }
-
   var messageId = e.messageMetadata.messageId;
   var thread = GmailApp.getMessageById(messageId).getThread();
   var subject = thread.getFirstMessageSubject();
   var messageDate = thread.getLastMessageDate();
+  var raw = GmailApp.getMessageById(messageId).getRawContent()
   
   var header = {
     alg: "HS256",
@@ -120,6 +109,22 @@ function getAddonData(e) {
     idUser: user.data.idUser,
     userName: user.data.name
   };
+
+  // var url = apiEndpoint + "";
+  // var data = {
+  //     'idUser': addonData.idUser,
+  //     'account': addonData.account,
+  //     'provider': addonData.provider,
+  //     'messageId': addonData.messageId,
+  //     'raw': raw
+  // };
+  // var options = {
+  //     'method': "post",
+  //     'contentType': 'application/json',
+  //     'payload': JSON.stringify(data),
+  //     'muteHttpExceptions': true
+  // };
+  // var response = UrlFetchApp.fetch(url, options);
   
   var signature = Utilities.base64Encode(JSON.stringify(header)) + "." 
     + Utilities.base64Encode(JSON.stringify(addonData));

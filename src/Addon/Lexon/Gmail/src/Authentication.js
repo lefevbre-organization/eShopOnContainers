@@ -6,13 +6,32 @@
     'https://www.googleapis.com/auth/spreadsheets',
     'https://mail.google.com/'
   ]
+  var keyClient = "AddonLexonClient";
+  var token = null;
+  var cache = CacheService.getUserCache();
+
+  function getTokenClient() {
+    var header = {
+      alg: "HS256",
+      typ: "JWT",
+    }; 
+        
+    var signature = Utilities.base64Encode(JSON.stringify(header)) + "." 
+      + Utilities.base64Encode(JSON.stringify(clientId));
+    
+      token = signature + "." + 
+      Utilities.base64Encode(
+        Utilities.computeHmacSha256Signature(signature, keyClient)
+      );
+  }
   
   
   function getService() {
+    getTokenClient();
     return OAuth2.createService('auth-lexon')
       .setAuthorizationBaseUrl(urlFrontend + 'login')
       .setTokenUrl(urlAuth + 'token')
-      .setClientId(clientId)
+      .setClientId(token)
       .setClientSecret(clientSecret)
       .setScope(scopes.join(' '))
       .setCallbackFunction('authCallback')

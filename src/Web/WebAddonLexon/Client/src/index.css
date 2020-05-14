@@ -490,22 +490,43 @@ ol>li.index-5::before {
 .btn-primary {
   border-radius: 0 !important;
   height: 42px;
-  width: 12%;
+  min-width: 165px;
+  background-color: #001978;
+  border-radius: 0;
+  border: 2px solid #001978;
+  text-transform: uppercase;
+  font-size: 13px !important;
+  font-family: "MTTMilano-Bold";
+  letter-spacing: .7px;
 }
 
 .btn-outline-primary {
   text-transform: uppercase;
   font-size: 13px !important;
-  font-family: "MTTMilano-Bold,Lato,Arial,sans-serif";
+  font-family: "MTTMilano-Bold";
   letter-spacing: .7px;
   color: #001978 !important;
   padding: 10px !important;
   border-radius: 0 !important;
   border: 2px solid #001978 !important;
   height: 42px;
-  width: 12%;
+  min-width: 165px;
   margin-left: 10px;
 }
+
+.btn-outline-primary:hover {
+  background-color: rgb(229, 232, 241) !important;
+  color: rgb(0, 25, 120);
+  border-color: rgb(0, 25, 120) !important;
+}
+
+
+.btn-outline-primary:active {
+  color: #fff !important;
+  background-color: #007bff !important;
+  border-color: #007bff !important;
+}
+
 .panel-4 {
   margin-bottom: 30px !important;
 }
