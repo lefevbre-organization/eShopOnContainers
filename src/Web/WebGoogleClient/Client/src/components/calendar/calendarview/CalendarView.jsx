@@ -3,7 +3,7 @@ import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import { ButtonComponent, RadioButtonComponent, ChangeEventArgs as CheckBoxChange } from '@syncfusion/ej2-react-buttons';
 import { ComboBoxComponent } from '@syncfusion/ej2-react-dropdowns';
 import { ListViewComponent } from '@syncfusion/ej2-react-lists';
-import { getCalendarList, getCalendar, addCalendar, updateCalendar, addACL, listACL, deleteACL } from "../../../api/calendar-api";
+import { getCalendarList, getCalendar, addCalendar, updateCalendar, addAcl, listAcl, deleteAcl } from "../../../api/calendar-api";
 import { ToastComponent, ToastCloseArgs } from '@syncfusion/ej2-react-notifications';
 import './calendarview.scss';
 
@@ -17,16 +17,15 @@ export class CalendarView extends React.Component {
         this.onAddClick = this.onAddClick.bind(this);
         this.onModifyClick = this.onModifyClick.bind(this);
         this.onAddPermission = this.onAddPermission.bind(this);
-        this.getlistACL = this.getlistACL.bind(this);
-
+        this.getlistAcl = this.getlistAcl.bind(this);
 
         this.toasts = [
-            { content: 'Processing' },
-            { content: 'Process complete', cssClass: 'e-toast-success', icon: 'e-success toast-icons' },
+            { content: 'Processing', cssClass: 'e-toast-black', icon: '' },
+            { content: 'Process complete', cssClass: 'e-toast-black', icon: '' },
             { content: 'Error', cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
         ]
-        this.position = { X: 'Center', Y: 'Bottom' };
 
+        this.position = { X: 'Center', Y: 'Bottom' };
 
         this.roleData = [
             { "Id": "freeBusyReader", "Role": "freeBusyReader" },
@@ -46,8 +45,8 @@ export class CalendarView extends React.Component {
     }
 
     toastCusAnimation = {
-        //hide: { effect: 'SlideBottomOut' },
-        show: { effect: 'SlideBottomIn' }
+        hide: { duration: '1' },
+        show: {  duration: '200' }
     };
 
     onAddClick(args) {
@@ -59,12 +58,14 @@ export class CalendarView extends React.Component {
         }
 
         this.toastObj.showProgressBar = true
+        this.toastObj.timeOut = 10000;
         this.toastObj.show(this.toasts[0]);
         addCalendar(calendar)
             .then(result => {
-                console.log(result)
+              
                 this.toastObj.hide('All');
                 this.toastObj.showProgressBar = false
+                this.toastObj.timeOut = 1000;
                 this.toastObj.show(this.toasts[1]);
                 this.setState({ buttonDisabled: false })
                 this.props.close();
@@ -74,6 +75,7 @@ export class CalendarView extends React.Component {
                 console.log('error ->', error);
                 this.toastObj.showProgressBar = false
                 this.toastObj.hide('All');
+                this.toastObj.timeOut = 1000;
                 this.toastObj.show(this.toasts[2]);
                 this.addBtn.properties.disabled = false
                 this.setState({ buttonDisabled: false })
@@ -91,7 +93,7 @@ export class CalendarView extends React.Component {
         this.toastObj.show(this.toasts[0]);
         updateCalendar(this.state.calendarid, calendarData)
             .then(result => {
-                console.log(result)
+               
                 this.toastObj.hide('All');
                 this.toastObj.showProgressBar = false
                 this.toastObj.show(this.toasts[1]);
@@ -123,14 +125,17 @@ export class CalendarView extends React.Component {
             "id": id
         }
 
-        this.toastObj.showProgressBar = true
+        this.toastObj.timeOut = 10000;
+        this.toastObj.showProgressBar = true;
         this.toastObj.show(this.toasts[0]);
-        addACL(this.state.calendarid, aclData)
+        addAcl(this.state.calendarid, aclData)
             .then(result => {
-                console.log(result)
+               
                 this.toastObj.hide('All');
-                this.toastObj.showProgressBar = false
+                this.toastObj.showProgressBar = false;
+                this.toastObj.timeOut = 1000;
                 this.toastObj.show(this.toasts[1]);
+               
 
                 let dataPermission = {
                     text: this.mailaccountObj.value,
@@ -143,10 +148,11 @@ export class CalendarView extends React.Component {
             })
             .catch(error => {
                 console.log('error ->', error);
-                this.toastObj.showProgressBar = false
+                this.toastObj.showProgressBar = false;
                 this.toastObj.hide('All');
-                this.toastObj.show(this.toasts[2]);
-                this.addBtn.properties.disabled = false
+                this.toastObj.timeOut = 1000;
+                this.toastObj.show(this.toasts[2]);               
+                this.addBtn.properties.disabled = false;
                 this.setState({ buttonDisabled: false })
             });
     }
@@ -169,8 +175,8 @@ export class CalendarView extends React.Component {
         // this.listviewInstance.refreshChild();
     }
 
-    getlistACL() {
-        listACL(this.state.calendarid)
+    getlistAcl() {
+        listAcl(this.state.calendarid)
             .then(result => {
                 this.onDataBinding(result.items)
             })
@@ -200,12 +206,14 @@ export class CalendarView extends React.Component {
         args.stopPropagation();
         let liItem = args.target.parentElement.parentElement;
 
+        this.toastObj.timeOut = 10000;
         this.toastObj.showProgressBar = true
         this.toastObj.show(this.toasts[0]);
-        deleteACL(this.state.calendarid, liItem.dataset.uid)
+        deleteAcl(this.state.calendarid, liItem.dataset.uid)
             .then(result => {
                 this.toastObj.hide('All');
                 this.toastObj.showProgressBar = false
+                this.toastObj.timeOut = 1000;
                 this.toastObj.show(this.toasts[1]);
                 this.listviewInstance.removeItem(liItem);
             })
@@ -213,6 +221,7 @@ export class CalendarView extends React.Component {
                 console.log('error ->', error);
                 this.toastObj.showProgressBar = false
                 this.toastObj.hide('All');
+                this.toastObj.timeOut = 1000;
                 this.toastObj.show(this.toasts[2]);
 
             });
@@ -234,7 +243,7 @@ export class CalendarView extends React.Component {
                     console.log('error ->', error);
                 });
 
-            this.getlistACL();
+            this.getlistAcl();
         }
     }
 
@@ -313,7 +322,6 @@ export class CalendarView extends React.Component {
                             </div>
 
 
-
                             {this.state.hideAddCalendarButton ? (
 
                                 <div >
@@ -373,7 +381,6 @@ export class CalendarView extends React.Component {
                                         </div>
                                     </div>
 
-
                                 </div >
                             ) : (
                                     ''
@@ -399,7 +406,7 @@ export class CalendarView extends React.Component {
                                 position={this.position}
                                 target={this.target}
                                 animation={this.toastCusAnimation}
-                                timeOut={10000}
+                                timeOut={1000}
                             >
                             </ToastComponent>
                         </div>

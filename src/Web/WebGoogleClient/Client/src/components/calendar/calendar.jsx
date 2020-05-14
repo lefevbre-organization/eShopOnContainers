@@ -60,14 +60,20 @@ export class Calendar extends Component {
         this.position = { X: 'Center', Y: 'Bottom' };       
         this.resourceCalendarData = [];
 
-        this.toasts =  [
-        { content: 'Processing', cssClass: '', icon: '' },
-        { content: 'The event has been created successfully.', cssClass: 'e-toast-success', icon: 'e-success toast-icons' },
-        { content: 'The event has been modified successfully.', cssClass: 'e-toast-success', icon: 'e-success toast-icons' },
-        { content: 'A problem has been occurred while submitting your data.', cssClass: 'e-toast-danger', icon: 'e-error toast-icons' },
-        { content: 'The calendar has been created successfully.', cssClass: 'e-toast-success', icon: 'e-success toast-icons' },
-        //{ title: 'Information!', content: 'Please read the comments carefully.', cssClass: 'e-toast-info', icon: 'e-info toast-icons' }
-                       ];
+        //this.toasts =  [
+        //{ content: 'Processing', cssClass: '', icon: '' },
+        //{ content: 'The event has been created successfully.', cssClass: 'e-toast-success', icon: 'e-success toast-icons' },
+        //{ content: 'The event has been modified successfully.', cssClass: 'e-toast-success', icon: 'e-success toast-icons' },
+        //{ content: 'A problem has been occurred while submitting your data.', cssClass: 'e-toast-danger', icon: 'e-error toast-icons' },
+        //{ content: 'The calendar has been created successfully.', cssClass: 'e-toast-success', icon: 'e-success toast-icons' },
+        ////{ title: 'Information!', content: 'Please read the comments carefully.', cssClass: 'e-toast-info', icon: 'e-info toast-icons' }
+        //];
+
+        this.toasts = [
+            { content: 'Processing', cssClass: 'e-toast-black', icon: '' },
+            { content: 'Process complete', cssClass: 'e-toast-black', icon: '' },
+            { content: 'Error', cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
+        ]
 
         this.state = {
             isVisible: true, 
@@ -146,7 +152,7 @@ export class Calendar extends Component {
                 console.log('error ->', error);
                 this.toastObj.showProgressBar = false
                 this.toastObj.hide('All');
-                this.toastObj.show(this.toasts[3]);                
+                this.toastObj.show(this.toasts[2]);                
             });   
         
     }
@@ -192,9 +198,10 @@ export class Calendar extends Component {
      // Calednar View Dialog
     dialogClose(args) {
         if (args == undefined) {
+            this.LoadCalendarList(true)
             this.sidebarCalendarList();
-            //this.LoadCalendarList(true)
-            this.toastObj.show(this.toasts[4]);
+           
+            this.toastObj.show(this.toasts[1]);
         }       
         this.setState({           
             hidePromptDialog: false
@@ -216,8 +223,8 @@ export class Calendar extends Component {
     }
 
     toastCusAnimation = {
-    //hide: { effect: 'SlideBottomOut' },
-    show: { effect: 'SlideBottomIn' }
+        hide: { duration: '1' },
+        show: { duration: '200' }
     };
 
     toastPreventDuplicate(e) {
@@ -383,6 +390,7 @@ export class Calendar extends Component {
                 this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;
                 if (!DisableloadSchedule) {
                     this.loadCalendarEvents(this.resourceCalendarData[0].id, true);
+                    this.scheduleObj.refresh();
                 }
                   
             })
@@ -581,7 +589,7 @@ export class Calendar extends Component {
                 }               
             })
             .catch(error => {
-                this.toastObj.show(this.toasts[3]);
+                this.toastObj.show(this.toasts[2]);
                 console.log('error ->', error);
             })
     }
@@ -590,11 +598,11 @@ export class Calendar extends Component {
         deleteCalendarEvent(calendarId, item)
             .then(result => {
                 if (!hiddeMessage) {
-                    this.toastObj.show(this.toasts[2]);
+                    this.toastObj.show(this.toasts[1]);
                 }
             })
             .catch(error => {
-                this.toastObj.show(this.toasts[3]);
+                this.toastObj.show(this.toasts[2]);
                 console.log('error ->', error);
             })
     }
@@ -603,11 +611,11 @@ export class Calendar extends Component {
         updateCalendarEvent(calendarId, item, event)
             .then(result => {
                 if (!hiddeMessage) {
-                    this.toastObj.show(this.toasts[2]);
+                    this.toastObj.show(this.toasts[1]);
                 }
             })
             .catch(error => {
-                this.toastObj.show(this.toasts[3]);
+                this.toastObj.show(this.toasts[2]);
                 console.log('error ->', error);
             })
     }  
@@ -866,7 +874,7 @@ export class Calendar extends Component {
                                     visible={this.state.hidePromptDialog}
                                     showCloseIcon={true}
                                     animationSettings={this.animationSettings}
-                                    width='475px'
+                                    width='575px'
                                     ref={dialog => this.promptDialogInstance = dialog}
                                     target='#target'
                                     open={this.dialogOpen.bind(this)}

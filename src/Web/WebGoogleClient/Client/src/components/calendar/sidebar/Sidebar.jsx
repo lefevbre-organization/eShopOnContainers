@@ -109,11 +109,15 @@ export class Sidebar extends PureComponent {
             sortedCalendars = sortBy(visibleCalendars, "name");
         }
 
+
+        calendarList = calendarList.filter(function (obj) {
+            return obj.accessRole != "owner";
+        });
        
-        return (
-           <React.Fragment>
+        return (            
+            <React.Fragment>              
              {this.renderMyCalendarView(calendarGroups.owner)}
-             {this.renderOtherCalendars(calendarGroups.reader)}
+             {this.renderOtherCalendars(calendarList)}
            </React.Fragment>
         ); 
 
