@@ -1,4 +1,5 @@
 var nameEntityType = "";
+var nameFolder = "";
 var companyResponse = [];
 var classificationsResponse = [];
 var classificationsDataResponse = null;
@@ -82,29 +83,44 @@ function deleteClassification(idMail,
       return classificationsDeleteResponse = JSON.parse(raw);
 }
 
+function getNameFolder(folderMessage) { 
+  if(folderMessage.isStarred()) {
+    nameFolder = 'Destacados';
+  } else if(folderMessage.isInChats()) {
+    nameFolder = 'Conversación';
+  } else if(folderMessage.isInTrash()) {
+    nameFolder = 'Papelera';
+  } else if(folderMessage.isInInbox()) {
+    nameFolder = 'Recibidos';
+  } else {
+    nameFolder = 'Enviados';
+  }
+}
+
 function getAddonData(e) {
   var user = JSON.parse(cache.get('dataUser'));
   var companyData = JSON.parse(cache.get('companyData'));
-  var messageId = e.messageMetadata.messageId;
-  var thread = GmailApp.getMessageById(messageId).getThread();
+  var messageDataId = e.messageMetadata.messageId;
+  var thread = GmailApp.getMessageById(messageDataId).getThread();
   var subject = thread.getFirstMessageSubject();
   var messageDate = thread.getLastMessageDate();
-  var raw = GmailApp.getMessageById(messageId).getRawContent()
+  var raw = GmailApp.getMessageById(messageDataId).getRawContent()
+  var message = GmailApp.getMessageById(messageDataId);
+  getNameFolder(message)
   
-  var header = {
-    alg: "HS256",
-    typ: "JWT",
-  }; 
-    
+  var messageHeader = message.getRawContent();
+  var messageId = messageHeader.match(/^Message-ID.*$/gim);
+  var id = messageId[0].split(": ");
+  
   var addonData = {
     idCompany: companyData.idCompany,
     bbdd: companyData.bbdd,
     name: companyData.name,
     account: companyData.account,
     provider: 'GOOGLE',
-    messageId: messageId,
+    messageId: id[1],
     subject: subject,
-    folder: 'Inbox',
+    folder: nameFolder,
     sentDateTime: messageDate,
     idUser: user.data.idUser,
     userName: user.data.name
@@ -125,6 +141,11 @@ function getAddonData(e) {
   //     'muteHttpExceptions': true
   // };
   // var response = UrlFetchApp.fetch(url, options);
+  
+  var header = {
+    alg: "HS256",
+    typ: "JWT",
+  }; 
   
   var signature = Utilities.base64Encode(JSON.stringify(header)) + "." 
     + Utilities.base64Encode(JSON.stringify(addonData));
