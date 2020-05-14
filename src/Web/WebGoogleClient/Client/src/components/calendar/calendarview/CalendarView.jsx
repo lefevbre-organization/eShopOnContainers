@@ -135,6 +135,7 @@ export class CalendarView extends React.Component {
                 let data = {
                     text: this.mailaccountObj.value ,
                     role: this.permissionObj.value,
+                    id: id,
                     icon: "delete-icon"
                 };
                 this.listviewInstance.addItem([data]);
@@ -199,14 +200,21 @@ export class CalendarView extends React.Component {
         args.stopPropagation();
         let liItem = args.target.parentElement.parentElement;
 
+        this.toastObj.showProgressBar = true
+        this.toastObj.show(this.toasts[0]);
         deleteACL(this.state.calendarid, liItem.dataset.uid)
             .then(result => {
-               this.toastObj.show(this.toasts[1]); 
+                this.toastObj.hide('All');
+                this.toastObj.showProgressBar = false
+                this.toastObj.show(this.toasts[1]); 
                this.listviewInstance.removeItem(liItem);
             })
             .catch(error => {
-                console.log('error ->', error);                
-                this.toastObj.show(this.toasts[2]);               
+                console.log('error ->', error);  
+                this.toastObj.showProgressBar = false
+                this.toastObj.hide('All');
+                this.toastObj.show(this.toasts[2]);
+                           
             });   
        
     }

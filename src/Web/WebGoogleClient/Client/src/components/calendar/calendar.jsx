@@ -193,7 +193,7 @@ export class Calendar extends Component {
     dialogClose(args) {
         if (args == undefined) {
             this.sidebarCalendarList();
-            this.LoadCalendarList(true)
+            //this.LoadCalendarList(true)
             this.toastObj.show(this.toasts[4]);
         }       
         this.setState({           
