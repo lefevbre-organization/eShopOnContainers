@@ -132,13 +132,13 @@ export class CalendarView extends React.Component {
                 this.toastObj.showProgressBar = false
                 this.toastObj.show(this.toasts[1]);
 
-                let data = {
+                let dataPermission = {
                     text: this.mailaccountObj.value ,
                     role: this.permissionObj.value,
                     id: id,
                     icon: "delete-icon"
                 };
-                this.listviewInstance.addItem([data]);
+                this.listviewInstance.addItem([dataPermission]);
                
             })
             .catch(error => {
