@@ -294,7 +294,8 @@ export class CalendarView extends React.Component {
                                     <div id="noError" />
                                 </div> 
                                 <div>
-                                    {/*<div className="row">
+
+                                    {/* <div className="row">
                                         <div className="submitRow">
                                             <div style={{ display: 'inline-block' }}>                                                                                                  
                                                     <ButtonComponent
@@ -311,10 +312,12 @@ export class CalendarView extends React.Component {
                                 </div> 
                             </div>
                             
-                            <h4 className="e-dlg-header">Share with people</h4>
+                           
 
                             {this.state.hideAddCalendarButton ? (
+                               
                                 <div >
+                                    <h4 className="e-dlg-header">Share with people</h4>
                                         <ListViewComponent
                                             id="sample-list"
                                             dataSource={this.dataACLSource}
@@ -369,25 +372,26 @@ export class CalendarView extends React.Component {
                                             </div>
                                         </div> 
                                     </div>
-                                    <div className="row">
-                                        <div className="submitRow">
-                                            <div style={{ display: 'inline-block' }}>
-                                                <ButtonComponent
-                                                    id="add"
-                                                    disabled={this.state.buttonDisabled}
-                                                    cssClass='e-primary'
-                                                    onClick={ObjClick}
-                                                    ref={(scope) => { this.addBtn = scope }}
-                                                > {ObjText}</ButtonComponent>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
 
                                 </div >
                             ) : (
                                    ''
                                 )}
 
+                            <div className="row">
+                                <div className="submitRow">
+                                    <div style={{ display: 'inline-block' }}>
+                                        <ButtonComponent
+                                            id="modify"
+                                            disabled={this.state.buttonDisabled}
+                                            cssClass='e-primary'
+                                            onClick={ObjClick}
+                                            ref={(scope) => { this.addBtn = scope }}
+                                        > {ObjText}</ButtonComponent>
+                                    </div>
+                                </div>
+                            </div>
 
                             <ToastComponent ref={(toast) => { this.toastObj = toast; }}
                                 id='toast_pos'
