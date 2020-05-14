@@ -1,8 +1,5 @@
 ﻿using Autofac;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Filters;
 using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Middlewares;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Repositories;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
@@ -15,45 +12,42 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using RabbitMQ.Client;
-using System;
-using System.Collections.Generic;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Extensions
 {
     public static class CustomExtensionsMethods
     {
-        public static IServiceCollection AddAppInsight(this IServiceCollection services, IConfiguration configuration)
-        {
-            return services;
-        }
+        //public static IServiceCollection AddAppInsight(this IServiceCollection services, IConfiguration configuration)
+        //{
+        //    return services;
+        //}
 
-        public static IServiceCollection AddCustomMVC(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddMvc(options =>
-            {
-                options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-            })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddControllersAsServices();
+        //public static IServiceCollection AddCustomMVC(this IServiceCollection services, IConfiguration configuration)
+        //{
+        //    services.AddMvc(options =>
+        //    {
+        //        options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+        //    })
+        //        .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+        //        .AddControllersAsServices();
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder
-                    .SetIsOriginAllowed((host) => true)
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
-            });
+        //    services.AddCors(options =>
+        //    {
+        //        options.AddPolicy("CorsPolicy",
+        //            builder => builder
+        //            .SetIsOriginAllowed((host) => true)
+        //            .AllowAnyMethod()
+        //            .AllowAnyHeader()
+        //            .AllowCredentials());
+        //    });
 
-            services.AddTransient<ICentinelaService, CentinelaService>();
-            services.AddTransient<ICentinelaRepository, CentinelaRepository>();
-            return services;
-        }
+        //    services.AddTransient<ICentinelaService, CentinelaService>();
+        //    services.AddTransient<ICentinelaRepository, CentinelaRepository>();
+        //    return services;
+        //}
 
         public static IServiceCollection AddCustomHealthCheck(this IServiceCollection services, IConfiguration configuration)
         {
-
             var hcBuilder = services.AddHealthChecks();
 
             hcBuilder
@@ -70,10 +64,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Extensions
             return services;
         }
 
-        public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
-        {
-            return services;
-        }
+        //public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
+        //{
+        //    return services;
+        //}
 
         public static IServiceCollection AddCustomOptions(this IServiceCollection services, IConfiguration configuration)
         {
@@ -99,22 +93,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Extensions
             return services;
         }
 
-        //public static IServiceCollection AddSwagger(this IServiceCollection services)
-        //{
-        //    services.AddSwaggerGen(options =>
-        //    {
-        //        options.DescribeAllEnumsAsStrings();
-        //        options.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info
-        //        {
-        //            Title = "Lefebvre Now - Centinela HTTP API",
-        //            Version = "v1",
-        //            Description = "The Centinela Microservice HTTP API. This is a Data-Driven/CRUD microservice sample",
-        //            TermsOfService = "Terms Of Service"
-        //        });
-        //    });
-
-        //    return services;
-        //}
 
         public static IServiceCollection AddIntegrationServices(this IServiceCollection services, IConfiguration configuration)
         {
@@ -181,7 +159,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Extensions
         {
             services.AddSwaggerGen(options =>
             {
-                options.DescribeAllEnumsAsStrings();
+                //options.DescribeAllEnumsAsStrings();
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Lefebvre Now - Lexon HTTP API",
@@ -241,6 +219,5 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Extensions
 
             return services;
         }
-
     }
 }

@@ -215,9 +215,12 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionString=${ESHOP_MONGO_DB:-mongodb://nosql.data}
       - Database=CentinelaApiDB
-      - CentinelaUrl=https://compliance-api.affin.es/api/secure/conectamail
-      - CentinelaLogin=centinelaAPI,
-      - CentinelaPassword=led.2018,
+#      - CentinelaUrl=https://compliance-api.affin.es/api/secure/conectamail
+#      - CentinelaLogin=centinelaAPI
+#      - CentinelaPassword=led.2018
+      - CentinelaUrl=https://centinela-api.lefebvre.es/api/secure/conectamail
+      - CentinelaLogin=CentinelaAPI
+      - CentinelaPassword=muWeEtF3ht#9yJPB
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}        
@@ -235,6 +238,7 @@ services:
       - Database=UserUtilsApiDB
       - MinihubUrl=http://led-pre-servicehub/Herramientas/Get
       - OnlineUrl=https://herculesppd.lefebvre.es/webclient46/ws
+
       - LoginUrl=http://led-pre-servicecomtools
       - OnlineLogin=ws
       - OnlinePassword=22lcqsp11lsw

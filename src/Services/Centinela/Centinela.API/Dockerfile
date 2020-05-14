@@ -13,6 +13,17 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
 
+# Install ASP.NET Core
+ENV ASPNETCORE_VERSION 2.2.1
+RUN curl -SL --output aspnetcore.tar.gz https://dotnetcli.blob.core.windows.net/dotnet/aspnetcore/Runtime/$ASPNETCORE_VERSION/aspnetcore-runtime-$ASPNETCORE_VERSION-linux-x64.tar.gz \
+    && aspnetcore_sha512='e027a5dada5d139a44675f28090f996375e49fbd72f7897aa925e48803632d5bf187d4f22dc8225505ac33e6a7a05dcdd8ed19d8b6d5e46b22e628315cf13e3e' \
+    && echo "$aspnetcore_sha512  aspnetcore.tar.gz" | sha512sum -c - \
+    && mkdir -p /usr/share/dotnet \
+    && tar -zxf aspnetcore.tar.gz -C /usr/share/dotnet \
+    && rm aspnetcore.tar.gz \
+    && ln -sf /usr/share/dotnet/dotnet /usr/bin/dotnet
+
+
 # Keep the project list and command dotnet restore identical in all Dockfiles to maximize image cache utilization
 COPY eLefebvreOnContainers-ServicesAndWebApps.sln .
 COPY docker-compose.dcproj /src/
@@ -56,13 +67,20 @@ RUN dotnet publish --no-restore -c Release -o /app
 FROM build AS publish
 
 FROM base AS final
+
+USER root
+RUN whoami
+RUN apt update && apt dist-upgrade -y
+
+#RUN sed -i 's/TLSv1.2/TLSv1.0/g' /etc/ssl/openssl.cnf
+#RUN sed -i 's/TLSv1.3/TLSv1.0/g' /etc/ssl/openssl.cnf
+#RUN sed -i 's/TLSv1.1/TLSv1.0/g' /etc/ssl/openssl.cnf
+RUN apt-get install ca-certificates
+RUN apt-get update && apt-get install -y --no-install-recommends apt-utils gss-ntlmssp
+RUN update-ca-certificates
+
 #ENV ASPNETCORE_URLS="https://+"
-#ENV ASPNETCORE_Kestrel__Certificates__Default__Path="./lexon_api.pfx"
-#ENV ASPNETCORE_Kestrel__Certificates__Default__Password="lefebvre"
-#ENV ASPNETCORE_Kestrel__Certificates__Default__AllowInvalid=true
 WORKDIR /app
 COPY --from=publish /app .
-RUN apt-get update && apt-get install -y --no-install-recommends apt-utils gss-ntlmssp
-# RUN apt-get install -y gss-ntlmssp
 #RUN ls -lha /app
 ENTRYPOINT ["dotnet", "Centinela.API.dll"]

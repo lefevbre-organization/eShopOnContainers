@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Centinela.API.Infrastructure.Exceptions
+namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Exceptions
 {
     /// <summary>
     /// Exception type for app exceptions

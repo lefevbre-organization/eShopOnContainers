@@ -1,6 +1,6 @@
 ﻿using HealthChecks.UI.Client;
-using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.ApplicationInsights.ServiceFabric;
+//using Microsoft.ApplicationInsights.Extensibility;
+//using Microsoft.ApplicationInsights.ServiceFabric;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -24,7 +24,7 @@ namespace WebStatusLef
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            RegisterAppInsights(services);
+            //RegisterAppInsights(services);
 
             services.AddOptions();
             services.AddHealthChecks()
@@ -81,22 +81,22 @@ namespace WebStatusLef
             });
         }
 
-        private void RegisterAppInsights(IServiceCollection services)
-        {
-            services.AddApplicationInsightsTelemetry(Configuration);
-            var orchestratorType = Configuration.GetValue<string>("OrchestratorType");
+        //private void RegisterAppInsights(IServiceCollection services)
+        //{
+        //    services.AddApplicationInsightsTelemetry(Configuration);
+        //    var orchestratorType = Configuration.GetValue<string>("OrchestratorType");
 
-            if (orchestratorType?.ToUpper() == "K8S")
-            {
-                // Enable K8s telemetry initializer
-                services.AddApplicationInsightsKubernetesEnricher();
-            }
-            if (orchestratorType?.ToUpper() == "SF")
-            {
-                // Enable SF telemetry initializer
-                services.AddSingleton<ITelemetryInitializer>((serviceProvider) =>
-                    new FabricTelemetryInitializer());
-            }
-        }
+        //    if (orchestratorType?.ToUpper() == "K8S")
+        //    {
+        //        // Enable K8s telemetry initializer
+        //        services.AddApplicationInsightsKubernetesEnricher();
+        //    }
+        //    if (orchestratorType?.ToUpper() == "SF")
+        //    {
+        //        // Enable SF telemetry initializer
+        //        services.AddSingleton<ITelemetryInitializer>((serviceProvider) =>
+        //            new FabricTelemetryInitializer());
+        //    }
+        //}
     }
 }

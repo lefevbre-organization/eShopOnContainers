@@ -1,4 +1,4 @@
-﻿namespace Centinela.API.Models
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Models
 {
     public class ConceptFile
     {

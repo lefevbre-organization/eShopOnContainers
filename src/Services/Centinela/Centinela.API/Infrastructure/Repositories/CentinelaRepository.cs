@@ -1,5 +1,4 @@
-﻿using Centinela.API.IntegrationsEvents.Events;
-using Centinela.API.Models;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Models;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;

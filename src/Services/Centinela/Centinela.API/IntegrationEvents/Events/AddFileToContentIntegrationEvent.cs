@@ -1,6 +1,6 @@
 ﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 
-namespace Centinela.API.IntegrationsEvents.Events
+namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.IntegrationsEvents.Events
 {
     public class AddFileToContentIntegrationEvent : IntegrationEvent
     {

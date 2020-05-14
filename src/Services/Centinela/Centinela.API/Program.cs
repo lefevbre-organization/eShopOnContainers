@@ -129,15 +129,5 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API
               .UseSerilog()
               .Build();
 
-        //private static IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
-        //    WebHost.CreateDefaultBuilder(args)
-        //        .CaptureStartupErrors(false)
-        //        .UseStartup<Startup>()
-        //        //.UseApplicationInsights()
-        //        .UseContentRoot(Directory.GetCurrentDirectory())
-        //        //.UseWebRoot("Pics")
-        //        .UseConfiguration(configuration)
-        //        .UseSerilog()
-        //        .Build();
     }
 }

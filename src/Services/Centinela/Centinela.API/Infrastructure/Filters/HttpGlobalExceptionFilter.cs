@@ -1,5 +1,5 @@
-﻿using Centinela.API.Infrastructure.ActionResults;
-using Centinela.API.Infrastructure.Exceptions;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.ActionResults;
+using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +11,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.F
 {
     public class HttpGlobalExceptionFilter : IExceptionFilter
     {
-        private readonly IHostingEnvironment env;
+        //private readonly IHostingEnvironment env;
+        private readonly IWebHostEnvironment env;
+
         private readonly ILogger<HttpGlobalExceptionFilter> logger;
 
-        public HttpGlobalExceptionFilter(IHostingEnvironment env, ILogger<HttpGlobalExceptionFilter> logger)
+        public HttpGlobalExceptionFilter(IWebHostEnvironment env, ILogger<HttpGlobalExceptionFilter> logger)
         {
             this.env = env;
             this.logger = logger;
@@ -47,7 +49,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.F
                     Messages = new[] { "An error ocurred." }
                 };
 
-                if (env.IsDevelopment())
+                if (env.EnvironmentName.ToString().Contains("Development"))
                 {
                     json.DeveloperMessage = context.Exception;
                 }

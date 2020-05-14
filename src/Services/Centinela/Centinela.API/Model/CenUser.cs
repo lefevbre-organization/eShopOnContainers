@@ -1,9 +1,9 @@
-﻿using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿//using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+//using MongoDB.Bson;
+//using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
-namespace Centinela.API.Models
+namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Models
 {
     //[BsonIgnoreExtraElements]
     public class CenUser //: MongoModel

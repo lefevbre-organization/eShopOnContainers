@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Centinela.API.Extensions;
 using HealthChecks.UI.Client;
 using Lefebvre.eLefebvreOnContainers.Services.Centinela.API;
 using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers;
@@ -40,11 +39,14 @@ namespace Centinela.API
 
             //RegisterAppInsights(services);
 
+            //services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
+            //        .AddNegotiate();
+
             services.AddControllers(options =>
-            {
-                options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-                options.Filters.Add(typeof(ValidateModelStateFilter));
-            }) // Added for functional tests
+                    {
+                        options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+                        options.Filters.Add(typeof(ValidateModelStateFilter));
+                    }) // Added for functional tests
             .AddApplicationPart(typeof(CentinelaController).Assembly)
             .AddNewtonsoftJson()
                 ;
@@ -86,25 +88,6 @@ namespace Centinela.API
             return new AutofacServiceProvider(container.Build());
         }
 
-        //public IServiceProvider ConfigureServices(IServiceCollection services)
-        //{
-        //    services.AddAppInsight(Configuration)
-        //     .AddCustomMVC(Configuration)
-        //     .AddCustomDbContext(Configuration)
-        //     .AddCustomOptions(Configuration)
-        //     .AddIntegrationServices(Configuration)
-        //     .AddEventBus(Configuration)
-        //     .AddSwagger()
-        //     .AddHttpClient()
-        //     .AddCustomHealthCheck(Configuration);
-
-        //     //AppContext.SetSwitch("System.Net.Http.UseSocketsHttpHandler", false);
-
-        //    var container = new ContainerBuilder();
-        //    container.Populate(services);
-        //    return new AutofacServiceProvider(container.Build());
-        //}
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
@@ -117,7 +100,7 @@ namespace Centinela.API
             app.UseSwagger()
                .UseSwaggerUI(setup =>
                {
-                   setup.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "Lexon.API V1");
+                   setup.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "Centinela.API V1");
                    setup.OAuthClientId("centinelaswaggerui");
                    setup.OAuthAppName("Centinela Swagger UI");
                });
@@ -165,51 +148,6 @@ namespace Centinela.API
             //    .Wait();
         }
 
-        //public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        //{
-        //    var pathBase = Configuration["PATH_BASE"];
-
-        //    if (!string.IsNullOrEmpty(pathBase))
-        //    {
-        //        loggerFactory.CreateLogger<Startup>().LogDebug("Using PATH BASE '{pathBase}'", pathBase);
-        //        app.UsePathBase(pathBase);
-        //    }
-
-        //    app.UseHealthChecks("/hc", new HealthCheckOptions()
-        //    {
-        //        Predicate = _ => true,
-        //        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-        //    });
-
-        //    app.UseHealthChecks("/liveness", new HealthCheckOptions
-        //    {
-        //        Predicate = r => r.Name.Contains("self")
-        //    });
-
-        //    app.UseCors("CorsPolicy");
-
-        //    if (env.IsDevelopment())
-        //    {
-        //        app.UseDeveloperExceptionPage();
-        //    }
-        //    else
-        //    {
-        //        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-        //        app.UseHsts();
-        //    }
-
-        //    app.UseHttpsRedirection();
-        //    app.UseSwagger()
-        //      .UseSwaggerUI(c =>
-        //      {
-        //          c.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "Lexon.API V1");
-        //          c.RoutePrefix = @"api";
-        //      });
-
-        //    app.UseMvc();
-        //    ConfigureEventBus(app);
-        //}
-
         protected virtual void ConfigureAuth(IApplicationBuilder app)
         {
             if (Configuration.GetValue<bool>("UseLoadTest"))
@@ -238,13 +176,6 @@ namespace Centinela.API
         //        options.Audience = "centinela";
         //        options.RequireHttpsMetadata = false;
         //    });
-        //}
-
-        //private void ConfigureEventBus(IApplicationBuilder app)
-        //{
-        //    var eventBus = app.ApplicationServices.GetRequiredService<IEventBus>();
-
-        //    //eventBus.Subscribe<AddFileToUserIntegrationEvent, AddFileToUserIntegrationEventHandler>();
         //}
 
         private void ConfigureEventBus(IApplicationBuilder app, out IEventBus eventBus)

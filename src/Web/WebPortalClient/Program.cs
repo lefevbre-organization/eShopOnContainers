@@ -29,7 +29,7 @@ namespace eShopConContainers.WebSPA
                     builder.AddDebug();
                     builder.AddAzureWebAppDiagnostics();
                 })
-                .UseApplicationInsights()
+                //.UseApplicationInsights()
                 .UseSerilog((builderContext, config) =>
                 {
                     config

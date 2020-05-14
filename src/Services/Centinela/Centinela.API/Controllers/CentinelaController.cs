@@ -1,5 +1,5 @@
-﻿using Centinela.API.Models;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Services;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Services;
+using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
