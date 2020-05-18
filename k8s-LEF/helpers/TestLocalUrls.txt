@@ -1,3 +1,9 @@
+# webstatus
+http://localhost:5671/hc-ui#/healthchecks
+http://localhost:5672/hc-ui#/healthchecks
+http://localhost:4369/hc-ui#/healthchecks
+http://localhost:15671/
+
 # Centinela gateway
 http://localhost:8089/api/v1/cen/test
 http://localhost:8089/api/v1/cen/user?idNavisionUser=E1621396

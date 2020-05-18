@@ -58,7 +58,6 @@ services:
       - OrchestratorType=${ORCHESTRATOR_TYPE}
     ports:
       - "5107:80"
-
   webportalclient:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -73,6 +72,30 @@ services:
     ports:
       - "3003:80"
 
+  webgoogleclient:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - UseCustomizationData=True
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+
+    ports:
+      - "3000:80"
+
+  webofficeclient:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - UseCustomizationData=True
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+
+    ports:
+      - "3001:80"
+
   weblexonclient:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -84,6 +107,30 @@ services:
 
     ports:
       - "3005:80"
+
+  webaddonlexon:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - UseCustomizationData=True
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+    ports:
+      - "3006:80"
+
+  webimapclient:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - UseCustomizationData=True
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+
+    ports:
+      - "9000:80"
 
   account.api:
     environment:

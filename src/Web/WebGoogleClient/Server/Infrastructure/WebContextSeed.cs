@@ -1,5 +1,4 @@
-﻿using eShopOnContainers.WebSPA;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -9,11 +8,11 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 
-namespace WebSPA.Infrastructure
+namespace Lefebvre.eLefebvreOnContainers.Clients.WebGoogle.Infrastructure
 {
     public class WebContextSeed
     {
-        public static void Seed(IApplicationBuilder applicationBuilder, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public static void Seed(IApplicationBuilder applicationBuilder, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             var log = loggerFactory.CreateLogger<WebContextSeed>();
 
@@ -32,7 +31,7 @@ namespace WebSPA.Infrastructure
             }
         }
 
-        static void GetPreconfiguredImages(string contentRootPath, string webroot, ILogger log)
+        private static void GetPreconfiguredImages(string contentRootPath, string webroot, ILogger log)
         {
             try
             {

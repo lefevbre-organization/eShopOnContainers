@@ -15,13 +15,14 @@ services:
     image: rabbitmq:3-management-alpine
 
   webstatus:
-    image: ${REGISTRY:-elefebvreoncontainers}/webstatuslef:${PLATFORM:-linux}-${TAG:-net3}
+    image: ${REGISTRY:-elefebvreoncontainers}/webstatuslef:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
       dockerfile: src/Web/WebStatusLef/Dockerfile
 
+      
   webportalclient:
-    image: ${REGISTRY:-elefebvreoncontainers}/webportalclient:${PLATFORM:-linux}-${TAG:-net3}
+    image: ${REGISTRY:-elefebvreoncontainers}/webportalclient:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
       dockerfile: src/Web/WebPortalClient/Dockerfile    
@@ -30,6 +31,26 @@ services:
     depends_on:
       - rabbitmq
 
+  webgoogleclient:
+    image: ${REGISTRY:-elefebvreoncontainers}/webgoogleclient:${PLATFORM:-linux}-${TAG:-dev}
+    build:
+      context: .
+      dockerfile: src/Web/WebGoogleClient/Dockerfile    
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+    depends_on:
+      - rabbitmq
+
+  webofficeclient:
+    image: ${REGISTRY:-elefebvreoncontainers}/webofficeclient:${PLATFORM:-linux}-${TAG:-dev}
+    build:
+      context: .
+      dockerfile: src/Web/WebOffice365Client/Dockerfile    
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+    depends_on:
+      - rabbitmq
+     
   weblexonclient:
     image: ${REGISTRY:-elefebvreoncontainers}/weblexonclient:${PLATFORM:-linux}-${TAG:-dev}
     build:
@@ -39,7 +60,26 @@ services:
         NODE_IMAGE: ${NODE_IMAGE:-node:12}
     depends_on:
       - rabbitmq
+
+  webaddonlexon:
+    image: ${REGISTRY:-elefebvreoncontainers}/webaddonlexon:${PLATFORM:-linux}-${TAG:-dev}
+    build:
+      context: .
+      dockerfile: src/Web/WebAddonLexon/Dockerfile    
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+    depends_on:
+      - rabbitmq
       
+  webimapclient:
+    image: ${REGISTRY:-elefebvreoncontainers}/webimapclient:${PLATFORM:-linux}-${TAG:-dev}
+    build:
+      context: .
+      dockerfile: src/Web/WebImapClient/Dockerfile    
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+    depends_on:
+      - rabbitmq   
 
   account.api:
     image: ${REGISTRY:-elefebvreoncontainers}/account.api:${PLATFORM:-linux}-${TAG:-dev}

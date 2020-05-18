@@ -69,7 +69,7 @@ services:
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
       - LexonApiGatewayUrlHC=http://weblexonapigw/hc
       - PortalUrlHC=http://webportalclient/user
-#      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
+
     ports:
       - "3003:80"
 
@@ -81,7 +81,7 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-#      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+
     ports:
       - "3000:80"
 
@@ -93,7 +93,7 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-#      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+
     ports:
       - "3001:80"
 
@@ -118,7 +118,6 @@ services:
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - LexonApiGatewayUrlHC=http://weblexonapigw/hc
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-#      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
     ports:
       - "3006:80"
 
@@ -130,7 +129,7 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-#      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+
     ports:
       - "9000:80"
 

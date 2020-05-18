@@ -77,17 +77,6 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebPortalClient
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHealthChecks("/liveness", new HealthCheckOptions
-            {
-                Predicate = r => r.Name.Contains("self")
-            });
-
-            app.UseHealthChecks("/hc", new HealthCheckOptions()
-            {
-                Predicate = _ => true,
-                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-            });
-
             // Configure XSRF middleware, This pattern is for SPA style applications where XSRF token is added on Index page
             // load and passed back token on every subsequent async request
             // app.Use(async (context, next) =>
