@@ -19,7 +19,7 @@
   },
    "gmail": {
      "openLinkUrlPrefixes": [
-       "https://lexbox-test-webaddonlexon.lefebvre.es/",
+       "https://localhost:3000/",
        "https://mail.google.com/"
      ], 
      "contextualTriggers": [{

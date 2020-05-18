@@ -270,6 +270,11 @@
   left: 93%;
   color: #D81F2A;
   top: 11px;
-  font-size: 16px;
+  font-size: 16px;  
+}
 
+@media (min-width: 400px) {  
+  .ml-sm-5 {
+    margin-left: 3rem!important;
+  }
 }
