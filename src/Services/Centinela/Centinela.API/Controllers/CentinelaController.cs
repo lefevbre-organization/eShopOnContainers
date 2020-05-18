@@ -119,7 +119,20 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
                 return (IActionResult)BadRequest("id user value invalid. Must be a valid iduser");
 
             var result = await _service.GetDocumentsAsync(idNavisionUser, search);
-            return result.errors?.Count() > 0 ? Ok(result) : (IActionResult)BadRequest(result);
+            return result.errors?.Count() > 0 ? (IActionResult)BadRequest(result) : Ok(result); 
+        }
+
+        [HttpGet("documents/instance")]
+        [ProducesResponseType(typeof(Result<List<CenDocumentObject>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<List<CenDocumentObject>>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetDocumentsByInstanceAsync(string idNavisionUser = "E1669460", string conceptObjectId = "75823")
+        {
+            // https://centinela-api.lefebvre.es/api/secure/conectamail/documentobjects/conceptobject/75823?IdEntrada=E1669460
+            if (string.IsNullOrEmpty(idNavisionUser))
+                return (IActionResult)BadRequest("id user value invalid. Must be a valid iduser");
+
+            var result = await _service.GetDocumentsByInstanceAsync(idNavisionUser, conceptObjectId);
+            return result.errors?.Count() > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpPost("concepts/files/post")]

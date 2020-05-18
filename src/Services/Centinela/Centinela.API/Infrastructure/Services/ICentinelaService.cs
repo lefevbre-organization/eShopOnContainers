@@ -14,6 +14,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
         Task<Result<CenEvaluation>> GetEvaluationByIdAsync(string idNavisionUser, int idEvaluation);
 
         Task<Result<List<CenDocument>>> GetDocumentsAsync(string idNavisionUser, string search);
+        Task<Result<List<CenDocumentObject>>> GetDocumentsByInstanceAsync(string idNavisionUser, string conceptObjectId);
 
         Task<Result<bool>> FilePostAsync(ConceptFile file);
 

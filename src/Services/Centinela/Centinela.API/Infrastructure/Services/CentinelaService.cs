@@ -47,16 +47,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             var handler = new HttpClientHandler { Credentials = credentialsCache };
             _client = new HttpClient(handler) { BaseAddress = uri, Timeout = new TimeSpan(0, 0, 10) };
 
-            //_client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            //_clientOnline = _clientFactory.CreateClient();
-            //var handlerOnline = new HttpClientHandler { };
-            //handlerOnline.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-            //_clientOnline.BaseAddress = new Uri("https://herculesppd.lefebvre.es/webclient46/ws");
-
-            //var authData = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"ws:22lcqsp11lsw"));
-
-            //_clientOnline.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authData);
         }
 
         #region Review
@@ -346,14 +336,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             return result;
         }
 
-        internal class OnlineEntrada
-        {
-            public string ENTRADA_ENCRIPTADA { get; set; }
-            public long ID_ENTRADA { get; set; }
-            public string N_ENTRADA { get; set; }
-            //{"ID_ENTRADA":1037352,"N_ENTRADA":"E1621500"}
-            // {"ENTRADA_ENCRIPTADA":"eHRncH9gaw%3D%3D"}
-        }
+        //internal class OnlineEntrada
+        //{
+        //    public string ENTRADA_ENCRIPTADA { get; set; }
+        //    public long ID_ENTRADA { get; set; }
+        //    public string N_ENTRADA { get; set; }
+        //    //{"ID_ENTRADA":1037352,"N_ENTRADA":"E1621500"}
+        //    // {"ENTRADA_ENCRIPTADA":"eHRncH9gaw%3D%3D"}
+        //}
 
         public async Task<Result<List<CenDocument>>> GetDocumentsAsync(string idNavisionUser, string search)
         {
@@ -465,6 +455,48 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
                         {
                             var resultado = (JsonConvert.DeserializeObject<CenConceptInstance[]>(rawResult));
                             result.data = resultado.ToList();
+                        }
+                    }
+                    else
+                    {
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "593",
+                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "594",
+                    detail = $"General error when call centinela service",
+                    message = ex.Message
+                });
+            }
+
+            return result;
+        }
+
+        public async Task<Result<List<CenDocumentObject>>> GetDocumentsByInstanceAsync(string idNavisionUser, string conceptObjectId)
+        {
+            var result = new Result<List<CenDocumentObject>>(new List<CenDocumentObject>());
+            try
+            {
+                var url = $"{_settings.Value.CentinelaUrl}/documentobjects/conceptobject/{conceptObjectId}?IdEntrada={idNavisionUser}";
+
+                using (var response = await _client.GetAsync(url))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<CenDocumentObject[]>(rawResult));
+                            result.data = resultado?.ToList();
                         }
                     }
                     else

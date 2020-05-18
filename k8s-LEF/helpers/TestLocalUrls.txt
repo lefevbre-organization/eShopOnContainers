@@ -1,7 +1,5 @@
 # webstatus
 http://localhost:5671/hc-ui#/healthchecks
-http://localhost:5672/hc-ui#/healthchecks
-http://localhost:4369/hc-ui#/healthchecks
 http://localhost:15671/
 
 # Centinela gateway
