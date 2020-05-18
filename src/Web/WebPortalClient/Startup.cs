@@ -1,24 +1,20 @@
-﻿using eShopOnContainers.WebSPA;
+﻿using HealthChecks.UI.Client;
+using Lefebvre.eLefebvreOnContainers.Clients.WebPortalClient.Infrastructure;
 //using Microsoft.ApplicationInsights.Extensibility;
 //using Microsoft.ApplicationInsights.ServiceFabric;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Serialization;
-using StackExchange.Redis;
 using System;
 using System.IO;
-using WebSPA.Infrastructure;
-using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace eShopConContainers.WebSPA
+namespace Lefebvre.eLefebvreOnContainers.Clients.WebPortalClient
 {
     public class Startup
     {
@@ -29,11 +25,8 @@ namespace eShopConContainers.WebSPA
 
         public IConfiguration Configuration { get; }
 
-        private IHostingEnvironment _hostingEnv;
-        public Startup(IHostingEnvironment env)
+        public Startup()
         {
-            _hostingEnv = env;
-
             var localPath = new Uri(Configuration["ASPNETCORE_URLS"])?.LocalPath ?? "/";
             Configuration["BaseUrl"] = localPath;
         }
@@ -45,51 +38,43 @@ namespace eShopConContainers.WebSPA
             //RegisterAppInsights(services);
 
             services.AddHealthChecks()
-                .AddUrlGroup(new Uri(Configuration["PortalUrlHC"]), name: "webportal-check", tags: new string[] { "webportal" })
-                //.AddCheck("self", () => HealthCheckResult.Healthy())
-                .AddUrlGroup(new Uri(Configuration["LexonApiUrlHC"]), name: "lexonapi-check", tags: new string[] { "lexonapi" })
-                //.AddUrlGroup(new Uri(Configuration["LexonMySqlApiUrlHC"]), name: "lexonmysqlapi-check", tags: new string[] { "lexonmysqlapi" })
-                //.AddUrlGroup(new Uri(Configuration["LexonApiGatewayUrlHC"]), name: "lexonapigw-check", tags: new string[] { "lexonapigw" })
-                .AddUrlGroup(new Uri(Configuration["AccountApiUrlHC"]), name: "accountapi-check", tags: new string[] { "accountapigw" })
-                //.AddUrlGroup(new Uri(Configuration["AccountApiGatewayUrlHC"]), name: "accountapigw-check", tags: new string[] { "accountapigw" })
-                //.AddUrlGroup(new Uri(Configuration["IdentityUrlHC"]), name: "identityapi-check", tags: new string[] { "identityapi" })
-                ;
+                 .AddCheck("self", () => HealthCheckResult.Healthy())
+                 .AddUrlGroup(new Uri(Configuration["PortalUrlHC"]), name: "webportal-check", tags: new string[] { "webportal" })
+                 //.AddUrlGroup(new Uri(Configuration["LexonApiUrlHC"]), name: "lexonapi-check", tags: new string[] { "lexonapi" })
+                 //.AddUrlGroup(new Uri(Configuration["LexonMySqlApiUrlHC"]), name: "lexonmysqlapi-check", tags: new string[] { "lexonmysqlapi" })
+                 .AddUrlGroup(new Uri(Configuration["LexonApiGatewayUrlHC"]), name: "lexonapigw-check", tags: new string[] { "lexonapigw" })
+                 //.AddUrlGroup(new Uri(Configuration["AccountApiUrlHC"]), name: "accountapi-check", tags: new string[] { "accountapigw" })
+                 .AddUrlGroup(new Uri(Configuration["AccountApiGatewayUrlHC"]), name: "accountapigw-check", tags: new string[] { "accountapigw" })
+                 //.AddUrlGroup(new Uri(Configuration["IdentityUrlHC"]), name: "identityapi-check", tags: new string[] { "identityapi" })
+                 ;
 
             services.Configure<AppSettings>(Configuration);
 
-            if (Configuration.GetValue<string>("IsClusterEnv") == bool.TrueString)
-            {
-                services.AddDataProtection(opts =>
-                {
-                    opts.ApplicationDiscriminator = "eshop.webspa";
-                })
-                .PersistKeysToRedis(ConnectionMultiplexer.Connect(Configuration["DPConnectionString"]), "DataProtection-Keys");
-            }
+            //if (Configuration.GetValue<string>("IsClusterEnv") == bool.TrueString)
+            //{
+            //    services.AddDataProtection(opts =>
+            //    {
+            //        opts.ApplicationDiscriminator = "eshop.webspa";
+            //    })
+            //    .PersistKeysToRedis(ConnectionMultiplexer.Connect(Configuration["DPConnectionString"]), "DataProtection-Keys");
+            //}
 
             services.AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN");
-
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+            services.AddControllers()
                 .AddJsonOptions(options =>
                 {
-                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
                 });
         }
 
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IAntiforgery antiforgery)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IAntiforgery antiforgery)
         {
-            //loggerFactory.AddApplicationInsights(app.ApplicationServices, LogLevel.Trace);
+            // loggerFactory.AddApplicationInsights(app.ApplicationServices, LogLevel.Trace);
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
             }
 
             app.UseHealthChecks("/liveness", new HealthCheckOptions
@@ -103,8 +88,8 @@ namespace eShopConContainers.WebSPA
                 ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
             });
 
-            // Configure XSRF middleware, This pattern is for SPA style applications where XSRF token is added on Index page 
-            // load and passed back token on every subsequent async request            
+            // Configure XSRF middleware, This pattern is for SPA style applications where XSRF token is added on Index page
+            // load and passed back token on every subsequent async request
             // app.Use(async (context, next) =>
             // {
             //     if (string.Equals(context.Request.Path.Value, "/", StringComparison.OrdinalIgnoreCase))
@@ -133,17 +118,98 @@ namespace eShopConContainers.WebSPA
                 // Rewrite request to use app root
                 if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value) && !context.Request.Path.Value.StartsWith("/api"))
                 {
-                    context.Request.Path = "/index.html"; 
+                    context.Request.Path = "/index.html";
                     context.Response.StatusCode = 200; // Make sure we update the status code, otherwise it returns 404
                     await next();
                 }
             });
-            
+
             app.UseDefaultFiles();
             app.UseStaticFiles();
-
-            app.UseMvcWithDefaultRoute();
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDefaultControllerRoute();
+                endpoints.MapControllers();
+                endpoints.MapHealthChecks("/liveness", new HealthCheckOptions
+                {
+                    Predicate = r => r.Name.Contains("self")
+                });
+                endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
+            });
         }
+
+        //// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        //public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IAntiforgery antiforgery)
+        //{
+        //    //loggerFactory.AddApplicationInsights(app.ApplicationServices, LogLevel.Trace);
+
+        //    if (env.IsDevelopment())
+        //    {
+        //        app.UseDeveloperExceptionPage();
+        //    }
+        //    else
+        //    {
+        //        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+        //        app.UseHsts();
+        //    }
+
+        //    app.UseHealthChecks("/liveness", new HealthCheckOptions
+        //    {
+        //        Predicate = r => r.Name.Contains("self")
+        //    });
+
+        //    app.UseHealthChecks("/hc", new HealthCheckOptions()
+        //    {
+        //        Predicate = _ => true,
+        //        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+        //    });
+
+        //    // Configure XSRF middleware, This pattern is for SPA style applications where XSRF token is added on Index page
+        //    // load and passed back token on every subsequent async request
+        //    // app.Use(async (context, next) =>
+        //    // {
+        //    //     if (string.Equals(context.Request.Path.Value, "/", StringComparison.OrdinalIgnoreCase))
+        //    //     {
+        //    //         var tokens = antiforgery.GetAndStoreTokens(context);
+        //    //         context.Response.Cookies.Append("XSRF-TOKEN", tokens.RequestToken, new CookieOptions() { HttpOnly = false });
+        //    //     }
+        //    //     await next.Invoke();
+        //    // });
+
+        //    //Seed Data
+        //    WebContextSeed.Seed(app, env, loggerFactory);
+
+        //    var pathBase = Configuration["PATH_BASE"];
+        //    if (!string.IsNullOrEmpty(pathBase))
+        //    {
+        //        loggerFactory.CreateLogger<Startup>().LogDebug("Using PATH BASE '{pathBase}'", pathBase);
+        //        app.UsePathBase(pathBase);
+        //    }
+
+        //    app.Use(async (context, next) =>
+        //    {
+        //        await next();
+
+        //        // If there's no available file and the request doesn't contain an extension, we're probably trying to access a page.
+        //        // Rewrite request to use app root
+        //        if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value) && !context.Request.Path.Value.StartsWith("/api"))
+        //        {
+        //            context.Request.Path = "/index.html";
+        //            context.Response.StatusCode = 200; // Make sure we update the status code, otherwise it returns 404
+        //            await next();
+        //        }
+        //    });
+
+        //    app.UseDefaultFiles();
+        //    app.UseStaticFiles();
+
+        //    app.UseMvcWithDefaultRoute();
+        //}
 
         //private void RegisterAppInsights(IServiceCollection services)
         //{

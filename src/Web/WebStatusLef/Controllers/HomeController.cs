@@ -1,10 +1,8 @@
-﻿using HealthChecks.UI.Configuration;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace WebStatusLef.Controllers
+namespace Lefebvre.eLefebvreOnContainers.Clients.WebStatusLef.Controllers
 {
     public class HomeController : Controller
     {

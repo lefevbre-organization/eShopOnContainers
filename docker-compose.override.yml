@@ -105,8 +105,7 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - LexonApiGatewayUrlHC=http://weblexonapigw/hc
-#      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-#      - CentinelaApiGatewayUrlHC=http://webcentinelaapigw/hc
+
     ports:
       - "3005:80"
 

@@ -14,11 +14,31 @@ services:
   rabbitmq:
     image: rabbitmq:3-management-alpine
 
-  # webstatus:
-  #   image: ${REGISTRY:-elefebvreoncontainers}/webstatuslef:${PLATFORM:-linux}-${TAG:-dev}
-  #   build:
-  #     context: .
-  #     dockerfile: src/Web/WebStatusLef/Dockerfile
+  webstatus:
+    image: ${REGISTRY:-elefebvreoncontainers}/webstatuslef:${PLATFORM:-linux}-${TAG:-net3}
+    build:
+      context: .
+      dockerfile: src/Web/WebStatusLef/Dockerfile
+
+  webportalclient:
+    image: ${REGISTRY:-elefebvreoncontainers}/webportalclient:${PLATFORM:-linux}-${TAG:-net3}
+    build:
+      context: .
+      dockerfile: src/Web/WebPortalClient/Dockerfile    
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+    depends_on:
+      - rabbitmq
+
+  weblexonclient:
+    image: ${REGISTRY:-elefebvreoncontainers}/weblexonclient:${PLATFORM:-linux}-${TAG:-dev}
+    build:
+      context: .
+      dockerfile: src/Web/WebLexonClient/Dockerfile    
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+    depends_on:
+      - rabbitmq
       
 
   account.api:
@@ -85,7 +105,7 @@ services:
       - rabbitmq
 
   centinela.api:
-    image: ${REGISTRY:-elefebvreoncontainers}/centinela.api:${PLATFORM:-linux}-${TAG:-dev}
+    image: ${REGISTRY:-elefebvreoncontainers}/centinela.api:${PLATFORM:-linux}-${TAG:-net3}
     build:
       context: .
       dockerfile: src/Services/Centinela/Centinela.API/Dockerfile 
