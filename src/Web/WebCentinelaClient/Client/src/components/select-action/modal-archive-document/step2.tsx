@@ -251,7 +251,7 @@ export class Step2 extends React.Component<Props, State> {
     }
   }
 
-  searchResultsByType(type: any, search: string) {
+  searchResultsByType(search: string) {
     if (this.state.search !== search) {
       this.setState(
         {

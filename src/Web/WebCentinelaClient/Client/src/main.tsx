@@ -38,6 +38,7 @@ const mapDispatchToProps = (dispatch: any) => {
         resetListMessages: MessagesActions.resetListMessages,
         setLoadingStatus: ApplicationActions.setLoadingStatus,
         setComposerStatus: ApplicationActions.setComposerStatus,
+        setCurrentUser: ApplicationActions.setCurrentUser,
       },
       dispatch
     ),
@@ -137,7 +138,8 @@ class Main extends Component<Props, State> {
     );
     console.log(event.detail);
 
-    const { selectedMessages } = event.detail;
+    const { user, selectedMessages } = event.detail;
+    this.props.setCurrentUser(user);
 
     selectedMessages.forEach((message: Message) => {
       this.props.addMessage(message);

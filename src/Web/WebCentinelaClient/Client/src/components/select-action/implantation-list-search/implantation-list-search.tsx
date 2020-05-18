@@ -3,7 +3,7 @@ import i18n from 'i18next';
 import PropTypes from 'prop-types';
 
 interface Props {
-  searchResultsByType: (type: number | null, search: string) => void;
+  searchResultsByType: (search: string) => void;
   countResults: number;
   closeClassName: string;
 }
@@ -20,7 +20,7 @@ class ImplantationListSearch extends Component<Props, State> {
 
     this.state = {
       showSearch: false,
-      search: ''
+      search: '',
     };
 
     this._handleOnclick = this._handleOnclick.bind(this);
@@ -47,7 +47,7 @@ class ImplantationListSearch extends Component<Props, State> {
   _handleOnclickSearch(event: any) {
     const { searchResultsByType } = this.props;
 
-    searchResultsByType(null, this.state.search);
+    searchResultsByType(this.state.search);
   }
 
   _handleOnChange(event: any) {
@@ -58,7 +58,7 @@ class ImplantationListSearch extends Component<Props, State> {
     const { searchResultsByType } = this.props;
 
     if (event.keyCode === 13) {
-      searchResultsByType(null, event.target.value);
+      searchResultsByType(event.target.value);
     }
   }
 
@@ -80,8 +80,8 @@ class ImplantationListSearch extends Component<Props, State> {
       : 'search-trigger-show';
 
     return (
-      <div className="lexon-clasification-list-search">
-        <div className="lexon-clasification-list-results">
+      <div className='lexon-clasification-list-search'>
+        <div className='lexon-clasification-list-results'>
           {countResults > -1 && (
             <p>
               {/* i18n.t('implantation-list-search.results-total') */}
@@ -91,27 +91,25 @@ class ImplantationListSearch extends Component<Props, State> {
           <span
             className={classTriggerShow}
             title={i18n.t('implantation-list-search.show-search')}
-            onClick={this._handleOnclick}
-          >
-            <strong className="sr-only sr-only-focusable">
+            onClick={this._handleOnclick}>
+            <strong className='sr-only sr-only-focusable'>
               {i18n.t('implantation-list-search.show-search')}
             </strong>
-            <span className="lf-icon-search"></span>
+            <span className='lf-icon-search'></span>
           </span>
         </div>
         <div className={classListSearcher}>
-          <label htmlFor="search">
+          <label htmlFor='search'>
             <span
-              className="lf-icon-search"
-              onClick={this._handleOnclickSearch}
-            ></span>
-            <strong className="sr-only sr-only-focusable">
+              className='lf-icon-search'
+              onClick={this._handleOnclickSearch}></span>
+            <strong className='sr-only sr-only-focusable'>
               {i18n.t('classificaction-list-search.assigned-to')}
             </strong>
           </label>
           <input
-            type="text"
-            className="form-control"
+            type='text'
+            className='form-control'
             id={this.id}
             value={this.state.search}
             onChange={this._handleOnChange}
@@ -120,12 +118,11 @@ class ImplantationListSearch extends Component<Props, State> {
           <span
             className={`search-trigger-hide ${closeClassName}`}
             title={i18n.t('implantation-list-search.hide-search')}
-            onClick={this._handleOnclick}
-          >
-            <strong className="sr-only sr-only-focusable">
+            onClick={this._handleOnclick}>
+            <strong className='sr-only sr-only-focusable'>
               {i18n.t('implantation-list-search.hide-search')}
             </strong>
-            <span className="lf-icon-close"></span>
+            <span className='lf-icon-close'></span>
           </span>
         </div>
         <style jsx>{`
