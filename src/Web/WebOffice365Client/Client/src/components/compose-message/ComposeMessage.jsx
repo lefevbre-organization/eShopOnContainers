@@ -866,6 +866,11 @@ export class ComposeMessage extends PureComponent {
                     value={this.state.subject}
                     onChange={this.setField('subject', false)}
                   />
+                  {isPriority && (
+                    <div style={{ paddingTop: 5, paddingRight: 5, height: 29 }}>
+                      <i className='lf-icon-bookmarks-active'></i>
+                    </div>
+                  )}
                 </InputGroup>
               </div>
               <div className='editor-wrapper'>
@@ -948,9 +953,22 @@ export class ComposeMessage extends PureComponent {
             font-size: 14px !important;
           }
 
+          .priority-text {
+            font-family: MTTMilano, Lato, Arial, sans-serif;
+          }
+
+          .icon-priority {
+            cursor: pointer !important;
+          }
+
           .attach-button .fa-paperclip {
             font-size: 20px;
             margin-right: 5px;
+          }
+
+          .lf-icon-bookmarks-active {
+            font-size: 20px;
+            color: #c43741;
           }
         `}</style>
       </React.Fragment>
