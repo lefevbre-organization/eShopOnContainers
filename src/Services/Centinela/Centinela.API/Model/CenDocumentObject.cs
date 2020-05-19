@@ -15,4 +15,12 @@
         public bool canBeDeleted { get; set; }
         public bool confidential { get; set; }
     }
+
+    public class ListaDocumentObjects
+    {
+        public CenDocumentObject[] Documents { get; set; }
+    }
+
+ 
+
 }

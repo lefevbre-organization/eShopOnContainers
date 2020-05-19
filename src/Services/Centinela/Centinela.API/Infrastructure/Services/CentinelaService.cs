@@ -495,8 +495,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
 
                         if (!string.IsNullOrEmpty(rawResult))
                         {
-                            var resultado = (JsonConvert.DeserializeObject<CenDocumentObject[]>(rawResult));
-                            result.data = resultado?.ToList();
+                            var resultado = (JsonConvert.DeserializeObject<ListaDocumentObjects>(rawResult));
+                            result.data = resultado?.Documents.ToList();
                         }
                     }
                     else
