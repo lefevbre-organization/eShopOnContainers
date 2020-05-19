@@ -619,11 +619,55 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 var serviceToActualice = resultListApps.data.FirstOrDefault(
                     x => x.descHerramienta.ToLowerInvariant().Equals(nameService.ToLowerInvariant()));
                 var newUrl = serviceToActualice?.url;
-                result.data = newUrl;
+                Result<string> temporalLinkResult = await GeUserUtilFinalLink(newUrl);
+                result.data = temporalLinkResult.data;
             }
             else
             {
                 result.data = "http://www.google.es";
+            }
+
+            return result;
+        }
+
+        private async Task<Result<string>> GeUserUtilFinalLink(string newUrl)
+        {
+            var result = new Result<string>(null);
+            try
+            {
+                
+                using (var response = await _clientMinihub.GetAsync(newUrl))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<UrlJson>(rawResult));
+                            result.data = resultado.url;
+                            //var listAll = resultado.ToList();
+                            //result.data = onlyActives ? listAll.Where(x => x.indAcceso > 0).ToList() : listAll.ToList();
+                        }
+                    }
+                    else
+                    {
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "ErrorFinalLink_WebClient",
+                            detail = $"Error in call to {newUrl} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "ErrorFinalLink",
+                    detail = $"General error in call Final Link",
+                    message = ex.Message
+                });
             }
 
             return result;

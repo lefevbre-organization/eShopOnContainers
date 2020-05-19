@@ -230,11 +230,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         [ProducesResponseType(typeof(RedirectResult), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(RedirectResult), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ByPassUrlAsync(
-              [FromQuery] string NameService,
-              [FromQuery] string idUser
+              [FromQuery] string NameService = "Lex-On",
+              [FromQuery] string idUser = "E1621396"
             )
         {
-            Result<ByPassModel> result = await _service.GetByPassAsync(NameService);
             Result<string> resultUserUtils = await _service.GetUserUtilsActualToServiceAsync(idUser, NameService);
 
             return Redirect(resultUserUtils.data);
