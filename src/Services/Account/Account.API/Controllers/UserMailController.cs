@@ -301,6 +301,58 @@
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-#endregion New Region
+        #endregion New Region
+
+        #region RawMessage
+
+        [HttpGet("{user}/raw")]
+        [ProducesResponseType(typeof(Result<RawMessageProvider>), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(Result<RawMessageProvider>), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetRawByUser(
+            [FromRoute]string user, 
+            [FromQuery] string provider,
+            [FromQuery] string account,
+            [FromQuery] string messageId
+
+            )
+        {
+            if (string.IsNullOrEmpty(user))
+                return BadRequest("user invalid. Must be a valid user to search the userMail");
+
+            Result<RawMessageProvider> result = await _accountsService.GetRawUser(user, provider, account, messageId);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpPost("{user}/raw")]
+        [ProducesResponseType(typeof(Result<RawMessageProvider>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<RawMessageProvider>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> PostRawUser(
+            [FromBody] RawMessageProvider rawMessage
+            )
+        {
+            if (string.IsNullOrEmpty(rawMessage.User))
+                return BadRequest("values invalid. Must be a valid user and valid data to configuration");
+
+            Result<RawMessageProvider> result = await _accountsService.CreateRaw(rawMessage);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpPost("{user}/raw/delete")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> DeleteRawUser(
+            [FromBody] RawMessageProvider rawMessage
+            )
+        {
+            if (string.IsNullOrEmpty(rawMessage.User))
+                return BadRequest("values invalid. Must be a valid user and valid data to configuration");
+
+            Result<bool> result = await _accountsService.DeleteRaw(rawMessage);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+        #endregion RawMessage
     }
 }
