@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Main from './components/calendar/calendar';
+import Main from './calendar/components/main/main';
 import Login from './components/login/Login';
 import Authenticating from './components/authenticating/Authenticating';
 import { connect } from 'react-redux';

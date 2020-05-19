@@ -7,10 +7,10 @@ import {
 //import './schedule-component.css';
 import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
 import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
-import { getEventList } from '../../api/calendar-api';
+import { getEventList } from '../../../api/calendar-api';
 
 
-export class CalendarCard extends Component {
+export class Card extends Component {
     constructor(props) {
         super(props);
 
@@ -151,7 +151,7 @@ export class CalendarCard extends Component {
 
  
 
-export default CalendarCard;
+export default Card;
 
 
 

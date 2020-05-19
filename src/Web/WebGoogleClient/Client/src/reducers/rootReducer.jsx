@@ -4,7 +4,7 @@ import { signInStatusResult } from "./gapi.reducers";
 import { lexon } from "./lexon";
 
 import { labelsResult } from "../components/sidebar/sidebar.reducers";
-import { calendarsResult } from "../components/calendar/sidebar/sidebarCalendar.reducers";
+import { calendarsResult } from "../calendar/components/sidebar/sidebarCalendar.reducers";
 
 import {
   messagesResult,

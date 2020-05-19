@@ -1,25 +1,25 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
-import ACTIONS from '../../actions/lexon';
-import Header from '../header/Header';
-import Sidebar from './sidebar/Sidebar';
-import { Notification } from '../notification/';
-import './calendar.scss';
+import ACTIONS from '../../../actions/lexon';
+import Header from '../../../components/header/Header';
+import Sidebar from '../sidebar/Sidebar';
+//import { Notification } from '../notification/';
+import './main.scss';
 import { Route, Switch, withRouter } from 'react-router-dom';
-import { getCalendars } from './sidebar/sidebar.actions';
-import {toggleSelected} from '../content/message-list/actions/message-list.actions';
-import { selectCalendar } from './sidebar/sidebar.actions';
-import { signOut } from '../../api/authentication';
-import { signOutDisconnect } from '../../api/authentication';
+import { getCalendars } from '../sidebar/sidebar.actions';
+//import {toggleSelected} from '../content/message-list/actions/message-list.actions';
+import { selectCalendar } from '../sidebar/sidebar.actions';
+import { signOut } from '../../../api/authentication';
+import { signOutDisconnect } from '../../../api/authentication';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import SidebarCnn from 'react-sidebar';
-import LexonComponent from '../../apps/lexon_content';
-import CalendarComponent from '../../apps/calendar_content';
-import { CalendarView } from './calendarview/CalendarView';
+import LexonComponent from '../../../apps/lexon_content';
+import CalendarComponent from '../../../apps/calendar_content';
+import { Calendars } from '../calendars/Calendars';
 import 'react-reflex/styles.css';
-import { resetDefaultAccount} from '../../api/accounts';
+import { resetDefaultAccount} from '../../../api/accounts';
 import {
     ScheduleComponent, ViewsDirective, ViewDirective,
     Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, DragEventArgs, ResourcesDirective, ResourceDirective,
@@ -27,14 +27,14 @@ import {
 import { DataManager, Query, Predicate } from '@syncfusion/ej2-data';
 import { ToastComponent, ToastCloseArgs } from '@syncfusion/ej2-react-notifications';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
-import { deleteCalendar, getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, listCalendarList, updateCalendarList } from '../../api/calendar-api';
+import { deleteCalendar, getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, listCalendarList, updateCalendarList } from '../../../api/calendar-api';
 import moment from 'moment';
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
 
 
 
-export class Calendar extends Component {
+export class Main extends Component {
 
     constructor(props) {
         super(props);
@@ -58,17 +58,7 @@ export class Calendar extends Component {
         this.scheduleData = [];
         //this.CalendarList = [];
         this.position = { X: 'Center', Y: 'Bottom' };       
-        this.resourceCalendarData = [];
-
-        //this.toasts =  [
-        //{ content: 'Processing', cssClass: '', icon: '' },
-        //{ content: 'The event has been created successfully.', cssClass: 'e-toast-success', icon: 'e-success toast-icons' },
-        //{ content: 'The event has been modified successfully.', cssClass: 'e-toast-success', icon: 'e-success toast-icons' },
-        //{ content: 'A problem has been occurred while submitting your data.', cssClass: 'e-toast-danger', icon: 'e-error toast-icons' },
-        //{ content: 'The calendar has been created successfully.', cssClass: 'e-toast-success', icon: 'e-success toast-icons' },
-        ////{ title: 'Information!', content: 'Please read the comments carefully.', cssClass: 'e-toast-info', icon: 'e-info toast-icons' }
-        //];
-
+        this.resourceCalendarData = [];  
         this.toasts = [
             { content: 'Processing', cssClass: 'e-toast-black', icon: '' },
             { content: 'Process complete', cssClass: 'e-toast-black', icon: '' },
@@ -86,11 +76,6 @@ export class Calendar extends Component {
             calendarToEdit: undefined,
         };
 
-
-           // Calednar View Dialog
-        //this.promptButtonRef = element => {
-        //    this.promptButtonEle = element;
-        //};
            // Calednar View Dialog
         this.alertButtons = [{
             // Click the footer buttons to hide the Dialog
@@ -126,8 +111,7 @@ export class Calendar extends Component {
             buttonModel: { content: 'Cancel' }
             }];
            // Calednar View Dialog
-        this.animationSettings = { effect: 'None' };
-       
+        this.animationSettings = { effect: 'None' };       
     } 
 
     calendarColorModify(calendarId, color) {
@@ -156,7 +140,6 @@ export class Calendar extends Component {
             });   
         
     }
-
 
     deleteCalendar(args) {  
         this.toastObj.show(this.toasts[0]);
@@ -879,8 +862,8 @@ export class Calendar extends Component {
                                     target='#target'
                                     open={this.dialogOpen.bind(this)}
                                     close={this.dialogClose.bind(this)}>
-                                    <div>{(this.state.hidePromptDialog) ? <CalendarView
-                                    calendarToEdit={this.state.calendarToEdit} 
+                                    <div>{(this.state.hidePromptDialog) ? <Calendars
+                                    calendarId={this.state.calendarToEdit} 
                                     close={this.dialogClose.bind(this)}
                                     /> : ''}</div>                                   
                             </DialogComponent>                           
@@ -924,7 +907,7 @@ export class Calendar extends Component {
 
             return (
                 <div className='d-flex h-100 align-items-center justify-content-center'>
-                    <Notification
+                    {/* <Notification
                         initialModalState={showNotification}
                         toggleNotification={() => {
                             messageNotification === 'El mensaje no está en el servidor'
@@ -932,7 +915,7 @@ export class Calendar extends Component {
                                 : this.onSignoutDisconnect();
                         }}
                         message={messageNotification}
-                    />
+                    />*/}
                 </div>
             );
         }
@@ -949,7 +932,7 @@ const mapDispatchToProps = dispatch =>
     bindActionCreators(
         {
             getCalendars,            
-            toggleSelected,
+            //toggleSelected,
             selectCalendar,                   
             setGUID: ACTIONS.setGUID,
             setSign: ACTIONS.setSign
@@ -960,6 +943,6 @@ const mapDispatchToProps = dispatch =>
 export default compose(
     withRouter,
     connect(mapStateToProps, mapDispatchToProps)
-)(Calendar);
+)(Main);
 
 
