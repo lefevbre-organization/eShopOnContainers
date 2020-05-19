@@ -1,56 +1,26 @@
 import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
 import {
     ScheduleComponent, ViewsDirective, ViewDirective,
-    Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, DragEventArgs
+    Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, DragEventArgs, ResourcesDirective, ResourceDirective,
 } from '@syncfusion/ej2-react-schedule';
 //import './schedule-component.css';
-import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
-import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
+import { DataManager } from '@syncfusion/ej2-data';
 import { getEventList } from '../../../api/calendar-api';
+import moment from 'moment';
 
 
 export class Card extends Component {
     constructor(props) {
         super(props);
-
         this.onCalendarChange = this.onCalendarChange.bind(this);
-
         this.dataManger = new DataManager(); 
+        this.resourceCalendarData = [];  
 
         getEventList('primary')
             .then(result => {
                 this.dataManger = result.result;
-
-                this.onDataBinding(this.dataManger);
-                this.scheduleObj.refreshEvents();
-
-                let items = this.dataManger.items;
-                let scheduleData = [];
-                if (items.length > 0) {
-                    for (let i = 0; i < items.length; i++) {
-                        let event = items[i];
-                        let when = event.start.dateTime;
-                        let start = event.start.dateTime;
-                        let end = event.end.dateTime;
-                        if (!when) {
-                            when = event.start.date;
-                            start = event.start.date;
-                            end = event.end.date;
-                        }
-                        scheduleData.push({
-                            Id: event.id,
-                            Subject: event.summary,
-                            StartTime: new Date(start+1),
-                            EndTime: new Date(end),
-                            IsAllDay: !event.start.dateTime
-                        });
-                    }
-                    this.scheduleObj.addResource(scheduleData, 'calendar', 1);
-                    this.scheduleObj.refreshEvents();
-                }
-               
-               
+                this.onDataBinding(this.dataManger);               
+                this.scheduleObj.refreshEvents(); 
             })
             .catch(error => {
                 console.log('error ->', error);
@@ -58,13 +28,26 @@ export class Card extends Component {
 
     }
 
-
     onDataBinding(e) {
+        let calendarId = "primary"
         let items = this.dataManger.items;
         let scheduleData = [];
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
                 let event = items[i];
+                if (event.status === 'cancelled') {
+                    var dateStartTime = new Date(event.originalStartTime.dateTime);
+                    var dateString = moment(dateStartTime).seconds(0).toISOString().split('.')[0] + "Z";
+                    var ExcRecurenceDate = dateString.replace(/[:.-]/g, "");
+                    var ParentscheduleException = "";
+                    var coma = ""
+                    if (this.scheduleData.find(x => x.Id == event.recurringEventId).RecurrenceException != undefined) {
+                        ParentscheduleException = this.scheduleData.find(x => x.Id == event.recurringEventId).RecurrenceException;
+                        coma = ","
+                    }
+                    this.scheduleData.find(x => x.Id == event.recurringEventId).RecurrenceException = ParentscheduleException + coma + ExcRecurenceDate
+                    continue;
+                }
                 let when = event.start.dateTime;
                 let start = event.start.dateTime;
                 let end = event.end.dateTime;
@@ -73,15 +56,30 @@ export class Card extends Component {
                     start = event.start.date;
                     end = event.end.date;
                 }
-                scheduleData.push({
-                    Id: event.id,
-                    Subject: event.summary,
-                    StartTime: new Date(start),
-                    EndTime: new Date(end),
-                    IsAllDay: !event.start.dateTime
-                });
+                let recurrenceRule
+                if (event.recurrence != undefined) {
+                    recurrenceRule = event.recurrence[0].replace('RRULE:', '');
+                }
+                try {
+                    scheduleData.push({
+                        Id: event.id,
+                        CalendarId: calendarId,
+                        Subject: event.summary,
+                        Location: event.location,
+                        Description: event.description,
+                        StartTime: new Date(start),
+                        EndTime: new Date(end),
+                        IsAllDay: !event.start.dateTime,
+                        RecurrenceRule: recurrenceRule,
+                        //CategoryColor: "#357cd2",
+                    });
+                }
+                catch (error){
+                    console.error(error);
+                }               
             }
         }
+       // this.scheduleObj.applyCategoryColor();
         e.result = scheduleData;
     }
 
@@ -109,6 +107,10 @@ export class Card extends Component {
                                 <ViewDirective option='Agenda' />                               
                             </ViewsDirective>
                             <Inject services={[Day, Agenda, Resize, DragAndDrop]} />
+                            <ResourcesDirective>
+                                <ResourceDirective field='CalendarId' title='My Calendars' name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor'>
+                                </ResourceDirective>
+                            </ResourcesDirective>
                         </ScheduleComponent>
                     </div>
                 </div>
@@ -147,9 +149,8 @@ export class Card extends Component {
 
         );
     }
-}
 
- 
+}
 
 export default Card;
 
