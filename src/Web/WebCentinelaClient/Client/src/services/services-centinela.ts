@@ -319,3 +319,9 @@ export const getResults = async (
     throw err;
   }
 };
+
+export const downloadFile = (
+  documentId: number,
+  user: string,
+  progress: any
+) => {};
