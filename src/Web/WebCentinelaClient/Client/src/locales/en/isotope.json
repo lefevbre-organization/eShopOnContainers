@@ -42,6 +42,26 @@
     "hide-search": "Hide search"
   },
   "modal-attach": {
-    "save-copy": "Selecciona los archivos en CENTINELA"
+    "title": "Attach files from CENTINELA",
+    "cancel": "Cancel",
+    "back": "Previous",
+    "continue": "Continue",
+    "save": "save",
+    "copy-email": "Save copy of email",
+    "copy-attachments": "Save attachments",
+    "q1": "Use the search engine or explore your implants to locate the files",
+    "q1b": "Do a direct search for the files you want to attach",
+    "q1c": "Or locate your files by exploring the implants",
+    "q3": "In which implementation do you want to archive the selected messages?",
+    "search": "Search",
+    "explore": "Explore implantations",
+    "filter by product": "FILTER BY PRODUCT",
+    "modal-save-ko": "The documents have been sent successfully",
+    "table-title": "Title",
+    "author": "Author",
+    "creation": "Creation",
+    "modification": "Modification",
+    "attach": "Attach",
+    "save-copy": "Select files from CENTINELA"
   }
 }

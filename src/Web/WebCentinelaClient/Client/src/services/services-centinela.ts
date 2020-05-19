@@ -137,8 +137,8 @@ export const getUser = async (
       method: 'GET',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     });
 
     const result = await response.json();
@@ -166,7 +166,7 @@ export const getEvaluations = (navisionUser: string): EvaluationResponse => {
         risk: false,
         normChange: false,
         canManage: true,
-        canModify: true,
+        canModify: true
       },
       {
         evaluationId: 4534,
@@ -181,7 +181,7 @@ export const getEvaluations = (navisionUser: string): EvaluationResponse => {
         risk: false,
         normChange: false,
         canManage: true,
-        canModify: true,
+        canModify: true
       },
       {
         evaluationId: 4581,
@@ -196,7 +196,7 @@ export const getEvaluations = (navisionUser: string): EvaluationResponse => {
         risk: false,
         normChange: false,
         canManage: true,
-        canModify: true,
+        canModify: true
       },
       {
         evaluationId: 4583,
@@ -211,7 +211,7 @@ export const getEvaluations = (navisionUser: string): EvaluationResponse => {
         risk: false,
         normChange: false,
         canManage: true,
-        canModify: true,
+        canModify: true
       },
       {
         evaluationId: 4592,
@@ -226,9 +226,9 @@ export const getEvaluations = (navisionUser: string): EvaluationResponse => {
         risk: false,
         normChange: false,
         canManage: true,
-        canModify: true,
-      },
-    ],
+        canModify: true
+      }
+    ]
   };
 };
 
@@ -252,8 +252,8 @@ export const getEvaluationById = (
       risk: false,
       normChange: false,
       canManage: true,
-      canModify: true,
-    },
+      canModify: true
+    }
   };
 };
 
@@ -267,8 +267,8 @@ export const getEvaluationTree = async (
       method: 'GET',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     });
 
     const result = await response.json();
@@ -288,8 +288,8 @@ export const getInstances = async (
       method: 'GET',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     });
 
     const result = await response.json();
@@ -309,8 +309,29 @@ export const getResults = async (
       method: 'GET',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const result = await response.json();
+    return result;
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const getDocumentsByInstance = async (
+  navisionUser: string,
+  conceptObjectId: number
+): Promise<DocumentResponse> => {
+  const url = `https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/documents/instance?idNavisionUser=${navisionUser}&conceptObjectId=${conceptObjectId}`;
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      }
     });
 
     const result = await response.json();

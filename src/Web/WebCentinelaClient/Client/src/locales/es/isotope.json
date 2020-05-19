@@ -52,7 +52,7 @@
     "q1": "Usa el buscador o explora tus implantaciones para localizar los archivos.",
     "q1b": "Haz una búsqueda directa de los archivos que quieres adjuntar.",
     "q1c": "O bien localiza tus archivos explorando las implantaciones.",
-    "q3": "¿En qué implantación quieres archivar los mensajes seleccionados?",
+    "q3": "Desde que implantación quieres adjuntar los archivos?",
     "search": "Buscar",
     "explore": "Explorar implantaciones",
     "filter-by-product": "FILTRAR POR PRODUCTO",
@@ -60,6 +60,8 @@
     "table-title": "Título",
     "author": "Autor",
     "creation": "Creación",
-    "modification": "Modificación"
+    "modification": "Modificación",
+    "attach": "Adjuntar",
+    "save-copy": "Selecciona los archivos en CENTINELA"
   }
 }

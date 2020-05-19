@@ -7,10 +7,15 @@ import {
   Inject,
   Search,
   Sort,
-  Page,
+  Page
 } from '@syncfusion/ej2-react-grids';
 import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
-import { getResults, Document } from '../../../services/services-centinela';
+import {
+  getResults,
+  Document,
+  CentInstance,
+  getDocumentsByInstance
+} from '../../../services/services-centinela';
 import Spinner from '../../spinner/spinner';
 import moment from 'moment';
 import ImplantationListSearch from '../implantation-list-search/implantation-list-search';
@@ -21,6 +26,7 @@ interface Props {
   user: string;
   search: string;
   files: any;
+  instance?: CentInstance;
   onChange: any;
   onSearchChange: any;
 }
@@ -54,7 +60,7 @@ export class Step4 extends React.Component<Props, State> {
       totalResults: -1,
       currentPage: 0,
       search: '',
-      counter: 0,
+      counter: 0
     };
 
     this.searchResultsByType = this.searchResultsByType.bind(this);
@@ -68,7 +74,7 @@ export class Step4 extends React.Component<Props, State> {
   }
 
   async componentDidUpdate(prevProps: Props) {
-    const { show, search, user } = this.props;
+    const { show, search, user, instance } = this.props;
     const { currentPage } = this.state;
 
     if (prevProps.show === false && show === true) {
@@ -81,10 +87,14 @@ export class Step4 extends React.Component<Props, State> {
           totalResults: -1,
           currentPage: 0,
           search: '',
-          counter: 0,
+          counter: 0
         },
         () => {
-          this.searchResultsByType(search);
+          if (instance) {
+            this.searchResultsByInstance(instance);
+          } else {
+            this.searchResultsByType(search);
+          }
           this.setState({ currentPage: 1 }, () => {
             this.searchRef.current.Search(search);
           });
@@ -103,7 +113,7 @@ export class Step4 extends React.Component<Props, State> {
       }
       this.setState({
         currentPage: np,
-        lastPage: lp,
+        lastPage: lp
       });
     }
   }
@@ -120,7 +130,7 @@ export class Step4 extends React.Component<Props, State> {
 
       this.setState({
         currentPage: np,
-        lastPage: lp,
+        lastPage: lp
       });
     }
   }
@@ -141,7 +151,7 @@ export class Step4 extends React.Component<Props, State> {
         search: search || '',
         showSpinner: true,
         currentPage,
-        counter: 0,
+        counter: 0
       },
       async () => {
         const response = await getResults(user, search);
@@ -149,7 +159,36 @@ export class Step4 extends React.Component<Props, State> {
         this.setState({
           entities: response.data,
           showSpinner: false,
-          totalResults: response.data.length,
+          totalResults: response.data.length
+        });
+      }
+    );
+  }
+
+  searchResultsByInstance(instance: CentInstance) {
+    const { user, onSearchChange } = this.props;
+    const { currentPage, showSpinner } = this.state;
+    if (showSpinner) {
+      return;
+    }
+
+    this.setState(
+      {
+        search: '',
+        showSpinner: true,
+        currentPage,
+        counter: 0
+      },
+      async () => {
+        const response = await getDocumentsByInstance(
+          user,
+          instance.conceptObjectId
+        );
+
+        this.setState({
+          entities: response.data,
+          showSpinner: false,
+          totalResults: response.data.length
         });
       }
     );
@@ -182,9 +221,9 @@ export class Step4 extends React.Component<Props, State> {
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <span>
           <CheckBoxComponent
-            label=''
+            label=""
             checked={this.isFileSelected(props)}
-            cssClass='e-small'
+            cssClass="e-small"
             change={(evt) => {
               this.onChangeFile(evt, props);
             }}
@@ -215,30 +254,31 @@ export class Step4 extends React.Component<Props, State> {
 
     return (
       <Fragment>
-        <div className='step3-container'>
+        <div className="step3-container">
           <ol style={{ textAlign: 'center' }}>
-            <li className='index-4'>
+            <li className="index-4">
               <span>
                 Selecciona los archivos que quieras adjuntar al correo
               </span>
             </li>
           </ol>
 
-          <section className='panel section-border'>
-            <div className='panel-right'>
-              <div className='panel-right-top'>
-                <span className='section-title'>
+          <section className="panel section-border">
+            <div className="panel-right">
+              <div className="panel-right-top">
+                <span className="section-title">
                   {/* {'this.props.entity.description'} */}
                 </span>
                 <ImplantationListSearch
                   ref={this.searchRef}
-                  closeClassName='search-close-3'
+                  closeClassName="search-close-3"
                   searchResultsByType={this.searchResultsByType}
-                  countResults={entities.length}></ImplantationListSearch>
+                  countResults={entities.length}
+                ></ImplantationListSearch>
               </div>
 
               {this.state.showSpinner === true && (
-                <div className='spinner'>
+                <div className="spinner">
                   <Spinner />
                 </div>
               )}
@@ -252,51 +292,58 @@ export class Step4 extends React.Component<Props, State> {
                 selectionSettings={{
                   type: 'Single',
                   mode: 'Row',
-                  enableToggle: false,
+                  enableToggle: false
                 }}
-                locale='es-ES'>
+                locale="es-ES"
+              >
                 <ColumnsDirective>
                   <ColumnDirective
-                    field='contentType'
-                    headerText='Formato'
+                    field="contentType"
+                    headerText="Formato"
                     allowFiltering={false}
-                    width='40'
-                    template={this.renderOrigin}></ColumnDirective>
+                    width="40"
+                    template={this.renderOrigin}
+                  ></ColumnDirective>
                   <ColumnDirective
-                    field='name'
-                    headerText='Título'
-                    width='150'></ColumnDirective>
+                    field="name"
+                    headerText="Título"
+                    width="150"
+                  ></ColumnDirective>
                   <ColumnDirective
-                    field='author'
-                    headerText='Autor'
-                    width='80'></ColumnDirective>
+                    field="author"
+                    headerText="Autor"
+                    width="80"
+                  ></ColumnDirective>
                   <ColumnDirective
-                    field='creationDate'
-                    headerText='Creación'
-                    width='50'
-                    template={this.renderDate}></ColumnDirective>
+                    field="creationDate"
+                    headerText="Creación"
+                    width="50"
+                    template={this.renderDate}
+                  ></ColumnDirective>
                 </ColumnsDirective>
                 <Inject services={[Search, Sort]} />
               </GridComponent>
-              <section className='pager'>
+              <section className="pager">
                 <div
                   className={`prevButton ${
                     this.state.currentPage === 1 ? 'disabled' : ''
                   }`}
-                  onClick={() => this.prevPage()}>
-                  <span className='pager-icon lf-icon-angle-left' />
+                  onClick={() => this.prevPage()}
+                >
+                  <span className="pager-icon lf-icon-angle-left" />
                   <span>Anterior</span>
                 </div>
 
-                <div className='currentPage'>{currentPage}</div>
+                <div className="currentPage">{currentPage}</div>
 
                 <div
                   className={`nextButton ${
                     this.state.lastPage === true ? 'disabled' : ''
                   }`}
-                  onClick={() => this.nextPage()}>
+                  onClick={() => this.nextPage()}
+                >
                   <span>Siguiente</span>
-                  <span className='pager-icon lf-icon-angle-right' />
+                  <span className="pager-icon lf-icon-angle-right" />
                 </div>
               </section>
             </div>

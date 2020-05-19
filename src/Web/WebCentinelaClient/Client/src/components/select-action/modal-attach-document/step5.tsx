@@ -5,20 +5,23 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import i18n from 'i18next';
 
 interface Props {
+  files: any;
+  user: string;
+  show: boolean;
   downloadComplete: () => void;
 }
 interface State {
   downloading: boolean;
 }
 
-export class AttachDocumentsStep5 extends React.Component<Props, State> {
+export class Step5 extends React.Component<Props, State> {
   private pendingDownloads: number;
   private downloadRefs: any;
   constructor(props: Props) {
     super(props);
 
     this.state = {
-      downloading: false,
+      downloading: false
     };
 
     this.pendingDownloads = 0;
@@ -35,8 +38,8 @@ export class AttachDocumentsStep5 extends React.Component<Props, State> {
     }
   }
 
-  renderType(props) {
-    const icon = props.type === 'dir' ? 'lf-icon-folder' : 'lf-icon-document';
+  renderType(props: any) {
+    const icon = 'lf-icon-document';
     return <span className={`pager-icon ${icon} new-folder-icon`} />;
   }
 
@@ -53,20 +56,20 @@ export class AttachDocumentsStep5 extends React.Component<Props, State> {
   }
 
   render() {
-    const { files, user, bbdd } = this.props;
+    const { files, user } = this.props;
     return (
       <Fragment>
-        <div className='step5-container panel section-border'>
-          <div className='section-title-5'>
+        <div className="step5-container panel section-border">
+          <div className="section-title-5">
             <div>DOCUMENTOS SELECCIONADOS</div>
             <div>
-              <span className='subtitle-5'>TOTAL: </span>
+              <span className="subtitle-5">TOTAL: </span>
               <strong>{files.length}</strong>
             </div>
           </div>
-          <div className='documents-container'>
+          <div className="documents-container">
             <PerfectScrollbar style={{ height: 386 }}>
-              {files.map((item, index) => (
+              {files.map((item: any, index: number) => (
                 <Downloader
                   ref={(ref) => {
                     this.downloadRefs[index] = ref;
@@ -74,9 +77,9 @@ export class AttachDocumentsStep5 extends React.Component<Props, State> {
                   }}
                   doc={item}
                   user={user}
-                  bbdd={bbdd}
                   index={index}
-                  downloadComplete={this.downloadComplete}></Downloader>
+                  downloadComplete={this.downloadComplete}
+                ></Downloader>
               ))}
             </PerfectScrollbar>
           </div>

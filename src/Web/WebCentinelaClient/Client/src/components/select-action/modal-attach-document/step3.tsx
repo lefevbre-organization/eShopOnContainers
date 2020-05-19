@@ -115,7 +115,7 @@ export class Step3 extends React.Component<Props, State> {
         }
       }
 
-      return;
+      //return;
     }
 
     if (this.crumbRef && this.crumbRef.current) {
@@ -140,6 +140,7 @@ export class Step3 extends React.Component<Props, State> {
           this.setState(
             {
               route: [],
+              substep: 0,
               phases: [...response.data],
               currentNodes: {
                 node: 'root',
