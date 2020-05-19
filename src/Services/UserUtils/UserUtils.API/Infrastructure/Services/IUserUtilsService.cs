@@ -21,5 +21,9 @@ namespace UserUtils.API.Infrastructure.Services
         Task<Result<ServiceComUser>> GetUserDataWithEntryAsync(string idNavisionUser);
         Task<Result<LexUser>> GetLexonGenericAsync(TokenModelView tokenRequest, bool addTerminatorToToken);
         Task<Result<ServiceComArea[]>> GetAreasByUserAsync(string idNavisionUser);
+        Task<Result<ByPassModel>> PostByPassAsync(ByPassModel byPass);
+        Task<Result<ByPassModel>> GetByPassAsync(string nameService);
+        Task<Result<bool>> RemoveByPassAsync(ByPassModel byPass);
+        Task<Result<string>> GetUserUtilsActualToServiceAsync(string idUser, string nameService);
     }
 }

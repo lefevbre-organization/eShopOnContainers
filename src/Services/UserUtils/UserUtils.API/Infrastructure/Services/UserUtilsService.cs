@@ -602,5 +602,40 @@ namespace UserUtils.API.Infrastructure.Services
 
             return new List<string>();
         }
+
+        public async Task<Result<ByPassModel>> PostByPassAsync(ByPassModel byPass)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<Result<ByPassModel>> GetByPassAsync(string nameService)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<Result<bool>> RemoveByPassAsync(ByPassModel byPass)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<Result<string>> GetUserUtilsActualToServiceAsync(string idUser, string nameService)
+        {
+            var result = new Result<string>(null);
+            var resultListApps = await GetUserUtilsAsync(idUser, true);
+            result.errors = resultListApps.errors;
+            result.infos = resultListApps.infos;
+            if (result.errors?.Count == 0)
+            {
+                var serviceToActualice = resultListApps.data.FirstOrDefault(x => x.descHerramienta.ToLowerInvariant().Equals(nameService.ToLowerInvariant());
+                var newUrl = serviceToActualice?.url;
+                result.data = newUrl;
+            }
+            else
+            {
+                result.data = "http://www.google.es";
+            }
+
+            return result;
+        }
     }
 }

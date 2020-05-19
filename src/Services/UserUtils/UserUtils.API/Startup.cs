@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 using UserUtils.API.Extensions;
 using System;
 
-namespace UserUtils.API
+namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
 {
     public class Startup
     {

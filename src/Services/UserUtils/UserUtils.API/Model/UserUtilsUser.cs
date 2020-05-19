@@ -19,9 +19,10 @@ namespace UserUtils.API.Models
 
         public string name { get; set; }
 
+        public TokenControl[] tokens { get; set; }
+
         [JsonIgnore]
         public short version { get; set; }
 
     }
-
 }

@@ -164,5 +164,86 @@ namespace UserUtils.API.Controllers
             return Ok(result);
             //http://led-servicecomtools/Login/RecuperarUsuarioPorEntrada?idUsuarioPro=E1621396
         }
+
+        /// <summary>
+        /// Permite agregar una dirección de reemplazo para redirigir la petición del minihub
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("user/apps/bypass")]
+        [ProducesResponseType(typeof(Result<ByPassModel>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<ByPassModel>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ByPastPostAsync(
+              [FromBody] ByPassModel byPass
+            )
+        {
+            if (string.IsNullOrEmpty(byPass.NameService) && string.IsNullOrEmpty(byPass.UrlByPass))
+                return BadRequest("value invalid. Must be a valid NameService and valid url to redirect");
+
+            Result<ByPassModel> result = await _service.PostByPassAsync(byPass);
+
+            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        /// <summary>
+        /// Permite obtener una dirección de reemplazo para redirigir la petición del minihub
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("user/apps/bypass")]
+        [ProducesResponseType(typeof(Result<ByPassModel>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<ByPassModel>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ByPassGetAsync(
+              [FromQuery] string NameService
+            )
+        {
+            if (string.IsNullOrEmpty(NameService))
+                return BadRequest("value invalid. Must be a valid NameService");
+
+            Result<ByPassModel> result = await _service.GetByPassAsync(NameService);
+
+            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+
+        /// <summary>
+        /// Permite borrar una dirección de reemplazo para redirigir la petición del minihub
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("user/apps/bypass/delete")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ByPassRemoveAsync(
+              [FromBody] ByPassModel byPass
+            )
+        {
+            if (string.IsNullOrEmpty(byPass.NameService) && string.IsNullOrEmpty(byPass.UrlByPass))
+                return BadRequest("value invalid. Must be a valid NameService and valid url to redirect");
+
+            Result<bool> result = await _service.RemoveByPassAsync(byPass);
+
+            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        /// <summary>
+        /// Devueve una redirección hacia una url
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("user/apps/redirect")]
+        [ProducesResponseType(typeof(RedirectResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(RedirectResult), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ByPassUrlAsync(
+              [FromQuery] string NameService, 
+              [FromQuery] string idUser
+            )
+        {
+            Result<ByPassModel> result = await _service.GetByPassAsync(NameService);
+            Result<string> resultUserUtils = await _service.GetUserUtilsActualToServiceAsync(idUser, NameService);
+
+            return Redirect(resultUserUtils.data);
+         
+        }
+
+
     }
+
+
 }

@@ -5,7 +5,7 @@ using Serilog;
 using System;
 using System.IO;
 
-namespace UserUtils.API
+namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
 {
     public class Program
     {
