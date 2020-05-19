@@ -324,7 +324,7 @@ export const getDocumentsByInstance = async (
   navisionUser: string,
   conceptObjectId: number
 ): Promise<DocumentResponse> => {
-  const url = `https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/documents/instance?idNavisionUser=${navisionUser}&conceptObjectId=${conceptObjectId}`;
+  const url = `https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/Centinela/documents/instance?idNavisionUser=${navisionUser}&conceptObjectId=${conceptObjectId}`;
   try {
     const response = await fetch(url, {
       method: 'GET',

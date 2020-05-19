@@ -96,7 +96,7 @@ export class Step4 extends React.Component<Props, State> {
             this.searchResultsByType(search);
           }
           this.setState({ currentPage: 1 }, () => {
-            this.searchRef.current.Search(search);
+            this.searchRef.current && this.searchRef.current.Search(search);
           });
         }
       );
@@ -247,6 +247,7 @@ export class Step4 extends React.Component<Props, State> {
 
   render() {
     const { currentPage, entities } = this.state;
+    const { instance } = this.props;
     const itemsToShow = entities.slice(
       (currentPage - 1) * 6,
       (currentPage - 1) * 6 + 6
@@ -269,12 +270,14 @@ export class Step4 extends React.Component<Props, State> {
                 <span className="section-title">
                   {/* {'this.props.entity.description'} */}
                 </span>
-                <ImplantationListSearch
-                  ref={this.searchRef}
-                  closeClassName="search-close-3"
-                  searchResultsByType={this.searchResultsByType}
-                  countResults={entities.length}
-                ></ImplantationListSearch>
+                {!instance && (
+                  <ImplantationListSearch
+                    ref={this.searchRef}
+                    closeClassName="search-close-3"
+                    searchResultsByType={this.searchResultsByType}
+                    countResults={entities.length}
+                  ></ImplantationListSearch>
+                )}
               </div>
 
               {this.state.showSpinner === true && (

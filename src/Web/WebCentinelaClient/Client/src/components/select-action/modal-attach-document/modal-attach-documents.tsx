@@ -409,10 +409,15 @@ class ModalAttachDocuments extends Component<Props, State> {
                 >
                   <Step1
                     onClickSearch={(search: string) => {
-                      this.setState({ step: 4, search });
+                      this.setState({ step: 4, search, instance: undefined });
                     }}
                     onClickExploreImplantations={() => {
-                      this.setState({ entity: 1, step: 2, search: '' });
+                      this.setState({
+                        entity: 1,
+                        step: 2,
+                        search: '',
+                        instance: undefined
+                      });
                     }}
                   />
                 </div>
