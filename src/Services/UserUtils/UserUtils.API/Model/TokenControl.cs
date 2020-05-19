@@ -1,4 +1,4 @@
-﻿namespace UserUtils.API.Models
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models
 {
     public class TokenControl
     {

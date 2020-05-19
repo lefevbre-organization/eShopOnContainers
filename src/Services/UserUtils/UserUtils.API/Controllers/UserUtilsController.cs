@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Services;
+using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using UserUtils.API.Infrastructure.Services;
-using UserUtils.API.Models;
 
-namespace UserUtils.API.Controllers
+namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
@@ -203,7 +203,6 @@ namespace UserUtils.API.Controllers
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-
         /// <summary>
         /// Permite borrar una dirección de reemplazo para redirigir la petición del minihub
         /// </summary>
@@ -231,7 +230,7 @@ namespace UserUtils.API.Controllers
         [ProducesResponseType(typeof(RedirectResult), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(RedirectResult), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> ByPassUrlAsync(
-              [FromQuery] string NameService, 
+              [FromQuery] string NameService,
               [FromQuery] string idUser
             )
         {
@@ -239,11 +238,6 @@ namespace UserUtils.API.Controllers
             Result<string> resultUserUtils = await _service.GetUserUtilsActualToServiceAsync(idUser, NameService);
 
             return Redirect(resultUserUtils.data);
-         
         }
-
-
     }
-
-
 }

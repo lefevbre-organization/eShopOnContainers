@@ -3,7 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
-namespace UserUtils.API.Models
+namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models
 {
     [BsonIgnoreExtraElements]
     public class UserUtilsUser : MongoModel

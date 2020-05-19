@@ -1,8 +1,7 @@
-﻿using UserUtils.API.Models;
+﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -13,7 +12,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace UserUtils.API.Infrastructure
+namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure
 {
     //mirar https://www.mongodb.com/blog/post/working-with-mongodb-transactions-with-c-and-the-net-framework
     public class UserUtilsContext : IMongoDbContext, IIntegrationEventLogContextMongoDB
@@ -48,19 +47,24 @@ namespace UserUtils.API.Infrastructure
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(IntegrationEventLogEntry))) { BsonClassMap.RegisterClassMap<IntegrationEventLogEntry>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(UserUtilsUser))) { BsonClassMap.RegisterClassMap<UserUtilsUser>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(ByPassModel))) { BsonClassMap.RegisterClassMap<ByPassModel>(); }
         }
 
-        //public IMongoCollection<LexonUser> LexonUsers
-        //{
-        //    get { return Database.GetCollection<LexonUser>(_settings.Value.Collection); }
-        //}
+        public IMongoCollection<ByPassModel> ByPassModels
+        {
+            get { return Database.GetCollection<ByPassModel>(_settings.Value.CollectionByPass); }
+        }
 
+        public IMongoCollection<ByPassModel> ByPassModelsTransaction(IClientSessionHandle session)
+        {
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<ByPassModel>(_settings.Value.CollectionByPass);
+        }
         public IMongoCollection<UserUtilsUser> UserUtils
         {
             get { return Database.GetCollection<UserUtilsUser>(_settings.Value.Collection); }
         }
 
-        public IMongoCollection<UserUtilsUser> MiniUsersTransaction(IClientSessionHandle session)
+        public IMongoCollection<UserUtilsUser> UsersUtilsTransaction(IClientSessionHandle session)
         {
             return session.Client.GetDatabase(_settings.Value.Database).GetCollection<UserUtilsUser>(_settings.Value.Collection);
         }

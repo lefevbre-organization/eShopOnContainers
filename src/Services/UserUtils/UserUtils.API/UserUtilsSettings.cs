@@ -1,4 +1,4 @@
-﻿namespace UserUtils.API
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
 {
     public class UserUtilsSettings
     {

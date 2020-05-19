@@ -1,4 +1,7 @@
 ﻿using Autofac;
+using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Filters;
+using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Repositories;
+using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
@@ -9,12 +12,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using UserUtils.API.Infrastructure.Filters;
-using UserUtils.API.Infrastructure.Repositories;
-using UserUtils.API.Infrastructure.Services;
 using RabbitMQ.Client;
 
-namespace UserUtils.API.Extensions
+namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Extensions
 {
     public static class CustomExtensionsMethods
     {
@@ -49,7 +49,6 @@ namespace UserUtils.API.Extensions
 
         public static IServiceCollection AddCustomHealthCheck(this IServiceCollection services, IConfiguration configuration)
         {
- 
             var hcBuilder = services.AddHealthChecks();
 
             hcBuilder
