@@ -91,9 +91,14 @@ export class Card extends Component {
         }
     }
 
-    onPopupOpen(args) {       
-        window.open("calendar", "_blank");  
+    onPopupOpen(args) {  
         args.cancel = true;
+        window.open("calendar", "_blank");  
+    }
+
+    doubleOpen(args) {
+        args.cancel = true;
+        window.open("calendar", "_blank");       
     }
   
     render() {
@@ -105,7 +110,7 @@ export class Card extends Component {
                             height='650px' currentView="Day"
                             readonly={false}
                             popupOpen={this.onPopupOpen.bind(this)} 
-                            cellDoubleClick={this.onPopupOpen.bind(this)}
+                            cellDoubleClick={this.doubleOpen.bind(this)}                            
                             eventSettings={{ dataSource: this.dataManger }} dataBinding={this.onDataBinding.bind(this)}>
                             <ViewsDirective>
                                 <ViewDirective option='Day' />                               
