@@ -953,10 +953,6 @@ export class ComposeMessage extends PureComponent {
             font-size: 14px !important;
           }
 
-          .priority-text {
-            font-family: MTTMilano, Lato, Arial, sans-serif;
-          }
-
           .icon-priority {
             cursor: pointer !important;
           }
