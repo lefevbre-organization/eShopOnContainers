@@ -32,6 +32,25 @@ export const getCalendarList = (calendar) =>
 
     });
 
+export const updateCalendarList = (calendarId, calendar) =>
+
+    new Promise((resolve, reject) => {
+        window.gapi.client.calendar.calendarList
+            .update({
+                calendarId: calendarId,
+                colorRgbFormat: 'true',
+                resource: calendar
+            })
+
+            .then(response => {
+                resolve(response.result);
+            })
+            .catch(err => {
+                reject(err);
+            });
+
+    });
+
 
 //Calendars Api
 
@@ -100,24 +119,7 @@ export const deleteCalendar = (calendar) =>
 
     });
 
-export const updateCalendarList = (calendarId, calendar) =>
 
-    new Promise((resolve, reject) => {       
-        window.gapi.client.calendar.calendarList
-            .update({
-                calendarId: calendarId,
-                colorRgbFormat: 'true',
-                resource: calendar
-            })
-
-            .then(response => {
-                resolve(response.result);
-            })
-            .catch(err => {
-                reject(err);
-            });
-
-    });
 
 
 // Events Api

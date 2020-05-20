@@ -12,7 +12,7 @@ import {
     faExclamationTriangle,
     faChevronLeft
 } from "@fortawesome/free-solid-svg-icons";
-import CalendarItem from "./calendaritem/CalendarItem";
+import CalendarItem from "./calendaritem/calendaritem";
 import { Link } from "react-router-dom";
 import { Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

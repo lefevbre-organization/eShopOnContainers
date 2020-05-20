@@ -25,7 +25,6 @@ export class Card extends Component {
             .catch(error => {
                 console.log('error ->', error);
             });
-
     }
 
     onDataBinding(e) {
@@ -70,16 +69,14 @@ export class Card extends Component {
                         StartTime: new Date(start),
                         EndTime: new Date(end),
                         IsAllDay: !event.start.dateTime,
-                        RecurrenceRule: recurrenceRule,
-                        //CategoryColor: "#357cd2",
+                        RecurrenceRule: recurrenceRule                       
                     });
                 }
                 catch (error){
                     console.error(error);
                 }               
             }
-        }
-       // this.scheduleObj.applyCategoryColor();
+        }      
         e.result = scheduleData;
     }
 

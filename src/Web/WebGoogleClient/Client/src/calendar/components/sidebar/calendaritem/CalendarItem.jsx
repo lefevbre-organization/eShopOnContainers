@@ -1,7 +1,7 @@
 import React, { PureComponent , Fragment } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
-import CalendarMenu from '../calendarmenu/CalendarMenu';
+import CalendarMenu from '../calendarmenu/calendarmenu';
 import "@reach/menu-button/styles.css";
 import "./calendaritem.scss";
 

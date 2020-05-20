@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
 import ACTIONS from '../../../actions/lexon';
 import Header from '../../../components/header/Header';
-import Sidebar from '../sidebar/Sidebar';
+import Sidebar from '../sidebar/sidebar';
 //import { Notification } from '../notification/';
 import './main.scss';
 import { Route, Switch, withRouter } from 'react-router-dom';
@@ -17,7 +17,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import SidebarCnn from 'react-sidebar';
 import LexonComponent from '../../../apps/lexon_content';
 import CalendarComponent from '../../../apps/calendar_content';
-import { Calendars } from '../calendars/Calendars';
+import { Calendars } from '../calendars/calendars';
 import 'react-reflex/styles.css';
 import { resetDefaultAccount} from '../../../api/accounts';
 import {
@@ -728,7 +728,7 @@ export class Main extends Component {
         //localStorage.clear();
     }   
 
-    renderInboxViewport() {
+    render() {
         const { leftSideBar } = this.state;
         const { lexon } = this.props;
 
@@ -809,7 +809,7 @@ export class Main extends Component {
                         <article className='d-flex flex-column position-relative'>
                             {/*<Switch>*/}
                             {/*popupOpen={this.onPopupOpen.bind(this)}*/}
-                                <div className='schedule-control-section'>
+                            <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
                                             <ScheduleComponent
@@ -899,28 +899,7 @@ export class Main extends Component {
         );
     }
 
-    render() {
-        if (this.state.googleDown) {
-            const { showNotification, messageNotification } = this.state;
-            const { token } = this.props.lexon;
-            const baseUrl = window.URL_MF_GOOGLE.replace("/user", "");
-
-            return (
-                <div className='d-flex h-100 align-items-center justify-content-center'>
-                    {/* <Notification
-                        initialModalState={showNotification}
-                        toggleNotification={() => {
-                            messageNotification === 'El mensaje no está en el servidor'
-                                ? ((token) ? window.open(`${baseUrl}/access/${token}/?prov=GO0`, "_self") : window.open(`${window.URL_MF_GOOGLE}/GO0${this.props.lexon.userId}`, '_self'))
-                                : this.onSignoutDisconnect();
-                        }}
-                        message={messageNotification}
-                    />*/}
-                </div>
-            );
-        }
-        return this.renderInboxViewport();
-    }
+  
 }
 
 const mapStateToProps = state => ({

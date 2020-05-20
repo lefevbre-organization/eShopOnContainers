@@ -3,7 +3,7 @@ import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import { ButtonComponent, ChangeEventArgs as CheckBoxChange } from '@syncfusion/ej2-react-buttons';
 import { getCalendar, addCalendar, updateCalendar } from "../../../api/calendar-api";
 import { ToastComponent } from '@syncfusion/ej2-react-notifications';
-import { Acl } from './acl/Acl';
+import { Acl } from './acl/acl';
 
 
 export class Calendars extends React.Component {
