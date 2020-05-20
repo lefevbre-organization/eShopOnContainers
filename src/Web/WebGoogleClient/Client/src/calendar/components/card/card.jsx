@@ -9,6 +9,7 @@ import { getEventList } from '../../../api/calendar-api';
 import moment from 'moment';
 
 
+
 export class Card extends Component {
     constructor(props) {
         super(props);
@@ -89,6 +90,11 @@ export class Card extends Component {
             this.scheduleObj.removeResource(value, 'Calendars');
         }
     }
+
+    onPopupOpen(args) {       
+        window.open("calendar", "_blank");  
+        args.cancel = true;
+    }
   
     render() {
         return (
@@ -97,7 +103,9 @@ export class Card extends Component {
                     <div className='control-wrapper'>
                         <ScheduleComponent ref={schedule => this.scheduleObj = schedule} width='100%'
                             height='650px' currentView="Day"
-                            readonly={true}
+                            readonly={false}
+                            popupOpen={this.onPopupOpen.bind(this)} 
+                            cellDoubleClick={this.onPopupOpen.bind(this)}
                             eventSettings={{ dataSource: this.dataManger }} dataBinding={this.onDataBinding.bind(this)}>
                             <ViewsDirective>
                                 <ViewDirective option='Day' />                               
