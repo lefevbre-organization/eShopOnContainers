@@ -1,5 +1,8 @@
 ﻿namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models
 {
+    /// <summary>
+    /// Clase utilizada en la obtención de información de login
+    /// </summary>
     public class ServiceComUser
     {
         
@@ -32,14 +35,5 @@
             }
         }
 
-    }
-
-    public class ServiceComArea
-    {
-        //{"idArea":10,"descArea":"Análisis de Novedades","idExterno":-1,"indAdmin":0}
-        public int idArea { get; set; }
-        public string descArea { get; set; }
-        public int? idExterno { get; set; }
-        public int? indAdmin { get; set; }
     }
 }
