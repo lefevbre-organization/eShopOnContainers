@@ -32,7 +32,7 @@ import React from 'react';
                   </div>
                  <input type="text" name="login" className="form-control login-input" 
                   placeholder="Usuario" onChange={children.handleChange} />
-                  {verificationLogin ? <i className="lf-icon-close-round-full front-login__input-error-icon"></i> 
+                  {verificationLogin || verificationEmail ? <i className="lf-icon-close-round-full front-login__input-error-icon"></i> 
                    : null} 
                  </div>
                  { verificationLogin }
