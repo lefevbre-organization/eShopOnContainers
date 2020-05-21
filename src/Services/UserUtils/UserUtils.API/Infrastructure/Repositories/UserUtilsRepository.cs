@@ -5,6 +5,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Repositories
@@ -34,6 +36,24 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
 
                 if (result.data == null)
                     TraceMessage(result.errors, new Exception($"No se encuentra ningún servicio {nameService}"), "ErrorByPassGet");
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
+
+        public async Task<Result<List<ByPassModel>>> GetListByPassAsync()
+        {
+            var result = new Result<List<ByPassModel>>(new List<ByPassModel>());
+            try
+            {
+                var filter = FilterDefinition<ByPassModel>.Empty;
+                result.data = await _context.ByPassModels.Find(filter).ToListAsync();
+
+                if (result.data == null)
+                    TraceMessage(result.errors, new Exception($"No se encuentra ningún servicio en bypass"), "ErrorByPassGet");
             }
             catch (Exception ex)
             {
@@ -104,7 +124,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
         private void ReviewByPassModel(ByPassModel byPass)
         {
             byPass.NameService= byPass.NameService.ToUpperInvariant();
-            byPass.UrlByPass = byPass.UrlByPass.ToUpperInvariant();
+            //byPass.UrlByPass = byPass.UrlByPass.ToUpperInvariant();
             byPass.Created = DateTime.Now.Ticks;
 
         }

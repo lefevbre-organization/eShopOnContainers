@@ -172,6 +172,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                         {
                             var resultado = (JsonConvert.DeserializeObject<LexApp[]>(rawResult));
                             var listAll = resultado.ToList();
+                            UpdateListByPass(listAll, idNavisionUser, result.errors);
                             result.data = onlyActives ? listAll.Where(x => x.indAcceso > 0).ToList() : listAll.ToList();
                         }
                     }
@@ -196,6 +197,37 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             }
 
             return result;
+        }
+
+        private async void UpdateListByPass(List<LexApp> listAll, string idNavisionUser, List<ErrorInfo> errors)
+        {
+            try
+            {
+                var listaByPass = await _repository.GetListByPassAsync();
+                foreach (var app in listAll)
+                {
+                    var encontrado = listaByPass.data.Find(x => x.NameService.Equals(app.descHerramienta.ToUpperInvariant()));
+                    if (encontrado?.NameService != null)
+                    {
+                      //  encontrado.Url = app.url;
+                        var urlReplace = encontrado.UrlByPass
+                            .Replace("{idUserNavision}", idNavisionUser)
+                            .Replace("{serviceName}", app.descHerramienta);
+                      //  var actualizado = await _repository.PostByPassAsync(encontrado);
+                        app.url = urlReplace;
+                        return;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                errors.Add(new ErrorInfo
+                {
+                    code = "ErrorUpdateByPass",
+                    detail = $"General error in update bypass data",
+                    message = ex.Message
+                });
+            }
         }
 
         public async Task<Result<ServiceComUser>> GetUserDataWithLoginAsync(string login, string pass)
@@ -556,50 +588,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         {
             var result = new Result<List<string>>(new List<string>());
 
-            //using (MySqlConnection conn = new MySqlConnection(_conn))
-            //{
-            //    try
-            //    {
-            //        var filtro = GiveMeEntityFilter(entitySearch);
-            //        conn.Open();
-            //        using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetContact, conn))
-            //        {
-            //            AddCommonParameters(entitySearch.idUser, command, "P_FILTER", filtro);
-            //            AddListSearchParameters(1, 1, "ts", "desc", command);
-
-            //            using (var reader = await command.ExecuteReaderAsync())
-            //            {
-            //                TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
-            //                if (EvaluateErrorCommand(result.errors, command) == 0)
-            //                    while (reader.Read())
-            //                    {
-            //                        var rawResult = reader.GetValue(0).ToString();
-            //                        if (!string.IsNullOrEmpty(rawResult))
-            //                        {
-            //                            var lista = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
-            //                            result.data = lista?.FirstOrDefault();
-            //                        }
-            //                        else
-            //                        {
-            //                            TraceOutputMessage(result.errors, "2004", "MySql get and empty string with this search");
-
-            //                        }
-            //                    }
-            //            }
-            //        }
-
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        TraceMessage(result.errors, ex);
-            //    }
-            //}
-
             return new List<string>();
         }
 
         public async Task<Result<ByPassModel>> PostByPassAsync(ByPassModel byPass)
-            => await _repository.PostByPassAsync(byPass);
+        {
+            return await _repository.PostByPassAsync(byPass);
+        }
 
         public async Task<Result<ByPassModel>> GetByPassAsync(string nameService)
             => await _repository.GetByPassAsync(nameService);
@@ -607,18 +602,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         public async Task<Result<bool>> RemoveByPassAsync(ByPassModel byPass)
             => await _repository.RemoveByPassAsync(byPass);
 
-
         public async Task<Result<string>> GetUserUtilsActualToServiceAsync(string idUser, string nameService)
         {
             var result = new Result<string>(null);
-            var resultListApps = await GetUserUtilsAsync(idUser, true);
-            result.errors = resultListApps.errors;
-            result.infos = resultListApps.infos;
-            if (result.errors?.Count == 0)
+            var byPassResult = await GetByPassAsync(nameService);
+            if (byPassResult.errors?.Count == 0 && byPassResult.data?.Url != null)
             {
-                var serviceToActualice = resultListApps.data.FirstOrDefault(
-                    x => x.descHerramienta.ToLowerInvariant().Equals(nameService.ToLowerInvariant()));
-                var newUrl = serviceToActualice?.url;
+                var newUrl = byPassResult.data?.Url;
                 Result<string> temporalLinkResult = await GeUserUtilFinalLink(newUrl);
                 result.data = temporalLinkResult.data;
             }
@@ -635,7 +625,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             var result = new Result<string>(null);
             try
             {
-                
                 using (var response = await _clientMinihub.GetAsync(newUrl))
                 {
                     if (response.IsSuccessStatusCode)
@@ -687,6 +676,5 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         {
             throw new NotImplementedException();
         }
-
     }
 }
