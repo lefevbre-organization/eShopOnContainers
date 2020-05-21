@@ -10,7 +10,8 @@
   ],
   "urlFetchWhitelist": [
     "https://lexbox-test-apigwlex.lefebvre.es/api/v1/mysql/LexonMySql/",
-    "https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Lexon/"
+    "https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Lexon/",
+    "https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail/"
   ],
  "addOns": {
   "common": {
@@ -19,7 +20,7 @@
   },
    "gmail": {
      "openLinkUrlPrefixes": [
-       "https://localhost:3000/",
+       "https://lexbox-test-webaddonlexon.lefebvre.es/",
        "https://mail.google.com/"
      ], 
      "contextualTriggers": [{
