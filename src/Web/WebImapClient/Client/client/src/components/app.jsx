@@ -164,7 +164,7 @@ class App extends Component {
   }
 
   sendMessagePutUser(user) {
-    const { selectedMessages } = this.props.messages;
+    const { selectedMessages, selected } = this.props.messages;
     console.log('messages ->', this.props.messages);
     window.dispatchEvent(
       new CustomEvent('PutUserFromLexonConnector', {
@@ -181,6 +181,10 @@ class App extends Component {
         },
       })
     );
+
+    if (selectedMessages.length != selected.length) {
+      window.dispatchEvent(new CustomEvent('LoadingMessage'));
+    }
   }
 
   handleGetUserFromLexonConnector() {

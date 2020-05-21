@@ -13,7 +13,7 @@ import Notification from './components/notification/notification';
 import {
   getCompanies,
   getUser,
-  addClassification
+  addClassification,
 } from './services/services-lexon';
 
 class Main extends Component {
@@ -32,7 +32,7 @@ class Main extends Component {
       bbdd: null,
       idCompany: null,
       provider: null,
-      account: null
+      account: null,
     };
 
     this.handleSentMessage = this.handleSentMessage.bind(this);
@@ -46,6 +46,9 @@ class Main extends Component {
     this.toggleNotification = this.toggleNotification.bind(this);
     this.handleOpenComposer = this.handleOpenComposer.bind(this);
     this.handleCloseComposer = this.handleCloseComposer.bind(this);
+
+    this.onShowLoader = this.onShowLoader.bind(this);
+    this.onHideLoader = this.onHideLoader.bind(this);
   }
 
   componentDidMount() {
@@ -59,9 +62,10 @@ class Main extends Component {
     );
     window.addEventListener('OpenComposer', this.handleOpenComposer);
     window.addEventListener('CloseComposer', this.handleCloseComposer);
+    window.addEventListener('LoadingMessage', this.onShowLoader);
+    window.addEventListener('LoadedMessage', this.onHideLoader);
 
     this.sendMessageGetUser();
-  
   }
 
   // componentDidUpdate(prevProps) {
@@ -76,6 +80,9 @@ class Main extends Component {
   // }
 
   componentWillUnmount() {
+    window.removeEventListener('LoadingMessage', this.onShowLoader);
+    window.removeEventListener('LoadedMessage', this.onHideLoader);
+
     window.removeEventListener('SentMessage', this.handleSentMessage);
     window.removeEventListener('Checkclick', this.handleKeyPress);
     window.removeEventListener('CheckAllclick', this.handleCheckAllclick);
@@ -89,13 +96,21 @@ class Main extends Component {
   }
 
   handleOpenComposer() {
-    console.log('handleOpenComposer');
     this.props.setComposerOpen(true);
   }
 
   handleCloseComposer() {
-    console.log('handleCloseComposer');
     this.props.setComposerOpen(false);
+  }
+
+  onShowLoader() {
+    console.log('ShowSpinner');
+    this.props.setShowSpinner(true);
+  }
+
+  onHideLoader() {
+    console.log('HideSpinner');
+    this.props.setShowSpinner(false);
   }
 
   async handleResetList(event) {
@@ -139,8 +154,8 @@ class Main extends Component {
         {
           id: idEmail,
           subject,
-          sentDateTime: date
-        }
+          sentDateTime: date,
+        },
       ],
       idCaseFile,
       1
@@ -150,7 +165,7 @@ class Main extends Component {
     this.props.setCaseFile({
       casefile: null,
       bbdd: null,
-      company: null
+      company: null,
     });
   }
 
@@ -159,13 +174,13 @@ class Main extends Component {
 
     event.detail.chkselected
       ? this.props.addMessage({
-        id: event.detail.extMessageId,
-        //extMessageId: event.detail.extMessageId,
-        subject: event.detail.subject,
-        folder: event.detail.folder,
-        sentDateTime: event.detail.sentDateTime,
-        raw: event.detail.raw
-      })
+          id: event.detail.extMessageId,
+          //extMessageId: event.detail.extMessageId,
+          subject: event.detail.subject,
+          folder: event.detail.folder,
+          sentDateTime: event.detail.sentDateTime,
+          raw: event.detail.raw,
+        })
       : this.props.deleteMessage(event.detail.extMessageId);
   }
 
@@ -189,14 +204,14 @@ class Main extends Component {
     console.log('HandleEvent Client -> Lexon - PutUserFromLexonConnector');
     console.log(event.detail);
 
-    if(window.addonData) {
+    if (window.addonData) {
       const addonData = window.addonData;
       this.setState({
-        addonData: addonData, 
-        bbdd: { 
-          idCompany: addonData.idCompany, 
-          bbdd: addonData.bbdd 
-        } 
+        addonData: addonData,
+        bbdd: {
+          idCompany: addonData.idCompany,
+          bbdd: addonData.bbdd,
+        },
       });
     }
 
@@ -207,7 +222,7 @@ class Main extends Component {
       bbdd,
       idCompany,
       provider = 'DEFAULT',
-      account = 'default@default.def'
+      account = 'default@default.def',
     } = event.detail;
     if (idCaseFile != null && idCaseFile !== undefined) {
       this.setState({
@@ -215,7 +230,7 @@ class Main extends Component {
         bbdd,
         idCompany,
         provider,
-        account
+        account,
       });
     }
 
@@ -223,22 +238,22 @@ class Main extends Component {
       this.props.setInitialBBDD(bbdd);
     }
 
-    selectedMessages.forEach(message => {
+    selectedMessages.forEach((message) => {
       this.props.addMessage(message);
     });
 
     getUser(user)
-      .then(result => {
+      .then((result) => {
         const newUser = Object.assign({}, result.user, {
           account,
           provider,
-          config: result.config
+          config: result.config,
         });
         this.setState({ user: newUser });
         getCompanies(newUser)
-          .then(result => {
+          .then((result) => {
             if (Array.isArray(result.errors)) {
-              result.errors.forEach(error =>
+              result.errors.forEach((error) =>
                 this.props.addError(JSON.stringify(error))
               );
             } else {
@@ -247,20 +262,20 @@ class Main extends Component {
 
             this.setState({
               isLoading: false,
-              companies: result.companies || []
+              companies: result.companies || [],
             });
             if (Array.isArray(result.errors)) {
-              result.errors.forEach(error =>
+              result.errors.forEach((error) =>
                 this.props.addError(JSON.stringify(error))
               );
             } else {
               this.props.addError(JSON.stringify(result.errors));
             }
           })
-          .catch(errors => {
+          .catch((errors) => {
             this.setState({ isLoading: false });
             if (Array.isArray(errors)) {
-              errors.forEach(error =>
+              errors.forEach((error) =>
                 this.props.addError(JSON.stringify(error))
               );
             } else {
@@ -269,10 +284,10 @@ class Main extends Component {
             console.log('errors ->', this.props.errors);
           });
       })
-      .catch(errors => {
+      .catch((errors) => {
         this.setState({ isLoading: false });
         if (Array.isArray(errors)) {
-          errors.forEach(error => this.props.addError(JSON.stringify(error)));
+          errors.forEach((error) => this.props.addError(JSON.stringify(error)));
         } else {
           this.props.addError(JSON.stringify(errors));
         }
@@ -281,10 +296,10 @@ class Main extends Component {
   }
 
   toggleNotification(message, error = false) {
-    this.setState(state => ({
+    this.setState((state) => ({
       showNotification: !state.showNotification,
       messageNotification: message,
-      errorNotification: error
+      errorNotification: error,
     }));
   }
 
@@ -321,7 +336,7 @@ class Main extends Component {
       errorNotification,
       idCaseFile,
       bbdd,
-      idCompany
+      idCompany,
     } = this.state;
     const { errors } = this.props;
 
@@ -358,24 +373,26 @@ class Main extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     selectedMessages: state.email.selectedMessages,
-    errors: state.applicationReducer.errors
+    errors: state.applicationReducer.errors,
   };
 };
 
-const mapDispatchToProps = dispatch => ({
-  setInitialBBDD: item => dispatch(SELECTION_ACTIONS.setInitialBBDD(item)),
-  addMessage: item => dispatch(ACTIONS.addMessage(item)),
-  deleteMessage: id => dispatch(ACTIONS.deleteMessage(id)),
-  addListMessages: listMessages =>
+const mapDispatchToProps = (dispatch) => ({
+  setInitialBBDD: (item) => dispatch(SELECTION_ACTIONS.setInitialBBDD(item)),
+  addMessage: (item) => dispatch(ACTIONS.addMessage(item)),
+  deleteMessage: (id) => dispatch(ACTIONS.deleteMessage(id)),
+  addListMessages: (listMessages) =>
     dispatch(ACTIONS.addListMessages(listMessages)),
-  deleteListMessages: listMessages =>
+  deleteListMessages: (listMessages) =>
     dispatch(ACTIONS.deleteListMessages(listMessages)),
   resetListMessages: () => dispatch(ACTIONS.resetListMessages()),
-  addError: error => dispatch(APPLICATION_ACTIONS.addError(error)),
-  setComposerOpen: open => dispatch(APPLICATION_ACTIONS.setComposerOpen(open))
+  addError: (error) => dispatch(APPLICATION_ACTIONS.addError(error)),
+  setComposerOpen: (open) =>
+    dispatch(APPLICATION_ACTIONS.setComposerOpen(open)),
+  setShowSpinner: (show) => dispatch(APPLICATION_ACTIONS.setShowSpinner(show)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main);

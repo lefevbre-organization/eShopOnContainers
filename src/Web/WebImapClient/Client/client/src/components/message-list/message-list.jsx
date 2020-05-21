@@ -268,7 +268,14 @@ class MessageList extends Component {
           debugger;
           for (let i = 0; i < msgs.length; i++) {
             const msg = msgs[i];
-            debugger;
+
+            // update redux message with raw data
+            this.props.messageSelected(
+              [{ ...message, raw: msg.raw }],
+              true,
+              this.props.selectedFolder.fullName
+            );
+
             window.dispatchEvent(
               new CustomEvent('Checkclick', {
                 detail: {
@@ -305,6 +312,13 @@ class MessageList extends Component {
           this.props.selectedFolder,
           message
         ).then((response) => {
+          // update redux message with raw data
+          this.props.messageSelected(
+            [{ ...message, raw: response.raw }],
+            checked,
+            this.props.selectedFolder.fullName
+          );
+
           // Send message to connectors
           window.dispatchEvent(
             new CustomEvent('Checkclick', {
