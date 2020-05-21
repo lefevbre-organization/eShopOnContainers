@@ -10,7 +10,7 @@ import {
   addedDiff,
   deletedDiff,
   updatedDiff,
-  detailedDiff
+  detailedDiff,
 } from 'deep-object-diff';
 import Cookies from 'js-cookie';
 import Header from '../header/Header';
@@ -31,7 +31,7 @@ import {
   addInitialPageToken,
   clearPageTokens,
   setSearchQuery,
-  deleteMessage
+  deleteMessage,
 } from '../content/message-list/actions/message-list.actions';
 
 import { selectLabel } from '../sidebar/sidebar.actions';
@@ -46,7 +46,7 @@ import 'react-reflex/styles.css';
 import {
   addOrUpdateAccount,
   resetDefaultAccount,
-  getUser
+  getUser,
 } from '../../api/accounts';
 import { PROVIDER } from '../../constants';
 import { getMessageListWithRFC } from '../../api/';
@@ -80,11 +80,11 @@ export class Main extends Component {
       showNotification: false,
       messageNotification: '',
       leftSideBar: {
-        collapsed: false
+        collapsed: false,
       },
       sidebarComponent: (
         <img border='0' alt='Lefebvre' src='/assets/img/lexon-fake.png'></img>
-      )
+      ),
     };
 
     this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
@@ -106,8 +106,8 @@ export class Main extends Component {
     const toggleCollapsed = !this.state.leftSideBar.collapsed;
     this.setState({
       leftSideBar: {
-        collapsed: toggleCollapsed
-      }
+        collapsed: toggleCollapsed,
+      },
     });
   }
 
@@ -119,23 +119,30 @@ export class Main extends Component {
 
   sendMessagePutUser(user) {
     const { selectedMessages, googleUser } = this.props;
-    console.log("*******************");
+    console.log('*******************');
     console.log('Account:' + googleUser.getBasicProfile().getEmail());
-    console.log("*******************");
+    console.log('*******************');
     window.dispatchEvent(
       new CustomEvent('PutUserFromLexonConnector', {
         detail: {
           user,
-          selectedMessages: selectedMessages,
+          selectedMessages: selectedMessages.filter((msg) => msg.raw),
           idCaseFile: this.props.lexon.idCaseFile,
           bbdd: this.props.lexon.bbdd,
           idCompany: this.props.lexon.idCompany,
           provider: this.props.lexon.provider,
           //account: googleUser.Qt.zu
-          account: googleUser.getBasicProfile().getEmail()
-        }
+          account: googleUser.getBasicProfile().getEmail(),
+        },
       })
     );
+
+    for (let i = 0; i < selectedMessages.length; i++) {
+      if (!selectedMessages[i].raw) {
+        window.dispatchEvent(new CustomEvent('LoadingMessage'));
+        break;
+      }
+    }
   }
 
   handleGetUserFromLexonConnector() {
@@ -154,7 +161,7 @@ export class Main extends Component {
     this.setState({
       sidebarComponent: (
         <CalendarComponent sidebarDocked={this.onSetSidebarDocked} />
-      )
+      ),
     });
     this.setState({ sidebarDocked: open });
   }
@@ -163,14 +170,17 @@ export class Main extends Component {
     this.setState({
       sidebarComponent: (
         <LexonComponent sidebarDocked={this.onSetSidebarDocked} />
-      )
+      ),
     });
     this.setState({ sidebarDocked: open });
   }
 
   onSetSidebarOpenQMemento(open) {
     let lexon = (
-      <img border='0' alt='Lefebvre' src='/assets/img/lexon-fake-null.png'></img>
+      <img
+        border='0'
+        alt='Lefebvre'
+        src='/assets/img/lexon-fake-null.png'></img>
     );
     this.setState({ sidebarComponent: lexon });
     this.setState({ sidebarDocked: open });
@@ -178,7 +188,10 @@ export class Main extends Component {
 
   onSetSidebarOpenCompliance(open) {
     let lexon = (
-      <img border='0' alt='Lefebvre' src='/assets/img/lexon-fake-null.png'></img>
+      <img
+        border='0'
+        alt='Lefebvre'
+        src='/assets/img/lexon-fake-null.png'></img>
     );
     this.setState({ sidebarComponent: lexon });
     this.setState({ sidebarDocked: open });
@@ -186,7 +199,10 @@ export class Main extends Component {
 
   onSetSidebarOpenDatabase(open) {
     let lexon = (
-      <img border='0' alt='Lefebvre' src='/assets/img/lexon-fake-null.png'></img>
+      <img
+        border='0'
+        alt='Lefebvre'
+        src='/assets/img/lexon-fake-null.png'></img>
     );
     this.setState({ sidebarComponent: lexon });
     this.setState({ sidebarDocked: open });
@@ -253,14 +269,14 @@ export class Main extends Component {
 
     this.getLabelList();
 
-    window.addEventListener('toggleClock', function(event) {
+    window.addEventListener('toggleClock', function (event) {
       alert(event.detail.name);
     });
     window.addEventListener(
       'GetUserFromLexonConnector',
       this.handleGetUserFromLexonConnector
     );
-    window.addEventListener('RemoveSelectedDocument', event => {
+    window.addEventListener('RemoveSelectedDocument', (event) => {
       this.props.deleteMessage(event.detail.id);
       dispatchEvent(
         new CustomEvent('Checkclick', {
@@ -273,8 +289,8 @@ export class Main extends Component {
             folder: event.detail.folder,
             provider: 'GOOGLE',
             account: this.props.lexon.account,
-            chkselected: false
-          }
+            chkselected: false,
+          },
         })
       );
     });
@@ -288,7 +304,7 @@ export class Main extends Component {
       this.setState({
         googleDown: true,
         showNotification: true,
-        messageNotification: 'El proveedor de Google está caido'
+        messageNotification: 'El proveedor de Google está caido',
       });
       return;
     }
@@ -312,7 +328,7 @@ export class Main extends Component {
       console.log(user);
 
       let sign = '';
-      const account = user.data.accounts.filter(a => a.email === email);
+      const account = user.data.accounts.filter((a) => a.email === email);
       if (account.length >= 1) {
         sign = account[0].sign;
       }
@@ -325,11 +341,11 @@ export class Main extends Component {
         sign,
         defaultAccount: true,
         configAccount: null,
-        mails: []
+        mails: [],
       };
-      addOrUpdateAccount(userId, newAccount).then(result => {
+      addOrUpdateAccount(userId, newAccount).then((result) => {
         Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, {
-          domain: 'lefebvre.es'
+          domain: 'lefebvre.es',
         });
         this.props.setGUID(GUID);
         this.props.setSign(sign);
@@ -345,7 +361,7 @@ export class Main extends Component {
             idEmail.indexOf('<') !== -1 &&
             idEmail.indexOf('>') !== -1
           ) {
-            getMessageListWithRFC(idEmail).then(response => {
+            getMessageListWithRFC(idEmail).then((response) => {
               if (
                 response &&
                 response.result &&
@@ -364,7 +380,7 @@ export class Main extends Component {
                 this.setState({
                   googleDown: true,
                   showNotification: true,
-                  messageNotification: 'El mensaje no está en el servidor'
+                  messageNotification: 'El mensaje no está en el servidor',
                 });
                 return;
               }
@@ -405,15 +421,15 @@ export class Main extends Component {
 
     if (prevProps.signedInUser !== this.props.signedInUser) {
       this.setState({
-        signedInUser: this.props.signedInUser
+        signedInUser: this.props.signedInUser,
       });
     }
 
     const { labels } = this.props.labelsResult;
     const { pathname } = this.props.location;
-    const selectedLabel = labels.find(el => el.selected);
+    const selectedLabel = labels.find((el) => el.selected);
     const labelPathMatch = labels.find(
-      el => el.id.toLowerCase() === pathname.slice(1)
+      (el) => el.id.toLowerCase() === pathname.slice(1)
     );
     if (!selectedLabel) {
       if (labelPathMatch && this.props.searchQuery === '') {
@@ -435,7 +451,7 @@ export class Main extends Component {
     this.getLabelList();
     this.renderLabelRoutes();
     const { labels } = this.props.labelsResult;
-    const selectedLabel = labels.find(el => el.selected);
+    const selectedLabel = labels.find((el) => el.selected);
     this.getLabelMessages({ labelIds: [selectedLabel.id] });
   }
 
@@ -444,7 +460,7 @@ export class Main extends Component {
     const currentToken =
       searchParam.indexOf('?') === 0 ? searchParam.slice(1) : '';
     this.props.setPageTokens({
-      prevPageToken: currentToken
+      prevPageToken: currentToken,
     });
     this.props.history.push(token);
   }
@@ -488,12 +504,12 @@ export class Main extends Component {
 
   renderLabelRoutes() {
     const { leftSideBar } = this.state;
-    return this.props.labelsResult.labels.map(el => (
+    return this.props.labelsResult.labels.map((el) => (
       <Route
         key={el.id + '_route'}
         exact
         path={'/' + el.id}
-        render={props => {
+        render={(props) => {
           const that = this;
           return (
             <MessageList
@@ -511,7 +527,7 @@ export class Main extends Component {
               }}
               addInitialPageToken={this.addInitialPageToken}
               parentLabel={that.props.labelsResult.labels.find(
-                el => el.id === props.match.path.slice(1)
+                (el) => el.id === props.match.path.slice(1)
               )}
               searchQuery={this.props.searchQuery}
               loadLabelMessageSingle={this.loadLabelMessageSingle}
@@ -534,11 +550,13 @@ export class Main extends Component {
     console.log('IN ... onSignout');
     const { userId, token } = this.props.lexon;
     resetDefaultAccount(userId)
-      .then(result => {
+      .then((result) => {
         signOut();
       })
-      .then(_ => {
-        const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}/` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+      .then((_) => {
+        const urlRedirect = token
+          ? `${window.URL_SELECT_ACCOUNT}/access/${token}/`
+          : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
         window.open(urlRedirect, '_self');
       });
 
@@ -550,11 +568,13 @@ export class Main extends Component {
     console.log('IN ... onSignoutDisconnect');
     const { userId, token } = this.props.lexon;
     resetDefaultAccount(userId)
-      .then(result => {
+      .then((result) => {
         signOutDisconnect();
       })
-      .then(_ => {
-        const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}/` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+      .then((_) => {
+        const urlRedirect = token
+          ? `${window.URL_SELECT_ACCOUNT}/access/${token}/`
+          : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
         window.open(urlRedirect, '_self');
       });
 
@@ -582,7 +602,7 @@ export class Main extends Component {
             zIndex: 100,
             overflowY: 'hidden',
             WebkitTransition: '-webkit-transform 0s',
-            willChange: 'transform'
+            willChange: 'transform',
           },
           content: {
             position: 'absolute',
@@ -593,7 +613,7 @@ export class Main extends Component {
             overflowY: 'hidden',
             overflowX: 'hidden',
             WebkitOverflowScrolling: 'touch',
-            transition: 'left .0s ease-out, right .0s ease-out'
+            transition: 'left .0s ease-out, right .0s ease-out',
           },
           overlay: {
             zIndex: 1,
@@ -605,14 +625,14 @@ export class Main extends Component {
             opacity: 0,
             visibility: 'hidden',
             //transition: "opacity .3s ease-out, visibility .0s ease-out",
-            backgroundColor: 'rgba(0,0,0,.3)'
+            backgroundColor: 'rgba(0,0,0,.3)',
           },
           dragHandle: {
             zIndex: 1,
             position: 'fixed',
             top: 0,
-            bottom: 0
-          }
+            bottom: 0,
+          },
         }}>
         <Fragment>
           <Header
@@ -669,14 +689,13 @@ export class Main extends Component {
             </article>
 
             <div className='productpanel'>
-                        {/*<span className="productsbutton">
+              {/*<span className="productsbutton">
                  <div onClick={() => this.onSetSidebarOpenCalendar(true)}>               
                   <img
-                    className="imgproduct"
-                    border="0"
-                    alt="Calendar"
-                    src="/assets/img/icon-calendar.png"
-                  ></img>
+                    className='imgproduct'
+                    border='0'
+                    alt='Calendar'
+                    src='/assets/img/icon-calendar.png'></img>
                 </div>
               </span>*/}
               <span className='productsbutton'>
@@ -698,8 +717,8 @@ export class Main extends Component {
                   </div>
                 )}
               </span>
-              
-             {/* <span className="productsbutton">
+
+              {/* <span className="productsbutton">
                  <div onClick={() => this.onSetSidebarOpenQMemento(true)}> 
                 <div>
                   <img
@@ -746,7 +765,7 @@ export class Main extends Component {
     if (this.state.googleDown) {
       const { showNotification, messageNotification } = this.state;
       const { token } = this.props.lexon;
-      const baseUrl = window.URL_MF_GOOGLE.replace("/user", "");
+      const baseUrl = window.URL_MF_GOOGLE.replace('/user', '');
 
       return (
         <div className='d-flex h-100 align-items-center justify-content-center'>
@@ -754,7 +773,12 @@ export class Main extends Component {
             initialModalState={showNotification}
             toggleNotification={() => {
               messageNotification === 'El mensaje no está en el servidor'
-                ? ((token) ? window.open(`${baseUrl}/access/${token}/?prov=GO0`, "_self") : window.open(`${window.URL_MF_GOOGLE}/GO0${this.props.lexon.userId}`, '_self'))
+                ? token
+                  ? window.open(`${baseUrl}/access/${token}/?prov=GO0`, '_self')
+                  : window.open(
+                      `${window.URL_MF_GOOGLE}/GO0${this.props.lexon.userId}`,
+                      '_self'
+                    )
                 : this.onSignoutDisconnect();
             }}
             message={messageNotification}
@@ -766,16 +790,16 @@ export class Main extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   labelsResult: state.labelsResult,
   messagesResult: state.messagesResult,
   pageTokens: state.pageTokens,
   searchQuery: state.searchQuery,
   lexon: state.lexon,
-  selectedMessages: state.messageList.selectedMessages
+  selectedMessages: state.messageList.selectedMessages,
 });
 
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       getLabels,
@@ -789,7 +813,7 @@ const mapDispatchToProps = dispatch =>
       setSearchQuery,
       deleteMessage,
       setGUID: ACTIONS.setGUID,
-      setSign: ACTIONS.setSign
+      setSign: ACTIONS.setSign,
     },
     dispatch
   );

@@ -6,20 +6,20 @@ const applicationReducer = (state = INITIAL_STATE.application, action) => {
     case ACTIONS.Types.ADD_ERROR: {
       return {
         ...state,
-        errors: [...state.errors, action.payload]
+        errors: [...state.errors, action.payload],
       };
     }
     case ACTIONS.Types.REMOVE_ERRORS: {
       return {
         ...state,
-        errors: []
+        errors: [],
       };
     }
 
     case ACTIONS.Types.SET_CASEFILE: {
       return {
         ...state,
-        idCaseFile: action.payload
+        idCaseFile: action.payload,
       };
     }
 
@@ -27,15 +27,21 @@ const applicationReducer = (state = INITIAL_STATE.application, action) => {
       return {
         ...state,
         config: {
-          ...action.payload
-        }
+          ...action.payload,
+        },
       };
     }
 
     case ACTIONS.Types.SET_COMPOSER_OPEN: {
       return {
         ...state,
-        isComposerOpen: action.payload
+        isComposerOpen: action.payload,
+      };
+    }
+    case ACTIONS.Types.SET_SHOW_SPINNER: {
+      return {
+        ...state,
+        showSpinner: action.payload,
       };
     }
     default:

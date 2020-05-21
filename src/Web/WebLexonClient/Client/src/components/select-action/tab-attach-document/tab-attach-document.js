@@ -8,37 +8,16 @@ import ModalAttachDocuments from '../../modal-attach-documents/modal-attach-docu
 import ACTIONS from '../../../actions/documentsAction';
 
 class TabAttachDocument extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      loading: false
-    };
-    this.onShowLoader = this.onShowLoader.bind(this);
-    this.onHideLoader = this.onHideLoader.bind(this);
-  }
-
   componentDidMount() {}
 
-  componentWillUnmount() {
-    window.removeEventListener('LoadingMessage', this.onShowLoader);
-    window.removeEventListener('LoadedMessage', this.onHideLoader);
-  }
+  componentWillUnmount() {}
 
   componentDidUpdate(prevProps) {}
-
-  onShowLoader() {
-    this.setState({ loading: true });
-  }
-
-  onHideLoader() {
-    this.setState({ loading: false });
-  }
 
   render() {
     const { user, toggleNotification } = this.props;
 
-    if (this.state.loading === true) {
+    if (this.props.showSpinner === true) {
       return <Spinner />;
     }
 
@@ -70,18 +49,18 @@ class TabAttachDocument extends Component {
 }
 
 TabAttachDocument.propTypes = {
-  user: PropTypes.string.isRequired
+  user: PropTypes.string.isRequired,
 };
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   toggleModalAttachDocuments: () =>
-    dispatch(ACTIONS.toggleModalAttachDocuments())
+    dispatch(ACTIONS.toggleModalAttachDocuments()),
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     selectedMessages: state.email.selectedMessages,
-    companySelected: state.selections.companySelected
+    companySelected: state.selections.companySelected,
   };
 };
 
