@@ -211,7 +211,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - ConnectionString=${ESHOP_MONGO_DB:-mongodb://nosql.data}
+      - ConnectionString=${ELEF_MONGO_CONN:-mongodb://nosql.data}
       - Database=CentinelaApiDB
 #      - CentinelaUrl=https://compliance-api.affin.es/api/secure/conectamail
 #      - CentinelaLogin=centinelaAPI
@@ -232,7 +232,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
-      - ConnectionString=${ESHOP_MONGO_DB:-mongodb://nosql.data}
+      - ConnectionString=${ELEF_MONGO_CONN:-mongodb://nosql.data}
       - Database=UserUtilsApiDB
       - MinihubUrl=http://led-pre-servicehub/Herramientas/Get
       - OnlineUrl=https://herculesppd.lefebvre.es/webclient46/ws
