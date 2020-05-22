@@ -22,6 +22,8 @@ inf:
       database: LexonApiDb
     centinela:
       database: CentinelaApiDb    
+    signature:
+      database: signature    
 
   # redis:                    # inf.redis defines the redis' connection strings
   #   basket:     

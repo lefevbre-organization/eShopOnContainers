@@ -63,8 +63,19 @@
       ],
       "UpstreamPathTemplate": "/api/{version}/cen/{everything}",
       "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE" ]
-    }
-
+    }//,
+    //{
+    //  "DownstreamPathTemplate": "/api/{version}/{everything}",
+    //  "DownstreamScheme": "http",
+    //  "DownstreamHostAndPorts": [
+    //    {
+    //      "Host": "signature.api",
+    //      "Port": 80
+    //    }
+    //  ],
+    //  "UpstreamPathTemplate": "/api/{version}/sign/{everything}",
+    //  "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE", "PATCH" ]
+    //}
   ],
   "GlobalConfiguration": {
     "RequestIdKey": "OcRequestId",

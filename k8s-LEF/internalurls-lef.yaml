@@ -12,6 +12,8 @@ data:
   lexonmysql__hc: http://lexon.mysql.api/hc
   account: http://account.api
   account__hc: http://account.api/hc
+  signature: http://signature.api
+  signature__hc: http://signature.api/hc  
   userutils: http://userutils.api
   userutils__hc: http://userutils.api/hc
   centinela: http://centinela.api
@@ -20,8 +22,10 @@ data:
   webgoogleclient__hc: http://webgoogleclient/hc
   webofficeclient__hc: http://webofficeclient/hc
   webimapclient__hc: http://webimapclient/hc
+  websignatureclient__hc: http://websignatureclient/hc  
   weblexonclient__hc: http://weblexonclient/hc
 # API GWs
   apigwacc: http://ocelotapigw-acc
   apigwlex: http://ocelotapigw-lex
   apigwcen: http://ocelotapigw-cen
+  apigwsig: http://ocelotapigw-sig

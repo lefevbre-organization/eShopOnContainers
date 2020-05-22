@@ -371,6 +371,68 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
+  name: signatures
+spec:
+  paused: true
+  template:
+    metadata:
+      labels:
+        app: elefebvre
+        component: signatures
+    spec:
+      containers:
+      - name: signatures
+        image: elefebvreoncotainers/signatures.api
+        imagePullPolicy: Always
+        env:
+        - name: PATH_BASE
+          value: /signatures-api
+        - name: ConnectionString
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: signature__ConnectionString
+        - name: EventBusConnection
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EventBusConnection
+        - name: EventBusUserName
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EventBusUserName
+        - name: EventBusPassword
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EventBusPassword
+        - name: AzureServiceBusEnabled
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__UseAzureServiceBus
+        - name: ApplicationInsights__InstrumentationKey
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__InstrumentationKey
+        - name: UseLoadTest
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EnableLoadTest
+        - name: OrchestratorType
+          value: 'K8S'           
+        ports:
+        - containerPort: 80
+        
+      imagePullSecrets:
+      - name: registry-key
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
   name: webportalclient
 spec:
   paused: true
@@ -994,6 +1056,48 @@ spec:
            configMapKeyRef:
              name: internalurls
              key: userutils__hc 
+        - name: ApplicationInsights__InstrumentationKey
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__InstrumentationKey
+        - name: UseLoadTest
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EnableLoadTest
+        - name: OrchestratorType
+          value: 'K8S'       
+        ports:
+        - containerPort: 80
+        
+      imagePullSecrets:
+      - name: registry-key
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: websignatureclient
+spec:
+  paused: true
+  template:
+    metadata:
+      labels:
+        app: elefebvre
+        component: websignatureclient
+    spec:
+      containers:
+      - name: websignatureclient
+        image: elefebvreoncotainers/websignatureclient
+        imagePullPolicy: Always
+        env:
+        - name: PATH_BASE
+          value: /websignatureclient
+        - name: SignatureApiUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: signatureapi__hc
         - name: ApplicationInsights__InstrumentationKey
           valueFrom:
            configMapKeyRef:

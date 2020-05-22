@@ -51,11 +51,11 @@ namespace Lexon.MySql.Extensions
 
             hcBuilder
                 .AddCheck("self", () => HealthCheckResult.Healthy())
-                .AddCheck(
-                    name: "MySqlDatabase",
-                    new MySqlConnectionHealthCheck(configuration["ConnectionString"]),
-                    tags: new string[] { "mysql" });
-
+                //.AddCheck(
+                //    name: "MySqlDatabase",
+                //    new MySqlConnectionHealthCheck(configuration["ConnectionString"]),
+                //    tags: new string[] { "mysql" });
+                ;
             return services;
         }
 

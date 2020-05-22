@@ -9,9 +9,9 @@ Param(
     [parameter(Mandatory=$false)][string]$configFile,
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
-    [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "webloginaddonlexon", "webaddonlexon", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "webstatus", "webaddonlexon"),
+    [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webloginaddonlexon", "webaddonlexon", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw", "webstatus", "webaddonlexon"),
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
-    [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "webloginaddonlexon", "webaddonlexon", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "ocelotapigw", "webstatuslef", "webaddonlexon"),
+    [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webloginaddonlexon", "webaddonlexon", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "ocelotapigw", "webstatuslef", "webaddonlexon"),
     [parameter(Mandatory=$false)][string]$imageTag="linux-dev",
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
@@ -205,10 +205,12 @@ if ($deployKubernetes){
     ExecKube -cmd 'set image deployments/weblexonclient weblexonclient=${registryPath}${dockerOrg}/weblexonclient:$imageTag'
     ExecKube -cmd 'set image deployments/webloginaddonlexon webloginaddonlexon=${registryPath}${dockerOrg}/webloginaddonlexon:$imageTag'
     ExecKube -cmd 'set image deployments/webimapclient webimapclient=${registryPath}${dockerOrg}/webimapclient:$imageTag'
+	ExecKube -cmd 'set image deployments/websignatureclient websignatureclient=${registryPath}${dockerOrg}/websignatureclient:$imageTag'
     ExecKube -cmd 'set image deployments/webstatus webstatus=${registryPath}${dockerOrg}/webstatus:$imageTag'
 
     ExecKube -cmd 'set image deployments/apigwlex apigwlex=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
     ExecKube -cmd 'set image deployments/apigwacc apigwacc=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
+	ExecKube -cmd 'set image deployments/apigwsig apigwsig=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
 
     Write-Host "Execute rollout..." -ForegroundColor Yellow
     ExecKube -cmd 'rollout resume deployments/lexon'
@@ -220,9 +222,11 @@ if ($deployKubernetes){
     ExecKube -cmd 'rollout resume deployments/weblexonclient'
     ExecKube -cmd 'rollout resume deployments/webloginaddonlexon'
     ExecKube -cmd 'rollout resume deployments/webimapclient'
+	ExecKube -cmd 'rollout resume deployments/websignatureclient'
     ExecKube -cmd 'rollout resume deployments/webstatus'
     ExecKube -cmd 'rollout resume deployments/apigwlex'
     ExecKube -cmd 'rollout resume deployments/apigwacc'
+	ExecKube -cmd 'rollout resume deployments/apigwsig'
 
     Write-Host "Adding/Updating ingress resource from ingress-lef.yalm..." -ForegroundColor Yellow
     ExecKube -cmd 'apply -f ingress-lef.yaml'

@@ -25,6 +25,7 @@ COPY src/Services/Lexon/Lexon.API/Lexon.API.csproj src/Services/Lexon/Lexon.API/
 COPY src/Services/Lexon/Lexon.MySql/Lexon.MySql.csproj src/Services/Lexon/Lexon.MySql/
 COPY src/Services/UserUtils/UserUtils.API/UserUtils.API.csproj src/Services/UserUtils/UserUtils.API/
 COPY src/Services/Centinela/Centinela.API/Centinela.API.csproj src/Services/Centinela/Centinela.API/
+COPY src/Services/Signature/Signature.API/Signature.API.csproj src/Services/Signature/Signature.API/
 COPY src/Web/WebGoogleClient/WebGoogleClient.csproj src/Web/WebGoogleClient/
 COPY src/Web/WebLexonClient/WebLexonClient.csproj src/Web/WebLexonClient/
 COPY src/Web/WebAddonLexon/WebAddonLexon.csproj src/Web/WebAddonLexon/
@@ -32,6 +33,7 @@ COPY src/Web/WebOffice365Client/WebOffice365Client.csproj src/Web/WebOffice365Cl
 COPY src/Web/WebPortalClient/WebPortalClient.csproj src/Web/WebPortalClient/
 COPY src/Web/WebImapClient/WebImapClient.csproj src/Web/WebImapClient/
 COPY src/Web/WebStatusLef/WebStatusLef.csproj src/Web/WebStatusLef/
+COPY src/Web/WebSignatureClient/WebSignatureClient.csproj src/Web/WebSignatureClient/
 
 
 RUN dotnet restore eLefebvreOnContainers-ServicesAndWebApps.sln

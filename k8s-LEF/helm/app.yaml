@@ -31,12 +31,15 @@ app:                                                  # app global settings
       addonlexon: webaddonlexon
       imap: webimap
       imapserver: webimapserver
+      signature: websignature
       accountapigw: accountapigw
       accountapi: account-api
       lexonapigw: lexonapigw
       lexonapi: lexon-api
       lexonmysqlapi: lexonmysql-api
-      
+      signatureapigw: signatureapigw
+      signatureapi: signature-api
+     
   svc:
       basket: basket-api                              # ingress entry for basket api
       catalog: catalog-api                            # ingress entry for catalog api
@@ -63,8 +66,11 @@ app:                                                  # app global settings
       addonlexon: webaddonlexon
       imap: webimap
       imapserver: webimapserver
+      signature: websignature
       accountapigw: accountapigw
       accountapi: account-api
       lexonapigw: lexonapigw
       lexonapi: lexon-api
       lexonmysqlapi: lexonmysql-api
+      signatureapigw: signatureapigw
+      signatureapi: signature-api
