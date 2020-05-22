@@ -39,7 +39,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             return Ok(new Result<string>(data));
         }
 
-        #region Tokensm
+        #region Token
 
         /// <summary>
         /// Permite obtener los token necesarios para operar con los microservicios de envio de correo
@@ -88,7 +88,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             return result.data.valid ? Ok(result) : (IActionResult)BadRequest(result);
         }
 
-#endregion New Region
+        #endregion Token
 
         #region User
 
@@ -105,7 +105,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             return Ok(result);
         }
 
-        [HttpPut("user/areas")]
+        [HttpGet("user/areas")]
         [ProducesResponseType(typeof(Result<ServiceComArea[]>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<ServiceComArea[]>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetAreasByUserAsync(string idNavisionUser = "E1621396")
@@ -158,7 +158,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         {
             if (string.IsNullOrEmpty(login))
                 return (IActionResult)BadRequest("id encoded value invalid. Must be a valid encoded user");
-            
+
             //Todo: actualizar con el upsert del usuario en mongo
             Result<ServiceComUser> result = await _service.GetUserDataWithLoginAsync(login, pass);
             return Ok(result);
@@ -233,7 +233,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-#endregion New Region
+        #endregion User
 
         /// <summary>
         /// Devueve una redirección hacia una url

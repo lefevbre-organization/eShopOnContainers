@@ -50,9 +50,9 @@ services:
       - HealthChecksUI__HealthChecks__9__Uri=http://lexon.mysql.api/hc
       - HealthChecksUI__HealthChecks__10__Name=Centinela API HTTP Check
       - HealthChecksUI__HealthChecks__10__Uri=http://centinela.api/hc
-      - HealthChecksUI__HealthChecks__11__Name=User Utis API HTTP Check
+      - HealthChecksUI__HealthChecks__11__Name=UserUtils API HTTP Check
       - HealthChecksUI__HealthChecks__11__Uri=http://userutils.api/hc
-      - HealthChecksUI__HealthChecks__12__Name=Centinela API GW HTTP Check
+      - HealthChecksUI__HealthChecks__12__Name=Centinela GW HTTP Check
       - HealthChecksUI__HealthChecks__12__Uri=http://webcentinelaapigw/hc
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
@@ -236,13 +236,14 @@ services:
       - Database=UserUtilsApiDB
       - MinihubUrl=http://led-pre-servicehub/Herramientas/Get
       - OnlineUrl=https://herculesppd.lefebvre.es/webclient46/ws
-
       - LoginUrl=http://led-pre-servicecomtools
       - OnlineLogin=ws
       - OnlinePassword=22lcqsp11lsw
       - IdAppNavision=3
       - TokenCaducity=150
       - TokenKey=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9
+      - ByPassUrls__0__NameService=Lex-On
+      - ByPassUrls__0__UrlByPass=https://localhost:44307/api/v1/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}        
