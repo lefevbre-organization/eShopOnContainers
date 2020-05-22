@@ -5,32 +5,38 @@ const Types = {
   UPDATE_HASERROR: 'UPDATE_HASERROR',
   SET_CASEFILE: 'SET_CASEFILE',
   SET_CONFIG: 'SET_CONFIG',
-  SET_COMPOSER_OPEN: 'SET_COMPOSER_OPEN'
+  SET_COMPOSER_OPEN: 'SET_COMPOSER_OPEN',
+  SET_SHOW_SPINNER: 'SET_SHOW_SPINNER',
 };
 
 // actions
-const addError = error => ({
+const addError = (error) => ({
   type: Types.ADD_ERROR,
-  payload: error
+  payload: error,
 });
 
-const setCaseFile = casefile => ({
+const setCaseFile = (casefile) => ({
   type: Types.SET_CASEFILE,
-  payload: casefile
+  payload: casefile,
 });
 
 const removeErrors = () => ({
-  type: Types.REMOVE_ERRORS
+  type: Types.REMOVE_ERRORS,
 });
 
-const setConfig = config => ({
+const setConfig = (config) => ({
   type: Types.SET_CONFIG,
-  payload: config
+  payload: config,
 });
 
-const setComposerOpen = open => ({
+const setComposerOpen = (open) => ({
   type: Types.SET_COMPOSER_OPEN,
-  payload: open
+  payload: open,
+});
+
+const setShowSpinner = (show) => ({
+  type: Types.SET_SHOW_SPINNER,
+  payload: show,
 });
 
 export default {
@@ -39,5 +45,6 @@ export default {
   setCaseFile,
   setConfig,
   setComposerOpen,
-  Types
+  setShowSpinner,
+  Types,
 };

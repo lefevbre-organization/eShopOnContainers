@@ -67,7 +67,12 @@ class App extends Component {
     if (values && values.bbdd 
       && Object.keys(values).length > 0) {
       const payload = values.bbdd.split('.')[1];
-      const addonData = JSON.parse(atob(payload));
+      const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+       }).join(''));
+      const addonData = JSON.parse(jsonPayload);
+    
       this.setState({ addonData: addonData, bbdd: { idCompany: addonData.idCompany, bbdd: addonData.bbdd }})
       this.sendMessagePutUser(userId, addonData);
     }

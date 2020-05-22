@@ -4,7 +4,7 @@ import React from 'react';
 
    <div className="login-header">
     <div className="row">
-      <div className="col-md-2 front-login__go-home">
+      <div className="front-login__go-home">
        <img src={children.logoHeader} alt="logo" />
       </div>
       <div className="front-login__go-shop">

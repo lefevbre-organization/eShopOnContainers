@@ -1,25 +1,25 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
-import ACTIONS from '../../actions/lexon';
-import Header from '../header/Header';
-import Sidebar from './sidebar/Sidebar';
-import { Notification } from '../notification/';
-import './calendar.scss';
+import ACTIONS from '../../../actions/lexon';
+import Header from '../../../components/header/Header';
+import Sidebar from '../sidebar/sidebar';
+//import { Notification } from '../notification/';
+import './main.scss';
 import { Route, Switch, withRouter } from 'react-router-dom';
-import { getCalendars } from './sidebar/sidebar.actions';
-import {toggleSelected} from '../content/message-list/actions/message-list.actions';
-import { selectCalendar } from './sidebar/sidebar.actions';
-import { signOut } from '../../api/authentication';
-import { signOutDisconnect } from '../../api/authentication';
+import { getCalendars } from '../sidebar/sidebar.actions';
+//import {toggleSelected} from '../content/message-list/actions/message-list.actions';
+import { selectCalendar } from '../sidebar/sidebar.actions';
+import { signOut } from '../../../api/authentication';
+import { signOutDisconnect } from '../../../api/authentication';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import SidebarCnn from 'react-sidebar';
-import LexonComponent from '../../apps/lexon_content';
-import CalendarComponent from '../../apps/calendar_content';
-import { CalendarView } from './calendarview/CalendarView';
+import LexonComponent from '../../../apps/lexon_content';
+import CalendarComponent from '../../../apps/calendar_content';
+import { Calendars } from '../calendars/calendars';
 import 'react-reflex/styles.css';
-import { resetDefaultAccount} from '../../api/accounts';
+import { resetDefaultAccount} from '../../../api/accounts';
 import {
     ScheduleComponent, ViewsDirective, ViewDirective,
     Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, DragEventArgs, ResourcesDirective, ResourceDirective,
@@ -27,14 +27,14 @@ import {
 import { DataManager, Query, Predicate } from '@syncfusion/ej2-data';
 import { ToastComponent, ToastCloseArgs } from '@syncfusion/ej2-react-notifications';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
-import { deleteCalendar, getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, listCalendarList, updateCalendarList } from '../../api/calendar-api';
+import { deleteCalendar, getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, listCalendarList, updateCalendarList } from '../../../api/calendar-api';
 import moment from 'moment';
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
 
 
 
-export class Calendar extends Component {
+export class Main extends Component {
 
     constructor(props) {
         super(props);
@@ -58,16 +58,12 @@ export class Calendar extends Component {
         this.scheduleData = [];
         //this.CalendarList = [];
         this.position = { X: 'Center', Y: 'Bottom' };       
-        this.resourceCalendarData = [];
-
-        this.toasts =  [
-        { content: 'Processing', cssClass: '', icon: '' },
-        { content: 'The event has been created successfully.', cssClass: 'e-toast-success', icon: 'e-success toast-icons' },
-        { content: 'The event has been modified successfully.', cssClass: 'e-toast-success', icon: 'e-success toast-icons' },
-        { content: 'A problem has been occurred while submitting your data.', cssClass: 'e-toast-danger', icon: 'e-error toast-icons' },
-        { content: 'The calendar has been created successfully.', cssClass: 'e-toast-success', icon: 'e-success toast-icons' },
-        //{ title: 'Information!', content: 'Please read the comments carefully.', cssClass: 'e-toast-info', icon: 'e-info toast-icons' }
-                       ];
+        this.resourceCalendarData = [];  
+        this.toasts = [
+            { content: 'Processing', cssClass: 'e-toast-black', icon: '' },
+            { content: 'Process complete', cssClass: 'e-toast-black', icon: '' },
+            { content: 'Error', cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
+        ]
 
         this.state = {
             isVisible: true, 
@@ -80,11 +76,6 @@ export class Calendar extends Component {
             calendarToEdit: undefined,
         };
 
-
-           // Calednar View Dialog
-        //this.promptButtonRef = element => {
-        //    this.promptButtonEle = element;
-        //};
            // Calednar View Dialog
         this.alertButtons = [{
             // Click the footer buttons to hide the Dialog
@@ -120,8 +111,7 @@ export class Calendar extends Component {
             buttonModel: { content: 'Cancel' }
             }];
            // Calednar View Dialog
-        this.animationSettings = { effect: 'None' };
-       
+        this.animationSettings = { effect: 'None' };       
     } 
 
     calendarColorModify(calendarId, color) {
@@ -146,11 +136,10 @@ export class Calendar extends Component {
                 console.log('error ->', error);
                 this.toastObj.showProgressBar = false
                 this.toastObj.hide('All');
-                this.toastObj.show(this.toasts[3]);                
+                this.toastObj.show(this.toasts[2]);                
             });   
         
     }
-
 
     deleteCalendar(args) {  
         this.toastObj.show(this.toasts[0]);
@@ -192,9 +181,10 @@ export class Calendar extends Component {
      // Calednar View Dialog
     dialogClose(args) {
         if (args == undefined) {
-            this.sidebarCalendarList();
             this.LoadCalendarList(true)
-            this.toastObj.show(this.toasts[4]);
+            this.sidebarCalendarList();
+           
+            this.toastObj.show(this.toasts[1]);
         }       
         this.setState({           
             hidePromptDialog: false
@@ -216,8 +206,8 @@ export class Calendar extends Component {
     }
 
     toastCusAnimation = {
-    //hide: { effect: 'SlideBottomOut' },
-    show: { effect: 'SlideBottomIn' }
+        hide: { duration: '1' },
+        show: { duration: '200' }
     };
 
     toastPreventDuplicate(e) {
@@ -383,6 +373,7 @@ export class Calendar extends Component {
                 this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;
                 if (!DisableloadSchedule) {
                     this.loadCalendarEvents(this.resourceCalendarData[0].id, true);
+                    this.scheduleObj.refresh();
                 }
                   
             })
@@ -581,7 +572,7 @@ export class Calendar extends Component {
                 }               
             })
             .catch(error => {
-                this.toastObj.show(this.toasts[3]);
+                this.toastObj.show(this.toasts[2]);
                 console.log('error ->', error);
             })
     }
@@ -590,11 +581,11 @@ export class Calendar extends Component {
         deleteCalendarEvent(calendarId, item)
             .then(result => {
                 if (!hiddeMessage) {
-                    this.toastObj.show(this.toasts[2]);
+                    this.toastObj.show(this.toasts[1]);
                 }
             })
             .catch(error => {
-                this.toastObj.show(this.toasts[3]);
+                this.toastObj.show(this.toasts[2]);
                 console.log('error ->', error);
             })
     }
@@ -603,11 +594,11 @@ export class Calendar extends Component {
         updateCalendarEvent(calendarId, item, event)
             .then(result => {
                 if (!hiddeMessage) {
-                    this.toastObj.show(this.toasts[2]);
+                    this.toastObj.show(this.toasts[1]);
                 }
             })
             .catch(error => {
-                this.toastObj.show(this.toasts[3]);
+                this.toastObj.show(this.toasts[2]);
                 console.log('error ->', error);
             })
     }  
@@ -737,7 +728,7 @@ export class Calendar extends Component {
         //localStorage.clear();
     }   
 
-    renderInboxViewport() {
+    render() {
         const { leftSideBar } = this.state;
         const { lexon } = this.props;
 
@@ -818,7 +809,7 @@ export class Calendar extends Component {
                         <article className='d-flex flex-column position-relative'>
                             {/*<Switch>*/}
                             {/*popupOpen={this.onPopupOpen.bind(this)}*/}
-                                <div className='schedule-control-section'>
+                            <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
                                             <ScheduleComponent
@@ -866,13 +857,13 @@ export class Calendar extends Component {
                                     visible={this.state.hidePromptDialog}
                                     showCloseIcon={true}
                                     animationSettings={this.animationSettings}
-                                    width='475px'
+                                    width='575px'
                                     ref={dialog => this.promptDialogInstance = dialog}
                                     target='#target'
                                     open={this.dialogOpen.bind(this)}
                                     close={this.dialogClose.bind(this)}>
-                                    <div>{(this.state.hidePromptDialog) ? <CalendarView
-                                    calendarToEdit={this.state.calendarToEdit} 
+                                    <div>{(this.state.hidePromptDialog) ? <Calendars
+                                    calendarId={this.state.calendarToEdit} 
                                     close={this.dialogClose.bind(this)}
                                     /> : ''}</div>                                   
                             </DialogComponent>                           
@@ -908,28 +899,7 @@ export class Calendar extends Component {
         );
     }
 
-    render() {
-        if (this.state.googleDown) {
-            const { showNotification, messageNotification } = this.state;
-            const { token } = this.props.lexon;
-            const baseUrl = window.URL_MF_GOOGLE.replace("/user", "");
-
-            return (
-                <div className='d-flex h-100 align-items-center justify-content-center'>
-                    <Notification
-                        initialModalState={showNotification}
-                        toggleNotification={() => {
-                            messageNotification === 'El mensaje no está en el servidor'
-                                ? ((token) ? window.open(`${baseUrl}/access/${token}/?prov=GO0`, "_self") : window.open(`${window.URL_MF_GOOGLE}/GO0${this.props.lexon.userId}`, '_self'))
-                                : this.onSignoutDisconnect();
-                        }}
-                        message={messageNotification}
-                    />
-                </div>
-            );
-        }
-        return this.renderInboxViewport();
-    }
+  
 }
 
 const mapStateToProps = state => ({
@@ -941,7 +911,7 @@ const mapDispatchToProps = dispatch =>
     bindActionCreators(
         {
             getCalendars,            
-            toggleSelected,
+            //toggleSelected,
             selectCalendar,                   
             setGUID: ACTIONS.setGUID,
             setSign: ACTIONS.setSign
@@ -952,6 +922,6 @@ const mapDispatchToProps = dispatch =>
 export default compose(
     withRouter,
     connect(mapStateToProps, mapDispatchToProps)
-)(Calendar);
+)(Main);
 
 

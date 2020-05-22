@@ -4,6 +4,11 @@ body {
   font-family: sans-serif;
 }
 
+.container {
+  padding-top: 48px;
+  text-align: left !important;
+}
+
 .step1-container {
   margin: 50px;
   width: 72%;
@@ -69,7 +74,7 @@ ol > li > span {
 .section-border {
   position: sticky;
   border: 1px solid #d2d2d2;
-  height: 497px !important;
+  height: 441px !important;
 }
 
 .section-title {
@@ -346,7 +351,7 @@ a.disabled .new-folder-text {
 .section-border {
   position: sticky;
   border: 1px solid #d2d2d2;
-  height: 497px !important;
+  height: 441px !important;
 }
 
 .section-title {
@@ -438,6 +443,7 @@ ol>li.index-5::before {
 .step4-subtitle {
   color: #333333 !important;
   text-align: center !important;
+  margin-bottom: 25px;
 }
 
 .panel-4 {
@@ -457,7 +463,7 @@ ol>li.index-5::before {
 .panel-4.section-border {
   position: sticky;
   border: 1px solid #D2D2D2;
-  height: 400px;
+  height: 400px !important;
 }
 
 .section-title {
@@ -531,12 +537,14 @@ ol>li.index-5::before {
   margin-bottom: 30px !important;
 }
 
+
+
 .modal-content .modal-header {
   background-color: #001978 !important;
   color: #ffffff;
 }
 
-.modal.error {
+.modal.error .modal-header {
   background-color: #C43741 !important;
 }
 

@@ -9,25 +9,26 @@ export const INITIAL_STATE = {
     errors: [],
     idCaseFile: null,
     config: {},
-    isComposerOpen: false
+    isComposerOpen: false,
+    showSpinner: false,
   },
   email: {
-    selectedMessages: []
+    selectedMessages: [],
   },
   selections: {
     companySelected: null,
     typeSelected: null,
-    initialBBDD: null
+    initialBBDD: null,
   },
   documents: {
     showModalDocuments: false,
-    showAttachDocuments: false
-  }
+    showAttachDocuments: false,
+  },
 };
 
 export default combineReducers({
   email,
   selections,
   documentsReducer,
-  applicationReducer
+  applicationReducer,
 });

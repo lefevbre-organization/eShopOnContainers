@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import MaterialTitlePanel from "./material_title_panel";
-import CalendarCard from "../components/calendar/CalendarCard"
+import CalendarCard from "../calendar/components/card/card"
 
 const styles = {
   sidebar: {

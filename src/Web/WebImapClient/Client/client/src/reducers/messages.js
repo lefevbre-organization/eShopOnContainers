@@ -1,5 +1,5 @@
-import { INITIAL_STATE } from "./";
-import { ActionTypes } from "../actions/action-types";
+import { INITIAL_STATE } from './';
+import { ActionTypes } from '../actions/action-types';
 
 const messages = (state = INITIAL_STATE.messages, action = {}) => {
   switch (action.type) {
@@ -8,7 +8,7 @@ const messages = (state = INITIAL_STATE.messages, action = {}) => {
     case ActionTypes.MESSAGES_BE_REQUEST_COMPLETED:
       return {
         ...state,
-        activeRequests: state.activeRequests > 0 ? state.activeRequests - 1 : 0
+        activeRequests: state.activeRequests > 0 ? state.activeRequests - 1 : 0,
       };
     case ActionTypes.MESSAGES_SET_CACHE:
       return { ...state, cache: action.payload };
@@ -16,7 +16,7 @@ const messages = (state = INITIAL_STATE.messages, action = {}) => {
       const newState = { ...state };
       newState.cache = { ...newState.cache };
       newState.cache[action.payload.folder.folderId] = new Map(
-        action.payload.messages.map(m => [m.uid, m])
+        action.payload.messages.map((m) => [m.uid, m])
       );
       return newState;
     }
@@ -35,9 +35,9 @@ const messages = (state = INITIAL_STATE.messages, action = {}) => {
       }
       action.payload.messages
         .filter(
-          m => !m.messageId || !newUpdateState.locked.includes(m.messageId)
+          (m) => !m.messageId || !newUpdateState.locked.includes(m.messageId)
         )
-        .forEach(m =>
+        .forEach((m) =>
           newUpdateState.cache[action.payload.folder.folderId].set(m.uid, m)
         );
       return newUpdateState;
@@ -58,10 +58,10 @@ const messages = (state = INITIAL_STATE.messages, action = {}) => {
           messagesToUpdate = action.payload.messages;
         } else {
           messagesToUpdate = action.payload.messages.filter(
-            m => !m.messageId || !newUpdateState.locked.includes(m.messageId)
+            (m) => !m.messageId || !newUpdateState.locked.includes(m.messageId)
           );
         }
-        messagesToUpdate.forEach(m => {
+        messagesToUpdate.forEach((m) => {
           if (cache.has(m.uid)) {
             cache.set(m.uid, m);
           }
@@ -84,19 +84,21 @@ const messages = (state = INITIAL_STATE.messages, action = {}) => {
       );
       // Delete unitary messages
       const cache = newUpdateState.cache[action.payload.folder.folderId];
-      action.payload.messages.forEach(m => cache.delete(m.uid));
+      action.payload.messages.forEach((m) => cache.delete(m.uid));
 
       // Delete UID range
       const { deleteUidRange } = action.payload;
       if (deleteUidRange) {
         let toDeleteUids = Array.from(cache.keys());
         if (deleteUidRange.from || deleteUidRange.from === 0) {
-          toDeleteUids = toDeleteUids.filter(uid => uid >= deleteUidRange.from);
+          toDeleteUids = toDeleteUids.filter(
+            (uid) => uid >= deleteUidRange.from
+          );
         }
         if (deleteUidRange.to || deleteUidRange.to === 0) {
-          toDeleteUids = toDeleteUids.filter(uid => uid <= deleteUidRange.to);
+          toDeleteUids = toDeleteUids.filter((uid) => uid <= deleteUidRange.to);
         }
-        toDeleteUids.forEach(uid => cache.delete(uid));
+        toDeleteUids.forEach((uid) => cache.delete(uid));
       }
       return newUpdateState;
     }
@@ -114,34 +116,39 @@ const messages = (state = INITIAL_STATE.messages, action = {}) => {
       const newUpdateState = { ...state };
       newUpdateState.selected = [...state.selected];
       newUpdateState.selectedMessages = [...state.selectedMessages];
-      action.payload.messages.forEach(message => {
-        const indexOfMessage = newUpdateState.selected.indexOf(message.messageId);
+      action.payload.messages.forEach((message) => {
+        const indexOfMessage = newUpdateState.selected.indexOf(
+          message.messageId
+        );
         if (action.payload.selected && indexOfMessage < 0) {
           // Select Message
           newUpdateState.selected.push(message.messageId);
         } else if (!action.payload.selected) {
           // Unselect message
           newUpdateState.selected = newUpdateState.selected.filter(
-            messageId => messageId !== message.messageId
+            (messageId) => messageId !== message.messageId
           );
         }
 
-        const indexOfSelectedMessage = newUpdateState.selectedMessages
-          .map(e => e.id)
-          .indexOf(message.messageId);
-        if (action.payload.selected && indexOfSelectedMessage < 0) {
+        if (action.payload.selected && message.raw) {
           // Select Message
           const data = {
             id: message.messageId,
             subject: message.subject,
             sentDateTime: message.receivedDate,
-            folder: action.payload.folderName
+            folder: action.payload.folderName,
+            raw: message.raw,
           };
-          newUpdateState.selectedMessages.push(data);
+          newUpdateState.selectedMessages = [
+            ...newUpdateState.selectedMessages.filter(
+              (msg) => msg.id !== message.messageId
+            ),
+            data,
+          ];
         } else if (!action.payload.selected) {
           // Unselect message
           newUpdateState.selectedMessages = newUpdateState.selectedMessages.filter(
-            e => e.id !== message.messageId
+            (e) => e.id !== message.messageId
           );
         }
       });
@@ -156,8 +163,8 @@ const messages = (state = INITIAL_STATE.messages, action = {}) => {
       newState.locked = [
         ...newState.locked,
         ...action.payload
-          .filter(m => m.messageId && m.messageId.length > 0)
-          .map(m => m.messageId)
+          .filter((m) => m.messageId && m.messageId.length > 0)
+          .map((m) => m.messageId),
       ];
       return newState;
     }
@@ -165,8 +172,8 @@ const messages = (state = INITIAL_STATE.messages, action = {}) => {
       const newState = { ...state };
       const remainingItems = [
         ...action.payload
-          .filter(m => m.messageId && m.messageId.length > 0)
-          .map(m => m.messageId)
+          .filter((m) => m.messageId && m.messageId.length > 0)
+          .map((m) => m.messageId),
       ];
       newState.locked = [];
       for (const messageId of state.locked) {

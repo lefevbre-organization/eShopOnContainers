@@ -23,7 +23,7 @@ import React from 'react';
          </div>
            <div className="row">
              <div className="col-md-8 offset-md-2 mb-5">
-               <div className="ml-n4 mb-4">
+               <div className="ml-md-n4 mb-4 ml-sm-5">
                  <div className="input-group login-input-group">
                   <div className="input-group-prepend">
                     <span className="input-group-text" id="inputGroupPrepend">
@@ -32,13 +32,13 @@ import React from 'react';
                   </div>
                  <input type="text" name="login" className="form-control login-input" 
                   placeholder="Usuario" onChange={children.handleChange} />
-                  {verificationLogin ? <i className="lf-icon-close-round-full front-login__input-error-icon"></i> 
+                  {verificationLogin || verificationEmail ? <i className="lf-icon-close-round-full front-login__input-error-icon"></i> 
                    : null} 
                  </div>
                  { verificationLogin }
                  { verificationEmail }
                </div>
-               <div className="ml-n4 mb-4 pt-1">
+               <div className="ml-md-n4 mb-4 ml-sm-5 pt-1">
                  <div className="input-group login-input-group">
                   <div className="input-group-prepend">
                     <span className="input-group-text" id="inputGroupPrepend">

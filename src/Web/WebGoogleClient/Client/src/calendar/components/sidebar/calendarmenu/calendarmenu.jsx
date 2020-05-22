@@ -42,7 +42,7 @@ export class CalendarMenu extends PureComponent {
     let selected = this.props.selected ? " selected" : "";     
   
       return (
-                   <span class="closeb">
+                   <span className="closeb">
                       <Menu>
                           <MenuButton className="menubutton">...</MenuButton>
                           <MenuList className="menupanel">

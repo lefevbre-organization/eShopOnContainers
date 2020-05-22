@@ -43,11 +43,11 @@ export const checkSignInStatus = () => {
 
         if (isSignedIn) {
           // Listen for sign-in state changes.
-          googleAuthInstance.isSignedIn.listen(isSignedIn => {
+            googleAuthInstance.isSignedIn.listen(isSignedIn => {
             updateSigninStatus(isSignedIn);
           });
 
-          resolve(googleAuthInstance.currentUser.je);
+          resolve(googleAuthInstance.currentUser.get());
         } else {
           reject();
         }

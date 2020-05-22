@@ -12,11 +12,12 @@ import {
     faExclamationTriangle,
     faChevronLeft
 } from "@fortawesome/free-solid-svg-icons";
-import CalendarItem from "./calendaritem/CalendarItem";
+import CalendarItem from "./calendaritem/calendaritem";
 import { Link } from "react-router-dom";
 import { Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CalendarComponent, ChangedEventArgs } from '@syncfusion/ej2-react-calendars';
+import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 
 
 
@@ -109,11 +110,15 @@ export class Sidebar extends PureComponent {
             sortedCalendars = sortBy(visibleCalendars, "name");
         }
 
+
+        calendarList = calendarList.filter(function (obj) {
+            return obj.accessRole != "owner";
+        });
        
-        return (
-           <React.Fragment>
+        return (            
+            <React.Fragment>              
              {this.renderMyCalendarView(calendarGroups.owner)}
-             {this.renderOtherCalendars(calendarGroups.reader)}
+             {this.renderOtherCalendars(calendarList)}
            </React.Fragment>
         ); 
 
@@ -128,12 +133,10 @@ export class Sidebar extends PureComponent {
                 </div>  
                 <li key="olders-nav-title" className="pl-2 nav-title">
                     <span> {t("calendar-sidebar.mycalendars")}</span>
-                    <span
-                        className="newcalendar"
-                        onClick={this.newCalendarClick}
-                    > 
-                    New calendar
-                    </span>    
+                   
+
+                    <ButtonComponent cssClass='newcalendar e-small e-round' onClick={this.newCalendarClick} iconCss='e-btn-sb-icons e-add-icon'></ButtonComponent>
+                   
                 </li>
                 {calendarsOwner.map(el => {
                     const iconProps = {
@@ -219,17 +222,21 @@ export class Sidebar extends PureComponent {
                 <div className="compose-panel">
                     <div className="d-flex justify-content-center p-2 compose-btn">
                         <div className="compose-div">
+
+                           
+
                             <span
                                 className="btn font-weight-bold BtnLfcolor uppercase compose-btn"
                                 onClick={this.newEventClick}
                             >
-                                <img
+                                <ButtonComponent cssClass='e-big e-round ImgLf' onClick={this.newEventClick} iconCss='e-btn-sb-icons e-add-icon' ></ButtonComponent>
+                                {/* <img
                                     className="ImgLf"
                                     border="0"
                                     alt="otulook"
                                     src="/assets/img/plus.png"
                                     onClick={this.newEventClick}
-                                ></img>
+                                ></img>*/}
                                 {t("calendar-sidebar.compose")}
                             </span>
                             <Button

@@ -1,27 +1,4 @@
-﻿/**
- * Load Google Calendar Events
- */
-export const getEventList = (idCalendar, selectedDate) =>
-    new Promise((resolve, reject) => {
-        window.gapi.client.calendar.events
-            .list({
-                calendarId: idCalendar,
-               // timeMin: (new Date()).toISOString()
-               // timeMin: (new Date(selectedDate.getFullYear(), selectedDate.getMonth(), -1)).toISOString(),
-               // timeMax: (new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 2)).toISOString(),
-                //showDeleted: false,
-                //singleEvents: true,
-                //maxResults: 10,
-                //orderBy: 'startTime',
-            })
-            .then(response => {
-                resolve(response)
-            })
-            .catch(error => {
-                reject(error);
-            });
-    });
-
+﻿//Calendarlist Api
 
 export const listCalendarList = () =>
     new Promise((resolve, reject) => {
@@ -55,6 +32,45 @@ export const getCalendarList = (calendar) =>
 
     });
 
+export const updateCalendarList = (calendarId, calendar) =>
+
+    new Promise((resolve, reject) => {
+        window.gapi.client.calendar.calendarList
+            .update({
+                calendarId: calendarId,
+                colorRgbFormat: 'true',
+                resource: calendar
+            })
+
+            .then(response => {
+                resolve(response.result);
+            })
+            .catch(err => {
+                reject(err);
+            });
+
+    });
+
+
+//Calendars Api
+
+export const updateCalendar = (calendarId, calendar) =>
+    new Promise((resolve, reject) => {
+        window.gapi.client.calendar.calendars
+            .update({
+                calendarId: calendarId,
+                resource: calendar
+            })
+
+            .then(response => {
+                resolve(response.result);
+            })
+            .catch(err => {
+                reject(err);
+            });
+
+    });
+
 export const getCalendar = (calendar) =>
     new Promise((resolve, reject) => {
         window.gapi.client.calendar.calendars
@@ -71,11 +87,11 @@ export const getCalendar = (calendar) =>
 
     });
 
-export const addCalendar = (event) =>
+export const addCalendar = (calendar) =>
     new Promise((resolve, reject) => {
         window.gapi.client.calendar.calendars
             .insert({               
-                resource: event
+                resource: calendar
             })
 
             .then(response => {
@@ -103,42 +119,31 @@ export const deleteCalendar = (calendar) =>
 
     });
 
-export const updateCalendarList = (calendarId, calendar) =>
 
-    new Promise((resolve, reject) => {       
-        window.gapi.client.calendar.calendarList
-            .update({
-                calendarId: calendarId,
-                colorRgbFormat: 'true',
-                resource: calendar
-            })
 
-            .then(response => {
-                resolve(response.result);
-            })
-            .catch(err => {
-                reject(err);
-            });
 
-    });
+// Events Api
 
-export const updateCalendar = (calendar, event) =>
+export const getEventList = (idCalendar, selectedDate) =>
     new Promise((resolve, reject) => {
-        window.gapi.client.calendar.calendars
-            .update({
-                calendarId: calendar,               
-                resource: event
+        window.gapi.client.calendar.events
+            .list({
+                calendarId: idCalendar,
+                // timeMin: (new Date()).toISOString()
+                // timeMin: (new Date(selectedDate.getFullYear(), selectedDate.getMonth(), -1)).toISOString(),
+                // timeMax: (new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 2)).toISOString(),
+                //showDeleted: false,
+                //singleEvents: true,
+                //maxResults: 10,
+                //orderBy: 'startTime',
             })
-
             .then(response => {
-                resolve(response.result);
+                resolve(response)
             })
-            .catch(err => {
-                reject(err);
+            .catch(error => {
+                reject(error);
             });
-
     });
-
 
 export const addCalendarEvent = (calendar, event) =>
     new Promise((resolve, reject) => {
@@ -156,8 +161,6 @@ export const addCalendarEvent = (calendar, event) =>
             });
 
     });
-
-
 
 export const updateCalendarEvent = (calendar, eventId, event) =>
     new Promise((resolve, reject) => {
@@ -211,7 +214,10 @@ export const requestRecurringEvent = (calendar, eventId) =>
 
     });
 
-export const addACL = (calendar, acl) =>
+
+// Acl api
+
+export const addAcl = (calendar, acl) =>
     new Promise((resolve, reject) => {
         window.gapi.client.calendar.acl
             .insert({
@@ -228,8 +234,7 @@ export const addACL = (calendar, acl) =>
 
     });
 
-
-export const listACL = (calendar) =>
+export const listAcl = (calendar) =>
     new Promise((resolve, reject) => {
         window.gapi.client.calendar.acl
             .list({
@@ -244,7 +249,7 @@ export const listACL = (calendar) =>
 
     });
 
-export const deleteACL = (calendar, ruleId) =>
+export const deleteAcl = (calendar, ruleId) =>
     new Promise((resolve, reject) => {
         window.gapi.client.calendar.acl
             .delete({

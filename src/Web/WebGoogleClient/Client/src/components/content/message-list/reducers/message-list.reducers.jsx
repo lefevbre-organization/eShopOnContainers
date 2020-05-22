@@ -22,7 +22,7 @@ import {
   ADD_LIST_MESSAGES,
   SET_OPEN_MESSAGE,
   ADD_OPEN_MESSAGE_ATTACHMENT,
-  CLEAR_OPEN_MESSAGE_ATTACHMENT
+  CLEAR_OPEN_MESSAGE_ATTACHMENT,
 } from '../actions/message-list.actions';
 
 const defaultMessagesState = {
@@ -30,7 +30,7 @@ const defaultMessagesState = {
   loading: true,
   pageTokens: [],
   openMessage: null,
-  openMessageAttachments: []
+  openMessageAttachments: [],
 };
 
 export const messagesResult = (state = defaultMessagesState, action) => {
@@ -47,14 +47,14 @@ export const messagesResult = (state = defaultMessagesState, action) => {
         ...stateClone,
         ...action.payload,
         loading: false,
-        pageTokens: pageTokens
+        pageTokens: pageTokens,
       };
     case GET_MESSAGES_FAILED: {
       return {
         ...state,
         loading: false,
         failed: true,
-        error: action.payload
+        error: action.payload,
       };
     }
     case EMPTY_MESSAGES:
@@ -64,34 +64,34 @@ export const messagesResult = (state = defaultMessagesState, action) => {
         ...state,
         label: null,
         nextPageToken: null,
-        loading: true
+        loading: true,
       };
     case TOGGLE_SELECTED:
       return {
         ...state,
-        messages: state.messages.map(el => {
+        messages: state.messages.map((el) => {
           if (action.payload.messageIds.indexOf(el.id) > -1) {
             return { ...el, selected: action.payload.selected };
           }
           return el;
-        })
+        }),
       };
     case ADD_INITIAL_PAGE_TOKEN:
       return {
         ...state,
-        pageTokens: [action.payload]
+        pageTokens: [action.payload],
       };
     case CLEAR_PAGE_TOKENS:
       return {
         ...state,
-        pageTokens: []
+        pageTokens: [],
       };
     case MODIFY_MESSAGES_SUCCESS:
       return {
         ...state,
         messages: state.messages.filter(
-          el => action.payload.modifiedIds.indexOf(el.id) === -1
-        )
+          (el) => action.payload.modifiedIds.indexOf(el.id) === -1
+        ),
       };
 
     case SET_OPEN_MESSAGE:
@@ -101,19 +101,19 @@ export const messagesResult = (state = defaultMessagesState, action) => {
 
       return {
         ...state,
-        openMessage: action.payload
+        openMessage: action.payload,
       };
 
     case ADD_OPEN_MESSAGE_ATTACHMENT:
       const attachments = state.openMessageAttachments;
       return {
         ...state,
-        openMessageAttachments: [...attachments, action.payload]
+        openMessageAttachments: [...attachments, action.payload],
       };
     case CLEAR_OPEN_MESSAGE_ATTACHMENT:
       return {
         ...state,
-        openMessageAttachments: []
+        openMessageAttachments: [],
       };
     default:
       return state;
@@ -135,7 +135,7 @@ export const pageTokens = (
 const defaultEmailMessageResult = {
   body: '',
   loading: false,
-  failed: false
+  failed: false,
 };
 
 export const emailMessageResult = (
@@ -151,14 +151,14 @@ export const emailMessageResult = (
         ...state,
         ...action.payload,
         loading: false,
-        failed: false
+        failed: false,
       };
     case MESSAGE_LOAD_FAIL:
       return {
         ...state,
         loading: false,
         failed: true,
-        error: action.payload
+        error: action.payload,
       };
     default:
       return state;
@@ -168,7 +168,7 @@ export const emailMessageResult = (
 const defaultEmailHeaderMessageResult = {
   headers: null,
   loading: false,
-  failed: false
+  failed: false,
 };
 
 export const emailHeaderMessageResult = (
@@ -183,7 +183,7 @@ export const emailHeaderMessageResult = (
         ...state,
         headers: action.payload.payload.headers,
         loading: false,
-        failed: false
+        failed: false,
       };
     case MESSAGE_HEADER_LOAD_FAIL:
       return {
@@ -191,7 +191,7 @@ export const emailHeaderMessageResult = (
         headers: null,
         loading: false,
         failed: true,
-        error: action.payload
+        error: action.payload,
       };
     default:
       return state;
@@ -208,37 +208,34 @@ export const searchQuery = (state = '', action) => {
 };
 
 const defaultMessageList = {
-  selectedMessages: []
+  selectedMessages: [],
 };
 
 export function messageList(state = defaultMessageList, action) {
   switch (action.type) {
     case ADD_MESSAGE: {
-      const index = state.selectedMessages.findIndex(
-        message => message.extMessageId === action.data.extMessageId
-      );
-      if (index === -1) {
-        return {
-          ...state,
-          selectedMessages: [...state.selectedMessages, action.data]
-        };
-      }
-      return state;
+      return {
+        ...state,
+        selectedMessages: [
+          ...state.selectedMessages.filter((msg) => msg.id !== action.data.id),
+          action.data,
+        ],
+      };
     }
 
     case DELETE_MESSAGE: {
       return {
         ...state,
         selectedMessages: state.selectedMessages.filter(
-          message => message.extMessageId !== action.data.id
-        )
+          (message) => message.extMessageId !== action.data.id
+        ),
       };
     }
 
     case DELETE_LIST_MESSAGES: {
       for (let i = 0; i < action.listMessages.length; i++) {
         const index = state.selectedMessages.findIndex(
-          message => message.extMessageId === action.listMessages[i]
+          (message) => message.extMessageId === action.listMessages[i]
         );
         if (index > -1) {
           state.selectedMessages.splice(index, 1);
@@ -246,14 +243,14 @@ export function messageList(state = defaultMessageList, action) {
       }
       return {
         ...state,
-        selectedMessages: [...state.selectedMessages]
+        selectedMessages: [...state.selectedMessages],
       };
     }
 
     case ADD_LIST_MESSAGES: {
       for (let i = 0; i < action.listMessages.length; i++) {
         const index = state.selectedMessages.findIndex(
-          message =>
+          (message) =>
             message.extMessageId === action.listMessages[i].extMessageId
         );
         if (index === -1) {
@@ -261,21 +258,21 @@ export function messageList(state = defaultMessageList, action) {
             id: action.listMessages[i].id,
             extMessageId: action.listMessages[i].extMessageId,
             subject: action.listMessages[i].subject,
-            sentDateTime: action.listMessages[i].sentDateTime
+            sentDateTime: action.listMessages[i].sentDateTime,
           };
           state.selectedMessages.push(data);
         }
       }
       return {
         ...state,
-        selectedMessages: [...state.selectedMessages]
+        selectedMessages: [...state.selectedMessages],
       };
     }
 
     case CLEAR_LIST_MESSAGES: {
       return {
         ...state,
-        selectedMessages: []
+        selectedMessages: [],
       };
     }
 

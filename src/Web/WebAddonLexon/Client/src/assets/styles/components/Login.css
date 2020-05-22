@@ -201,15 +201,15 @@
 
 .client {
   color: #6675AE;
-  font-family: "MTT Milano";
-  font-size: 17px;
-  font-weight: 500;
+  font-family: MTTMilano-Medium,Lato,Arial,sans-serif;
+  font-size: 18px;
+  font-weight: 400 !important;
   text-align: center;
 }
 
 .front-login__information-contact-email {
   color: #001978 !important;
-  font-weight: 600;
+ 
 }
 
 .login-footer {
@@ -270,6 +270,26 @@
   left: 93%;
   color: #D81F2A;
   top: 11px;
-  font-size: 16px;
+  font-size: 16px;  
+}
+
+@media (min-width: 400px) {  
+  .ml-sm-5 {
+    margin-left: 3rem!important;
+  }
+}
+
+@media (max-width: 645px) {  
+  .rights-reserved-login {
+    margin-top: -4rem !important;
+    font-size: 11px;
+  }
+  .login-box {
+    margin: 16px auto 49px;
+  }
+
+  .login-title-space {
+    margin-bottom: -17px !important;
+  }
 
 }

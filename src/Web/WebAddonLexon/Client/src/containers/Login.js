@@ -38,7 +38,8 @@ class Login extends Component {
       requestInfo: 'Solicitar información',
       needHelp: '¿Necesitas ayuda?',
       phoneNumber: '91 210 80 00 - 902 44 33 55 |',
-      client: 'clientes@lefebvre.es'
+      client: 'clientes@lefebvre.es',
+      required: 'Este campo es obligatorio.'
     } 
   }
 
@@ -64,7 +65,7 @@ class Login extends Component {
     if(this.state.form.login == '') {
       this.setState({ 
         errorsMessage: {
-          login: 'Este campo es obligatorio'
+          login: this.state.required
         }
        });
        return false;
@@ -73,7 +74,7 @@ class Login extends Component {
     if(!validator.validate(this.state.form.login)) {
       this.setState({
         errorsMessage: {
-          email: 'Correo no valido'
+          email: 'El campo debe tener formato de email.'
         }
       });
       return false;
@@ -82,7 +83,7 @@ class Login extends Component {
     if(this.state.form.password == '') {
       this.setState({ 
         errorsMessage: {
-          password: 'Este campo es obligatorio'
+          password: this.state.required
         }
        });
        return false;

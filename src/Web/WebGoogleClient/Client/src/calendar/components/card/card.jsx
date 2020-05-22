@@ -1,70 +1,53 @@
 import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
 import {
     ScheduleComponent, ViewsDirective, ViewDirective,
-    Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, DragEventArgs
+    Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, DragEventArgs, ResourcesDirective, ResourceDirective,
 } from '@syncfusion/ej2-react-schedule';
 //import './schedule-component.css';
-import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
-import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
-import { getEventList } from '../../api/calendar-api';
+import { DataManager } from '@syncfusion/ej2-data';
+import { getEventList } from '../../../api/calendar-api';
+import moment from 'moment';
 
 
-export class CalendarCard extends Component {
+
+export class Card extends Component {
     constructor(props) {
         super(props);
-
         this.onCalendarChange = this.onCalendarChange.bind(this);
-
         this.dataManger = new DataManager(); 
+        this.resourceCalendarData = [];  
 
         getEventList('primary')
             .then(result => {
                 this.dataManger = result.result;
-
-                this.onDataBinding(this.dataManger);
-                this.scheduleObj.refreshEvents();
-
-                let items = this.dataManger.items;
-                let scheduleData = [];
-                if (items.length > 0) {
-                    for (let i = 0; i < items.length; i++) {
-                        let event = items[i];
-                        let when = event.start.dateTime;
-                        let start = event.start.dateTime;
-                        let end = event.end.dateTime;
-                        if (!when) {
-                            when = event.start.date;
-                            start = event.start.date;
-                            end = event.end.date;
-                        }
-                        scheduleData.push({
-                            Id: event.id,
-                            Subject: event.summary,
-                            StartTime: new Date(start+1),
-                            EndTime: new Date(end),
-                            IsAllDay: !event.start.dateTime
-                        });
-                    }
-                    this.scheduleObj.addResource(scheduleData, 'calendar', 1);
-                    this.scheduleObj.refreshEvents();
-                }
-               
-               
+                this.onDataBinding(this.dataManger);               
+                this.scheduleObj.refreshEvents(); 
             })
             .catch(error => {
                 console.log('error ->', error);
             });
-
     }
 
-
     onDataBinding(e) {
+        let calendarId = "primary"
         let items = this.dataManger.items;
         let scheduleData = [];
         if (items.length > 0) {
             for (let i = 0; i < items.length; i++) {
                 let event = items[i];
+                if (event.status === 'cancelled') {
+                    var dateStartTime = new Date(event.originalStartTime.dateTime);
+                    var dateString = moment(dateStartTime).seconds(0).toISOString().split('.')[0] + "Z";
+                    var ExcRecurenceDate = dateString.replace(/[:.-]/g, "");
+                    var ParentscheduleException = "";
+                    var coma = ""
+                    if (this.scheduleData.find(x => x.Id == event.recurringEventId).RecurrenceException != undefined) {
+                        ParentscheduleException = this.scheduleData.find(x => x.Id == event.recurringEventId).RecurrenceException;
+                        coma = ","
+                    }
+                    this.scheduleData.find(x => x.Id == event.recurringEventId).RecurrenceException = ParentscheduleException + coma + ExcRecurenceDate
+                    continue;
+                }
                 let when = event.start.dateTime;
                 let start = event.start.dateTime;
                 let end = event.end.dateTime;
@@ -73,15 +56,28 @@ export class CalendarCard extends Component {
                     start = event.start.date;
                     end = event.end.date;
                 }
-                scheduleData.push({
-                    Id: event.id,
-                    Subject: event.summary,
-                    StartTime: new Date(start),
-                    EndTime: new Date(end),
-                    IsAllDay: !event.start.dateTime
-                });
+                let recurrenceRule
+                if (event.recurrence != undefined) {
+                    recurrenceRule = event.recurrence[0].replace('RRULE:', '');
+                }
+                try {
+                    scheduleData.push({
+                        Id: event.id,
+                        CalendarId: calendarId,
+                        Subject: event.summary,
+                        Location: event.location,
+                        Description: event.description,
+                        StartTime: new Date(start),
+                        EndTime: new Date(end),
+                        IsAllDay: !event.start.dateTime,
+                        RecurrenceRule: recurrenceRule                       
+                    });
+                }
+                catch (error){
+                    console.error(error);
+                }               
             }
-        }
+        }      
         e.result = scheduleData;
     }
 
@@ -94,6 +90,16 @@ export class CalendarCard extends Component {
             this.scheduleObj.removeResource(value, 'Calendars');
         }
     }
+
+    onPopupOpen(args) {  
+        args.cancel = true;
+        window.open("calendar", "_blank");  
+    }
+
+    doubleOpen(args) {
+        args.cancel = true;
+        window.open("calendar", "_blank");       
+    }
   
     render() {
         return (
@@ -102,13 +108,19 @@ export class CalendarCard extends Component {
                     <div className='control-wrapper'>
                         <ScheduleComponent ref={schedule => this.scheduleObj = schedule} width='100%'
                             height='650px' currentView="Day"
-                            readonly={true}
+                            readonly={false}
+                            popupOpen={this.onPopupOpen.bind(this)} 
+                            cellDoubleClick={this.doubleOpen.bind(this)}                            
                             eventSettings={{ dataSource: this.dataManger }} dataBinding={this.onDataBinding.bind(this)}>
                             <ViewsDirective>
                                 <ViewDirective option='Day' />                               
                                 <ViewDirective option='Agenda' />                               
                             </ViewsDirective>
                             <Inject services={[Day, Agenda, Resize, DragAndDrop]} />
+                            <ResourcesDirective>
+                                <ResourceDirective field='CalendarId' title='My Calendars' name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor'>
+                                </ResourceDirective>
+                            </ResourcesDirective>
                         </ScheduleComponent>
                     </div>
                 </div>
@@ -147,11 +159,10 @@ export class CalendarCard extends Component {
 
         );
     }
+
 }
 
- 
-
-export default CalendarCard;
+export default Card;
 
 
 
