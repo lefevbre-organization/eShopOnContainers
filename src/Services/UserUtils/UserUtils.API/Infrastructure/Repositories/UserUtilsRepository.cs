@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Repositories
@@ -27,15 +27,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
             _context = new UserUtilsContext(settings, eventBus);
         }
 
-        public async Task<Result<ByPassModel>> GetByPassAsync(string nameService)
+        public async Task<Result<UserUtilsModel>> GetUserAsync(string idNavision)
         {
-            var result = new Result<ByPassModel>();
+            var result = new Result<UserUtilsModel>();
             try
             {
-                result.data = await _context.ByPassModels.Find(GetFilterByPassModel(nameService)).FirstOrDefaultAsync();
+                result.data = await _context.UserUtils.Find(GetFilterUserModel(idNavision)).FirstOrDefaultAsync();
 
                 if (result.data == null)
-                    TraceMessage(result.errors, new Exception($"No se encuentra ningún servicio {nameService}"), "ErrorByPassGet");
+                    TraceMessage(result.errors, new Exception($"No se encuentra ningún usuario {idNavision}"), "ErrorUserGet");
             }
             catch (Exception ex)
             {
@@ -62,25 +62,24 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
             return result;
         }
 
-        public async Task<Result<ByPassModel>> PostByPassAsync(ByPassModel byPass)
+        public async Task<Result<UserUtilsModel>> PostUserAsync(UserUtilsModel user)
         {
-            var result = new Result<ByPassModel>();
-            ReviewByPassModel(byPass);
+            var result = new Result<UserUtilsModel>();
+            ReviewUserModel(user);
 
             try
             {
-                var resultReplace = await _context.ByPassModels.ReplaceOneAsync(
-                    GetFilterByPassModel(byPass.NameService),
-                    byPass,
+                var resultReplace = await _context.UserUtils.ReplaceOneAsync(
+                    GetFilterUserModel(user.idNavision),
+                    user,
                     GetUpsertOptions());
 
-                byPass.id = ManageCreateByPassMessage($"Don´t insert or modify the service {byPass.NameService}",
-                    $"Se modifica el servicio {byPass.NameService}",
-                    $"Se inserta el servicio {byPass.NameService} con {resultReplace.UpsertedId}",
-                     result, resultReplace);
+                user.id = ManageCreateMessage($"Don´t insert or modify the user {user.idNavision}",
+                    $"Se modifica el usuario {user.idNavision}",
+                    $"Se inserta el usuario {user.idNavision} con {resultReplace.UpsertedId}",
+                     result.infos, result.errors, resultReplace);
 
-                result.data = byPass;
-
+                result.data = user;
             }
             catch (Exception ex)
             {
@@ -89,57 +88,52 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
             return result;
         }
 
-
-        private string ManageCreateByPassMessage(
-            string msgError, 
-            string msgModify, 
-            string msgInsert, 
-            Result<ByPassModel> result, 
-            ReplaceOneResult resultReplace)
+        private void ReviewUserModel(UserUtilsModel user)
         {
-            if (resultReplace.IsAcknowledged)
+            user.idNavision = user.idNavision.ToUpperInvariant();
+            if (user.name != null)
+                user.name = user.name.ToUpperInvariant();
+            //  user.Created = DateTime.Now.Ticks;
+            UpdateByPassInfo(user);
+            user.version = _settings.Value.Version;
+        }
+
+        private void UpdateByPassInfo(UserUtilsModel user)
+        {
+            var listByPass = _settings.Value.ByPassUrls?.ToList();
+            if (listByPass?.Count == 0)
+                return;
+
+            if (user.apps?.Length > 0)
             {
-                if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
+                foreach (var app in user.apps)
                 {
-                    TraceInfo(result.infos, msgModify);
-                }
-                else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
-                {
-                    TraceInfo(result.infos, msgInsert);
-                    return resultReplace.UpsertedId.ToString();
+                    var encontrado = listByPass.Find(x => x.NameService.Equals(app.descHerramienta));
+                    if (encontrado?.NameService != null)
+                    {
+                        //  encontrado.Url = app.url;
+                        var urlReplace = encontrado.UrlByPass
+                            .Replace("{idUserNavision}", user.idNavision)
+                            .Replace("{serviceName}", app.descHerramienta);
+                        //  var actualizado = await _repository.PostByPassAsync(encontrado);
+                        app.urlByPass = app.url;
+                        app.url = urlReplace;
+                    }
                 }
             }
-            else
-            {
-                TraceMessage(result.errors, new Exception(msgError), "CreateRawError");
-            }
-            return null;
         }
 
-        private static UpdateOptions GetUpsertOptions()
-        {
-            return new UpdateOptions { IsUpsert = true };
-        }
-
-        private void ReviewByPassModel(ByPassModel byPass)
-        {
-            byPass.NameService= byPass.NameService.ToUpperInvariant();
-            //byPass.UrlByPass = byPass.UrlByPass.ToUpperInvariant();
-            byPass.Created = DateTime.Now.Ticks;
-
-        }
-
-        public async Task<Result<bool>> RemoveByPassAsync(ByPassModel byPass)
+        public async Task<Result<bool>> RemoveUserAsync(string idNavision)
         {
             var result = new Result<bool>();
             try
             {
-                var resultRemove = await _context.ByPassModels.DeleteOneAsync(GetFilterByPassModel(byPass.NameService));
+                var resultRemove = await _context.UserUtils.DeleteOneAsync(GetFilterUserModel(idNavision));
 
                 result.data = resultRemove.IsAcknowledged && resultRemove.DeletedCount > 0;
                 if (result.data)
                 {
-                    TraceInfo(result.infos, $"Se ha eliminado correctamente el byPass de {byPass.NameService}");
+                    TraceInfo(result.infos, $"Se ha eliminado correctamente el usuario {idNavision}");
                 }
             }
             catch (Exception ex)
@@ -149,14 +143,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
             return result;
         }
 
-        private static FilterDefinition<ByPassModel> GetFilterByPassModel(string nameService)
+        private static FilterDefinition<UserUtilsModel> GetFilterUserModel(string idNavision)
         {
-            return Builders<ByPassModel>.Filter.Eq(u => u.NameService, nameService.ToUpperInvariant());
+            return Builders<UserUtilsModel>.Filter.Eq(u => u.idNavision, idNavision.ToUpperInvariant());
         }
-
-
- 
-
-
     }
 }

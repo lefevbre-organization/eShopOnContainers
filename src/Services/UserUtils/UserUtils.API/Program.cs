@@ -76,14 +76,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
 
             var config = builder.Build();
 
-            if (config.GetValue<bool>("UseVault", false))
-            {
-                //is mandatory take values from azurevault
-                //builder.AddAzureKeyVault(
-                //    $"https://{config["Vault:Name"]}.vault.azure.net/",
-                //    config["Vault:ClientId"],
-                //    config["Vault:ClientSecret"]);
-            }
+            //if (config.GetValue<bool>("UseVault", false))
+            //{
+            //    //is mandatory take values from azurevault
+            //    //builder.AddAzureKeyVault(
+            //    //    $"https://{config["Vault:Name"]}.vault.azure.net/",
+            //    //    config["Vault:ClientId"],
+            //    //    config["Vault:ClientSecret"]);
+            //}
 
             return builder.Build();
         }

@@ -591,31 +591,29 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             return new List<string>();
         }
 
-        public async Task<Result<ByPassModel>> PostByPassAsync(ByPassModel byPass)
-        {
-            return await _repository.PostByPassAsync(byPass);
-        }
+        public async Task<Result<UserUtilsModel>> PostUserAsync(UserUtilsModel user) 
+            => await _repository.PostUserAsync(user);
 
-        public async Task<Result<ByPassModel>> GetByPassAsync(string nameService)
-            => await _repository.GetByPassAsync(nameService);
+        public async Task<Result<UserUtilsModel>> GetUserAsync(string idNavision)
+            => await _repository.GetUserAsync(idNavision);
 
-        public async Task<Result<bool>> RemoveByPassAsync(ByPassModel byPass)
-            => await _repository.RemoveByPassAsync(byPass);
+        public async Task<Result<bool>> RemoveUserAsync(string idNavision)
+            => await _repository.RemoveUserAsync(idNavision);
 
         public async Task<Result<string>> GetUserUtilsActualToServiceAsync(string idUser, string nameService)
         {
             var result = new Result<string>(null);
-            var byPassResult = await GetByPassAsync(nameService);
-            if (byPassResult.errors?.Count == 0 && byPassResult.data?.Url != null)
-            {
-                var newUrl = byPassResult.data?.Url;
-                Result<string> temporalLinkResult = await GeUserUtilFinalLink(newUrl);
-                result.data = temporalLinkResult.data;
-            }
-            else
-            {
-                result.data = "http://www.google.es";
-            }
+            var byPassResult = await GetUserAsync(nameService);
+            //if (byPassResult.errors?.Count == 0 && byPassResult.data?.Url != null)
+            //{
+            //    var newUrl = byPassResult.data?.Url;
+            //    Result<string> temporalLinkResult = await GeUserUtilFinalLink(newUrl);
+            //    result.data = temporalLinkResult.data;
+            //}
+            //else
+            //{
+            //    result.data = "http://www.google.es";
+            //}
 
             return result;
         }
@@ -662,19 +660,5 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             return result;
         }
 
-        Task<Result<ServiceComUser>> IUserUtilsService.GetUserDataWithLoginAsync(string login, string pass)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<Result<ServiceComUser>> IUserUtilsService.GetUserDataWithEntryAsync(string idNavisionUser)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<Result<ServiceComArea[]>> IUserUtilsService.GetAreasByUserAsync(string idNavisionUser)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

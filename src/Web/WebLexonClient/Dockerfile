@@ -3,7 +3,7 @@
 #WORKDIR /app
 #EXPOSE 80
 
-ARG NODE_IMAGE=node:8.12
+ARG NODE_IMAGE=node:12
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.0-buster-slim AS base
 WORKDIR /app
 EXPOSE 80

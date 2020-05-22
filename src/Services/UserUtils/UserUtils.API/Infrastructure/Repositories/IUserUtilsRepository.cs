@@ -7,12 +7,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
 {
     public interface IUserUtilsRepository
     {
-        Task<Result<bool>> RemoveByPassAsync(ByPassModel byPass);
-
-        Task<Result<ByPassModel>> GetByPassAsync(string nameService);
-
         Task<Result<List<ByPassModel>>> GetListByPassAsync();
 
-        Task<Result<ByPassModel>> PostByPassAsync(ByPassModel byPass);
+        Task<Result<UserUtilsModel>> GetUserAsync(string idNavision);
+
+        Task<Result<UserUtilsModel>> PostUserAsync(UserUtilsModel user);
+
+        Task<Result<bool>> RemoveUserAsync(string idNavision);
     }
 }

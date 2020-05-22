@@ -46,7 +46,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure
         private static void ClassMapping()
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(IntegrationEventLogEntry))) { BsonClassMap.RegisterClassMap<IntegrationEventLogEntry>(); }
-            if (!BsonClassMap.IsClassMapRegistered(typeof(UserUtilsUser))) { BsonClassMap.RegisterClassMap<UserUtilsUser>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(UserUtilsModel))) { BsonClassMap.RegisterClassMap<UserUtilsModel>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(ByPassModel))) { BsonClassMap.RegisterClassMap<ByPassModel>(); }
         }
 
@@ -59,14 +59,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure
         {
             return session.Client.GetDatabase(_settings.Value.Database).GetCollection<ByPassModel>(_settings.Value.CollectionByPass);
         }
-        public IMongoCollection<UserUtilsUser> UserUtils
+        public IMongoCollection<UserUtilsModel> UserUtils
         {
-            get { return Database.GetCollection<UserUtilsUser>(_settings.Value.Collection); }
+            get { return Database.GetCollection<UserUtilsModel>(_settings.Value.Collection); }
         }
 
-        public IMongoCollection<UserUtilsUser> UsersUtilsTransaction(IClientSessionHandle session)
+        public IMongoCollection<UserUtilsModel> UsersUtilsTransaction(IClientSessionHandle session)
         {
-            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<UserUtilsUser>(_settings.Value.Collection);
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<UserUtilsModel>(_settings.Value.Collection);
         }
 
         public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogs

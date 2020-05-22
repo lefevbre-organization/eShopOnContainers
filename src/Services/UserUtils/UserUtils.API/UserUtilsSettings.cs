@@ -1,4 +1,6 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
+﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models;
+
+namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
 {
     public class UserUtilsSettings
     {
@@ -28,5 +30,7 @@
         public string TokenKey { get; set; }
         public string OnlineLogin { get; set; }
         public string OnlinePassword { get; set; }
+
+        public ByPassModel[] ByPassUrls { get; set; }
     }
 }

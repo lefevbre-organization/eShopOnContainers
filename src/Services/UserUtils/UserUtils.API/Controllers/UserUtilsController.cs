@@ -31,12 +31,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("test")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
         public IActionResult Test()
         {
-            return Ok(new Result<bool>(true));
+            var data = $"Version is { _settings.Value.Version}";
+            return Ok(new Result<string>(data));
         }
+
+        #region Tokensm
 
         /// <summary>
         /// Permite obtener los token necesarios para operar con los microservicios de envio de correo
@@ -85,6 +88,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             return result.data.valid ? Ok(result) : (IActionResult)BadRequest(result);
         }
 
+#endregion New Region
+
+        #region User
+
         [HttpGet("user/apps")]
         [ProducesResponseType(typeof(Result<List<LexApp>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<List<LexApp>>), (int)HttpStatusCode.BadRequest)]
@@ -94,7 +101,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
                 return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
             var result = await _service.GetUserUtilsAsync(idNavisionUser, onlyActives);
-            result.infos.Add(new Info() { code = "0000", message = "estoy en user utils" });
+            result.infos.Add(new Info() { code = "UserUtilsCheck", message = "estoy en user utils" });
             return Ok(result);
         }
 
@@ -108,7 +115,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
 
             Result<ServiceComArea[]> result = await _service.GetAreasByUserAsync(idNavisionUser);
             return Ok(result);
-            //http://led-servicecomtools/Areas/GetUsuariosProAreas?idUsuarioPro=E0384919
         }
 
         [HttpGet("user/encode")]
@@ -136,7 +142,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             //http://led-servicecomtools/Login/RecuperarUsuario?login=e0384919&password=asasd
         }
 
-        [HttpPut("user/get/login")]
+        /// <summary>
+        /// Obtiene los datos de usuario en base al login y password y actualiz o crea un usuario en UserUtils
+        /// </summary>
+        /// <param name="login"></param>
+        /// <param name="pass"></param>
+        /// <returns></returns>
+        [HttpGet("user/login")]
         [ProducesResponseType(typeof(Result<ServiceComUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<ServiceComUser>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUserWithLoginAsync(
@@ -146,13 +158,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         {
             if (string.IsNullOrEmpty(login))
                 return (IActionResult)BadRequest("id encoded value invalid. Must be a valid encoded user");
-
+            
+            //Todo: actualizar con el upsert del usuario en mongo
             Result<ServiceComUser> result = await _service.GetUserDataWithLoginAsync(login, pass);
             return Ok(result);
-            //Http://led-servicecomtools/Login/RecuperarUsuario?strLogin=f.reyes-ext@lefebvreelderecho.com&strPass=etEb9221
         }
 
-        [HttpPut("user/get/entrada")]
+        [HttpGet("user/entrada")]
         [ProducesResponseType(typeof(Result<ServiceComUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<ServiceComUser>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUserWithEntradaAsync(string idNavisionUser = "E1621396")
@@ -162,65 +174,66 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
 
             Result<ServiceComUser> result = await _service.GetUserDataWithEntryAsync(idNavisionUser);
             return Ok(result);
-            //http://led-servicecomtools/Login/RecuperarUsuarioPorEntrada?idUsuarioPro=E1621396
         }
 
         /// <summary>
-        /// Permite agregar una dirección de reemplazo para redirigir la petición del minihub
+        /// Permite agregar un usuario con los datos de aplicación
         /// </summary>
         /// <returns></returns>
-        [HttpPost("user/apps/bypass")]
-        [ProducesResponseType(typeof(Result<ByPassModel>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<ByPassModel>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> ByPastPostAsync(
-              [FromBody] ByPassModel byPass
+        [HttpPost("user")]
+        [ProducesResponseType(typeof(Result<UserUtilsModel>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<UserUtilsModel>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UserPostAsync(
+              [FromBody] UserUtilsModel user
             )
         {
-            if (string.IsNullOrEmpty(byPass.NameService) && string.IsNullOrEmpty(byPass.UrlByPass))
-                return BadRequest("value invalid. Must be a valid NameService and valid url to redirect");
+            if (string.IsNullOrEmpty(user.idNavision))
+                return BadRequest("value invalid. Must be a valid idNavision");
 
-            Result<ByPassModel> result = await _service.PostByPassAsync(byPass);
+            Result<UserUtilsModel> result = await _service.PostUserAsync(user);
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         /// <summary>
-        /// Permite obtener una dirección de reemplazo para redirigir la petición del minihub
+        /// Permite obtener una usuario con sus datos de aplicaciones
         /// </summary>
         /// <returns></returns>
-        [HttpGet("user/apps/bypass")]
-        [ProducesResponseType(typeof(Result<ByPassModel>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<ByPassModel>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> ByPassGetAsync(
-              [FromQuery] string NameService
+        [HttpGet("user")]
+        [ProducesResponseType(typeof(Result<UserUtilsModel>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<UserUtilsModel>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UserGetAsync(
+              [FromQuery] string IdNavision
             )
         {
-            if (string.IsNullOrEmpty(NameService))
-                return BadRequest("value invalid. Must be a valid NameService");
+            if (string.IsNullOrEmpty(IdNavision))
+                return BadRequest("value invalid. Must be a valid idNavision");
 
-            Result<ByPassModel> result = await _service.GetByPassAsync(NameService);
+            Result<UserUtilsModel> result = await _service.GetUserAsync(IdNavision);
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         /// <summary>
-        /// Permite borrar una dirección de reemplazo para redirigir la petición del minihub
+        /// Permite borrar un usuario
         /// </summary>
         /// <returns></returns>
-        [HttpPost("user/apps/bypass/delete")]
+        [HttpPost("user/delete")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> ByPassRemoveAsync(
-              [FromBody] ByPassModel byPass
+        public async Task<IActionResult> UserRemoveAsync(
+              [FromBody] string idNavision
             )
         {
-            if (string.IsNullOrEmpty(byPass.NameService) && string.IsNullOrEmpty(byPass.UrlByPass))
-                return BadRequest("value invalid. Must be a valid NameService and valid url to redirect");
+            if (string.IsNullOrEmpty(idNavision))
+                return BadRequest("value invalid. Must be a valid idnavision");
 
-            Result<bool> result = await _service.RemoveByPassAsync(byPass);
+            Result<bool> result = await _service.RemoveUserAsync(idNavision);
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
+
+#endregion New Region
 
         /// <summary>
         /// Devueve una redirección hacia una url

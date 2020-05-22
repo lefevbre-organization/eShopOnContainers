@@ -35,11 +35,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
         Task<Result<ServiceComArea[]>> GetAreasByUserAsync(string idNavisionUser);
 
-        Task<Result<ByPassModel>> PostByPassAsync(ByPassModel byPass);
+        Task<Result<UserUtilsModel>> PostUserAsync(UserUtilsModel user);
 
-        Task<Result<ByPassModel>> GetByPassAsync(string nameService);
+        Task<Result<UserUtilsModel>> GetUserAsync(string nameService);
 
-        Task<Result<bool>> RemoveByPassAsync(ByPassModel byPass);
+        //Task<Result<bool>> RemoveByPassAsync(ByPassModel byPass);
+        Task<Result<bool>> RemoveUserAsync(string idNavision);
 
         Task<Result<string>> GetUserUtilsActualToServiceAsync(string idUser, string nameService);
     }
