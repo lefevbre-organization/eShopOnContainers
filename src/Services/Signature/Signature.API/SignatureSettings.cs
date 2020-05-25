@@ -2,14 +2,12 @@
 {
     public class SignatureSettings
     {
-        public string ConnectionString { get;
-            set; }
+        public string ConnectionString { get; set; }
         public string Database { get; set; }
         public string CollectionSignatures { get; set; }
         public string CollectionBrandings { get; set; }
         //public string CollectionMasters { get; set; }
         public string CollectionEvents { get; set; }
-      //  public string PicBaseUrl { get; set; }
 
         public string SignatureMySqlUrl { get; set; }
         public string SignatureFilesUrl { get; set; }
