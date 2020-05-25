@@ -54,6 +54,12 @@ services:
       - HealthChecksUI__HealthChecks__11__Uri=http://userutils.api/hc
       - HealthChecksUI__HealthChecks__12__Name=Centinela GW HTTP Check
       - HealthChecksUI__HealthChecks__12__Uri=http://webcentinelaapigw/hc
+      - HealthChecksUI__HealthChecks__13__Name=Signature API HTTP Check
+      - HealthChecksUI__HealthChecks__13__Uri=http://signature.api/hc
+      - HealthChecksUI__HealthChecks__14__Name=Signature API GW HTTP Check
+      - HealthChecksUI__HealthChecks__14__Uri=http://websignatureapigw/hc
+      - HealthChecksUI__HealthChecks__15__Name=WebSignatureClient HTTP Check
+      - HealthChecksUI__HealthChecks__15__Uri=http://websignature/hc
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
     ports:
@@ -133,6 +139,17 @@ services:
     ports:
       - "9000:80"
 
+  websignatureclient:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - UseCustomizationData=True
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - SignatureApiUrlHC=http://websignatureapi/hc
+    ports:
+      - "9001:80"
+
   account.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -156,6 +173,7 @@ services:
       - AccountApiUrlHC=http://account.api/hc
       - CentinelaApiUrlHC=http://centinela.api/hc
       - UserUtilsApiUrlHC=http://userutils.api/hc
+      - SignatureApiUrlHC=http://signature.api/hc
     ports:
       - "8083:80"   
     volumes:
@@ -202,6 +220,7 @@ services:
       - AccountApiUrlHC=http://account.api/hc
       - CentinelaApiUrlHC=http://centinela.api/hc
       - UserUtilsApiUrlHC=http://userutils.api/hc
+      - SignatureApiUrlHC=http://signature.api/hc
     ports:
       - "8086:80"   
     volumes:
@@ -261,8 +280,39 @@ services:
       - AccountApiUrlHC=http://account.api/hc
       - CentinelaApiUrlHC=http://centinela.api/hc
       - UserUtilsApiUrlHC=http://userutils.api/hc
+      - SignatureApiUrlHC=http://signature.api/hc
     ports:
       - "8089:80"   
     volumes:
       - ./src/ApiGateways/Web.Bff.Centinela/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
+
+  signature.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionString=${ELEF_MONGO_DB:-mongodb://nosql.data}
+      - Database=signature
+      - SignaturitApiUrl=http://signaturit
+      - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
+      - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
+      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}        
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - UseLoadTest=${USE_LOADTEST:-False}
+    ports:
+      - "8090:80"
+
+  websignatureapigw:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - LexonApiUrlHC=http://lexon.api/hc
+      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
+      - AccountApiUrlHC=http://account.api/hc
+      - CentinelaApiUrlHC=http://centinela.api/hc
+      - UserUtilsApiUrlHC=http://userutils.api/hc
+      - SignatureApiUrlHC=http://signature.api/hc
+    ports:
+      - "8091:80"   
+    volumes:
+      - ./src/ApiGateways/Web.Bff.Signature/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
     

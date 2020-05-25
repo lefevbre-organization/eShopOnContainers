@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import queryString from 'query-string';
+import validator from 'email-validator';
 import LoginHeader from '../components/LoginHeader';
 import LoginFooter from '../components/LoginFooter';
 import LoginComponents from '../components/LoginComponents';
@@ -27,6 +28,7 @@ class Login extends Component {
       },
       isPermission: false,
       errorsMessage: {
+        email: '',
         login: '',
         password: ''
       },
@@ -36,7 +38,8 @@ class Login extends Component {
       requestInfo: 'Solicitar información',
       needHelp: '¿Necesitas ayuda?',
       phoneNumber: '91 210 80 00 - 902 44 33 55 |',
-      client: 'clientes@lefebvre.es'
+      client: 'clientes@lefebvre.es',
+      required: 'Este campo es obligatorio.'
     } 
   }
 
@@ -50,6 +53,7 @@ class Login extends Component {
    if(this.state.form.login != '' && this.state.form.password != '' ) {
     this.setState({
       errorsMessage: {
+        email: null,
         login: null,
         password: null
       },
@@ -61,15 +65,25 @@ class Login extends Component {
     if(this.state.form.login == '') {
       this.setState({ 
         errorsMessage: {
-          login: 'Este campo es obligatorio'
+          login: this.state.required
         }
        });
        return false;
     }
+
+    if(!validator.validate(this.state.form.login)) {
+      this.setState({
+        errorsMessage: {
+          email: 'El campo debe tener formato de email.'
+        }
+      });
+      return false;
+    }
+
     if(this.state.form.password == '') {
       this.setState({ 
         errorsMessage: {
-          password: 'Este campo es obligatorio'
+          password: this.state.required
         }
        });
        return false;

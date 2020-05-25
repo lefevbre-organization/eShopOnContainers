@@ -4,6 +4,11 @@ body {
   font-family: sans-serif;
 }
 
+.container {
+  padding-top: 48px;
+  text-align: left !important;
+}
+
 .step1-container {
   margin: 50px;
   width: 72%;
@@ -69,7 +74,7 @@ ol > li > span {
 .section-border {
   position: sticky;
   border: 1px solid #d2d2d2;
-  height: 497px !important;
+  height: 441px !important;
 }
 
 .section-title {
@@ -346,7 +351,7 @@ a.disabled .new-folder-text {
 .section-border {
   position: sticky;
   border: 1px solid #d2d2d2;
-  height: 497px !important;
+  height: 441px !important;
 }
 
 .section-title {
@@ -438,6 +443,7 @@ ol>li.index-5::before {
 .step4-subtitle {
   color: #333333 !important;
   text-align: center !important;
+  margin-bottom: 25px;
 }
 
 .panel-4 {
@@ -457,7 +463,7 @@ ol>li.index-5::before {
 .panel-4.section-border {
   position: sticky;
   border: 1px solid #D2D2D2;
-  height: 400px;
+  height: 400px !important;
 }
 
 .section-title {
@@ -490,32 +496,55 @@ ol>li.index-5::before {
 .btn-primary {
   border-radius: 0 !important;
   height: 42px;
-  width: 12%;
+  min-width: 165px;
+  background-color: #001978;
+  border-radius: 0;
+  border: 2px solid #001978;
+  text-transform: uppercase;
+  font-size: 13px !important;
+  font-family: "MTTMilano-Bold";
+  letter-spacing: .7px;
 }
 
 .btn-outline-primary {
   text-transform: uppercase;
   font-size: 13px !important;
-  font-family: "MTTMilano-Bold,Lato,Arial,sans-serif";
+  font-family: "MTTMilano-Bold";
   letter-spacing: .7px;
   color: #001978 !important;
   padding: 10px !important;
   border-radius: 0 !important;
   border: 2px solid #001978 !important;
   height: 42px;
-  width: 12%;
+  min-width: 165px;
   margin-left: 10px;
 }
+
+.btn-outline-primary:hover {
+  background-color: rgb(229, 232, 241) !important;
+  color: rgb(0, 25, 120);
+  border-color: rgb(0, 25, 120) !important;
+}
+
+
+.btn-outline-primary:active {
+  color: #fff !important;
+  background-color: #007bff !important;
+  border-color: #007bff !important;
+}
+
 .panel-4 {
   margin-bottom: 30px !important;
 }
+
+
 
 .modal-content .modal-header {
   background-color: #001978 !important;
   color: #ffffff;
 }
 
-.modal.error {
+.modal.error .modal-header {
   background-color: #C43741 !important;
 }
 

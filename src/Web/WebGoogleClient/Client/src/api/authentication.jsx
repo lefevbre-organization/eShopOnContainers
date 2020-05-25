@@ -19,7 +19,7 @@ export const initGmailClient = (apiKey, clientId) => {
     // included, separated by spaces.
     // More info: https://developers.google.com/identity/protocols/googlescopes
     const SCOPES ="https://mail.google.com https://www.googleapis.com/auth/contacts https://www.googleapis.com/auth/user.emails.read https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.readonly"; // Scope for Read, send, delete, and manage your email";
-    
+  
 
   const gapi = window.gapi;
 
@@ -43,11 +43,11 @@ export const checkSignInStatus = () => {
 
         if (isSignedIn) {
           // Listen for sign-in state changes.
-          googleAuthInstance.isSignedIn.listen(isSignedIn => {
+            googleAuthInstance.isSignedIn.listen(isSignedIn => {
             updateSigninStatus(isSignedIn);
           });
 
-          resolve(googleAuthInstance.currentUser.je);
+          resolve(googleAuthInstance.currentUser.get());
         } else {
           reject();
         }

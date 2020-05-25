@@ -1,6 +1,8 @@
 var nameEntityType = "";
+var nameFolder = "";
 var companyResponse = [];
 var classificationsResponse = [];
+var messageRawResponse = [];
 var classificationsDataResponse = null;
 var classificationsDeleteResponse = null;
 
@@ -80,6 +82,133 @@ function deleteClassification(idMail,
       var response = UrlFetchApp.fetch(url, options);
       var raw = response.getContentText();
       return classificationsDeleteResponse = JSON.parse(raw);
+}
+
+function getNameFolder(folderMessage) { 
+  if(folderMessage.isStarred()) {
+    nameFolder = 'Destacados';
+  } else if(folderMessage.isInChats()) {
+    nameFolder = 'Conversación';
+  } else if(folderMessage.isInTrash()) {
+    nameFolder = 'Papelera';
+  } else if(folderMessage.isInInbox()) {
+    nameFolder = 'Recibidos';
+  } else {
+    nameFolder = 'Enviados';
+  }
+}
+
+function getMessageRaw(addonData) {
+  var queryString = '?provider='+ addonData.provider 
+  + '&account='+ addonData.account +'&messageId=' 
+  + addonData.messageById;
+  var url = apiAccount + queryString;
+  var response = UrlFetchApp.fetch(url, {
+    method: "get",
+    // headers: headers,
+    followRedirects: true,
+    muteHttpExceptions: true,
+    escaping: true
+  });
+  var raw = response.getContentText();
+  return messageRawResponse = JSON.parse(raw);
+}
+
+function saveMessageRaw(addonData, raw) {
+  if(messageRawResponse.data != null) {
+    return;
+  }
+  var url = apiAccount;
+  var data = {
+      'id': null,
+      'user': "E1621396",
+      'account': addonData.account,
+      'provider': addonData.provider,
+      'messageId': addonData.messageById,
+      'raw': raw
+  };
+  var options = {
+      'method': "post",
+      'contentType': 'application/json',
+      'payload': JSON.stringify(data),
+      'muteHttpExceptions': true
+  };
+  var saveResponse = UrlFetchApp.fetch(url, options);
+}
+
+function removeRawAddon(addonData) {
+  const url = apiAccount + '/delete';
+  const data = {
+    'user': "E1621396",
+    'account': addonData.account,
+    'provider': addonData.provider,
+    'messageId': addonData.messageById
+  };
+
+  var options = {
+    'method': "post",
+    'contentType': 'application/json',
+    'payload': JSON.stringify(data),
+    'muteHttpExceptions': true
+  };
+  var deleteResponse = UrlFetchApp.fetch(url, options);
+}
+
+
+function getAddonData(e) {
+  var user = JSON.parse(cache.get('dataUser'));
+  var companyData = JSON.parse(cache.get('companyData'));
+  var messageDataId = e.messageMetadata.messageId;
+  var thread = GmailApp.getMessageById(messageDataId).getThread();
+  var subject = thread.getFirstMessageSubject();
+  var messageDate = thread.getLastMessageDate();
+  var raw = GmailApp.getMessageById(messageDataId).getRawContent()
+  var message = GmailApp.getMessageById(messageDataId);
+  getNameFolder(message)
+  
+  var response = Gmail.Users.Messages.get('me', thread.getId())
+  var messageId = "";
+  for (var i = 0; i < response.payload.headers.length; i++) {
+    if(response.payload.headers[i].name == "Message-ID") {
+      messageId = response.payload.headers[i].value;
+    }
+  }
+
+  var addonData = {
+    idCompany: companyData.idCompany,
+    bbdd: companyData.bbdd,
+    name: companyData.name,
+    account: companyData.account,
+    provider: 'GOOGLE',
+    messageId: messageId,
+    messageById: thread.getId(),
+    subject: subject,
+    folder: nameFolder,
+    sentDateTime: messageDate,
+    idUser: user.data.idUser,
+    userName: user.data.name
+  };
+  
+  var header = {
+    alg: "HS256",
+    typ: "JWT",
+  }; 
+  
+  var signature = Utilities.base64Encode(JSON.stringify(header)) + "." 
+    + Utilities.base64Encode(JSON.stringify(addonData));
+  
+  var jwt = signature + "." + 
+    Utilities.base64Encode(
+      Utilities.computeHmacSha256Signature(signature, key)
+    );
+
+  cache.put('getAddonData', JSON.stringify(addonData), 21600);
+  
+  cache.put('token', jwt, 21600);
+  
+  getMessageRaw(addonData);
+  saveMessageRaw(addonData, raw);
+  
 }
 
 function getNameEntityType(entityType) {

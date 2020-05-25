@@ -46,9 +46,10 @@
   margin-bottom: 30px !important;
 }
    
-.footer-space {
+.main-box {
   overflow: hidden;
   min-height: calc(100% - 260px);
+  background-color: #F4F4F4;
 }
   
 .login-box {
@@ -56,7 +57,7 @@
   display: block;
   width: 450px;
   min-height: 502px;
-  border: 1px solid #7f8cbb;
+  border: 1px solid #2E3C8D;
   background-color: #FFFFFF;
 }
 
@@ -106,6 +107,8 @@
 
 .input-group-text {
   border-radius: inherit !important;
+  background-color: #E5E8F0 !important;
+  border: 1px solid #E5E8F0 !important;
 }
 
 .login-input-group {
@@ -126,11 +129,10 @@
 
 .btn-label {
   border: none;
-  text-transform: uppercase;
-  color: #FFFFFF !important;
-  font-family: "MTTMilano";
+  /* text-transform: uppercase; */
+  color: #ffffff!important;
   font-size: 13px !important;
-  letter-spacing: 1px;
+  letter-spacing: 0px;
   margin-bottom: 14px;
 }
 
@@ -168,10 +170,11 @@
 }
 
 .front-login__info-block-link {
-  color: #001978 !important;
+  color: #44569C !important;
   font-weight: 600;
   text-decoration: none;
-  font-size: 16px;
+  font-size: 15px;
+  letter-spacing: 1px;
 }
 
 .login-help {
@@ -186,8 +189,9 @@
   color: #001978 !important;
   font-family: "MTTMilano";
   margin: 0 0 4px;
-  font-size: 19px;
+  font-size: 20px;
   font-weight: 600;
+  letter-spacing: 1px;
 }
 
 .separate {
@@ -197,15 +201,15 @@
 
 .client {
   color: #6675AE;
-  font-family: "MTT Milano";
-  font-size: 17px;
-  font-weight: 500;
+  font-family: MTTMilano-Medium,Lato,Arial,sans-serif;
+  font-size: 18px;
+  font-weight: 400 !important;
   text-align: center;
 }
 
 .front-login__information-contact-email {
   color: #001978 !important;
-  font-weight: 600;
+ 
 }
 
 .login-footer {
@@ -266,6 +270,26 @@
   left: 93%;
   color: #D81F2A;
   top: 11px;
-  font-size: 16px;
+  font-size: 16px;  
+}
+
+@media (min-width: 400px) {  
+  .ml-sm-5 {
+    margin-left: 3rem!important;
+  }
+}
+
+@media (max-width: 645px) {  
+  .rights-reserved-login {
+    margin-top: -4rem !important;
+    font-size: 11px;
+  }
+  .login-box {
+    margin: 16px auto 49px;
+  }
+
+  .login-title-space {
+    margin-bottom: -17px !important;
+  }
 
 }

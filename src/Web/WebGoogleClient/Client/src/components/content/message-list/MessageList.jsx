@@ -16,7 +16,7 @@ import { getMessage, getMessageHeader, getLabelSentItems } from '../../../api';
 const ViewMode = {
   LIST: 1,
   CONTENT: 2,
-  EDIT: 3
+  EDIT: 3,
 };
 
 const months = {
@@ -31,7 +31,7 @@ const months = {
   Sep: '09',
   Oct: '10',
   Nov: '11',
-  Dec: '12'
+  Dec: '12',
 };
 
 export class MessageList extends Component {
@@ -41,7 +41,7 @@ export class MessageList extends Component {
     this.state = {
       viewMode: ViewMode.LIST,
       contentMessageId: undefined,
-      currentLabel: ''
+      currentLabel: '',
     };
 
     this.onSelectionChange = this.onSelectionChange.bind(this);
@@ -64,7 +64,7 @@ export class MessageList extends Component {
 
     this.props.getLabelMessages({
       ...(labelIds && { labelIds }),
-      pageToken: token
+      pageToken: token,
     });
 
     this.isSentFolder = this.props.parentLabel.id === 'SENT';
@@ -89,7 +89,7 @@ export class MessageList extends Component {
 
       this.props.getLabelMessages({
         ...(labelIds && { labelIds }),
-        pageToken: token
+        pageToken: token,
       });
     }
   }
@@ -97,7 +97,7 @@ export class MessageList extends Component {
   async onSelectionChange(selected, msg) {
     this.props.toggleSelected([msg.id], selected);
     const extMessageId = this.getContentByHeader(msg, 'Message-Id');
-    console.log("MessageId:" + extMessageId);
+    console.log('MessageId:' + extMessageId);
     const message = {
       id: msg.id,
       extMessageId,
@@ -107,7 +107,7 @@ export class MessageList extends Component {
       provider: 'GOOGLE',
       account: this.props.lexon.account,
       chkselected: selected,
-      raw: null
+      raw: null,
     };
 
     selected
@@ -118,11 +118,12 @@ export class MessageList extends Component {
       window.dispatchEvent(new CustomEvent('LoadingMessage'));
       const msgRaw = await getMessage(msg.id, 'raw');
       message.raw = msgRaw.result;
+      this.props.addMessage(message);
     }
 
     window.dispatchEvent(
       new CustomEvent('Checkclick', {
-        detail: message
+        detail: message,
       })
     );
 
@@ -159,8 +160,8 @@ export class MessageList extends Component {
       );
     }
 
-    return this.props.messagesResult.messages.map(el => {
-      if (_this.props.selectedMessages.find(x => x.id === el.id)) {
+    return this.props.messagesResult.messages.map((el) => {
+      if (_this.props.selectedMessages.find((x) => x.id === el.id)) {
         el.selected = true;
       } else {
         el.selected = false;
@@ -250,21 +251,21 @@ export class MessageList extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     selectedMessages: state.messageList.selectedMessages,
     selectedFolder: state.messagesResult.label
       ? state.messagesResult.label.result.name
       : '',
-    lexon: state.lexon
+    lexon: state.lexon,
   };
 };
 
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       addMessage,
-      deleteMessage
+      deleteMessage,
     },
     dispatch
   );

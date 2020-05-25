@@ -45,184 +45,180 @@ export const getLabelMessages = ({ labelIds, q = '', pageToken }) => (
   }
 
   getMessageList({ labelIds, maxResults: 20, q: searchQuery, pageToken })
-    .then(response => {
+    .then((response) => {
       dispatch({
         type: GET_MESSAGES,
-        payload: response
+        payload: response,
       });
 
       dispatch(
         setPageTokens({
-          nextPageToken: response.nextPageToken || ''
+          nextPageToken: response.nextPageToken || '',
         })
       );
     })
-    .catch(err => {
+    .catch((err) => {
       dispatch({
         type: GET_MESSAGES_FAILED,
-        payload: err
+        payload: err,
       });
     });
 };
 
-export const setSearchQuery = q => ({
+export const setSearchQuery = (q) => ({
   type: SET_SEARCH_QUERY,
-  payload: q
+  payload: q,
 });
 
-export const setPageTokens = tokens => ({
+export const setPageTokens = (tokens) => ({
   type: SET_PAGE_TOKENS,
-  payload: tokens
+  payload: tokens,
 });
 
 export const emptyLabelMessages = () => ({
-  type: EMPTY_MESSAGES
+  type: EMPTY_MESSAGES,
 });
 
 export const toggleSelected = (messageIds, selected) => ({
   type: TOGGLE_SELECTED,
   payload: {
     messageIds,
-    selected
-  }
+    selected,
+  },
 });
 
-export const getEmailMessage = messageId => dispatch => {
+export const getEmailMessage = (messageId) => (dispatch) => {
   dispatch(setMessageLoadInProgress());
   getMessage(messageId)
-    .then(response => {
+    .then((response) => {
       dispatch({
         type: MESSAGE_LOAD_SUCCESS,
-        payload: response
+        payload: response,
       });
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
         type: MESSAGE_LOAD_FAIL,
-        payload: error
+        payload: error,
       });
     });
 };
 
-export const getEmailHeaderMessage = messageId => dispatch => {
+export const getEmailHeaderMessage = (messageId) => (dispatch) => {
   dispatch(setMessageHeaderLoadInProgress());
   getMessageHeader(messageId)
-    .then(response => {
+    .then((response) => {
       dispatch({
         type: MESSAGE_HEADER_LOAD_SUCCESS,
-        payload: response
+        payload: response,
       });
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
         type: MESSAGE_HEADER_LOAD_FAIL,
-        payload: error
+        payload: error,
       });
     });
 };
 
 const setMessageLoadInProgress = () => ({
-  type: MESSAGE_LOAD_IN_PROGRESS
+  type: MESSAGE_LOAD_IN_PROGRESS,
 });
 
 const setMessageHeaderLoadInProgress = () => ({
-  type: MESSAGE_HEADER_LOAD_IN_PROGRESS
+  type: MESSAGE_HEADER_LOAD_IN_PROGRESS,
 });
 
 const setMessageListLoadInProgress = () => ({
-  type: GET_MESSAGES_LOAD_IN_PROGRESS
+  type: GET_MESSAGES_LOAD_IN_PROGRESS,
 });
 
-export const addInitialPageToken = token => ({
+export const addInitialPageToken = (token) => ({
   type: ADD_INITIAL_PAGE_TOKEN,
-  payload: token
+  payload: token,
 });
 
 export const clearPageTokens = () => ({
-  type: CLEAR_PAGE_TOKENS
+  type: CLEAR_PAGE_TOKENS,
 });
 
 export const modifyMessages = ({
   ids,
   addLabelIds = [],
-  removeLabelIds = []
-}) => dispatch => {
+  removeLabelIds = [],
+}) => (dispatch) => {
   batchModify({ ids, addLabelIds, removeLabelIds })
-    .then(modifiedIds => {
+    .then((modifiedIds) => {
       dispatch({
         type: MODIFY_MESSAGES_SUCCESS,
-        payload: { modifiedIds, addLabelIds, removeLabelIds }
+        payload: { modifiedIds, addLabelIds, removeLabelIds },
       });
     })
-    .catch(error => {
+    .catch((error) => {
       dispatch({
-        type: MODIFY_MESSAGES_FAILED
+        type: MODIFY_MESSAGES_FAILED,
       });
     });
 };
 
-export const addMessage = message => dispatch => {
+export const addMessage = (message) => (dispatch) => {
   const data = {
-    id: message.id,
-    subject: message.subject,
-    sentDateTime: message.sentDateTime,
-    extMessageId: message.extMessageId,
-    folder: message.folder
+    ...message,
   };
 
   dispatch({
     type: ADD_MESSAGE,
-    data
+    data,
   });
 };
 
-export const deleteMessage = messageId => dispatch => {
+export const deleteMessage = (messageId) => (dispatch) => {
   const data = {
-    id: messageId
+    id: messageId,
   };
 
   dispatch({
     type: DELETE_MESSAGE,
-    data
+    data,
   });
 };
 
-export const deleteListMessages = listMessages => dispatch => {
+export const deleteListMessages = (listMessages) => (dispatch) => {
   dispatch({
     type: DELETE_LIST_MESSAGES,
-    listMessages
+    listMessages,
   });
 };
 
-export const addListMessages = listMessages => dispatch => {
+export const addListMessages = (listMessages) => (dispatch) => {
   dispatch({
     type: ADD_LIST_MESSAGES,
-    listMessages
+    listMessages,
   });
 };
 
-export const clearListMessages = () => dispatch => {
+export const clearListMessages = () => (dispatch) => {
   dispatch({
-    type: CLEAR_LIST_MESSAGES
+    type: CLEAR_LIST_MESSAGES,
   });
 };
 
-export const setOpenMessage = message => dispatch => {
+export const setOpenMessage = (message) => (dispatch) => {
   dispatch({
     type: SET_OPEN_MESSAGE,
-    payload: message
+    payload: message,
   });
 };
 
-export const addOpenMessageAttachment = attchment => dispatch => {
+export const addOpenMessageAttachment = (attchment) => (dispatch) => {
   dispatch({
     type: ADD_OPEN_MESSAGE_ATTACHMENT,
-    payload: attchment
+    payload: attchment,
   });
 };
 
-export const clearOpenMessageAttachment = () => dispatch => {
+export const clearOpenMessageAttachment = () => (dispatch) => {
   dispatch({
-    type: CLEAR_OPEN_MESSAGE_ATTACHMENT
+    type: CLEAR_OPEN_MESSAGE_ATTACHMENT,
   });
 };
