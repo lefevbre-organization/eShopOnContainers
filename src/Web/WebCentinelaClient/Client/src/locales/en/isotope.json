@@ -1,0 +1,67 @@
+{
+  "main": {
+    "error_connection": "Error connecting to Lexon. The data is not updated.",
+    "bbdd_error": "Error connectin to database."
+  },
+  "select-action-header": {
+    "messages-selected": "SELECTED MESSAGES:",
+    "folder": "Folder",
+    "subject": "Subject"
+  },
+  "select-action": {
+    "archive-messages": "Store Messages",
+    "attach-messages": "Attach Files",
+    "attach-documents": "Search the CENTINELA facilities and attach the files you need to your emails."
+  },
+  "tab-archive": {
+    "select-mail": "Select one or more messages and save them in the CENTINELA documentation. Your location will be shown individually.",
+    "new-archive-location": "New file location"
+  },
+  "modal-archive": {
+    "title": "Store messages on CENTINELA",
+    "cancel": "Cancel",
+    "back": "Back",
+    "continue": "Continue",
+    "save": "Save",
+    "copy-email": "Archive an email copy",
+    "copy-attachments": "Archive the attachments",
+    "q1": "What do you want to do with the selected messages?",
+    "q1b": "Check which attachments you want to save",
+    "q3": "In which implementation do you want to archive the selected messages?",
+    "filter-by-product": "FILTRE BY PRODUCT",
+    "modal-save-ko": "The files are saved successfully",
+    "table-title": "Title",
+    "author": "Author",
+    "creation": "Created",
+    "modification": "Modified"
+  },
+  "implantation-list-search": {
+    "results-total": "TOTAL RESULTS: ",
+    "show-search": "Show search",
+    "search-by": "Search by:",
+    "hide-search": "Hide search"
+  },
+  "modal-attach": {
+    "title": "Attach files from CENTINELA",
+    "cancel": "Cancel",
+    "back": "Previous",
+    "continue": "Continue",
+    "save": "save",
+    "copy-email": "Save copy of email",
+    "copy-attachments": "Save attachments",
+    "q1": "Use the search engine or explore your implants to locate the files",
+    "q1b": "Do a direct search for the files you want to attach",
+    "q1c": "Or locate your files by exploring the implants",
+    "q3": "In which implementation do you want to archive the selected messages?",
+    "search": "Search",
+    "explore": "Explore implantations",
+    "filter by product": "FILTER BY PRODUCT",
+    "modal-save-ko": "The documents have been sent successfully",
+    "table-title": "Title",
+    "author": "Author",
+    "creation": "Creation",
+    "modification": "Modification",
+    "attach": "Attach",
+    "save-copy": "Select files from CENTINELA"
+  }
+}

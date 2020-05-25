@@ -16,7 +16,7 @@ class SideBar extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dragOver: false
+      dragOver: false,
     };
     this.handleOnDragOver = this.onDragOver.bind(this);
     this.handleOnDragLeave = this.onDragLeave.bind(this);
@@ -134,25 +134,25 @@ SideBar.propTypes = {
   collapsed: PropTypes.bool.isRequired,
   application: PropTypes.object,
   errors: PropTypes.object,
-  newMessage: PropTypes.func.isRequired
+  newMessage: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   application: state.application,
   errors: state.application.errors,
-  lexon: state.lexon
+  lexon: state.lexon,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   moveFolderToFirstLevel: (user, folder) =>
     moveFolder(dispatch, user, folder, null),
-  newMessage: sign => editNewMessage(dispatch, [], sign)
+  newMessage: (sign) => editNewMessage(dispatch, [], sign),
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
   Object.assign({}, stateProps, dispatchProps, ownProps, {
-    moveFolderToFirstLevel: folder =>
-      dispatchProps.moveFolderToFirstLevel(stateProps.application.user, folder)
+    moveFolderToFirstLevel: (folder) =>
+      dispatchProps.moveFolderToFirstLevel(stateProps.application.user, folder),
   });
 
 export default connect(
