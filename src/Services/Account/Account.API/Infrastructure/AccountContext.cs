@@ -53,13 +53,20 @@
         {
             if (!BsonClassMap.IsClassMapRegistered(typeof(IntegrationEventLogEntry))) { BsonClassMap.RegisterClassMap<IntegrationEventLogEntry>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(UserMail))) { BsonClassMap.RegisterClassMap<UserMail>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(RawMessageProvider))) { BsonClassMap.RegisterClassMap<RawMessageProvider>(); }
         }
 
         public IMongoCollection<UserMail> Accounts => Database.GetCollection<UserMail>(_settings.Value.Collection);
+        public IMongoCollection<RawMessageProvider> RawMessages => Database.GetCollection<RawMessageProvider>(_settings.Value.CollectionRaw);
 
         public IMongoCollection<UserMail> AccountsTransaction(IClientSessionHandle session)
         {
             return session.Client.GetDatabase(_settings.Value.Database).GetCollection<UserMail>(_settings.Value.Collection);
+        }
+
+        public IMongoCollection<RawMessageProvider> RawMessagesTransaction(IClientSessionHandle session)
+        {
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<RawMessageProvider>(_settings.Value.CollectionRaw);
         }
 
         public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogs

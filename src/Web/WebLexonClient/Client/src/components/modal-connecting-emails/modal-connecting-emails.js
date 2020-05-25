@@ -11,7 +11,7 @@ import { ConnectingEmailsStep4 } from './step4';
 import { addClassification, uploadFile } from '../../services/services-lexon';
 import ACTIONS from '../../actions/documentsAction';
 import 'react-perfect-scrollbar/dist/css/styles.css';
-const base64js = require('base64-js')
+const base64js = require('base64-js');
 
 class ModalConnectingEmails extends Component {
   constructor() {
@@ -76,7 +76,6 @@ class ModalConnectingEmails extends Component {
   nextStep() {
     const { step, step1Data } = this.state;
 
-
     if (step === 1) {
       this.setState({ step: 2 });
     } else if (step === 2) {
@@ -88,10 +87,8 @@ class ModalConnectingEmails extends Component {
       } else {
         if (step1Data.actuation === true) {
           this.setState({ step: 4 });
-
         } else {
           this.setState({ step: 3 });
-
         }
       }
     } else if (step === 3) {
@@ -117,7 +114,6 @@ class ModalConnectingEmails extends Component {
           this.setState({ step: 2 });
         } else {
           this.setState({ step: 3 });
-
         }
       }
     }
@@ -211,7 +207,10 @@ class ModalConnectingEmails extends Component {
         notification = 1;
       }
 
-      if (step1Data.copyDocuments === true || step1Data.saveDocuments === true) {
+      if (
+        step1Data.copyDocuments === true ||
+        step1Data.saveDocuments === true
+      ) {
         notification += 2;
         // Save email as eml format
         for (let i = 0; i < selectedMessages.length; i++) {
@@ -241,9 +240,13 @@ class ModalConnectingEmails extends Component {
                   'Content-Disposition: attachment;'
                 ) > -1
               ) {
-                let rawAttach = base64js.fromByteArray(mime.childNodes[j].content);
+                let rawAttach = base64js.fromByteArray(
+                  mime.childNodes[j].content
+                );
                 await uploadFile(
-                  step1Data.actuation === false ? step3Data.selected : undefined,
+                  step1Data.actuation === false
+                    ? step3Data.selected
+                    : undefined,
                   step1Data.actuation === false ? step2Data.id : undefined,
                   step1Data.actuation === false ? step2Data.idType : 45,
                   step1Data.actuation === true ? sc[i] : undefined,
@@ -263,12 +266,17 @@ class ModalConnectingEmails extends Component {
       } else if (notification === 2) {
         toggleNotification(i18n.t('classify-emails.documents-saved-ok'));
       } else if (notification === 3) {
-        toggleNotification(i18n.t('classify-emails.classification-docs-saved-ok'));
+        toggleNotification(
+          i18n.t('classify-emails.classification-docs-saved-ok')
+        );
       }
     } catch (err) {
-      console.log(err)
+      console.log(err);
       if (notification === 1) {
-        toggleNotification(i18n.t('classify-emails.classification-saved-ko'), true);
+        toggleNotification(
+          i18n.t('classify-emails.classification-saved-ko'),
+          true
+        );
       } else if (notification > 1) {
         toggleNotification(i18n.t('classify-emails.documents-saved-ko'), true);
       }
@@ -313,7 +321,10 @@ class ModalConnectingEmails extends Component {
 
     switch (step) {
       case 1:
-        const dsbl = (step1Data.actuation === false && step1Data.copyDocuments === false && step1Data.saveDocuments === false)
+        const dsbl =
+          step1Data.actuation === false &&
+          step1Data.copyDocuments === false &&
+          step1Data.saveDocuments === false;
         return (
           <Fragment>
             <Button
@@ -377,7 +388,7 @@ class ModalConnectingEmails extends Component {
               }}>
               {i18n.t('classify-emails.back')}
             </Button>
-            {step1Data.actuation === true &&
+            {step1Data.actuation === true && (
               <Button
                 disabled={this.save3Disabled()}
                 bsPrefix='btn btn-primary'
@@ -385,8 +396,9 @@ class ModalConnectingEmails extends Component {
                   this.nextStep();
                 }}>
                 {i18n.t('classify-emails.continue')}
-              </Button>}
-            {step1Data.actuation === false &&
+              </Button>
+            )}
+            {step1Data.actuation === false && (
               <Button
                 disabled={this.save3Disabled()}
                 bsPrefix='btn btn-primary'
@@ -394,7 +406,8 @@ class ModalConnectingEmails extends Component {
                   this.onSave();
                 }}>
                 {i18n.t('classify-emails.save')}
-              </Button>}
+              </Button>
+            )}
           </Fragment>
         );
       case 4:

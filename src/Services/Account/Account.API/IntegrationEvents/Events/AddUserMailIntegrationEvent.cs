@@ -17,4 +17,15 @@
             Configuration = config;
         }
     }
+
+    public class AddRawMessageIntegrationEvent : IntegrationEvent
+    {
+        public string User { get; set; }
+
+
+        public AddRawMessageIntegrationEvent(string user)
+        {
+            User = user;
+        }
+    }
 }

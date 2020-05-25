@@ -37,5 +37,8 @@
         Task<Result<List<MailRelation>>> GetRelationsFromMail(string user, string provider, string mail, string uid);
 
         Task<Result<bool>> UpSertAccountConfig(string user, string provider, string mail,  ConfigImapAccount config);
+        Task<Result<RawMessageProvider>> GetRawUser(string user, string provider, string account, string messageId);
+        Task<Result<RawMessageProvider>> CreateRaw(RawMessageProvider rawMessage);
+        Task<Result<bool>> DeleteRaw(RawMessageProvider rawMessage);
     }
 }

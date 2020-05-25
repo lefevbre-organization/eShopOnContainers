@@ -73,7 +73,28 @@
             }
             else
             {
-                TraceMessage(result.errors, new Exception(msgError), "1003");
+                TraceMessage(result.errors, new Exception(msgError), "CreateUserError");
+            }
+            return null;
+        }
+
+        private string ManageCreateRawMessage(string msgError, string msgModify, string msgInsert, Result<RawMessageProvider> result, ReplaceOneResult resultReplace)
+        {
+            if (resultReplace.IsAcknowledged)
+            {
+                if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
+                {
+                    TraceInfo(result.infos, msgModify);
+                }
+                else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
+                {
+                    TraceInfo(result.infos, msgInsert);
+                    return resultReplace.UpsertedId.ToString();
+                }
+            }
+            else
+            {
+                TraceMessage(result.errors, new Exception(msgError), "CreateRawError");
             }
             return null;
         }
@@ -495,6 +516,15 @@
             }
         }
 
+        private void ReviewRawMessage(RawMessageProvider rawMessage)
+        {
+            rawMessage.User = rawMessage.User.ToUpperInvariant();
+            rawMessage.Provider = rawMessage.Provider.ToUpperInvariant();
+            rawMessage.Account = rawMessage.Account.ToUpperInvariant();
+            rawMessage.MessageId = rawMessage.MessageId.ToUpperInvariant();
+            
+        }
+
         private static void ReviewAccountMail(Account acc)
         {
             acc.provider = acc.provider.ToUpperInvariant();
@@ -552,6 +582,17 @@
             return Builders<UserMail>.Filter.Eq(u => u.User, idUser.ToUpperInvariant());
         }
 
+        private static FilterDefinition<RawMessageProvider> GetFilterRawMessage(string idUser, string provider, string account, string messageId)
+        {
+            
+            return Builders<RawMessageProvider>.Filter.And(
+                Builders<RawMessageProvider>.Filter.Eq(u => u.User, idUser.ToUpperInvariant()),
+                Builders<RawMessageProvider>.Filter.Eq(u => u.Provider, provider.ToUpperInvariant()),
+                Builders<RawMessageProvider>.Filter.Eq(u => u.Account, account.ToUpperInvariant()),
+                Builders<RawMessageProvider>.Filter.Eq(u => u.MessageId, messageId.ToUpperInvariant())
+                );
+        }
+
         private UserMail GetNewUserMail(string user, string email, string provider, string guid)
         {
             return new UserMail()
@@ -571,5 +612,77 @@
         }
 
         #endregion Common
+
+        #region RawMessage
+        public async Task<Result<RawMessageProvider>> GetRawUser(string user, string provider, string account, string messageId)
+        {
+            var result = new Result<RawMessageProvider>();
+            try
+            {
+                result.data = await _context.RawMessages.Find(GetFilterRawMessage(user, provider, account, messageId)).FirstOrDefaultAsync();
+
+                if (result.data == null)
+                    TraceMessage(result.errors, new Exception($"No se encuentra ningún usuario {user}"), "1003");
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
+
+        public async Task<Result<RawMessageProvider>> CreateRaw(RawMessageProvider rawMessage)
+        {
+            var result = new Result<RawMessageProvider>();
+            ReviewRawMessage(rawMessage);
+
+            try
+            {
+                var resultReplace = await _context.RawMessages.ReplaceOneAsync(
+                    GetFilterRawMessage(rawMessage.User, rawMessage.Provider, rawMessage.Account, rawMessage.MessageId),
+                    rawMessage,
+                    GetUpsertOptions());
+
+                rawMessage.Id = ManageCreateRawMessage($"Don´t insert or modify the raw {rawMessage.User}",
+                    $"Se modifica el usuario {rawMessage.User}",
+                    $"Se inserta el usuario {rawMessage.User} con {resultReplace.UpsertedId}",
+                     result, resultReplace);
+
+                result.data = rawMessage;
+
+                var eventAssoc = new AddRawMessageIntegrationEvent(rawMessage.User);
+                _eventBus.Publish(eventAssoc);
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
+
+        public async Task<Result<bool>> DeleteRaw(RawMessageProvider rawMessage)
+        {
+            var result = new Result<bool>();
+            try
+            {
+                var resultRemove = await _context.RawMessages.DeleteOneAsync(
+                    GetFilterRawMessage(rawMessage.User, rawMessage.Provider, rawMessage.Account, rawMessage.MessageId));
+
+                result.data = resultRemove.IsAcknowledged && resultRemove.DeletedCount > 0;
+                if (result.data)
+                {
+                    TraceInfo(result.infos, $"Se ha eliminado correctamente el raw de {rawMessage.MessageId}");
+                    //var eventAssoc = new RemoveUserMailIntegrationEvent(user);
+                    //_eventBus.Publish(eventAssoc);
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
+
+        #endregion RawMessage
     }
 }

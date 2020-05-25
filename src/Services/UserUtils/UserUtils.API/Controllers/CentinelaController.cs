@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
+﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
-using UserUtils.API.Models;
-using UserUtils.API.Infrastructure.Services;
+using System;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
-namespace UserUtils.API.Controllers
+namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
@@ -26,6 +24,7 @@ namespace UserUtils.API.Controllers
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _service = service ?? throw new ArgumentNullException(nameof(service));
         }
+
         /// <summary>
         /// Permite obtener los token necesarios mediante login y password y eligiendo la aplicación adecuada
         /// </summary>
@@ -44,9 +43,8 @@ namespace UserUtils.API.Controllers
 
             Result<TokenData> result = await _service.GetUserFromLoginAsync(
                 tokenRequest.idApp, tokenRequest.login, tokenRequest.password, addTerminatorToToken);
-            
-            return result.data.valid ? Ok(result) : (IActionResult)BadRequest(result);
 
+            return result.data.valid ? Ok(result) : (IActionResult)BadRequest(result);
         }
 
         /// <summary>
@@ -70,8 +68,8 @@ namespace UserUtils.API.Controllers
             var result = await _service.GetTokenAsync(token, addTerminatorToToken);
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
-
         }
+
         /// <summary>
         /// Permite obtener los token necesarios para operar con los microservicios de envio de correo
         /// </summary>
@@ -91,6 +89,5 @@ namespace UserUtils.API.Controllers
             var result = await _service.VadidateTokenAsync(tokenRequest);
             return result.data.valid ? Ok(result) : (IActionResult)BadRequest(result);
         }
-
     }
 }

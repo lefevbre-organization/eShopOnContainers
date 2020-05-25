@@ -1,9 +1,9 @@
-﻿using Centinela.API.Models;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Models;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Centinela.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Services
 {
     public interface ICentinelaService
     {
@@ -14,6 +14,7 @@ namespace Centinela.Infrastructure.Services
         Task<Result<CenEvaluation>> GetEvaluationByIdAsync(string idNavisionUser, int idEvaluation);
 
         Task<Result<List<CenDocument>>> GetDocumentsAsync(string idNavisionUser, string search);
+        Task<Result<List<CenDocumentObject>>> GetDocumentsByInstanceAsync(string idNavisionUser, string conceptObjectId);
 
         Task<Result<bool>> FilePostAsync(ConceptFile file);
 

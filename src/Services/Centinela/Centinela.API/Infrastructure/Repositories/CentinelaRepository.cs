@@ -1,5 +1,4 @@
-﻿using Centinela.API.IntegrationsEvents.Events;
-using Centinela.API.Models;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Models;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
@@ -15,7 +14,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Centinela.API.Infrastructure.Repositories
+namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Repositories
 {
     public class CentinelaRepository : BaseClass<CentinelaRepository>, ICentinelaRepository
     {

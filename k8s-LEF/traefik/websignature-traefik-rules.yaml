@@ -1,0 +1,17 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: websignature-traefik-rules
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.frontend.rule.type: PathPrefixStrip
+spec:
+  rules:
+    - host: now-websignature.lefebvre.es
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: websignature
+              servicePort: http

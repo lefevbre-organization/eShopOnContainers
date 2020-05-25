@@ -1,3 +1,58 @@
+# webstatus
+http://localhost:5671/hc-ui#/healthchecks
+http://localhost:15671/
+
+# account
+https://localhost:44305/api/v2/usermail/E1/raw?provider=E1&account=e1%40e1.es&messageId=e1
+http://localhost:8082/api/v2/usermail/E1/raw?provider=E1&account=e1%40e1.es&messageId=e1
+http://localhost:8083/api/v2/accounts/usermail/E1/raw?provider=E1&account=e1%40e1.es&messageId=e1
+https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail/E1/raw?provider=E1&account=e1%40e1.es&messageId=e1
+
+curl -X POST "https://localhost:44305/api/v2/usermail/E1/raw" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"user\": \"E1\", \"account\": \"e1@e1.es\", \"provider\": \"e1\", \"messageId\": \"e1\", \"raw\": \"e1fffffff\"}"
+curl -X POST "https://localhost:44305/api/v2/usermail/E1/raw/delete" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"user\": \"E1\", \"account\": \"e1@e1.es\", \"provider\": \"e1\", \"messageId\": \"e1\",}"
+curl -X POST "https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail/E123123/raw" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"id\": null, \"user\": \"E123123\", \"account\": \"f@f.es\", \"provider\": \"imap\", \"messageId\": \"111\", \"raw\": \"raw123\"}" --trace-ascii /dev/stdout
+
+
+# Centinela gateway
+http://localhost:8089/api/v1/cen/test
+http://localhost:8089/api/v1/cen/user?idNavisionUser=E1621396
+http://localhost:8089/api/v1/cen/evaluations?idNavisionUser=E1621396
+http://localhost:8089/api/v1/cen/evaluations/getbyid?idNavisionUser=E1621396&idEvaluation=4509
+http://localhost:8089/api/v1/cen/evaluations/tree/getbyid?idNavisionUser=E1621396&idEvaluation=4509
+http://localhost:8089/api/v1/cen/documents?idNavisionUser=E1621396&search=af
+http://localhost:8089/api/v1/cen/concepts/instances?idNavisionUser=E1621396&idConcept=107229
+http://localhost:8089/api/v1/cen/documents/instance?idNavisionUser=E1669460&conceptObjectId=75823
+
+# Centinela direct
+http://localhost:8087/api/v1/Centinela/test
+http://localhost:8087/api/v1/Centinela/user?idNavisionUser=E1621396
+http://localhost:8087/api/v1/Centinela/evaluations?idNavisionUser=E1621396
+http://localhost:8087/api/v1/Centinela/evaluations/getbyid?idNavisionUser=E1621396&idEvaluation=4509
+http://localhost:8087/api/v1/Centinela/evaluations/tree/getbyid?idNavisionUser=E1621396&idEvaluation=4509
+http://localhost:8087/api/v1/Centinela/documents?idNavisionUser=E1621396&search=af
+http://localhost:8087/api/v1/Centinela/concepts/instances?idNavisionUser=E1621396&idConcept=107229
+https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/documents/instance?idNavisionUser=E1669460&conceptObjectId=75823
+https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/Centinela/documents/instance?idNavisionUser=E1669460&conceptObjectId=75823
+https://localhost:44334/api/v1/Centinela/documents/instance?idNavisionUser=E1669460&conceptObjectId=75823
+
+# UserUtils direct
+http://localhost:8088/api/v1/UserUtils/test
+
+# Gateway UserUtil
+http://localhost:8089/api/v1/utils/UserUtils/test
+
+# Gateway lexon
+http://localhost:8086/api/v1/lex/Lexon/test
+http://localhost:8086/api/v1/mysql/LexonMysql/test
+
+# Lexon direct
+http://localhost:8084/api/v1/Lexon/test
+
+# LexonMySql direct
+http://localhost:8085/api/v1/LexonMySql/test
+
+
+# Gateway account
 http://localhost:8083/api/v1/lex/Lexon/entities/types
 http://localhost:8083/api/v1/accounts/UserMail/test
 http://localhost:8082/api/v1/UserMail/test
@@ -12,6 +67,7 @@ http://localhost:8083/api/v1/mysql/LexonMySql/test
 http://localhost:8086/api/v1/mysql/LexonMySql/test
 http://localhost:8084/api/v1/Lexon/test
 http://localhost:8085/api/v1/LexonMySql/test
+
 
 http://localhost:8083/api/v1/mysql/LexonMySql/user?idNavisionUser=E1621396
 http://localhost:8086/api/v1/mysql/LexonMySql/user?idNavisionUser=E1621396
@@ -37,3 +93,7 @@ http://localhost:8085/api/v1/LexonMySql/entities/search?pageIndex=1&idType=13&bb
 http://localhost:8083/api/v1/mysql/LexonMySql/classifications/search?pageSize=10&pageIndex=1&bbdd=lexon_admin_02&idUser=449&idMail=mail_001
 http://localhost:8086/api/v1/mysql/LexonMySql/classifications/search?pageSize=10&pageIndex=1&bbdd=lexon_admin_02&idUser=449&idMail=mail_001
 http://localhost:8085/api/v1/LexonMySql/classifications/search?pageSize=10&pageIndex=1&bbdd=lexon_admin_02&idUser=449&idMail=mail_001
+
+
+curl -vv https://compliance-api.affin.es/api/secure/conectamail/evaluations/user/E1621396 -v --ntlm -u centinelaAPI:led.2018
+curl -vv https://centinela-api.lefebvre.es/api/secure/conectamail/evaluations/user/E1621396 -v --ntlm -u CentinelaAPI:muWeEtF3ht#9yJPB                                                                                                                                                        

@@ -1,7 +1,8 @@
-﻿using Centinela.API.Models;
-using Centinela.Infrastructure.Services;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Services;
+using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Centinela.API.Controllers
+namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
@@ -17,14 +18,17 @@ namespace Centinela.API.Controllers
     {
         private ICentinelaService _service;
         private readonly IOptions<CentinelaSettings> _settings;
+        internal readonly ILogger<CentinelaController> _log;
 
         public CentinelaController(
           ICentinelaService service
           , IOptions<CentinelaSettings> settings
+            , ILogger<CentinelaController> log
           )
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _service = service ?? throw new ArgumentNullException(nameof(service));
+            _log = log ?? throw new ArgumentNullException(nameof(log));
         }
 
         /// <summary>
@@ -36,6 +40,8 @@ namespace Centinela.API.Controllers
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public IActionResult Test()
         {
+            _log.LogDebug("test");
+            System.Diagnostics.Trace.WriteLine("test");
             return Ok(new Result<bool>(true));
         }
 
@@ -113,7 +119,20 @@ namespace Centinela.API.Controllers
                 return (IActionResult)BadRequest("id user value invalid. Must be a valid iduser");
 
             var result = await _service.GetDocumentsAsync(idNavisionUser, search);
-            return result.errors?.Count() > 0 ? Ok(result) : (IActionResult)BadRequest(result);
+            return result.errors?.Count() > 0 ? (IActionResult)BadRequest(result) : Ok(result); 
+        }
+
+        [HttpGet("documents/instance")]
+        [ProducesResponseType(typeof(Result<List<CenDocumentObject>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<List<CenDocumentObject>>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetDocumentsByInstanceAsync(string idNavisionUser = "E1669460", string conceptObjectId = "75823")
+        {
+            // https://centinela-api.lefebvre.es/api/secure/conectamail/documentobjects/conceptobject/75823?IdEntrada=E1669460
+            if (string.IsNullOrEmpty(idNavisionUser))
+                return (IActionResult)BadRequest("id user value invalid. Must be a valid iduser");
+
+            var result = await _service.GetDocumentsByInstanceAsync(idNavisionUser, conceptObjectId);
+            return result.errors?.Count() > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpPost("concepts/files/post")]

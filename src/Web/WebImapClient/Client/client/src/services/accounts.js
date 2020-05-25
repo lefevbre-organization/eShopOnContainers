@@ -1,4 +1,6 @@
-export const getUser = async userId => {
+import history from '../routes/history';
+
+export const getUser = async (userId) => {
   const url = `${window.URL_GET_ACCOUNTS}/${userId}`;
   const url2 = `${window.API_GATEWAY}/api/v1/lex/Lexon/user?idUserNavision=${userId}`;
 
@@ -8,10 +10,9 @@ export const getUser = async userId => {
     const res2 = await fetch(url2, { method: 'GET' });
     const navUser = await res2.json();
     user.data.lexonUserId = navUser.data.idUser;
-
     return user;
   } catch (err) {
-    throw err;
+    history.push('/error/404');
   }
 };
 
@@ -23,9 +24,9 @@ export const addOrUpdateAccount = async (userId, account) => {
     const res = await fetch(url, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(account)
+      body: JSON.stringify(account),
     });
 
     const user = await res.json();
@@ -35,12 +36,12 @@ export const addOrUpdateAccount = async (userId, account) => {
   }
 };
 
-export const resetDefaultAccount = async userId => {
+export const resetDefaultAccount = async (userId) => {
   const url = `${window.URL_GET_ACCOUNTS}/${userId}/account/reset`;
 
   try {
     const res = await fetch(url, {
-      method: 'POST'
+      method: 'POST',
     });
 
     const user = await res.json();
@@ -70,19 +71,19 @@ export const classifyEmail = async (
       uid: id,
       subject: subject,
       date: date,
-      folder
+      folder,
     },
     bbdd: bbdd,
-    idUser: userId
+    idUser: userId,
   };
 
   try {
     const response = await fetch(url, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(classification)
+      body: JSON.stringify(classification),
     });
     const data = await response.json();
 

@@ -142,5 +142,18 @@
   },
   "msgNotFoundSnackbar": {
     "error": "Mensaje no encontrado en el servidor"
+  },
+  "error": {
+    "back": "Volver a la página de inicio",
+    "help": "¿Necesitas ayuda?",
+    "404-title": "Página no encontrada",
+    "404-info1": "Lo sentimos, ha ocurrido un error.",
+    "404-info2": "No se ha encontrado la página solicitada.",
+    "403-title": "Acceso prohibido",
+    "403-info1": "Lo sentimos, no tienes permisos suficientes para acceder a esta página.",
+    "403-info2": "",
+    "500-title": "Error de servidor",
+    "500-info1": "Lo sentimos, algo ha ido mal. Refresca la página o intenta acceder más tarde.",
+    "500-info2": ""
   }
 }

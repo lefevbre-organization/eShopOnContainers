@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Services;
+using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using UserUtils.API.Infrastructure.Services;
-using UserUtils.API.Models;
 
-namespace UserUtils.API.Controllers
+namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
@@ -31,12 +31,15 @@ namespace UserUtils.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("test")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
         public IActionResult Test()
         {
-            return Ok(new Result<bool>(true));
+            var data = $"Version is { _settings.Value.Version}";
+            return Ok(new Result<string>(data));
         }
+
+        #region Token
 
         /// <summary>
         /// Permite obtener los token necesarios para operar con los microservicios de envio de correo
@@ -85,6 +88,10 @@ namespace UserUtils.API.Controllers
             return result.data.valid ? Ok(result) : (IActionResult)BadRequest(result);
         }
 
+        #endregion Token
+
+        #region User
+
         [HttpGet("user/apps")]
         [ProducesResponseType(typeof(Result<List<LexApp>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<List<LexApp>>), (int)HttpStatusCode.BadRequest)]
@@ -94,11 +101,11 @@ namespace UserUtils.API.Controllers
                 return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
             var result = await _service.GetUserUtilsAsync(idNavisionUser, onlyActives);
-            result.infos.Add(new Info() { code = "0000", message = "estoy en user utils" });
+            result.infos.Add(new Info() { code = "UserUtilsCheck", message = "estoy en user utils" });
             return Ok(result);
         }
 
-        [HttpPut("user/areas")]
+        [HttpGet("user/areas")]
         [ProducesResponseType(typeof(Result<ServiceComArea[]>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<ServiceComArea[]>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetAreasByUserAsync(string idNavisionUser = "E1621396")
@@ -108,7 +115,6 @@ namespace UserUtils.API.Controllers
 
             Result<ServiceComArea[]> result = await _service.GetAreasByUserAsync(idNavisionUser);
             return Ok(result);
-            //http://led-servicecomtools/Areas/GetUsuariosProAreas?idUsuarioPro=E0384919
         }
 
         [HttpGet("user/encode")]
@@ -136,7 +142,13 @@ namespace UserUtils.API.Controllers
             //http://led-servicecomtools/Login/RecuperarUsuario?login=e0384919&password=asasd
         }
 
-        [HttpPut("user/get/login")]
+        /// <summary>
+        /// Obtiene los datos de usuario en base al login y password y actualiz o crea un usuario en UserUtils
+        /// </summary>
+        /// <param name="login"></param>
+        /// <param name="pass"></param>
+        /// <returns></returns>
+        [HttpGet("user/login")]
         [ProducesResponseType(typeof(Result<ServiceComUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<ServiceComUser>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUserWithLoginAsync(
@@ -147,12 +159,12 @@ namespace UserUtils.API.Controllers
             if (string.IsNullOrEmpty(login))
                 return (IActionResult)BadRequest("id encoded value invalid. Must be a valid encoded user");
 
+            //Todo: actualizar con el upsert del usuario en mongo
             Result<ServiceComUser> result = await _service.GetUserDataWithLoginAsync(login, pass);
             return Ok(result);
-            //Http://led-servicecomtools/Login/RecuperarUsuario?strLogin=f.reyes-ext@lefebvreelderecho.com&strPass=etEb9221
         }
 
-        [HttpPut("user/get/entrada")]
+        [HttpGet("user/entrada")]
         [ProducesResponseType(typeof(Result<ServiceComUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<ServiceComUser>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetUserWithEntradaAsync(string idNavisionUser = "E1621396")
@@ -162,7 +174,82 @@ namespace UserUtils.API.Controllers
 
             Result<ServiceComUser> result = await _service.GetUserDataWithEntryAsync(idNavisionUser);
             return Ok(result);
-            //http://led-servicecomtools/Login/RecuperarUsuarioPorEntrada?idUsuarioPro=E1621396
+        }
+
+        /// <summary>
+        /// Permite agregar un usuario con los datos de aplicación
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("user")]
+        [ProducesResponseType(typeof(Result<UserUtilsModel>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<UserUtilsModel>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UserPostAsync(
+              [FromBody] UserUtilsModel user
+            )
+        {
+            if (string.IsNullOrEmpty(user.idNavision))
+                return BadRequest("value invalid. Must be a valid idNavision");
+
+            Result<UserUtilsModel> result = await _service.PostUserAsync(user);
+
+            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        /// <summary>
+        /// Permite obtener una usuario con sus datos de aplicaciones
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("user")]
+        [ProducesResponseType(typeof(Result<UserUtilsModel>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<UserUtilsModel>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UserGetAsync(
+              [FromQuery] string IdNavision
+            )
+        {
+            if (string.IsNullOrEmpty(IdNavision))
+                return BadRequest("value invalid. Must be a valid idNavision");
+
+            Result<UserUtilsModel> result = await _service.GetUserAsync(IdNavision);
+
+            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        /// <summary>
+        /// Permite borrar un usuario
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("user/delete")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UserRemoveAsync(
+              [FromBody] string idNavision
+            )
+        {
+            if (string.IsNullOrEmpty(idNavision))
+                return BadRequest("value invalid. Must be a valid idnavision");
+
+            Result<bool> result = await _service.RemoveUserAsync(idNavision);
+
+            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        #endregion User
+
+        /// <summary>
+        /// Devueve una redirección hacia una url
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("user/apps/redirect")]
+        [ProducesResponseType(typeof(RedirectResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(RedirectResult), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ByPassUrlAsync(
+              [FromQuery] string NameService = "Lex-On",
+              [FromQuery] string idUser = "E1621396"
+            )
+        {
+            Result<string> resultUserUtils = await _service.GetUserUtilsActualToServiceAsync(idUser, NameService);
+
+            return Redirect(resultUserUtils.data);
         }
     }
 }

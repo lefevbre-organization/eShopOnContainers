@@ -1,0 +1,67 @@
+{
+  "main": {
+    "error_connection": "Error al conectar con Lexon. Los datos no se muestran actualizados.",
+    "bbdd_error": "Error al conectar con la base de datos."
+  },
+  "select-action-header": {
+    "messages-selected": "MENSAJES SELECCIONADOS:",
+    "folder": "Carpeta",
+    "subject": "Asunto"
+  },
+  "select-action": {
+    "archive-messages": "Archivar Mensajes",
+    "attach-documents": "Adjuntar archivos"
+  },
+  "tab-archive": {
+    "select-mail": "Selecciona uno o más mensajes y guárdalos en la documentación de CENTINELA. Su ubicación se mostrará individualmente.",
+    "new-archive-location": "Nueva localización de archivo",
+    "attach-documents": "Busca en las implantaciones de CENTINELA y adjunta a tus correos los archivos que necesites."
+  },
+  "modal-archive": {
+    "title": "Archivar mensajes en CENTINELA",
+    "cancel": "Cancelar",
+    "back": "Anterior",
+    "continue": "Continuar",
+    "save": "Guardar",
+    "copy-email": "Guardar copia del correo",
+    "copy-attachments": "Guardar archivos adjuntos",
+    "q1": "¿Qué quieres hacer con los mensajes seleccionados?",
+    "q1b": "Verifica qué adjuntos quieres guardar",
+    "q3": "¿En qué implantación quieres archivar los mensajes seleccionados?",
+    "filter-by-product": "FILTRAR POR PRODUCTO",
+    "modal-save-ko": "Los documentos se han enviado correctamente",
+    "table-title": "Título",
+    "author": "Autor",
+    "creation": "Creación",
+    "modification": "Modificación"
+  },
+  "implantation-list-search": {
+    "results-total": "TOTAL RESULTADOS: ",
+    "show-search": "Mostrar buscador",
+    "search-by": "Buscar por:",
+    "hide-search": "Ocultar buscador"
+  },
+  "modal-attach": {
+    "title": "Adjuntar archivos desde CENTINELA",
+    "cancel": "Cancelar",
+    "back": "Anterior",
+    "continue": "Continuar",
+    "save": "Guardar",
+    "copy-email": "Guardar copia del correo",
+    "copy-attachments": "Guardar archivos adjuntos",
+    "q1": "Usa el buscador o explora tus implantaciones para localizar los archivos.",
+    "q1b": "Haz una búsqueda directa de los archivos que quieres adjuntar.",
+    "q1c": "O bien localiza tus archivos explorando las implantaciones.",
+    "q3": "Desde que implantación quieres adjuntar los archivos?",
+    "search": "Buscar",
+    "explore": "Explorar implantaciones",
+    "filter-by-product": "FILTRAR POR PRODUCTO",
+    "modal-save-ko": "Los documentos se han enviado correctamente",
+    "table-title": "Título",
+    "author": "Autor",
+    "creation": "Creación",
+    "modification": "Modificación",
+    "attach": "Adjuntar",
+    "save-copy": "Selecciona los archivos en CENTINELA"
+  }
+}

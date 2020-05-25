@@ -8,12 +8,13 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace WebStatusLef
+namespace Lefebvre.eLefebvreOnContainers.Clients.WebStatusLef
 {
     public class Program
     {
         public static readonly string Namespace = typeof(Program).Namespace;
         public static readonly string AppName = Namespace;
+
 
         public static int Main(string[] args)
         {
@@ -44,11 +45,12 @@ namespace WebStatusLef
             }
         }
 
+
         private static IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .CaptureStartupErrors(false)
                 .UseStartup<Startup>()
-                .UseApplicationInsights()
+                //.UseApplicationInsights()
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseConfiguration(configuration)
                 .UseSerilog()
@@ -78,13 +80,13 @@ namespace WebStatusLef
 
             var config = builder.Build();
 
-            if (config.GetValue<bool>("UseVault", false))
-            {
-                builder.AddAzureKeyVault(
-                    $"https://{config["Vault:Name"]}.vault.azure.net/",
-                    config["Vault:ClientId"],
-                    config["Vault:ClientSecret"]);
-            }
+            //if (config.GetValue<bool>("UseVault", false))
+            //{
+            //    builder.AddAzureKeyVault(
+            //        $"https://{config["Vault:Name"]}.vault.azure.net/",
+            //        config["Vault:ClientId"],
+            //        config["Vault:ClientSecret"]);
+            //}
 
             return builder.Build();
         }
