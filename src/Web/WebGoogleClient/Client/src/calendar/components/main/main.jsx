@@ -24,6 +24,7 @@ import {
     ScheduleComponent, ViewsDirective, ViewDirective,
     Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, DragEventArgs, ResourcesDirective, ResourceDirective,
 } from '@syncfusion/ej2-react-schedule';
+
 import { DataManager, Query, Predicate } from '@syncfusion/ej2-data';
 import { ToastComponent, ToastCloseArgs } from '@syncfusion/ej2-react-notifications';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
@@ -31,6 +32,12 @@ import { deleteCalendar, getEventList, addCalendarEvent, deleteCalendarEvent, up
 import moment from 'moment';
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
+
+
+import { Browser, Internationalization, extend } from '@syncfusion/ej2-base';
+import { createElement } from '@syncfusion/ej2-base';
+import { DropDownList } from '@syncfusion/ej2-dropdowns';
+import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
 
 
 
@@ -64,6 +71,8 @@ export class Main extends Component {
             { content: 'Process complete', cssClass: 'e-toast-black', icon: '' },
             { content: 'Error', cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
         ]
+
+              
 
         this.state = {
             isVisible: true, 
@@ -236,6 +245,16 @@ export class Main extends Component {
         }
     }
 
+    editorTemplate(props) {
+       // return ((props !== undefined) ? <div></div> : <div></div>);
+    }
+
+    eventTemplate(props) {
+        return (
+            <div className="image"><img width="16" height="16" src={"assets/img/"+ props.ImageName + ".png"} />
+            </div>);
+    }
+
     onDataBinding(e, calendarId ) {
         let items = this.dataManager.items;       
         if (items.length > 0) {
@@ -266,6 +285,9 @@ export class Main extends Component {
                 if (event.recurrence != undefined) {
                     recurrenceRule = event.recurrence[0].replace('RRULE:', '');
                 }
+
+               
+
                 this.scheduleData.push({
                     Id: event.id,
                     CalendarId: calendarId,
@@ -276,6 +298,8 @@ export class Main extends Component {
                     EndTime: new Date(end),
                     IsAllDay: !event.start.dateTime,
                     RecurrenceRule: recurrenceRule,
+                    //ImageName: "transparente",
+                    ImageName: "lefebvre",
 
                     //Fake to remove
                     //resources: [{
@@ -359,10 +383,8 @@ export class Main extends Component {
     }   
 
     componentDidMount() {  
-
       this.sidebarCalendarList();  
-      this.LoadCalendarList();
-         
+      this.LoadCalendarList();         
     }
 
     LoadCalendarList(DisableloadSchedule) {
@@ -449,13 +471,51 @@ export class Main extends Component {
       let a = args
     }
 
+    tabCreated() {
+      
+        let tabContent =  {
+            "text": 'essssseeee',
+            "content": 'eeeee'
+        }   
+              
+        this.items = tabContent;
+      //  this.refresh();
+           
+    }
+
     onPopupOpen(args) {
 
         if (args.type === 'QuickInfo') {
 
         }
         if (args.type === 'Editor') {
+
+        
+
+            //if (!args.element.querySelector('.e-dlg-content')) {
+                //let formContainer = args.element.querySelector('.e-form-container')
+                //let containerF = createElement('div', { className: 'e-form-container' });
+                //containerF.appendChild(formContainer);
+            //}
+
+          
+
+
             if (!args.element.querySelector('.custom-field-row')) {
+
+                let tabComponent = new TabComponent({
+                    heightAdjustMode:'Auto',
+                    created : this.tabCreated() 
+                });
+
+                let formElement = args.element.querySelector('.e-schedule-form');
+               // formElement.firstChild.insertBefore(row, formElement.firstChild.firstChild);
+                let container = createElement('div', { className: 'custom-field-container' });
+                container.appendChild(tabComponent);
+
+                
+
+
                 //let row = createElement('div', { className: 'custom-field-row' });
                 //let formElement = args.element.querySelector('.e-schedule-form');
                 //formElement.firstChild.insertBefore(row, formElement.firstChild.firstChild);
@@ -478,6 +538,8 @@ export class Main extends Component {
                 //});
                 //drowDownList.appendTo(inputEle);
                 //inputEle.setAttribute('name', 'EventType');
+
+              
             }
         }
     }
@@ -808,28 +870,33 @@ export class Main extends Component {
                     />
                         <article className='d-flex flex-column position-relative'>
                             {/*<Switch>*/}
-                            {/*popupOpen={this.onPopupOpen.bind(this)}*/}
+                                {/*popupOpen={this.onPopupOpen.bind(this)}*/}
                             <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
                                             <ScheduleComponent
                                                 ref={schedule => this.scheduleObj = schedule}
-                                                width='100%' 
+                                                width='100%'
                                                 currentView="Month"
-                                                height='650px' 
+                                                height='650px'
+                                                views={this.viewsCollections}
                                                 actionComplete={this.onEventRendered.bind(this)}
-                                                popupOpen={this.onPopupOpen.bind(this)}                                           
+                                                popupOpen={this.onPopupOpen.bind(this)}
                                                 eventSettings={{ dataSource: this.scheduleData }}
                                                 dragStart={(this.onEventDragStart.bind(this))}
                                                 eventClick={(this.onEventClick.bind(this))}
                                                 dragStop={(this.onEventDragStop.bind(this))}>
+                                                {/* editorTemplate={this.editorTemplate.bind(this)}*/}
+                                               
+                                                                                           
                                                 <ViewsDirective>
-                                                    <ViewDirective option='Day' />
-                                                    <ViewDirective option='Week' />
-                                                    <ViewDirective option='WorkWeek' />
-                                                    <ViewDirective option='Month' />
-                                                    <ViewDirective option='Agenda' />
-                                                </ViewsDirective>
+                                                    <ViewDirective option='Day' eventTemplate={this.eventTemplate.bind(this)} />
+                                                    <ViewDirective option='Week' eventTemplate={this.eventTemplate.bind(this)} />
+                                                    <ViewDirective option='WorkWeek' eventTemplate={this.eventTemplate.bind(this)} />
+                                                    <ViewDirective option='Month' eventTemplate={this.eventTemplate.bind(this)} />
+                                                    <ViewDirective option='Agenda' eventTemplate={this.eventTemplate.bind(this)} />
+                                                </ViewsDirective>                                                
+
                                                 <ResourcesDirective>
                                                     <ResourceDirective field='CalendarId' title='My Calendars' name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor'>
                                                     </ResourceDirective>
@@ -895,7 +962,7 @@ export class Main extends Component {
                     </section>
                 </Fragment>
                 </SidebarCnn>
-            </div>
+            </div> 
         );
     }
 

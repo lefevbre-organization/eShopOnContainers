@@ -13,6 +13,7 @@
     "@syncfusion/ej2-react-dropdowns": "^18.1.52",
     "@syncfusion/ej2-react-inputs": "^18.1.45",
     "@syncfusion/ej2-react-lists": "17.1.47",
+    "@syncfusion/ej2-react-navigations": "^18.1.52",
     "@syncfusion/ej2-react-notifications": "^18.1.42",
     "@syncfusion/ej2-react-popups": "^18.1.46",
     "@syncfusion/ej2-react-richtexteditor": "^17.4.55",
