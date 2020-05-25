@@ -9,11 +9,11 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 
-namespace WebSPA.Infrastructure
+namespace Lefebvre.eLefebvreOnContainers.Clients.WebSignature.Infrastructure
 {
     public class WebContextSeed
     {
-        public static void Seed(IApplicationBuilder applicationBuilder, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public static void Seed(IApplicationBuilder applicationBuilder, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             var log = loggerFactory.CreateLogger<WebContextSeed>();
 

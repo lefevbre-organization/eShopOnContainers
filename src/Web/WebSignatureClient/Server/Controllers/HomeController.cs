@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using eShopOnContainers.WebSPA;
 
-namespace eShopConContainers.WebSPA.Server.Controllers
+namespace Lefebvre.eLefebvreOnContainers.Clients.WebSignature.Server.Controllers
 {
     public class HomeController : Controller
     {

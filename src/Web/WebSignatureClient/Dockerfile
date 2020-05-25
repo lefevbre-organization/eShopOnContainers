@@ -1,5 +1,10 @@
+#ARG NODE_IMAGE=node:12
+#FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS base
+#WORKDIR /app
+#EXPOSE 80
+
 ARG NODE_IMAGE=node:12
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.0-buster-slim AS base
 WORKDIR /app
 EXPOSE 80
 
@@ -14,12 +19,15 @@ RUN npm run build
  #RUN ls -lha /web
  #RUN ls -lha /web/build
 
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
 
-# Keep the project list and command dotnet restore identical in all Dockfiles to maximize image cache utilization
-COPY eLefebvreOnContainers-ServicesAndWebApps.sln .
-COPY docker-compose.dcproj /src/
+COPY "eLefebvreOnContainers-ServicesAndWebApps.sln" "eLefebvreOnContainers-ServicesAndWebApps.sln"
+#COPY eLefebvreOnContainers-ServicesAndWebApps.sln .
+
+
+
+#COPY docker-compose.dcproj /src/
 COPY src/ApiGateways/ApiGw-Base/OcelotApiGw.csproj src/ApiGateways/ApiGw-Base/
 COPY src/BuildingBlocks/Devspaces.Support/Devspaces.Support.csproj src/BuildingBlocks/Devspaces.Support/
 COPY src/BuildingBlocks/Models/Lef.Models/Lef.Models.csproj src/BuildingBlocks/Models/Lef.Models/
@@ -46,6 +54,9 @@ COPY src/Web/WebPortalClient/WebPortalClient.csproj src/Web/WebPortalClient/
 COPY src/Web/WebImapClient/WebImapClient.csproj src/Web/WebImapClient/
 COPY src/Web/WebStatusLef/WebStatusLef.csproj src/Web/WebStatusLef/
 COPY src/Web/WebSignatureClient/WebSignatureClient.csproj src/Web/WebSignatureClient/
+
+COPY "docker-compose.dcproj" "docker-compose.dcproj"
+COPY "NuGet.config" "NuGet.config"
 
 RUN dotnet restore eLefebvreOnContainers-ServicesAndWebApps.sln
 
