@@ -51,7 +51,7 @@ COPY src/Web/WebOffice365Client/WebOffice365Client.csproj src/Web/WebOffice365Cl
 COPY src/Web/WebPortalClient/WebPortalClient.csproj src/Web/WebPortalClient/
 COPY src/Web/WebImapClient/WebImapClient.csproj src/Web/WebImapClient/
 COPY src/Web/WebStatusLef/WebStatusLef.csproj src/Web/WebStatusLef/
-COPY src/Web/WebSignatureClient/WebSignatureClient.csproj src/Web/WebSignatureClient/
+COPY src/Web/WebCentinelaClient/WebCentinelaClient.csproj src/Web/WebCentinelaClient/
 
 
 COPY "docker-compose.dcproj" "docker-compose.dcproj"
