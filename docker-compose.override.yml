@@ -59,7 +59,7 @@ services:
       - HealthChecksUI__HealthChecks__14__Name=Signature API GW HTTP Check
       - HealthChecksUI__HealthChecks__14__Uri=http://websignatureapigw/hc
       - HealthChecksUI__HealthChecks__15__Name=WebSignatureClient HTTP Check
-      - HealthChecksUI__HealthChecks__15__Uri=http://websignature/hc
+      - HealthChecksUI__HealthChecks__15__Uri=http://websignatureclient/hc
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
     ports:
