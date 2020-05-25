@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using HealthChecks.UI.Client;
+using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -8,10 +9,9 @@ using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using UserUtils.API.Extensions;
 using System;
 
-namespace UserUtils.API
+namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
 {
     public class Startup
     {

@@ -35,6 +35,10 @@ spec:
         backend:
           serviceName: webimapclient
           servicePort: 80
+      - path: /websignatureclient
+        backend:
+          serviceName: websignatureclient
+          servicePort: 80
       - path: /webstatus
         backend:
           serviceName: webstatus
@@ -51,6 +55,10 @@ spec:
         backend:
           serviceName: ocelotapigw-cen
           servicePort: 80                          
+      - path: /websignatureapigw 
+        backend:
+          serviceName: ocelotapigw-sig
+          servicePort: 80          
       - path: /lexon.api
         backend:
           serviceName: lexon.api
@@ -62,6 +70,10 @@ spec:
       - path: /account.api
         backend:
           serviceName: account.api
+          servicePort: 80                      
+      - path: /signature.api
+        backend:
+          serviceName: signature.api
           servicePort: 80                      
       - path: /centinela.api
         backend:

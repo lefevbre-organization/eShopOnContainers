@@ -1,4 +1,4 @@
-﻿namespace Centinela.API
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API
 {
     public class CentinelaSettings
     {

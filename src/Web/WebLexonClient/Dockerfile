@@ -1,5 +1,10 @@
+#ARG NODE_IMAGE=node:12
+#FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS base
+#WORKDIR /app
+#EXPOSE 80
+
 ARG NODE_IMAGE=node:12
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2 AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.0-buster-slim AS base
 WORKDIR /app
 EXPOSE 80
 
@@ -9,14 +14,19 @@ COPY src/Web/WebLexonClient/Client .
 RUN npm install
 RUN npm run build
 # RUN ls -lha /web
-# RUN ls -lha /web/build
 
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
+#FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
+#WORKDIR /src
+#
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
 
-# Keep the project list and command dotnet restore identical in all Dockfiles to maximize image cache utilization
-COPY eLefebvreOnContainers-ServicesAndWebApps.sln .
-COPY docker-compose.dcproj /src/
+COPY "eLefebvreOnContainers-ServicesAndWebApps.sln" "eLefebvreOnContainers-ServicesAndWebApps.sln"
+#COPY eLefebvreOnContainers-ServicesAndWebApps.sln .
+
+
+
+#COPY docker-compose.dcproj /src/
 COPY src/ApiGateways/ApiGw-Base/OcelotApiGw.csproj src/ApiGateways/ApiGw-Base/
 COPY src/BuildingBlocks/Devspaces.Support/Devspaces.Support.csproj src/BuildingBlocks/Devspaces.Support/
 COPY src/BuildingBlocks/Models/Lef.Models/Lef.Models.csproj src/BuildingBlocks/Models/Lef.Models/
@@ -34,6 +44,7 @@ COPY src/Services/Lexon/Lexon.API/Lexon.API.csproj src/Services/Lexon/Lexon.API/
 COPY src/Services/Lexon/Lexon.MySql/Lexon.MySql.csproj src/Services/Lexon/Lexon.MySql/
 COPY src/Services/UserUtils/UserUtils.API/UserUtils.API.csproj src/Services/UserUtils/UserUtils.API/
 COPY src/Services/Centinela/Centinela.API/Centinela.API.csproj src/Services/Centinela/Centinela.API/
+COPY src/Services/Signature/Signature.API/Signature.API.csproj src/Services/Signature/Signature.API/
 COPY src/Web/WebGoogleClient/WebGoogleClient.csproj src/Web/WebGoogleClient/
 COPY src/Web/WebLexonClient/WebLexonClient.csproj src/Web/WebLexonClient/
 COPY src/Web/WebAddonLexon/WebAddonLexon.csproj src/Web/WebAddonLexon/
@@ -41,6 +52,11 @@ COPY src/Web/WebOffice365Client/WebOffice365Client.csproj src/Web/WebOffice365Cl
 COPY src/Web/WebPortalClient/WebPortalClient.csproj src/Web/WebPortalClient/
 COPY src/Web/WebImapClient/WebImapClient.csproj src/Web/WebImapClient/
 COPY src/Web/WebStatusLef/WebStatusLef.csproj src/Web/WebStatusLef/
+COPY src/Web/WebSignatureClient/WebSignatureClient.csproj src/Web/WebSignatureClient/
+COPY src/Web/WebCentinelaClient/WebCentinelaClient.csproj src/Web/WebCentinelaClient/
+s
+COPY "docker-compose.dcproj" "docker-compose.dcproj"
+COPY "NuGet.config" "NuGet.config"
 
 RUN dotnet restore eLefebvreOnContainers-ServicesAndWebApps.sln
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,7 +21,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             // string inputString = "Räksmörgås";
 
             Encoding iso = Encoding.GetEncoding(
-                "ISO-8859-1", 
+                "ISO-8859-1",
                 new EncoderReplacementFallback(string.Empty),
                 new DecoderExceptionFallback()
                 );
@@ -140,6 +141,37 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             };
 
             infos.Add(info);
+        }
+
+        public string ManageCreateMessage(
+            string msgError,
+            string msgModify,
+            string msgInsert,
+            List<Info> infos,
+            List<ErrorInfo> errors,
+            ReplaceOneResult resultReplace)
+        {
+            if (resultReplace.IsAcknowledged)
+            {
+                if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
+                {
+                    TraceInfo(infos, msgModify);
+                }
+                else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
+                {
+                    TraceInfo(infos, msgInsert);
+                    return resultReplace.UpsertedId.ToString();
+                }
+            }
+            else
+            {
+                TraceMessage(errors, new Exception(msgError), "CreateRawError");
+            }
+            return null;
+        }
+        public static UpdateOptions GetUpsertOptions()
+        {
+            return new UpdateOptions { IsUpsert = true };
         }
     }
 }

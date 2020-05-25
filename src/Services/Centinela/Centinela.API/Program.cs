@@ -1,16 +1,28 @@
-﻿using Microsoft.AspNetCore;
+﻿using Centinela.API;
+using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Middlewares;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using System;
 using System.IO;
+using System.Net;
 
-namespace Centinela.API
+namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API
 {
     public class Program
     {
         public static readonly string Namespace = typeof(Program).Namespace;
         public static readonly string AppName = Namespace.Substring(Namespace.LastIndexOf('.', Namespace.LastIndexOf('.') - 1) + 1);
+
+        private static (int httpPort, int grpcPort) GetDefinedPorts(IConfiguration config)
+        {
+            var grpcPort = config.GetValue("GRPC_PORT", 5001);
+            var port = config.GetValue("PORT", 80);
+            return (port, grpcPort);
+        }
 
         public static int Main(string[] args)
         {
@@ -89,14 +101,33 @@ namespace Centinela.API
         }
 
         private static IWebHost BuildWebHost(IConfiguration configuration, string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .CaptureStartupErrors(false)
-                .UseStartup<Startup>()
-                //.UseApplicationInsights()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                //.UseWebRoot("Pics")
-                .UseConfiguration(configuration)
-                .UseSerilog()
-                .Build();
+                WebHost.CreateDefaultBuilder(args)
+              //.UseServiceProviderFactory(new AutofacServiceProviderFactory())
+              .CaptureStartupErrors(false)
+              .ConfigureKestrel(options =>
+              {
+                  var ports = GetDefinedPorts(configuration);
+                  options.Listen(IPAddress.Any, ports.httpPort, listenOptions =>
+                  {
+                      listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
+                  });
+
+                  options.Listen(IPAddress.Any, ports.grpcPort, listenOptions =>
+                  {
+                      listenOptions.Protocols = HttpProtocols.Http2;
+                  });
+              })
+              .UseFailing(options =>
+              {
+                  options.ConfigPath = "/Failing";
+                  options.NotFilteredPaths.AddRange(new[] { "/hc", "/liveness" });
+              })
+              .UseStartup<Startup>()
+              // .UseApplicationInsights()
+              .UseContentRoot(Directory.GetCurrentDirectory())
+              .UseConfiguration(configuration)
+              .UseSerilog()
+              .Build();
+
     }
 }

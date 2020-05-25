@@ -1,8 +1,7 @@
-﻿using Centinela.API.Models;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Models;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using Microsoft.eShopOnContainers.BuildingBlocks.IntegrationEventLogMongoDB;
-using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -13,7 +12,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Centinela.API.Infrastructure
+namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure
 {
     //mirar https://www.mongodb.com/blog/post/working-with-mongodb-transactions-with-c-and-the-net-framework
     public class CentinelaContext : IMongoDbContext, IIntegrationEventLogContextMongoDB

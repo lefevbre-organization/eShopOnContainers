@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Centinela.API.Infrastructure.ActionResults
+namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.ActionResults
 {
     public class InternalServerErrorObjectResult : ObjectResult
     {

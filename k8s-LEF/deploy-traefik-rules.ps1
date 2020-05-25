@@ -1,4 +1,6 @@
 kubectl apply -f .\traefik\webimap-traefik-rules.yaml
+kubectl apply -f .\traefik\websignature-traefik-rules.yaml
+kubectl apply -f .\traefik\signatureapigw-traefik-rules.yaml
 kubectl apply -f .\traefik\accountapigw-traefik-rules.yaml
 kubectl apply -f .\traefik\lexonapigw-traefik-rules.yaml
 kubectl apply -f .\traefik\webgoogle-traefik-rules.yaml

@@ -1,7 +1,7 @@
 ﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 using System.Threading.Tasks;
 
-namespace Centinela.API.IntegrationsEvents
+namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.IntegrationsEvents
 {
     public interface ICentinelaIntegrationEventService
     {

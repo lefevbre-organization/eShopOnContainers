@@ -92,6 +92,7 @@ services:
       - lexon.mysql.api
       - userutils.api
       - centinela.api
+      - signature.api
 
   lexon.api:
     image: ${REGISTRY:-elefebvreoncontainers}/lexon.api:${PLATFORM:-linux}-${TAG:-dev}
@@ -164,3 +165,42 @@ services:
       - rabbitmq
       - centinela.api
       - userutils.api
+
+  websignatureclient:
+    image: ${REGISTRY:-elefebvreoncontainers}/websignatureclient:${PLATFORM:-linux}-${TAG:-dev}
+    build:
+      context: .
+      dockerfile: src/Web/WebSignatureClient/Dockerfile    
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+    depends_on:
+      - rabbitmq   
+
+  webcentinelaclient:
+    image: ${REGISTRY:-elefebvreoncontainers}/webcentinelaclient:${PLATFORM:-linux}-${TAG:-dev}
+    build:
+      context: .
+      dockerfile: src/Web/WebCentinelaClient/Dockerfile    
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+    depends_on:
+      - rabbitmq  
+
+  signature.api:
+    image: ${REGISTRY:-elefebvreoncontainers}/signature.api:${PLATFORM:-linux}-${TAG:-dev}
+    build:
+      context: .
+      dockerfile: src/Services/Signature/Signature.API/Dockerfile    
+    depends_on:
+      - nosql.data
+      - rabbitmq
+
+  websignatureapigw:
+    image: ${REGISTRY:-elefebvreoncontainers}/ocelotapigw:${PLATFORM:-linux}-${TAG:-dev}
+    build:
+      context: .
+      dockerfile: src/ApiGateways/ApiGw-Base/Dockerfile
+    depends_on:
+      - nosql.data
+      - rabbitmq
+      - signature.api

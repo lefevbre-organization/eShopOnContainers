@@ -10,7 +10,7 @@
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/cen/{everything}",
-      "DownstreamPathTemplate": "/api/{version}/{everything}"
+      "DownstreamPathTemplate": "/api/{version}/Centinela/{everything}"
     },
     {
       "DangerousAcceptAnyServerCertificateValidator": true,

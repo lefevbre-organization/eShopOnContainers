@@ -1,6 +1,6 @@
 ﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 
-namespace UserUtis.API.IntegrationsEvents.Events
+namespace Lefebvre.eLefebvreOnContainers.Services.UserUtis.API.IntegrationsEvents.Events
 {
     public class ErrorGetDataIntegrationEvent : IntegrationEvent
     {

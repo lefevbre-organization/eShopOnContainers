@@ -1,7 +1,5 @@
 ﻿using Autofac;
-using Centinela.API.Infrastructure.Filters;
-using Centinela.API.Infrastructure.Repositories;
-using Centinela.Infrastructure.Services;
+using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Middlewares;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;
@@ -12,44 +10,44 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using RabbitMQ.Client;
 
-namespace Centinela.API.Extensions
+namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Extensions
 {
     public static class CustomExtensionsMethods
     {
-        public static IServiceCollection AddAppInsight(this IServiceCollection services, IConfiguration configuration)
-        {
-            return services;
-        }
+        //public static IServiceCollection AddAppInsight(this IServiceCollection services, IConfiguration configuration)
+        //{
+        //    return services;
+        //}
 
-        public static IServiceCollection AddCustomMVC(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddMvc(options =>
-            {
-                options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-            })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddControllersAsServices();
+        //public static IServiceCollection AddCustomMVC(this IServiceCollection services, IConfiguration configuration)
+        //{
+        //    services.AddMvc(options =>
+        //    {
+        //        options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+        //    })
+        //        .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+        //        .AddControllersAsServices();
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder
-                    .SetIsOriginAllowed((host) => true)
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
-            });
+        //    services.AddCors(options =>
+        //    {
+        //        options.AddPolicy("CorsPolicy",
+        //            builder => builder
+        //            .SetIsOriginAllowed((host) => true)
+        //            .AllowAnyMethod()
+        //            .AllowAnyHeader()
+        //            .AllowCredentials());
+        //    });
 
-            services.AddTransient<ICentinelaService, CentinelaService>();
-            services.AddTransient<ICentinelaRepository, CentinelaRepository>();
-            return services;
-        }
+        //    services.AddTransient<ICentinelaService, CentinelaService>();
+        //    services.AddTransient<ICentinelaRepository, CentinelaRepository>();
+        //    return services;
+        //}
 
         public static IServiceCollection AddCustomHealthCheck(this IServiceCollection services, IConfiguration configuration)
         {
-
             var hcBuilder = services.AddHealthChecks();
 
             hcBuilder
@@ -66,10 +64,10 @@ namespace Centinela.API.Extensions
             return services;
         }
 
-        public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
-        {
-            return services;
-        }
+        //public static IServiceCollection AddCustomDbContext(this IServiceCollection services, IConfiguration configuration)
+        //{
+        //    return services;
+        //}
 
         public static IServiceCollection AddCustomOptions(this IServiceCollection services, IConfiguration configuration)
         {
@@ -95,22 +93,6 @@ namespace Centinela.API.Extensions
             return services;
         }
 
-        public static IServiceCollection AddSwagger(this IServiceCollection services)
-        {
-            services.AddSwaggerGen(options =>
-            {
-                options.DescribeAllEnumsAsStrings();
-                options.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info
-                {
-                    Title = "Lefebvre Now - Centinela HTTP API",
-                    Version = "v1",
-                    Description = "The Centinela Microservice HTTP API. This is a Data-Driven/CRUD microservice sample",
-                    TermsOfService = "Terms Of Service"
-                });
-            });
-
-            return services;
-        }
 
         public static IServiceCollection AddIntegrationServices(this IServiceCollection services, IConfiguration configuration)
         {
@@ -143,7 +125,71 @@ namespace Centinela.API.Extensions
             return services;
         }
 
-        public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
+        //public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
+        //{
+        //    var subscriptionClientName = configuration["SubscriptionClientName"];
+
+        //    if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
+        //    {
+        //        //no implementado y posiblemente no se necesite
+        //    }
+        //    else
+        //    {
+        //        services.AddSingleton<IEventBus, EventBusRabbitMQ>(sp =>
+        //        {
+        //            var rabbitMQPersistentConnection = sp.GetRequiredService<IRabbitMQPersistentConnection>();
+        //            var iLifetimeScope = sp.GetRequiredService<ILifetimeScope>();
+        //            var logger = sp.GetRequiredService<ILogger<EventBusRabbitMQ>>();
+        //            var eventBusSubcriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
+
+        //            var retryCount = 5;
+        //            if (!string.IsNullOrEmpty(configuration["EventBusRetryCount"]))
+        //                retryCount = int.Parse(configuration["EventBusRetryCount"]);
+
+        //            return new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, subscriptionClientName, retryCount);
+        //        });
+        //    }
+        //    services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
+        //    //services.AddTransient<AddFileToUserIntegrationEventHandler>();
+
+        //    return services;
+        //}
+
+        public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddSwaggerGen(options =>
+            {
+                //options.DescribeAllEnumsAsStrings();
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Lefebvre Now - Lexon HTTP API",
+                    Version = "v1",
+                    Description = "The Lexon Microservice HTTP API. This is a Data-Driven/CRUD microservice sample"
+                });
+
+                //options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                //{
+                //    Type = SecuritySchemeType.OAuth2,
+                //    Flows = new OpenApiOAuthFlows()
+                //    {
+                //        Implicit = new OpenApiOAuthFlow()
+                //        {
+                //            AuthorizationUrl = new Uri($"{configuration.GetValue<string>("IdentityUrlExternal")}/connect/authorize"),
+                //            TokenUrl = new Uri($"{configuration.GetValue<string>("IdentityUrlExternal")}/connect/token"),
+                //            Scopes = new Dictionary<string, string>()
+                //            {
+                //                { "centinela", "Centinela API" }
+                //            }
+                //        }
+                //    }
+                //});
+
+                options.OperationFilter<AuthorizeCheckOperationFilter>();
+            });
+            return services;
+        }
+
+        public static IServiceCollection RegisterEventBus(this IServiceCollection services, IConfiguration configuration)
         {
             var subscriptionClientName = configuration["SubscriptionClientName"];
 
@@ -167,6 +213,7 @@ namespace Centinela.API.Extensions
                     return new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, subscriptionClientName, retryCount);
                 });
             }
+
             services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
             //services.AddTransient<AddFileToUserIntegrationEventHandler>();
 

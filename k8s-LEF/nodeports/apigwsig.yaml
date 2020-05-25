@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: apigwsig
+spec:
+  type: NodePort
+  selector:
+    app: apigwsig
+  ports:
+    - port: 80
+      nodePort: 30021
+      name: apigwsig-port

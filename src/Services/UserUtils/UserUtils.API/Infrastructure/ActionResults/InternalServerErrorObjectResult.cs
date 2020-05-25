@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace UserUtils.API.Infrastructure.ActionResults
+namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.ActionResults
 {
     public class InternalServerErrorObjectResult : ObjectResult
     {

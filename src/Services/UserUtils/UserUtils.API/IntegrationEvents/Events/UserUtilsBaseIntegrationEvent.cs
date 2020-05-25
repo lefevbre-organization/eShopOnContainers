@@ -1,6 +1,6 @@
 ﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 
-namespace UserUtils.API.IntegrationsEvents.Events
+namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.IntegrationsEvents.Events
 {
     public class UserUtilsBaseIntegrationEvent : IntegrationEvent
     {

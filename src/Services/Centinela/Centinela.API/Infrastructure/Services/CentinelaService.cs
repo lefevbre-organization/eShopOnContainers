@@ -1,6 +1,5 @@
-﻿using Centinela.API;
-using Centinela.API.Infrastructure.Repositories;
-using Centinela.API.Models;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Repositories;
+using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Models;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
@@ -16,21 +15,23 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Centinela.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Services
 {
     public class CentinelaService : BaseClass<CentinelaService>, ICentinelaService
     {
         public readonly ICentinelaRepository _centinelaRepository;
         private readonly IEventBus _eventBus;
-        //private readonly IHttpClientFactory _clientFactory;
+        private readonly IHttpClientFactory _clientFactory;
         private readonly HttpClient _client;
+        private readonly HttpClient _clientPro;
+        private readonly HttpClient _clientOnline;
         private readonly IOptions<CentinelaSettings> _settings;
 
         public CentinelaService(
                 IOptions<CentinelaSettings> settings
                 , ICentinelaRepository centinelaRepository
                 , IEventBus eventBus
-                //, IHttpClientFactory clientFactory
+                , IHttpClientFactory clientFactory
                 , ILogger<CentinelaService> logger
             ) : base(logger)
         {
@@ -38,33 +39,15 @@ namespace Centinela.Infrastructure.Services
             _centinelaRepository = centinelaRepository ?? throw new ArgumentNullException(nameof(centinelaRepository));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
 
-            //_clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
+            _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
             //_client = _clientFactory.CreateClient();
-            
+
             var uri = new Uri(_settings.Value.CentinelaUrl);
             var credentialsCache = new CredentialCache { { uri, "NTLM", new NetworkCredential(_settings.Value.CentinelaLogin, _settings.Value.CentinelaPassword) } };
             var handler = new HttpClientHandler { Credentials = credentialsCache };
             _client = new HttpClient(handler) { BaseAddress = uri, Timeout = new TimeSpan(0, 0, 10) };
-            //_client.BaseAddress = uri;
 
-            //var authData = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{_settings.Value.CentinelaLogin}:{_settings.Value.CentinelaPassword}"));
-
-            //_client.DefaultRequestHeaders.Add("Accept", "text/plain");
-            //_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authData);
-            //_client.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
-            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            //var response = httpClient.GetAsync("api/MyMethod").Result;
         }
-
-        //services.AddHttpClient("myName").ConfigurePrimaryHttpMessageHandler(_ => new HttpClientHandler
-        //{
-        //    Credentials = new CredentialCache {
-        //    {
-        //        new Uri("url"), "NTLM", new NetworkCredential("username", "password", "domain")
-        //    }
-        //}
-        //});
-    
 
         #region Review
 
@@ -261,24 +244,106 @@ namespace Centinela.Infrastructure.Services
                     {
                         result.errors.Add(new ErrorInfo
                         {
-                            code = "593",
-                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                            code = "Centinela_Error_SuccesStatusCode",
+                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase} -> {_settings.Value.CentinelaPassword}"
                         });
                     }
                 }
             }
             catch (Exception ex)
             {
+                var traceEx = ex.StackTrace ?? "";
+                var messageEx = ex.InnerException?.Message ?? "";
                 result.errors.Add(new ErrorInfo
                 {
-                    code = "594",
+                    code = "Centinela_Error",
                     detail = $"General error when call centinela service",
-                    message = ex.Message
+                    message = $"{ex.Message} =  {messageEx} ({traceEx}) -> {_settings.Value.CentinelaPassword}"
                 });
             }
 
+            //try
+            //{
+            //    var url = $"https://herculesppd.lefebvre.es/webclient46/ws/encriptarEntrada.do?nEntrada={idNavisionUser}";
+
+            //    using (var response = await _clientOnline.GetAsync(url))
+            //    {
+            //        if (response.IsSuccessStatusCode)
+            //        {
+            //            var rawResult = await response.Content.ReadAsStringAsync();
+
+            //            if (!string.IsNullOrEmpty(rawResult))
+            //            {
+            //                var resultado = (JsonConvert.DeserializeObject<OnlineEntrada>(rawResult));
+            //                result.infos.Add(new Info() { code = "PRE_Online", message = resultado.ENTRADA_ENCRIPTADA });
+            //            }
+            //        }
+            //        else
+            //        {
+            //            result.errors.Add(new ErrorInfo
+            //            {
+            //                code = "553",
+            //                detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+            //            });
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    result.errors.Add(new ErrorInfo
+            //    {
+            //        code = "554",
+            //        detail = $"General error when call online service",
+            //        message = ex.Message
+            //    });
+            //}
+            //try
+            //{
+            //    var url = $"https://centinela-api.lefebvre.es/api/secure/conectamail/evaluations/user/{idNavisionUser}";
+
+            //    using (var response = await _clientPro.GetAsync(url))
+            //    {
+            //        if (response.IsSuccessStatusCode)
+            //        {
+            //            var rawResult = await response.Content.ReadAsStringAsync();
+
+            //            if (!string.IsNullOrEmpty(rawResult))
+            //            {
+            //                var resultado = (JsonConvert.DeserializeObject<CenEvaluation[]>(rawResult));
+            //                resultado.ToList();
+            //                result.infos.Add(new Info() { code = "PRO_Centinela", message = resultado?.ToList()?.Count.ToString() });
+            //            }
+            //        }
+            //        else
+            //        {
+            //            result.errors.Add(new ErrorInfo
+            //            {
+            //                code = "553",
+            //                detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+            //            });
+            //        }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    result.errors.Add(new ErrorInfo
+            //    {
+            //        code = "554",
+            //        detail = $"General error when call online service",
+            //        message = ex.Message
+            //    });
+            //}
             return result;
         }
+
+        //internal class OnlineEntrada
+        //{
+        //    public string ENTRADA_ENCRIPTADA { get; set; }
+        //    public long ID_ENTRADA { get; set; }
+        //    public string N_ENTRADA { get; set; }
+        //    //{"ID_ENTRADA":1037352,"N_ENTRADA":"E1621500"}
+        //    // {"ENTRADA_ENCRIPTADA":"eHRncH9gaw%3D%3D"}
+        //}
 
         public async Task<Result<List<CenDocument>>> GetDocumentsAsync(string idNavisionUser, string search)
         {
@@ -378,7 +443,6 @@ namespace Centinela.Infrastructure.Services
             var result = new Result<List<CenConceptInstance>>(new List<CenConceptInstance>());
             try
             {
-        
                 var url = $"{_settings.Value.CentinelaUrl}/conceptobjects/concept/{idConcept}?IdEntrada={idNavisionUser}";
 
                 using (var response = await _client.GetAsync(url))
@@ -391,6 +455,48 @@ namespace Centinela.Infrastructure.Services
                         {
                             var resultado = (JsonConvert.DeserializeObject<CenConceptInstance[]>(rawResult));
                             result.data = resultado.ToList();
+                        }
+                    }
+                    else
+                    {
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "593",
+                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "594",
+                    detail = $"General error when call centinela service",
+                    message = ex.Message
+                });
+            }
+
+            return result;
+        }
+
+        public async Task<Result<List<CenDocumentObject>>> GetDocumentsByInstanceAsync(string idNavisionUser, string conceptObjectId)
+        {
+            var result = new Result<List<CenDocumentObject>>(new List<CenDocumentObject>());
+            try
+            {
+                var url = $"{_settings.Value.CentinelaUrl}/documentobjects/conceptobject/{conceptObjectId}?IdEntrada={idNavisionUser}";
+
+                using (var response = await _client.GetAsync(url))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<ListaDocumentObjects>(rawResult));
+                            result.data = resultado?.Documents.ToList();
                         }
                     }
                     else

@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: signature-api
+spec:
+  type: NodePort
+  selector:
+    app: signature-api
+  ports:
+    - port: 80
+      nodePort: 30020
+      name: signature-api-port

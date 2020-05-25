@@ -1,4 +1,6 @@
-﻿using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
+﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Repositories;
+using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models;
+using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -13,10 +15,8 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
-using UserUtils.API.Infrastructure.Repositories;
-using UserUtils.API.Models;
 
-namespace UserUtils.API.Infrastructure.Services
+namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Services
 {
     public class UserUtilsService : BaseClass<UserUtilsService>, IUserUtilsService
     {
@@ -172,6 +172,7 @@ namespace UserUtils.API.Infrastructure.Services
                         {
                             var resultado = (JsonConvert.DeserializeObject<LexApp[]>(rawResult));
                             var listAll = resultado.ToList();
+                            UpdateListByPass(listAll, idNavisionUser, result.errors);
                             result.data = onlyActives ? listAll.Where(x => x.indAcceso > 0).ToList() : listAll.ToList();
                         }
                     }
@@ -196,6 +197,37 @@ namespace UserUtils.API.Infrastructure.Services
             }
 
             return result;
+        }
+
+        private async void UpdateListByPass(List<LexApp> listAll, string idNavisionUser, List<ErrorInfo> errors)
+        {
+            try
+            {
+                var listaByPass = await _repository.GetListByPassAsync();
+                foreach (var app in listAll)
+                {
+                    var encontrado = listaByPass.data.Find(x => x.NameService.Equals(app.descHerramienta.ToUpperInvariant()));
+                    if (encontrado?.NameService != null)
+                    {
+                      //  encontrado.Url = app.url;
+                        var urlReplace = encontrado.UrlByPass
+                            .Replace("{idUserNavision}", idNavisionUser)
+                            .Replace("{serviceName}", app.descHerramienta);
+                      //  var actualizado = await _repository.PostByPassAsync(encontrado);
+                        app.url = urlReplace;
+                        return;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                errors.Add(new ErrorInfo
+                {
+                    code = "ErrorUpdateByPass",
+                    detail = $"General error in update bypass data",
+                    message = ex.Message
+                });
+            }
         }
 
         public async Task<Result<ServiceComUser>> GetUserDataWithLoginAsync(string login, string pass)
@@ -447,15 +479,13 @@ namespace UserUtils.API.Infrastructure.Services
                     AddClaimToPayload(payload, clienteModelLexon.idEntityType, nameof(clienteModelLexon.idEntityType));
                     AddClaimToPayload(payload, clienteModelLexon.idEntity, nameof(clienteModelLexon.idEntity));
                 }
-
             }
-
         }
 
         private async Task<List<string>> GetRolesOfUserAsync(string idClienteNavision, string login, string password)
         {
             var apps = await GetUserUtilsAsync(idClienteNavision, true);
-            var areas =  await GetAreasByUserAsync(idClienteNavision);
+            var areas = await GetAreasByUserAsync(idClienteNavision);
             var appsWithAccess = new List<string>() { "lexonconnector", "centinelaconnector" };
             foreach (var app in apps.data)
             {
@@ -466,7 +496,6 @@ namespace UserUtils.API.Infrastructure.Services
             {
                 appsWithAccess.Add(area.descArea);
             }
-
 
             var usuarioValido = !string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password);
             if (!string.IsNullOrEmpty(idClienteNavision) && usuarioValido)
@@ -521,7 +550,6 @@ namespace UserUtils.API.Infrastructure.Services
 
         public async Task<Result<LexUser>> GetLexonGenericAsync(TokenModelView tokenRequest, bool addTerminatorToToken)
         {
-
             tokenRequest.idClienteNavision = ValidarUsuario(tokenRequest.login, tokenRequest.password, tokenRequest.idClienteNavision);
             Result<LexUser> resultado = new Result<LexUser>(new LexUser()); // await _lexonRepository.GetUserAsync(idUser);
 
@@ -556,51 +584,81 @@ namespace UserUtils.API.Infrastructure.Services
             throw new NotImplementedException();
         }
 
-        private async  Task<List<string>> GetContactDataFromLexon(string idUser, string bbdd, short? idEntityType, int? idEntity, List<string> mailContacts)
+        private async Task<List<string>> GetContactDataFromLexon(string idUser, string bbdd, short? idEntityType, int? idEntity, List<string> mailContacts)
         {
             var result = new Result<List<string>>(new List<string>());
 
-            //using (MySqlConnection conn = new MySqlConnection(_conn))
-            //{
-            //    try
-            //    {
-            //        var filtro = GiveMeEntityFilter(entitySearch);
-            //        conn.Open();
-            //        using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetContact, conn))
-            //        {
-            //            AddCommonParameters(entitySearch.idUser, command, "P_FILTER", filtro);
-            //            AddListSearchParameters(1, 1, "ts", "desc", command);
-
-
-            //            using (var reader = await command.ExecuteReaderAsync())
-            //            {
-            //                TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
-            //                if (EvaluateErrorCommand(result.errors, command) == 0)
-            //                    while (reader.Read())
-            //                    {
-            //                        var rawResult = reader.GetValue(0).ToString();
-            //                        if (!string.IsNullOrEmpty(rawResult))
-            //                        {
-            //                            var lista = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
-            //                            result.data = lista?.FirstOrDefault();
-            //                        }
-            //                        else
-            //                        {
-            //                            TraceOutputMessage(result.errors, "2004", "MySql get and empty string with this search");
-
-            //                        }
-            //                    }
-            //            }
-            //        }
-
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        TraceMessage(result.errors, ex);
-            //    }
-            //}
-
             return new List<string>();
         }
+
+        public async Task<Result<UserUtilsModel>> PostUserAsync(UserUtilsModel user) 
+            => await _repository.PostUserAsync(user);
+
+        public async Task<Result<UserUtilsModel>> GetUserAsync(string idNavision)
+            => await _repository.GetUserAsync(idNavision);
+
+        public async Task<Result<bool>> RemoveUserAsync(string idNavision)
+            => await _repository.RemoveUserAsync(idNavision);
+
+        public async Task<Result<string>> GetUserUtilsActualToServiceAsync(string idUser, string nameService)
+        {
+            var result = new Result<string>(null);
+            var byPassResult = await GetUserAsync(nameService);
+            //if (byPassResult.errors?.Count == 0 && byPassResult.data?.Url != null)
+            //{
+            //    var newUrl = byPassResult.data?.Url;
+            //    Result<string> temporalLinkResult = await GeUserUtilFinalLink(newUrl);
+            //    result.data = temporalLinkResult.data;
+            //}
+            //else
+            //{
+            //    result.data = "http://www.google.es";
+            //}
+
+            return result;
+        }
+
+        private async Task<Result<string>> GeUserUtilFinalLink(string newUrl)
+        {
+            var result = new Result<string>(null);
+            try
+            {
+                using (var response = await _clientMinihub.GetAsync(newUrl))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<UrlJson>(rawResult));
+                            result.data = resultado.url;
+                            //var listAll = resultado.ToList();
+                            //result.data = onlyActives ? listAll.Where(x => x.indAcceso > 0).ToList() : listAll.ToList();
+                        }
+                    }
+                    else
+                    {
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "ErrorFinalLink_WebClient",
+                            detail = $"Error in call to {newUrl} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "ErrorFinalLink",
+                    detail = $"General error in call Final Link",
+                    message = ex.Message
+                });
+            }
+
+            return result;
+        }
+
     }
 }
