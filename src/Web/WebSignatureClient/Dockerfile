@@ -10,7 +10,7 @@ EXPOSE 80
 
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
-COPY src/Web/WebSignaturitClient/Client/client .
+COPY src/Web/WebSignatureClient/Client/client .
 RUN npm install
 RUN npm run build
 #RUN echo $(ls -1 /app)
