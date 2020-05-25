@@ -16,7 +16,10 @@ RUN npm run build
 # RUN ls -lha /web
 # RUN ls -lha /web/build
 
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
+#FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
+#WORKDIR /src
+#
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
 
 COPY "eLefebvreOnContainers-ServicesAndWebApps.sln" "eLefebvreOnContainers-ServicesAndWebApps.sln"

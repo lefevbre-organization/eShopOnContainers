@@ -17,6 +17,7 @@ app:                                                  # app global settings
       imap: webimap                                   # ingress entry for webimap client
       imapserver: webimapserver                       # ingress entry for webimap server
       signature: websignature                         # ingress entry for websignature client      
+      centinela: webcentinela                         # ingress entry for webcentinela client      
       accountapigw: accountapigw                      # ingress entry for account api gw 
       accountapi: account-api                         # ingress entry for account api
       lexonapigw: lexonapigw                          # ingress entry for lexon api gw
@@ -41,6 +42,7 @@ app:                                                  # app global settings
       imap: webimap                                   # svc entry for webimap client
       imapserver: webimapserver                       # svc entry for webimap server
       signature: websignature                         # svc entry for websignature client
+      centinela: webcentinela                         # svc entry for webcentinela client      
       accountapigw: accountapigw                      # svc entry for marketing api
       accountapi: account-api                         # svc entry for marketing api
       lexonapigw: lexonapigw                          # svc entry for marketing api

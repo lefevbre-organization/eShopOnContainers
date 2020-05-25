@@ -150,6 +150,17 @@ services:
     ports:
       - "9001:80"
 
+  webcentinelaclient:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - UseCustomizationData=True
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - CentinelaApiUrlHC=http://webcentinelaapi/hc
+    ports:
+      - "9002:80"
+
   account.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
