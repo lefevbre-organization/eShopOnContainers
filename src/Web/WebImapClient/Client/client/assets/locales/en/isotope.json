@@ -142,5 +142,18 @@
   },
   "msgNotFoundSnackbar": {
     "error": "Message not found in server"
+  },
+  "error": {
+    "back": "Back to the home page",
+    "help": "Do you need help?",
+    "404-title": "Page not found",
+    "404-info1": "Sorry, an error has occurred.",
+    "404-info2": "The requested page was not found.",
+    "403-title": "Forbidden access",
+    "403-info1": "Sorry, we do not have permissions to access this page.",
+    "403-info2": "",
+    "500-title": "Server error",
+    "500-info1": "Sorry, something went wrong. Refresh the page or try to access later.",
+    "500-info2": ""
   }
 }
