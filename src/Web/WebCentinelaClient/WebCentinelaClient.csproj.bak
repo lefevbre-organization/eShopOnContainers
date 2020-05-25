@@ -61,7 +61,7 @@
     <Folder Include="wwwroot\assets\" />
   </ItemGroup>
 
-  <ProjectExtensions>
+s  <ProjectExtensions>
     <VisualStudio><UserProperties package_1json__JSONSchema="http://json.schemastore.org/project-1.0.0-beta4" /></VisualStudio>
   </ProjectExtensions>
 

@@ -55,6 +55,7 @@ COPY src/Web/WebPortalClient/WebPortalClient.csproj src/Web/WebPortalClient/
 COPY src/Web/WebImapClient/WebImapClient.csproj src/Web/WebImapClient/
 COPY src/Web/WebStatusLef/WebStatusLef.csproj src/Web/WebStatusLef/
 COPY src/Web/WebSignatureClient/WebSignatureClient.csproj src/Web/WebSignatureClient/
+COPY src/Web/WebCentinelaClient/WebCentinelaClient.csproj src/Web/WebCentinelaClient/
 
 RUN dotnet restore eLefebvreOnContainers-ServicesAndWebApps.sln
 
