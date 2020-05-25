@@ -1,6 +1,6 @@
-﻿using eShopOnContainers.WebSPA;
-using HealthChecks.UI.Client;
+﻿using HealthChecks.UI.Client;
 using Lefebvre.eLefebvreOnContainers.Clients.WebSignature.Infrastructure;
+
 //using Microsoft.ApplicationInsights.Extensibility;
 //using Microsoft.ApplicationInsights.ServiceFabric;
 using Microsoft.AspNetCore.Antiforgery;
@@ -31,6 +31,7 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebSignature
             var localPath = new Uri(Configuration["ASPNETCORE_URLS"])?.LocalPath ?? "/";
             Configuration["BaseUrl"] = localPath;
         }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -69,7 +70,6 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebSignature
                  });
         }
 
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IAntiforgery antiforgery)
         {
@@ -85,8 +85,8 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebSignature
                 app.UseHsts();
             }
 
-            // Configure XSRF middleware, This pattern is for SPA style applications where XSRF token is added on Index page 
-            // load and passed back token on every subsequent async request            
+            // Configure XSRF middleware, This pattern is for SPA style applications where XSRF token is added on Index page
+            // load and passed back token on every subsequent async request
             // app.Use(async (context, next) =>
             // {
             //     if (string.Equals(context.Request.Path.Value, "/", StringComparison.OrdinalIgnoreCase))
@@ -115,7 +115,7 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebSignature
                 // Rewrite request to use app root
                 if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value) && !context.Request.Path.Value.StartsWith("/api"))
                 {
-                    context.Request.Path = "/index.html"; 
+                    context.Request.Path = "/index.html";
                     context.Response.StatusCode = 200; // Make sure we update the status code, otherwise it returns 404
                     await next();
                 }
