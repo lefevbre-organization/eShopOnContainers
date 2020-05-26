@@ -17,4 +17,5 @@ data:
   internalurls__lexonmysql__hc: http://{{ .Values.app.svc.lexonmysqlapi }}/hc
   internalurls__centinela__hc: http://{{ .Values.app.svc.centinelaapi }}/hc
   internalurls__userutils__hc: http://{{ .Values.app.svc.userutilsapi }}/hc
+  internalurls__signature__hc: http://{{ .Values.app.svc.signatureapi }}/hc
 
