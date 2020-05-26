@@ -160,8 +160,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
         [ProducesResponseType(typeof(Result<String>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> FileGet(
-            [FromQuery] string idNavisionUser,
-            [FromQuery] string idDocument
+            [FromQuery] string idNavisionUser = "E1669460",
+            [FromQuery] string idDocument = "78927"
             )
         {
 

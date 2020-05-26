@@ -89,7 +89,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
         }
       
 
-        public async Task<Result<bool>> FilePostAsync(CenDocumentContent fileMail)
+        public async Task<Result<bool>> FilePostAsync(ConceptFile fileMail)
         {
             var result = new Result<bool>(false);
             try
@@ -125,7 +125,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             return result;
         }
 
-        private void CleanNameFile(CenDocumentContent fileMail, out string cleanName)
+        private void CleanNameFile(ConceptFile fileMail, out string cleanName)
         {
             fileMail.Name = RemoveProblematicChars(fileMail.Name);
 
@@ -138,11 +138,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             cleanName = name;
         }
 
-        private void SerializeToMultiPart(CenDocumentContent fileMail, string name, out string url, out MultipartFormDataContent multipartContent)
+        private void SerializeToMultiPart(ConceptFile fileMail, string name, out string url, out MultipartFormDataContent multipartContent)
         {
             // https://stackoverflow.com/questions/42212406/how-to-send-a-file-and-form-data-with-httpclient-in-c-sharp/42212590
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            var path = $"/document/conceptobject/{fileMail.ConceptId}?idEntrada={fileMail.Name}";
+            var path = $"/document/conceptobject/{fileMail.ConceptId}?idEntrada={fileMail.idNavision}";
             url = $"{_settings.Value.CentinelaUrl}{path}";
             TraceLog(parameters: new string[] { $"url={url}" });
 
@@ -158,15 +158,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
                 };
         }
 
-        private void SerializeObjectToByteArray(string textInBase64, string path, out string url, out ByteArrayContent byteArrayContent)
-        {
-            url = $"{_settings.Value.CentinelaUrl}{path}";
-            TraceLog(parameters: new string[] { $"url={url}" });
-            byte[] newBytes = Convert.FromBase64String(textInBase64);
+        //private void SerializeObjectToByteArray(string textInBase64, string path, out string url, out ByteArrayContent byteArrayContent)
+        //{
+        //    url = $"{_settings.Value.CentinelaUrl}{path}";
+        //    TraceLog(parameters: new string[] { $"url={url}" });
+        //    byte[] newBytes = Convert.FromBase64String(textInBase64);
 
-            byteArrayContent = new ByteArrayContent(newBytes);
-            byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("application/bson");
-        }
+        //    byteArrayContent = new ByteArrayContent(newBytes);
+        //    byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("application/bson");
+        //}
 
 
  
@@ -245,88 +245,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
                 });
             }
 
-            //try
-            //{
-            //    var url = $"https://herculesppd.lefebvre.es/webclient46/ws/encriptarEntrada.do?nEntrada={idNavisionUser}";
-
-            //    using (var response = await _clientOnline.GetAsync(url))
-            //    {
-            //        if (response.IsSuccessStatusCode)
-            //        {
-            //            var rawResult = await response.Content.ReadAsStringAsync();
-
-            //            if (!string.IsNullOrEmpty(rawResult))
-            //            {
-            //                var resultado = (JsonConvert.DeserializeObject<OnlineEntrada>(rawResult));
-            //                result.infos.Add(new Info() { code = "PRE_Online", message = resultado.ENTRADA_ENCRIPTADA });
-            //            }
-            //        }
-            //        else
-            //        {
-            //            result.errors.Add(new ErrorInfo
-            //            {
-            //                code = "553",
-            //                detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-            //            });
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    result.errors.Add(new ErrorInfo
-            //    {
-            //        code = "554",
-            //        detail = $"General error when call online service",
-            //        message = ex.Message
-            //    });
-            //}
-            //try
-            //{
-            //    var url = $"https://centinela-api.lefebvre.es/api/secure/conectamail/evaluations/user/{idNavisionUser}";
-
-            //    using (var response = await _clientPro.GetAsync(url))
-            //    {
-            //        if (response.IsSuccessStatusCode)
-            //        {
-            //            var rawResult = await response.Content.ReadAsStringAsync();
-
-            //            if (!string.IsNullOrEmpty(rawResult))
-            //            {
-            //                var resultado = (JsonConvert.DeserializeObject<CenEvaluation[]>(rawResult));
-            //                resultado.ToList();
-            //                result.infos.Add(new Info() { code = "PRO_Centinela", message = resultado?.ToList()?.Count.ToString() });
-            //            }
-            //        }
-            //        else
-            //        {
-            //            result.errors.Add(new ErrorInfo
-            //            {
-            //                code = "553",
-            //                detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-            //            });
-            //        }
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    result.errors.Add(new ErrorInfo
-            //    {
-            //        code = "554",
-            //        detail = $"General error when call online service",
-            //        message = ex.Message
-            //    });
-            //}
             return result;
         }
 
-        //internal class OnlineEntrada
-        //{
-        //    public string ENTRADA_ENCRIPTADA { get; set; }
-        //    public long ID_ENTRADA { get; set; }
-        //    public string N_ENTRADA { get; set; }
-        //    //{"ID_ENTRADA":1037352,"N_ENTRADA":"E1621500"}
-        //    // {"ENTRADA_ENCRIPTADA":"eHRncH9gaw%3D%3D"}
-        //}
+
 
         public async Task<Result<List<CenDocument>>> GetDocumentsAsync(string idNavisionUser, string search)
         {
@@ -371,11 +293,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             return result;
         }
 
-        public async Task<Result<bool>> FilePostAsync(ConceptFile file)
-        {
-            throw new NotImplementedException();
-            // /document/conceptobject/CONCEPTOBJECT_ID?idEntrada=ID_EN
-        }
 
         public async Task<Result<List<CenEvaluationTree>>> GetEvaluationTreeByIdAsync(string idNavisionUser, int idEvaluation)
         {
