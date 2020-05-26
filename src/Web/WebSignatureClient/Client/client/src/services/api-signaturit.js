@@ -274,7 +274,7 @@ export const getUserSignatures = async userId => {
       redirect: 'follow'
     };
     
-    fetch(`${window.URL_SIGNATURES_API}/${userId}`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Signatures/${userId}`, requestOptions)
       .then(response => response.json())
       .then(result => resolve(result))
       .catch(error => {
@@ -309,7 +309,7 @@ export const createUser = async (userId, brandings = [], signatures = []) => {
     redirect: 'follow'
   };
 
-  fetch(`${window.URL_SIGNATURES_API}`, requestOptions)
+  fetch(`${window.API_SIGN_GATEWAY}/Signatures`, requestOptions)
     .then(response => {
       console.log(response);
       response.text()
@@ -338,7 +338,7 @@ export const addOrUpdateSignature = async (userId, externalId, guid, app) => {
     redirect: 'follow'
   };
 
-  fetch(`${window.URL_SIGNATURES_API}/${userId}/signature/addorupdate`, requestOptions)
+  fetch(`${window.API_SIGN_GATEWAY}/Signatures/${userId}/signature/addorupdate`, requestOptions)
     .then(response => {
       console.log(response);
       response.text()
@@ -359,7 +359,7 @@ export const deleteUser = async userId => {
     redirect: 'follow'
   };
 
-  fetch(`${window.URL_SIGNATURES_API}/${userId}/delete`, requestOptions)
+  fetch(`${window.API_SIGN_GATEWAY}/Signatures/${userId}/delete`, requestOptions)
     .then(response => response.text())
     .then(result => console.log(result))
     .catch(error => console.log('error', error));
@@ -372,7 +372,7 @@ export const getAvailableSignatures = async userId => {
       redirect: 'follow'
     };
   
-    fetch(`${window.URL_SIGNATURES_API}/${userId}/getAvailableSignatures`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Signatures/${userId}/getAvailableSignatures`, requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
@@ -399,7 +399,7 @@ export const saveAvailableSignatures = async (userId, num) => {
       redirect: 'follow'
     };
 
-    fetch(`${window.URL_SIGNATURES_API}/${userId}/setAvailableSignatures`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Signatures/${userId}/setAvailableSignatures`, requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
@@ -421,7 +421,7 @@ export const decAvailableSignatures = async userId => {
       redirect: 'follow'
     };
     
-    fetch(`${window.URL_SIGNATURES_API}/${userId}/DecAvailableSignatures`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Signatures/${userId}/DecAvailableSignatures`, requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
@@ -441,7 +441,7 @@ export const getBrandingTemplate = async app => {
       redirect: 'follow'
     };
     
-    fetch(`${window.URL_BRANDINGS_API}/get/${app}/template`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Brandings/get/${app}/template`, requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
@@ -478,7 +478,7 @@ export const addOrUpdateBranding = async (user, brandingInfo) => {
       redirect: 'follow'
     };
     
-    fetch(`${window.URL_SIGNATURES_API}/${user}/branding/addorupdate`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Signatures/${user}/branding/addorupdate`, requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
@@ -504,7 +504,7 @@ export function preloadSignatures2(dispatch, filters, auth) {
     var request = require('request');
     var options = {
         'method': 'GET',
-        'url': `${window.URL_SIGNATURIT_API}/getSignatures/${filters}`,
+        'url': `${window.API_SIGN_GATEWAY}/Signaturit/getSignatures/${filters}`,
         'headers': {
             'Authorization': `${auth}`
     }
@@ -575,7 +575,7 @@ export const createSignature2 = async (recipients, subject, body, files, filesDa
       redirect: 'follow'
     };
     
-    fetch(`${window.URL_SIGNATURIT_API}/newSignature`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/newSignature`, requestOptions)
       .then(response => response.json())
       .then(result => {
         resolve(result)
@@ -600,7 +600,7 @@ export const downloadSignedDocument2 = (signId, docId, fileName, auth) => {
       redirect: 'follow'
     };
     
-    fetch(`${window.URL_SIGNATURIT_API}/download/${signId}/signedDocument/${docId}`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/download/${signId}/signedDocument/${docId}`, requestOptions)
       .then(response => response.blob())
       .then(blob => {
         console.log(blob);
@@ -629,7 +629,7 @@ export const downloadTrailDocument2 = (signId, docId, fileName, auth) => {
     redirect: 'follow'
   };
 
-  fetch(`${window.URL_SIGNATURIT_API}/download/${signId}/trailDocument/${docId}`, requestOptions)
+  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/download/${signId}/trailDocument/${docId}`, requestOptions)
     .then(response => response.blob())
     .then(blob => {
       console.log(blob);
@@ -655,7 +655,7 @@ export const sendReminder2 = async (signatureId, auth) => {
   redirect: 'follow'
   };
 
-  fetch(`${window.URL_SIGNATURIT_API}/reminder/${signatureId}`, requestOptions)
+  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/reminder/${signatureId}`, requestOptions)
   .then(response => response.text())
   .then(result => console.log(result))
   .catch(error => console.log('error', error));
@@ -672,7 +672,7 @@ export const cancelSignature2 = async (signatureId, auth) => {
   redirect: 'follow'
   };
 
-  fetch(`${window.URL_SIGNATURIT_API}/cancelSignature/${signatureId}`, requestOptions)
+  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/cancelSignature/${signatureId}`, requestOptions)
   .then(response => response.text())
   .then(result => console.log(result))
   .catch(error => console.log('error', error));
@@ -722,7 +722,7 @@ export const createBranding2 = async (template, auth) => {
       redirect: 'follow'
     };
 
-    fetch(`${window.URL_SIGNATURIT_API}/newBranding`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/newBranding`, requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
