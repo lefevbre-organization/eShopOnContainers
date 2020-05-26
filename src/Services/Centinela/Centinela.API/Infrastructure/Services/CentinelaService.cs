@@ -49,28 +49,20 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
 
         }
 
-        #region Review
+     
 
-        public async Task<Result<string>> FileGetAsync(EntitySearchById fileMail)
+        public async Task<Result<string>> FileGetAsync(string idNavisionUser, string idFile)
         {
             var result = new Result<string>(null);
             try
             {
-                var lexonFile = new LexonGetFile
-                {
-                    idCompany = 449, //await GetIdCompany(fileMail.idUser, fileMail.bbdd),
-                    idUser = fileMail.idUser,
-                    idDocument = fileMail.idEntity ?? 0
-                };
-
-                var json = JsonConvert.SerializeObject(lexonFile);
-                byte[] buffer = Encoding.UTF8.GetBytes(json);
-                var dataparameters = Convert.ToBase64String(buffer);
-                var url = $"{_settings.Value.CentinelaUrl}?option=com_lexon&task=hook.receive&type=repository&data={dataparameters}";
+                
+                // "/api/secure/conectamail/documentobject/DOCUMENTOBJECT_ID/download?idEntrada=ID_ENTRADA";
+                var url = $"{_settings.Value.CentinelaUrl}/documentobject/{idFile}/download?idEntrada={idNavisionUser}";
                 WriteError($"Se hace llamada a {url} a las {DateTime.Now}");
                 using (var response = await _client.GetAsync(url))
                 {
-                    WriteError($"Se recibe contestación {DateTime.Now}");
+                  //  WriteError($"Se recibe contestación {DateTime.Now}");
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -78,46 +70,36 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
                         var stringFile = Convert.ToBase64String(arrayFile);
                         var fileName = response.Content.Headers.ContentDisposition.FileName;
                         result.data = stringFile;
-                        TraceInfo(result.infos, $"Se recupera el fichero:  {fileName}", lexonFile.idDocument.ToString());
+                        TraceInfo(result.infos, $"Se recupera el fichero:  {fileName}", idFile);
                     }
                     else
                     {
                         var responseText = await response.Content.ReadAsStringAsync();
-                        TraceOutputMessage(result.errors, $"Response not ok : {responseText} with lexon-dev with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", 2003);
+                        TraceOutputMessage(result.errors, $"Response not ok : {responseText} with centinela with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", 2003);
                     }
                 }
             }
             catch (Exception ex)
             {
-                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.idEntity}, -> {ex.Message}", "599");
+                TraceOutputMessage(result.errors, $"Error al obtener el archivo {idFile}, -> {ex.Message}", "CentinelaGetDocumentError");
             }
 
             WriteError($"Salimos de FileGetAsync a las {DateTime.Now}");
             return result;
         }
+      
 
-        public async Task<Result<bool>> FilePostAsync(MailFileView fileMail)
+        public async Task<Result<bool>> FilePostAsync(CenDocumentContent fileMail)
         {
             var result = new Result<bool>(false);
             try
             {
-                var lexonFile = await GetFileDataByTypeActuation(fileMail);
-                lexonFile.fileName = RemoveProblematicChars(lexonFile.fileName);
-                var name = Path.GetFileNameWithoutExtension(lexonFile.fileName);
+                CleanNameFile(fileMail, out string name);
 
-                name = string.Concat(name.Split(Path.GetInvalidFileNameChars()));
-                name = string.Concat(name.Split(Path.GetInvalidPathChars()));
-                var maxlenght = name.Length > 55 ? 55 : name.Length;
-                lexonFile.fileName = $"{name.Substring(0, maxlenght)}{Path.GetExtension(lexonFile.fileName)}";
-
-                var json = JsonConvert.SerializeObject(lexonFile);
-                byte[] buffer = Encoding.UTF8.GetBytes(json);
-                var dataparameters = Convert.ToBase64String(buffer);
-
-                SerializeObjectToPut(fileMail.ContentFile, $"?option=com_lexon&task=hook.receive&type=repository&data={dataparameters}", out string url, out ByteArrayContent data);
+                SerializeToMultiPart(fileMail, name, out string url, out MultipartFormDataContent multipartContent);
 
                 WriteError($"Se hace llamada a {url} a las {DateTime.Now}");
-                using (var response = await _client.PutAsync(url, data))
+                using (var response = await _client.PostAsync(url, multipartContent))
                 {
                     WriteError($"Se recibe contestación {DateTime.Now}");
 
@@ -143,37 +125,40 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             return result;
         }
 
-        private async Task<LexonPostFile> GetFileDataByTypeActuation(MailFileView fileMail)
+        private void CleanNameFile(CenDocumentContent fileMail, out string cleanName)
         {
-            var lexonFile = new LexonPostFile
-            {
-                idCompany = 449, // await GetIdCompany(fileMail.idUser, fileMail.bbdd),
-                fileName = fileMail.Name,
-                idUser = fileMail.idUser,
-                idEntityType = fileMail.idType ?? 0
-            };
-            if (fileMail.IdActuation == null || fileMail.IdActuation == 0)
-            {
-                lexonFile.idFolder = fileMail.IdParent ?? 0;
-                lexonFile.idEntity = fileMail.idEntity ?? 0;
-            }
-            else
-            {
-                lexonFile.idFolder = 0;
-                lexonFile.idEntity = (long)fileMail.IdActuation;
-            };
-            return lexonFile;
+            fileMail.Name = RemoveProblematicChars(fileMail.Name);
+
+            var name = Path.GetFileNameWithoutExtension(fileMail.Name);
+            name = string.Concat(name.Split(Path.GetInvalidFileNameChars()));
+            name = string.Concat(name.Split(Path.GetInvalidPathChars()));
+            var maxlenght = name.Length > 120 ? 120 : name.Length;
+
+            fileMail.Name = $"{name.Substring(0, maxlenght)}{Path.GetExtension(fileMail.Name)}";
+            cleanName = name;
         }
 
-        private void SerializeObjectToPost(object parameters, string path, out string url, out StringContent data)
+        private void SerializeToMultiPart(CenDocumentContent fileMail, string name, out string url, out MultipartFormDataContent multipartContent)
         {
+            // https://stackoverflow.com/questions/42212406/how-to-send-a-file-and-form-data-with-httpclient-in-c-sharp/42212590
+            _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var path = $"/document/conceptobject/{fileMail.ConceptId}?idEntrada={fileMail.Name}";
             url = $"{_settings.Value.CentinelaUrl}{path}";
             TraceLog(parameters: new string[] { $"url={url}" });
-            var json = JsonConvert.SerializeObject(parameters);
-            data = new StringContent(json, Encoding.UTF8, "application/json");
+
+            byte[] newBytes = Convert.FromBase64String(fileMail.ContentFile);
+            var byteArrayContent = new ByteArrayContent(newBytes);
+
+
+            multipartContent = new MultipartFormDataContent()
+                {
+                    //{new StringContent(surveyId), "\"surveyId\""},
+                    {byteArrayContent, name, fileMail.Name}
+
+                };
         }
 
-        private void SerializeObjectToPut(string textInBase64, string path, out string url, out ByteArrayContent byteArrayContent)
+        private void SerializeObjectToByteArray(string textInBase64, string path, out string url, out ByteArrayContent byteArrayContent)
         {
             url = $"{_settings.Value.CentinelaUrl}{path}";
             TraceLog(parameters: new string[] { $"url={url}" });
@@ -183,14 +168,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("application/bson");
         }
 
-        #endregion Review
+
+ 
 
         #region Centinela
 
-        public Task<Result<string>> FileGetAsync(string idNavisionUser, string idFile)
-        {
-            throw new NotImplementedException();
-        }
+
 
         public async Task<Result<CenUser>> GetUserAsync(string idNavisionUser)
         {

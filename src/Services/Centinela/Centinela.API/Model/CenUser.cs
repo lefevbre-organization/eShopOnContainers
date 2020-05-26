@@ -24,4 +24,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Models
 
         public CenEvaluation[] evaluations { get; set; }
     }
+
+    
 }
