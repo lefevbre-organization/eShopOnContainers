@@ -1,5 +1,3 @@
-window.REACT_APP_ENVIRONMENT = "LEXON-CLIENT LOCAL";
-window.API_GATEWAY = "https://now-apigwlex.lefebvre.es";
-window.API_ACC_GATEWAY = "https://now-apigwacc.lefebvre.es"
-window.URL_MF_LEXON_BASE = "http://localhost:3004/"
-
+window.REACT_APP_ENVIRONMENT = 'CENTINELA-CLIENT LOCAL';
+window.API_GATEWAY =
+  'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/Centinela';
