@@ -85,7 +85,7 @@ class UserLexon extends Component {
                 //store the new token in cookie
                 Cookies.set(`Lefebvre.Signaturit.${user}`, this.props.match.params.token, {
                     expires: 1,
-                    domain: 'localhost'
+                    domain: (window.REACT_APP_ENVIRONMENT==='LOCAL' ? 'localhost': 'lefebvre.es')
                   });
 
                 this.props.setToken(this.props.match.params.token);
