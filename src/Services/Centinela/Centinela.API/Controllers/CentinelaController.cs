@@ -156,7 +156,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
             return BadRequest(result);
         }
 
-        [HttpPost("concepts/files/get")]
+        [HttpGet("concepts/files/get")]
         [ProducesResponseType(typeof(Result<String>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> FileGet(
