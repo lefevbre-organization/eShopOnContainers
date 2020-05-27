@@ -1,21 +1,23 @@
-import { combineReducers } from "redux";
-import { signedOutReducer } from "./gapi.reducers";
-import { signInStatusResult } from "./gapi.reducers";
-import { lexon } from "./lexon";
+import { combineReducers } from 'redux';
+import { signedOutReducer } from './gapi.reducers';
+import { signInStatusResult } from './gapi.reducers';
+import { lexon } from './lexon';
+import { currentUser } from './user';
 
-import { labelsResult } from "../components/sidebar/sidebar.reducers";
+import { labelsResult } from '../components/sidebar/sidebar.reducers';
 import {
   messagesResult,
   emailMessageResult,
   emailHeaderMessageResult,
   pageTokens,
   searchQuery,
-  messageList
-} from "../components/content/message-list/reducers/message-list.reducers";
+  messageList,
+} from '../components/content/message-list/reducers/message-list.reducers';
 
 export default combineReducers({
   signedOutReducer,
   signInStatusResult,
+  currentUser,
   lexon,
   labelsResult,
   messagesResult,
@@ -23,5 +25,5 @@ export default combineReducers({
   emailHeaderMessageResult,
   pageTokens,
   searchQuery,
-  messageList
+  messageList,
 });

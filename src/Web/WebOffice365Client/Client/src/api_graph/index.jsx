@@ -14,12 +14,12 @@ export const getUserApplication = () => {
       auth: {
         clientId: config.appId,
         redirectUri: redirectUri,
-        postLogoutRedirectUri: 'https://lexbox-test-webgraph.lefebvre.es'
+        postLogoutRedirectUri: 'https://lexbox-test-webgraph.lefebvre.es',
       },
       cache: {
         cacheLocation: 'localStorage',
-        storeAuthStateInCookie: true
-      }
+        storeAuthStateInCookie: true,
+      },
     });
 
     userAgentApplication.handleRedirectCallback((error, response) => {});
@@ -28,14 +28,14 @@ export const getUserApplication = () => {
   return userAgentApplication;
 };
 
-export const getAuthenticatedClient = accessToken => {
+export const getAuthenticatedClient = (accessToken) => {
   // Initialize Graph client
   const client = graph.Client.init({
     // Use the provided access token to authenticate
     // requests
-    authProvider: done => {
+    authProvider: (done) => {
       done(null, accessToken.accessToken);
-    }
+    },
   });
 
   return client;
@@ -104,7 +104,7 @@ export const getLabelInbox = () =>
     client
       .api('/me/mailFolders/inbox')
       .get()
-      .then(response => {
+      .then((response) => {
         resolve(response);
       });
   });
@@ -121,17 +121,17 @@ export const getMessageList = ({ labelIds, maxResults, q, pageToken }) =>
   new Promise((resolve, reject) => {
     getMessageRawList({ labelIds, maxResults, pageToken, q })
       .then(getMessageHeaders)
-      .then(messageResult =>
+      .then((messageResult) =>
         flattenMessagesWithLabel(messageResult.messages, labelIds).then(
-          labelMessagesDetails =>
+          (labelMessagesDetails) =>
             resolve({
               ...messageResult,
               messages: labelMessagesDetails.messages,
-              label: labelMessagesDetails.label
+              label: labelMessagesDetails.label,
             })
         )
       )
-      .catch(err => {
+      .catch((err) => {
         reject(err);
       });
   });
@@ -142,9 +142,9 @@ export const flattenMessagesWithLabel = (messages, labelIds) =>
       messages,
       label: {
         result: {
-          messagesTotal: 0
-        }
-      }
+          messagesTotal: 0,
+        },
+      },
     });
     return;
   });
@@ -158,10 +158,10 @@ const getMessageRawList = ({ labelIds, maxResults, pageToken, q = '' }) =>
         .api(`${pageToken}`)
 
         .get()
-        .then(response => {
+        .then((response) => {
           resolve(response);
         })
-        .catch(err => {
+        .catch((err) => {
           reject(err);
         });
     } else {
@@ -170,10 +170,10 @@ const getMessageRawList = ({ labelIds, maxResults, pageToken, q = '' }) =>
           .api(`me/mailFolders/${labelIds}/messages`)
           .top(`${maxResults}`)
           .get()
-          .then(response => {
+          .then((response) => {
             resolve(response);
           })
-          .catch(err => {
+          .catch((err) => {
             reject(err);
           });
       } else {
@@ -181,57 +181,57 @@ const getMessageRawList = ({ labelIds, maxResults, pageToken, q = '' }) =>
           .api(`me/messages?$search=${q}`)
           .top(`${maxResults}`)
           .get()
-          .then(response => {
+          .then((response) => {
             resolve(response);
           })
-          .catch(err => {
+          .catch((err) => {
             reject(err);
           });
       }
     }
   });
 
-export const getMessageHeaders = response => {
+export const getMessageHeaders = (response) => {
   const messageResult = response;
 
   return new Promise((resolve, reject) => {
-    const headerPromises = (messageResult.value || []).map(el => {
+    const headerPromises = (messageResult.value || []).map((el) => {
       return getMessageHeader(el.id);
     });
 
-    Promise.all(headerPromises).then(messages => {
+    Promise.all(headerPromises).then((messages) => {
       resolve({
         ...messageResult,
-        messages
+        messages,
       });
     });
   });
 };
 
-export const getMessageHeadersFromId = messageIds => {
+export const getMessageHeadersFromId = (messageIds) => {
   return new Promise((resolve, reject) => {
-    const headerPromises = (messageIds || []).map(messageId => {
+    const headerPromises = (messageIds || []).map((messageId) => {
       return getMessageHeader(messageId);
     });
 
-    Promise.all(headerPromises).then(messages => {
+    Promise.all(headerPromises).then((messages) => {
       resolve({
         ...messageIds,
-        messages
+        messages,
       });
     });
   });
 };
 
-export const getMessageHeader = id => {
+export const getMessageHeader = (id) => {
   return new Promise(async (resolve, reject) => {
     const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
     client
       .api(`me/messages/${id}`)
       .get()
-      .then(response => resolve(response))
-      .catch(err => {
+      .then((response) => resolve(response))
+      .catch((err) => {
         reject(err);
       });
   });
@@ -240,33 +240,33 @@ export const getMessageHeader = id => {
 export const getMessage = (messageId, format) =>
   new Promise((resolve, reject) => {
     getMessageDetail(messageId, format)
-      .then(Messagedetail => {
+      .then((Messagedetail) => {
         if (format === 'raw') {
           resolve(Messagedetail);
           return;
         }
 
-        getAttachmentsList(messageId).then(MessagesandAttachementsDetails =>
+        getAttachmentsList(messageId).then((MessagesandAttachementsDetails) =>
           resolve({
             ...Messagedetail,
-            attach: MessagesandAttachementsDetails
+            attach: MessagesandAttachementsDetails,
           })
         );
       })
-      .catch(err => {
+      .catch((err) => {
         reject(err);
       });
   });
 
-export const getAttachmentsList = messageId => {
+export const getAttachmentsList = (messageId) => {
   return new Promise(async (resolve, reject) => {
     const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
     client
       .api(`me/messages/${messageId}/attachments`)
       .get()
-      .then(response => resolve(response.value))
-      .catch(err => {
+      .then((response) => resolve(response.value))
+      .catch((err) => {
         reject(err);
       });
   });
@@ -289,14 +289,14 @@ export const getMessageDetail = async (messageId, format = '') => {
     return {
       body: result.body,
       headers: response.headers,
-      result: { ...result, messageHeaders: result, payload: undefined }
+      result: { ...result, messageHeaders: result, payload: undefined },
     };
   } catch (err) {
     throw err;
   }
 };
 
-export const getMessageByInternetMessageId = async internetMessageId => {
+export const getMessageByInternetMessageId = async (internetMessageId) => {
   try {
     const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
@@ -316,7 +316,7 @@ export const getMessageByInternetMessageId = async internetMessageId => {
     return {
       id: result.id,
       subject: result.subject,
-      sentDateTime: result.sentDateTime
+      sentDateTime: result.sentDateTime,
     };
   } catch (err) {
     throw err;
@@ -328,7 +328,7 @@ export const emailEnd = () => {
   return email;
 };
 
-export const emailBody = data => {
+export const emailBody = (data) => {
   const guid = data.internetMessageId;
   const subject = data.subject.replace(/\"/g, '\\"');
 
@@ -356,7 +356,7 @@ export const emailBody = data => {
   return email;
 };
 
-export const emailToRecipients = data => {
+export const emailToRecipients = (data) => {
   //to Recipients
   var email = `[]`;
   if (data.to === '') return email;
@@ -374,7 +374,7 @@ export const emailToRecipients = data => {
   return email;
 };
 
-export const emailToCcRecipients = data => {
+export const emailToCcRecipients = (data) => {
   //to Recipients
   var email = `"CcRecipients": [],`;
   if (data.cc === '') return email;
@@ -392,7 +392,7 @@ export const emailToCcRecipients = data => {
   return email;
 };
 
-export const emailToBccRecipients = data => {
+export const emailToBccRecipients = (data) => {
   //to BccRecipients
   var email = `"BccRecipients": [],`;
   if (data.bcc === '') return email;
@@ -415,7 +415,7 @@ export const emailPriority = () => {
   return priority;
 };
 
-export const emailAttachments = data => {
+export const emailAttachments = (data) => {
   var email = `"Attachments": [],`;
   var attachments = data.uppyPreviews;
 
@@ -453,10 +453,7 @@ export const sendMessage = async ({ data, attachments }) => {
   try {
     const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
-    let response = await client
-      .api('/me/messages')
-      .version('beta')
-      .post(email);
+    let response = await client.api('/me/messages').version('beta').post(email);
 
     await uploadFiles(response.id, data.uppyPreviews);
     response = await client
@@ -471,13 +468,28 @@ export const sendMessage = async ({ data, attachments }) => {
   }
 };
 
-export const setMessageAsRead = async messageId => {
+export const setMessageAsRead = async (messageId) => {
   try {
     const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
 
     await client.api(`me/messages/${messageId}`).patch({
-      isRead: true
+      isRead: true,
+    });
+    return true;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+};
+
+export const setMessageAsUnread = async (messageId) => {
+  try {
+    const accessToken = await getAccessTokenSilent();
+    const client = getAuthenticatedClient(accessToken);
+
+    await client.api(`me/messages/${messageId}`).patch({
+      isRead: false,
     });
     return true;
   } catch (err) {
@@ -489,22 +501,38 @@ export const setMessageAsRead = async messageId => {
 export const batchModify = async ({
   ids,
   addLabelIds = [],
-  removeLabelIds = []
+  removeLabelIds = [],
 }) => {
   const accessToken = await getAccessTokenSilent();
   const client = getAuthenticatedClient(accessToken);
-  const deleteFolder = 'deleteditems';
-  const DestinationId = `{
+  let prs = [];
+
+  if (addLabelIds[0] === 'TRASH') {
+    const deleteFolder = 'deleteditems';
+    const DestinationId = `{
                      "destinationId": "${deleteFolder}"
                      }`;
 
-  let prs = [];
-  if (ids && ids.length) {
-    for (let i = 0; i < ids.length; i++) {
-      prs.push(client.api(`me/messages/${ids[i]}/move`).post(DestinationId));
+    if (ids && ids.length) {
+      for (let i = 0; i < ids.length; i++) {
+        prs.push(client.api(`me/messages/${ids[i]}/move`).post(DestinationId));
+      }
+    }
+  } else if (addLabelIds[0] === 'UNREAD') {
+    if (ids && ids.length) {
+      for (let i = 0; i < ids.length; i++) {
+        prs.push(setMessageAsUnread(ids[i]));
+      }
     }
   }
 
+  if (removeLabelIds[0] === 'UNREAD') {
+    if (ids && ids.length) {
+      for (let i = 0; i < ids.length; i++) {
+        prs.push(setMessageAsRead(ids[i]));
+      }
+    }
+  }
   await Promise.all(prs);
   return ids;
 };
@@ -538,7 +566,7 @@ export const uploadFile = async (emailId, fileName, file, content) => {
   const attachment = {
     '@odata.type': '#microsoft.graph.fileAttachment',
     name: fileName,
-    contentBytes: data
+    contentBytes: data,
   };
 
   try {
@@ -566,8 +594,8 @@ export const uploadFileWithUploadSession = async (
     AttachmentItem: {
       attachmentType: 'file',
       name: fileName,
-      size: file.size
-    }
+      size: file.size,
+    },
   };
 
   try {
@@ -582,9 +610,9 @@ export const uploadFileWithUploadSession = async (
       headers: {
         'Content-Type': 'application/octet-stream',
         'Content-Length': `${file.size}`,
-        'Content-Range': `bytes 0-${file.size - 1}/${file.size}`
+        'Content-Range': `bytes 0-${file.size - 1}/${file.size}`,
       },
-      body: content
+      body: content,
     });
   } catch (err) {
     console.log(err);
@@ -601,11 +629,11 @@ export const getContacts = () =>
     client
       .api(`me/contacts?top=250`)
       .get()
-      .then(response => {
+      .then((response) => {
         let arr = response.value;
         let contacts = [];
         if (arr) {
-          arr.map(function(item) {
+          arr.map(function (item) {
             if (item.emailAddresses.length > 0)
               contacts.push(item.emailAddresses[0].address);
           });

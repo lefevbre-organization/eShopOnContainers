@@ -2,6 +2,7 @@ import React, { Component, useReducer } from 'react';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import ACTIONS from '../../actions/lexon';
+import CU_ACTIONS from '../../actions/user';
 import { setFormValues } from '../../actions/login';
 import { clearUserCredentials } from '../../actions/application';
 import history from '../../routes/history';
@@ -57,6 +58,12 @@ class UserLexon extends Component {
     const payload = this.props.match.params.token
       ? parseJwt(this.props.match.params.token)
       : undefined;
+    if (payload) {
+      const aux = { ...payload };
+      delete aux.exp;
+      this.props.setCurrentUser(aux);
+    }
+
     //const user = (this.props.match.params.token ? `IM0${getUserId(payload)}` : this.props.match.params.idUser);
     var user = this.props.match.params.token
       ? getUserId(payload)
@@ -100,6 +107,7 @@ class UserLexon extends Component {
       });
       this.props.logout();
     }
+
     this.props.setUser(user);
 
     if (idMessage && base64regex.test(idMessage)) {
@@ -231,6 +239,7 @@ const mapDispatchToProps = (dispatch) => ({
     history.push('/login');
   },
   setToken: (token) => dispatch(ACTIONS.setToken(token)),
+  setCurrentUser: (payload) => dispatch(CU_ACTIONS.setCurrentUser(payload)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserLexon);

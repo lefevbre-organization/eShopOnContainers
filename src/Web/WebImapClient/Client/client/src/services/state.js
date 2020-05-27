@@ -1,10 +1,11 @@
-import { persistState, recoverState } from "./indexed-db";
-import { INITIAL_STATE } from "../reducers";
-import { processFolders } from "./folder";
+import { persistState, recoverState } from './indexed-db';
+import { INITIAL_STATE } from '../reducers';
+import { processFolders } from './folder';
 
-export const KEY_USER_ID = "KEY_USER_ID";
-export const KEY_HASH = "KEY_HASH";
-export const LEXON = "LEXON";
+export const KEY_USER_ID = 'KEY_USER_ID';
+export const KEY_HASH = 'KEY_HASH';
+export const LEXON = 'LEXON';
+export const CURRENT_USER = 'CURRENT_USER';
 
 function emptyState() {
   return JSON.parse(JSON.stringify(INITIAL_STATE));
@@ -41,6 +42,11 @@ export async function loadState() {
     state.lexon = JSON.parse(lexon);
   }
 
+  const currentUser = localStorage.getItem(CURRENT_USER);
+  if (currentUser !== null && currentUser.user !== null) {
+    state.currentUser = JSON.parse(currentUser);
+  }
+
   return state;
 }
 
@@ -60,6 +66,7 @@ export function saveState(dispatch, state) {
   localStorage.setItem(KEY_USER_ID, state.application.user.id);
   localStorage.setItem(KEY_HASH, state.application.user.hash);
   localStorage.setItem(LEXON, JSON.stringify(state.lexon));
+  localStorage.setItem(CURRENT_USER, JSON.stringify(state.currentUser));
 
   persistState(dispatch, state);
 }
@@ -70,11 +77,12 @@ export function removeState() {
   localStorage.removeItem(KEY_USER_ID);
   localStorage.removeItem(KEY_HASH);
   localStorage.removeItem(LEXON);
+  localStorage.removeItem(CURRENT_USER);
   sessionStorage.clear();
 }
 
-export function removeStateExLexon() {    
-    localStorage.removeItem(KEY_USER_ID);
-    localStorage.removeItem(KEY_HASH);
-    sessionStorage.clear();
+export function removeStateExLexon() {
+  localStorage.removeItem(KEY_USER_ID);
+  localStorage.removeItem(KEY_HASH);
+  sessionStorage.clear();
 }

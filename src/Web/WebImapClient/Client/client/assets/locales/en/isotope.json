@@ -55,7 +55,8 @@
     "lexon": "LEX-ON",
     "database": "Data Base",
     "compliance": "Compliance",
-    "calendar": "Calendar"
+    "calendar": "Calendar",
+    "centinela": "Centinela"
   },
   "messageList": {
     "emptyFolder": "Empty folder",

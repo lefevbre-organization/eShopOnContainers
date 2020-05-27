@@ -544,6 +544,14 @@ export class Main extends Component {
     this.props.addInitialPageToken(token);
   }
 
+  hasProduct(product) {
+    if (this.props.currentUser && this.props.currentUser.roles) {
+      return this.props.currentUser.roles.indexOf(product) > -1;
+    }
+
+    return false;
+  }
+
   renderLabelRoutes() {
     const { leftSideBar } = this.state;
     return this.props.labelsResult.labels.map((el) => (
@@ -758,11 +766,13 @@ export class Main extends Component {
                   </div>
                 )}
               </span>
-              {/* <span className='productsbutton'>
-                <div onClick={() => this.onSetSidebarOpenCentinela(true)}>
-                  <span className='lf-icon-compliance product-icon'></span>
-                </div>
-              </span> */}
+              {this.hasProduct('centinelaconnector') && (
+                <span className='productsbutton'>
+                  <div onClick={() => this.onSetSidebarOpenCentinela(true)}>
+                    <span className='lf-icon-compliance product-icon'></span>
+                  </div>
+                </span>
+              )}
               {/* <span className="productsbutton">
                  <div onClick={() => this.onSetSidebarOpenQMemento(true)}> 
                 <div>
@@ -848,6 +858,7 @@ const mapStateToProps = (state) => ({
   pageTokens: state.pageTokens,
   searchQuery: state.searchQuery,
   lexon: state.lexon,
+  currentUser: state.currentUser,
   selectedMessages: state.messageList.selectedMessages,
 });
 
