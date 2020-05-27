@@ -138,7 +138,7 @@ export class MessageViewer extends Component {
             folder: this.props.currentFolder.fullName,
             account: this.props.login.formValues.user,
             provider: 'IMAP',
-            raw: response,
+            raw: response.raw,
           },
         })
       );
