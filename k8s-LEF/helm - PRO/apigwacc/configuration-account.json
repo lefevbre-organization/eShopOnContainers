@@ -1,8 +1,49 @@
 {
   "ReRoutes": [
     {
-      "DownstreamPathTemplate": "/api/{version}/{everything}",
+      "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "lexon-api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/lex/{everything}",
+      "DownstreamPathTemplate": "/api/{version}/{everything}"
+    },
+    {
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "lexonmysql-api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/mysql/{everything}",
+      "DownstreamPathTemplate": "/api/{version}/{everything}",
+      "Priority": 0
+    },
+    {
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userutils-api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/mysql/LexonMySql/user/apps",
+      "DownstreamPathTemplate": "/api/{version}/UserUtils/user/apps",
+      "Priority": 1
+    },
+    {
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE" ],
       "DownstreamHostAndPorts": [
         {
           "Host": "account-api",
@@ -10,11 +51,25 @@
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/accounts/{everything}",
-       "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE" ]
+      "DownstreamPathTemplate": "/api/{version}/{everything}"
+    },
+    {
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userutils-api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/utils/{everything}",
+      "DownstreamPathTemplate": "/api/{version}/{everything}"
     }
   ],
   "GlobalConfiguration": {
-      "RequestIdKey": "OcRequestId",
-      "AdministrationPath": "/administration"
+    "RequestIdKey": "OcRequestId",
+    "AdministrationPath": "/administration"
   }
 }
+  

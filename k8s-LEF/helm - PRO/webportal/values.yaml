@@ -34,26 +34,12 @@ env:
       key: all__InstrumentationKey
     - name: UseLoadTest
       key: all_EnableLoadTest
-    - name: DPConnectionString
-      key: webmvc__keystore
-    - name: PurchaseUrl
-      key: internalurls__apigwws
-    - name: ExternalPurchaseUrl
-      key: urls__apigwws
-    - name: CallBackUrl
-      key: urls__mvc
-    - name: IdentityUrl
-      key: urls__IdentityUrl
-    - name: MarketingUrl
-      key: internalurls__apigwwm
-    - name: PurchaseUrlHC
-      key: internalurls__apigwws__hc
-    - name: IdentityUrlHC
-      key: internalurls__identity__hc      
-    - name: MarketingUrlHC
-      key: internalurls__apigwwm__hc    
-    - name: SignalrHubUrl
-      key: urls__apigwws
+    - name: LexonApiUrlHC
+      key: internalurls__lexonapi__hc
+    - name: AccountApiUrlHC
+      key: internalurls__accountapi__hc
+    - name: PortalUrlHC
+      key: internalurls__portal__hc
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
@@ -69,4 +55,4 @@ configValues: |
   window.URL_INBOX_GOOGLE= 'https://lexbox-webgoogle.lefebvre.es'
   window.URL_INBOX_OUTLOOK= 'https://lexbox-webgraph.lefebvre.es'
   window.URL_INBOX_IMAP= 'https://lexbox-webimap.lefebvre.es'
-  window.RELEASE= 'RC 0.19'
+  window.RELEASE= 'RC 0.21'

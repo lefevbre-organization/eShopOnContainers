@@ -14,8 +14,6 @@ This is just a brief enumeration of the configuration files used to create the k
 
 
 
-
-
 - `deploy-ingess.ps1` : lanza el script general nginx-ingress\mandatory.yaml de configuración del ingress
 - `deploy-ingess-azure.ps1` : lanza el script general nginx-ingress\cloud-generic.yaml de configuración del ingress para un clousd remoto
 - `deploy-ingess-dockerlocal.ps1` : lanza el script general nginx-ingress\cloud-generic.yaml de configuración del ingress

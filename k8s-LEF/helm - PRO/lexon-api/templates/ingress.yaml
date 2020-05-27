@@ -4,10 +4,10 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "webhooks-api.fullname" . }}
+  name: {{ template "lexon-api.fullname" . }}
   labels:
-    app: {{ template "webhooks-api.name" . }}
-    chart: {{ template "webhooks-api.chart" . }}
+    app: {{ template "lexon-api.name" . }}
+    chart: {{ template "lexon-api.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- with .Values.ingress.annotations }}
