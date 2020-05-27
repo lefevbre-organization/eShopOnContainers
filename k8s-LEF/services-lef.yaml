@@ -81,5 +81,18 @@ spec:
   selector:
     app: elefebvre
     component: centinela
-
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: elefebvre
+    component: signature
+  name: signature
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: elefebvre
+    component: signature
 # se necesita poner la aplucacion web?

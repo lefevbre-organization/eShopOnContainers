@@ -3,32 +3,20 @@ kind: ConfigMap
 metadata:
   name: externalcfg
   labels:
-    app: eshop
+    app: elefevbre
 data:
-# Basket.API entries
-  basket__ConnectionString: REDIS CONNECTION STRING FOR BASKET
-# Catalog.API entries
-  catalog__ConnectionString: Catalog SQL SERVER CONNECTION STRING (Server=xxxx;Intial Catalog=yyy;....)
-# Identity.API entries
-  IdentitySqlDb: Identity SQL SERVER CONNECTION STRING (Server=xxxx;Intial Catalog=yyy;....)
-# Locations.API entries
-  LocationsBus: CONNECTION_STRING (NAME OF RABBITMQ CONTAINER OR Endpoint=sb://XXXX for topic in case of using Azure)
-  LocationsNoSqlDb: Locations MongoDb ConnectionString
-  LocationsNoSqlDbName: Locations MongoDb database (LocationsDb)
-# Marketing.API entries
-  MarketingBus: CONNECTION_STRING (NAME OF RABBITMQ CONTAINER OR Endpoint=sb://XXXX for topic in case of using Azure)
-  MarketingNoSqlDb: Marketing MongoDb ConnectionString
-  MarketingNoSqlDbName: Marketing MongoDb database (MarketingDb)
-  MarketingSqlDb: Marketing SQL SERVER CONNECTION STRING (Server=xxxx;Intial Catalog=yyy;....)
-# Ordering.API entries
-  OrderingBus: CONNECTION_STRING (NAME OF RABBITMQ CONTAINER OR Endpoint=sb://XXXX for topic in case of using Azure)
-  OrderingSqlDb: Ordering SQL SERVER CONNECTION STRING (Server=xxxx;Intial Catalog=yyy;....)
-  GracePeriodManager_GracePeriodTime: "1"
-  GracePeriodManager_CheckUpdateTime: "15000"
-# Payment.API entries
-  PaymentBus: CONNECTION_STRING (NAME OF RABBITMQ CONTAINER OR Endpoint=sb://XXXX for topic in case of using Azure)
-# Global entries
-  all_UseAzureServiceBus: "TRUE" IF USE AZURE SB ("FALSE" FOR USING RABBITMQ)
-  keystore: REDIS CONNECTION STRING FOR KEYSTORE
-  all_EventBusConnection: CONNECTION_STRING (NAME OF RABBITMQ CONTAINER OR Endpoint=sb://XXXX in case of using Azure)
-  all_InstrumentationKey: APPINSIGHTS KEY
+  userutils__ConnectionString: mongodb://nosql-data
+  userutils__Database: UserUtilsDb
+  account__ConnectionString: mongodb://nosql-data
+  account__Database: LocationsDb #MailAccounts
+  lexon__ConnectionString: mongodb://nosql-data
+  lexon__Database: LexonApiDb
+  centinela__ConnectionString: mongodb://nosql-data
+  centinela__Database: CentinelaApiDb
+  signature__ConnectionString: mongodb://nosql-data
+  signature__Database: signature
+  identity__ConnectionString: Server=sql-data;Initial Catalog=Microsoft.eShopOnContainers.Services.IdentityDb;User Id=sa;Password=Pass@word;
+  all__EventBusConnection: rabbitmq
+  all__InstrumentationKey: ""
+  all__EnableLoadTest: "False"
+  all__UseAzureServiceBus: "False"
