@@ -43,7 +43,8 @@
   "message-toolbar": {
     "move-to-trash": "Mover a la Papelera",
     "reply": "Responder",
-    "resend": "Reenviar"
+    "resend": "Reenviar",
+    "unread": "Marcar como leído"
   },
   "message-footer": {
     "messages": "Mensajes"

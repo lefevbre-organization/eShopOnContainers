@@ -42,7 +42,8 @@
   "message-toolbar": {
     "move-to-trash": "Mover a la Papelera",
     "reply": "Responder",
-    "resend": "Reenviar"
+    "resend": "Reenviar",
+    "unread": "Marcar como no leído"
   },
   "message-footer": {
     "messages": "Mensajes"

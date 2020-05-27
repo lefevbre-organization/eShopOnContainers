@@ -42,7 +42,8 @@
   "message-toolbar": {
     "move-to-trash": "Move to Trash",
     "reply": "Reply",
-    "resend": "Resend"
+    "resend": "Resend",
+    "unread": "Mark as unread"
   },
   "message-footer": {
     "messages": "Messages"
