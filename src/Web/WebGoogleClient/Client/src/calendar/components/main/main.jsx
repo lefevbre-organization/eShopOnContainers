@@ -32,15 +32,10 @@ import { deleteCalendar, getEventList, addCalendarEvent, deleteCalendarEvent, up
 import moment from 'moment';
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
-
-
-import { Browser, Internationalization, extend } from '@syncfusion/ej2-base';
 import { createElement } from '@syncfusion/ej2-base';
-import { DropDownList } from '@syncfusion/ej2-dropdowns';
-import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
-import { ODataV4Adaptor } from '@syncfusion/ej2-data';
 
-const SERVICE_URI = 'https://services.odata.org/V4/Northwind/Northwind.svc/Employees';
+import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
+import { Browser, Internationalization, extend } from '@syncfusion/ej2-base';
 
 export class Main extends Component {
 
@@ -73,7 +68,7 @@ export class Main extends Component {
             { content: 'Error', cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
         ]
 
-        
+        this.instance = new Internationalization();
         this.tabInstance = new TabComponent;    
 
         this.state = {
@@ -85,6 +80,7 @@ export class Main extends Component {
             }, 
             hidePromptDialog: false,
             calendarToEdit: undefined,
+            externalcomponent: "<LexonComponent sidebarDocked={this.onSetSidebarDocked} />",
         };
 
            // Calednar View Dialog
@@ -251,12 +247,20 @@ export class Main extends Component {
        // return ((props !== undefined) ? <div></div> : <div></div>);
     }
 
-    eventTemplate(props) {
-        return (
-            <div className="image"><img width="16" height="16" src={"assets/img/"+ props.ImageName + ".png"} />
-            </div>);
+    getTimeString(value) {
+        return this.instance.formatDate(value, { skeleton: 'hm' });
     }
 
+    eventTemplate(props) {
+        return (
+            <div>
+                <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>
+                {/* <div className="subject">{props.Subject}</div>
+               <div className="time">Time: {this.getTimeString(props.StartTime)} - {this.getTimeString(props.EndTime)}</div>*/}
+               
+            </div>);   
+        }
+    
     onDataBinding(e, calendarId ) {
         let items = this.dataManager.items;       
         if (items.length > 0) {
@@ -473,19 +477,7 @@ export class Main extends Component {
       let a = args
     }
 
-    tabCreated() {
-        new DataManager({ url: SERVICE_URI, adaptor: new ODataV4Adaptor })
-            .executeQuery(new Query().range(1, 4)).then((e) => {
-                let itemsData = [];
-                let result = e.result;
-                let mapping = { header: 'FirstName', content: 'Notes' };
-                for (let i = 0; i < result.length; i++) {
-                    itemsData.push({ header: { text: result[i][mapping.header] }, content: result[i][mapping.content] });
-                }
-                this.items = itemsData;
-                this.refresh();
-            });
-    }
+   
 
     onPopupOpen(args) {
 
@@ -505,7 +497,7 @@ export class Main extends Component {
                     let tabObj = new TabComponent({
                         items: [
                             { header: { text: "EVENT" }, content: formContainer },
-                            { header: { text: 'LEX-ON' }, content: 'Connectors here!' }
+                            { header: { text: 'LEX-ON' }, content: this.state.externalcomponent }
                         ],
                         ref: { tab : this.tabInstance } 
                     });
