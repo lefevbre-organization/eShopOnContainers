@@ -147,7 +147,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
             var result = await _service.FilePostAsync(file);
 
             if (result.errors.Count == 0)
-            {
+            {   
                 resultFile.errors = result.errors;
                 resultFile.infos = result.infos;
                 return StatusCode(201, resultFile);
@@ -155,5 +155,20 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
 
             return BadRequest(result);
         }
+
+        [HttpGet("concepts/files/get")]
+        [ProducesResponseType(typeof(Result<String>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> FileGet(
+            [FromQuery] string idNavisionUser = "E1669460",
+            [FromQuery] string idDocument = "78927"
+            )
+        {
+
+            Result<string> result = await _service.FileGetAsync(idNavisionUser, idDocument);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+
+        }
+
     }
 }
