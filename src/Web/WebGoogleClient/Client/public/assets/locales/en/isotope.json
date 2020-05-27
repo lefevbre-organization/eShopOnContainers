@@ -43,6 +43,7 @@
     "move-to-trash": "Move to Trash",
     "reply": "Reply",
     "resend": "Resend",
+    "read": "Mark as read",
     "unread": "Mark as unread"
   },
   "message-footer": {

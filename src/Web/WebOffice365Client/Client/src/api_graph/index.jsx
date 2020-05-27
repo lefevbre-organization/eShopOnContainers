@@ -518,8 +518,21 @@ export const batchModify = async ({
         prs.push(client.api(`me/messages/${ids[i]}/move`).post(DestinationId));
       }
     }
+  } else if (addLabelIds[0] === 'UNREAD') {
+    if (ids && ids.length) {
+      for (let i = 0; i < ids.length; i++) {
+        prs.push(setMessageAsUnread(ids[i]));
+      }
+    }
   }
 
+  if (removeLabelIds[0] === 'UNREAD') {
+    if (ids && ids.length) {
+      for (let i = 0; i < ids.length; i++) {
+        prs.push(setMessageAsRead(ids[i]));
+      }
+    }
+  }
   await Promise.all(prs);
   return ids;
 };
