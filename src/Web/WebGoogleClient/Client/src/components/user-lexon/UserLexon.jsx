@@ -44,7 +44,11 @@ class UserLexon extends Component {
     const payload = this.props.match.params.token
       ? parseJwt(this.props.match.params.token)
       : undefined;
-    payload && this.props.setCurrentUser(payload);
+    if (payload) {
+      const aux = { ...payload };
+      delete aux.exp;
+      this.props.setCurrentUser(aux);
+    }
 
     var user = this.props.match.params.token
       ? getUserId(payload)
@@ -78,9 +82,6 @@ class UserLexon extends Component {
       }
     }
 
-    if (user.startsWith('GO0') === false) {
-      user = 'GO0' + user;
-    }
     this.props.setUser(user);
 
     this.props.setCaseFile({
