@@ -38,8 +38,9 @@ import { Browser, Internationalization, extend } from '@syncfusion/ej2-base';
 import { createElement } from '@syncfusion/ej2-base';
 import { DropDownList } from '@syncfusion/ej2-dropdowns';
 import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
+import { ODataV4Adaptor } from '@syncfusion/ej2-data';
 
-
+const SERVICE_URI = 'https://services.odata.org/V4/Northwind/Northwind.svc/Employees';
 
 export class Main extends Component {
 
@@ -72,7 +73,8 @@ export class Main extends Component {
             { content: 'Error', cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
         ]
 
-              
+        
+        this.tabInstance = new TabComponent;    
 
         this.state = {
             isVisible: true, 
@@ -472,15 +474,17 @@ export class Main extends Component {
     }
 
     tabCreated() {
-      
-        let tabContent =  {
-            "text": 'essssseeee',
-            "content": 'eeeee'
-        }   
-              
-        this.items = tabContent;
-      //  this.refresh();
-           
+        new DataManager({ url: SERVICE_URI, adaptor: new ODataV4Adaptor })
+            .executeQuery(new Query().range(1, 4)).then((e) => {
+                let itemsData = [];
+                let result = e.result;
+                let mapping = { header: 'FirstName', content: 'Notes' };
+                for (let i = 0; i < result.length; i++) {
+                    itemsData.push({ header: { text: result[i][mapping.header] }, content: result[i][mapping.content] });
+                }
+                this.items = itemsData;
+                this.refresh();
+            });
     }
 
     onPopupOpen(args) {
@@ -488,58 +492,33 @@ export class Main extends Component {
         if (args.type === 'QuickInfo') {
 
         }
-        if (args.type === 'Editor') {
-
-        
-
-            //if (!args.element.querySelector('.e-dlg-content')) {
-                //let formContainer = args.element.querySelector('.e-form-container')
-                //let containerF = createElement('div', { className: 'e-form-container' });
-                //containerF.appendChild(formContainer);
-            //}
+        if (args.type === 'Editor') {   
+            
+            
+           let TabContainer = args.element.querySelector('.custom-tab-row');
+            if (TabContainer == null) {
+                if (args.element.querySelector('.e-dlg-content')) {
+                    let formContainer = args.element.querySelector('.e-dialog-parent');
+                    let Element = args.element.querySelector('.e-dlg-content');
+                    let row = createElement('div', { className: 'custom-tab-row' });
+                    Element.firstChild.insertBefore(row, Element.firstChild.firstChild);
+                    let tabObj = new TabComponent({
+                        items: [
+                            { header: { text: "EVENT" }, content: formContainer },
+                            { header: { text: 'LEX-ON' }, content: 'Connectors here!' }
+                        ],
+                        ref: { tab : this.tabInstance } 
+                    });
+                    tabObj.appendTo(row);
+                }
+            }
+            else {
+                console.log(this.tabInstance);
+            }
 
           
-
-
             if (!args.element.querySelector('.custom-field-row')) {
-
-                let tabComponent = new TabComponent({
-                    heightAdjustMode:'Auto',
-                    created : this.tabCreated() 
-                });
-
-                let formElement = args.element.querySelector('.e-schedule-form');
-               // formElement.firstChild.insertBefore(row, formElement.firstChild.firstChild);
-                let container = createElement('div', { className: 'custom-field-container' });
-                container.appendChild(tabComponent);
-
                 
-
-
-                //let row = createElement('div', { className: 'custom-field-row' });
-                //let formElement = args.element.querySelector('.e-schedule-form');
-                //formElement.firstChild.insertBefore(row, formElement.firstChild.firstChild);
-                //let container = createElement('div', { className: 'custom-field-container' });
-                //let inputEle = createElement('input', {
-                //    className: 'e-field', attrs: { name: 'EventType' }
-                //});
-                //container.appendChild(inputEle);
-                //row.appendChild(container);
-                //let drowDownList = new DropDownList({
-                //    dataSource: [
-                //        { text: 'Public Event', value: 'public-event' },
-                //        { text: 'Maintenance', value: 'maintenance' },
-                //        { text: 'Commercial Event', value: 'commercial-event' },
-                //        { text: 'Family Event', value: 'family-event' }
-                //    ],
-                //    fields: { text: 'text', value: 'value' },
-                //    value: args.data.EventType,
-                //    floatLabelType: 'Always', placeholder: 'Event Type'
-                //});
-                //drowDownList.appendTo(inputEle);
-                //inputEle.setAttribute('name', 'EventType');
-
-              
             }
         }
     }
@@ -871,7 +850,12 @@ export class Main extends Component {
                         <article className='d-flex flex-column position-relative'>
                             {/*<Switch>*/}
                                 {/*popupOpen={this.onPopupOpen.bind(this)}*/}
-                            <div className='schedule-control-section'>
+
+                                {/* <TabComponent className="hidden" heightAdjustMode='Auto' ref={tab => this.tabInstance = tab} created={this.tabCreated}>
+                                </TabComponent>*/}
+
+
+                                <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
                                             <ScheduleComponent
@@ -887,15 +871,15 @@ export class Main extends Component {
                                                 eventClick={(this.onEventClick.bind(this))}
                                                 dragStop={(this.onEventDragStop.bind(this))}>
                                                 {/* editorTemplate={this.editorTemplate.bind(this)}*/}
-                                               
-                                                                                           
+
+
                                                 <ViewsDirective>
                                                     <ViewDirective option='Day' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='Week' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='WorkWeek' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='Month' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='Agenda' eventTemplate={this.eventTemplate.bind(this)} />
-                                                </ViewsDirective>                                                
+                                                </ViewsDirective>
 
                                                 <ResourcesDirective>
                                                     <ResourceDirective field='CalendarId' title='My Calendars' name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor'>
@@ -904,8 +888,11 @@ export class Main extends Component {
                                                 <Inject services={[Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop]} />
                                             </ScheduleComponent>
                                         </div>
-                                    </div>                                   
-                            </div>
+                                    </div>
+                                </div>
+                            
+
+              
                             <ToastComponent ref={(toast) => { this.toastObj = toast; }}
                                 id='toast_pos'
                                 content='Action successfully completed.'

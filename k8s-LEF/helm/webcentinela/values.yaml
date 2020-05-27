@@ -42,5 +42,5 @@ env:
     - name: IsClusterEnv
       value: 'True'
 configValues: |
-  window.REACT_APP_ENVIRONMENT='PRODUCTION'
+  window.REACT_APP_ENVIRONMENT='PRODUCTION' 
   window.RELEASE = 'RC 0.21'
