@@ -30,6 +30,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import e from '../../event-bus';
 import SidebarCnn from 'react-sidebar';
 import LexonComponent from '../../apps/lexon_content';
+import CentinelaComponent from '../../apps/centinela_content';
 import SidebarComponent from '../../apps/sidebar_content';
 import ComposeMessage from '../compose-message/ComposeMessage';
 import 'react-reflex/styles.css';
@@ -166,6 +167,15 @@ export class Main extends Component {
         src='/assets/img/lexon-fake-null.png'></img>
     );
     this.setState({ sidebarComponent: lexon });
+    this.setState({ sidebarDocked: open });
+  }
+
+  onSetSidebarOpenCentinela(open) {
+    this.setState({
+      sidebarComponent: (
+        <CentinelaComponent sidebarDocked={this.onSetSidebarDocked} />
+      ),
+    });
     this.setState({ sidebarDocked: open });
   }
 
@@ -501,6 +511,14 @@ export class Main extends Component {
     this.props.addInitialPageToken(token);
   }
 
+  hasProduct(product) {
+    if (this.props.currentUser && this.props.currentUser.roles) {
+      return this.props.currentUser.roles.indexOf(product) > -1;
+    }
+
+    return false;
+  }
+
   renderLabelRoutes() {
     const { leftSideBar } = this.state;
     return this.props.labelsResult.labels.map((el) => (
@@ -691,6 +709,13 @@ export class Main extends Component {
                   </div>
                 )}
               </span>
+              {this.hasProduct('centinelaconnector') && (
+                <span className='productsbutton'>
+                  <div onClick={() => this.onSetSidebarOpenCentinela(true)}>
+                    <span className='lf-icon-compliance product-icon'></span>
+                  </div>
+                </span>
+              )}
               {/* <span className="productsbutton">
                  <div onClick={() => this.onSetSidebarOpenQMemento(true)}> 
                 <div>
@@ -757,6 +782,7 @@ const mapStateToProps = (state) => ({
   pageTokens: state.pageTokens,
   searchQuery: state.searchQuery,
   lexon: state.lexon,
+  currentUser: state.currentUser,
   selectedMessages: state.messageList.selectedMessages,
 });
 

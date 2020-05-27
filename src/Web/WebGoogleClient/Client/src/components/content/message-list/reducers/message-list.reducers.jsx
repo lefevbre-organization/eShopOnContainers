@@ -87,13 +87,42 @@ export const messagesResult = (state = defaultMessagesState, action) => {
         pageTokens: [],
       };
     case MODIFY_MESSAGES_SUCCESS:
-      return {
-        ...state,
-        messages: state.messages.filter(
-          (el) => action.payload.modifiedIds.indexOf(el.id) === -1
-        ),
-      };
+      if (action.payload.addLabelIds.indexOf('TRASH') > -1) {
+        return {
+          ...state,
+          messages: state.messages.filter(
+            (el) => action.payload.modifiedIds.indexOf(el.id) === -1
+          ),
+        };
+      } else if (action.payload.addLabelIds.indexOf('UNREAD') > -1) {
+        const newState = {
+          ...state,
+          messages: state.messages.map((msg) => {
+            if (action.payload.modifiedIds.indexOf(msg.id) > -1) {
+              return { ...msg, labelIds: [...msg.labelIds, 'UNREAD'] };
+            }
+            return msg;
+          }),
+        };
 
+        return newState;
+      } else if (action.payload.removeLabelIds.indexOf('UNREAD') > -1) {
+        const newState = {
+          ...state,
+          messages: state.messages.map((msg) => {
+            if (action.payload.modifiedIds.indexOf(msg.id) > -1) {
+              return {
+                ...msg,
+                labelIds: [...msg.labelIds.filter((l) => l !== 'UNREAD')],
+              };
+            }
+            return msg;
+          }),
+        };
+
+        return newState;
+      }
+      return { ...state };
     case SET_OPEN_MESSAGE:
       if (state.openMessage === action.payload) {
         return state;

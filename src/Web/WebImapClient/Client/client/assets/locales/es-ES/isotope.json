@@ -53,7 +53,8 @@
     "lexon": "LEX-ON",
     "database": "Base de datos",
     "compliance": "Centinela",
-    "calendar": "Calendario"
+    "calendar": "Calendario",
+    "centinela": "Centinela"
   },
   "messageList": {
     "emptyFolder": "Vaciar carpeta",

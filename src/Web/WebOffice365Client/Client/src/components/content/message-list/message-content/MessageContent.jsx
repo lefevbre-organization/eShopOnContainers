@@ -9,14 +9,18 @@ import {
   clearListMessages,
   setOpenMessage,
   addOpenMessageAttachment,
-  clearOpenMessageAttachment
+  clearOpenMessageAttachment,
 } from '../actions/message-list.actions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import MessageToolbar from '../message-toolbar/MessageToolbar';
 import './messageContent.scss';
 import MessageHeader from './messageHeader';
-import { setMessageAsRead, getMessage } from '../../../../api_graph';
+import {
+  setMessageAsRead,
+  getMessage,
+  setMessageAsUnread,
+} from '../../../../api_graph';
 import MessageNotFound from '../../../message-not-found/MessageNotFound';
 
 //BEGIN functions for attachment functionality
@@ -133,7 +137,7 @@ export class MessageContent extends Component {
 
     this.state = {
       errorMessage: undefined,
-      showMessageNotFound: false
+      showMessageNotFound: false,
     };
     this.refresh = false;
     this.iframeRef = React.createRef();
@@ -143,8 +147,8 @@ export class MessageContent extends Component {
   }
 
   toggleShowMessageNotFound() {
-    this.setState(state => ({
-      showMessageNotFound: !state.showMessageNotFound
+    this.setState((state) => ({
+      showMessageNotFound: !state.showMessageNotFound,
     }));
   }
 
@@ -166,11 +170,11 @@ export class MessageContent extends Component {
         subject: this.props.selectedMessages[i].subject,
         sentDateTime: this.props.selectedMessages[i].sentDateTime,
         raw: '',
-        chkselected: true
+        chkselected: true,
       };
       window.dispatchEvent(
         new CustomEvent('Checkclick', {
-          detail
+          detail,
         })
       );
     }
@@ -192,23 +196,23 @@ export class MessageContent extends Component {
         subject: emailHeaderMessageResult.headers.subject,
         sentDateTime: emailHeaderMessageResult.headers.sentDateTime,
         chkselected: true,
-        raw: null
+        raw: null,
       };
 
       // Get raw message
       window.dispatchEvent(new CustomEvent('LoadingMessage'));
       getMessage(emailHeaderMessageResult.headers.id, 'raw')
-        .then(msgRaw => {
+        .then((msgRaw) => {
           window.dispatchEvent(new CustomEvent('LoadedMessage'));
           detail.raw = msgRaw;
 
           window.dispatchEvent(
             new CustomEvent('Checkclick', {
-              detail
+              detail,
             })
           );
         })
-        .catch(err => {
+        .catch((err) => {
           window.dispatchEvent(new CustomEvent('LoadedMessage'));
         });
     }
@@ -248,8 +252,8 @@ export class MessageContent extends Component {
                     mimeType: attach[i].contentType,
                     attachment: {
                       size: attach[i].size,
-                      data: dataBase64Rep
-                    }
+                      data: dataBase64Rep,
+                    },
                   });
 
                   var blobUrl = URL.createObjectURL(urlBlob);
@@ -293,7 +297,7 @@ export class MessageContent extends Component {
           this.setState({
             //errorMessage: emailMessageResult.error.result.error.message,
             errorMessage: 'error',
-            modal: true
+            modal: true,
           });
         }
       }
@@ -326,10 +330,16 @@ export class MessageContent extends Component {
   }
 
   modifyMessage(addLabelIds, removeLabelIds) {
+    if (addLabelIds[0] === 'UNREAD') {
+      setMessageAsUnread(this.props.emailMessageResult.result.id);
+      this.props.history.goBack();
+      return;
+    }
+
     const id = this.props.emailMessageResult.result.id;
     const actionParams = {
       ...(addLabelIds && { addLabelIds }),
-      ...(removeLabelIds && { removeLabelIds })
+      ...(removeLabelIds && { removeLabelIds }),
     };
     this.props.modifyMessages({ ids: [id], ...actionParams });
     this.props.history.goBack();
@@ -366,7 +376,7 @@ export class MessageContent extends Component {
               style={{
                 display: this.props.emailMessageResult.loading
                   ? 'none'
-                  : 'block'
+                  : 'block',
               }}
             />
           )}
@@ -376,13 +386,13 @@ export class MessageContent extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   emailMessageResult: state.emailMessageResult,
   emailHeaderMessageResult: state.emailHeaderMessageResult,
-  selectedMessages: state.messageList.selectedMessages
+  selectedMessages: state.messageList.selectedMessages,
 });
 
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       toggleSelected,
@@ -391,7 +401,8 @@ const mapDispatchToProps = dispatch =>
       clearListMessages,
       setOpenMessage,
       addOpenMessageAttachment,
-      clearOpenMessageAttachment
+      clearOpenMessageAttachment,
+      //setMessageAsUnread,
     },
     dispatch
   );
