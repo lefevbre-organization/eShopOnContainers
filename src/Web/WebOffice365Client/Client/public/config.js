@@ -14,3 +14,4 @@ window.URL_MF_LEXON_BASE = 'http://localhost:3004';
 window.API_GATEWAY = 'https://lexbox-test-apigwlex.lefebvre.es';
 window.RELEASE = 'RC DEV';
 window.URL_MF_CENTINELA = 'http://localhost:3005/static/js/main.js';
+window.SHOW_EXPERIMENTAL = '1';

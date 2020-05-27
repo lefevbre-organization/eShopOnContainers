@@ -59,3 +59,4 @@ configValues: |
   window.URL_MF_CENTINELA = 'https://lexbox-test-webcentinela.lefebvre.es/static/js/main.js'
   window.URL_MF_CENTINELA_BASE = 'https://lexbox-test-webcentinela.lefebvre.es'
   window.RELEASE = 'RC 0.21'
+  window.SHOW_EXPERIMENTAL='1'

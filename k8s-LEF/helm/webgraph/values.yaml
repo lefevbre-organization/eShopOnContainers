@@ -18,7 +18,6 @@ ingress:
 
 resources: {}
 
-
 nodeSelector: {}
 
 tolerations: []
@@ -33,9 +32,9 @@ env:
     - name: ApplicationInsights__InstrumentationKey
       key: all__InstrumentationKey
     - name: UseLoadTest
-      key: all_EnableLoadTest    
+      key: all_EnableLoadTest
     - name: AccountApiGatewayUrlHC
-      key: internalurls__accountapigw__hc    
+      key: internalurls__accountapigw__hc
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
@@ -60,3 +59,4 @@ configValues: |
   window.URL_MF_CENTINELA = 'https://lexbox-test-webcentinela.lefebvre.es/static/js/main.js'
   window.URL_MF_CENTINELA_BASE = 'https://lexbox-test-webcentinela.lefebvre.es'
   window.RELEASE = 'RC 0.21'
+  window.SHOW_EXPERIMENTAL='1'
