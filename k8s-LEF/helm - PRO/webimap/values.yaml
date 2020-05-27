@@ -18,7 +18,6 @@ ingress:
 
 resources: {}
 
-
 nodeSelector: {}
 
 tolerations: []
@@ -49,9 +48,9 @@ env:
     - name: PurchaseUrlHC
       key: internalurls__apigwws__hc
     - name: IdentityUrlHC
-      key: internalurls__identity__hc      
+      key: internalurls__identity__hc
     - name: MarketingUrlHC
-      key: internalurls__apigwwm__hc    
+      key: internalurls__apigwwm__hc
     - name: SignalrHubUrl
       key: urls__apigwws
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
@@ -77,3 +76,4 @@ configValues: |
   window.API_ACC_GATEWAY = 'https://lexbox-apigwacc.lefebvre.es' 
   window.URL_MF_LEXON_BASE = 'https://lexbox-weblexon.lefebvre.es'  
   window.RELEASE= 'RC 0.19'
+  window.SHOW_EXPERIMENTAL='0'

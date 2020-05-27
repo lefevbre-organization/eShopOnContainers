@@ -7,7 +7,7 @@ const loadReactApp = async () => {
   return window.centinela;
 };
 
-const activityFunction = location => location.pathname.startsWith('/');
+const activityFunction = (location) => location.pathname.startsWith('/');
 
 export const registerCentinelaApp = () => {
   singleSpa.registerApplication(

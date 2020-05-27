@@ -329,19 +329,21 @@ class App extends Component {
                 )}
                 <div className={styles.btnselect}></div>
               </span>
-              <span
-                className={styles.productsbutton}
-                isotip={t('productBar.centinela')}
-                isotip-position='bottom-end'
-                isotip-size='small'>
-                {this.hasProduct('centinelaconnector') ? (
+              {this.hasProduct('centinelaconnector') &&
+              window.SHOW_EXPERIMENTAL === '1' ? (
+                <span
+                  className={styles.productsbutton}
+                  isotip={t('productBar.centinela')}
+                  isotip-position='bottom-end'
+                  isotip-size='small'>
                   <IconButton
                     onClick={() => this.onSetSidebarOpenCentinela(true)}>
                     <span className='lf-icon-compliance product-icon'></span>
                   </IconButton>
-                ) : null}
-                <div className={styles.btnselect}></div>
-              </span>
+
+                  <div className={styles.btnselect}></div>
+                </span>
+              ) : null}
 
               {/* <span
                 className={styles.productsbutton}
@@ -374,23 +376,6 @@ class App extends Component {
                     border="0"
                     alt="Calendar"
                     src="assets/images/icon-compliance.png"
-                    className="disabledimg"
-                  ></img>
-                </IconButton>
-                <div className={styles.btnselect}></div>
-              </span>
-              <span
-                className={styles.productsbutton}
-                isotip={t("productBar.calendar")}
-                isotip-position="bottom-end"
-                isotip-size="small"
-              >
-                <IconButton onClick={() => this.onSetSidebarOpenCalendar(true)}> 
-                <IconButton>
-                  <img
-                    border="0"
-                    alt="Calendar"
-                    src="assets/images/icon-calendar.png"
                     className="disabledimg"
                   ></img>
                 </IconButton>

@@ -31,3 +31,4 @@ window.URL_MF_CENTINELA_BASE = 'https://lexbox-test-webcentinela.lefebvre.es';
 //window.URL_MF_LEXON = "https://lexbox-test-weblexon.lefebvre.es/static/js/main.js"
 window.API_GATEWAY = 'https://lexbox-test-apigwlex.lefebvre.es';
 window.RELEASE = 'RC DEV';
+window.SHOW_EXPERIMENTAL = '1';

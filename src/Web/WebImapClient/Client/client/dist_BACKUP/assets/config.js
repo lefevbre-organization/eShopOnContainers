@@ -15,3 +15,4 @@ window.URL_MF_CENTINELA = 'http://localhost:3005/static/js/main.js';
 window.API_GATEWAY = 'https://lexbox-test-apigwlex.lefebvre.es';
 window.API_ACC_GATEWAY = 'https://lexbox-test-apigwacc.lefebvre.es';
 window.RELEASE = 'RC DEV';
+window.SHOW_EXPERIMENTAL = '1';

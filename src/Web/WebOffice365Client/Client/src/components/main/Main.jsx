@@ -512,6 +512,7 @@ export class Main extends Component {
   }
 
   hasProduct(product) {
+    debugger;
     if (this.props.currentUser && this.props.currentUser.roles) {
       return this.props.currentUser.roles.indexOf(product) > -1;
     }
@@ -709,14 +710,28 @@ export class Main extends Component {
                   </div>
                 )}
               </span>
-              {this.hasProduct('centinelaconnector') && (
+              {window.SHOW_EXPERIMENTAL === '1' && (
                 <span className='productsbutton'>
-                  <div onClick={() => this.onSetSidebarOpenCentinela(true)}>
-                    <span className='lf-icon-compliance product-icon'></span>
+                  <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
+                    <div>
+                      <img
+                        className='imgproductdisable'
+                        border='0'
+                        alt='Calendar'
+                        src='/assets/img/icon-calendar.png'></img>
+                    </div>
                   </div>
                 </span>
               )}
-              {/* <span className="productsbutton">
+              {this.hasProduct('centinelaconnector') &&
+                window.SHOW_EXPERIMENTAL === '1' && (
+                  <span className='productsbutton'>
+                    <div onClick={() => this.onSetSidebarOpenCentinela(true)}>
+                      <span className='lf-icon-compliance product-icon'></span>
+                    </div>
+                  </span>
+                )}
+              {/*<span className="productsbutton">
                  <div onClick={() => this.onSetSidebarOpenQMemento(true)}> 
                 <div>
                   <img
@@ -738,17 +753,7 @@ export class Main extends Component {
                   ></img>
                 </div>
               </span>
-              <span className="productsbutton">
-                <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
-                <div>
-                  <img
-                    className="imgproductdisable"
-                    border="0"
-                    alt="Calendar"
-                    src="/assets/img/icon-calendar.png"
-                  ></img>
-                </div>
-              </span>
+
               {/* <span className="productsbutton">
                 <button
                   onClick={() => this.onSetSidebarDocked(false)}
