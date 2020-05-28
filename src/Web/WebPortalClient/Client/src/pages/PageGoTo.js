@@ -85,7 +85,7 @@ export class PageGoTo extends Component {
               // Esto se pone así porque puede haber una misma cuenta configurada por gmail y por imap por ejemplo.
               for (let i = 0; i < data.accounts.length; i++) {
                 const account = data.accounts[i];
-                if (account.email === payload.mailAccount && account.provider.toUpperCase() === payload.provider.toUpperCase()){
+                if (account.email === payload.mailAccount && (account.provider.toUpperCase() === payload.provider.toUpperCase() || account.provider.substring(0, 2).toUpperCase() === payload.provider.toUpperCase())){
                   if (account.provider.toUpperCase() === 'IMAP') {
                     imapAutoLog =  base64.encode(account.email);
                   }
