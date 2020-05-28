@@ -30,6 +30,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import e from '../../event-bus';
 import SidebarCnn from 'react-sidebar';
 import LexonComponent from '../../apps/lexon_content';
+import CentinelaComponent from '../../apps/centinela_content';
 import SidebarComponent from '../../apps/sidebar_content';
 import ComposeMessage from '../compose-message/ComposeMessage';
 import 'react-reflex/styles.css';
@@ -166,6 +167,15 @@ export class Main extends Component {
         src='/assets/img/lexon-fake-null.png'></img>
     );
     this.setState({ sidebarComponent: lexon });
+    this.setState({ sidebarDocked: open });
+  }
+
+  onSetSidebarOpenCentinela(open) {
+    this.setState({
+      sidebarComponent: (
+        <CentinelaComponent sidebarDocked={this.onSetSidebarDocked} />
+      ),
+    });
     this.setState({ sidebarDocked: open });
   }
 
@@ -501,6 +511,15 @@ export class Main extends Component {
     this.props.addInitialPageToken(token);
   }
 
+  hasProduct(product) {
+    debugger;
+    if (this.props.currentUser && this.props.currentUser.roles) {
+      return this.props.currentUser.roles.indexOf(product) > -1;
+    }
+
+    return false;
+  }
+
   renderLabelRoutes() {
     const { leftSideBar } = this.state;
     return this.props.labelsResult.labels.map((el) => (
@@ -691,7 +710,28 @@ export class Main extends Component {
                   </div>
                 )}
               </span>
-              {/* <span className="productsbutton">
+              {window.SHOW_EXPERIMENTAL === '1' && (
+                <span className='productsbutton'>
+                  <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
+                    <div>
+                      <img
+                        className='imgproductdisable'
+                        border='0'
+                        alt='Calendar'
+                        src='/assets/img/icon-calendar.png'></img>
+                    </div>
+                  </div>
+                </span>
+              )}
+              {this.hasProduct('centinelaconnector') &&
+                window.SHOW_EXPERIMENTAL === '1' && (
+                  <span className='productsbutton'>
+                    <div onClick={() => this.onSetSidebarOpenCentinela(true)}>
+                      <span className='lf-icon-compliance product-icon'></span>
+                    </div>
+                  </span>
+                )}
+              {/*<span className="productsbutton">
                  <div onClick={() => this.onSetSidebarOpenQMemento(true)}> 
                 <div>
                   <img
@@ -713,17 +753,7 @@ export class Main extends Component {
                   ></img>
                 </div>
               </span>
-              <span className="productsbutton">
-                <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
-                <div>
-                  <img
-                    className="imgproductdisable"
-                    border="0"
-                    alt="Calendar"
-                    src="/assets/img/icon-calendar.png"
-                  ></img>
-                </div>
-              </span>
+
               {/* <span className="productsbutton">
                 <button
                   onClick={() => this.onSetSidebarDocked(false)}
@@ -757,6 +787,7 @@ const mapStateToProps = (state) => ({
   pageTokens: state.pageTokens,
   searchQuery: state.searchQuery,
   lexon: state.lexon,
+  currentUser: state.currentUser,
   selectedMessages: state.messageList.selectedMessages,
 });
 

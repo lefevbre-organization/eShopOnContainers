@@ -160,7 +160,7 @@ export class PageGoTo extends Component {
       .catch((error) => {
         console.log(error);
         store.addNotification({
-          message: error,
+          message: error.message,
           type: 'danger',
           container: 'bottom-center',
           animationIn: ['animated', 'fadeIn'],

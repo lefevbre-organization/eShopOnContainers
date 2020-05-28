@@ -19873,13 +19873,38 @@ function handleAADErrors(exchangeResponse) {
  */
 
 /* global document, Office, require */
-var ssoAuthHelper = __webpack_require__(/*! ./../helpers/ssoauthhelper */ "./src/helpers/ssoauthhelper.js");
+var ssoAuthHelper = __webpack_require__(/*! ./../helpers/ssoauthhelper */ "./src/helpers/ssoauthhelper.js"); // const OfficeHelpers = require("@microsoft/office-js-helpers");
 
-Office.onReady(function (info) {
-  if (info.host === Office.HostType.Outlook) {
-    document.getElementById("getGraphDataButton").onclick = ssoAuthHelper.getGraphData;
-  }
-});
+
+Office.initialize = function () {
+  if (OfficeHelpers.Authenticator.isAuthDialog()) return;
+  Office.onReady(function (info) {
+    if (info.host === Office.HostType.Outlook) {
+      var authenticator = new OfficeHelpers.Authenticator(); // authenticator.endpoints.registerGoogleAuth('835159453859-mrrokdm9qdihjlv6f117k999qe8kvito.apps.googleusercontent.com');
+
+      authenticator.endpoints.add('Todoist', {
+        clientId: '835159453859-mrrokdm9qdihjlv6f117k999qe8kvito.apps.googleusercontent.com',
+        baseUrl: 'https://localhost:3000',
+        tokenUrl: 'https://lexbox-test-apigwlex.lefebvre.es/api/v1/mysql/LexonMySql/token',
+        redirectUrl: 'https://localhost:3020',
+        authorizeUrl: '/login',
+        scope: 'data:read',
+        responseType: 'token',
+        state: true
+      });
+
+      var authenticate = function authenticate() {
+        authenticator.authenticate('Todoist', true).then(function (token) {
+          /*
+              `token` is newly obtained.
+          */
+        })["catch"](OfficeHelpers.Utilities.log);
+      };
+
+      document.getElementById("getGraphDataButton").onclick = authenticate;
+    }
+  }); // document.getElementById("getGraphDataButton").onclick = authenticate;
+};
 
 /***/ }),
 

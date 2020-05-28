@@ -14,6 +14,7 @@ import MessageList from './message-list/message-list';
 import MessageViewer from './message-viewer/message-viewer';
 import MessageSnackbar from './message-snackbar/message-snackbar';
 import NotFoundSnackbar from './messageNotFound-snackbar/messageNotFound-snackbar';
+import CentinelaComponent from '../apps/centinela_content';
 
 import {
   clearUserCredentials,
@@ -109,10 +110,27 @@ class App extends Component {
     );
   }
 
+  hasProduct(product) {
+    if (this.props.currentUser && this.props.currentUser.roles) {
+      return this.props.currentUser.roles.indexOf(product) > -1;
+    }
+
+    return false;
+  }
+
   onSetSidebarOpenCalendar(open) {
     this.setState({
       sidebarComponent: (
         <CalendarComponent sidebarDocked={this.onSetSidebarDocked} />
+      ),
+    });
+    this.setState({ sidebarDocked: open });
+  }
+
+  onSetSidebarOpenCentinela(open) {
+    this.setState({
+      sidebarComponent: (
+        <CentinelaComponent sidebarDocked={this.onSetSidebarDocked} />
       ),
     });
     this.setState({ sidebarDocked: open });
@@ -311,6 +329,22 @@ class App extends Component {
                 )}
                 <div className={styles.btnselect}></div>
               </span>
+              {this.hasProduct('centinelaconnector') &&
+              window.SHOW_EXPERIMENTAL === '1' ? (
+                <span
+                  className={styles.productsbutton}
+                  isotip={t('productBar.centinela')}
+                  isotip-position='bottom-end'
+                  isotip-size='small'>
+                  <IconButton
+                    onClick={() => this.onSetSidebarOpenCentinela(true)}>
+                    <span className='lf-icon-compliance product-icon'></span>
+                  </IconButton>
+
+                  <div className={styles.btnselect}></div>
+                </span>
+              ) : null}
+
               {/* <span
                 className={styles.productsbutton}
                 isotip={t("productBar.database")}
@@ -342,23 +376,6 @@ class App extends Component {
                     border="0"
                     alt="Calendar"
                     src="assets/images/icon-compliance.png"
-                    className="disabledimg"
-                  ></img>
-                </IconButton>
-                <div className={styles.btnselect}></div>
-              </span>
-              <span
-                className={styles.productsbutton}
-                isotip={t("productBar.calendar")}
-                isotip-position="bottom-end"
-                isotip-size="small"
-              >
-                <IconButton onClick={() => this.onSetSidebarOpenCalendar(true)}> 
-                <IconButton>
-                  <img
-                    border="0"
-                    alt="Calendar"
-                    src="assets/images/icon-calendar.png"
                     className="disabledimg"
                   ></img>
                 </IconButton>
@@ -868,6 +885,7 @@ const mapStateToProps = (state) => ({
   lexon: state.lexon,
   email: state.login.formValues.user,
   all: state,
+  currentUser: state.currentUser,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -6,14 +6,16 @@ import { connect } from 'react-redux';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import { signIn, checkSignInStatus } from './api/authentication';
 import { mountScripts } from './api/scripts';
+import { parseJwt } from './utils/jwt';
 import {
   SIGNED_OUT,
   AUTH_SUCCESS,
   AUTH_FAIL,
-  AUTH_IN_PROGRESS
+  AUTH_IN_PROGRESS,
 } from './constants';
 import { getStateStorage } from './localstorage';
 import ACTIONS from './actions/lexon';
+import CU_ACTIONS from './actions/user';
 
 class AppContainer extends Component {
   constructor(props) {
@@ -22,7 +24,7 @@ class AppContainer extends Component {
     this.state = {
       signInStatus: SIGNED_OUT,
       googleUser: undefined,
-      openEmail: undefined
+      openEmail: undefined,
     };
 
     this.init = this.init.bind(this);
@@ -35,16 +37,21 @@ class AppContainer extends Component {
 
   componentDidMount() {
     const user = this.props.match.params.idUser;
-    const stateStorageLexon = getStateStorage();
-    if (!user && stateStorageLexon) {
-      const userLexon = stateStorageLexon.lexon;
+    const stateStorage = getStateStorage();
+    if (!user && stateStorage) {
+      const userLexon = stateStorage.lexon;
       if (userLexon && userLexon.user) {
         this.props.setUser(userLexon.user);
         this.props.setCaseFile({
           casefile: userLexon.idCaseFile,
           bbdd: userLexon.bbdd,
-          company: userLexon.idCompany
+          company: userLexon.idCompany,
         });
+      }
+
+      const currentUser = stateStorage.currentUser;
+      if (!user && currentUser) {
+        this.props.setCurrentUser(currentUser);
       }
     }
 
@@ -67,9 +74,9 @@ class AppContainer extends Component {
   initClient() {
     checkSignInStatus()
       .then(this.onSignInSuccess)
-      .catch(_ => {
+      .catch((_) => {
         this.setState({
-          signInStatus: AUTH_FAIL
+          signInStatus: AUTH_FAIL,
         });
       });
   }
@@ -87,14 +94,13 @@ class AppContainer extends Component {
   }
 
   onSignInSuccess(googleUser) {
-
     this.setState({
       signInStatus: AUTH_SUCCESS,
       googleUser: googleUser,
-      openEmail: this.props.match.params.idMail
+      openEmail: this.props.match.params.idMail,
     });
 
-      this.props.setAccount(googleUser.getBasicProfile().getEmail());
+    this.props.setAccount(googleUser.getBasicProfile().getEmail());
     //this.props.setAccount(googleUser.Rt.Au);
   }
 
@@ -115,14 +121,15 @@ class AppContainer extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  lexon: state.lexon
+const mapStateToProps = (state) => ({
+  lexon: state.lexon,
 });
 
-const mapDispatchToProps = dispatch => ({
-  setUser: user => dispatch(ACTIONS.setUser(user)),
-  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
-  setAccount: account => dispatch(ACTIONS.setAccount(account))
+const mapDispatchToProps = (dispatch) => ({
+  setUser: (user) => dispatch(ACTIONS.setUser(user)),
+  setCaseFile: (casefile) => dispatch(ACTIONS.setCaseFile(casefile)),
+  setAccount: (account) => dispatch(ACTIONS.setAccount(account)),
+  setCurrentUser: (payload) => dispatch(CU_ACTIONS.setCurrentUser(payload)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);

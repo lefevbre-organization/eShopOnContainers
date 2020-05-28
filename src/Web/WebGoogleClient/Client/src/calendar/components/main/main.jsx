@@ -16,6 +16,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import SidebarCnn from 'react-sidebar';
 import LexonComponent from '../../../apps/lexon_content';
+import LexonComponentCalendar from '../../../apps/lexon_content_calendar';
 import CalendarComponent from '../../../apps/calendar_content';
 import { Calendars } from '../calendars/calendars';
 import 'react-reflex/styles.css';
@@ -32,14 +33,10 @@ import { deleteCalendar, getEventList, addCalendarEvent, deleteCalendarEvent, up
 import moment from 'moment';
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
-
-
-import { Browser, Internationalization, extend } from '@syncfusion/ej2-base';
 import { createElement } from '@syncfusion/ej2-base';
-import { DropDownList } from '@syncfusion/ej2-dropdowns';
+
 import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
-
-
+import { Browser, Internationalization, extend } from '@syncfusion/ej2-base';
 
 export class Main extends Component {
 
@@ -72,7 +69,8 @@ export class Main extends Component {
             { content: 'Error', cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
         ]
 
-              
+        this.instance = new Internationalization();
+        this.tabInstance = new TabComponent;    
 
         this.state = {
             isVisible: true, 
@@ -83,6 +81,8 @@ export class Main extends Component {
             }, 
             hidePromptDialog: false,
             calendarToEdit: undefined,
+            //externalcomponent: "<LexonComponent sidebarDocked={this.onSetSidebarDocked} />"
+           
         };
 
            // Calednar View Dialog
@@ -249,12 +249,20 @@ export class Main extends Component {
        // return ((props !== undefined) ? <div></div> : <div></div>);
     }
 
-    eventTemplate(props) {
-        return (
-            <div className="image"><img width="16" height="16" src={"assets/img/"+ props.ImageName + ".png"} />
-            </div>);
+    getTimeString(value) {
+        return this.instance.formatDate(value, { skeleton: 'hm' });
     }
 
+    eventTemplate(props) {
+        return (
+            <div>
+                <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>
+                {/* <div className="subject">{props.Subject}</div>
+               <div className="time">Time: {this.getTimeString(props.StartTime)} - {this.getTimeString(props.EndTime)}</div>*/}
+               
+            </div>);   
+        }
+    
     onDataBinding(e, calendarId ) {
         let items = this.dataManager.items;       
         if (items.length > 0) {
@@ -471,76 +479,47 @@ export class Main extends Component {
       let a = args
     }
 
-    tabCreated() {
-      
-        let tabContent =  {
-            "text": 'essssseeee',
-            "content": 'eeeee'
-        }   
-              
-        this.items = tabContent;
-      //  this.refresh();
-           
-    }
+  tabContent() {
+      return (
+          <LexonComponentCalendar />
+      );
+}
 
     onPopupOpen(args) {
 
         if (args.type === 'QuickInfo') {
 
         }
-        if (args.type === 'Editor') {
+        if (args.type === 'Editor') {   
+            
+            
+           let TabContainer = args.element.querySelector('.custom-tab-row');
+            if (TabContainer == null) {
+                if (args.element.querySelector('.e-dlg-content')) {
+                    let formContainer = args.element.querySelector('.e-dialog-parent');
+                    let Element = args.element.querySelector('.e-dlg-content');
+                    let row = createElement('div', { className: 'custom-tab-row' });
+                    Element.firstChild.insertBefore(row, Element.firstChild.firstChild);
+                    let tabObj = new TabComponent({
+                       
+                        items: [
+                            { header: { text: "EVENT" }, content: formContainer },
+                            { header: { text: 'LEX-ON' }, content: this.tabContent }
+                        ],
+                        //headerPlacement: 'Left',                        
+                    });
+                    tabObj.animation.previous = { duration: 100 };
+                    tabObj.animation.next = { duration: 100 };
+                    tabObj.animation.previous = { effect: 'FadeIn' };
+                    tabObj.animation.next = { effect: 'FadeIn' };
 
-        
-
-            //if (!args.element.querySelector('.e-dlg-content')) {
-                //let formContainer = args.element.querySelector('.e-form-container')
-                //let containerF = createElement('div', { className: 'e-form-container' });
-                //containerF.appendChild(formContainer);
-            //}
-
-          
-
-
-            if (!args.element.querySelector('.custom-field-row')) {
-
-                let tabComponent = new TabComponent({
-                    heightAdjustMode:'Auto',
-                    created : this.tabCreated() 
-                });
-
-                let formElement = args.element.querySelector('.e-schedule-form');
-               // formElement.firstChild.insertBefore(row, formElement.firstChild.firstChild);
-                let container = createElement('div', { className: 'custom-field-container' });
-                container.appendChild(tabComponent);
-
-                
-
-
-                //let row = createElement('div', { className: 'custom-field-row' });
-                //let formElement = args.element.querySelector('.e-schedule-form');
-                //formElement.firstChild.insertBefore(row, formElement.firstChild.firstChild);
-                //let container = createElement('div', { className: 'custom-field-container' });
-                //let inputEle = createElement('input', {
-                //    className: 'e-field', attrs: { name: 'EventType' }
-                //});
-                //container.appendChild(inputEle);
-                //row.appendChild(container);
-                //let drowDownList = new DropDownList({
-                //    dataSource: [
-                //        { text: 'Public Event', value: 'public-event' },
-                //        { text: 'Maintenance', value: 'maintenance' },
-                //        { text: 'Commercial Event', value: 'commercial-event' },
-                //        { text: 'Family Event', value: 'family-event' }
-                //    ],
-                //    fields: { text: 'text', value: 'value' },
-                //    value: args.data.EventType,
-                //    floatLabelType: 'Always', placeholder: 'Event Type'
-                //});
-                //drowDownList.appendTo(inputEle);
-                //inputEle.setAttribute('name', 'EventType');
-
-              
+                    tabObj.appendTo(row);
+                }
             }
+            else {
+                console.log(this.tabInstance);
+            }          
+            
         }
     }
 
@@ -871,7 +850,12 @@ export class Main extends Component {
                         <article className='d-flex flex-column position-relative'>
                             {/*<Switch>*/}
                                 {/*popupOpen={this.onPopupOpen.bind(this)}*/}
-                            <div className='schedule-control-section'>
+
+                                {/* <TabComponent className="hidden" heightAdjustMode='Auto' ref={tab => this.tabInstance = tab} created={this.tabCreated}>
+                                </TabComponent>*/}
+                                {/*<LexonComponent sidebarDocked={false} />*/}
+
+                                <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
                                             <ScheduleComponent
@@ -887,15 +871,15 @@ export class Main extends Component {
                                                 eventClick={(this.onEventClick.bind(this))}
                                                 dragStop={(this.onEventDragStop.bind(this))}>
                                                 {/* editorTemplate={this.editorTemplate.bind(this)}*/}
-                                               
-                                                                                           
+
+
                                                 <ViewsDirective>
                                                     <ViewDirective option='Day' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='Week' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='WorkWeek' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='Month' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='Agenda' eventTemplate={this.eventTemplate.bind(this)} />
-                                                </ViewsDirective>                                                
+                                                </ViewsDirective>
 
                                                 <ResourcesDirective>
                                                     <ResourceDirective field='CalendarId' title='My Calendars' name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor'>
@@ -904,8 +888,11 @@ export class Main extends Component {
                                                 <Inject services={[Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop]} />
                                             </ScheduleComponent>
                                         </div>
-                                    </div>                                   
-                            </div>
+                                    </div>
+                                </div>
+                            
+
+              
                             <ToastComponent ref={(toast) => { this.toastObj = toast; }}
                                 id='toast_pos'
                                 content='Action successfully completed.'

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import ACTIONS from '../../actions/lexon';
+import CU_ACTIONS from '../../actions/user';
 import { signOut } from '../../api_graph/authentication';
 import { PROVIDER } from '../../constants';
 import { getUserApplication } from '../../api_graph';
@@ -37,6 +38,12 @@ class UserLexon extends Component {
     const payload = this.props.match.params.token
       ? parseJwt(this.props.match.params.token)
       : undefined;
+    if (payload) {
+      const aux = { ...payload };
+      delete aux.exp;
+      this.props.setCurrentUser(aux);
+    }
+
     var user = this.props.match.params.token
       ? getUserId(payload)
       : this.props.match.params.idUser;
@@ -68,7 +75,6 @@ class UserLexon extends Component {
         user = `${parametros.get('prov')}${user}`;
       }
     }
-
     this.props.setUser(user);
 
     this.props.setCaseFile({
@@ -200,6 +206,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(ACTIONS.setMailContacts(mailContacts)),
   setIdMail: (idMail) => dispatch(ACTIONS.setIdMail(idMail)),
   setToken: (token) => dispatch(ACTIONS.setToken(token)),
+  setCurrentUser: (payload) => dispatch(CU_ACTIONS.setCurrentUser(payload)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserLexon);

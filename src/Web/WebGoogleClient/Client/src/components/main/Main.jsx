@@ -544,6 +544,15 @@ export class Main extends Component {
     this.props.addInitialPageToken(token);
   }
 
+  hasProduct(product) {
+    debugger;
+    if (this.props.currentUser && this.props.currentUser.roles) {
+      return this.props.currentUser.roles.indexOf(product) > -1;
+    }
+
+    return false;
+  }
+
   renderLabelRoutes() {
     const { leftSideBar } = this.state;
     return this.props.labelsResult.labels.map((el) => (
@@ -730,15 +739,17 @@ export class Main extends Component {
             </article>
 
             <div className='productpanel'>
-              <span className='productsbutton'>
-                <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
-                  <img
-                    className='imgproduct'
-                    border='0'
-                    alt='Calendar'
-                    src='/assets/img/icon-calendar.png'></img>
-                </div>
-              </span>
+              {window.SHOW_EXPERIMENTAL === '1' && (
+                <span className='productsbutton'>
+                  <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
+                    <img
+                      className='imgproduct'
+                      border='0'
+                      alt='Calendar'
+                      src='/assets/img/icon-calendar.png'></img>
+                  </div>
+                </span>
+              )}
               <span className='productsbutton'>
                 {lexon.user ? (
                   <div onClick={() => this.onSetSidebarOpenLexon(true)}>
@@ -758,11 +769,14 @@ export class Main extends Component {
                   </div>
                 )}
               </span>
-              {/* <span className='productsbutton'>
-                <div onClick={() => this.onSetSidebarOpenCentinela(true)}>
-                  <span className='lf-icon-compliance product-icon'></span>
-                </div>
-              </span> */}
+              {this.hasProduct('centinelaconnector') &&
+                window.SHOW_EXPERIMENTAL === '1' && (
+                  <span className='productsbutton'>
+                    <div onClick={() => this.onSetSidebarOpenCentinela(true)}>
+                      <span className='lf-icon-compliance product-icon'></span>
+                    </div>
+                  </span>
+                )}
               {/* <span className="productsbutton">
                  <div onClick={() => this.onSetSidebarOpenQMemento(true)}> 
                 <div>
@@ -848,6 +862,7 @@ const mapStateToProps = (state) => ({
   pageTokens: state.pageTokens,
   searchQuery: state.searchQuery,
   lexon: state.lexon,
+  currentUser: state.currentUser,
   selectedMessages: state.messageList.selectedMessages,
 });
 
