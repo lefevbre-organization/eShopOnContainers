@@ -1,9 +1,9 @@
 replicaCount: 1
 clusterName: eshop-aks
-pathBase: /websignature
+pathBase: /lexon-api
 
 image:
-  repository: elefebvreoncontainers/websignatureclient
+  repository: elefebvreoncontainers/lexon.api
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -14,6 +14,8 @@ service:
 ingress:
   enabled: true
   annotations: {}
+  hosts:
+    - chart-example.local
   tls: []
 
 resources: {}
@@ -31,19 +33,26 @@ env:
   configmap:
     - name: ApplicationInsights__InstrumentationKey
       key: all__InstrumentationKey
-    - name: UseLoadTest
-      key: all_EnableLoadTest
-    - name: SignatureApiGatewayUrlHC
-      key: internalurls__signatureapigw__hc
+    - name: EventBusConnection
+      key: all__EventBusConnection
+    - name: AzureServiceBusEnabled
+      key: all__UseAzureServiceBus
+    - name: IdentityUrl
+      key: urls__IdentityUrl
+    - name: IdentityUrlExternal
+      key: urls__IdentityUrlExternal
+    - name: ConnectionString
+      key: lexon__ConnectionString
+    - name: Database
+      key: lexon__Database
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
+    - name: LexonMySqlUrl
+      value: 'http://lexonmysql-api/api/v1/LexonMySql'
+    - name: LexonFilesUrl
+      value: 'https://led-dev-lexon.eu.els.local/index.php'
     - name: OrchestratorType
       value: 'K8S'
-    - name: IsClusterEnv
-      value: 'True'
-configValues: |
-  window.REACT_APP_ENVIRONMENT='PRODUCTION'
-  window.API_SIGN_GATEWAY = "https://lexbox-test-apigwsig/api/v1/signservice";
-  window.RELEASE = 'RC 0.21'
+
