@@ -50,11 +50,11 @@ env:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
     - name: CentinelaUrl
-      value: 'https://compliance-api.affin.es/api/secure/conectamail'
+      value: 'https://centinela-api.lefebvre.es/api/secure/conectamail'
     - name: CentinelaPassword
-      value: 'led.2018'
+      value: 'muWeEtF3ht#9yJPB'
     - name: CentinelaLogin
-      value: 'centinelaAPI'
+      value: 'CentinelaAPI'
     - name: OrchestratorType
       value: 'K8S'
 

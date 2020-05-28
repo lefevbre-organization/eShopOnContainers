@@ -545,7 +545,6 @@ export class Main extends Component {
   }
 
   hasProduct(product) {
-    debugger;
     if (this.props.currentUser && this.props.currentUser.roles) {
       return this.props.currentUser.roles.indexOf(product) > -1;
     }
