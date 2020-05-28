@@ -77,6 +77,10 @@
  .ms-welcome__action.ms-Button--hero {
      margin-top: 30px;
  }
+
+.logo-2-space {
+  margin-top: 28px;
+}
  
 .ms-Button.ms-Button--hero .ms-Button-label {
   color: #001978;
@@ -92,9 +96,11 @@ b {
     font-weight: bold;
 }
 .btn-login {
-  width: 230px !important;
-  height: 30px;
+  height: 42px;
+  width: 206px !important;
   background-color: #001978 !important;
+  margin-top: 28px;
+  cursor: pointer;
 }
 
 .btn-login:focus {
@@ -110,5 +116,16 @@ b {
   line-height: 1.5;
   letter-spacing: 3px;
   color: #ffffff !important;
+  font-family: "MTT Milano";
+}
+
+.reserved {
+  color: #001978;
+  font-family: "MTT Milano";
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 21px;
+  margin-top: 53px;
 }
   
