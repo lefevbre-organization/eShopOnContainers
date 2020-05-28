@@ -169,7 +169,8 @@ function getAddonData(e) {
   var response = Gmail.Users.Messages.get('me', thread.getId())
   var messageId = "";
   for (var i = 0; i < response.payload.headers.length; i++) {
-    if(response.payload.headers[i].name == "Message-ID") {
+    if(response.payload.headers[i].name == "Message-ID" || 
+      response.payload.headers[i].name == "Message-Id") {
       messageId = response.payload.headers[i].value;
     }
   }
@@ -195,16 +196,16 @@ function getAddonData(e) {
   }; 
   
   var signature = Utilities.base64Encode(JSON.stringify(header)) + "." 
-    + Utilities.base64Encode(JSON.stringify(addonData));
+    + Utilities.base64Encode(JSON.stringify(addonData), Utilities.Charset.UTF_8);
   
   var jwt = signature + "." + 
     Utilities.base64Encode(
-      Utilities.computeHmacSha256Signature(signature, key)
+      Utilities.computeHmacSha256Signature(signature, key, Utilities.Charset.UTF_8)
     );
 
-  cache.put('getAddonData', JSON.stringify(addonData), 21600);
+  cache.put('getAddonData', JSON.stringify(addonData), 85900);
   
-  cache.put('token', jwt, 21600);
+  cache.put('token', jwt, 85900);
   
   getMessageRaw(addonData);
   saveMessageRaw(addonData, raw);
