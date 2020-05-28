@@ -345,23 +345,65 @@ export const getDocumentsByInstance = async (
   }
 };
 
-export const downloadFile = (
+export const downloadFile = async (
   documentId: number,
   navisionUser: string,
-  progress: any
+  progressCallback: any
 ) => {
-  const url = `${API_CENTINELA_GATEWAY}/documents/instance?idNavisionUser=${navisionUser}&conceptObjectId=${conceptObjectId}`;
+  const url = `${API_CENTINELA_GATEWAY}/concepts/files/get?idNavisionUser=${navisionUser}&idDocument=${documentId}`;
+
   try {
+    let progress = 0;
     const response = await fetch(url, {
       method: 'GET',
       headers: {
-        Accept: 'application/json',
+        Accept: 'application/text',
         'Content-Type': 'application/json',
       },
     });
 
-    const result = await response.json();
-    return result;
+    if (response.status !== 200) {
+      return response;
+    }
+
+    if (response && response.headers) {
+      const contentLength = +(response as any).headers.get('Content-Length');
+      progressCallback &&
+        progressCallback({ length: contentLength, progress: progress });
+
+      const reader = (response as any).body.getReader();
+      let receivedLength = 0; // received that many bytes at the moment
+      let chunks = []; // array of received binary chunks (comprises the body)
+
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) {
+          break;
+        }
+
+        chunks.push(value);
+        receivedLength += value.length;
+
+        progress = Math.ceil((receivedLength * 100) / contentLength);
+        progressCallback && progressCallback({ progress: progress });
+      }
+
+      let chunksAll = new Uint8Array(receivedLength); // (4.1)
+      let position = 0;
+      for (let chunk of chunks) {
+        chunksAll.set(chunk, position); // (4.2)
+        position += chunk.length;
+      }
+
+      let result = new TextDecoder('utf-8').decode(chunksAll);
+
+      // We're done!
+      let commits = JSON.parse(result);
+      progressCallback && progressCallback({ progress: 100 });
+
+      return { ...commits, status: 200 };
+    }
   } catch (err) {
     throw err;
   }
