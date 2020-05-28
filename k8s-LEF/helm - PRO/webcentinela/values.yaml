@@ -44,4 +44,5 @@ env:
 configValues: |
   window.REACT_APP_ENVIRONMENT='PRODUCTION'
   window.API_GATEWAY = 'https://lexbox-apigwcen.lefebvre.es/api/v1/cen/Centinela';
-  window.RELEASE = 'RC 0.21'
+  window.RELEASE = 'RC 0.23'
+  window.SHOW_EXPERIMENTAL='0'
