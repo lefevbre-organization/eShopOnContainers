@@ -85,6 +85,10 @@ export class Main extends Component {
            
         };
 
+        this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
+            this
+        );
+
            // Calednar View Dialog
         this.alertButtons = [{
             // Click the footer buttons to hide the Dialog
@@ -363,8 +367,20 @@ export class Main extends Component {
 
     handleGetUserFromLexonConnector() {
         const { userId } = this.props.lexon;
+
+        // Comentar esto (es para pruebas)
+        // const userId = 120;
+        // Comentar esto (es para pruebas)
+
         if (userId) {
-            this.sendMessagePutUser(userId);
+            this.sendMessagePutUser('E1621396');
+        }
+    }
+
+    handleGetUserFromLexonConnector() {
+        const { userId } = this.props.lexon;
+        if (userId) {
+            this.sendMessagePutUser('E1621396');
         }
     }
 
@@ -391,6 +407,35 @@ export class Main extends Component {
     }   
 
     componentDidMount() {  
+
+        window.addEventListener(
+            'GetUserFromLexonConnector',
+            this.handleGetUserFromLexonConnector
+        );
+        window.addEventListener(
+            'GetUserFromCentinelaConnector',
+            this.handleGetUserFromCentinelaConnector
+        );
+
+        window.addEventListener('RemoveSelectedDocument', (event) => {
+            this.props.deleteMessage(event.detail.id);
+            dispatchEvent(
+                new CustomEvent('Checkclick', {
+                    detail: {
+                        id: event.detail.id,
+                        extMessageId: event.detail.id,
+                        name: event.detail.id,
+                        subject: event.detail.subject,
+                        sentDateTime: event.detail.sentDateTime,
+                        folder: event.detail.folder,
+                        provider: 'GOOGLE',
+                        account: this.props.lexon.account,
+                        chkselected: false,
+                    },
+                })
+            );
+        });
+
       this.sidebarCalendarList();  
       this.LoadCalendarList();         
     }
@@ -413,10 +458,14 @@ export class Main extends Component {
     }
 
     componentWillUnmount() {
-        //window.removeEventListener(
-        //    'GetUserFromLexonConnector',
-        //    this.handleGetUserFromLexonConnector
-        //);
+        window.removeEventListener(
+            'GetUserFromLexonConnector',
+            this.handleGetUserFromLexonConnector
+        );
+        window.removeEventListener(
+            'GetUserFromCentinelaConnector',
+            this.handleGetUserFromCentinelaConnector
+        );
     }
  
     buildEventoGoogle(values) {  
@@ -767,7 +816,9 @@ export class Main extends Component {
             });
         //sessionStorage.clear();
         //localStorage.clear();
-    }   
+    } 
+
+    
 
     render() {
         const { leftSideBar } = this.state;
