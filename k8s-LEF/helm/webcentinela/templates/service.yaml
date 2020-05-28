@@ -17,29 +17,3 @@ spec:
   selector:
     app: {{ template "webcentinela.name" . }}
     release: {{ .Release.Name }}
-
-
-in order to API OAuth Dev Verification
-
-http://localhost:3001/user/GO0E1621396
-
-http://localhost:3001/user/GO0E1621396/calendar
-
-
-
-bubbles: false
-cancelBubble: false
-cancelable: false
-composed: false
-currentTarget: Window {parent: Window, opener: null, top: Window, length: 3, frames: Window, …}
-defaultPrevented: false
-detail: {user: "E1621396", selectedMessages: Array(0), idCaseFile: undefined, bbdd: undefined, idCompany: undefined, …}
-eventPhase: 2
-isTrusted: false
-path: [Window]
-returnValue: true
-srcElement: Window {parent: Window, opener: null, top: Window, length: 3, frames: Window, …}
-target: Window {parent: Window, opener: null, top: Window, length: 3, frames: Window, …}
-timeStamp: 92899.62999999989
-type: "PutUserFromLexonConnector"
-__proto__: CustomEvent
