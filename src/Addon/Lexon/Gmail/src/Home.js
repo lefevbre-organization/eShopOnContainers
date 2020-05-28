@@ -65,7 +65,7 @@ function buildHomeCard() {
 
 function handleCheckboxChange(e){
   selectCompany = e.formInput.selectCompany
-  cache.put('selectCompany', JSON.stringify(selectCompany), 21600);
+  cache.put('selectCompany', JSON.stringify(selectCompany), 85900);
 }
 
 
@@ -80,7 +80,7 @@ function getSelectCompany(e) {
       }
   }
 
-  cache.put('companyData', JSON.stringify(companyObj), 21600);
+  cache.put('companyData', JSON.stringify(companyObj), 85900);
   
  var MessageClassificationCard = buildMessageClassificationCard(e);
     return CardService.newActionResponseBuilder()
@@ -93,7 +93,7 @@ function getFirstTimeCompany(e) {
     getCompanyList();
     var account = Session.getEffectiveUser().getEmail();
     companyResponse.data[0].account = account;
-    cache.put('companyData', JSON.stringify(companyResponse.data[0]), 21600);
+    cache.put('companyData', JSON.stringify(companyResponse.data[0]), 85900);
     var MessageClassificationCard = buildMessageClassificationCard(e);
     return CardService.newActionResponseBuilder()
     .setNavigation(CardService.newNavigation().pushCard(MessageClassificationCard))

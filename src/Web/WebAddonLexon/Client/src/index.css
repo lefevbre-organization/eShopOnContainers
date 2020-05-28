@@ -564,3 +564,7 @@ ol>li.index-5::before {
   position: relative;
   top: -50px;
 }
+
+.lf-icon-bookmarks {
+  margin-right: 16px;
+}
