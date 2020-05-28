@@ -47,4 +47,8 @@ env:
 configValues: |
  window.REACT_APP_ENVIRONMENT='PRODUCTION'
  window.API_GATEWAY='http://lexbox-test-apigwlex.lefebvre.es'
+<<<<<<< HEAD
  window.RELEASE= 'RC 0.23'
+=======
+ window.RELEASE = 'RC 0.23'
+>>>>>>> 91c28182430a0b33226f5b44d76b97d10f0629cb

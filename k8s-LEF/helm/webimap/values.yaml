@@ -58,6 +58,11 @@ configValues: |
   window.API_ACC_GATEWAY = 'https://lexbox-test-apigwacc.lefebvre.es'
   window.URL_MF_LEXON_BASE = 'https://lexbox-test-weblexon.lefebvre.es' 
   window.URL_MF_CENTINELA = 'https://lexbox-test-webcentinela.lefebvre.es/static/js/main.js'
+<<<<<<< HEAD
   window.URL_MF_CENTINELA_BASE = 'https://lexbox-test-webcentinela.lefebvre.es'
   window.RELEASE = 'RC 0.23'
+=======
+  window.URL_MF_CENTINELA_BASE = 'https://lexbox-test-webcentinela.lefebvre.es'  
+>>>>>>> 91c28182430a0b33226f5b44d76b97d10f0629cb
   window.SHOW_EXPERIMENTAL='1'
+  window.RELEASE = 'RC 0.23'

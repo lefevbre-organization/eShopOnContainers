@@ -56,7 +56,15 @@ configValues: |
   window.URL_MF_LEXON='https://lexbox-test-weblexon.lefebvre.es/static/js/main.js'
   window.API_GATEWAY='https://lexbox-test-apigwlex.lefebvre.es'
   window.URL_MF_LEXON_BASE = 'https://lexbox-test-weblexon.lefebvre.es'
+<<<<<<< HEAD
    window.URL_MF_CENTINELA = 'https://lexbox-test-webcentinela.lefebvre.es/static/js/main.js'
   window.URL_MF_CENTINELA_BASE = 'https://lexbox-test-webcentinela.lefebvre.es'
   window.RELEASE = 'RC 0.23'
   window.SHOW_EXPERIMENTAL='1'
+=======
+  window.URL_MF_CENTINELA = 'https://lexbox-test-webcentinela.lefebvre.es/static/js/main.js'
+  window.URL_MF_CENTINELA_BASE = 'https://lexbox-test-webcentinela.lefebvre.es'  
+  window.RELEASE = 'RC 0.23'
+  window.SHOW_EXPERIMENTAL='1'
+
+>>>>>>> 91c28182430a0b33226f5b44d76b97d10f0629cb
