@@ -53,4 +53,3 @@ configValues: |
  window.URL_GET_ACCOUNTS='https://lexbox-apigwacc.lefebvre.es/api/v2/accounts/usermail'
  window.URL_MF_LEXON_BASE = 'https://lexbox-weblexon.lefebvre.es'
  window.RELEASE = 'RC 0.23'
- window.SHOW_EXPERIMENTAL='0'

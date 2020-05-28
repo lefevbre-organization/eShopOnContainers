@@ -546,10 +546,12 @@ export class Main extends Component {
                         ],
                         //headerPlacement: 'Left',                        
                     });
+                    tabObj.select(1);
                     tabObj.animation.previous = { duration: 100 };
                     tabObj.animation.next = { duration: 100 };
                     tabObj.animation.previous = { effect: 'FadeIn' };
                     tabObj.animation.next = { effect: 'FadeIn' };
+                   
 
                     tabObj.appendTo(row);
                 }
