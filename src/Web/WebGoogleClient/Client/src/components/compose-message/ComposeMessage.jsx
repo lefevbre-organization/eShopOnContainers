@@ -433,7 +433,6 @@ export class ComposeMessage extends PureComponent {
 
     const Fileattached = this.state.uppyPreviews;
 
-    debugger;
     sendMessage({
       headers,
       body: this.state.content,
