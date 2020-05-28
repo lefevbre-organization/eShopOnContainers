@@ -124,8 +124,8 @@ export interface Document {
   creationDate: string;
 }
 
-const API_GATEWAY =
-  (window as any).API_GATEWAY ||
+const API_CENTINELA_GATEWAY =
+  (window as any).API_CENTINELA_GATEWAY ||
   'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/Centinela';
 
 export interface DocumentResponse extends CentinelaResponse {
@@ -135,7 +135,7 @@ export interface DocumentResponse extends CentinelaResponse {
 export const getUser = async (
   navisionUser: string
 ): Promise<CentUserResponse> => {
-  const url = `${API_GATEWAY}/user?idNavisionUser=${navisionUser}`;
+  const url = `${API_CENTINELA_GATEWAY}/user?idNavisionUser=${navisionUser}`;
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -265,7 +265,7 @@ export const getEvaluationTree = async (
   navisionUser: string,
   evaluation: string
 ): Promise<TreeNodeResponse> => {
-  const url = `${API_GATEWAY}/evaluations/tree/getbyid?idNavisionUser=${navisionUser}&idEvaluation=${evaluation}`;
+  const url = `${API_CENTINELA_GATEWAY}/evaluations/tree/getbyid?idNavisionUser=${navisionUser}&idEvaluation=${evaluation}`;
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -286,7 +286,7 @@ export const getInstances = async (
   navisionUser: string,
   conceptId: string
 ): Promise<CentInstanceResponse> => {
-  const url = `${API_GATEWAY}/concepts/instances?idNavisionUser=${navisionUser}&idConcept=${conceptId}`;
+  const url = `${API_CENTINELA_GATEWAY}/concepts/instances?idNavisionUser=${navisionUser}&idConcept=${conceptId}`;
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -307,7 +307,7 @@ export const getResults = async (
   navisionUser: string,
   search: string
 ): Promise<DocumentResponse> => {
-  const url = `${API_GATEWAY}/documents?idNavisionUser=${navisionUser}&search=${search}`;
+  const url = `${API_CENTINELA_GATEWAY}/documents?idNavisionUser=${navisionUser}&search=${search}`;
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -328,7 +328,7 @@ export const getDocumentsByInstance = async (
   navisionUser: string,
   conceptObjectId: number
 ): Promise<DocumentResponse> => {
-  const url = `${API_GATEWAY}/documents/instance?idNavisionUser=${navisionUser}&conceptObjectId=${conceptObjectId}`;
+  const url = `${API_CENTINELA_GATEWAY}/documents/instance?idNavisionUser=${navisionUser}&conceptObjectId=${conceptObjectId}`;
   try {
     const response = await fetch(url, {
       method: 'GET',
