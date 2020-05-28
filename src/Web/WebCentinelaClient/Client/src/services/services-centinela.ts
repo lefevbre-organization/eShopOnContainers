@@ -126,7 +126,7 @@ export interface Document {
 
 const API_CENTINELA_GATEWAY =
   (window as any).API_CENTINELA_GATEWAY ||
-  'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/Centinela';
+  'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen';
 
 export interface DocumentResponse extends CentinelaResponse {
   data: Document[];
@@ -347,6 +347,22 @@ export const getDocumentsByInstance = async (
 
 export const downloadFile = (
   documentId: number,
-  user: string,
+  navisionUser: string,
   progress: any
-) => {};
+) => {
+  const url = `${API_CENTINELA_GATEWAY}/documents/instance?idNavisionUser=${navisionUser}&conceptObjectId=${conceptObjectId}`;
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const result = await response.json();
+    return result;
+  } catch (err) {
+    throw err;
+  }
+};
