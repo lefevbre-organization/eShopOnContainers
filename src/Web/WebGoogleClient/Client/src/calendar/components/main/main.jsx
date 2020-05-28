@@ -354,7 +354,7 @@ export class Main extends Component {
             new CustomEvent('PutUserFromLexonConnector', {
                 detail: {
                     user,
-                    selectedMessages: selectedMessages,
+                    selectedMessages: [],
                     idCaseFile: this.props.lexon.idCaseFile,
                     bbdd: this.props.lexon.bbdd,
                     idCompany: this.props.lexon.idCompany,
@@ -363,24 +363,13 @@ export class Main extends Component {
                 }
             })
         );
-    }
+    }   
 
     handleGetUserFromLexonConnector() {
-        const { userId } = this.props.lexon;
-
-        // Comentar esto (es para pruebas)
-        // const userId = 120;
-        // Comentar esto (es para pruebas)
-
+       // const { userId } = this.props.lexon;
+        const  userId  = 'E1621396'
         if (userId) {
-            this.sendMessagePutUser('E1621396');
-        }
-    }
-
-    handleGetUserFromLexonConnector() {
-        const { userId } = this.props.lexon;
-        if (userId) {
-            this.sendMessagePutUser('E1621396');
+            this.sendMessagePutUser(userId);
         }
     }
 
@@ -528,7 +517,7 @@ export class Main extends Component {
       let a = args
     }
 
-  tabContent() {
+   tabContent() {
       return (
           <LexonComponentCalendar />
       );
@@ -818,8 +807,6 @@ export class Main extends Component {
         //localStorage.clear();
     } 
 
-    
-
     render() {
         const { leftSideBar } = this.state;
         const { lexon } = this.props;
@@ -899,13 +886,7 @@ export class Main extends Component {
 
                     />
                         <article className='d-flex flex-column position-relative'>
-                            {/*<Switch>*/}
-                                {/*popupOpen={this.onPopupOpen.bind(this)}*/}
-
-                                {/* <TabComponent className="hidden" heightAdjustMode='Auto' ref={tab => this.tabInstance = tab} created={this.tabCreated}>
-                                </TabComponent>*/}
-                                {/*<LexonComponent sidebarDocked={false} />*/}
-
+                            {/*<Switch>*/}                                
                                 <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
@@ -922,7 +903,6 @@ export class Main extends Component {
                                                 eventClick={(this.onEventClick.bind(this))}
                                                 dragStop={(this.onEventDragStop.bind(this))}>
                                                 {/* editorTemplate={this.editorTemplate.bind(this)}*/}
-
 
                                                 <ViewsDirective>
                                                     <ViewDirective option='Day' eventTemplate={this.eventTemplate.bind(this)} />
@@ -941,8 +921,6 @@ export class Main extends Component {
                                         </div>
                                     </div>
                                 </div>
-                            
-
               
                             <ToastComponent ref={(toast) => { this.toastObj = toast; }}
                                 id='toast_pos'
@@ -971,7 +949,7 @@ export class Main extends Component {
                                     calendarId={this.state.calendarToEdit} 
                                     close={this.dialogClose.bind(this)}
                                     /> : ''}</div>                                   
-                            </DialogComponent>                           
+                            </DialogComponent>                         
 
                         {/*</Switch>*/}
                         </article>
@@ -1003,8 +981,7 @@ export class Main extends Component {
             </div> 
         );
     }
-
-  
+ 
 }
 
 const mapStateToProps = state => ({
