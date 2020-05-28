@@ -25,7 +25,7 @@ export class ButtonFilter extends React.Component {
     const {t, activeMessageFilter} = this.props;
     const {dialogVisible} = this.state;
     const active = activeMessageFilter.key !== MessageFilters.ALL.key;
-    const {lexon} = this.props;
+    const {lefebvre} = this.props;
     return <span
       className={`${styles['button-filter']} ${mainCss['mdc-menu-surface--anchor']}`}
       isotip={t('topBar.quickFilter')} isotip-position='bottom-end' isotip-size='small'
@@ -44,25 +44,25 @@ export class ButtonFilter extends React.Component {
     event.stopPropagation();
     this.props.backendRequest();
     setTimeout(() => {
-      const {lexon} = this.props;
+      const {lefebvre} = this.props;
       if (this.props.application.selectedSignature === null){
         console.log('******************************');
         console.log('******************************');
         console.log('******************************');
         console.log('');
-        console.log('button-filter.refreshClicked: Llamando a preloadSignatures(lexon.userId)');
+        console.log('button-filter.refreshClicked: Llamando a preloadSignatures(lefebvre.userId)');
         console.log('******************************');
         console.log('******************************');
         console.log('******************************');
         console.log('');
         
   
-        this.props.preloadSignatures(lexon.userId);
+        this.props.preloadSignatures(lefebvre.userId);
         this.props.backendRequestCompleted();
   
       } else {
         
-        this.props.preloadSignatures(lexon.userId);
+        this.props.preloadSignatures(lefebvre.userId);
         let signature = this.props.application.signatures.find(s => s.id === this.props.application.selectedSignature.id)
         this.props.signatureClicked(signature);
         this.props.backendRequestCompleted();
@@ -92,7 +92,7 @@ export class ButtonFilter extends React.Component {
 const mapStateToProps = state => ({
   activeMessageFilter: getFromKey(state.application.messageFilterKey),
   application: state.application,
-  lexon: state.lexon
+  lefebvre: state.lefebvre
 });
 
 const mapDispatchToProps = dispatch => ({

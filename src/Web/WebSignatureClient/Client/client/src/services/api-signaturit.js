@@ -808,6 +808,32 @@ export const getUser = async userId => {
     }
   };
 
+export const getAttachment = async (bbdd, attachmentId, userId) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    
+    var raw = JSON.stringify({"idEntity":attachmentId,"bbdd":bbdd,"idUser":userId});
+    
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+    
+    fetch("https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Lexon/entities/files/get", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        resolve(result);
+      })
+      .catch(error => {
+        console.log('error', error);
+        reject(error);
+      });
+  })
+}
 
 // export const createSignature = async (recipients, files) => {
 //     var request = require('request');

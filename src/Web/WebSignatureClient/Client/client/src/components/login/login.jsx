@@ -7,7 +7,7 @@ import Button from '../buttons/button';
 import LoginSnackbar from './login-snackbar';
 import TextField from '../form/text-field/text-field';
 import Spinner from '../spinner/spinner';
-import UserLexon from "../user-lexon/UserLexon";
+import UserLexon from "../user-lefebvre/UserLefebvre";
 import mainCss from '../../styles/main.scss';
 import { validateEmail } from '../../services/validation';
 import styles from './login.scss';
@@ -46,16 +46,16 @@ export class Login extends Component {
     render() {
         const t = this.props.t;
         const { user, password } = this.state.values;
-        const { lexon } = this.props;
+        const { lefebvre } = this.props;
         let cookie;
         if (user === undefined || user === null || user === ""){
-            cookie = Cookies.get(`Lefebvre.Signaturit.${lexon.userId}`);
+            cookie = Cookies.get(`Lefebvre.Signaturit.${lefebvre.userId}`);
         } else {
             cookie = Cookies.get(`Lefebvre.Signaturit.${user}`)
         }
         console.log(cookie);
         if (cookie){
-            this.props.setUserCredentials(lexon.user, lexon.user, {authenticated: true, encrypted: cookie, salt: "1234", name: ""})
+            this.props.setUserCredentials(lefebvre.user, lefebvre.user, {authenticated: true, encrypted: cookie, salt: "1234", name: ""})
             return <Redirect to="/" />
         }
         if (this.props.application.user.credentials) {
@@ -138,7 +138,7 @@ export class Login extends Component {
 const mapStateToProps = state => ({
     application: state.application,
     formValues: state.login.formValues,
-    lexon: state.lexon
+    lefebvre: state.lefebvre
 });
 
 const mapDispatchToProps = dispatch => ({

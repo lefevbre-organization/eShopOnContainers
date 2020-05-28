@@ -6,7 +6,7 @@ import { clearSelectedMessage, getCredentials } from '../../services/application
 import { getSelectedFolder } from '../../selectors/folders';
 import mainCss from '../../styles/main.scss';
 import styles from './message-viewer.scss';
-import ACTIONS from "../../actions/lexon";
+import ACTIONS from "../../actions/lefebvre";
 import { downloadSignedDocument,  downloadSignedDocument2, downloadTrailDocument, downloadTrailDocument2, sendReminder, sendReminder2, cancelSignature, cancelSignature2 } from "../../services/api-signaturit";
 
 export function addressGroups(address) {
@@ -287,7 +287,7 @@ const mapStateToProps = state => {
     currentFolder: getSelectedFolder(state) || {},
     selectedMessage: state.application.selectedMessage,
     selectedMessages: state.messages.selectedMessages,
-    lexon: state.lexon,
+    lefebvre: state.lefebvre,
     login: state.login,
     credentials: state.application.user.credentials,
     selectedSignature: state.application.selectedSignature,
@@ -300,7 +300,7 @@ const mapDispatchToProps = dispatch => ({
     clearSelectedMessage(dispatch);
     dispatch(selectFolder(folder));
   },
-  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
+  // setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
   resetIdEmail: () => dispatch(ACTIONS.resetIdEmail()),
 });
 

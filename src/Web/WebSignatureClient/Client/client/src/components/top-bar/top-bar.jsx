@@ -34,11 +34,11 @@ export class TopBar extends Component {
   }
 
   onReplyMessage() {
-    this.props.replyMessage(this.props.lexon.sign);
+    this.props.replyMessage(this.props.lefebvre.sign);
   }
 
   onForwardMessage() {
-    this.props.forwardMessage(this.props.lexon.sign);
+    this.props.forwardMessage(this.props.lefebvre.sign);
   }
 
   render() {
@@ -153,7 +153,7 @@ const mapStateToProps = state => {
     selectedMessagesAllUnread: selectedMessagesAllUnread,
     credentials: getCredentials(state),
     folders: state.folders,
-    lexon: state.lexon,
+    lefebvre: state.lefebvre,
     messages: messages
   };
 };

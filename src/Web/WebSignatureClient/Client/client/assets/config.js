@@ -20,7 +20,9 @@ window.URL_MF_SIGNATURIT = "http://localhost:3020";
 // window.URL_SIGNATURIT_API = "https://localhost:44375/api/v1/Signaturit"
 
 
-window.API_SIGN_GATEWAY = "http://localhost:8091/api/v1/signservice";
-window.URL_SIGNATURES_API = "http://localhost:8091/api/v1/signservice/Signatures";
-window.URL_BRANDINGS_API = "http://localhost:8091/api/v1/signservice/Brandings";
-window.URL_SIGNATURIT_API = "http://localhost:8091/api/v1/signservice/Signaturit"
+//window.API_SIGN_GATEWAY = "http://localhost:8091/api/v1/signservice";
+// window.URL_SIGNATURES_API = "http://localhost:8091/api/v1/signservice/Signatures";
+// window.URL_BRANDINGS_API = "http://localhost:8091/api/v1/signservice/Brandings";
+// window.URL_SIGNATURIT_API = "http://localhost:8091/api/v1/signservice/Signaturit"
+
+window.API_SIGN_GATEWAY = "https://localhost:44375/api/v1"

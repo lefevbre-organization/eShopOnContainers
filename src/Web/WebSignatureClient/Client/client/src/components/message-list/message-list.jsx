@@ -138,18 +138,18 @@ class MessageList extends Component {
     }
 
     componentDidMount() {
-        const { lexon } = this.props;
+        const { lefebvre } = this.props;
         console.log('******************************');
         console.log('******************************');
         console.log('******************************');
         console.log('');
-        console.log('Message-list.ComponentDidMount: Llamando a preloadSignatures(lexon.userId)');
+        console.log('Message-list.ComponentDidMount: Llamando a preloadSignatures(lefebvre.userId)');
         console.log('******************************');
         console.log('******************************');
         console.log('******************************');
         console.log('');
     
-        this.props.preloadSignatures(lexon.userId);
+        this.props.preloadSignatures(lefebvre.userId);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -393,7 +393,7 @@ const mapStateToProps = state => ({
     downloadedMessages: state.application.downloadedMessages,
     signatures: state.application.signatures,
     signatureFilter: state.application.signaturesFilterKey,
-    lexon: state.lexon,
+    lefebvre: state.lefebvre,
     all: state
 });
 
