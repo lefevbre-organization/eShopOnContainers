@@ -16,6 +16,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import SidebarCnn from 'react-sidebar';
 import LexonComponent from '../../../apps/lexon_content';
+import LexonComponentCalendar from '../../../apps/lexon_content_calendar';
 import CalendarComponent from '../../../apps/calendar_content';
 import { Calendars } from '../calendars/calendars';
 import 'react-reflex/styles.css';
@@ -80,7 +81,8 @@ export class Main extends Component {
             }, 
             hidePromptDialog: false,
             calendarToEdit: undefined,
-            externalcomponent: "<LexonComponent sidebarDocked={this.onSetSidebarDocked} />",
+            //externalcomponent: "<LexonComponent sidebarDocked={this.onSetSidebarDocked} />"
+           
         };
 
            // Calednar View Dialog
@@ -477,7 +479,11 @@ export class Main extends Component {
       let a = args
     }
 
-   
+  tabContent() {
+      return (
+          <LexonComponentCalendar />
+      );
+}
 
     onPopupOpen(args) {
 
@@ -495,23 +501,25 @@ export class Main extends Component {
                     let row = createElement('div', { className: 'custom-tab-row' });
                     Element.firstChild.insertBefore(row, Element.firstChild.firstChild);
                     let tabObj = new TabComponent({
+                       
                         items: [
                             { header: { text: "EVENT" }, content: formContainer },
-                            { header: { text: 'LEX-ON' }, content: this.state.externalcomponent }
+                            { header: { text: 'LEX-ON' }, content: this.tabContent }
                         ],
-                        ref: { tab : this.tabInstance } 
+                        //headerPlacement: 'Left',                        
                     });
+                    tabObj.animation.previous = { duration: 100 };
+                    tabObj.animation.next = { duration: 100 };
+                    tabObj.animation.previous = { effect: 'FadeIn' };
+                    tabObj.animation.next = { effect: 'FadeIn' };
+
                     tabObj.appendTo(row);
                 }
             }
             else {
                 console.log(this.tabInstance);
-            }
-
-          
-            if (!args.element.querySelector('.custom-field-row')) {
-                
-            }
+            }          
+            
         }
     }
 
@@ -845,7 +853,7 @@ export class Main extends Component {
 
                                 {/* <TabComponent className="hidden" heightAdjustMode='Auto' ref={tab => this.tabInstance = tab} created={this.tabCreated}>
                                 </TabComponent>*/}
-
+                                {/*<LexonComponent sidebarDocked={false} />*/}
 
                                 <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
