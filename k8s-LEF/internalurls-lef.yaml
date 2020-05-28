@@ -24,8 +24,13 @@ data:
   webimapclient__hc: http://webimapclient/hc
   websignatureclient__hc: http://websignatureclient/hc  
   weblexonclient__hc: http://weblexonclient/hc
+  webcentinelaclient__hc: http://webcentinelaclient/hc  
 # API GWs
   apigwacc: http://ocelotapigw-acc
+  accountapigw__hc: http://ocelotapigw-acc/hc
   apigwlex: http://ocelotapigw-lex
+  lexonapigw__hc: http://ocelotapigw-lex/hc
   apigwcen: http://ocelotapigw-cen
+  centinelaapigw__hc: http://ocelotapigw-cen/hc
   apigwsig: http://ocelotapigw-sig
+  signatureapigw: http://ocelotapigw-sig/hc

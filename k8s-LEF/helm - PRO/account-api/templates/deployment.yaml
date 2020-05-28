@@ -1,25 +1,25 @@
-{{- $name := include "webhooks-api.fullname" . -}}
+{{- $name := include "account-api.fullname" . -}}
 {{- $cfgname := printf "%s-%s" "cfg" $name -}}
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: {{ template "webhooks-api.fullname" . }}
+  name: {{ template "account-api.fullname" . }}
   labels:
     ufo: {{ $cfgname}}
-    app: {{ template "webhooks-api.name" . }}
-    chart: {{ template "webhooks-api.chart" . }}
+    app: {{ template "account-api.name" . }}
+    chart: {{ template "account-api.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ template "webhooks-api.name" . }}
+      app: {{ template "account-api.name" . }}
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ template "webhooks-api.name" . }}
+        app: {{ template "account-api.name" . }}
         release: {{ .Release.Name }}
     spec:
       {{ if .Values.inf.registry -}}
