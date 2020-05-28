@@ -20,7 +20,6 @@ ingress:
 
 resources: {}
 
-
 nodeSelector: {}
 
 tolerations: []
@@ -95,9 +94,14 @@ env:
     - name: HealthChecksUI__HealthChecks__14__Uri
       key: internalurls__signatureapigw__hc
     - name: HealthChecksUI__HealthChecks__15__Name
-      key: name__websignatureclient__hc
+      key: name__websignature__hc
     - name: HealthChecksUI__HealthChecks__15__Uri
-      key: internalurls__websignatureclient__hc      # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
+      key: internalurls__websignature__hc
+    - name: HealthChecksUI__HealthChecks__16__Name
+      key: name__webcentinela__hc
+    - name: HealthChecksUI__HealthChecks__16__Uri
+      key: internalurls__webcentinela__hc      
+      # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
