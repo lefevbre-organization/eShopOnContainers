@@ -1,19 +1,21 @@
 replicaCount: 1
 clusterName: eshop-aks
-pathBase: /weblexon
+pathBase: /webimapserver
 
 image:
-  repository: elefebvreoncontainers/weblexonclient
+  repository: elefebvreoncontainers/webimapserver
   tag: latest
   pullPolicy: IfNotPresent
 
 service:
   type: ClusterIP
   port: 80
-
+  
 ingress:
   enabled: true
   annotations: {}
+  hosts:
+    - chart-example.local
   tls: []
 
 resources: {}
@@ -30,21 +32,26 @@ env:
   urls:
   # configmap declares variables which value is taken from the config map defined in template configmap.yaml (name is name of var and key the key in configmap).
   configmap:
+    - name: ConnectionString
+      key: webhooks__ConnectionString
     - name: ApplicationInsights__InstrumentationKey
       key: all__InstrumentationKey
+    - name: EventBusConnection
+      key: all__EventBusConnection
+    - name: AzureServiceBusEnabled
+      key: all__UseAzureServiceBus
+    - name: IdentityUrl
+      key: urls__IdentityUrl
+    - name: IdentityUrlExternal
+      key: urls__IdentityUrlExternal
     - name: UseLoadTest
       key: all_EnableLoadTest
-    - name: LexonApiGatewayUrlHC
-      key: internalurls__lexonapigw__hc
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
+    - name: LexonMySqlUrl
+      value: 'http://lexonmysql-api/api/v1/LexonMySql'
     - name: OrchestratorType
       value: 'K8S'
-    - name: IsClusterEnv
-      value: 'True'
-configValues: |
- window.REACT_APP_ENVIRONMENT='PRODUCTION'
- window.API_GATEWAY='http://lexbox-test-apigwlex.lefebvre.es'
- window.RELEASE= 'RC 0.21'
+
