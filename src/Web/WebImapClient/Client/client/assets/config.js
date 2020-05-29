@@ -14,5 +14,7 @@ window.URL_MF_CENTINELA = 'http://localhost:3005/static/js/main.js';
 //window.URL_MF_LEXON_BASE = "https://lexbox-test-weblexon.lefebvre.es";
 window.API_GATEWAY = 'https://lexbox-test-apigwlex.lefebvre.es';
 window.API_ACC_GATEWAY = 'https://lexbox-test-apigwacc.lefebvre.es';
+window.API_CENTINELA_GATEWAY =
+  'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen';
 window.RELEASE = 'RC DEV';
 window.SHOW_EXPERIMENTAL = '1';

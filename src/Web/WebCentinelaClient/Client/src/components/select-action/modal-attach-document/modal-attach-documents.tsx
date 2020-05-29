@@ -181,22 +181,10 @@ class ModalAttachDocuments extends Component<Props, State> {
     } else if (step === 3) {
       this.setState({ step: 2 });
     } else if (step === 4) {
-      this.setState({ step: 1, files: [] });
+      this.setState({ step: this.lastStep, files: [] });
     } else if (step === 5) {
       this.setState({ step: this.lastStep, files: [] });
     }
-
-    // } else if (step === 3) {
-    //   this.setState({ step: 2 });
-    // } else if (step === 4) {
-    //   this.setState({ step: 1 });
-    // } else if (step === 5) {
-    //   if (search.trim() === '') {
-    //     this.setState({ step: 3 });
-    //   } else {
-    //     this.setState({ step: 4 });
-    //   }
-    // }
   }
 
   saveDocuments() {
