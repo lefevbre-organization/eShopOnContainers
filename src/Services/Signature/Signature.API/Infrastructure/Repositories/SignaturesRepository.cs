@@ -17,6 +17,8 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.WindowsAzure.Storage;
+    using System.Net.NetworkInformation;
 
     #endregion
     public class SignaturesRepository : BaseClass<SignaturesRepository>, ISignaturesRepository
@@ -46,9 +48,16 @@
                 );
         }
 
-        private static FilterDefinition<Signature> GetFilterSignature(string externalId)
+        private static ProjectionDefinition<UserSignatures> GetProjectSignature(string externalId)
         {
-            return Builders<Signature>.Filter.And(Builders<Signature>.Filter.Eq(u => u.externalId, externalId));
+            //return Builders<UserSignatures>.Projection.Include(u => u.User).Include(u => u.signatures).Exclude(u => u.Id);
+            //return Builders<UserSignatures>.Projection.ElemMatch(u => u.signatures, sig => sig.externalId == externalId).Include(u => u.User).Include(u => u.signatures).Exclude(u => u.Id);
+            return Builders<UserSignatures>.Projection.Include(u => u.User).ElemMatch(u => u.signatures, sig => sig.externalId == externalId).Exclude(u => u.Id);
+        }
+
+        private static FilterDefinition<UserSignatures> GetFilterSignature(string externalId)
+        {
+            return Builders<UserSignatures>.Filter.ElemMatch(u => u.signatures, sig => sig.externalId == externalId);
         }
 
         private static FilterDefinition<UserSignatures> GetFilterUser(string user)
@@ -342,6 +351,44 @@
 
             result.data = true;
             return result;
+        }
+
+        public async Task<Result<BsonDocument>> GetSignature(string signatureId)
+        {
+            var result = new Result<BsonDocument>();
+            var filter = GetFilterSignature(signatureId);
+            var project = GetProjectSignature(signatureId);
+            try
+            {
+                result.data = await _context.Signatures.Find(filter).Project(project).FirstOrDefaultAsync();
+                //result.data = await _context.Signatures.Find(filter).FirstOrDefaultAsync();
+
+                if (result.data == null)
+                {
+                    TraceMessage(result.errors, new Exception($"No se encuentra ninguna firma para el id {signatureId}"), "1003");
+                }
+                else
+                {
+                    var user = result.data["user"].AsString;
+                    var guid = result.data["signatures"][0]["guid"].AsString;
+                    var app = result.data["signatures"][0]["app"].AsString;
+
+                    // Downloadfile
+
+                    if (app == "lex")
+                    {
+                        // Call lexon api to store document
+                    } else if (app == "cen")
+                    {
+                        // Call centinela api to store document
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //TraceInfo(result.infos, $"Error al obtener datos de {user}: {ex.Message}");
+            }
+            return result; 
         }
 
         #endregion

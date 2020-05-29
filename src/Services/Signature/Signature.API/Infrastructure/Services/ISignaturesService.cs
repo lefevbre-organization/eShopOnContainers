@@ -5,6 +5,7 @@
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using System;
     #endregion Using
 
     public interface ISignaturesService
@@ -24,6 +25,8 @@
         Task<Result<int>> GetAvailableSignatures(string user);
 
         Task<Result<bool>> UpSertBranding(string user, UserBranding brandingIn);
+
+        Task<Result<string>> GetSignature(string signatureId, string documentId);
 
         //Task<Result<int>> DecAvailableSignatures(string user);
     }

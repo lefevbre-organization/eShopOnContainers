@@ -5,6 +5,7 @@
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
     using System.Collections.Generic;
     using System.Threading.Tasks;
+    using MongoDB.Bson;
     #endregion
 
     public interface ISignaturesRepository
@@ -26,5 +27,7 @@
         //Task<Result<int>> DecAvailableSignatures(string user);
 
         Task<Result<bool>> UpSertBranding(string user, UserBranding brandingIn);
+
+        Task<Result<BsonDocument>> GetSignature(string signatureId);
     }
 }

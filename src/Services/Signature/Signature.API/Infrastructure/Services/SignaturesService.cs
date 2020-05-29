@@ -17,6 +17,11 @@
     using System.Net.Http.Headers;
     using System.Text;
     using System.Threading.Tasks;
+    using MongoDB.Bson;
+    using RestSharp;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.AspNetCore.Mvc;
+
 
     #endregion
     public class SignaturesService : ISignaturesService
@@ -27,6 +32,8 @@
         //private readonly HttpClient _client;
         //private readonly HttpClient _clientFiles;
         private readonly IOptions<SignatureSettings> _settings;
+        private readonly IConfiguration _configuration;
+        private readonly int _timeout;
 
         //public UsersService(
         //        IOptions<SignatureSettings> settings
@@ -38,7 +45,8 @@
         public SignaturesService(
                 IOptions<SignatureSettings> settings
                 , ISignaturesRepository signaturesRepository
-                //, IEventBus eventBus
+            , IConfiguration configuration
+            //, IEventBus eventBus
             )
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
@@ -48,6 +56,9 @@
             //_client = _clientFactory.CreateClient();
             //_client.BaseAddress = new Uri(_settings.Value.SignatureMySqlUrl);
             //_client.DefaultRequestHeaders.Add("Accept", "text/plain");
+            _configuration = configuration;
+            _timeout = 5000;
+
         }
 
         #region Signatures
@@ -98,5 +109,79 @@
         }
 
         #endregion Signatures
+
+        #region Events
+        public async Task<Result<string>> GetSignature(string signatureId, string documentId)
+        {
+            var result = new Result<BsonDocument>();
+            
+            result = await _signaturesRepository.GetSignature(signatureId);
+
+            if (result.data != null)
+            {
+                var user = result.data["user"].AsString;
+                var guid = result.data["signatures"][0]["guid"].AsString;
+                var app = result.data["signatures"][0]["app"].AsString;
+
+                // Downloadfile
+                var File = GetSignedFile(signatureId, documentId);
+
+                if (app == "lex")
+                {
+                    // Call lexon api to store document
+                    await SaveFileLexon(File);
+
+                }
+                else if (app == "cen")
+                {
+                    // Call centinela api to store document
+                }
+            }
+
+
+
+            return new Result<string>();
+        }
+        #endregion
+
+        #region HelperFunctions
+        public BsonDocument GetSignedFile(string signatureId, string documentId)
+        {
+            var client = new RestClient($"https://api.sandbox.signaturit.com/v3/signatures/{signatureId}/documents/{documentId}/download/signed");
+            client.Timeout = 5000;
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
+            request.AlwaysMultipartFormData = true;
+            IRestResponse response = client.Execute(request);
+            Console.WriteLine(response.Content);
+
+            var fileContentDisposition = response.Headers.FirstOrDefault(f => f.Name == "Content-Disposition");
+            string fileName = ((String)fileContentDisposition.Value).Split("filename=")[1].Replace("\"", "");
+
+            return new BsonDocument { { "fileContent", response.RawBytes }, { "contentType", response.ContentType }, { "fileName", fileName } };
+        }
+
+        public async Task SaveFileLexon(BsonDocument file)
+        {
+            var client = new RestClient("https://lexbox-test-apigwlex.lefebvre.es/api/v1/Lexon/entities/files/post");
+            client.Timeout = -1;
+            var request = new RestRequest(Method.POST);
+            Dictionary<string, string> values = new Dictionary<string, string>();
+            values.Add("idType", "45");
+            values.Add("bbdd", "lexon_admin_02");
+            values.Add("idUser", "449");
+            values.Add("idActuation", "675");
+            values.Add("name", file["fileName"].AsString);
+            values.Add("contentFile", file["fileConten"].AsString);
+
+            var json = JsonConvert.SerializeObject(values);
+            request.AddHeader("Accept", "text/plain");
+            request.AddHeader("Content-Type", "application/json-patch+json");
+
+            request.AddParameter("application/json-patch+json", json, ParameterType.RequestBody);
+            IRestResponse response = await client.ExecuteAsync(request);
+            Console.WriteLine(response.Content);
+        }
+        #endregion
     }
 }

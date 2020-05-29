@@ -379,14 +379,6 @@
 
         }
 
-        [HttpPost]
-        [Route("event/post.json")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> signatureEvent([FromBody] EventInfo eventinfo)
-        {
-            
-        }
 
         private bool checkToken(string authToken)
         {
