@@ -512,7 +512,10 @@ export class Main extends Component {
   }
 
   hasProduct(product) {
-    debugger;
+    if (window.SHOW_EXPERIMENTAL === '1') {
+      return true;
+    }
+
     if (this.props.currentUser && this.props.currentUser.roles) {
       return this.props.currentUser.roles.indexOf(product) > -1;
     }
