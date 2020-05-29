@@ -11,7 +11,7 @@ const reduxStore = configureStore();
 
 class App extends Component {
   componentDidMount() {
-    console.log('ENVIRONMENT LEXON ->', window.REACT_APP_ENVIRONMENT);
+    console.log('ENVIRONMENT CENTINELA ->', window.REACT_APP_ENVIRONMENT);
   }
 
   render() {

@@ -108,6 +108,9 @@ class App extends Component {
     this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
       this
     );
+    this.handleGetUserFromCentinelaConnector = this.handleGetUserFromCentinelaConnector.bind(
+      this
+    );
   }
 
   hasProduct(product) {
@@ -218,6 +221,34 @@ class App extends Component {
 
     if (userId) {
       this.sendMessagePutUser(userId);
+    }
+  }
+
+  handleGetUserFromCentinelaConnector() {
+    const { userId } = this.props.lexon;
+    debugger;
+
+    if (userId) {
+      this.sendMessageCentinelaPutUser(userId);
+    }
+  }
+
+  sendMessageCentinelaPutUser(user) {
+    const { selectedMessages, selected } = this.props.messages;
+    console.log('messages ->', this.props.messages);
+    window.dispatchEvent(
+      new CustomEvent('PutUserFromCentinelaConnector', {
+        detail: {
+          user,
+          selectedMessages: selectedMessages,
+          account: this.props.all.login.formValues.user,
+          provider: 'IMAP',
+        },
+      })
+    );
+
+    if (selectedMessages.length != selected.length) {
+      window.dispatchEvent(new CustomEvent('LoadingMessage'));
     }
   }
 
@@ -629,6 +660,11 @@ class App extends Component {
       this.handleGetUserFromLexonConnector
     );
 
+    window.addEventListener(
+      'GetUserFromCentinelaConnector',
+      this.handleGetUserFromCentinelaConnector
+    );
+
     window.addEventListener('RemoveSelectedDocument', (event) => {
       const messages = [event.detail].map((msg) => ({
         ...msg,
@@ -740,6 +776,11 @@ class App extends Component {
     window.removeEventListener(
       'GetUserFromLexonConnector',
       this.handleGetUserFromLexonConnector
+    );
+
+    window.removeEventListener(
+      'GetUserFromCentinelaConnector',
+      this.handleGetUserFromCentinelaConnector
     );
   }
 

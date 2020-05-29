@@ -91,6 +91,9 @@ export class Main extends Component {
     this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
       this
     );
+    this.handleGetUserFromCentinelaConnector = this.handleGetUserFromCentinelaConnector.bind(
+      this
+    );
 
     this.toggleSideBar = this.toggleSideBar.bind(this);
     this.toggleShowMessageNotFound = this.toggleShowMessageNotFound.bind(this);
@@ -134,11 +137,38 @@ export class Main extends Component {
   }
 
   handleGetUserFromLexonConnector() {
+    debugger;
     const { userId } = this.props.lexon;
 
     if (userId) {
       this.sendMessagePutUser(userId);
     }
+  }
+
+  handleGetUserFromCentinelaConnector() {
+    const { userId } = this.props.lexon;
+    debugger;
+
+    if (userId) {
+      this.sendMessageCentinelaPutUser(userId);
+    }
+  }
+
+  sendMessageCentinelaPutUser(user) {
+    const { selectedMessages } = this.props;
+    window.dispatchEvent(
+      new CustomEvent('PutUserFromCentinelaConnector', {
+        detail: {
+          user,
+          selectedMessages: selectedMessages.map((m) => ({
+            ...m,
+            id: m.extMessageId,
+          })),
+          provider: this.props.lexon.provider,
+          account: this.props.User.email,
+        },
+      })
+    );
   }
 
   onSetSidebarOpenLexon(open) {
@@ -264,6 +294,10 @@ export class Main extends Component {
       'GetUserFromLexonConnector',
       this.handleGetUserFromLexonConnector
     );
+    window.addEventListener(
+      'GetUserFromCentinelaConnector',
+      this.handleGetUserFromCentinelaConnector
+    );
     window.addEventListener('RemoveSelectedDocument', (event) => {
       this.props.deleteMessage(event.detail.id);
       dispatchEvent(
@@ -361,6 +395,10 @@ export class Main extends Component {
     window.removeEventListener(
       'GetUserFromLexonConnector',
       this.handleGetUserFromLexonConnector
+    );
+    window.removeEventListener(
+      'GetUserFromCentinelaConnector',
+      this.handleGetUserFromCentinelaConnector
     );
   }
 
