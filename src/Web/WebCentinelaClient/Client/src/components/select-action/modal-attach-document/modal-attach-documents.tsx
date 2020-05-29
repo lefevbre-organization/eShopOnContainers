@@ -14,7 +14,7 @@ import { Step5 } from './step5';
 import {
   Evaluation,
   CentInstance,
-  Document
+  Document,
 } from '../../../services/services-centinela';
 const parse = require('emailjs-mime-parser').default;
 const base64js = require('base64-js');
@@ -23,7 +23,7 @@ const mapStateToProps = (state: AppState) => {
   return {
     showAttachDocuments: state.application.showAttachModal,
     selected: state.messages.selected,
-    user: state.application.user
+    user: state.application.user,
   };
 };
 
@@ -31,10 +31,10 @@ const mapDispatchToProps = (dispatch: any) => {
   return {
     ...bindActionCreators(
       {
-        toggleAttachModal: ApplicationActions.toggleAttachModal
+        toggleAttachModal: ApplicationActions.toggleAttachModal,
       },
       dispatch
-    )
+    ),
   };
 };
 
@@ -53,6 +53,7 @@ interface State {
   entity: number;
   messages: any;
   files: any;
+  downloading: boolean;
   copyEmail: boolean;
   copyAttachments: boolean;
   instance?: CentInstance;
@@ -60,12 +61,14 @@ interface State {
 
 class ModalAttachDocuments extends Component<Props, State> {
   private lastStep = -1;
+  private step5Ref: any = null;
   constructor(props: Props) {
     super(props);
 
     this.state = {
       complete: false,
       implantation: null,
+      downloading: false,
       search: '',
       step: 1,
       entity: 0,
@@ -73,12 +76,15 @@ class ModalAttachDocuments extends Component<Props, State> {
       files: [],
       copyEmail: true,
       copyAttachments: true,
-      instance: undefined
+      instance: undefined,
     };
 
     this.onInstanceSelected = this.onInstanceSelected.bind(this);
     this.onImplantation = this.onImplantation.bind(this);
     this.onDocumentSelected = this.onDocumentSelected.bind(this);
+    this.downloadComplete = this.downloadComplete.bind(this);
+
+    this.step5Ref = React.createRef();
   }
 
   componentDidMount() {
@@ -89,6 +95,10 @@ class ModalAttachDocuments extends Component<Props, State> {
     if (prevProps.selected !== this.props.selected) {
       this.initMessages();
     }
+  }
+
+  downloadComplete() {
+    this.setState({ downloading: false, complete: true });
   }
 
   initMessages() {
@@ -144,7 +154,7 @@ class ModalAttachDocuments extends Component<Props, State> {
         entity: 0,
         messages: [],
         files: [],
-        complete: false
+        complete: false,
       });
     }, 1000);
     toggleAttachModal && toggleAttachModal();
@@ -171,22 +181,10 @@ class ModalAttachDocuments extends Component<Props, State> {
     } else if (step === 3) {
       this.setState({ step: 2 });
     } else if (step === 4) {
-      this.setState({ step: 1, files: [] });
+      this.setState({ step: this.lastStep, files: [] });
     } else if (step === 5) {
       this.setState({ step: this.lastStep, files: [] });
     }
-
-    // } else if (step === 3) {
-    //   this.setState({ step: 2 });
-    // } else if (step === 4) {
-    //   this.setState({ step: 1 });
-    // } else if (step === 5) {
-    //   if (search.trim() === '') {
-    //     this.setState({ step: 3 });
-    //   } else {
-    //     this.setState({ step: 4 });
-    //   }
-    // }
   }
 
   saveDocuments() {
@@ -200,7 +198,7 @@ class ModalAttachDocuments extends Component<Props, State> {
       copyAttachments,
       copyEmail,
       implantation,
-      instance
+      instance,
     } = this.state;
     if (step === 1 && (copyAttachments === true || copyEmail === true)) {
       return false;
@@ -226,28 +224,25 @@ class ModalAttachDocuments extends Component<Props, State> {
         return (
           <Fragment>
             <Button
-              bsPrefix="btn btn-outline-primary"
+              bsPrefix='btn btn-outline-primary'
               onClick={() => {
                 this.closeDialog();
-              }}
-            >
+              }}>
               {i18n.t('modal-attach.cancel')}
             </Button>
             <Button
-              bsPrefix="btn btn-outline-primary"
+              bsPrefix='btn btn-outline-primary'
               onClick={() => {
                 this.prevStep();
-              }}
-            >
+              }}>
               {i18n.t('modal-attach.back')}
             </Button>
             <Button
               disabled={this.saveDisabled()}
-              bsPrefix="btn btn-primary"
+              bsPrefix='btn btn-primary'
               onClick={() => {
                 this.nextStep();
-              }}
-            >
+              }}>
               {i18n.t('modal-attach.continue')}
             </Button>
           </Fragment>
@@ -256,28 +251,25 @@ class ModalAttachDocuments extends Component<Props, State> {
         return (
           <Fragment>
             <Button
-              bsPrefix="btn btn-outline-primary"
+              bsPrefix='btn btn-outline-primary'
               onClick={() => {
                 this.closeDialog();
-              }}
-            >
+              }}>
               {i18n.t('modal-attach.cancel')}
             </Button>
             <Button
-              bsPrefix="btn btn-outline-primary"
+              bsPrefix='btn btn-outline-primary'
               onClick={() => {
                 this.prevStep();
-              }}
-            >
+              }}>
               {i18n.t('modal-attach.back')}
             </Button>
             <Button
               disabled={this.saveDisabled()}
-              bsPrefix="btn btn-primary"
+              bsPrefix='btn btn-primary'
               onClick={() => {
                 this.nextStep();
-              }}
-            >
+              }}>
               {i18n.t('modal-attach.continue')}
             </Button>
           </Fragment>
@@ -286,28 +278,25 @@ class ModalAttachDocuments extends Component<Props, State> {
         return (
           <Fragment>
             <Button
-              bsPrefix="btn btn-outline-primary"
+              bsPrefix='btn btn-outline-primary'
               onClick={() => {
                 this.closeDialog();
-              }}
-            >
+              }}>
               {i18n.t('modal-attach.cancel')}
             </Button>
             <Button
-              bsPrefix="btn btn-outline-primary"
+              bsPrefix='btn btn-outline-primary'
               onClick={() => {
                 this.prevStep();
-              }}
-            >
+              }}>
               {i18n.t('modal-attach.back')}
             </Button>
             <Button
               disabled={files.length === 0}
-              bsPrefix="btn btn-primary"
+              bsPrefix='btn btn-primary'
               onClick={() => {
                 this.nextStep();
-              }}
-            >
+              }}>
               {i18n.t('modal-attach.continue')}
             </Button>
           </Fragment>
@@ -315,31 +304,46 @@ class ModalAttachDocuments extends Component<Props, State> {
       case 5:
         return (
           <Fragment>
-            <Button
-              bsPrefix="btn btn-outline-primary"
-              onClick={() => {
-                this.closeDialog();
-              }}
-            >
-              {i18n.t('modal-attach.cancel')}
-            </Button>
-            <Button
-              bsPrefix="btn btn-outline-primary"
-              onClick={() => {
-                this.prevStep();
-              }}
-            >
-              {i18n.t('modal-attach.back')}
-            </Button>
-            <Button
-              disabled={files.length === 0}
-              bsPrefix="btn btn-primary"
-              onClick={() => {
-                this.nextStep();
-              }}
-            >
-              {i18n.t('modal-attach.attach')}
-            </Button>
+            {complete === true && (
+              <Button
+                disabled={this.state.downloading === true}
+                bsPrefix='btn btn-primary'
+                onClick={() => {
+                  this.closeDialog();
+                }}>
+                {i18n.t('modal-attach.close')}
+              </Button>
+            )}
+            {complete === false && (
+              <>
+                <Button
+                  bsPrefix='btn btn-outline-primary'
+                  disabled={this.state.downloading === true}
+                  onClick={() => {
+                    this.closeDialog();
+                  }}>
+                  {i18n.t('modal-attach.cancel')}
+                </Button>
+                <Button
+                  disabled={this.state.downloading === true}
+                  bsPrefix='btn btn-outline-primary'
+                  onClick={() => {
+                    this.prevStep();
+                  }}>
+                  {i18n.t('modal-attach.back')}
+                </Button>
+                <Button
+                  disabled={files.length === 0}
+                  bsPrefix='btn btn-primary'
+                  onClick={() => {
+                    this.setState({ downloading: true }, () => {
+                      this.step5Ref.current.StartDownload();
+                    });
+                  }}>
+                  {i18n.t('modal-attach.attach')}
+                </Button>
+              </>
+            )}
           </Fragment>
         );
       default:
@@ -377,36 +381,33 @@ class ModalAttachDocuments extends Component<Props, State> {
     const { step, implantation, search, files, instance } = this.state;
 
     return (
-      <div className="modal-connection-emails">
+      <div className='modal-connection-emails'>
         <Modal
           show={showAttachDocuments}
           onHide={() => {
             this.closeDialog();
           }}
-          size="lg"
-          aria-labelledby="contained-modal-title-vcenter"
+          size='lg'
+          aria-labelledby='contained-modal-title-vcenter'
           centered
-          dialogClassName="modal"
-        >
-          <Modal.Header className="align-items-center" closeButton>
+          dialogClassName='modal'>
+          <Modal.Header className='align-items-center' closeButton>
             <h5
-              className="modal-title d-flex align-items-center"
-              id="documentarGuardardocumentacionLabel"
-            >
-              <span className="lf-icon-compliance"></span>
+              className='modal-title d-flex align-items-center'
+              id='documentarGuardardocumentacionLabel'>
+              <span className='lf-icon-compliance'></span>
 
               <span>{i18n.t('modal-attach.title')}</span>
               <span>{step}</span>
             </h5>
           </Modal.Header>
-          <Modal.Body className="mimodal">
+          <Modal.Body className='mimodal'>
             <Container>
               <Fragment>
                 <div
                   style={{
-                    display: step === 1 ? 'block' : 'none'
-                  }}
-                >
+                    display: step === 1 ? 'block' : 'none',
+                  }}>
                   <Step1
                     onClickSearch={(search: string) => {
                       this.setState({ step: 4, search, instance: undefined });
@@ -416,16 +417,15 @@ class ModalAttachDocuments extends Component<Props, State> {
                         entity: 1,
                         step: 2,
                         search: '',
-                        instance: undefined
+                        instance: undefined,
                       });
                     }}
                   />
                 </div>
                 <div
                   style={{
-                    display: step === 2 ? 'block' : 'none'
-                  }}
-                >
+                    display: step === 2 ? 'block' : 'none',
+                  }}>
                   <Step2
                     user={user}
                     show={step === 2}
@@ -435,9 +435,8 @@ class ModalAttachDocuments extends Component<Props, State> {
                 </div>
                 <div
                   style={{
-                    display: this.state.step === 3 ? 'block' : 'none'
-                  }}
-                >
+                    display: this.state.step === 3 ? 'block' : 'none',
+                  }}>
                   <Step3
                     user={user}
                     show={step === 3}
@@ -447,9 +446,8 @@ class ModalAttachDocuments extends Component<Props, State> {
                 </div>
                 <div
                   style={{
-                    display: this.state.step === 4 ? 'block' : 'none'
-                  }}
-                >
+                    display: this.state.step === 4 ? 'block' : 'none',
+                  }}>
                   <Step4
                     files={files}
                     user={user}
@@ -462,14 +460,14 @@ class ModalAttachDocuments extends Component<Props, State> {
                 </div>
                 <div
                   style={{
-                    display: this.state.step === 5 ? 'block' : 'none'
-                  }}
-                >
+                    display: this.state.step === 5 ? 'block' : 'none',
+                  }}>
                   <Step5
+                    ref={this.step5Ref}
                     files={files}
                     user={user}
                     show={step === 5}
-                    downloadComplete={() => {}}
+                    downloadComplete={this.downloadComplete}
                   />
                 </div>
               </Fragment>

@@ -60,9 +60,10 @@ export class Downloader extends React.Component<Props, State> {
         });
       } else if (res.status === 200) {
         this.setState({ downloading: false, progress: 100, error: '' });
+
         window.dispatchEvent(
           new CustomEvent('AttachDocument', {
-            detail: { document: doc, content: res.data },
+            detail: { document: { code: doc.name }, content: res.data },
           })
         );
       }

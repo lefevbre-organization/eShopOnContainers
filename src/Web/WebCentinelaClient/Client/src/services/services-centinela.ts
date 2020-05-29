@@ -124,9 +124,9 @@ export interface Document {
   creationDate: string;
 }
 
-const API_GATEWAY =
-  (window as any).API_GATEWAY ||
-  'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/Centinela';
+const API_CENTINELA_GATEWAY =
+  (window as any).API_CENTINELA_GATEWAY ||
+  'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen';
 
 export interface DocumentResponse extends CentinelaResponse {
   data: Document[];
@@ -135,7 +135,7 @@ export interface DocumentResponse extends CentinelaResponse {
 export const getUser = async (
   navisionUser: string
 ): Promise<CentUserResponse> => {
-  const url = `${API_GATEWAY}/user?idNavisionUser=${navisionUser}`;
+  const url = `${API_CENTINELA_GATEWAY}/user?idNavisionUser=${navisionUser}`;
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -265,7 +265,7 @@ export const getEvaluationTree = async (
   navisionUser: string,
   evaluation: string
 ): Promise<TreeNodeResponse> => {
-  const url = `${API_GATEWAY}/evaluations/tree/getbyid?idNavisionUser=${navisionUser}&idEvaluation=${evaluation}`;
+  const url = `${API_CENTINELA_GATEWAY}/evaluations/tree/getbyid?idNavisionUser=${navisionUser}&idEvaluation=${evaluation}`;
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -286,7 +286,7 @@ export const getInstances = async (
   navisionUser: string,
   conceptId: string
 ): Promise<CentInstanceResponse> => {
-  const url = `${API_GATEWAY}/concepts/instances?idNavisionUser=${navisionUser}&idConcept=${conceptId}`;
+  const url = `${API_CENTINELA_GATEWAY}/concepts/instances?idNavisionUser=${navisionUser}&idConcept=${conceptId}`;
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -307,7 +307,7 @@ export const getResults = async (
   navisionUser: string,
   search: string
 ): Promise<DocumentResponse> => {
-  const url = `${API_GATEWAY}/documents?idNavisionUser=${navisionUser}&search=${search}`;
+  const url = `${API_CENTINELA_GATEWAY}/documents?idNavisionUser=${navisionUser}&search=${search}`;
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -328,7 +328,7 @@ export const getDocumentsByInstance = async (
   navisionUser: string,
   conceptObjectId: number
 ): Promise<DocumentResponse> => {
-  const url = `${API_GATEWAY}/documents/instance?idNavisionUser=${navisionUser}&conceptObjectId=${conceptObjectId}`;
+  const url = `${API_CENTINELA_GATEWAY}/documents/instance?idNavisionUser=${navisionUser}&conceptObjectId=${conceptObjectId}`;
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -345,8 +345,66 @@ export const getDocumentsByInstance = async (
   }
 };
 
-export const downloadFile = (
+export const downloadFile = async (
   documentId: number,
-  user: string,
-  progress: any
-) => {};
+  navisionUser: string,
+  progressCallback: any
+) => {
+  const url = `${API_CENTINELA_GATEWAY}/concepts/files/get?idNavisionUser=${navisionUser}&idDocument=${documentId}`;
+
+  try {
+    let progress = 0;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/text',
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.status !== 200) {
+      return response;
+    }
+
+    if (response && response.headers) {
+      const contentLength = +(response as any).headers.get('Content-Length');
+      progressCallback &&
+        progressCallback({ length: contentLength, progress: progress });
+
+      const reader = (response as any).body.getReader();
+      let receivedLength = 0; // received that many bytes at the moment
+      let chunks = []; // array of received binary chunks (comprises the body)
+
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) {
+          break;
+        }
+
+        chunks.push(value);
+        receivedLength += value.length;
+
+        progress = Math.ceil((receivedLength * 100) / contentLength);
+        progressCallback && progressCallback({ progress: progress });
+      }
+
+      let chunksAll = new Uint8Array(receivedLength); // (4.1)
+      let position = 0;
+      for (let chunk of chunks) {
+        chunksAll.set(chunk, position); // (4.2)
+        position += chunk.length;
+      }
+
+      let result = new TextDecoder('utf-8').decode(chunksAll);
+
+      // We're done!
+      let commits = JSON.parse(result);
+      progressCallback && progressCallback({ progress: 100 });
+
+      return { ...commits, status: 200 };
+    }
+  } catch (err) {
+    throw err;
+  }
+};
