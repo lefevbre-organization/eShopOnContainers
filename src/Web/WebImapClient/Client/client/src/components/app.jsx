@@ -226,7 +226,6 @@ class App extends Component {
 
   handleGetUserFromCentinelaConnector() {
     const { userId } = this.props.lexon;
-    debugger;
 
     if (userId) {
       this.sendMessageCentinelaPutUser(userId);
