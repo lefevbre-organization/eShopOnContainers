@@ -398,7 +398,6 @@ class ModalAttachDocuments extends Component<Props, State> {
               <span className='lf-icon-compliance'></span>
 
               <span>{i18n.t('modal-attach.title')}</span>
-              <span>{step}</span>
             </h5>
           </Modal.Header>
           <Modal.Body className='mimodal'>
