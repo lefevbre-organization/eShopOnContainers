@@ -34,7 +34,7 @@ class MessageList extends Component {
         const signatures = this.props.signatures;
         signatures.map(e => {
             e.documents.some(d => {
-                if (d.status !== 'canceled' && d.status !== 'ready' && d.status === 'completed'){
+                if (d.status !== 'canceled' && d.status !== 'ready' && d.status !== 'declined' && d.status !== 'expired' && d.status === 'completed'){
                     i+=1;
                     return true;
                 }
@@ -49,7 +49,7 @@ class MessageList extends Component {
 
         signatures.map(e => {
             e.documents.some(d => {
-                if (d.status !== 'canceled' && d.status === 'ready'){
+                if (d.status !== 'canceled' && d.status !== 'declined' && d.status !== 'expired' && d.status === 'ready'){
                     console.log('');
                     i+=1;
                     return true;
@@ -184,8 +184,12 @@ class MessageList extends Component {
                 break;
             case 'declined':
                 coloredStatus = <font color="#c43333">Declinado</font>
-                status = 'Cancelado';
+                status = 'Declinado';
                 break;
+            case 'expired':
+                coloredStatus = <font color="#c43333">Expirado</font>
+                status = 'Expirado';
+                break;               
             case 'En progreso':
             case 'ready':
                 coloredStatus = <font color="#001978">En progreso</font>

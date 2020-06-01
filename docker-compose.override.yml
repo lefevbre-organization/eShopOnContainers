@@ -303,7 +303,8 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionString=${ELEF_MONGO_DB:-mongodb://nosql.data}
       - Database=signature
-      - SignaturitApiUrl=http://signaturit
+      - SignaturitApiUrl=https://api.sandbox.signaturit.com/v3
+      - LexonFilesUrl=https://10.38.6.18/index.php
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}        

@@ -140,6 +140,9 @@ export class MessageViewer extends Component {
       case 'ready':
         status = <font color="#001978">In progress </font>
         break;
+      case 'expired':
+        status = <font color="#001978">In progress </font>
+        break;      
       default:
         break;
     }

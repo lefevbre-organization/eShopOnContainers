@@ -21,6 +21,7 @@
     using RestSharp;
     using Microsoft.Extensions.Configuration;
     using Microsoft.AspNetCore.Mvc;
+    using Newtonsoft.Json.Linq;
 
 
     #endregion
@@ -111,11 +112,12 @@
         #endregion Signatures
 
         #region Events
-        public async Task<Result<string>> GetSignature(string signatureId, string documentId)
+        public async Task<Result<bool>> GetSignature(string signatureId, string documentId)
         {
-            var result = new Result<BsonDocument>();
-            
-            result = await _signaturesRepository.GetSignature(signatureId);
+            //var result = new Result<BsonDocument>();
+            var response = new Result<bool>();
+
+            var result = await _signaturesRepository.GetSignature(signatureId);
 
             if (result.data != null)
             {
@@ -126,28 +128,27 @@
                 // Downloadfile
                 var File = GetSignedFile(signatureId, documentId);
 
-                if (app == "lex")
+                if (app == "lexon")
                 {
                     // Call lexon api to store document
-                    await SaveFileLexon(File);
+                    response = await SaveFileLexon(File);
 
                 }
-                else if (app == "cen")
+                else if (app == "centinela")
                 {
                     // Call centinela api to store document
                 }
             }
 
-
-
-            return new Result<string>();
+            return response;
         }
         #endregion
 
         #region HelperFunctions
         public BsonDocument GetSignedFile(string signatureId, string documentId)
         {
-            var client = new RestClient($"https://api.sandbox.signaturit.com/v3/signatures/{signatureId}/documents/{documentId}/download/signed");
+
+            var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/signatures/{signatureId}/documents/{documentId}/download/signed");
             client.Timeout = 5000;
             var request = new RestRequest(Method.GET);
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
@@ -158,12 +159,13 @@
             var fileContentDisposition = response.Headers.FirstOrDefault(f => f.Name == "Content-Disposition");
             string fileName = ((String)fileContentDisposition.Value).Split("filename=")[1].Replace("\"", "");
 
-            return new BsonDocument { { "fileContent", response.RawBytes }, { "contentType", response.ContentType }, { "fileName", fileName } };
+            return new BsonDocument { { "fileContent", Convert.ToBase64String(response.RawBytes) }, { "contentType", response.ContentType }, { "fileName", fileName } };
         }
 
-        public async Task SaveFileLexon(BsonDocument file)
+        public async Task<Result<bool>> SaveFileLexon(BsonDocument file)
         {
-            var client = new RestClient("https://lexbox-test-apigwlex.lefebvre.es/api/v1/Lexon/entities/files/post");
+            var result = new Result<bool>();
+            var client = new RestClient($"{_settings.Value.LexonApiGwUrl}/lex/Lexon/entities/files/post");
             client.Timeout = -1;
             var request = new RestRequest(Method.POST);
             Dictionary<string, string> values = new Dictionary<string, string>();
@@ -172,15 +174,29 @@
             values.Add("idUser", "449");
             values.Add("idActuation", "675");
             values.Add("name", file["fileName"].AsString);
-            values.Add("contentFile", file["fileConten"].AsString);
+            values.Add("contentFile", file["fileContent"].AsString);
 
-            var json = JsonConvert.SerializeObject(values);
+            var outputJson = JsonConvert.SerializeObject(values);
             request.AddHeader("Accept", "text/plain");
             request.AddHeader("Content-Type", "application/json-patch+json");
 
-            request.AddParameter("application/json-patch+json", json, ParameterType.RequestBody);
+            request.AddParameter("application/json-patch+json", outputJson, ParameterType.RequestBody);
             IRestResponse response = await client.ExecuteAsync(request);
+            
+            JObject responseJson = JObject.Parse(response.Content);
+            List<Info> infos = (List<Info>)responseJson["infos"].ToObject(typeof(List<Info>));
+            List<ErrorInfo> errors = (List<ErrorInfo>)responseJson["errors"].ToObject(typeof(List<ErrorInfo>));
+
+            if (response.Content != null && errors.Count == 0)
+            {
+                result = new Result<bool>() { errors = new List<ErrorInfo>(), infos = infos, data = true };
+            } else
+            {
+                result = new Result<bool>() { errors = errors, infos = infos, data = false };
+            }
             Console.WriteLine(response.Content);
+
+            return result;
         }
         #endregion
     }

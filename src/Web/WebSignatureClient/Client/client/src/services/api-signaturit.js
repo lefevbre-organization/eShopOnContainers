@@ -748,6 +748,7 @@ const calculateStatus = (signatures) => {
   let numInProgress = 0;
   let numCancelled = 0;
   let numRejected = 0;
+  let numExpired = 0;
   signatures.map(signature => {
     numSigners = signature.documents.length;
       signature.documents.map( document => {
@@ -764,6 +765,9 @@ const calculateStatus = (signatures) => {
         case 'declined':
           numRejected += 1;
           break;
+        case 'expired':
+          numExpired += 1;
+          break;
         default:
           break;
       }
@@ -771,18 +775,21 @@ const calculateStatus = (signatures) => {
     console.log('NumSigners: '+ numSigners);
     if (numSigners === numCompleted){
       signature.status = 'completed';
-    } else if (numSigners > 0 && numCompleted < numSigners && numCancelled === 0 && numRejected === 0){
+    } else if (numSigners > 0 && numCompleted < numSigners && numCancelled === 0 && numRejected === 0 && numExpired === 0){
       signature.status = 'ready';
     } else if (numSigners > 0 && numCancelled > 0){
       signature.status = 'canceled';
     } else if (numSigners > 0 && numRejected > 0){
       signature.status = 'declined';
+    } else if (numSigners > 0 && numExpired > 0){
+      signature.status = 'expired';
     }
     numSigners = 0;
     numCompleted = 0;
     numInProgress = 0;
     numCancelled = 0;
     numRejected = 0;
+    numExpired = 0;
   })
   console.log("Signatures after: ");
   console.log({signatures});

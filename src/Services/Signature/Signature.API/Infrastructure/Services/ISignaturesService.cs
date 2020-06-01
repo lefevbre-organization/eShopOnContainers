@@ -26,7 +26,7 @@
 
         Task<Result<bool>> UpSertBranding(string user, UserBranding brandingIn);
 
-        Task<Result<string>> GetSignature(string signatureId, string documentId);
+        Task<Result<bool>> GetSignature(string signatureId, string documentId);
 
         //Task<Result<int>> DecAvailableSignatures(string user);
     }

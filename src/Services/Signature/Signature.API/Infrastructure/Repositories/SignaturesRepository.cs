@@ -367,26 +367,10 @@
                 {
                     TraceMessage(result.errors, new Exception($"No se encuentra ninguna firma para el id {signatureId}"), "1003");
                 }
-                else
-                {
-                    var user = result.data["user"].AsString;
-                    var guid = result.data["signatures"][0]["guid"].AsString;
-                    var app = result.data["signatures"][0]["app"].AsString;
-
-                    // Downloadfile
-
-                    if (app == "lex")
-                    {
-                        // Call lexon api to store document
-                    } else if (app == "cen")
-                    {
-                        // Call centinela api to store document
-                    }
-                }
             }
             catch (Exception ex)
             {
-                //TraceInfo(result.infos, $"Error al obtener datos de {user}: {ex.Message}");
+                TraceInfo(result.infos, $"Error al obtener datos de {signatureId}: {ex.Message}");
             }
             return result; 
         }
