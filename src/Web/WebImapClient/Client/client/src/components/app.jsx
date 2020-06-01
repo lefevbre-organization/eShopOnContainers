@@ -207,7 +207,11 @@ class App extends Component {
       })
     );
 
-    if (selectedMessages.length != selected.length) {
+    if (
+      !this.props.lexon.idEmail &&
+      selectedMessages.length !== selected.length
+    ) {
+      console.log('LoadingMessage: 1');
       window.dispatchEvent(new CustomEvent('LoadingMessage'));
     }
   }
@@ -247,6 +251,7 @@ class App extends Component {
     );
 
     if (selectedMessages.length != selected.length) {
+      console.log('LoadingMessage: 2');
       window.dispatchEvent(new CustomEvent('LoadingMessage'));
     }
   }
@@ -799,6 +804,9 @@ class App extends Component {
         },
       })
     );
+
+    console.log('LoadedMessage: 1');
+    window.dispatchEvent(new CustomEvent('LoadedMessage'));
   }
 
   startPoll() {

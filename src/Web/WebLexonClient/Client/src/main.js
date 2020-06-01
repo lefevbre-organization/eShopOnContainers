@@ -98,7 +98,7 @@ class Main extends Component {
   handleOpenComposer() {
     this.props.setComposerOpen(true);
   }
-
+AB#
   handleCloseComposer() {
     this.props.setComposerOpen(false);
   }
