@@ -141,8 +141,8 @@ export const getUser = async (
       method: 'GET',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     });
 
     const result = await response.json();
@@ -170,7 +170,7 @@ export const getEvaluations = (navisionUser: string): EvaluationResponse => {
         risk: false,
         normChange: false,
         canManage: true,
-        canModify: true,
+        canModify: true
       },
       {
         evaluationId: 4534,
@@ -185,7 +185,7 @@ export const getEvaluations = (navisionUser: string): EvaluationResponse => {
         risk: false,
         normChange: false,
         canManage: true,
-        canModify: true,
+        canModify: true
       },
       {
         evaluationId: 4581,
@@ -200,7 +200,7 @@ export const getEvaluations = (navisionUser: string): EvaluationResponse => {
         risk: false,
         normChange: false,
         canManage: true,
-        canModify: true,
+        canModify: true
       },
       {
         evaluationId: 4583,
@@ -215,7 +215,7 @@ export const getEvaluations = (navisionUser: string): EvaluationResponse => {
         risk: false,
         normChange: false,
         canManage: true,
-        canModify: true,
+        canModify: true
       },
       {
         evaluationId: 4592,
@@ -230,9 +230,9 @@ export const getEvaluations = (navisionUser: string): EvaluationResponse => {
         risk: false,
         normChange: false,
         canManage: true,
-        canModify: true,
-      },
-    ],
+        canModify: true
+      }
+    ]
   };
 };
 
@@ -256,8 +256,8 @@ export const getEvaluationById = (
       risk: false,
       normChange: false,
       canManage: true,
-      canModify: true,
-    },
+      canModify: true
+    }
   };
 };
 
@@ -271,8 +271,8 @@ export const getEvaluationTree = async (
       method: 'GET',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     });
 
     const result = await response.json();
@@ -292,8 +292,8 @@ export const getInstances = async (
       method: 'GET',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     });
 
     const result = await response.json();
@@ -313,8 +313,8 @@ export const getResults = async (
       method: 'GET',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     });
 
     const result = await response.json();
@@ -334,12 +334,43 @@ export const getDocumentsByInstance = async (
       method: 'GET',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     });
 
     const result = await response.json();
     return result;
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const uploadFile = async (
+  navisionUser: string,
+  conceptId: number,
+  doc: any
+): number => {
+  const url = `${API_CENTINELA_GATEWAY}/concepts/files/post`;
+  const body = {
+    idNavision: navisionUser,
+    conceptId,
+    name: doc.name,
+    contentFile: doc.content
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/text',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    await response.json();
+
+    return response.status;
   } catch (err) {
     throw err;
   }
@@ -358,8 +389,8 @@ export const downloadFile = async (
       method: 'GET',
       headers: {
         Accept: 'application/text',
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     });
 
     if (response.status !== 200) {
