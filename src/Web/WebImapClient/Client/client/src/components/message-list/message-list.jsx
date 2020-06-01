@@ -228,6 +228,7 @@ class MessageList extends Component {
       );
 
       if (checked === true) {
+        console.log('LoadingMessage: 3');
         window.dispatchEvent(new CustomEvent('LoadingMessage'));
       }
 
@@ -292,6 +293,7 @@ class MessageList extends Component {
               })
             );
           }
+          console.log('LoadedMessage: 4');
           window.dispatchEvent(new CustomEvent('LoadedMessage'));
         });
       }
@@ -304,6 +306,7 @@ class MessageList extends Component {
       );
 
       if (checked === true) {
+        console.log('LoadingMessage: 4');
         window.dispatchEvent(new CustomEvent('LoadingMessage'));
         const rm = readMessageRaw(
           null,
@@ -335,6 +338,7 @@ class MessageList extends Component {
               },
             })
           );
+          console.log('LoadedMessage: 3');
           window.dispatchEvent(new CustomEvent('LoadedMessage'));
         });
       } else {

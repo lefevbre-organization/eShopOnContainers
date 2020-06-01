@@ -41,7 +41,7 @@ class ListClassifications extends Component {
       selectedMessages,
       classifications,
       updateClassifications,
-      toggleConfirmRemoveClassification
+      toggleConfirmRemoveClassification,
     } = this.props;
     const mail = selectedMessages[0];
 
@@ -65,7 +65,7 @@ class ListClassifications extends Component {
           <PerfectScrollbar options={{ suppressScrollX: true }}>
             <ul className='row lexon-document-list'>
               {classificationsFiltered &&
-                classificationsFiltered.map(classification => {
+                classificationsFiltered.map((classification) => {
                   return (
                     <Classification
                       classification={classification}
@@ -97,13 +97,13 @@ class ListClassifications extends Component {
 
 ListClassifications.propTypes = {
   user: PropTypes.string.isRequired,
-  toggleConfirmRemoveClassification: PropTypes.func.isRequired
+  toggleConfirmRemoveClassification: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     selectedMessages: state.email.selectedMessages,
-    companySelected: state.selections.companySelected
+    companySelected: state.selections.companySelected,
   };
 };
 
