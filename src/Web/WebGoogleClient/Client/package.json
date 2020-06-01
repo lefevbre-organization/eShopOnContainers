@@ -6,6 +6,7 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.28",
     "@fortawesome/free-solid-svg-icons": "^5.13.0",
     "@fortawesome/react-fontawesome": "^0.1.9",
+    "@pathofdev/react-tag-input": "^1.0.7",
     "@reach/menu-button": "^0.10.1",
     "@syncfusion/ej2-data": "^17.4.51",
     "@syncfusion/ej2-react-buttons": "^18.1.43",

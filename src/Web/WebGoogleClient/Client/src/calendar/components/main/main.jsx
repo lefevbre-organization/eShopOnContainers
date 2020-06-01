@@ -37,6 +37,8 @@ import { createElement } from '@syncfusion/ej2-base';
 
 import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
 import { Browser, Internationalization, extend } from '@syncfusion/ej2-base';
+import ReactTagInput from "@pathofdev/react-tag-input";
+import "@pathofdev/react-tag-input/build/index.css";
 
 export class Main extends Component {
 
@@ -62,7 +64,8 @@ export class Main extends Component {
         this.scheduleData = [];
         //this.CalendarList = [];
         this.position = { X: 'Center', Y: 'Bottom' };       
-        this.resourceCalendarData = [];  
+        this.resourceCalendarData = []; 
+        this.tagAttendess = ['pepe@ee.es','hola@es.es'];
         this.toasts = [
             { content: 'Processing', cssClass: 'e-toast-black', icon: '' },
             { content: 'Process complete', cssClass: 'e-toast-black', icon: '' },
@@ -70,7 +73,8 @@ export class Main extends Component {
         ]
 
         this.instance = new Internationalization();
-        this.tabInstance = new TabComponent;    
+        this.tabInstance = new TabComponent;   
+        
 
         this.state = {
             isVisible: true, 
@@ -89,7 +93,7 @@ export class Main extends Component {
             this
         );
 
-           // Calednar View Dialog
+                  // Calednar View Dialog
         this.alertButtons = [{
             // Click the footer buttons to hide the Dialog
             click: () => {
@@ -523,7 +527,7 @@ export class Main extends Component {
       );
 }
 
-    onPopupOpen(args) {
+   onPopupOpen(args) {
 
         if (args.type === 'QuickInfo') {
 
@@ -809,7 +813,13 @@ export class Main extends Component {
         //localStorage.clear();
     } 
 
-    render() {
+    setEmailTags(tag) {      
+        this.tagAttendess.push(tag.toString())
+    }
+
+    render() {           
+       
+
         const { leftSideBar } = this.state;
         const { lexon } = this.props;
 
@@ -888,7 +898,26 @@ export class Main extends Component {
 
                     />
                         <article className='d-flex flex-column position-relative'>
-                            {/*<Switch>*/}                                
+                                {/*<Switch>*/}     
+                                <ReactTagInput
+                                    tags={this.tagAttendess}
+                                    placeholder="Type and press enter"
+                                    maxTags={10}
+                                    editable={true}
+                                    readOnly={false}
+                                    removeOnBackspace={true}
+                                    onChange={(newTags) => this.setEmailTags(newTags)}
+                                    validator={(value) => {
+                                        // Don't actually validate e-mails this way
+                                        const isEmail = value.indexOf("@") !== -1;
+                                        if (!isEmail) {
+                                            alert("Please enter an e-mail address");
+                                        }
+                                        // Return boolean to indicate validity
+                                        return isEmail;
+                                    }}
+                                />
+
                                 <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
