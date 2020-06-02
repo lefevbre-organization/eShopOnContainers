@@ -64,7 +64,7 @@ import CalendarComponent from '../apps/calendar_content';
 import DataBaseComponent from '../apps/database_content';
 import { PROVIDER } from '../constants';
 
-import { preloadSignatures, preloadSignatures2, getSignatures, getAttachment} from "../services/api-signaturit";
+import { preloadSignatures, preloadSignatures2, getSignatures, getAttachmentLex, getAttachmentCen } from "../services/api-signaturit";
 import { getFileType } from '../services/mimeType';
 
 const MESSAGENOTFOUND_SNACKBAR_DURATION = 4000;
@@ -488,8 +488,8 @@ class App extends Component {
           )
         } 
         if (newSignature) {
-          if (lefebvre.idEntityType === 14 && lefebvre.idEntity && lefebvre.idEntity > 0){ // Hay que recuperar un adjunto
-            this.props.getAttachment(lefebvre.bbdd, lefebvre.idEntity, lefebvre.idUserApp)
+          if ((lefebvre.userApp === "lex" || lefebvre.userApp === "lexon") && lefebvre.idEntityType === 14 && lefebvre.idEntity && lefebvre.idEntity > 0){ // Hay que recuperar un adjunto de lexon
+            this.props.getAttachmentLex(lefebvre.bbdd, lefebvre.idEntity, lefebvre.idUserApp)
             .then((attachment) => {
                 if (attachment.data === null){ //El fichero no existe o no se ha podido recuperar
                   this.props.newMessage();
@@ -507,11 +507,33 @@ class App extends Component {
                 }
             })
             .catch(() => this.props.newMessage([], null));
+          } 
+          else if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela") && lefebvre.idDocument && lefebvre.idDocument > 0){
+            this.props.getAttachmentCen(lefebvre.userId, lefebvre.idDocument)
+            .then((attachment) => {
+              if (attachment.data === null) { //El fichero no existe o no se ha podido recuperar
+                this.props.newMessage();
+              }
+              else {
+                const length = attachment.data.length;
+                  const fileName = attachment.infos[0].message.split(":")[1].replace(/"/g,'').trim();
+                  const newAttachment = [{
+                    fileName: fileName,
+                    size: length,
+                    contentType: getFileType(fileName),
+                    content: attachment.data
+                  }]
+                  this.props.newMessage([], null, newAttachment);
+              }
+            })
+            .catch(() => this.props.newMessage([], null));
           }
         }  
       }
     })
     .catch(err => { throw new Error(err);} );
+
+
 
 
     // if (userId !== null && email !== null) {
@@ -940,7 +962,8 @@ const mapDispatchToProps = dispatch => ({
   setSign: sign => dispatch(setSign(sign)),
   preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth),
   signatureClicked: signature => dispatch(selectSignature(signature)),
-  getAttachment: (bbdd, id, user) => getAttachment(bbdd, id, user)
+  getAttachmentLex: (bbdd, id, user) => getAttachmentLex(bbdd, id, user),
+  getAttachmentCen: (userId, documentId) => getAttachmentCen(userId, documentId),
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
@@ -966,7 +989,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
     // setCaseFile: casefile => dispatchProps.setCaseFile(casefile),
     preloadSignatures: (userId) => dispatchProps.preloadSignatures(userId, stateProps.application.user.credentials.encrypted),
     signatureClicked: signature => dispatchProps.signatureClicked(signature),
-    getAttachment: (bbdd, id, user) => dispatchProps.getAttachment(bbdd, id, user)
+    getAttachmentLex: (bbdd, id, user) => dispatchProps.getAttachmentLex(bbdd, id, user),
+    getAttachmentCen: (userId, documentId) => dispatchProps.getAttachmentCen(userId, documentId)
   });
 
 export default connect(

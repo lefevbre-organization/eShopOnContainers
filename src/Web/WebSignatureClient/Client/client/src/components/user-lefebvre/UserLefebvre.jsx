@@ -8,7 +8,7 @@ import { PROVIDER } from "../../constants";
 import { getUser } from '../../services/accounts';
 import { removeState } from "../../services/state";
 import * as base64 from 'base-64';
-import { parseJwt, getUserId, getGuid, getUserName, getApp, getIdEntityType, getIdEntity, getBbdd, getIdUserApp } from "../../services/jwt";
+import { parseJwt, getUserId, getGuid, getUserName, getApp, getIdEntityType, getIdEntity, getBbdd, getIdUserApp, getIdDocument } from "../../services/jwt";
 import jwt from "njwt";
 import Cookies from 'js-cookie';
 import * as uuid from 'uuid/v4';
@@ -68,6 +68,7 @@ class UserLefebvre extends Component {
         var idEntity = (this.props.match.params.token ? getIdEntity(payload) : null)
         var bbdd = (this.props.match.params.token ? getBbdd(payload): null)
         var idUserApp = (this.props.match.params.token ? getIdUserApp(payload): null)
+        var idDocument = (this.props.match.params.token ? getIdDocument(payload): null)
 
         this.props.setUser(`IM0${user}`);
         this.props.setGuid(guid);
@@ -77,7 +78,7 @@ class UserLefebvre extends Component {
         (idEntityType ? this.props.setIdEntityType(idEntityType) : null);
         (idEntity ? this.props.setIdEntity(idEntity) : null);
         (bbdd ? this.props.setDataBase(bbdd) : null);
-       
+        (idDocument ? this.props.setIdDocument(idDocument) : null);
         
 
         if (Date.now() >= payload.exp * 1000) {
@@ -225,7 +226,8 @@ const mapDispatchToProps = dispatch => ({
     setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
     setIdEntityType: id => dispatch(ACTIONS.setIdEntityType(id)),
     setIdEntity: id => dispatch(ACTIONS.setIdEntity(id)),
-    setIdUserApp: id => dispatch(ACTIONS.setIdUserApp(id))
+    setIdUserApp: id => dispatch(ACTIONS.setIdUserApp(id)),
+    setIdDocument: id => dispatch(ACTIONS.setIdDocument(id))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserLefebvre);

@@ -65,7 +65,8 @@ export const INITIAL_STATE = {
         idEntityType: null,
         idEntity: null,
         idUserApp: null,
-        bbdd: null
+        bbdd: null,
+        idDocument: null
     }
 };
 

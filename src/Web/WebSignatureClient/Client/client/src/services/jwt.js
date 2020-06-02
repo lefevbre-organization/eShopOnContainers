@@ -71,6 +71,10 @@ export const getIdEntity = payload =>{
   return(payload.hasOwnProperty('idEntity') ? payload.idEntity : null);
 }
 
+export const getIdDocument = payload =>{
+  return(payload.hasOwnProperty('idDocument') ? payload.idDocument : null);
+}
+
 export const getMailContacts = payload => {
   return(payload.hasOwnProperty('mailContacts') ? payload.mailContacts.toString() : null)
 }

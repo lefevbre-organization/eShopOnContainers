@@ -815,7 +815,7 @@ export const getUser = async userId => {
     }
   };
 
-export const getAttachment = async (bbdd, attachmentId, userId) => {
+export const getAttachmentLex = async (bbdd, attachmentId, userId) => {
   return new Promise((resolve, reject) => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -839,6 +839,33 @@ export const getAttachment = async (bbdd, attachmentId, userId) => {
         console.log('error', error);
         reject(error);
       });
+  })
+}
+
+export const getAttachmentCen = async (userId, attachmentId) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+    myHeaders.append("Content-Type", "application/json-patch+json");
+        
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    userId = 'E1669460'; //Para pruebas
+    
+    fetch(`https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/concepts/files/get?idNavisionUser=${userId}&idDocument=${attachmentId}`, requestOptions)
+    .then(response => response.json())
+    .then(result => {
+      console.log(result);
+      resolve(result);
+    })
+    .catch(error => {
+      console.log('error', error);
+      reject(error);
+    });
   })
 }
 

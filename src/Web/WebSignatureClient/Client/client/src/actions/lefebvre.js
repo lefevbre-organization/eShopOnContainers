@@ -95,6 +95,12 @@ export const setIdUserApp = idUserApp => ({
     payload: idUserApp
 })
 
+export const setIdDocument = idDocument => ({
+    type: ActionTypes.LEFEBVRE_ID_DOCUMENT,
+    payload: idDocument
+})
+
+
 export default {
     setUser,
     setDataBase,
@@ -114,5 +120,6 @@ export default {
     setUserApp,
     setIdEntityType,
     setIdEntity,
-    setIdUserApp
+    setIdUserApp,
+    setIdDocument
 };

@@ -127,6 +127,12 @@ const lefebvre = (state = INITIAL_STATE.lefebvre, action = {}) => {
                 idUserApp: action.payload
             }
 
+        case ActionTypes.LEFEBVRE_ID_DOCUMENT:
+            return {
+                ...state, 
+                idDocument: action.payload
+            }
+            
         default:
             return state;
     }
