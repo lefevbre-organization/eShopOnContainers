@@ -1,115 +1,111 @@
-  var scopes = [
-    'https://www.googleapis.com/auth/script.external_request',
-    'https://www.googleapis.com/auth/userinfo.email',
-    'https://www.googleapis.com/auth/gmail.addons.execute',
-    'https://www.googleapis.com/auth/gmail.addons.current.message.readonly',
-    'https://www.googleapis.com/auth/spreadsheets',
-    'https://mail.google.com/'
-  ]
-  var keyClient = "AddonLexonClient";
-  var token = null;
-  var cache = CacheService.getUserCache();
+var SPACES = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+var MESSAGESPACES = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+var companyObj = {};
+var key = "AddonLexonSecret"
 
-  function getTokenClient() {
-    var header = {
-      alg: "HS256",
-      typ: "JWT",
-    }; 
+function getLogout() {
+  var logoutAction = CardService.newCardAction()
+       .setText("logout").setOnClickAction(CardService.newAction()
+       .setFunctionName("logout"))
+
+  return logoutAction
+}
+
+function buildHomeCard() { 
+    getCompanyList();
+  
+    var companylistText = CardService.newTextParagraph().
+    setText('<font color="#212529">Selecciona una empresa:</font>');
+  
+    var checkboxGroup = CardService.newSelectionInput()
+    .setType(CardService.SelectionInputType.RADIO_BUTTON)
+    .setFieldName("selectCompany")
+    .setOnChangeAction(CardService.newAction()
+        .setFunctionName("handleCheckboxChange"));
+
+       for (var i = 0; i < companyResponse.data.length; i++) {
+        var company = companyResponse.data[i];
+        company.selected = true
+        checkboxGroup.addItem(company.name, company.bbdd, company.selected);
+       } 
+ 
+    var action = CardService.newAction()
+        .setFunctionName('onSveCompany');
         
-    var signature = Utilities.base64Encode(JSON.stringify(header)) + "." 
-      + Utilities.base64Encode(JSON.stringify(clientId));
-    
-      token = signature + "." + 
-      Utilities.base64Encode(
-        Utilities.computeHmacSha256Signature(signature, keyClient)
-      );
-  }
+    var button = CardService.newImage()
+    .setAltText("Entrar")
+       .setImageUrl("https://www.dropbox.com/s/042ic4nutt5re85/Screen%20Shot%202020-03-20%20at%207.17.27%20AM.png?raw=1")
+        .setOnClickAction(action);
+
+    var logoutAction = getLogout();
+ 
+    var sectionFormCompany = CardService.newCardSection()
+     .addWidget(companylistText)
+     .addWidget(checkboxGroup)
+     .addWidget(button);
   
-  
-  function getService() {
-    getTokenClient();
-    return OAuth2.createService('auth-lexon')
-      .setAuthorizationBaseUrl(urlFrontend + 'login')
-      .setTokenUrl(urlAuth + 'token')
-      .setClientId(token)
-      .setClientSecret(clientSecret)
-      .setScope(scopes.join(' '))
-      .setCallbackFunction('authCallback')
-      .setCache(CacheService.getUserCache())
-      .setPropertyStore(PropertiesService.getUserProperties())
-  }
-  
-  
-  function create3PAuthorizationUi() {
-      var service = getService()
-      var authUrl = service.getAuthorizationUrl()
-  
-      var logo = CardService.newImage()
-      .setAltText("Logo")
-      .setImageUrl("https://www.dropbox.com/s/csqs86p9kjgy80w/Screenshot%202020-04-20%2009.44.01.png?raw=1");
-  
-      var icon = CardService.newImage()
-      .setAltText("Icon")
-      .setImageUrl("https://www.dropbox.com/s/sspa471xfkibxvs/Screenshot%202020-04-20%2010.03.08.png?raw=1");
-  
-      var loginButton = CardService.newImage()
-      .setAltText("Login")
-       .setImageUrl("https://www.dropbox.com/s/otg9e2qyo99vs9h/Screenshot%202020-04-20%2010.12.01.png?raw=1")
-       .setAuthorizationAction(CardService.newAuthorizationAction()
-              .setAuthorizationUrl(authUrl));
-              
-     var reserved = CardService.newImage()
-      .setAltText("©2020 Lefebvre. Todos los derechos reservados.")
-      .setImageUrl("https://www.dropbox.com/s/sksg0u2iezrywje/Screenshot%202020-04-20%2011.01.43.png?raw=1");
-  
-      var card = CardService.newCardBuilder()
-          .addSection(CardService.newCardSection()
-              .addWidget(logo)
-              .addWidget(icon)
-              .addWidget(loginButton)
-              .addWidget(reserved)
-              ).build()
-      return [card]
-  }
-  
-  function authCallback(callbackRequest) {
-      Logger.log("Run authcallback!")
-      const authorized = getService().handleCallback(callbackRequest)
-  
-      return HtmlService.createHtmlOutput('Success! <script>setTimeout(function() { top.window.close() }, 1)</script>')
-  }
-  
-  function checkAuth() {
-    var service = getService()
-    if (service.hasAccess()) return
-  
-    CardService.newAuthorizationException()
-      .setAuthorizationUrl(service.getAuthorizationUrl())
-      .setResourceDisplayName("Display name to show to the user")
-      .setCustomUiCallback('create3PAuthorizationUi')
-      .throwException()
-  }
-  
-  function buildAddOn(e) {
-    var accessToken = e.messageMetadata.accessToken;
-    GmailApp.setCurrentMessageAccessToken(accessToken);
-    checkAuth();
-    var addonData = JSON.parse(cache.get('getAddonData'));
-    if(addonData) {
-      return buildMessageClassificationCard(e);
+    var user = JSON.parse(cache.get('dataUser'));
+    if (user == null) {
+      return logout();
     }
-   return buildHomeCard();
   
-  }
+    var account = Session.getEffectiveUser().getEmail();
   
-  function logout() {
-    cache.remove('getAddonData');
-    cache.remove('dataUser');
-    cache.remove('companyData');
-    cache.remove('selectCompany');
-    
-    var service = getService();
-    var login = create3PAuthorizationUi();
-    service.reset();
-    return login
+    var homeCard = CardService.newCardBuilder()
+      .setHeader(CardService.newCardHeader()
+      .setImageUrl("http://www.derechopractico.es/wp-content/uploads/2019/03/Logo-Lefebvre.jpg")
+      .setTitle(account)
+      .setSubtitle(user.data.name))
+      .addCardAction(logoutAction)
+      .addSection(sectionFormCompany);
+  
+    return homeCard.build();
+   
+ }
+
+function handleCheckboxChange(e){
+  selectCompany = e.formInput.selectCompany
+  cache.put('selectCompany', JSON.stringify(selectCompany), 85900);
+}
+
+
+function getSelectCompany(e) {
+  getCompanyList();
+  var selectCompany = JSON.parse(cache.get('selectCompany'));
+  for (var i = 0; i < companyResponse.data.length; i++) {
+      if(selectCompany == companyResponse.data[i].bbdd){
+        var account = Session.getEffectiveUser().getEmail();
+        companyResponse.data[i].account = account;
+        companyObj = companyResponse.data[i];
+      }
   }
+
+  cache.put('companyData', JSON.stringify(companyObj), 85900);
+  
+ var MessageClassificationCard = buildMessageClassificationCard(e);
+    return CardService.newActionResponseBuilder()
+    .setNavigation(CardService.newNavigation().pushCard(MessageClassificationCard))
+    .build();
+
+}
+
+function getFirstTimeCompany(e) {
+    getCompanyList();
+    var account = Session.getEffectiveUser().getEmail();
+    companyResponse.data[0].account = account;
+    cache.put('companyData', JSON.stringify(companyResponse.data[0]), 85900);
+    var MessageClassificationCard = buildMessageClassificationCard(e);
+    return CardService.newActionResponseBuilder()
+    .setNavigation(CardService.newNavigation().pushCard(MessageClassificationCard))
+    .build();
+}
+
+function onSveCompany(e) {
+  //Logger.log(e.parameters.name, e.parameters.bbdd)
+  var selectCompany = JSON.parse(cache.get('selectCompany'));
+  if(selectCompany) {
+   return getSelectCompany(e);
+  } else {
+    return getFirstTimeCompany(e);
+  } 
+}

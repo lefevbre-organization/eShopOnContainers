@@ -545,7 +545,10 @@ export class Main extends Component {
   }
 
   hasProduct(product) {
-    debugger;
+    if (window.SHOW_EXPERIMENTAL === '1') {
+      return true;
+    }
+
     if (this.props.currentUser && this.props.currentUser.roles) {
       return this.props.currentUser.roles.indexOf(product) > -1;
     }
@@ -717,6 +720,7 @@ export class Main extends Component {
                       sideBarToggle={this.toggleSideBar}
                       casefile={lexon.idCaseFile}
                       mailContacts={lexon.mailContacts}
+                      googleUser={this.props.googleUser}
                     />
                   )}
                 />

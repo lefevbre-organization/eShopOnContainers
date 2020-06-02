@@ -1,8 +1,9 @@
 {
   "ReRoutes": [
     {
-      "DownstreamPathTemplate": "/api/{version}/{everything}",
+      "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ],
       "DownstreamHostAndPorts": [
         {
           "Host": "lexon-api",
@@ -10,25 +11,51 @@
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/lex/{everything}",
-      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ]
+      "DownstreamPathTemplate": "/api/{version}/{everything}"
     },
-	{
-   
-	  "DownstreamPathTemplate": "/api/{version}/{everything}",
-	  "DownstreamScheme": "http",
-	  "DownstreamHostAndPorts": [
-		{
-		  "Host": "lexonmysql-api",
-		  "Port": 80
-		}
-	  ],
-    "UpstreamPathTemplate": "/api/{version}/mysql/{everything}",
-    "UpstreamHttpMethod": [ "POST", "PUT", "GET" ]
+    {
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "lexonmysql-api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/mysql/{everything}",
+      "DownstreamPathTemplate": "/api/{version}/{everything}",
+      "Priority": 0
+    },
+    {
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "account-api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/accounts/{everything}",
+      "DownstreamPathTemplate": "/api/{version}/{everything}"
+    },
+    {
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userutils-api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/utils/{everything}",
+      "DownstreamPathTemplate": "/api/{version}/{everything}"
     }
   ],
   "GlobalConfiguration": {
     "RequestIdKey": "OcRequestId",
-    "AdministrationPath": "/administration",
+    "AdministrationPath": "/administration"
   }
 }
   

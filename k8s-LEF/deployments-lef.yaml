@@ -382,11 +382,11 @@ spec:
     spec:
       containers:
       - name: signatures
-        image: elefebvreoncotainers/signatures.api
+        image: elefebvreoncotainers/signature.api
         imagePullPolicy: Always
         env:
         - name: PATH_BASE
-          value: /signatures-api
+          value: /signature-api
         - name: ConnectionString
           valueFrom:
            configMapKeyRef:
@@ -449,16 +449,6 @@ spec:
         env:
         - name: PATH_BASE
           value: /
-        - name: LexonApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: lexon
-        - name: LexonMySqlApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: lexonmysql__hc
         - name: LexonApiGatewayUrlHC
           valueFrom:
            configMapKeyRef:
@@ -479,31 +469,11 @@ spec:
            configMapKeyRef:
              name: urls
              key: apigwacc_e          
-        - name: AccountApiUrlHC
+        - name: PortalApiUrlHC
           valueFrom:
            configMapKeyRef:
              name: internalurls
-             key: account__hc
-        - name: CentinelaApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: apigwcen__hc     
-        - name: ExternalCentinelaApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: urls
-             key: apigwcen_e          
-        - name: CentinelaApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: centinela__hc 
-        - name: UserUtilsApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: userutils__hc 
+             key: webportal__hc 
         - name: ApplicationInsights__InstrumentationKey
           valueFrom:
            configMapKeyRef:
@@ -541,26 +511,6 @@ spec:
         env:
         - name: PATH_BASE
           value: /webgoogleclient
-        - name: LexonApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: lexon__hc
-        - name: LexonMySqlApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: lexonmysql__hc
-        - name: LexonApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: apigwlex__hc     
-        - name: ExternalLexonApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: urls
-             key: apigwlex_e
         - name: AccountApiGatewayUrlHC
           valueFrom:
            configMapKeyRef:
@@ -571,31 +521,6 @@ spec:
            configMapKeyRef:
              name: urls
              key: apigwacc_e          
-        - name: AccountApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: account__hc
-        - name: CentinelaApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: apigwcen__hc     
-        - name: ExternalCentinelaApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: urls
-             key: apigwcen_e          
-        - name: CentinelaApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: centinela__hc 
-        - name: UserUtilsApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: userutils__hc 
         - name: ApplicationInsights__InstrumentationKey
           valueFrom:
            configMapKeyRef:
@@ -633,16 +558,6 @@ spec:
         env:
         - name: PATH_BASE
           value: /webofficeclient
-        - name: LexonApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: lexon__hc
-        - name: LexonMySqlApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: lexonmysql__hc
         - name: LexonApiGatewayUrlHC
           valueFrom:
            configMapKeyRef:
@@ -653,41 +568,6 @@ spec:
            configMapKeyRef:
              name: urls
              key: apigwlex_e
-        - name: AccountApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: apigwacc__hc     
-        - name: ExternalAccountApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: urls
-             key: apigwacc_e          
-        - name: AccountApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: account__hc
-        - name: CentinelaApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: apigwcen__hc     
-        - name: ExternalCentinelaApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: urls
-             key: apigwcen_e          
-        - name: CentinelaApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: centinela__hc 
-        - name: UserUtilsApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: userutils__hc 
         - name: ApplicationInsights__InstrumentationKey
           valueFrom:
            configMapKeyRef:
@@ -725,16 +605,6 @@ spec:
         env:
         - name: PATH_BASE
           value: /weblexonclient
-        - name: LexonApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: lexon__hc
-        - name: LexonMySqlApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: lexonmysql__hc
         - name: LexonApiGatewayUrlHC
           valueFrom:
            configMapKeyRef:
@@ -745,133 +615,6 @@ spec:
            configMapKeyRef:
              name: urls
              key: apigwlex_e
-        - name: AccountApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: apigwacc__hc     
-        - name: ExternalAccountApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: urls
-             key: apigwacc_e          
-        - name: AccountApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: account__hc
-        - name: CentinelaApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: apigwcen__hc     
-        - name: ExternalCentinelaApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: urls
-             key: apigwcen_e          
-        - name: CentinelaApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: centinela__hc 
-        - name: UserUtilsApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: userutils__hc 
-        - name: ApplicationInsights__InstrumentationKey
-          valueFrom:
-           configMapKeyRef:
-             name: externalcfg
-             key: all__InstrumentationKey
-        - name: UseLoadTest
-          valueFrom:
-           configMapKeyRef:
-             name: externalcfg
-             key: all__EnableLoadTest
-        - name: OrchestratorType
-          value: 'K8S'       
-        ports:
-        - containerPort: 80
-        
-      imagePullSecrets:
-      - name: registry-key
----
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  name: webloginaddonlexon
-spec:
-  paused: true
-  template:
-    metadata:
-      labels:
-        app: elefebvre
-        component: webloginaddonlexon
-    spec:
-      containers:
-      - name: webloginaddonlexon
-        image: elefebvreoncotainers/webloginaddonlexon
-        imagePullPolicy: Always
-        env:
-        - name: PATH_BASE
-          value: /webloginaddonlexon
-        - name: LexonApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: lexon__hc
-        - name: LexonMySqlApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: lexonmysql__hc
-        - name: LexonApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: apigwlex__hc     
-        - name: ExternalLexonApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: urls
-             key: apigwlex_e
-        - name: AccountApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: apigwacc__hc     
-        - name: ExternalAccountApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: urls
-             key: apigwacc_e          
-        - name: AccountApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: account__hc
-        - name: CentinelaApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: apigwcen__hc     
-        - name: ExternalCentinelaApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: urls
-             key: apigwcen_e          
-        - name: CentinelaApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: centinela__hc 
-        - name: UserUtilsApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: userutils__hc 
         - name: ApplicationInsights__InstrumentationKey
           valueFrom:
            configMapKeyRef:
@@ -909,16 +652,6 @@ spec:
         env:
         - name: PATH_BASE
           value: /webaddonlexon
-        - name: LexonApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: lexon__hc
-        - name: LexonMySqlApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: lexonmysql__hc
         - name: LexonApiGatewayUrlHC
           valueFrom:
            configMapKeyRef:
@@ -939,31 +672,6 @@ spec:
            configMapKeyRef:
              name: urls
              key: apigwacc_e          
-        - name: AccountApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: account__hc
-        - name: CentinelaApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: apigwcen__hc     
-        - name: ExternalCentinelaApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: urls
-             key: apigwcen_e        
-        - name: CentinelaApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: centinela__hc 
-        - name: UserUtilsApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: userutils__hc 
         - name: ApplicationInsights__InstrumentationKey
           valueFrom:
            configMapKeyRef:
@@ -1001,26 +709,6 @@ spec:
         env:
         - name: PATH_BASE
           value: /webimapclient
-        - name: LexonApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: lexon__hc
-        - name: LexonMySqlApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: lexonmysql__hc
-        - name: LexonApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: apigwlex__hc     
-        - name: ExternalLexonApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: urls
-             key: apigwlex_e
         - name: AccountApiGatewayUrlHC
           valueFrom:
            configMapKeyRef:
@@ -1031,31 +719,6 @@ spec:
            configMapKeyRef:
              name: urls
              key: apigwacc_e          
-        - name: AccountApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: account__hc
-        - name: CentinelaApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: apigwcen__hc     
-        - name: ExternalCentinelaApiGatewayUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: urls
-             key: apigwcen_e          
-        - name: CentinelaApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: centinela__hc 
-        - name: UserUtilsApiUrlHC
-          valueFrom:
-           configMapKeyRef:
-             name: internalurls
-             key: userutils__hc 
         - name: ApplicationInsights__InstrumentationKey
           valueFrom:
            configMapKeyRef:
@@ -1119,6 +782,48 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
+  name: webcentinelaclient
+spec:
+  paused: true
+  template:
+    metadata:
+      labels:
+        app: elefebvre
+        component: webcentinelaclient
+    spec:
+      containers:
+      - name: webcentinelaclient
+        image: elefebvreoncotainers/webcentinelaclient
+        imagePullPolicy: Always
+        env:
+        - name: PATH_BASE
+          value: /webcentinelaclient
+        - name: CentinelaApiUrlHC
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: centinelaapi__hc
+        - name: ApplicationInsights__InstrumentationKey
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__InstrumentationKey
+        - name: UseLoadTest
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EnableLoadTest
+        - name: OrchestratorType
+          value: 'K8S'       
+        ports:
+        - containerPort: 80
+        
+      imagePullSecrets:
+      - name: registry-key
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
   name: webstatus
 spec:
   paused: true
@@ -1135,7 +840,7 @@ spec:
         env:
         - name: PATH_BASE
           value: /webstatus
-        - name: WebpPortalClient
+        - name: WebPortalClient
           valueFrom:
            configMapKeyRef:
              name: internalurls
@@ -1160,6 +865,16 @@ spec:
            configMapKeyRef:
              name: internalurls
              key: weblexonclient__hc
+        - name: WebSignatureClient
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: websignatureclient__hc
+        - name: WebCentinelaClient
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: webcentinelaclient__hc
         - name: AccountApi
           valueFrom:
            configMapKeyRef:

@@ -18,7 +18,6 @@ ingress:
 
 resources: {}
 
-
 nodeSelector: {}
 
 tolerations: []
@@ -34,26 +33,10 @@ env:
       key: all__InstrumentationKey
     - name: UseLoadTest
       key: all_EnableLoadTest
-    - name: LexonApiUrlHC
-      key: internalurls__lexonapi__hc
-    - name: LexonMySqlApiUrlHC
-      key: internalurls__lexonmysqlapi_hc
-    - name: AccountApiUrlHC
-      key: internalurls__accountapi__hc
     - name: LexonApiGatewayUrlHC
       key: internalurls__lexonapigw__hc
     - name: AccountApiGatewayUrlHC
       key: internalurls__accountapigw__hc
-    - name: CentinelaUrlHC
-      key: internalurls__centinela__hc
-    - name: UserUtilsUrlHC
-      key: internalurls__userutils__hc
-    - name: CentinelaApiGatewayUrlHC
-      key: internalurls__centinelaapigw__hc
-    - name: IdentityUrlHC
-      key: internalurls__identity__hc      
-    - name: IdentityUrl
-      key: urls__IdentityUrl 
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
@@ -69,4 +52,4 @@ configValues: |
  window.URL_MF_LEXON='https://lexbox-test-weblexon.lefebvre.es/static/js/main.js'
  window.URL_GET_ACCOUNTS='https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail'
  window.URL_MF_LEXON_BASE = 'https://lexbox-test-weblexon.lefebvre.es'
- window.RELEASE = 'RC 0.22'
+ window.RELEASE = 'RC 0.23'

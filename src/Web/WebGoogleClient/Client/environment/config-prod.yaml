@@ -15,4 +15,5 @@ data:
     window.URL_MF_IMAP='http://localhost:9000/user'
     window.URL_MF_LEXON='http://localhost:3005/static/js/main.js'
     window.URL_MF_CENTINELA='http://localhost:3005/static/js/main.js'
+    window.API_CENTINELA_GATEWAY =   'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen'
     window.SHOW_EXPERIMENTAL='1'

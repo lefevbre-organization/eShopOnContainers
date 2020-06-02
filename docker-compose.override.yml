@@ -60,6 +60,8 @@ services:
       - HealthChecksUI__HealthChecks__14__Uri=http://websignatureapigw/hc
       - HealthChecksUI__HealthChecks__15__Name=WebSignatureClient HTTP Check
       - HealthChecksUI__HealthChecks__15__Uri=http://websignatureclient/hc
+      - HealthChecksUI__HealthChecks__16__Name=WebCentinelaClient HTTP Check
+      - HealthChecksUI__HealthChecks__16__Uri=http://webcentinelaclient/hc
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
     ports:
@@ -110,7 +112,8 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+      - LexonApiUrlHC=http://lexon.api/hc
+#      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
 
     ports:
       - "3005:80"
@@ -146,7 +149,7 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - SignatureApiUrlHC=http://websignatureapi/hc
+      - SignatureApiUrlHC=http://signature.api/hc
     ports:
       - "9001:80"
 
@@ -157,7 +160,7 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - CentinelaApiUrlHC=http://webcentinelaapi/hc
+      - CentinelaApiUrlHC=http://centinela.api/hc
     ports:
       - "9002:80"
 

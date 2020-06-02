@@ -145,7 +145,7 @@ class Main extends Component {
 
   async handleSentMessage(event) {
     const { user, idCaseFile, bbdd } = this.state;
-    const { idEmail, subject, date } = event.detail;
+    const { idEmail, subject, date, folder } = event.detail;
 
     await addClassification(
       user,
@@ -154,6 +154,7 @@ class Main extends Component {
         {
           id: idEmail,
           subject,
+          folder,
           sentDateTime: date,
         },
       ],

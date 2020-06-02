@@ -20,7 +20,6 @@ ingress:
 
 resources: {}
 
-
 nodeSelector: {}
 
 tolerations: []
@@ -55,17 +54,17 @@ env:
     - name: HealthChecksUI__HealthChecks__4__Uri
       key: internalurls__weblexon__hc
     - name: HealthChecksUI__HealthChecks__5__Name
-      key: name__accountapigw__hc
-    - name: HealthChecksUI__HealthChecks__5__Uri
-      key: internalurls__accountapigw__hc
-    - name: HealthChecksUI__HealthChecks__6__Name
-      key: name__lexonapigw__hc
-    - name: HealthChecksUI__HealthChecks__6__Uri
-      key: internalurls__lexonapigw__hc
-    - name: HealthChecksUI__HealthChecks__7__Name
       key: name__accountapi__hc
-    - name: HealthChecksUI__HealthChecks__7__Uri
+    - name: HealthChecksUI__HealthChecks__5__Uri
       key: internalurls__accountapi__hc
+    - name: HealthChecksUI__HealthChecks__6__Name
+      key: name__accountapigw__hc
+    - name: HealthChecksUI__HealthChecks__6__Uri
+      key: internalurls__accountapigw__hc
+    - name: HealthChecksUI__HealthChecks__7__Name
+      key: name__lexonapigw__hc
+    - name: HealthChecksUI__HealthChecks__7__Uri
+      key: internalurls__lexonapigw__hc
     - name: HealthChecksUI__HealthChecks__8__Name
       key: name__lexonapi__hc
     - name: HealthChecksUI__HealthChecks__8__Uri
@@ -74,6 +73,34 @@ env:
       key: name__lexonmysqlapi__hc
     - name: HealthChecksUI__HealthChecks__9__Uri
       key: internalurls__lexonmysqlapi__hc
+    - name: HealthChecksUI__HealthChecks__10__Name
+      key: name__centinelaapi__hc
+    - name: HealthChecksUI__HealthChecks__10__Uri
+      key: internalurls__centinelaapi__hc
+    - name: HealthChecksUI__HealthChecks__11__Name
+      key: name__userutilsapi__hc
+    - name: HealthChecksUI__HealthChecks__11__Uri
+      key: internalurls__userutilsapi__hc
+    - name: HealthChecksUI__HealthChecks__12__Name
+      key: name__centinelaapigw__hc
+    - name: HealthChecksUI__HealthChecks__12__Uri
+      key: internalurls__centinelaapigw__hc
+    - name: HealthChecksUI__HealthChecks__13__Name
+      key: name__signatureapi__hc
+    - name: HealthChecksUI__HealthChecks__13__Uri
+      key: internalurls__signatureapi__hc
+    - name: HealthChecksUI__HealthChecks__14__Name
+      key: name__signatureapigw__hc
+    - name: HealthChecksUI__HealthChecks__14__Uri
+      key: internalurls__signatureapigw__hc
+    - name: HealthChecksUI__HealthChecks__15__Name
+      key: name__websignature__hc
+    - name: HealthChecksUI__HealthChecks__15__Uri
+      key: internalurls__websignature__hc
+    - name: HealthChecksUI__HealthChecks__16__Name
+      key: name__webcentinela__hc
+    - name: HealthChecksUI__HealthChecks__16__Uri
+      key: internalurls__webcentinela__hc      
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT

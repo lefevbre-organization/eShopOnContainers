@@ -15,9 +15,9 @@ spec:
         backend:
           serviceName: webaddonlexon
           servicePort: 80
-      - path: /webloginaddonlexon
+      - path: /webcentinelaclient
         backend:
-          serviceName: webloginaddonlexon
+          serviceName: webcentinelaclient
           servicePort: 80
       - path: /webgoogleclient
         backend:

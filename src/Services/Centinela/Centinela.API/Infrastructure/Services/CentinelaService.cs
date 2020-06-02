@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -141,21 +142,31 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
         private void SerializeToMultiPart(ConceptFile fileMail, string name, out string url, out MultipartFormDataContent multipartContent)
         {
             // https://stackoverflow.com/questions/42212406/how-to-send-a-file-and-form-data-with-httpclient-in-c-sharp/42212590
-           // _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            var path = $"/documentobject/conceptobject/{fileMail.ConceptId}?idEntrada={fileMail.idNavision}";
+            // _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var contentDispositionHeader = new ContentDisposition()
+            {
+                FileName = fileMail.Name,
+                DispositionType = "attachment"
+            };
+            var path = $"/document/conceptobject/{fileMail.ConceptId}?idEntrada={fileMail.idNavision}";
             url = $"{_settings.Value.CentinelaUrl}{path}";
             TraceLog(parameters: new string[] { $"url={url}" });
 
             byte[] newBytes = Convert.FromBase64String(fileMail.ContentFile);
             var byteArrayContent = new ByteArrayContent(newBytes);
-
+            byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("application/bson");
+            byteArrayContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+            {
+                Name = fileMail.Name,
+                FileName = fileMail.Name
+            };
 
             multipartContent = new MultipartFormDataContent()
                 {
-                    //{new StringContent(surveyId), "\"surveyId\""},
-                    {byteArrayContent, name, fileMail.Name}
-
+                 //{byteArrayContent, name, fileMail.Name}
+                {byteArrayContent }
                 };
+ 
         }
 
         //private void SerializeObjectToByteArray(string textInBase64, string path, out string url, out ByteArrayContent byteArrayContent)

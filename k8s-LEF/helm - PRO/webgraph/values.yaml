@@ -33,26 +33,8 @@ env:
       key: all__InstrumentationKey
     - name: UseLoadTest
       key: all_EnableLoadTest
-    - name: DPConnectionString
-      key: webmvc__keystore
-    - name: PurchaseUrl
-      key: internalurls__apigwws
-    - name: ExternalPurchaseUrl
-      key: urls__apigwws
-    - name: CallBackUrl
-      key: urls__mvc
-    - name: IdentityUrl
-      key: urls__IdentityUrl
-    - name: MarketingUrl
-      key: internalurls__apigwwm
-    - name: PurchaseUrlHC
-      key: internalurls__apigwws__hc
-    - name: IdentityUrlHC
-      key: internalurls__identity__hc
-    - name: MarketingUrlHC
-      key: internalurls__apigwwm__hc
-    - name: SignalrHubUrl
-      key: urls__apigwws
+    - name: AccountApiGatewayUrlHC
+      key: internalurls__accountapigw__hc
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
@@ -74,5 +56,6 @@ configValues: |
   window.URL_MF_LEXON='https://lexbox-weblexon.lefebvre.es/static/js/main.js'
   window.API_GATEWAY='https://lexbox-apigwlex.lefebvre.es'
   window.URL_MF_LEXON_BASE = 'https://lexbox-weblexon.lefebvre.es'
-  window.RELEASE= 'RC 0.19'
+  window.API_CENTINELA_GATEWAY =   'https://lexbox-apigwcen.lefebvre.es/api/v1/cen'
   window.SHOW_EXPERIMENTAL='0'
+  window.RELEASE= 'RC 0.23'

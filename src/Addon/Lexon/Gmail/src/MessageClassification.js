@@ -5,7 +5,11 @@ function showNewConection() {
     .setAddonData(token)
     .setCallbackFunction('newConectionCallback')
     .setCache(CacheService.getUserCache())
-    .setPropertyStore(PropertiesService.getUserProperties());
+    .setPropertyStore(PropertiesService.getUserProperties())
+    .setLock(LockService.getUserLock())
+    .setParam('access_type', 'offline')
+    .setParam('prompt', 'consent')
+    .setParam('approval_prompt', 'force');
 }
 
 function newConectionCallback(callbackRequest) {
@@ -13,6 +17,7 @@ function newConectionCallback(callbackRequest) {
   
   return HtmlService.createHtmlOutput('Success! <script>setTimeout(function() { top.window.close() }, 1)</script>');
 }
+
 
 function buildMessageClassificationCard(e) {
 

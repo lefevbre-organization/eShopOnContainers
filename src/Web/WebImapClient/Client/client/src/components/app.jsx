@@ -108,9 +108,16 @@ class App extends Component {
     this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
       this
     );
+    this.handleGetUserFromCentinelaConnector = this.handleGetUserFromCentinelaConnector.bind(
+      this
+    );
   }
 
   hasProduct(product) {
+    if (SHOW_EXPERIMENTAL === '1') {
+      return true;
+    }
+
     if (this.props.currentUser && this.props.currentUser.roles) {
       return this.props.currentUser.roles.indexOf(product) > -1;
     }
@@ -200,7 +207,11 @@ class App extends Component {
       })
     );
 
-    if (selectedMessages.length != selected.length) {
+    if (
+      !this.props.lexon.idEmail &&
+      selectedMessages.length !== selected.length
+    ) {
+      console.log('LoadingMessage: 1');
       window.dispatchEvent(new CustomEvent('LoadingMessage'));
     }
   }
@@ -214,6 +225,34 @@ class App extends Component {
 
     if (userId) {
       this.sendMessagePutUser(userId);
+    }
+  }
+
+  handleGetUserFromCentinelaConnector() {
+    const { userId } = this.props.lexon;
+
+    if (userId) {
+      this.sendMessageCentinelaPutUser(userId);
+    }
+  }
+
+  sendMessageCentinelaPutUser(user) {
+    const { selectedMessages, selected } = this.props.messages;
+    console.log('messages ->', this.props.messages);
+    window.dispatchEvent(
+      new CustomEvent('PutUserFromCentinelaConnector', {
+        detail: {
+          user,
+          selectedMessages: selectedMessages,
+          account: this.props.all.login.formValues.user,
+          provider: 'IMAP',
+        },
+      })
+    );
+
+    if (selectedMessages.length != selected.length) {
+      console.log('LoadingMessage: 2');
+      window.dispatchEvent(new CustomEvent('LoadingMessage'));
     }
   }
 
@@ -625,6 +664,11 @@ class App extends Component {
       this.handleGetUserFromLexonConnector
     );
 
+    window.addEventListener(
+      'GetUserFromCentinelaConnector',
+      this.handleGetUserFromCentinelaConnector
+    );
+
     window.addEventListener('RemoveSelectedDocument', (event) => {
       const messages = [event.detail].map((msg) => ({
         ...msg,
@@ -737,6 +781,11 @@ class App extends Component {
       'GetUserFromLexonConnector',
       this.handleGetUserFromLexonConnector
     );
+
+    window.removeEventListener(
+      'GetUserFromCentinelaConnector',
+      this.handleGetUserFromCentinelaConnector
+    );
   }
 
   sentEmail(id, subject) {
@@ -755,6 +804,9 @@ class App extends Component {
         },
       })
     );
+
+    console.log('LoadedMessage: 1');
+    window.dispatchEvent(new CustomEvent('LoadedMessage'));
   }
 
   startPoll() {

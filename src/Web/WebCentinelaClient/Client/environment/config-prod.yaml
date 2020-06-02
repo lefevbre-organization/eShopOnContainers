@@ -5,4 +5,4 @@ metadata:
 data:
   config.js: |
     window.REACT_APP_ENVIRONMENT='PROD'
-    window.API_GATEWAY =  'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/Centinela';
+    window.API_CENTINELA_GATEWAY =  'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/Centinela';

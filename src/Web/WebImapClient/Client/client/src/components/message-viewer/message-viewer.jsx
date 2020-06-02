@@ -118,6 +118,7 @@ export class MessageViewer extends Component {
       this.props.currentFolder.fullName
     );
 
+    console.log('LoadingMessage: 5');
     window.dispatchEvent(new CustomEvent('LoadingMessage'));
     readMessageRaw(
       null,
@@ -126,7 +127,6 @@ export class MessageViewer extends Component {
       this.props.currentFolder,
       this.props.selectedMessage
     ).then((response) => {
-      debugger;
       window.dispatchEvent(
         new CustomEvent('Checkclick', {
           detail: {
@@ -142,6 +142,7 @@ export class MessageViewer extends Component {
           },
         })
       );
+      console.log('LoadedMessage: 2');
       window.dispatchEvent(new CustomEvent('LoadedMessage'));
     });
   }
