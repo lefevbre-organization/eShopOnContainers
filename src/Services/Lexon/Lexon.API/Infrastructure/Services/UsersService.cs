@@ -70,8 +70,8 @@ namespace Lexon.Infrastructure.Services
 
                         if (result.data?.Count == 0)
                             TraceOutputMessage(result.errors, "Mysql don´t create the classification", 2001);
-                        else
-                            await AddClassificationToListMongoAsync(classificationAdd, result);
+                        //else
+                        //    await AddClassificationToListMongoAsync(classificationAdd, result);
                     }
                     else
                     {
@@ -153,8 +153,8 @@ namespace Lexon.Infrastructure.Services
 
                         if (result.data == 0)
                             TraceOutputMessage(result.errors, "Mysql don´t remove the classification", 2001);
-                        else
-                            await RemoveClassificationFromListMongoAsync(classificationRemove, result);
+                        //else
+                        //    await RemoveClassificationFromListMongoAsync(classificationRemove, result);
                     }
                     else
                     {
@@ -209,13 +209,13 @@ namespace Lexon.Infrastructure.Services
                 TraceMessage(resultMySql.Errors, ex);
             }
 
-            if (resultMySql.TengoActuaciones())
-                await _usersRepository.UpsertRelationsAsync(classificationSearch, resultMySql);
-            else
-            {
-                //var resultMongo = await _usersRepository.GetRelationsAsync(classificationSearch);
-                //resultMySql.DataActuation = resultMongo.DataActuation;
-            }
+            //if (resultMySql.TengoActuaciones())
+            //    await _usersRepository.UpsertRelationsAsync(classificationSearch, resultMySql);
+            //else
+            //{
+            //    //var resultMongo = await _usersRepository.GetRelationsAsync(classificationSearch);
+            //    //resultMySql.DataActuation = resultMongo.DataActuation;
+            //}
 
             return resultMySql;
         }
@@ -508,13 +508,13 @@ namespace Lexon.Infrastructure.Services
                 TraceMessage(resultMySql.Errors, ex);
             }
 
-            if (resultMySql.TengoLista())
-                await _usersRepository.UpsertEntitiesAsync(entitySearch, resultMySql);
-            else
-            {
-                //var resultMongo = await _usersRepository.GetEntitiesAsync(entitySearch);
-                //resultMySql.Data = resultMongo.Data;
-            }
+            //if (resultMySql.TengoLista())
+            //    await _usersRepository.UpsertEntitiesAsync(entitySearch, resultMySql);
+            //else
+            //{
+            //    //var resultMongo = await _usersRepository.GetEntitiesAsync(entitySearch);
+            //    //resultMySql.Data = resultMongo.Data;
+            //}
 
             return resultMySql;
         }
