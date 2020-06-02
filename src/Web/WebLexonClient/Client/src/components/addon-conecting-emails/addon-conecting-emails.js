@@ -11,7 +11,8 @@ import { ConnectingEmailsStep3 } from '../modal-connecting-emails/step3';
 import { ConnectingEmailsStep4 } from '../modal-connecting-emails/step4';
 import {
   addClassification,
-  uploadFile
+  uploadFile,
+  getRawAddon
 } from '../../services/services-lexon';
 import ACTIONS from '../../actions/documentsAction';
 import 'react-perfect-scrollbar/dist/css/styles.css';
@@ -37,13 +38,18 @@ class AddonConnectingEmails extends Component {
         selected: -1,
       },
       messages: [],
+      rawAddon: null,
+      isSave: false
     };
 
     this.changeSubject = this.changeSubject.bind(this);
   }
 
   componentDidMount() {
-    this.setState({ messages: this.props.selectedMessages });
+    
+    this.setState({ 
+      messages: this.props.selectedMessages
+    });
   }
 
   componentDidUpdate(prevProps) {
@@ -162,7 +168,7 @@ class AddonConnectingEmails extends Component {
 
   onSaveStep2() {
     const { step1Data, step2Data } = this.state;
-    const { toggleNotification } = this.props;
+    const { toggleNotification, addonData } = this.props;
 
     if (step2Data.id === -1 || step2Data.idType === -1) {
       toggleNotification(i18n.t('classify-emails.classification-selection-ko'));
@@ -173,9 +179,7 @@ class AddonConnectingEmails extends Component {
       step1Data.copyDocuments === false &&
       step1Data.saveDocuments === false
     ) {
-      setTimeout(() => {
-        this.goBackAddon();
-      }, 1000);
+      
       this.saveClassifications();
     } else {
       this.nextStep();
@@ -185,11 +189,15 @@ class AddonConnectingEmails extends Component {
   async onSaveStep3() {
     const { step1Data, step2Data, step3Data } = this.state;
     const { toggleNotification } = this.props;
-    const { selectedMessages } = this.props;
+    const { selectedMessages, addonData } = this.props;
     let notification = 0;
 
     let sc = null;
-    // const msgRaw = await getMessage(selectedMessages[0].id, 'raw');
+    //  await getMessage(selectedMessages[0].id, 'raw');
+
+    const msgRaw = await getRawAddon(
+      addonData
+    );
 
     try {
       if (step1Data.actuation === true) {
@@ -204,7 +212,7 @@ class AddonConnectingEmails extends Component {
         notification += 2;
         // Save email as eml format
         for (let i = 0; i < selectedMessages.length; i++) {
-          const raw = Base64.encode(selectedMessages[i].raw, false);
+          const raw = Base64.encode(msgRaw.result.data.raw, false);
 
           const subject = selectedMessages[i].subject;
 
@@ -219,11 +227,12 @@ class AddonConnectingEmails extends Component {
               subject + '.eml',
               raw
             );
+            this.setState({isSave: true});
           }
 
           if (step1Data.saveDocuments === true) {
             // Save attachments
-            const mime = parse(selectedMessages[i].raw);
+            const mime = parse(msgRaw.result.data.raw);
             for (let j = 0; j < mime.childNodes.length; j++) {
               if (
                 mime.childNodes[j].raw.indexOf(
@@ -245,6 +254,7 @@ class AddonConnectingEmails extends Component {
                   mime.childNodes[j].contentType.params.name,
                   rawAttach
                 );
+                
               }
             }
           }
@@ -253,18 +263,11 @@ class AddonConnectingEmails extends Component {
 
       if (notification === 1) {
         toggleNotification(i18n.t('classify-emails.classification-saved-ok'));
-        setTimeout(() => {
-          this.goBackAddon();
-        }, 1000);
       } else if (notification === 2) {
         toggleNotification(i18n.t('classify-emails.documents-saved-ok'));
-        setTimeout(() => {
-          this.goBackAddon();
-        }, 1000);
+        this.setState({isSave: true});
       } else if (notification === 3) {
-        setTimeout(() => {
-          this.goBackAddon();
-        }, 1000);
+        this.setState({isSave: true});
         toggleNotification(
           i18n.t('classify-emails.classification-docs-saved-ok')
         );
@@ -288,6 +291,7 @@ class AddonConnectingEmails extends Component {
       user,
       companySelected,
       bbddAddon,
+      addonData,
       selectedMessages,
       toggleNotification,
     } = this.props;
@@ -306,6 +310,8 @@ class AddonConnectingEmails extends Component {
           this.props.updateClassifications(selectedMessages[0].id);
       }
 
+      this.setState({isSave: true});
+
       return res.classifications;
     } catch (err) {
       toggleNotification(
@@ -318,7 +324,7 @@ class AddonConnectingEmails extends Component {
   }
 
   renderButtons() {
-    const { step, step1Data } = this.state;
+    const { step, step1Data, isSave } = this.state;
 
     switch (step) {
       case 1:
@@ -377,6 +383,7 @@ class AddonConnectingEmails extends Component {
           <Fragment>
             <Button
               bsPrefix='btn btn-outline-primary'
+              disabled={isSave}
               onClick={() => {
                 this.goBackAddon();
               }}>
@@ -384,6 +391,7 @@ class AddonConnectingEmails extends Component {
             </Button>
             <Button
               bsPrefix='btn btn-outline-primary'
+              disabled={isSave}
               onClick={() => {
                 this.prevStep();
               }}>
@@ -402,11 +410,21 @@ class AddonConnectingEmails extends Component {
             {step1Data.actuation === false && (
               <Button
                 disabled={this.save3Disabled()}
+                hidden={isSave}
                 bsPrefix='btn btn-primary'
                 onClick={() => {
                   this.onSave();
                 }}>
                 {i18n.t('classify-emails.save')}
+              </Button>
+            )}
+            { isSave === true && (
+              <Button
+                bsPrefix='btn btn-primary'
+                onClick={() => {
+                  this.goBackAddon();
+                }}>
+                {i18n.t('classify-emails.finish')}
               </Button>
             )}
           </Fragment>
@@ -415,6 +433,7 @@ class AddonConnectingEmails extends Component {
         return (
           <Fragment>
             <Button
+              disabled={isSave}
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
                 this.goBackAddon();
@@ -422,6 +441,7 @@ class AddonConnectingEmails extends Component {
               {i18n.t('classify-emails.cancel')}
             </Button>
             <Button
+              disabled={isSave}
               bsPrefix='btn btn-outline-primary'
               onClick={() => {
                 this.prevStep();
@@ -429,12 +449,22 @@ class AddonConnectingEmails extends Component {
               {i18n.t('classify-emails.back')}
             </Button>
             <Button
+              hidden={isSave}
               bsPrefix='btn btn-primary'
               onClick={() => {
                 this.onSave();
               }}>
               {i18n.t('classify-emails.save')}
             </Button>
+             { isSave === true && (
+              <Button
+                bsPrefix='btn btn-primary'
+                onClick={() => {
+                  this.goBackAddon();
+                }}>
+                {i18n.t('classify-emails.finish')}
+              </Button>
+            )}
           </Fragment>
         );
       default:

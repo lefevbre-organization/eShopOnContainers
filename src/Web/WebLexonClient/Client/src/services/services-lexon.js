@@ -489,3 +489,26 @@ export const downloadFile = async (
     throw err;
   }
 };
+
+export const getRawAddon = async (
+  addonData
+) => {
+  const url = `${window.URL_GET_ACCOUNTS}/E1621396/raw?`
+  + 'provider='+ addonData.provider + '&account=' + 
+  addonData.account +'&messageId=' + addonData.messageById;
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+    });
+    const result = await response.json();
+
+    return { result };
+  } catch (err) {
+    throw err;
+  }
+};
