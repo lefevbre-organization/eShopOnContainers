@@ -1,14 +1,19 @@
-/*.hidden {
+.hidden {
     display: none !important;
+}
+/*.e-dialog {
+    width: 700px !important;
 }*/
+.custom-field-row {
+    padding-bottom: 12px !important;
+}
 
-.custom-tab-row{
-    min-height:470px
+.custom-tab-row {
+    min-height: 470px
 }
 .e-tab .e-content {
    padding-top:10px !important;
 }
-
 
 .callayout {
     padding-top: 9px;

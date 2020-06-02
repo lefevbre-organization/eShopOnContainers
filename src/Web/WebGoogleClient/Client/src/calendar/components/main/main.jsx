@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import ReactDOM from "react-dom";
 import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
 import ACTIONS from '../../../actions/lexon';
@@ -37,8 +38,11 @@ import { createElement } from '@syncfusion/ej2-base';
 
 import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
 import { Browser, Internationalization, extend } from '@syncfusion/ej2-base';
-import ReactTagInput from "@pathofdev/react-tag-input";
+import  ReactTagInput from "@pathofdev/react-tag-input/";
+
 import "@pathofdev/react-tag-input/build/index.css";
+
+import { DropDownList } from '@syncfusion/ej2-dropdowns';
 
 export class Main extends Component {
 
@@ -65,6 +69,15 @@ export class Main extends Component {
         //this.CalendarList = [];
         this.position = { X: 'Center', Y: 'Bottom' };
         this.resourceCalendarData = [];
+
+        this.ownerData = [
+            { text: 'a.valverde-ext@lefebvre.es', id:'a.valverde-ext@lefebvre.es' },
+            { text: 'albertovalverd@hotmail.com', id: 'albertovalverd@hotmail.com' },
+            { text: 'alberto.valverde.escribano@gmail.com', id: 'alberto.valverde.escribano@gmail.com' }  
+        ];
+
+       
+
         this.toasts = [
             { content: 'Processing', cssClass: 'e-toast-black', icon: '' },
             { content: 'Process complete', cssClass: 'e-toast-black', icon: '' },
@@ -84,7 +97,7 @@ export class Main extends Component {
             },
             hidePromptDialog: false,
             calendarToEdit: undefined,
-            tagAttendess: ['pepe@ee.es', 'hola@es.es']
+            tagAttendess: ['a.valverde-ext@lefebvre.es', 'albertovalverd@hotmail.com', 'alberto.valverde.escribano@gmail.com']
 
             //externalcomponent: "<LexonComponent sidebarDocked={this.onSetSidebarDocked} />"
 
@@ -528,6 +541,14 @@ export class Main extends Component {
         );
     }
 
+ CheckEnterKey(args) {
+    if (args.which == 13) {
+        args.preventDefault();
+        
+    }
+ }
+
+
     onPopupOpen(args) {
 
         if (args.type === 'QuickInfo') {
@@ -535,6 +556,31 @@ export class Main extends Component {
         }
         if (args.type === 'Editor') {
 
+            var dialogObj = args.element.ej2_instances[0];
+            dialogObj.buttons[1].buttonModel.isPrimary = false; 
+
+            // Create required custom elements in initial time
+            if (!args.element.querySelector('.custom-field-row')) {
+                let row = createElement('div', { className: 'custom-field-row' });
+                let formElement = args.element.querySelector('.e-schedule-form');
+                formElement.firstChild.insertBefore(row, formElement.firstChild.firstChild);
+                let container = createElement('div', { className: 'custom-field-container' });               
+                row.appendChild(container);             
+
+                //let tag = new ReactTagInput({
+                //    tags: this.state.tagAttendess,
+                //    placeholder: "Invite Attendees",
+                //    maxTags: 10,
+                //    editable:true,
+                //    readOnly:false,
+                //    removeOnBackspace:true,
+                //    onChange:this.setEmailTags                
+                //});               
+                
+                var node = ReactDOM.findDOMNode(this.tagObj);
+                container.appendChild(node);
+
+            }          
 
             let TabContainer = args.element.querySelector('.custom-tab-row');
             if (TabContainer == null) {
@@ -556,14 +602,12 @@ export class Main extends Component {
                     tabObj.animation.next = { duration: 100 };
                     tabObj.animation.previous = { effect: 'FadeIn' };
                     tabObj.animation.next = { effect: 'FadeIn' };
-
-
                     tabObj.appendTo(row);
                 }
             }
             else {
                 console.log(this.tabInstance);
-            }
+            }         
 
         }
     }
@@ -818,6 +862,9 @@ export class Main extends Component {
         this.setState({ tagAttendess: [...tag] })
     }
 
+
+    
+
     render() {
 
 
@@ -900,24 +947,28 @@ export class Main extends Component {
                             />
                             <article className='d-flex flex-column position-relative'>
                                 {/*<Switch>*/}
-                                <ReactTagInput
-                                    tags={this.state.tagAttendess}
-                                    placeholder="Type and press enter"
-                                    maxTags={10}
-                                    editable={true}
-                                    readOnly={false}
-                                    removeOnBackspace={true}
-                                    onChange={(newTags) => this.setEmailTags(newTags)}
-                                    validator={(value) => {
-                                        // Don't actually validate e-mails this way
-                                        const isEmail = value.indexOf("@") !== -1;
-                                        if (!isEmail) {
-                                            alert("Please enter an e-mail address");
-                                        }
-                                        // Return boolean to indicate validity
-                                        return isEmail;
-                                    }}
-                                />
+                                <div className="hidden">
+                                    <ReactTagInput  
+                                        onkeypress="alert('')"
+                                        tags={this.state.tagAttendess}
+                                        placeholder="Invite Attendees"
+                                        maxTags={10}
+                                        editable={true}
+                                        readOnly={false}
+                                        removeOnBackspace={false}
+                                        ref={tag => this.tagObj = tag}
+                                        onChange={(newTags) => this.setEmailTags(newTags)}
+                                        validator={(value) => {
+                                            // Don't actually validate e-mails this way
+                                            const isEmail = value.indexOf("@") !== -1;
+                                            if (!isEmail) {
+                                                alert("Please enter an e-mail address");
+                                            }
+                                            // Return boolean to indicate validity
+                                            return isEmail;
+                                        }}
+                                     />
+                                </div>
 
                                 <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
@@ -926,6 +977,7 @@ export class Main extends Component {
                                                 ref={schedule => this.scheduleObj = schedule}
                                                 width='100%'
                                                 currentView="Month"
+                                                allowKeyboardInteraction={true}
                                                 height='650px'
                                                 views={this.viewsCollections}
                                                 actionComplete={this.onEventRendered.bind(this)}
@@ -944,10 +996,20 @@ export class Main extends Component {
                                                     <ViewDirective option='Agenda' eventTemplate={this.eventTemplate.bind(this)} />
                                                 </ViewsDirective>
 
+                                               
+
                                                 <ResourcesDirective>
+
+                                                    {/* <ResourceDirective field='AttendeesId' title='Attendees' name='MeetingRoom' allowMultiple={true} >
+                                                    </ResourceDirective> */}
+                                                  
                                                     <ResourceDirective field='CalendarId' title='My Calendars' name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor'>
-                                                    </ResourceDirective>
+                                                    </ResourceDirective>                                                                                           
+                                                   
                                                 </ResourcesDirective>
+
+                                               
+
                                                 <Inject services={[Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop]} />
                                             </ScheduleComponent>
                                         </div>
