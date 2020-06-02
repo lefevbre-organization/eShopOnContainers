@@ -308,6 +308,7 @@ services:
       - Database=signature
       - SignaturitApiUrl=https://api.sandbox.signaturit.com/v3
       - LexonFilesUrl=https://10.38.6.18/index.php
+      - LexonApiGwUrl=https://lexbox-test-apigwlex.lefebvre.es/api/v1
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}        
