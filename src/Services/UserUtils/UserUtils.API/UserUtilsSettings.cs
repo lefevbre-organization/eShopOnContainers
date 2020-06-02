@@ -31,6 +31,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
         public string OnlineLogin { get; set; }
         public string OnlinePassword { get; set; }
 
+        public string CentinelaApiUrl { get; set; }
+        public string LexonApiUrl { get; set; }
+        public string SignaturitApiUrl { get; set; }
+
         public ByPassModel[] ByPassUrls { get; set; }
     }
 }
