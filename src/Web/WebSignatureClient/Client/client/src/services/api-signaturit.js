@@ -748,6 +748,7 @@ const calculateStatus = (signatures) => {
   let numInProgress = 0;
   let numCancelled = 0;
   let numRejected = 0;
+  let numExpired = 0;
   signatures.map(signature => {
     numSigners = signature.documents.length;
       signature.documents.map( document => {
@@ -764,6 +765,9 @@ const calculateStatus = (signatures) => {
         case 'declined':
           numRejected += 1;
           break;
+        case 'expired':
+          numExpired += 1;
+          break;
         default:
           break;
       }
@@ -771,18 +775,21 @@ const calculateStatus = (signatures) => {
     console.log('NumSigners: '+ numSigners);
     if (numSigners === numCompleted){
       signature.status = 'completed';
-    } else if (numSigners > 0 && numCompleted < numSigners && numCancelled === 0 && numRejected === 0){
+    } else if (numSigners > 0 && numCompleted < numSigners && numCancelled === 0 && numRejected === 0 && numExpired === 0){
       signature.status = 'ready';
     } else if (numSigners > 0 && numCancelled > 0){
       signature.status = 'canceled';
     } else if (numSigners > 0 && numRejected > 0){
       signature.status = 'declined';
+    } else if (numSigners > 0 && numExpired > 0){
+      signature.status = 'expired';
     }
     numSigners = 0;
     numCompleted = 0;
     numInProgress = 0;
     numCancelled = 0;
     numRejected = 0;
+    numExpired = 0;
   })
   console.log("Signatures after: ");
   console.log({signatures});
@@ -808,6 +815,59 @@ export const getUser = async userId => {
     }
   };
 
+export const getAttachmentLex = async (bbdd, attachmentId, userId) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    
+    var raw = JSON.stringify({"idEntity":attachmentId,"bbdd":bbdd,"idUser":userId});
+    
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+    
+    fetch("https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Lexon/entities/files/get", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        resolve(result);
+      })
+      .catch(error => {
+        console.log('error', error);
+        reject(error);
+      });
+  })
+}
+
+export const getAttachmentCen = async (userId, attachmentId) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+    myHeaders.append("Content-Type", "application/json-patch+json");
+        
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    userId = 'E1669460'; //Para pruebas
+    
+    fetch(`https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/concepts/files/get?idNavisionUser=${userId}&idDocument=${attachmentId}`, requestOptions)
+    .then(response => response.json())
+    .then(result => {
+      console.log(result);
+      resolve(result);
+    })
+    .catch(error => {
+      console.log('error', error);
+      reject(error);
+    });
+  })
+}
 
 // export const createSignature = async (recipients, files) => {
 //     var request = require('request');

@@ -16,13 +16,15 @@ import { persistApplicationNewMessageContent } from '../../services/indexed-db';
 import styles from './message-editor.scss';
 import mainCss from '../../styles/main.scss';
 import i18n from 'i18next';
-import ACTIONS from '../../actions/lexon';
+import ACTIONS from '../../actions/lefebvre';
 import ComposeMessageEditor from './composeMessageEditor.jsx';
 
 import { createSignature, createSignature2, addOrUpdateSignature, getUserSignatures, createUser, decAvailableSignatures } from '../../services/api-signaturit';
 import { getUser } from '../../services/accounts';
 //import { createUser, addOrUpdateSignature, getUserSignatures } from '../../services/api-signature';
 import * as uuid from 'uuid/v4';
+import { getUrlType } from '../../services/jwt';
+import { getFileType } from '../../services/mimeType';
 
 class MessageEditor extends Component {
   constructor(props) {
@@ -69,13 +71,13 @@ class MessageEditor extends Component {
     if (this.fileInput) {
       this.fileInput.onchange = this.onAttachSelected;
     }
-    //createSignature();
+        //createSignature();
   }
 
   removeMessageEditor(aplication) {
-    const { close, lexon } = this.props;
+    const { close, lefebvre } = this.props;
 
-    if (lexon.mailContacts) {
+    if (lefebvre.mailContacts) {
       this.props.setMailContacts(null);
     }
 
@@ -298,7 +300,7 @@ class MessageEditor extends Component {
           <button
             className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']}
             ${styles['action-button']} ${styles.send}`}
-            disabled={to.length + cc.length + bcc.length === 0}
+            disabled={to.length + cc.length + bcc.length === 0 || this.props.attachments.length === 0}
             onClick={this.handleSubmit}>
             {t('messageEditor.send')}
           </button>
@@ -371,8 +373,8 @@ class MessageEditor extends Component {
       // Get content directly from editor, state content may not contain latest changes
       const content = this.getEditor().getContent();
       const { to, cc,  subject } = this.props;
-      const { lexon } = this.props;
-      const userBranding = lexon.userBrandings.find(b => b.app === lexon.userApp)
+      const { lefebvre } = this.props;
+      const userBranding = lefebvre.userBrandings.find(b => b.app === lefebvre.userApp)
       
       let  reminders = [];
       switch (this.state.selectedReminderOption) {
@@ -430,30 +432,38 @@ class MessageEditor extends Component {
       console.log({reminders});
       console.log(expiration);
 
-      let guid = lexon.guid;
+      let guid = lefebvre.guid;
       if (guid === null){
         guid =  uuid();
       }
 
-      if (document.getElementById('file-input').files[0]){
-          var reader = new FileReader();
-          reader.readAsDataURL(document.getElementById('file-input').files[0]);
-          reader.onloadend = (evt) => {
-             console.log(evt.target.result);
-             var fileData = evt.target.result.split('base64,')[1];
-             this.callApis(to, subject, content.innerHTML, document.getElementById('file-input').files[0], fileData, reminders, expiration, lexon.userId, guid, userBranding.externalId);
-          }
-          reader.onerror = function (evt) {
-              console.log("error reading file");
-          }
+
+
+      // if (document.getElementById('file-input').files[0]){
+      //     var reader = new FileReader();
+      //     reader.readAsDataURL(document.getElementById('file-input').files[0]);
+      //     reader.onloadend = (evt) => {
+      //        console.log(evt.target.result);
+      //        var fileData = evt.target.result.split('base64,')[1];
+      //        this.callApis(to, subject, content.innerHTML, document.getElementById('file-input').files[0], fileData, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
+      //     }
+      //     reader.onerror = function (evt) {
+      //         console.log("error reading file");
+      //     }
+      // } else 
+      if (this.props.attachments){
+        var attachment = this.props.attachments[0];
+        var file = new File([attachment.content], attachment.fileName, {type: getFileType(attachment.fileName), lastModified: new Date()})
+        this.callApis(to, subject, content.innerHTML, file, this.props.attachments[0].content, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
+
       }
-      //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lexon.userId, guid);
+      //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
     }
   }
 
 
   callApis(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId){
-    const { lexon } = this.props;
+    const { lefebvre } = this.props;
     
     createSignature2(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId, this.props.credentials.encrypted)
     .then( signatureInfo => {
@@ -464,11 +474,11 @@ class MessageEditor extends Component {
         getUserSignatures(userId)
         .then( userInfo => {
           if (userInfo && userInfo.errors && userInfo.errors.code && userInfo.errors.code === "1003"){
-            const signature = {externalId: signatureInfo.id, guid: guid, app: lexon.userApp}
+            const signature = {externalId: signatureInfo.id, guid: guid, app: lefebvre.userApp}
             createUser(userId, signature);
           } else {
             console.log('Insertando sólo firma');
-            addOrUpdateSignature(userId, signatureInfo.id, guid, lexon.userApp);
+            addOrUpdateSignature(userId, signatureInfo.id, guid, lefebvre.userApp);
           }
           decAvailableSignatures(userId)
           .then(res => this.props.setAvailableSignatures(res.data))
@@ -663,7 +673,7 @@ const mapStateToProps = state => ({
   editor: state.application.newMessage.editor,
   content: state.application.newMessage.content,
   getAddresses: value => getAddresses(value, state.messages.cache),
-  lexon: state.lexon,
+  lefebvre: state.lefebvre,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -690,7 +700,7 @@ const mapDispatchToProps = dispatch => ({
       subject,
       content
     }),
-  setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
+  // setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
   setMailContacts: mailContacts =>
     dispatch(ACTIONS.setMailContacts(mailContacts)),
   setGuid: guid => dispatch(ACTIONS.setGUID(guid)),

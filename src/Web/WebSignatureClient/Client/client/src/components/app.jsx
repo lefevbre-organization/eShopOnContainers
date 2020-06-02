@@ -26,12 +26,12 @@ import {
 } from '../actions/application';
 import { clearSelected, setSelected } from '../actions/messages';
 import {
-  setEmailShown,
-  resetIdEmail,
-  setCaseFile,
+  // setEmailShown,
+  // resetIdEmail,
+  // setCaseFile,
   setGUID,
   setSign
-} from '../actions/lexon';
+} from '../actions/lefebvre';
 
 import { getSelectedFolder } from '../selectors/folders';
 
@@ -64,7 +64,8 @@ import CalendarComponent from '../apps/calendar_content';
 import DataBaseComponent from '../apps/database_content';
 import { PROVIDER } from '../constants';
 
-import { preloadSignatures, preloadSignatures2, getSignatures} from "../services/api-signaturit";
+import { preloadSignatures, preloadSignatures2, getSignatures, getAttachmentLex, getAttachmentCen } from "../services/api-signaturit";
+import { getFileType } from '../services/mimeType';
 
 const MESSAGENOTFOUND_SNACKBAR_DURATION = 4000;
 
@@ -104,13 +105,9 @@ class App extends Component {
     this.onSetSidebarOpenCalendar = this.onSetSidebarOpenCalendar.bind(this);
     this.onSetSidebarOpenLexon = this.onSetSidebarOpenLexon.bind(this);
     this.onSetSidebarOpenQMemento = this.onSetSidebarOpenQMemento.bind(this);
-    this.onSetSidebarOpenCompliance = this.onSetSidebarOpenCompliance.bind(
-      this
-    );
+    this.onSetSidebarOpenCompliance = this.onSetSidebarOpenCompliance.bind(this);
     this.onSetSidebarOpenDatabase = this.onSetSidebarOpenDatabase.bind(this);
-    this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
-      this
-    );
+    this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(this);
   }
 
   onSetSidebarOpenCalendar(open) {
@@ -200,7 +197,7 @@ class App extends Component {
   }
 
   render() {
-    const { t, lexon } = this.props;
+    const { t, lefebvre } = this.props;
     const { sideBar, isUpdatedDefaultAccount } = this.state;
 
     if (!isUpdatedDefaultAccount) {
@@ -272,8 +269,8 @@ class App extends Component {
             <SideBar
               collapsed={sideBar.collapsed}
               sideBarToggle={this.toggleSideBar}
-              casefile={lexon.idCaseFile}
-              bbdd={lexon.bbdd}
+              casefile={lefebvre.idCaseFile}
+              bbdd={lefebvre.bbdd}
             />
             <div id='mainnav-app' />
 
@@ -290,10 +287,10 @@ class App extends Component {
             <div className={styles.productpanel}>
               <span
                 className={styles.productsbutton}
-                isotip={t('productBar.lexon')}
+                isotip={t('productBar.lefebvre')}
                 isotip-position='bottom-end'
                 isotip-size='small'>
-                {lexon.user ? (
+                {lefebvre.user ? (
                   <IconButton onClick={() => this.onSetSidebarOpenLexon(true)}>
                     <img
                       border='0'
@@ -466,38 +463,77 @@ class App extends Component {
     //setTimeout(function () { this.registerConnectorApp(); }, 2200);
     this.registerConnectorApp();
 
-    const { lexon } = this.props;
+    const { lefebvre } = this.props;
 
     console.log('******************************');
     console.log('******************************');
     console.log('******************************');
     console.log('');
-    console.log('App.ComponentDidMount: Llamando a preloadSignatures(lexon.userId)');
+    console.log('App.ComponentDidMount: Llamando a preloadSignatures(lefebvre.userId)');
     console.log('******************************');
     console.log('******************************');
     console.log('******************************');
     console.log('');
 
-    this.props.preloadSignatures(lexon.userId)
+    this.props.preloadSignatures(lefebvre.userId)
     .then( () => {
-      if (lexon.guid !== null){
+      if (lefebvre.guid !== null){ // Viene guid de firma interno. Puede ser por petición de firma nueva o para ver el estado de una firma existente.
         const { signatures } = this.props.application;
         let newSignature = true;
         if (signatures && signatures.length > 0){
           (signatures.some(s => 
-            (s.data.find( d => d.key === "lefebvre_guid" && d.value === lexon.guid)) 
+            (s.data.find( d => d.key === "lefebvre_guid" && d.value === lefebvre.guid)) 
               ? newSignature = this.openSignature(s) 
               : null)
           )
         } 
         if (newSignature) {
-          this.props.newMessage([], null);
+          if ((lefebvre.userApp === "lex" || lefebvre.userApp === "lexon") && lefebvre.idEntityType === 14 && lefebvre.idEntity && lefebvre.idEntity > 0){ // Hay que recuperar un adjunto de lexon
+            this.props.getAttachmentLex(lefebvre.bbdd, lefebvre.idEntity, lefebvre.idUserApp)
+            .then((attachment) => {
+                if (attachment.data === null){ //El fichero no existe o no se ha podido recuperar
+                  this.props.newMessage();
+                }
+                else {
+                  const length = attachment.data.length;
+                  const fileName = attachment.infos[0].message.split(":")[1].replace(/"/g,'').trim();
+                  const newAttachment = [{
+                    fileName: fileName,
+                    size: length,
+                    contentType: getFileType(fileName),
+                    content: attachment.data
+                  }]
+                  this.props.newMessage([], null, newAttachment);
+                }
+            })
+            .catch(() => this.props.newMessage([], null));
+          } 
+          else if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela") && lefebvre.idDocument && lefebvre.idDocument > 0){
+            this.props.getAttachmentCen(lefebvre.userId, lefebvre.idDocument)
+            .then((attachment) => {
+              if (attachment.data === null) { //El fichero no existe o no se ha podido recuperar
+                this.props.newMessage();
+              }
+              else {
+                const length = attachment.data.length;
+                  const fileName = attachment.infos[0].message.split(":")[1].replace(/"/g,'').trim();
+                  const newAttachment = [{
+                    fileName: fileName,
+                    size: length,
+                    contentType: getFileType(fileName),
+                    content: attachment.data
+                  }]
+                  this.props.newMessage([], null, newAttachment);
+              }
+            })
+            .catch(() => this.props.newMessage([], null));
+          }
         }  
       }
     })
     .catch(err => { throw new Error(err);} );
 
-  
+
 
 
     // if (userId !== null && email !== null) {
@@ -657,17 +693,17 @@ class App extends Component {
       () => this.props.setError('messageNotFound', null),
       MESSAGENOTFOUND_SNACKBAR_DURATION
     );
-    this.props.resetIdEmail();
+    // this.props.resetIdEmail();
     if (
-      this.props.lexon.idCaseFile !== null &&
-      this.props.lexon.idCaseFile !== undefined
+      this.props.lefebvre.idCaseFile !== null &&
+      this.props.lefebvre.idCaseFile !== undefined
     ) {
-      window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
-      this.props.setCaseFile({
-        casefile: null,
-        bbdd: this.props.lexon.bbdd,
-        company: this.props.lexon.company
-      });
+      // window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
+      // this.props.setCaseFile({
+      //   casefile: null,
+      //   bbdd: this.props.lefebvre.bbdd,
+      //   company: this.props.lefebvre.company
+      // });
     }
   }
 
@@ -677,7 +713,7 @@ class App extends Component {
 
   async componentDidUpdate() {
     if (
-      this.props.lexon.userId !== '' &&
+      this.props.lefebvre.userId !== '' &&
       this.props.outbox &&
       this.props.outbox.sent &&
       !this.props.outbox.eventNotified
@@ -687,9 +723,9 @@ class App extends Component {
         this.props.outbox.message.subject
       );
 
-      if (this.props.lexon.bbdd && this.props.email) {
+      if (this.props.lefebvre.bbdd && this.props.email) {
         try {
-          const user = await getUser(this.props.lexon.userId);
+          const user = await getUser(this.props.lefebvre.userId);
 
           if (user && user.data && user.data.configUser) {
             console.log(user)
@@ -710,9 +746,9 @@ class App extends Component {
                 emailDate,
                 this.props.outbox.message.recipients.map(rec => rec.address),
                 folder.fullName,
-                this.props.lexon.provider,
+                this.props.lefebvre.provider,
                 this.props.email,
-                this.props.lexon.bbdd,
+                this.props.lefebvre.bbdd,
                 user.data.lexonUserId
               );
             }
@@ -781,7 +817,7 @@ class App extends Component {
   async refreshPoll() {
     let keepPolling = true;
     try {
-      if (this.props.lexon.idEmail && !this.props.lexon.emailShown) {
+      if (this.props.lefebvre.idEmail && !this.props.lefebvre.emailShown) {
         const folderPromise = this.props.reloadFolders();
         await Promise.all([folderPromise]);
 
@@ -795,7 +831,7 @@ class App extends Component {
           explodedItems.some(folder => {
             if (
               folder[1].fullName.toUpperCase() ===
-              this.props.lexon.idFolder.toUpperCase()
+              this.props.lefebvre.idFolder.toUpperCase()
             ) {
               console.log('*************** FOLDER FOUND2');
               targetFolder = folder[1];
@@ -804,7 +840,7 @@ class App extends Component {
             }
             return (
               folder[1].fullName.toUpperCase() ===
-              this.props.lexon.idFolder.toUpperCase()
+              this.props.lefebvre.idFolder.toUpperCase()
             );
           });
 
@@ -817,7 +853,7 @@ class App extends Component {
                 ].values()
               );
               const message = messages.find(
-                e => e.messageId === this.props.lexon.idEmail
+                e => e.messageId === this.props.lefebvre.idEmail
               );
               console.log({ messages });
 
@@ -831,7 +867,7 @@ class App extends Component {
                 console.log('**************************** MESSAGE NOT FOUND2:');
                 this.renderNotFoundModal();
               }
-              this.props.setEmailShown(true);
+              // this.props.setEmailShown(true);
             });
           }
         }
@@ -876,8 +912,8 @@ App.propTypes = {
   reloadFolders: PropTypes.func,
   reloadMessageCache: PropTypes.func,
   loadMessageByFolder: PropTypes.func,
-  newMessage: PropTypes.func.isRequired,
-  resetIdEmail: PropTypes.func
+  newMessage: PropTypes.func.isRequired //,
+  // resetIdEmail: PropTypes.func
 };
 
 const mapStateToProps = state => ({
@@ -887,7 +923,7 @@ const mapStateToProps = state => ({
   folders: state.folders,
   receivedFolder: getSelectedFolder(state) || {},
   messages: state.messages,
-  lexon: state.lexon,
+  lefebvre: state.lefebvre,
   email: state.login.formValues.user,
   all: state
 });
@@ -896,7 +932,7 @@ const mapDispatchToProps = dispatch => ({
   reloadFolders: credentials => getFolders(dispatch, credentials, true),
   reloadMessageCache: (user, folder) =>
     resetFolderMessagesCache(dispatch, user, folder),
-  newMessage: (to, sign) => editNewMessage(dispatch, to, sign),
+  newMessage: (to, sign, attachments) => editNewMessage(dispatch, to, sign, attachments),
   selectFolder: (folder, user) => {
     dispatch(selectFolder(folder));
     clearSelectedMessage(dispatch);
@@ -907,7 +943,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(selectMessage(message));
     readMessage(dispatch, credentials, downloadedMessages, folder, message);
   },
-  setEmailShown: flag => dispatch(setEmailShown(flag)),
+  // setEmailShown: flag => dispatch(setEmailShown(flag)),
   outboxEventNotified: () => dispatch(outboxEventNotified()),
   logout: () => {
     dispatch(clearUserCredentials());
@@ -918,14 +954,16 @@ const mapDispatchToProps = dispatch => ({
     //persistApplicationNewMessageContent(application, "");
   },
   setError: (err, msg) => dispatch(setError(err, msg)),
-  resetIdEmail: () => dispatch(resetIdEmail()),
-  setCaseFile: casefile => dispatch(setCaseFile(casefile)),
+  // resetIdEmail: () => dispatch(resetIdEmail()),
+  // setCaseFile: casefile => dispatch(setCaseFile(casefile)),
   // setSelected: (messages, selected, shiftKey) =>
   //   dispatch(setSelected(messages, selected, shiftKey)),
   setGUID: guid => dispatch(setGUID(guid)),
   setSign: sign => dispatch(setSign(sign)),
   preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth),
-  signatureClicked: signature => dispatch(selectSignature(signature))
+  signatureClicked: signature => dispatch(selectSignature(signature)),
+  getAttachmentLex: (bbdd, id, user) => getAttachmentLex(bbdd, id, user),
+  getAttachmentCen: (userId, documentId) => getAttachmentCen(userId, documentId),
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
@@ -943,14 +981,16 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
         stateProps.receivedFolder,
         message
       ),
-    setEmailShown: flag => dispatchProps.setEmailShown(flag),
+    // setEmailShown: flag => dispatchProps.setEmailShown(flag),
     outboxEventNotified: () => dispatchProps.outboxEventNotified(),
     close: application => dispatchProps.close(stateProps.application),
     setError: (err, msg) => dispatchProps.setError(err, msg),
-    resetIdEmail: () => dispatchProps.resetIdEmail(),
-    setCaseFile: casefile => dispatchProps.setCaseFile(casefile),
+    // resetIdEmail: () => dispatchProps.resetIdEmail(),
+    // setCaseFile: casefile => dispatchProps.setCaseFile(casefile),
     preloadSignatures: (userId) => dispatchProps.preloadSignatures(userId, stateProps.application.user.credentials.encrypted),
     signatureClicked: signature => dispatchProps.signatureClicked(signature),
+    getAttachmentLex: (bbdd, id, user) => dispatchProps.getAttachmentLex(bbdd, id, user),
+    getAttachmentCen: (userId, documentId) => dispatchProps.getAttachmentCen(userId, documentId)
   });
 
 export default connect(

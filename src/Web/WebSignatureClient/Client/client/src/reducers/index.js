@@ -3,7 +3,7 @@ import application from './application';
 import folders from './folders';
 import login from './login';
 import messages from './messages';
-import lexon from './lexon';
+import lefebvre from './lefebvre';
 
 export const INITIAL_STATE = {
     application: {
@@ -44,7 +44,7 @@ export const INITIAL_STATE = {
         locked: [],
         activeRequests: 0
     },
-    lexon: {
+    lefebvre: {
         user: null,
         account: null,
         userId: null,
@@ -61,7 +61,12 @@ export const INITIAL_STATE = {
         userName: null,
         userApp: null, 
         availableSignatures: 0,
-        userBrandings: null
+        userBrandings: null,
+        idEntityType: null,
+        idEntity: null,
+        idUserApp: null,
+        bbdd: null,
+        idDocument: null
     }
 };
 
@@ -71,5 +76,5 @@ export default combineReducers({
     login,
     folders: folders,
     messages: messages,
-    lexon: lexon
+    lefebvre: lefebvre
 });

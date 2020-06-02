@@ -11,6 +11,10 @@ export const parseJwt = token => {
     return JSON.parse(jsonPayload);
 }
 
+export const getIdUserApp = payload => {
+  return(payload.hasOwnProperty('idUserApp') ? payload.idUserApp :  null)
+}
+
 export const getUserId = payload =>{
   return(payload.hasOwnProperty('idClienteNavision') ? payload.idClienteNavision : (payload.hasOwnProperty('idLexonUser')) ? payload.idLexonUser : (payload.hasOwnProperty('nameUser')) ? payload.nameUser : (payload.hasOwnProperty('userId')) ? payload.userId : null);
 }
@@ -65,6 +69,10 @@ export const getIdEntityType = payload =>{
 
 export const getIdEntity = payload =>{
   return(payload.hasOwnProperty('idEntity') ? payload.idEntity : null);
+}
+
+export const getIdDocument = payload =>{
+  return(payload.hasOwnProperty('idDocument') ? payload.idDocument : null);
 }
 
 export const getMailContacts = payload => {

@@ -305,7 +305,7 @@ export class MessageContent extends Component {
   }
 
   renderInbox() {
-    this.props.history.push('/');
+    this.props.history.push(`/${this.props.labelInbox.id}`);
   }
 
   markEmailAsRead(message) {
@@ -332,7 +332,7 @@ export class MessageContent extends Component {
   modifyMessage(addLabelIds, removeLabelIds) {
     if (addLabelIds[0] === 'UNREAD') {
       setMessageAsUnread(this.props.emailMessageResult.result.id);
-      this.props.history.goBack();
+      this.renderInbox();
       return;
     }
 
@@ -390,6 +390,7 @@ const mapStateToProps = (state) => ({
   emailMessageResult: state.emailMessageResult,
   emailHeaderMessageResult: state.emailHeaderMessageResult,
   selectedMessages: state.messageList.selectedMessages,
+  labelInbox: state.labelsResult.labelInbox,
 });
 
 const mapDispatchToProps = (dispatch) =>

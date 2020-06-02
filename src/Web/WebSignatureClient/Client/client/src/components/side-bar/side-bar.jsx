@@ -12,7 +12,7 @@ import { editNewMessage } from '../../services/application';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import { getAvailableSignatures } from '../../services/api-signaturit';
-import { setAvailableSignatures } from '../../actions/lexon';
+import { setAvailableSignatures } from '../../actions/lefebvre';
 
 class SideBar extends Component {
   constructor(props) {
@@ -89,16 +89,16 @@ class SideBar extends Component {
   }
 
   onNewMessage() {
-    const { lexon } = this.props;
+    const { lefebvre } = this.props;
 
-    getAvailableSignatures(lexon.userId)
+    getAvailableSignatures(lefebvre.userId)
     .then(response => {
       setAvailableSignatures(response.data);
       if (response.data === 0){
         alert('Ha agotado todas sus solicitudes de firma. Debe comprar más');
       } else {
         this.props.setAvailableSignatures(response.data);
-        this.props.newMessage(lexon.sign);
+        this.props.newMessage(lefebvre.sign);
       }
     })
     .catch(err => {
@@ -106,7 +106,7 @@ class SideBar extends Component {
         //Mostrar aviso no se han podido recuperar firmas
         alert('No se ha podido comprobar si tiene firmas disponibles');
         this.props.setAvailableSignatures(1);
-        this.props.newMessage(lexon.sign);
+        this.props.newMessage(lefebvre.sign);
       }
     })
   }
@@ -160,7 +160,7 @@ SideBar.propTypes = {
 const mapStateToProps = state => ({
   application: state.application,
   errors: state.application.errors,
-  lexon: state.lexon
+  lefebvre: state.lefebvre
 });
 
 const mapDispatchToProps = dispatch => ({

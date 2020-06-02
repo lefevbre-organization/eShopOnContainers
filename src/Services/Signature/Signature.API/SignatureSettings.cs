@@ -9,8 +9,11 @@
         //public string CollectionMasters { get; set; }
         public string CollectionEvents { get; set; }
 
-        public string SignatureMySqlUrl { get; set; }
-        public string SignatureFilesUrl { get; set; }
+        public string LexonMySqlUrl { get; set; }
+        public string LexonFilesUrl { get; set; }
+        public string LexonApiGwUrl { get; set; }
+
+        public string SignaturitApiUrl { get; set; }
 
         public string EventBusConnection { get; set; }
         public string EventBusUserName { get; set; }

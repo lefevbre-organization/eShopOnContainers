@@ -47,6 +47,7 @@ namespace Signature.API.Extensions
             services.AddTransient<ISignaturesRepository, SignaturesRepository>();
             services.AddTransient<IBrandingsService, BrandingsService>();
             services.AddTransient<IBrandingsRepository, BrandingsRepository>();
+            services.AddTransient<ISignaturitService, SignaturitService>();
             return services;
         }
 

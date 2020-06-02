@@ -53,4 +53,8 @@ env:
     - name: OrchestratorType
       value: 'K8S'
     - name: SignaturitApiUrl
-      value: https://api.sandbox.signaturit.com/
+      value: 'https://api.sandbox.signaturit.com/v3'
+    - name: LexonFilesUrl
+      value: 'https://led-dev-lexon.eu.els.local/index.php'
+    - name: LexonApiGwUrl
+      value: 'https://lexbox-test-apigwlex.lefebvre.es/api/v1'

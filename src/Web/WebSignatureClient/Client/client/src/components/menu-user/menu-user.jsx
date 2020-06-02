@@ -7,7 +7,7 @@ import i18n from 'i18next';
 import { removeState } from '../../services/state';
 import { clearUserCredentials } from '../../actions/application';
 import { resetDefaultAccount, addOrUpdateAccount } from '../../services/accounts';
-import { setSign, setAvailableSignatures } from '../../actions/lexon';
+import { setSign, setAvailableSignatures } from '../../actions/lefebvre';
 import Cookies from 'js-cookie';
 import { getAvailableSignatures } from '../../services/api-signaturit';
 
@@ -36,9 +36,9 @@ class MenuUser extends Component {
     }
 
     componentDidMount() {
-        const { lexon } = this.props;
-        if (lexon.userId) {
-            getAvailableSignatures(lexon.userId)
+        const { lefebvre } = this.props;
+        if (lefebvre.userId) {
+            getAvailableSignatures(lefebvre.userId)
             .then( res => this.props.setAvailableSignatures(res.data))
             .catch(err => {
                 if (err.message === "Failed to fetch"){
@@ -84,9 +84,9 @@ class MenuUser extends Component {
 
     toggle() {
         const { onToggleDialog } = this.props;
-        const { lexon } = this.props;
-        if (lexon.userId) {
-            getAvailableSignatures(lexon.userId)
+        const { lefebvre } = this.props;
+        if (lefebvre.userId) {
+            getAvailableSignatures(lefebvre.userId)
             .then( res => this.props.setAvailableSignatures(res.data));
         }
         this.setState(
@@ -103,7 +103,7 @@ class MenuUser extends Component {
     }
 
     _handleOnClick() {
-        const { userId, token } = this.props.lexon;
+        const { userId, token } = this.props.lefebvre;
         if (userId !== null) {
             resetDefaultAccount(userId)
                 .then(() => {
@@ -136,22 +136,22 @@ class MenuUser extends Component {
     async onSaveSign() {
         const fullName = this.props.login.formValues.user;
 
-        const { lexon } = this.props;
+        const { lefebvre } = this.props;
         const { sign } = this.state;
         const newAccount = {
             provider: 'IMAP',
             email: fullName,
-            guid: lexon.guid,
+            guid: lefebvre.guid,
             sign
         };
 
         this.props.setSign(sign);
-        await addOrUpdateAccount(lexon.userId, newAccount);
+        await addOrUpdateAccount(lefebvre.userId, newAccount);
         this.onBack();
     }
 
     routeLogout() {
-        const { userId, token } = this.props.lexon;
+        const { userId, token } = this.props.lefebvre;
         Cookies.remove(`Lefebvre.Signaturit.${userId}`);
         removeState();
         this.props.logout();
@@ -162,7 +162,7 @@ class MenuUser extends Component {
 
     render() {
         const { dropdownOpen, accounts } = this.state;
-        const { lexon } = this.props;
+        const { lefebvre } = this.props;
         const fullName = this.props.login.formValues.user;
         const { showSign, sign } = this.state;
 
@@ -216,8 +216,8 @@ class MenuUser extends Component {
                                                     <img src='/assets/images/notification-icon.png' alt='icon' />                                                    
                                                 </a>
                                             </div>
-                                            <span className='user-name text-center'>{`Firmas disponibles: ${lexon.availableSignatures}`}</span>
-                                            <span className='user-name text-center'>{`${lexon.userName}-(${lexon.userId})`}</span>
+                                            <span className='user-name text-center'>{`Firmas disponibles: ${lefebvre.availableSignatures}`}</span>
+                                            <span className='user-name text-center'>{`${lefebvre.userName}-(${lefebvre.userId})`}</span>
                                             <span className='company-name text-center'>
                                                 Lefebvre-El Derecho, S.A.
                                             </span>
@@ -395,7 +395,7 @@ MenuUser.propTypes = {
 };
 
 const mapStateToProps = state => ({
-    lexon: state.lexon,
+    lefebvre: state.lefebvre,
     login: state.login
 });
 

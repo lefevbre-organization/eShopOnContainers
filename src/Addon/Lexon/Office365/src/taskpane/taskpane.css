@@ -95,6 +95,11 @@
 b {
     font-weight: bold;
 }
+
+.text-center {
+  text-align: center;
+}
+
 .btn-login {
   height: 42px;
   width: 206px !important;

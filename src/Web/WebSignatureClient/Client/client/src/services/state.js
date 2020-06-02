@@ -4,7 +4,7 @@ import { processFolders } from "./folder";
 
 export const KEY_USER_ID = "KEY_USER_ID";
 export const KEY_HASH = "KEY_HASH";
-export const LEXON = "LEXON";
+export const LEFEBVRE = "LEFEBVRE";
 
 function emptyState() {
   return JSON.parse(JSON.stringify(INITIAL_STATE));
@@ -36,9 +36,9 @@ export async function loadState() {
       state.messages.cache = { ...dbState.messages.cache };
     }
   }
-  const lexon = localStorage.getItem(LEXON);
-  if (lexon !== null && lexon.user !== null) {
-    state.lexon = JSON.parse(lexon);
+  const lefebvre = localStorage.getItem(LEFEBVRE);
+  if (lefebvre !== null && lefebvre.user !== null) {
+    state.lefebvre = JSON.parse(lefebvre);
   }
 
   return state;
@@ -59,7 +59,7 @@ export function saveState(dispatch, state) {
 
   localStorage.setItem(KEY_USER_ID, state.application.user.id);
   localStorage.setItem(KEY_HASH, state.application.user.hash);
-  localStorage.setItem(LEXON, JSON.stringify(state.lexon));
+  localStorage.setItem(LEFEBVRE, JSON.stringify(state.lefebvre));
 
   persistState(dispatch, state);
 }
@@ -69,11 +69,11 @@ export function removeState() {
   //sessionStorage.removeItem(KEY_HASH);
   localStorage.removeItem(KEY_USER_ID);
   localStorage.removeItem(KEY_HASH);
-  localStorage.removeItem(LEXON);
+  localStorage.removeItem(LEFEBVRE);
   sessionStorage.clear();
 }
 
-export function removeStateExLexon() {    
+export function removeStateExLefebvre() {    
     localStorage.removeItem(KEY_USER_ID);
     localStorage.removeItem(KEY_HASH);
     sessionStorage.clear();

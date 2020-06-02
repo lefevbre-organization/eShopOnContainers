@@ -54,7 +54,7 @@ function getAttachments(messageID, parts, callback) {
     messageId: messageID,
     userId: 'me'
   });
-  request.execute(function(attachment) {
+  request.execute(function (attachment) {
     callback(parts.filename, parts.mimeType, attachment);
   });
 }
@@ -282,8 +282,8 @@ export class MessageContent extends Component {
                     (filename, mimeType, attachment) => {
                       if (attachment.code !== 400) {
                         let dataBase64Rep = attachment.data
-                        .replace(/-/g, '+')
-                        .replace(/_/g, '/');
+                          .replace(/-/g, '+')
+                          .replace(/_/g, '/');
                         this.props.addOpenMessageAttachment({
                           filename,
                           mimeType,
@@ -306,10 +306,10 @@ export class MessageContent extends Component {
                         if (
                           contentDisposition
                         ) {
-                          var contentId = getHeader(athc.headers,'Content-ID');
-                          if (contentId !== undefined){
-                            contentId = contentId.replace('<', '').replace('>','');
-                          }                          
+                          var contentId = getHeader(athc.headers, 'Content-ID');
+                          if (contentId !== undefined) {
+                            contentId = contentId.replace('<', '').replace('>', '');
+                          }
                           var iframe = document.getElementById('message-iframe');
                           const bd = iframe.contentDocument.body.innerHTML.replace(
                             `cid:${contentId}`,
@@ -329,7 +329,7 @@ export class MessageContent extends Component {
                             iframe.contentDocument.body.appendChild(
                               AttachmentDiv
                             );
-                         } 
+                        }
                       }
                     }
                   );
@@ -357,7 +357,7 @@ export class MessageContent extends Component {
                 emailMessageResult.id || emailMessageResult.result.id;
               if (!this.attachments[attach[i].partId]) {
                 this.attachments[attach[i].partId] = attach[i];
-                getAttachments(msgid, attach[i], function(
+                getAttachments(msgid, attach[i], function (
                   filename,
                   mimeType,
                   attachment
@@ -419,7 +419,7 @@ export class MessageContent extends Component {
       ...(removeLabelIds && { removeLabelIds })
     };
     this.props.modifyMessages({ ids: [id], ...actionParams });
-    this.props.history.goBack();
+    this.renderInbox();
   }
 
   render() {
@@ -447,18 +447,18 @@ export class MessageContent extends Component {
           {this.state.errorMessage ? (
             this.renderErrorModal()
           ) : (
-            <iframe
-              ref={this.iframeRef}
-              title='Message contents'
-              id='message-iframe'
-              srcDoc={this.props.emailMessageResult.body}
-              style={{
-                display: this.props.emailMessageResult.loading
-                  ? 'none'
-                  : 'block'
-              }}
-            />
-          )}
+              <iframe
+                ref={this.iframeRef}
+                title='Message contents'
+                id='message-iframe'
+                srcDoc={this.props.emailMessageResult.body}
+                style={{
+                  display: this.props.emailMessageResult.loading
+                    ? 'none'
+                    : 'block'
+                }}
+              />
+            )}
         </div>
 
         <MessageNotFound
