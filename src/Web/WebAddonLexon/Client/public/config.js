@@ -4,3 +4,4 @@ window.URL_MF_LEXON = "http://localhost:3004/static/js/main.js"
 window.URL_MF_LEXON_BASE = "http://localhost:3004/"
 window.API_GATEWAY='https://lexbox-test-apigwlex.lefebvre.es'
 window.URL_GET_ACCOUNTS = "https://lexbox-test-apigwlex.lefebvre.es/api/v2/accounts/usermail"
+window.URL_GET_USER = "https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login"

@@ -18,6 +18,7 @@ interface State {
 }
 
 const MessageWithAttachments = ({ msg }: { msg: Message }) => {
+  console.log('MessageWithAttachments.render');
   if (msg.attachments && msg.attachments.length > 0) {
     return (
       <div>
@@ -41,7 +42,7 @@ const MessageWithAttachments = ({ msg }: { msg: Message }) => {
         <style jsx>{`
           .subject {
             font-family: MTTMilano, Lato, Arial, sans-serif;
-            font-size: 16px;
+            font-size: 16px !important;
             align-items: center;
             display: flex;
           }
@@ -52,8 +53,10 @@ const MessageWithAttachments = ({ msg }: { msg: Message }) => {
 
           .attachments {
             display: flex;
+            flex-direction: column;
+            align-items: flex-start;
             font-family: MTTMilano, Lato, Arial, sans-serif;
-            font-size: 16px;
+            font-size: 16px !important;
           }
 
           .attachments span {
@@ -69,7 +72,7 @@ const MessageWithAttachments = ({ msg }: { msg: Message }) => {
     );
   }
 
-  return null;
+  return <p>{JSON.stringify(msg)}</p>;
 };
 
 export class Step1 extends React.Component<Props, State> {
@@ -84,7 +87,6 @@ export class Step1 extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    debugger;
   }
 
   componentDidUpdate() {
@@ -223,6 +225,9 @@ export class Step1 extends React.Component<Props, State> {
               -webkit-columns: 2;
               -moz-columns: 2;
               min-height: 180px;
+            }
+            .e-checkbox-wrapper .e-frame + .e-label {
+              font-size: 16px !important;
             }
           `}
         </style>
