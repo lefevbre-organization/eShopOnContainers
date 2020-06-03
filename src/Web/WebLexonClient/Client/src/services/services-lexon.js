@@ -6,28 +6,28 @@ import {
   CLASSIFICATIONS_REMOVE,
   TYPES,
   RESULTS,
-  USER
+  USER,
 } from '../constants';
 
 import * as encodings from 'text-encoding';
 if (!global.TextDecoder) {
   global.TextDecoder = encodings.TextDecoder;
 }
-export const getCompanies = user => {
+export const getCompanies = (user) => {
   return new Promise((resolve, reject) => {
     const url = `${window.API_GATEWAY}/${COMPANIES}?idUser=${user.idUser}`;
 
     fetch(url, {
-      method: 'GET'
+      method: 'GET',
     })
-      .then(data => data.json())
-      .then(result => {
+      .then((data) => data.json())
+      .then((result) => {
         resolve({
           companies: result.data,
-          errors: result.errors
+          errors: result.errors,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         reject(error);
       });
   });
@@ -47,7 +47,7 @@ export const getClassifications = async (
     pageSize,
     pageIndex: 1,
     bbdd,
-    idUser: user.idUser
+    idUser: user.idUser,
   };
 
   try {
@@ -55,9 +55,9 @@ export const getClassifications = async (
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     const result = await response.json();
@@ -77,7 +77,7 @@ export const addClassification = async (
   const url = `${window.API_GATEWAY}/${CLASSIFICATIONS_ADD}`;
   console.log(listMails);
   const body = {
-    listaMails: listMails.map(mail => {
+    listaMails: listMails.map((mail) => {
       const m = moment(mail.sentDateTime).format('YYYY-MM-DD HH:mm:ss');
       console.log('addClassfication: ' + m);
       return {
@@ -86,13 +86,13 @@ export const addClassification = async (
         uid: mail.id,
         folder: mail.folder,
         subject: mail.subject,
-        date: m
+        date: m,
       };
     }),
     idType: typeId,
     idUser: user.idUser,
     idRelated: relatedId,
-    bbdd: company.bbdd
+    bbdd: company.bbdd,
   };
 
   try {
@@ -100,9 +100,9 @@ export const addClassification = async (
       method: 'PUT',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     const result = await response.json();
@@ -138,7 +138,7 @@ export const removeClassification = async (
     idRelated: idRelated,
     idCompany: idCompany,
     provider: user.provider,
-    mailAccount: user.account
+    mailAccount: user.account,
   };
 
   try {
@@ -146,9 +146,9 @@ export const removeClassification = async (
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     const result = await response.json();
@@ -186,17 +186,17 @@ export const getTypes = () => {
   return new Promise((resolve, reject) => {
     const url = `${window.API_GATEWAY}/${TYPES}`;
     fetch(url, {
-      method: 'GET'
+      method: 'GET',
     })
-      .then(data => data.json())
-      .then(result => {
+      .then((data) => data.json())
+      .then((result) => {
         resolve({
           types: result.data.filter(
-            entity => !typesHidden.includes(entity.idEntity)
-          )
+            (entity) => !typesHidden.includes(entity.idEntity)
+          ),
         });
       })
-      .catch(error => {
+      .catch((error) => {
         reject(error);
       });
   });
@@ -219,7 +219,7 @@ export const getResults = async (
     search,
     idUser: user.idUser,
     bbdd: company.bbdd,
-    idType: typeId
+    idType: typeId,
   };
 
   try {
@@ -227,9 +227,9 @@ export const getResults = async (
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     if (response.status === 404) {
@@ -258,7 +258,7 @@ export const getCasefile = async (user, bbdd, company, typeId, search) => {
     search,
     idUser: user,
     bbdd: bbdd,
-    idType: typeId
+    idType: typeId,
   };
 
   try {
@@ -266,9 +266,9 @@ export const getCasefile = async (user, bbdd, company, typeId, search) => {
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     const result = await response.json();
@@ -278,7 +278,7 @@ export const getCasefile = async (user, bbdd, company, typeId, search) => {
   }
 };
 
-export const getUser = async userNavision => {
+export const getUser = async (userNavision) => {
   const url = `${window.API_GATEWAY}/${USER}/?idUserNavision=${userNavision}`;
 
   try {
@@ -302,17 +302,17 @@ export const saveUserConfig = (config, userId) => {
     fetch(url, {
       method: 'POST',
       headers: {
-        'Content-type': 'application/json'
+        'Content-type': 'application/json',
       },
-      body: JSON.stringify(config)
+      body: JSON.stringify(config),
     })
-      .then(data => data.json())
-      .then(result => {
+      .then((data) => data.json())
+      .then((result) => {
         resolve({
-          user: result.data
+          user: result.data,
         });
       })
-      .catch(error => {
+      .catch((error) => {
         reject(error);
       });
   });
@@ -330,7 +330,7 @@ export const getFolderTree = async (
     nestedLimit: 0,
     includeFiles,
     bbdd,
-    idUser
+    idUser,
   };
 
   try {
@@ -338,9 +338,9 @@ export const getFolderTree = async (
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
     const result = await response.json();
 
@@ -365,7 +365,7 @@ export const createFolder = async (
     idEntity,
     idType,
     bbdd,
-    idUser
+    idUser,
   };
 
   try {
@@ -373,9 +373,9 @@ export const createFolder = async (
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
     const result = await response.json();
 
@@ -404,7 +404,7 @@ export const uploadFile = async (
     idUser,
     idActuation,
     name: nameFile,
-    contentFile
+    contentFile,
   };
 
   try {
@@ -412,9 +412,9 @@ export const uploadFile = async (
       method: 'POST',
       headers: {
         Accept: 'application/text',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     return { response };
@@ -433,7 +433,7 @@ export const downloadFile = async (
   const body = {
     idEntity,
     bbdd,
-    idUser
+    idUser,
   };
 
   try {
@@ -442,16 +442,17 @@ export const downloadFile = async (
       method: 'POST',
       headers: {
         Accept: 'application/text',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
 
     if (response.status !== 200) {
       return response;
     }
     const contentLength = +response.headers.get('Content-Length');
-    progressCallback && progressCallback({ length: contentLength, progress: progress })
+    progressCallback &&
+      progressCallback({ length: contentLength, progress: progress });
 
     const reader = response.body.getReader();
     let receivedLength = 0; // received that many bytes at the moment
@@ -467,8 +468,8 @@ export const downloadFile = async (
       chunks.push(value);
       receivedLength += value.length;
 
-      progress = Math.ceil(receivedLength * 100 / contentLength);
-      progressCallback && progressCallback({ progress: progress })
+      progress = Math.ceil((receivedLength * 100) / contentLength);
+      progressCallback && progressCallback({ progress: progress });
     }
 
     let chunksAll = new Uint8Array(receivedLength); // (4.1)
@@ -478,11 +479,11 @@ export const downloadFile = async (
       position += chunk.length;
     }
 
-    let result = new TextDecoder("utf-8").decode(chunksAll);
+    let result = new TextDecoder('utf-8').decode(chunksAll);
 
     // We're done!
     let commits = JSON.parse(result);
-    progressCallback && progressCallback({ progress: 100 })
+    progressCallback && progressCallback({ progress: 100 });
 
     return { ...commits, status: 200 };
   } catch (err) {
