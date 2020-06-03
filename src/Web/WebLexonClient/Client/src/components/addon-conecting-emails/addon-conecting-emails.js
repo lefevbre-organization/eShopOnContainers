@@ -39,14 +39,15 @@ class AddonConnectingEmails extends Component {
       },
       messages: [],
       rawAddon: null,
-      isSave: false
+      isSave: false,
+      expirationTime: null
     };
 
     this.changeSubject = this.changeSubject.bind(this);
   }
 
   componentDidMount() {
-    
+    this.getSessionInfo();
     this.setState({ 
       messages: this.props.selectedMessages
     });
@@ -66,6 +67,7 @@ class AddonConnectingEmails extends Component {
     window.location.replace(
       `${window.GOOGLE_SCRIPT}` + '?success=1' + '&state=' + values.state
     );
+    localStorage.removeItem('oldTime');
   }
 
   nextStep() {
@@ -112,6 +114,38 @@ class AddonConnectingEmails extends Component {
       }
     }
   }
+
+  getExpirationTime() {
+    var date = new Date();
+    var currentTime = date.getTime();
+    var oldTime = parseInt(localStorage.getItem('oldTime'));
+    var milliseconds = Math.abs(oldTime - currentTime);
+    var minute = parseInt(milliseconds/60000);
+    var expirationTime = 60 - minute;
+    this.setState({expirationTime: expirationTime});
+    return  expirationTime
+  
+  }
+
+  getSessionInfo() {  
+    const { 
+      toggleNotification
+    } = this.props;
+    var date = new Date();
+    var time = date.getTime();
+    var oldTime = localStorage.getItem('oldTime');
+    if(!oldTime) {
+      localStorage.setItem('oldTime', time);
+    } 
+    setTimeout(() => {
+      this.getSessionInfo();
+    }, 60000);
+   const expirationTime = this.getExpirationTime();
+    // toggleNotification(i18n.t('classify-emails.expiration')
+    // + '\xa0' + expirationTime + '\xa0' + i18n.t('classify-emails.minute'), true
+    // );
+  }
+
 
   changeStep1Data(data) {
     let step2Data = this.state.step2Data;
@@ -481,7 +515,12 @@ class AddonConnectingEmails extends Component {
       showModalDocuments,
       toggleNotification,
     } = this.props;
-    const { messages, step1Data, step } = this.state;
+    const { 
+      messages, 
+      step1Data, 
+      step,
+      expirationTime
+    } = this.state;
     console.log('Data addon --->', addonData);
     return (
       <div className=''>
@@ -497,6 +536,9 @@ class AddonConnectingEmails extends Component {
             <span className='title-space'>
               {i18n.t('modal-conecting-emails.save-copy')}
             </span>
+            <span className="expiration">{i18n.t('classify-emails.expiration') 
+            + '\xa0' + expirationTime + '\xa0' 
+            + i18n.t('classify-emails.minute')}</span>
           </h5>
         </header>
         <Container>

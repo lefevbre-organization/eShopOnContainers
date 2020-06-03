@@ -78,6 +78,8 @@
     "back": "BACK",
     "attach": "ATTACH",
     "close": "CLOSE",
+    "expiration": "Session expiration:",
+    "minute": "Minutes",
     "title": "New classification",
     "body": "Select classification type to load the corresponding list and assign the messages to one of the items in the list.",
     "classification-saved-ok": "The classification has been saved correctly",
