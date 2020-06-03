@@ -316,7 +316,13 @@ export class Main extends Component {
                     recurrenceRule = event.recurrence[0].replace('RRULE:', '');
                 }
 
-
+                let attendees = []
+                if (event.attendees != undefined) {
+                    attendees = event.attendees;
+                }
+                else {
+                    attendees = undefined;
+                }
 
                 this.scheduleData.push({
                     Id: event.id,
@@ -327,10 +333,9 @@ export class Main extends Component {
                     StartTime: new Date(start),
                     EndTime: new Date(end),
                     IsAllDay: !event.start.dateTime,
-                    RecurrenceRule: recurrenceRule,
-                    //ImageName: "transparente",
+                    RecurrenceRule: recurrenceRule,                   
                     ImageName: "lefebvre",
-
+                    Attendees: attendees,
                     //Fake to remove
                     //resources: [{
                     //    field: "calendarId",
@@ -477,10 +482,11 @@ export class Main extends Component {
 
     buildEventoGoogle(values) {
 
-        var event = {
+        var event = { 
             'summary': values.Subject,
             'location': values.Location,
             'description': values.Description,
+           
             'start': {
                 'dateTime': values.StartTime,
                 'timeZone': 'Europe/Madrid',
@@ -489,9 +495,32 @@ export class Main extends Component {
                 'dateTime': values.EndTime,
                 'timeZone': 'Europe/Madrid',
             },
+            //'attendees': [               
+            //    { 'email': 'alberto.valverde.escribano@gmail.com' },
+            //    { 'email': 'albertovalverd@hotmail.com' }
+            //],
+           
+            //'reminders': {
+            //    'useDefault': false,
+            //    'overrides': [
+            //        { 'method': 'email', 'minutes': 24 * 60 },
+            //        { 'method': 'popup', 'minutes': 10 }
+            //    ]
+            //}
         }
 
         if (values.RecurrenceRule != undefined) { event.recurrence = ['RRULE:' + values.RecurrenceRule] };
+
+        let arr = this.state.tagAttendess
+        let ateendeeObj = [];
+        if (arr.length > 0) {
+            Object.keys(arr).forEach(function (key) {                
+                ateendeeObj.push({ 'email': arr[key] });
+            });
+        }
+        event.attendees = ateendeeObj;
+       
+
         // if (values.RecurrenceException != undefined) { event.RecurrenceException = [values.RecurrenceException] };
 
         //if (values.IsAllDay != undefined) { event.isallday = values.IsAllDay };        
@@ -541,15 +570,19 @@ export class Main extends Component {
         );
     }
 
- CheckEnterKey(args) {
-    if (args.which == 13) {
-        args.preventDefault();
-        
-    }
- }
-
-
     onPopupOpen(args) {
+       
+        if (args.data.Attendees != undefined) {
+            //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i]) 
+            var arr = [];
+            Object.keys(args.data.Attendees).forEach(function (key) {
+                arr.push(args.data.Attendees[key].email);
+            });
+            this.setState({ tagAttendess: arr })
+        }
+        else {
+            this.setState({ tagAttendess: [] })
+        }
 
         if (args.type === 'QuickInfo') {
 
@@ -565,21 +598,10 @@ export class Main extends Component {
                 let formElement = args.element.querySelector('.e-schedule-form');
                 formElement.firstChild.insertBefore(row, formElement.firstChild.firstChild);
                 let container = createElement('div', { className: 'custom-field-container' });               
-                row.appendChild(container);             
+                row.appendChild(container); 
 
-                //let tag = new ReactTagInput({
-                //    tags: this.state.tagAttendess,
-                //    placeholder: "Invite Attendees",
-                //    maxTags: 10,
-                //    editable:true,
-                //    readOnly:false,
-                //    removeOnBackspace:true,
-                //    onChange:this.setEmailTags                
-                //});               
-                
                 var node = ReactDOM.findDOMNode(this.tagObj);
                 container.appendChild(node);
-
             }          
 
             let TabContainer = args.element.querySelector('.custom-tab-row');
@@ -590,7 +612,6 @@ export class Main extends Component {
                     let row = createElement('div', { className: 'custom-tab-row' });
                     Element.firstChild.insertBefore(row, Element.firstChild.firstChild);
                     let tabObj = new TabComponent({
-
                         items: [
                             { header: { text: "EVENT" }, content: formContainer },
                             { header: { text: 'LEX-ON' }, content: this.tabContent }
@@ -666,7 +687,7 @@ export class Main extends Component {
                         this.toastObj.show(this.toasts[1]);
                     })
                     .catch(error => {
-                        this.toastObj.show(this.toasts[3]);
+                        this.toastObj.show(this.toasts[2]);
                         console.log('error ->', error);
                     })
 

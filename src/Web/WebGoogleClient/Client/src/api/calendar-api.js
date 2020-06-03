@@ -150,7 +150,8 @@ export const addCalendarEvent = (calendar, event) =>
         window.gapi.client.calendar.events
             .insert({
                 calendarId: calendar ,
-                resource: event
+                resource: event,
+                sendUpdates: 'all',
             })
 
             .then(response => {
@@ -168,7 +169,8 @@ export const updateCalendarEvent = (calendar, eventId, event) =>
             .update({
                 calendarId: calendar,
                 eventId: eventId,
-                resource: event
+                resource: event,
+                sendUpdates: 'all'
             })
 
             .then(response => {
@@ -185,7 +187,8 @@ export const deleteCalendarEvent = (calendar, eventId) =>
         window.gapi.client.calendar.events
             .delete({
                 calendarId: calendar,
-                eventId: eventId
+                eventId: eventId,
+                sendUpdates: 'all'
             })
 
             .then(response => {
