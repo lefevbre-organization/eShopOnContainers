@@ -83,7 +83,9 @@ export class Step1 extends React.Component<Props, State> {
     };
   }
 
-  async componentDidMount() {}
+  async componentDidMount() {
+    debugger;
+  }
 
   componentDidUpdate() {
     const { onCopyEmail, onCopyAttachments } = this.props;

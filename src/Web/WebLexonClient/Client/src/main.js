@@ -203,7 +203,6 @@ class Main extends Component {
 
   async handlePutUserFromLexonConnector(event) {
     console.log('HandleEvent Client -> Lexon - PutUserFromLexonConnector');
-    console.log(event.detail);
 
     if (window.addonData) {
       const addonData = window.addonData;
@@ -236,7 +235,14 @@ class Main extends Component {
     }
 
     if (bbdd && bbdd !== '') {
-      this.props.setInitialBBDD(bbdd);
+      this.setState(
+        {
+          bbdd,
+        },
+        () => {
+          this.props.setInitialBBDD(bbdd);
+        }
+      );
     }
 
     selectedMessages.forEach((message) => {

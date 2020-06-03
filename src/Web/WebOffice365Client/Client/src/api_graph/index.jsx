@@ -463,7 +463,6 @@ export const sendMessage = async ({ data, attachments }) => {
     return response;
   } catch (err) {
     console.log(err);
-    debugger;
     throw err;
   }
 };
