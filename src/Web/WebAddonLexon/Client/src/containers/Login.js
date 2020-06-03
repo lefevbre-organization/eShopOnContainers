@@ -4,6 +4,7 @@ import validator from 'email-validator';
 import LoginHeader from '../components/LoginHeader';
 import LoginFooter from '../components/LoginFooter';
 import LoginComponents from '../components/LoginComponents';
+import { getUser } from "../services/services-lexon";
 
 import '../assets/styles/components/Login.css';
 import logoHeader from '../assets/img/LogoLefebvre.png';
@@ -30,7 +31,8 @@ class Login extends Component {
       errorsMessage: {
         email: '',
         login: '',
-        password: ''
+        password: '',
+        auth: ''
       },
 
       shopTitle: 'TIENDA',
@@ -92,6 +94,27 @@ class Login extends Component {
     return true;
   }
 
+  async getUser() {
+    
+   const user = await getUser(
+     this.state.form
+   );
+    if(user.result.data._login){
+     this.goBackAddon();
+     this.setState({
+      errorsMessage: {
+        auth: ''
+      }
+    });
+    } else {
+      this.setState({
+        errorsMessage: {
+          auth: 'Usuario o Contraseña inválidos.'
+        }
+      });
+    }
+  }
+
   goBackAddon = () => {
     const values = queryString.parse(this.props.location.search);
     window.location.replace(values.redirect_uri + '?success=1&response_type=' + 
@@ -101,7 +124,7 @@ class Login extends Component {
 
   handleEventAddon = (e) => {
     if (this.validateForm()) {
-       this.goBackAddon();
+       this.getUser();
     };
   }
 
