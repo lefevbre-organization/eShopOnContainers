@@ -87,7 +87,6 @@ export class Step1 extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    debugger;
   }
 
   componentDidUpdate() {

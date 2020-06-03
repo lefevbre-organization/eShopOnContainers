@@ -349,7 +349,7 @@ export const uploadFile = async (
   navisionUser: string,
   conceptId: number,
   doc: any
-): number => {
+) => {
   const url = `${API_CENTINELA_GATEWAY}/concepts/files/post`;
   const body = {
     idNavision: navisionUser,
