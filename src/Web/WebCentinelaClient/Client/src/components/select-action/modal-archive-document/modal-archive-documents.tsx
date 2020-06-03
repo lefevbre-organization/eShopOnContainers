@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import i18n from 'i18next';
+import { Base64 } from 'js-base64';
 import { Button, Modal, Container } from 'react-bootstrap';
 import { connect, ConnectedProps } from 'react-redux';
 import 'react-perfect-scrollbar/dist/css/styles.css';
@@ -9,7 +10,11 @@ import { ApplicationActions } from '../../../store/application/actions';
 import { Step1 } from './step1';
 import { Step2 } from './step2';
 import { Step3 } from './step3';
-import { Evaluation, CentInstance } from '../../../services/services-centinela';
+import {
+  Evaluation,
+  CentInstance,
+  uploadFile
+} from '../../../services/services-centinela';
 const parse = require('emailjs-mime-parser').default;
 const base64js = require('base64-js');
 
@@ -17,7 +22,7 @@ const mapStateToProps = (state: AppState) => {
   return {
     showAttachDocuments: state.application.showArchiveModal,
     selected: state.messages.selected,
-    user: state.application.user,
+    user: state.application.user
   };
 };
 
@@ -25,10 +30,10 @@ const mapDispatchToProps = (dispatch: any) => {
   return {
     ...bindActionCreators(
       {
-        toggleArchiveModal: ApplicationActions.toggleArchiveModal,
+        toggleArchiveModal: ApplicationActions.toggleArchiveModal
       },
       dispatch
-    ),
+    )
   };
 };
 
@@ -66,7 +71,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
       files: [],
       copyEmail: true,
       copyAttachments: true,
-      instance: undefined,
+      instance: undefined
     };
 
     this.onCopyAttachments = this.onCopyAttachments.bind(this);
@@ -75,14 +80,18 @@ class ModalArchiveDocuments extends Component<Props, State> {
     this.onInstanceSelected = this.onInstanceSelected.bind(this);
   }
 
-  componentDidMount() {
-    this.initMessages();
-  }
+  componentDidMount() {}
 
   componentDidUpdate(prevProps: Props) {
-    if (prevProps.selected !== this.props.selected) {
+    if (
+      prevProps.showAttachDocuments === false &&
+      this.props.showAttachDocuments === true
+    ) {
       this.initMessages();
     }
+    // if (prevProps.selected !== this.props.selected) {
+    //   this.initMessages();
+    // }
   }
 
   initMessages() {
@@ -138,7 +147,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
         entity: 0,
         messages: [],
         files: [],
-        complete: false,
+        complete: false
       });
     }, 1000);
     toggleArchiveModal && toggleArchiveModal();
@@ -179,9 +188,74 @@ class ModalArchiveDocuments extends Component<Props, State> {
     // }
   }
 
-  saveDocuments() {
+  async saveDocuments() {
     const { toggleNotification } = this.props;
-    toggleNotification(i18n.t('modal-archive.modal-save-ko'));
+    const { messages, instance } = this.state;
+    let result = false;
+
+    for (let m = 0; m < messages.length; m++) {
+      if (messages[m] && messages[m].raw) {
+        const mime = parse(messages[m].raw);
+
+        if (this.state.copyEmail) {
+          // Upload eml file
+          const raw = Base64.encode(messages[m].raw, false);
+          const r1 = await uploadFile(
+            this.props.user,
+            instance?.conceptObjectId || 0,
+            {
+              name: messages[m].subject + '.eml',
+              content: raw
+            }
+          );
+
+          if (r1 === 200 || r1 === 201) {
+            result = true;
+          }
+        }
+
+        if (this.state.copyAttachments) {
+          // Upload attachments
+          for (let j = 0; j < mime.childNodes.length; j++) {
+            if (
+              mime.childNodes[j].raw.indexOf(
+                'Content-Disposition: attachment;'
+              ) > -1
+            ) {
+              for (let k = 0; k < messages[m].attachments.length; k++) {
+                if (
+                  messages[m].attachments[k].name ===
+                    mime.childNodes[j].contentType.params.name &&
+                  messages[m].attachments[k].checked === true
+                ) {
+                  let rawAttach = base64js.fromByteArray(
+                    mime.childNodes[j].content
+                  );
+                  const r2 = await uploadFile(
+                    this.props.user,
+                    instance?.conceptObjectId || 0,
+                    {
+                      name: mime.childNodes[j].contentType.params.name,
+                      content: rawAttach
+                    }
+                  );
+
+                  if (r2 === 200 || r2 === 201) {
+                    result = true;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    if (result) {
+      toggleNotification(i18n.t('modal-archive.modal-save-ok'));
+    } else {
+      toggleNotification(i18n.t('modal-archive.modal-save-ko'), true);
+    }
   }
 
   saveDisabled() {
@@ -190,7 +264,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
       copyAttachments,
       copyEmail,
       implantation,
-      instance,
+      instance
     } = this.state;
     if (step === 1 && (copyAttachments === true || copyEmail === true)) {
       return false;
@@ -214,18 +288,20 @@ class ModalArchiveDocuments extends Component<Props, State> {
         return (
           <Fragment>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.closeDialog();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.cancel')}
             </Button>
             <Button
               disabled={this.saveDisabled()}
-              bsPrefix='btn btn-primary'
+              bsPrefix="btn btn-primary"
               onClick={() => {
                 this.nextStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.continue')}
             </Button>
           </Fragment>
@@ -234,25 +310,28 @@ class ModalArchiveDocuments extends Component<Props, State> {
         return (
           <Fragment>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.closeDialog();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.cancel')}
             </Button>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.prevStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.back')}
             </Button>
             <Button
               disabled={this.saveDisabled()}
-              bsPrefix='btn btn-primary'
+              bsPrefix="btn btn-primary"
               onClick={() => {
                 this.nextStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.continue')}
             </Button>
           </Fragment>
@@ -261,25 +340,28 @@ class ModalArchiveDocuments extends Component<Props, State> {
         return (
           <Fragment>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.closeDialog();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.cancel')}
             </Button>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.prevStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.back')}
             </Button>
             <Button
               disabled={this.saveDisabled()}
-              bsPrefix='btn btn-primary'
+              bsPrefix="btn btn-primary"
               onClick={() => {
                 this.nextStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.save')}
             </Button>
           </Fragment>
@@ -288,25 +370,28 @@ class ModalArchiveDocuments extends Component<Props, State> {
         return (
           <Fragment>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.closeDialog();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.cancel')}
             </Button>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.prevStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.back')}
             </Button>
             <Button
               disabled={files.length === 0}
-              bsPrefix='btn btn-primary'
+              bsPrefix="btn btn-primary"
               onClick={() => {
                 this.nextStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.continue')}
             </Button>
           </Fragment>
@@ -348,33 +433,36 @@ class ModalArchiveDocuments extends Component<Props, State> {
     console.log();
 
     return (
-      <div className='modal-connection-emails'>
+      <div className="modal-connection-emails">
         <Modal
           show={showAttachDocuments}
           onHide={() => {
             this.closeDialog();
           }}
-          size='lg'
-          aria-labelledby='contained-modal-title-vcenter'
+          size="lg"
+          aria-labelledby="contained-modal-title-vcenter"
           centered
-          dialogClassName='modal'>
-          <Modal.Header className='align-items-center' closeButton>
+          dialogClassName="modal"
+        >
+          <Modal.Header className="align-items-center" closeButton>
             <h5
-              className='modal-title d-flex align-items-center'
-              id='documentarGuardardocumentacionLabel'>
-              <span className='lf-icon-compliance'></span>
+              className="modal-title d-flex align-items-center"
+              id="documentarGuardardocumentacionLabel"
+            >
+              <span className="lf-icon-compliance"></span>
 
               <span>{i18n.t('modal-archive.title')}</span>
               {/* <span>{step}</span> */}
             </h5>
           </Modal.Header>
-          <Modal.Body className='mimodal'>
+          <Modal.Body className="mimodal">
             <Container>
               <Fragment>
                 <div
                   style={{
-                    display: this.state.step === 1 ? 'block' : 'none',
-                  }}>
+                    display: this.state.step === 1 ? 'block' : 'none'
+                  }}
+                >
                   <Step1
                     selected={messages}
                     onCopyEmail={this.onCopyEmail}
@@ -383,8 +471,9 @@ class ModalArchiveDocuments extends Component<Props, State> {
                 </div>
                 <div
                   style={{
-                    display: this.state.step === 2 ? 'block' : 'none',
-                  }}>
+                    display: this.state.step === 2 ? 'block' : 'none'
+                  }}
+                >
                   <Step2
                     user={user}
                     show={step === 2}
@@ -394,8 +483,9 @@ class ModalArchiveDocuments extends Component<Props, State> {
                 </div>
                 <div
                   style={{
-                    display: this.state.step === 3 ? 'block' : 'none',
-                  }}>
+                    display: this.state.step === 3 ? 'block' : 'none'
+                  }}
+                >
                   <Step3
                     user={user}
                     show={step === 3}
@@ -405,8 +495,9 @@ class ModalArchiveDocuments extends Component<Props, State> {
                 </div>
                 <div
                   style={{
-                    display: this.state.step === 4 ? 'block' : 'none',
-                  }}>
+                    display: this.state.step === 4 ? 'block' : 'none'
+                  }}
+                >
                   <div>Step 4</div>
                 </div>
               </Fragment>
