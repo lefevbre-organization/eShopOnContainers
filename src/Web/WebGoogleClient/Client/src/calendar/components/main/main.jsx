@@ -682,7 +682,23 @@ export class Main extends Component {
                 // this.addCalendarEventCRUD(args.data[0].CalendarId, event, args);   
                 addCalendarEvent(args.data[0].CalendarId, event)
                     .then(result => {
-                        args.data[0].Id = result.id
+                        // refresh event data
+                        args.data[0].Id = result.id;
+                        args.data[0].ImageName = "lefebvre";
+
+                        let attendees = []
+                        let att = this.state.tagAttendess
+                        if (att != undefined) {
+                            Object.keys(att).forEach(function (key) {
+                                attendees.push({ 'email': att[key] });
+                            });                           
+                        }
+                        else {
+                            attendees = undefined;
+                        }
+
+                        args.data[0].Attendees = attendees;
+
                         this.scheduleObj.refreshEvents();
                         this.toastObj.show(this.toasts[1]);
                     })
