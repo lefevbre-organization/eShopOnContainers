@@ -80,22 +80,22 @@ export class ComposeMessage extends PureComponent {
           ? props.mailContacts
           : props.history.location.state &&
             props.history.location.state.composeProps.to
-          ? props.history.location.state.composeProps.to
-          : '',
+            ? props.history.location.state.composeProps.to
+            : '',
       to2:
         props.mailContacts && props.mailContacts !== null
           ? props.mailContacts.split(',')
           : props.history.location.state &&
             props.history.location.state.composeProps.to
-          ? props.history.location.state.composeProps.to.split(',')
-          : [],
+            ? props.history.location.state.composeProps.to.split(',')
+            : [],
       cc:
         (props.history.location.state &&
           props.history.location.state.composeProps.cc) ||
         '',
       cc2:
         props.history.location.state &&
-        props.history.location.state.composeProps.cc
+          props.history.location.state.composeProps.cc
           ? props.history.location.state.composeProps.cc.split(',')
           : [],
       bcc:
@@ -104,7 +104,7 @@ export class ComposeMessage extends PureComponent {
         '',
       bcc2:
         props.history.location.state &&
-        props.history.location.state.composeProps.bcc
+          props.history.location.state.composeProps.bcc
           ? props.history.location.state.composeProps.bcc.split(',')
           : [],
       subject:
@@ -293,11 +293,11 @@ export class ComposeMessage extends PureComponent {
     //const emailDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
     console.log(
       'SentEmail:' +
-        message.id +
-        ' Subject:' +
-        message.subject +
-        ' SentDate:' +
-        message.sentDateTime
+      message.id +
+      ' Subject:' +
+      message.subject +
+      ' SentDate:' +
+      message.sentDateTime
     );
     this.props.setMailContacts(null);
 
@@ -413,6 +413,7 @@ export class ComposeMessage extends PureComponent {
 
   _sendEmail() {
     const validTo = getValidEmails(this.state.to);
+    debugger
 
     const headers = {
       To: validTo.join(', '),
@@ -439,12 +440,16 @@ export class ComposeMessage extends PureComponent {
       attachments: Fileattached,
     })
       .then(function (response) {
+        debugger
+
         return response.json();
       })
       .then((email) => {
         //this.sentEmail(email.id, this.state.subject);
+        debugger
         getMessageHeader(email.id)
           .then((headers) => {
+            debugger
             console.log('Headers:' + headers);
             const message = {
               id: this.getContentByHeader(headers, 'Message-Id'),
@@ -453,7 +458,13 @@ export class ComposeMessage extends PureComponent {
             };
             this.sentEmail(message);
           })
-          .catch((err) => console.log('Error getting Headers:' + err));
+          .catch((err) => {
+            debugger
+            console.log('Error getting Headers:' + err);
+          })
+      }).catch((err) => {
+        debugger
+        console.log('Error getting Headers:' + err);
       });
     this.resetFields();
     this.closeModal();
