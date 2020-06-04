@@ -8,3 +8,7 @@
   flex-direction: column;
   align-items: flex-end;
 }
+
+.menuIcon-99 {
+  display: none;
+}
