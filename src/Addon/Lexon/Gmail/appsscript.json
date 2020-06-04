@@ -11,7 +11,8 @@
   "urlFetchWhitelist": [
     "https://lexbox-test-apigwlex.lefebvre.es/api/v1/mysql/LexonMySql/",
     "https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Lexon/",
-    "https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail/"
+    "https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail/",
+    "https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login"
   ],
  "addOns": {
   "common": {
