@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
+import { ChoiceGroup, Button } from 'office-ui-fabric-react';
+import { getCompanies } from '../../services/services';
 import Header from '../header/header';
+import '../select-company/select-company.css';
 import { PAGE_LOGIN } from "../../constants";
 
 class SelectCompany extends Component {
@@ -7,12 +10,30 @@ class SelectCompany extends Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-        //   isLoading: false,
+          companies: [],
         };
       }
 
     componentDidMount() {
       this._isMounted = true;
+      this.getCompanies();
+    }
+
+    getCompanies() {
+      getCompanies()
+      .then((result) => {
+        let newCompanies = [];
+        result.companies.forEach(company => {
+          newCompanies.push({
+            key: company.bbdd,
+            text: company.name
+          })
+        });
+        this.setState({companies: newCompanies});
+      })
+      .catch((errors) => {
+        console.log(errors);
+      });
     }
 
     componentWillUnmount() {
@@ -24,11 +45,35 @@ class SelectCompany extends Component {
       this.props.changePage(PAGE_LOGIN);
     }
 
+    _onChange(e) {
+      console.log(e.target)
+    }
+
     render() {
+     const { companies } = this.state
+      const options = companies;
       return (
         <div className="">  
          <Header logout={this.logout} />
-         <p>SelectCompany</p>
+         <div className="form-selection-business">
+           <p>Selecciona una empresa:</p>
+         </div>
+         <div className="select-group">
+         <ChoiceGroup 
+            options={options} 
+            onChange={this._onChange} />
+         </div>
+         <div className="justify-content-center">
+          <Button
+             className="btn-primary"
+             // buttonType={ButtonType.hero}
+             // iconProps={{ iconName: "ChevronRight" }}
+             // onClick={this.click}
+           >
+             Entrar
+           </Button>
+         </div>
+        
         </div>
       );
     }
