@@ -324,6 +324,10 @@ export class Main extends Component {
                     attendees = undefined;
                 }
 
+                let eventType;
+                if (event.extendedProperties != undefined) {
+                    eventType = event.extendedProperties.private.eventType;
+                }
                 this.scheduleData.push({
                     Id: event.id,
                     CalendarId: calendarId,
@@ -336,7 +340,7 @@ export class Main extends Component {
                     RecurrenceRule: recurrenceRule,                   
                     ImageName: "lefebvre",
                     Attendees: attendees,
-                    EventType: "profesional-event"
+                    EventType: eventType,
                     //Fake to remove
                     //resources: [{
                     //    field: "calendarId",
@@ -496,6 +500,12 @@ export class Main extends Component {
                 'dateTime': values.EndTime,
                 'timeZone': 'Europe/Madrid',
             },
+            "extendedProperties": {
+                "private": {
+                    'eventType': 'profesional-event'
+                },
+            },   
+             
             //'attendees': [               
             //    { 'email': 'alberto.valverde.escribano@gmail.com' },
             //    { 'email': 'albertovalverd@hotmail.com' }
