@@ -26,7 +26,6 @@ import {
     ScheduleComponent, ViewsDirective, ViewDirective,
     Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, DragEventArgs, ResourcesDirective, ResourceDirective,
 } from '@syncfusion/ej2-react-schedule';
-
 import { DataManager, Query, Predicate } from '@syncfusion/ej2-data';
 import { ToastComponent, ToastCloseArgs } from '@syncfusion/ej2-react-notifications';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
@@ -35,14 +34,14 @@ import moment from 'moment';
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
 import { createElement } from '@syncfusion/ej2-base';
-
 import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
 import { Browser, Internationalization, extend } from '@syncfusion/ej2-base';
 import  ReactTagInput from "@pathofdev/react-tag-input/";
-
 import "@pathofdev/react-tag-input/build/index.css";
-
 import { DropDownList } from '@syncfusion/ej2-dropdowns';
+
+
+
 
 export class Main extends Component {
 
@@ -74,9 +73,7 @@ export class Main extends Component {
             { text: 'a.valverde-ext@lefebvre.es', id:'a.valverde-ext@lefebvre.es' },
             { text: 'albertovalverd@hotmail.com', id: 'albertovalverd@hotmail.com' },
             { text: 'alberto.valverde.escribano@gmail.com', id: 'alberto.valverde.escribano@gmail.com' }  
-        ];
-
-       
+        ];       
 
         this.toasts = [
             { content: 'Processing', cssClass: 'e-toast-black', icon: '' },
@@ -97,10 +94,9 @@ export class Main extends Component {
             },
             hidePromptDialog: false,
             calendarToEdit: undefined,
-            tagAttendess: ['a.valverde-ext@lefebvre.es', 'albertovalverd@hotmail.com', 'alberto.valverde.escribano@gmail.com']
-
+            tagAttendess: [],
+            eventType: undefined
             //externalcomponent: "<LexonComponent sidebarDocked={this.onSetSidebarDocked} />"
-
         };
 
         this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
@@ -311,11 +307,14 @@ export class Main extends Component {
                     start = event.start.date;
                     end = event.end.date;
                 }
+
+                // Recurrence
                 let recurrenceRule
                 if (event.recurrence != undefined) {
                     recurrenceRule = event.recurrence[0].replace('RRULE:', '');
                 }
 
+                // Attendees
                 let attendees = []
                 if (event.attendees != undefined) {
                     attendees = event.attendees;
@@ -324,10 +323,12 @@ export class Main extends Component {
                     attendees = undefined;
                 }
 
-                let eventType;
-                if (event.extendedProperties != undefined) {
+                 // EventType  
+                let eventType
+                if (event.extendedProperties != undefined) {                    
                     eventType = event.extendedProperties.private.eventType;
                 }
+
                 this.scheduleData.push({
                     Id: event.id,
                     CalendarId: calendarId,
@@ -340,26 +341,7 @@ export class Main extends Component {
                     RecurrenceRule: recurrenceRule,                   
                     ImageName: "lefebvre",
                     Attendees: attendees,
-                    EventType: eventType,
-                    //Fake to remove
-                    //resources: [{
-                    //    field: "calendarId",
-                    //    title: "Calendar",
-                    //    resourceSettings: {
-                    //        dataSource: [{
-                    //            CalendarText: "alberto",
-                    //            id: 1,
-                    //            CalendarColor: "#f8a398"
-                    //        }, {
-                    //            CalnendarText: "Steven",
-                    //            id: 2,
-                    //            CalendarColor: "#56ca95"
-                    //        }],
-                    //        text: "calnedarText",
-                    //        id: "id",
-                    //        color: "calendarColor"
-                    //    }
-                    //}],
+                    EventType: eventType,                   
                 });
             }
         }
@@ -581,19 +563,7 @@ export class Main extends Component {
         );
     }
 
-    onPopupOpen(args) {
-       
-        if (args.data.Attendees != undefined) {
-            //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i]) 
-            var arr = [];
-            Object.keys(args.data.Attendees).forEach(function (key) {
-                arr.push(args.data.Attendees[key].email);
-            });
-            this.setState({ tagAttendess: arr })
-        }
-        else {
-            this.setState({ tagAttendess: [] })
-        }
+    onPopupOpen(args) {      
 
         if (args.type === 'QuickInfo') {
 
@@ -602,6 +572,34 @@ export class Main extends Component {
 
             var dialogObj = args.element.ej2_instances[0];
             dialogObj.buttons[1].buttonModel.isPrimary = false; 
+
+            // default values for Atendees coming from event args
+            if (args.data.Attendees != undefined) {
+                //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i]) 
+                var arr = [];
+                Object.keys(args.data.Attendees).forEach(function (key) {
+                    arr.push(args.data.Attendees[key].email);
+                });
+                this.setState({ tagAttendess: arr })
+            }
+            else {
+                this.setState({ tagAttendess: [] })
+            }
+
+            // default values for eventType coming from event args
+            let eventType;
+            if (args.data.EventType == undefined) {
+                this.setState({
+                    eventType: 'profesional-event'
+                });
+            }
+            else {
+                this.setState({
+                    eventType: args.data.EventType
+                });
+            }
+
+
 
             // Create required custom elements in initial time
             if (!args.element.querySelector('.custom-field-row')) {
@@ -615,15 +613,7 @@ export class Main extends Component {
                 let inputEle = createElement('input', {
                     className: 'e-field', attrs: { name: 'EventType' }
                 });
-                containerEventType.appendChild(inputEle);
-
-                let eventType;
-                if (args.data.EventType == undefined) {
-                    eventType = 'profesional-event';
-                }
-                else {
-                    eventType = args.data.EventType;
-                }
+                containerEventType.appendChild(inputEle);                
 
                 let drowDownList = new DropDownList({
                     dataSource: [
@@ -631,7 +621,7 @@ export class Main extends Component {
                         { text: 'Personal Event', value: 'personal-event' },
                     ],
                     fields: { text: 'text', value: 'value' },
-                    value: eventType,
+                    value: this.state.eventType,
                     floatLabelType: 'Always', placeholder: 'Event Type'
                 });                
                 drowDownList.appendTo(inputEle);
@@ -642,8 +632,7 @@ export class Main extends Component {
                 let containerTab = createElement('div', { className: 'custom-field-container' });
                 row.appendChild(containerTab); 
                 var node = ReactDOM.findDOMNode(this.tagObj);
-                containerTab.appendChild(node);               
-
+                containerTab.appendChild(node);
 
             }          
 
@@ -1036,11 +1025,11 @@ export class Main extends Component {
                                     <ReactTagInput  
                                         onkeypress="alert('')"
                                         tags={this.state.tagAttendess}
-                                        placeholder="Invite Attendees"
+                                        placeholder="Invite attendees and press enter"
                                         maxTags={10}
                                         editable={true}
                                         readOnly={false}
-                                        removeOnBackspace={false}
+                                        removeOnBackspace={true}
                                         ref={tag => this.tagObj = tag}
                                         onChange={(newTags) => this.setEmailTags(newTags)}
                                         validator={(value) => {
@@ -1059,6 +1048,7 @@ export class Main extends Component {
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
                                             <ScheduleComponent
+                                               
                                                 ref={schedule => this.scheduleObj = schedule}
                                                 width='100%'
                                                 currentView="Month"
