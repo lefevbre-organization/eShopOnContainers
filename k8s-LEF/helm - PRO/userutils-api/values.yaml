@@ -54,7 +54,7 @@ env:
     - name: OnlineUrl
       value: 'https://online.elderecho.com/ws'
     - name: LoginUrl
-      value: 'http://led-servicecomtools.eu.els.local'
+      value: 'http://led-servicecomtools_ntt.eu.els.local'
     - name: OrchestratorType
       value: 'K8S'
     - name: OnlineLogin
