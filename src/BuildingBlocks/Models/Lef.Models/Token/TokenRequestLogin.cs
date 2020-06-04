@@ -1,6 +1,6 @@
 ﻿namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
-    public class TokenRequestLogin
+    public class TokenRequestLogin: TokenRequest
     {
         public string login { get; set; }
 

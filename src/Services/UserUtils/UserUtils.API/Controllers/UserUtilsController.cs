@@ -52,18 +52,20 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         public async Task<IActionResult> TokenPostAsync(
               [FromForm] string login
              , [FromForm] string password
+             , [FromForm] short idApp
              , [FromForm] bool addTerminatorToToken = true
             )
         {
-            var tokenRequest = new TokenModelBase
+            var tokenRequest = new TokenRequestLogin
             {
                 login = login,
-                password = password
+                password = password,
+                idApp = idApp
             };
             if (string.IsNullOrEmpty(tokenRequest.login) && string.IsNullOrEmpty(tokenRequest.password))
                 return BadRequest("id value invalid. Must be a valid user code in the enviroment or login and password");
 
-            var result = await _service.GetTokenAsync(tokenRequest, addTerminatorToToken);
+            var result = await _service.GetGenericTokenAsync((TokenRequest)tokenRequest, idApp, addTerminatorToToken);
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }

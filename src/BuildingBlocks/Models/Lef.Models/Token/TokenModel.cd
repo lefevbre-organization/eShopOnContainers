@@ -29,9 +29,9 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenRequest">
-    <Position X="6.75" Y="2.75" Width="1.75" />
+    <Position X="6.75" Y="2.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAgAAAACBAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Token\TokenRequest.cs</FileName>
     </TypeIdentifier>
   </Class>

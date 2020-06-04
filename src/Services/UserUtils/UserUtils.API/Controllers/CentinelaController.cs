@@ -63,9 +63,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             if (string.IsNullOrEmpty(idClienteNavision))
                 return BadRequest("id value invalid. Must be a valid user code in the enviroment or login and password");
 
-            var token = new TokenModelBase() { idClienteNavision = idClienteNavision };
+            var token = new TokenRequest() { idClienteNavision = idClienteNavision };
 
-            var result = await _service.GetTokenAsync(token, addTerminatorToToken);
+            var result = await _service.GetGenericTokenAsync(token, _settings.Value.IdAppCentinela, addTerminatorToToken);
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }

@@ -209,11 +209,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     var encontrado = listaByPass.data.Find(x => x.NameService.Equals(app.descHerramienta.ToUpperInvariant()));
                     if (encontrado?.NameService != null)
                     {
-                      //  encontrado.Url = app.url;
+                        //  encontrado.Url = app.url;
                         var urlReplace = encontrado.UrlByPass
                             .Replace("{idUserNavision}", idNavisionUser)
                             .Replace("{serviceName}", app.descHerramienta);
-                      //  var actualizado = await _repository.PostByPassAsync(encontrado);
+                        //  var actualizado = await _repository.PostByPassAsync(encontrado);
                         app.url = urlReplace;
                         return;
                     }
@@ -361,28 +361,94 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             return result;
         }
 
+        #region Mongo User
+        public async Task<Result<UserUtilsModel>> PostUserAsync(UserUtilsModel user)
+      => await _repository.PostUserAsync(user);
+
+        public async Task<Result<UserUtilsModel>> GetUserAsync(string idNavision)
+            => await _repository.GetUserAsync(idNavision);
+
+        public async Task<Result<bool>> RemoveUserAsync(string idNavision)
+            => await _repository.RemoveUserAsync(idNavision);
+        #endregion
+
+        public async Task<Result<string>> GetUserUtilsActualToServiceAsync(string idUser, string nameService)
+        {
+            var result = new Result<string>(null);
+            var byPassResult = await GetUserAsync(nameService);
+            //if (byPassResult.errors?.Count == 0 && byPassResult.data?.Url != null)
+            //{
+            //    var newUrl = byPassResult.data?.Url;
+            //    Result<string> temporalLinkResult = await GeUserUtilFinalLink(newUrl);
+            //    result.data = temporalLinkResult.data;
+            //}
+            //else
+            //{
+            //    result.data = "http://www.google.es";
+            //}
+
+            return result;
+        }
+
+        //private async Task<Result<string>> GeUserUtilFinalLink(string newUrl)
+        //{
+        //    var result = new Result<string>(null);
+        //    try
+        //    {
+        //        using (var response = await _clientMinihub.GetAsync(newUrl))
+        //        {
+        //            if (response.IsSuccessStatusCode)
+        //            {
+        //                var rawResult = await response.Content.ReadAsStringAsync();
+
+        //                if (!string.IsNullOrEmpty(rawResult))
+        //                {
+        //                    var resultado = (JsonConvert.DeserializeObject<UrlJson>(rawResult));
+        //                    result.data = resultado.url;
+        //                    //var listAll = resultado.ToList();
+        //                    //result.data = onlyActives ? listAll.Where(x => x.indAcceso > 0).ToList() : listAll.ToList();
+        //                }
+        //            }
+        //            else
+        //            {
+        //                result.errors.Add(new ErrorInfo
+        //                {
+        //                    code = "ErrorFinalLink_WebClient",
+        //                    detail = $"Error in call to {newUrl} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+        //                });
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        result.errors.Add(new ErrorInfo
+        //        {
+        //            code = "ErrorFinalLink",
+        //            detail = $"General error in call Final Link",
+        //            message = ex.Message
+        //        });
+        //    }
+
+        //    return result;
+        //}
+
         #endregion Generic
 
-        private string ValidarUsuario(string login, string password, string idUser)
-        {
-            //TODO: validar usuario
-            if (!string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password) && string.IsNullOrEmpty(idUser))
-                idUser = "E1621396";
+        #region Token Common
 
-            return idUser;
-        }
+        //public async Task<Result<TokenData>> GetTokenAsync(TokenModelBase tokenRequest, bool addTerminatorToToken)
+        //{
+        //    tokenRequest.roles = await GetRolesOfUserAsync(tokenRequest.idClienteNavision, tokenRequest.login, tokenRequest.password);
+        //    var resultado = new Result<TokenData>(new TokenData());
 
-        public async Task<Result<TokenData>> GetTokenAsync(TokenModelBase tokenRequest, bool addTerminatorToToken)
-        {
-            tokenRequest.roles = await GetRolesOfUserAsync(tokenRequest.idClienteNavision, tokenRequest.login, tokenRequest.password);
-            var resultado = new Result<TokenData>(new TokenData());
+        //    resultado.data.token = BuildTokenWithPayloadAsync(tokenRequest).Result;
 
-            resultado.data.token = BuildTokenWithPayloadAsync(tokenRequest).Result;
+        //    resultado.data.token += addTerminatorToToken ? "/" : "";
+        //    resultado.data.valid = true;
+        //    return resultado;
+        //}
 
-            resultado.data.token += addTerminatorToToken ? "/" : "";
-            resultado.data.valid = true;
-            return resultado;
-        }
+        #region Token Validation
 
         private TokenValidationParameters GetValidationParameters()
         {
@@ -411,7 +477,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 result.errors.Add(new ErrorInfo
                 {
-                    code = "574",
+                    code = "Token Invalid",
                     detail = $"Security error with token",
                     message = ex.Message
                 });
@@ -421,7 +487,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 result.errors.Add(new ErrorInfo
                 {
-                    code = "575",
+                    code = "Token Validation Error",
                     detail = $"General error with token",
                     message = ex.Message
                 });
@@ -431,56 +497,219 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             return result;
         }
 
-        /// <summary>
-        ///   Se crea el claim a pelo como en el ejemplo https://stackoverflow.com/questions/29715178/complex-json-web-token-array-in-webapi-with-owin
-        /// </summary>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        public async Task<string> BuildTokenWithPayloadAsync(TokenModelBase token)
+        #endregion Token Validation
+
+        //public async Task<string> BuildTokenWithPayloadAsync(TokenModelBase token)
+        //{
+        //    // Se crea el claim a pelo como en el ejemplo https://stackoverflow.com/questions/29715178/complex-json-web-token-array-in-webapi-with-owin
+        //    var accion = await Task.Run(() =>
+        //    {
+        //        _logger.LogInformation("START --> {0} con tiempo {1} y caducidad token {2}", nameof(BuildTokenWithPayloadAsync), DateTime.Now, DateTime.Now.AddSeconds(_settings.Value.TokenCaducity));
+
+        //        var exp = DateTime.UtcNow.AddSeconds(_settings.Value.TokenCaducity);
+        //        var payload = new JwtPayload(null, "", new List<Claim>(), null, exp);
+
+        //        AddValuesToPayload(payload, token);
+
+        //        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_settings.Value.TokenKey));
+        //        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        //        var jwtToken = new JwtSecurityToken(new JwtHeader(creds), payload);
+        //        return new JwtSecurityTokenHandler().WriteToken(jwtToken);
+        //    });
+
+        //    _logger.LogInformation("END --> {0} con token: {1}", nameof(BuildTokenWithPayloadAsync), accion);
+
+        //    return accion;
+        //}
+
+        private void AddValuesToPayload(JwtPayload payload, TokenRequest tokenRequest)
         {
-            var accion = await Task.Run(() =>
+            AddClaimToPayload(payload, tokenRequest.idClienteNavision, nameof(tokenRequest.idClienteNavision));
+            AddClaimToPayload(payload, tokenRequest.roles, nameof(tokenRequest.roles));
+            //AddClaimToPayload(payload, tokenRequest.name, nameof(tokenRequest.name));
+            //AddClaimToPayload(payload, tokenRequestNewMail.idUserApp, nameof(tokenRequestNewMail.idUserApp));
+
+            if (tokenRequest is TokenRequestDataBase tokenRequesDB)
             {
-                _logger.LogInformation("START --> {0} con tiempo {1} y caducidad token {2}", nameof(BuildTokenWithPayloadAsync), DateTime.Now, DateTime.Now.AddSeconds(_settings.Value.TokenCaducity));
+                AddClaimToPayload(payload, tokenRequesDB.bbdd, nameof(tokenRequesDB.bbdd));
 
-                var exp = DateTime.UtcNow.AddSeconds(_settings.Value.TokenCaducity);
-                var payload = new JwtPayload(null, "", new List<Claim>(), null, exp);
-
-                AddValuesToPayload(payload, token);
-
-                var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_settings.Value.TokenKey));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-                var jwtToken = new JwtSecurityToken(new JwtHeader(creds), payload);
-                return new JwtSecurityTokenHandler().WriteToken(jwtToken);
-            });
-
-            _logger.LogInformation("END --> {0} con token: {1}", nameof(BuildTokenWithPayloadAsync), accion);
-
-            return accion;
-        }
-
-        private void AddValuesToPayload(JwtPayload payload, TokenModelBase modelo)
-        {
-            if (modelo is TokenModelBase clienteModel)
+            }
+            if (tokenRequest is TokenRequestLogin tokenRequesLogin)
             {
-                AddClaimToPayload(payload, clienteModel.idClienteNavision, nameof(clienteModel.idClienteNavision));
-                AddClaimToPayload(payload, clienteModel.roles, nameof(clienteModel.roles));
-                AddClaimToPayload(payload, clienteModel.login, nameof(clienteModel.login));
+                AddClaimToPayload(payload, tokenRequesLogin.login, nameof(tokenRequesLogin.login));
+                AddClaimToPayload(payload, tokenRequesLogin.password, nameof(tokenRequesLogin.password));
+                AddClaimToPayload(payload, tokenRequesLogin.idApp, nameof(tokenRequesLogin.idApp));
+            }
+            if (tokenRequest is TokenRequestNewMail tokenRequestNewMail)
+            {
+                AddClaimToPayload(payload, tokenRequestNewMail.idEntity, nameof(tokenRequestNewMail.idEntity));
+                AddClaimToPayload(payload, tokenRequestNewMail.idEntityType, nameof(tokenRequestNewMail.idEntityType));
 
-                if (modelo is TokenModelLexon clienteModelLexon)
+                if (tokenRequest is TokenRequestOpenMail tokenRequestOpenMail)
                 {
-                    AddClaimToPayload(payload, clienteModelLexon.idUserApp, nameof(clienteModelLexon.idUserApp));
-                    AddClaimToPayload(payload, clienteModelLexon.name, nameof(clienteModelLexon.name));
-                    AddClaimToPayload(payload, clienteModelLexon.bbdd, nameof(clienteModelLexon.bbdd));
-                    AddClaimToPayload(payload, clienteModelLexon.provider, nameof(clienteModelLexon.provider));
-                    AddClaimToPayload(payload, clienteModelLexon.mailAccount, nameof(clienteModelLexon.mailAccount));
-                    AddClaimToPayload(payload, clienteModelLexon.folder, nameof(clienteModelLexon.folder));
-                    AddClaimToPayload(payload, clienteModelLexon.idMail, nameof(clienteModelLexon.idMail));
-                    AddClaimToPayload(payload, clienteModelLexon.idEntityType, nameof(clienteModelLexon.idEntityType));
-                    AddClaimToPayload(payload, clienteModelLexon.idEntity, nameof(clienteModelLexon.idEntity));
+                    AddClaimToPayload(payload, tokenRequestOpenMail.mailAccount, nameof(tokenRequestOpenMail.mailAccount));
+                    AddClaimToPayload(payload, tokenRequestOpenMail.provider, nameof(tokenRequestOpenMail.provider));
+                    AddClaimToPayload(payload, tokenRequestOpenMail.folder, nameof(tokenRequestOpenMail.folder));
+                    AddClaimToPayload(payload, tokenRequestOpenMail.idMail, nameof(tokenRequestOpenMail.idMail));
+
                 }
+
             }
         }
+
+        //private void AddValuesToPayload(JwtPayload payload, TokenModelBase modelo)
+        //{
+        //    if (modelo is TokenModelBase clienteModel)
+        //    {
+        //        AddClaimToPayload(payload, clienteModel.idClienteNavision, nameof(clienteModel.idClienteNavision));
+        //        AddClaimToPayload(payload, clienteModel.roles, nameof(clienteModel.roles));
+        //        AddClaimToPayload(payload, clienteModel.login, nameof(clienteModel.login));
+
+        //        if (modelo is TokenModelLexon clienteModelLexon)
+        //        {
+        //            AddClaimToPayload(payload, clienteModelLexon.idUserApp, nameof(clienteModelLexon.idUserApp));
+        //            AddClaimToPayload(payload, clienteModelLexon.name, nameof(clienteModelLexon.name));
+        //            AddClaimToPayload(payload, clienteModelLexon.bbdd, nameof(clienteModelLexon.bbdd));
+        //            AddClaimToPayload(payload, clienteModelLexon.provider, nameof(clienteModelLexon.provider));
+        //            AddClaimToPayload(payload, clienteModelLexon.mailAccount, nameof(clienteModelLexon.mailAccount));
+        //            AddClaimToPayload(payload, clienteModelLexon.folder, nameof(clienteModelLexon.folder));
+        //            AddClaimToPayload(payload, clienteModelLexon.idMail, nameof(clienteModelLexon.idMail));
+        //            AddClaimToPayload(payload, clienteModelLexon.idEntityType, nameof(clienteModelLexon.idEntityType));
+        //            AddClaimToPayload(payload, clienteModelLexon.idEntity, nameof(clienteModelLexon.idEntity));
+        //        }
+        //    }
+        //}
+
+        //private void AddClaimNumberToPayload(JwtPayload payload, long? valorClaim, string nombreClaim)
+        //{
+        //    if (valorClaim == null) return;
+
+        //    _logger.LogInformation("Claim númerico {0} --> {1}", nombreClaim, valorClaim);
+        //    payload.Add(nombreClaim, valorClaim);
+        //}
+
+        private void AddClaimToPayload(JwtPayload payload, object valorClaim, string nombreClaim)
+        {
+            if (valorClaim == null) return;
+
+            _logger.LogInformation("Claim {0} --> {1}", nombreClaim, valorClaim);
+            payload.Add(nombreClaim, valorClaim);
+        }
+
+        private TokenRequest BuidSpecificToken(TokenModelView token)
+        {
+            if (token.idClienteNavision != null && token.bbdd != null
+                  && token.idEntity != null && token.idEntityType != null
+                  && token.folder != null && token.provider != null
+                  && token.idMail != null && token.mailAccount != null)
+            {
+
+                return new TokenRequestOpenMail
+                {
+                    idClienteNavision = token.idClienteNavision,
+                    bbdd = token.bbdd,
+                    idEntity = (int)token.idEntity,
+                    idEntityType = (short)token.idEntityType,
+                    folder = token.folder,
+                    provider = token.provider,
+                    idMail = token.idMail,
+                    mailAccount = token.mailAccount,
+                    mailContacts = token.mailContacts
+                };
+
+            }
+            else if (token.idClienteNavision != null && token.bbdd != null
+                && token.idEntity != null && token.idEntityType != null)
+            {
+                return new TokenRequestNewMail()
+                {
+                    idClienteNavision = token.idClienteNavision,
+                    bbdd = token.bbdd,
+                    idEntity = (int)token.idEntity,
+                    idEntityType = (short)token.idEntityType
+                };
+            }
+            else if (token.idClienteNavision != null && token.bbdd != null)
+            {
+                return new TokenRequestDataBase()
+                {
+                    idClienteNavision = token.idClienteNavision,
+                    bbdd = token.bbdd
+                };
+            }
+            else if (token.login != null && token.password != null)
+            {
+                return new TokenRequestLogin() { login = token.login, password = token.password };
+            }
+            else if (token.idClienteNavision != null)
+            {
+                return new TokenRequest() { idClienteNavision = token.idClienteNavision };
+            }
+
+            return null;
+        }
+
+        #endregion
+
+        #region Auxiliar
+
+        private async Task<Result<TokenData>> GetRolesAndValidate(TokenRequest token)
+        {
+            var result = new Result<TokenData>(new TokenData());
+
+            try
+            {
+                var userLefebvreResult = (token is TokenRequestLogin)
+                     ? await GetUserDataWithLoginAsync(((TokenRequestLogin)token).login, ((TokenRequestLogin)token).password)
+                     : await GetUserDataWithEntryAsync(token.idClienteNavision);
+
+                if (userLefebvreResult?.data?._idEntrada != null)
+                {
+                    result.data.valid = true;
+                    token.idClienteNavision = userLefebvreResult?.data?._idEntrada;
+                    token.roles.AddRange(new List<string>() { "gmailpanel", "outlookpanel", "lexonconnector", "centinelaconnector" });
+                }
+                else
+                {
+                    result.data.valid = false;
+                    TraceOutputMessage(result.errors, $"Error validation user > User login or user idEntry don´t exist", "Error Validation User");
+                    return result;
+                }
+
+                var apps = await GetUserUtilsAsync(token.idClienteNavision, true);
+                foreach (var app in apps.data)
+                {
+                    token.roles.Add(app.descHerramienta);
+                }
+
+                var areas = await GetAreasByUserAsync(token.idClienteNavision);
+                foreach (var area in areas.data)
+                {
+                    token.roles.Add(area.descArea);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                TraceOutputMessage(result.errors, $"Error validation user => {ex.Message}", "Error Validation");
+
+            }
+            return result;
+        }
+
+        //private async Task<string> ValidarUsuario(string login, string password, string idUser)
+        //{
+        //    var userLefebvreResult = idUser == null
+        //        ? await GetUserDataWithLoginAsync(login, password)
+        //        : await GetUserDataWithEntryAsync(idUser);
+
+        //    return userLefebvreResult?.data?._idEntrada;
+        //    //if (!string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password) && string.IsNullOrEmpty(idUser))
+        //    //    idUser = "E1621396";
+
+        //    //return idUser;
+        //}
 
         private async Task<List<string>> GetRolesOfUserAsync(string idClienteNavision, string login, string password)
         {
@@ -507,158 +736,101 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             return appsWithAccess;
         }
 
-        private void AddClaimNumberToPayload(JwtPayload payload, long? valorClaim, string nombreClaim)
-        {
-            if (valorClaim == null) return;
-
-            _logger.LogInformation("Claim númerico {0} --> {1}", nombreClaim, valorClaim);
-            payload.Add(nombreClaim, valorClaim);
-        }
-
-        private void AddClaimToPayload(JwtPayload payload, object valorClaim, string nombreClaim)
-        {
-            if (valorClaim == null) return;
-
-            _logger.LogInformation("Claim {0} --> {1}", nombreClaim, valorClaim);
-            payload.Add(nombreClaim, valorClaim);
-        }
+        #endregion
 
         public Task<Result<TokenData>> GetUserFromLoginAsync(int? idApp, string login, string password, bool addTerminatorToToken)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Result<TokenData>> GetLexonUserSimpleAsync(string idClienteNavision, bool addTerminatorToToken)
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task<Result<TokenData>> GetLexonNewMailAsync(TokenRequestNewMail tokenRequest, bool addTerminatorToToken)
+        public async Task<Result<TokenData>> GetGenericTokenAsync(TokenRequest tokenRequest, short idApp, bool addTerminatorToToken)
         {
-            throw new NotImplementedException();
-        }
+            //1. Validar usuario contra loginurl o minuhub (pensar si de hace con todos)
+            //4. Obtener roles y permisos de aplicación para el usuario (puede unificarse al paso 1)
+            var result = await GetRolesAndValidate(tokenRequest);
 
-        public Task<Result<TokenData>> GetLexonOpenMailAsync(TokenRequestOpenMail tokenRequest, bool addTerminatorToToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Result<TokenData>> GetLexonUserDbAsync(TokenRequestDataBase tokenRequest, bool addTerminatorToToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Result<LexUser>> GetLexonGenericAsync(TokenModelView tokenRequest, bool addTerminatorToToken)
-        {
-            tokenRequest.idClienteNavision = ValidarUsuario(tokenRequest.login, tokenRequest.password, tokenRequest.idClienteNavision);
-            Result<LexUser> resultado = new Result<LexUser>(new LexUser()); // await _lexonRepository.GetUserAsync(idUser);
-
-            if (string.IsNullOrEmpty(resultado?.data?.idUser))
+            //2. Obtener datos de lexon (TODO: evaluar si es necesari, se puede obviar con el paso anterior u obtenemos un método más eficiente)
+            if (idApp == 1) //1 . Lexon 2. Centinela 3. SIgnaturit
             {
-                resultado.errors.Add(new ErrorInfo() { code = "5000", message = "No se recupera un idUser desde Lexon" });
+                var lexUserResult = await _repository.GetLexonUserAsync(tokenRequest.idClienteNavision);
+                if (string.IsNullOrEmpty(lexUserResult?.data?.idNavision))
+                    TraceOutputMessage(result.errors, $"Error get user from lexon", "Error Get Lexon Token");
+                tokenRequest.idUser = lexUserResult?.data?.idUser;
             }
-            tokenRequest.mailContacts = await GetContactDataFromLexon(resultado?.data?.idUser, tokenRequest.bbdd, tokenRequest.idEntityType, tokenRequest.idEntity, tokenRequest.mailContacts);
 
-            resultado.data.token = BuildTokenWithPayloadAsync(new TokenModelLexon
+            //3. Obtener contactos si se necesita (evaluar si tengo que pasarlo a otros métodos y quitarlos del general
+            //5. Construir token diferente según los datos proporcionados
+            if (tokenRequest is TokenRequestNewMail || tokenRequest is TokenRequestOpenMail)
+                GetContactDataFromLexon((TokenRequestNewMail)tokenRequest);
+
+            var tokenString = await Task.Run(() =>
             {
-                idClienteNavision = tokenRequest.idClienteNavision,
-                name = resultado?.data?.name,
-                idUserApp = GetLongIdUser(resultado?.data?.idUser),
-                bbdd = tokenRequest.bbdd,
-                provider = tokenRequest.provider,
-                mailAccount = tokenRequest.mailAccount,
-                folder = tokenRequest.folder,
-                idMail = tokenRequest.idMail,
-                idEntityType = tokenRequest.idEntityType,
-                idEntity = tokenRequest.idEntity,
-                mailContacts = tokenRequest.mailContacts,
-                roles = await GetRolesOfUserAsync(tokenRequest.idClienteNavision, tokenRequest.login, tokenRequest.password)
-            }).Result;
+                _logger.LogInformation("START --> {0} con tiempo {1} y caducidad token {2}", nameof(GetGenericTokenAsync), DateTime.Now, DateTime.Now.AddSeconds(_settings.Value.TokenCaducity));
 
-            resultado.data.token += addTerminatorToToken ? "/" : "";
-            return resultado;
-        }
+                var exp = DateTime.UtcNow.AddSeconds(_settings.Value.TokenCaducity);
+                var payload = new JwtPayload(null, "", new List<Claim>(), null, exp);
 
-        private long? GetLongIdUser(string idUser)
-        {
-            throw new NotImplementedException();
-        }
+                AddValuesToPayload(payload, tokenRequest);
 
-        private async Task<List<string>> GetContactDataFromLexon(string idUser, string bbdd, short? idEntityType, int? idEntity, List<string> mailContacts)
-        {
-            var result = new Result<List<string>>(new List<string>());
+                var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_settings.Value.TokenKey));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            return new List<string>();
-        }
+                var jwtToken = new JwtSecurityToken(new JwtHeader(creds), payload);
+                return new JwtSecurityTokenHandler().WriteToken(jwtToken);
+            });
 
-        public async Task<Result<UserUtilsModel>> PostUserAsync(UserUtilsModel user) 
-            => await _repository.PostUserAsync(user);
+            _logger.LogInformation("END --> {0} con token: {1}", nameof(GetGenericTokenAsync), tokenString);
 
-        public async Task<Result<UserUtilsModel>> GetUserAsync(string idNavision)
-            => await _repository.GetUserAsync(idNavision);
-
-        public async Task<Result<bool>> RemoveUserAsync(string idNavision)
-            => await _repository.RemoveUserAsync(idNavision);
-
-        public async Task<Result<string>> GetUserUtilsActualToServiceAsync(string idUser, string nameService)
-        {
-            var result = new Result<string>(null);
-            var byPassResult = await GetUserAsync(nameService);
-            //if (byPassResult.errors?.Count == 0 && byPassResult.data?.Url != null)
-            //{
-            //    var newUrl = byPassResult.data?.Url;
-            //    Result<string> temporalLinkResult = await GeUserUtilFinalLink(newUrl);
-            //    result.data = temporalLinkResult.data;
-            //}
-            //else
-            //{
-            //    result.data = "http://www.google.es";
-            //}
+            tokenString += addTerminatorToToken ? "/" : "";
+            result.data.token = tokenString;
+            //result.data.valid = true;
 
             return result;
         }
 
-        private async Task<Result<string>> GeUserUtilFinalLink(string newUrl)
+
+        public async Task<Result<LexUser>> GetLexonGenericAsync(TokenModelView token, short idApp, bool addTerminatorToToken)
         {
-            var result = new Result<string>(null);
-            try
-            {
-                using (var response = await _clientMinihub.GetAsync(newUrl))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var rawResult = await response.Content.ReadAsStringAsync();
 
-                        if (!string.IsNullOrEmpty(rawResult))
-                        {
-                            var resultado = (JsonConvert.DeserializeObject<UrlJson>(rawResult));
-                            result.data = resultado.url;
-                            //var listAll = resultado.ToList();
-                            //result.data = onlyActives ? listAll.Where(x => x.indAcceso > 0).ToList() : listAll.ToList();
-                        }
-                    }
-                    else
-                    {
-                        result.errors.Add(new ErrorInfo
-                        {
-                            code = "ErrorFinalLink_WebClient",
-                            detail = $"Error in call to {newUrl} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                        });
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "ErrorFinalLink",
-                    detail = $"General error in call Final Link",
-                    message = ex.Message
-                });
-            }
+            var tokenRequest = BuidSpecificToken(token);
 
-            return result;
+            var tokenResult = await GetGenericTokenAsync(tokenRequest, idApp, addTerminatorToToken);
+            var lexUser = new LexUser() { idNavision = tokenRequest.idClienteNavision, idUser = tokenRequest.idUser, token = tokenResult.data.token };
+
+            var resultLexUser = new Result<LexUser>(lexUser);
+            resultLexUser.errors.AddRange(tokenResult.errors);
+            resultLexUser.infos.AddRange(tokenResult.infos);
+
+            return resultLexUser;
         }
+
+
+        private async void GetContactDataFromLexon(TokenRequestNewMail token)
+        {
+            if (token.idEntityType == (short?)LexonAdjunctionType.files
+                || token.idEntityType == (short?)LexonAdjunctionType.folders
+                || token.idEntityType == (short?)LexonAdjunctionType.others
+                || token.idEntityType == (short?)LexonAdjunctionType.documents)
+                return;
+
+            var search = new EntitySearchById
+            {
+                bbdd = token.bbdd,
+                idEntity = token.idEntity,
+                idType = token.idEntityType,
+                idUser = token.idClienteNavision
+            };
+            var contactsResult = await _repository.GetLexonContactsAsync(search);
+            if (!string.IsNullOrEmpty(contactsResult?.data.Email))
+            {
+                if (token.mailContacts == null)
+                    token.mailContacts = new List<string>();
+                token.mailContacts.Add(contactsResult?.data.Email);
+            }
+
+        }
+
 
     }
 }

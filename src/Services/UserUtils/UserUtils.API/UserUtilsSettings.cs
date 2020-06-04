@@ -24,7 +24,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
         public bool UseCustomizationData { get; set; }
 
         public bool AzureStorageEnabled { get; set; }
-        public long IdAppNavision { get; set; }
+        public short IdAppUserUtils { get; set; }
+        public short IdAppLexon { get; set; }
+        public short IdAppCentinela { get; set; }
+        public short IdAppSignaturit { get; set; }
         public long TokenCaducity { get; set; }
 
         public string TokenKey { get; set; }

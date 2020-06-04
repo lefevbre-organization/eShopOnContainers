@@ -63,9 +63,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             if (string.IsNullOrEmpty(idClienteNavision))
                 return BadRequest("id value invalid. Must be a valid user code in the enviroment or login and password");
 
-            var token = new TokenModelBase() { idClienteNavision = idClienteNavision };
+            var token = new TokenRequest() { idClienteNavision = idClienteNavision };
 
-            var result = await _service.GetTokenAsync(token, addTerminatorToToken);
+            var result = await _service.GetGenericTokenAsync(token, _settings.Value.IdAppLexon, addTerminatorToToken);
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
@@ -86,8 +86,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             if (string.IsNullOrEmpty(tokenRequest.idClienteNavision))
                 return BadRequest("Must be a valid idClient");
 
-            Result<TokenData> result = await _service.GetLexonUserSimpleAsync(
-                tokenRequest.idClienteNavision, addTerminatorToToken);
+            Result<TokenData> result = await _service.GetGenericTokenAsync(
+                tokenRequest, _settings.Value.IdAppLexon, addTerminatorToToken);
 
             return result.data.valid ? Ok(result) : (IActionResult)BadRequest(result);
         }
@@ -108,8 +108,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             if (string.IsNullOrEmpty(tokenRequest.idClienteNavision) || string.IsNullOrEmpty(tokenRequest.bbdd))
                 return BadRequest("Must be a valid idClient and bbdd");
 
-            Result<TokenData> result = await _service.GetLexonUserDbAsync(
-                tokenRequest, addTerminatorToToken);
+            Result<TokenData> result = await _service.GetGenericTokenAsync(
+                tokenRequest, _settings.Value.IdAppLexon, addTerminatorToToken);
 
             return result.data.valid ? Ok(result) : (IActionResult)BadRequest(result);
         }
@@ -127,11 +127,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             , bool addTerminatorToToken = true
             )
         {
-            if (string.IsNullOrEmpty(tokenRequest.idClienteNavision))
-                return BadRequest("Must be a valid idClient");
+            if (string.IsNullOrEmpty(tokenRequest.idClienteNavision)
+                || (tokenRequest.idEntity == 0 || tokenRequest.idEntityType ==0))
+                return BadRequest("Must be a valid idClient and valid idtype and idEntityType");
 
-            Result<TokenData> result = await _service.GetLexonNewMailAsync(
-                tokenRequest, addTerminatorToToken);
+            Result<TokenData> result = await _service.GetGenericTokenAsync(
+                tokenRequest, _settings.Value.IdAppLexon, addTerminatorToToken);
 
             return result.data.valid ? Ok(result) : (IActionResult)BadRequest(result);
         }
@@ -153,8 +154,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
                 || string.IsNullOrEmpty(tokenRequest.idMail))
                 return BadRequest("Must be a valid idClient and valid idMail");
 
-            Result<TokenData> result = await _service.GetLexonOpenMailAsync(
-                tokenRequest, addTerminatorToToken);
+            Result<TokenData> result = await _service.GetGenericTokenAsync(
+                tokenRequest, _settings.Value.IdAppLexon, addTerminatorToToken);
 
             return result.data.valid ? Ok(result) : (IActionResult)BadRequest(result);
         }
@@ -177,8 +178,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
                 return BadRequest("id value invalid. Must be a valid user code in the enviroment or login and password");
 
             Result<LexUser> result = await _service.GetLexonGenericAsync(
-                tokenRequest,
-                addTerminatorToToken);
+                tokenRequest, _settings.Value.IdAppLexon, addTerminatorToToken);
 
             if (result?.data != null)
                 result.data.companies = null;
@@ -220,7 +220,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
              , [FromForm] bool addTerminatorToToken = true
             )
         {
-            var tokenRequest = new TokenModelBase
+            var tokenRequest = new TokenRequestLogin
             {
                 login = login,
                 password = password
@@ -228,7 +228,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             if (string.IsNullOrEmpty(tokenRequest.login) && string.IsNullOrEmpty(tokenRequest.password))
                 return BadRequest("id value invalid. Must be a valid user code in the enviroment or login and password");
 
-            var result = await _service.GetTokenAsync(tokenRequest, addTerminatorToToken);
+            var result = await _service.GetGenericTokenAsync(tokenRequest, _settings.Value.IdAppLexon, addTerminatorToToken);
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
