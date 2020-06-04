@@ -336,6 +336,7 @@ export class Main extends Component {
                     RecurrenceRule: recurrenceRule,                   
                     ImageName: "lefebvre",
                     Attendees: attendees,
+                    EventType: "profesional-event"
                     //Fake to remove
                     //resources: [{
                     //    field: "calendarId",
@@ -597,11 +598,43 @@ export class Main extends Component {
                 let row = createElement('div', { className: 'custom-field-row' });
                 let formElement = args.element.querySelector('.e-schedule-form');
                 formElement.firstChild.insertBefore(row, formElement.firstChild.firstChild);
-                let container = createElement('div', { className: 'custom-field-container' });               
-                row.appendChild(container); 
+                
+                // Adding type of event element
+                let containerEventType = createElement('div', { className: 'custom-field-container' });
+                row.appendChild(containerEventType);
+                let inputEle = createElement('input', {
+                    className: 'e-field', attrs: { name: 'EventType' }
+                });
+                containerEventType.appendChild(inputEle);
 
+                let eventType;
+                if (args.data.EventType == undefined) {
+                    eventType = 'profesional-event';
+                }
+                else {
+                    eventType = args.data.EventType;
+                }
+
+                let drowDownList = new DropDownList({
+                    dataSource: [
+                        { text: 'Profesional Event', value: 'profesional-event' },
+                        { text: 'Personal Event', value: 'personal-event' },
+                    ],
+                    fields: { text: 'text', value: 'value' },
+                    value: eventType,
+                    floatLabelType: 'Always', placeholder: 'Event Type'
+                });                
+                drowDownList.appendTo(inputEle);
+                inputEle.setAttribute('name', 'EventType');
+               
+
+                // Adding attendees tag element
+                let containerTab = createElement('div', { className: 'custom-field-container' });
+                row.appendChild(containerTab); 
                 var node = ReactDOM.findDOMNode(this.tagObj);
-                container.appendChild(node);
+                containerTab.appendChild(node);               
+
+
             }          
 
             let TabContainer = args.element.querySelector('.custom-tab-row');
@@ -640,7 +673,24 @@ export class Main extends Component {
 
             case 'eventChanged':
 
+                // TO FIX BECOUSE REFRESH OF ATTENDES ARGS ARE NOT WORKING FINE
+                // Update current Event in calendar (not in google cloud)
+                //let att = this.state.tagAttendess;
+                //args.data.Attendees = [];
+                //if (att != undefined) {
+                //    Object.keys(att).forEach(function (key) {
+                //     args.data.Attendees.push({ 'email': att[key] });
+                //     });                           
+                //   }
+                //else {
+                //    args.data.Attendees = undefined;
+                //}
+                //this.scheduleObj.refreshEvents();
+                //this.scheduleObj.refresh();
+
                 event = this.buildEventoGoogle(args.data);
+
+
                 let itemToModify = args.data.Id
                 let calendarToModify = args.data.CalendarId
                 if (args.data.occurrence != undefined) {
@@ -685,19 +735,7 @@ export class Main extends Component {
                         // refresh event data
                         args.data[0].Id = result.id;
                         args.data[0].ImageName = "lefebvre";
-
-                        let attendees = []
-                        let att = this.state.tagAttendess
-                        if (att != undefined) {
-                            Object.keys(att).forEach(function (key) {
-                                attendees.push({ 'email': att[key] });
-                            });                           
-                        }
-                        else {
-                            attendees = undefined;
-                        }
-
-                        args.data[0].Attendees = attendees;
+                        args.data[0].Attendees = result.attendees;
 
                         this.scheduleObj.refreshEvents();
                         this.toastObj.show(this.toasts[1]);
