@@ -1,66 +1,90 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="TokenModelBase y TokenModelLexon obsoletos&#xD;&#xA;">
+    <Position X="3.796" Y="2.291" Height="0.75" Width="1.7" />
+  </Comment>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenData">
-    <Position X="7.5" Y="0.75" Width="1.5" />
+    <Position X="9" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ=</HashCode>
       <FileName>Token\TokenData.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenModelBase">
-    <Position X="4" Y="0.5" Width="1.75" />
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenModelBase" Collapsed="true">
+    <Position X="3.75" Y="0.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAACBAAAAAAEAAAAAAAAAgAAEgA=</HashCode>
       <FileName>Token\TokenModelBase.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenModelCentinela">
-    <Position X="1.25" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAA=</HashCode>
-      <FileName>Token\TokenModelCentinela.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenModelLexon">
-    <Position X="1.25" Y="2.25" Width="2" />
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenModelLexon" Collapsed="true">
+    <Position X="3.5" Y="1.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAEAAQIAABAAAAAAAAAAAAAAAAAAAAAAAAQSABAAIA=</HashCode>
       <FileName>Token\TokenModelLexon.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenRequest">
-    <Position X="6.75" Y="2.5" Width="1.75" />
+    <Position X="6.75" Y="0.75" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAgAAAACBAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAACAAAAAIAAAAAAAQAAgBAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Token\TokenRequest.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenRequestOpenMail">
-    <Position X="5.5" Y="7.75" Width="2.25" />
+    <Position X="5.5" Y="7" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAEAAQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA=</HashCode>
       <FileName>Token\TokenRequestOpenMail.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenRequestNewMail">
-    <Position X="5.5" Y="5.75" Width="2.25" />
+    <Position X="5.5" Y="5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQCABAAAA=</HashCode>
       <FileName>Token\TokenRequestNewMail.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenRequestLogin">
-    <Position X="8.5" Y="4.25" Width="2" />
+    <Position X="8.5" Y="3.25" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAgAAEAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAEAA=</HashCode>
       <FileName>Token\TokenRequestLogin.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenRequestDataBase">
-    <Position X="5.5" Y="4.25" Width="2.5" />
+    <Position X="5.5" Y="3.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Token\TokenRequestDataBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenRequestCentinelaNewFirm">
+    <Position X="10.75" Y="3.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAAAAAAAAAAAAAgAAAAAAAACAAAAAQ=</HashCode>
+      <FileName>Token\TokenRequestCentinelaNewFirm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenRequestCentinelaViewFirm">
+    <Position X="10.75" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Token\TokenRequestCentinelaViewFirm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenModel">
+    <Position X="1.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAACAAAAAAAEAAAAAAAAQAAAAgA=</HashCode>
+      <FileName>Token\TokenModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.TokenModelView">
+    <Position X="1" Y="3" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAQIAABAAAAAAAAABAAAAAAAAAAAAAAQCgBAEIA=</HashCode>
+      <FileName>Token\TokenModelView.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
