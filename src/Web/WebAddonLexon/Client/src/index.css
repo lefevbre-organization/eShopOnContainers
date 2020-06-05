@@ -568,3 +568,9 @@ ol>li.index-5::before {
 .lf-icon-bookmarks {
   margin-right: 16px;
 }
+
+.expiration {
+  font-size: 16px;
+  margin-left: auto;
+  padding-right: 5px;
+}

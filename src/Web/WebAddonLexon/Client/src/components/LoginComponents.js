@@ -11,7 +11,11 @@ import React from 'react';
 
    const verificationPassword = children.errorsMessage.password ? (
       <div className="errorsMessage">{children.errorsMessage.password}</div>
-        ) : null;
+    ) : null;
+        
+   const verificationAuth = children.errorsMessage.auth ? (
+     <div className="errorsMessageAuth">{children.errorsMessage.auth}</div>
+    ) : null;
 
    return (
     <div className="main-box">
@@ -55,6 +59,7 @@ import React from 'react';
                <div className="ml-n4 pt-4">
                  <button onClick={children.handleEventAddon} className="btn btn-label btn-login"> INICIAR SESIÓN
                 </button>
+                { verificationAuth }
                </div>
                 <p className="mt-3 front-login__info-block">{children.notClient} <a className="front-login__info-block-link" 
                 href="https://espaciolefebvre.lefebvre.es/solicitar-informacion"> {children.requestInfo} </a></p>

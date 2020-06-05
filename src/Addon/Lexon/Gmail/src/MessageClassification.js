@@ -121,11 +121,11 @@ function buildMessageClassificationCard(e) {
    }
   
  }
- var account = Session.getEffectiveUser().getEmail();
+//  var account = Session.getEffectiveUser().getEmail();
   var card = CardService.newCardBuilder()
     .setHeader(CardService.newCardHeader()
     .setImageUrl("http://www.derechopractico.es/wp-content/uploads/2019/03/Logo-Lefebvre.jpg")
-    .setTitle(account)
+    .setTitle(addonData.email)
     .setSubtitle(addonData.userName))
     .addCardAction(logoutAction)
     .addSection(selectionCompany);

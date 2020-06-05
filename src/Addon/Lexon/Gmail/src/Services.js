@@ -102,7 +102,8 @@ function getMessageRaw(addonData) {
   var queryString = '?provider='+ addonData.provider 
   + '&account='+ addonData.account +'&messageId=' 
   + addonData.messageById;
-  var url = apiAccount + queryString;
+  var url = apiAccount + addonData.idClienteNav 
+  + '/raw' + queryString;
   var response = UrlFetchApp.fetch(url, {
     method: "get",
     // headers: headers,
@@ -118,10 +119,10 @@ function saveMessageRaw(addonData, raw) {
   if(messageRawResponse.data != null) {
     return;
   }
-  var url = apiAccount;
+  var url = apiAccount + addonData.idClienteNav + '/raw';
   var data = {
       'id': null,
-      'user': "E1621396",
+      'user': addonData.idClienteNav,
       'account': addonData.account,
       'provider': addonData.provider,
       'messageId': addonData.messageById,
@@ -137,9 +138,9 @@ function saveMessageRaw(addonData, raw) {
 }
 
 function removeRawAddon(addonData) {
-  const url = apiAccount + '/delete';
+  const url = apiAccount + addonData.idClienteNav + '/raw/delete';
   const data = {
-    'user': "E1621396",
+    'user': addonData.idClienteNav,
     'account': addonData.account,
     'provider': addonData.provider,
     'messageId': addonData.messageById
@@ -186,8 +187,10 @@ function getAddonData(e) {
     subject: subject,
     folder: nameFolder,
     sentDateTime: messageDate,
-    idUser: user.data.idUser,
-    userName: user.data.name
+    idUser: "449",
+    idClienteNav: user.data._idClienteNav,
+    userName: user.data._nombre,
+    email: user.data._login
   };
   
   var header = {

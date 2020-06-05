@@ -49,13 +49,13 @@ function buildHomeCard() {
       return logout();
     }
   
-    var account = Session.getEffectiveUser().getEmail();
+    // var account = Session.getEffectiveUser().getEmail();
   
     var homeCard = CardService.newCardBuilder()
       .setHeader(CardService.newCardHeader()
       .setImageUrl("http://www.derechopractico.es/wp-content/uploads/2019/03/Logo-Lefebvre.jpg")
-      .setTitle(account)
-      .setSubtitle(user.data.name))
+      .setTitle(user.data._login)
+      .setSubtitle(user.data._nombre))
       .addCardAction(logoutAction)
       .addSection(sectionFormCompany);
   

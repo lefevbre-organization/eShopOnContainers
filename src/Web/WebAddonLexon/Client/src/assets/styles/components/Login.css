@@ -265,6 +265,20 @@
   margin-top: 1px;
 }
 
+.errorsMessageAuth {
+  font-family: "MTTMilano";
+  font-size: 14px;
+  border: 0;
+  font-weight: 600;
+  background-color: transparent;
+  color: #D81F2A;
+  margin-left: 1px;
+  margin-top: -5px;
+  text-align: center;
+  margin-top: 1px;
+}
+
+
 .front-login__input-error-icon {
   position: absolute;
   left: 93%;
