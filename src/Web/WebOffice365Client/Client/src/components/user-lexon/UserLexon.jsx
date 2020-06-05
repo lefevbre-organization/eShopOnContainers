@@ -122,6 +122,7 @@ class UserLexon extends Component {
       if (this.props.lexon.isNewAccount) {
         this.setState({
           readyToRedirect: true,
+          loading: false,
         });
 
         if (this.checkIsAuthenticated()) {

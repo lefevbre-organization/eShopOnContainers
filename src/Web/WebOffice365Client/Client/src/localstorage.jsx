@@ -10,8 +10,8 @@ export const getStateStorage = () => {
   }
 
   return {
-    lexon: JSON.parse(lexon),
-    currentUser: JSON.parse(currentUser),
+    lexon: lexon ? JSON.parse(lexon) : undefined,
+    currentUser: currentUser ? JSON.parse(currentUser) : undefined,
   };
 };
 
