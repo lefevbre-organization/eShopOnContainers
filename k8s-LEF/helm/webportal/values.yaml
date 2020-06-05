@@ -53,8 +53,7 @@ configValues: |
   window.API_ACCOUNTS='https://lexbox-test-apigwacc.lefebvre.es'
   window.URL_INBOX_GOOGLE= 'https://lexbox-test-webgoogle.lefebvre.es'
   window.URL_INBOX_OUTLOOK= 'https://lexbox-test-webgraph.lefebvre.es'
-  window.URL_INBOX_IMAP= 'https://lexbox-test-webimap.lefebvre.es'
+  window.URL_INBOX_IMAP= 'https://lexbox-test-webimap.lefebvre.es' 
+  window.URL_GET_USER = 'https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login'
+  window.TERMS_AND_CONDITIONS_URL = ''
   window.RELEASE= 'RC 0.23'
-  window.URL_GET_USER =
-  'https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login';
-window.TERMS_AND_CONDITIONS_URL = '';

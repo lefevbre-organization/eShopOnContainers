@@ -572,6 +572,7 @@ export class Main extends Component {
 
             var dialogObj = args.element.ej2_instances[0];
             dialogObj.buttons[1].buttonModel.isPrimary = false; 
+            args.element.style.width = "700px";
 
             // default values for Atendees coming from event args
             if (args.data.Attendees != undefined) {
@@ -586,18 +587,18 @@ export class Main extends Component {
                 this.setState({ tagAttendess: [] })
             }
 
-            // default values for eventType coming from event args
-            let eventType;
-            if (args.data.EventType == undefined) {
-                this.setState({
-                    eventType: 'profesional-event'
-                });
-            }
-            else {
-                this.setState({
-                    eventType: args.data.EventType
-                });
-            }
+            //// default values for eventType coming from event args
+            //let eventType;
+            //if (args.data.EventType == undefined) {
+            //    this.setState({
+            //        eventType: 'profesional-event'
+            //    });
+            //}
+            //else {
+            //    this.setState({
+            //        eventType: args.data.EventType
+            //    });
+            //}
 
 
 
