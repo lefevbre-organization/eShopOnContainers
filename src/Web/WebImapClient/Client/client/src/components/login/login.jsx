@@ -64,7 +64,10 @@ const stateFromAccount = (account) => ({
     serverPort: account.imapPort || DEFAULT_IMAP_PORT,
     user: account.imapUser || '',
     password: account.imapPass || '',
-    imapSsl: account.imapSsl || DEFAULT_IMAP_SSL,
+    imapSsl: 
+      account && account.imapSsl !== undefined && account.imapsSsl !== null
+        ? account.imapSsl 
+        : DEFAULT_IMAP_SSL,
     smtpHost: account.smtp || '',
     smtpPort: account.smtpPort || DEFAULT_SMTP_PORT,
     smtpSsl:
