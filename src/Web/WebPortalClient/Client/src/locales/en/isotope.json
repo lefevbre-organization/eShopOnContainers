@@ -10,7 +10,8 @@
     "legal-warning": "Legal warning",
     "privacy-policy": "Privacy policy",
     "cookies-policy": "Cookies policy",
-    "version": "Version"
+    "version": "Version",
+    "terms-and-conditions": "Terms and conditions"
   },
   "accounts": {
     "nothing-user-email-added": "Nothing user email added"
