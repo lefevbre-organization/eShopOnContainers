@@ -3,14 +3,14 @@ import {
   GridComponent,
   ColumnsDirective,
   ColumnDirective,
-  rowSelected
+  rowSelected,
 } from '@syncfusion/ej2-react-grids';
 import { L10n } from '@syncfusion/ej2-base';
 import i18n from 'i18next';
 import {
   getUser,
   Evaluation,
-  CentUser
+  CentUser,
 } from '../../../services/services-centinela';
 import * as _ from 'lodash';
 import ImplantationListSearch from '../implantation-list-search/implantation-list-search';
@@ -23,9 +23,9 @@ import { Search } from '@syncfusion/ej2-react-dropdowns';
 L10n.load({
   'es-ES': {
     grid: {
-      EmptyRecord: 'No hay datos que mostrar'
-    }
-  }
+      EmptyRecord: 'No hay datos que mostrar',
+    },
+  },
 });
 
 interface Props {
@@ -60,7 +60,7 @@ export class Step2 extends React.Component<Props, State> {
       rowSelected: -1,
       currentPage: 1,
       search: '',
-      lastPage: false
+      lastPage: false,
     };
     this.toolbarOptions = ['Search'];
     this.renderCheck = this.renderCheck.bind(this);
@@ -85,7 +85,7 @@ export class Step2 extends React.Component<Props, State> {
         currentPage: 1,
         lastPage: this.searchImplantations.length <= 6,
         implantations: _.slice(this.searchImplantations, 0, 6),
-        showSpinner: false
+        showSpinner: false,
       });
     }
   }
@@ -181,7 +181,7 @@ export class Step2 extends React.Component<Props, State> {
       this.setState({
         currentPage: np,
         lastPage: lp,
-        implantations: _.slice(this.searchImplantations, (np - 1) * 6, fi + 6)
+        implantations: _.slice(this.searchImplantations, (np - 1) * 6, fi + 6),
       });
     }
   }
@@ -199,7 +199,7 @@ export class Step2 extends React.Component<Props, State> {
       this.setState({
         currentPage: np,
         lastPage: lp,
-        implantations: _.slice(this.searchImplantations, (np - 1) * 6, fi + 6)
+        implantations: _.slice(this.searchImplantations, (np - 1) * 6, fi + 6),
       });
     }
   }
@@ -210,7 +210,7 @@ export class Step2 extends React.Component<Props, State> {
     if (rowSelected !== event.data.evaluationId) {
       this.setState(
         {
-          rowSelected: event.data.evaluationId
+          rowSelected: event.data.evaluationId,
         },
         () => {
           onImplantation(event.data);
@@ -226,7 +226,7 @@ export class Step2 extends React.Component<Props, State> {
           search: search || '',
           currentPage: 1,
           counter: 0,
-          showSpinner: true
+          showSpinner: true,
         },
         () => {
           var re = new RegExp(search, 'i');
@@ -244,7 +244,7 @@ export class Step2 extends React.Component<Props, State> {
             lastPage: this.searchImplantations.length <= 6,
             currentPage: 1,
             counter: this.searchImplantations.length,
-            implantations: this.searchImplantations
+            implantations: this.searchImplantations,
           });
         }
       );
@@ -258,7 +258,7 @@ export class Step2 extends React.Component<Props, State> {
           search: search || '',
           currentPage: 1,
           counter: 0,
-          showSpinner: true
+          showSpinner: true,
         },
         () => {
           var re = new RegExp(search, 'i');
@@ -279,7 +279,7 @@ export class Step2 extends React.Component<Props, State> {
             lastPage: this.searchImplantations.length <= 6,
             currentPage: 1,
             counter: this.searchImplantations.length,
-            implantations: this.searchImplantations
+            implantations: this.searchImplantations,
           });
         }
       );
@@ -293,7 +293,7 @@ export class Step2 extends React.Component<Props, State> {
       counter,
       implantations,
       currentPage,
-      rowSelected
+      rowSelected,
     } = this.state;
     const products = this.allImplantations
       ? _.uniq(this.allImplantations.map((i: any) => i.productName))
@@ -301,75 +301,68 @@ export class Step2 extends React.Component<Props, State> {
 
     return (
       <Fragment>
-        <div className="step2-container">
+        <div className='step2-container'>
           <ol style={{ textAlign: 'center' }}>
-            <li className="index-3">
+            <li className='index-3'>
               <span>{i18n.t(`modal-archive.q3`)}</span>
             </li>
           </ol>
-          <section className="section-border">
+          <section className='section-border'>
             {showSpinner === true && (
-              <div className="spinner-wrapper">
+              <div className='spinner-wrapper'>
                 <Spinner />
               </div>
             )}
             <ProductFilter
               products={products as string[]}
-              onFilter={this.onProductFilter}
-            ></ProductFilter>
+              onFilter={this.onProductFilter}></ProductFilter>
             <ImplantationListSearch
-              closeClassName="search-close-2"
+              closeClassName='search-close-2'
               searchResultsByType={this.searchResultsByType}
-              countResults={counter}
-            ></ImplantationListSearch>
+              countResults={counter}></ImplantationListSearch>
             <div style={{ height: 300 }}>
               <GridComponent
                 ref={(g) => (this.gridRef = g)}
                 dataSource={implantations}
                 height={'300px'}
                 selectionSettings={{ type: 'Single', mode: 'Row' }}
-                locale="es-ES"
+                locale='es-ES'
                 rowSelected={(event) => {
                   this.onRowSelected(event);
-                }}
-              >
+                }}>
                 <ColumnsDirective>
                   <ColumnDirective
-                    headerText=""
+                    headerText=''
                     field={'' + rowSelected}
-                    width="50"
+                    width='50'
                     template={this.renderCheck}
                   />
                   <ColumnDirective
-                    field="name"
-                    headerText="Implantación"
-                  ></ColumnDirective>
+                    field='name'
+                    headerText='Implantación'></ColumnDirective>
                   <ColumnDirective
-                    field="clientName"
-                    headerText="Organización"
-                    width="150"
-                  ></ColumnDirective>
+                    field='clientName'
+                    headerText='Organización'
+                    width='150'></ColumnDirective>
                 </ColumnsDirective>
               </GridComponent>
-              <section className="pager">
+              <section className='pager'>
                 <div
                   className={`prevButton ${
                     this.state.currentPage === 1 ? 'disabled' : ''
                   }`}
-                  onClick={() => this.prevPage()}
-                >
-                  <span className="pager-icon lf-icon-angle-left" />
+                  onClick={() => this.prevPage()}>
+                  <span className='pager-icon lf-icon-angle-left' />
                   <span>Anterior</span>
                 </div>
-                <div className="currentPage">{currentPage}</div>
+                <div className='currentPage'>{currentPage}</div>
                 <div
                   className={`nextButton ${
                     this.state.lastPage === true ? 'disabled' : ''
                   }`}
-                  onClick={() => this.nextPage()}
-                >
+                  onClick={() => this.nextPage()}>
                   <span>Siguiente</span>
-                  <span className="pager-icon lf-icon-angle-right" />
+                  <span className='pager-icon lf-icon-angle-right' />
                 </div>
               </section>
             </div>
