@@ -86,8 +86,7 @@ export class Step1 extends React.Component<Props, State> {
     };
   }
 
-  async componentDidMount() {
-  }
+  async componentDidMount() {}
 
   componentDidUpdate() {
     const { onCopyEmail, onCopyAttachments } = this.props;
@@ -144,7 +143,7 @@ export class Step1 extends React.Component<Props, State> {
               </ul>
             </li>
             {copyAttachments && (
-              <li className='no-bullet'>
+              <li style={{ marginBottom: 20 }}>
                 <span>
                   {i18n.t('modal-archive.q1b')}
                   <span style={{ color: 'red' }}>*</span>
@@ -170,6 +169,7 @@ export class Step1 extends React.Component<Props, State> {
             .file-list-wrapper {
               margin-left: auto;
               margin-right: auto;
+              margin-top: 20px;
               width: 400px;
               height: 300px;
             }

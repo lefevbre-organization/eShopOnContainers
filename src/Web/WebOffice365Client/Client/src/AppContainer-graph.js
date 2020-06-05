@@ -55,8 +55,6 @@ class AppContainerGraph extends Component {
         this.props.setIdMail(userLexon.idMail);
         this.props.setToken(userLexon.token);
       }
-      console.log('user:' + userLexon.user);
-      console.log('token:' + userLexon.token);
     }
 
     const currentUser = stateStorage.currentUser;

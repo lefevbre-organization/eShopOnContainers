@@ -134,6 +134,7 @@ class UserLexon extends Component {
         } else {
           this.setState({
             readyToRedirect: true,
+            loading: false
           });
         }
       }
