@@ -88,7 +88,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     {
                         result.errors.Add(new ErrorInfo
                         {
-                            code = "553",
+                            code = "Error_EncodeUser_Service",
                             detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
                         });
                     }
@@ -98,7 +98,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 result.errors.Add(new ErrorInfo
                 {
-                    code = "554",
+                    code = "Error_EncodeUser",
                     detail = $"General error when call online service",
                     message = ex.Message
                 });
@@ -131,7 +131,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     {
                         result.errors.Add(new ErrorInfo
                         {
-                            code = "553",
+                            code = "Error_DecodeUser_Service",
                             detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
                         });
                     }
@@ -141,7 +141,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 result.errors.Add(new ErrorInfo
                 {
-                    code = "554",
+                    code = "Error_DecodeUser",
                     detail = $"General error when call online service",
                     message = ex.Message
                 });
@@ -180,7 +180,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     {
                         result.errors.Add(new ErrorInfo
                         {
-                            code = "533",
+                            code = "Error_Get_Minihub_Service",
                             detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
                         });
                     }
@@ -190,7 +190,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 result.errors.Add(new ErrorInfo
                 {
-                    code = "534",
+                    code = "Error_Get_Minihub",
                     detail = $"General error in call Minihub data",
                     message = ex.Message
                 });
@@ -255,7 +255,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     {
                         result.errors.Add(new ErrorInfo
                         {
-                            code = "573",
+                            code = "Error_GetUserWithLogin_Service",
                             detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
                         });
                     }
@@ -265,7 +265,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 result.errors.Add(new ErrorInfo
                 {
-                    code = "574",
+                    code = "Error_GetUserWithLogin",
                     detail = $"General error when call commontool service",
                     message = ex.Message
                 });
@@ -299,7 +299,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     {
                         result.errors.Add(new ErrorInfo
                         {
-                            code = "573",
+                            code = "Error_GetUserWithEntry_Service",
                             detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
                         });
                     }
@@ -309,7 +309,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 result.errors.Add(new ErrorInfo
                 {
-                    code = "574",
+                    code = "Error_GetUserWithEntry",
                     detail = $"General error when call commontool service",
                     message = ex.Message
                 });
@@ -342,7 +342,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     {
                         result.errors.Add(new ErrorInfo
                         {
-                            code = "553",
+                            code = "Error_GetAreas_Service",
                             detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
                         });
                     }
@@ -352,7 +352,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 result.errors.Add(new ErrorInfo
                 {
-                    code = "554",
+                    code = "Error_GetAreas",
                     detail = $"General error when call online service",
                     message = ex.Message
                 });
@@ -362,15 +362,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         }
 
         #region Mongo User
+
         public async Task<Result<UserUtilsModel>> PostUserAsync(UserUtilsModel user)
-      => await _repository.PostUserAsync(user);
+            => await _repository.PostUserAsync(user);
 
         public async Task<Result<UserUtilsModel>> GetUserAsync(string idNavision)
             => await _repository.GetUserAsync(idNavision);
 
         public async Task<Result<bool>> RemoveUserAsync(string idNavision)
             => await _repository.RemoveUserAsync(idNavision);
-        #endregion
+
+        #endregion Mongo User
 
         public async Task<Result<string>> GetUserUtilsActualToServiceAsync(string idUser, string nameService)
         {
@@ -390,63 +392,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             return result;
         }
 
-        //private async Task<Result<string>> GeUserUtilFinalLink(string newUrl)
-        //{
-        //    var result = new Result<string>(null);
-        //    try
-        //    {
-        //        using (var response = await _clientMinihub.GetAsync(newUrl))
-        //        {
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                var rawResult = await response.Content.ReadAsStringAsync();
-
-        //                if (!string.IsNullOrEmpty(rawResult))
-        //                {
-        //                    var resultado = (JsonConvert.DeserializeObject<UrlJson>(rawResult));
-        //                    result.data = resultado.url;
-        //                    //var listAll = resultado.ToList();
-        //                    //result.data = onlyActives ? listAll.Where(x => x.indAcceso > 0).ToList() : listAll.ToList();
-        //                }
-        //            }
-        //            else
-        //            {
-        //                result.errors.Add(new ErrorInfo
-        //                {
-        //                    code = "ErrorFinalLink_WebClient",
-        //                    detail = $"Error in call to {newUrl} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-        //                });
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        result.errors.Add(new ErrorInfo
-        //        {
-        //            code = "ErrorFinalLink",
-        //            detail = $"General error in call Final Link",
-        //            message = ex.Message
-        //        });
-        //    }
-
-        //    return result;
-        //}
-
         #endregion Generic
 
         #region Token Common
-
-        //public async Task<Result<TokenData>> GetTokenAsync(TokenModelBase tokenRequest, bool addTerminatorToToken)
-        //{
-        //    tokenRequest.roles = await GetRolesOfUserAsync(tokenRequest.idClienteNavision, tokenRequest.login, tokenRequest.password);
-        //    var resultado = new Result<TokenData>(new TokenData());
-
-        //    resultado.data.token = BuildTokenWithPayloadAsync(tokenRequest).Result;
-
-        //    resultado.data.token += addTerminatorToToken ? "/" : "";
-        //    resultado.data.valid = true;
-        //    return resultado;
-        //}
 
         #region Token Validation
 
@@ -499,30 +447,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
         #endregion Token Validation
 
-        //public async Task<string> BuildTokenWithPayloadAsync(TokenModelBase token)
-        //{
-        //    // Se crea el claim a pelo como en el ejemplo https://stackoverflow.com/questions/29715178/complex-json-web-token-array-in-webapi-with-owin
-        //    var accion = await Task.Run(() =>
-        //    {
-        //        _logger.LogInformation("START --> {0} con tiempo {1} y caducidad token {2}", nameof(BuildTokenWithPayloadAsync), DateTime.Now, DateTime.Now.AddSeconds(_settings.Value.TokenCaducity));
-
-        //        var exp = DateTime.UtcNow.AddSeconds(_settings.Value.TokenCaducity);
-        //        var payload = new JwtPayload(null, "", new List<Claim>(), null, exp);
-
-        //        AddValuesToPayload(payload, token);
-
-        //        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_settings.Value.TokenKey));
-        //        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        //        var jwtToken = new JwtSecurityToken(new JwtHeader(creds), payload);
-        //        return new JwtSecurityTokenHandler().WriteToken(jwtToken);
-        //    });
-
-        //    _logger.LogInformation("END --> {0} con token: {1}", nameof(BuildTokenWithPayloadAsync), accion);
-
-        //    return accion;
-        //}
-
         private void AddValuesToPayload(JwtPayload payload, TokenRequest tokenRequest)
         {
             AddClaimToPayload(payload, tokenRequest.IdClienteNavision, nameof(tokenRequest.IdClienteNavision));
@@ -530,16 +454,27 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             AddClaimToPayload(payload, tokenRequest.Name, nameof(tokenRequest.Name));
             AddClaimToPayload(payload, tokenRequest.IdApp, nameof(tokenRequest.IdApp));
 
+            if (tokenRequest is TokenRequestCentinelaViewFirm tokenRequestCentinelaViewFirm)
+            {
+                AddClaimToPayload(payload, tokenRequestCentinelaViewFirm.Guid, nameof(tokenRequestCentinelaViewFirm.Guid));
+                if (tokenRequest is TokenRequestCentinelaNewFirm tokenRequestCentinela)
+                {
+                    AddClaimToPayload(payload, tokenRequestCentinela.DocumentsId, nameof(tokenRequestCentinela.DocumentsId));
+                    AddClaimToPayload(payload, tokenRequestCentinela.RecipientsId, nameof(tokenRequestCentinela.RecipientsId));
+                    AddClaimToPayload(payload, tokenRequestCentinela.MailsAdmins, nameof(tokenRequestCentinela.MailsAdmins));
+                    AddClaimToPayload(payload, tokenRequestCentinela.LogoUrl, nameof(tokenRequestCentinela.LogoUrl));
+
+                }
+            }
             if (tokenRequest is TokenRequestDataBase tokenRequesDB)
             {
                 AddClaimToPayload(payload, tokenRequesDB.bbdd, nameof(tokenRequesDB.bbdd));
-
             }
-            if (tokenRequest is TokenRequestLogin tokenRequesLogin)
+            if (tokenRequest is TokenRequestLogin tokenRequestLogin)
             {
-                AddClaimToPayload(payload, tokenRequesLogin.Login, nameof(tokenRequesLogin.Login));
-                AddClaimToPayload(payload, tokenRequesLogin.Password, nameof(tokenRequesLogin.Password));
-                AddClaimToPayload(payload, tokenRequesLogin.IdApp, nameof(tokenRequesLogin.IdApp));
+                AddClaimToPayload(payload, tokenRequestLogin.Login, nameof(tokenRequestLogin.Login));
+                AddClaimToPayload(payload, tokenRequestLogin.Password, nameof(tokenRequestLogin.Password));
+                AddClaimToPayload(payload, tokenRequestLogin.IdApp, nameof(tokenRequestLogin.IdApp));
             }
             if (tokenRequest is TokenRequestNewMail tokenRequestNewMail)
             {
@@ -552,36 +487,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     AddClaimToPayload(payload, tokenRequestOpenMail.provider, nameof(tokenRequestOpenMail.provider));
                     AddClaimToPayload(payload, tokenRequestOpenMail.folder, nameof(tokenRequestOpenMail.folder));
                     AddClaimToPayload(payload, tokenRequestOpenMail.idMail, nameof(tokenRequestOpenMail.idMail));
-
                 }
-
             }
         }
 
-        //private void AddValuesToPayload(JwtPayload payload, TokenModelBase modelo)
-        //{
-        //    if (modelo is TokenModelBase clienteModel)
-        //    {
-        //        AddClaimToPayload(payload, clienteModel.idClienteNavision, nameof(clienteModel.idClienteNavision));
-        //        AddClaimToPayload(payload, clienteModel.roles, nameof(clienteModel.roles));
-        //        AddClaimToPayload(payload, clienteModel.login, nameof(clienteModel.login));
-
-        //        if (modelo is TokenModelLexon clienteModelLexon)
-        //        {
-        //            AddClaimToPayload(payload, clienteModelLexon.idUserApp, nameof(clienteModelLexon.idUserApp));
-        //            AddClaimToPayload(payload, clienteModelLexon.name, nameof(clienteModelLexon.name));
-        //            AddClaimToPayload(payload, clienteModelLexon.bbdd, nameof(clienteModelLexon.bbdd));
-        //            AddClaimToPayload(payload, clienteModelLexon.provider, nameof(clienteModelLexon.provider));
-        //            AddClaimToPayload(payload, clienteModelLexon.mailAccount, nameof(clienteModelLexon.mailAccount));
-        //            AddClaimToPayload(payload, clienteModelLexon.folder, nameof(clienteModelLexon.folder));
-        //            AddClaimToPayload(payload, clienteModelLexon.idMail, nameof(clienteModelLexon.idMail));
-        //            AddClaimToPayload(payload, clienteModelLexon.idEntityType, nameof(clienteModelLexon.idEntityType));
-        //            AddClaimToPayload(payload, clienteModelLexon.idEntity, nameof(clienteModelLexon.idEntity));
-        //        }
-        //    }
-        //}
-
-        //private void AddClaimNumberToPayload(JwtPayload payload, long? valorClaim, string nombreClaim)
+         //private void AddClaimNumberToPayload(JwtPayload payload, long? valorClaim, string nombreClaim)
         //{
         //    if (valorClaim == null) return;
 
@@ -597,16 +507,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             payload.Add(nombreClaim, valorClaim);
         }
 
-        private TokenRequest BuidSpecificToken(TokenModelView token)
+        private TokenRequest BuidSpecificToken(TokenModelView token, short idApp)
         {
             if (token.idClienteNavision != null && token.bbdd != null
                   && token.idEntity != null && token.idEntityType != null
                   && token.folder != null && token.provider != null
                   && token.idMail != null && token.mailAccount != null)
             {
-
                 return new TokenRequestOpenMail
                 {
+                    IdApp = idApp,
                     IdClienteNavision = token.idClienteNavision,
                     bbdd = token.bbdd,
                     idEntity = (int)token.idEntity,
@@ -617,13 +527,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     mailAccount = token.mailAccount,
                     mailContacts = token.mailContacts
                 };
-
             }
             else if (token.idClienteNavision != null && token.bbdd != null
                 && token.idEntity != null && token.idEntityType != null)
             {
                 return new TokenRequestNewMail()
                 {
+                    IdApp = idApp,
                     IdClienteNavision = token.idClienteNavision,
                     bbdd = token.bbdd,
                     idEntity = (int)token.idEntity,
@@ -634,23 +544,24 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 return new TokenRequestDataBase()
                 {
+                    IdApp = idApp,
                     IdClienteNavision = token.idClienteNavision,
                     bbdd = token.bbdd
                 };
             }
             else if (token.login != null && token.password != null)
             {
-                return new TokenRequestLogin() { Login = token.login, Password = token.password };
+                return new TokenRequestLogin() { IdApp = idApp, Login = token.login, Password = token.password };
             }
             else if (token.idClienteNavision != null)
             {
-                return new TokenRequest() { IdClienteNavision = token.idClienteNavision };
+                return new TokenRequest() { IdApp = idApp, IdClienteNavision = token.idClienteNavision };
             }
 
             return null;
         }
 
-        #endregion
+        #endregion Token Common
 
         #region Auxiliar
 
@@ -668,7 +579,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 {
                     result.data.valid = true;
                     token.IdClienteNavision = userLefebvreResult?.data?._idEntrada;
-                    token.Roles.AddRange(new List<string>() { "gmailpanel", "outlookpanel", "lexonconnector", "centinelaconnector" });
+                    token.Roles = new List<string>() { "gmailpanel", "outlookpanel", "lexonconnector", "centinelaconnector" };
                 }
                 else
                 {
@@ -688,30 +599,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 {
                     token.Roles.Add(area.descArea);
                 }
-
             }
             catch (Exception ex)
             {
                 TraceOutputMessage(result.errors, $"Error validation user => {ex.Message}", "Error Validation");
-
             }
             return result;
         }
 
-        //private async Task<string> ValidarUsuario(string login, string password, string idUser)
-        //{
-        //    var userLefebvreResult = idUser == null
-        //        ? await GetUserDataWithLoginAsync(login, password)
-        //        : await GetUserDataWithEntryAsync(idUser);
-
-        //    return userLefebvreResult?.data?._idEntrada;
-        //    //if (!string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password) && string.IsNullOrEmpty(idUser))
-        //    //    idUser = "E1621396";
-
-        //    //return idUser;
-        //}
-
-        private async Task<List<string>> GetRolesOfUserAsync(string idClienteNavision, string login, string password)
+         private async Task<List<string>> GetRolesOfUserAsync(string idClienteNavision, string login, string password)
         {
             var apps = await GetUserUtilsAsync(idClienteNavision, true);
             var areas = await GetAreasByUserAsync(idClienteNavision);
@@ -736,33 +632,33 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             return appsWithAccess;
         }
 
-        #endregion
+        #endregion Auxiliar
 
-        public Task<Result<TokenData>> GetUserFromLoginAsync(int? idApp, string login, string password, bool addTerminatorToToken)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        public async Task<Result<TokenData>> GetGenericTokenAsync(TokenRequest tokenRequest, short idApp, bool addTerminatorToToken)
+        public async Task<Result<TokenData>> GetGenericTokenAsync(TokenRequest tokenRequest, bool addTerminatorToToken)
         {
             //1. Validar usuario contra loginurl o minuhub (pensar si de hace con todos)
             //4. Obtener roles y permisos de aplicación para el usuario (puede unificarse al paso 1)
             var result = await GetRolesAndValidate(tokenRequest);
 
+            if (result.data?.valid == false) return result;
+
             //2. Obtener datos de lexon (TODO: evaluar si es necesari, se puede obviar con el paso anterior u obtenemos un método más eficiente)
-            if (idApp == 1) //1 . Lexon 2. Centinela 3. SIgnaturit
+            if (tokenRequest.IdApp == _settings.Value.IdAppLexon)
             {
-                var lexUserResult = await _repository.GetLexonUserAsync(tokenRequest.IdClienteNavision);
-                if (string.IsNullOrEmpty(lexUserResult?.data?.idNavision))
-                    TraceOutputMessage(result.errors, $"Error get user from lexon", "Error Get Lexon Token");
-                tokenRequest.IdUser = lexUserResult?.data?.idUser;
+                //var lexUserResult = await _repository.GetLexonUserAsync(tokenRequest.IdClienteNavision);
+                //if (string.IsNullOrEmpty(lexUserResult?.data?.idNavision))
+                //    TraceOutputMessage(result.errors, $"Error get user from lexon", "Error Get Lexon Token");
+                //tokenRequest.IdUser = lexUserResult?.data?.idUser;
+                tokenRequest.IdUser = "449";
             }
 
             //3. Obtener contactos si se necesita (evaluar si tengo que pasarlo a otros métodos y quitarlos del general
             //5. Construir token diferente según los datos proporcionados
             if (tokenRequest is TokenRequestNewMail || tokenRequest is TokenRequestOpenMail)
                 GetContactDataFromLexon((TokenRequestNewMail)tokenRequest);
+
+            if (tokenRequest is TokenRequestCentinelaNewFirm)
+                ((TokenRequestCentinelaNewFirm)tokenRequest).Guid = Guid.NewGuid().ToString();
 
             var tokenString = await Task.Run(() =>
             {
@@ -789,13 +685,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             return result;
         }
 
-
         public async Task<Result<LexUser>> GetLexonGenericAsync(TokenModelView token, short idApp, bool addTerminatorToToken)
         {
+            var tokenRequest = BuidSpecificToken(token, idApp);
 
-            var tokenRequest = BuidSpecificToken(token);
-
-            var tokenResult = await GetGenericTokenAsync(tokenRequest, idApp, addTerminatorToToken);
+            var tokenResult = await GetGenericTokenAsync(tokenRequest, addTerminatorToToken);
             var lexUser = new LexUser() { idNavision = tokenRequest.IdClienteNavision, idUser = tokenRequest.IdUser, token = tokenResult.data.token };
 
             var resultLexUser = new Result<LexUser>(lexUser);
@@ -804,7 +698,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
             return resultLexUser;
         }
-
 
         private async void GetContactDataFromLexon(TokenRequestNewMail token)
         {
@@ -828,9 +721,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     token.mailContacts = new List<string>();
                 token.mailContacts.Add(contactsResult?.data.Email);
             }
-
         }
-
-
     }
 }

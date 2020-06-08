@@ -89,13 +89,12 @@ namespace Lexon.MySql.Infrastructure.Services
         {
             idUser = ValidarUsuario(login, password, idUser);
             var resultado = await _lexonRepository.GetUserAsync(idUser);
-            var resultado = new Result<>;
 
-            //if (string.IsNullOrEmpty(resultado?.data?.idUser))
-            //{
-            //    resultado.errors.Add(new ErrorInfo() { code = "5000", message = "No se recupera un idUser desde Lexon" });
-            //}
-            //mailContacts = await GetContactData(resultado?.data?.idUser, bbdd, idEntityType, idEntity, mailContacts);
+            if (string.IsNullOrEmpty(resultado?.data?.idUser))
+            {
+                resultado.errors.Add(new ErrorInfo() { code = "5000", message = "No se recupera un idUser desde Lexon" });
+            }
+            mailContacts = await GetContactData(resultado?.data?.idUser, bbdd, idEntityType, idEntity, mailContacts);
 
             resultado.data.token = BuildTokenWithPayloadAsync(new TokenModel
             {
