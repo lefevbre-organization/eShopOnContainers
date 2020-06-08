@@ -23,14 +23,14 @@ const LoginComponents = (children) => {
         <div
           className='login-box'
           style={{
+            paddingTop: 30,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}>
           <div className='text-center login-title-space'>
-            <p className='lefebvre-title'>LEFEBVRE</p>
-            <p className='lefebvre-mail-service'>MAIL SERVICE</p>
+            <p className='lefebvre-mail-service'>MAIL</p>
           </div>
           <div className='row' style={{ flexDirection: 'column' }}>
             <div className='input-group login-input-group'>
