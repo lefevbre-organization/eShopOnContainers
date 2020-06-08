@@ -47,17 +47,16 @@ env:
       value: 'K8S'
     - name: IsClusterEnv
       value: 'True'
-      
+
 configValues: |
   window.REACT_APP_ENVIRONMENT='PRO'
   window.API_ACCOUNTS='https://lexbox-apigwacc.lefebvre.es'
   window.URL_INBOX_GOOGLE= 'https://lexbox-webgoogle.lefebvre.es'
   window.URL_INBOX_OUTLOOK= 'https://lexbox-webgraph.lefebvre.es'
   window.URL_INBOX_IMAP= 'https://lexbox-webimap.lefebvre.es' 
-  window.URL_GET_USER =
-  'https://lexbox-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login'
-window.TERMS_AND_CONDITIONS_URL = 'https://lefebvre.es/aviso-legal'
-window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies'
-window.PRIVACY_POLICY_URL = 'https://lefebvre.es/politica-privacidad'
-window.LEGAL_WARNING_URL = 'https://lefebvre.es/aviso-legal'
-window.RELEASE = 'RC 0.23'
+  window.URL_GET_USER ='https://lexbox-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login'
+  window.TERMS_AND_CONDITIONS_URL = 'https://lefebvre.es/aviso-legal'
+  window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies'
+  window.PRIVACY_POLICY_URL = 'https://lefebvre.es/politica-privacidad'
+  window.LEGAL_WARNING_URL = 'https://lefebvre.es/aviso-legal'
+  window.RELEASE = 'RC 0.23'
