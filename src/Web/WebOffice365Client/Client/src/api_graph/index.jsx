@@ -415,6 +415,11 @@ export const emailPriority = () => {
   return priority;
 };
 
+export const emailReadConfirmation = () => {
+  const priority = `"isDeliveryReceiptRequested": true\r\n`;
+  return priority;
+};
+
 export const emailAttachments = (data) => {
   var email = `"Attachments": [],`;
   var attachments = data.uppyPreviews;
@@ -446,6 +451,9 @@ export const sendMessage = async ({ data, attachments }) => {
   email += emailToBccRecipients(data);
   if (data.isPriority) {
     email += emailPriority(1);
+  }
+  if (data.isReadReceiptRequested) {
+    email += emailReadConfirmation();
   }
   //email += emailAttachments(data);
   email += emailEnd();

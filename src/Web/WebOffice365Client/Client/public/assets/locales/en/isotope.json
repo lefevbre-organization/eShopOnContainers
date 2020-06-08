@@ -38,7 +38,8 @@
     "min-dest-alert": "This message must have at least one recipient.",
     "no-subject-warning": "Do you want to send this message without subject?",
     "forbidden-extension": "It is not allowed to upload this type of file.",
-    "mark-prioritary": "Mark as important"
+    "mark-prioritary": "Mark as important",
+    "read-confirmation": "Receipt confirmation"
   },
   "message-toolbar": {
     "move-to-trash": "Move to Trash",
