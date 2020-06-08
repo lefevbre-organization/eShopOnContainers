@@ -85,9 +85,15 @@ export class PageGoTo extends Component {
               // Esto se pone así porque puede haber una misma cuenta configurada por gmail y por imap por ejemplo.
               for (let i = 0; i < data.accounts.length; i++) {
                 const account = data.accounts[i];
-                if (account.email === payload.mailAccount && (account.provider.toUpperCase() === payload.provider.toUpperCase() || account.provider.substring(0, 2).toUpperCase() === payload.provider.toUpperCase())){
+                if (
+                  account.email === payload.mailAccount &&
+                  (account.provider.toUpperCase() ===
+                    payload.provider.toUpperCase() ||
+                    account.provider.substring(0, 2).toUpperCase() ===
+                      payload.provider.toUpperCase())
+                ) {
                   if (account.provider.toUpperCase() === 'IMAP') {
-                    imapAutoLog =  base64.encode(account.email);
+                    imapAutoLog = base64.encode(account.email);
                   }
                   found = true;
                   break;
@@ -96,38 +102,56 @@ export class PageGoTo extends Component {
               if (!found) {
                 for (let i = 0; i < data.accounts.length; i++) {
                   const account = data.accounts[i];
-                  if (account.email === payload.mailAccount){
+                  if (account.email === payload.mailAccount) {
                     if (account.provider.toUpperCase() === 'IMAP') {
-                      imapAutoLog =  base64.encode(account.email);
+                      imapAutoLog = base64.encode(account.email);
                     }
                     found = true;
                     break;
                   }
                 }
-                if (!found){
+                if (!found) {
                   alert(
                     'No tiene configurada la cuenta asociada al email que quiere visualizar. Configúrela y pruebe de nuevo'
                   );
                 }
               } else {
-                if (account.defaultAccount && payload.mailAccount == account.email) {
-                  if (this.state.token){
-                    url = `${buildClientUrlToken(account.provider, this.state.token)}?prov=${account.provider.substring(0, 2)}0`;
-                    url = (imapAutoLog) ? `${url}&account=${imapAutoLog}` : url;
+                if (
+                  account.defaultAccount &&
+                  payload.mailAccount == account.email
+                ) {
+                  if (this.state.token) {
+                    url = `${buildClientUrlToken(
+                      account.provider,
+                      this.state.token
+                    )}?prov=${account.provider.substring(0, 2)}0`;
+                    url = imapAutoLog ? `${url}&account=${imapAutoLog}` : url;
                   } else {
-                    url = buildClientUrl(account.provider,`${account.provider.substring(0, 2)}0${userId}`,this.state.payload);
-                    url = (imapAutoLog) ? `${url}?account=${imapAutoLog}` : url;
+                    url = buildClientUrl(
+                      account.provider,
+                      `${account.provider.substring(0, 2)}0${userId}`,
+                      this.state.payload
+                    );
+                    url = imapAutoLog ? `${url}?account=${imapAutoLog}` : url;
                   }
                   console.log('TOKEN 1*****************: ' + this.state.token);
                   console.log(url);
                 } else {
-                  if (this.state.token){
-                    url = `${buildClientUrlToken(payload.provider.toUpperCase(), this.state.token)}?prov=${payload.provider.substring(0, 2)}0`;
-                    url = (imapAutoLog) ? `${url}&account=${imapAutoLog}` : url;
-                  }
-                  else {
-                    url = buildClientUrl(payload.provider.toUpperCase(),`${payload.provider.substring(0, 2).toUpperCase()}0${userId}`,this.state.payload);
-                    url = (imapAutoLog) ? `${url}?account=${imapAutoLog}` : url;
+                  if (this.state.token) {
+                    url = `${buildClientUrlToken(
+                      payload.provider.toUpperCase(),
+                      this.state.token
+                    )}?prov=${payload.provider.substring(0, 2)}0`;
+                    url = imapAutoLog ? `${url}&account=${imapAutoLog}` : url;
+                  } else {
+                    url = buildClientUrl(
+                      payload.provider.toUpperCase(),
+                      `${payload.provider
+                        .substring(0, 2)
+                        .toUpperCase()}0${userId}`,
+                      this.state.payload
+                    );
+                    url = imapAutoLog ? `${url}?account=${imapAutoLog}` : url;
                   }
                   console.log('TOKEN 2*****************: ' + this.state.token);
                   console.log(url);
@@ -291,9 +315,9 @@ export class PageGoTo extends Component {
           {this.renderSpinner()}
           <div className='container-fluid d-flex h-100 flex-column' id='borrar'>
             {this.renderGoTo()}
-            {this.renderFooter()}
           </div>
         </div>
+        {this.renderFooter()}
       </React.Fragment>
     );
   }

@@ -35,7 +35,7 @@
 .footer {
   background: #001978;
   padding: 40px 0;
-  position: fixed;
+  /*position: fixed;*/
   bottom: 0;
   height: 206px;
   width: calc(100%);
@@ -106,6 +106,8 @@
   font-family: MTTMilano, Lato, Arial, sans-serif;
   font-size: 0.7em !important;
   padding-top: 20px;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
 }
 @media (min-width: 992px) {
   .footer .social-squares {
