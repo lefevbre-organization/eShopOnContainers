@@ -22,6 +22,15 @@ export class Header extends PureComponent {
             </div>
           </div>
         )}
+        {!showUser && (
+          <div className='header-user'>
+            <a href='https://www.efl.es/'>
+              <span className='lf-icon-shop'>
+                <span className='shop-text'>TIENDA</span>
+              </span>
+            </a>
+          </div>
+        )}
       </header>
     );
   }
