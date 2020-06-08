@@ -63,37 +63,55 @@ class Footer extends Component {
             <p className='col-xs-12'>
               ©2019 Lefebvre. {i18n.t('footer.all-reserved-right')}
               <span>
-                <a
-                  rel='noopener noreferrer'
-                  href='https://lefebvre.es/aviso-legal'
-                  target='_blank'
-                  title={i18n.t('footer.legal-warning')}>
-                  {i18n.t('footer.legal-warning')}
-                </a>{' '}
-                &nbsp;|&nbsp;
-                <a
-                  rel='noopener noreferrer'
-                  href='https://lefebvre.es/politica-privacidad'
-                  target='_blank'
-                  title={i18n.t('footer.privacy-policy')}>
-                  {i18n.t('footer.privacy-policy')}
-                </a>{' '}
-                &nbsp;|&nbsp;
-                <a
-                  rel='noopener noreferrer'
-                  href='https://lefebvre.es/politica-cookies'
-                  target='_blank'
-                  title={i18n.t('footer.cookies-policy')}>
-                  {i18n.t('footer.cookies-policy')}
-                </a>
-                &nbsp;|&nbsp;
-                <a
-                  rel='noopener noreferrer'
-                  href={window.TERMS_AND_CONDITIONS_URL}
-                  target='_blank'
-                  title={i18n.t('footer.terms-and-conditions')}>
-                  {i18n.t('footer.terms-and-conditions')}
-                </a>
+                {window.LEGAL_WARNING_URL && window.LEGAL_WARNING_URL !== '' && (
+                  <span>
+                    &nbsp;
+                    <a
+                      rel='noopener noreferrer'
+                      href={window.LEGAL_WARNING_URL}
+                      target='_blank'
+                      title={i18n.t('footer.legal-warning')}>
+                      {i18n.t('footer.legal-warning')}
+                    </a>{' '}
+                  </span>
+                )}
+                {window.PRIVACY_POLICY_URL && window.PRIVACY_POLICY_URL !== '' && (
+                  <span>
+                    &nbsp;|&nbsp;
+                    <a
+                      rel='noopener noreferrer'
+                      href={window.PRIVACY_POLICY_URL}
+                      target='_blank'
+                      title={i18n.t('footer.privacy-policy')}>
+                      {i18n.t('footer.privacy-policy')}
+                    </a>{' '}
+                  </span>
+                )}
+                {window.COOKIES_POLICY_URL && window.COOKIES_POLICY_URL !== '' && (
+                  <span>
+                    &nbsp;|&nbsp;
+                    <a
+                      rel='noopener noreferrer'
+                      href={window.COOKIES_POLICY_URL}
+                      target='_blank'
+                      title={i18n.t('footer.cookies-policy')}>
+                      {i18n.t('footer.cookies-policy')}
+                    </a>
+                  </span>
+                )}
+                {window.TERMS_AND_CONDITIONS_URL &&
+                  window.TERMS_AND_CONDITIONS_URL !== '' && (
+                    <span>
+                      &nbsp;|&nbsp;
+                      <a
+                        rel='noopener noreferrer'
+                        href={window.TERMS_AND_CONDITIONS_URL}
+                        target='_blank'
+                        title={i18n.t('footer.terms-and-conditions')}>
+                        {i18n.t('footer.terms-and-conditions')}
+                      </a>
+                    </span>
+                  )}
               </span>
             </p>
           </div>

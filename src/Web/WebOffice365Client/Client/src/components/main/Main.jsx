@@ -278,7 +278,11 @@ export class Main extends Component {
 
         return false;
       } else {
-        return true;
+        if (difP.added && difP.added.messagesResult && difP.added.messagesResult.label === null && difP.added.messagesResult.nextPageToken === null ) {
+          return false;
+        } else {
+          return true;
+        }
       }
     }
 

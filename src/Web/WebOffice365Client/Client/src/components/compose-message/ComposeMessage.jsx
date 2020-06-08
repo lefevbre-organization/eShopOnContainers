@@ -19,7 +19,6 @@ import { Notification, Confirmation } from '../notification/';
 import HeaderAddress from './header-address';
 import { getUser, classifyEmail } from '../../api_graph/accounts';
 import ComposeMessageEditor from './composeMessageEditor';
-import { RedirectHandlerOptions } from '@microsoft/microsoft-graph-client';
 
 const Uppy = require('@uppy/core');
 const Tus = require('@uppy/tus');
@@ -131,6 +130,7 @@ export class ComposeMessage extends PureComponent {
       messageNotification: '',
       showEmptySubjectWarning: false,
       isPriority: false,
+      readConfirmation: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.sendEmail = this.sendEmail.bind(this);
@@ -139,6 +139,7 @@ export class ComposeMessage extends PureComponent {
     this.setField = this.setField.bind(this);
     this.attachFromLexon = this.attachFromLexon.bind(this);
     this.onTogglePriority = this.onTogglePriority.bind(this);
+    this.onToggleReadConfirmation = this.onToggleReadConfirmation.bind(this);
 
     this.uppy = new Uppy({
       id: 'uppy1',
@@ -255,6 +256,11 @@ export class ComposeMessage extends PureComponent {
   onTogglePriority() {
     const { isPriority } = this.state;
     this.setState({ isPriority: !isPriority });
+  }
+
+  onToggleReadConfirmation() {
+    const { readConfirmation } = this.state;
+    this.setState({ readConfirmation: !readConfirmation });
   }
 
   attachFromLexon(event) {
@@ -433,7 +439,7 @@ export class ComposeMessage extends PureComponent {
   }
 
   _sendEmail() {
-    const { isPriority } = this.state;
+    const { isPriority, readConfirmation } = this.state;
     const validTo = getValidEmails(this.state.to);
 
     const headers = {
@@ -457,6 +463,7 @@ export class ComposeMessage extends PureComponent {
     const email = Object.assign({}, this.state, {
       subject: this.state.subject,
       importance: isPriority ? 'High' : 'Normal',
+      isReadReceiptRequested: readConfirmation,
       internetMessageId: `<${uuid()}-${uuid()}@lefebvre.es>`,
     });
 
@@ -482,6 +489,8 @@ export class ComposeMessage extends PureComponent {
       subject: this.props.subject || '',
       content: this.props.content || '',
       uppyPreviews: [],
+      readConfirmation: false,
+      isPriority: false,
     });
   }
 
@@ -748,6 +757,7 @@ export class ComposeMessage extends PureComponent {
       showEmptySubjectWarning,
       errorNotification,
       isPriority,
+      readConfirmation,
     } = this.state;
 
     const { to, cc, bcc } = this.props;
@@ -803,6 +813,21 @@ export class ComposeMessage extends PureComponent {
                   )}
                   <span className='priority-text'>
                     {i18n.t('compose-message.mark-prioritary')}
+                  </span>
+                </div>
+                <div className='receipt-wrapper'>
+                  {readConfirmation && (
+                    <i
+                      className='lf lf-icon-switch-right icon-priority'
+                      onClick={this.onToggleReadConfirmation}></i>
+                  )}
+                  {!readConfirmation && (
+                    <i
+                      className='lf lf-icon-switch-left icon-priority'
+                      onClick={this.onToggleReadConfirmation}></i>
+                  )}
+                  <span className='priority-text'>
+                    {i18n.t('compose-message.read-confirmation')}
                   </span>
                 </div>
               </div>

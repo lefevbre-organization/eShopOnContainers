@@ -241,9 +241,9 @@ export class PageGoToLegacy extends Component {
           {this.renderSpinner()}
           <div className='container-fluid d-flex h-100 flex-column' id='borrar'>
             {this.renderGoTo()}
-            {this.renderFooter()}
           </div>
         </div>
+        {this.renderFooter()}
       </React.Fragment>
     );
   }
