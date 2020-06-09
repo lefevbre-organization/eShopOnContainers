@@ -490,6 +490,33 @@ export const addOrUpdateBranding = async (user, brandingInfo) => {
       });
   })
 }
+
+export const createTemplate = async (templateInfo) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    
+    var raw = JSON.stringify(templateInfo);
+    
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+    
+    fetch(`${window.API_SIGN_GATEWAY}/Brandings/addBaseConfigTest`, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        resolve(result);
+      })
+      .catch(error => {
+        console.log('error', error);
+        reject(error)
+      });
+})
+}
 // END OF LEFEBVRE SIGNATURE API CALLS
 
 

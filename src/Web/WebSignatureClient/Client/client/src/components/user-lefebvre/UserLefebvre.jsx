@@ -8,13 +8,18 @@ import { PROVIDER } from "../../constants";
 import { getUser } from '../../services/accounts';
 import { removeState } from "../../services/state";
 import * as base64 from 'base-64';
-import { parseJwt, getUserId, getGuid, getUserName, getApp, getIdEntityType, getIdEntity, getBbdd, getIdUserApp, getIdDocument } from "../../services/jwt";
+import { parseJwt, getUserId, getGuid, getUserName, getApp, getIdEntityType, getIdEntity, getBbdd, getIdUserApp, getIdDocument, getConfigureBaseTemplates, getConfigureDefaultTemplates } from "../../services/jwt";
 import jwt from "njwt";
 import Cookies from 'js-cookie';
 import * as uuid from 'uuid/v4';
-import { getAvailableSignatures, getUserSignatures, createBranding, createBranding2, getBrandingTemplate, createUser, addOrUpdateBranding } from "../../services/api-signaturit";
+import { getAvailableSignatures, getUserSignatures, createBranding, createBranding2, getBrandingTemplate, createUser, addOrUpdateBranding, createTemplate } from "../../services/api-signaturit";
 import { ActionTypes } from "../../actions/action-types";
-
+import lefebvreBaseTemplate from "../../../assets/templates/LefebvreBaseTemplate.json";
+import lexonBaseTemplate from "../../../assets/templates/LexonBaseTemplate.json";
+import centinelaBaseTemplate from "../../../assets/templates/CentinelaBaseTemplate.json";
+import lefebvreDefaultTemplate from "../../../assets/templates/LefebvreBaseTemplate.json";
+import lexonDefaultTemplate from "../../../assets/templates/LexonBaseTemplate.json";
+import centinelaDefaultTemplate from "../../../assets/templates/CentinelaBaseTemplate.json";
 
 class UserLefebvre extends Component {
     constructor(props) {
@@ -26,6 +31,30 @@ class UserLefebvre extends Component {
             isNewAccount: false,
             type: ''
         };
+    }
+
+    configureTemplates(type){
+        const templates = ["lefebvre", "centinela", "lexon"];
+        let template;
+        templates.forEach(app => {        
+            switch (app) {
+                case "lefebvre":
+                    template = ( type === "baseTemplates" ? lefebvreBaseTemplate : lefebvreDefaultTemplate);
+                    break;
+                case "lexon":
+                    template = ( type === "baseTemplates" ? lexonBaseTemplate : lexonDefaultTemplate);
+                    break;
+                case "centinela":
+                    template = ( type === "baseTemplates" ? centinelaBaseTemplate : centinelaDefaultTemplate);;
+                    break;
+                default:
+                    break;
+            }  
+            createTemplate(template)
+            .then(res => {
+                console.log('res:' + res)
+            })
+        });
     }
 
     verifyTokenSignature(token){
@@ -58,17 +87,19 @@ class UserLefebvre extends Component {
     }
 
 
-    componentDidMount() {
+    async componentDidMount() {
         const payload = (this.props.match.params.token ? parseJwt(this.props.match.params.token) : undefined);
         var user = (this.props.match.params.token ? getUserId(payload) : this.props.match.params.idUser);
         var name = (this.props.match.params.token ? getUserName(payload) : "Anónimo");
         var guid = (this.props.match.params.token ? getGuid(payload) : null);
         var app = (this.props.match.params.token ? getApp(payload) : "lefebvre");
-        var idEntityType = (this.props.match.params.token ? getIdEntityType(payload) : null)
-        var idEntity = (this.props.match.params.token ? getIdEntity(payload) : null)
-        var bbdd = (this.props.match.params.token ? getBbdd(payload): null)
-        var idUserApp = (this.props.match.params.token ? getIdUserApp(payload): null)
-        var idDocument = (this.props.match.params.token ? getIdDocument(payload): null)
+        var idEntityType = (this.props.match.params.token ? getIdEntityType(payload) : null);
+        var idEntity = (this.props.match.params.token ? getIdEntity(payload) : null);
+        var bbdd = (this.props.match.params.token ? getBbdd(payload): null);
+        var idUserApp = (this.props.match.params.token ? getIdUserApp(payload): null);
+        var idDocument = (this.props.match.params.token ? getIdDocument(payload): null);
+        var configureBaseTemplates = (this.props.match.params.token ? getConfigureBaseTemplates(payload) : false);
+        var configureDefaultTemplates = (this.props.match.params.token ? getConfigureDefaultTemplates(payload) : false);
 
         this.props.setUser(`IM0${user}`);
         this.props.setGuid(guid);
@@ -100,6 +131,14 @@ class UserLefebvre extends Component {
                   });
 
                 this.props.setToken(this.props.match.params.token);
+
+                if (configureBaseTemplates){
+                   await this.configureTemplates("baseTemplates");
+                } 
+                if (configureDefaultTemplates){
+                   await this.configureDefaultTemplates("defaultTemplates");
+                }
+                
 
                 getUserSignatures(user)
                 .then( userInfo => {

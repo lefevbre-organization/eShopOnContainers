@@ -99,3 +99,11 @@ export const getUrlType = payload =>{
     return "default";
   }
 }
+
+export const getConfigureBaseTemplates = payload => {
+  return(payload.hasOwnProperty('configBaseTemplates') ? payload.configBaseTemplates : null);
+}
+
+export const getConfigureDefaultTemplates = payload => {
+  return(payload.hasOwnProperty('configDefaultTemplates') ? payload.configDefaultTemplates : null);
+}
