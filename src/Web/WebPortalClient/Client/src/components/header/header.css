@@ -13,6 +13,12 @@
   margin-right: 100px;
 }
 
+.header-user a {
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+
 .header-user .lf-icon-user {
   font-size: 24px;
   margin-right: 10px;
@@ -21,4 +27,25 @@
 .header-left {
   flex: 0 0 100px;
   margin-left: 100px;
+}
+
+.lf-icon-shop {
+  color: #fff;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+}
+
+.shop-text {
+  font-family: MTTMilano, Lato, Arial, sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  margin-left: 10px;
+  margin-top: 5px;
+  color: #fff;
+}
+
+a:hover {
+  text-decoration: none !important;
+  opacity: 0.8;
 }

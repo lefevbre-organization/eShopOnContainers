@@ -4,8 +4,9 @@ import {
     PAGE_SELECT_COMPANY,
     PAGE_MESSAGE_CLASSIFICATIONS 
 } from '../../constants'
-import Login from "../login/login";
-import SelectCompany from "../select-company/select-company";
+import Login from '../login/login';
+import SelectCompany from '../select-company/select-company';
+import MessageClassifications from '../message-classifications/message-classifications'
 
 export default class Routing extends Component {
     constructor(props) {
@@ -14,19 +15,24 @@ export default class Routing extends Component {
       let actualPage = token ? PAGE_SELECT_COMPANY : PAGE_LOGIN;
   
       this.state = {
-        actualPage: actualPage
+        actualPage: actualPage,
+        data: null
       };
-  
+      // console.log(Office.context.mailbox.userProfile.emailAddress);
       this.changePage = this.changePage.bind(this);
     }
-  
-    changePage(page) {
-      this.setState({ actualPage: page });
+
+    changePage(page, data) {
+      this.setState({ 
+        actualPage: page, 
+        data: data
+       });
     }
   
     renderPage() {
-      const { actualPage } = this.state;
+      const { actualPage, data } = this.state;
       const { title, isOfficeInitialized } = this.props;
+
       switch (actualPage) {
 
        case PAGE_LOGIN:
@@ -45,15 +51,13 @@ export default class Routing extends Component {
             />
           );
       
-        // case PAGE_MESSAGE_CLASSIFICATIONS:
-        //   return (
-        //     <MessageClassifications 
-        //       user={user} 
-        //       bbddAddon={bbdd}
-        //       addonData={addonData}
-        //       toggleNotification={toggleNotification}
-        //     />
-        //   );
+        case PAGE_MESSAGE_CLASSIFICATIONS:
+          return (
+            <MessageClassifications 
+              selectCompany={data} 
+              changePage={this.changePage}
+            />
+          );
   
         default:
           return <Login changePage={this.changePage} />;

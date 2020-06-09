@@ -122,7 +122,7 @@ class Login extends Component {
   render() {
     return (
       <div className='wrapper'>
-        <Header></Header>
+        <Header showUser={false}></Header>
         <LoginComponents
           iconUser={iconUser}
           iconLock={iconLock}

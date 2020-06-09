@@ -24,7 +24,7 @@ class Footer extends Component {
               <li>
                 <a
                   rel='noopener noreferrer'
-                  href='https://www.facebook.com/lefebvreelderecho'
+                  href='https://www.facebook.com/Lefebvre.es'
                   target='_blank'
                   title='Facebook'>
                   <span className='lf-icon-facebook-round'></span>
