@@ -26,6 +26,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         private readonly HttpClient _clientMinihub;
         private readonly HttpClient _clientOnline;
         private readonly HttpClient _clientLogin;
+        private readonly HttpClient _clientLexonApi;
         private readonly IOptions<UserUtilsSettings> _settings;
         internal readonly ILogger<UserUtilsService> _logger;
 
@@ -60,6 +61,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             _clientOnline.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authData);
 
             _clientOnline.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3");
+
+            _clientLexonApi = _clientFactory.CreateClient();
+            _clientLexonApi.BaseAddress = new Uri(_settings.Value.LexonApiUrl);
+            _clientLexonApi.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
         #region Generic
@@ -281,6 +286,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 //http://led-pre-servicecomtools/Login/RecuperarUsuarioPorEntrada?idUsuarioPro=e0384919
                 //http://led-servicecomtools/Login/RecuperarUsuarioPorEntrada?idUsuarioPro=E1621396
+                //http://led-servicecomtools/Login/RecuperarUsuarioPorEntrada?idUsuarioPro=E1676156
+
                 var url = $"{_settings.Value.LoginUrl}/Login/RecuperarUsuarioPorEntrada?idUsuarioPro={idNavisionUser}";
 
                 using (var response = await _clientLogin.GetAsync(url))
@@ -453,6 +460,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             AddClaimToPayload(payload, tokenRequest.Roles, nameof(tokenRequest.Roles));
             AddClaimToPayload(payload, tokenRequest.Name, nameof(tokenRequest.Name));
             AddClaimToPayload(payload, tokenRequest.IdApp, nameof(tokenRequest.IdApp));
+            AddClaimToPayload(payload, tokenRequest.IdUser, nameof(tokenRequest.IdUser));
 
             if (tokenRequest is TokenRequestCentinelaViewFirm tokenRequestCentinelaViewFirm)
             {
@@ -474,7 +482,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 AddClaimToPayload(payload, tokenRequestLogin.Login, nameof(tokenRequestLogin.Login));
                 AddClaimToPayload(payload, tokenRequestLogin.Password, nameof(tokenRequestLogin.Password));
-                AddClaimToPayload(payload, tokenRequestLogin.IdApp, nameof(tokenRequestLogin.IdApp));
             }
             if (tokenRequest is TokenRequestNewMail tokenRequestNewMail)
             {
@@ -490,14 +497,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 }
             }
         }
-
-         //private void AddClaimNumberToPayload(JwtPayload payload, long? valorClaim, string nombreClaim)
-        //{
-        //    if (valorClaim == null) return;
-
-        //    _logger.LogInformation("Claim númerico {0} --> {1}", nombreClaim, valorClaim);
-        //    payload.Add(nombreClaim, valorClaim);
-        //}
 
         private void AddClaimToPayload(JwtPayload payload, object valorClaim, string nombreClaim)
         {
@@ -579,6 +578,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 {
                     result.data.valid = true;
                     token.IdClienteNavision = userLefebvreResult?.data?._idEntrada;
+                    token.Name = userLefebvreResult?.data?.name;
                     token.Roles = new List<string>() { "gmailpanel", "outlookpanel", "lexonconnector", "centinelaconnector" };
                 }
                 else
@@ -645,11 +645,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             //2. Obtener datos de lexon (TODO: evaluar si es necesari, se puede obviar con el paso anterior u obtenemos un método más eficiente)
             if (tokenRequest.IdApp == _settings.Value.IdAppLexon)
             {
-                //var lexUserResult = await _repository.GetLexonUserAsync(tokenRequest.IdClienteNavision);
-                //if (string.IsNullOrEmpty(lexUserResult?.data?.idNavision))
-                //    TraceOutputMessage(result.errors, $"Error get user from lexon", "Error Get Lexon Token");
-                //tokenRequest.IdUser = lexUserResult?.data?.idUser;
-                tokenRequest.IdUser = "449";
+                Result<LexUser> lexUserResult = await GetLexonUserAsync(tokenRequest.IdClienteNavision);
+                if (string.IsNullOrEmpty(lexUserResult?.data?.idNavision))
+                    TraceOutputMessage(result.errors, $"Error get user from lexon", "Error Get Lexon Token");
+                tokenRequest.IdUser = lexUserResult?.data?.idUser;
+               // tokenRequest.IdUser = "449";
             }
 
             //3. Obtener contactos si se necesita (evaluar si tengo que pasarlo a otros métodos y quitarlos del general
@@ -682,6 +682,35 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             result.data.token = tokenString;
             //result.data.valid = true;
 
+            return result;
+        }
+
+        private async Task<Result<LexUser>> GetLexonUserAsync(string idNavisionUser)
+        {
+            var result = new Result<LexUser>(new LexUser());
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonApiUrl}/user?idNavisionUser={idNavisionUser}");
+            TraceLog(parameters: new string[] { $"request:{request}" });
+
+            try
+            {
+                using (var response = await _clientLexonApi.SendAsync(request))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        result = await response.Content.ReadAsAsync<Result<LexUser>>();
+                        result.data.idNavision = idNavisionUser;
+                    }
+                    else
+                    {
+                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
             return result;
         }
 
