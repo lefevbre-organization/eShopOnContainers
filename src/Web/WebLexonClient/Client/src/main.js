@@ -241,6 +241,9 @@ class Main extends Component {
         },
         () => {
           this.props.setInitialBBDD(bbdd);
+          window.dispatchEvent(new CustomEvent('ChangedLexonBBDD'), {
+            detail: { bbdd },
+          });
         }
       );
     }

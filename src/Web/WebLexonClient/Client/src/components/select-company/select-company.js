@@ -1,21 +1,21 @@
-import React, { Component } from "react";
-import "./select-company.css";
-import PropTypes from "prop-types";
-import i18n from "i18next";
-import { connect } from "react-redux";
-import ACTIONS from "../../actions/selections";
+import React, { Component } from 'react';
+import './select-company.css';
+import PropTypes from 'prop-types';
+import i18n from 'i18next';
+import { connect } from 'react-redux';
+import ACTIONS from '../../actions/selections';
 // import PerfectScrollbar from "react-perfect-scrollbar";
 // import "react-perfect-scrollbar/dist/css/styles.css";
 
-import Company from "../company/company";
-import { PAGE_SELECT_ACTION } from "../../constants";
+import Company from '../company/company';
+import { PAGE_SELECT_ACTION } from '../../constants';
 
 class SelectCompany extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      showMessageSelectCompany: false
+      showMessageSelectCompany: false,
     };
 
     this._handleOnClick = this._handleOnClick.bind(this);
@@ -27,16 +27,24 @@ class SelectCompany extends Component {
 
     if (companies.length === 1) {
       this.props.setCompanySelected(companies[0]);
+      this.notifyChangeBBDD(companies[0]);
       this.props.changePage(PAGE_SELECT_ACTION);
     }
 
     for (let i = 0; i < companies.length; i++) {
       if (companies[i].bbdd === this.props.initialBBDD) {
-        console.log("Selecting default BBDD")
+        console.log('Selecting default BBDD');
         this.props.setCompanySelected(companies[i]);
+        this.notifyChangeBBDD(companies[i]);
         this.props.changePage(PAGE_SELECT_ACTION);
       }
     }
+  }
+
+  notifyChangeBBDD(newBBDD) {
+    window.dispatchEvent(new CustomEvent('ChangedLexonBBDD'), {
+      detail: { bbdd: newBBDD },
+    });
   }
 
   _handleOnClick() {
@@ -55,11 +63,12 @@ class SelectCompany extends Component {
 
   updateSelectedCompany(idCompany) {
     const company = this.props.companies.find(
-      company => company.idCompany === Number(idCompany)
+      (company) => company.idCompany === Number(idCompany)
     );
     this.props.setCompanySelected(company);
+    this.notifyChangeBBDD(company);
     this.setState({
-      showMessageSelectCompany: false
+      showMessageSelectCompany: false,
     });
   }
 
@@ -68,9 +77,9 @@ class SelectCompany extends Component {
 
     if (showMessageSelectCompany) {
       return (
-        <p className="d-flex align-items-center business-alert-warning">
-          <span className="lf-icon-close-round-full"></span>
-          <strong>{i18n.t("select-company.must-select-company")}</strong>
+        <p className='d-flex align-items-center business-alert-warning'>
+          <span className='lf-icon-close-round-full'></span>
+          <strong>{i18n.t('select-company.must-select-company')}</strong>
         </p>
       );
     }
@@ -107,24 +116,24 @@ class SelectCompany extends Component {
     const _this = this;
 
     return (
-      <div className="container">
-        <div className="row">
-          <form className="col-12 form-selection-business">
-            <p>{i18n.t("select-company.select-company")}</p>
+      <div className='container'>
+        <div className='row'>
+          <form className='col-12 form-selection-business'>
+            <p>{i18n.t('select-company.select-company')}</p>
             {/* <PerfectScrollbar style={{ height: "50vh" }}> */}
-            <ul className="list-unstyled">
-              {this.props.companies && this.props.companies.map(company => {
-                return _this.renderCompany(company);
-              })}
+            <ul className='list-unstyled'>
+              {this.props.companies &&
+                this.props.companies.map((company) => {
+                  return _this.renderCompany(company);
+                })}
             </ul>
             {/* </PerfectScrollbar> */}
             {this.renderShowMessageSelectCompany()}
-            <div className="d-flex justify-content-center mt-5">
+            <div className='d-flex justify-content-center mt-5'>
               <button
-                type="button"
-                className="btn btn-primary text-center"
-                onClick={this._handleOnClick}
-              >
+                type='button'
+                className='btn btn-primary text-center'
+                onClick={this._handleOnClick}>
                 Entrar
               </button>
             </div>
@@ -138,19 +147,19 @@ class SelectCompany extends Component {
 SelectCompany.propTypes = {
   user: PropTypes.string.isRequired,
   companies: PropTypes.array.isRequired,
-  initialBBDD: PropTypes.object.isRequired
+  initialBBDD: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     companySelected: state.selections.companySelected,
     errors: state.applicationReducer.errors,
-    initialBBDD: state.selections.initialBBDD
+    initialBBDD: state.selections.initialBBDD,
   };
 };
 
-const mapDispatchToProps = dispatch => ({
-  setCompanySelected: item => dispatch(ACTIONS.setCompanySelected(item))
+const mapDispatchToProps = (dispatch) => ({
+  setCompanySelected: (item) => dispatch(ACTIONS.setCompanySelected(item)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SelectCompany);
