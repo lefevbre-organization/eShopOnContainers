@@ -14,12 +14,12 @@ import Cookies from 'js-cookie';
 import * as uuid from 'uuid/v4';
 import { getAvailableSignatures, getUserSignatures, createBranding, createBranding2, getBrandingTemplate, createUser, addOrUpdateBranding, createTemplate } from "../../services/api-signaturit";
 import { ActionTypes } from "../../actions/action-types";
-import lefebvreBaseTemplate from "../../../assets/templates/LefebvreBaseTemplate.json";
-import lexonBaseTemplate from "../../../assets/templates/LexonBaseTemplate.json";
-import centinelaBaseTemplate from "../../../assets/templates/CentinelaBaseTemplate.json";
-import lefebvreDefaultTemplate from "../../../assets/templates/LefebvreBaseTemplate.json";
-import lexonDefaultTemplate from "../../../assets/templates/LexonBaseTemplate.json";
-import centinelaDefaultTemplate from "../../../assets/templates/CentinelaBaseTemplate.json";
+import LefebvreBaseTemplate from "../../../assets/templates/LefebvreBaseTemplate.json";
+import LexonBaseTemplate from "../../../assets/templates/LexonBaseTemplate.json";
+import CentinelaBaseTemplate from "../../../assets/templates/CentinelaBaseTemplate.json";
+// import lefebvreDefaultTemplate from "../../../assets/templates/LefebvreBaseTemplate.json";
+// import lexonDefaultTemplate from "../../../assets/templates/LexonBaseTemplate.json";
+// import centinelaDefaultTemplate from "../../../assets/templates/CentinelaBaseTemplate.json";
 
 class UserLefebvre extends Component {
     constructor(props) {
@@ -39,13 +39,16 @@ class UserLefebvre extends Component {
         templates.forEach(app => {        
             switch (app) {
                 case "lefebvre":
-                    template = ( type === "baseTemplates" ? lefebvreBaseTemplate : lefebvreDefaultTemplate);
+                    //template = ( type === "baseTemplates" ? LefebvreBaseTemplate : LefebvreDefaultTemplate);
+                    template = LefebvreBaseTemplate;
                     break;
                 case "lexon":
-                    template = ( type === "baseTemplates" ? lexonBaseTemplate : lexonDefaultTemplate);
+                    //template = ( type === "baseTemplates" ? LexonBaseTemplate : LexonDefaultTemplate);
+                    template = LexonBaseTemplate;
                     break;
                 case "centinela":
-                    template = ( type === "baseTemplates" ? centinelaBaseTemplate : centinelaDefaultTemplate);;
+                    //template = ( type === "baseTemplates" ? CentinelaBaseTemplate : CentinelaDefaultTemplate);
+                    template = CentinelaBaseTemplate;
                     break;
                 default:
                     break;
