@@ -3,7 +3,10 @@ import { ChoiceGroup, Button } from 'office-ui-fabric-react';
 import { getCompanies } from '../../services/services';
 import Header from '../header/header';
 import '../select-company/select-company.css';
-import { PAGE_LOGIN } from "../../constants";
+import { 
+  PAGE_LOGIN, 
+  PAGE_MESSAGE_CLASSIFICATIONS
+ } from "../../constants";
 
 class SelectCompany extends Component {
     _isMounted = false;
@@ -11,6 +14,9 @@ class SelectCompany extends Component {
         super(props, context);
         this.state = {
           companies: [],
+          newCompanies: [],
+          selectCompany: null,
+          isDisabled: true
         };
       }
 
@@ -29,7 +35,10 @@ class SelectCompany extends Component {
             text: company.name
           })
         });
-        this.setState({companies: newCompanies});
+        this.setState({
+          newCompanies: newCompanies, 
+          companies: result.companies
+        });
       })
       .catch((errors) => {
         console.log(errors);
@@ -45,13 +54,32 @@ class SelectCompany extends Component {
       this.props.changePage(PAGE_LOGIN);
     }
 
-    _onChange(e) {
-      console.log(e.target)
+    _onChange = (e, option) => {
+      const { companies, isDisabled } = this.state
+      companies.forEach(company => {
+        if(company.bbdd == option.key) {
+          this.setState({
+            selectCompany: company, 
+            isDisabled: false
+          });
+        }
+      });
     }
 
+    click = async () => {
+      const { selectCompany } = this.state
+      if(selectCompany != null) {
+        this.props.changePage(PAGE_MESSAGE_CLASSIFICATIONS, 
+          selectCompany);
+      }
+    };
+
     render() {
-     const { companies } = this.state
-      const options = companies;
+     const { 
+       newCompanies, 
+       isDisabled
+     } = this.state
+      const options = newCompanies;
       return (
         <div className="">  
          <Header logout={this.logout} />
@@ -66,9 +94,8 @@ class SelectCompany extends Component {
          <div className="justify-content-center">
           <Button
              className="btn-primary"
-             // buttonType={ButtonType.hero}
-             // iconProps={{ iconName: "ChevronRight" }}
-             // onClick={this.click}
+             disabled={isDisabled}
+             onClick={this.click}
            >
              Entrar
            </Button>

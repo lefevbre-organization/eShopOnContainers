@@ -14,5 +14,9 @@
         Task<Result<BaseBrandings>> GetUserBranding(string app, string id);
         Task<Result<BaseBrandings>> CreateBranding(BaseBrandings branding);
         //Task<Result<UserBrandings>> AddOrUpdateUserBranding(string app, string id);
+
+        Task<Result<BaseBrandings>> CreateBrandingTest(BaseBrandings branding);
+        Task<Result<BaseBrandings>> GetTemplateBrandingTest(string app);
+
     }
 }

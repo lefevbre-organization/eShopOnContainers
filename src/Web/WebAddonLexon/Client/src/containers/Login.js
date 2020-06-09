@@ -9,7 +9,7 @@ import { getUser } from "../services/services-lexon";
 import '../assets/styles/components/Login.css';
 import logoHeader from '../assets/img/LogoLefebvre.png';
 import shopHeader from '../assets/img/icon-shop.png';
-import logoLexon from '../assets/img/LogoLexOn.jpg';
+import logoLexon from '../assets/img/logo-lexon.png';
 import logoFooter from '../assets/img/lefebvre-ij-bl-160x57.png';
 import iconFacebook from '../assets/img/icon-facebook-round.png'; 
 import iconLinkedin from '../assets/img/icon-linkedin-round.png';

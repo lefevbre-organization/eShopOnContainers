@@ -94,5 +94,33 @@
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
+
+        [HttpPost]
+        [Route("addBaseConfigTest")]
+        [ProducesResponseType(typeof(Result<BaseBrandings>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<BaseBrandings>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddBaseConfigurationTest([FromBody] BaseBrandings brandingIn)
+        {
+            if (string.IsNullOrEmpty(brandingIn.app) || string.IsNullOrEmpty(brandingIn.type) || string.IsNullOrEmpty(brandingIn.id_signaturit))
+                return BadRequest("invalid values");
+
+            var result = await _brandingsService.CreateBrandingTest(brandingIn);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpGet]
+        [Route("get/{app}/template/test")]
+        [ProducesResponseType(typeof(Result<BaseBrandings>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<BaseBrandings>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetTemplateBrandingTest([FromRoute] string app)
+        {
+            if (string.IsNullOrEmpty(app))
+                return BadRequest("invalid user value");
+
+            var result = await _brandingsService.GetTemplateBrandingTest(app);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
     }
 }

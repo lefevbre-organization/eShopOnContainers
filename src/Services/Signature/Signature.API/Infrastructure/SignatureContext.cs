@@ -111,6 +111,14 @@ namespace Signature.API.Infrastructure
             return session.Client.GetDatabase(_settings.Value.Database).GetCollection<BaseBrandings>(_settings.Value.CollectionBrandings);
         }
 
+
+        public IMongoCollection<BaseBrandings> TestBrandings => Database.GetCollection<BaseBrandings>(_settings.Value.CollectionTest);
+
+        public IMongoCollection<BaseBrandings> TestBrandingsTransaction(IClientSessionHandle session)
+        {
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<BaseBrandings>(_settings.Value.CollectionTest);
+        }
+
         //public IMongoCollection<SignatureMaster> SignatureMasters
         //{
         //    get { return Database.GetCollection<SignatureMaster>(_settings.Value.CollectionMasters); }

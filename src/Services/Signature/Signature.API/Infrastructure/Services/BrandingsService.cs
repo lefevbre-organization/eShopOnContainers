@@ -68,6 +68,16 @@
         {
             return await _brandingsRepository.CreateBranding(branding);
         }
+
+        public async Task<Result<BaseBrandings>> CreateBrandingTest(BaseBrandings branding)
+        {
+            return await _brandingsRepository.CreateBrandingTest(branding);
+        }
+        public async Task<Result<BaseBrandings>> GetTemplateBrandingTest(string app)
+        {
+            return await _brandingsRepository.GetTemplateBranding(app);
+        }
+
         #endregion Signatures
     }
 }

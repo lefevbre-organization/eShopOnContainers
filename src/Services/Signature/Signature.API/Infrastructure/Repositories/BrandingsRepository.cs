@@ -188,6 +188,58 @@
             }
             return result;
         }
+
+        public async Task<Result<BaseBrandings>> CreateBrandingTest(BaseBrandings brandingIn)
+        {
+            var result = new Result<BaseBrandings>();
+            var filter = GetFilterBranding(brandingIn.app, brandingIn.type);
+
+            try
+            {
+                var resultReplace = await _context.TestBrandings.ReplaceOneAsync(filter, brandingIn, GetUpsertOptions());
+
+                brandingIn.Id = ManageCreateBranding($"Branding don't inserted {brandingIn.app}, type {brandingIn.type}",
+                    $"Branding already existed and it's been modified {brandingIn.app}, type {brandingIn.type}",
+                    $"Branding inserted {brandingIn.app} type {brandingIn.type}",
+                    result, resultReplace);
+
+                result.data = brandingIn;
+
+            }
+            catch (Exception)
+            {
+                TraceInfo(result.infos, $"Error al guardar el branding {brandingIn.app}, type {brandingIn.type}");
+                throw;
+            }
+            return result;
+        }
+
+        public async Task<Result<BaseBrandings>> GetTemplateBrandingTest(string app)
+        {
+            var result = new Result<BaseBrandings>();
+            var filter = GetFilterBranding(app, "template");
+            try
+            {
+                result.data = await _context.TestBrandings.Find(filter).FirstOrDefaultAsync();
+
+                if (result.data == null)
+                {
+                    TraceMessage(result.errors, new Exception($"No se encuentra ningún template con los datos facilitados"), "1003");
+                }
+                else
+                {
+                    var branding = result.data;
+
+                    result.data = branding;
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceInfo(result.infos, $"Error al obtener datos de : {ex.Message}");
+            }
+            return result;
+        }
+
         #endregion
 
         #region Helpers
