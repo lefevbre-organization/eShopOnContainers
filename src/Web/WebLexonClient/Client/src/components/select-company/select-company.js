@@ -27,7 +27,7 @@ class SelectCompany extends Component {
 
     if (companies.length === 1) {
       this.props.setCompanySelected(companies[0]);
-      this.notifyChangeBBDD(companies[0]);
+      this.notifyChangeBBDD(companies[0].bbdd);
       this.props.changePage(PAGE_SELECT_ACTION);
     }
 
@@ -35,16 +35,18 @@ class SelectCompany extends Component {
       if (companies[i].bbdd === this.props.initialBBDD) {
         console.log('Selecting default BBDD');
         this.props.setCompanySelected(companies[i]);
-        this.notifyChangeBBDD(companies[i]);
+        this.notifyChangeBBDD(companies[i].bbdd);
         this.props.changePage(PAGE_SELECT_ACTION);
       }
     }
   }
 
   notifyChangeBBDD(newBBDD) {
-    window.dispatchEvent(new CustomEvent('ChangedLexonBBDD'), {
-      detail: { bbdd: newBBDD },
-    });
+    window.dispatchEvent(
+      new CustomEvent('ChangedLexonBBDD', {
+        detail: { bbdd: newBBDD },
+      })
+    );
   }
 
   _handleOnClick() {
@@ -66,7 +68,7 @@ class SelectCompany extends Component {
       (company) => company.idCompany === Number(idCompany)
     );
     this.props.setCompanySelected(company);
-    this.notifyChangeBBDD(company);
+    this.notifyChangeBBDD(company.bbdd);
     this.setState({
       showMessageSelectCompany: false,
     });
