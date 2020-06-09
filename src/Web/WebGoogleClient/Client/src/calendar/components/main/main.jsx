@@ -35,13 +35,20 @@ import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
 import { createElement } from '@syncfusion/ej2-base';
 import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
-import { Browser, Internationalization, extend } from '@syncfusion/ej2-base';
+
 import  ReactTagInput from "@pathofdev/react-tag-input/";
 import "@pathofdev/react-tag-input/build/index.css";
 import { DropDownList } from '@syncfusion/ej2-dropdowns';
 
 
-
+import { setCulture, L10n, loadCldr, Internationalization } from '@syncfusion/ej2-base';
+import currencies from 'cldr-data/main/es/currencies.json';
+import gregorian from 'cldr-data/main/es/ca-gregorian.json';
+import numbers from 'cldr-data/main/es/numbers.json';
+import timeZoneNames from 'cldr-data/main/es/timeZoneNames.json';
+import numberingSystems from 'cldr-data/supplemental/numberingSystems.json';
+import weekData from 'cldr-data/supplemental/weekData.json';// To load the culture based first day of week
+import i18n from 'i18next';
 
 export class Main extends Component {
 
@@ -68,23 +75,18 @@ export class Main extends Component {
         //this.CalendarList = [];
         this.position = { X: 'Center', Y: 'Bottom' };
         this.resourceCalendarData = [];
-
         this.ownerData = [
             { text: 'a.valverde-ext@lefebvre.es', id:'a.valverde-ext@lefebvre.es' },
             { text: 'albertovalverd@hotmail.com', id: 'albertovalverd@hotmail.com' },
             { text: 'alberto.valverde.escribano@gmail.com', id: 'alberto.valverde.escribano@gmail.com' }  
-        ];       
-
+        ];  
         this.toasts = [
             { content: 'Processing', cssClass: 'e-toast-black', icon: '' },
             { content: 'Process complete', cssClass: 'e-toast-black', icon: '' },
             { content: 'Error', cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
         ]
-
         this.instance = new Internationalization();
         this.tabInstance = new TabComponent;
-
-
         this.state = {
             isVisible: true,
             sidebarOpen: false,
@@ -98,11 +100,9 @@ export class Main extends Component {
             eventType: undefined
             //externalcomponent: "<LexonComponent sidebarDocked={this.onSetSidebarDocked} />"
         };
-
         this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
             this
         );
-
         // Calednar View Dialog
         this.alertButtons = [{
             // Click the footer buttons to hide the Dialog
@@ -139,6 +139,21 @@ export class Main extends Component {
         }];
         // Calednar View Dialog
         this.animationSettings = { effect: 'None' };
+
+        // Syncfusion omponent translation
+        this.setGlobalization();
+    }
+
+    async setGlobalization() {
+        if (window.navigator.language.includes("es-") 
+            || (window.navigator.language == "ca")
+            || (window.navigator.language == "ga")
+            || (window.navigator.language == "eu")){
+            loadCldr(currencies, numberingSystems, gregorian, numbers, timeZoneNames, weekData);
+            const data = await import('../../syncfusion-resources/calendar-es.json')
+            setCulture('es');
+            L10n.load(data);
+        }
     }
 
     calendarColorModify(calendarId, color) {
@@ -651,7 +666,7 @@ export class Main extends Component {
                         ],
                         //headerPlacement: 'Left',                        
                     });
-                    tabObj.select(1);
+                    //tabObj.select(1);
                     tabObj.animation.previous = { duration: 100 };
                     tabObj.animation.next = { duration: 100 };
                     tabObj.animation.previous = { effect: 'FadeIn' };
@@ -1048,7 +1063,7 @@ export class Main extends Component {
                                 <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
-                                            <ScheduleComponent
+                                            <ScheduleComponent    
                                                
                                                 ref={schedule => this.scheduleObj = schedule}
                                                 width='100%'
