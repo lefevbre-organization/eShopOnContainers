@@ -10,6 +10,7 @@ import '../../assets/styles/components/Login.css';
 import logoLexon from '../../assets/img/LogoLexOn.jpg';
 import iconUser from '../../assets/img/icon-user.png';
 import iconLock from '../../assets/img/icon-lock.png';
+import i18n from '../../services/i18n';
 
 class Login extends Component {
   constructor(props) {
@@ -27,13 +28,13 @@ class Login extends Component {
         auth: '',
       },
 
-      shopTitle: 'TIENDA',
-      notClient: 'No soy cliente.',
-      requestInfo: 'Solicitar información',
-      needHelp: '¿Necesitas ayuda?',
-      phoneNumber: '91 210 80 00 - 902 44 33 55 |',
-      client: 'clientes@lefebvre.es',
-      required: 'Este campo es obligatorio.',
+      shopTitle: i18n.t('login.shop'),
+      notClient: i18n.t('login.notClient'),
+      requestInfo: i18n.t('login.requestInfo'),
+      needHelp: i18n.t('login.needHelp'),
+      phoneNumber: i18n.t('login.phoneNumber'),
+      client: i18n.t('login.client'),
+      required: i18n.t('login.required'),
     };
   }
 
@@ -42,6 +43,11 @@ class Login extends Component {
       form: {
         ...this.state.form,
         [e.target.name]: e.target.value,
+      },
+      errorsMessage: {
+        ...this.state.errorsMessage,
+        [e.target.name]: '',
+        email: '',
       },
     });
     if (this.state.form.login !== '' && this.state.form.password !== '') {
@@ -56,30 +62,38 @@ class Login extends Component {
   };
 
   validateForm = () => {
+    let bRes = true;
+    let errors = { ...this.state.errorsMessage };
+
     if (this.state.form.login === '') {
-      this.setState({
-        errorsMessage: {
-          login: this.state.required,
-        },
-      });
-      return false;
+      errors = {
+        ...errors,
+        login: this.state.required,
+      };
+
+      bRes = false;
     }
 
-    if (!validator.validate(this.state.form.login)) {
-      this.setState({
-        errorsMessage: {
-          email: 'El campo debe tener formato de email.',
-        },
-      });
-      return false;
+    if (bRes === true && !validator.validate(this.state.form.login)) {
+      errors = {
+        ...errors,
+        email: i18n.t('login.email-error'),
+      };
+
+      bRes = false;
     }
 
     if (this.state.form.password === '') {
-      this.setState({
-        errorsMessage: {
-          password: this.state.required,
-        },
-      });
+      errors = {
+        ...errors,
+        password: this.state.required,
+      };
+
+      bRes = false;
+    }
+
+    if (!bRes) {
+      this.setState({ errorsMessage: errors });
       return false;
     }
 
@@ -102,7 +116,7 @@ class Login extends Component {
     } else {
       this.setState({
         errorsMessage: {
-          auth: 'Usuario o Contraseña inválidos.',
+          auth: i18n.t('login.user-error'),
         },
       });
     }

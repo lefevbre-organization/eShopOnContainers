@@ -145,7 +145,7 @@ strong.add-accounts {
   background-color: #e5e8f1;
   color: #001978 !important;
 }
-.form-box li [class^="lf-icon"] {
+.form-box li [class^='lf-icon'] {
   font-size: 30px;
   margin-left: 0;
   margin-right: 4px;
@@ -234,7 +234,7 @@ strong.add-accounts {
   text-transform: uppercase;
 }
 
-.user-options ul li [class^="lf-icon"] {
+.user-options ul li [class^='lf-icon'] {
   font-size: 28px;
   margin-right: 10px;
   font-weight: normal;
@@ -248,8 +248,8 @@ strong.add-accounts {
 }
 
 .user-image-and-name .user-image::before {
-  font-family: "lf-font";
-  content: "\e952";
+  font-family: 'lf-font';
+  content: '\e952';
   position: relative;
   top: 56px;
   left: 140px;
@@ -377,7 +377,7 @@ strong.add-accounts {
   font-family: MTTMilano-Bold, Lato, Arial, sans-serif;
 }
 
-.product-list [class^="lf-icon"] {
+.product-list [class^='lf-icon'] {
   color: #fff;
   font-size: 27px;
   font-weight: normal;
@@ -393,7 +393,7 @@ strong.add-accounts {
   padding: 3%;
 }
 
-.product-list [class^="lf-icon"]:hover {
+.product-list [class^='lf-icon']:hover {
   background: #888eba;
 }
 
@@ -436,7 +436,7 @@ strong.add-accounts {
 
 .dropdown-menu-arrow:before,
 .dropdown-menu-arrow:after {
-  content: "";
+  content: '';
   position: absolute;
   display: block;
   width: 0;
@@ -472,7 +472,7 @@ strong.add-accounts {
   color: #001978;
 }
 
-.dropdown-menu [class^="lf-icon-close"] {
+.dropdown-menu [class^='lf-icon-close'] {
   font-size: 13px;
 }
 

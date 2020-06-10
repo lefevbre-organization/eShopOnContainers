@@ -33,7 +33,7 @@ class Footer extends Component {
               <li>
                 <a
                   rel='noopener noreferrer'
-                  href='https://www.linkedin.com/company/lefebvre-elderecho'
+                  href='https://www.linkedin.com/company/lefebvre_es'
                   target='_blank'
                   title='Linkedin'>
                   <span className='lf-icon-linkedin-round'></span>
@@ -61,7 +61,7 @@ class Footer extends Component {
           </div>
           <div className='row'>
             <p className='col-xs-12'>
-              ©2019 Lefebvre. {i18n.t('footer.all-reserved-right')}
+              {i18n.t('footer.all-reserved-right')}
               <span>
                 {window.LEGAL_WARNING_URL && window.LEGAL_WARNING_URL !== '' && (
                   <span>
