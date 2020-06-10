@@ -34,6 +34,7 @@
   font-size: 22px;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
 }
 
 .shop-text {
@@ -47,4 +48,8 @@
 
 a:hover {
   text-decoration: none !important;
+}
+
+.header-icons {
+  text-align: right;
 }
