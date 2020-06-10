@@ -42,6 +42,20 @@
       "Priority": 1
     },
     {
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userutils.api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/mysql/LexonMySql/token?addTerminatorToToken={terminator}",
+      "DownstreamPathTemplate": "/api/{version}/Lexon/token?addTerminatorToToken={terminator}",
+      "Priority": 2
+    },
+    {
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE" ],
       "DownstreamHostAndPorts": [

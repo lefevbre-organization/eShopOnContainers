@@ -37,9 +37,23 @@
           "Port": 80
         }
       ],
-      "UpstreamPathTemplate": "/api/v1/mysql/LexonMySql/token?addTerminatorToToken={terminator}",
-      "DownstreamPathTemplate": "/api/{version}/Lexon/token?addTerminatorToToken={terminator}",
+      "UpstreamPathTemplate": "/api/{version}/mysql/LexonMySql/user/apps",
+      "DownstreamPathTemplate": "/api/{version}/UserUtils/user/apps",
       "Priority": 1
+    },
+    {
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "userutils.api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/mysql/LexonMySql/token?addTerminatorToToken={terminator}",
+      "DownstreamPathTemplate": "/api/{version}/Lexon/token?addTerminatorToToken={terminator}",
+      "Priority": 2
     },
     {
       "DownstreamScheme": "http",
