@@ -11,21 +11,35 @@ export class Header extends PureComponent {
     return (
       <header className='login-header'>
         <div className='front-login__header-login row'>
-          <a class='front-login__go-home col-md-5'>
+          <a
+            class='front-login__go-home col-md-5'
+            href='https://lefbvre.es'
+            rel='noopener noreferrer'
+            target='_blank'>
             <img
               src='https://assets.lefebvre.es/media/logos/web/comunes/lefebvre-bl-120x24.png'
+              alt='LEFEBVRE'
               className='front-login__logo-lefebvre'
             />
           </a>
-          <a
-            class='front-login__go-shop'
-            href='https://www.efl.es/'
-            target='_blank'>
-            <i class='lf-icon-shop front-login__go-shop-icon'></i>
-            <span data-translate='front-login.shop' class='ng-scope'>
-              TIENDA
-            </span>
-          </a>
+          {showUser && (
+            <div className='front-login__go-shop'>
+              <span className='lf-icon-user'></span>
+              <span className='user-name'>{userName}</span>
+            </div>
+          )}
+          {!showUser && (
+            <a
+              className='front-login__go-shop'
+              rel='noopener noreferrer'
+              href='https://www.efl.es/'
+              target='_blank'>
+              <i class='lf-icon-shop front-login__go-shop-icon'></i>
+              <span data-translate='front-login.shop' class='ng-scope'>
+                TIENDA
+              </span>
+            </a>
+          )}
         </div>
       </header>
 

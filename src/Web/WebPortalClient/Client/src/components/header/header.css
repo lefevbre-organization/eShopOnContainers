@@ -20,6 +20,10 @@
   margin-left: 100px;
   position: absolute;
 }
+.front-login__go-shop:hover {
+  text-decoration: none;
+  color: #fff;
+}
 
 .front-login__go-shop {
   font-family: MTTMilano;
@@ -38,6 +42,10 @@
   position: relative;
   top: 5px;
   padding-right: 11px;
+}
+
+.user-name {
+  margin-left: 20px;
 }
 
 /* .header {

@@ -48,7 +48,7 @@ class Footer extends Component {
                   <span className='lf-icon-youtube-round'></span>
                 </a>
               </li>
-              <li>
+              <li style={{ marginRight: 0 }}>
                 <a
                   rel='noopener noreferrer'
                   href='https://twitter.com/edicionesfl'
