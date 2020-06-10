@@ -633,12 +633,12 @@ export class Main extends Component {
 
                 let drowDownList = new DropDownList({
                     dataSource: [
-                        { text: 'Profesional Event', value: 'profesional-event' },
-                        { text: 'Personal Event', value: 'personal-event' },
+                        { text: i18n.t("schedule.profesional-event"), value: 'profesional-event' },
+                        { text: i18n.t("schedule.personal-event"), value: 'personal-event' },
                     ],
                     fields: { text: 'text', value: 'value' },
                     value: this.state.eventType,
-                    floatLabelType: 'Always', placeholder: 'Event Type'
+                    floatLabelType: 'Always', placeholder: i18n.t("schedule.eventtype") 
                 });                
                 drowDownList.appendTo(inputEle);
                 inputEle.setAttribute('name', 'EventType');
@@ -956,8 +956,7 @@ export class Main extends Component {
     
 
     render() {
-
-
+        const { t } = this.props;
         const { leftSideBar } = this.state;
         const { lexon } = this.props;
 
@@ -1094,7 +1093,7 @@ export class Main extends Component {
                                                     {/* <ResourceDirective field='AttendeesId' title='Attendees' name='MeetingRoom' allowMultiple={true} >
                                                     </ResourceDirective> */}
                                                   
-                                                    <ResourceDirective field='CalendarId' title='My Calendars' name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor'>
+                                                    <ResourceDirective field='CalendarId' title={i18n.t("calendar-sidebar.mycalendars")} name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor'>
                                                     </ResourceDirective>                                                                                           
                                                    
                                                 </ResourcesDirective>

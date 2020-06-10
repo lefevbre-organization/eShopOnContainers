@@ -84,6 +84,11 @@
   "calendar-sidebar": {
     "compose": "New event",
     "mycalendars": "My calendars",
-    "othercalendars": "Other calendars"
+    "othercalendars": "Other calendars"    
+  },
+  "schedule": {
+    "eventtype": "Event Type",
+    "profesional-event": "Profesional Event",
+    "personal-event": "Personal Event"
   }
 }
