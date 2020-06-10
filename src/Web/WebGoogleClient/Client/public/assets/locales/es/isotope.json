@@ -85,5 +85,10 @@
     "compose": "Nuevo Evento",
     "mycalendars": "Mis calendarios",
     "othercalendars": "Otros calendarios"
+  },
+  "schedule": {
+    "eventtype": "Tipo de evento",
+    "profesional-event": "Evento profesional",
+    "personal-event": "Evento personal"
   }
 }
