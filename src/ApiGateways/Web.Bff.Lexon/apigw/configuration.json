@@ -37,8 +37,8 @@
           "Port": 80
         }
       ],
-      "UpstreamPathTemplate": "/api/{version}/mysql/LexonMySql/token/{everything}",
-      "DownstreamPathTemplate": "/api/{version}/utils/Lexon/token/{everything}",
+      "UpstreamPathTemplate": "/api/v1/mysql/LexonMySql/token?addTerminatorToToken={terminator}",
+      "DownstreamPathTemplate": "/api/{version}/Lexon/token?addTerminatorToToken={terminator}",
       "Priority": 1
     },
     {
@@ -61,7 +61,7 @@
         {
           "Host": "userutils.api",
           "Port": 80
-        }  
+        }
       ],
       "UpstreamPathTemplate": "/api/{version}/utils/{everything}",
       "DownstreamPathTemplate": "/api/{version}/{everything}"
