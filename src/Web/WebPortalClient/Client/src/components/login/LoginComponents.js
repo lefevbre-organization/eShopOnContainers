@@ -1,4 +1,7 @@
 import React from 'react';
+import i18n from '../../services/i18n';
+
+import './login.css';
 
 const LoginComponents = (children) => {
   const verificationLogin = children.errorsMessage.login ? (
@@ -43,7 +46,7 @@ const LoginComponents = (children) => {
                 type='text'
                 name='login'
                 className='form-control login-input'
-                placeholder='Usuario'
+                placeholder={i18n.t('login.user')}
                 onChange={children.handleChange}
               />
               {verificationLogin || verificationEmail ? (
@@ -65,7 +68,7 @@ const LoginComponents = (children) => {
                 name='password'
                 className='form-control login-input'
                 onChange={children.handleChange}
-                placeholder='Contraseña'
+                placeholder={i18n.t('login.password')}
               />
               {verificationPassword ? (
                 <i className='lf-icon-close-round-full front-login__input-error-icon'></i>
@@ -77,8 +80,7 @@ const LoginComponents = (children) => {
             <button
               onClick={children.handleEventAddon}
               className='btn btn-label btn-login'>
-              {' '}
-              INICIAR SESIÓN
+              {i18n.t('login.login')}
             </button>
             {verificationAuth}
           </div>
@@ -87,6 +89,8 @@ const LoginComponents = (children) => {
               {children.notClient}{' '}
               <a
                 className='front-login__info-block-link'
+                target='_blank'
+                rel='noopener noreferrer'
                 href='https://espaciolefebvre.lefebvre.es/solicitar-informacion'>
                 {' '}
                 {children.requestInfo}{' '}
@@ -98,7 +102,9 @@ const LoginComponents = (children) => {
               <p className='pt-3 need-help mb-4'>{children.needHelp}</p>
               <p className='client mt-n3'>
                 {children.phoneNumber}
-                <a className='front-login__information-contact-email'>
+                <a
+                  className='front-login__information-contact-email'
+                  href={`mailto:${children.client}`}>
                   {' '}
                   {children.client}
                 </a>

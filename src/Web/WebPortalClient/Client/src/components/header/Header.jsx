@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import logoHeader from '../../assets/img/LogoLefebvre.png';
+import i18n from '../../services/i18n';
 
 import './header.css';
 
@@ -24,9 +25,12 @@ export class Header extends PureComponent {
         )}
         {!showUser && (
           <div className='header-user'>
-            <a href='https://www.efl.es/'>
+            <a
+              href='https://www.efl.es/'
+              target='_blank'
+              rel='noopener noreferrer'>
               <span className='lf-icon-shop'>
-                <span className='shop-text'>TIENDA</span>
+                <span className='shop-text'>{i18n.t('header.shop')}</span>
               </span>
             </a>
           </div>

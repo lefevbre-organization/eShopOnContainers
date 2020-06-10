@@ -10,5 +10,5 @@ window.URL_GET_USER =
 window.TERMS_AND_CONDITIONS_URL = 'https://lefebvre.es/aviso-legal';
 window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies';
 window.PRIVACY_POLICY_URL = 'https://lefebvre.es/politica-privacidad';
-window.LEGAL_WARNING_URL = 'https://lefebvre.es/aviso-legal';
+window.LEGAL_WARNING_URL = '';
 window.RELEASE = 'RC DEV';
