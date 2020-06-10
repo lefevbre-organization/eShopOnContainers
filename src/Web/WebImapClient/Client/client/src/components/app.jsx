@@ -754,12 +754,13 @@ class App extends Component {
 
               const folder = findSentFolder(this.props.folders);
 
-              console.log(folder.fullName);
               await classifyEmail(
                 this.props.outbox.idMessage,
                 this.props.outbox.message.subject,
                 emailDate,
-                this.props.outbox.message.recipients.map((rec) => rec.address),
+                this.props.outbox.message.recipients.map((rec) =>
+                  clearEmailAddress(rec.address)
+                ),
                 folder.fullName,
                 this.props.lexon.provider,
                 this.props.email,
@@ -1011,3 +1012,13 @@ export default connect(
   mapDispatchToProps,
   mergeProps
 )(translate()(App));
+
+function clearEmailAddress(address) {
+  const regExp = /<([^>]+)?>/;
+  const result = regExp.exec(address);
+
+  if (result && result.length >= 2) {
+    return result[1];
+  }
+  return address;
+}
