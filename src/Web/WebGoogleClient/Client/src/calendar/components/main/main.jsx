@@ -137,6 +137,16 @@ export class Main extends Component {
 
         // Syncfusion omponent translation
         this.setGlobalization();
+
+        //params for iframe enbebed functions
+        if (this.props.location.search == "?layout=iframe") {
+            this.layoutIframe = true;
+        }
+        else {
+            this.layoutIframe = false;
+        }
+            
+           
     }
 
     async setGlobalization() {
@@ -957,7 +967,7 @@ export class Main extends Component {
         }
 
         return (
-            <div id='target' className='col-lg-12 control-section'>
+            <div id='target' className='control-section'>
                 <SidebarCnn
                     sidebar={this.state.sidebarComponent}
                     open={this.state.sidebarOpen}
@@ -1002,17 +1012,26 @@ export class Main extends Component {
                         }
                     }}>
                     <Fragment>
-                        <Header
-                            googleUser={this.props.googleUser}
-                            onSignout={this.onSignout}
-                            onSignoutDisconnect={this.onSignout}
-                            setSearchQuery={this.props.setSearchQuery}
-                            getLabelMessages={this.getLabelMessages}
-                            searchQuery={this.props.searchQuery}
-                        />
+                        {!this.layoutIframe ? (
+                            <div >
+                                <Header
+                                    googleUser={this.props.googleUser}
+                                    onSignout={this.onSignout}
+                                    onSignoutDisconnect={this.onSignout}
+                                    setSearchQuery={this.props.setSearchQuery}
+                                    getLabelMessages={this.getLabelMessages}
+                                    searchQuery={this.props.searchQuery}
+                                />
+                            </div>
+                        ) : (
+                                <div>
+                                   
+                                </div>
+                        )}
+                        
                         <section className='main hbox space-between'>
                             <Sidebar
-                                sideBarCollapsed={leftSideBar.collapsed}
+                                sideBarCollapsed={!this.layoutIframe ? (false) : ( true )}
                                 sideBarToggle={this.toggleSideBar}
                                 getCalendarList={this.sidebarCalendarList}
                                 pathname={this.props.location.pathname}
@@ -1130,7 +1149,7 @@ export class Main extends Component {
                                 {/*</Switch>*/}
                             </article>
 
-                            <div className='productpanel'>
+                            {/* <div className='productpanel'>
                                 <span className='productsbutton'>
                                     {lexon.user ? (
                                         <div onClick={() => this.onSetSidebarOpenLexon(true)}>
@@ -1150,7 +1169,7 @@ export class Main extends Component {
                                             </div>
                                         )}
                                 </span>
-                            </div>
+                            </div>*/}
                         </section>
                     </Fragment>
                 </SidebarCnn>
