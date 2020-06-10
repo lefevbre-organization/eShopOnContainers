@@ -35,7 +35,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
         public IActionResult Test()
         {
-            var data = $"Version is { _settings.Value.Version}";
+            var data = $"UserUtils.Utils v.{ _settings.Value.Version}";
             return Ok(new Result<string>(data));
         }
 
@@ -52,18 +52,20 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         public async Task<IActionResult> TokenPostAsync(
               [FromForm] string login
              , [FromForm] string password
+             , [FromForm] short idApp
              , [FromForm] bool addTerminatorToToken = true
             )
         {
-            var tokenRequest = new TokenModelBase
+            var tokenRequest = new TokenRequestLogin
             {
-                login = login,
-                password = password
+                Login = login,
+                Password = password,
+                IdApp = idApp
             };
-            if (string.IsNullOrEmpty(tokenRequest.login) && string.IsNullOrEmpty(tokenRequest.password))
+            if (string.IsNullOrEmpty(tokenRequest.Login) && string.IsNullOrEmpty(tokenRequest.Password))
                 return BadRequest("id value invalid. Must be a valid user code in the enviroment or login and password");
 
-            var result = await _service.GetTokenAsync(tokenRequest, addTerminatorToToken);
+            var result = await _service.GetGenericTokenAsync((TokenRequest)tokenRequest, addTerminatorToToken);
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }

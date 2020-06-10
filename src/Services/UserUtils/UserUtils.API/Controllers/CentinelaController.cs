@@ -26,48 +26,66 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         }
 
         /// <summary>
+        /// Permite testar si se llega a la aplicación
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("test")]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
+        public IActionResult Test()
+        {
+            var data = $"UserUtils.Centinela v.{ _settings.Value.Version}";
+            return Ok(new Result<string>(data));
+        }
+
+        /// <summary>
         /// Permite obtener los token necesarios mediante login y password y eligiendo la aplicación adecuada
         /// </summary>
         /// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>
         /// <returns></returns>
-        [HttpPut("token")]
+        [HttpPut("token/firm/get")]
         [ProducesResponseType(typeof(Result<TokenData>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<TokenData>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> TokenAsync(
-            [FromBody] TokenRequestLogin tokenRequest
+        public async Task<IActionResult> TokenFirmGetAsync(
+            [FromBody] TokenRequestCentinelaViewFirm tokenRequest
             , bool addTerminatorToToken = true
             )
         {
-            if (string.IsNullOrEmpty(tokenRequest.login) && string.IsNullOrEmpty(tokenRequest.password))
+            if (tokenRequest.IdApp == null || tokenRequest.IdApp != _settings.Value.IdAppCentinela)
+                tokenRequest.IdApp = _settings.Value.IdAppCentinela;
+
+            if (string.IsNullOrEmpty(tokenRequest.Guid))
                 return BadRequest("Must be a valid login and password");
 
-            Result<TokenData> result = await _service.GetUserFromLoginAsync(
-                tokenRequest.idApp, tokenRequest.login, tokenRequest.password, addTerminatorToToken);
+            Result<TokenData> result = await _service.GetGenericTokenAsync(tokenRequest, addTerminatorToToken);
+            result.infos.Add(new Info() { code = "UserUtils.Centinela", message = "token/firm/get" });
 
             return result.data.valid ? Ok(result) : (IActionResult)BadRequest(result);
         }
 
         /// <summary>
-        /// Permite obtener los token necesarios para operar con los microservicios de envio de correo
+        /// Permite obtener los token necesarios mediante login y password y eligiendo la aplicación adecuada
         /// </summary>
         /// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>
         /// <returns></returns>
-        [HttpPut("token/id")]
+        [HttpPut("token/firm/new")]
         [ProducesResponseType(typeof(Result<TokenData>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<TokenData>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> TokenAsync(
-             string idClienteNavision = "E1621396"
+        public async Task<IActionResult> TokenFirmNewAsync(
+            [FromBody] TokenRequestCentinelaNewFirm tokenRequest
             , bool addTerminatorToToken = true
             )
         {
-            if (string.IsNullOrEmpty(idClienteNavision))
-                return BadRequest("id value invalid. Must be a valid user code in the enviroment or login and password");
+            if (tokenRequest.IdApp == null || tokenRequest.IdApp != _settings.Value.IdAppCentinela)
+                tokenRequest.IdApp = _settings.Value.IdAppCentinela;
 
-            var token = new TokenModelBase() { idClienteNavision = idClienteNavision };
+            if ( tokenRequest.DocumentsId?.Count == 0 || tokenRequest.RecipientsId?.Count == 0)
+                return BadRequest("Must be a valid list of documents and recipients");
 
-            var result = await _service.GetTokenAsync(token, addTerminatorToToken);
+            Result<TokenData> result = await _service.GetGenericTokenAsync(tokenRequest, addTerminatorToToken);
+            result.infos.Add(new Info() { code = "UserUtils.Centinela", message = "token/firm/new" });
 
-            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
+            return result.data.valid ? Ok(result) : (IActionResult)BadRequest(result);
         }
 
         /// <summary>
@@ -87,6 +105,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
 
             var tokenRequest = new TokenData() { token = token, valid = false };
             var result = await _service.VadidateTokenAsync(tokenRequest);
+            result.infos.Add(new Info() { code = "UserUtils.Centinela", message = "token/validation" });
+
             return result.data.valid ? Ok(result) : (IActionResult)BadRequest(result);
         }
     }
