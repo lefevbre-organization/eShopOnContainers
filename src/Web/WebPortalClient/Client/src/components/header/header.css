@@ -1,4 +1,46 @@
-.header {
+.login-header {
+  height: 60px;
+  width: 100%;
+  display: block;
+  overflow: hidden;
+  background-color: #001978;
+}
+
+.front-login__header {
+  position: relative;
+  display: block;
+  margin-right: -15px;
+  margin-left: -15px;
+  width: 100%;
+}
+
+.front-login__go-home {
+  margin-top: 14px;
+  float: left;
+  margin-left: 100px;
+  position: absolute;
+}
+
+.front-login__go-shop {
+  font-family: MTTMilano;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: 13px;
+  margin-left: 87%;
+  letter-spacing: 1px;
+  color: #fff;
+  position: absolute;
+}
+
+.front-login__go-shop-icon {
+  font-size: 27px;
+  position: relative;
+  top: 5px;
+  padding-right: 11px;
+}
+
+/* .header {
   border-bottom: 1px solid #d9dfe2;
   background-color: #001978;
   height: 65px;
@@ -51,5 +93,20 @@ a:hover {
 }
 
 .header-icons {
-  text-align: right;
+  font-family: MTTMilano;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: 13px;
+  margin-left: 87%;
+  letter-spacing: 1px;
+  color: #fff;
+  position: absolute;
 }
+
+.header-logo {
+  margin-top: 14px;
+  float: left;
+  margin-left: 100px;
+  position: absolute;
+} */
