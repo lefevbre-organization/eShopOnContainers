@@ -100,7 +100,7 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - AccountApiGatewayUrlHC=https://webaccountapigw/hc
+      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
 
     ports:
       - "3001:80"
@@ -113,7 +113,7 @@ services:
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - LexonApiUrlHC=http://lexon.api/hc
-#      - LexonApiGatewayUrlHC=https://weblexonapigw/hc
+#      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
 
     ports:
       - "3005:80"

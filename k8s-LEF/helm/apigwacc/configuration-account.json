@@ -52,7 +52,7 @@
         }
       ],
       "UpstreamPathTemplate": "/api/{version}/mysql/LexonMySql/token?addTerminatorToToken={terminator}",
-      "DownstreamPathTemplate": "/api/{version}/Lexon/token?addTerminatorToToken={terminator}",
+      "DownstreamPathTemplate": "/api/{version}/Lexon/token/lexon?addTerminatorToToken={terminator}",
       "Priority": 2
     },
     {
