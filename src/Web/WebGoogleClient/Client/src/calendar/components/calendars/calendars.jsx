@@ -4,6 +4,7 @@ import { ButtonComponent, ChangeEventArgs as CheckBoxChange } from '@syncfusion/
 import { getCalendar, addCalendar, updateCalendar } from "../../../api/calendar-api";
 import { ToastComponent } from '@syncfusion/ej2-react-notifications';
 import { Acl } from './acl/acl';
+import i18n from 'i18next';
 
 
 export class Calendars extends React.Component {
@@ -115,13 +116,12 @@ export class Calendars extends React.Component {
         var ObjText;
         if (this.props.calendarId != '') {
             ObjClick = this.onModifyClick
-            ObjText = 'Modify'
+            ObjText = i18n.t("calendar.modify")            
         }
         else {
             ObjClick = this.onAddClick
-            ObjText = 'Add Calendar'
+            ObjText = i18n.t("calendar.add")
         }
-
 
         return (
             <div className="row custom-margin custom-padding-5 material2">
@@ -133,7 +133,7 @@ export class Calendars extends React.Component {
                                     <div className="e-float-input">
                                         <TextBoxComponent
                                             id='name'
-                                            placeholder="Name"
+                                            placeholder={i18n.t("calendar.name")}
                                             floatLabelType="Always"
                                             ref={(scope) => { this.nameObj = scope }}
                                         />
@@ -147,7 +147,7 @@ export class Calendars extends React.Component {
                                             row="3"
                                             multiline={true}
                                             floatLabelType="Always"
-                                            placeholder="Description"
+                                            placeholder={i18n.t("calendar.description")}
                                             ref={(scope) => { this.descriptionObj = scope }}
                                         />
                                     </div>
@@ -177,7 +177,7 @@ export class Calendars extends React.Component {
 
                                 <div >                                 
 
-                                    <h4 className="e-dlg-header">Share with people</h4>
+                                    <h4 className="e-dlg-header">{i18n.t("calendar.sharewithpeople")}</h4>
                                     <Acl calendarId={this.state.calendarid} />                                   
 
                                 </div >

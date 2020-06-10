@@ -5,11 +5,9 @@ import { bindActionCreators, compose } from 'redux';
 import ACTIONS from '../../../actions/lexon';
 import Header from '../../../components/header/Header';
 import Sidebar from '../sidebar/sidebar';
-//import { Notification } from '../notification/';
 import './main.scss';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import { getCalendars } from '../sidebar/sidebar.actions';
-//import {toggleSelected} from '../content/message-list/actions/message-list.actions';
 import { selectCalendar } from '../sidebar/sidebar.actions';
 import { signOut } from '../../../api/authentication';
 import { signOutDisconnect } from '../../../api/authentication';
@@ -35,12 +33,9 @@ import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
 import { createElement } from '@syncfusion/ej2-base';
 import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
-
 import  ReactTagInput from "@pathofdev/react-tag-input/";
 import "@pathofdev/react-tag-input/build/index.css";
 import { DropDownList } from '@syncfusion/ej2-dropdowns';
-
-
 import { setCulture, L10n, loadCldr, Internationalization } from '@syncfusion/ej2-base';
 import currencies from 'cldr-data/main/es/currencies.json';
 import gregorian from 'cldr-data/main/es/ca-gregorian.json';
@@ -952,9 +947,6 @@ export class Main extends Component {
         this.setState({ tagAttendess: [...tag] })
     }
 
-
-    
-
     render() {
         const { t } = this.props;
         const { leftSideBar } = this.state;
@@ -1120,7 +1112,7 @@ export class Main extends Component {
                                 <DialogComponent
                                     id='dialogDraggable'
                                     isModal={true}
-                                    header='Calendar Configuration'
+                                    header={i18n.t("calendar.title")}
                                     visible={this.state.hidePromptDialog}
                                     showCloseIcon={true}
                                     animationSettings={this.animationSettings}
