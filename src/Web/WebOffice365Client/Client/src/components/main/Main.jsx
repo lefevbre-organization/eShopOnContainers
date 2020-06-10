@@ -95,6 +95,7 @@ export class Main extends Component {
       this
     );
 
+    this.changeLexonBBDD = this.changeLexonBBDD.bind(this);
     this.toggleSideBar = this.toggleSideBar.bind(this);
     this.toggleShowMessageNotFound = this.toggleShowMessageNotFound.bind(this);
     this.notFoundModal = props.notFoundModal;
@@ -278,7 +279,12 @@ export class Main extends Component {
 
         return false;
       } else {
-        if (difP.added && difP.added.messagesResult && difP.added.messagesResult.label === null && difP.added.messagesResult.nextPageToken === null ) {
+        if (
+          difP.added &&
+          difP.added.messagesResult &&
+          difP.added.messagesResult.label === null &&
+          difP.added.messagesResult.nextPageToken === null
+        ) {
           return false;
         } else {
           return true;
@@ -289,10 +295,15 @@ export class Main extends Component {
     return true;
   }
 
+  changeLexonBBDD(event) {
+    this.props.setBBDD(event.detail.bbdd);
+  }
+
   async componentDidMount() {
     this.getLabelList();
     this.getLabelInbox();
 
+    window.addEventListener('ChangedLexonBBDD', this.changeLexonBBDD);
     window.addEventListener(
       'GetUserFromLexonConnector',
       this.handleGetUserFromLexonConnector
@@ -403,6 +414,7 @@ export class Main extends Component {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromCentinelaConnector
     );
+    window.removeEventListener('ChangedLexonBBDD', this.changeLexonBBDD);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -849,6 +861,7 @@ const mapDispatchToProps = (dispatch) =>
       clearPageTokens,
       setSearchQuery,
       deleteMessage,
+      setBBDD: ACTIONS.setBBDD,
       setGUID: ACTIONS.setGUID,
       setSign: ACTIONS.setSign,
     },

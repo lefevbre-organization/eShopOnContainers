@@ -104,6 +104,7 @@ export class Main extends Component {
       this
     );
 
+    this.changeLexonBBDD = this.changeLexonBBDD.bind(this);
     this.toggleSideBar = this.toggleSideBar.bind(this);
   }
 
@@ -272,6 +273,10 @@ export class Main extends Component {
     return true;
   }
 
+  changeLexonBBDD(event) {
+    this.props.setBBDD(event.detail.bbdd);
+  }
+
   async componentDidMount() {
     /* Label list is fetched from here 
     so that we can declare Routes by labelId 
@@ -279,6 +284,7 @@ export class Main extends Component {
 
     this.getLabelList();
 
+    window.addEventListener('ChangedLexonBBDD', this.changeLexonBBDD);
     window.addEventListener('toggleClock', function (event) {
       alert(event.detail.name);
     });
@@ -420,6 +426,8 @@ export class Main extends Component {
   }
 
   componentWillUnmount() {
+    window.removeEventListener('ChangedLexonBBDD', this.changeLexonBBDD);
+
     window.removeEventListener(
       'GetUserFromLexonConnector',
       this.handleGetUserFromLexonConnector
@@ -883,6 +891,7 @@ const mapDispatchToProps = (dispatch) =>
       clearPageTokens,
       setSearchQuery,
       deleteMessage,
+      setBBDD: ACTIONS.setBBDD,
       setGUID: ACTIONS.setGUID,
       setSign: ACTIONS.setSign,
     },
