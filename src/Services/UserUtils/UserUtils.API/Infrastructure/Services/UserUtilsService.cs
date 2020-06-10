@@ -13,6 +13,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -471,7 +472,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     AddClaimToPayload(payload, tokenRequestCentinela.RecipientsId, nameof(tokenRequestCentinela.RecipientsId));
                     AddClaimToPayload(payload, tokenRequestCentinela.MailsAdmins, nameof(tokenRequestCentinela.MailsAdmins));
                     AddClaimToPayload(payload, tokenRequestCentinela.LogoUrl, nameof(tokenRequestCentinela.LogoUrl));
-
                 }
             }
             if (tokenRequest is TokenRequestDataBase tokenRequesDB)
@@ -487,6 +487,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 AddClaimToPayload(payload, tokenRequestNewMail.idEntity, nameof(tokenRequestNewMail.idEntity));
                 AddClaimToPayload(payload, tokenRequestNewMail.idEntityType, nameof(tokenRequestNewMail.idEntityType));
+                AddClaimToPayload(payload, tokenRequestNewMail.mailContacts, nameof(tokenRequestNewMail.mailContacts));
 
                 if (tokenRequest is TokenRequestOpenMail tokenRequestOpenMail)
                 {
@@ -607,7 +608,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             return result;
         }
 
-         private async Task<List<string>> GetRolesOfUserAsync(string idClienteNavision, string login, string password)
+        private async Task<List<string>> GetRolesOfUserAsync(string idClienteNavision, string login, string password)
         {
             var apps = await GetUserUtilsAsync(idClienteNavision, true);
             var areas = await GetAreasByUserAsync(idClienteNavision);
@@ -649,7 +650,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 if (string.IsNullOrEmpty(lexUserResult?.data?.idNavision))
                     TraceOutputMessage(result.errors, $"Error get user from lexon", "Error Get Lexon Token");
                 tokenRequest.IdUser = lexUserResult?.data?.idUser;
-               // tokenRequest.IdUser = "449";
+                // tokenRequest.IdUser = "449";
             }
 
             //3. Obtener contactos si se necesita (evaluar si tengo que pasarlo a otros métodos y quitarlos del general
@@ -741,15 +742,46 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 bbdd = token.bbdd,
                 idEntity = token.idEntity,
                 idType = token.idEntityType,
-                idUser = token.IdClienteNavision
+                idUser = token.IdUser
             };
-            var contactsResult = await _repository.GetLexonContactsAsync(search);
+            Result<LexContact> contactsResult = await GetLexonContactsAsync(search);
             if (!string.IsNullOrEmpty(contactsResult?.data.Email))
             {
                 if (token.mailContacts == null)
                     token.mailContacts = new List<string>();
                 token.mailContacts.Add(contactsResult?.data.Email);
             }
+        }
+
+        private void SerializeObjectToPost(object parameters, string path, out string url, out StringContent data)
+        {
+            url = $"{_settings.Value.LexonApiUrl}{path}";
+            TraceLog(parameters: new string[] { $"url={url}" });
+            var json = JsonConvert.SerializeObject(parameters);
+            data = new StringContent(json, Encoding.UTF8, "application/json");
+        }
+
+        private async Task<Result<LexContact>> GetLexonContactsAsync(EntitySearchById search)
+        {
+            var resultContact = new Result<LexContact>(new LexContact());
+
+            try
+            {
+                var path = $"/entities/contact/getbyid";
+                SerializeObjectToPost(search, path, out string url, out StringContent data);
+                using (var response = await _clientLexonApi.PostAsync(url, data))
+                {
+                    if (response.IsSuccessStatusCode)
+                        resultContact = await response.Content.ReadAsAsync<Result<LexContact>>();
+                    else
+                        TraceOutputMessage(resultContact.errors, $"Response not ok with lexon.api with code-> {response.StatusCode} - {response.ReasonPhrase}", 2003);
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(resultContact.errors, ex);
+            }
+            return resultContact;
         }
     }
 }

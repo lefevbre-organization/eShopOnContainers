@@ -166,6 +166,19 @@ namespace Lexon.API.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        [HttpPost("classifications/contact/getbyid")]
+        [ProducesResponseType(typeof(Result<LexContact>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexContact>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ContactByIdAsync([FromBody] EntitySearchById entitySearch)
+        {
+            if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType == null)
+                return BadRequest("values invalid. Must be a valid user, bbdd, idType and idEntity to get de Entity");
+
+            Result<LexContact> result = await _usersService.GetContactAsync(entitySearch);
+            return Ok(result);
+        }
+
         [HttpPost]
         [Route("classifications/remove")]
         [ProducesResponseType(typeof(Result<long>), (int)HttpStatusCode.OK)]

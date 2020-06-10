@@ -35,7 +35,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
         public IActionResult Test()
         {
-            var data = $"Version is { _settings.Value.Version}";
+            var data = $"UserUtils.Utils v.{ _settings.Value.Version}";
             return Ok(new Result<string>(data));
         }
 

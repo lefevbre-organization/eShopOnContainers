@@ -26,6 +26,19 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         }
 
         /// <summary>
+        /// Permite testar si se llega a la aplicación
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("test")]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
+        public IActionResult Test()
+        {
+            var data = $"UserUtils.Signaturit v.{ _settings.Value.Version}";
+            return Ok(new Result<string>(data));
+        }
+
+        /// <summary>
         /// Permite obtener los token necesarios mediante login y password y eligiendo la aplicación adecuada
         /// </summary>
         /// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>
