@@ -416,7 +416,7 @@ export const emailPriority = () => {
 };
 
 export const emailReadConfirmation = () => {
-  const priority = `"isDeliveryReceiptRequested": true\r\n`;
+  const priority = `"isReadReceiptRequested": true\r\n`;
   return priority;
 };
 

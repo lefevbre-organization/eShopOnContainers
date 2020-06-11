@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import * as uuid from 'uuid/v4';
-import { sendMessage, getMessageByInternetMessageId } from '../../api_graph';
+import { sendMessage } from '../../api_graph';
 import { getValidEmails } from '../../utils';
 import i18n from 'i18next';
 import { Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
@@ -815,6 +815,13 @@ export class ComposeMessage extends PureComponent {
                     {i18n.t('compose-message.mark-prioritary')}
                   </span>
                 </div>
+              </div>
+              <div
+                className='action-btns'
+                style={{
+                  justifyContent: 'flex-end',
+                  marginRight: 15,
+                }}>
                 <div className='receipt-wrapper'>
                   {readConfirmation && (
                     <i

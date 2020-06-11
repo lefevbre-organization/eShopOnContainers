@@ -137,7 +137,6 @@ export class Main extends Component {
   }
 
   handleGetUserFromLexonConnector() {
-    debugger;
     const { userId } = this.props.lexon;
 
     if (userId) {
