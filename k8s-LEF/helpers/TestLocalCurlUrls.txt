@@ -22,7 +22,7 @@ curl -X  PUT "http://localhost:8086/api/v1/utils/Lexon/token/id?idClienteNavisio
 
 curl -X PUT "http://localhost:8086/api/v1/mysql/LexonMySql/token?addTerminatorToToken=true" -H  "accept: text/plain" -H  "Content-Type: application/json-patch+json" -d "{  \"login\": \"i.molina-ext@lefebvreelderecho.com\",  \"password\": \"imolina2\"}"
 curl -X PUT "http://localhost:8086/api/v1/utils/Lexon/token/lexon?addTerminatorToToken=true" -H  "accept: text/plain" -H  "Content-Type: application/json-patch+json" -d "{  \"login\": \"i.molina-ext@lefebvreelderecho.com\",  \"password\": \"imolina2\"}"
-curl -X PUT "http://localhost:8086/api/v1/utils/Lexon/token?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"login\": \"i.molina-ext@lefebvreelderecho.com\", \"password\": \"imolina2\", \"idApp\": 1}"
+curl -X PUT "http://localhost:8086/api/v1/utils/Lexon/token/login?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"login\": \"i.molina-ext@lefebvreelderecho.com\", \"password\": \"imolina2\", \"idApp\": 1}"
 
 curl -X PUT "http://localhost:8086/api/v1/mysql/LexonMySql/token?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"idClienteNavision\": \"E1621396\", \"bbdd\": \"lexon_admin_02\"}"
 curl -X PUT "http://localhost:8086/api/v1/utils/Lexon/token/lexon?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"idClienteNavision\": \"E1621396\", \"bbdd\": \"lexon_admin_02\"}"
