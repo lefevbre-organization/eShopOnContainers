@@ -8,21 +8,29 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.ClassificationAddView">
-    <Position X="5" Y="4.5" Width="2" />
+    <Position X="5.25" Y="4.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Views\ClassificationAddView.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.ClassificationContactsView">
-    <Position X="10.75" Y="2.5" Width="2.25" />
+    <Position X="10" Y="2.5" Width="2.25" />
+    <AssociationLine Name="mail" Type="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.MailInfo">
+      <MemberNameLabel ManuallyPlaced="true" ManuallySized="true">
+        <Position X="-0.154" Y="0.268" Height="0.182" Width="0.911" />
+      </MemberNameLabel>
+    </AssociationLine>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAE=</HashCode>
       <FileName>Views\ClassificationContactsView.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="mail" />
+    </ShowAsAssociation>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.ClassificationRemoveView">
-    <Position X="7.75" Y="4.5" Width="2.5" />
+    <Position X="7.75" Y="4.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAIAAAEAAAAAAAAAAAAAAAAAAAAAAAAgAAABAA=</HashCode>
       <FileName>Views\ClassificationRemoveView.cs</FileName>
@@ -50,7 +58,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.MailInfo">
-    <Position X="11.25" Y="5.25" Width="2" />
+    <Position X="10" Y="4.25" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAEAAAAAJAAAAAAAAAAAAABAAAAgAAABAA=</HashCode>
       <FileName>Views\MailInfo.cs</FileName>
@@ -88,9 +96,9 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.MailFileView">
-    <Position X="4.25" Y="7.5" Width="1.5" />
+    <Position X="3.25" Y="7.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAA=</HashCode>
       <FileName>Views\MailFileView.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -99,6 +107,13 @@
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAQ=</HashCode>
       <FileName>Views\FolderToEntity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.FolderNestedView">
+    <Position X="4.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAgAAAAAAAAQAAAAAACAAAAAABAA=</HashCode>
+      <FileName>Views\FolderNestedView.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

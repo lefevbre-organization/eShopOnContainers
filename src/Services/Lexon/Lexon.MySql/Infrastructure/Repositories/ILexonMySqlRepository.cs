@@ -29,5 +29,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
         Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification);
 
         Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder);
+        Task<Result<List<LexContact>>> GetContactsAsync(BaseView search);
+        Task<MySqlCompany> GetRelationsFromMailAsync(string idUser, MailInfo mail);
     }
 }

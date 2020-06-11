@@ -650,6 +650,16 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return !string.IsNullOrEmpty(value) ? $"{comma}\"{name}\":\"{value}\"" : string.Empty;
         }
 
+        public Task<Result<List<LexContact>>> GetContactsAsync(BaseView search)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<MySqlCompany> GetRelationsFromMailAsync(string idUser, MailInfo mail)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion Common
     }
 }

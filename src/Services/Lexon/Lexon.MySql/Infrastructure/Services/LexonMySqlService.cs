@@ -17,8 +17,8 @@ namespace Lexon.MySql.Infrastructure.Services
     public partial class LexonMySqlService : ILexonMySqlService
     {
         public readonly ILexonMySqlRepository _lexonRepository;
-        private readonly IHttpClientFactory _clientFactory;
-        private readonly HttpClient _client;
+        //private readonly IHttpClientFactory _clientFactory;
+        //private readonly HttpClient _client;
         private readonly IOptions<LexonSettings> _settings;
         internal readonly ILogger<LexonMySqlService> _logger;
 
@@ -26,39 +26,48 @@ namespace Lexon.MySql.Infrastructure.Services
             IOptions<LexonSettings> settings
             , ILogger<LexonMySqlService> logger
             , ILexonMySqlRepository lexonRepository
-            , IHttpClientFactory clientFactory
+            //, IHttpClientFactory clientFactory
             )
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _lexonRepository = lexonRepository ?? throw new ArgumentNullException(nameof(lexonRepository));
-            _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
-            _client = _clientFactory.CreateClient();
+            //_clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
+            //_client = _clientFactory.CreateClient();
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         #region Relations
 
-        public async Task<Result<List<int>>> AddRelationMailAsync(ClassificationAddView classification) => await _lexonRepository.AddRelationMailAsync(classification);
+        public async Task<Result<List<int>>> AddRelationMailAsync(ClassificationAddView classification) 
+            => await _lexonRepository.AddRelationMailAsync(classification);
 
-        public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification) => await _lexonRepository.AddRelationContactsMailAsync(classification);
+        public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification) 
+            => await _lexonRepository.AddRelationContactsMailAsync(classification);
 
-        public async Task<Result<int>> RemoveRelationMailAsync(ClassificationRemoveView classification) => await _lexonRepository.RemoveRelationMailAsync(classification);
+        public async Task<Result<int>> RemoveRelationMailAsync(ClassificationRemoveView classification) 
+            => await _lexonRepository.RemoveRelationMailAsync(classification);
 
-        public async Task<MySqlCompany> GetRelationsAsync(ClassificationSearchView classification) => await _lexonRepository.GetRelationsAsync(classification);
+        public async Task<MySqlCompany> GetRelationsAsync(ClassificationSearchView classification) 
+            => await _lexonRepository.GetRelationsAsync(classification);
 
         #endregion Relations
 
         #region Entities
 
-        public async Task<MySqlCompany> GetEntitiesAsync(IEntitySearchView entitySearch) => await _lexonRepository.GetEntitiesAsync(entitySearch);
+        public async Task<MySqlCompany> GetEntitiesAsync(IEntitySearchView entitySearch) 
+            => await _lexonRepository.GetEntitiesAsync(entitySearch);
 
-        public async Task<MySqlCompany> GetFoldersFilesEntitiesAsync(IEntitySearchView entitySearch) => await _lexonRepository.GetFoldersFilesEntitiesAsync(entitySearch);
+        public async Task<MySqlCompany> GetFoldersFilesEntitiesAsync(IEntitySearchView entitySearch) 
+            => await _lexonRepository.GetFoldersFilesEntitiesAsync(entitySearch);
 
-        public async Task<Result<LexEntity>> GetEntityAsync(EntitySearchById entitySearch) => await _lexonRepository.GetEntityAsync(entitySearch);
+        public async Task<Result<LexEntity>> GetEntityAsync(EntitySearchById entitySearch) 
+            => await _lexonRepository.GetEntityAsync(entitySearch);
 
-        public async Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch) => await _lexonRepository.GetContactAsync(entitySearch);
+        public async Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch) 
+            => await _lexonRepository.GetContactAsync(entitySearch);
 
-        public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync() => await _lexonRepository.GetMasterEntitiesAsync();
+        public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync() 
+            => await _lexonRepository.GetMasterEntitiesAsync();
 
         #endregion Entities
 
@@ -87,7 +96,7 @@ namespace Lexon.MySql.Infrastructure.Services
             string password = null,
             bool addTerminatorToToken = true)
         {
-            idUser = ValidarUsuario(login, password, idUser);
+            //idUser = ValidarUsuario(login, password, idUser);
             var resultado = await _lexonRepository.GetUserAsync(idUser);
 
             if (string.IsNullOrEmpty(resultado?.data?.idUser))
@@ -142,14 +151,14 @@ namespace Lexon.MySql.Infrastructure.Services
             return mailContacts;
         }
 
-        private string ValidarUsuario(string login, string password, string idUser)
-        {
-            //TODO: validar usuario
-            if (!string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password) && string.IsNullOrEmpty(idUser))
-                idUser = "E1621396";
+        //private string ValidarUsuario(string login, string password, string idUser)
+        //{
+        //    //TODO: validar usuario
+        //    if (!string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password) && string.IsNullOrEmpty(idUser))
+        //        idUser = "E1621396";
 
-            return idUser;
-        }
+        //    return idUser;
+        //}
 
         private long? GetLongIdUser(string idUser)
         {
@@ -189,7 +198,6 @@ namespace Lexon.MySql.Infrastructure.Services
         {
             if (modelo is TokenModel clienteModel)
             {
-                //var roleOptions = GetRolesOfUser(clienteModel.idClienteNavision);
                 AddClaimToPayload(payload, clienteModel.idClienteNavision, nameof(clienteModel.idClienteNavision));
                 AddClaimToPayload(payload, clienteModel.idUserApp, nameof(clienteModel.idUserApp));
                 AddClaimToPayload(payload, clienteModel.name, nameof(clienteModel.name));
@@ -207,12 +215,12 @@ namespace Lexon.MySql.Infrastructure.Services
 
         private async Task<List<string>> GetRolesOfUserAsync(string idClienteNavision, string login, string password)
         {
-            var apps = await GetUserMiniHubAsync(idClienteNavision);
+            //var apps = await GetUserMiniHubAsync(idClienteNavision);
             var appsWithAccess = new List<string>() { "lexonconnector", "centinelaconnector" };
-            foreach (var app in apps.data)
-            {
-                appsWithAccess.Add(app.descHerramienta);
-            }
+            //foreach (var app in apps.data)
+            //{
+            //    appsWithAccess.Add(app.descHerramienta);
+            //}
 
             var usuarioValido = !string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password);
             if (!string.IsNullOrEmpty(idClienteNavision) && usuarioValido)
@@ -224,13 +232,13 @@ namespace Lexon.MySql.Infrastructure.Services
             return appsWithAccess;
         }
 
-        private void AddClaimNumberToPayload(JwtPayload payload, long? valorClaim, string nombreClaim)
-        {
-            if (valorClaim == null) return;
+        //private void AddClaimNumberToPayload(JwtPayload payload, long? valorClaim, string nombreClaim)
+        //{
+        //    if (valorClaim == null) return;
 
-            _logger.LogInformation("Claim númerico {0} --> {1}", nombreClaim, valorClaim);
-            payload.Add(nombreClaim, valorClaim);
-        }
+        //    _logger.LogInformation("Claim númerico {0} --> {1}", nombreClaim, valorClaim);
+        //    payload.Add(nombreClaim, valorClaim);
+        //}
 
         private void AddClaimToPayload(JwtPayload payload, object valorClaim, string nombreClaim)
         {
@@ -316,50 +324,56 @@ namespace Lexon.MySql.Infrastructure.Services
             //limit -= 1;
         }
 
-        public async Task<Result<List<LexApp>>> GetUserMiniHubAsync(string idNavisionUser, bool onlyActives = true)
-        {
-            var result = new Result<List<LexApp>>(new List<LexApp>());
-            try
-            {
-                //string usuarioEncriptado = "f3NrcnZs";
-                //string user = "E0383956";
-                //http://led-pre-servicehub/Herramientas/Get?IdUsuarioPro=E0383956&IdUsuarioProEncriptado=f3NrcnZs&indMinuHub=1
-                var url = $"{_settings.Value.LexonHubUrl}?IdUsuarioPro={idNavisionUser}&IdUsuarioProEncriptado={idNavisionUser}&indMinuHub=1";
+        //public async Task<Result<List<LexApp>>> GetUserMiniHubAsync(string idNavisionUser, bool onlyActives = true)
+        //{
+        //    var result = new Result<List<LexApp>>(new List<LexApp>());
+        //    try
+        //    {
+        //        //string usuarioEncriptado = "f3NrcnZs";
+        //        //string user = "E0383956";
+        //        //http://led-pre-servicehub/Herramientas/Get?IdUsuarioPro=E0383956&IdUsuarioProEncriptado=f3NrcnZs&indMinuHub=1
+        //        var url = $"{_settings.Value.LexonHubUrl}?IdUsuarioPro={idNavisionUser}&IdUsuarioProEncriptado={idNavisionUser}&indMinuHub=1";
 
-                using (var response = await _client.GetAsync(url))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var rawResult = await response.Content.ReadAsStringAsync();
+        //        using (var response = await _client.GetAsync(url))
+        //        {
+        //            if (response.IsSuccessStatusCode)
+        //            {
+        //                var rawResult = await response.Content.ReadAsStringAsync();
 
-                        if (!string.IsNullOrEmpty(rawResult))
-                        {
-                            var resultado = (JsonConvert.DeserializeObject<LexApp[]>(rawResult));
-                            var listAll = resultado.ToList();
-                            result.data = onlyActives ? listAll.Where(x => x.indAcceso > 0).ToList() : listAll.ToList();
-                        }
-                    }
-                    else
-                    {
-                        result.errors.Add(new ErrorInfo
-                        {
-                            code = "533",
-                            detail = $"Error in callnto {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                        });
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "534",
-                    detail = $"General error in call Minihub data",
-                    message = ex.Message
-                });
-            }
+        //                if (!string.IsNullOrEmpty(rawResult))
+        //                {
+        //                    var resultado = (JsonConvert.DeserializeObject<LexApp[]>(rawResult));
+        //                    var listAll = resultado.ToList();
+        //                    result.data = onlyActives ? listAll.Where(x => x.indAcceso > 0).ToList() : listAll.ToList();
+        //                }
+        //            }
+        //            else
+        //            {
+        //                result.errors.Add(new ErrorInfo
+        //                {
+        //                    code = "533",
+        //                    detail = $"Error in callnto {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+        //                });
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        result.errors.Add(new ErrorInfo
+        //        {
+        //            code = "534",
+        //            detail = $"General error in call Minihub data",
+        //            message = ex.Message
+        //        });
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
+
+        public Task<Result<List<LexContact>>> GetContactsAsync(BaseView search)
+            => _lexonRepository.GetContactsAsync(search);
+
+        public Task<MySqlCompany> GetRelationsFromMailAsync(string idUser, MailInfo mail)
+            => _lexonRepository.GetRelationsFromMailAsync(idUser, mail);
     }
 }
