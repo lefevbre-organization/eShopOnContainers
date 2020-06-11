@@ -27,7 +27,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
             _context = new UserUtilsContext(settings, eventBus);
         }
 
-        public async Task<Result<UserUtilsModel>> GetUserAsync(string idNavision)
+        public async Task<Result<UserUtilsModel>> GetLexonUserAsync(string idNavision)
         {
             var result = new Result<UserUtilsModel>();
             try
@@ -146,6 +146,21 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
         private static FilterDefinition<UserUtilsModel> GetFilterUserModel(string idNavision)
         {
             return Builders<UserUtilsModel>.Filter.Eq(u => u.idNavision, idNavision.ToUpperInvariant());
+        }
+
+        Task<Result<LexUser>> IUserUtilsRepository.GetLexonUserAsync(string idNavision)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<LexContact>> GetLexonContactsAsync(EntitySearchById search)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<UserUtilsModel>> GetUserAsync(string idNavision)
+        {
+            throw new NotImplementedException();
         }
     }
 }

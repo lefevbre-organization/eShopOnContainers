@@ -55,6 +55,16 @@ env:
       value: 'https://online.elderecho.com/ws'
     - name: LoginUrl
       value: 'http://led-servicecomtools_ntt.eu.els.local'
+    - name: CentinelaApiUrl
+      value: 'http://centinela-api/api/v1/Centinela'
+    - name: LexonApiUrl
+      value: 'http://lexonmysql-api/api/v1/LexonMySql'
+    - name: SignaturitApiUrl
+      value: 'http://signature-api/api/v1/Signaturit'
+    - name: ByPassUrls__0__NameService
+      value: Lex-On
+    - name: ByPassUrls__0__UrlByPass
+      value: 'https://userutils-api/api/v1/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}'
     - name: OrchestratorType
       value: 'K8S'
     - name: OnlineLogin

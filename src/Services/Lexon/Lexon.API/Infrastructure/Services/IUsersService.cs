@@ -33,5 +33,6 @@ namespace Lexon.Infrastructure.Services
         Task<Result<LexNestedEntity>> GetNestedFolderAsync(FolderNestedView entityFolder);
         Task<Result<bool>> FilePostAsync(MailFileView fileMail);
         Task<Result<string>> FileGetAsync(EntitySearchById fileMail);
+        Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch);
     }
 }

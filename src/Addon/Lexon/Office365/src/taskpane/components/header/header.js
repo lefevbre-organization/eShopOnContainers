@@ -6,7 +6,7 @@ class Header extends React.Component {
   
   render() {
 
-   const emojiIcon = { iconName: 'MoreVertical' };
+   const optionIcon = { iconName: 'MoreVertical' };
 
     const menuProps = {
         items: [
@@ -20,37 +20,15 @@ class Header extends React.Component {
         directionalHintFixed: true,
       };
       
-    // const _overflowItems = [
-    //     {
-    //       key: "move",
-    //       text: "Move to...",
-    //       onClick: () => console.log("Move to"),
-    //       iconProps: { iconName: "MoveToFolder" }
-    //     },
-    //     {
-    //       key: "copy",
-    //       text: "Copy to...",
-    //       onClick: () => console.log("Copy to"),
-    //       iconProps: { iconName: "Copy" }
-    //     },
-    //     {
-    //       key: "rename",
-    //       text: "Rename...",
-    //       onClick: () => console.log("Rename"),
-    //       iconProps: { iconName: "Edit" }
-    //     },
-    //   ];
-    
-      
     return (
       <section className="header ms-u-fadeIn500">
         {/* <CommandBar
          overflowItems={_overflowItems} */}
           <IconButton
           menuProps={menuProps}
-          iconProps={emojiIcon}
-          title="Emoji"
-          ariaLabel="Emoji"
+          iconProps={optionIcon}
+          title="option"
+          ariaLabel="option"
         />
       </section>
     );

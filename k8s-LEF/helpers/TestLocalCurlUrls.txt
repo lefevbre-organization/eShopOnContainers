@@ -1,0 +1,51 @@
+curl -v -k --request GET "http://localhost:8086/api/v1/utils/UserUtils/user/apps?idNavisionUser=E1621396&onlyActives=false" -H "accept: text/plain" 
+curl -v -k --request GET "http://localhost:8089/api/v1/utils/UserUtils/user/apps?idNavisionUser=E1621396&onlyActives=false" -H "accept: text/plain" 
+curl -v -k --request GET "https://lexbox-test-apigwsig.lefebvre.es/api/v1/utils/UserUtils/user/apps?idNavisionUser=E1621396&onlyActives=false" -H "accept: text/plain"
+
+curl -v -k --request GET "http://localhost:8086/api/v1/utils/UserUtils/user/areas?idNavisionUser=E1621396" -H "accept: text/plain"
+curl -v -k --request GET "http://localhost:8089/api/v1/utils/UserUtils/user/areas?idNavisionUser=E1621396" -H "accept: text/plain"
+curl -v -k --request GET "https://lexbox-test-apigwsig.lefebvre.es/api/v1/utils/UserUtils/user/areas?idNavisionUser=E1621396" -H "accept: text/plain" 
+
+curl -v -k --request GET "http://localhost:8086/api/v1/utils/UserUtils/user/encode?idNavisionUser=E1621396" -H "accept: text/plain" 
+curl -v -k --request GET "http://localhost:8089/api/v1/utils/UserUtils/user/encode?idNavisionUser=E1621396" -H "accept: text/plain"
+curl -v -k --request GET "https://lexbox-test-apigwsig.lefebvre.es/api/v1/utils/UserUtils/user/encode?idNavisionUser=E1621396" -H "accept: text/plain" 
+
+curl -v -k --request GET "http://localhost:8086/api/v1/utils/UserUtils/user/decode?idEncodedNavisionUser=eHZqcHllZQ%253D%253D" -H "accept: text/plain" 
+
+curl -v -k --request GET "http://localhost:8086/api/v1/utils/UserUtils/user/login?login=i.molina-ext%40lefebvreelderecho.com&pass=imolina2" -H "accept: text/plain"
+
+curl -v -k --request GET "http://localhost:8086/api/v1/utils/UserUtils/user/entrada?idNavisionUser=E1621396" -H "accept: text/plain"
+
+curl -X  PUT "http://localhost:8086/api/v1/mysql/LexonMySql/token?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"idClienteNavision\": \"E1621396\"}"
+curl -X  PUT "http://localhost:8086/api/v1/utils/Lexon/token/lexon?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"idClienteNavision\": \"E1621396\"}"
+curl -X  PUT "http://localhost:8086/api/v1/utils/Lexon/token/id?idClienteNavision=E1621396&addTerminatorToToken=true" -H "accept: text/plain"
+
+curl -X PUT "http://localhost:8086/api/v1/mysql/LexonMySql/token?addTerminatorToToken=true" -H  "accept: text/plain" -H  "Content-Type: application/json-patch+json" -d "{  \"login\": \"i.molina-ext@lefebvreelderecho.com\",  \"password\": \"imolina2\"}"
+curl -X PUT "http://localhost:8086/api/v1/utils/Lexon/token/lexon?addTerminatorToToken=true" -H  "accept: text/plain" -H  "Content-Type: application/json-patch+json" -d "{  \"login\": \"i.molina-ext@lefebvreelderecho.com\",  \"password\": \"imolina2\"}"
+curl -X PUT "http://localhost:8086/api/v1/utils/Lexon/token?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"login\": \"i.molina-ext@lefebvreelderecho.com\", \"password\": \"imolina2\", \"idApp\": 1}"
+
+curl -X PUT "http://localhost:8086/api/v1/mysql/LexonMySql/token?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"idClienteNavision\": \"E1621396\", \"bbdd\": \"lexon_admin_02\"}"
+curl -X PUT "http://localhost:8086/api/v1/utils/Lexon/token/lexon?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"idClienteNavision\": \"E1621396\", \"bbdd\": \"lexon_admin_02\"}"
+curl -X PUT "http://localhost:8086/api/v1/utils/Lexon/token/db?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"idClienteNavision\": \"E1621396\", \"bbdd\": \"lexon_admin_02\"}"
+
+curl -X PUT "http://localhost:8086/api/v1/mysql/LexonMySql/token?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"idClienteNavision\": \"E1621396\", \"bbdd\": \"lexon_admin_02\", \"idEntityType\": 1, \"idEntity\": 301,}"
+curl -X PUT "http://localhost:8086/api/v1/utils/token/lexon?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"idClienteNavision\": \"E1621396\", \"bbdd\": \"lexon_admin_02\", \"idEntityType\": 1, \"idEntity\": 301,}"
+curl -X PUT "http://localhost:8086/api/v1/utils/token/mail/new?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"idClienteNavision\": \"E1621396\", \"bbdd\": \"lexon_admin_02\", \"idEntityType\": 1, \"idEntity\": 301,}"
+
+curl -X PUT "http://localhost:8086/api/v1/mysql/LexonMySql/token?addTerminatorToToken=true" -H  "accept: text/plain" -H  "Content-Type: application/json-patch+json" -d "{  \"idClienteNavision\": \"E1621396\",  \"bbdd\": \"lexon_admin_02\",  \"idEntityType\": 2,  \"idEntity\": 44,  \"mailContacts\": [    \"pa@co.es\", \"pe@pe.es\"  ]}"
+curl -X PUT "http://localhost:8086/api/v1/utils/token/lexon?addTerminatorToToken=true" -H  "accept: text/plain" -H  "Content-Type: application/json-patch+json" -d "{  \"idClienteNavision\": \"E1621396\",  \"bbdd\": \"lexon_admin_02\",  \"idEntityType\": 2,  \"idEntity\": 44,  \"mailContacts\": [    \"pa@co.es\", \"pe@pe.es\"  ]}"
+curl -X PUT "http://localhost:8086/api/v1/utils/token/mail/new?addTerminatorToToken=true" -H  "accept: text/plain" -H  "Content-Type: application/json-patch+json" -d "{  \"idClienteNavision\": \"E1621396\",  \"bbdd\": \"lexon_admin_02\",  \"idEntityType\": 2,  \"idEntity\": 44,  \"mailContacts\": [    \"pa@co.es\", \"pe@pe.es\"  ]}"
+
+curl -X PUT "http://localhost:8086/api/v1/mysql/LexonMySql/token?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"idClienteNavision\": \"E1621396\", \"bbdd\": \"lexon_admin_02\", \"idMail\": \"mail_01\", \"provider\": \"google\", \"mailAccount\": \"pe@pi.to\", \"idEntityType\": 1, \"idEntity\": 301, \"folder\": \"folderimap::inbox\"}"
+curl -X PUT "http://localhost:8086/api/v1/utils/Lexon/token/lexon?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"idClienteNavision\": \"E1621396\", \"bbdd\": \"lexon_admin_02\", \"idMail\": \"mail_01\", \"provider\": \"google\", \"mailAccount\": \"pe@pi.to\", \"idEntityType\": 1, \"idEntity\": 301, \"folder\": \"folderimap::inbox\"}"
+curl -X PUT "http://localhost:8086/api/v1/utils/Lexon/token/mail/open?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"idClienteNavision\": \"E1621396\", \"bbdd\": \"lexon_admin_02\", \"idMail\": \"mail_01\", \"provider\": \"google\", \"mailAccount\": \"pe@pi.to\", \"idEntityType\": 1, \"idEntity\": 301, \"folder\": \"folderimap::inbox\"}"
+
+curl -X PUT "http://localhost:8086/api/v1/mysql/LexonMySql/token?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"idClienteNavision\": \"E1621396\", \"bbdd\": \"lexon_admin_02\", \"idMail\": \"mail_01\", \"provider\": \"google\", \"mailAccount\": \"pe@pi.to\", \"idEntityType\": 1, \"idEntity\": 301, \"folder\": \"folderimap::inbox\", \"mailContacts\": [ \"pa@co.es\", \"pe@pe.es\" ]}"
+curl -X PUT "http://localhost:8086/api/v1/utils/Lexon/token/lexon?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"idClienteNavision\": \"E1621396\", \"bbdd\": \"lexon_admin_02\", \"idMail\": \"mail_01\", \"provider\": \"google\", \"mailAccount\": \"pe@pi.to\", \"idEntityType\": 1, \"idEntity\": 301, \"folder\": \"folderimap::inbox\", \"mailContacts\": [ \"pa@co.es\", \"pe@pe.es\" ]}"
+curl -X PUT "http://localhost:8086/api/v1/utils/Lexon/token/mail/open?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"idClienteNavision\": \"E1621396\", \"bbdd\": \"lexon_admin_02\", \"idMail\": \"mail_01\", \"provider\": \"google\", \"mailAccount\": \"pe@pi.to\", \"idEntityType\": 1, \"idEntity\": 301, \"folder\": \"folderimap::inbox\", \"mailContacts\": [ \"pa@co.es\", \"pe@pe.es\" ]}"
+
+curl -X PUT "http://localhost:8086/api/v1/LexonMySql/token/validation" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "\"dasdasdasdasd\""
+curl -X PUT "http://localhost:8086/api/v1/utils/Lexon/token/validation" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "\"dasdasdasdasd\""
+
+curl -X PUT "http://localhost:8089/api/v1/utils/Centinela/token/firm/get?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{\"IdApp\": 2,\"IdUser\":\"Despacho123\", \"idClienteNavision\": \"E1621396\",\"guid\":\"2d8dadfe-b3b4-41a7-92b7-85a5f44cbc9f\"}"
+curl -X PUT "http://localhost:8089/api/v1/utils/Centinela/token/firm/new?addTerminatorToToken=true" -H "accept: text/plain" -H "Content-Type: application/json-patch+json" -d "{ \"mailsAdmins\": [ \"aaaaa\" ], \"documentsId\": [ \"sbbbbbb\",\"ccccccc\" ], \"recipientsId\": [ \"asasas\" ], \"logoUrl\": \"loguitpo\", \"guid\": \"asdasdasdasdsa\", \"idApp\": 2, \"IdUser\":\"Despacho123\", \"idClienteNavision\": \"E1621396\"}"
