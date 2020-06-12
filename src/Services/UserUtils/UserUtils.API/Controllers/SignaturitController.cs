@@ -26,6 +26,19 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         }
 
         /// <summary>
+        /// Permite testar si se llega a la aplicación
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("test")]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
+        public IActionResult Test()
+        {
+            var data = $"UserUtils.Signaturit v.{ _settings.Value.Version}";
+            return Ok(new Result<string>(data));
+        }
+
+        /// <summary>
         /// Permite obtener los token necesarios mediante login y password y eligiendo la aplicación adecuada
         /// </summary>
         /// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>
@@ -41,8 +54,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             if (string.IsNullOrEmpty(tokenRequest.login) && string.IsNullOrEmpty(tokenRequest.password))
                 return BadRequest("Must be a valid login and password");
 
-            Result<TokenData> result = await _service.GetUserFromLoginAsync(
-                tokenRequest.idApp, tokenRequest.login, tokenRequest.password, addTerminatorToToken);
+            Result<TokenData> result = await _service.GetGenericTokenAsync(tokenRequest, addTerminatorToToken);
 
             return result.data.valid ? Ok(result) : (IActionResult)BadRequest(result);
         }
@@ -63,9 +75,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             if (string.IsNullOrEmpty(idClienteNavision))
                 return BadRequest("id value invalid. Must be a valid user code in the enviroment or login and password");
 
-            var token = new TokenModelBase() { idClienteNavision = idClienteNavision };
-
-            var result = await _service.GetTokenAsync(token, addTerminatorToToken);
+            var token = new TokenRequest() { idClienteNavision = idClienteNavision , idApp = _settings.Value.IdAppSignaturit };
+            var result = await _service.GetGenericTokenAsync(token, addTerminatorToToken);
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }

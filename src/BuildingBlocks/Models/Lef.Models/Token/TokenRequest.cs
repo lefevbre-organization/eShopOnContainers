@@ -1,7 +1,15 @@
-﻿namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
+﻿using System.Collections.Generic;
+
+namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
     public class TokenRequest
     {
+        public int? idApp { get; set; }
         public string idClienteNavision { get; set; }
+        public string name { get; set; }
+        public string idUserApp { get; set; }
+        public List<string> roles { get; set; }
     }
+
+
 }

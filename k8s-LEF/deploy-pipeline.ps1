@@ -10,8 +10,8 @@ Param(
     # [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webgoogleclient"),
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webaddonlexon", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "ocelotapigw", "webstatuslef"),
-    [parameter(Mandatory=$false)][string]$imageTag="linux-dev",
-    [parameter(Mandatory=$false)][string]$tagToRetag="linux-dev",
+    [parameter(Mandatory=$false)][string]$tagToPush="linux-dev-24",
+    [parameter(Mandatory=$false)][string]$initialTag="linux-dev",
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
     [parameter(Mandatory=$false)][string]$kubeconfigPath,
@@ -70,19 +70,19 @@ else {
 }
 
 # Get tag to use from current branch if no tag is passed
-if ([string]::IsNullOrEmpty($imageTag)) {
-    $imageTag = $(git rev-parse --abbrev-ref HEAD)
-    Write-Host "Get from Git imageTag $imageTag" -ForegroundColor White
+if ([string]::IsNullOrEmpty($tagToPush)) {
+    $tagToPush = $(git rev-parse --abbrev-ref HEAD)
+    Write-Host "Get from Git tagToPush $tagToPush" -ForegroundColor White
 }
 
-if (-not [string]::IsNullOrEmpty($tagToRetag)) {
-    Write-Host "Rename tagToRetag $tagToRetag to $imageTag" -ForegroundColor White
-    $tagToRetag =  $imageTag
+if ([string]::IsNullOrEmpty($initialTag)) {
+    Write-Host "Rename initialTag $initialTag to $tagToPush" -ForegroundColor White
+    $initialTag =  $tagToPush
 }
 
 Write-Host "=====================================" -ForegroundColor DarkCyan
 Write-Host "Docker location: $location" -ForegroundColor DarkCyan
-Write-Host "Docker image Tag: $imageTag" -ForegroundColor DarkCyan
+Write-Host "Docker build Tag: $initialTag -> Hub push Tag: $tagToPush" -ForegroundColor DarkCyan
 Write-Host "Se usa DockeHub: $useDockerHub" -ForegroundColor DarkCyan 
 Write-Host "Docker: Build $buildImages all[$buildAll] and Clean $cleanDocker" -ForegroundColor DarkCyan 
 Write-Host "Docker: Push images $pushImages" -ForegroundColor DarkCyan 
@@ -98,7 +98,8 @@ if ($buildImages) {
         docker rmi -f $(docker images -a -q)
     }
     
-    # $env:TAG=$imageTag
+    # $env:TAG=$initialTag
+    # if changue this , the tag from docke-compose changue
     Write-Host "BuildDocker 01: Files" -ForegroundColor DarkBlue
     Get-ChildItem -Path $location -Filter $fileCompose | ForEach-Object{$_.FullName}
 
@@ -111,13 +112,13 @@ if ($buildImages) {
     Write-Host "BuildDocker 02: $pathFileCompose" -ForegroundColor DarkBlue
 
     if($buildAll){
-        Write-Host "BuildDockers 03A: Building All Docker images tagged with '$imageTag'" -ForegroundColor DarkBlue
+        Write-Host "BuildDockers 03A: Building All Docker images tagged with '$tagToPush'" -ForegroundColor DarkBlue
         docker-compose -p .. -f $pathFileCompose build      
         # docker-compose -p .. -f ../docker-compose.yml build      
     }else{
 
         foreach ($service in $servicesToBuild) {
-            Write-Host "BuildDockers 03B: Building Docker image '$service' tagged with '$imageTag'" -ForegroundColor DarkBlue
+            Write-Host "BuildDockers 03B: Building Docker image '$service' tagged with '$tagToPush'" -ForegroundColor DarkBlue
             # docker-compose -p .. -f ../docker-compose.yml build $service
             docker-compose -p .. -f $pathFileCompose build $service
         }
@@ -130,11 +131,11 @@ if ($pushImages) {
 
     foreach ($service in $servicesToPush) {
         $imageFqdn = if ($useDockerHub)  {"$dockerOrg/${service}"} else {"$registry/$dockerOrg/${service}"}
-        docker tag $dockerOrg/${service}:$tagToRetag ${imageFqdn}:$imageTag
-        Write-Host "PushImages 02: $dockerOrg/${service}:$tagToRetag añade el tag ${imageFqdn}:$imageTag" -ForegroundColor Magenta
+        docker tag $dockerOrg/${service}:$initialTag ${imageFqdn}:$tagToPush
+        Write-Host "PushImages 02: $dockerOrg/${service}:$initialTag añade el tag ${imageFqdn}:$tagToPush" -ForegroundColor Magenta
 
-        docker push ${imageFqdn}:$imageTag  
-        Write-Host "PushImages 03: ${imageFqdn}:$imageTag" -ForegroundColor Magenta
+        docker push ${imageFqdn}:$tagToPush  
+        Write-Host "PushImages 03: ${imageFqdn}:$tagToPush" -ForegroundColor Magenta
                   
     }
 
@@ -223,23 +224,23 @@ if ($deployKubernetes){
         $registryPath = "$registry/"
     }
 
-    Write-Host "DeployKubernetes 11: Update Image containers to use prefix '$registry$dockerOrg' and tag '$imageTag'" -ForegroundColor Yellow
+    Write-Host "DeployKubernetes 11: Update Image containers to use prefix '$registry$dockerOrg' and tag '$tagToPush'" -ForegroundColor Yellow
 
-    ExecKube -cmd 'set image deployments/lexon lexon=${registryPath}${dockerOrg}/lexon.api:$imageTag'
-    ExecKube -cmd 'set image deployments/lexonmysql lexonmysql=${registryPath}${dockerOrg}/lexonmysql.api:$imageTag'
-    ExecKube -cmd 'set image deployments/account account=${registryPath}${dockerOrg}/account.api:$imageTag'
-    ExecKube -cmd 'set image deployments/webportalclient webportalclient=${registryPath}${dockerOrg}/webportalclient.api:$imageTag'
-    ExecKube -cmd 'set image deployments/webgoogleclient webgoogleclient=${registryPath}${dockerOrg}/webgoogleclient:$imageTag'
-    ExecKube -cmd 'set image deployments/webofficeclient webofficeclient=${registryPath}${dockerOrg}/webofficeclient:$imageTag'
-    ExecKube -cmd 'set image deployments/weblexonclient weblexonclient=${registryPath}${dockerOrg}/weblexonclient:$imageTag'
-    ExecKube -cmd 'set image deployments/webloginaddonlexon webloginaddonlexon=${registryPath}${dockerOrg}/webloginaddonlexon:$imageTag'
-    ExecKube -cmd 'set image deployments/webimapclient webimapclient=${registryPath}${dockerOrg}/webimapclient:$imageTag'
-	ExecKube -cmd 'set image deployments/websignatureclient websignatureclient=${registryPath}${dockerOrg}/websignatureclient:$imageTag'
-    ExecKube -cmd 'set image deployments/webstatus webstatus=${registryPath}${dockerOrg}/webstatuslef:$imageTag'
+    ExecKube -cmd 'set image deployments/lexon lexon=${registryPath}${dockerOrg}/lexon.api:$tagToPush'
+    ExecKube -cmd 'set image deployments/lexonmysql lexonmysql=${registryPath}${dockerOrg}/lexonmysql.api:$tagToPush'
+    ExecKube -cmd 'set image deployments/account account=${registryPath}${dockerOrg}/account.api:$tagToPush'
+    ExecKube -cmd 'set image deployments/webportalclient webportalclient=${registryPath}${dockerOrg}/webportalclient.api:$tagToPush'
+    ExecKube -cmd 'set image deployments/webgoogleclient webgoogleclient=${registryPath}${dockerOrg}/webgoogleclient:$tagToPush'
+    ExecKube -cmd 'set image deployments/webofficeclient webofficeclient=${registryPath}${dockerOrg}/webofficeclient:$tagToPush'
+    ExecKube -cmd 'set image deployments/weblexonclient weblexonclient=${registryPath}${dockerOrg}/weblexonclient:$tagToPush'
+    ExecKube -cmd 'set image deployments/webloginaddonlexon webloginaddonlexon=${registryPath}${dockerOrg}/webloginaddonlexon:$tagToPush'
+    ExecKube -cmd 'set image deployments/webimapclient webimapclient=${registryPath}${dockerOrg}/webimapclient:$tagToPush'
+	ExecKube -cmd 'set image deployments/websignatureclient websignatureclient=${registryPath}${dockerOrg}/websignatureclient:$tagToPush'
+    ExecKube -cmd 'set image deployments/webstatus webstatus=${registryPath}${dockerOrg}/webstatuslef:$tagToPush'
 
-    ExecKube -cmd 'set image deployments/apigwlex apigwlex=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
-    ExecKube -cmd 'set image deployments/apigwacc apigwacc=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
-	ExecKube -cmd 'set image deployments/apigwsig apigwsig=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
+    ExecKube -cmd 'set image deployments/apigwlex apigwlex=${registryPath}${dockerOrg}/ocelotapigw:$tagToPush'
+    ExecKube -cmd 'set image deployments/apigwacc apigwacc=${registryPath}${dockerOrg}/ocelotapigw:$tagToPush'
+	ExecKube -cmd 'set image deployments/apigwsig apigwsig=${registryPath}${dockerOrg}/ocelotapigw:$tagToPush'
 
     Write-Host "DeployKubernetes 12: Execute rollout..." -ForegroundColor Yellow
     ExecKube -cmd 'rollout resume deployments/lexon'

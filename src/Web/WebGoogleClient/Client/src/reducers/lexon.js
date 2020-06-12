@@ -13,7 +13,7 @@ const defaultLexon = {
   account: null,
   mailContacts: null,
   idMail: null,
-  token: null
+  token: null,
 };
 
 export const lexon = (state = defaultLexon, action = {}) => {
@@ -28,7 +28,7 @@ export const lexon = (state = defaultLexon, action = {}) => {
         user: user,
         provider: provider,
         isNewAccount: isNewAccount,
-        userId: userId
+        userId: userId,
       };
 
     case ActionTypes.LEXON_CASEFILE:
@@ -36,43 +36,47 @@ export const lexon = (state = defaultLexon, action = {}) => {
         ...state,
         idCaseFile: action.payload.casefile,
         bbdd: action.payload.bbdd,
-        idCompany: action.payload.company
+        idCompany: action.payload.company,
       };
 
     case ActionTypes.LEXON_ACCOUNT:
       return {
         ...state,
-        account: action.payload
+        account: action.payload,
       };
-
+    case ActionTypes.LEXON_BBDD:
+      return {
+        ...state,
+        bbdd: action.payload,
+      };
     case ActionTypes.LEXON_MAILCONTACTS:
       return {
         ...state,
-        mailContacts: action.payload
+        mailContacts: action.payload,
       };
 
     case ActionTypes.LEXON_ACCOUNT_GUID:
       return {
         ...state,
-        guid: action.payload
+        guid: action.payload,
       };
     case ActionTypes.LEXON_ACCOUNT_SIGN:
       return {
         ...state,
-        sign: action.payload
+        sign: action.payload,
       };
 
     case ActionTypes.LEXON_IDMAIL:
-        return {
-            ...state,
-            idMail: action.payload
-        }
+      return {
+        ...state,
+        idMail: action.payload,
+      };
 
     case ActionTypes.LEXON_TOKEN:
-        return {
-            ...state,
-            token: action.payload
-        }
+      return {
+        ...state,
+        token: action.payload,
+      };
     default:
       return state;
   }

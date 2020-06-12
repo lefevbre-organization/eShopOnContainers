@@ -5,11 +5,9 @@ import { bindActionCreators, compose } from 'redux';
 import ACTIONS from '../../../actions/lexon';
 import Header from '../../../components/header/Header';
 import Sidebar from '../sidebar/sidebar';
-//import { Notification } from '../notification/';
 import './main.scss';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import { getCalendars } from '../sidebar/sidebar.actions';
-//import {toggleSelected} from '../content/message-list/actions/message-list.actions';
 import { selectCalendar } from '../sidebar/sidebar.actions';
 import { signOut } from '../../../api/authentication';
 import { signOutDisconnect } from '../../../api/authentication';
@@ -35,12 +33,9 @@ import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
 import { createElement } from '@syncfusion/ej2-base';
 import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/ej2-react-navigations';
-
 import  ReactTagInput from "@pathofdev/react-tag-input/";
 import "@pathofdev/react-tag-input/build/index.css";
 import { DropDownList } from '@syncfusion/ej2-dropdowns';
-
-
 import { setCulture, L10n, loadCldr, Internationalization } from '@syncfusion/ej2-base';
 import currencies from 'cldr-data/main/es/currencies.json';
 import gregorian from 'cldr-data/main/es/ca-gregorian.json';
@@ -142,6 +137,16 @@ export class Main extends Component {
 
         // Syncfusion omponent translation
         this.setGlobalization();
+
+        //params for iframe enbebed functions
+        if (this.props.location.search == "?layout=iframe") {
+            this.layoutIframe = true;
+        }
+        else {
+            this.layoutIframe = false;
+        }
+            
+           
     }
 
     async setGlobalization() {
@@ -155,6 +160,13 @@ export class Main extends Component {
             L10n.load(data);
         }
     }
+
+    convertUnicode(input) {
+        return input.replace(/\\u(\w{4,4})/g, function (a, b) {
+            var charcode = parseInt(b, 16);
+            return String.fromCharCode(charcode);
+    });
+}
 
     calendarColorModify(calendarId, color) {
 
@@ -633,12 +645,12 @@ export class Main extends Component {
 
                 let drowDownList = new DropDownList({
                     dataSource: [
-                        { text: 'Profesional Event', value: 'profesional-event' },
-                        { text: 'Personal Event', value: 'personal-event' },
+                        { text: i18n.t("schedule.profesional-event"), value: 'profesional-event' },
+                        { text: i18n.t("schedule.personal-event"), value: 'personal-event' },
                     ],
                     fields: { text: 'text', value: 'value' },
                     value: this.state.eventType,
-                    floatLabelType: 'Always', placeholder: 'Event Type'
+                    floatLabelType: 'Always', placeholder: i18n.t("schedule.eventtype") 
                 });                
                 drowDownList.appendTo(inputEle);
                 inputEle.setAttribute('name', 'EventType');
@@ -750,7 +762,8 @@ export class Main extends Component {
                         // refresh event data
                         args.data[0].Id = result.id;
                         args.data[0].ImageName = "lefebvre";
-                        args.data[0].Attendees = result.attendees;
+                        args.data[0].Attendees = result.attendees;                      
+                        this.setState({ tagAttendess: [] })
 
                         this.scheduleObj.refreshEvents();
                         this.toastObj.show(this.toasts[1]);
@@ -952,12 +965,8 @@ export class Main extends Component {
         this.setState({ tagAttendess: [...tag] })
     }
 
-
-    
-
     render() {
-
-
+        const { t } = this.props;
         const { leftSideBar } = this.state;
         const { lexon } = this.props;
 
@@ -966,7 +975,7 @@ export class Main extends Component {
         }
 
         return (
-            <div id='target' className='col-lg-12 control-section'>
+            <div id='target' className='control-section'>
                 <SidebarCnn
                     sidebar={this.state.sidebarComponent}
                     open={this.state.sidebarOpen}
@@ -1011,17 +1020,27 @@ export class Main extends Component {
                         }
                     }}>
                     <Fragment>
-                        <Header
-                            googleUser={this.props.googleUser}
-                            onSignout={this.onSignout}
-                            onSignoutDisconnect={this.onSignout}
-                            setSearchQuery={this.props.setSearchQuery}
-                            getLabelMessages={this.getLabelMessages}
-                            searchQuery={this.props.searchQuery}
-                        />
-                        <section className='main hbox space-between'>
+                        {!this.layoutIframe ? (
+                            <div >
+                                <Header
+                                    googleUser={this.props.googleUser}
+                                    onSignout={this.onSignout}
+                                    onSignoutDisconnect={this.onSignout}
+                                    setSearchQuery={this.props.setSearchQuery}
+                                    getLabelMessages={this.getLabelMessages}
+                                    searchQuery={this.props.searchQuery}
+                                />
+                            </div>
+                        ) : (
+                                <div>
+                                   
+                                </div>
+                        )}
+                        
+                        <section className='main hbox space-between'>  
+                           
                             <Sidebar
-                                sideBarCollapsed={leftSideBar.collapsed}
+                                sideBarCollapsed={!this.layoutIframe ? (false) : ( true )}
                                 sideBarToggle={this.toggleSideBar}
                                 getCalendarList={this.sidebarCalendarList}
                                 pathname={this.props.location.pathname}
@@ -1063,8 +1082,7 @@ export class Main extends Component {
                                 <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
-                                            <ScheduleComponent    
-                                               
+                                            <ScheduleComponent  
                                                 ref={schedule => this.scheduleObj = schedule}
                                                 width='100%'
                                                 currentView="Month"
@@ -1094,7 +1112,7 @@ export class Main extends Component {
                                                     {/* <ResourceDirective field='AttendeesId' title='Attendees' name='MeetingRoom' allowMultiple={true} >
                                                     </ResourceDirective> */}
                                                   
-                                                    <ResourceDirective field='CalendarId' title='My Calendars' name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor'>
+                                                    <ResourceDirective field='CalendarId' title={i18n.t("calendar-sidebar.mycalendars")} name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor'>
                                                     </ResourceDirective>                                                                                           
                                                    
                                                 </ResourcesDirective>
@@ -1121,7 +1139,7 @@ export class Main extends Component {
                                 <DialogComponent
                                     id='dialogDraggable'
                                     isModal={true}
-                                    header='Calendar Configuration'
+                                    header={i18n.t("calendar.title")}
                                     visible={this.state.hidePromptDialog}
                                     showCloseIcon={true}
                                     animationSettings={this.animationSettings}
@@ -1139,7 +1157,7 @@ export class Main extends Component {
                                 {/*</Switch>*/}
                             </article>
 
-                            <div className='productpanel'>
+                            {/* <div className='productpanel'>
                                 <span className='productsbutton'>
                                     {lexon.user ? (
                                         <div onClick={() => this.onSetSidebarOpenLexon(true)}>
@@ -1159,7 +1177,7 @@ export class Main extends Component {
                                             </div>
                                         )}
                                 </span>
-                            </div>
+                            </div>*/}
                         </section>
                     </Fragment>
                 </SidebarCnn>

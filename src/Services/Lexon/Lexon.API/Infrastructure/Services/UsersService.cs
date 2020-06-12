@@ -657,5 +657,28 @@ namespace Lexon.Infrastructure.Services
             byteArrayContent = new ByteArrayContent(newBytes);
             byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("application/bson");
         }
+
+        public async Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch)
+        {
+            var resultContact = new Result<LexContact>(new LexContact());
+
+            try
+            {
+                var path = $"/entities/contact/getbyid";
+                SerializeObjectToPost(entitySearch, path, out string url, out StringContent data);
+                using (var response = await _client.PostAsync(url, data))
+                {
+                    if (response.IsSuccessStatusCode)
+                        resultContact = await response.Content.ReadAsAsync<Result<LexContact>>();
+                    else
+                        TraceOutputMessage(resultContact.errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", 2003);
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(resultContact.errors, ex);
+            }
+            return resultContact;
+        }
     }
 }

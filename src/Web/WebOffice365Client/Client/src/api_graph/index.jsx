@@ -120,15 +120,16 @@ export const getLabelSentItems = async () => {
 export const getMessageList = ({ labelIds, maxResults, q, pageToken }) =>
   new Promise((resolve, reject) => {
     getMessageRawList({ labelIds, maxResults, pageToken, q })
-      .then(getMessageHeaders)
+      //.then(getMessageHeaders)
       .then((messageResult) =>
-        flattenMessagesWithLabel(messageResult.messages, labelIds).then(
-          (labelMessagesDetails) =>
+        flattenMessagesWithLabel(messageResult.value, labelIds).then(
+          (labelMessagesDetails) => {
             resolve({
               ...messageResult,
               messages: labelMessagesDetails.messages,
               label: labelMessagesDetails.label,
-            })
+            });
+          }
         )
       )
       .catch((err) => {

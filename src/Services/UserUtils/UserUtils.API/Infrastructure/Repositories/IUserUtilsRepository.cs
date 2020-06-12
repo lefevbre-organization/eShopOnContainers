@@ -9,10 +9,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
     {
         Task<Result<List<ByPassModel>>> GetListByPassAsync();
 
-        Task<Result<UserUtilsModel>> GetUserAsync(string idNavision);
-
         Task<Result<UserUtilsModel>> PostUserAsync(UserUtilsModel user);
 
         Task<Result<bool>> RemoveUserAsync(string idNavision);
+        Task<Result<LexUser>> GetLexonUserAsync(string idNavision);
+        Task<Result<LexContact>> GetLexonContactsAsync(EntitySearchById search);
+        Task<Result<UserUtilsModel>> GetUserAsync(string idNavision);
     }
 }

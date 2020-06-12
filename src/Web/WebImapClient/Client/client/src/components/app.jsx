@@ -31,6 +31,7 @@ import {
   setCaseFile,
   setGUID,
   setSign,
+  setDataBase,
 } from '../actions/lexon';
 
 import { getSelectedFolder } from '../selectors/folders';
@@ -111,6 +112,7 @@ class App extends Component {
     this.handleGetUserFromCentinelaConnector = this.handleGetUserFromCentinelaConnector.bind(
       this
     );
+    this.changeLexonBBDD = this.changeLexonBBDD.bind(this);
   }
 
   hasProduct(product) {
@@ -510,6 +512,10 @@ class App extends Component {
     // }
   }
 
+  changeLexonBBDD(event) {
+    this.props.setDataBase({ bbdd: event.detail.bbdd });
+  }
+
   async componentDidMount() {
     document.title = this.props.application.title;
     //Starting poll to update the inbox automatically
@@ -668,6 +674,7 @@ class App extends Component {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromCentinelaConnector
     );
+    window.addEventListener('ChangedLexonBBDD', this.changeLexonBBDD);
 
     window.addEventListener('RemoveSelectedDocument', (event) => {
       const messages = [event.detail].map((msg) => ({
@@ -747,12 +754,13 @@ class App extends Component {
 
               const folder = findSentFolder(this.props.folders);
 
-              console.log(folder.fullName);
               await classifyEmail(
                 this.props.outbox.idMessage,
                 this.props.outbox.message.subject,
                 emailDate,
-                this.props.outbox.message.recipients.map((rec) => rec.address),
+                this.props.outbox.message.recipients.map((rec) =>
+                  clearEmailAddress(rec.address)
+                ),
                 folder.fullName,
                 this.props.lexon.provider,
                 this.props.email,
@@ -763,7 +771,6 @@ class App extends Component {
           }
         } catch (err) {
           console.log(err);
-          debugger;
           //throw err;
         }
       }
@@ -786,6 +793,8 @@ class App extends Component {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromCentinelaConnector
     );
+
+    window.removeEventListener('ChangedLexonBBDD', this.changeLexonBBDD);
   }
 
   sentEmail(id, subject) {
@@ -970,6 +979,7 @@ const mapDispatchToProps = (dispatch) => ({
   setCaseFile: (casefile) => dispatch(setCaseFile(casefile)),
   setSelected: (messages, selected, shiftKey) =>
     dispatch(setSelected(messages, selected, shiftKey)),
+  setDataBase: (ddbb) => dispatch(setDataBase(ddbb)),
   setGUID: (guid) => dispatch(setGUID(guid)),
   setSign: (sign) => dispatch(setSign(sign)),
 });
@@ -1002,3 +1012,13 @@ export default connect(
   mapDispatchToProps,
   mergeProps
 )(translate()(App));
+
+function clearEmailAddress(address) {
+  const regExp = /<([^>]+)?>/;
+  const result = regExp.exec(address);
+
+  if (result && result.length >= 2) {
+    return result[1];
+  }
+  return address;
+}

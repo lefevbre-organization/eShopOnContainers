@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-
+import queryString from 'query-string';
 import ACTIONS from './actions/email';
 import APPLICATION_ACTIONS from './actions/applicationAction';
 import SELECTION_ACTIONS from './actions/selections';
@@ -33,6 +33,7 @@ class Main extends Component {
       idCompany: null,
       provider: null,
       account: null,
+      isAddon: false
     };
 
     this.handleSentMessage = this.handleSentMessage.bind(this);
@@ -42,7 +43,7 @@ class Main extends Component {
     this.handlePutUserFromLexonConnector = this.handlePutUserFromLexonConnector.bind(
       this
     );
-
+    this.handlePutAddonFromLexonConnector = this.handlePutAddonFromLexonConnector.bind(this);
     this.toggleNotification = this.toggleNotification.bind(this);
     this.handleOpenComposer = this.handleOpenComposer.bind(this);
     this.handleCloseComposer = this.handleCloseComposer.bind(this);
@@ -60,12 +61,17 @@ class Main extends Component {
       'PutUserFromLexonConnector',
       this.handlePutUserFromLexonConnector
     );
+    window.addEventListener(
+      'PutAddonFromLexonConnector',
+      this.handlePutAddonFromLexonConnector
+    );
     window.addEventListener('OpenComposer', this.handleOpenComposer);
     window.addEventListener('CloseComposer', this.handleCloseComposer);
     window.addEventListener('LoadingMessage', this.onShowLoader);
     window.addEventListener('LoadedMessage', this.onHideLoader);
 
     this.sendMessageGetUser();
+    this.sendMessageGetAddonsInfo();
   }
 
   // componentDidUpdate(prevProps) {
@@ -91,6 +97,10 @@ class Main extends Component {
       'PutUserFromLexonConnector',
       this.handlePutUserFromLexonConnector
     );
+    window.removeEventListener(
+      'GoBacPutAddonFromLexonConnectorkAddon', 
+       this.handlePutAddonFromLexonConnector
+      );
     window.removeEventListener('OpenComposer', this.handleOpenComposer);
     window.removeEventListener('CloseComposer', this.handleCloseComposer);
   }
@@ -197,13 +207,15 @@ class Main extends Component {
     window.dispatchEvent(new CustomEvent('GetUserFromLexonConnector'));
   }
 
+  sendMessageGetAddonsInfo() {
+    window.dispatchEvent(new CustomEvent('GetAddonsInfoFromLexonConnector'));
+  }
+
   async getCompanies(user) {
     getCompanies(user);
   }
 
-  async handlePutUserFromLexonConnector(event) {
-    console.log('HandleEvent Client -> Lexon - PutUserFromLexonConnector');
-
+  getAddonData() {
     if (window.addonData) {
       const addonData = window.addonData;
       this.setState({
@@ -214,7 +226,11 @@ class Main extends Component {
         },
       });
     }
+  }
 
+  async handlePutUserFromLexonConnector(event) {
+    console.log('HandleEvent Client -> Lexon - PutUserFromLexonConnector');
+    this.getAddonData();
     const {
       user,
       selectedMessages,
@@ -241,6 +257,11 @@ class Main extends Component {
         },
         () => {
           this.props.setInitialBBDD(bbdd);
+          window.dispatchEvent(
+            new CustomEvent('ChangedLexonBBDD', {
+              detail: { bbdd },
+            })
+          );
         }
       );
     }
@@ -302,7 +323,23 @@ class Main extends Component {
       });
   }
 
+  async handlePutAddonFromLexonConnector(event) {
+    this.setState({isAddon: true});
+  }
+
+  closeLexonConnector(message) {
+    if(!message && this.state.isAddon) {
+      const values = queryString.parse(window.location.search);
+      window.location.replace(
+        `${window.GOOGLE_SCRIPT}` + '?success=1' + '&state=' + values.state
+      );
+      localStorage.removeItem('oldTime');
+    }
+   
+  }
+
   toggleNotification(message, error = false) {
+    this.closeLexonConnector(message);
     this.setState((state) => ({
       showNotification: !state.showNotification,
       messageNotification: message,

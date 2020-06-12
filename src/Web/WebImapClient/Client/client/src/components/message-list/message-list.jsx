@@ -266,7 +266,6 @@ class MessageList extends Component {
 
       if (checked === true) {
         Promise.all(prs).then((msgs) => {
-          debugger;
           for (let i = 0; i < msgs.length; i++) {
             const msg = msgs[i];
 

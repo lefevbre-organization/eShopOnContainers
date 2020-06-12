@@ -84,6 +84,21 @@
   "calendar-sidebar": {
     "compose": "Nuevo Evento",
     "mycalendars": "Mis calendarios",
-    "othercalendars": "Otros calendarios"
+    "othercalendars": "Otros calendarios",
+    "configandshare": "Configurar y Compartir",
+    "remove": "Eliminar"
+  },
+  "schedule": {
+    "eventtype": "Tipo de evento",
+    "profesional-event": "Evento profesional",
+    "personal-event": "Evento personal"
+  },
+  "calendar": {
+    "title": "Configuración",
+    "modify": "Modidicar",
+    "add": "Añadir calendario",
+    "name": "Nombre",
+    "description": "Descripción",
+    "sharewithpeople": "Compartir con determinadas personas"
   }
 }

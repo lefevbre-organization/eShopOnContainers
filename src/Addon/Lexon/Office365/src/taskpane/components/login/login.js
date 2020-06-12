@@ -27,7 +27,7 @@ class Login extends Component {
           provider: 'auth-lexon',
           clientId: 'a8c9f1a1-3472-4a83-8725-4dfa74bac24d',
           baseUrl: 'https://localhost:3000',
-          tokenUrl: 'https://lexbox-test-apigwlex.lefebvre.es/api/v1/mysql/LexonMySql/token',
+          tokenUrl: 'https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login',
           redirectUrl: 'https://localhost:3020/taskpane.html',
           authorizeUrl: '/login',
           scope: 'openid profile onelist offline_access',

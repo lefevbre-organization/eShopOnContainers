@@ -6,7 +6,7 @@
     "my-accounts": "My emails accounts"
   },
   "footer": {
-    "all-reserved-right": "©2019 Lefebvre. Todos los derechos reservados.Aviso legal  | Política de privacidad  | Política de Cookies",
+    "all-reserved-right": "©2020 Lefebvre. Todos los derechos reservados.Aviso legal  | Política de privacidad  | Política de Cookies",
     "legal-warning": "Legal warning",
     "privacy-policy": "Privacy policy",
     "cookies-policy": "Cookies policy",
@@ -20,5 +20,22 @@
     "body": "If you discard this email account you will stop accessing its content from the Lefebvre Mail service. Do you want to continue?",
     "yes": "Yes",
     "no": "No"
+  },
+  "header": {
+    "shop": "SHOP"
+  },
+  "login": {
+    "shop": "SHOP",
+    "notClient": "I am not a customer",
+    "requestInfo": "Request information",
+    "needHelp": "Need help?",
+    "phoneNumber": "91 210 80 00 - 902 44 33 55 |",
+    "client": "clientes@lefebvre.es",
+    "required": "This field is required.",
+    "email-error": "The field must be a valid email.",
+    "user-error": "User or password not valid.",
+    "user": "User",
+    "password": "Passsord",
+    "login": "LOG IN"
   }
 }

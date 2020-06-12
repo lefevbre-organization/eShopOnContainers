@@ -131,7 +131,11 @@ export class MessageList extends Component {
 
     if (this.props.messagesResult.loading) {
       return this.renderSpinner();
-    } else if (this.props.messagesResult.messages.length === 0) {
+    } else if (
+      this.props.messagesResult &&
+      this.props.messagesResult.messages &&
+      this.props.messagesResult.messages.length === 0
+    ) {
       return (
         <div className='p-4 text-center'>{t('message-list.no-message')}</div>
       );

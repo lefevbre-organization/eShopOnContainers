@@ -9,9 +9,7 @@ export class CalendarItem extends PureComponent {
 
   constructor(props) {
     super(props);
-      this.onClick = this.onClick.bind(this);
-
-  
+      this.onClick = this.onClick.bind(this);  
       this.state = {
           css : this.makeid(5)        
       };
@@ -30,7 +28,6 @@ export class CalendarItem extends PureComponent {
     }
     return result;
 }
-
 
   render() {
     const {name, messagesUnread} = this.props;
