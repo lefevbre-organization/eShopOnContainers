@@ -319,7 +319,7 @@ export const createUser = async (userId, brandings = [], signatures = []) => {
 }
 
 // Adds or updates a signature of a given user
-export const addOrUpdateSignature = async (userId, externalId, guid, app) => {
+export const addOrUpdateSignature = async (userId, externalId, guid, app, documents) => {
   var myHeaders = new Headers();
   myHeaders.append("Accept", "text/plain");
   myHeaders.append("Content-Type", "application/json-patch+json");
@@ -328,7 +328,8 @@ export const addOrUpdateSignature = async (userId, externalId, guid, app) => {
   var raw = `{
   \n  \"externalId\": \"${externalId}\",
   \n  \"guid\": \"${guid}\",
-  \n  \"app\": \"${app}\"
+  \n  \"app\": \"${app}\",
+  \n  \"documents\": ${JSON.stringify(documents)}
   \n}`;
 
   var requestOptions = {
@@ -556,7 +557,8 @@ export function preloadSignatures2(dispatch, filters, auth) {
 }
 
 // Creates a new signature calling internal proxy api
-export const createSignature2 = async (recipients, subject, body, files, filesData, reminders, expiration, lefebvreId, guid, brandingId, auth) => {
+//export const createSignature2 = async (recipients, subject, body, files, filesData, reminders, expiration, lefebvreId, guid, brandingId, auth) => {
+  export const createSignature2 = async (recipients, subject, body, files, reminders, expiration, lefebvreId, guid, brandingId, auth) => {
   return new Promise((resolve, reject) => {
     var myHeaders = new Headers();
     myHeaders.append("Accept", "text/plain");
@@ -566,7 +568,7 @@ export const createSignature2 = async (recipients, subject, body, files, filesDa
 
     var jsonObject = {};
     var recipientsData = [];
-    //var filesData = [];
+    var filesData = [];
     var customFieldsData = [];
     //var fileData = '';
     recipients.forEach(recipient => {
@@ -578,12 +580,18 @@ export const createSignature2 = async (recipients, subject, body, files, filesDa
     // files.forEach(file => {
     //   filesData.push({file: file, fileName: file.name})
     // });
-    jsonObject.files = [{file: filesData, fileName: files.name}];
+    files.forEach(file => {
+      filesData.push({file: file.content, fileName: file.fileName})
+    })
+    //jsonObject.files = [{file: filesData, fileName: files.name}];
+    jsonObject.files = filesData;
 
     customFieldsData.push({name: "lefebvre_id", value: lefebvreId});
     customFieldsData.push({name: "lefebvre_guid", value: guid});
     customFieldsData.push({name: "subject", value: subject});
     customFieldsData.push({name: "body", value: body});
+    // customFieldsData.push({name: "expiration", value: expiration});
+    // customFieldsData.push({name: "reminders", value: reminders});
     jsonObject.customFields = customFieldsData;
 
     jsonObject.subject = subject;
@@ -945,5 +953,3 @@ export const getAttachmentCen = async (userId, attachmentId) => {
 //         console.log(res.raw_body);
 //     });
 // }
-
-

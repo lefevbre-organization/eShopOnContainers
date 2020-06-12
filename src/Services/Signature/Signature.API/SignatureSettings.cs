@@ -16,6 +16,8 @@
         public string LexonFilesUrl { get; set; }
         public string LexonApiGwUrl { get; set; }
 
+        public string CentinelaApiGwUrl { get; set; }
+
         public string SignaturitApiUrl { get; set; }
 
         public string EventBusConnection { get; set; }

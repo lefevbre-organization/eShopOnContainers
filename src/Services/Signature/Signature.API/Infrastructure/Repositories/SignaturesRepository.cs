@@ -52,12 +52,12 @@
         {
             //return Builders<UserSignatures>.Projection.Include(u => u.User).Include(u => u.signatures).Exclude(u => u.Id);
             //return Builders<UserSignatures>.Projection.ElemMatch(u => u.signatures, sig => sig.externalId == externalId).Include(u => u.User).Include(u => u.signatures).Exclude(u => u.Id);
-            return Builders<UserSignatures>.Projection.Include(u => u.User).ElemMatch(u => u.signatures, sig => sig.externalId == externalId).Exclude(u => u.Id);
+            return Builders<UserSignatures>.Projection.Include(u => u.User).ElemMatch(u => u.Signatures, sig => sig.ExternalId == externalId).Exclude(u => u.Id);
         }
 
         private static FilterDefinition<UserSignatures> GetFilterSignature(string externalId)
         {
-            return Builders<UserSignatures>.Filter.ElemMatch(u => u.signatures, sig => sig.externalId == externalId);
+            return Builders<UserSignatures>.Filter.ElemMatch(u => u.Signatures, sig => sig.ExternalId == externalId);
         }
 
         private static FilterDefinition<UserSignatures> GetFilterUser(string user)
@@ -67,13 +67,13 @@
 
         private static Predicate<Signature> GetFilterUserSignature(string externalId, string guid)
         {
-            return x => x.externalId.Equals(externalId.ToLowerInvariant())
-                                    && x.guid.Equals(guid.ToUpperInvariant());
+            return x => x.ExternalId.Equals(externalId.ToLowerInvariant())
+                                    && x.Guid.Equals(guid.ToUpperInvariant());
         }
 
         private static Predicate<Signature> GetFilterUserSignatureGuid(string guid)
         {
-            return x => x.guid.Equals(guid.ToUpperInvariant());
+            return x => x.Guid.Equals(guid.ToUpperInvariant());
         }
 
         private static Predicate<UserBranding> GetFilterUserBranding(string app)
@@ -98,9 +98,9 @@
                 }
                 else
                 {
-                    var signatures = result.data?.signatures.ToList();
+                    var signatures = result.data?.Signatures.ToList();
 
-                    result.data.signatures = signatures;
+                    result.data.Signatures = signatures;
                 }
             }
             catch (Exception ex)
@@ -162,7 +162,7 @@
 
             try
             {
-                var userSignature = GetNewUserSignature(user, signatureIn.externalId, signatureIn.guid, signatureIn.app);
+                var userSignature = GetNewUserSignature(user, signatureIn.ExternalId, signatureIn.Guid, signatureIn.App);
 
                 var userDb = await _context.Signatures.Find(GetFilterUser(user)).SingleOrDefaultAsync();
                 if (userDb == null)
@@ -222,12 +222,12 @@
                 }
                 else
                 {
-                    var availableSignatures = userInfo.data.availableSignatures;
+                    var availableSignatures = userInfo.data.AvailableSignatures;
 
                     //Second, update availableSignatures adding the new ones to existing ones
                     var resultUpdate = await _context.Signatures.UpdateOneAsync(
                         filter,
-                        Builders<UserSignatures>.Update.Set(x => x.availableSignatures, num + availableSignatures)
+                        Builders<UserSignatures>.Update.Set(x => x.AvailableSignatures, num + availableSignatures)
                     );
                     if (resultUpdate.IsAcknowledged && resultUpdate.ModifiedCount > 0)
                     {
@@ -312,7 +312,7 @@
                 }
                 else
                 {
-                    result.data = userInfo.data.availableSignatures;
+                    result.data = userInfo.data.AvailableSignatures;
                 }
             }
             catch (Exception ex)
@@ -409,10 +409,10 @@
             return new UserSignatures()
             {
                 User = user.ToUpperInvariant(),
-                availableSignatures = 0,
-                brandings = new List<UserBranding>(),
-                signatures = new List<Signature>() {
-                        new Signature() {externalId = externalId, guid= guid, app= app.ToLowerInvariant()}
+                AvailableSignatures = 0,
+                Brandings = new List<UserBranding>(),
+                Signatures = new List<Signature>() {
+                        new Signature() {ExternalId = externalId, Guid= guid, App= app.ToLowerInvariant()}
                     }
             };
         }
@@ -422,9 +422,9 @@
             return new UserSignatures()
             {
                 User = user.ToUpperInvariant(),
-                availableSignatures = 0,
-                brandings = new List<UserBranding>(),
-                signatures = new List<Signature>()
+                AvailableSignatures = 0,
+                Brandings = new List<UserBranding>(),
+                Signatures = new List<Signature>()
             };
         }
 
@@ -432,18 +432,18 @@
         {
             //userDb.signatures.ForEach(x => x.defaultAccount = false);
             //var signatureDb = userDb.signatures.Find(GetFilterUserSignature(signatureIn.externalId, signatureIn.guid));
-            var signatureDb = userDb.signatures.Find(GetFilterUserSignatureGuid(signatureIn.guid));
+            var signatureDb = userDb.Signatures.Find(GetFilterUserSignatureGuid(signatureIn.Guid));
             
 
             if (signatureDb == null)
             {
-                userDb.signatures.Add(signatureIn);
-                TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo una firma para {signatureIn.externalId}-{signatureIn.guid}-{signatureIn.app}");
+                userDb.Signatures.Add(signatureIn);
+                TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo una firma para {signatureIn.ExternalId}-{signatureIn.Guid}-{signatureIn.App}");
             }
             else
             {
                 UpdateSignatureWithOther(signatureIn, signatureDb);
-                TraceInfo(result.infos, $"Se modifica el usuario {user} modificando la firma para {signatureIn.externalId}-{signatureDb.externalId}");
+                TraceInfo(result.infos, $"Se modifica el usuario {user} modificando la firma para {signatureIn.ExternalId}-{signatureDb.ExternalId}");
             }
         }
 
@@ -452,11 +452,11 @@
             //userDb.signatures.ForEach(x => x.defaultAccount = false);
             //var signatureDb = userDb.signatures.Find(GetFilterUserSignature(signatureIn.externalId, signatureIn.guid));
             
-            var brandingDb = userDb.brandings.Find(GetFilterUserBranding(brandingIn.app));
+            var brandingDb = userDb.Brandings.Find(GetFilterUserBranding(brandingIn.app));
 
             if (brandingDb == null)
             {
-                userDb.brandings.Add(brandingIn);
+                userDb.Brandings.Add(brandingIn);
                 TraceInfo(result.infos, $"Se modifica el usuario {user} añadiendo un branding para {brandingIn.app}-{brandingIn.externalId}");
             }
             else
@@ -468,9 +468,9 @@
 
         private static void UpdateSignatureWithOther(Signature signatureIn, Signature signatureDb)
         {
-            signatureDb.externalId = signatureIn.externalId;
-            signatureDb.guid = signatureIn.guid;
-            signatureDb.app = signatureIn.app;
+            signatureDb.ExternalId = signatureIn.ExternalId;
+            signatureDb.Guid = signatureIn.Guid;
+            signatureDb.App = signatureIn.App;
         }
 
         private static void UpdateBrandingWithOther(UserBranding brandingIn, UserBranding brandingDb)
