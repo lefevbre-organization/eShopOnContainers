@@ -5,8 +5,8 @@
   overflow: hidden;
   background: #001978;
   float: left;
-  position: fixed;
-  bottom: 0;
+  position: static;
+  bottom: 160px;
   width: 100%;
   padding: 43px 75px 21px 60px;
 }
@@ -82,7 +82,6 @@
 
 @media (max-width: 595px) {
   .compliance-footer {
-    background-color: red;
     margin-top: -10px;
   }
 }
