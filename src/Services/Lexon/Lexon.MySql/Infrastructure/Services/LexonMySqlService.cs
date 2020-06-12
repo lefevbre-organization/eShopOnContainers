@@ -373,8 +373,8 @@ namespace Lexon.MySql.Infrastructure.Services
         public Task<Result<List<LexContact>>> GetAllContactsAsync(BaseView search)
             => _lexonRepository.GetAllContactsAsync(search);
 
-        public Task<MySqlCompany> GetRelationsFromMailAsync(string idUser, MailInfo mail)
-            => _lexonRepository.GetRelationsFromMailAsync(idUser, mail);
+        public Task<Result<LexUserSimpleCheck>> CheckRelationsMailAsync(string idUser, MailInfo mail)
+            => _lexonRepository.CheckRelationsMailAsync(idUser, mail);
 
         public Task<Result<LexUserSimple>> GetUserIdAsync(string idNavisionUser)
             => _lexonRepository.GetUserIdAsync(idNavisionUser);

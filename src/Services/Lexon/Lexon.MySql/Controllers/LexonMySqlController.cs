@@ -335,18 +335,18 @@ namespace Lexon.MySql.Controllers
             return Ok(result);
         }
 
-        [HttpPost("classifications/{idUser}/search")]
-        [ProducesResponseType(typeof(MySqlCompany), (int)HttpStatusCode.OK)]
+        [HttpPost("classifications/{idUser}/check")]
+        [ProducesResponseType(typeof(Result<LexUserSimpleCheck>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetRelationsFromMailAsync(
+        public async Task<IActionResult> CheckRelationsMailAsync(
             [FromBody] MailInfo mail,
-            [FromRoute] string idUser
+            [FromRoute] string idUser = "E1621396"
             )
         {
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(mail.Uid) || string.IsNullOrEmpty(mail.MailAccount))
                 return BadRequest("values invalid. Must be a valid idUser, idMail and account to search the relations of mail");
 
-            MySqlCompany result = await _lexonService.GetRelationsFromMailAsync(idUser, mail);
+            Result<LexUserSimpleCheck> result = await _lexonService.CheckRelationsMailAsync(idUser, mail);
             return Ok(result);
         }
     }

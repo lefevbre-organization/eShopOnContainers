@@ -315,7 +315,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         public async Task<Result<List<LexContact>>> GetAllContactsAsync(BaseView search)
         {
-            var result = new Result<LexContact>(new LexContact());
+            var result = new Result<List<LexContact>>(new List<LexContact>());
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -337,8 +337,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                                     var rawResult = reader.GetValue(0).ToString();
                                     if (!string.IsNullOrEmpty(rawResult))
                                     {
-                                        var lista = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
-                                        result.data = lista?.FirstOrDefault();
+                                        result.data = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
                                     }
                                     else
                                     {
@@ -476,6 +475,49 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return resultMySql;
         }
 
+        public async Task<Result<LexUserSimpleCheck>> CheckRelationsMailAsync(string idUser, MailInfo mail)
+        {
+            var result = new Result<LexUserSimpleCheck>(new LexUserSimpleCheck());
+
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    var filtro = GiveMeCheckMailFilter(idUser, mail);
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.CheckRelations, conn))
+                    {
+                        AddCommonParameters(idUser, command, "P_FILTER", filtro);
+                        AddListSearchParameters(1, 1, "ts", "desc", command);
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                            if (EvaluateErrorCommand(result.errors, command) == 0)
+                                while (reader.Read())
+                                {
+                                    var rawResult = reader.GetValue(0).ToString();
+                                    if (!string.IsNullOrEmpty(rawResult))
+                                    {
+                                        result.data = (JsonConvert.DeserializeObject<LexUserSimpleCheck>(rawResult));
+                                    }
+                                    else
+                                    {
+                                        TraceOutputMessage(result.errors, "2004", "MySql get and empty string with this search");
+                                    }
+                                }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TraceMessage(result.errors, ex);
+                }
+            }
+
+            return result;
+        }
+
         public async Task<Result<List<int>>> AddRelationMailAsync(ClassificationAddView classification)
         {
             var result = new Result<List<int>>(new List<int>());
@@ -537,7 +579,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
             return result;
         }
-
         public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification)
         {
             var result = new Result<int>(0);
@@ -638,17 +679,23 @@ namespace Lexon.MySql.Infrastructure.Repositories
         private static string GetUserFilter(string bbdd, string idUser, bool withComma = false)
         {
             var comma = withComma ? ", " : "";
-            return $"{comma}\"BBDD\":\"{bbdd}\",\"IdUser\":{idUser}";
+            var bbddParam = bbdd ?? $"\"BBDD\":\"{bbdd}\",";
+            return $"{comma}{bbddParam}\"IdUser\":{idUser}";
         }
 
         private string GetMailFilter(MailInfo mail)
         {
+            return GetMailIdFilter(mail) +
+                $"{GetTextFilter("Subject", mail.Subject)}" +
+                $"{GetTextFilter("Date", mail.Date)}";
+        }
+
+        private string GetMailIdFilter(MailInfo mail)
+        {
             return $"{GetTextFilter("Provider", mail.Provider)}" +
                 $"{GetTextFilter("MailAccount", mail.MailAccount)}" +
                 $"{GetTextFilter("Uid", mail.Uid)}" +
-                $"{GetTextFilter("Subject", mail.Subject)}" +
-                $"{GetTextFilter("Folder", mail.Folder)}" +
-                $"{GetTextFilter("Date", mail.Date)}";
+                $"{GetTextFilter("Folder", mail.Folder)}";
         }
 
         private string GeFolderCreateFilter(FolderToEntity folderToEntity)
@@ -703,6 +750,14 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     $" }}";
         }
 
+        private string GiveMeCheckMailFilter(string idUser, MailInfo mail)
+        {
+            return $"{{ " +
+                    GetUserFilter(null, idUser) +
+                    GetMailIdFilter(mail) +
+                    $" }}";
+        }
+
         private string GiveMeUserFilter(BaseView search)
         {
             return $"{{ " +
@@ -738,10 +793,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
         {
             var comma = withComma ? ", " : "";
             return !string.IsNullOrEmpty(value) ? $"{comma}\"{name}\":\"{value}\"" : string.Empty;
-        }
-        public Task<MySqlCompany> GetRelationsFromMailAsync(string idUser, MailInfo mail)
-        {
-            throw new NotImplementedException();
         }
         #endregion Common
     }

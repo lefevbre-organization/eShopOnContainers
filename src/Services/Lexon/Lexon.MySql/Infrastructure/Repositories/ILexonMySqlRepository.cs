@@ -34,6 +34,6 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder);
 
-        Task<MySqlCompany> GetRelationsFromMailAsync(string idUser, MailInfo mail);
+        Task<Result<LexUserSimpleCheck>> CheckRelationsMailAsync(string idUser, MailInfo mail);
     }
 }

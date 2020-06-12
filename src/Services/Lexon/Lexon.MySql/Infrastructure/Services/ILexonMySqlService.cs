@@ -43,7 +43,7 @@ namespace Lexon.MySql.Infrastructure.Services
         Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch);
         //Task<Result<List<LexApp>>> GetUserMiniHubAsync(string idNavisionUser, bool onlyActives = true);
         Task<Result<List<LexContact>>> GetAllContactsAsync(BaseView search);
-        Task<MySqlCompany> GetRelationsFromMailAsync(string idUser, MailInfo mail);
+        Task<Result<LexUserSimpleCheck>> CheckRelationsMailAsync(string idUser, MailInfo mail);
         Task<Result<LexUserSimple>> GetUserIdAsync(string idNavisionUser);
     }
 }
