@@ -18,18 +18,22 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
         Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch);
 
+        Task<Result<List<LexContact>>> GetAllContactsAsync(BaseView search);
+
         Task<Result<int>> RemoveRelationMailAsync(ClassificationRemoveView classification);
 
         Task<Result<List<int>>> AddRelationMailAsync(ClassificationAddView classification);
 
         Task<Result<LexUser>> GetUserAsync(string idNavisionUser);
 
+        Task<Result<LexUserSimple>> GetUserIdAsync(string idNavisionUser);
+
         Task<MySqlCompany> GetRelationsAsync(ClassificationSearchView classification);
 
         Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification);
 
         Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder);
-        Task<Result<List<LexContact>>> GetContactsAsync(BaseView search);
+
         Task<MySqlCompany> GetRelationsFromMailAsync(string idUser, MailInfo mail);
     }
 }

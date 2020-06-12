@@ -26,6 +26,8 @@ namespace Lexon.MySql.Infrastructure.Repositories
             _conn = _settings.Value.ConnectionString;
         }
 
+        #region User
+
         public async Task<Result<LexUser>> GetUserAsync(string idNavisionUser)
         {
             var result = new Result<LexUser>(new LexUser());
@@ -36,6 +38,41 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 {
                     var filtro = $"{{\"NavisionId\":\"{idNavisionUser}\"}}";
                     await GetUserCommon(result, conn, filtro);
+                }
+                catch (Exception ex)
+                {
+                    result.data = null;
+                    TraceMessage(result.errors, ex);
+                }
+            }
+            return result;
+        }
+
+        public async Task<Result<LexUserSimple>> GetUserIdAsync(string idNavisionUser)
+        {
+            var result = new Result<LexUserSimple>(null);
+
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    var filtro = $"{{\"NavisionId\":\"{idNavisionUser}\",\"User\":1}}";
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetCompanies, conn))
+                    {
+                        AddCommonParameters("0", command, "P_FILTER", filtro);
+                        AddListSearchParameters(0, 1, null, null, command);
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                            if (EvaluateErrorCommand(result.errors, command) == 0)
+                                while (reader.Read())
+                                {
+                                    var rawJson = reader.GetValue(0).ToString();
+                                    result.data = JsonConvert.DeserializeObject<LexUserSimple>(rawJson);
+                                }
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -86,6 +123,8 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
             return result;
         }
+
+#endregion New Region
 
         #region Entities
 
@@ -243,6 +282,50 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetContact, conn))
                     {
                         AddCommonParameters(entitySearch.idUser, command, "P_FILTER", filtro);
+                        AddListSearchParameters(1, 1, "ts", "desc", command);
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                            if (EvaluateErrorCommand(result.errors, command) == 0)
+                                while (reader.Read())
+                                {
+                                    var rawResult = reader.GetValue(0).ToString();
+                                    if (!string.IsNullOrEmpty(rawResult))
+                                    {
+                                        var lista = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
+                                        result.data = lista?.FirstOrDefault();
+                                    }
+                                    else
+                                    {
+                                        TraceOutputMessage(result.errors, "2004", "MySql get and empty string with this search");
+                                    }
+                                }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TraceMessage(result.errors, ex);
+                }
+            }
+
+            return result;
+        }
+
+        public async Task<Result<List<LexContact>>> GetAllContactsAsync(BaseView search)
+        {
+            var result = new Result<LexContact>(new LexContact());
+
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    var filtro = GiveMeUserFilter(search);
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetContact, conn))
+                    {
+                        AddCommonParameters(search.idUser, command, "P_FILTER", filtro);
                         AddListSearchParameters(1, 1, "ts", "desc", command);
 
                         using (var reader = await command.ExecuteReaderAsync())
@@ -620,6 +703,13 @@ namespace Lexon.MySql.Infrastructure.Repositories
                     $" }}";
         }
 
+        private string GiveMeUserFilter(BaseView search)
+        {
+            return $"{{ " +
+                    GetUserFilter(search.bbdd, search.idUser) +
+                    $" }}";
+        }
+
         private string GetFolderDocumentFilter(IEntitySearchView search)
         {
             if (search is EntitySearchFoldersView || search == null)
@@ -649,17 +739,10 @@ namespace Lexon.MySql.Infrastructure.Repositories
             var comma = withComma ? ", " : "";
             return !string.IsNullOrEmpty(value) ? $"{comma}\"{name}\":\"{value}\"" : string.Empty;
         }
-
-        public Task<Result<List<LexContact>>> GetContactsAsync(BaseView search)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<MySqlCompany> GetRelationsFromMailAsync(string idUser, MailInfo mail)
         {
             throw new NotImplementedException();
         }
-
         #endregion Common
     }
 }

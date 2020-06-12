@@ -51,16 +51,16 @@ namespace Lexon.MySql.Controllers
         }
 
         [HttpGet("user/getid")]
-        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<LexUserSimple>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexUserSimple>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UserIdAsync(string idNavisionUser = "E1621396")
         {
             if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
-            var resultUser = await _lexonService.GetUserAsync(idNavisionUser);
-            var idUser = resultUser?.data?.idUser;
-            return Ok(idUser);
+            Result<LexUserSimple> resultUser = await _lexonService.GetUserIdAsync(idNavisionUser);
+            //var idUser = resultUser?.data?.idUser;
+            return Ok(resultUser);
         }
 
         //[HttpGet("user/apps")]
@@ -242,7 +242,7 @@ namespace Lexon.MySql.Controllers
             if (string.IsNullOrEmpty(search.idUser) || string.IsNullOrEmpty(search.bbdd))
                 return BadRequest("values invalid. Must be a valid user and bbdd");
 
-            Result<List<LexContact>> result = await _lexonService.GetContactsAsync(search);
+            Result<List<LexContact>> result = await _lexonService.GetAllContactsAsync(search);
             return Ok(result);
         }
 

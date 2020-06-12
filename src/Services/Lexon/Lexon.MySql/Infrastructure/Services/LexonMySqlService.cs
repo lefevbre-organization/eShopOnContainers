@@ -370,10 +370,13 @@ namespace Lexon.MySql.Infrastructure.Services
         //    return result;
         //}
 
-        public Task<Result<List<LexContact>>> GetContactsAsync(BaseView search)
-            => _lexonRepository.GetContactsAsync(search);
+        public Task<Result<List<LexContact>>> GetAllContactsAsync(BaseView search)
+            => _lexonRepository.GetAllContactsAsync(search);
 
         public Task<MySqlCompany> GetRelationsFromMailAsync(string idUser, MailInfo mail)
             => _lexonRepository.GetRelationsFromMailAsync(idUser, mail);
+
+        public Task<Result<LexUserSimple>> GetUserIdAsync(string idNavisionUser)
+            => _lexonRepository.GetUserIdAsync(idNavisionUser);
     }
 }

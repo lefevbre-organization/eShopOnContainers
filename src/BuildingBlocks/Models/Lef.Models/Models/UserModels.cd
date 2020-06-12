@@ -7,16 +7,6 @@
       <FileName>Models\MongoModel.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexUser">
-    <Position X="3" Y="2.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAEAACAAAAAAAAgAAAAAACAAAAAEAAAAAAAAAEAAAgA=</HashCode>
-      <FileName>Models\LexUser.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Property Name="aplicaciones" />
-    </ShowAsCollectionAssociation>
-  </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexCompany">
     <Position X="5" Y="2.25" Width="1.5" />
     <AssociationLine Name="entities" Type="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexEntity" FixedFromPoint="true" FixedToPoint="true">
@@ -97,6 +87,13 @@
     <TypeIdentifier>
       <HashCode>AIAAAAAAAAAAAAAAAAAAEAAAQAAIAAAAAAAAAAAAAgA=</HashCode>
       <FileName>Models\LexApp.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexUserSimple">
+    <Position X="3" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Models\LexUserSimple.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
