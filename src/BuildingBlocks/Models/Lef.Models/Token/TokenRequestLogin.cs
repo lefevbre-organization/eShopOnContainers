@@ -2,9 +2,9 @@
 {
     public class TokenRequestLogin : TokenRequest
     {
-        public string Login { get; set; }
+        public string login { get; set; }
 
-        public string Password { get; set; }
+        public string password { get; set; }
 
     }
 }
