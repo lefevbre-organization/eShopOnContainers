@@ -490,7 +490,9 @@ export class Main extends Component {
     this.renderLabelRoutes();
     const { labels } = this.props.labelsResult;
     const selectedLabel = labels.find((el) => el.selected);
-    this.getLabelMessages({ labelIds: [selectedLabel.id] });
+    if (selectedLabel) {
+      this.getLabelMessages({ labelIds: [selectedLabel.id] });
+    }
   }
 
   navigateToNextPage(token) {

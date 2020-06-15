@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
 import { withTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getNameEmail, getValidEmails } from '../../../../utils';
-import { sendMessage } from '../../../../api_graph';
+import { getNameEmail } from '../../../../utils';
+import { sendMessage, getConversation } from '../../../../api_graph';
 
 import moment from 'moment';
 import { Button, Popover, PopoverBody } from 'reactstrap';
@@ -29,11 +29,16 @@ export class MessageToolbar extends PureComponent {
     };
   }
 
-  componentDidMount() {
-    this.setState({ confirm1Open: true });
-    setTimeout(() => {
-      this.setState({ confirm1Open: false });
-    }, 9000);
+  async componentDidMount() {
+    if (
+      this.props.messageResult.result.isReadReceiptRequested === true &&
+      this.props.messageResult.result.isRead === false
+    ) {
+      this.setState({ confirm2Open: true });
+      setTimeout(() => {
+        this.setState({ confirm2Open: false });
+      }, 9000);
+    }
   }
 
   render() {
@@ -51,7 +56,7 @@ export class MessageToolbar extends PureComponent {
 
     let confirmation = 0;
     if (messageHeaders.isReadReceiptRequested === true) {
-      confirmation = 1;
+      confirmation = 2;
     }
 
     replyTo = messageHeaders.from
@@ -175,7 +180,7 @@ export class MessageToolbar extends PureComponent {
                     this.setState({ confirm1Open: false });
                   }}
                   onClick={() => {
-                    this.sendReadConfirmation();
+                    //this.sendReadConfirmation();
                   }}>
                   <i className='lf-icon-step-done icon-red'></i>
                 </div>
@@ -242,40 +247,39 @@ export class MessageToolbar extends PureComponent {
     );
   }
 
-  sendReadConfirmation() {
-    const { messageResult } = this.props;
-    const validTo = [messageResult.result.from.emailAddress.address];
+  //   sendReadConfirmation() {
+  //     const { messageResult } = this.props;
+  //     const validTo = [messageResult.result.from.emailAddress.address];
 
-    const headers = {
-      To: validTo.join(', '),
-      Subject: this.state.subject,
-      attachments: [],
-    };
+  //     const headers = {
+  //       To: validTo.join(', '),
+  //       Subject: this.state.subject,
+  //       attachments: [],
+  //     };
 
-    const email = {
-      headers,
-      to: headers.To,
-      cc: '',
-      bcc: '',
-      uppyPreviews: [],
-      content: 'Lectura confirmada :-)',
-      subject: 'Confirmación de lectura',
-      importance: 'Normal',
-      internetMessageId: `<${uuid()}-${uuid()}@lefebvre.es>`,
-    };
+  //     const email = {
+  //       headers,
+  //       to: headers.To,
+  //       cc: '',
+  //       bcc: '',
+  //       uppyPreviews: [],
+  //       content: 'Lectura confirmada :-)',
+  //       subject: 'Confirmación de lectura',
+  //       importance: 'Normal',
+  //       internetMessageId: `<${uuid()}-${uuid()}@lefebvre.es>`,
+  //     };
 
-    sendMessage({
-      data: email,
-      attachments: [],
-    })
-      .then((_) => {
-        debugger;
-      })
-      .catch((err) => {
-        console.log(err);
-        debugger;
-      });
-  }
+  //     sendMessage({
+  //       data: email,
+  //       attachments: [],
+  //     })
+  //       .then((_) => {
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //         debugger;
+  //       });
+  //   }
 }
 
 export default withTranslation()(MessageToolbar);
