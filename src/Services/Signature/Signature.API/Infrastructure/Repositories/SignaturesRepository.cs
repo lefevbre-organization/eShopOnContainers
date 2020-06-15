@@ -162,7 +162,7 @@
 
             try
             {
-                var userSignature = GetNewUserSignature(user, signatureIn.ExternalId, signatureIn.Guid, signatureIn.App);
+                var userSignature = GetNewUserSignature(user, signatureIn.ExternalId, signatureIn.Guid, signatureIn.App, signatureIn.Documents);
 
                 var userDb = await _context.Signatures.Find(GetFilterUser(user)).SingleOrDefaultAsync();
                 if (userDb == null)
@@ -404,15 +404,22 @@
             return null;
         }
 
-        private UserSignatures GetNewUserSignature(string user, string externalId, string guid, string app)
+        private UserSignatures GetNewUserSignature(string user, string externalId, string guid, string app, List<Document> documents)
         {
+            
+
             return new UserSignatures()
             {
                 User = user.ToUpperInvariant(),
                 AvailableSignatures = 0,
                 Brandings = new List<UserBranding>(),
                 Signatures = new List<Signature>() {
-                        new Signature() {ExternalId = externalId, Guid= guid, App= app.ToLowerInvariant()}
+                        new Signature() {
+                            ExternalId = externalId, 
+                            Guid= guid, 
+                            App= app.ToLowerInvariant(),
+                            Documents = documents
+                        }
                     }
             };
         }

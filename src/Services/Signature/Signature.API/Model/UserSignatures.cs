@@ -53,89 +53,80 @@ namespace Signature.API.Model
 
     public partial class UserSignatures
     {
-        [JsonProperty("_id")]
+        [BsonId]
+        [BsonIgnoreIfDefault]
+        [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
-        [JsonProperty("user")]
+        [BsonElement("user")]
         public string User { get; set; }
 
-        [JsonProperty("availableSignatures")]
+        [BsonElement("availableSignatures")]
         public int AvailableSignatures { get; set; }
 
-        [JsonProperty("brandings")]
+        [BsonElement("brandings")]
         public List<UserBranding> Brandings { get; set; }
 
-        [JsonProperty("signatures")]
+        [BsonElement("signatures")]
         public List<Signature> Signatures { get; set; }
     }
 
-    public partial class AvailableSignatures
-    {
-        [JsonProperty("$numberInt")]
-        [JsonConverter(typeof(ParseStringConverter))]
-        public long NumberInt { get; set; }
-    }
-
+    
     public partial class Branding
     {
-        [JsonProperty("app")]
+        [BsonElement("app")]
         public string App { get; set; }
 
-        [JsonProperty("externalId")]
-        public Guid ExternalId { get; set; }
+        [BsonElement("externalId")]
+        public string ExternalId { get; set; }
     }
 
-    public partial class Id
-    {
-        [JsonProperty("$oid")]
-        public string Oid { get; set; }
-    }
-
+    
     public partial class Signature
     {
-        [JsonProperty("externalId")]
+        [BsonElement("externalId")]
         public string ExternalId { get; set; }
 
-        [JsonProperty("guid")]
+        [BsonElement("guid")]
         public string Guid { get; set; }
 
-        [JsonProperty("app")]
+        [BsonElement("app")]
         public string App { get; set; }
 
-        [JsonProperty("documents")]
+        [BsonElement("documents")]
         public List<Document> Documents { get; set; }
     }
 
     public partial class Document
     {
-        [JsonProperty("externalFileName")]
+        [BsonElement("externalFileName")]
         public string ExternalFileName { get; set; }
 
-        [JsonProperty("externalId")]
-        public Guid ExternalId { get; set; }
+        [BsonElement("externalId")]
+        public string ExternalId { get; set; }
 
-        [JsonProperty("internalInfo")]
+        [BsonElement("internalInfo")]
         public InternalInfo InternalInfo { get; set; }
 
-        [JsonProperty("signer")]
+        [BsonElement("signer")]
         public Signer Signer { get; set; }
     }
 
     public partial class InternalInfo
     {
-        [JsonProperty("docId")]
-        public long Id { get; set; }
+        [BsonElement("docId")]
+        public string DocId { get; set; }
 
-        [JsonProperty("docName")]
-        public string FileName { get; set; }
+        [BsonElement("docName")]
+        public string DocName { get; set; }
     }
 
     public partial class Signer
     {
-        [JsonProperty("email")]
+        [BsonElement("email")]
         public string Email { get; set; }
 
-        [JsonProperty("name")]
+        [BsonElement("name")]
         public string Name { get; set; }
     }
 
