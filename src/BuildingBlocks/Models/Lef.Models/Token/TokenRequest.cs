@@ -4,12 +4,11 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
     public class TokenRequest
     {
-        public int? IdApp { get; set; }
-        public string IdClienteNavision { get; set; }
-        public string Name { get; set; }
-        public string IdUser { get; set; }
-        //TODO: meter idApp
-        public List<string> Roles { get; set; }
+        public int? idApp { get; set; }
+        public string idClienteNavision { get; set; }
+        public string name { get; set; }
+        public string idUserApp { get; set; }
+        public List<string> roles { get; set; }
     }
 
 

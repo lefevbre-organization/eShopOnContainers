@@ -16,6 +16,9 @@ class App extends Component {
       this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
         this
       );
+      this.handleGetAddonsInfoFromLexonConnector = this.handleGetAddonsInfoFromLexonConnector.bind(
+        this
+      );
   
   }
 
@@ -24,14 +27,22 @@ class App extends Component {
       'GetUserFromLexonConnector',
       this.handleGetUserFromLexonConnector
    );
-  }
+   window.addEventListener(
+    'GetAddonsInfoFromLexonConnector',
+    this.handleGetAddonsInfoFromLexonConnector
+  );
 
+  }
 
   componentWillUnmount() {
     window.removeEventListener(
       'GetUserFromLexonConnector',
       this.handleGetUserFromLexonConnector
    );
+   window.removeEventListener(
+    'GetAddonsInfoFromLexonConnector',
+    this.handleGetAddonsInfoFromLexonConnector
+  );
 
   }
 
@@ -76,6 +87,14 @@ class App extends Component {
       this.setState({ addonData: addonData, bbdd: { idCompany: addonData.idCompany, bbdd: addonData.bbdd }})
       this.sendMessagePutUser(userId, addonData);
     }
+  }
+
+  handleGetAddonsInfoFromLexonConnector() {
+    window.dispatchEvent(
+      new CustomEvent('PutAddonFromLexonConnector', {
+        
+      })
+    );
   }
 
   render() {

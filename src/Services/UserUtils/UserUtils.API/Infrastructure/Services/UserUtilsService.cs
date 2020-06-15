@@ -455,33 +455,32 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
         #endregion Token Validation
 
+        private long? GetLongIdUser(string idUser)
+        {
+            long.TryParse(idUser, out long idUserLong);
+            return idUserLong;
+        }
         private void AddValuesToPayload(JwtPayload payload, TokenRequest tokenRequest)
         {
-            AddClaimToPayload(payload, tokenRequest.IdClienteNavision, nameof(tokenRequest.IdClienteNavision));
-            AddClaimToPayload(payload, tokenRequest.Roles, nameof(tokenRequest.Roles));
-            AddClaimToPayload(payload, tokenRequest.Name, nameof(tokenRequest.Name));
-            AddClaimToPayload(payload, tokenRequest.IdApp, nameof(tokenRequest.IdApp));
-            AddClaimToPayload(payload, tokenRequest.IdUser, nameof(tokenRequest.IdUser));
+            AddClaimToPayload(payload, tokenRequest.idClienteNavision, nameof(tokenRequest.idClienteNavision));
+            AddClaimToPayload(payload, tokenRequest.roles, nameof(tokenRequest.roles));
+            AddClaimToPayload(payload, tokenRequest.name, nameof(tokenRequest.name));
+            AddClaimToPayload(payload, tokenRequest.idApp, nameof(tokenRequest.idApp));
+            AddClaimToPayload(payload, GetLongIdUser(tokenRequest.idUserApp), nameof(tokenRequest.idUserApp));
+            AddClaimToPayload(payload, tokenRequest.idUserApp, "idUser");
+
+
 
             if (tokenRequest is TokenRequestCentinelaViewFirm tokenRequestCentinelaViewFirm)
             {
-                AddClaimToPayload(payload, tokenRequestCentinelaViewFirm.Guid, nameof(tokenRequestCentinelaViewFirm.Guid));
+                AddClaimToPayload(payload, tokenRequestCentinelaViewFirm.guid, nameof(tokenRequestCentinelaViewFirm.guid));
                 if (tokenRequest is TokenRequestCentinelaNewFirm tokenRequestCentinela)
                 {
-                    AddClaimToPayload(payload, tokenRequestCentinela.DocumentsId, nameof(tokenRequestCentinela.DocumentsId));
-                    AddClaimToPayload(payload, tokenRequestCentinela.RecipientsId, nameof(tokenRequestCentinela.RecipientsId));
-                    AddClaimToPayload(payload, tokenRequestCentinela.MailsAdmins, nameof(tokenRequestCentinela.MailsAdmins));
-                    AddClaimToPayload(payload, tokenRequestCentinela.LogoUrl, nameof(tokenRequestCentinela.LogoUrl));
+                    AddClaimToPayload(payload, tokenRequestCentinela.documentsId, nameof(tokenRequestCentinela.documentsId));
+                    AddClaimToPayload(payload, tokenRequestCentinela.recipientsId, nameof(tokenRequestCentinela.recipientsId));
+                    AddClaimToPayload(payload, tokenRequestCentinela.mailsAdmins, nameof(tokenRequestCentinela.mailsAdmins));
+                    AddClaimToPayload(payload, tokenRequestCentinela.logoUrl, nameof(tokenRequestCentinela.logoUrl));
                 }
-            }
-            if (tokenRequest is TokenRequestDataBase tokenRequesDB)
-            {
-                AddClaimToPayload(payload, tokenRequesDB.bbdd, nameof(tokenRequesDB.bbdd));
-            }
-            if (tokenRequest is TokenRequestLogin tokenRequestLogin)
-            {
-                AddClaimToPayload(payload, tokenRequestLogin.Login, nameof(tokenRequestLogin.Login));
-                AddClaimToPayload(payload, tokenRequestLogin.Password, nameof(tokenRequestLogin.Password));
             }
             if (tokenRequest is TokenRequestNewMail tokenRequestNewMail)
             {
@@ -497,6 +496,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     AddClaimToPayload(payload, tokenRequestOpenMail.idMail, nameof(tokenRequestOpenMail.idMail));
                 }
             }
+            if (tokenRequest is TokenRequestDataBase tokenRequesDB)
+            {
+                AddClaimToPayload(payload, tokenRequesDB.bbdd, nameof(tokenRequesDB.bbdd));
+            }
+            if (tokenRequest is TokenRequestLogin tokenRequestLogin)
+            {
+                AddClaimToPayload(payload, tokenRequestLogin.login, nameof(tokenRequestLogin.login));
+                AddClaimToPayload(payload, tokenRequestLogin.password, nameof(tokenRequestLogin.password));
+            }
         }
 
         private void AddClaimToPayload(JwtPayload payload, object valorClaim, string nombreClaim)
@@ -510,17 +518,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         private TokenRequest BuidSpecificToken(TokenModelView token, short idApp)
         {
             if (token.idClienteNavision != null && token.bbdd != null
-                  && token.idEntity != null && token.idEntityType != null
+                  //&& token.idEntity != null && token.idEntityType != null
                   && token.folder != null && token.provider != null
                   && token.idMail != null && token.mailAccount != null)
             {
                 return new TokenRequestOpenMail
                 {
-                    IdApp = idApp,
-                    IdClienteNavision = token.idClienteNavision,
+                    idApp = idApp,
+                    idClienteNavision = token.idClienteNavision,
                     bbdd = token.bbdd,
-                    idEntity = (int)token.idEntity,
-                    idEntityType = (short)token.idEntityType,
+                    idEntity = token.idEntity,
+                    idEntityType = token.idEntityType,
                     folder = token.folder,
                     provider = token.provider,
                     idMail = token.idMail,
@@ -533,8 +541,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 return new TokenRequestNewMail()
                 {
-                    IdApp = idApp,
-                    IdClienteNavision = token.idClienteNavision,
+                    idApp = idApp,
+                    idClienteNavision = token.idClienteNavision,
                     bbdd = token.bbdd,
                     idEntity = (int)token.idEntity,
                     idEntityType = (short)token.idEntityType
@@ -544,18 +552,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 return new TokenRequestDataBase()
                 {
-                    IdApp = idApp,
-                    IdClienteNavision = token.idClienteNavision,
+                    idApp = idApp,
+                    idClienteNavision = token.idClienteNavision,
                     bbdd = token.bbdd
                 };
             }
             else if (token.login != null && token.password != null)
             {
-                return new TokenRequestLogin() { IdApp = idApp, Login = token.login, Password = token.password };
+                return new TokenRequestLogin() { idApp = idApp, login = token.login, password = token.password };
             }
             else if (token.idClienteNavision != null)
             {
-                return new TokenRequest() { IdApp = idApp, IdClienteNavision = token.idClienteNavision };
+                return new TokenRequest() { idApp = idApp, idClienteNavision = token.idClienteNavision };
             }
 
             return null;
@@ -572,15 +580,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             try
             {
                 var userLefebvreResult = (token is TokenRequestLogin)
-                     ? await GetUserDataWithLoginAsync(((TokenRequestLogin)token).Login, ((TokenRequestLogin)token).Password)
-                     : await GetUserDataWithEntryAsync(token.IdClienteNavision);
+                     ? await GetUserDataWithLoginAsync(((TokenRequestLogin)token).login, ((TokenRequestLogin)token).password)
+                     : await GetUserDataWithEntryAsync(token.idClienteNavision);
 
                 if (userLefebvreResult?.data?._idEntrada != null)
                 {
                     result.data.valid = true;
-                    token.IdClienteNavision = userLefebvreResult?.data?._idEntrada;
-                    token.Name = userLefebvreResult?.data?.name;
-                    token.Roles = new List<string>() { "gmailpanel", "outlookpanel", "lexonconnector", "centinelaconnector" };
+                    token.idClienteNavision = userLefebvreResult?.data?._idEntrada;
+                    token.name = userLefebvreResult?.data?.name;
+                    token.roles = new List<string>() { "gmailpanel", "outlookpanel", "lexonconnector", "centinelaconnector" };
                 }
                 else
                 {
@@ -589,16 +597,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     return result;
                 }
 
-                var apps = await GetUserUtilsAsync(token.IdClienteNavision, true);
+                var apps = await GetUserUtilsAsync(token.idClienteNavision, true);
                 foreach (var app in apps.data)
                 {
-                    token.Roles.Add(app.descHerramienta);
+                    token.roles.Add(app.descHerramienta);
                 }
 
-                var areas = await GetAreasByUserAsync(token.IdClienteNavision);
+                var areas = await GetAreasByUserAsync(token.idClienteNavision);
                 foreach (var area in areas.data)
                 {
-                    token.Roles.Add(area.descArea);
+                    token.roles.Add(area.descArea);
                 }
             }
             catch (Exception ex)
@@ -644,12 +652,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             if (result.data?.valid == false) return result;
 
             //2. Obtener datos de lexon (TODO: evaluar si es necesari, se puede obviar con el paso anterior u obtenemos un método más eficiente)
-            if (tokenRequest.IdApp == _settings.Value.IdAppLexon)
+            if (tokenRequest.idApp == _settings.Value.IdAppLexon)
             {
-                Result<LexUser> lexUserResult = await GetLexonUserAsync(tokenRequest.IdClienteNavision);
+                Result<LexUser> lexUserResult = await GetLexonUserAsync(tokenRequest.idClienteNavision);
                 if (string.IsNullOrEmpty(lexUserResult?.data?.idNavision))
                     TraceOutputMessage(result.errors, $"Error get user from lexon", "Error Get Lexon Token");
-                tokenRequest.IdUser = lexUserResult?.data?.idUser;
+                tokenRequest.idUserApp = lexUserResult?.data?.idUser;
                 // tokenRequest.IdUser = "449";
             }
 
@@ -659,7 +667,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 GetContactDataFromLexon((TokenRequestNewMail)tokenRequest);
 
             if (tokenRequest is TokenRequestCentinelaNewFirm)
-                ((TokenRequestCentinelaNewFirm)tokenRequest).Guid = Guid.NewGuid().ToString();
+                ((TokenRequestCentinelaNewFirm)tokenRequest).guid = Guid.NewGuid().ToString();
 
             var tokenString = await Task.Run(() =>
             {
@@ -720,7 +728,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             var tokenRequest = BuidSpecificToken(token, idApp);
 
             var tokenResult = await GetGenericTokenAsync(tokenRequest, addTerminatorToToken);
-            var lexUser = new LexUser() { idNavision = tokenRequest.IdClienteNavision, idUser = tokenRequest.IdUser, token = tokenResult.data.token };
+            var lexUser = new LexUser() { idNavision = tokenRequest.idClienteNavision, idUser = tokenRequest.idUserApp, token = tokenResult.data.token };
 
             var resultLexUser = new Result<LexUser>(lexUser);
             resultLexUser.errors.AddRange(tokenResult.errors);
@@ -742,7 +750,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 bbdd = token.bbdd,
                 idEntity = token.idEntity,
                 idType = token.idEntityType,
-                idUser = token.IdUser
+                idUser = token.idUserApp
             };
             Result<LexContact> contactsResult = await GetLexonContactsAsync(search);
             if (!string.IsNullOrEmpty(contactsResult?.data.Email))

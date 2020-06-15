@@ -88,7 +88,7 @@ export const getLabelList = async () => {
   const client = await getAuthenticatedClient(accessToken);
 
   try {
-    const folders = await client.api('/me/mailFolders').get();
+    const folders = await client.api('/me/mailFolders?$top=200').get();
     return folders.value;
   } catch (err) {
     console.log(err);

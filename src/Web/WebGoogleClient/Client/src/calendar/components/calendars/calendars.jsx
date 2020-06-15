@@ -20,9 +20,9 @@ export class Calendars extends React.Component {
         };      
 
         this.toasts = [
-            { content: 'Processing', cssClass: 'e-toast-black', icon: '' },
-            { content: 'Process complete', cssClass: 'e-toast-black', icon: '' },
-            { content: 'Error', cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
+            { content: i18n.t("schedule.toast-processing"), cssClass: 'e-toast-black', icon: '' },
+            { content: i18n.t("schedule.toast-process-complete"), cssClass: 'e-toast-black', icon: '' },
+            { content: i18n.t("schedule.toast-process-error"), cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
         ] 
     }
 

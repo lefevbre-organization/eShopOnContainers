@@ -70,15 +70,11 @@ export class Main extends Component {
         //this.CalendarList = [];
         this.position = { X: 'Center', Y: 'Bottom' };
         this.resourceCalendarData = [];
-        this.ownerData = [
-            { text: 'a.valverde-ext@lefebvre.es', id:'a.valverde-ext@lefebvre.es' },
-            { text: 'albertovalverd@hotmail.com', id: 'albertovalverd@hotmail.com' },
-            { text: 'alberto.valverde.escribano@gmail.com', id: 'alberto.valverde.escribano@gmail.com' }  
-        ];  
+        //this.ownerData = [];  
         this.toasts = [
-            { content: 'Processing', cssClass: 'e-toast-black', icon: '' },
-            { content: 'Process complete', cssClass: 'e-toast-black', icon: '' },
-            { content: 'Error', cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
+            { content: i18n.t("schedule.toast-processing"), cssClass: 'e-toast-black', icon: '' },
+            { content: i18n.t("schedule.toast-process-complete"), cssClass: 'e-toast-black', icon: '' },
+            { content: i18n.t("schedule.toast-process-error"), cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
         ]
         this.instance = new Internationalization();
         this.tabInstance = new TabComponent;
@@ -160,6 +156,13 @@ export class Main extends Component {
             L10n.load(data);
         }
     }
+
+    convertUnicode(input) {
+        return input.replace(/\\u(\w{4,4})/g, function (a, b) {
+            var charcode = parseInt(b, 16);
+            return String.fromCharCode(charcode);
+    });
+}
 
     calendarColorModify(calendarId, color) {
 
@@ -739,6 +742,8 @@ export class Main extends Component {
                     event = this.buildEventoGoogle(args.changedRecords[0]);
                 }
 
+               // this.setState({ tagAttendess: [] })
+
                 //call function to update event
                 this.updateCalendarEventCRUD(calendarToModify, itemToModify, event);
 
@@ -755,7 +760,9 @@ export class Main extends Component {
                         // refresh event data
                         args.data[0].Id = result.id;
                         args.data[0].ImageName = "lefebvre";
-                        args.data[0].Attendees = result.attendees;
+                        args.data[0].Attendees = result.attendees;  
+                        //args.data[0].ImageName = "lefebvre";
+                        this.setState({ tagAttendess: [] })
 
                         this.scheduleObj.refreshEvents();
                         this.toastObj.show(this.toasts[1]);
@@ -1029,7 +1036,8 @@ export class Main extends Component {
                                 </div>
                         )}
                         
-                        <section className='main hbox space-between'>
+                        <section className='main hbox space-between'>  
+                           
                             <Sidebar
                                 sideBarCollapsed={!this.layoutIframe ? (false) : ( true )}
                                 sideBarToggle={this.toggleSideBar}
@@ -1073,8 +1081,7 @@ export class Main extends Component {
                                 <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
-                                            <ScheduleComponent    
-                                               
+                                            <ScheduleComponent  
                                                 ref={schedule => this.scheduleObj = schedule}
                                                 width='100%'
                                                 currentView="Month"

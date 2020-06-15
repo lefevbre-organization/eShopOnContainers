@@ -51,7 +51,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             , bool addTerminatorToToken = true
             )
         {
-            if (string.IsNullOrEmpty(tokenRequest.Login) && string.IsNullOrEmpty(tokenRequest.Password))
+            if (string.IsNullOrEmpty(tokenRequest.login) && string.IsNullOrEmpty(tokenRequest.password))
                 return BadRequest("Must be a valid login and password");
 
             Result<TokenData> result = await _service.GetGenericTokenAsync(tokenRequest, addTerminatorToToken);
@@ -75,7 +75,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             if (string.IsNullOrEmpty(idClienteNavision))
                 return BadRequest("id value invalid. Must be a valid user code in the enviroment or login and password");
 
-            var token = new TokenRequest() { IdClienteNavision = idClienteNavision , IdApp = _settings.Value.IdAppSignaturit };
+            var token = new TokenRequest() { idClienteNavision = idClienteNavision , idApp = _settings.Value.IdAppSignaturit };
             var result = await _service.GetGenericTokenAsync(token, addTerminatorToToken);
 
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);

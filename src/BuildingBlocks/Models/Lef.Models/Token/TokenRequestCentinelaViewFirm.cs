@@ -5,7 +5,7 @@
         /// <summary>
         /// generado anteriormente y ahora recibido
         /// </summary>
-        public string Guid { get; set; }
+        public string guid { get; set; }
 
     }
 

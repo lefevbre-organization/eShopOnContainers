@@ -494,7 +494,7 @@ export const downloadFile = async (
 export const getRawAddon = async (
   addonData
 ) => {
-  const url = `${window.URL_GET_ACCOUNTS}/E1621396/raw?`
+  const url = `${window.URL_GET_ACCOUNTS}/${addonData.idClienteNav}/raw?`
   + 'provider='+ addonData.provider + '&account=' + 
   addonData.account +'&messageId=' + addonData.messageById;
 

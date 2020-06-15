@@ -313,6 +313,7 @@ export class ComposeMessage extends PureComponent {
       }
       if (this.props.labelsResult) {
         this.props.loadLabelMessages(this.props.labelsResult.labelInbox);
+        this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
       }
     }
   }
