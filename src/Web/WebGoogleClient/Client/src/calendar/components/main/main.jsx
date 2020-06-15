@@ -70,15 +70,11 @@ export class Main extends Component {
         //this.CalendarList = [];
         this.position = { X: 'Center', Y: 'Bottom' };
         this.resourceCalendarData = [];
-        this.ownerData = [
-            { text: 'a.valverde-ext@lefebvre.es', id:'a.valverde-ext@lefebvre.es' },
-            { text: 'albertovalverd@hotmail.com', id: 'albertovalverd@hotmail.com' },
-            { text: 'alberto.valverde.escribano@gmail.com', id: 'alberto.valverde.escribano@gmail.com' }  
-        ];  
+        //this.ownerData = [];  
         this.toasts = [
-            { content: 'Processing', cssClass: 'e-toast-black', icon: '' },
-            { content: 'Process complete', cssClass: 'e-toast-black', icon: '' },
-            { content: 'Error', cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
+            { content: i18n.t("schedule.toast-processing"), cssClass: 'e-toast-black', icon: '' },
+            { content: i18n.t("schedule.toast-process-complete"), cssClass: 'e-toast-black', icon: '' },
+            { content: i18n.t("schedule.toast-process-error"), cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
         ]
         this.instance = new Internationalization();
         this.tabInstance = new TabComponent;
@@ -746,6 +742,8 @@ export class Main extends Component {
                     event = this.buildEventoGoogle(args.changedRecords[0]);
                 }
 
+               // this.setState({ tagAttendess: [] })
+
                 //call function to update event
                 this.updateCalendarEventCRUD(calendarToModify, itemToModify, event);
 
@@ -762,7 +760,8 @@ export class Main extends Component {
                         // refresh event data
                         args.data[0].Id = result.id;
                         args.data[0].ImageName = "lefebvre";
-                        args.data[0].Attendees = result.attendees;                      
+                        args.data[0].Attendees = result.attendees;  
+                        //args.data[0].ImageName = "lefebvre";
                         this.setState({ tagAttendess: [] })
 
                         this.scheduleObj.refreshEvents();
