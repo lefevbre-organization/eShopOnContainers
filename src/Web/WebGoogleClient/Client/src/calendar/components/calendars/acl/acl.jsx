@@ -5,6 +5,7 @@ import { addAcl, listAcl, deleteAcl } from "../../../../api/calendar-api";
 import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import { ComboBoxComponent } from '@syncfusion/ej2-react-dropdowns';
 import { ToastComponent } from '@syncfusion/ej2-react-notifications';
+import i18n from 'i18next';
 import '../calendars.scss';
 
 
@@ -22,15 +23,16 @@ export class Acl extends React.Component {
         this.fieldsList = { text: "text", iconCss: "icon" };
         this.onAddPermission = this.onAddPermission.bind(this);
         this.getlistAcl = this.getlistAcl.bind(this);
+       
 
         this.state = {
             calendarid: this.props.calendarId
         };
 
         this.toasts = [
-            { content: 'Processing', cssClass: 'e-toast-black', icon: '' },
-            { content: 'Process complete', cssClass: 'e-toast-black', icon: '' },
-            { content: 'Error', cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
+            { content: i18n.t("schedule.toast-processing"), cssClass: 'e-toast-black', icon: '' },
+            { content: i18n.t("schedule.toast-process-complete"), cssClass: 'e-toast-black', icon: '' },
+            { content: i18n.t("schedule.toast-process-error"), cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
         ]
 
         this.roleData = [
