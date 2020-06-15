@@ -455,13 +455,20 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
         #endregion Token Validation
 
+        private long? GetLongIdUser(string idUser)
+        {
+            long.TryParse(idUser, out long idUserLong);
+            return idUserLong;
+        }
         private void AddValuesToPayload(JwtPayload payload, TokenRequest tokenRequest)
         {
             AddClaimToPayload(payload, tokenRequest.idClienteNavision, nameof(tokenRequest.idClienteNavision));
             AddClaimToPayload(payload, tokenRequest.roles, nameof(tokenRequest.roles));
             AddClaimToPayload(payload, tokenRequest.name, nameof(tokenRequest.name));
             AddClaimToPayload(payload, tokenRequest.idApp, nameof(tokenRequest.idApp));
-            AddClaimToPayload(payload, tokenRequest.idUserApp, nameof(tokenRequest.idUserApp));
+            AddClaimToPayload(payload, GetLongIdUser(tokenRequest.idUserApp), nameof(tokenRequest.idUserApp));
+            AddClaimToPayload(payload, tokenRequest.idUserApp, "idUser");
+
 
 
             if (tokenRequest is TokenRequestCentinelaViewFirm tokenRequestCentinelaViewFirm)
@@ -511,7 +518,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         private TokenRequest BuidSpecificToken(TokenModelView token, short idApp)
         {
             if (token.idClienteNavision != null && token.bbdd != null
-                  && token.idEntity != null && token.idEntityType != null
+                  //&& token.idEntity != null && token.idEntityType != null
                   && token.folder != null && token.provider != null
                   && token.idMail != null && token.mailAccount != null)
             {
@@ -520,8 +527,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     idApp = idApp,
                     idClienteNavision = token.idClienteNavision,
                     bbdd = token.bbdd,
-                    idEntity = (int)token.idEntity,
-                    idEntityType = (short)token.idEntityType,
+                    idEntity = token.idEntity,
+                    idEntityType = token.idEntityType,
                     folder = token.folder,
                     provider = token.provider,
                     idMail = token.idMail,
