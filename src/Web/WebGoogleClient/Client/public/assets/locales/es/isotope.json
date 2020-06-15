@@ -91,7 +91,10 @@
   "schedule": {
     "eventtype": "Tipo de evento",
     "profesional-event": "Evento profesional",
-    "personal-event": "Evento personal"
+    "personal-event": "Evento personal",
+    "toast-processing": "Procesando",
+    "toast-process-complete": "Proceso completado",
+    "toast-process-error": "Error"
   },
   "calendar": {
     "title": "Configuración",

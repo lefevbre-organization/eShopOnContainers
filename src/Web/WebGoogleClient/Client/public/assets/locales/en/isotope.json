@@ -91,14 +91,17 @@
   "schedule": {
     "eventtype": "Event Type",
     "profesional-event": "Profesional Event",
-    "personal-event": "Personal Event"
+    "personal-event": "Personal Event",
+    "toast-processing": "Processing",
+    "toast-process-complete": "Process complete",
+    "toast-process-error": "Error"
   },
   "calendar": {
-    "title":  "Calendar Configuration",
+    "title": "Calendar Configuration",
     "modify": "Modify",
     "add": "Add Calendar",
     "name": "Name",
     "description": "Description",
-    "sharewithpeople": "Share with people"
+    "sharewithpeople": "Share with people"    
   }
 }

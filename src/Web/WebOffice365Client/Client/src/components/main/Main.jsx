@@ -278,19 +278,9 @@ export class Main extends Component {
 
         return false;
       } else {
-        if (
-          difP.added &&
-          difP.added.messagesResult &&
-          difP.added.messagesResult.label === null &&
-          difP.added.messagesResult.nextPageToken === null
-        ) {
-          return false;
-        } else {
-          return true;
-        }
+        return true;
       }
     }
-
     return true;
   }
 
@@ -539,7 +529,7 @@ export class Main extends Component {
         return;
       }
     }
-    if (!mailContacts) {
+    if (!mailContacts && this.props.history.location.pathname !== '/compose') {
       this.props.history.push(`/${label.id.toLowerCase()}`);
     }
   }

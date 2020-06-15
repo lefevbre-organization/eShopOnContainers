@@ -150,7 +150,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             )
         {
             if (string.IsNullOrEmpty(tokenRequest.idClienteNavision)
-                || (tokenRequest.idEntity == 0 || tokenRequest.idEntityType ==0))
+                && (tokenRequest.idEntity != null && tokenRequest.idEntityType != null))
                 return BadRequest("Must be a valid idClient and valid idtype and idEntityType");
             
             if (tokenRequest.idApp == null)
