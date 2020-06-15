@@ -817,21 +817,23 @@ export class ComposeMessage extends PureComponent {
                     {i18n.t('compose-message.mark-prioritary')}
                   </span>
                 </div>
-                <div className='receipt-wrapper'>
-                  {readConfirmation && (
-                    <i
-                      className='lf lf-icon-switch-right icon-priority'
-                      onClick={this.onToggleReadConfirmation}></i>
-                  )}
-                  {!readConfirmation && (
-                    <i
-                      className='lf lf-icon-switch-left icon-priority'
-                      onClick={this.onToggleReadConfirmation}></i>
-                  )}
-                  <span className='priority-text'>
-                    {i18n.t('compose-message.read-confirmation')}
-                  </span>
-                </div>
+                {window.SHOW_EXPERIMENTAL === '1' && (
+                  <div className='receipt-wrapper'>
+                    {readConfirmation && (
+                      <i
+                        className='lf lf-icon-switch-right icon-priority'
+                        onClick={this.onToggleReadConfirmation}></i>
+                    )}
+                    {!readConfirmation && (
+                      <i
+                        className='lf lf-icon-switch-left icon-priority'
+                        onClick={this.onToggleReadConfirmation}></i>
+                    )}
+                    <span className='priority-text'>
+                      {i18n.t('compose-message.read-confirmation')}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
