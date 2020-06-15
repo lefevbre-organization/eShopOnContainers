@@ -475,15 +475,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     AddClaimToPayload(payload, tokenRequestCentinela.logoUrl, nameof(tokenRequestCentinela.logoUrl));
                 }
             }
-            if (tokenRequest is TokenRequestDataBase tokenRequesDB)
-            {
-                AddClaimToPayload(payload, tokenRequesDB.bbdd, nameof(tokenRequesDB.bbdd));
-            }
-            if (tokenRequest is TokenRequestLogin tokenRequestLogin)
-            {
-                AddClaimToPayload(payload, tokenRequestLogin.login, nameof(tokenRequestLogin.login));
-                AddClaimToPayload(payload, tokenRequestLogin.password, nameof(tokenRequestLogin.password));
-            }
             if (tokenRequest is TokenRequestNewMail tokenRequestNewMail)
             {
                 AddClaimToPayload(payload, tokenRequestNewMail.idEntity, nameof(tokenRequestNewMail.idEntity));
@@ -497,6 +488,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     AddClaimToPayload(payload, tokenRequestOpenMail.folder, nameof(tokenRequestOpenMail.folder));
                     AddClaimToPayload(payload, tokenRequestOpenMail.idMail, nameof(tokenRequestOpenMail.idMail));
                 }
+            }
+            if (tokenRequest is TokenRequestDataBase tokenRequesDB)
+            {
+                AddClaimToPayload(payload, tokenRequesDB.bbdd, nameof(tokenRequesDB.bbdd));
+            }
+            if (tokenRequest is TokenRequestLogin tokenRequestLogin)
+            {
+                AddClaimToPayload(payload, tokenRequestLogin.login, nameof(tokenRequestLogin.login));
+                AddClaimToPayload(payload, tokenRequestLogin.password, nameof(tokenRequestLogin.password));
             }
         }
 
