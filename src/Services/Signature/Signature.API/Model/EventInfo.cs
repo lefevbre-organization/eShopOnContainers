@@ -4,11 +4,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Signature.API.Model
 {
     public class EventInfo
     {
+        [BsonId]
+        [BsonIgnoreIfDefault]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string mongoId { get; set; }
+
         [JsonProperty("created_at")]
         public string CreatedAt { get; set; }
         
@@ -16,7 +23,7 @@ namespace Signature.API.Model
         public FileInfo File { get; set; }
         
         [JsonProperty("id")]
-        public string Id { get; set; }
+        public string DocumentId { get; set; }
 
         [JsonProperty("events")]
         public List<SingleEvent> Events { get; set; }

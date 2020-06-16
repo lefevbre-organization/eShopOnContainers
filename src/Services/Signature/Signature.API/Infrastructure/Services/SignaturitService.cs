@@ -91,6 +91,7 @@ namespace Signature.API.Infrastructure.Services
             foreach (UserFile file in signatureInfo.files)
             {
                 request.AddFileBytes($"files[{i}]", file.file, file.fileName);
+                i += 1;
             }
             foreach (CustomField field in signatureInfo.customFields)
             {

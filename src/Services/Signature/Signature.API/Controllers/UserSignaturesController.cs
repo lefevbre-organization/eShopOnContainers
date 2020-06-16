@@ -92,7 +92,7 @@
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> PostSignature([FromRoute]string user, [FromBody] Signature signatureIn)
         {
-            if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(signatureIn.externalId) || string.IsNullOrEmpty(signatureIn.guid) || string.IsNullOrEmpty(signatureIn.app))
+            if (string.IsNullOrEmpty(user) || string.IsNullOrEmpty(signatureIn.ExternalId) || string.IsNullOrEmpty(signatureIn.Guid) || string.IsNullOrEmpty(signatureIn.App))
                 return BadRequest("values invalid. Must be a valid user, signatureId, app and guid to insert the signature");
 
             var result = await _signaturesService.UpSertSignature(user, signatureIn);

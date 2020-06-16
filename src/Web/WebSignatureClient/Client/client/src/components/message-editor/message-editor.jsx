@@ -65,6 +65,11 @@ class MessageEditor extends Component {
     this.handleOnReminderDaysChange = this.onReminderDaysChange.bind(this);
     this.handleOnExpirationDaysChange = this.onExpirationDaysChange.bind(this);
     this.callApis = this.callApis.bind(this);
+    this.combineInfo = this.combineInfo.bind(this);
+    this.getDocumentsNamesAndIds = this.getDocumentsNamesAndIds.bind(this);
+    this.getDocumentsIds = this.getDocumentsIds.bind(this);
+    this.getDocumentsNames = this.getDocumentsNames.bind(this);
+    this.buildDocumentsInfo = this.buildDocumentsInfo.bind(this);
   }
 
   componentDidMount() {
@@ -452,20 +457,127 @@ class MessageEditor extends Component {
       //     }
       // } else 
       if (this.props.attachments){
-        var attachment = this.props.attachments[0];
-        var file = new File([attachment.content], attachment.fileName, {type: getFileType(attachment.fileName), lastModified: new Date()})
-        this.callApis(to, subject, content.innerHTML, file, this.props.attachments[0].content, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
-
+        let attachmentsList = [];
+        this.props.attachments.forEach(attachment => {
+          //var attachment = this.props.attachments[0];
+          var file = new File([attachment.content], attachment.fileName, {type: getFileType(attachment.fileName), lastModified: new Date()})
+          attachmentsList.push(file);
+          debugger;
+        });
+        //this.callApis(to, subject, content.innerHTML, file, this.props.attachments[0].content, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
+        this.callApis(to, subject, content.innerHTML, this.props.attachments, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
       }
       //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
     }
   }
 
+  example(){
+    var lookup = {};
+    var items = json.DATA;
+    var result = [];
 
-  callApis(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId){
+    for (var item, i = 0; item = items[i++];) {
+      var name = item.name;
+
+      if (!(name in lookup)) {
+        lookup[name] = 1;
+        result.push(name);
+      }
+    }
+  }
+
+  getDocumentsNames(signature){
+    var lookup = {};
+    var items = signature.documents;
+    var result = [];
+
+    for (var item, i = 0; item = items[i++];) {
+      var name = item.file.name;
+      var id = item.id;
+
+      if (!(name in lookup)) {
+        lookup[name] = 1;
+        result.push(name);
+      }
+    }
+    return result;
+  }
+
+  getDocumentsIds(signature){
+    var lookup = {};
+    var items = signature.documents;
+    var result = [];
+
+    for (var item, i = 0; item = items[i++];) {
+      var id = item.id;
+
+      if (!(id in lookup)) {
+        lookup[id] = 1;
+        result.push(id);
+      }
+    }
+    return result;
+  }
+
+
+  getDocumentsNamesAndIds(signature){
+    var lookup = {};
+    var items = signature.documents;
+    var result = [];
+
+    for (var item, i = 0; item = items[i++];) {
+      var name = item.file.name;
+      var id = item.id;
+      var info = {name: name, id: id}
+
+      if (!(info in lookup)) {
+        lookup[info] = 1;
+        result.push(info);
+      }
+    }
+    return result;
+  }
+
+  combineInfo(externalIds, internalIds){
+    let merged = [];
+
+    for(let i=0; i<externalIds.length; i++) {
+      merged.push({
+      ...externalIds[i], 
+      ...(internalIds.find((itmInner) => itmInner.name === externalIds[i].name))}
+      );
+    }
+    return merged;
+  }
+
+  buildDocumentsInfo(signature){
+    let result;
+
+    result = signature.documents.map(e => { 
+      return {
+        externalFileName: e.file.name, 
+        externalId: e.id,
+        signer: {name: e.name, email: e.email},
+        internalInfo: (
+          this.props.lefebvre.idDocuments.find( d => {
+            if (d.docName.replace(/ /g, '_') === e.file.name){
+              return d.docId
+            }
+          })		
+        )
+      }
+    })
+
+    return result;
+    
+  }
+
+  //callApis(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId){
+  callApis(to, subject, content, files, reminders, expiration, userId, guid, userBrandingId){
     const { lefebvre } = this.props;
     
-    createSignature2(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId, this.props.credentials.encrypted)
+    //createSignature2(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId, this.props.credentials.encrypted)
+    createSignature2(to, subject, content, files, reminders, expiration, userId, guid, userBrandingId, this.props.credentials.encrypted)
     .then( signatureInfo => {
       console.log(signatureInfo);
       if (signatureInfo.status_code){
@@ -473,13 +585,21 @@ class MessageEditor extends Component {
       } else {
         getUserSignatures(userId)
         .then( userInfo => {
-          if (userInfo && userInfo.errors && userInfo.errors.code && userInfo.errors.code === "1003"){
-            const signature = {externalId: signatureInfo.id, guid: guid, app: lefebvre.userApp}
-            createUser(userId, signature);
-          } else {
+          // if (userInfo && userInfo.errors && userInfo.errors.code && userInfo.errors.code === "1003"){
+          //   var externalIds = getDocumentsNamesAndIds(signatureInfo);
+          //   var combinedInfo = combineInfo(externalIds, lefebvre.idDocuments);
+          //   debugger;
+          //   const signature = {externalId: signatureInfo.id, guid: guid, app: lefebvre.userApp, signers: to, idDocuments:combinedInfo}
+          //   createUser(userId, signature);
+          // } else {
+            // var externalIds = this.getDocumentsIds(signatureInfo);
+            // var documentsNames = this.getDocumentsNames(signatureInfo);
+            // var combinedInfo = this.combineInfo(externalIds, lefebvre.idDocuments);
+            var documentsInfo = this.buildDocumentsInfo(signatureInfo);
+            debugger;
             console.log('Insertando sólo firma');
-            addOrUpdateSignature(userId, signatureInfo.id, guid, lefebvre.userApp);
-          }
+            addOrUpdateSignature(userId, signatureInfo.id, guid, lefebvre.userApp, documentsInfo );
+          //}
           decAvailableSignatures(userId)
           .then(res => this.props.setAvailableSignatures(res.data))
         })

@@ -95,9 +95,9 @@ export const setIdUserApp = idUserApp => ({
     payload: idUserApp
 })
 
-export const setIdDocument = idDocument => ({
+export const setIdDocuments = idDocuments => ({
     type: ActionTypes.LEFEBVRE_ID_DOCUMENT,
-    payload: idDocument
+    payload: idDocuments
 })
 
 
@@ -121,5 +121,5 @@ export default {
     setIdEntityType,
     setIdEntity,
     setIdUserApp,
-    setIdDocument
+    setIdDocuments
 };

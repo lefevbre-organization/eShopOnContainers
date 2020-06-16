@@ -29,5 +29,7 @@
         Task<Result<bool>> GetSignature(string signatureId, string documentId);
 
         //Task<Result<int>> DecAvailableSignatures(string user);
+
+        Task<Result<bool>> SaveEvent(EventInfo info);
     }
 }

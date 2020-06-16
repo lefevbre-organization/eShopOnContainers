@@ -51,6 +51,38 @@ export class MessageViewer extends Component {
     return res;
   }
 
+  getDocuments(signature){
+    var lookup = {};
+    var items = signature.documents;
+    var result = [];
+
+    for (var item, i = 0; item = items[i++];) {
+      var name = item.file.name;
+
+      if (!(name in lookup)) {
+        lookup[name] = 1;
+        result.push(name);
+      }
+    }
+    return result;
+  }
+
+  getSigners(signature){
+    var lookup = {};
+    var items = signature.documents;
+    var result = [];
+
+    for (var item, i = 0; item = items[i++];) {
+      var name = item.file.email;
+
+      if (!(name in lookup)) {
+        lookup[name] = 1;
+        result.push(name);
+      }
+    }
+    return result;
+  }
+
   renderSignerInfo(signer) {
     let emailSent;
     let emailDelivered;

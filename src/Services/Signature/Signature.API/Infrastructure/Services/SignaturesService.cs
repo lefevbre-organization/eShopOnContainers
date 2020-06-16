@@ -112,6 +112,13 @@
         #endregion Signatures
 
         #region Events
+        public async Task<Result<bool>> SaveEvent(EventInfo eventInfo)
+        {
+            var response = new Result<bool>();
+            var result = await _signaturesRepository.SaveEvent(eventInfo);
+            return response;
+        }
+
         public async Task<Result<bool>> GetSignature(string signatureId, string documentId)
         {
             //var result = new Result<BsonDocument>();
@@ -119,24 +126,32 @@
 
             var result = await _signaturesRepository.GetSignature(signatureId);
 
-            if (result.data != null)
+            if (result.data != null && result.data.Signatures.Count > 0)
             {
-                var user = result.data["user"].AsString;
-                var guid = result.data["signatures"][0]["guid"].AsString;
-                var app = result.data["signatures"][0]["app"].AsString;
+                //var user = result.data["user"].AsString;
+                //var guid = result.data["signatures"][0]["guid"].AsString;
+                //var app = result.data["signatures"][0]["app"].AsString;
+
+                var user = result.data.User;
+                var guid = result.data.Signatures[0].Guid;
+                var app = result.data.Signatures[0].App;
+
+
 
                 // Downloadfile
-                var File = GetSignedFile(signatureId, documentId);
+                var file = GetSignedFile(signatureId, documentId);
 
                 if (app == "lexon")
                 {
                     // Call lexon api to store document
-                    response = await SaveFileLexon(File);
+                    response = await SaveFileLexon(file);
 
                 }
                 else if (app == "centinela")
                 {
                     // Call centinela api to store document
+                    var cenDocId = result.data.Signatures[0].Documents.Find(e => e.ExternalId == documentId).InternalInfo.DocId;
+                    response = await SaveFileCentinela(file, guid, cenDocId);
                     
                 }
             }
@@ -192,6 +207,42 @@
             {
                 result = new Result<bool>() { errors = new List<ErrorInfo>(), infos = infos, data = true };
             } else
+            {
+                result = new Result<bool>() { errors = errors, infos = infos, data = false };
+            }
+            Console.WriteLine(response.Content);
+
+            return result;
+        }
+
+        public async Task<Result<bool>> SaveFileCentinela(BsonDocument file, string guid, string cenDocId)
+        {
+            var result = new Result<bool>();
+            var client = new RestClient($"{_settings.Value.CentinelaApiGwUrl}/lex/Lexon/entities/files/post");
+            client.Timeout = -1;
+            var request = new RestRequest(Method.POST);
+            Dictionary<string, string> values = new Dictionary<string, string>();
+            values.Add("idNavision", "45");
+            values.Add("conceptId", "lexon_admin_02");
+            values.Add("name", file["fileName"].AsString);
+            values.Add("contentFile", file["fileContent"].AsString);
+
+            var outputJson = JsonConvert.SerializeObject(values);
+            request.AddHeader("Accept", "text/plain");
+            request.AddHeader("Content-Type", "application/json-patch+json");
+
+            request.AddParameter("application/json-patch+json", outputJson, ParameterType.RequestBody);
+            IRestResponse response = await client.ExecuteAsync(request);
+
+            JObject responseJson = JObject.Parse(response.Content);
+            List<Info> infos = (List<Info>)responseJson["infos"].ToObject(typeof(List<Info>));
+            List<ErrorInfo> errors = (List<ErrorInfo>)responseJson["errors"].ToObject(typeof(List<ErrorInfo>));
+
+            if (response.Content != null && errors.Count == 0)
+            {
+                result = new Result<bool>() { errors = new List<ErrorInfo>(), infos = infos, data = true };
+            }
+            else
             {
                 result = new Result<bool>() { errors = errors, infos = infos, data = false };
             }
