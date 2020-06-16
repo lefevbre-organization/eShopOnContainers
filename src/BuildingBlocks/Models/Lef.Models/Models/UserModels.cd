@@ -7,14 +7,23 @@
       <FileName>Models\MongoModel.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexUser">
+    <Position X="3" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAACAAAAAAAAgAAAAAACAAAAAEAAAAAAAAAEAAAgA=</HashCode>
+      <FileName>Models\LexUser.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="aplicaciones" />
+    </ShowAsCollectionAssociation>
+  </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexCompany">
-    <Position X="5" Y="2.25" Width="1.5" />
+    <Position X="5" Y="2.5" Width="1.5" />
     <AssociationLine Name="entities" Type="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexEntity" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="6.023" Y="4.06" />
-        <Point X="6.023" Y="4.435" />
-        <Point X="5.875" Y="4.435" />
-        <Point X="5.875" Y="4.75" />
+        <Point X="6.023" Y="4.31" />
+        <Point X="6.023" Y="6.063" />
+        <Point X="6.25" Y="6.063" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
@@ -27,34 +36,34 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexEntity">
-    <Position X="5.25" Y="4.75" Width="1.5" />
+    <Position X="6.25" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAoIkQAAAAAIAAEAAAAAAAAAAAAQAA=</HashCode>
       <FileName>Models\LexEntity.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexMailActuation">
-    <Position X="2.75" Y="5" Width="1.5" />
+    <Position X="9.25" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAEAAQAABAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA=</HashCode>
       <FileName>Models\LexMailActuation.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.MySqlCompany">
-    <Position X="9.5" Y="0.5" Width="2.5" />
+    <Position X="11" Y="1.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAEAIAgBQAAAAAgEIQAYAAAABAAAIQAEAAEEAA=</HashCode>
       <FileName>MySql\MySqlCompany.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexNestedEntity">
-    <Position X="7.5" Y="5.5" Width="2.5" />
+    <Position X="8.25" Y="5.5" Width="2.5" />
     <AssociationLine Name="subChild" Type="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexNestedEntity" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="8.371" Y="6.733" />
-        <Point X="8.371" Y="7.379" />
-        <Point X="9.688" Y="7.379" />
-        <Point X="9.688" Y="6.733" />
+        <Point X="9.121" Y="6.733" />
+        <Point X="9.121" Y="7.379" />
+        <Point X="10.438" Y="7.379" />
+        <Point X="10.438" Y="6.733" />
       </Path>
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.089" Y="0.154" />
@@ -69,14 +78,14 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexActuation">
-    <Position X="7.5" Y="2" Width="1.5" />
+    <Position X="7.25" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAIAAAAAAAIIAAAAAAAAAAEAAAAAAAQAQAAQQA=</HashCode>
       <FileName>Models\LexActuation.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexContact">
-    <Position X="0.75" Y="4" Width="1.5" />
+    <Position X="0.5" Y="4.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAACAABAAAABAAAAYAQAAAAEAAAAAAIAAAAAA=</HashCode>
       <FileName>Models\LexContact.cs</FileName>
@@ -90,16 +99,16 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexUserSimple">
-    <Position X="3" Y="1.75" Width="1.5" />
+    <Position X="3.25" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
       <FileName>Models\LexUserSimple.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models.LexUserSimpleCheck">
-    <Position X="2.75" Y="3.5" Width="1.75" />
+    <Position X="2.75" Y="6.75" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Models\LexUserSimpleCheck.cs</FileName>
     </TypeIdentifier>
   </Class>

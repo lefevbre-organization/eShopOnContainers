@@ -124,7 +124,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
             return result;
         }
 
-#endregion New Region
+        #endregion User
 
         #region Entities
 
@@ -579,6 +579,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
 
             return result;
         }
+
         public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification)
         {
             var result = new Result<int>(0);
@@ -794,6 +795,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
             var comma = withComma ? ", " : "";
             return !string.IsNullOrEmpty(value) ? $"{comma}\"{name}\":\"{value}\"" : string.Empty;
         }
+
         #endregion Common
     }
 }
