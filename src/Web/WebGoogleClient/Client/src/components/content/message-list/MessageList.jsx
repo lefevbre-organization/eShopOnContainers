@@ -11,7 +11,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import ListToolbar from './list-toolbar/ListToolbar';
 import ListFooter from './list-footer/ListFooter';
 import './messageList.scss';
-import { getMessage, getMessageHeader, getLabelSentItems } from '../../../api';
+import { getMessage } from '../../../api';
 
 const ViewMode = {
   LIST: 1,
@@ -48,6 +48,7 @@ export class MessageList extends Component {
     this.renderView = this.renderView.bind(this);
     this.renderMessages = this.renderMessages.bind(this);
     this.getContentByHeader = this.getContentByHeader.bind(this);
+    this.onDeletedMessages = this.onDeletedMessages.bind(this);
     this.isSentFolder = false;
   }
 
@@ -220,6 +221,12 @@ export class MessageList extends Component {
     return { nextToken, prevToken };
   }
 
+  onDeletedMessages(messages) {
+    for (let i = 0; i < messages.length; i++) {
+      this.onSelectionChange(false, messages[i]);
+    }
+  }
+
   render() {
     const { messagesResult } = this.props;
     const messagesTotal = messagesResult.label
@@ -241,6 +248,7 @@ export class MessageList extends Component {
           getLabelMessages={this.props.getLabelMessages}
           getPageTokens={this.props.getPageTokens}
           loadLabelMessageSingle={this.props.loadLabelMessageSingle}
+          onDeletedMessages={this.onDeletedMessages}
         />
         <PerfectScrollbar className='container-fluid no-gutters px-0 message-list-container'>
           {this.renderView()}
