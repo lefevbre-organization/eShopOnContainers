@@ -12,11 +12,18 @@ export default class Routing extends Component {
     constructor(props) {
       super(props);
       let token = JSON.parse(localStorage.getItem('auth-lexon'));
-      let actualPage = token ? PAGE_SELECT_COMPANY : PAGE_LOGIN;
+      let selectCompany = JSON.parse(localStorage.getItem('selectCompany'));
+      let actualPage = null;
+      if(selectCompany){
+        actualPage = PAGE_MESSAGE_CLASSIFICATIONS
+      } else {
+        actualPage = token ? PAGE_SELECT_COMPANY : PAGE_LOGIN;
+      }
+     
   
       this.state = {
         actualPage: actualPage,
-        data: null
+        data: selectCompany
       };
       // console.log(Office.context.mailbox.userProfile.emailAddress);
       this.changePage = this.changePage.bind(this);
@@ -54,6 +61,7 @@ export default class Routing extends Component {
         case PAGE_MESSAGE_CLASSIFICATIONS:
           return (
             <MessageClassifications 
+              isOfficeInitialized={isOfficeInitialized}
               selectCompany={data} 
               changePage={this.changePage}
             />
