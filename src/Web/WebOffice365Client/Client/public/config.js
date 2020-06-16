@@ -17,4 +17,4 @@ window.URL_MF_CENTINELA = 'http://localhost:3005/static/js/main.js';
 window.API_CENTINELA_GATEWAY =
   'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen';
 
-window.SHOW_EXPERIMENTAL = '1';
+window.SHOW_EXPERIMENTAL = '0';
