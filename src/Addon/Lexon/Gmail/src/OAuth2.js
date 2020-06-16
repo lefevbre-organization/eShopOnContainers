@@ -568,7 +568,8 @@ Service_.prototype.fetchToken_ = function(payload, optUrl) {
  // Use the configured token URL unless one is specified.
  var url = optUrl || this.tokenUrl_;
  var headers = {
-   'Accept': 'text/plain'
+   'Accept': 'text/plain',
+   'contentType': 'application/json'
  };
  if (this.tokenHeaders_) {
    headers = extend_(headers, this.tokenHeaders_);
@@ -576,17 +577,26 @@ Service_.prototype.fetchToken_ = function(payload, optUrl) {
  if (this.tokenPayloadHandler_) {
    payload = this.tokenPayloadHandler_(payload);
  }
- var response = UrlFetchApp.fetch('https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login' 
- + '?login='+ payload.login + '&pass=' + 
- payload.password, {
-   method: 'get',
-   headers: headers,
-  //  payload: payload,
-   muteHttpExceptions: true
- });
+ var data = {
+  'login': payload.login,
+  'password': payload.password
+  };
+  
+  var options = {
+      'method': "put",
+      'contentType': 'application/json',
+      'payload': JSON.stringify(data),
+      'muteHttpExceptions': true
+  };
+  
+ var response = UrlFetchApp.fetch(url, options);
  var result = response.getContentText();
+ var jsonToken = JSON.parse(result);
+ var resultToken = jsonToken.data.token.split('.')[1]
+ var dataUser = Utilities.base64Decode(resultToken);
  var cache = CacheService.getUserCache();
- cache.put('dataUser', result, 85900);
+ cache.put('dataUser', Utilities.newBlob(dataUser).getDataAsString(), 85900);
+
  return this.getTokenFromResponse_(response);
 };
 

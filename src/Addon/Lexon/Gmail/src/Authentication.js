@@ -1,10 +1,11 @@
 var scopes = [
-  'https://www.googleapis.com/auth/script.external_request',
-  'https://www.googleapis.com/auth/userinfo.email',
-  'https://www.googleapis.com/auth/gmail.addons.execute',
-  'https://www.googleapis.com/auth/gmail.addons.current.message.readonly',
-  'https://www.googleapis.com/auth/spreadsheets',
-  'https://mail.google.com/'
+  "https://mail.google.com/",
+    "https://www.googleapis.com/auth/gmail.addons.current.action.compose",
+    "https://www.googleapis.com/auth/gmail.addons.execute",
+    "https://www.googleapis.com/auth/gmail.addons.current.message.metadata",
+    "https://www.googleapis.com/auth/script.external_request",
+    "https://www.googleapis.com/auth/userinfo.email",
+    "https://www.googleapis.com/auth/drive"
 ]
 var keyClient = "AddonLexonClient";
 var token = null;
@@ -30,7 +31,7 @@ function getService() {
   getTokenClient();
   return OAuth2.createService('auth-lexon')
     .setAuthorizationBaseUrl(urlFrontend + 'login')
-    .setTokenUrl(urlAuth + 'token')
+    .setTokenUrl(urlAuth)
     .setClientId(token)
     .setClientSecret(clientSecret)
     .setScope(scopes.join(' '))
@@ -38,6 +39,7 @@ function getService() {
     .setCache(CacheService.getUserCache())
     .setPropertyStore(PropertiesService.getUserProperties())
     .setLock(LockService.getUserLock())
+    .setExpirationMinutes(3600)
     .setParam('access_type', 'offline')
     .setParam('prompt', 'consent')
     .setParam('state', getStateToken('authCallback')); 
@@ -71,6 +73,7 @@ function create3PAuthorizationUi() {
             .addWidget(logo)
             .addWidget(icon)
             .addWidget(loginButton)
+            .addWidget(reserved)
             ).build()
     return [card]
 }
