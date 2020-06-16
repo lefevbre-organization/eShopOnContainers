@@ -59,7 +59,6 @@ namespace Lexon.MySql.Controllers
                 return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
             Result<LexUserSimple> resultUser = await _lexonService.GetUserIdAsync(idNavisionUser);
-            //var idUser = resultUser?.data?.idUser;
             return Ok(resultUser);
         }
 

@@ -680,5 +680,45 @@ namespace Lexon.Infrastructure.Services
             }
             return resultContact;
         }
+
+        public async Task<Result<LexUserSimple>> GetUserIdAsync(string idNavisionUser)
+        {
+            var result = new Result<LexUserSimple>(new LexUserSimple());
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/user/getid?idNavisionUser={idNavisionUser}");
+            TraceLog(parameters: new string[] { $"request:{request}" });
+
+            try
+            {
+                using (var response = await _client.SendAsync(request))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        result = await response.Content.ReadAsAsync<Result<LexUserSimple>>();
+                        result.data.idNavision = idNavisionUser;
+                    }
+                    else
+                    {
+                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+
+            return result;
+        }
+
+        public Task<Result<List<LexContact>>> GetAllContactsAsync(BaseView search)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<LexUserSimpleCheck>> CheckRelationsMailAsync(string idUser, MailInfo mail)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
