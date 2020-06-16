@@ -238,6 +238,24 @@ export const getMessageHeader = (id) => {
   });
 };
 
+export const getConversation = (conversationId) => {
+  return new Promise(async (resolve, reject) => {
+    const accessToken = await getAccessTokenSilent();
+    const client = getAuthenticatedClient(accessToken);
+    const url =
+      "me/messages/?$filter= conversationId eq '" +
+      conversationId.replace(/=/g, '%3D') +
+      "'";
+    client
+      .api(url)
+      .get()
+      .then((response) => resolve(response))
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
 export const getMessage = (messageId, format) =>
   new Promise((resolve, reject) => {
     getMessageDetail(messageId, format)
@@ -417,7 +435,7 @@ export const emailPriority = () => {
 };
 
 export const emailReadConfirmation = () => {
-  const priority = `"isDeliveryReceiptRequested": true\r\n`;
+  const priority = `"isReadReceiptRequested": true\r\n`;
   return priority;
 };
 

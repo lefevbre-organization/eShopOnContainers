@@ -12,6 +12,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -455,13 +456,20 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
         #endregion Token Validation
 
+        private long? GetLongIdUser(string idUser)
+        {
+            long.TryParse(idUser, out long idUserLong);
+            return idUserLong;
+        }
         private void AddValuesToPayload(JwtPayload payload, TokenRequest tokenRequest)
         {
             AddClaimToPayload(payload, tokenRequest.idClienteNavision, nameof(tokenRequest.idClienteNavision));
             AddClaimToPayload(payload, tokenRequest.roles, nameof(tokenRequest.roles));
             AddClaimToPayload(payload, tokenRequest.name, nameof(tokenRequest.name));
             AddClaimToPayload(payload, tokenRequest.idApp, nameof(tokenRequest.idApp));
-            AddClaimToPayload(payload, tokenRequest.idUserApp, nameof(tokenRequest.idUserApp));
+            AddClaimToPayload(payload, GetLongIdUser(tokenRequest.idUserApp), nameof(tokenRequest.idUserApp));
+            AddClaimToPayload(payload, tokenRequest.idUserApp, "idUser");
+
 
 
             if (tokenRequest is TokenRequestCentinelaViewFirm tokenRequestCentinelaViewFirm)
@@ -511,7 +519,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         private TokenRequest BuidSpecificToken(TokenModelView token, short idApp)
         {
             if (token.idClienteNavision != null && token.bbdd != null
-                  && token.idEntity != null && token.idEntityType != null
+                  //&& token.idEntity != null && token.idEntityType != null
                   && token.folder != null && token.provider != null
                   && token.idMail != null && token.mailAccount != null)
             {
@@ -520,8 +528,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     idApp = idApp,
                     idClienteNavision = token.idClienteNavision,
                     bbdd = token.bbdd,
-                    idEntity = (int)token.idEntity,
-                    idEntityType = (short)token.idEntityType,
+                    idEntity = token.idEntity,
+                    idEntityType = token.idEntityType,
                     folder = token.folder,
                     provider = token.provider,
                     idMail = token.idMail,
@@ -538,7 +546,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     idClienteNavision = token.idClienteNavision,
                     bbdd = token.bbdd,
                     idEntity = (int)token.idEntity,
-                    idEntityType = (short)token.idEntityType
+                    idEntityType = (short)token.idEntityType,
+                    mailContacts = token.mailContacts
                 };
             }
             else if (token.idClienteNavision != null && token.bbdd != null)
@@ -657,7 +666,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             //3. Obtener contactos si se necesita (evaluar si tengo que pasarlo a otros métodos y quitarlos del general
             //5. Construir token diferente según los datos proporcionados
             if (tokenRequest is TokenRequestNewMail || tokenRequest is TokenRequestOpenMail)
-                GetContactDataFromLexon((TokenRequestNewMail)tokenRequest);
+                tokenRequest = await GetContactDataFromLexon((TokenRequestNewMail)tokenRequest);
 
             if (tokenRequest is TokenRequestCentinelaNewFirm)
                 ((TokenRequestCentinelaNewFirm)tokenRequest).guid = Guid.NewGuid().ToString();
@@ -730,13 +739,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             return resultLexUser;
         }
 
-        private async void GetContactDataFromLexon(TokenRequestNewMail token)
+        private async Task<TokenRequestNewMail> GetContactDataFromLexon(TokenRequestNewMail token)
         {
             if (token.idEntityType == (short?)LexonAdjunctionType.files
                 || token.idEntityType == (short?)LexonAdjunctionType.folders
                 || token.idEntityType == (short?)LexonAdjunctionType.others
                 || token.idEntityType == (short?)LexonAdjunctionType.documents)
-                return;
+                return token;
 
             var search = new EntitySearchById
             {
@@ -752,6 +761,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     token.mailContacts = new List<string>();
                 token.mailContacts.Add(contactsResult?.data.Email);
             }
+            return token;
         }
 
         private void SerializeObjectToPost(object parameters, string path, out string url, out StringContent data)

@@ -501,6 +501,20 @@ Service_.prototype.setAddonData = function(addonData) {
    var token = this.getToken();
    return token.access_token;
  };
+
+  /**
+   * Gets an id token for this service. This token can be used in HTTP
+   * requests to the service's endpoint. This method will throw an error if the
+   * user's access was not granted or has expired.
+   * @return {string} An id token.
+   */
+   Service_.prototype.getIdToken = function() {
+     if (!this.hasAccess()) {
+       throw new Error('Access not granted or expired.');
+     }
+     var token = this.getToken();
+      return token.id_token;
+ };
  
  /**
   * Resets the service, removing access and requiring the service to be
@@ -562,10 +576,10 @@ Service_.prototype.setAddonData = function(addonData) {
   *     when fetching the token.
   * @return {Object} The token, or null if no token was found.
   */
-//  Service_.prototype.getToken = function(optSkipMemoryCheck) {
-//    // Gets the stored value under the null key, which is reserved for the token.
-//    return this.getStorage().getValue(null, optSkipMemoryCheck);
-//  };
+ Service_.prototype.getToken = function(optSkipMemoryCheck) {
+   // Gets the stored value under the null key, which is reserved for the token.
+   return this.getStorage().getValue(null, optSkipMemoryCheck);
+ };
  
  /**
   * Determines if a retrieved token is still valid.

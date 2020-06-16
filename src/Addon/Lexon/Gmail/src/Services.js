@@ -187,10 +187,10 @@ function getAddonData(e) {
     subject: subject,
     folder: nameFolder,
     sentDateTime: messageDate,
-    idUser: "449",
-    idClienteNav: user.data._idClienteNav,
-    userName: user.data._nombre,
-    email: user.data._login
+    idUser: user.idUserApp,
+    idClienteNav: user.idClienteNavision,
+    userName: user.name,
+    email: user.login
   };
   
   var header = {

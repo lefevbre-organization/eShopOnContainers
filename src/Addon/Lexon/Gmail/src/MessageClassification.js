@@ -7,6 +7,7 @@ function showNewConection() {
     .setCache(CacheService.getUserCache())
     .setPropertyStore(PropertiesService.getUserProperties())
     .setLock(LockService.getUserLock())
+    .setExpirationMinutes(120)
     .setParam('access_type', 'offline')
     .setParam('prompt', 'consent')
     .setParam('approval_prompt', 'force');
@@ -37,7 +38,7 @@ function buildMessageClassificationCard(e) {
   var service = showNewConection();
   
   var authUrl = service.getAuthorizationUrl();
-
+  
   var cardChangeAction = CardService.newAction()
         .setFunctionName('onChangeCompany')
 

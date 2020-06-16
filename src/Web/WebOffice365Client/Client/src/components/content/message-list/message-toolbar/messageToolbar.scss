@@ -5,7 +5,7 @@
   .action-btns {
     width: 98%;
     display: flex;
-    justify-content: space-between;
+    //justify-content: space-between;
 
     .action-btn {
       cursor: pointer;
@@ -17,6 +17,42 @@
       color: #c43741;
       font-size: 22px;
       padding-top: 2px;
+
+      .icon-red {
+        color: #c43741;
+        cursor: pointer;
+      }
+
+      .icon-green {
+        color: #417505;
+        cursor: pointer;
+      }
     }
+  }
+}
+
+.popover-red {
+  background-color: #c43741 !important;
+  color: white !important;
+
+  .popover-body {
+    color: white;
+  }
+
+  .arrow:after {
+    border-left-color: #c43741 !important;
+  }
+}
+
+.popover-green {
+  background-color: #417505 !important;
+  color: white !important;
+
+  .popover-body {
+    color: white;
+  }
+
+  .arrow:after {
+    border-left-color: #417505 !important;
   }
 }

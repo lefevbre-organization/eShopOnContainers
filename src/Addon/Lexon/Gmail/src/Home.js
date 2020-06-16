@@ -54,8 +54,8 @@ function buildHomeCard() {
     var homeCard = CardService.newCardBuilder()
       .setHeader(CardService.newCardHeader()
       .setImageUrl("http://www.derechopractico.es/wp-content/uploads/2019/03/Logo-Lefebvre.jpg")
-      .setTitle(user.data._login)
-      .setSubtitle(user.data._nombre))
+      .setTitle(user.login)
+      .setSubtitle(user.name))
       .addCardAction(logoutAction)
       .addSection(sectionFormCompany);
   

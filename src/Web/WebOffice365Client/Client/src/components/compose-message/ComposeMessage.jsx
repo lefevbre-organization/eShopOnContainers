@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import * as uuid from 'uuid/v4';
-import { sendMessage, getMessageByInternetMessageId } from '../../api_graph';
+import { sendMessage } from '../../api_graph';
 import { getValidEmails } from '../../utils';
 import i18n from 'i18next';
 import { Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
@@ -313,6 +313,7 @@ export class ComposeMessage extends PureComponent {
       }
       if (this.props.labelsResult) {
         this.props.loadLabelMessages(this.props.labelsResult.labelInbox);
+        this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
       }
     }
   }
@@ -817,21 +818,30 @@ export class ComposeMessage extends PureComponent {
                     {i18n.t('compose-message.mark-prioritary')}
                   </span>
                 </div>
-                <div className='receipt-wrapper'>
-                  {readConfirmation && (
-                    <i
-                      className='lf lf-icon-switch-right icon-priority'
-                      onClick={this.onToggleReadConfirmation}></i>
-                  )}
-                  {!readConfirmation && (
-                    <i
-                      className='lf lf-icon-switch-left icon-priority'
-                      onClick={this.onToggleReadConfirmation}></i>
-                  )}
-                  <span className='priority-text'>
-                    {i18n.t('compose-message.read-confirmation')}
-                  </span>
-                </div>
+              </div>
+              <div
+                className='action-btns'
+                style={{
+                  justifyContent: 'flex-end',
+                  marginRight: 15,
+                }}>
+                {window.SHOW_EXPERIMENTAL === '1' && (
+                  <div className='receipt-wrapper'>
+                    {readConfirmation && (
+                      <i
+                        className='lf lf-icon-switch-right icon-priority'
+                        onClick={this.onToggleReadConfirmation}></i>
+                    )}
+                    {!readConfirmation && (
+                      <i
+                        className='lf lf-icon-switch-left icon-priority'
+                        onClick={this.onToggleReadConfirmation}></i>
+                    )}
+                    <span className='priority-text'>
+                      {i18n.t('compose-message.read-confirmation')}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </div>

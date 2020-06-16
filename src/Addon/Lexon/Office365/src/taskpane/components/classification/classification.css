@@ -1,0 +1,57 @@
+.lexon-item {
+    font-size: 14px;
+    margin-top: 15px;
+}
+
+.lexon-item p {
+  margin-bottom: .5rem;
+}
+
+strong {
+  font-weight: 500;
+  font-family: MTTMilano-Medium, Lato, Arial, sans-serif;
+}
+
+.lexon-document-list .lexon-item strong {
+  color: #001978;
+}
+
+.lexon-document-list .lexon-item p.tools-bar {
+  padding-bottom: 5px;
+
+}
+
+.lexon-document-list .lexon-item p:last-child {
+  border-bottom: 1px dotted #001978;
+  padding-bottom: 1rem;
+}
+
+.text-right {
+  text-align: right !important;
+}
+
+.lexon-document-list .lexon-item a {
+  color: #001978;
+  font-size: 20px;
+  width: 34px;
+  height: 34px;
+  padding: 7px;
+  transition: background-color .3ms;
+  border-radius: 50%;
+}
+
+a, a:hover {
+  outline: none;
+  text-decoration: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
