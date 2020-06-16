@@ -52,11 +52,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             , bool addTerminatorToToken = true
             )
         {
-            if (string.IsNullOrEmpty(tokenRequest.Login) && string.IsNullOrEmpty(tokenRequest.Password))
+            if (string.IsNullOrEmpty(tokenRequest.login) && string.IsNullOrEmpty(tokenRequest.password))
                 return BadRequest("Must be a valid login and password");
 
-            if (tokenRequest.IdApp == null)
-                tokenRequest.IdApp = _settings.Value.IdAppLexon;
+            if (tokenRequest.idApp == null)
+                tokenRequest.idApp = _settings.Value.IdAppLexon;
 
             var result = await _service.GetGenericTokenAsync(tokenRequest, addTerminatorToToken);
             result.infos.Add(new Info() { code = "UserUtils.Lexon", message = "token/login" });
@@ -79,7 +79,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             if (string.IsNullOrEmpty(idClienteNavision))
                 return BadRequest("id value invalid. Must be a valid user code in the enviroment or login and password");
 
-            var token = new TokenRequest() { IdClienteNavision = idClienteNavision , IdApp= _settings.Value.IdAppLexon};
+            var token = new TokenRequest() { idClienteNavision = idClienteNavision , idApp= _settings.Value.IdAppLexon};
 
             var result = await _service.GetGenericTokenAsync(token, addTerminatorToToken);
             result.infos.Add(new Info() { code = "UserUtils.Lexon", message = "token/id" });
@@ -99,11 +99,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             , bool addTerminatorToToken = true
             )
         {
-            if (string.IsNullOrEmpty(tokenRequest.IdClienteNavision))
+            if (string.IsNullOrEmpty(tokenRequest.idClienteNavision))
                 return BadRequest("Must be a valid idClient");
 
-            if (tokenRequest.IdApp == null)
-                tokenRequest.IdApp = _settings.Value.IdAppLexon;
+            if (tokenRequest.idApp == null)
+                tokenRequest.idApp = _settings.Value.IdAppLexon;
 
             var result = await _service.GetGenericTokenAsync(tokenRequest, addTerminatorToToken);
             result.infos.Add(new Info() { code = "UserUtils.Lexon", message = "token/basic" });
@@ -124,11 +124,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             , bool addTerminatorToToken = true
             )
         {
-            if (string.IsNullOrEmpty(tokenRequest.IdClienteNavision) || string.IsNullOrEmpty(tokenRequest.bbdd))
+            if (string.IsNullOrEmpty(tokenRequest.idClienteNavision) || string.IsNullOrEmpty(tokenRequest.bbdd))
                 return BadRequest("Must be a valid idClient and bbdd");
 
-            if (tokenRequest.IdApp == null)
-                tokenRequest.IdApp = _settings.Value.IdAppLexon;
+            if (tokenRequest.idApp == null)
+                tokenRequest.idApp = _settings.Value.IdAppLexon;
 
             var result = await _service.GetGenericTokenAsync(tokenRequest, addTerminatorToToken);
             result.infos.Add(new Info() { code = "UserUtils.Lexon", message = "token/db" });
@@ -149,12 +149,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             , bool addTerminatorToToken = true
             )
         {
-            if (string.IsNullOrEmpty(tokenRequest.IdClienteNavision)
-                || (tokenRequest.idEntity == 0 || tokenRequest.idEntityType ==0))
+            if (string.IsNullOrEmpty(tokenRequest.idClienteNavision)
+                && (tokenRequest.idEntity != null && tokenRequest.idEntityType != null))
                 return BadRequest("Must be a valid idClient and valid idtype and idEntityType");
             
-            if (tokenRequest.IdApp == null)
-                tokenRequest.IdApp = _settings.Value.IdAppLexon;
+            if (tokenRequest.idApp == null)
+                tokenRequest.idApp = _settings.Value.IdAppLexon;
             
             var result = await _service.GetGenericTokenAsync(tokenRequest, addTerminatorToToken);
             result.infos.Add(new Info() { code = "UserUtils.Lexon", message = "token/mail/new" });
@@ -175,12 +175,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             , bool addTerminatorToToken = true
             )
         {
-            if (string.IsNullOrEmpty(tokenRequest.IdClienteNavision)
+            if (string.IsNullOrEmpty(tokenRequest.idClienteNavision)
                 || string.IsNullOrEmpty(tokenRequest.idMail))
                 return BadRequest("Must be a valid idClient and valid idMail");
 
-            if (tokenRequest.IdApp == null)
-                tokenRequest.IdApp = _settings.Value.IdAppLexon;
+            if (tokenRequest.idApp == null)
+                tokenRequest.idApp = _settings.Value.IdAppLexon;
 
             var result = await _service.GetGenericTokenAsync( tokenRequest, addTerminatorToToken);
             result.infos.Add(new Info() { code = "UserUtils.Lexon", message = "token/mail.open" });
@@ -252,13 +252,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
              , [FromForm] bool addTerminatorToToken = true
             )
         {
-            var tokenRequest = new TokenRequestLogin { Login = login, Password = password};
+            var tokenRequest = new TokenRequestLogin { login = login, password = password};
 
-            if (string.IsNullOrEmpty(tokenRequest.Login) && string.IsNullOrEmpty(tokenRequest.Password))
+            if (string.IsNullOrEmpty(tokenRequest.login) && string.IsNullOrEmpty(tokenRequest.password))
                 return BadRequest("id value invalid. Must be a valid user code in the enviroment or login and password");
 
-            if (tokenRequest.IdApp == null)
-                tokenRequest.IdApp = _settings.Value.IdAppLexon;
+            if (tokenRequest.idApp == null)
+                tokenRequest.idApp = _settings.Value.IdAppLexon;
 
             var result = await _service.GetGenericTokenAsync(tokenRequest, addTerminatorToToken);
             result.infos.Add(new Info() { code = "UserUtils.Lexon", message = "token/post" });

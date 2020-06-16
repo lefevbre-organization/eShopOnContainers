@@ -51,10 +51,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             , bool addTerminatorToToken = true
             )
         {
-            if (tokenRequest.IdApp == null || tokenRequest.IdApp != _settings.Value.IdAppCentinela)
-                tokenRequest.IdApp = _settings.Value.IdAppCentinela;
+            if (tokenRequest.idApp == null || tokenRequest.idApp != _settings.Value.IdAppCentinela)
+                tokenRequest.idApp = _settings.Value.IdAppCentinela;
 
-            if (string.IsNullOrEmpty(tokenRequest.Guid))
+            if (string.IsNullOrEmpty(tokenRequest.guid))
                 return BadRequest("Must be a valid login and password");
 
             Result<TokenData> result = await _service.GetGenericTokenAsync(tokenRequest, addTerminatorToToken);
@@ -76,10 +76,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             , bool addTerminatorToToken = true
             )
         {
-            if (tokenRequest.IdApp == null || tokenRequest.IdApp != _settings.Value.IdAppCentinela)
-                tokenRequest.IdApp = _settings.Value.IdAppCentinela;
+            if (tokenRequest.idApp == null || tokenRequest.idApp != _settings.Value.IdAppCentinela)
+                tokenRequest.idApp = _settings.Value.IdAppCentinela;
 
-            if ( tokenRequest.DocumentsId?.Count == 0 || tokenRequest.RecipientsId?.Count == 0)
+            if ( tokenRequest.documentsId?.Count == 0 || tokenRequest.recipientsId?.Count == 0)
                 return BadRequest("Must be a valid list of documents and recipients");
 
             Result<TokenData> result = await _service.GetGenericTokenAsync(tokenRequest, addTerminatorToToken);
