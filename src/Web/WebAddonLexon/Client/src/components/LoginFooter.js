@@ -22,7 +22,7 @@ const LoginFooter = (children) => (
     </div>
     <div className="row"> 
       <div className="col-md-12 text-justify">
-        <p className="rights-reserved-login my-md-4">©2019 Lefebvre. Todos los derechos reservados. Aviso legal 
+        <p className="rights-reserved-login my-lg-4">©2019 Lefebvre. Todos los derechos reservados. Aviso legal 
         | Política de privacidad | Política de Cookies</p>
        </div>
     </div>

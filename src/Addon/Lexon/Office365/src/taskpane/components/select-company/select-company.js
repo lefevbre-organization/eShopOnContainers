@@ -51,6 +51,7 @@ class SelectCompany extends Component {
 
     logout = async () => { 
       localStorage.removeItem('auth-lexon');
+      localStorage.removeItem('selectCompany');
       this.props.changePage(PAGE_LOGIN);
     }
 
@@ -68,6 +69,7 @@ class SelectCompany extends Component {
 
     click = async () => {
       const { selectCompany } = this.state
+      localStorage.setItem('selectCompany', JSON.stringify(selectCompany));
       if(selectCompany != null) {
         this.props.changePage(PAGE_MESSAGE_CLASSIFICATIONS, 
           selectCompany);

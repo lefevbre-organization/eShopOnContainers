@@ -569,6 +569,10 @@ ol>li.index-5::before {
   margin-right: 16px;
 }
 
+.lf-icon-warning {
+  margin-right: 16px;
+}
+
 .expiration {
   font-size: 16px;
   margin-left: auto;

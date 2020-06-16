@@ -1,18 +1,18 @@
 {
   "oauthScopes": [
     "https://mail.google.com/",
-    "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/gmail.addons.current.action.compose",
     "https://www.googleapis.com/auth/gmail.addons.execute",
     "https://www.googleapis.com/auth/gmail.addons.current.message.metadata",
     "https://www.googleapis.com/auth/script.external_request",
-    "https://www.googleapis.com/auth/userinfo.email"
+    "https://www.googleapis.com/auth/userinfo.email",
+    "https://www.googleapis.com/auth/drive"
   ],
   "urlFetchWhitelist": [
     "https://lexbox-test-apigwlex.lefebvre.es/api/v1/mysql/LexonMySql/",
     "https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Lexon/",
     "https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail/",
-    "https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login"
+    "https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/"
   ],
  "addOns": {
   "common": {
