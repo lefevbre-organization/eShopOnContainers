@@ -340,7 +340,7 @@ namespace Lexon.MySql.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CheckRelationsMailAsync(
             [FromBody] MailInfo mail,
-            [FromRoute] string idUser = "E1621396"
+            [FromRoute] string idUser = "449"
             )
         {
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(mail.Uid) || string.IsNullOrEmpty(mail.MailAccount))

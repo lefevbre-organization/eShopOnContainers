@@ -70,6 +70,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                                 {
                                     var rawJson = reader.GetValue(0).ToString();
                                     result.data = JsonConvert.DeserializeObject<LexUserSimple>(rawJson);
+                                    result.data.idNavision = idNavisionUser;
                                 }
                         }
                     }
@@ -323,7 +324,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                 {
                     var filtro = GiveMeUserFilter(search);
                     conn.Open();
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetContact, conn))
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetAllContacts, conn))
                     {
                         AddCommonParameters(search.idUser, command, "P_FILTER", filtro);
                         AddListSearchParameters(1, 1, "ts", "desc", command);
@@ -338,6 +339,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                                     if (!string.IsNullOrEmpty(rawResult))
                                     {
                                         result.data = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
+                                        CompleteContacts(search, result);
                                     }
                                     else
                                     {
@@ -354,6 +356,24 @@ namespace Lexon.MySql.Infrastructure.Repositories
             }
 
             return result;
+        }
+
+        private void CompleteContacts(BaseView search, Result<List<LexContact>> result)
+        {
+            try
+            {
+                foreach (var contact in result.data)
+                {
+                    if (contact.IdTipo == null)  continue;
+                    
+                    contact.EntityType = contact.IdTipo != null ? Enum.GetName(typeof(LexonAdjunctionType), contact.IdTipo) : null;
+                    contact.Tags = new string[] { search.bbdd, search.idUser, contact.EntityType };
+                }
+            }
+            catch (Exception ex)
+            {
+                result.infos.Add(new Info() { code = "ErorCompleteContact", message = $"Error no controlado al completar datos del contacto + {ex.Message}" });
+            }
         }
 
         public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync()
@@ -680,7 +700,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
         private static string GetUserFilter(string bbdd, string idUser, bool withComma = false)
         {
             var comma = withComma ? ", " : "";
-            var bbddParam = bbdd ?? $"\"BBDD\":\"{bbdd}\",";
+            var bbddParam = bbdd != null ? $"\"BBDD\":\"{bbdd}\"," : "";
             return $"{comma}{bbddParam}\"IdUser\":{idUser}";
         }
 

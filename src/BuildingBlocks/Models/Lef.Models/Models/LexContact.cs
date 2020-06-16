@@ -4,7 +4,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
     public class LexContact
     {
         public int? Id { get; set; }
-        public int? IdType { get; set; }
+        public int? IdTipo { get; set; } //TODO IdType
         public string EntityType { get; set; }
         public string[] Tags { get; set; }
         public string Uid { get; set; }
