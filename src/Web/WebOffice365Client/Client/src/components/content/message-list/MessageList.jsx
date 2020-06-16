@@ -33,6 +33,7 @@ export class MessageList extends Component {
     this.onSelectionChange = this.onSelectionChange.bind(this);
     this.renderView = this.renderView.bind(this);
     this.renderMessages = this.renderMessages.bind(this);
+    this.onDeletedMessages = this.onDeletedMessages.bind(this);
     this.isSentFolder = false;
   }
 
@@ -206,6 +207,12 @@ export class MessageList extends Component {
     return { nextToken, prevToken };
   }
 
+  onDeletedMessages(messages) {
+    for (let i = 0; i < messages.length; i++) {
+      this.onSelectionChange(false, messages[i]);
+    }
+  }
+
   render() {
     const collapsed = this.props.sideBarCollapsed;
     const { messagesResult } = this.props;
@@ -226,6 +233,7 @@ export class MessageList extends Component {
           getLabelMessages={this.props.getLabelMessages}
           getPageTokens={this.props.getPageTokens}
           loadLabelMessageSingle={this.props.loadLabelMessageSingle}
+          onDeletedMessages={this.onDeletedMessages}
         />
         <PerfectScrollbar className='container-fluid no-gutters px-0 message-list-container'>
           {this.renderView()}
