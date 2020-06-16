@@ -2,28 +2,44 @@ import React, { PureComponent } from 'react';
 import { withTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getNameEmail } from '../../../../utils';
+import { sendMessage, getConversation } from '../../../../api_graph';
+
 import moment from 'moment';
-import { Button } from 'reactstrap';
-import {
-  faBars,
-  faReply,
-  faShare,
-  faExclamation,
-} from '@fortawesome/free-solid-svg-icons';
+import { Button, Popover, PopoverBody } from 'reactstrap';
+import { faBars, faReply, faShare } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 import './messageToolbar.scss';
+import * as uuid from 'uuid/v4';
 
 export class MessageToolbar extends PureComponent {
   constructor(props) {
     super(props);
     this.trashHandler = this.getClickHandler(['TRASH'], []);
     this.markAsUnread = this.getClickHandler(['UNREAD'], []);
+
+    this.state = {
+      confirm1Open: false,
+      confirm2Open: false,
+    };
   }
 
   getClickHandler(addLabels, removeLabels) {
     return (evt) => {
       this.props.onClick(addLabels, removeLabels);
     };
+  }
+
+  async componentDidMount() {
+    if (
+      window.SHOW_EXPERIMENTAL === '1' &&
+      this.props.messageResult.result.isReadReceiptRequested === true &&
+      this.props.messageResult.result.isRead === false
+    ) {
+      this.setState({ confirm2Open: true });
+      setTimeout(() => {
+        this.setState({ confirm2Open: false });
+      }, 9000);
+    }
   }
 
   render() {
@@ -38,6 +54,11 @@ export class MessageToolbar extends PureComponent {
 
     let replyTo, cc, subject;
     subject = messageHeaders.subject;
+
+    let confirmation = 0;
+    if (messageHeaders.isReadReceiptRequested === true) {
+      confirmation = 2;
+    }
 
     replyTo = messageHeaders.from
       ? messageHeaders.from.emailAddress.address
@@ -142,6 +163,72 @@ export class MessageToolbar extends PureComponent {
               <i style={{}} className='lf-icon lf-icon-mail'></i>
             </div>
           </div>
+          <div
+            className='action-btns'
+            style={{
+              justifyContent: 'flex-end',
+              marginRight: 15,
+            }}>
+            {confirmation === 1 && window.SHOW_EXPERIMENTAL === '1' && (
+              <>
+                <div
+                  id='Popover1'
+                  className='action-btn mr-2 icon-priority'
+                  onMouseEnter={() => {
+                    this.setState({ confirm1Open: true });
+                  }}
+                  onMouseLeave={() => {
+                    this.setState({ confirm1Open: false });
+                  }}
+                  onClick={() => {
+                    //this.sendReadConfirmation();
+                  }}>
+                  <i className='lf-icon-step-done icon-red'></i>
+                </div>
+                <Popover
+                  placement='left'
+                  isOpen={this.state.confirm1Open}
+                  target='Popover1'
+                  className='popover-red'
+                  toggle={() => {
+                    this.setState({ confirm1Open: !this.state.confirm1Open });
+                  }}>
+                  <PopoverBody>
+                    El remitente del mensaje ha solicitado confirmación de
+                    lectura. Para enviar una confirmación, haz click en el
+                    icono.
+                  </PopoverBody>
+                </Popover>
+              </>
+            )}
+            {confirmation === 2 && window.SHOW_EXPERIMENTAL === '1' && (
+              <>
+                <div
+                  id='Popover2'
+                  className='action-btn mr-2 icon-priority'
+                  onMouseEnter={() => {
+                    this.setState({ confirm2Open: true });
+                  }}
+                  onMouseLeave={() => {
+                    this.setState({ confirm2Open: false });
+                  }}>
+                  <i className='lf-icon-step-done icon-green'></i>
+                </div>
+                <Popover
+                  placement='left'
+                  isOpen={this.state.confirm2Open}
+                  target='Popover2'
+                  className='popover-green'
+                  toggle={() => {
+                    this.setState({ confirm2Open: !this.state.confirm2Open });
+                  }}>
+                  <PopoverBody>
+                    Se ha enviado una confirmación de lectura al remitente.
+                  </PopoverBody>
+                </Popover>
+              </>
+            )}
+          </div>
         </div>
 
         <style jsx>{`
@@ -160,6 +247,40 @@ export class MessageToolbar extends PureComponent {
       </>
     );
   }
+
+  //   sendReadConfirmation() {
+  //     const { messageResult } = this.props;
+  //     const validTo = [messageResult.result.from.emailAddress.address];
+
+  //     const headers = {
+  //       To: validTo.join(', '),
+  //       Subject: this.state.subject,
+  //       attachments: [],
+  //     };
+
+  //     const email = {
+  //       headers,
+  //       to: headers.To,
+  //       cc: '',
+  //       bcc: '',
+  //       uppyPreviews: [],
+  //       content: 'Lectura confirmada :-)',
+  //       subject: 'Confirmación de lectura',
+  //       importance: 'Normal',
+  //       internetMessageId: `<${uuid()}-${uuid()}@lefebvre.es>`,
+  //     };
+
+  //     sendMessage({
+  //       data: email,
+  //       attachments: [],
+  //     })
+  //       .then((_) => {
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //         debugger;
+  //       });
+  //   }
 }
 
 export default withTranslation()(MessageToolbar);
