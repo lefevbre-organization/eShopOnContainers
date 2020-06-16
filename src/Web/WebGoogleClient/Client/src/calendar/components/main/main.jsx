@@ -597,20 +597,22 @@ export class Main extends Component {
             dialogObj.buttons[1].buttonModel.isPrimary = false; 
             args.element.style.width = "700px";
 
-            // default values for Atendees coming from event args
-            if (args.data.Attendees != undefined) {
-                //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i]) 
-                var arr = [];
-                Object.keys(args.data.Attendees).forEach(function (key) {
-                    arr.push(args.data.Attendees[key].email);
-                });
-                this.setState({ tagAttendess: arr })
-            }
-            else {
-                this.setState({ tagAttendess: [] })
-            }
+          
 
-            //// default values for eventType coming from event args
+            // default values for Atendees coming from event args
+            //if (args.data.Attendees != undefined) {
+            //    //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i]) 
+            //    var arr = [];
+            //    Object.keys(args.data.Attendees).forEach(function (key) {
+            //        arr.push(args.data.Attendees[key].email);
+            //    });
+            //    this.setState({ tagAttendess: arr })
+            //}
+            //else {
+            //    this.setState({ tagAttendess: [] })
+            //}
+
+            // default values for eventType coming from event args
             //let eventType;
             //if (args.data.EventType == undefined) {
             //    this.setState({
