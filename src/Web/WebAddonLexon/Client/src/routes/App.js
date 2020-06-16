@@ -72,9 +72,7 @@ class App extends Component {
 
   handleGetUserFromLexonConnector() {
     console.log('handleGetUserFromLexonConnector');
-    const userId = 'E1621396';
-    const values = queryString.parse(window.location.search);
-    
+    const values = queryString.parse(window.location.search);    
     if (values && values.bbdd 
       && Object.keys(values).length > 0) {
       const payload = values.bbdd.split('.')[1];
@@ -83,9 +81,8 @@ class App extends Component {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
        }).join(''));
       const addonData = JSON.parse(jsonPayload);
-    
       this.setState({ addonData: addonData, bbdd: { idCompany: addonData.idCompany, bbdd: addonData.bbdd }})
-      this.sendMessagePutUser(userId, addonData);
+      this.sendMessagePutUser(addonData.idClienteNav, addonData);
     }
   }
 
