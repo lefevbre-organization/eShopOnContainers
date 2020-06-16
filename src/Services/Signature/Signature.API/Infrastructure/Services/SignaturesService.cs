@@ -112,6 +112,13 @@
         #endregion Signatures
 
         #region Events
+        public async Task<Result<bool>> SaveEvent(EventInfo eventInfo)
+        {
+            var response = new Result<bool>();
+            var result = await _signaturesRepository.SaveEvent(eventInfo);
+            return response;
+        }
+
         public async Task<Result<bool>> GetSignature(string signatureId, string documentId)
         {
             //var result = new Result<BsonDocument>();
@@ -119,24 +126,32 @@
 
             var result = await _signaturesRepository.GetSignature(signatureId);
 
-            if (result.data != null)
+            if (result.data != null && result.data.Signatures.Count > 0)
             {
-                var user = result.data["user"].AsString;
-                var guid = result.data["signatures"][0]["guid"].AsString;
-                var app = result.data["signatures"][0]["app"].AsString;
+                //var user = result.data["user"].AsString;
+                //var guid = result.data["signatures"][0]["guid"].AsString;
+                //var app = result.data["signatures"][0]["app"].AsString;
+
+                var user = result.data.User;
+                var guid = result.data.Signatures[0].Guid;
+                var app = result.data.Signatures[0].App;
+
+
 
                 // Downloadfile
-                var File = GetSignedFile(signatureId, documentId);
+                var file = GetSignedFile(signatureId, documentId);
 
                 if (app == "lexon")
                 {
                     // Call lexon api to store document
-                    response = await SaveFileLexon(File);
+                    response = await SaveFileLexon(file);
 
                 }
                 else if (app == "centinela")
                 {
                     // Call centinela api to store document
+                    var cenDocId = result.data.Signatures[0].Documents.Find(e => e.ExternalId == documentId).InternalInfo.DocId;
+                    response = await SaveFileCentinela(file, guid, cenDocId);
                     
                 }
             }
@@ -200,7 +215,7 @@
             return result;
         }
 
-        public async Task<Result<bool>> SaveFileCentinela(BsonDocument file)
+        public async Task<Result<bool>> SaveFileCentinela(BsonDocument file, string guid, string cenDocId)
         {
             var result = new Result<bool>();
             var client = new RestClient($"{_settings.Value.CentinelaApiGwUrl}/lex/Lexon/entities/files/post");

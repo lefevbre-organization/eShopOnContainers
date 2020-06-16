@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Signature.API.Infrastructure
 {
@@ -75,6 +76,7 @@ namespace Signature.API.Infrastructure
             //if (!BsonClassMap.IsClassMapRegistered(typeof(Signatures))) { BsonClassMap.RegisterClassMap<Signatures>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(UserSignatures))) { BsonClassMap.RegisterClassMap<UserSignatures>(); }
             if (!BsonClassMap.IsClassMapRegistered(typeof(BaseBrandings))) { BsonClassMap.RegisterClassMap<BaseBrandings>(); }
+            if (!BsonClassMap.IsClassMapRegistered(typeof(Signature.API.Model.EventInfo))) { BsonClassMap.RegisterClassMap<Signature.API.Model.EventInfo>(); }
         }
 
         //public IMongoCollection<SignatureUser> SignatureUsers
@@ -111,6 +113,12 @@ namespace Signature.API.Infrastructure
             return session.Client.GetDatabase(_settings.Value.Database).GetCollection<BaseBrandings>(_settings.Value.CollectionBrandings);
         }
 
+        public IMongoCollection<Signature.API.Model.EventInfo> SignatureEvents => Database.GetCollection<Signature.API.Model.EventInfo>(_settings.Value.CollectionSignatureEvents);
+
+        public IMongoCollection<Signature.API.Model.EventInfo> EventsTransaction(IClientSessionHandle session)
+        {
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<Signature.API.Model.EventInfo>(_settings.Value.CollectionSignatureEvents);
+        }
 
         public IMongoCollection<BaseBrandings> TestBrandings => Database.GetCollection<BaseBrandings>(_settings.Value.CollectionTest);
 

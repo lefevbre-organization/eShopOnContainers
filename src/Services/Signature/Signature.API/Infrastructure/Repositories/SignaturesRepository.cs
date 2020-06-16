@@ -353,14 +353,17 @@
             return result;
         }
 
-        public async Task<Result<BsonDocument>> GetSignature(string signatureId)
+        public async Task<Result<UserSignatures>> GetSignature(string signatureId)
         {
-            var result = new Result<BsonDocument>();
+            var result = new Result<UserSignatures>();
             var filter = GetFilterSignature(signatureId);
             var project = GetProjectSignature(signatureId);
+           
             try
             {
-                result.data = await _context.Signatures.Find(filter).Project(project).FirstOrDefaultAsync();
+                //result.data = await _context.Signatures.Find(filter).Project(project).FirstOrDefaultAsync();
+                //result.data = await _context.Signatures.Find(filter).Project(project).FirstOrDefaultAsync();
+                result.data = BsonSerializer.Deserialize<UserSignatures>(await _context.Signatures.Find(filter).Project(project).FirstOrDefaultAsync());
                 //result.data = await _context.Signatures.Find(filter).FirstOrDefaultAsync();
 
                 if (result.data == null)
@@ -373,6 +376,22 @@
                 TraceInfo(result.infos, $"Error al obtener datos de {signatureId}: {ex.Message}");
             }
             return result; 
+        }
+
+        public async Task<Result<bool>> SaveEvent(EventInfo eventInfo)
+        {
+            var result = new Result<bool>();
+
+            try
+            {
+                await _context.SignatureEvents.InsertOneAsync(eventInfo);
+            }
+            catch (Exception ex)
+            {
+                TraceInfo(result.infos, $"Error al guardar el evento: {ex.Message}");
+                throw;
+            }
+            return result;
         }
 
         #endregion

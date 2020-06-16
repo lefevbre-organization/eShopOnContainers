@@ -6,11 +6,11 @@
         public string Database { get; set; }
         public string CollectionSignatures { get; set; }
         public string CollectionBrandings { get; set; }
-
+        public string CollectionSignatureEvents { get; set; }
+        public string CollectionEvents { get; set; }
         public string CollectionTest { get; set; }
 
         //public string CollectionMasters { get; set; }
-        public string CollectionEvents { get; set; }
 
         public string LexonMySqlUrl { get; set; }
         public string LexonFilesUrl { get; set; }
