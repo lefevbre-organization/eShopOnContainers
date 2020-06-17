@@ -169,22 +169,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
  
         }
 
-        //private void SerializeObjectToByteArray(string textInBase64, string path, out string url, out ByteArrayContent byteArrayContent)
-        //{
-        //    url = $"{_settings.Value.CentinelaUrl}{path}";
-        //    TraceLog(parameters: new string[] { $"url={url}" });
-        //    byte[] newBytes = Convert.FromBase64String(textInBase64);
-
-        //    byteArrayContent = new ByteArrayContent(newBytes);
-        //    byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("application/bson");
-        //}
-
-
- 
-
         #region Centinela
-
-
 
         public async Task<Result<CenUser>> GetUserAsync(string idNavisionUser)
         {
@@ -258,7 +243,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
 
             return result;
         }
-
 
 
         public async Task<Result<List<CenDocument>>> GetDocumentsAsync(string idNavisionUser, string search)
@@ -427,6 +411,51 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
                     code = "594",
                     detail = $"General error when call centinela service",
                     message = ex.Message
+                });
+            }
+
+            return result;
+        }
+
+        public async Task<Result<List<LexContact>>> GetAllContactsAsync(string idNavisionUser, string idClient)
+        {
+            var result = new Result<List<LexContact>>(new List<LexContact>());
+            try
+            {
+                //https://compliance-api.affin.es/api/secure/contacts/user/E1621396
+                var url = $"{_settings.Value.CentinelaUrl}/contacts/user/{idNavisionUser}/client/{idClient}";
+
+                using (var response = await _client.GetAsync(url))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<LexContact[]>(rawResult));
+                            result.data = resultado.ToList();
+                        }
+                    }
+                    else
+                    {
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "Centinela_Error_GetContactsCode",
+                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var traceEx = ex.StackTrace ?? "";
+                var messageEx = ex.InnerException?.Message ?? "";
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "Centinela_GetContacts_Error",
+                    detail = $"General error when call centinela service",
+                    message = $"{ex.Message} =  {messageEx} ({traceEx})"
                 });
             }
 

@@ -170,5 +170,21 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
 
         }
 
+        [HttpGet("contacts/all")]
+        [ProducesResponseType(typeof(Result<List<LexContact>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<List<LexContact>>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetContactsAsync(
+            [FromQuery] string idNavisionUser = "E1669460",
+            [FromQuery] string idClient = "1234"
+            )
+        {
+            if (string.IsNullOrEmpty(idNavisionUser))
+                return BadRequest("values invalid. Must be a valid user and bbdd");
+
+            Result<List<LexContact>> result = await _service.GetAllContactsAsync(idNavisionUser, idClient);
+            return Ok(result);
+        }
+
     }
 }
