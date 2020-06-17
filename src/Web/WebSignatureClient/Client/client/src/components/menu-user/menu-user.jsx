@@ -38,7 +38,7 @@ class MenuUser extends Component {
     componentDidMount() {
         const { lefebvre } = this.props;
         if (lefebvre.userId) {
-            getAvailableSignatures(lefebvre.userId)
+            getAvailableSignatures(lefebvre.idUserApp, 1)
             .then( res => this.props.setAvailableSignatures(res.data))
             .catch(err => {
                 if (err.message === "Failed to fetch"){
@@ -86,7 +86,7 @@ class MenuUser extends Component {
         const { onToggleDialog } = this.props;
         const { lefebvre } = this.props;
         if (lefebvre.userId) {
-            getAvailableSignatures(lefebvre.userId)
+            getAvailableSignatures(lefebvre.idUserApp, 1)
             .then( res => this.props.setAvailableSignatures(res.data));
         }
         this.setState(

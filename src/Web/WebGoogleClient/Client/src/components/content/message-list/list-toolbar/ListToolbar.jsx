@@ -125,6 +125,13 @@ export class MessageToolbar extends PureComponent {
       ...(addLabelIds && { addLabelIds }),
       ...(removeLabelIds && { removeLabelIds }),
     };
+
+    // Unmark deleted messages
+    if (this.props.onDeletedMessages && addLabelIds.indexOf('TRASH') > -1) {
+      this.props.onDeletedMessages(
+        this.props.messagesResult.messages.filter((el) => el.selected)
+      );
+    }
     this.props.modifyMessages({ ids, ...actionParams });
   }
 

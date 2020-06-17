@@ -71,12 +71,16 @@ export const getIdEntity = payload =>{
   return(payload.hasOwnProperty('idEntity') ? payload.idEntity : null);
 }
 
-export const getIdDocument = payload =>{
-  return(payload.hasOwnProperty('idDocument') ? payload.idDocument : null);
+export const getIdDocuments = payload =>{
+  return(payload.hasOwnProperty('documentsId') ? payload.documentsId : null);
 }
 
 export const getMailContacts = payload => {
-  return(payload.hasOwnProperty('mailContacts') ? payload.mailContacts.toString() : null)
+  return(payload.hasOwnProperty('recipientsId') ? payload.recipientsId : null)
+}
+
+export const getAdminContacts = payload => {
+  return(payload.hasOwnProperty('mailsAdmins') ? payload.mailsAdmins : null)
 }
 
 export const getUrlType = payload =>{

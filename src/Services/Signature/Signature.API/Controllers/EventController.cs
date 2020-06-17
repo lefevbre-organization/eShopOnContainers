@@ -52,7 +52,10 @@
                 if (eventinfo.Status == "document_completed")
                 {
                     var signatureId = eventinfo.Signature.Id;
-                    var documentId = eventinfo.Id;
+
+                    var documentId = eventinfo.DocumentId;
+
+                    var logResult = await _signaturesService.SaveEvent(eventinfo);
 
                     var result = await _signaturesService.GetSignature(signatureId, documentId);
 

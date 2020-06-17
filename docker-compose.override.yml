@@ -310,7 +310,7 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionString=${ELEF_MONGO_DB:-mongodb://nosql.data}
       - Database=signature
-      - SignaturitApiUrl=https://api.sandbox.signaturit.com/v3
+      - SignaturitApiUrl=https://api.signaturit.com/v3
       - LexonFilesUrl=https://10.38.6.18/index.php
       - LexonApiGwUrl=https://lexbox-test-apigwlex.lefebvre.es/api/v1
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}

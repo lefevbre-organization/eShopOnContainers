@@ -8,7 +8,7 @@ import { PROVIDER } from "../../constants";
 import { getUser } from '../../services/accounts';
 import { removeState } from "../../services/state";
 import * as base64 from 'base-64';
-import { parseJwt, getUserId, getGuid, getUserName, getApp, getIdEntityType, getIdEntity, getBbdd, getIdUserApp, getIdDocument, getConfigureBaseTemplates, getConfigureDefaultTemplates } from "../../services/jwt";
+import { parseJwt, getUserId, getGuid, getUserName, getApp, getIdEntityType, getIdEntity, getBbdd, getIdUserApp, getIdDocuments, getConfigureBaseTemplates, getConfigureDefaultTemplates, getMailContacts, getAdminContacts } from "../../services/jwt";
 import jwt from "njwt";
 import Cookies from 'js-cookie';
 import * as uuid from 'uuid/v4';
@@ -91,6 +91,7 @@ class UserLefebvre extends Component {
 
 
     async componentDidMount() {
+        let documentsInfo = [];
         const payload = (this.props.match.params.token ? parseJwt(this.props.match.params.token) : undefined);
         var user = (this.props.match.params.token ? getUserId(payload) : this.props.match.params.idUser);
         var name = (this.props.match.params.token ? getUserName(payload) : "Anónimo");
@@ -98,11 +99,15 @@ class UserLefebvre extends Component {
         var app = (this.props.match.params.token ? getApp(payload) : "lefebvre");
         var idEntityType = (this.props.match.params.token ? getIdEntityType(payload) : null);
         var idEntity = (this.props.match.params.token ? getIdEntity(payload) : null);
-        var bbdd = (this.props.match.params.token ? getBbdd(payload): null);
-        var idUserApp = (this.props.match.params.token ? getIdUserApp(payload): null);
-        var idDocument = (this.props.match.params.token ? getIdDocument(payload): null);
+        var bbdd = (this.props.match.params.token ? getBbdd(payload) : null);
+        var idUserApp = (this.props.match.params.token ? getIdUserApp(payload) : null);
+        var idDocuments = (this.props.match.params.token ? getIdDocuments(payload) : null);
+        var mailContacts = (this.props.match.params.token ? getMailContacts(payload) : null);
+        var adminContacts = (this.props.match.params.token ? getAdminContacts(payload) : null);
+        
         var configureBaseTemplates = (this.props.match.params.token ? getConfigureBaseTemplates(payload) : false);
         var configureDefaultTemplates = (this.props.match.params.token ? getConfigureDefaultTemplates(payload) : false);
+       
 
         this.props.setUser(`IM0${user}`);
         this.props.setGuid(guid);
@@ -112,7 +117,16 @@ class UserLefebvre extends Component {
         (idEntityType ? this.props.setIdEntityType(idEntityType) : null);
         (idEntity ? this.props.setIdEntity(idEntity) : null);
         (bbdd ? this.props.setDataBase(bbdd) : null);
-        (idDocument ? this.props.setIdDocument(idDocument) : null);
+        (mailContacts ? this.props.setMailContacts(mailContacts) : null);
+        (adminContacts ? this.props.setAdminContacts(adminContacts) : null);
+
+        if (idDocuments && idDocuments.length > 0){
+            idDocuments.forEach(id => {
+                documentsInfo.push({docId: id, docName: ""});
+            });
+            this.props.setIdDocuments(documentsInfo);
+        }
+        // (idDocuments && idDocuments.length > 0 ? this.props.setIdDocuments(idDocuments) : null);
         
 
         if (Date.now() >= payload.exp * 1000) {
@@ -178,8 +192,12 @@ class UserLefebvre extends Component {
                             this.props.setUserBrandings(userInfo.data.brandings);
                         }
 
-                        getAvailableSignatures(user)
-                        .then(response => this.props.setAvailableSignatures(response.data));   
+                        getAvailableSignatures(idUserApp, idDocuments.length)
+                        .then(response => this.props.setAvailableSignatures(response))
+                        .catch(err => {
+                            console.log(err);
+                            this.props.setAvailableSignatures(true); // Esto se pone mientras el equipo encargado del api lo arregla
+                        });  
                     }                    
 
                     console.log("UserLefebvre.ComponentDidMount - userInfo:");
@@ -269,7 +287,8 @@ const mapDispatchToProps = dispatch => ({
     setIdEntityType: id => dispatch(ACTIONS.setIdEntityType(id)),
     setIdEntity: id => dispatch(ACTIONS.setIdEntity(id)),
     setIdUserApp: id => dispatch(ACTIONS.setIdUserApp(id)),
-    setIdDocument: id => dispatch(ACTIONS.setIdDocument(id))
+    setIdDocuments: ids => dispatch(ACTIONS.setIdDocuments(ids)),
+    setAdminContacts: adminContacts => dispatch(ACTIONS.setAdminContacts(adminContacts))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserLefebvre);

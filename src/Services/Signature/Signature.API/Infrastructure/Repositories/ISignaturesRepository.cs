@@ -28,6 +28,8 @@
 
         Task<Result<bool>> UpSertBranding(string user, UserBranding brandingIn);
 
-        Task<Result<BsonDocument>> GetSignature(string signatureId);
+        Task<Result<UserSignatures>> GetSignature(string signatureId);
+
+        Task<Result<bool>> SaveEvent(EventInfo eventInfo);
     }
 }

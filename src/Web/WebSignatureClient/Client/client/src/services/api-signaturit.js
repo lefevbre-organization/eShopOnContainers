@@ -319,7 +319,7 @@ export const createUser = async (userId, brandings = [], signatures = []) => {
 }
 
 // Adds or updates a signature of a given user
-export const addOrUpdateSignature = async (userId, externalId, guid, app) => {
+export const addOrUpdateSignature = async (userId, externalId, guid, app, documents) => {
   var myHeaders = new Headers();
   myHeaders.append("Accept", "text/plain");
   myHeaders.append("Content-Type", "application/json-patch+json");
@@ -328,7 +328,8 @@ export const addOrUpdateSignature = async (userId, externalId, guid, app) => {
   var raw = `{
   \n  \"externalId\": \"${externalId}\",
   \n  \"guid\": \"${guid}\",
-  \n  \"app\": \"${app}\"
+  \n  \"app\": \"${app}\",
+  \n  \"documents\": ${JSON.stringify(documents)}
   \n}`;
 
   var requestOptions = {
@@ -365,25 +366,25 @@ export const deleteUser = async userId => {
     .catch(error => console.log('error', error));
 }
 
-export const getAvailableSignatures = async userId => {
-  return new Promise((resolve, reject) => {
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow'
-    };
+// export const getAvailableSignatures = async userId => {
+//   return new Promise((resolve, reject) => {
+//     var requestOptions = {
+//       method: 'GET',
+//       redirect: 'follow'
+//     };
   
-    fetch(`${window.API_SIGN_GATEWAY}/Signatures/${userId}/getAvailableSignatures`, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        console.log(result);
-        resolve(result);
-      })
-      .catch(error => {
-        console.log('error', error);
-        reject(error);
-      })
-  })
-}
+//     fetch(`${window.API_SIGN_GATEWAY}/Signatures/${userId}/getAvailableSignatures`, requestOptions)
+//       .then(response => response.json())
+//       .then(result => {
+//         console.log(result);
+//         resolve(result);
+//       })
+//       .catch(error => {
+//         console.log('error', error);
+//         reject(error);
+//       })
+//   })
+// }
 
 export const saveAvailableSignatures = async (userId, num) => {
   return new Promise((resolve, reject) => {
@@ -556,7 +557,8 @@ export function preloadSignatures2(dispatch, filters, auth) {
 }
 
 // Creates a new signature calling internal proxy api
-export const createSignature2 = async (recipients, subject, body, files, filesData, reminders, expiration, lefebvreId, guid, brandingId, auth) => {
+//export const createSignature2 = async (recipients, subject, body, files, filesData, reminders, expiration, lefebvreId, guid, brandingId, auth) => {
+  export const createSignature2 = async (recipients, cc, subject, body, files, reminders, expiration, lefebvreId, guid, brandingId, auth) => {
   return new Promise((resolve, reject) => {
     var myHeaders = new Headers();
     myHeaders.append("Accept", "text/plain");
@@ -566,7 +568,8 @@ export const createSignature2 = async (recipients, subject, body, files, filesDa
 
     var jsonObject = {};
     var recipientsData = [];
-    //var filesData = [];
+    var ccData = [];
+    var filesData = [];
     var customFieldsData = [];
     //var fileData = '';
     recipients.forEach(recipient => {
@@ -574,16 +577,26 @@ export const createSignature2 = async (recipients, subject, body, files, filesDa
     });
     jsonObject.recipients = recipientsData;
 
+    cc.forEach(recipient => {
+      ccData.push({name: recipient.split('@')[0], email: recipient})
+    });
+    jsonObject.cc = ccData;
     //filesData.push({file: filesData, fileName: files.name})
     // files.forEach(file => {
     //   filesData.push({file: file, fileName: file.name})
     // });
-    jsonObject.files = [{file: filesData, fileName: files.name}];
+    files.forEach(file => {
+      filesData.push({file: file.content, fileName: file.fileName})
+    })
+    //jsonObject.files = [{file: filesData, fileName: files.name}];
+    jsonObject.files = filesData;
 
     customFieldsData.push({name: "lefebvre_id", value: lefebvreId});
     customFieldsData.push({name: "lefebvre_guid", value: guid});
     customFieldsData.push({name: "subject", value: subject});
     customFieldsData.push({name: "body", value: body});
+    // customFieldsData.push({name: "expiration", value: expiration});
+    // customFieldsData.push({name: "reminders", value: reminders});
     jsonObject.customFields = customFieldsData;
 
     jsonObject.subject = subject;
@@ -896,6 +909,49 @@ export const getAttachmentCen = async (userId, attachmentId) => {
   })
 }
 
+export const getAvailableSignatures = async (companyId, numDocuments) => {
+  return new Promise((resolve, reject) => {
+
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+    
+    fetch(`${window.API_CHECK_CREDITS}/ComprobarPuedeCrearFirmaDigital?IdClientNav=${companyId}&NumDocuments=${numDocuments}&idUic=1`, requestOptions)
+      .then(response => response.text())
+      .then(result => {
+        //resolve(result);
+        resolve(true);
+        console.log(result);
+      })
+      .catch(error => {
+        console.log('error', error);
+        reject(error);
+      });
+  })
+}
+
+export const notifySignature = async (userId, companyId, numDocuments) => {
+  return new Promise((resolve, reject) => {
+
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+    
+    fetch(`${window.API_CHECK_CREDITS}/CrearFirmaDigital?IdClientNav=${companyId}&idUsuarioPro=${userId}&NumDocuments=${numDocuments}&idUic=1`, requestOptions)
+      .then(response => response.text())
+      .then(result => {
+        console.log(result);
+        resolve (result);
+      })
+      .catch(error => {
+        console.log('error', error);
+        reject(error);
+      });
+  })
+}
+
 // export const createSignature = async (recipients, files) => {
 //     var request = require('request');
 //     var fs = require('fs');
@@ -945,5 +1001,3 @@ export const getAttachmentCen = async (userId, attachmentId) => {
 //         console.log(res.raw_body);
 //     });
 // }
-
-

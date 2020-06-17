@@ -11,12 +11,12 @@ import { findTrashFolder, FolderTypes } from '../../services/folder';
 import {
   forwardMessage,
   replyMessage,
-  clearSelectedMessage
+  clearSelectedMessage,
 } from '../../services/application';
 import {
   deleteMessages,
   moveMessages,
-  setMessagesSeen
+  setMessagesSeen,
 } from '../../services/message';
 import styles from './top-bar.scss';
 import mainCss from '../../styles/main.scss';
@@ -26,7 +26,7 @@ export class TopBar extends Component {
     super(props);
     this.state = {
       deletingFromTrash: false,
-      deletingFromTrashConfirm: () => {}
+      deletingFromTrashConfirm: () => {},
     };
 
     this.onForwardMessage = this.onForwardMessage.bind(this);
@@ -48,7 +48,7 @@ export class TopBar extends Component {
       selectedMessages,
       selectedMessagesAllUnread,
       outbox,
-      toggleMessageSeen
+      toggleMessageSeen,
     } = props;
     const collapsed = props.sideBarCollapsed;
     const isEditing =
@@ -112,15 +112,27 @@ export class TopBar extends Component {
   }
 
   onDelete(action) {
-    if (this.props.selectedFolder.type === FolderTypes.TRASH) {
+    if (this.props.selectedFolder.tsype === FolderTypes.TRASH) {
       this.setState({
         deletingFromTrash: true,
         deletingFromTrashConfirm: () => {
           action();
           this.setState({ deletingFromTrash: false });
-        }
+        },
       });
     } else {
+      // Uncheck messages from Lexon
+      for (let i = 0; i < this.props.selectedMessages.length; i++) {
+        window.dispatchEvent(
+          new CustomEvent('RemoveSelectedDocument', {
+            detail: {
+              ...this.props.selectedMessages[i],
+              id: this.props.selectedMessages[i].messageId,
+            },
+          })
+        );
+      }
+
       action();
     }
   }
@@ -136,10 +148,10 @@ TopBar.propTypes = {
   selectedMessagesAllUnread: PropTypes.bool,
   clearSelectedMessage: PropTypes.func,
   sideBarToggle: PropTypes.func.isRequired,
-  sideBarCollapsed: PropTypes.bool.isRequired
+  sideBarCollapsed: PropTypes.bool.isRequired,
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const selectedMessagesIds = state.messages.selected;
   const messages =
     state.application.selectedFolderId &&
@@ -149,10 +161,10 @@ const mapStateToProps = state => {
         )
       : [];
   const selectedMessages = messages.filter(
-    m => selectedMessagesIds.indexOf(m.messageId) > -1
+    (m) => selectedMessagesIds.indexOf(m.messageId) > -1
   );
   const selectedMessagesAllUnread =
-    selectedMessages.filter(m => m.seen === true).length === 0;
+    selectedMessages.filter((m) => m.seen === true).length === 0;
   return {
     title: state.application.title,
     newMessage: state.application.newMessage,
@@ -165,11 +177,11 @@ const mapStateToProps = state => {
     credentials: getCredentials(state),
     folders: state.folders,
     lexon: state.lexon,
-    messages: messages
+    messages: messages,
   };
 };
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   clearSelectedMessage: () => clearSelectedMessage(dispatch),
   replyMessage: (selectedMessaage, sign) =>
     replyMessage(dispatch, selectedMessaage, sign),
@@ -180,11 +192,11 @@ const mapDispatchToProps = dispatch => ({
     if (selectedMessage && selectedFolder && trashFolder) {
       if (selectedFolder === trashFolder) {
         deleteMessages(dispatch, credentials, selectedFolder, [
-          selectedMessage
+          selectedMessage,
         ]);
       } else {
         moveMessages(dispatch, credentials, selectedFolder, trashFolder, [
-          selectedMessage
+          selectedMessage,
         ]);
       }
       clearSelectedMessage(dispatch);
@@ -226,14 +238,14 @@ const mapDispatchToProps = dispatch => ({
         seen
       );
     }
-  }
+  },
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
   Object.assign({}, stateProps, dispatchProps, ownProps, {
-    replyMessage: sign =>
+    replyMessage: (sign) =>
       dispatchProps.replyMessage(stateProps.selectedMessage, sign),
-    forwardMessage: sign =>
+    forwardMessage: (sign) =>
       dispatchProps.forwardMessage(stateProps.selectedMessage, sign),
     deleteMessage: () =>
       dispatchProps.deleteMessage(
@@ -255,13 +267,13 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
         stateProps.selectedFolder,
         stateProps.selectedMessages
       ),
-    setMessagesSeen: seen =>
+    setMessagesSeen: (seen) =>
       dispatchProps.setMessagesSeen(
         stateProps.credentials,
         stateProps.selectedFolder,
         stateProps.selectedMessages,
         seen
-      )
+      ),
   });
 
 export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(TopBar);
