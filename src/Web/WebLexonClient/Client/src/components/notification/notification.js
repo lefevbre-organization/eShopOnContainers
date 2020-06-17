@@ -25,11 +25,7 @@ class Notification extends Component {
                 id="clasificarNuevaclasificacionLabel"
               >
                 {error === false && <span className="lf-icon-bookmarks"></span>}
-                {error === true && <img
-                  className="img-warning"
-                  alt=""
-                  src="/assets/img/icon-warning.png"
-                ></img>}
+                {error === true && <span className="lf-icon-warning"></span>}
                 {message}
               </h5>
             </div>
