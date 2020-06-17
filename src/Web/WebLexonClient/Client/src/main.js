@@ -330,8 +330,10 @@ class Main extends Component {
   closeLexonConnector(message) {
     if(!message && this.state.isAddon) {
       const values = queryString.parse(window.location.search);
+      let redirect_uri = values.redirect_uri ? values.redirect_uri 
+      : window.GOOGLE_SCRIPT
       window.location.replace(
-        `${window.GOOGLE_SCRIPT}` + '?success=1' + '&state=' + values.state
+        `${redirect_uri}` + '?success=1' + '&state=' + values.state
       );
       localStorage.removeItem('oldTime');
     }

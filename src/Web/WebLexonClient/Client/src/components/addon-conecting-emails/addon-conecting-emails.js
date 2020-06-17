@@ -63,8 +63,10 @@ class AddonConnectingEmails extends Component {
 
   goBackAddon() {
     const values = queryString.parse(window.location.search);
+    let redirect_uri = values.redirect_uri ? values.redirect_uri 
+    : window.GOOGLE_SCRIPT
     window.location.replace(
-      `${window.GOOGLE_SCRIPT}` + '?success=1' + '&state=' + values.state
+      `${redirect_uri}` + '?success=1' + '&state=' + values.state
     );
     localStorage.removeItem('oldTime');
   }
@@ -120,7 +122,7 @@ class AddonConnectingEmails extends Component {
     var oldTime = parseInt(localStorage.getItem('oldTime'));
     var milliseconds = Math.abs(oldTime - currentTime);
     var minute = parseInt(milliseconds/60000);
-    var expirationTime = 60 - minute;
+    var expirationTime = 30 - minute;
     this.setState({expirationTime: expirationTime});
     if(expirationTime == 1){
       this.goBackAddon();
@@ -483,8 +485,7 @@ class AddonConnectingEmails extends Component {
     const { 
       messages, 
       step1Data, 
-      step,
-      expirationTime
+      step
     } = this.state;
     console.log('Data addon --->', addonData);
     return (
@@ -501,9 +502,6 @@ class AddonConnectingEmails extends Component {
             <span className='title-space'>
               {i18n.t('modal-conecting-emails.save-copy')}
             </span>
-            <span className="expiration">{i18n.t('classify-emails.expiration') 
-            + '\xa0' + expirationTime + '\xa0' 
-            + i18n.t('classify-emails.minute')}</span>
           </h5>
         </header>
         <Container>
