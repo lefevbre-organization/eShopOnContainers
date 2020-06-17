@@ -155,6 +155,18 @@ function removeRawAddon(addonData) {
   var deleteResponse = UrlFetchApp.fetch(url, options);
 }
 
+ function getHeaderId(thread){
+  var response = Gmail.Users.Threads.get('me', thread.getId());
+  for (var i = 0; i < response.messages.length; i++) {
+   for (var j = 0; j < response.messages[i].payload.headers.length; j++) {
+       if(response.messages[i].payload.headers[j].name == "Message-ID" || 
+          response.messages[i].payload.headers[j].name == "Message-Id") {
+          return response.messages[i].payload.headers[j].value;
+       }
+     }
+   }
+
+ }
 
 function getAddonData(e) {
   var user = JSON.parse(cache.get('dataUser'));
@@ -165,17 +177,11 @@ function getAddonData(e) {
   var messageDate = thread.getLastMessageDate();
   var raw = GmailApp.getMessageById(messageDataId).getRawContent()
   var message = GmailApp.getMessageById(messageDataId);
-  getNameFolder(message)
   
-  var response = Gmail.Users.Messages.get('me', thread.getId())
-  var messageId = "";
-  for (var i = 0; i < response.payload.headers.length; i++) {
-    if(response.payload.headers[i].name == "Message-ID" || 
-      response.payload.headers[i].name == "Message-Id") {
-      messageId = response.payload.headers[i].value;
-    }
-  }
-
+  getNameFolder(message);
+  
+  var messageId = getHeaderId(thread);
+  
   var addonData = {
     idCompany: companyData.idCompany,
     bbdd: companyData.bbdd,
