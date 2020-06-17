@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import * as uuid from 'uuid/v4';
-import { sendMessage } from '../../api_graph';
+import { sendMessage, getLabelInbox } from '../../api_graph';
 import { getValidEmails } from '../../utils';
 import i18n from 'i18next';
 import { Button, InputGroup, InputGroupAddon, Input } from 'reactstrap';
@@ -301,7 +301,12 @@ export class ComposeMessage extends PureComponent {
       this.props.lexon.idCaseFile === null ||
       this.props.lexon.idCaseFile === undefined
     ) {
-      this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
+      //this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
+      if (this.props.labelsResult.labelInbox === null){
+        getLabelInbox().then(label => this.props.history.push(`/${label.id}`));
+      } else {
+        this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
+      }
     } else {
       if (this.props.casefile !== null && this.props.casefile !== undefined) {
         window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
