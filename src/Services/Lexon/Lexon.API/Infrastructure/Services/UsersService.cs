@@ -711,14 +711,50 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        public Task<Result<List<LexContact>>> GetAllContactsAsync(BaseView search)
+        public async Task<Result<List<LexContact>>> GetAllContactsAsync(BaseView search)
         {
-            throw new NotImplementedException();
+            var resultContact = new Result<List<LexContact>>(new List<LexContact>());
+
+            try
+            {
+                var path = $"/entities/contact/all";
+                SerializeObjectToPost(search, path, out string url, out StringContent data);
+                using (var response = await _client.PostAsync(url, data))
+                {
+                    if (response.IsSuccessStatusCode)
+                        resultContact = await response.Content.ReadAsAsync<Result<List<LexContact>>>();
+                    else
+                        TraceOutputMessage(resultContact.errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", 2003);
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(resultContact.errors, ex);
+            }
+            return resultContact;
         }
 
-        public Task<Result<LexUserSimpleCheck>> CheckRelationsMailAsync(string idUser, MailInfo mail)
+        public async Task<Result<LexUserSimpleCheck>> CheckRelationsMailAsync(string idUser, MailInfo mail)
         {
-            throw new NotImplementedException();
+            var resultContact = new Result<LexUserSimpleCheck>(new LexUserSimpleCheck());
+
+            try
+            {
+                var path = $"/classifications/{idUser}/check";
+                SerializeObjectToPost(mail, path, out string url, out StringContent data);
+                using (var response = await _client.PostAsync(url, data))
+                {
+                    if (response.IsSuccessStatusCode)
+                        resultContact = await response.Content.ReadAsAsync<Result<LexUserSimpleCheck>>();
+                    else
+                        TraceOutputMessage(resultContact.errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", 2003);
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(resultContact.errors, ex);
+            }
+            return resultContact;
         }
     }
 }

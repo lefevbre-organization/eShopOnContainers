@@ -656,11 +656,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             //2. Obtener datos de lexon (TODO: evaluar si es necesari, se puede obviar con el paso anterior u obtenemos un método más eficiente)
             if (tokenRequest.idApp == _settings.Value.IdAppLexon)
             {
-                Result<LexUser> lexUserResult = await GetLexonUserAsync(tokenRequest.idClienteNavision);
-                if (string.IsNullOrEmpty(lexUserResult?.data?.idNavision))
+                var lexUserResult = await GetLexonUserIdAsync(tokenRequest.idClienteNavision);
+                if (string.IsNullOrEmpty(lexUserResult?.data?.idUser))
                     TraceOutputMessage(result.errors, $"Error get user from lexon", "Error Get Lexon Token");
                 tokenRequest.idUserApp = lexUserResult?.data?.idUser;
-                // tokenRequest.IdUser = "449";
             }
 
             //3. Obtener contactos si se necesita (evaluar si tengo que pasarlo a otros métodos y quitarlos del general
@@ -696,11 +695,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             return result;
         }
 
-        private async Task<Result<LexUser>> GetLexonUserAsync(string idNavisionUser)
+        private async Task<Result<LexUserSimple>> GetLexonUserIdAsync(string idNavisionUser)
         {
-            var result = new Result<LexUser>(new LexUser());
+            var result = new Result<LexUserSimple>(new LexUserSimple());
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonApiUrl}/user?idNavisionUser={idNavisionUser}");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonApiUrl}/user/getid?idNavisionUser={idNavisionUser}");
             TraceLog(parameters: new string[] { $"request:{request}" });
 
             try
@@ -709,7 +708,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        result = await response.Content.ReadAsAsync<Result<LexUser>>();
+                        result = await response.Content.ReadAsAsync<Result<LexUserSimple>>();
                         result.data.idNavision = idNavisionUser;
                     }
                     else

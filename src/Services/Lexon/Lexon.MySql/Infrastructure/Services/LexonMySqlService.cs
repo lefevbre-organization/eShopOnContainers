@@ -3,12 +3,9 @@ using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -17,9 +14,11 @@ namespace Lexon.MySql.Infrastructure.Services
     public partial class LexonMySqlService : ILexonMySqlService
     {
         public readonly ILexonMySqlRepository _lexonRepository;
+
         //private readonly IHttpClientFactory _clientFactory;
         //private readonly HttpClient _client;
         private readonly IOptions<LexonSettings> _settings;
+
         internal readonly ILogger<LexonMySqlService> _logger;
 
         public LexonMySqlService(
@@ -38,35 +37,35 @@ namespace Lexon.MySql.Infrastructure.Services
 
         #region Relations
 
-        public async Task<Result<List<int>>> AddRelationMailAsync(ClassificationAddView classification) 
+        public async Task<Result<List<int>>> AddRelationMailAsync(ClassificationAddView classification)
             => await _lexonRepository.AddRelationMailAsync(classification);
 
-        public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification) 
+        public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification)
             => await _lexonRepository.AddRelationContactsMailAsync(classification);
 
-        public async Task<Result<int>> RemoveRelationMailAsync(ClassificationRemoveView classification) 
+        public async Task<Result<int>> RemoveRelationMailAsync(ClassificationRemoveView classification)
             => await _lexonRepository.RemoveRelationMailAsync(classification);
 
-        public async Task<MySqlCompany> GetRelationsAsync(ClassificationSearchView classification) 
+        public async Task<MySqlCompany> GetRelationsAsync(ClassificationSearchView classification)
             => await _lexonRepository.GetRelationsAsync(classification);
 
         #endregion Relations
 
         #region Entities
 
-        public async Task<MySqlCompany> GetEntitiesAsync(IEntitySearchView entitySearch) 
+        public async Task<MySqlCompany> GetEntitiesAsync(IEntitySearchView entitySearch)
             => await _lexonRepository.GetEntitiesAsync(entitySearch);
 
-        public async Task<MySqlCompany> GetFoldersFilesEntitiesAsync(IEntitySearchView entitySearch) 
+        public async Task<MySqlCompany> GetFoldersFilesEntitiesAsync(IEntitySearchView entitySearch)
             => await _lexonRepository.GetFoldersFilesEntitiesAsync(entitySearch);
 
-        public async Task<Result<LexEntity>> GetEntityAsync(EntitySearchById entitySearch) 
+        public async Task<Result<LexEntity>> GetEntityAsync(EntitySearchById entitySearch)
             => await _lexonRepository.GetEntityAsync(entitySearch);
 
-        public async Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch) 
+        public async Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch)
             => await _lexonRepository.GetContactAsync(entitySearch);
 
-        public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync() 
+        public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync()
             => await _lexonRepository.GetMasterEntitiesAsync();
 
         #endregion Entities
@@ -103,7 +102,10 @@ namespace Lexon.MySql.Infrastructure.Services
             {
                 resultado.errors.Add(new ErrorInfo() { code = "5000", message = "No se recupera un idUser desde Lexon" });
             }
-            mailContacts = await GetContactData(resultado?.data?.idUser, bbdd, idEntityType, idEntity, mailContacts);
+            if (idEntity != null && idEntityType != null)
+            {
+                mailContacts = await GetContactData(resultado?.data?.idUser, bbdd, idEntityType, idEntity, mailContacts);
+            }
 
             resultado.data.token = BuildTokenWithPayloadAsync(new TokenModel
             {
