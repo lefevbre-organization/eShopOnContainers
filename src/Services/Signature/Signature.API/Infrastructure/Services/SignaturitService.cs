@@ -88,6 +88,13 @@ namespace Signature.API.Infrastructure.Services
                 i += 1;
             }
             i = 0;
+            foreach (Recipient recipient in signatureInfo.cc)
+            {
+                request.AddParameter($"cc[{i}][name]", recipient.name);
+                request.AddParameter($"cc[{i}][email]", recipient.email);
+                i += 1;
+            }
+            i = 0;
             foreach (UserFile file in signatureInfo.files)
             {
                 request.AddFileBytes($"files[{i}]", file.file, file.fileName);

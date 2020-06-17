@@ -132,6 +132,12 @@ const lefebvre = (state = INITIAL_STATE.lefebvre, action = {}) => {
                 ...state, 
                 idDocuments: action.payload
             }
+
+        case ActionTypes.LEFEBVRE_ADMINCONTACTS:
+            return {
+                ...state,
+                adminContacts: action.payload
+            }
             
         default:
             return state;

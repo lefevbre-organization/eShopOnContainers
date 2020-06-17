@@ -19,7 +19,7 @@ import i18n from 'i18next';
 import ACTIONS from '../../actions/lefebvre';
 import ComposeMessageEditor from './composeMessageEditor.jsx';
 
-import { createSignature, createSignature2, addOrUpdateSignature, getUserSignatures, createUser, decAvailableSignatures } from '../../services/api-signaturit';
+import { createSignature, createSignature2, addOrUpdateSignature, getUserSignatures, createUser, decAvailableSignatures, notifySignature } from '../../services/api-signaturit';
 import { getUser } from '../../services/accounts';
 //import { createUser, addOrUpdateSignature, getUserSignatures } from '../../services/api-signature';
 import * as uuid from 'uuid/v4';
@@ -377,7 +377,7 @@ class MessageEditor extends Component {
     if (this.headerFormRef.current.reportValidity()) {
       // Get content directly from editor, state content may not contain latest changes
       const content = this.getEditor().getContent();
-      const { to, cc,  subject } = this.props;
+      const { to, cc, subject } = this.props;
       const { lefebvre } = this.props;
       const userBranding = lefebvre.userBrandings.find(b => b.app === lefebvre.userApp)
       
@@ -465,7 +465,7 @@ class MessageEditor extends Component {
           debugger;
         });
         //this.callApis(to, subject, content.innerHTML, file, this.props.attachments[0].content, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
-        this.callApis(to, subject, content.innerHTML, this.props.attachments, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
+        this.callApis(to, cc, subject, content.innerHTML, this.props.attachments, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
       }
       //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
     }
@@ -573,11 +573,11 @@ class MessageEditor extends Component {
   }
 
   //callApis(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId){
-  callApis(to, subject, content, files, reminders, expiration, userId, guid, userBrandingId){
+  callApis(to, cc, subject, content, files, reminders, expiration, userId, guid, userBrandingId){
     const { lefebvre } = this.props;
     
     //createSignature2(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId, this.props.credentials.encrypted)
-    createSignature2(to, subject, content, files, reminders, expiration, userId, guid, userBrandingId, this.props.credentials.encrypted)
+    createSignature2(to, cc, subject, content, files, reminders, expiration, userId, guid, userBrandingId, this.props.credentials.encrypted)
     .then( signatureInfo => {
       console.log(signatureInfo);
       if (signatureInfo.status_code){
@@ -600,8 +600,9 @@ class MessageEditor extends Component {
             console.log('Insertando sólo firma');
             addOrUpdateSignature(userId, signatureInfo.id, guid, lefebvre.userApp, documentsInfo );
           //}
-          decAvailableSignatures(userId)
-          .then(res => this.props.setAvailableSignatures(res.data))
+          // decAvailableSignatures(userId)
+          // .then(res => this.props.setAvailableSignatures(res.data))
+          notifySignature(lefebvre.userId, lefebvre.idUserApp, documentsInfo.length);
         })
       }
     })

@@ -366,25 +366,25 @@ export const deleteUser = async userId => {
     .catch(error => console.log('error', error));
 }
 
-export const getAvailableSignatures = async userId => {
-  return new Promise((resolve, reject) => {
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow'
-    };
+// export const getAvailableSignatures = async userId => {
+//   return new Promise((resolve, reject) => {
+//     var requestOptions = {
+//       method: 'GET',
+//       redirect: 'follow'
+//     };
   
-    fetch(`${window.API_SIGN_GATEWAY}/Signatures/${userId}/getAvailableSignatures`, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        console.log(result);
-        resolve(result);
-      })
-      .catch(error => {
-        console.log('error', error);
-        reject(error);
-      })
-  })
-}
+//     fetch(`${window.API_SIGN_GATEWAY}/Signatures/${userId}/getAvailableSignatures`, requestOptions)
+//       .then(response => response.json())
+//       .then(result => {
+//         console.log(result);
+//         resolve(result);
+//       })
+//       .catch(error => {
+//         console.log('error', error);
+//         reject(error);
+//       })
+//   })
+// }
 
 export const saveAvailableSignatures = async (userId, num) => {
   return new Promise((resolve, reject) => {
@@ -558,7 +558,7 @@ export function preloadSignatures2(dispatch, filters, auth) {
 
 // Creates a new signature calling internal proxy api
 //export const createSignature2 = async (recipients, subject, body, files, filesData, reminders, expiration, lefebvreId, guid, brandingId, auth) => {
-  export const createSignature2 = async (recipients, subject, body, files, reminders, expiration, lefebvreId, guid, brandingId, auth) => {
+  export const createSignature2 = async (recipients, cc, subject, body, files, reminders, expiration, lefebvreId, guid, brandingId, auth) => {
   return new Promise((resolve, reject) => {
     var myHeaders = new Headers();
     myHeaders.append("Accept", "text/plain");
@@ -568,6 +568,7 @@ export function preloadSignatures2(dispatch, filters, auth) {
 
     var jsonObject = {};
     var recipientsData = [];
+    var ccData = [];
     var filesData = [];
     var customFieldsData = [];
     //var fileData = '';
@@ -576,6 +577,10 @@ export function preloadSignatures2(dispatch, filters, auth) {
     });
     jsonObject.recipients = recipientsData;
 
+    cc.forEach(recipient => {
+      ccData.push({name: recipient.split('@')[0], email: recipient})
+    });
+    jsonObject.cc = ccData;
     //filesData.push({file: filesData, fileName: files.name})
     // files.forEach(file => {
     //   filesData.push({file: file, fileName: file.name})
@@ -901,6 +906,49 @@ export const getAttachmentCen = async (userId, attachmentId) => {
       console.log('error', error);
       reject(error);
     });
+  })
+}
+
+export const getAvailableSignatures = async (companyId, numDocuments) => {
+  return new Promise((resolve, reject) => {
+
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+    
+    fetch(`${window.API_CHECK_CREDITS}/ComprobarPuedeCrearFirmaDigital?IdClientNav=${companyId}&NumDocuments=${numDocuments}&idUic=1`, requestOptions)
+      .then(response => response.text())
+      .then(result => {
+        //resolve(result);
+        resolve(true);
+        console.log(result);
+      })
+      .catch(error => {
+        console.log('error', error);
+        reject(error);
+      });
+  })
+}
+
+export const notifySignature = async (userId, companyId, numDocuments) => {
+  return new Promise((resolve, reject) => {
+
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+    
+    fetch(`${window.API_CHECK_CREDITS}/CrearFirmaDigital?IdClientNav=${companyId}&idUsuarioPro=${userId}&NumDocuments=${numDocuments}&idUic=1`, requestOptions)
+      .then(response => response.text())
+      .then(result => {
+        console.log(result);
+        resolve (result);
+      })
+      .catch(error => {
+        console.log('error', error);
+        reject(error);
+      });
   })
 }
 

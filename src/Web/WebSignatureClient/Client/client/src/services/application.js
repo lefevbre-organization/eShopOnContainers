@@ -114,15 +114,15 @@ export async function login(dispatch, credentials) {
   }
 }
 
-export function editNewMessage(dispatch, to = [], sign = '', attachments = []) {
+export function editNewMessage(dispatch, to = [], cc = [], sign = null, attachments = []) {
   dispatch(
     editMessage({
       to: to,
-      cc: [],
+      cc: cc,
       bcc: [],
       attachments: attachments,
       subject: '',
-      content: `<br/><br/><br/><br/>${sign?sign:''}`
+      content: `<br/>${sign?sign:''}`
     })
   );
 }

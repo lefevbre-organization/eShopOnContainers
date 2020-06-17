@@ -458,6 +458,7 @@ class App extends Component {
 
   async componentDidMount() {
     document.title = this.props.application.title;
+    var { mailContacts, adminContacts } = this.props.lefebvre;
     //Starting poll to update the inbox automatically
     this.startPoll();
     //adding connector App to right slide panel
@@ -493,7 +494,7 @@ class App extends Component {
             this.props.getAttachmentLex(lefebvre.bbdd, lefebvre.idEntity, lefebvre.idUserApp)
             .then((attachment) => {
                 if (attachment.data === null){ //El fichero no existe o no se ha podido recuperar
-                  this.props.newMessage();
+                  this.props.newMessage(mailContacts, adminContacts);
                 }
                 else {
                   const length = attachment.data.length;
@@ -504,10 +505,10 @@ class App extends Component {
                     contentType: getFileType(fileName),
                     content: attachment.data
                   }]
-                  this.props.newMessage([], null, newAttachment);
+                  this.props.newMessage(mailContacts, adminContacts, null, newAttachment);
                 }
             })
-            .catch(() => this.props.newMessage([], null));
+            .catch(() => this.props.newMessage(mailContacts, adminContacts));
           } 
           else if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela") && lefebvre.idDocuments && lefebvre.idDocuments.length > 0){
             let documentsInfo = []; 
@@ -537,10 +538,10 @@ class App extends Component {
 
                 if (i > 0 && i === attachmentsList.length){
                   this.props.setIdDocuments(documentsInfo);
-                  this.props.newMessage([], null, attachmentsList);
+                  this.props.newMessage(mailContacts, adminContacts, null, attachmentsList);
                 }
               })
-              .catch(() => this.props.newMessage([], null));        
+              .catch(() => this.props.newMessage(mailContacts, adminContacts));        
             });
           }
         }  
@@ -947,7 +948,7 @@ const mapDispatchToProps = dispatch => ({
   reloadFolders: credentials => getFolders(dispatch, credentials, true),
   reloadMessageCache: (user, folder) =>
     resetFolderMessagesCache(dispatch, user, folder),
-  newMessage: (to, sign, attachments) => editNewMessage(dispatch, to, sign, attachments),
+  newMessage: (to, cc, sign, attachments) => editNewMessage(dispatch, to, cc, sign, attachments),
   selectFolder: (folder, user) => {
     dispatch(selectFolder(folder));
     clearSelectedMessage(dispatch);

@@ -100,6 +100,11 @@ export const setIdDocuments = idDocuments => ({
     payload: idDocuments
 })
 
+export const setAdminContacts = email => ({
+    type: ActionTypes.LEFEBVRE_ADMINCONTACTS,
+    payload: email
+})
+
 
 export default {
     setUser,
@@ -121,5 +126,6 @@ export default {
     setIdEntityType,
     setIdEntity,
     setIdUserApp,
-    setIdDocuments
+    setIdDocuments,
+    setAdminContacts
 };

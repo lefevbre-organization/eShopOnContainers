@@ -91,13 +91,13 @@ class SideBar extends Component {
   onNewMessage() {
     const { lefebvre } = this.props;
 
-    getAvailableSignatures(lefebvre.userId)
+    getAvailableSignatures(lefebvre.idUserApp, 1)
     .then(response => {
-      setAvailableSignatures(response.data);
-      if (response.data === 0){
+      setAvailableSignatures(response);
+      if (response === false || response === "false"){
         alert('Ha agotado todas sus solicitudes de firma. Debe comprar más');
       } else {
-        this.props.setAvailableSignatures(response.data);
+        this.props.setAvailableSignatures(response);
         this.props.newMessage(lefebvre.sign);
       }
     })
@@ -105,7 +105,7 @@ class SideBar extends Component {
       if (err.message === "Failed to fetch"){
         //Mostrar aviso no se han podido recuperar firmas
         alert('No se ha podido comprobar si tiene firmas disponibles');
-        this.props.setAvailableSignatures(1);
+        // this.props.setAvailableSignatures(1);
         this.props.newMessage(lefebvre.sign);
       }
     })
@@ -166,7 +166,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   moveFolderToFirstLevel: (user, folder) =>
     moveFolder(dispatch, user, folder, null),
-  newMessage: sign => editNewMessage(dispatch, [], sign),
+  newMessage: sign => editNewMessage(dispatch, [], [], sign),
   setAvailableSignatures: num => dispatch(setAvailableSignatures(num))
 });
 
