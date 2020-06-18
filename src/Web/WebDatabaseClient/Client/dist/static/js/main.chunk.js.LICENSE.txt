@@ -1,0 +1,79 @@
+/*! /Users/juan/Desarrollo/Lefebvre/eShopOnContainers/src/Web/WebDatabaseClient/Client/src/index.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/classCallCheck.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/createClass.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/createSuper.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/inherits.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/objectSpread2.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/toConsumableArray.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/i18next/dist/esm/i18next.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/react-bootstrap/esm/Modal.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/react-dom/index.js (<- Module is not an ECMAScript module) */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/react-i18next/dist/es/index.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/react-redux/es/index.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/react/index.js (<- Module is not an ECMAScript module) */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/redux-logger/dist/redux-logger.js (<- Module is not an ECMAScript module) */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/redux/es/redux.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/single-spa-react/lib/single-spa-react.js (<- Module is not an ECMAScript module) */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./src/locales/en/isotope.json (<- Module is not an ECMAScript module) */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./src/locales/es/isotope.json (<- Module is not an ECMAScript module) */
+
+/*! ModuleConcatenation bailout: Module is not an ECMAScript module */
+
+/*! all exports used */
+
+/*! exports provided: bootstrap, mount, unmount */
+
+/*! exports provided: main, select-company, select-action-header, new-classification, attaching, connecting, classification, classify-emails, classification-type, classification-list-search, tab-classify, tab-connect, classification-list, confirm-remove-classification, select-action, tab-document, tab-attachment, save-copy, list-classifications, list-documents, modal-documents-emails, modal-conecting-emails, modal-attach-documents, case-file, configuration, default */
+
+/*! exports provided: main, select-company, select-action-header, new-classification, connecting, attaching, classification, classify-emails, classification-type, classification-list-search, tab-classify, select-action, classification-list, confirm-remove-classification, tab-document, tab-connect, tab-attachment, save-copy, list-classifications, list-documents, modal-documents-emails, modal-conecting-emails, modal-attach-documents, case-file, configuration, default */
+
+/*! exports used: default */
+
+/*! no static exports found */
+
+/*!*********************!*\
+  !*** ./src/App.css ***!
+  \*********************/
+
+/*!**********************!*\
+  !*** ./src/main.css ***!
+  \**********************/
+
+/*!****************************!*\
+  !*** multi ./src/index.js ***!
+  \****************************/
+
+/*!***********************************!*\
+  !*** ./src/index.js + 15 modules ***!
+  \***********************************/
+
+/*!*************************************!*\
+  !*** ./src/locales/en/isotope.json ***!
+  \*************************************/
+
+/*!*************************************!*\
+  !*** ./src/locales/es/isotope.json ***!
+  \*************************************/
+
+/*!******************************************************!*\
+  !*** ./src/components/notification/notification.css ***!
+  \******************************************************/

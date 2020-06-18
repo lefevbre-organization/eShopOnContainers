@@ -1,0 +1,163 @@
+{
+  "main": {
+    "error_connection": "Error al conectar con Lexon. Los datos no se muestran actualizados.",
+    "bbdd_error": "Error al conectar con la base de datos."
+  },
+  "select-company": {
+    "select-company": "Selecciona una empresa:",
+    "enter": "ENTRAR",
+    "open-all-window": "Abrir en pantalla completa",
+    "hide-column": "Ocultar columna",
+    "must-select-company": "Debes seleccionar una empresa."
+  },
+  "select-action-header": {
+    "messages-selected": "MENSAJES SELECCIONADOS:",
+    "company-selected": "Empresa identificada:",
+    "change-company": "Cambiar de empresa",
+    "select-another-company": "Seleccionar otra empresa diferente",
+    "folder": "Carpeta",
+    "subject": "Asunto"
+  },
+  "new-classification": {
+    "new-classification": "Nueva clasificación"
+  },
+  "connecting": {
+    "q1": "¿Que quieres hacer con los mensajes seleccionados?",
+    "q2": "¿Con que tipo de entidad quieres clasificarlos?",
+    "create": "Crear actuación",
+    "copy": "Guardar copia de los mensajes en documentación",
+    "save": "Guardar los archivos adjuntos en documentación",
+    "q3_1": "¿En que expediente quieres clasificar los mensajes?",
+    "q3_2": "¿En que cliente quieres clasificar los mensajes?",
+    "q3_3": "¿En que contrario quieres clasificar los mensajes?",
+    "q3_4": "¿En que proveedor quieres clasificar los mensajes?",
+    "q3_5": "¿En que abogado propio quieres clasificar los mensajes?",
+    "q3_6": "¿En que abogado contrario quieres clasificar los mensajes?",
+    "q3_7": "¿En que procurador propio quieres clasificar los mensajes?",
+    "q3_8": "¿En que procurador contrario quieres clasificar los mensajes?",
+    "q3_9": "¿En que notario quieres clasificar los mensajes?",
+    "q3_10": "¿En que juzgado quieres clasificar los mensajes?",
+    "q3_11": "¿En que asegurador quieres clasificar los mensajes?",
+    "q3_12": "¿En que entidad quieres clasificar los mensajes?",
+    "q3_13": "¿En que carpeta quieres clasificar los mensajes?",
+    "q3_14": "¿En que documento quieres clasificar los mensajes?",
+    "q4": "Selecciona la ubicación exacta para los archivos",
+    "q5": "¿Quieres renombrar las nuevas actuaciones?",
+    "qs5": "Las actuaciones creadas toman por defecto como título el asunto de los mensajes clasificados. Si lo deseas, puedes editar estos títulos.",
+    "actuation-title": "Título de la actuación",
+    "new-folder": "Nueva carpeta"
+  },
+  "attaching": {
+    "q2": "¿En que tipo de contacto quieres realizar la búsqueda?"
+  },
+  "classification": {
+    "type": "Tipo: ",
+    "assigned": "Asignado a: ",
+    "remove-document": "Eliminar documento de la clasificación",
+    "1": "Expediente",
+    "2": "Clientes",
+    "3": "Contrarios",
+    "4": "Proveedores",
+    "5": "Abogados propios",
+    "6": "Abogados contrarios",
+    "7": "Procuradores propios",
+    "8": "Procuradores contrarios",
+    "9": "Notarios",
+    "10": "Juzgados",
+    "11": "Aseguradores",
+    "12": "Otros",
+    "13": "Carpetas",
+    "14": "Documentos"
+  },
+  "classify-emails": {
+    "cancel": "CANCELAR",
+    "save": "GUARDAR",
+    "continue": "CONTINUAR",
+    "back": "ANTERIOR",
+    "attach": "ADJUNTAR",
+    "close": "CERRAR",
+    "title": "Nueva clasificación",
+    "body": "Selecciona tipo de clasificación para cargar el listado correspondiente y asigna los mensajes a uno de los elementos de la lista.",
+    "classification-docs-saved-ok": "La clasificación y los doumentos han sido guardados correctamente",
+    "documents-saved-ok": "Los documentos han sido guardados correctamente",
+    "documents-saved-ko": "Ha habido un error guardando los documentos",
+    "classification-saved-ok": "La clasificación se ha guardado correctamente",
+    "classification-saved-ko": "Ha habido un error guardando la clasificación",
+    "classification-removed-ok": "La clasificación se ha borrado correctamente",
+    "classification-removed-ko": "Ha habido un error borrando la clasificación",
+    "classification-selection-ko": "Debes seleccionar un Tipo y una Entidad para poder clasificar"
+  },
+  "classification-type": {
+    "type": "Tipo",
+    "select": "--Seleccionar--"
+  },
+  "classification-list-search": {
+    "results-total": "TOTAL RESULTADOS: ",
+    "show-search": "Mostrar buscador",
+    "search-by": "Buscar por:",
+    "hide-search": "Ocultar buscador"
+  },
+  "tab-classify": {
+    "select-mail": "Selecciona un mensaje y clasifícalo en Lex-on. La relación establecida será visible en este panel y también en la aplicación."
+  },
+  "select-action": {
+    "connect-messages": "Clasificar mensajes",
+    "attach-documents": "Adjuntar documentos"
+  },
+  "classification-list": {
+    "assigned-to": "Asignado a",
+    "code": "Código",
+    "name": "Nombre",
+    "description": "Descripción",
+    "client": "Cliente"
+  },
+  "confirm-remove-classification": {
+    "yes": "Si",
+    "no": "No",
+    "text-confirm-remove": "Si eliminas este vínculo dejarás de visualizar el correo en la clasificación correspondiente de Lex-on. ¿Quieres continuar?"
+  },
+  "tab-document": {
+    "select-mail": "Selecciona uno o más mensajes y guárdalos como copia independiente en la documentación de Lex-on."
+  },
+  "tab-connect": {
+    "select-mail": "Selecciona uno o más mensajes y clasifícalos con Lex-on. Las clasificaciones realizadas se mostrarán individualmente en cada mensaje."
+  },
+  "tab-attachment": {
+    "select-docs": "Busca en los expedientes y contactos de LEX-ON y adjunta a tus correos los archivos que necesites.",
+    "select-link": "Selecciona los archivos en LEX-ON"
+  },
+  "save-copy": {
+    "save-copy": "Nueva clasificación"
+  },
+  "list-classifications": {
+    "classifications": "CLASIFICACIONES:",
+    "no-classifications": "No existen clasificaciones asociadas a este correo"
+  },
+  "list-documents": {
+    "documented-copies": "COPIAS DOCUMENTADAS:"
+  },
+  "modal-documents-emails": {
+    "save-copy": "Guardar copia en Documentación"
+  },
+  "modal-conecting-emails": {
+    "save-copy": "Clasificar mensajes en Lex-on"
+  },
+  "modal-attach-documents": {
+    "title": "Adjuntar archivos desde LEX-ON",
+    "explore-files": "Explorar expedientes",
+    "explore-contacts": "Explorar contactos",
+    "search": "Buscar"
+  },
+  "case-file": {
+    "casefile-related": "Expediente relacionado",
+    "casefile-notfound": "Expediente relacionado no encontrado",
+    "identifier": "Identificador",
+    "description": "Descripción:",
+    "client": "Cliente:"
+  },
+  "configuration": {
+    "version": "Versión",
+    "configuration": "OPCIONES DE CONFIGURACIÓN",
+    "classify-contacts": "Clasificar contactos automáticamente al enviar correo"
+  }
+}

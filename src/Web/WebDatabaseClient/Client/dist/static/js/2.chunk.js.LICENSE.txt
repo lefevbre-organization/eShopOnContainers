@@ -1,0 +1,455 @@
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+
+/*!
+  Copyright (c) 2017 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+
+/*! ./../../webpack/buildin/global.js */
+
+/*! ./../../webpack/buildin/harmony-module.js */
+
+/*! ./addEventListener */
+
+/*! ./arrayLikeToArray */
+
+/*! ./arrayWithHoles */
+
+/*! ./canUseDOM */
+
+/*! ./cjs/react-dom.production.min.js */
+
+/*! ./cjs/react-is.production.min.js */
+
+/*! ./cjs/react.production.min.js */
+
+/*! ./cjs/scheduler.production.min.js */
+
+/*! ./factoryWithThrowingShims */
+
+/*! ./iterableToArrayLimit */
+
+/*! ./lib/ReactPropTypesSecret */
+
+/*! ./lib/parse */
+
+/*! ./lib/stringify */
+
+/*! ./nonIterableRest */
+
+/*! ./objectWithoutPropertiesLoose */
+
+/*! ./parse-tag */
+
+/*! ./ponyfill.js */
+
+/*! ./removeEventListener */
+
+/*! ./unsupportedIterableToArray */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/@babel/runtime/helpers/classCallCheck.js (<- Module is not an ECMAScript module) */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/@babel/runtime/helpers/createClass.js (<- Module is not an ECMAScript module) */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/@babel/runtime/helpers/defineProperty.js (<- Module is not an ECMAScript module) */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js because of ./src/components/notification/notification.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js because of ./src/main.tsx */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/@babel/runtime/helpers/esm/extends.js because of ./src/App.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/@babel/runtime/helpers/esm/extends.js because of ./src/components/notification/notification.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js because of ./node_modules/uncontrollable/esm/uncontrollable.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js because of ./src/App.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js because of ./src/components/notification/notification.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/@babel/runtime/helpers/objectWithoutProperties.js (<- Module is not an ECMAScript module) */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/@babel/runtime/helpers/slicedToArray.js (<- Module is not an ECMAScript module) */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/@babel/runtime/helpers/typeof.js (<- Module is not an ECMAScript module) */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/@restart/context/forwardRef.js (<- Module is not an ECMAScript module) */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/@restart/hooks/esm/useEventCallback.js because of ./node_modules/react-overlays/esm/useRootClose.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js because of ./src/main.tsx */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/classnames/index.js (<- Module is not an ECMAScript module) */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/dom-helpers/esm/addEventListener.js because of ./node_modules/react-overlays/esm/useRootClose.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/dom-helpers/esm/canUseDOM.js because of ./node_modules/react-overlays/esm/useRootClose.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/dom-helpers/esm/contains.js because of ./node_modules/react-overlays/esm/useRootClose.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/dom-helpers/esm/listen.js because of ./node_modules/react-overlays/esm/useRootClose.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/dom-helpers/esm/ownerDocument.js because of ./node_modules/react-overlays/esm/useRootClose.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/dom-helpers/esm/querySelectorAll.js because of ./node_modules/react-overlays/esm/Dropdown.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/dom-helpers/esm/removeEventListener.js because of ./node_modules/react-overlays/esm/useRootClose.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/hoist-non-react-statics/dist/hoist-non-react-statics.cjs.js (<- Module is not an ECMAScript module) */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/html-parse-stringify2/index.js (<- Module is not an ECMAScript module) */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/prop-types/index.js (<- Module is not an ECMAScript module) */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/react-dom/index.js (<- Module is not an ECMAScript module) */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/react-is/index.js (<- Module is not an ECMAScript module) */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/react-overlays/esm/utils/ownerDocument.js because of ./node_modules/react-overlays/esm/useRootClose.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/react-overlays/esm/utils/useWaitForDOMRef.js because of ./node_modules/react-overlays/esm/Overlay.js */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/react/index.js (<- Module is not an ECMAScript module) */
+
+/*! ModuleConcatenation bailout: Cannot concat with ./node_modules/redux/es/redux.js because of ./src/store/store.jsx */
+
+/*! ModuleConcatenation bailout: Module is not an ECMAScript module */
+
+/*! ModuleConcatenation bailout: Module uses injected variables (global, module) */
+
+/*! all exports used */
+
+/*! dom-helpers/ownerDocument */
+
+/*! exports provided: Provider, connectAdvanced, ReactReduxContext, connect, batch, useDispatch, createDispatchHook, useSelector, createSelectorHook, useStore, createStoreHook, shallowEqual */
+
+/*! exports provided: Trans, useTranslation, withTranslation, Translation, I18nextProvider, withSSR, useSSR, I18nContext, initReactI18next, setDefaults, getDefaults, setI18n, getI18n, composeInitialProps, getInitialProps */
+
+/*! exports provided: __DO_NOT_USE__ActionTypes, applyMiddleware, bindActionCreators, combineReducers, compose, createStore */
+
+/*! exports provided: default */
+
+/*! exports provided: optionsSupported, onceSupported, default */
+
+/*! exports used: I18nextProvider */
+
+/*! exports used: Provider, connect */
+
+/*! exports used: applyMiddleware, bindActionCreators, combineReducers, compose, createStore */
+
+/*! exports used: default */
+
+/*! exports used: default, unstable_batchedUpdates */
+
+/*! no static exports found */
+
+/*! object-assign */
+
+/*! react */
+
+/*! react-dom */
+
+/*! react-is */
+
+/*! scheduler */
+
+/*! symbol-observable */
+
+/*! void-elements */
+
+/*!***********************************!*\
+  !*** (webpack)/buildin/global.js ***!
+  \***********************************/
+
+/*!*************************************!*\
+  !*** ./node_modules/react/index.js ***!
+  \*************************************/
+
+/*!****************************************!*\
+  !*** ./node_modules/react-is/index.js ***!
+  \****************************************/
+
+/*!****************************************!*\
+  !*** ./node_modules/redux/es/redux.js ***!
+  \****************************************/
+
+/*!*****************************************!*\
+  !*** ./node_modules/react-dom/index.js ***!
+  \*****************************************/
+
+/*!*****************************************!*\
+  !*** ./node_modules/scheduler/index.js ***!
+  \*****************************************/
+
+/*!******************************************!*\
+  !*** ./node_modules/classnames/index.js ***!
+  \******************************************/
+
+/*!******************************************!*\
+  !*** ./node_modules/prop-types/index.js ***!
+  \******************************************/
+
+/*!*******************************************!*\
+  !*** (webpack)/buildin/harmony-module.js ***!
+  \*******************************************/
+
+/*!*********************************************!*\
+  !*** ./node_modules/object-assign/index.js ***!
+  \*********************************************/
+
+/*!*********************************************!*\
+  !*** ./node_modules/void-elements/index.js ***!
+  \*********************************************/
+
+/*!************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/listen.js ***!
+  \************************************************/
+
+/*!**************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/contains.js ***!
+  \**************************************************/
+
+/*!***************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/canUseDOM.js ***!
+  \***************************************************/
+
+/*!****************************************************!*\
+  !*** ./node_modules/symbol-observable/es/index.js ***!
+  \****************************************************/
+
+/*!*****************************************************!*\
+  !*** ./node_modules/@restart/context/forwardRef.js ***!
+  \*****************************************************/
+
+/*!*****************************************************!*\
+  !*** ./node_modules/html-parse-stringify2/index.js ***!
+  \*****************************************************/
+
+/*!*******************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/typeof.js ***!
+  \*******************************************************/
+
+/*!*******************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/ownerDocument.js ***!
+  \*******************************************************/
+
+/*!*******************************************************!*\
+  !*** ./node_modules/symbol-observable/es/ponyfill.js ***!
+  \*******************************************************/
+
+/*!********************************************************!*\
+  !*** ./node_modules/react/cjs/react.production.min.js ***!
+  \********************************************************/
+
+/*!********************************************************!*\
+  !*** ./node_modules/redux-logger/dist/redux-logger.js ***!
+  \********************************************************/
+
+/*!*********************************************************!*\
+  !*** ./node_modules/html-parse-stringify2/lib/parse.js ***!
+  \*********************************************************/
+
+/*!**********************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/addEventListener.js ***!
+  \**********************************************************/
+
+/*!**********************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/querySelectorAll.js ***!
+  \**********************************************************/
+
+/*!***********************************************************!*\
+  !*** ./node_modules/react-redux/es/index.js + 22 modules ***!
+  \***********************************************************/
+
+/*!************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/createClass.js ***!
+  \************************************************************/
+
+/*!************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/esm/extends.js ***!
+  \************************************************************/
+
+/*!*************************************************************!*\
+  !*** ./node_modules/dom-helpers/esm/removeEventListener.js ***!
+  \*************************************************************/
+
+/*!*************************************************************!*\
+  !*** ./node_modules/html-parse-stringify2/lib/parse-tag.js ***!
+  \*************************************************************/
+
+/*!*************************************************************!*\
+  !*** ./node_modules/html-parse-stringify2/lib/stringify.js ***!
+  \*************************************************************/
+
+/*!*************************************************************!*\
+  !*** ./node_modules/prop-types/factoryWithThrowingShims.js ***!
+  \*************************************************************/
+
+/*!*************************************************************!*\
+  !*** ./node_modules/prop-types/lib/ReactPropTypesSecret.js ***!
+  \*************************************************************/
+
+/*!**************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/slicedToArray.js ***!
+  \**************************************************************/
+
+/*!**************************************************************!*\
+  !*** ./node_modules/react-is/cjs/react-is.production.min.js ***!
+  \**************************************************************/
+
+/*!***************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/arrayWithHoles.js ***!
+  \***************************************************************/
+
+/*!***************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/classCallCheck.js ***!
+  \***************************************************************/
+
+/*!***************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/defineProperty.js ***!
+  \***************************************************************/
+
+/*!***************************************************************!*\
+  !*** ./node_modules/i18next/dist/esm/i18next.js + 20 modules ***!
+  \***************************************************************/
+
+/*!***************************************************************!*\
+  !*** ./node_modules/single-spa-react/lib/single-spa-react.js ***!
+  \***************************************************************/
+
+/*!****************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/nonIterableRest.js ***!
+  \****************************************************************/
+
+/*!****************************************************************!*\
+  !*** ./node_modules/react-bootstrap/esm/Modal.js + 35 modules ***!
+  \****************************************************************/
+
+/*!****************************************************************!*\
+  !*** ./node_modules/react-dom/cjs/react-dom.production.min.js ***!
+  \****************************************************************/
+
+/*!****************************************************************!*\
+  !*** ./node_modules/react-overlays/esm/utils/ownerDocument.js ***!
+  \****************************************************************/
+
+/*!****************************************************************!*\
+  !*** ./node_modules/scheduler/cjs/scheduler.production.min.js ***!
+  \****************************************************************/
+
+/*!*****************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/arrayLikeToArray.js ***!
+  \*****************************************************************/
+
+/*!*****************************************************************!*\
+  !*** ./node_modules/react-i18next/dist/es/index.js + 9 modules ***!
+  \*****************************************************************/
+
+/*!******************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js ***!
+  \******************************************************************/
+
+/*!*******************************************************************!*\
+  !*** ./node_modules/react-overlays/esm/utils/useWaitForDOMRef.js ***!
+  \*******************************************************************/
+
+/*!*********************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/iterableToArrayLimit.js ***!
+  \*********************************************************************/
+
+/*!************************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/objectWithoutProperties.js ***!
+  \************************************************************************/
+
+/*!*************************************************************************!*\
+  !*** ./node_modules/@restart/hooks/esm/useEventCallback.js + 1 modules ***!
+  \*************************************************************************/
+
+/*!**************************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js ***!
+  \**************************************************************************/
+
+/*!***************************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/unsupportedIterableToArray.js ***!
+  \***************************************************************************/
+
+/*!*****************************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/objectWithoutPropertiesLoose.js ***!
+  \*****************************************************************************/
+
+/*!*********************************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/esm/objectWithoutPropertiesLoose.js ***!
+  \*********************************************************************************/
+
+/*!**********************************************************************************!*\
+  !*** ./node_modules/hoist-non-react-statics/dist/hoist-non-react-statics.cjs.js ***!
+  \**********************************************************************************/
+
+/*!****************************************************************************************************!*\
+  !*** ./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/createClass.js ***!
+  \****************************************************************************************************/
+
+/*!*******************************************************************************************************!*\
+  !*** ./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/classCallCheck.js ***!
+  \*******************************************************************************************************/
+
+/*!*************************************************************************************************************!*\
+  !*** ./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/inherits.js + 1 modules ***!
+  \*************************************************************************************************************/
+
+/*!**************************************************************************************************************!*\
+  !*** ./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js ***!
+  \**************************************************************************************************************/
+
+/*!****************************************************************************************************************!*\
+  !*** ./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/createSuper.js + 4 modules ***!
+  \****************************************************************************************************************/
+
+/*!******************************************************************************************************************!*\
+  !*** ./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/objectSpread2.js + 1 modules ***!
+  \******************************************************************************************************************/
+
+/*!**********************************************************************************************************************!*\
+  !*** ./node_modules/babel-preset-react-app/node_modules/@babel/runtime/helpers/esm/toConsumableArray.js + 5 modules ***!
+  \**********************************************************************************************************************/
+
+/** @license React v0.19.1
+ * scheduler.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/** @license React v16.13.1
+ * react-dom.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/** @license React v16.13.1
+ * react-is.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/** @license React v16.13.1
+ * react.production.min.js
+ *
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
