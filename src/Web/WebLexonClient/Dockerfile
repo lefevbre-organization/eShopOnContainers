@@ -13,7 +13,7 @@ WORKDIR /web
 COPY src/Web/WebLexonClient/Client .
 RUN npm install
 RUN npm run build
-# RUN ls -lha /web
+RUN ls -lha /web
 
 #FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 #WORKDIR /src

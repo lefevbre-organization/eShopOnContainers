@@ -13,7 +13,7 @@ WORKDIR /web
 COPY src/Addon/Lexon/Office365/WebOffice365Addon/Client .
 RUN npm install
 RUN npm run build
-# RUN ls -lha /web
+RUN ls -lha /web
 # RUN ls -lha /web/build
 
 #FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
@@ -46,13 +46,14 @@ COPY src/Services/Centinela/Centinela.API/Centinela.API.csproj src/Services/Cent
 COPY src/Services/Signature/Signature.API/Signature.API.csproj src/Services/Signature/Signature.API/
 COPY src/Web/WebGoogleClient/WebGoogleClient.csproj src/Web/WebGoogleClient/
 COPY src/Web/WebLexonClient/WebLexonClient.csproj src/Web/WebLexonClient/
-COPY src/Addon/Lexon/Office365/WebOffice365Addon/WebOffice365Addon.csproj src/Addon/Lexon/Office365/WebOffice365Addon/
+COPY src/Web/WebAddonLexon/WebAddonLexon.csproj src/Web/WebAddonLexon/
 COPY src/Web/WebOffice365Client/WebOffice365Client.csproj src/Web/WebOffice365Client/
 COPY src/Web/WebPortalClient/WebPortalClient.csproj src/Web/WebPortalClient/
 COPY src/Web/WebImapClient/WebImapClient.csproj src/Web/WebImapClient/
 COPY src/Web/WebStatusLef/WebStatusLef.csproj src/Web/WebStatusLef/
-COPY src/Web/WebCentinelaClient/WebCentinelaClient.csproj src/Web/WebCentinelaClient/
 COPY src/Web/WebSignatureClient/WebSignatureClient.csproj src/Web/WebSignatureClient/
+COPY src/Web/WebCentinelaClient/WebCentinelaClient.csproj src/Web/WebCentinelaClient/
+COPY src/Addon/Lexon/Office365/WebOffice365Addon/WebOffice365Addon.csproj src/Addon/Lexon/Office365/WebOffice365Addon/
 
 
 
