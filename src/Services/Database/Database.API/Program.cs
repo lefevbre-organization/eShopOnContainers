@@ -1,4 +1,4 @@
-﻿using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Middlewares;
+//using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Middlewares;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,7 +9,7 @@ using System;
 using System.IO;
 using System.Net;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API
+namespace Lefebvre.eLefebvreOnContainers.Services.Database.API
 {
     public class Program
     {
@@ -127,5 +127,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API
               .UseConfiguration(configuration)
               .UseSerilog()
               .Build();
+
     }
 }

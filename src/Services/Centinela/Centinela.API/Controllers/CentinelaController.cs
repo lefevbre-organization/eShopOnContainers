@@ -40,9 +40,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public IActionResult Test()
         {
-            _log.LogDebug("test");
-            System.Diagnostics.Trace.WriteLine("test");
-            return Ok(new Result<bool>(true));
+            var data = $"Centinela v.{ _settings.Value.Version}";
+            System.Diagnostics.Trace.WriteLine(data);
+            _log.LogDebug(data);
+            return Ok(new Result<string>(data));
         }
 
         /// <summary>

@@ -1,13 +1,12 @@
-﻿using Autofac;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using HealthChecks.UI.Client;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Extensions;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Filters;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Middlewares;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Repositories;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Services;
+using Lefebvre.eLefebvreOnContainers.Services.Database.API.Controllers;
+using Lefebvre.eLefebvreOnContainers.Services.Database.API.Extensions;
+using Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Filters;
+using Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Middlewares;
+using Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Repositories;
+using Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -18,7 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API
+namespace Lefebvre.eLefebvreOnContainers.Services.Database.API
 {
     public class Startup
     {
@@ -43,11 +42,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API
             //        .AddNegotiate();
 
             services.AddControllers(options =>
-                    {
-                        options.Filters.Add(typeof(HttpGlobalExceptionFilter));
-                        options.Filters.Add(typeof(ValidateModelStateFilter));
-                    }) // Added for functional tests
-            .AddApplicationPart(typeof(CentinelaController).Assembly)
+            {
+                options.Filters.Add(typeof(HttpGlobalExceptionFilter));
+                options.Filters.Add(typeof(ValidateModelStateFilter));
+            }) // Added for functional tests
+            .AddApplicationPart(typeof(DatabaseController).Assembly)
             .AddNewtonsoftJson()
                 ;
 
@@ -57,7 +56,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API
 
             services.AddCustomHealthCheck(Configuration);
 
-            services.Configure<CentinelaSettings>(Configuration);
+            services.Configure<DatabaseSettings>(Configuration);
 
             //services.AddRedis();
 
@@ -76,8 +75,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API
             });
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddTransient<ICentinelaRepository, CentinelaRepository>();
-            services.AddTransient<ICentinelaService, CentinelaService>();
+            services.AddTransient<IDatabaseRepository, DatabaseRepository>();
+            services.AddTransient<IDatabaseService, DatabaseService>();
             //services.AddTransient<IIdentityService, IdentityService>();
 
             services.AddOptions();
@@ -100,9 +99,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API
             app.UseSwagger()
                .UseSwaggerUI(setup =>
                {
-                   setup.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "Centinela.API V1");
-                   setup.OAuthClientId("centinelaswaggerui");
-                   setup.OAuthAppName("Centinela Swagger UI");
+                   setup.SwaggerEndpoint($"{ (!string.IsNullOrEmpty(pathBase) ? pathBase : string.Empty) }/swagger/v1/swagger.json", "Database.API V1");
+                   setup.OAuthClientId("databaseswaggerui");
+                   setup.OAuthAppName("Database Swagger UI");
                });
 
             app.UseRouting();
