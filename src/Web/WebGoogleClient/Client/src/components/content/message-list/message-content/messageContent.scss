@@ -11,7 +11,8 @@ $base-color: #333333;
 }
 
 .message-content {
-  position: absolute;
+  // position: absolute;
+  flex: 1 1 auto;
   left: 0;
   right: 0;
   top: 64px;
