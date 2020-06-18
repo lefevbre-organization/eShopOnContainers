@@ -22,7 +22,8 @@ $base-color: #333333;
 
       .folder {
         margin-left: $default-spacing;
-        height: 15px;
+        //height: 15px;
+        height: 100%;
         line-height: 15px;
         font-size: 11px;
         margin-top: 7px;
@@ -32,6 +33,7 @@ $base-color: #333333;
         padding-right: 10px;
         cursor: pointer;
         color: rgba(0, 0, 0, 0.87);
+        text-align: center;
       }
     }
 
