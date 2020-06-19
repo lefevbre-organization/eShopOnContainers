@@ -14,6 +14,7 @@ import {
 } from './constants';
 import { getStateStorage } from './localstorage';
 import ACTIONS from './actions/lexon';
+import CU_ACTIONS from './actions/user';
 
 class AppContainer extends Component {
   constructor(props) {
@@ -35,7 +36,7 @@ class AppContainer extends Component {
 
   componentDidMount() {
     const user = this.props.match.params.idUser;
-    const stateStorageLexon = getStateStorage().lexon;
+    const stateStorageLexon = getStateStorage();
     if (!user && stateStorageLexon) {
       const userLexon = stateStorageLexon.lexon;
       if (userLexon && userLexon.user) {
@@ -47,6 +48,11 @@ class AppContainer extends Component {
         });
       }
     }
+
+    const currentUser = stateStorageLexon.currentUser;
+      if (!user && currentUser) {
+        this.props.setCurrentUser(currentUser);
+      }
 
     const { isNewAccount } = this.props.lexon;
     if (!isNewAccount) {
@@ -123,6 +129,7 @@ const mapDispatchToProps = (dispatch) => ({
   setUser: (user) => dispatch(ACTIONS.setUser(user)),
   setCaseFile: (casefile) => dispatch(ACTIONS.setCaseFile(casefile)),
   setAccount: (account) => dispatch(ACTIONS.setAccount(account)),
+  setCurrentUser: (payload) => dispatch(CU_ACTIONS.setCurrentUser(payload))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);

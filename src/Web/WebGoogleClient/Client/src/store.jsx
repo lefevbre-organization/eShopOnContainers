@@ -17,6 +17,7 @@ configureStore.subscribe(() => {
   setStateStorage({
     lexon: stateStorage.lexon || null,
     currentUser: stateStorage.currentUser || null,
+    calendarsResult: stateStorage.calendarsResult || null
   });
 });
 
