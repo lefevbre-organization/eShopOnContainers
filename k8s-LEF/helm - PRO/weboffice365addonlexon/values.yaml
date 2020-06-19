@@ -45,7 +45,8 @@ env:
       value: 'K8S'
     - name: IsClusterEnv
       value: 'True'
-configValues: 
+configValues: |
+ window.REACT_APP_ENVIRONMENT='PRODUCTION'
+ window.API_GATEWAY='https://lexbox-apigwlex.lefebvre.es/api/v1/lex/Lexon'
+ window.URL_GET_ACCOUNTS='https://lexbox-apigwacc.lefebvre.es/api/v2/accounts/usermail'
  window.RELEASE = 'RC 0.25'
- window.API_GATEWAY='https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Lexon';
- window.URL_GET_ACCOUNTS = "https://lexbox-test-apigwlex.lefebvre.es/api/v2/accounts/usermail";
