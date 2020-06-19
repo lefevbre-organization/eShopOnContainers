@@ -13,7 +13,7 @@ WORKDIR /web
 COPY src/Web/WebLexonClient/Client .
 RUN npm install
 RUN npm run build
-# RUN ls -lha /web
+RUN ls -lha /web
 
 #FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build
 #WORKDIR /src
@@ -54,6 +54,7 @@ COPY src/Web/WebImapClient/WebImapClient.csproj src/Web/WebImapClient/
 COPY src/Web/WebStatusLef/WebStatusLef.csproj src/Web/WebStatusLef/
 COPY src/Web/WebSignatureClient/WebSignatureClient.csproj src/Web/WebSignatureClient/
 COPY src/Web/WebCentinelaClient/WebCentinelaClient.csproj src/Web/WebCentinelaClient/
+COPY src/Addon/Lexon/Office365/WebOffice365Addon/WebOffice365Addon.csproj src/Addon/Lexon/Office365/WebOffice365Addon/
 
 COPY "docker-compose.dcproj" "docker-compose.dcproj"
 COPY "NuGet.config" "NuGet.config"

@@ -130,6 +130,18 @@ services:
     ports:
       - "3006:80"
 
+  webofficeaddon:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - UseCustomizationData=True
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+    ports:
+      - "3007:80"
+
   webimapclient:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
