@@ -29,6 +29,7 @@ app:                                                  # app global settings
       signatureapigw: signatureapigw                  # ingress entry for signature api gw
       signatureapi: signature-api                     # ingress entry for signature api      
       addonlexon: webaddonlexon
+      office365addonlexon: weboffice365addonlexon
       
   svc:
       identity: identity                              # svc entry for identity api
@@ -54,3 +55,4 @@ app:                                                  # app global settings
       signatureapigw: signatureapigw                  # svc entry for signature api gw
       signatureapi: signature-api                     # svc entry for signature api
       addonlexon: webaddonlexon
+      office365addonlexon: weboffice365addonlexon
