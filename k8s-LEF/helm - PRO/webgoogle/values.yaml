@@ -58,4 +58,4 @@ configValues: |
   window.URL_MF_LEXON_BASE = 'https://lexbox-weblexon.lefebvre.es'
   window.API_CENTINELA_GATEWAY =   'https://lexbox-apigwcen.lefebvre.es/api/v1/cen'
   window.SHOW_EXPERIMENTAL='0'
-  window.RELEASE = 'RC 0.23'
+  window.RELEASE = 'RC 0.25'
