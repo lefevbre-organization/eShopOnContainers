@@ -261,6 +261,7 @@ class MessageList extends Component {
               },
             })
           );
+          console.log(`MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`);
         }
       }
 
@@ -291,6 +292,7 @@ class MessageList extends Component {
                 },
               })
             );
+            console.log(`MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`);
           }
           console.log('LoadedMessage: 4');
           window.dispatchEvent(new CustomEvent('LoadedMessage'));
@@ -337,6 +339,7 @@ class MessageList extends Component {
               },
             })
           );
+          console.log(`MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`);
           console.log('LoadedMessage: 3');
           window.dispatchEvent(new CustomEvent('LoadedMessage'));
         });
@@ -362,6 +365,8 @@ class MessageList extends Component {
             },
           })
         );
+        console.log(`MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`);
+
       }
     }
   }
