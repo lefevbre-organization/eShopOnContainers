@@ -189,7 +189,7 @@ export class Acl extends React.Component {
                         <div className="e-float-input">
                             <TextBoxComponent
                                 id='mail'
-                                placeholder="Mail address"
+                                placeholder={i18n.t("acl.emailaddresses")}
                                 floatLabelType="Always"
                                 ref={(scope) => { this.mailaccountObj = scope }}
                             />
@@ -207,7 +207,7 @@ export class Acl extends React.Component {
                                 ref={(combobox) => { this.permissionObj = combobox; }}
                                 fields={this.fields}
                                 change={this.onChange.bind(this)}
-                                placeholder="Permissions"
+                                placeholder={i18n.t("acl.permissions")}
                                 value={this.value}
                                 popupHeight="220px" />
                         </div>

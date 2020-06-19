@@ -3,7 +3,7 @@
   "schedule": {
     "day": "Día",
     "week": "Semana",
-    "workWeek": "Semana laboral",
+    "workWeek": "laborables",
     "month": "Mes",
     "agenda": "Agenda",
     "weekAgenda": "Agenda semanal",

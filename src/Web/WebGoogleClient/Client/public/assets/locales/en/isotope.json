@@ -102,6 +102,14 @@
     "add": "Add Calendar",
     "name": "Name",
     "description": "Description",
-    "sharewithpeople": "Share with people"    
+    "sharewithpeople": "Share with people"
+  },
+  "acl": {
+    "permissions": "Permissions",
+    "emailaddresses": "Mail address",
+    "freebusyreader": "freeBusyReader",
+    "reader": "reader",
+    "writer": "writer",
+    "owner": "owner"
   }
 }

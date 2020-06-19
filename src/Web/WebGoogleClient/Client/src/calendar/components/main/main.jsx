@@ -664,29 +664,29 @@ export class Main extends Component {
       args.element.style.width = '700px';
 
       // default values for Atendees coming from event args
-      //if (args.data.Attendees != undefined) {
-      //  //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i])
-      //  var arr = [];
-      //  Object.keys(args.data.Attendees).forEach(function (key) {
-      //    arr.push(args.data.Attendees[key].email);
-      //  });
-      //  this.setState({ tagAttendess: arr });
-      //} else {
-      //  this.setState({ tagAttendess: [] });
-      //}
+      if (args.data.Attendees != undefined) {
+        //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i])
+        var arr = [];
+        Object.keys(args.data.Attendees).forEach(function (key) {
+          arr.push(args.data.Attendees[key].email);
+        });
+        this.setState({ tagAttendess: arr });
+      } else {
+        this.setState({ tagAttendess: [] });
+      }
 
-      //// default values for eventType coming from event args
-      //let eventType;
-      //if (args.data.EventType == undefined) {
-      //    this.setState({
-      //        eventType: 'profesional-event'
-      //    });
-      //}
-      //else {
-      //    this.setState({
-      //        eventType: args.data.EventType
-      //    });
-      //}
+      // default values for eventType coming from event args
+      let eventType;
+      if (args.data.EventType == undefined) {
+          this.setState({
+              eventType: 'profesional-event'
+          });
+      }
+      else {
+          this.setState({
+              eventType: args.data.EventType
+          });
+      }
 
       // Create required custom elements in initial time
       if (!args.element.querySelector('.custom-field-row')) {
@@ -734,6 +734,9 @@ export class Main extends Component {
         row.appendChild(containerTab);
         var node = ReactDOM.findDOMNode(this.tagObj);
         containerTab.appendChild(node);
+
+
+       // this.onPopupOpen(args)
       }
 
       let TabContainer = args.element.querySelector('.custom-tab-row');
@@ -759,7 +762,9 @@ export class Main extends Component {
         }
       } else {
         console.log(this.tabInstance);
-      }
+        }
+
+        
     }
   }
 
@@ -1298,6 +1303,7 @@ export class Main extends Component {
 const mapStateToProps = (state) => ({
   calendarsResult: state.calendarsResult,
   lexon: state.lexon,
+  currentUser: state.currentUser,
 });
 
 const mapDispatchToProps = (dispatch) =>

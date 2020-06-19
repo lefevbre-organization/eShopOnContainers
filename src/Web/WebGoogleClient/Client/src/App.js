@@ -4,6 +4,7 @@ import { Route } from 'react-router-dom';
 import AppContainer from './AppContainer';
 import AppContainerCalendar from './AppContainerCalendar';
 import UserLexon from './components/user-lexon/UserLexon';
+import UserCalendar from './components/user-lexon/UserCalendar';
 
 import './App.css';
 import './lefebvre-material.css';
@@ -45,7 +46,8 @@ class App extends Component {
           <Route exact path='/user/:idUser/bbdd/:bbdd' component={UserLexon} />
           <Route exact path='/message/:idMail' component={AppContainer} />
           <Route exact path='/user/:idUser' component={UserLexon} />
-          <Route exact path='/calendar' component={AppContainerCalendar} />
+          <Route exact path='/calendar/user/:idUser' component={UserCalendar} />
+          <Route path='/calendar' component={AppContainerCalendar} />
           <Route path='/' component={AppContainer} />
           {/* <AppContainer /> */}
         </Switch>
