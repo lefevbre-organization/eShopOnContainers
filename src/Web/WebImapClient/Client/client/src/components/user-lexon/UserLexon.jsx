@@ -36,7 +36,7 @@ class UserLexon extends Component {
   }
 
   async componentDidMount() {
-    const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+    //const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
     var parametros = undefined;
 
     if (
@@ -92,11 +92,13 @@ class UserLexon extends Component {
       ? { idClienteNavision: getUserId(payload) }
       : {};
     const portalToken = jwt.create(claims, 'top-secret-phrase');
-    console.log('TOKEN: ' + portalToken);
+    //console.log('TOKEN: ' + portalToken);
 
     if (this.props.location.search.indexOf('prov=') > -1) {
       user = `${parametros.get('prov')}${user}`;
     }
+
+    this.props.match.params.token ? console.log(`token:${this.props.match.params.token}`) : null;
 
     if (user !== this.props.lexon.user) {
       this.props.setFormValues({
@@ -110,12 +112,12 @@ class UserLexon extends Component {
 
     this.props.setUser(user);
 
-    if (idMessage && base64regex.test(idMessage)) {
-      idMessage = base64.decode(idMessage);
-    }
-    if (idFolder && base64regex.test(idFolder)) {
-      idFolder = base64.decode(idFolder);
-    }
+    // if (idMessage && base64regex.test(idMessage)) {
+    //   idMessage = base64.decode(idMessage);
+    // }
+    // if (idFolder && base64regex.test(idFolder)) {
+    //   idFolder = base64.decode(idFolder);
+    // }
     if (idFolder === null || idFolder === undefined || idFolder === 'NULL') {
       idFolder = 'INBOX';
     }
@@ -140,11 +142,11 @@ class UserLexon extends Component {
     }
     if (mailContacts) {
       console.log('Contactos recibidos');
-      if (base64regex.test(mailContacts)) {
-        this.props.setMailContacts(base64.decode(mailContacts));
-      } else {
+      //if (base64regex.test(mailContacts)) {
+      //  this.props.setMailContacts(base64.decode(mailContacts));
+      //} else {
         this.props.setMailContacts(mailContacts);
-      }
+      //}
     }
     if (this.props.match.params.token) {
       this.props.setToken(portalToken.toString());

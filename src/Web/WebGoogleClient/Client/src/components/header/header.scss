@@ -1,5 +1,5 @@
 .input-group-append {
-  height: 29px;  
+  height: 29px;
 }
 .search {
   max-width: 450px;
@@ -9,44 +9,42 @@
 }*/
 
 .header {
-border-bottom: 1px solid #d9dfe2;
-background-color: #001978;
+  border-bottom: 1px solid #d9dfe2;
+  background-color: #001978;
 
+  // height:65px;
+  min-width: 350px;
 
-height:65px;
-min-width: 350px;
+  color: #000;
+  .header-logo {
+    display: flex;
+    flex: 1 1;
+    font-weight: 600;
+    a {
+      color: #fff;
+      text-decoration: none;
+    }
+  }
 
-color: #000;
-.header-logo {
-  display: flex;
-  flex: 1 1;
-  font-weight: 600;
-  a {
-    color: #FFF;
-    text-decoration: none;
+  .header-search {
+    display: flex;
+    flex: 5 1;
+    .user-name {
+      cursor: default;
+      user-select: none;
+    }
+    .profile-pic {
+      height: 23px;
+      width: auto;
+    }
   }
 }
-
-.header-search {
-  display: flex;
-  flex: 5 1;
-  .user-name {
-    cursor: default;
-    user-select: none;
-  }
-  .profile-pic {
-    height: 23px;
-    width: auto;
-  }
-}
-}
-
 
 .img-circle {
-  border-radius: 50%; 
+  border-radius: 50%;
 }
 .btn-search {
- border-color: #ced4da
+  border-color: #ced4da;
 }
 
 .navbar-nav {
@@ -66,27 +64,26 @@ color: #000;
   text-align: center;
 
   button {
-      margin: 0 auto;
-      cursor: pointer;
+    margin: 0 auto;
+    cursor: pointer;
   }
 
   .nav-link {
-      padding-top: 0;
-      padding-bottom: 0;
-      background: 0;
-      border: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    background: 0;
+    border: 0;
 
+    .badge {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-top: -16px;
+      margin-left: 0;
+    }
 
-      .badge {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          margin-top: -16px;
-          margin-left: 0;
-      }
-
-      > .img-avatar {
-          margin: 0 10px;
-      }
+    > .img-avatar {
+      margin: 0 10px;
+    }
   }
 }
