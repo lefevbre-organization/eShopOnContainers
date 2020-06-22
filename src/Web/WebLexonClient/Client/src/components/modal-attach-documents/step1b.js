@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import {
   CheckBoxComponent,
-  RadioButtonComponent
+  RadioButtonComponent,
 } from '@syncfusion/ej2-react-buttons';
 import i18n from 'i18next';
 import { getTypes } from '../../services/services-lexon';
@@ -11,7 +11,7 @@ export class AttachDocumentsStep1b extends React.Component {
     super();
     this.state = {
       types: [],
-      entity: 2
+      entity: 2,
     };
   }
 
@@ -31,8 +31,7 @@ export class AttachDocumentsStep1b extends React.Component {
 
   onChangeData() {
     const { onChange } = this.props;
-    onChange &&
-      onChange(this.state.entity);
+    onChange && onChange(this.state.entity);
   }
 
   render() {
@@ -41,23 +40,25 @@ export class AttachDocumentsStep1b extends React.Component {
         <div className='step1b-container'>
           <ol>
             <li>
-              <span>{i18n.t('attaching.q2')}</span>
+              <span>{i18n.t('modal-attach-documents.q2')}</span>
               <ul className='two-columns'>
-                {this.state.types.filter(item => item.idEntity !== 1).map(item => (
-                  <li key={item.idEntity}>
-                    <RadioButtonComponent
-                      cssClass='e-primary'
-                      label={i18n.t('classification.' + item.idEntity)}
-                      name='entity'
-                      checked={item.idEntity === 2}
-                      change={() => {
-                        this.setState({ entity: item.idEntity }, () => {
-                          this.onChangeData();
-                        });
-                      }}
-                    />
-                  </li>
-                ))}
+                {this.state.types
+                  .filter((item) => item.idEntity !== 1)
+                  .map((item) => (
+                    <li key={item.idEntity}>
+                      <RadioButtonComponent
+                        cssClass='e-primary'
+                        label={i18n.t('classification.' + item.idEntity)}
+                        name='entity'
+                        checked={item.idEntity === 2}
+                        change={() => {
+                          this.setState({ entity: item.idEntity }, () => {
+                            this.onChangeData();
+                          });
+                        }}
+                      />
+                    </li>
+                  ))}
               </ul>
             </li>
           </ol>
@@ -74,7 +75,7 @@ export class AttachDocumentsStep1b extends React.Component {
             .list-checks li {
               margin-top: 10px;
             }
-            
+
             ol > li {
               counter-increment: li;
               color: #001978;

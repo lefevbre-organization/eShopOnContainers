@@ -110,6 +110,7 @@
   "classification-list": {
     "assigned-to": "Assigned to",
     "code": "Code",
+    "case": "Casefile",
     "name": "Name",
     "description": "Description",
     "client": "Client"
@@ -150,7 +151,26 @@
     "title": "Adjuntar archivos desde LEX-ON",
     "explore-files": "Explore casefiles",
     "explore-contacts": "Explore contacts",
-    "search": "Search"
+    "search": "Search",
+    "q2": "What type of contact do you want to search?",
+    "subtitle1": "Use the search engine or explore your files and contacts to locate Lex-on files",
+    "subtitle2": "Do a direct search for the files you want to attach.",
+    "subtitle3": "Or locate your files by browsing the files and the contact list.",
+    "search-your-file": "Search your file",
+    "from-where": "Where do you want to attach the files from?",
+    "case": "File",
+    "client": "Client",
+    "description": "Description",
+    "name": "Name",
+    "back": "Previous",
+    "next": "Next",
+    "select-files": "Select the files you want to attach to the email",
+    "origin": "Origin",
+    "type": "Type",
+    "selected-documents": "SELECTED DOCUMENTS",
+    "total": "TOTAL",
+    "file-not-found": "File not found",
+    "error-downloading": "Error downloading file"
   },
   "case-file": {
     "casefile-related": "Related Casefile",

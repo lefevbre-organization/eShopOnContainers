@@ -1,24 +1,22 @@
 import React, { Fragment } from 'react';
 import { Downloader } from './downloader';
-import PerfectScrollbar from "react-perfect-scrollbar";
-
+import PerfectScrollbar from 'react-perfect-scrollbar';
 import i18n from 'i18next';
 
 export class AttachDocumentsStep5 extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
-      downloading: false
-    }
+      downloading: false,
+    };
 
     this.pendingDownloads = 0;
-    this.downloadRefs = []
+    this.downloadRefs = [];
     this.downloadComplete = this.downloadComplete.bind(this);
   }
 
-  async componentDidUpdate(prevProps, prevState) {
-  }
+  async componentDidUpdate(prevProps, prevState) {}
 
   downloadComplete(index) {
     const { downloadComplete } = this.props;
@@ -40,10 +38,10 @@ export class AttachDocumentsStep5 extends React.Component {
       for (let i = 0; i < this.downloadRefs.length; i++) {
         if (this.downloadRefs[i] && this.downloadRefs[i].StartDownload) {
           this.pendingDownloads++;
-          this.downloadRefs[i].StartDownload()
+          this.downloadRefs[i].StartDownload();
         }
       }
-    })
+    });
   }
 
   render() {
@@ -52,233 +50,232 @@ export class AttachDocumentsStep5 extends React.Component {
       <Fragment>
         <div className='step5-container panel section-border'>
           <div className='section-title-5'>
-            <div>DOCUMENTOS SELECCIONADOS</div>
-            <div><span className="subtitle-5">TOTAL: </span><strong>{files.length}</strong></div>
+            <div>{i18n.t('modal-attach-documents.selected-documents')}</div>
+            <div>
+              <span className='subtitle-5'>
+                {i18n.t('modal-attach-documents.total')}:{' '}
+              </span>
+              <strong>{files.length}</strong>
+            </div>
           </div>
-          <div className="documents-container">
+          <div className='documents-container'>
             <PerfectScrollbar style={{ height: 386 }}>
-              {
-                files.map((item, index) => <Downloader ref={ref => {
-                  this.downloadRefs[index] = ref;
-                  console.log("DownloadRefs: " + this.downloadRefs.length)
-                }
-                } doc={item}
+              {files.map((item, index) => (
+                <Downloader
+                  ref={(ref) => {
+                    this.downloadRefs[index] = ref;
+                    console.log('DownloadRefs: ' + this.downloadRefs.length);
+                  }}
+                  doc={item}
                   user={user}
                   bbdd={bbdd}
                   index={index}
-                  downloadComplete={this.downloadComplete}
-                ></Downloader>)
-              }
+                  downloadComplete={this.downloadComplete}></Downloader>
+              ))}
             </PerfectScrollbar>
           </div>
         </div>
         <style jsx>{`
-           
+          .document-wrapper  {
+            border-bottom: 1px solid #7d878d;
+          }
+          .documents-container {
+            padding: 10px;
+          }
+          .document {
+            display: flex;
+            height: 60px;
+          }
 
-            .document-wrapper {
-              border-bottom: 1px solid #7D878D;
+          .document-icon {
+            flex: 0 0 50px;
+            width: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
 
-            }
-            .documents-container {
-              padding: 10px;
-            }
-            .document {
-              display: flex;
-              height: 60px;
-            }
+          .document-icon .lf-icon-document {
+            color: #001978;
+            font-size: 22px;
+          }
 
-            .document-icon {
-              flex: 0 0 50px;
-              width: 50px;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-            }
+          .document-info {
+            flex: 1;
+            color: #7d878d;
+            display: flex;
+            flex-direction: column;
+            line-height: 18px;
+            justify-content: center;
+          }
+          .document-name {
+          }
 
-            .document-icon .lf-icon-document {
-              color: #001978;
-              font-size: 22px;
-            }
+          .document-size {
+          }
 
-            .document-info {
-              flex: 1;
-              color: #7D878D;
-              display: flex;
-              flex-direction: column;
-              line-height: 18px;
-              justify-content: center;
-            }
-            .document-name {
-            }
+          .step5-container {
+            margin: 30px;
+            flex-direction: column;
+          }
 
-            .document-size {
+          .subtitle-5 {
+            font-size: 10px;
+          }
 
-            }
+          .section-title-5 strong {
+            font-weight: 900;
+          }
 
-            .step5-container {
-              margin: 30px;
-              flex-direction: column;
+          .e-selectionbackground {
+            background-color: #e5e8f1 !important;
+          }
 
-            }
+          .e-row:hover {
+            background-color: #e5e8f1 !important;
+          }
 
-            .subtitle-5 {
-              font-size: 10px;              
-            }
+          .e-list-text {
+            text-transform: none !important;
+          }
 
-            .section-title-5 strong {
-              font-weight: 900;
-            }
+          .btn-primary:disabled {
+            background-color: #001978 !important;
+            border-color: #001978 !important;
+            color: white !important;
+          }
 
-            .e-selectionbackground {
-              background-color: #e5e8f1 !important;
-            }
+          .new-folder {
+            text-align: right;
+            font-size: 14px;
+            color: #001978 !important;
+            height: 26px;
+          }
 
-            .e-row:hover {
-              background-color: #e5e8f1 !important;
-            }
+          .new-folder-container {
+            cursor: pointer;
+            display: inline-block;
+            margin-bottom: 5px;
+            padding-bottom: 0;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+          }
 
-            .e-list-text {
-              text-transform: none !important;
-            }
+          a.disabled,
+          a.disabled span,
+          .new-folder-container.disabled,
+          a.disabled .new-folder-text {
+            color: #d2d2d2 !important;
+            cursor: default !important;
+          }
 
-            .btn-primary:disabled {
-              background-color: #001978 !important;
-              border-color: #001978 !important;
-              color: white !important;
-            }
+          .new-folder-icon {
+            margin-right: 0px;
+          }
 
-            .new-folder {
-              text-align: right;
-              font-size: 14px;
-              color: #001978 !important;
-              height: 26px;
-            }
+          .new-folder-text {
+            font-family: 'MTTMilano-Medium' !important;
+            text-decoration: underline;
+            line-height: 19px !important;
+            font-size: 14px !important;
+            color: #001978 !important;
+          }
 
-            .new-folder-container {
-              cursor: pointer;
-              display: inline-block;
-              margin-bottom: 5px;
-              padding-bottom: 0;
-              box-sizing: border-box;
-              -moz-box-sizing: border-box;
-              -webkit-box-sizing: border-box;
-            }
+          .add-more:hover .new-folder-text {
+            background: none !important;
+          }
 
-            a.disabled,
-            a.disabled span,
-            .new-folder-container.disabled,
-            a.disabled .new-folder-text {
-              color: #d2d2d2 !important;
-              cursor: default !important;
-            }
+          .new-folder-text:hover {
+            background: none !important;
+          }
 
-            .new-folder-icon {
-              margin-right: 0px;
-            }
+          .panel {
+            display: flex;
+            height: 450px;
+          }
 
-            .new-folder-text {
-              font-family: 'MTTMilano-Medium' !important;
-              text-decoration: underline;
-              line-height: 19px !important;
-              font-size: 14px !important;
-              color: #001978 !important;
-            }
+          .e-rowcell.e-templatecell {
+            width: auto;
+            display: table-cell;
+          }
 
-            .add-more:hover .new-folder-text {
-              background: none !important;
-            }
+          .panel-left {
+            flex: 1;
+          }
 
-            .new-folder-text:hover {
-              background: none !important;
-            }
+          .panel-right {
+            flex: 2;
+            border-left: 1px solid #e0e0e0;
+          }
+          .panel-right-top {
+            color: red;
+            border-bottom: 1px solid #001978;
+            height: 46px;
+          }
 
-            .panel {
-              display: flex;
-              height: 450px;
-            }
+          .section-border {
+            position: sticky;
+            border: 1px solid #d2d2d2;
+            height: 450px;
+          }
 
-            .e-rowcell.e-templatecell {
-              width: auto;
-              display: table-cell;
-            }
+          .section-title-5 {
+            color: #001978;
+            font-family: 'MTTMilano-Medium' !important;
+            font-size: 14px;
+            font-weight: 900;
+            margin: 0 10px;
+            margin-top: 10px;
+            text-transform: none;
+            vertical-align: text-top;
 
-            .panel-left {
-              flex: 1;
-            }
+            display: flex;
+            justify-content: space-between;
+            flex: 0;
+            padding: 0 10px;
+            height: 40px;
+            border-bottom: 1px solid #001978;
+          }
 
-            .panel-right {
-              flex: 2;
-              border-left: 1px solid #e0e0e0;
-            }
-            .panel-right-top {
-              color: red;
-              border-bottom: 1px solid #001978;
-              height: 46px;
-            }
+          .index-4 span {
+            margin-left: 8px;
+            height: 20px;
+            width: 442px;
+            color: #7f8cbb;
+            font-family: 'MTTMilano-Medium';
+            font-size: 20px;
+            font-weight: 500;
+            line-height: 24px;
+          }
 
-            .section-border {
-              position: sticky;
-              border: 1px solid #d2d2d2;
-              height: 450px;
-            }
+          .e-treeview .e-ul,
+          .e-treeview .e-text-content {
+            padding: 0 0 0 18px;
+          }
 
-            .section-title-5 {
-              color: #001978;
-              font-family: 'MTTMilano-Medium' !important;
-              font-size: 14px;
-              font-weight: 900;
-              margin: 0 10px;
-              margin-top: 10px;
-              text-transform: none;
-              vertical-align: text-top;
-
-              display: flex;
-              justify-content: space-between;
-              flex: 0;
-              padding: 0 10px;
-              height: 40px;
-              border-bottom: 1px solid #001978;
-            }
-
-            .index-4 span {
-              margin-left: 8px;
-              height: 20px;
-              width: 442px;
-              color: #7f8cbb;
-              font-family: 'MTTMilano-Medium';
-              font-size: 20px;
-              font-weight: 500;
-              line-height: 24px;
-            }
-
-            .e-treeview .e-ul,
-            .e-treeview .e-text-content {
-              padding: 0 0 0 18px;
-            }
-
-            .e-list-text {
-              text-transform: uppercase;
-              color: #001978;
-              margin-left: 5px;
-            }
-            .e-treeview .e-list-item > .e-text-content .e-list-text,
-            .e-treeview .e-list-item.e-active > .e-text-content .e-list-text,
-            .e-treeview .e-list-item.e-hover > .e-text-content .e-list-text,
-            .e-treeview .e-list-item.e-active,
-            .e-treeview .e-list-item.e-hover {
-              color: #001978 !important;
-            }
-            .e-treeview .e-list-icon,
-            .e-treeview .e-list-img {
-              height: auto;
-            }
-            .e-treeview .e-icon-collapsible,
-            .e-treeview .e-icon-expandable {
-              color: #001978;
-            }
-          `}</style>
+          .e-list-text {
+            text-transform: uppercase;
+            color: #001978;
+            margin-left: 5px;
+          }
+          .e-treeview .e-list-item > .e-text-content .e-list-text,
+          .e-treeview .e-list-item.e-active > .e-text-content .e-list-text,
+          .e-treeview .e-list-item.e-hover > .e-text-content .e-list-text,
+          .e-treeview .e-list-item.e-active,
+          .e-treeview .e-list-item.e-hover {
+            color: #001978 !important;
+          }
+          .e-treeview .e-list-icon,
+          .e-treeview .e-list-img {
+            height: auto;
+          }
+          .e-treeview .e-icon-collapsible,
+          .e-treeview .e-icon-expandable {
+            color: #001978;
+          }
+        `}</style>
       </Fragment>
     );
   }
-
 }

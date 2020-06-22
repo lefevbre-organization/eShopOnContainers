@@ -6,7 +6,7 @@ import {
   ColumnDirective,
   Inject,
   Search,
-  Sort
+  Sort,
 } from '@syncfusion/ej2-react-grids';
 import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
 import { getResults } from '../../services/services-lexon';
@@ -22,7 +22,7 @@ export class AttachDocumentsStep4 extends React.Component {
       selected: null,
       showSpinner: false,
       lastPage: false,
-      totalResults: -1
+      totalResults: -1,
     };
 
     this.searchResultsByType = this.searchResultsByType.bind(this);
@@ -89,7 +89,7 @@ export class AttachDocumentsStep4 extends React.Component {
         search: search || '',
         showSpinner: true,
         currentPage,
-        counter: 0
+        counter: 0,
       },
       async () => {
         const response = await getResults(
@@ -106,7 +106,7 @@ export class AttachDocumentsStep4 extends React.Component {
           entities: response.results.data,
           showSpinner: false,
           totalResults: response.results.count,
-          lastPage
+          lastPage,
         });
       }
     );
@@ -128,7 +128,7 @@ export class AttachDocumentsStep4 extends React.Component {
   isFileSelected(data) {
     const { idRelated } = data;
 
-    const fd = this.props.files.find(item => item.idRelated === idRelated);
+    const fd = this.props.files.find((item) => item.idRelated === idRelated);
     return fd !== undefined;
   }
 
@@ -142,7 +142,7 @@ export class AttachDocumentsStep4 extends React.Component {
             label=''
             checked={this.isFileSelected(props)}
             cssClass='e-small'
-            change={evt => {
+            change={(evt) => {
               this.onChangeFile(evt, props);
             }}
           />
@@ -168,9 +168,7 @@ export class AttachDocumentsStep4 extends React.Component {
         <div className='step3-container'>
           <ol style={{ textAlign: 'center' }}>
             <li className='index-4'>
-              <span>
-                Selecciona los archivos que quieras adjuntar al correo
-              </span>
+              <span>{i18n.t('modal-attach-documents.select-files')}</span>
             </li>
           </ol>
 
@@ -194,13 +192,13 @@ export class AttachDocumentsStep4 extends React.Component {
               )}
 
               <GridComponent
-                ref={g => (this.gridRef = g)}
+                ref={(g) => (this.gridRef = g)}
                 dataSource={this.state.entities}
                 height={'300px'}
                 selectionSettings={{
                   type: 'Single',
                   mode: 'Row',
-                  enableToggle: false
+                  enableToggle: false,
                 }}
                 allowSorting={true}
                 hideScroll={true}
@@ -210,16 +208,16 @@ export class AttachDocumentsStep4 extends React.Component {
                 <ColumnsDirective>
                   <ColumnDirective
                     field='origin'
-                    headerText='Origen'
+                    headerText={i18n.t('modal-attach-documents.origin')}
                     width='100'
                     template={this.renderOrigin}></ColumnDirective>
                   <ColumnDirective
                     field='name'
-                    headerText='Nombre'
+                    headerText={i18n.t('modal-attach-documents.name')}
                     width='150'></ColumnDirective>
                   <ColumnDirective
                     field='type'
-                    headerText='Tipo'
+                    headerText={i18n.t('modal-attach-documents.type')}
                     width='50'
                     template={this.renderType}></ColumnDirective>
                 </ColumnsDirective>
@@ -232,7 +230,7 @@ export class AttachDocumentsStep4 extends React.Component {
                   }`}
                   onClick={() => this.prevPage()}>
                   <span className='pager-icon lf-icon-angle-left' />
-                  <span>Anterior</span>
+                  <span>{i18n.t('modal-attach-documents.back')}</span>
                 </div>
                 <div className='currentPage'>{currentPage}</div>
                 <div
@@ -240,7 +238,7 @@ export class AttachDocumentsStep4 extends React.Component {
                     this.state.lastPage === true ? 'disabled' : ''
                   }`}
                   onClick={() => this.nextPage()}>
-                  <span>Siguiente</span>
+                  <span>{i18n.t('modal-attach-documents.next')}</span>
                   <span className='pager-icon lf-icon-angle-right' />
                 </div>
               </section>

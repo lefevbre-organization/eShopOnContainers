@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import {
   GridComponent,
   ColumnsDirective,
-  ColumnDirective
+  ColumnDirective,
 } from '@syncfusion/ej2-react-grids';
 import { L10n } from '@syncfusion/ej2-base';
 import i18n from 'i18next';
@@ -13,9 +13,9 @@ import ClassificationListSearch from '../classify-emails/classification-list-sea
 L10n.load({
   'es-ES': {
     grid: {
-      EmptyRecord: 'No hay datos que mostrar'
-    }
-  }
+      EmptyRecord: 'No hay datos que mostrar',
+    },
+  },
 });
 
 export class ConnectingEmailsStep2 extends React.Component {
@@ -28,7 +28,7 @@ export class ConnectingEmailsStep2 extends React.Component {
       currentPage: 1,
       search: '',
       showSpinner: true,
-      lastPage: false
+      lastPage: false,
     };
     this.toolbarOptions = ['Search'];
     this.renderCheck = this._renderCheck.bind(this);
@@ -89,21 +89,21 @@ export class ConnectingEmailsStep2 extends React.Component {
               entities: [...response.results.data],
               counter: response.results.count,
               lastPage,
-              showSpinner: false
+              showSpinner: false,
             },
-            () => { }
+            () => {}
           );
         }
       } catch (err) {
         this.props.toggleNotification(
-          'Errores: ' + err.errors.map(e => e.message).join('; '),
+          'Errores: ' + err.errors.map((e) => e.message).join('; '),
           true
         );
         this.setState({
           entities: [],
           counter: 0,
           lastPage: false,
-          showSpinner: false
+          showSpinner: false,
         });
       }
     }
@@ -141,7 +141,7 @@ export class ConnectingEmailsStep2 extends React.Component {
         this.props.onSelectedEntity &&
           this.props.onSelectedEntity({
             ...event.data,
-            id: event.data.idRelated
+            id: event.data.idRelated,
           });
         this.gridRef && this.gridRef.refresh();
       }
@@ -154,7 +154,7 @@ export class ConnectingEmailsStep2 extends React.Component {
         search: search || '',
         showSpinner: true,
         currentPage: 1,
-        counter: 0
+        counter: 0,
       });
     }
   }
@@ -188,13 +188,13 @@ export class ConnectingEmailsStep2 extends React.Component {
               )}
 
               <GridComponent
-                ref={g => (this.gridRef = g)}
+                ref={(g) => (this.gridRef = g)}
                 dataSource={entities}
                 height={'300px'}
                 selectionSettings={{ type: 'Single', mode: 'Row' }}
                 hideScroll={true}
                 locale='es-ES'
-                rowSelected={event => {
+                rowSelected={(event) => {
                   this.onRowSelected(event);
                 }}>
                 {entity === 1 && (
@@ -207,15 +207,15 @@ export class ConnectingEmailsStep2 extends React.Component {
                     />
                     <ColumnDirective
                       field='code'
-                      headerText='Código'
+                      headerText={i18n.t('classification-list.casefile')}
                       width='100'></ColumnDirective>
                     <ColumnDirective
                       field='intervening'
-                      headerText='Cliente'
+                      headerText={i18n.t('classification-list.client')}
                       width='150'></ColumnDirective>
                     <ColumnDirective
                       field='description'
-                      headerText='Descripción'
+                      headerText={i18n.t('classification-list.description')}
                       width='170'></ColumnDirective>
                   </ColumnsDirective>
                 )}
@@ -228,7 +228,7 @@ export class ConnectingEmailsStep2 extends React.Component {
                     />
                     <ColumnDirective
                       field='description'
-                      headerText='Nombre'
+                      headerText={i18n.t('classification-list.name')}
                       width='170'></ColumnDirective>
                     <ColumnDirective
                       field='email'
@@ -241,18 +241,18 @@ export class ConnectingEmailsStep2 extends React.Component {
                 <div
                   className={`prevButton ${
                     this.state.currentPage === 1 ? 'disabled' : ''
-                    }`}
+                  }`}
                   onClick={() => this.prevPage()}>
                   <span className='pager-icon lf-icon-angle-left' />
-                  <span>Anterior</span>
+                  <span>{i18n.t('modal-attach-documents.back')}</span>
                 </div>
                 <div className='currentPage'>{currentPage}</div>
                 <div
                   className={`nextButton ${
                     this.state.lastPage === true ? 'disabled' : ''
-                    }`}
+                  }`}
                   onClick={() => this.nextPage()}>
-                  <span>Siguiente</span>
+                  <span>{i18n.t('modal-attach-documents.next')}</span>
                   <span className='pager-icon lf-icon-angle-right' />
                 </div>
               </section>

@@ -48,9 +48,6 @@
     "new-folder": "Nueva carpeta",
     "name-folder": "Nombre de la carpeta"
   },
-  "attaching": {
-    "q2": "¿En qué tipo de contacto quieres realizar la búsqueda?"
-  },
   "classification": {
     "type": "Tipo: ",
     "assigned": "Asignado a: ",
@@ -111,6 +108,8 @@
   "classification-list": {
     "assigned-to": "Asignado a",
     "code": "Código",
+    "case:": "Expediente",
+    "casefile": "Expediente",
     "name": "Nombre",
     "description": "Descripción",
     "client": "Cliente"
@@ -150,7 +149,26 @@
     "title": "Adjuntar archivos desde LEX-ON",
     "explore-files": "Explorar expedientes",
     "explore-contacts": "Explorar contactos",
-    "search": "Buscar"
+    "search": "Buscar",
+    "q2": "¿En qué tipo de contacto quieres realizar la búsqueda?",
+    "subtitle1": "Usa el buscador o explora tus expedientes y contactos para localizar los archivos de Lex-on",
+    "subtitle2": "Haz una búsqueda directa de los archivos que quieres adjuntar.",
+    "subtitle3": "O bien localiza tus archivos explorando los expedientes y la agenda de contactos.",
+    "search-your-file": "Busca tu archivo",
+    "from-where": "¿Desde donde quieres adjuntar los archivos?",
+    "case": "Expediente",
+    "client": "Cliente",
+    "description": "Descripción",
+    "name": "Nombre",
+    "back": "Anterior",
+    "next": "Siguiente",
+    "select-files": "Selecciona los archivos que quieras adjuntar al correo",
+    "origin": "Origen",
+    "type": "Tipo",
+    "selected-documents": "DOCUMENTOS SELECCIONADOS",
+    "total": "TOTAL",
+    "file-not-found": "Fichero no encontrado",
+    "error-downloading": "Error descargando fichero"
   },
   "case-file": {
     "casefile-related": "Expediente relacionado",

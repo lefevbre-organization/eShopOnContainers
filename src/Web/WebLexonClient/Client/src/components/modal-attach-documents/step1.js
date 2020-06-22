@@ -8,15 +8,15 @@ export class AttachDocumentsStep1 extends React.Component {
     super(props);
 
     this.state = {
-      searchText: ''
-    }
+      searchText: '',
+    };
 
     this.onKeyPress = this.onKeyPress.bind(this);
   }
-  async componentDidMount() { }
+  async componentDidMount() {}
 
   setSearch(search) {
-    this.setState({ searchText: search })
+    this.setState({ searchText: search });
   }
 
   onKeyPress(e) {
@@ -29,43 +29,44 @@ export class AttachDocumentsStep1 extends React.Component {
 
   render() {
     const { onClickCasefiles, onClickContacts } = this.props;
-    const searchDisabled = (this.state.searchText === '')
+    const searchDisabled = this.state.searchText === '';
     return (
       <Fragment>
         <div className='step1-container'>
           <div className=''>
             <p className='subtitle'>
-              Usa el buscador o explora tus expedientes y contactos para
-              localizar los archivos de Lex-on
+              {i18n.t('modal-attach-documents.subtitle1')}
             </p>
-            <p>
-              Haz una búsqueda directa de los archivos que quieres adjuntar.
-            </p>
+            <p>{i18n.t('modal-attach-documents.subtitle2')}</p>
           </div>
           <div className='input-wrapper'>
             <span className='lf-icon-search'></span>
-            <input placeholder='Busca tu archivo'
+            <input
+              placeholder={i18n.t('modal-attach-documents.search-your-file')}
               value={this.state.searchText}
               onKeyPress={this.onKeyPress}
               onChange={(event) => {
-                this.setState({ searchText: event.target.value.trim() })
+                this.setState({ searchText: event.target.value.trim() });
               }}></input>
-            <span className='lf-icon-close ' onClick={() => { this.setState({ searchText: '' }) }}></span>
+            <span
+              className='lf-icon-close '
+              onClick={() => {
+                this.setState({ searchText: '' });
+              }}></span>
           </div>
           <div className='button-container'>
-            <Button bsPrefix='btn btn-primary' disabled={searchDisabled} onClick={() => {
-              this.props.onClickSearch(this.state.searchText.trim());
-            }
-            }>
+            <Button
+              bsPrefix='btn btn-primary'
+              disabled={searchDisabled}
+              onClick={() => {
+                this.props.onClickSearch(this.state.searchText.trim());
+              }}>
               {i18n.t('modal-attach-documents.search')}
             </Button>
           </div>
 
           <div style={{ marginTop: 30 }}>
-            <p>
-              O bien localiza tus archivos explorando los expedientes y la
-              agenda de contactos.
-            </p>
+            <p>{i18n.t('modal-attach-documents.subtitle3')}</p>
             <div className='buttons'>
               <div>
                 <p
@@ -95,68 +96,68 @@ export class AttachDocumentsStep1 extends React.Component {
           </div>
         </div>
         <style jsx>{`
-            .step1-container {
-              margin: 50px;
-            }
+          .step1-container {
+            margin: 50px;
+          }
 
-            .input-wrapper {
-              background-color: #e5e8f1;
-              height: 45px;
-              display: flex;
-              padding: 10px;
-            }
-            .input-wrapper span.lf-icon-close {
-              cursor: pointer;
-            }
-            .input-wrapper span {
-              color: #001978;
-              font-size: 18px;
-              display: flex;
-              align-items: center;
-            }
-            .input-wrapper input {
-              width: 100%;
-              background-color: transparent;
-              border: none !important;
-              font-size: 14px;
-              color: #001978;
-              padding: 0 10px;
-            }
-            .input-wrapper input:focus {
-              border: none !important;
-              outline: none;
-            }
-            .input-wrapper input::placeholder {
-              /* Chrome, Firefox, Opera, Safari 10.1+ */
-              color: #001978;
-              opacity: 1; /* Firefox */
-              font-size: 14px;
-            }
-            p {
-              color: #333333 !important;
-              font-family: 'MTTMilano-Medium' !important;
-              font-size: 14px;
-              font-weight: 500 !important;
-              letter-spacing: 0 !important;
-            }
-            .subtitle {
-              color: #7f8cbb !important;
-              font-family: 'MTTMilano-Medium' !important;
-              font-size: 20px;
-              font-weight: 500;
-            }
-            .buttons {
-              display: flex;
-              justify-content: space-evenly;
-            }
-            .button-container {
-              text-align: right;
-              margin-top: 20px;
-            }
-            .buttons p {
-              color: #001978 !important;
-            }
-          `}</style>
+          .input-wrapper {
+            background-color: #e5e8f1;
+            height: 45px;
+            display: flex;
+            padding: 10px;
+          }
+          .input-wrapper span.lf-icon-close {
+            cursor: pointer;
+          }
+          .input-wrapper span {
+            color: #001978;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+          }
+          .input-wrapper input {
+            width: 100%;
+            background-color: transparent;
+            border: none !important;
+            font-size: 14px;
+            color: #001978;
+            padding: 0 10px;
+          }
+          .input-wrapper input:focus {
+            border: none !important;
+            outline: none;
+          }
+          .input-wrapper input::placeholder {
+            /* Chrome, Firefox, Opera, Safari 10.1+ */
+            color: #001978;
+            opacity: 1; /* Firefox */
+            font-size: 14px;
+          }
+          p {
+            color: #333333 !important;
+            font-family: 'MTTMilano-Medium' !important;
+            font-size: 14px;
+            font-weight: 500 !important;
+            letter-spacing: 0 !important;
+          }
+          .subtitle {
+            color: #7f8cbb !important;
+            font-family: 'MTTMilano-Medium' !important;
+            font-size: 20px;
+            font-weight: 500;
+          }
+          .buttons {
+            display: flex;
+            justify-content: space-evenly;
+          }
+          .button-container {
+            text-align: right;
+            margin-top: 20px;
+          }
+          .buttons p {
+            color: #001978 !important;
+          }
+        `}</style>
       </Fragment>
     );
   }

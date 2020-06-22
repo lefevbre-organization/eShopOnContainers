@@ -7,7 +7,7 @@ import {
   ColumnDirective,
   Inject,
   Search,
-  Sort
+  Sort,
 } from '@syncfusion/ej2-react-grids';
 import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
 import Spinner from '../spinner/spinner';
@@ -27,7 +27,7 @@ export class AttachDocumentsStep3 extends React.Component {
       entities: [],
       selected: null,
       loadingTree: false,
-      folderCreated: null
+      folderCreated: null,
     };
 
     this.searchResultsByType = this.searchResultsByType.bind(this);
@@ -49,7 +49,7 @@ export class AttachDocumentsStep3 extends React.Component {
         entities: [],
         selected: null,
         loadingTree: false,
-        folderCreated: null
+        folderCreated: null,
       });
       return;
     }
@@ -100,13 +100,13 @@ export class AttachDocumentsStep3 extends React.Component {
                 dataSource: [removeFileNodes(tree[0])],
                 id: 'id',
                 text: 'name',
-                child: 'subChild'
+                child: 'subChild',
               },
-              entities: childs
+              entities: childs,
             },
             () => {
               this.onNodeSelected({
-                nodeData: { id: this.props.entity.idFolder }
+                nodeData: { id: this.props.entity.idFolder },
               });
             }
           );
@@ -129,13 +129,13 @@ export class AttachDocumentsStep3 extends React.Component {
     // Show children of selected node
     const entities =
       node && node.subChild
-        ? node.subChild.map(sc => {
+        ? node.subChild.map((sc) => {
             return {
               origin: i18n.t(`classification.${this.props.entity.idType}`),
               name: sc.name || sc.code || sc.description || '',
               type: sc.idType === 13 ? 'dir' : 'file',
               modified: '26/09/2019 16:57',
-              id: sc.idRelated
+              id: sc.idRelated,
             };
           })
         : [];
@@ -160,7 +160,7 @@ export class AttachDocumentsStep3 extends React.Component {
           idRelated: id,
           checked,
           code: name,
-          description: ''
+          description: '',
         });
     }
   }
@@ -186,7 +186,7 @@ export class AttachDocumentsStep3 extends React.Component {
     const { id } = data;
 
     if (this.props.files) {
-      const fd = this.props.files.find(item => item.idRelated === id);
+      const fd = this.props.files.find((item) => item.idRelated === id);
       return fd !== undefined;
     } else {
       return false;
@@ -205,7 +205,7 @@ export class AttachDocumentsStep3 extends React.Component {
               label=''
               checked={this.isFileSelected(props)}
               cssClass='e-small'
-              change={evt => {
+              change={(evt) => {
                 this.onChangeFile(evt, props);
               }}
             />
@@ -214,7 +214,7 @@ export class AttachDocumentsStep3 extends React.Component {
         <span
           style={{ marginRight: 10, marginLeft: 10 }}
           className={`pager-icon ${icon} new-folder-icon`}></span>
-        <span>Expediente</span>
+        <span>{i18n.t('modal-attach-documents.case')}</span>
       </div>
     );
   }
@@ -231,9 +231,7 @@ export class AttachDocumentsStep3 extends React.Component {
         <div className='step3-container'>
           <ol style={{ textAlign: 'center' }}>
             <li className='index-4'>
-              <span>
-                Selecciona los archivos que quieras adjuntar al correo
-              </span>
+              <span>{i18n.t('modal-attach-documents.select-files')}</span>
             </li>
           </ol>
 
@@ -247,7 +245,7 @@ export class AttachDocumentsStep3 extends React.Component {
               {this.state.loadingTree === false && (
                 <PerfectScrollbar style={{ height: '445px' }}>
                   <TreeViewComponent
-                    ref={t => (this.treeRef = t)}
+                    ref={(t) => (this.treeRef = t)}
                     fields={this.state.fields}
                     expandOn='Auto'
                     nodeSelected={this.nodeSelected}
@@ -274,13 +272,13 @@ export class AttachDocumentsStep3 extends React.Component {
               )}
 
               <GridComponent
-                ref={g => (this.gridRef = g)}
+                ref={(g) => (this.gridRef = g)}
                 dataSource={this.state.entities}
                 height={'359px'}
                 selectionSettings={{
                   type: 'Single',
                   mode: 'Row',
-                  enableToggle: false
+                  enableToggle: false,
                 }}
                 allowSorting={true}
                 hideScroll={false}
@@ -497,7 +495,7 @@ function normalizeTree(entity, data, preselectId, removeFiles = true) {
     id: data.idRelated,
     selected: preselectRoot,
     name: i18n.t(`classification.${entity.idType}`),
-    expanded: true
+    expanded: true,
   };
 
   if (entity.idType === 1) {
@@ -522,7 +520,7 @@ function normalizeNodes(nodes, preselectId, removeFiles) {
       imageUrl:
         nodes[i].idType === 13
           ? `${window.URL_MF_LEXON_BASE}/assets/img/icon-folder.png`
-          : `${window.URL_MF_LEXON_BASE}/assets/img/icon-document.svg`
+          : `${window.URL_MF_LEXON_BASE}/assets/img/icon-document.svg`,
     };
     if (n.subChild.length > 0) {
       n.subChild = normalizeNodes(n.subChild);
@@ -561,7 +559,7 @@ function findNode(node, id) {
 }
 
 function removeFileNodes(node) {
-  node.subChild = node.subChild.filter(n => n.idType === 13);
+  node.subChild = node.subChild.filter((n) => n.idType === 13);
 
   for (let i = 0; i < node.subChild.length; i++) {
     node.subChild[i] = removeFileNodes(node.subChild[i]);
