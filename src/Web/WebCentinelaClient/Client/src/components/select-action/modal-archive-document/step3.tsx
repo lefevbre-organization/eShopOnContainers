@@ -20,6 +20,7 @@ import {
 } from '../../../services/services-centinela';
 import ImplantationListSearch from '../implantation-list-search/implantation-list-search';
 import Spinner from '../../spinner/spinner';
+import _ from 'lodash';
 //import ImplantationListSearch from '../implantation-list-search/implantation-list-search';
 
 L10n.load({
@@ -137,13 +138,21 @@ export class Step3 extends React.Component<Props, State> {
         console.log(response);
 
         if (response.errors.length === 0) {
+          const items = _.sortBy(
+            [
+              ...response.data
+                .filter((c: any) => c.hidden === false)
+                .map((c: any) => ({ ...c, key: c.name.toLowerCase() }))
+            ],
+            'name'
+          );
           this.setState(
             {
               route: [],
-              phases: [...response.data],
+              phases: items,
               currentNodes: {
                 node: 'root',
-                items: [...response.data]
+                items: items
               },
               showSpinner: false
             },
@@ -151,6 +160,7 @@ export class Step3 extends React.Component<Props, State> {
           );
         }
       } catch (err) {
+        console.log(err);
         toggleNotification &&
           toggleNotification(
             'Errores: ' + err.errors.map((e: any) => e.message).join('; '),
@@ -180,11 +190,30 @@ export class Step3 extends React.Component<Props, State> {
         }
       );
     } else {
+      debugger;
+      const items = _.sortBy(
+        _.concat(
+          event.data.children.map((c: any) => ({
+            ...c,
+            key: c.name.toLowerCase()
+          })),
+          event.data.concepts.map((c: any) => ({
+            ...c,
+            key: c.title.toLowerCase()
+          }))
+        ).filter((c: any) => c.hidden === false),
+        'name'
+      );
+
       this.setState({
         route: nr,
         currentNodes: {
           node: 'id',
-          items: [...event.data.children, ...event.data.concepts]
+          items: items
+          // [
+          //   ...event.data.children.filter((c: any) => c.hidden === false),
+          //   ...event.data.concepts.filter((c: any) => c.hidden === false)
+          // ]
         }
       });
     }
