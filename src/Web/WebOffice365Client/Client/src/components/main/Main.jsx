@@ -31,6 +31,7 @@ import e from '../../event-bus';
 import SidebarCnn from 'react-sidebar';
 import LexonComponent from '../../apps/lexon_content';
 import CentinelaComponent from '../../apps/centinela_content';
+import DatabaseComponent from '../../apps/database_content';
 import SidebarComponent from '../../apps/sidebar_content';
 import ComposeMessage from '../compose-message/ComposeMessage';
 import 'react-reflex/styles.css';
@@ -220,13 +221,11 @@ export class Main extends Component {
   }
 
   onSetSidebarOpenDatabase(open) {
-    let lexon = (
-      <img
-        border='0'
-        alt='Lefebvre'
-        src='/assets/img/lexon-fake-null.png'></img>
-    );
-    this.setState({ sidebarComponent: lexon });
+    this.setState({
+      sidebarComponent: (
+        <DatabaseComponent sidebarDocked={this.onSetSidebarDocked} />
+      ),
+    });
     this.setState({ sidebarDocked: open });
   }
 
@@ -775,6 +774,14 @@ export class Main extends Component {
                   <span className='productsbutton'>
                     <div onClick={() => this.onSetSidebarOpenCentinela(true)}>
                       <span className='lf-icon-compliance product-icon'></span>
+                    </div>
+                  </span>
+                )}
+              {this.hasProduct('databaseconnector') &&
+                window.SHOW_EXPERIMENTAL === '1' && (
+                  <span className='productsbutton'>
+                    <div onClick={() => this.onSetSidebarOpenDatabase(true)}>
+                      <span className='lf-icon-qmemento product-icon'></span>
                     </div>
                   </span>
                 )}

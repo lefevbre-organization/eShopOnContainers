@@ -7,6 +7,4 @@ data:
     window.REACT_APP_ENVIRONMENT='DEV'
     window.API_GATEWAY='http://localhost:8086'
     window.API_ACC_GATEWAY = "https://now-apigwacc.lefebvre.es"
-    window.URL_MF_LEXON_BASE = "http://localhost:3004/"
-
-
+    window.URL_MF_DATABASE_BASE = 'http://localhost:3006/'

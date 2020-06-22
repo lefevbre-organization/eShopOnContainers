@@ -16,4 +16,5 @@ data:
     window.URL_MF_LEXON='http://localhost:3004/static/js/main.js'
     window.URL_MF_CENTINELA='http://localhost:3005/static/js/main.js'
     window.API_CENTINELA_GATEWAY =   'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen'
+    window.URL_MF_DATABASE='http://localhost:3006/static/js/main.js'
     window.SHOW_EXPERIMENTAL='1'

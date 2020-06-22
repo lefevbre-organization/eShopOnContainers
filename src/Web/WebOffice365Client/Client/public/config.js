@@ -16,5 +16,7 @@ window.RELEASE = 'RC DEV';
 window.URL_MF_CENTINELA = 'http://localhost:3005/static/js/main.js';
 window.API_CENTINELA_GATEWAY =
   'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen';
+window.URL_MF_DATABASE = 'http://localhost:3006/static/js/main.js';
+window.URL_MF_DATABASE_BASE = 'http://localhost:3006';
 
-window.SHOW_EXPERIMENTAL = '0';
+window.SHOW_EXPERIMENTAL = '1';

@@ -75,14 +75,6 @@ class SelectActionHeader extends Component<Props, State> {
 
     return (
       <Fragment>
-        <p className="selected-messages">
-          {i18n.t('select-action-header.messages-selected')}
-          <br />
-          <MessageCounter onChange={this.onShowDocuments}>
-            {selected.length}
-          </MessageCounter>
-        </p>
-
         {/* {showDocuments && (
           <p className='company-id'>
             {i18n.t('select-action-header.company-selected')}
