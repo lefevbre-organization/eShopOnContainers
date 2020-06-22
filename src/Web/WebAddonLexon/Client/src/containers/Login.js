@@ -128,6 +128,21 @@ class Login extends Component {
     };
   }
 
+  goToSocial = (value) => {
+   switch (value) {
+     case 'f':
+       return window.open("https://www.facebook.com/Lefebvre.ES");
+     case 'l':
+       return window.open("https://www.linkedin.com/company/lefebvre_es/");
+      case 'y':
+       return window.open("https://www.youtube.com/c/lefebvre_es");
+      case 't':
+       return window.open("https://twitter.com/Lefebvre_ES");
+     default:
+       break;
+   }
+  }
+
   render() {
     return (
       <div className="wrapper">
@@ -156,6 +171,7 @@ class Login extends Component {
          iconLinkedin={iconLinkedin}
          iconTwitter={iconTwitter}
          iconYoutube={iconYoutube}
+         goToSocial={this.goToSocial}
         />
       </div>
          
