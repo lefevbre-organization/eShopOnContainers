@@ -28,9 +28,13 @@ window.URL_MF_CENTINELA = 'http://localhost:3005/static/js/main.js';
 window.URL_MF_CENTINELA_BASE = 'https://lexbox-test-webcentinela.lefebvre.es';
 
 // window.URL_MF_LEXON_BASE = "http://localhost:3004";
-window.URL_MF_LEXON = "https://lexbox-test-weblexon.lefebvre.es/static/js/main.js"
+window.URL_MF_LEXON =
+  'https://lexbox-test-weblexon.lefebvre.es/static/js/main.js';
 window.API_GATEWAY = 'https://lexbox-test-apigwlex.lefebvre.es';
 window.API_CENTINELA_GATEWAY =
   'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen';
+window.URL_MF_DATABASE = 'http://localhost:3006/static/js/main.js';
+window.URL_MF_DATABASE_BASE = 'http://localhost:3006';
+
 window.RELEASE = 'RC DEV';
 window.SHOW_EXPERIMENTAL = '1';

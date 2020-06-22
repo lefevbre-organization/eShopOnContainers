@@ -1,0 +1,161 @@
+{
+  "main": {
+    "error_connection": "Error connecting to Lexon. The data is not updated.",
+    "bbdd_error": "Error connectin to database."
+  },
+  "select-company": {
+    "select-company": "Select company:",
+    "enter": "ENTER",
+    "open-all-window": "Open in all window",
+    "hide-column": "Hide column",
+    "must-select-company": "You must select a company."
+  },
+  "select-action-header": {
+    "messages-selected": "SELECTED MESSAGES:",
+    "company-selected": "Company identified:",
+    "change-company": "Change company",
+    "select-another-company": "Select another company",
+    "folder": "Folder",
+    "subject": "Subject"
+  },
+  "new-classification": {
+    "new-classification": "New classification"
+  },
+  "attaching": {
+    "q2": "In what type of contact do you want to search?"
+  },
+  "connecting": {
+    "q1": "What do you want to do with the selected messages?",
+    "q2": "What type of entity do you want to classify with?",
+    "create": "Create performance",
+    "copy": "Save copy of the messages in documentation",
+    "save": "Save attachments in documentation",
+    "q3_1": "In which file do you want to classify the messages?",
+    "q3_2": "In which client do you want to classify the messages?",
+    "q3_3": "In what way do you want to classify the messages?",
+    "q3_4": "In which provider do you want to classify the messages?",
+    "q3_5": "In which lawyer do you want to classify the messages?",
+    "q3_6": "In which contrary lawyer do you want to classify the messages?",
+    "q3_7": "In which own attorney do you want to classify the messages?",
+    "q3_8": "In which opposite prosecutor do you want to classify the messages?",
+    "q3_9": "In which notary do you want to classify the messages?",
+    "q3_10": "In what court do you want to classify the messages?",
+    "q3_11": "In which insurer do you want to classify the messages?",
+    "q3_12": "In which entity do you want to classify the messages?",
+    "q3_13": "In which folder do you want to classify the messages?",
+    "q3_14": "In which document do you want to classify the messages?",
+    "q4": "Select the exact location for the files",
+    "q5": "Do you want to rename the new performances?",
+    "qs5": "The actions created take by default the subject of classified messages. If you wish, you can edit these titles.",
+    "actuation-title": "Acting title",
+    "new-folder": "New folder"
+  },
+  "classification": {
+    "type": "Type: ",
+    "assigned": "Assigned to: ",
+    "remove-document": "Remove docucment of the classification",
+    "1": "Files",
+    "2": "Clients",
+    "3": "Opposites",
+    "4": "Suppliers",
+    "5": "Lawyers",
+    "6": "Opposing Lawyers",
+    "7": "Solicitors",
+    "8": "Opposing Solicitors",
+    "9": "Notaries",
+    "10": "Courts",
+    "11": "Insurances",
+    "12": "Others",
+    "13": "Folders",
+    "14": "Documents"
+  },
+  "classify-emails": {
+    "cancel": "CANCEL",
+    "save": "SAVE",
+    "continue": "CONTINUE",
+    "back": "BACK",
+    "attach": "ATTACH",
+    "close": "CLOSE",
+    "title": "New classification",
+    "body": "Select classification type to load the corresponding list and assign the messages to one of the items in the list.",
+    "classification-saved-ok": "The classification has been saved correctly",
+    "classification-saved-ko": "There was an error has been saving the classification",
+    "classification-removed-ok": "The classification has beenremoved correctly",
+    "classification-removed-ko": "There was an error removing the classification",
+    "classification-selection-ko": "You must select a Type and Entity to qualify",
+    "classification-docs-saved-ok": "The classification and documents are been saved correctly",
+    "documents-saved-ok": "The documents has been saved correctly",
+    "documents-saved-ko": "There was an error saving the documents"
+  },
+  "classification-type": {
+    "type": "Type",
+    "select": "--Select--"
+  },
+  "classification-list-search": {
+    "results-total": "TOTAL RESULTS: ",
+    "show-search": "Show search",
+    "search-by": "Search by:",
+    "hide-search": "Hide search"
+  },
+  "tab-classify": {
+    "select-mail": "Select a message and rate it in Lex-on. The relationship established will be visible in this panel and also in the application."
+  },
+  "tab-connect": {
+    "select-mail": "Select a message and rate it in Lex-on. The relationship established will be visible in this panel and also in the application."
+  },
+  "classification-list": {
+    "assigned-to": "Assigned to",
+    "code": "Code",
+    "name": "Name",
+    "description": "Description",
+    "client": "Client"
+  },
+  "confirm-remove-classification": {
+    "yes": "Yes",
+    "no": "No",
+    "text-confirm-remove": "If you delete this link, you will stop viewing the email in the corresponding Lex-on classification. Do you want to continue?"
+  },
+  "select-action": {
+    "connect-messages": "Classify messages",
+    "attach-documents": "Attach documents"
+  },
+  "tab-document": {
+    "select-mail": "Select one or more messages and save them as a separate copy in the Lex-on documentation."
+  },
+  "tab-attachment": {
+    "select-docs": "Search the LEX-ON files and contacts and attach the files you need to your emails.",
+    "select-link": "Select document on LEX-ON"
+  },
+  "save-copy": {
+    "save-copy": "New conection"
+  },
+  "list-classifications": {
+    "classifications": "CLASSIFICATIONS:",
+    "no-classifications": "There are no classifications associated with this email"
+  },
+  "list-documents": {
+    "documented-copies": "DOCUMENTED COPIES:"
+  },
+  "modal-documents-emails": {
+    "save-copy": "Save copy in Documentation"
+  },
+  "modal-conecting-emails": {
+    "save-copy": "Classify messages on Lex-on"
+  },
+  "modal-attach-documents": {
+    "title": "Adjuntar archivos desde LEX-ON",
+    "explore-files": "Explore casefiles",
+    "explore-contacts": "Explore contacts",
+    "search": "Search"
+  },
+  "case-file": {
+    "casefile-related": "Related Casefile",
+    "casefile-notfound": "Related Casefile not found",
+    "identifier": "Identifier",
+    "description": "Description:",
+    "client": "Client:"
+  },
+  "configuration": {
+    "version": "Version"
+  }
+}

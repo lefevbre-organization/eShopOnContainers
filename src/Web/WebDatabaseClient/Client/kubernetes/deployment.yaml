@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: service
+  name: weblexonclient
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: weblexonclient
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: service
+        app: weblexonclient
+    spec:
+      containers:
+        - name: webgoogleclient
+          image: elefebvreoncontainers/weblexonclient:linux-dev
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name:  weblexonclient-config-volume
+              mountPath: app/wwwroot/config.js
+              subPath: config.js
+              readOnly: true
+      volumes:
+        - name: weblexonclient-config-volume
+          configMap:
+            name: weblexonclient-config

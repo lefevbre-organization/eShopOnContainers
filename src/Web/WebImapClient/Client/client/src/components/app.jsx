@@ -176,13 +176,11 @@ class App extends Component {
   }
 
   onSetSidebarOpenDatabase(open) {
-    const lexon = (
-      <img
-        border='0'
-        alt='Lefebvre'
-        src='/assets/images/lexon-fake-null.png'></img>
-    );
-    this.setState({ sidebarComponent: lexon });
+    this.setState({
+      sidebarComponent: (
+        <DataBaseComponent sidebarDocked={this.onSetSidebarDocked} />
+      ),
+    });
     this.setState({ sidebarDocked: open });
   }
 
@@ -386,6 +384,21 @@ class App extends Component {
                 </span>
               ) : null}
 
+              {this.hasProduct('databaseconnector') &&
+              window.SHOW_EXPERIMENTAL === '1' ? (
+                <span
+                  className={styles.productsbutton}
+                  isotip={t('productBar.database')}
+                  isotip-position='bottom-end'
+                  isotip-size='small'>
+                  <IconButton
+                    onClick={() => this.onSetSidebarOpenDatabase(true)}>
+                    <span className='lf-icon-qmemento product-icon'></span>
+                  </IconButton>
+
+                  <div className={styles.btnselect}></div>
+                </span>
+              ) : null}
               {/* <span
                 className={styles.productsbutton}
                 isotip={t("productBar.database")}
