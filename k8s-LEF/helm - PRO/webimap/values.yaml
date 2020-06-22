@@ -58,5 +58,7 @@ configValues: |
   window.API_ACC_GATEWAY = 'https://lexbox-apigwacc.lefebvre.es' 
   window.URL_MF_LEXON_BASE = 'https://lexbox-weblexon.lefebvre.es' 
   window.API_CENTINELA_GATEWAY =   'https://lexbox-apigwcen.lefebvre.es/api/v1/cen'
+  window.URL_MF_DATABASE='http://localhost:3006/static/js/main.js'
+  window.URL_MF_DATABASE_BASE='http://localhost:3006'
   window.SHOW_EXPERIMENTAL='0'  
   window.RELEASE= 'RC 0.23'
