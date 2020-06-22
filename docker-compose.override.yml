@@ -130,7 +130,7 @@ services:
     ports:
       - "3006:80"
 
-  webofficeaddon:
+  weboffice365addonlexon:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80

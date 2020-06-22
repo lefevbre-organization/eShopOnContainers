@@ -6,10 +6,10 @@ Param(
     [parameter(Mandatory=$false)][bool]$cleanDocker=$false,
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
-    [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webaddonlexon", "weboffice365addon","account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw", "webstatus"),
+    [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webaddonlexon", "weboffice365addonlexon","account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw", "webstatus"),
     # [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webgoogleclient"),
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
-    [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webaddonlexon", "weboffice365addon", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "ocelotapigw", "webstatuslef"),
+    [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webaddonlexon", "weboffice365addonlexon", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "ocelotapigw", "webstatuslef"),
     [parameter(Mandatory=$false)][string]$tagToPush="linux-dev-25",
     [parameter(Mandatory=$false)][string]$initialTag="linux-dev",
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
@@ -118,7 +118,9 @@ if ($buildImages) {
     }else{
 
         foreach ($service in $servicesToBuild) {
+            Write-Host "=====================================" -ForegroundColor DarkCyan
             Write-Host "BuildDockers 03B: Building Docker image '$service' tagged with '$tagToPush'" -ForegroundColor DarkBlue
+            Write-Host "=====================================" -ForegroundColor DarkCyan
             # docker-compose -p .. -f ../docker-compose.yml build $service
             docker-compose -p .. -f $pathFileCompose build $service
         }
