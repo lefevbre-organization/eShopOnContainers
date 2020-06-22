@@ -190,7 +190,6 @@ export class Step3 extends React.Component<Props, State> {
         }
       );
     } else {
-      debugger;
       const items = _.sortBy(
         _.concat(
           event.data.children.map((c: any) => ({
