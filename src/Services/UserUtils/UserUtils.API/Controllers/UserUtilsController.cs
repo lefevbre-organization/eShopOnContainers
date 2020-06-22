@@ -95,8 +95,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         #region User
 
         [HttpGet("user/apps")]
-        [ProducesResponseType(typeof(Result<List<LexApp>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<List<LexApp>>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<List<LefebvreApp>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<List<LefebvreApp>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UserAppsAsync(string idNavisionUser = "E1621396", bool onlyActives = true)
         {
             if (string.IsNullOrEmpty(idNavisionUser))

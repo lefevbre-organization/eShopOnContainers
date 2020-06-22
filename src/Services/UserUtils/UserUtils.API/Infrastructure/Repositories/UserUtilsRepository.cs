@@ -27,22 +27,22 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
             _context = new UserUtilsContext(settings, eventBus);
         }
 
-        public async Task<Result<UserUtilsModel>> GetLexonUserAsync(string idNavision)
-        {
-            var result = new Result<UserUtilsModel>();
-            try
-            {
-                result.data = await _context.UserUtils.Find(GetFilterUserModel(idNavision)).FirstOrDefaultAsync();
+        //public async Task<Result<UserUtilsModel>> GetLexonUserAsync(string idNavision)
+        //{
+        //    var result = new Result<UserUtilsModel>();
+        //    try
+        //    {
+        //        result.data = await _context.UserUtils.Find(GetFilterUserModel(idNavision)).FirstOrDefaultAsync();
 
-                if (result.data == null)
-                    TraceMessage(result.errors, new Exception($"No se encuentra ningún usuario {idNavision}"), "ErrorUserGet");
-            }
-            catch (Exception ex)
-            {
-                TraceMessage(result.errors, ex);
-            }
-            return result;
-        }
+        //        if (result.data == null)
+        //            TraceMessage(result.errors, new Exception($"No se encuentra ningún usuario {idNavision}"), "ErrorUserGet");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TraceMessage(result.errors, ex);
+        //    }
+        //    return result;
+        //}
 
         public async Task<Result<List<ByPassModel>>> GetListByPassAsync()
         {
@@ -158,9 +158,21 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.R
             throw new NotImplementedException();
         }
 
-        public Task<Result<UserUtilsModel>> GetUserAsync(string idNavision)
+        public async Task<Result<UserUtilsModel>> GetUserAsync(string idNavision)
         {
-            throw new NotImplementedException();
+            var result = new Result<UserUtilsModel>();
+            try
+            {
+                result.data = await _context.UserUtils.Find(GetFilterUserModel(idNavision)).FirstOrDefaultAsync();
+
+                if (result.data == null)
+                    TraceMessage(result.errors, new Exception($"No se encuentra ningún usuario {idNavision}"), "ErrorUserGet");
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
         }
     }
 }

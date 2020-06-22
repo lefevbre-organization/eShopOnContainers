@@ -12,7 +12,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -157,9 +156,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             return result;
         }
 
-        public async Task<Result<List<LexApp>>> GetUserUtilsAsync(string idNavisionUser, bool onlyActives)
+        public async Task<Result<List<LefebvreApp>>> GetUserUtilsAsync(string idNavisionUser, bool onlyActives)
         {
-            var result = new Result<List<LexApp>>(new List<LexApp>());
+            var result = new Result<List<LefebvreApp>>(new List<LefebvreApp>());
             try
             {
                 var usuarioEncriptado = await GetEncodeUserAsync(idNavisionUser); // "f3NrcnZs";
@@ -177,10 +176,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
                         if (!string.IsNullOrEmpty(rawResult))
                         {
-                            var resultado = (JsonConvert.DeserializeObject<LexApp[]>(rawResult));
-                            var listAll = resultado.ToList();
-                            UpdateListByPass(listAll, idNavisionUser, result.errors);
-                            result.data = onlyActives ? listAll.Where(x => x.indAcceso > 0).ToList() : listAll.ToList();
+                            var resultado = (JsonConvert.DeserializeObject<LefebvreApp[]>(rawResult));
+                            result.data = await UpdateListByPass(idNavisionUser, resultado, result.errors, onlyActives);
                         }
                     }
                     else
@@ -206,25 +203,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             return result;
         }
 
-        private async void UpdateListByPass(List<LexApp> listAll, string idNavisionUser, List<ErrorInfo> errors)
+        private async Task<List<LefebvreApp>> UpdateListByPass(string idNavisionUser, LefebvreApp[] resultado, List<ErrorInfo> errors, bool onlyActives)
         {
+            var modelo = new UserUtilsModel() { idNavision = idNavisionUser, version = _settings.Value.Version };
             try
             {
-                var listaByPass = await _repository.GetListByPassAsync();
-                foreach (var app in listAll)
-                {
-                    var encontrado = listaByPass.data.Find(x => x.NameService.Equals(app.descHerramienta.ToUpperInvariant()));
-                    if (encontrado?.NameService != null)
-                    {
-                        //  encontrado.Url = app.url;
-                        var urlReplace = encontrado.UrlByPass
-                            .Replace("{idUserNavision}", idNavisionUser)
-                            .Replace("{serviceName}", app.descHerramienta);
-                        //  var actualizado = await _repository.PostByPassAsync(encontrado);
-                        app.url = urlReplace;
-                        return;
-                    }
-                }
+                modelo.apps = resultado.ToList().Where(i => i.indAcceso > 0 && onlyActives || !onlyActives).ToArray();
+                await PostUserAsync(modelo);
             }
             catch (Exception ex)
             {
@@ -235,6 +220,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     message = ex.Message
                 });
             }
+            // modelo.apps = cleanListApp.ToArray();
+            return modelo.apps.ToList();
         }
 
         public async Task<Result<ServiceComUser>> GetUserDataWithLoginAsync(string login, string pass)
@@ -386,17 +373,53 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         public async Task<Result<string>> GetUserUtilsActualToServiceAsync(string idUser, string nameService)
         {
             var result = new Result<string>(null);
-            var byPassResult = await GetUserAsync(nameService);
-            //if (byPassResult.errors?.Count == 0 && byPassResult.data?.Url != null)
-            //{
-            //    var newUrl = byPassResult.data?.Url;
-            //    Result<string> temporalLinkResult = await GeUserUtilFinalLink(newUrl);
-            //    result.data = temporalLinkResult.data;
-            //}
-            //else
-            //{
-            //    result.data = "http://www.google.es";
-            //}
+            var user = await GetUserAsync(idUser);
+            if (user.errors?.Count == 0)
+            {
+                var app = user.data?.apps?.FirstOrDefault(x => x.descHerramienta == nameService);
+                Result<string> temporalLinkResult = await GeUserUtilFinalLink(app?.urlByPass);
+                result.data = temporalLinkResult?.data;
+            }
+
+            return result;
+        }
+
+        private async Task<Result<string>> GeUserUtilFinalLink(string newUrl)
+        {
+            var result = new Result<string>(null);
+            try
+            {
+                using (var response = await _clientMinihub.GetAsync(newUrl))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var rawResult = await response.Content.ReadAsStringAsync();
+
+                        if (!string.IsNullOrEmpty(rawResult))
+                        {
+                            var resultado = (JsonConvert.DeserializeObject<UrlJson>(rawResult));
+                            result.data = resultado.url;
+                        }
+                    }
+                    else
+                    {
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "ErrorFinalLink_WebClient",
+                            detail = $"Error in call to {newUrl} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "ErrorFinalLink",
+                    detail = $"General error in call Final Link",
+                    message = ex.Message
+                });
+            }
 
             return result;
         }
@@ -461,6 +484,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             long.TryParse(idUser, out long idUserLong);
             return idUserLong;
         }
+
         private void AddValuesToPayload(JwtPayload payload, TokenRequest tokenRequest)
         {
             AddClaimToPayload(payload, tokenRequest.idClienteNavision, nameof(tokenRequest.idClienteNavision));
@@ -469,8 +493,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             AddClaimToPayload(payload, tokenRequest.idApp, nameof(tokenRequest.idApp));
             AddClaimToPayload(payload, GetLongIdUser(tokenRequest.idUserApp), nameof(tokenRequest.idUserApp));
             AddClaimToPayload(payload, tokenRequest.idUserApp, "idUser");
-
-
 
             if (tokenRequest is TokenRequestCentinelaViewFirm tokenRequestCentinelaViewFirm)
             {
@@ -616,31 +638,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 TraceOutputMessage(result.errors, $"Error validation user => {ex.Message}", "Error Validation");
             }
             return result;
-        }
-
-        private async Task<List<string>> GetRolesOfUserAsync(string idClienteNavision, string login, string password)
-        {
-            var apps = await GetUserUtilsAsync(idClienteNavision, true);
-            var areas = await GetAreasByUserAsync(idClienteNavision);
-            var appsWithAccess = new List<string>() { "lexonconnector", "centinelaconnector" };
-            foreach (var app in apps.data)
-            {
-                appsWithAccess.Add(app.descHerramienta);
-            }
-
-            foreach (var area in areas.data)
-            {
-                appsWithAccess.Add(area.descArea);
-            }
-
-            var usuarioValido = !string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password);
-            if (!string.IsNullOrEmpty(idClienteNavision) && usuarioValido)
-            {
-                appsWithAccess.Add("gmailpanel");
-                appsWithAccess.Add("outlookpanel");
-            }
-
-            return appsWithAccess;
         }
 
         #endregion Auxiliar

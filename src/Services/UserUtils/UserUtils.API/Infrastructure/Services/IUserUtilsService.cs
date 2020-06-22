@@ -11,7 +11,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
         Task<Result<string>> GetDecodeUserAsync(string idEncodeNavisionUser);
 
-        Task<Result<List<LexApp>>> GetUserUtilsAsync(string idNavisionUser, bool onlyActives);
+        Task<Result<List<LefebvreApp>>> GetUserUtilsAsync(string idNavisionUser, bool onlyActives);
 
         //Task<Result<TokenData>> GetTokenAsync(TokenModelBase tokenRequest, bool addTerminatorToToken);
 
