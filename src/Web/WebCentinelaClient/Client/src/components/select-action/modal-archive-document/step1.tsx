@@ -6,6 +6,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 
 interface Props {
   selected: Message[];
+  attachments: boolean;
   onCopyEmail: (check: boolean) => void;
   onCopyAttachments: (check: boolean) => void;
 }
@@ -22,17 +23,18 @@ const MessageWithAttachments = ({ msg }: { msg: Message }) => {
   if (msg.attachments && msg.attachments.length > 0) {
     return (
       <div>
-        <div className='subject'>
-          <i className='lf-icon-mail'></i>
+        <div className="subject">
+          <i className="lf-icon-mail"></i>
           {msg.subject}
         </div>
-        <ul className='attachments'>
+        <ul className="attachments">
           {msg.attachments?.map((at) =>
             at.name ? (
               <li>
                 <CheckBoxComponent
-                  cssClass='e-small'
-                  checked={at.checked}></CheckBoxComponent>
+                  cssClass="e-small"
+                  checked={at.checked}
+                ></CheckBoxComponent>
                 <span>{at.name}</span>
               </li>
             ) : null
@@ -72,7 +74,7 @@ const MessageWithAttachments = ({ msg }: { msg: Message }) => {
     );
   }
 
-  return <p>{JSON.stringify(msg)}</p>;
+  return null;
 };
 
 export class Step1 extends React.Component<Props, State> {
@@ -82,7 +84,7 @@ export class Step1 extends React.Component<Props, State> {
       types: [],
       copyEmail: true,
       copyAttachments: true,
-      entity: 1,
+      entity: 1
     };
   }
 
@@ -111,17 +113,18 @@ export class Step1 extends React.Component<Props, State> {
 
   render() {
     const { copyEmail, copyAttachments } = this.state;
-    const { selected } = this.props;
+    const { selected, attachments } = this.props;
+
     return (
       <Fragment>
-        <div className='step1-container'>
+        <div className="step1-container">
           <ol>
             <li>
               <span>
                 {i18n.t('modal-archive.q1')}
                 <span style={{ color: 'red' }}>*</span>
               </span>
-              <ul className='list-checks'>
+              <ul className="list-checks">
                 <li>
                   <CheckBoxComponent
                     label={i18n.t('modal-archive.copy-email')}
@@ -131,24 +134,26 @@ export class Step1 extends React.Component<Props, State> {
                     }}
                   />
                 </li>
-                <li>
-                  <CheckBoxComponent
-                    label={i18n.t('modal-archive.copy-attachments')}
-                    checked={copyAttachments}
-                    change={(data) => {
-                      this.changeCheck2(data);
-                    }}
-                  />
-                </li>
+                {attachments && (
+                  <li>
+                    <CheckBoxComponent
+                      label={i18n.t('modal-archive.copy-attachments')}
+                      checked={copyAttachments}
+                      change={(data) => {
+                        this.changeCheck2(data);
+                      }}
+                    />
+                  </li>
+                )}
               </ul>
             </li>
-            {copyAttachments && (
+            {attachments && copyAttachments && (
               <li style={{ marginBottom: 20 }}>
                 <span>
                   {i18n.t('modal-archive.q1b')}
                   <span style={{ color: 'red' }}>*</span>
                 </span>
-                <div className='file-list-wrapper'>
+                <div className="file-list-wrapper">
                   <PerfectScrollbar>
                     {selected.map((sm: Message) => (
                       <MessageWithAttachments msg={sm} />

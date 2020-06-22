@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 interface CentinelaResponse {
   errors: any;
   infos: any;
@@ -146,6 +148,14 @@ export const getUser = async (
     });
 
     const result = await response.json();
+
+    result.data.evaluations = _.sortBy(
+      result.data.evaluations.map((item: any) => ({
+        ...item,
+        key: item.name.toLowerCase()
+      })),
+      'key'
+    );
     return result;
   } catch (err) {
     throw err;

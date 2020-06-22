@@ -13,7 +13,7 @@ import { Step3 } from './step3';
 import {
   Evaluation,
   CentInstance,
-  uploadFile,
+  uploadFile
 } from '../../../services/services-centinela';
 const parse = require('emailjs-mime-parser').default;
 const base64js = require('base64-js');
@@ -22,7 +22,7 @@ const mapStateToProps = (state: AppState) => {
   return {
     showAttachDocuments: state.application.showArchiveModal,
     selected: state.messages.selected,
-    user: state.application.user,
+    user: state.application.user
   };
 };
 
@@ -30,10 +30,10 @@ const mapDispatchToProps = (dispatch: any) => {
   return {
     ...bindActionCreators(
       {
-        toggleArchiveModal: ApplicationActions.toggleArchiveModal,
+        toggleArchiveModal: ApplicationActions.toggleArchiveModal
       },
       dispatch
-    ),
+    )
   };
 };
 
@@ -71,7 +71,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
       files: [],
       copyEmail: true,
       copyAttachments: true,
-      instance: undefined,
+      instance: undefined
     };
 
     this.onCopyAttachments = this.onCopyAttachments.bind(this);
@@ -146,7 +146,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
         entity: 0,
         messages: [],
         files: [],
-        complete: false,
+        complete: false
       });
     }, 1000);
     toggleArchiveModal && toggleArchiveModal();
@@ -204,7 +204,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
             instance?.conceptObjectId || 0,
             {
               name: messages[m].subject + '.eml',
-              content: raw,
+              content: raw
             }
           );
 
@@ -235,7 +235,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
                     instance?.conceptObjectId || 0,
                     {
                       name: mime.childNodes[j].contentType.params.name,
-                      content: rawAttach,
+                      content: rawAttach
                     }
                   );
 
@@ -263,7 +263,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
       copyAttachments,
       copyEmail,
       implantation,
-      instance,
+      instance
     } = this.state;
     if (step === 1 && (copyAttachments === true || copyEmail === true)) {
       return false;
@@ -287,18 +287,20 @@ class ModalArchiveDocuments extends Component<Props, State> {
         return (
           <Fragment>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.closeDialog();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.cancel')}
             </Button>
             <Button
               disabled={this.saveDisabled()}
-              bsPrefix='btn btn-primary'
+              bsPrefix="btn btn-primary"
               onClick={() => {
                 this.nextStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.continue')}
             </Button>
           </Fragment>
@@ -307,25 +309,28 @@ class ModalArchiveDocuments extends Component<Props, State> {
         return (
           <Fragment>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.closeDialog();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.cancel')}
             </Button>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.prevStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.back')}
             </Button>
             <Button
               disabled={this.saveDisabled()}
-              bsPrefix='btn btn-primary'
+              bsPrefix="btn btn-primary"
               onClick={() => {
                 this.nextStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.continue')}
             </Button>
           </Fragment>
@@ -334,25 +339,28 @@ class ModalArchiveDocuments extends Component<Props, State> {
         return (
           <Fragment>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.closeDialog();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.cancel')}
             </Button>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.prevStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.back')}
             </Button>
             <Button
               disabled={this.saveDisabled()}
-              bsPrefix='btn btn-primary'
+              bsPrefix="btn btn-primary"
               onClick={() => {
                 this.nextStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.save')}
             </Button>
           </Fragment>
@@ -361,25 +369,28 @@ class ModalArchiveDocuments extends Component<Props, State> {
         return (
           <Fragment>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.closeDialog();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.cancel')}
             </Button>
             <Button
-              bsPrefix='btn btn-outline-primary'
+              bsPrefix="btn btn-outline-primary"
               onClick={() => {
                 this.prevStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.back')}
             </Button>
             <Button
               disabled={files.length === 0}
-              bsPrefix='btn btn-primary'
+              bsPrefix="btn btn-primary"
               onClick={() => {
                 this.nextStep();
-              }}>
+              }}
+            >
               {i18n.t('modal-archive.continue')}
             </Button>
           </Fragment>
@@ -417,57 +428,71 @@ class ModalArchiveDocuments extends Component<Props, State> {
 
   render() {
     const { user, showAttachDocuments } = this.props;
-    const { messages, step, implantation } = this.state;
-
+    const { messages, step, implantation, copyAttachments } = this.state;
+    let attachments = false;
+    for (let i = 0; i < messages.length; i++) {
+      const msg = messages[i];
+      if (msg.attachments && msg.attachments.length > 0) {
+        attachments = true;
+        break;
+      }
+    }
     return (
-      <div className='modal-connection-emails'>
+      <div className="modal-connection-emails">
         <Modal
           show={showAttachDocuments}
           onHide={() => {
             this.closeDialog();
           }}
-          size='lg'
-          aria-labelledby='contained-modal-title-vcenter'
+          size="lg"
+          aria-labelledby="contained-modal-title-vcenter"
           centered
-          dialogClassName='modal'>
-          <Modal.Header className='align-items-center' closeButton>
+          dialogClassName="modal"
+        >
+          <Modal.Header className="align-items-center" closeButton>
             <h5
-              className='modal-title d-flex align-items-center'
-              id='documentarGuardardocumentacionLabel'>
-              <span className='lf-icon-compliance'></span>
+              className="modal-title d-flex align-items-center"
+              id="documentarGuardardocumentacionLabel"
+            >
+              <span className="lf-icon-compliance"></span>
 
               <span>{i18n.t('modal-archive.title')}</span>
               {/* <span>{step}</span> */}
             </h5>
           </Modal.Header>
-          <Modal.Body className='mimodal'>
+          <Modal.Body className="mimodal">
             <Container>
               <Fragment>
                 <div
                   style={{
-                    display: this.state.step === 1 ? 'block' : 'none',
-                  }}>
+                    display: this.state.step === 1 ? 'block' : 'none'
+                  }}
+                >
                   <Step1
                     selected={messages}
+                    attachments={attachments}
                     onCopyEmail={this.onCopyEmail}
                     onCopyAttachments={this.onCopyAttachments}
                   />
                 </div>
                 <div
                   style={{
-                    display: this.state.step === 2 ? 'block' : 'none',
-                  }}>
+                    display: this.state.step === 2 ? 'block' : 'none'
+                  }}
+                >
                   <Step2
                     user={user}
                     show={step === 2}
+                    step={attachments && copyAttachments ? 3 : 2}
                     implantation={''}
                     onImplantation={this.onImplantation}
                   />
                 </div>
                 <div
                   style={{
-                    display: this.state.step === 3 ? 'block' : 'none',
-                  }}>
+                    display: this.state.step === 3 ? 'block' : 'none'
+                  }}
+                >
                   <Step3
                     user={user}
                     show={step === 3}
@@ -477,8 +502,9 @@ class ModalArchiveDocuments extends Component<Props, State> {
                 </div>
                 <div
                   style={{
-                    display: this.state.step === 4 ? 'block' : 'none',
-                  }}>
+                    display: this.state.step === 4 ? 'block' : 'none'
+                  }}
+                >
                   <div>Step 4</div>
                 </div>
               </Fragment>
