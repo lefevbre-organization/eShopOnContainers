@@ -292,7 +292,7 @@ services:
       - TokenCaducity=150
       - TokenKey=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9
       - ByPassUrls__0__NameService=Lex-On
-      - ByPassUrls__0__UrlByPass=https://weblexonapigw/api/v1/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}
+      - ByPassUrls__0__UrlByPass=https://weblexonapigw/api/v1/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}        
