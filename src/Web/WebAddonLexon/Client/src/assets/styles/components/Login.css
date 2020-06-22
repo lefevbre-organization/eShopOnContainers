@@ -286,6 +286,20 @@
   top: 11px;
   font-size: 16px;  
 }
+.compliance-footer__disclaimer-text--link {
+  text-decoration: none;
+  color: #fff;
+  padding-left: 3px;
+}
+
+.compliance-footer__disclaimer-text--link:hover {
+  text-decoration: none;
+  color: #fff;
+}
+
+.compliance-footer__delimiter {
+  padding-left: 2px;
+}
 
 @media (min-width: 400px) {  
   .ml-sm-5 {
