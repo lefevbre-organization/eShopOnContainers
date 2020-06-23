@@ -65,38 +65,43 @@ export class TopBar extends Component {
       title = `${props.selectedFolder.name}`;
     }
     return (
-      <header
-        className={`${styles.topBar}  }
-      ${collapsed ? '' : styles['with-side-bar']}
-      ${mainCss['mdc-top-app-bar']} ${mainCss['mdc-top-app-bar--fixed']} ${
-          styles.divheader
-        }`}>
-        {!isEditing && !isMessageViewer && (
-          <TopBarMessageList
-            title={title}
-            collapsed={collapsed}
-            sideBarToggle={sideBarToggle}
-            selectedMessages={selectedMessages}
-            onDeleteClick={() => this.onDelete(props.deleteMessages)}
-            selectedMessagesAllUnread={selectedMessagesAllUnread}
-            onMarkReadClick={() => props.setMessagesSeen(true)}
-            onMarkUnreadClick={() => props.setMessagesSeen(false)}
-          />
-        )}
+      // <header
+      //   className={`${styles.topBar}  }
+      // ${collapsed ? '' : styles['with-side-bar']}
+      // ${mainCss['mdc-top-app-bar']} ${mainCss['mdc-top-app-bar--fixed']} ${
+      //     styles.divheader
+      //   }`}>
+      //   {/* {!isEditing && !isMessageViewer && (
+      //     <TopBarMessageList
+      //       title={title}
+      //       collapsed={collapsed}
+      //       sideBarToggle={sideBarToggle}
+      //       selectedMessages={selectedMessages}
+      //       onDeleteClick={() => this.onDelete(props.deleteMessages)}
+      //       selectedMessagesAllUnread={selectedMessagesAllUnread}
+      //       onMarkReadClick={() => props.setMessagesSeen(true)}
+      //       onMarkUnreadClick={() => props.setMessagesSeen(false)}
+      //     />
+      //   )}
         
-        {isEditing && (
-          <TopBarMessageEditor
-            title={title}
-            collapsed={collapsed}
-            sideBarToggle={sideBarToggle}
-          />
-        )}
-        <ConfirmDeleteFromTrashDialog
-          visible={this.state.deletingFromTrash}
-          deleteAction={this.state.deletingFromTrashConfirm}
-          cancelAction={() => this.setState({ deletingFromTrash: false })}
-        />
-      </header>
+      //   {isEditing && (
+      //     <TopBarMessageEditor
+      //       title={title}
+      //       collapsed={collapsed}
+      //       sideBarToggle={sideBarToggle}
+      //     />
+      //   )}
+      //   <ConfirmDeleteFromTrashDialog
+      //     visible={this.state.deletingFromTrash}
+      //     deleteAction={this.state.deletingFromTrashConfirm}
+      //     cancelAction={() => this.setState({ deletingFromTrash: false })}
+      //   /> */}
+      // <div className={styles['contenido-central']}>
+        <div className={styles['pasos-firma']}>
+          <span className={styles['producto-procedente']}>LEX-ON</span> FIRMA <span className={styles.miga}>solicitud de firma</span>
+        </div>
+      // </div>
+      // </header>
     );
   }
 

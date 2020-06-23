@@ -406,7 +406,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    preloadSignatures: (filter, auth) => preloadSignatures2(dispatch, filter, auth),
+    preloadSignatures: (filter, auth) => preloadSignatures(dispatch, filter, auth),
     signatureClicked: signature => {
         dispatch(selectSignature(signature));
     },

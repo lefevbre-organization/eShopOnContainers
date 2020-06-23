@@ -60,7 +60,7 @@ class SideBar extends Component {
           <button
             style={{ height: 48 }}
             className={`${mainCss['mdc-button']}
-                    ${mainCss['mdc-button']} ${styles['compose']}`}
+                    ${mainCss['mdc-button']} ${styles['nueva-firma']}`}
             onClick={this.handleOnNewMessage}>
             {/* <i className='material-icons mdc-button__icon' style={{ fontSize: 48 }}>add_circle_outline</i>*/}
             <img
@@ -71,7 +71,7 @@ class SideBar extends Component {
               {t('sideBar.newRequest')}
             </span>
           </button>
-          <span
+          {/* <span
             className={styles.toggle}
             isotip={t('sideBar.hide')}
             isotip-position='bottom-end'
@@ -79,7 +79,7 @@ class SideBar extends Component {
             <IconButton onClick={this.props.sideBarToggle}>
               keyboard_arrow_left
             </IconButton>
-          </span>
+          </span> */}
         </div>
         <PerfectScrollbar>
           <MenuContainer />
