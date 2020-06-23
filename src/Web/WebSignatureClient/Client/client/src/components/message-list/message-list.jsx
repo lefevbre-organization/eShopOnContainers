@@ -77,6 +77,8 @@ class MessageList extends Component {
                         count++;
                     } else if (this.props.signatures[i].status === 'completed' && this.signatureFilter === 'Completadas'){
                         count++;
+                    } else if ((this.props.signatures[i].status === 'canceled' || this.props.signatures[i].status === 'declined' || this.props.signatures[i].status === 'expired') && this.props.signatureFilter === 'Canceladas'){
+                        count++;
                     }
                 }
             }
@@ -170,6 +172,8 @@ class MessageList extends Component {
                 filteredSignatures.push(sig);
             } else if ((sig.status === 'Completadas' || sig.status === 'completed') && (this.props.signatureFilter === "Completadas")){
                 filteredSignatures.push(sig);
+            } else if ((sig.status === 'Canceladas' || sig.status === 'canceled' || sig.status === 'expired' || sig.status ==='declined') && (this.props.signatureFilter === 'Canceladas')) {
+                filteredSignatures.push(sig);    
             } else if (this.props.signatureFilter === "Mostrar todas") {
                 filteredSignatures.push(sig);
             }

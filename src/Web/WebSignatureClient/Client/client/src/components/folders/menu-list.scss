@@ -25,3 +25,128 @@
 .childList {
   padding: 0;
 }
+
+
+.title-nav-firmas{
+  background:#001978;
+  color:#FFF;
+  text-transform: uppercase;
+  padding:15px;
+  span{
+    font-size:18px;
+    margin:0 10px;
+  }
+}
+
+.nav-firmas{
+  margin:0;
+  padding-left:0;
+  li {
+    &.todas {
+      background: #e6e9f2;
+      a {
+        color: #001978;
+        span:before {
+          color: #001978;
+        }
+        &:hover{
+          background: #001978;
+          color:#FFF;
+          span:before {
+            color:#FFF ;
+          }
+        }
+        &:active{
+          background: #001978;
+          color:#FFF;
+          span:before {
+            color:#FFF ;
+          }         
+        }
+      }
+    }
+    &.en-progreso {
+      background: rgba(234, 160, 1, 0.1);
+      a {
+        color: #e9a128;
+        span:before {
+          color: #e9a128;
+        }
+        &:hover{
+          background: #e9a128;
+          color:#FFF;
+          span:before {
+            color:#FFF ;
+          }
+        }
+        &:active{
+          background: #e9a128;
+          color:#FFF;
+          span:before {
+            color:#FFF ;
+          }
+        }
+      }
+    }
+    &.completadas {
+      background: rgba(33, 126, 5, 0.1);
+      a {
+        color: #217e05;
+        span:before {
+          color: #217e05;
+        }
+        &:hover{
+          background: #217e05;
+          color:#FFF;
+          span:before {
+            color:#FFF ;
+          }
+        }
+        &:active{
+          background: #217e05;
+          color:#FFF;
+          span:before {
+            color:#FFF ;
+          }
+        }
+      }
+    }
+    &.canceladas {
+      background: rgba(202, 1, 35, 0.1);
+      a {
+        color: #c90223;
+        span:before {
+          color: #c90223;
+        }
+        &:hover{
+          background: #c90223;
+          color:#FFF;
+          span:before {
+            color:#FFF ;
+          }
+        }
+        &:active{
+          background: #c90223;
+          color:#FFF;
+          span:before {
+            color:#FFF ;
+          }
+        }
+      }
+
+    }
+    a{
+      padding:13px 20px;
+      display:block;
+      margin-top:1px;
+      span {
+        font-size:14px;
+        &:before {
+          margin-right: 15px;
+          font-size:20px;
+        }
+      }
+    }
+
+  }
+}
