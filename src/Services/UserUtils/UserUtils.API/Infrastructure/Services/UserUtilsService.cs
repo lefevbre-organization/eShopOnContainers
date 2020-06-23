@@ -494,17 +494,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             AddClaimToPayload(payload, GetLongIdUser(tokenRequest.idUserApp), nameof(tokenRequest.idUserApp));
             AddClaimToPayload(payload, tokenRequest.idUserApp, "idUser");
 
-            if (tokenRequest is TokenRequestCentinelaViewFirm tokenRequestCentinelaViewFirm)
-            {
-                AddClaimToPayload(payload, tokenRequestCentinelaViewFirm.guid, nameof(tokenRequestCentinelaViewFirm.guid));
+            //if (tokenRequest is TokenRequestCentinelaViewFirm tokenRequestCentinelaViewFirm)
+            //{
                 if (tokenRequest is TokenRequestCentinelaNewFirm tokenRequestCentinela)
                 {
+                    AddClaimToPayload(payload, tokenRequestCentinela.guid, nameof(tokenRequestCentinela.guid));
                     AddClaimToPayload(payload, tokenRequestCentinela.documentsId, nameof(tokenRequestCentinela.documentsId));
                     AddClaimToPayload(payload, tokenRequestCentinela.recipientsId, nameof(tokenRequestCentinela.recipientsId));
                     AddClaimToPayload(payload, tokenRequestCentinela.mailsAdmins, nameof(tokenRequestCentinela.mailsAdmins));
                     AddClaimToPayload(payload, tokenRequestCentinela.logoUrl, nameof(tokenRequestCentinela.logoUrl));
                 }
-            }
+            //}
             if (tokenRequest is TokenRequestNewMail tokenRequestNewMail)
             {
                 AddClaimToPayload(payload, tokenRequestNewMail.idEntity, nameof(tokenRequestNewMail.idEntity));
