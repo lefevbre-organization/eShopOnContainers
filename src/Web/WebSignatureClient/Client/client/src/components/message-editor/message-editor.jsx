@@ -19,7 +19,15 @@ import i18n from 'i18next';
 import ACTIONS from '../../actions/lefebvre';
 import ComposeMessageEditor from './composeMessageEditor.jsx';
 
-import { createSignature, createSignature2, addOrUpdateSignature, getUserSignatures, createUser, decAvailableSignatures, notifySignature } from '../../services/api-signaturit';
+import {
+  createSignature,
+  createSignature2,
+  addOrUpdateSignature,
+  getUserSignatures,
+  createUser,
+  decAvailableSignatures,
+  notifySignature,
+} from '../../services/api-signaturit';
 import { getUser } from '../../services/accounts';
 //import { createUser, addOrUpdateSignature, getUserSignatures } from '../../services/api-signature';
 import * as uuid from 'uuid/v4';
@@ -37,16 +45,16 @@ class MessageEditor extends Component {
       // Stores state of current selection in the dialog (is title, underlined... H1, H2, ..., italic, underline)
       // Used in editor buttons to activate/deactivate them
       editorState: {},
-      selectedReminderOption: "option2",
+      selectedReminderOption: 'option2',
       reminderDays: 0,
-      selectedExpirationOption: "exp_option1",
-      expirationDays: 7
+      selectedExpirationOption: 'exp_option1',
+      expirationDays: 7,
     };
 
     this.fileInput = null;
     this.editorRef = null;
     this.headerFormRef = React.createRef();
-    this.handleSetState = patchedState => this.setState(patchedState);
+    this.handleSetState = (patchedState) => this.setState(patchedState);
     this.handleSubmit = this.submit.bind(this);
     // Global events
     this.handleOnDrop = this.onDrop.bind(this);
@@ -76,7 +84,7 @@ class MessageEditor extends Component {
     if (this.fileInput) {
       this.fileInput.onchange = this.onAttachSelected;
     }
-        //createSignature();
+    //createSignature();
   }
 
   removeMessageEditor(aplication) {
@@ -101,7 +109,7 @@ class MessageEditor extends Component {
       bcc,
       attachments,
       subject,
-      content
+      content,
     } = this.props;
 
     return (
@@ -161,7 +169,7 @@ class MessageEditor extends Component {
           onClick={() => this.editorWrapperClick()}>
           <div className={styles['editor-container']}>
             <ComposeMessageEditor
-              ref={ref => (this.editorRef = ref)}
+              ref={(ref) => (this.editorRef = ref)}
               onChange={this.handleEditorChange}
               defaultValue={content}
             />
@@ -180,121 +188,150 @@ class MessageEditor extends Component {
               ))}
             </div>
           </div>
-          <div className={styles['reminders-container']}>
-            <div className={styles.title}>
-              Recordatorios
-            </div>
+          <div className={styles['side-container']}>
+            <div className={styles.title}>Recordatorios</div>
             <br></br>
             <div className={styles.options}>
               <form>
-                <div className="form-check">
+                <div className='form-check'>
                   <label>
                     <input
-                      type="radio"
-                      name="react-tips"
-                      value="option1"
+                      type='radio'
+                      name='react-tips'
+                      value='option1'
                       checked={this.state.selectedReminderOption === 'option1'}
                       //onSelect={this.handleOptionChange}
-                      onChange={e => this.setState({ selectedReminderOption: e.target.value })}
-                      className="form-check-input"
+                      onChange={(e) =>
+                        this.setState({
+                          selectedReminderOption: e.target.value,
+                        })
+                      }
+                      className='form-check-input'
                     />
-                    Enviar recordatorio al 
+                    Enviar recordatorio al
                     {/* <span><input type="text" name='reminderDays' value={this.state.reminderDays} onChange={e => this.setState({reminderDays: e.target.value})}></input></span> */}
                     <input
                       type={'text'}
                       value={this.state.reminderDays}
                       //onChange={this.handleOnReminderDaysChange}
-                      onChange={e => this.setState({ reminderDays: e.target.value })}
-                      style={{width: 25+'px'}}
-                    /> día.
+                      onChange={(e) =>
+                        this.setState({ reminderDays: e.target.value })
+                      }
+                      style={{ width: 25 + 'px' }}
+                    />{' '}
+                    día.
                   </label>
-                  
                 </div>
 
-                <div className="form-check">
+                <div className='form-check'>
                   <label>
                     <input
-                      type="radio"
-                      name="react-tips"
-                      value="option2"
+                      type='radio'
+                      name='react-tips'
+                      value='option2'
                       checked={this.state.selectedReminderOption === 'option2'}
                       //onSelect={this.handleOptionChange}
-                      onChange={e => this.setState({ selectedReminderOption: e.target.value })}
-                      className="form-check-input"
+                      onChange={(e) =>
+                        this.setState({
+                          selectedReminderOption: e.target.value,
+                        })
+                      }
+                      className='form-check-input'
                     />
-                   Recordatorios diarios.
+                    Recordatorios diarios.
                   </label>
                 </div>
 
-                <div className="form-check">
+                <div className='form-check'>
                   <label>
                     <input
-                      type="radio"
-                      name="react-tips"
-                      value="option3"
+                      type='radio'
+                      name='react-tips'
+                      value='option3'
                       checked={this.state.selectedReminderOption === 'option3'}
                       //onSelect={this.handleOptionChange}
-                      onChange={e => this.setState({ selectedReminderOption: e.target.value })}
-                      className="form-check-input"
+                      onChange={(e) =>
+                        this.setState({
+                          selectedReminderOption: e.target.value,
+                        })
+                      }
+                      className='form-check-input'
                     />
                     Recordatorios semanales.
                   </label>
                 </div>
-                <div className="form-check">
+                <div className='form-check'>
                   <label>
                     <input
-                      type="radio"
-                      name="react-tips"
-                      value="option4"
+                      type='radio'
+                      name='react-tips'
+                      value='option4'
                       checked={this.state.selectedReminderOption === 'option4'}
                       //onSelect={this.handleOptionChange}
-                      onChange={e => this.setState({ selectedReminderOption: e.target.value })}
-                      className="form-check-input"
+                      onChange={(e) =>
+                        this.setState({
+                          selectedReminderOption: e.target.value,
+                        })
+                      }
+                      className='form-check-input'
                     />
                     No quiero enviar ningún recordatorio.
                   </label>
                 </div>
               </form>
             </div>
-            <div className={styles.title}>
-              Expiración
-            </div>
+            <div className={styles.title}>Expiración</div>
             <br></br>
             <div className={styles.options}>
               <form>
-                <div className="form-check">
+                <div className='form-check'>
                   <label>
                     <input
-                      type="radio"
-                      name="react-tips"
-                      value="exp_option1"
-                      checked={this.state.selectedExpirationOption === 'exp_option1'}
+                      type='radio'
+                      name='react-tips'
+                      value='exp_option1'
+                      checked={
+                        this.state.selectedExpirationOption === 'exp_option1'
+                      }
                       //onSelect={this.handleOptionChange}
-                      onChange={e => this.setState({ selectedExpirationOption: e.target.value })}
-                      className="form-check-input"
+                      onChange={(e) =>
+                        this.setState({
+                          selectedExpirationOption: e.target.value,
+                        })
+                      }
+                      className='form-check-input'
                     />
-                    Expirar en  
+                    Expirar en
                     <input
                       type={'text'}
                       value={this.state.expirationDays}
                       //onChange={this.handleOnExpirationDaysChange}
-                      onChange={e => this.setState({ expirationDays: e.target.value })}
-                      style={{width: 25+'px'}}
-                    /> días.
+                      onChange={(e) =>
+                        this.setState({ expirationDays: e.target.value })
+                      }
+                      style={{ width: 25 + 'px' }}
+                    />{' '}
+                    días.
                   </label>
                 </div>
-                <div className="form-check">
+                <div className='form-check'>
                   <label>
                     <input
-                      type="radio"
-                      name="react-tips"
-                      value="exp_option2"
-                      checked={this.state.selectedExpirationOption === 'exp_option2'}
+                      type='radio'
+                      name='react-tips'
+                      value='exp_option2'
+                      checked={
+                        this.state.selectedExpirationOption === 'exp_option2'
+                      }
                       //onSelect={this.handleOptionChange}
-                      onChange={e => this.setState({ selectedExpirationOption: e.target.value })}
-                      className="form-check-input"
+                      onChange={(e) =>
+                        this.setState({
+                          selectedExpirationOption: e.target.value,
+                        })
+                      }
+                      className='form-check-input'
                     />
-                   No expirar nunca.
+                    No expirar nunca.
                   </label>
                 </div>
               </form>
@@ -305,7 +342,10 @@ class MessageEditor extends Component {
           <button
             className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']}
             ${styles['action-button']} ${styles.send}`}
-            disabled={to.length + cc.length + bcc.length === 0 || this.props.attachments.length === 0}
+            disabled={
+              to.length + cc.length + bcc.length === 0 ||
+              this.props.attachments.length === 0
+            }
             onClick={this.handleSubmit}>
             {t('messageEditor.send')}
           </button>
@@ -320,7 +360,7 @@ class MessageEditor extends Component {
               <span>{i18n.t('messageEditor.attach')}</span>
             </div>
             <input
-              ref={r => (this.fileInput = r)}
+              ref={(r) => (this.fileInput = r)}
               id='file-input'
               type='file'
               name='name'
@@ -339,10 +379,10 @@ class MessageEditor extends Component {
           closeDialog={() =>
             this.setState({
               linkDialogVisible: false,
-              linkDialogInitialUrl: ''
+              linkDialogInitialUrl: '',
             })
           }
-          onChange={e => this.setState({ linkDialogUrl: e.target.value })}
+          onChange={(e) => this.setState({ linkDialogUrl: e.target.value })}
           url={this.state.linkDialogUrl}
           insertLink={this.handleEditorInsertLink}
         />
@@ -379,41 +419,41 @@ class MessageEditor extends Component {
       const content = this.getEditor().getContent();
       const { to, cc, subject } = this.props;
       const { lefebvre } = this.props;
-      const userBranding = lefebvre.userBrandings.find(b => b.app === lefebvre.userApp)
-      
-      let  reminders = [];
+      const userBranding = lefebvre.userBrandings.find(
+        (b) => b.app === lefebvre.userApp
+      );
+
+      let reminders = [];
       switch (this.state.selectedReminderOption) {
-        case "option1":
+        case 'option1':
           reminders = this.state.reminderDays;
           break;
-        case "option2":
-          if (this.state.selectedExpirationOption === "exp_option1"){
+        case 'option2':
+          if (this.state.selectedExpirationOption === 'exp_option1') {
             for (let index = 0; index < this.state.expirationDays; index++) {
               reminders[index] = index + 1;
               //reminders.push(index + 1);
             }
-          }
-          else {
+          } else {
             for (let index = 0; index < 30; index++) {
               reminders[index] = index + 1;
             }
           }
           break;
-        case "option3":
-          if (this.state.selectedExpirationOption === "exp_option1"){
+        case 'option3':
+          if (this.state.selectedExpirationOption === 'exp_option1') {
             for (let index = 0; index < this.state.expirationDays; index++) {
-              if (7 * (index+1) < this.state.expirationDays){
-                reminders[index] = 7 * (index+1);
+              if (7 * (index + 1) < this.state.expirationDays) {
+                reminders[index] = 7 * (index + 1);
               }
             }
-          }
-          else {
+          } else {
             for (let index = 0; index < 30; index++) {
-              reminders[index] = 7 * (index+1);
+              reminders[index] = 7 * (index + 1);
             }
           }
           break;
-        case "option4":
+        case 'option4':
           reminders = 0;
           break;
         default:
@@ -423,26 +463,24 @@ class MessageEditor extends Component {
 
       let expiration;
       switch (this.state.selectedExpirationOption) {
-        case "exp_option1":
+        case 'exp_option1':
           expiration = this.state.expirationDays;
           break;
-        case "exp_option2":
+        case 'exp_option2':
           expiration = 0;
           break;
         default:
           break;
       }
-      
+
       console.log('Recordatorios y exp: ');
-      console.log({reminders});
+      console.log({ reminders });
       console.log(expiration);
 
       let guid = lefebvre.guid;
-      if (guid === null){
-        guid =  uuid();
+      if (guid === null) {
+        guid = uuid();
       }
-
-
 
       // if (document.getElementById('file-input').files[0]){
       //     var reader = new FileReader();
@@ -455,28 +493,42 @@ class MessageEditor extends Component {
       //     reader.onerror = function (evt) {
       //         console.log("error reading file");
       //     }
-      // } else 
-      if (this.props.attachments){
+      // } else
+      if (this.props.attachments) {
         let attachmentsList = [];
-        this.props.attachments.forEach(attachment => {
+        this.props.attachments.forEach((attachment) => {
           //var attachment = this.props.attachments[0];
-          var file = new File([attachment.content], attachment.fileName, {type: getFileType(attachment.fileName), lastModified: new Date()})
+          var file = new File([attachment.content], attachment.fileName, {
+            type: getFileType(attachment.fileName),
+            lastModified: new Date(),
+          });
           attachmentsList.push(file);
           debugger;
         });
         //this.callApis(to, subject, content.innerHTML, file, this.props.attachments[0].content, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
-        this.callApis(to, cc, subject, content.innerHTML, this.props.attachments, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
+        this.callApis(
+          to,
+          cc,
+          subject,
+          content.innerHTML,
+          this.props.attachments,
+          reminders,
+          expiration,
+          lefebvre.userId,
+          guid,
+          userBranding.externalId
+        );
       }
       //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
     }
   }
 
-  example(){
+  example() {
     var lookup = {};
     var items = json.DATA;
     var result = [];
 
-    for (var item, i = 0; item = items[i++];) {
+    for (var item, i = 0; (item = items[i++]); ) {
       var name = item.name;
 
       if (!(name in lookup)) {
@@ -486,12 +538,12 @@ class MessageEditor extends Component {
     }
   }
 
-  getDocumentsNames(signature){
+  getDocumentsNames(signature) {
     var lookup = {};
     var items = signature.documents;
     var result = [];
 
-    for (var item, i = 0; item = items[i++];) {
+    for (var item, i = 0; (item = items[i++]); ) {
       var name = item.file.name;
       var id = item.id;
 
@@ -503,12 +555,12 @@ class MessageEditor extends Component {
     return result;
   }
 
-  getDocumentsIds(signature){
+  getDocumentsIds(signature) {
     var lookup = {};
     var items = signature.documents;
     var result = [];
 
-    for (var item, i = 0; item = items[i++];) {
+    for (var item, i = 0; (item = items[i++]); ) {
       var id = item.id;
 
       if (!(id in lookup)) {
@@ -519,16 +571,15 @@ class MessageEditor extends Component {
     return result;
   }
 
-
-  getDocumentsNamesAndIds(signature){
+  getDocumentsNamesAndIds(signature) {
     var lookup = {};
     var items = signature.documents;
     var result = [];
 
-    for (var item, i = 0; item = items[i++];) {
+    for (var item, i = 0; (item = items[i++]); ) {
       var name = item.file.name;
       var id = item.id;
-      var info = {name: name, id: id}
+      var info = { name: name, id: id };
 
       if (!(info in lookup)) {
         lookup[info] = 1;
@@ -538,53 +589,78 @@ class MessageEditor extends Component {
     return result;
   }
 
-  combineInfo(externalIds, internalIds){
+  combineInfo(externalIds, internalIds) {
     let merged = [];
 
-    for(let i=0; i<externalIds.length; i++) {
+    for (let i = 0; i < externalIds.length; i++) {
       merged.push({
-      ...externalIds[i], 
-      ...(internalIds.find((itmInner) => itmInner.name === externalIds[i].name))}
-      );
+        ...externalIds[i],
+        ...internalIds.find(
+          (itmInner) => itmInner.name === externalIds[i].name
+        ),
+      });
     }
     return merged;
   }
 
-  buildDocumentsInfo(signature){
+  buildDocumentsInfo(signature) {
     let result;
 
-    result = signature.documents.map(e => { 
+    result = signature.documents.map((e) => {
       return {
-        externalFileName: e.file.name, 
+        externalFileName: e.file.name,
         externalId: e.id,
-        signer: {name: e.name, email: e.email},
-        internalInfo: (
-          this.props.lefebvre.idDocuments.find( d => {
-            if (d.docName.replace(/ /g, '_') === e.file.name){
-              return d.docId
-            }
-          })		
-        )
-      }
-    })
+        signer: { name: e.name, email: e.email },
+        internalInfo: this.props.lefebvre.idDocuments.find((d) => {
+          if (d.docName.replace(/ /g, '_') === e.file.name) {
+            return d.docId;
+          }
+        }),
+      };
+    });
 
     return result;
-    
   }
 
   //callApis(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId){
-  callApis(to, cc, subject, content, files, reminders, expiration, userId, guid, userBrandingId){
+  callApis(
+    to,
+    cc,
+    subject,
+    content,
+    files,
+    reminders,
+    expiration,
+    userId,
+    guid,
+    userBrandingId
+  ) {
     const { lefebvre } = this.props;
-    
+
     //createSignature2(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId, this.props.credentials.encrypted)
-    createSignature2(to, cc, subject, content, files, reminders, expiration, userId, guid, userBrandingId, this.props.credentials.encrypted)
-    .then( signatureInfo => {
+    createSignature2(
+      to,
+      cc,
+      subject,
+      content,
+      files,
+      reminders,
+      expiration,
+      userId,
+      guid,
+      userBrandingId,
+      this.props.credentials.encrypted
+    ).then((signatureInfo) => {
       console.log(signatureInfo);
-      if (signatureInfo.status_code){
-        console.log('Se ha producido un error: ' + signatureInfo.status_code + '-' + signatureInfo.message);
+      if (signatureInfo.status_code) {
+        console.log(
+          'Se ha producido un error: ' +
+            signatureInfo.status_code +
+            '-' +
+            signatureInfo.message
+        );
       } else {
-        getUserSignatures(userId)
-        .then( userInfo => {
+        getUserSignatures(userId).then((userInfo) => {
           // if (userInfo && userInfo.errors && userInfo.errors.code && userInfo.errors.code === "1003"){
           //   var externalIds = getDocumentsNamesAndIds(signatureInfo);
           //   var combinedInfo = combineInfo(externalIds, lefebvre.idDocuments);
@@ -592,23 +668,32 @@ class MessageEditor extends Component {
           //   const signature = {externalId: signatureInfo.id, guid: guid, app: lefebvre.userApp, signers: to, idDocuments:combinedInfo}
           //   createUser(userId, signature);
           // } else {
-            // var externalIds = this.getDocumentsIds(signatureInfo);
-            // var documentsNames = this.getDocumentsNames(signatureInfo);
-            // var combinedInfo = this.combineInfo(externalIds, lefebvre.idDocuments);
-            var documentsInfo = this.buildDocumentsInfo(signatureInfo);
-            debugger;
-            console.log('Insertando sólo firma');
-            addOrUpdateSignature(userId, signatureInfo.id, guid, lefebvre.userApp, documentsInfo );
+          // var externalIds = this.getDocumentsIds(signatureInfo);
+          // var documentsNames = this.getDocumentsNames(signatureInfo);
+          // var combinedInfo = this.combineInfo(externalIds, lefebvre.idDocuments);
+          var documentsInfo = this.buildDocumentsInfo(signatureInfo);
+          debugger;
+          console.log('Insertando sólo firma');
+          addOrUpdateSignature(
+            userId,
+            signatureInfo.id,
+            guid,
+            lefebvre.userApp,
+            documentsInfo
+          );
           //}
           // decAvailableSignatures(userId)
           // .then(res => this.props.setAvailableSignatures(res.data))
-          notifySignature(lefebvre.userId, lefebvre.idUserApp, documentsInfo.length);
-        })
+          notifySignature(
+            lefebvre.userId,
+            lefebvre.idUserApp,
+            documentsInfo.length
+          );
+        });
       }
-    })
+    });
     this.props.close(this.props.application);
   }
-
 
   /**
    * Adds an address to the list matching the id.
@@ -660,14 +745,14 @@ class MessageEditor extends Component {
     this.props.editMessage({ ...updatedMessage, subject: target.value });
   }
 
-  onReminderDaysChange(event){
+  onReminderDaysChange(event) {
     const target = event.target;
-    this.setState=({reminderDays: target.value});
+    this.setState = { reminderDays: target.value };
   }
 
-  onExpirationDaysChange(event){
+  onExpirationDaysChange(event) {
     const target = event.target;
-    this.setState=({expirationDays: target.value});
+    this.setState = { expirationDays: target.value };
   }
 
   onDrop(event) {
@@ -679,7 +764,10 @@ class MessageEditor extends Component {
         fileName: file.name,
         size: file.size,
         contentType: file.type,
-        content: dataUrl.currentTarget.result.replace(/^data:[^;]*;base64,/, '')
+        content: dataUrl.currentTarget.result.replace(
+          /^data:[^;]*;base64,/,
+          ''
+        ),
       };
       const updatedMessage = { ...this.props.editedMessage };
       updatedMessage.attachments = updatedMessage.attachments
@@ -687,7 +775,7 @@ class MessageEditor extends Component {
         : [newAttachment];
       this.props.editMessage(updatedMessage);
     };
-    Array.from(event.dataTransfer.files).forEach(file => {
+    Array.from(event.dataTransfer.files).forEach((file) => {
       const fileReader = new FileReader();
       fileReader.onload = addAttachment.bind(this, file);
       fileReader.readAsDataURL(file);
@@ -714,7 +802,7 @@ class MessageEditor extends Component {
     const updatedMessage = { ...this.props.editedMessage };
     if (updatedMessage.attachments && updatedMessage.attachments.length) {
       updatedMessage.attachments = updatedMessage.attachments.filter(
-        a => a !== attachment
+        (a) => a !== attachment
       );
       this.props.editMessage(updatedMessage);
     }
@@ -733,7 +821,10 @@ class MessageEditor extends Component {
         fileName: file.name,
         size: file.size,
         contentType: file.type,
-        content: dataUrl.currentTarget.result.replace(/^data:[^;]*;base64,/, '')
+        content: dataUrl.currentTarget.result.replace(
+          /^data:[^;]*;base64,/,
+          ''
+        ),
       };
       const updatedMessage = { ...this.props.editedMessage };
       updatedMessage.attachments = updatedMessage.attachments
@@ -741,7 +832,7 @@ class MessageEditor extends Component {
         : [newAttachment];
       this.props.editMessage(updatedMessage);
     };
-    Array.from(event.target.files).forEach(file => {
+    Array.from(event.target.files).forEach((file) => {
       const fileReader = new FileReader();
       fileReader.onload = addAttachment.bind(this, file);
       fileReader.readAsDataURL(file);
@@ -775,14 +866,14 @@ class MessageEditor extends Component {
 
 MessageEditor.propTypes = {
   className: PropTypes.string,
-  t: PropTypes.func.isRequired
+  t: PropTypes.func.isRequired,
 };
 
 MessageEditor.defaultProps = {
-  className: ''
+  className: '',
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   application: state.application,
   credentials: getCredentials(state),
   editedMessage: state.application.newMessage,
@@ -793,18 +884,18 @@ const mapStateToProps = state => ({
   subject: state.application.newMessage.subject,
   editor: state.application.newMessage.editor,
   content: state.application.newMessage.content,
-  getAddresses: value => getAddresses(value, state.messages.cache),
+  getAddresses: (value) => getAddresses(value, state.messages.cache),
   lefebvre: state.lefebvre,
 });
 
-const mapDispatchToProps = dispatch => ({
-  close: application => {
+const mapDispatchToProps = (dispatch) => ({
+  close: (application) => {
     dispatch(editMessage(null));
     // Clear content (editorBlur may be half way through -> force a message in the service worker to clear content after)
     // noinspection JSIgnoredPromiseFromCall
     persistApplicationNewMessageContent(application, '');
   },
-  editMessage: message => {
+  editMessage: (message) => {
     dispatch(editMessage(message));
   },
   sendMessage: (
@@ -819,13 +910,14 @@ const mapDispatchToProps = dispatch => ({
       bcc,
       attachments,
       subject,
-      content
+      content,
     }),
   // setCaseFile: casefile => dispatch(ACTIONS.setCaseFile(casefile)),
-  setMailContacts: mailContacts =>
+  setMailContacts: (mailContacts) =>
     dispatch(ACTIONS.setMailContacts(mailContacts)),
-  setGuid: guid => dispatch(ACTIONS.setGUID(guid)),
-  setAvailableSignatures: num => dispatch(ACTIONS.setAvailableSignatures(num))
+  setGuid: (guid) => dispatch(ACTIONS.setGUID(guid)),
+  setAvailableSignatures: (num) =>
+    dispatch(ACTIONS.setAvailableSignatures(num)),
 });
 
 export default connect(
