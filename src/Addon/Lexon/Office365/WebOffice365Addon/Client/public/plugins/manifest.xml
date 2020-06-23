@@ -10,7 +10,7 @@
   <HighResolutionIconUrl DefaultValue="https://lexbox-test-weboffice365addonlexon.lefebvre.es/assets/icon-lefebvre-80.jpg"/>
   <SupportUrl DefaultValue="https://www.contoso.com/help"/>
   <AppDomains>
-    <AppDomain>https://lexbox-test-weboffice365addonlexon.lefebvre.es/</AppDomain>
+    <AppDomain>https://lexbox-test-weboffice365addonlexon.lefebvre.es</AppDomain>
   </AppDomains>
   <Hosts>
     <Host Name="Mailbox"/>

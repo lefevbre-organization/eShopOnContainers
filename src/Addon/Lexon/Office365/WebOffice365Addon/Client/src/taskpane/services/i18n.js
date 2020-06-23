@@ -1,7 +1,7 @@
 import i18n from 'i18next';
 
 // import translation catalog
-import translationES from '../../../public/locales/es/isotope.json';
+import translationES from '../../../public/assets/locales/es/isotope.json';
 
 const userLanguage = () => navigator.language;
 

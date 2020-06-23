@@ -76,9 +76,8 @@ class MessageClassifications extends Component {
       authenticator.endpoints.add("lexon", { 
         provider: 'lexon',
         clientId: 'a8c9f1a1-3472-4a83-8725-4dfa74bac24d',
-        baseUrl: 'https://localhost:3000',
-      
-        redirectUrl: 'https://localhost:3020/taskpane.html',
+        baseUrl: `${window.URL_ADDON_LEXON}`,
+        redirectUrl: `${window.URL_LEXON_BASE}/taskpane.html`,
         authorizeUrl: '/lexon',
         scope: 'openid profile onelist offline_access',
         responseType: 'code',

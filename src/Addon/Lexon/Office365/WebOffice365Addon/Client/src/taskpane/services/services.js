@@ -2,7 +2,7 @@ import CryptoJS from 'crypto-js';
 
 export const getCompanies = () => {
    return new Promise((resolve, reject) => {
-     const url = `${window.API_GATEWAY}/companies`;   
+     const url = `${window.API_GATEWAY}/lex/Lexon/companies`;   
      fetch(url, {
        method: 'GET',
        headers: {
@@ -54,7 +54,7 @@ export const getClassifications = async (
   pageSize = 0,
   pageIndex = 1
 ) => {
-  const url = `${window.API_GATEWAY}/classifications`;
+  const url = `${window.API_GATEWAY}/lex/Lexon/classifications`;
   const body = {
     idMail: mailId,
     pageSize,
@@ -89,7 +89,7 @@ export const removeClassification = async (
   idRelated,
   idCompany
 ) => {
-  const url = `${window.API_GATEWAY}/classifications/remove`;
+  const url = `${window.API_GATEWAY}/lex/Lexon/classifications/remove`;
   const body = {
     idMail: idMail,
     idType: idType,

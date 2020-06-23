@@ -26,9 +26,9 @@ class Login extends Component {
         authenticator.endpoints.add("auth-lexon", { 
           provider: 'auth-lexon',
           clientId: 'a8c9f1a1-3472-4a83-8725-4dfa74bac24d',
-          baseUrl: 'https://localhost:3000',
-          tokenUrl: 'https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/Lexon/token/login?addTerminatorToToken=true',
-          redirectUrl: 'https://localhost:3020/taskpane.html',
+          baseUrl: `${window.URL_ADDON_LEXON}`,
+          tokenUrl: `${window.API_GATEWAY}/utils/Lexon/token/login?addTerminatorToToken=true`,
+          redirectUrl: `${window.URL_LEXON_BASE}/taskpane.html`,
           authorizeUrl: '/login',
           scope: 'openid profile onelist offline_access',
           responseType: 'code',

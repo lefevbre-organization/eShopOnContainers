@@ -20,7 +20,7 @@ class Classification extends Component {
 
     async getClassificationData() {
         const user = base64Decode();
-        const url = `${window.API_GATEWAY}/entities/getbyid`;
+        const url = `${window.API_GATEWAY}/lex/Lexon/entities/getbyid`;
         const response = await fetch(url, {
           method: 'POST',
           headers: {

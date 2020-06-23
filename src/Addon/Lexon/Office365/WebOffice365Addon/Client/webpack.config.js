@@ -77,6 +77,13 @@ module.exports = async (env, options)  => {
               to: 'assets',
           }
       ]),
+      new CopyWebpackPlugin([
+        {
+            from: './public/plugins',
+            ignore: ['*.scss'],
+            to: 'plugins',
+        }
+    ]),
       new webpack.ProvidePlugin({
         Promise: ["es6-promise", "Promise"]
       })
