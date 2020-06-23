@@ -111,7 +111,7 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebAddonLexon
                 // Rewrite request to use app root
                 if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value) && !context.Request.Path.Value.StartsWith("/api"))
                 {
-                    context.Request.Path = "/index.html";
+                    context.Request.Path = "/taskpane.html";
                     context.Response.StatusCode = 200; // Make sure we update the status code, otherwise it returns 404
                     await next();
                 }
