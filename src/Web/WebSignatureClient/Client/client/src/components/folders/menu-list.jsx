@@ -22,10 +22,27 @@ export class MenuListClass extends Component {
     const option1 = 'En progreso';
     const option2 = 'Completadas';
     const option3 = 'Mostrar todas';
+    const option4 = 'Canceladas';
 
     return (
-        <div key={'firmas'} className={`${styles.itemContainer}`}>
-          <MenuItem
+        // <div key={'firmas'} className={`${styles.itemContainer}`}>
+        <div>
+          <div className={`${styles['title-nav-firmas']}`}><span class="lf-icon-signature"></span>firmas solicitadas</div>
+          <ul className={`${styles['nav-firmas']}`}>
+                <li className={`${styles.todas}`}>
+                    <a href="#" id={option3} onClick={event => this.onClick(event, option3)}><span class="lf-icon-folder"></span>Mostrar todas</a>
+                </li>
+                <li className={`${styles['en-progreso']}`}>
+                    <a href="#" id={option1} onClick={event => this.onClick(event, option1)}><span class="lf-icon-folder"></span>En progreso</a>
+                </li>
+                <li className={`${styles.completadas}`}>
+                    <a href="#" id={option2} onClick={event => this.onClick(event, option2)}><span class="lf-icon-folder"></span>Completadas</a>
+                </li>
+                <li className={`${styles.canceladas}`}>
+                    <a href="#" id={option4} onClick={event => this.onClick(event, option4)}><span class="lf-icon-folder"></span>Canceladas</a>
+                </li>
+            </ul>
+          {/* <MenuItem
             label={'Firmas'} 
             graphic={'input'}
             className={styles.item}
@@ -35,7 +52,7 @@ export class MenuListClass extends Component {
               <MenuItem label={option1} graphic={'stop'} selected = {option1 === selectedFilter} onClick={event => this.onClick(event, option1)}/>
               <MenuItem label={option2} graphic={'stop'} selected = {option2 === selectedFilter} onClick={event => this.onClick(event, option2)}/>
               <MenuItem label={option3} graphic={'stop'} selected = {option3 === selectedFilter} onClick={event => this.onClick(event, option3)}/>
-            </nav>   
+            </nav>    */}
         </div>
     );
   }
