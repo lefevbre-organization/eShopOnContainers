@@ -104,7 +104,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Extensions
             {
                 services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
                 {
-                    var settings = sp.GetRequiredService<IOptions<CentinelaSettings>>().Value;
+                    var settings = sp.GetRequiredService<IOptions<DatabaseSettings>>().Value;
                     var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
                     var factory = new ConnectionFactory
                     {

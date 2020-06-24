@@ -28,7 +28,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Fi
                 context.Exception,
                 context.Exception.Message);
 
-            if (context.Exception.GetType() == typeof(CentinelaDomainException))
+            if (context.Exception.GetType() == typeof(DatabaseDomainException))
             {
                 var problemDetails = new ValidationProblemDetails()
                 {

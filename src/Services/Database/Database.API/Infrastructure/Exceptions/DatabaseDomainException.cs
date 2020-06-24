@@ -5,16 +5,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Ex
     /// <summary>
     /// Exception type for app exceptions
     /// </summary>
-    public class CentinelaDomainException : Exception
+    public class DatabaseDomainException : Exception
     {
-        public CentinelaDomainException()
+        public DatabaseDomainException()
         { }
 
-        public CentinelaDomainException(string message)
+        public DatabaseDomainException(string message)
             : base(message)
         { }
 
-        public CentinelaDomainException(string message, Exception innerException)
+        public DatabaseDomainException(string message, Exception innerException)
             : base(message, innerException)
         { }
     }
