@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ChoiceGroup, Button } from 'office-ui-fabric-react';
-import { getCompanies } from '../../services/services';
+import { getCompanies, base64Decode } from '../../services/services';
 import Header from '../header/header';
 import '../select-company/select-company.css';
 import { 
@@ -16,12 +16,15 @@ class SelectCompany extends Component {
           companies: [],
           newCompanies: [],
           selectCompany: null,
+          user: null,
           isDisabled: true
         };
       }
 
     componentDidMount() {
       this._isMounted = true;
+      const user = base64Decode();
+      this.setState({ user: user })
       this.getCompanies();
     }
 
@@ -79,12 +82,13 @@ class SelectCompany extends Component {
     render() {
      const { 
        newCompanies, 
-       isDisabled
+       isDisabled,
+       user
      } = this.state
       const options = newCompanies;
       return (
         <div className="">  
-         <Header logout={this.logout} />
+         <Header logout={this.logout} user={user} />
          <div className="form-selection-business">
            <p>Selecciona una empresa:</p>
          </div>
