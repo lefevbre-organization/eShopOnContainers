@@ -24,6 +24,8 @@
 @import '@material/menu/mdc-menu';
 @import '@material/menu-surface/mdc-menu-surface';
 @import '@material/top-app-bar/mdc-top-app-bar';
+@import "../../node_modules/@syncfusion/ej2-base/styles/material.css";
+@import "../../node_modules/@syncfusion/ej2-buttons/styles/material.css";
 
 :not(.mdc-list--non-interactive)
   > :not(.mdc-list-item--disabled).mdc-list-item {
@@ -93,4 +95,34 @@
 
 .e-control.e-richtexteditor.e-rte-tb-expand {
   height: calc(100% - 40px) !important;
+}
+
+.e-radio:checked + label:hover::before,
+.e-radio:checked + label::before {
+  border-color: #001978;
+}
+
+.e-radio:checked + label:hover::after {
+  background-color: #001978;
+}
+
+.e-radio:checked + label::after {
+  background-color: #001978;
+  color: #001978;
+}
+.e-radio + label .e-label {
+  color: #001978;
+  position: relative;
+  padding-left: 0;
+  cursor: pointer;
+  display: inline-block;
+  height: 25px;
+  line-height: 25px;
+  font-size: 1rem;
+  transition: .28s ease;
+  user-select: none;
+}
+
+.e-radio-wrapper {
+  display: block;
 }

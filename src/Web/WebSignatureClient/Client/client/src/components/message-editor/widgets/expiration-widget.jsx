@@ -1,4 +1,5 @@
 import React from 'react'
+import { RadioButtonComponent } from '@syncfusion/ej2-react-buttons';
 import styles from './widgets.scss';
 import mainCss from '../../../styles/main.scss';
 
@@ -8,14 +9,8 @@ export const ExpirationWidget = () => {
             <span className={"lf-icon-calendar-cross " + styles['title-icon']}></span><span className={styles["generic-title"]}>PLAZOS DE EXPIRACIÓN DE FIRMA</span>
             <form action="#">
                 <p className={styles["form"]}>
-                    <label>
-                        <input className={styles["with-gap"]} name="yourchoice" type="radio" checked="" /><span>Yes</span>
-                    </label>
-                </p>
-                <p class="formulario">
-                    <label>
-                        <input className={styles["with-gap"]} name="yourchoice" type="radio" /><span>No</span>
-                    </label>
+                    <RadioButtonComponent label="Yes" />
+                    <RadioButtonComponent label="No" />
                 </p>
             </form>
             <button

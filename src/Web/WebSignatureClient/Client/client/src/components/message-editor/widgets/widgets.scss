@@ -2,6 +2,7 @@
 @import '@material/chips/variables';
 @import '@material/chips/mixins';
 
+
 $editor-color: #333333 !default;
 $editor-container-padding: 8px !default;
 $editor-background-color: white !default;
@@ -75,7 +76,7 @@ $flag-size: 18px;
     input[type='radio'] {
       position: relative !important;
     }
-    .with-gap + span {
+    .span {
       position: relative;
       padding-left: 10px;
       cursor: pointer;
