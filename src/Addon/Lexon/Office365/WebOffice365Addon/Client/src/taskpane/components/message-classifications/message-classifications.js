@@ -25,7 +25,8 @@ class MessageClassifications extends Component {
          addonData: null,
          addonDataToken: null,
          classifications: null,
-         messageRaw: null
+         messageRaw: null,
+         user: null
         };
       }
 
@@ -45,6 +46,7 @@ class MessageClassifications extends Component {
     getClassifications() {
       const { selectCompany, isOfficeInitialized } = this.props;
       const user = base64Decode();
+      this.setState({ user: user })
       const messageId = Office.context.mailbox.item.internetMessageId;
 
       getClassifications(
@@ -201,10 +203,10 @@ class MessageClassifications extends Component {
 
     render() {
      const { selectCompany } = this.props;
-     const { classifications } = this.state;
+     const { classifications, user } = this.state;
       return (
        <div className="">  
-          <Header logout={this.logout} />
+          <Header logout={this.logout} user={user} />
           <p className="company-id">
            Empresa identificada:
            <br/>

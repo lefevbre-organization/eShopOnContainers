@@ -64,6 +64,14 @@
   top: 18px;
 }
 
+.ms-Button:hover {
+  background: content-box;
+}
+
+.ms-Button:active {
+  background: content-box;
+}
+
 [data-icon-name="MoreVertical"] {
   font-size: 20px;
 }
