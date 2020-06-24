@@ -8,7 +8,9 @@
     --mdc-ripple-fg-translate-start: 0;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     will-change: transform, opacity;
-    display: flex;
+    display: inherit;
+    float: right;
+    align-items: right;
     position: relative;
     flex-shrink: 0;
     align-items: center;

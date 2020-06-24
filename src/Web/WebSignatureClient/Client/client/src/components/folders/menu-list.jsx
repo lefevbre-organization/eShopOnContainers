@@ -59,8 +59,8 @@ export class MenuListClass extends Component {
 
   onClick(event, key) {
     event.stopPropagation();
-    this.props.setSignaturesFilterKey(key);
     this.props.signatureClicked(null);
+    this.props.setSignaturesFilterKey(key);
   }
 }
 
