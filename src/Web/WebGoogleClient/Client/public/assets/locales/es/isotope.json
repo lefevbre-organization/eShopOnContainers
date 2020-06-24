@@ -92,6 +92,7 @@
     "eventtype": "Tipo de evento",
     "profesional-event": "Evento profesional",
     "personal-event": "Evento personal",
+    "attendees": "Invite a los asistentes y presione enter",
     "toast-processing": "Procesando",
     "toast-process-complete": "Proceso completado",
     "toast-process-error": "Error"

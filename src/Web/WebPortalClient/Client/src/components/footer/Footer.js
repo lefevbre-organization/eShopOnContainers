@@ -81,7 +81,7 @@ class Footer extends Component {
                   &nbsp;|&nbsp;
                   <a
                     rel='noopener noreferrer'
-                    href={window.PRIVACY_POLICY_URL}
+                    href='/politica-privacidad.html'
                     target='_blank'
                     title={i18n.t('footer.privacy-policy')}>
                     {i18n.t('footer.privacy-policy')}

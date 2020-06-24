@@ -113,7 +113,24 @@ class MenuMinihub extends Component {
                     <span>{i18n.t('menu-minihub.products')}</span>
                   </div>                                
                 </div> 
-                  <Fragment>
+                            <Fragment>
+
+                                <i className='lf-icon-calculator'></i>
+                                <ul className="menu-header__blocks menu-header__blocks--products">
+                                    
+                                        <li className="menu-header__block-product ng-scope">
+                                            <a className="menu-header__block-icon-product menu-header__block-icon-product--product-1"
+                                                href=''
+                                                target="_blank"
+                                            >
+                                                <i className='lf-icon-calculator'></i>
+                                            </a>
+                                            <div className="menu-header__block-name-product">
+                                                <span className="ng-binding">ssss</span>
+                                            </div>
+                                        </li> 
+                                </ul>
+
                     <div className='accounts-container menu-main-panel'>
                       <PerfectScrollbar options={{ suppressScrollX: true }}>
                         <div className="menu-header__body-generic">
