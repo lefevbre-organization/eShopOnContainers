@@ -1,0 +1,126 @@
+@import '../../../styles/partials/variables';
+@import '@material/chips/variables';
+@import '@material/chips/mixins';
+
+$editor-color: #333333 !default;
+$editor-container-padding: 8px !default;
+$editor-background-color: white !default;
+$editor-outline-color: $editor-color !default;
+$editor-border-color: lighten($editor-outline-color, 50%) !default;
+$header-field-spacing: $default-spacing / 2 !default;
+$header-label-color: lighten($base-color, 25%) !default;
+$header-chip-fill-color: white !default;
+$header-chip-outline-color: transparentize(
+  $editor-outline-color,
+  0.75
+) !default;
+$header-chip-margin: 2px 6px 2px 0;
+$header-chip-height: 21px;
+$lefebvre-color: #001978;
+
+//añado
+$row-height: 43px;
+$font-size: 1.8rem;
+$flag-size: 18px;
+
+
+.widget {
+  border-radius: 3px;
+  background-color: #e6e9f2;
+  border: 1px solid #cfd3e1;
+  -webkit-box-shadow: 0px 0px 7px 0px #dde0ed;
+  -moz-box-shadow: 0px 0px 7px 0px #dde0ed;
+  box-shadow: 0px 0px 7px 0px #dde0ed;
+  padding: 10px;
+  margin: 10px 10px 20px 10px;
+
+  .title-icon {
+    font-size: 24px;
+    vertical-align: bottom;
+    color: #001978;
+    margin-right: 8px;
+    }
+
+  .generic-title {
+    color: #001978;
+    text-transform: uppercase;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .icon-trash {
+    color: #001978;
+    font-size: 16px;
+  }
+
+  .subtitle {
+    line-height: 1.2;
+    font-weight: 500;
+    font-size: 15px;
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+  }
+
+  form {
+    margin:15px 0;
+    label {
+      margin-bottom: 0 !important;
+    }
+    label * {
+      color: #001978;
+    }
+    input[type='radio'] {
+      position: relative !important;
+    }
+    .with-gap + span {
+      position: relative;
+      padding-left: 10px;
+      cursor: pointer;
+      display: inline-block;
+      height: 25px;
+      line-height: 25px;
+      font-size: 1rem;
+      transition: .28s ease;
+      user-select: none;
+      }
+
+      .with-gap:checked + span:before {
+        border: 1px solid $lefebvre-color;
+      }
+    p {
+      &.form {
+        margin: 5px 0;
+        line-height:1.2;
+      }
+    }
+  }
+}
+
+.sign {
+  padding: 15px 10px;
+  border-top: 1px solid #dadde9;
+  margin-top: 15px;
+
+  a {
+    font-size: 15px;
+    color: $lefebvre-color;
+    text-decoration: underline;
+  }
+}
+
+.bold {
+  line-height: 1.2;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.right {
+  float: right;
+}
+
+.p10 {
+  padding: 10px;
+}

@@ -10,7 +10,6 @@ import InsertLinkDialog from './insert-link-dialog';
 import { getCredentials } from '../../selectors/application';
 import { editMessage } from '../../actions/application';
 import { sendMessage } from '../../services/smtp';
-import { prettySize } from '../../services/prettify';
 import { getAddresses } from '../../services/message-addresses';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
 import styles from './message-editor.scss';
@@ -33,6 +32,9 @@ import { getUser } from '../../services/accounts';
 import * as uuid from 'uuid/v4';
 import { getUrlType } from '../../services/jwt';
 import { getFileType } from '../../services/mimeType';
+import { AttachmentsWidget } from './widgets/attachments-widget';
+import { ExpirationWidget } from './widgets/expiration-widget';
+import { RemindersWidget } from './widgets/reminders-widget';
 
 class MessageEditor extends Component {
   constructor(props) {
@@ -173,207 +175,28 @@ class MessageEditor extends Component {
               onChange={this.handleEditorChange}
               defaultValue={content}
             />
-
-            <div className={styles.attachments}>
-              {attachments.map((a, index) => (
-                <div key={index} className={styles.attachment}>
-                  <span className={styles.fileName}>{a.fileName}</span>
-                  <span className={styles.size}>({prettySize(a.size, 0)})</span>
-                  <Button
-                    className={styles.delete}
-                    icon={'delete'}
-                    onClick={() => this.removeAttachment(a)}
-                  />
-                </div>
-              ))}
-            </div>
           </div>
           <div className={styles['side-container']}>
-            <div className={styles.title}>Recordatorios</div>
-            <br></br>
-            <div className={styles.options}>
-              <form>
-                <div className='form-check'>
-                  <label>
-                    <input
-                      type='radio'
-                      name='react-tips'
-                      value='option1'
-                      checked={this.state.selectedReminderOption === 'option1'}
-                      //onSelect={this.handleOptionChange}
-                      onChange={(e) =>
-                        this.setState({
-                          selectedReminderOption: e.target.value,
-                        })
-                      }
-                      className='form-check-input'
-                    />
-                    Enviar recordatorio al
-                    {/* <span><input type="text" name='reminderDays' value={this.state.reminderDays} onChange={e => this.setState({reminderDays: e.target.value})}></input></span> */}
-                    <input
-                      type={'text'}
-                      value={this.state.reminderDays}
-                      //onChange={this.handleOnReminderDaysChange}
-                      onChange={(e) =>
-                        this.setState({ reminderDays: e.target.value })
-                      }
-                      style={{ width: 25 + 'px' }}
-                    />{' '}
-                    día.
-                  </label>
-                </div>
-
-                <div className='form-check'>
-                  <label>
-                    <input
-                      type='radio'
-                      name='react-tips'
-                      value='option2'
-                      checked={this.state.selectedReminderOption === 'option2'}
-                      //onSelect={this.handleOptionChange}
-                      onChange={(e) =>
-                        this.setState({
-                          selectedReminderOption: e.target.value,
-                        })
-                      }
-                      className='form-check-input'
-                    />
-                    Recordatorios diarios.
-                  </label>
-                </div>
-
-                <div className='form-check'>
-                  <label>
-                    <input
-                      type='radio'
-                      name='react-tips'
-                      value='option3'
-                      checked={this.state.selectedReminderOption === 'option3'}
-                      //onSelect={this.handleOptionChange}
-                      onChange={(e) =>
-                        this.setState({
-                          selectedReminderOption: e.target.value,
-                        })
-                      }
-                      className='form-check-input'
-                    />
-                    Recordatorios semanales.
-                  </label>
-                </div>
-                <div className='form-check'>
-                  <label>
-                    <input
-                      type='radio'
-                      name='react-tips'
-                      value='option4'
-                      checked={this.state.selectedReminderOption === 'option4'}
-                      //onSelect={this.handleOptionChange}
-                      onChange={(e) =>
-                        this.setState({
-                          selectedReminderOption: e.target.value,
-                        })
-                      }
-                      className='form-check-input'
-                    />
-                    No quiero enviar ningún recordatorio.
-                  </label>
-                </div>
-              </form>
-            </div>
-            <div className={styles.title}>Expiración</div>
-            <br></br>
-            <div className={styles.options}>
-              <form>
-                <div className='form-check'>
-                  <label>
-                    <input
-                      type='radio'
-                      name='react-tips'
-                      value='exp_option1'
-                      checked={
-                        this.state.selectedExpirationOption === 'exp_option1'
-                      }
-                      //onSelect={this.handleOptionChange}
-                      onChange={(e) =>
-                        this.setState({
-                          selectedExpirationOption: e.target.value,
-                        })
-                      }
-                      className='form-check-input'
-                    />
-                    Expirar en
-                    <input
-                      type={'text'}
-                      value={this.state.expirationDays}
-                      //onChange={this.handleOnExpirationDaysChange}
-                      onChange={(e) =>
-                        this.setState({ expirationDays: e.target.value })
-                      }
-                      style={{ width: 25 + 'px' }}
-                    />{' '}
-                    días.
-                  </label>
-                </div>
-                <div className='form-check'>
-                  <label>
-                    <input
-                      type='radio'
-                      name='react-tips'
-                      value='exp_option2'
-                      checked={
-                        this.state.selectedExpirationOption === 'exp_option2'
-                      }
-                      //onSelect={this.handleOptionChange}
-                      onChange={(e) =>
-                        this.setState({
-                          selectedExpirationOption: e.target.value,
-                        })
-                      }
-                      className='form-check-input'
-                    />
-                    No expirar nunca.
-                  </label>
-                </div>
-              </form>
-            </div>
+            <AttachmentsWidget></AttachmentsWidget>
+            <ExpirationWidget></ExpirationWidget>
+            <RemindersWidget></RemindersWidget>
+          </div>
+          <div className={styles['action-buttons']}>
+            <button
+              className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']}
+            ${styles['action-button']} ${styles.cancel}`}
+              onClick={() => this.removeMessageEditor(application)}>
+              Descartar
+            </button>
+            <button
+              className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']}
+            ${styles['action-button']} ${styles.send}`}
+              onClick={this.handleSubmit}>
+              {t('messageEditor.send')}
+            </button>
           </div>
         </div>
-        <div className={styles['action-buttons']}>
-          <button
-            className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']}
-            ${styles['action-button']} ${styles.send}`}
-            disabled={
-              to.length + cc.length + bcc.length === 0 ||
-              this.props.attachments.length === 0
-            }
-            onClick={this.handleSubmit}>
-            {t('messageEditor.send')}
-          </button>
-          <button
-            className={`${styles['action-button']} ${styles.attach}`}
-            onClick={this.onAttachButton}>
-            <div
-              className={`material-icons ${mainCss['mdc-list-item__graphic']} ${styles.icon}`}>
-              attach_file
-            </div>
-            <div>
-              <span>{i18n.t('messageEditor.attach')}</span>
-            </div>
-            <input
-              ref={(r) => (this.fileInput = r)}
-              id='file-input'
-              type='file'
-              name='name'
-              style={{ display: 'none' }}
-              multiple={true}
-            />
-          </button>
-          <button
-            className={`material-icons ${mainCss['mdc-icon-button']} ${styles['action-button']} ${styles.cancel}`}
-            onClick={() => this.removeMessageEditor(application)}>
-            delete
-          </button>
-        </div>
+
         <InsertLinkDialog
           visible={this.state.linkDialogVisible}
           closeDialog={() =>
@@ -528,7 +351,7 @@ class MessageEditor extends Component {
     var items = json.DATA;
     var result = [];
 
-    for (var item, i = 0; (item = items[i++]); ) {
+    for (var item, i = 0; (item = items[i++]);) {
       var name = item.name;
 
       if (!(name in lookup)) {
@@ -543,7 +366,7 @@ class MessageEditor extends Component {
     var items = signature.documents;
     var result = [];
 
-    for (var item, i = 0; (item = items[i++]); ) {
+    for (var item, i = 0; (item = items[i++]);) {
       var name = item.file.name;
       var id = item.id;
 
@@ -560,7 +383,7 @@ class MessageEditor extends Component {
     var items = signature.documents;
     var result = [];
 
-    for (var item, i = 0; (item = items[i++]); ) {
+    for (var item, i = 0; (item = items[i++]);) {
       var id = item.id;
 
       if (!(id in lookup)) {
@@ -576,7 +399,7 @@ class MessageEditor extends Component {
     var items = signature.documents;
     var result = [];
 
-    for (var item, i = 0; (item = items[i++]); ) {
+    for (var item, i = 0; (item = items[i++]);) {
       var name = item.file.name;
       var id = item.id;
       var info = { name: name, id: id };
@@ -655,9 +478,9 @@ class MessageEditor extends Component {
       if (signatureInfo.status_code) {
         console.log(
           'Se ha producido un error: ' +
-            signatureInfo.status_code +
-            '-' +
-            signatureInfo.message
+          signatureInfo.status_code +
+          '-' +
+          signatureInfo.message
         );
       } else {
         getUserSignatures(userId).then((userInfo) => {

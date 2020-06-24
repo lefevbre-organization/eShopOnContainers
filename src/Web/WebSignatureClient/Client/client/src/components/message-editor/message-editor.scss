@@ -6,7 +6,7 @@ $editor-color: #333333 !default;
 $editor-container-padding: 8px !default;
 $editor-background-color: white !default;
 $editor-outline-color: $editor-color !default;
-$editor-border-color: lighten($editor-outline-color, 50%) !default;
+$editor-border-color: #e0e0e0;
 $header-field-spacing: $default-spacing / 2 !default;
 $header-label-color: lighten($base-color, 25%) !default;
 $header-chip-fill-color: white !default;
@@ -136,6 +136,29 @@ $flag-size: 18px;
   }
 
   .editor-wrapper {
+    height: calc(100% - 120px);
+    display: grid;
+    overflow-y: auto;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 1px 1px;
+    grid-template-areas: 'editor-container editor-container side-container' 'editor-container editor-container side-container' 'editor-container editor-container side-container' 'editor-container editor-container side-container' 'editor-container editor-container side-container' 'editor-container editor-container side-container' 'action-buttons action-buttons side-container';
+  }
+
+  .editor-container {
+    height: 100%;
+    grid-area: editor-container;
+  }
+
+  .side-container {
+    grid-area: side-container;
+  }
+
+  .action-buttons {
+    grid-area: action-buttons;
+  }
+
+  .editor-wrapsper {
     flex: 1;
     height: 1px;
     min-height: 1px;
@@ -192,25 +215,7 @@ $flag-size: 18px;
     //   }
     // }
 
-    .editor-wrapper {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-      gap: 1px 1px;
-      grid-template-areas: 'editor-container editor-container side-container' 'editor-container editor-container side-container' 'editor-container editor-container side-container' 'editor-container editor-container side-container' 'editor-container editor-container side-container' 'editor-container editor-container side-container' 'action-buttons action-buttons action-buttons';
-    }
-
-    .editor-container {
-      grid-area: editor-container;
-    }
-
-    .side-container {
-      grid-area: side-container;
-    }
-
-    .action-buttons {
-      grid-area: action-buttons;
-    }
+    
 
     .reminders-container {
       flex: 1;
@@ -290,13 +295,29 @@ $flag-size: 18px;
     justify-content: flex-start;
 
     .action-button {
+      border-radius: 0;
+      padding: 11px 30px;
+
       &.send {
         margin-left: 0;
       }
 
-      &.cancel {
-        margin-left: auto;
+      &.send:hover {
+        background: #9a9a9a;
       }
+
+      &.cancel {
+        margin: 4px;
+        background-color: white;
+        color: $lefebvre-color;
+        border: 2px solid $lefebvre-color;
+
+        &:hover {
+          color: #9a9a9a;
+          border-color: #9a9a9a;
+        }
+      }
+      
 
       &.attach {
         background-color: white;
