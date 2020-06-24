@@ -53,6 +53,24 @@ export class MessageViewer extends Component {
     return res;
   }
 
+  getSingleEventDate(event, ev){
+    let evDate = '';
+    let res = '-';
+   
+    if (event.type === ev){
+      evDate = event.created_at
+    }
+
+    if (evDate !==''){
+      res = new Date(evDate).toLocaleString(navigator.language, {
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+      })
+    }
+    return res;
+
+  }
+
   getDocuments(signature){
     var lookup = {};
     var items = signature.documents;
@@ -388,104 +406,105 @@ export class MessageViewer extends Component {
                 return(
               
                 <div className={styles['cont-info-firmantes']}>
-                    <div className={`${styles.p15} ${styles.separador}`}>
-                        <div className={`${styles['tit-firmante']} left`}>FIRMANTES</div>
-                <span className={`${styles['name_firmante']} left`}>{signer.name}:</span><span className={styles.email}>{signer.email}</span>
-                <span className={`${styles['numero_firmante']} right`}>Firmante {i}</span>
-                    </div>
-                    <div className={`${styles.p15} ${styles.separador}`}>
+                  <div className={`${styles.p15} ${styles.separador}`}>
+                      <div className={`${styles['tit-firmante']} left`}>FIRMANTES</div>
+                        <span className={`${styles['name_firmante']} left`}>{signer.name}:</span>
+                        <span className={styles.email}>{signer.email}</span>
+                        <span className={`${styles['numero_firmante']} right`}>Firmante {i}</span>
+                      </div>
+                      <div className={`${styles.p15} ${styles.separador}`}>
                         <div className={styles['tit-firmante']}>PROGRESO peticion</div>
                         <div className={`${styles['seguimiento-firmante-individual']} ${((this.getEventStatus(signer, 'email_processed') === false) ? styles['no-completado']: ``)}`}>
-                            <span className="lf-icon-send"></span>
-                            <div className={styles['cont-check-seguimiento']}>
-                                <span className={`${((this.getEventStatus(signer, 'email_processed')) ? `lf-icon-check-round-full `: ``)} ${styles['check-seguimiento']}`}></span>
-                                <div className={`${styles.linea} ${styles['primer-estado']}`}></div>
-                                <div className={styles.info}>
-                                    <div className={styles.estado}> Email enviado</div>
-                                      {this.getEventDate(signer, 'email_processed').split(' ')[0]}<br/>
-                                      {this.getEventDate(signer, 'email_processed').split(' ')[1]}
-                                </div>
-                                <div className={styles.clearfix}></div>
-                            </div>
-                            <div className={styles.clearfix}></div>
+                          <span className="lf-icon-send"></span>
+                          <div className={styles['cont-check-seguimiento']}>
+                              <span className={`${((this.getEventStatus(signer, 'email_processed')) ? `lf-icon-check-round-full `: ``)} ${styles['check-seguimiento']}`}></span>
+                              <div className={`${styles.linea} ${styles['primer-estado']}`}></div>
+                              <div className={styles.info}>
+                                <div className={styles.estado}> Email enviado</div>
+                                {this.getEventDate(signer, 'email_processed').split(' ')[0]}<br/>
+                                {this.getEventDate(signer, 'email_processed').split(' ')[1]}
+                              </div>
+                              <div className={styles.clearfix}></div>
+                          </div>
+                          <div className={styles.clearfix}></div>
                         </div>
                         <div className={`${styles['seguimiento-firmante-individual']} ${((this.getEventStatus(signer, 'email_delivered') === false) ? styles['no-completado']: ``)}`}>
-                            <span className={`lf-icon-mail`}></span>
-                            <div className={styles['cont-check-seguimiento']}>
-                                <span className={`${((this.getEventStatus(signer, 'email_delivered')) ? `lf-icon-check-round-full `: ``)} ${styles['check-seguimiento']}`}></span>
-                                <div className={styles.linea}></div>
-                                <div className={styles.info}>
-                                    <div className={styles.estado}> Email entregado</div>
-                                      {this.getEventDate(signer, 'email_delivered').split(' ')[0]}<br/>
-                                      {this.getEventDate(signer, 'email_delivered').split(' ')[1]}
-                                </div>
-                                <div className={styles.clearfix}></div>
-                            </div>
-                            <div className={styles.clearfix}></div>
+                          <span className={`lf-icon-mail`}></span>
+                          <div className={styles['cont-check-seguimiento']}>
+                              <span className={`${((this.getEventStatus(signer, 'email_delivered')) ? `lf-icon-check-round-full `: ``)} ${styles['check-seguimiento']}`}></span>
+                              <div className={styles.linea}></div>
+                              <div className={styles.info}>
+                                  <div className={styles.estado}> Email entregado</div>
+                                    {this.getEventDate(signer, 'email_delivered').split(' ')[0]}<br/>
+                                    {this.getEventDate(signer, 'email_delivered').split(' ')[1]}
+                              </div>
+                              <div className={styles.clearfix}></div>
+                          </div>
+                          <div className={styles.clearfix}></div>
                         </div>
                         <div className={`${styles['seguimiento-firmante-individual']} ${((this.getEventStatus(signer, 'email_opened') === false) ? styles['no-completado']: ``)}`}>
-                            <span className="lf-icon-mail-open"></span>
-                            <div className={styles['cont-check-seguimiento']}>
-                                <span className={`${((this.getEventStatus(signer, 'email_opened')) ? `lf-icon-check-round-full `: ``)} ${styles['check-seguimiento']}`}></span>
-                                <div className={styles.linea}></div>
-                                <div className={styles.info}>
-                                    <div className={styles.estado}>
-                                        Email abierto
-                                    </div>
-                                      {this.getEventDate(signer, 'email_opened').split(' ')[0]}<br/>
-                                      {this.getEventDate(signer, 'email_opened').split(' ')[1]}
-                                </div>
-                                <div className={styles.clearfix}></div>
-                            </div>
-                            <div className={styles.clearfix}></div>
+                          <span className="lf-icon-mail-open"></span>
+                          <div className={styles['cont-check-seguimiento']}>
+                              <span className={`${((this.getEventStatus(signer, 'email_opened')) ? `lf-icon-check-round-full `: ``)} ${styles['check-seguimiento']}`}></span>
+                              <div className={styles.linea}></div>
+                              <div className={styles.info}>
+                                  <div className={styles.estado}>
+                                      Email abierto
+                                  </div>
+                                    {this.getEventDate(signer, 'email_opened').split(' ')[0]}<br/>
+                                    {this.getEventDate(signer, 'email_opened').split(' ')[1]}
+                              </div>
+                              <div className={styles.clearfix}></div>
+                          </div>
+                          <div className={styles.clearfix}></div>
                         </div>
                         <div className={`${styles['seguimiento-firmante-individual']} ${((this.getEventStatus(signer, 'document_opened') === false) ? styles['no-completado']: ``)}`}>
-                            <span className="lf-icon-document"></span>
-                            <div className={styles['cont-check-seguimiento']}>
-                                <span className={`${((this.getEventStatus(signer, 'document_opened')) ? `lf-icon-check-round-full `: ``)} ${styles['check-seguimiento']}`}></span>
-                                <div className={styles.linea}></div>
-                                  <div className={styles.info}>
-                                        <div className={styles.estado}>Documento abierto</div>
-                                          {this.getEventDate(signer, 'document_opened').split(' ')[0]}<br/>
-                                          {this.getEventDate(signer, 'document_opened').split(' ')[1]}
-                                  </div>
-                                <div className={styles.clearfix}></div>
-                            </div>
+                          <span className="lf-icon-document"></span>
+                          <div className={styles['cont-check-seguimiento']}>
+                              <span className={`${((this.getEventStatus(signer, 'document_opened')) ? `lf-icon-check-round-full `: ``)} ${styles['check-seguimiento']}`}></span>
+                              <div className={styles.linea}></div>
+                                <div className={styles.info}>
+                                      <div className={styles.estado}>Documento abierto</div>
+                                        {this.getEventDate(signer, 'document_opened').split(' ')[0]}<br/>
+                                        {this.getEventDate(signer, 'document_opened').split(' ')[1]}
+                                </div>
+                              <div className={styles.clearfix}></div>
+                          </div>
                         </div>
                         {/* <div className={`${styles['seguimiento-firmante-individual']} ${styles['no-completado']}`}> */}
                         <div className={`${styles['seguimiento-firmante-individual']} ${((this.getEventStatus(signer, 'document_signed') === false) ? styles['no-completado']: ``)}`}>
-                            <span className='lf-icon-document-validate'></span>
-                            <div className={styles['cont-check-seguimiento']}>
-                                <span className={`${((this.getEventStatus(signer, 'document_signed')) ? `lf-icon-check-round-full `: ``)} ${styles['check-seguimiento']}`}></span>
-                                <div className={styles.linea}></div>
-                                <div className={styles.info}>
-                                    <div className={styles.estado}>Documento firmado</div>
-                                      {this.getEventDate(signer, 'document_signed').split(' ')[0]}<br/>
-                                      {this.getEventDate(signer, 'document_signed').split(' ')[1]}
+                          <span className='lf-icon-document-validate'></span>
+                          <div className={styles['cont-check-seguimiento']}>
+                              <span className={`${((this.getEventStatus(signer, 'document_signed')) ? `lf-icon-check-round-full `: ``)} ${styles['check-seguimiento']}`}></span>
+                              <div className={styles.linea}></div>
+                              <div className={styles.info}>
+                                  <div className={styles.estado}>Documento firmado</div>
+                                    {this.getEventDate(signer, 'document_signed').split(' ')[0]}<br/>
+                                    {this.getEventDate(signer, 'document_signed').split(' ')[1]}
 
-                                </div>
-                            </div>
-                            <div className={styles.clearfix}></div>
+                              </div>
+                          </div>
+                          <div className={styles.clearfix}></div>
                         </div>
                         <div className={styles.clearfix}></div>
-                    </div>
-                    <div className={styles.p15}>
+                      </div>
+                      <div className={styles.p15}>
                         <div className={styles['tit-firmante']}>recordatorios enviados</div>
                         <p>{
-                            signer.events.map(x => 
-                              { 
-                                if (x.type === 'reminder_email_processed'){
-                                  return (
-                                    <span>
-                                    {`${this.getEventDate(signer, 'reminder_email_processed')}`}<br/>
-                                    </span>
-                                  )
-                                }
+                          signer.events.map(x => 
+                            { 
+                              if (x.type === 'reminder_email_processed'){
+                                return (
+                                  <span className={styles.fecha}>
+                                  {`${this.getSingleEventDate(x, 'reminder_email_processed')}`}<br/>
+                                  </span>
+                                )
                               }
-                            )}
+                            }
+                          )}
                         </p>
-                    </div>
-                </div>
+                      </div>
+                  </div>
                 )
               })}
             </div>
