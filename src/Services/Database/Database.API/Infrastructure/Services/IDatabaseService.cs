@@ -10,12 +10,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
 
         Task<Result<string>> GetSesionAsync(string idNavisionUser);
 
-        Task<Result<List<Document>>> GetDocumentsAsync(string sesion, string search, string indice, int start, int max);
+        Task<Result<DbDocSearch>> GetDocumentsAsync(string sesion, string search, string indice, int start, int max);
 
-        Task<Result<DocumentsCount>> GetDocumentsCountAsync(string sesion, string search);
+        Task<Result<DbDocCount>> GetDocumentsCountAsync(string sesion, string search);
 
-        Task<Result<Document>> GetDocumentByNrefAsync(string sesion, string producto, string nref);
+        Task<Result<DbDocument>> GetDocumentByNrefAsync(string idNavisionUser, string producto, string nref);
 
-        Task<Result<List<Document>>> GetDbDocumentsAsync(string sesion, string search, string producto, string orden, string universal, string tipoDoc);
+        Task<Result<List<DbDocument>>> GetDbDocumentsAsync(string sesion, string search, string producto, string orden, string universal, string tipoDoc);
     }
 }

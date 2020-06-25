@@ -64,8 +64,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Controllers
         }
 
         [HttpGet("documents/count")]
-        [ProducesResponseType(typeof(Result<DocumentsCount>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<DocumentsCount>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<DbDocCount>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<DbDocCount>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetEvaluationsAsync(
             string sesion = "E1621396",
             string search = "derecho"
@@ -74,13 +74,13 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Controllers
             if (string.IsNullOrEmpty(sesion))
                 return (IActionResult)BadRequest("Must be a valid session Id");
 
-            Result<DocumentsCount> result = await _service.GetDocumentsCountAsync(sesion, search);
+            Result<DbDocCount> result = await _service.GetDocumentsCountAsync(sesion, search);
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpGet("documents")]
-        [ProducesResponseType(typeof(Result<List<Document>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<List<Document>>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<DbDocSearch>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<DbDocSearch>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetDocumentsAsync(
             string sesion = "E1621396",
             string search = "derecho",
@@ -92,42 +92,42 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Controllers
             if (string.IsNullOrEmpty(sesion))
                 return (IActionResult)BadRequest("Must be a valid session Id");
 
-            Result<List<Document>> result = await _service.GetDocumentsAsync(sesion, search, indice, start, max);
+            var result = await _service.GetDocumentsAsync(sesion, search, indice, start, max);
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpGet("documents/getone")]
-        [ProducesResponseType(typeof(Result<Document>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<Document>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<DbDocument>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<DbDocument>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetDocumentAsync(
             string sesion = "E1621396",
-            string producto = "derecho",
+            string producto = "UNIVERSAL",
             string nref = "consultas"
             )
         {
             if (string.IsNullOrEmpty(sesion))
                 return (IActionResult)BadRequest("Must be a valid session Id");
 
-            Result<Document> result = await _service.GetDocumentByNrefAsync(sesion, producto, nref);
+            Result<DbDocument> result = await _service.GetDocumentByNrefAsync(sesion, producto, nref);
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         [HttpGet("database")]
-        [ProducesResponseType(typeof(Result<List<Document>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<List<Document>>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<List<DbDocument>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<List<DbDocument>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetDatabaseDocumentsAsync(
            string sesion = "E1621396",
            string search = "derecho",
-           string producto = "consultas",
-           string orden = "consultas",
-           string universal = "consultas",
+           string producto = "UNIVERSAL",
+           string orden = "relevancia",
+           string universal = "derecho",
            string tipoDoc = "libro"
            )
         {
             if (string.IsNullOrEmpty(sesion))
                 return (IActionResult)BadRequest("Must be a valid session Id");
 
-            Result<List<Document>> result = await _service.GetDbDocumentsAsync(sesion, search, producto, orden, universal, tipoDoc);
+            Result<List<DbDocument>> result = await _service.GetDbDocumentsAsync(sesion, search, producto, orden, universal, tipoDoc);
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
     }

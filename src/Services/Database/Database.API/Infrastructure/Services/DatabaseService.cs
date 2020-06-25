@@ -7,12 +7,9 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -56,54 +53,50 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
             _clientUserUtils = _clientFactory.CreateClient();
             _clientUserUtils.BaseAddress = new Uri(_settings.Value.UserUtilsUrl);
             _clientUserUtils.DefaultRequestHeaders.Add("Accept", "text/plain");
-
         }
-
 
         public async Task<Result<string>> GetSesionAsync(string idNavisionUser)
         {
-            var encodeUser = await GetEncodeUserAsync(idNavisionUser);
+            var result = new Result<string>(null);
+            try
             {
-                var result = new Result<string>(null);
-                try
+                var encodeUser = await GetEncodeUserAsync(idNavisionUser);
+                //https://herculesppd.lefebvre.es/webclient46/google/crearSesion.do?ei=eHZqcHllZQ%3D%3D
+                var url = $"{_settings.Value.OnlineUrl}/google/crearSesion.do?ei={encodeUser?.data}";
+
+                using (var response = await _clientOnline.GetAsync(url))
                 {
-                    //https://herculesppd.lefebvre.es/webclient46/google/crearSesion.do?ei=eHZqcHllZQ%3D%3D
-                    var url = $"{_settings.Value.OnlineUrl}/google/crearSesion.do?ei={encodeUser?.data}";
-
-                    using (var response = await _clientOnline.GetAsync(url))
+                    if (response.IsSuccessStatusCode)
                     {
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var rawResult = await response.Content.ReadAsStringAsync();
+                        var rawResult = await response.Content.ReadAsStringAsync();
 
-                            if (!string.IsNullOrEmpty(rawResult))
-                            {
-                                var resultado = (JsonConvert.DeserializeObject<OnlineSesion>(rawResult));
-                                result.data = resultado.JSESSIONID;
-                            }
-                        }
-                        else
+                        if (!string.IsNullOrEmpty(rawResult))
                         {
-                            result.errors.Add(new ErrorInfo
-                            {
-                                code = "Error_Get_Session",
-                                detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                            });
+                            var resultado = (JsonConvert.DeserializeObject<OnlineSesion>(rawResult));
+                            result.data = resultado.JSESSIONID;
                         }
                     }
-                }
-                catch (Exception ex)
-                {
-                    result.errors.Add(new ErrorInfo
+                    else
                     {
-                        code = "594",
-                        detail = $"General error when call Online Service",
-                        message = ex.Message
-                    });
+                        result.errors.Add(new ErrorInfo
+                        {
+                            code = "Error_Get_Session",
+                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                        });
+                    }
                 }
-
-                return result;
             }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "594",
+                    detail = $"General error when call Online Service",
+                    message = ex.Message
+                });
+            }
+
+            return result;
         }
 
         public async Task<Result<string>> GetEncodeUserAsync(string idNavisionUser)
@@ -114,26 +107,24 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 //https://online.elderecho.com/ws/encriptarEntrada.do?nEntrada=E1654569
                 var url = $"{_settings.Value.OnlineUrl}/ws/encriptarEntrada.do?nEntrada={idNavisionUser}";
 
-                using (var response = await _clientOnline.GetAsync(url))
+                using var response = await _clientOnline.GetAsync(url);
+                if (response.IsSuccessStatusCode)
                 {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var rawResult = await response.Content.ReadAsStringAsync();
+                    var rawResult = await response.Content.ReadAsStringAsync();
 
-                        if (!string.IsNullOrEmpty(rawResult))
-                        {
-                            var resultado = (JsonConvert.DeserializeObject<OnlineEntrada>(rawResult));
-                            result.data = resultado.ENTRADA_ENCRIPTADA;
-                        }
-                    }
-                    else
+                    if (!string.IsNullOrEmpty(rawResult))
                     {
-                        result.errors.Add(new ErrorInfo
-                        {
-                            code = "Error_EncodeUser_Service",
-                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                        });
+                        var resultado = (JsonConvert.DeserializeObject<OnlineEntrada>(rawResult));
+                        result.data = resultado.ENTRADA_ENCRIPTADA;
                     }
+                }
+                else
+                {
+                    result.errors.Add(new ErrorInfo
+                    {
+                        code = "Error_EncodeUser_Service",
+                        detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                    });
                 }
             }
             catch (Exception ex)
@@ -148,34 +139,33 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
 
             return result;
         }
-        public async Task<Result<List<Document>>> GetDocumentsAsync(string sesion, string search, string indice, int start, int max)
+
+        public async Task<Result<DbDocSearch>> GetDocumentsAsync(string sesion, string search, string indice, int start, int max)
         {
-            var result = new Result<List<Document>>(new List<Document>());
+            var result = new Result<DbDocSearch>(new DbDocSearch());
             try
             {
-                //https://herculesppd.lefebvre.es/webclient46/google/buscar.do?indice=...&fulltext=...&jsessionid=...&startat=...&maxresults=
+               //https://herculesppd.lefebvre.es/webclient46/google/buscar.do?indice=legislacion&fulltext=derecho&jsessionid=0372AF1F4CA95776AEA01F5832AF69CF.TC_ONLINE_PRE01
                 var url = $"{_settings.Value.OnlineUrl}/google/buscar.do?indice={indice}&fulltext={search}&sessionid={sesion}&startat={start}&maxresults={max}";
 
-                using (var response = await _clientOnline.GetAsync(url))
+                using var response = await _clientOnline.GetAsync(url);
+                if (response.IsSuccessStatusCode)
                 {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var rawResult = await response.Content.ReadAsStringAsync();
+                    var rawResult = await response.Content.ReadAsStringAsync();
 
-                        if (!string.IsNullOrEmpty(rawResult))
-                        {
-                            var resultado = (JsonConvert.DeserializeObject<Document[]>(rawResult));
-                            result.data = resultado?.ToList();
-                        }
-                    }
-                    else
+                    if (!string.IsNullOrEmpty(rawResult))
                     {
-                        result.errors.Add(new ErrorInfo
-                        {
-                            code = "Erro_Get_Documents",
-                            detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                        });
+                        var resultado = (JsonConvert.DeserializeObject<DbDocSearch>(rawResult));
+                        result.data = resultado;
                     }
+                }
+                else
+                {
+                    result.errors.Add(new ErrorInfo
+                    {
+                        code = "Erro_Get_Documents",
+                        detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                    });
                 }
             }
             catch (Exception ex)
@@ -191,23 +181,128 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
             return result;
         }
 
-        public async Task<Result<DocumentsCount>> GetDocumentsCountAsync(string sesion, string search)
+        public async Task<Result<DbDocCount>> GetDocumentsCountAsync(string sesion, string search)
         {
-            var result = new Result<DocumentsCount>(new DocumentsCount());
+            var result = new Result<DbDocCount>(new DbDocCount());
+            try
+            {
+                //https://herculesppd.lefebvre.es/webclient46/google/getResultadosPorIndice.do?fulltext=...&jsessionid=....
+                var url = $"{_settings.Value.OnlineUrl}/google/getResultadosPorIndice.do?fulltext={search}&jsessionid={sesion}";
+
+                using var response = await _clientOnline.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    var rawResult = await response.Content.ReadAsStringAsync();
+
+                    if (!string.IsNullOrEmpty(rawResult))
+                    {
+                        var resultado = (JsonConvert.DeserializeObject<DbDocCount>(rawResult));
+                        result.data = resultado;
+                    }
+                }
+                else
+                {
+                    result.errors.Add(new ErrorInfo
+                    {
+                        code = "Error_DocumentCount_Service",
+                        detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "Error_EncodeUser",
+                    detail = $"General error when call online service",
+                    message = ex.Message
+                });
+            }
+
             return result;
         }
 
-        public async Task<Result<Document>> GetDocumentByNrefAsync(string sesion, string producto, string nref)
+        public async Task<Result<DbDocument>> GetDocumentByNrefAsync(string idNavisionUser, string producto, string nref)
         {
-            var result = new Result<Document>(new Document());
+            var result = new Result<DbDocument>(new DbDocument());
+            try
+            {
+                var encodeUser = await GetEncodeUserAsync(idNavisionUser);
+                //https://herculesppd.lefebvre.es/webclient46/login.do?ei=xxx&producto_inicial=UNIVERSAL&nref=xxx
+                var url = $"{_settings.Value.OnlineUrl}/login.do?ei={encodeUser?.data}&producto_inicial={producto}&nref={nref}";
+
+                using var response = await _clientOnline.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    var rawResult = await response.Content.ReadAsStringAsync();
+
+                    if (!string.IsNullOrEmpty(rawResult))
+                    {
+                        var resultado = (JsonConvert.DeserializeObject<DbDocument>(rawResult));
+                        result.data = resultado;
+                    }
+                }
+                else
+                {
+                    result.errors.Add(new ErrorInfo
+                    {
+                        code = "Error_DocumentByNref_Service",
+                        detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "Error_EncodeUser",
+                    detail = $"General error when call online service",
+                    message = ex.Message
+                });
+            }
+
             return result;
         }
 
-        public async Task<Result<List<Document>>> GetDbDocumentsAsync(string sesion, string search, string producto, string orden, string universal, string tipoDoc)
+        public async Task<Result<List<DbDocument>>> GetDbDocumentsAsync(string sesion, string search, string producto, string orden, string universal, string tipoDoc)
         {
-            var result = new Result<List<Document>>(new List<Document>());
+            var result = new Result<List<DbDocument>>(new List<DbDocument>());
+            try
+            {
+                //http://herculesppd.lefebvre.es/webclient46/seleccionProducto.do?producto=UNIVERSAL&orden=relevancia&universal=derecho&jsessionId=xxx&subindices=xxxx
+                var url = $"{_settings.Value.OnlineUrl}/seleccionProducto.do?producto={producto}&orden={orden}&universal={universal}&jsessionId={sesion}&subindices={tipoDoc}";
+
+                using var response = await _clientOnline.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    var rawResult = await response.Content.ReadAsStringAsync();
+
+                    if (!string.IsNullOrEmpty(rawResult))
+                    {
+                        var resultado = (JsonConvert.DeserializeObject<DbDocument[]>(rawResult));
+                        result.data = resultado?.ToList();
+                    }
+                }
+                else
+                {
+                    result.errors.Add(new ErrorInfo
+                    {
+                        code = "Erro_Get_DocumentsDb",
+                        detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                result.errors.Add(new ErrorInfo
+                {
+                    code = "594",
+                    detail = $"General error when call DocumentsDb service",
+                    message = ex.Message
+                });
+            }
+
             return result;
         }
-
     }
 }
