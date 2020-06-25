@@ -367,7 +367,8 @@ export class Step3 extends React.Component<Props, State> {
   }
 
   renderInstanceCheck(row: CentInstance) {
-    const check = row.conceptId === this.state.rowSelected ? 'checked' : '';
+    const check =
+      row.conceptObjectId === this.state.rowSelected ? 'checked' : '';
     return (
       <div className={`row-check ${check}`}>
         <div className={`row-check-inner ${check}`}></div>
@@ -376,7 +377,7 @@ export class Step3 extends React.Component<Props, State> {
   }
 
   onInstanceSelected(instance: CentInstance) {
-    this.setState({ rowSelected: instance.conceptId }, () => {
+    this.setState({ rowSelected: instance.conceptObjectId }, () => {
       this.props.onInstanceSelected(instance);
     });
   }
