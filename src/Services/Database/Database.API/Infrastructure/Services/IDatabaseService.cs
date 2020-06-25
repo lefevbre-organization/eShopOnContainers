@@ -20,6 +20,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
 
         Task<Result<DbDocument>> GetDocumentByNrefAsync(string idNavisionUser, string producto, string nref);
 
-        Task<Result<List<DbDocument>>> GetDbDocumentsAsync(string sesion, string search, string producto, string orden, string universal, string tipoDoc);
+        Task<Result<List<DbDocument>>> GetDbDocumentsAsync( string sesion,
+                                                            string search,
+                                                            string producto,
+                                                            string orden,
+                                                            string universal,
+                                                            string tipoDoc);
     }
 }
