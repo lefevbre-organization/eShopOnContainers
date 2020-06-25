@@ -67,14 +67,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Controllers
         [ProducesResponseType(typeof(Result<DbDocCount>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<DbDocCount>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetEvaluationsAsync(
-            string sesion = "E1621396",
+            string idNavisionUser = "E1621396",
             string search = "derecho"
             )
         {
-            if (string.IsNullOrEmpty(sesion))
+            if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("Must be a valid session Id");
 
-            Result<DbDocCount> result = await _service.GetDocumentsCountAsync(sesion, search);
+            Result<DbDocCount> result = await _service.GetDocumentsCountAsync(idNavisionUser, search);
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
@@ -82,17 +82,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Controllers
         [ProducesResponseType(typeof(Result<DbDocSearch>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<DbDocSearch>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetDocumentsAsync(
-            string sesion = "E1621396",
+            string idNavisionUser = "E1621396",
             string search = "derecho",
-            string indice = "consultas",
+            string indice = "legislacion",
             int start = 1,
-            int max = 100
+            int max = 10
             )
         {
-            if (string.IsNullOrEmpty(sesion))
+            if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("Must be a valid session Id");
 
-            var result = await _service.GetDocumentsAsync(sesion, search, indice, start, max);
+            var result = await _service.GetDocumentsAsync(idNavisionUser, search, indice, start, max);
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 

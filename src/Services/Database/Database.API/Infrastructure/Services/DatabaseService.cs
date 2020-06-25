@@ -140,13 +140,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
             return result;
         }
 
-        public async Task<Result<DbDocSearch>> GetDocumentsAsync(string sesion, string search, string indice, int start, int max)
+        public async Task<Result<DbDocSearch>> GetDocumentsAsync(string idNavisionUser, string search, string indice, int start, int max)
         {
             var result = new Result<DbDocSearch>(new DbDocSearch());
             try
             {
+                //TODO: Hacer sistema de control de sesion en mongo y solictarlo si ha pasaso un tiempo
+                var resultSession = await GetSesionAsync(idNavisionUser);
                //https://herculesppd.lefebvre.es/webclient46/google/buscar.do?indice=legislacion&fulltext=derecho&jsessionid=0372AF1F4CA95776AEA01F5832AF69CF.TC_ONLINE_PRE01
-                var url = $"{_settings.Value.OnlineUrl}/google/buscar.do?indice={indice}&fulltext={search}&sessionid={sesion}&startat={start}&maxresults={max}";
+                var url = $"{_settings.Value.OnlineUrl}/google/buscar.do?indice={indice}&fulltext={search}&sessionid={resultSession?.data}&startat={start}&maxresults={max}";
 
                 using var response = await _clientOnline.GetAsync(url);
                 if (response.IsSuccessStatusCode)
@@ -181,13 +183,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
             return result;
         }
 
-        public async Task<Result<DbDocCount>> GetDocumentsCountAsync(string sesion, string search)
+        public async Task<Result<DbDocCount>> GetDocumentsCountAsync(string idNavisionUser, string search)
         {
             var result = new Result<DbDocCount>(new DbDocCount());
             try
             {
+                var resultSession = await GetSesionAsync(idNavisionUser);
+
                 //https://herculesppd.lefebvre.es/webclient46/google/getResultadosPorIndice.do?fulltext=...&jsessionid=....
-                var url = $"{_settings.Value.OnlineUrl}/google/getResultadosPorIndice.do?fulltext={search}&jsessionid={sesion}";
+                var url = $"{_settings.Value.OnlineUrl}/google/getResultadosPorIndice.do?fulltext={search}&jsessionid={resultSession?.data}";
 
                 using var response = await _clientOnline.GetAsync(url);
                 if (response.IsSuccessStatusCode)
