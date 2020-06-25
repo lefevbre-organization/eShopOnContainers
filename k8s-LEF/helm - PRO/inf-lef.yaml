@@ -23,15 +23,10 @@ inf:
     centinela:
       database: CentinelaApiDb    
     signature:
-      database: signature    
+      database: signature   
+    database:
+      database: DatabaseApiDb  
 
-  # redis:                    # inf.redis defines the redis' connection strings
-  #   basket:     
-  #     svc: basket-data      # Name of k8s svc for basket redis     
-  #     constr: basket-data   # Connection string to Redis used by Basket API
-  #   keystore:
-  #     svc: keystore-data    # Name of k8s svc for keystore-data redis
-  #     constr: keystore-data # Connection string to Redis used as a Keystore (by Identity API)
   eventbus:
     svc: rabbitmq           # Name of k8s svc for rabbitmq
     constr: rabbitmq        # Event bus connection string

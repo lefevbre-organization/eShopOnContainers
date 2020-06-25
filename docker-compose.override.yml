@@ -350,7 +350,7 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionString=${ELEF_MONGO_CONN:-mongodb://nosql.data}
       - Database=DatabaseApiDB
-      - OnlineUrl=https://herculesppd.lefebvre.es/webclient46/ws
+      - OnlineUrl=https://herculesppd.lefebvre.es/webclient46
       - OnlineLogin=ws
       - OnlinePassword=22lcqsp11lsw
       - IdAppNavision=5

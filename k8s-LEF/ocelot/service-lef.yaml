@@ -39,5 +39,33 @@ spec:
   selector:
     app: elefebvre
     component: apigwcen
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: elefebvre
+    component: ocelotapigw-sig
+  name: ocelotapigw-sig
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: elefebvre
+    component: apigwsig
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: elefebvre
+    component: ocelotapigw-dat
+  name: ocelotapigw-dat
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: elefebvre
+    component: apigwdat
 
 
