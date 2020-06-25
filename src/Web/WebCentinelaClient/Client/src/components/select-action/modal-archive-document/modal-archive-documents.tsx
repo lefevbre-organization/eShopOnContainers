@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component, Fragment, createRef } from 'react';
 import i18n from 'i18next';
 import { Base64 } from 'js-base64';
 import { Button, Modal, Container } from 'react-bootstrap';
@@ -58,8 +58,10 @@ interface State {
 }
 
 class ModalArchiveDocuments extends Component<Props, State> {
+  private step3Ref: any;
   constructor(props: Props) {
     super(props);
+    this.step3Ref = createRef();
 
     this.state = {
       complete: false,
@@ -171,20 +173,10 @@ class ModalArchiveDocuments extends Component<Props, State> {
     if (step === 2) {
       this.setState({ step: 1 });
     } else if (step === 3) {
-      this.setState({ step: 2 });
+      if (this.step3Ref.current.back() === true) {
+        this.setState({ step: 2 });
+      }
     }
-
-    // } else if (step === 3) {
-    //   this.setState({ step: 2 });
-    // } else if (step === 4) {
-    //   this.setState({ step: 1 });
-    // } else if (step === 5) {
-    //   if (search.trim() === '') {
-    //     this.setState({ step: 3 });
-    //   } else {
-    //     this.setState({ step: 4 });
-    //   }
-    // }
   }
 
   async saveDocuments() {
@@ -494,6 +486,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
                   }}
                 >
                   <Step3
+                    ref={this.step3Ref}
                     user={user}
                     show={step === 3}
                     implantation={implantation}
@@ -650,6 +643,10 @@ class ModalArchiveDocuments extends Component<Props, State> {
             background-color: #001978 !important;
             border: 2px solid #001978 !important;
             color: #ffff !important;
+          }
+
+          .btn-outline-primary:focus {
+            border-color: #001978 !important;
           }
 
           strong {

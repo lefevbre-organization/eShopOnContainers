@@ -99,6 +99,21 @@ export class Step3 extends React.Component<Props, State> {
     this.crumbRef = createRef();
   }
 
+  public back() {
+    const { route } = this.state;
+    if (route.length === 0) {
+      return true;
+    }
+
+    if (route.length === 1) {
+      this.onBreadcrumb();
+    } else {
+      this.onBreadcrumb(route[route.length - 2]);
+    }
+
+    return false;
+  }
+
   async componentDidUpdate(prevProps: Props, prevState: State) {
     const { user, toggleNotification, implantation } = this.props;
     const { gridHeight } = this.state;
@@ -116,7 +131,7 @@ export class Step3 extends React.Component<Props, State> {
         }
       }
 
-      return;
+      //      return;
     }
 
     if (this.crumbRef && this.crumbRef.current) {
@@ -171,6 +186,20 @@ export class Step3 extends React.Component<Props, State> {
           showSpinner: false
         });
       }
+    }
+
+    if (prevProps.show === true && this.props.show === false) {
+      const state = {
+        phases: [],
+        route: [],
+        instances: [],
+        gridHeight: 0,
+        substep: 0,
+        currentNodes: { items: [] },
+        rowSelected: -1,
+        showSpinner: true
+      };
+      this.setState(state);
     }
   }
 
