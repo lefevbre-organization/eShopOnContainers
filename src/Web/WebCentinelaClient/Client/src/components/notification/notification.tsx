@@ -36,10 +36,7 @@ class Notification extends Component<Props> {
                 id='clasificarNuevaclasificacionLabel'>
                 {error === false && <span className='lf-icon-bookmarks'></span>}
                 {error === true && (
-                  <img
-                    className='img-warning'
-                    alt=''
-                    src='/assets/img/icon-warning.png'></img>
+                  <span style={{ fontSize: 48 }} className='lf-icon-warning'></span>
                 )}
                 {message}
               </h5>
@@ -57,6 +54,11 @@ class Notification extends Component<Props> {
 
           .notification .modal-header .modal-title {
             min-height: 150px;
+          }
+
+          .notificacion .lf-icon-bookmarks,
+          .notification .lf-icon-warning {
+            font-size: 48px !important;
           }
 
           .modal-header .close {
