@@ -62,6 +62,10 @@ services:
       - HealthChecksUI__HealthChecks__15__Uri=http://websignatureclient/hc
       - HealthChecksUI__HealthChecks__16__Name=WebCentinelaClient HTTP Check
       - HealthChecksUI__HealthChecks__16__Uri=http://webcentinelaclient/hc
+      - HealthChecksUI__HealthChecks__17__Name=Database API HTTP Check
+      - HealthChecksUI__HealthChecks__17__Uri=http://database.api/hc
+      - HealthChecksUI__HealthChecks__18__Name=Database API GW HTTP Check
+      - HealthChecksUI__HealthChecks__18__Uri=http://webdatabaseapigw/hc
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
     ports:

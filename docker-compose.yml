@@ -222,4 +222,4 @@ services:
     depends_on:
       - nosql.data
       - rabbitmq
-      - signature.api
+      - database.api
