@@ -6,6 +6,76 @@
   display: flex;
   -webkit-flex-direction: column;
   flex-direction: column;
-  align-items: flex-end;
 }
 
+.header-divider {
+  box-sizing: border-box;
+  height: 3px;
+  width: 280px;
+  /* border: 1px solid #5E5E5D; */
+  background-color: #001978;
+}
+
+.header-panel {
+  box-sizing: border-box;
+  height: 50px;
+  width: 280px;
+  border: 1px solid #5E5E5D;
+  opacity: 0.2;
+  background-color: #001978;
+}
+
+.header-divider-email {
+  position: absolute;
+  padding-top: 6px;
+  padding-left: 5px;
+}
+
+.header-divider-name {
+  position: absolute;
+  top: 33px;
+  padding-left: 5px;
+}
+
+.ms-Icon {
+  color: #001978;
+ 
+}
+
+.title-user-email {
+  color: #001978;
+  font-family: "MTT Milano";
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 0;
+}
+
+.title-user-name {
+  color: #001978;
+  font-family: "MTT Milano";
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 0;
+}
+
+.icon-menu {
+  position: absolute;
+  right: 20px;
+  top: 18px;
+}
+
+.ms-Button:hover {
+  background: content-box;
+}
+
+.ms-Button:active {
+  background: content-box;
+}
+
+[data-icon-name="MoreVertical"] {
+  font-size: 20px;
+}
+
+[data-icon-name="ChevronDown"] {
+  font-size: 14px;
+}

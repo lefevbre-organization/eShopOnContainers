@@ -105,18 +105,23 @@ public class MessageUtils {
      */
     public static String extractContent(@NonNull Multipart multipart) throws MessagingException, IOException {
         String ret = "";
+        String plain = "";
         for (int it = 0; it < multipart.getCount(); it++) {
             final BodyPart bp = multipart.getBodyPart(it);
             if ((ret == null || ret.isEmpty())
                     && bp.getContentType().toLowerCase().startsWith(MediaType.TEXT_PLAIN_VALUE)) {
-                ret = String.format("<pre>%s</pre>", HtmlUtils.htmlEscape(bp.getContent().toString()));
+                plain = String.format("<pre>%s</pre>", HtmlUtils.htmlEscape(bp.getContent().toString()));
+                
             }
             if (bp.getContentType().toLowerCase().startsWith(MediaType.TEXT_HTML_VALUE)) {
-                ret = (bp.getContent().toString());
+                    ret += (bp.getContent().toString());             
             }
             if (bp.getContentType().toLowerCase().startsWith(MULTIPART_MIME_TYPE)) {
                 ret = extractContent((Multipart) bp.getContent());
             }
+        }
+        if ((ret == null || ret.isEmpty())){
+            ret = plain;
         }
         return ret;
     }
@@ -136,7 +141,7 @@ public class MessageUtils {
 
         return Boolean.TRUE.equals(contentId) ?
                 extractEmbeddedBodypart(mp, id) : // Embedded contentId
-                extractAttachmentBodypart(mp, id); // Attachment
+                extractAttachmentBodypart(mp, id,null); // Attachment
     }
 
     /**
@@ -208,12 +213,16 @@ public class MessageUtils {
      * @throws MessagingException for any IMAP exception
      * @throws IOException for IO problems when reading the content
      */
-    @Nullable private static BodyPart extractAttachmentBodypart(@NonNull Multipart multipart, @NonNull String id)
+    @Nullable private static BodyPart extractAttachmentBodypart(@NonNull Multipart multipart, @NonNull String id, @Nullable BodyPart finalbp)
             throws MessagingException, IOException {
 
+                
         for (int it = 0; it < multipart.getCount(); it++) {
             final BodyPart bp = multipart.getBodyPart(it);
-            if (bp.getDisposition() != null && Part.ATTACHMENT.equalsIgnoreCase(bp.getDisposition())) {
+            if (bp.getContentType().toLowerCase().startsWith(MULTIPART_MIME_TYPE)) {
+                finalbp = extractAttachmentBodypart((Multipart) bp.getContent(), id, finalbp);
+            }
+            if (bp.getDisposition() != null && (Part.ATTACHMENT.equalsIgnoreCase(bp.getDisposition()) || Part.INLINE.equalsIgnoreCase(bp.getDisposition()))) {
                 // Regular file
                 if (id.equals(MimeUtility.decodeText(bp.getFileName()))) {
                     return bp;
@@ -224,7 +233,8 @@ public class MessageUtils {
                     return bp;
                 }
             }
-        }
-        return null;
+        }  
+
+        return finalbp;
     }
 }

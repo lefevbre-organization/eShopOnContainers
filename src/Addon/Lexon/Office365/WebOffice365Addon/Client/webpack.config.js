@@ -83,7 +83,7 @@ module.exports = async (env, options)  => {
             ignore: ['*.scss'],
             to: 'plugins',
         }
-    ]),
+      ]),
       new webpack.ProvidePlugin({
         Promise: ["es6-promise", "Promise"]
       })

@@ -5,7 +5,8 @@ import './header.css';
 class Header extends React.Component {
   
   render() {
-
+   const { user } = this.props;
+   console.log(user);
    const optionIcon = { iconName: 'MoreVertical' };
 
     const menuProps = {
@@ -22,14 +23,27 @@ class Header extends React.Component {
       
     return (
       <section className="header ms-u-fadeIn500">
-        {/* <CommandBar
-         overflowItems={_overflowItems} */}
-          <IconButton
+        <div className="header-divider"></div>
+        <div className="header-panel"></div>
+        <div className="header-divider-email"> 
+         <span className="title-user-email">{user ? user.login : ''}</span>
+        </div>
+        <div className="header-divider-name">
+         <span className="title-user-name">{user ? user.name : ''}</span>
+         </div>
+        <div className="icon-menu">
+         <IconButton
           menuProps={menuProps}
           iconProps={optionIcon}
           title="option"
           ariaLabel="option"
         />
+        </div>
+       
+
+       
+        
+      
       </section>
     );
   }

@@ -246,16 +246,15 @@ const defaultMessageList = {
 export function messageList(state = defaultMessageList, action) {
   switch (action.type) {
     case ADD_MESSAGE: {
-      const index = state.selectedMessages.findIndex(
-        (message) => message.extMessageId === action.data.extMessageId
-      );
-      if (index === -1) {
-        return {
-          ...state,
-          selectedMessages: [...state.selectedMessages, action.data],
-        };
-      }
-      return state;
+      return {
+        ...state,
+        selectedMessages: [
+          ...state.selectedMessages.filter(
+            (msg) => msg.extMessageId !== action.data.extMessageId
+          ),
+          action.data,
+        ],
+      };
     }
 
     case DELETE_MESSAGE: {

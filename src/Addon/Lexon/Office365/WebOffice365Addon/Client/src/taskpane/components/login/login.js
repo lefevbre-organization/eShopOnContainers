@@ -28,7 +28,7 @@ class Login extends Component {
           clientId: 'a8c9f1a1-3472-4a83-8725-4dfa74bac24d',
           baseUrl: `${window.URL_ADDON_LEXON}`,
           tokenUrl: `${window.API_GATEWAY}/utils/Lexon/token/login?addTerminatorToToken=true`,
-          redirectUrl: `${window.URL_LEXON_BASE}/taskpane.html`,
+          redirectUrl: `${window.URL_ADDON_LEXON_BASE}/taskpane.html`,
           authorizeUrl: '/login',
           scope: 'openid profile onelist offline_access',
           responseType: 'code',

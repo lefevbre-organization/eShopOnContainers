@@ -10,7 +10,7 @@ import {
   clearListMessages,
   setOpenMessage,
   addOpenMessageAttachment,
-  clearOpenMessageAttachment
+  clearOpenMessageAttachment,
 } from '../actions/message-list.actions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
@@ -52,7 +52,7 @@ function getAttachments(messageID, parts, callback) {
   var request = window.gapi.client.gmail.users.messages.attachments.get({
     id: attachId,
     messageId: messageID,
-    userId: 'me'
+    userId: 'me',
   });
   request.execute(function (attachment) {
     callback(parts.filename, parts.mimeType, attachment);
@@ -138,7 +138,7 @@ export class MessageContent extends Component {
       errorMessage: undefined,
       attachment: true,
       attachments: [],
-      showMessageNotFound: false
+      showMessageNotFound: false,
     };
     this.attachments = [];
     this.refresh = false;
@@ -149,8 +149,8 @@ export class MessageContent extends Component {
   }
 
   toggleShowMessageNotFound() {
-    this.setState(state => ({
-      showMessageNotFound: !state.showMessageNotFound
+    this.setState((state) => ({
+      showMessageNotFound: !state.showMessageNotFound,
     }));
   }
 
@@ -178,11 +178,11 @@ export class MessageContent extends Component {
         account: this.props.lexon.account,
         folder: getFolderName(i18n.t, this.props.selectedFolder),
         provider: 'GOOGLE',
-        raw: this.props.selectedMessages[i].raw
+        raw: this.props.selectedMessages[i].raw,
       };
       window.dispatchEvent(
         new CustomEvent('Checkclick', {
-          detail
+          detail,
         })
       );
     }
@@ -215,22 +215,22 @@ export class MessageContent extends Component {
           folder: getFolderName(i18n.t, this.props.selectedFolder),
           account: this.props.lexon.account,
           provider: 'GOOGLE',
-          raw: null
+          raw: null,
         };
 
         window.dispatchEvent(new CustomEvent('LoadingMessage'));
         getMessage(msgId, 'raw')
-          .then(msgRaw => {
+          .then((msgRaw) => {
             window.dispatchEvent(new CustomEvent('LoadedMessage'));
             detail.raw = msgRaw.result;
 
             window.dispatchEvent(
               new CustomEvent('Checkclick', {
-                detail
+                detail,
               })
             );
           })
-          .catch(err => {
+          .catch((err) => {
             window.dispatchEvent(new CustomEvent('LoadedMessage'));
           });
       }
@@ -265,7 +265,13 @@ export class MessageContent extends Component {
             // }
             var iframe = document.getElementById('message-iframe');
             var Divider = addDivDivider();
-            iframe.contentDocument.body.appendChild(Divider);
+            if (
+              iframe &&
+              iframe.contentDocument &&
+              iframe.contentDocument.body
+            ) {
+              iframe.contentDocument.body.appendChild(Divider);
+            }
 
             this.props.clearOpenMessageAttachment();
             for (var i = 0; i < attach.length; i++) {
@@ -289,8 +295,8 @@ export class MessageContent extends Component {
                           mimeType,
                           attachment: {
                             size: attachment.result.size,
-                            data: dataBase64Rep
-                          }
+                            data: dataBase64Rep,
+                          },
                         });
 
                         let urlBlob = b64toBlob(
@@ -303,14 +309,16 @@ export class MessageContent extends Component {
                           athc.headers,
                           'content-disposition'
                         );
-                        if (
-                          contentDisposition
-                        ) {
+                        if (contentDisposition) {
                           var contentId = getHeader(athc.headers, 'Content-ID');
                           if (contentId !== undefined) {
-                            contentId = contentId.replace('<', '').replace('>', '');
+                            contentId = contentId
+                              .replace('<', '')
+                              .replace('>', '');
                           }
-                          var iframe = document.getElementById('message-iframe');
+                          var iframe = document.getElementById(
+                            'message-iframe'
+                          );
                           const bd = iframe.contentDocument.body.innerHTML.replace(
                             `cid:${contentId}`,
                             'data:image/png;base64, ' + dataBase64Rep
@@ -389,7 +397,7 @@ export class MessageContent extends Component {
   }
 
   markEmailAsRead(message) {
-    const found = message.labelIds.find(elem => elem === 'UNREAD');
+    const found = message.labelIds.find((elem) => elem === 'UNREAD');
     if (found) {
       setMessageAsRead(message.id);
       this.refresh = true;
@@ -416,7 +424,7 @@ export class MessageContent extends Component {
     const id = this.props.emailMessageResult.result.id;
     const actionParams = {
       ...(addLabelIds && { addLabelIds }),
-      ...(removeLabelIds && { removeLabelIds })
+      ...(removeLabelIds && { removeLabelIds }),
     };
     this.props.modifyMessages({ ids: [id], ...actionParams });
     this.renderInbox();
@@ -447,18 +455,18 @@ export class MessageContent extends Component {
           {this.state.errorMessage ? (
             this.renderErrorModal()
           ) : (
-              <iframe
-                ref={this.iframeRef}
-                title='Message contents'
-                id='message-iframe'
-                srcDoc={this.props.emailMessageResult.body}
-                style={{
-                  display: this.props.emailMessageResult.loading
-                    ? 'none'
-                    : 'block'
-                }}
-              />
-            )}
+            <iframe
+              ref={this.iframeRef}
+              title='Message contents'
+              id='message-iframe'
+              srcDoc={this.props.emailMessageResult.body}
+              style={{
+                display: this.props.emailMessageResult.loading
+                  ? 'none'
+                  : 'block',
+              }}
+            />
+          )}
         </div>
 
         <MessageNotFound
@@ -470,17 +478,17 @@ export class MessageContent extends Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   emailMessageResult: state.emailMessageResult,
   emailHeaderMessageResult: state.emailHeaderMessageResult,
   selectedMessages: state.messageList.selectedMessages,
   selectedFolder: state.messagesResult.label
     ? state.messagesResult.label.result.name
     : '',
-  lexon: state.lexon
+  lexon: state.lexon,
 });
 
-const mapDispatchToProps = dispatch =>
+const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       toggleSelected,
@@ -490,7 +498,7 @@ const mapDispatchToProps = dispatch =>
       clearListMessages,
       setOpenMessage,
       addOpenMessageAttachment,
-      clearOpenMessageAttachment
+      clearOpenMessageAttachment,
     },
     dispatch
   );
@@ -508,11 +516,11 @@ const getHeader = (headers, name) => {
   }
 };
 
-const findAttachments = email => {
+const findAttachments = (email) => {
   let attachs = [];
   if (email.attach) {
     for (let i = 0; i < email.attach.length; i++) {
-      if (email.attach[i].mimeType === 'multipart/related') {
+      if (email.attach[i].mimeType.startsWith('multipart') === true) {
         for (let j = 0; j < email.attach[i].parts.length; j++) {
           attachs.push(email.attach[i].parts[j]);
         }

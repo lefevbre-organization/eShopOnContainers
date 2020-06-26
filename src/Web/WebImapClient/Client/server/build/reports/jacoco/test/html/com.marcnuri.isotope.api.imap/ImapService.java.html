@@ -636,7 +636,7 @@ public class ImapService {
                 }
 <span class="nc" id="L637">            }</span>
             // Regular files
-<span class="nc bnc" id="L639" title="All 4 branches missed.">            else if (bp.getDisposition() != null &amp;&amp; bp.getDisposition().equalsIgnoreCase(Part.ATTACHMENT)) {</span>
+<span class="nc bnc" id="L639" title="All 6 branches missed.">            else if (bp.getDisposition() != null &amp;&amp; (bp.getDisposition().equalsIgnoreCase(Part.ATTACHMENT) || bp.getDisposition().equalsIgnoreCase(Part.INLINE))) {</span>
 <span class="nc" id="L640">                attachments.add(new Attachment(</span>
 <span class="nc" id="L641">                        null, MimeUtility.decodeText(bp.getFileName()), bp.getContentType(), bp.getSize()));</span>
             }
