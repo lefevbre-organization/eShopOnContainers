@@ -392,7 +392,7 @@ export class MessageViewer extends Component {
                   onClick={() => downloadSignedDocument2(signature.id, signature.documents[0].id, signature.documents[0].file.name, this.props.auth)} 
                   disabled={signature.status !=='completed'}>
                     Descargar documento
-                </button>
+                </button> 
                 <button 
                   className={`${styles['btn-gen']} modal-trigger right`}
                   onClick={() => downloadTrailDocument2(signature.id, signature.documents[0].id, signature.documents[0].file.name, this.props.auth)} 

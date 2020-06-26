@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { translate } from "react-i18next";
 import PropTypes from "prop-types";
-import { AutoSizer, List } from "react-virtualized";
+import { AutoSizer, List, Grid } from "react-virtualized";
 import Checkbox from "../form/checkbox/checkbox";
 import Spinner from "../spinner/spinner";
 import { getCredentials } from "../../selectors/application";
@@ -17,7 +17,8 @@ import mainCss from "../../styles/main.scss";
 import styles from "./message-list.scss";
 import { preloadSignatures, preloadSignatures2 } from "../../services/api-signaturit";
 import { backendRequest, backendRequestCompleted } from '../../actions/application';
-
+import { GridComponent} from '@syncfusion/ej2-react-grids';
+import data from './dataSource.json';
 
 class MessageList extends Component {
     constructor(props) {
@@ -88,55 +89,97 @@ class MessageList extends Component {
         }
     }
 
-    render() {
-        console.log('Entra en message-list: render');
-        console.log('State rowCount(): ' + this.state.rowCount);
-        console.log('ActiveRequests:' + this.props.activeRequests);
+    getSigners(signature){
+        var lookup = {};
+        var items = signature.documents;
+        var result = [];
+    
+        for (var item, i = 0; item = items[i++];) {
+          var name = item.email;
+    
+          if (!(name in lookup)) {
+            lookup[name] = 1;
+            result.push(name);
+          }
+        }
+        return result;
+      }
 
-        return (
-            <div className={`${styles.messageList} ${this.props.className}`}>
-                <Spinner
-                    visible={
-                        this.props.activeRequests > 0 //|| this.state.rowCount === 0
-                    }
-                />
-                {(this.state.rowCount === 0) ? <center><h3>No tiene firmas que mostrar</h3></center> : null }
+    getSignatures(signatures){
+        let res = [];
+        console.log(signatures);
+        signatures.map(signature => {
+            let documentName = '';
+            let subject = '';
+            let recipients = '';
+            let date = '';
+            let status = '';
+            documentName = signature.documents[0].file.name
+            subject = (signature.data.find(x => x.key === "subject")) ? signature.data.find(x => x.key === "subject").value : null;
+            recipients = this.getSigners(signature).length;
+            date = prettyDate(signature.created_at);
+            status = signature.documents[signature.documents.length-1].status;
+            res.push({Documento: documentName, Asunto: subject, Destinatarios: recipients, Fecha: date, Estado: status});
+        });
+        return res;
+    }
+
+    render() {
+        var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [];
+        // console.log('Entra en message-list: render');
+        // console.log('State rowCount(): ' + this.state.rowCount);
+        // console.log('ActiveRequests:' + this.props.activeRequests);
+
+        // return (
+        //     <div className={`${styles.messageList} ${this.props.className}`}>
+        //         <Spinner
+        //             visible={
+        //                 this.props.activeRequests > 0 //|| this.state.rowCount === 0
+        //             }
+        //         />
+        //         {(this.state.rowCount === 0) ? <center><h3>No tiene firmas que mostrar</h3></center> : null }
                 
-                { !(this.state.sign_ready) ? null : (
-                    <Fragment>
-                        <PerfectScrollbar>
-                            <ul className={`${mainCss["mdc-list"]} ${styles.list}`}>
-                                <AutoSizer defaultHeight={100}>
-                                    {({ height, width }) => (
-                                        <List
-                                            className={styles.virtualList}
-                                            height={height}
-                                            width={width}
-                                            rowRenderer={this.renderItem.bind(this)}
-                                            //rowCount={this.props.messages.length}
-                                            //rowCount={(this.props.signatureFilter === "Mostrar todas") ? this.props.signatures.length : ((this.props.signatureFilter === "Completadas") ? this.getRowsCompleted() : ((this.props.signatureFilter==='En Progreso') ? this.getRowsInProgress() : this.props.signatures.length)) }
-                                            //rowCount = { this.state.rowCount}
-                                            //rowCount = {this.props.signatures.length}
-                                            rowCount = {this.getCount()}
-                                            rowHeight={52}
-                                        />
-                                    )}
-                                </AutoSizer>
-                            </ul>
-                        </PerfectScrollbar>
-                    </Fragment>
-                )}
-                {this.props.activeRequests > 0 && this.props.messages.length > 0 
-                    ? (
-                        <Spinner
-                            className={styles.listSpinner}
-                            canvasClassName={styles.listSpinnerCanvas}
-                        />
-                        ) 
-                    : null
-                }
+        //         { !(this.state.sign_ready) ? null : (
+        //             <Fragment>
+        //                 <PerfectScrollbar>
+        //                     <ul className={`${mainCss["mdc-list"]} ${styles.list}`}>
+        //                         <AutoSizer defaultHeight={100}>
+        //                             {({ height, width }) => (
+        //                                 <List
+        //                                     className={styles.virtualList}
+        //                                     height={height}
+        //                                     width={width}
+        //                                     rowRenderer={this.renderItem.bind(this)}
+        //                                     //rowCount={this.props.messages.length}
+        //                                     //rowCount={(this.props.signatureFilter === "Mostrar todas") ? this.props.signatures.length : ((this.props.signatureFilter === "Completadas") ? this.getRowsCompleted() : ((this.props.signatureFilter==='En Progreso') ? this.getRowsInProgress() : this.props.signatures.length)) }
+        //                                     //rowCount = { this.state.rowCount}
+        //                                     //rowCount = {this.props.signatures.length}
+        //                                     rowCount = {this.getCount()}
+        //                                     rowHeight={52}
+        //                                 />
+        //                             )}
+        //                         </AutoSizer>
+        //                     </ul>
+        //                 </PerfectScrollbar>
+        //             </Fragment>
+        //         )}
+        //         {this.props.activeRequests > 0 && this.props.messages.length > 0 
+        //             ? (
+        //                 <Spinner
+        //                     className={styles.listSpinner}
+        //                     canvasClassName={styles.listSpinnerCanvas}
+        //                 />
+        //                 ) 
+        //             : null
+        //         }
+        //     </div>
+        // );
+
+        return( 
+            <div>
+                <GridComponent dataSource={firmas} />
             </div>
-        );
+        )
     }
 
     componentDidMount() {

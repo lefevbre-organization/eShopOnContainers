@@ -25,6 +25,7 @@
     "@material-ui/core": "^3.0.2",
     "@material-ui/icons": "^3.0.2",
     "@syncfusion/ej2-react-buttons": "^18.1.56",
+    "@syncfusion/ej2-react-grids": "^18.1.59",
     "@syncfusion/ej2-react-richtexteditor": "^17.4.55",
     "abortcontroller-polyfill": "^1.1.9",
     "babel-polyfill": "^6.26.0",
