@@ -41,8 +41,7 @@ function getService() {
     .setLock(LockService.getUserLock())
     .setExpirationMinutes(3600)
     .setParam('access_type', 'offline')
-    .setParam('prompt', 'consent')
-    .setParam('state', getStateToken('authCallback')); 
+    .setParam('prompt', 'consent'); 
 }
 
 
@@ -78,6 +77,38 @@ function create3PAuthorizationUi() {
     return [card]
 }
 
+function create3PAuthorizationComposeUi() {
+  var service = getService()
+  var authUrl = service.getAuthorizationUrl()
+
+  var logo = CardService.newImage()
+  .setAltText("Logo")
+  .setImageUrl("https://www.dropbox.com/s/oagsphvpiwfigbz/Screenshot%202020-06-25%2008.17.00%20copy.png?raw=1");
+
+  var icon = CardService.newImage()
+  .setAltText("Icon")
+  .setImageUrl("https://www.dropbox.com/s/voj0pwqn1ghqny5/Screenshot%202020-06-25%2008.17.00%20copy%202.png?raw=1");
+
+  var loginButton = CardService.newImage()
+  .setAltText("Login")
+   .setImageUrl("https://www.dropbox.com/s/q9knvwsd9yjggd3/Screenshot%202020-06-25%2009.35.23.png?raw=1")
+   .setAuthorizationAction(CardService.newAuthorizationAction()
+          .setAuthorizationUrl(authUrl));
+          
+//  var reserved = CardService.newImage()
+//   .setAltText("©2020 Lefebvre. Todos los derechos reservados.")
+//   .setImageUrl("https://www.dropbox.com/s/sksg0u2iezrywje/Screenshot%202020-04-20%2011.01.43.png?raw=1");
+
+  var card = CardService.newCardBuilder()
+      .addSection(CardService.newCardSection()
+          .addWidget(logo)
+          .addWidget(icon)
+          .addWidget(loginButton)
+          // .addWidget(reserved)
+          ).build()
+  return [card]
+}
+
 function authCallback(callbackRequest) {
    var service = getService();
   var authorized = service.handleCallback(callbackRequest);
@@ -90,46 +121,62 @@ function authCallback(callbackRequest) {
   }
 }
 
-
-function getStateToken(callbackFunction){
- var stateToken = ScriptApp.newStateToken()
-    .withMethod(callbackFunction)
-    .withTimeout(3600)
-    .createToken();
-  return stateToken;
-}
-
-function checkAuth() {
+function checkAuth(data) {
   var service = getService()
   if (service.hasAccess()) return
-
-  CardService.newAuthorizationException()
+   if(data != null){
+     CardService.newAuthorizationException()
+    .setAuthorizationUrl(service.getAuthorizationUrl())
+    .setResourceDisplayName("Display name to show to the user")
+    .setCustomUiCallback('create3PAuthorizationComposeUi')
+    .throwException()
+   } else {
+    CardService.newAuthorizationException()
     .setAuthorizationUrl(service.getAuthorizationUrl())
     .setResourceDisplayName("Display name to show to the user")
     .setCustomUiCallback('create3PAuthorizationUi')
     .throwException()
+   }
 }
+
 
 function buildAddOn(e) {
   var accessToken = e.messageMetadata.accessToken;
   GmailApp.setCurrentMessageAccessToken(accessToken);
-  checkAuth();
+  checkAuth(null);
   var addonData = JSON.parse(cache.get('getAddonData'));
   if(addonData) {
     return buildMessageClassificationCard(e);
   }
- return buildHomeCard();
+ return buildHomeCard(null);
 
 }
 
-function logout() {
+function onGmailCompose(e) {
+  checkAuth('gmailCompose');
+  return buildHomeCard('gmailCompose');
+}
+
+function logout(e) { 
   cache.remove('getAddonData');
   cache.remove('dataUser');
   cache.remove('companyData');
   cache.remove('selectCompany');
-  
+
   var service = getService();
-  var login = create3PAuthorizationUi();
+  var login = create3PAuthorizationUi() 
+  service.reset();
+  return login
+}
+
+function logoutCompose(e) { 
+  cache.remove('getAddonData');
+  cache.remove('dataUser');
+  cache.remove('companyData');
+  cache.remove('selectCompany');
+
+  var service = getService();
+  var login = create3PAuthorizationComposeUi() 
   service.reset();
   return login
 }
