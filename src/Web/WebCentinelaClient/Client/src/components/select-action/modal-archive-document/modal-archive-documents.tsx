@@ -124,7 +124,8 @@ class ModalArchiveDocuments extends Component<Props, State> {
         for (let j = 0; j < mime.childNodes.length; j++) {
           if (
             mime.childNodes[j].raw.indexOf('Content-Disposition: attachment;') >
-            -1
+              -1 ||
+            mime.childNodes[j].raw.indexOf('Content-Disposition: inline;') > -1
           ) {
             const rawAttach = base64js.fromByteArray(
               mime.childNodes[j].content

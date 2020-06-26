@@ -176,7 +176,8 @@ export class Step1 extends React.Component<Props, State> {
               margin-right: auto;
               margin-top: 20px;
               width: 400px;
-              height: 300px;
+              height: 220px;
+              overflow-y: auto;
             }
 
             ol {
