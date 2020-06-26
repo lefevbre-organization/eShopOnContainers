@@ -52,6 +52,7 @@ interface State {
   entity: number;
   messages: any;
   files: any;
+  attachments: any;
   copyEmail: boolean;
   copyAttachments: boolean;
   instance?: CentInstance;
@@ -71,6 +72,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
       entity: 0,
       messages: [],
       files: [],
+      attachments: [],
       copyEmail: true,
       copyAttachments: true,
       instance: undefined
@@ -98,19 +100,55 @@ class ModalArchiveDocuments extends Component<Props, State> {
   initMessages() {
     const { selected } = this.props;
     const messages = [];
+    let attachments: any = [];
 
     // Parsing messages
     for (let i = 0; i < selected.length; i++) {
-      const attchs = this.parseMessage(selected[i]);
+      const attchs: any = this.parseMessage(selected[i]);
+      attachments = [...attachments, ...attchs];
       const nm = Object.assign({}, selected[i], { attachments: attchs });
       messages.push(nm);
     }
 
-    this.setState({ messages });
+    this.setState({ messages, attachments });
+  }
+
+  isAttachment(node: any): boolean {
+    let bRes = false;
+    if (node['x-attachment-id']) {
+      bRes = true;
+    } else if (
+      node['content-disposition'] &&
+      node['content-disposition'][0].params.filename
+    ) {
+      bRes = true;
+    }
+
+    return bRes;
+  }
+
+  findAttachments(email: any): any {
+    let attachs: any = [];
+    if (email.childNodes) {
+      for (let i = 0; i < email.childNodes.length; i++) {
+        if (
+          email.childNodes[i]._isMultipart === false &&
+          this.isAttachment(email.childNodes[i].headers)
+        ) {
+          attachs.push({
+            ...email.childNodes[i],
+            checked: true
+          });
+        } else {
+          attachs = [...attachs, ...this.findAttachments(email.childNodes[i])];
+        }
+      }
+    }
+    return attachs;
   }
 
   parseMessage(message: any) {
-    const attachments = [];
+    let attachments = [];
     if (message.raw) {
       let mime = null;
       try {
@@ -121,19 +159,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
       }
 
       if (mime) {
-        for (let j = 0; j < mime.childNodes.length; j++) {
-          if (
-            mime.childNodes[j].raw.indexOf('Content-Disposition: attachment;') >
-              -1 ||
-            mime.childNodes[j].raw.indexOf('Content-Disposition: inline;') > -1
-          ) {
-            const rawAttach = base64js.fromByteArray(
-              mime.childNodes[j].content
-            );
-            const name = mime.childNodes[j].contentType.params.name;
-            attachments.push({ name, checked: true });
-          }
-        }
+        attachments = this.findAttachments(mime);
       }
     }
 
@@ -183,7 +209,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
   async saveDocuments() {
     const { toggleNotification } = this.props;
     const { messages, instance } = this.state;
-    let result = false;
+    let result = true;
 
     for (let m = 0; m < messages.length; m++) {
       if (messages[m] && messages[m].raw) {
@@ -201,41 +227,28 @@ class ModalArchiveDocuments extends Component<Props, State> {
             }
           );
 
-          if (r1 === 200 || r1 === 201) {
-            result = true;
+          if (r1 !== 200 && r1 !== 201) {
+            result = false;
           }
         }
 
         if (this.state.copyAttachments) {
-          // Upload attachments
-          for (let j = 0; j < mime.childNodes.length; j++) {
-            if (
-              mime.childNodes[j].raw.indexOf(
-                'Content-Disposition: attachment;'
-              ) > -1
-            ) {
-              for (let k = 0; k < messages[m].attachments.length; k++) {
-                if (
-                  messages[m].attachments[k].name ===
-                    mime.childNodes[j].contentType.params.name &&
-                  messages[m].attachments[k].checked === true
-                ) {
-                  let rawAttach = base64js.fromByteArray(
-                    mime.childNodes[j].content
-                  );
-                  const r2 = await uploadFile(
-                    this.props.user,
-                    instance?.conceptObjectId || 0,
-                    {
-                      name: mime.childNodes[j].contentType.params.name,
-                      content: rawAttach
-                    }
-                  );
+          for (let j = 0; j < this.state.attachments.length; j++) {
+            const node = this.state.attachments[j];
 
-                  if (r2 === 200 || r2 === 201) {
-                    result = true;
-                  }
+            if (node.checked === true) {
+              let rawAttach = base64js.fromByteArray(node.content);
+              const r2 = await uploadFile(
+                this.props.user,
+                instance?.conceptObjectId || 0,
+                {
+                  name: node.contentType.params.name,
+                  content: rawAttach
                 }
+              );
+
+              if (r2 !== 200 && r2 !== 201) {
+                result = false;
               }
             }
           }
@@ -621,6 +634,10 @@ class ModalArchiveDocuments extends Component<Props, State> {
           .e-radio-wrapper {
             display: inline-block;
             line-height: 2;
+          }
+
+          .container {
+            max-width: none !important;
           }
 
           .container p {

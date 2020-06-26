@@ -619,6 +619,10 @@ class ModalAttachDocuments extends Component<Props, State> {
             color: #001978;
           }
 
+          .container {
+            max-width: none !important;
+          }
+
           .btn-secundary {
             min-width: 165px;
             border-radius: 0;
