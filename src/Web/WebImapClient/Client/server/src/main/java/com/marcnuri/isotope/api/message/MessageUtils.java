@@ -105,18 +105,23 @@ public class MessageUtils {
      */
     public static String extractContent(@NonNull Multipart multipart) throws MessagingException, IOException {
         String ret = "";
+        String plain = "";
         for (int it = 0; it < multipart.getCount(); it++) {
             final BodyPart bp = multipart.getBodyPart(it);
             if ((ret == null || ret.isEmpty())
                     && bp.getContentType().toLowerCase().startsWith(MediaType.TEXT_PLAIN_VALUE)) {
-                ret = String.format("<pre>%s</pre>", HtmlUtils.htmlEscape(bp.getContent().toString()));
+                plain = String.format("<pre>%s</pre>", HtmlUtils.htmlEscape(bp.getContent().toString()));
+                
             }
             if (bp.getContentType().toLowerCase().startsWith(MediaType.TEXT_HTML_VALUE)) {
-                ret += (bp.getContent().toString());
+                    ret += (bp.getContent().toString());             
             }
             if (bp.getContentType().toLowerCase().startsWith(MULTIPART_MIME_TYPE)) {
                 ret = extractContent((Multipart) bp.getContent());
             }
+        }
+        if ((ret == null || ret.isEmpty())){
+            ret = plain;
         }
         return ret;
     }
