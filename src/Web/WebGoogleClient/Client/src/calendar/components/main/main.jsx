@@ -64,6 +64,10 @@ export class Main extends Component {
         this.deleteCalendar = this.deleteCalendar.bind(this);
         this.calendarColorModify = this.calendarColorModify.bind(this);
         this.onEventRendered = this.onEventRendered.bind(this);
+        //this.onBefoireClose = this.onBefoireClose.bind(this);
+
+        this.cancel = false;
+        
         this.dataManager = new DataManager();
         this.defaultCalendar = undefined;
         this.scheduleData = [];
@@ -586,15 +590,52 @@ export class Main extends Component {
         );
     }
 
-    selecting(args) {
-        console.log(args.selectingIndex);
-       // args.cancel = true
+    selecting(args) {  
 
+        var formElement = this.scheduleObj.eventWindow.element.querySelector('.e-schedule-form');
+        var validator = (formElement).ej2_instances[0];
+        validator.validate();
+
+        if (validator.errorRules.length == 0 ) {
+            //if (args.selectingIndex == 1 && args.previousIndex == 0) {
+
+            //   // this.scheduleObj.eventWindow.eventSave();
+            //    //this.scheduleObj.eventWindow.renderEventWindow();
+            //    //this.onEventRendered(this.scheduleObj.eventWindow.dialogObject);
+
+
+            //   // this.scheduleObj.saveEvent(this.scheduleObj.eventWindow.eventData);
+            //    this.scheduleObj.addEvent(this.scheduleObj.eventWindow.eventData);
+                
+
+            //    //let val = this.cancel;
+            //    //this.scheduleObj.eventWindow.dialogObject.beforeClose = function (args) {
+            //    //   args.cancel = val;
+            //    //   alert("Don't Close the Appointment Window");
+            //    //}
+               
+           this.cancel = false;
+
+          // args.cancel = true           
+
+            //}
+        }
+        else {
+            args.cancel = true 
+        }
+        
     }
 
     onPopupOpen(args) {
 
+       
+
         if (args.type === 'QuickInfo') {
+            var formElement = args.element.querySelector('.e-schedule-form');
+            if (formElement != null) {
+                var validator = (formElement).ej2_instances[0];
+                validator.addRules('Subject', { required: [true, i18n.t("schedule.validator-required")] });
+            }          
 
         }
         if (args.type === 'Editor') {
@@ -602,6 +643,12 @@ export class Main extends Component {
             var dialogObj = args.element.ej2_instances[0];
             dialogObj.buttons[1].buttonModel.isPrimary = false;
             args.element.style.width = "700px";
+
+            var formElement = args.element.querySelector('.e-schedule-form');
+            if (formElement != null) {
+                var validator = (formElement).ej2_instances[0];
+                validator.addRules('Subject', { required: [true, i18n.t("schedule.validator-required")] });
+            }  
 
             // default values for Atendees coming from event args
             if (args.data.Attendees != undefined) {
@@ -669,7 +716,7 @@ export class Main extends Component {
             let TabContainer = args.element.querySelector('.custom-tab-row');
             if (TabContainer == null) {
                 if (args.element.querySelector('.e-dlg-content')) {
-                    let formContainer = args.element.querySelector('.e-dialog-parent');
+                    let formContainer = args.element.querySelector('.e-schedule-form');
                     let Element = args.element.querySelector('.e-dlg-content');
                     let row = createElement('div', { className: 'custom-tab-row' });
                     Element.firstChild.insertBefore(row, Element.firstChild.firstChild);
@@ -679,7 +726,8 @@ export class Main extends Component {
                             { header: { text: 'LEX-ON', iconCss: 'e-twitter', iconPosition: 'right' }, content: this.tabContent },
                         ],
                         selectedItem: 0,
-                        selecting: this.selecting,
+                        selecting: this.selecting.bind(this)
+                   
                         //headerPlacement: 'Left',
                     });
                     //tabObj.select(1);
@@ -687,7 +735,7 @@ export class Main extends Component {
                     tabObj.animation.next = { duration: 100 };
                     tabObj.animation.previous = { effect: 'FadeIn' };
                     tabObj.animation.next = { effect: 'FadeIn' };
-                    tabObj.appendTo(row);
+                    tabObj.appendTo(row);                   
                 }
             }
             else {
@@ -695,10 +743,34 @@ export class Main extends Component {
             }
 
         }
+      
     }
 
+    onDataBound() {   
+        //this.scheduleObj.eventWindow.dialogObject.beforeClose = function (args) {
+        //    args.cancel = this.cancel;
+        //    this.cancel = false;
+        //}
+    }
+
+    onActionBegin(args) {
+        //if (args.requestType === 'eventCreate' || args.requestType === 'eventChange') {
+        //    var subject = (args.requestType === 'eventCreate') ? args.data[0].Subject : args.data.Subject;
+        //    //if (subject == 'New') {
+        //        args.cancel = true;
+        //        this.cancel = true;
+        //        let val = this.cancel;
+        //        this.scheduleObj.eventWindow.dialogObject.beforeClose = function (args) {
+        //            args.cancel = val;
+        //            alert("Don't Close the Appointment Window");
+        //        }
+        //        this.cancel = false;
+        //    //}
+        //}
+    } 
+
     onEventRendered(args) {
-        let event;
+        let event;       
 
         switch (args.requestType) {
 
@@ -780,7 +852,7 @@ export class Main extends Component {
                         console.log('error ->', error);
                     })
 
-
+               
                 break;
 
             case 'eventRemoved':
@@ -802,6 +874,11 @@ export class Main extends Component {
                 break;
         }
 
+        //this.scheduleObj.eventWindow.dialogObject.beforeClose = function (args) {
+        //    args.cancel = true;
+           
+        //} 
+      
     }
 
     addCalendarEventCRUD(CalendarId, event, hiddeMessage) {
@@ -1097,8 +1174,20 @@ export class Main extends Component {
                                                 height='650px'
                                                 views={this.viewsCollections}
                                                 actionComplete={this.onEventRendered.bind(this)}
+                                                //dataBound={this.onDataBound.bind(this)}
+                                                //actionBegin={this.onActionBegin.bind(this)}
+                                                //beforeClose={this.onBeforeClose.bind(this)}
                                                 popupOpen={this.onPopupOpen.bind(this)}
-                                                eventSettings={{ dataSource: this.scheduleData }}
+                                                eventSettings={
+                                                    {
+                                                        dataSource: this.scheduleData,
+                                                        fields: {
+                                                            subject: { name: 'Subject', validation: { required: true } }                                                           
+                                                        }
+                                                    }
+
+
+                                                }
                                                 dragStart={(this.onEventDragStart.bind(this))}
                                                 eventClick={(this.onEventClick.bind(this))}
                                                 dragStop={(this.onEventDragStop.bind(this))}>

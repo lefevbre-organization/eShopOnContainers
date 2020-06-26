@@ -13,7 +13,7 @@
     "@syncfusion/ej2-react-buttons": "^18.1.43",
     "@syncfusion/ej2-react-calendars": "^18.1.53",
     "@syncfusion/ej2-react-dropdowns": "^18.1.52",
-    "@syncfusion/ej2-react-inputs": "^18.1.45",
+    "@syncfusion/ej2-react-inputs": "18.1.59",
     "@syncfusion/ej2-react-lists": "^18.1.53",
     "@syncfusion/ej2-react-navigations": "^18.1.55",
     "@syncfusion/ej2-react-notifications": "^18.1.42",
