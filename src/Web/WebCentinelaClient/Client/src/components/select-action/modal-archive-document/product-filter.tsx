@@ -30,8 +30,8 @@ export const ProductFilter = ({ products, onFilter }: Props) => {
   return (
     <>
       <div className={`fpdropdown ${filter !== '' ? 'fpactive' : ''}`}>
-        <div className={`fpheader`}>
-          <div className="fpheader-left" onClick={toggleContent}>
+        <div className={`fpheader`} onClick={toggleContent}>
+          <div className="fpheader-left">
             <i className="lf-icon-filter-1"></i>
             <span style={{ marginLeft: 10, maxWidth: 280, overflow: 'hidden' }}>
               {filter === '' && i18n.t('modal-archive.filter-by-product')}
