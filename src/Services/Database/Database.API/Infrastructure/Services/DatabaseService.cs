@@ -91,8 +91,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 result.errors.Add(new ErrorInfo
                 {
                     code = "594",
-                    detail = $"General error when call Online Service",
-                    message = ex.Message
+                    detail = $"General error when call Online GetSesion",
+                    message = $"{ex.Message} -> {ex.InnerException?.Message}"
                 });
             }
 
@@ -132,8 +132,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 result.errors.Add(new ErrorInfo
                 {
                     code = "Error_EncodeUser",
-                    detail = $"General error when call online service",
-                    message = ex.Message
+                    detail = $"General error when call online encode user",
+                    message = $"{ex.Message} -> {ex.InnerException?.Message}"
                 });
             }
 
@@ -175,8 +175,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 result.errors.Add(new ErrorInfo
                 {
                     code = "594",
-                    detail = $"General error when call centinela service",
-                    message = ex.Message
+                    detail = $"General error when call centinela GetDocuments",
+                    message = $"{ex.Message} -> {ex.InnerException?.Message}"
                 });
             }
 
@@ -218,8 +218,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 result.errors.Add(new ErrorInfo
                 {
                     code = "Error_EncodeUser",
-                    detail = $"General error when call online service",
-                    message = ex.Message
+                    detail = $"General error when call online GetDocumentsCount",
+                    message = $"{ex.Message} -> {ex.InnerException?.Message}"
                 });
             }
 
@@ -260,8 +260,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 result.errors.Add(new ErrorInfo
                 {
                     code = "Error_EncodeUser",
-                    detail = $"General error when call online service",
-                    message = ex.Message
+                    detail = $"General error when call online getDocumentsByNref",
+                    message = $"{ex.Message} -> {ex.InnerException?.Message}"
                 });
             }
 
@@ -302,7 +302,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                 {
                     code = "594",
                     detail = $"General error when call DocumentsDb service",
-                    message = ex.Message
+                    message = $"{ex.Message} -> {ex.InnerException?.Message}"
                 });
             }
 
