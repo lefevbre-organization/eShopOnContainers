@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Button } from 'office-ui-fabric-react';
 import CryptoJS from 'crypto-js';
 import { 
   base64Decode, 
@@ -26,7 +25,8 @@ class MessageClassifications extends Component {
          addonDataToken: null,
          classifications: null,
          messageRaw: null,
-         user: null
+         user: null,
+         isOfficeInitialized: false
         };
       }
 
@@ -34,21 +34,37 @@ class MessageClassifications extends Component {
       if (OfficeHelpers.Authenticator.isAuthDialog()) {
         return;
       }
+  
       this._isMounted = true;
       this.getClassifications();
       this.getMessageRaw();
+
     }
 
+    componentDidUpdate(prevProps, prevState) {
+      if(prevProps.isOfficeInitialized !== this.props.isOfficeInitialized) {
+        const conversationId = Office.context.mailbox.initialData.conversationId;
+        if(conversationId == null) {
+          return this.changeCompany();
+        }
+        this.getClassifications();
+        Office.context.mailbox.item.getAllInternetHeadersAsync(
+          (asyncResult) => {
+            this.setState({messageRaw: asyncResult.value });
+          }
+        );
+      }
+    }
+    
     componentWillUnmount() {
       this._isMounted = false;
     }
 
-    getClassifications() {
+    getClassifications = async () => {
       const { selectCompany, isOfficeInitialized } = this.props;
       const user = base64Decode();
       this.setState({ user: user })
-      const messageId = Office.context.mailbox.item.internetMessageId;
-
+      let messageId = Office.context.mailbox.item.internetMessageId;
       getClassifications(
         user.idUserApp, 
         selectCompany.bbdd, 
@@ -65,11 +81,15 @@ class MessageClassifications extends Component {
     }
 
     getMessageRaw = () => {
-      Office.context.mailbox.item.getAllInternetHeadersAsync(
-        (asyncResult) => {
-          this.setState({messageRaw: asyncResult.value });
-        }
-      );
+      const { isOfficeInitialized } = this.props;
+      if(isOfficeInitialized) {
+        Office.context.mailbox.item.getAllInternetHeadersAsync(
+          (asyncResult) => {
+            this.setState({messageRaw: asyncResult.value });
+          }
+        );
+      }
+     
     }
 
     getProviderClasification(jwt) {
@@ -79,7 +99,7 @@ class MessageClassifications extends Component {
         provider: 'lexon',
         clientId: 'a8c9f1a1-3472-4a83-8725-4dfa74bac24d',
         baseUrl: `${window.URL_ADDON_LEXON}`,
-        redirectUrl: `${window.URL_LEXON_BASE}/taskpane.html`,
+        redirectUrl: `${window.URL_ADDON_LEXON_BASE}/taskpane.html`,
         authorizeUrl: '/lexon',
         scope: 'openid profile onelist offline_access',
         responseType: 'code',
@@ -204,6 +224,14 @@ class MessageClassifications extends Component {
     render() {
      const { selectCompany } = this.props;
      const { classifications, user } = this.state;
+    
+    //  let conversationId = '';
+    //  if(isOfficeInitialized) {
+    //   conversationId = Office.context.mailbox.initialData.conversationId
+    //  }
+    //  if(conversationId == null) {
+    //    this.changeCompany();
+    //   } 
       return (
        <div className="">  
           <Header logout={this.logout} user={user} />

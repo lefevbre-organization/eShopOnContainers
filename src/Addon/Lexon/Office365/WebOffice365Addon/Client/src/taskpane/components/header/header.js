@@ -6,7 +6,6 @@ class Header extends React.Component {
   
   render() {
    const { user } = this.props;
-   console.log(user);
    const optionIcon = { iconName: 'MoreVertical' };
 
     const menuProps = {

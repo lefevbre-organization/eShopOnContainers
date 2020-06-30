@@ -5,7 +5,8 @@ import Header from '../header/header';
 import '../select-company/select-company.css';
 import { 
   PAGE_LOGIN, 
-  PAGE_MESSAGE_CLASSIFICATIONS
+  PAGE_MESSAGE_CLASSIFICATIONS,
+  PAGE_DOCUMENT_ATTACHED
  } from "../../constants";
 
 class SelectCompany extends Component {
@@ -72,11 +73,15 @@ class SelectCompany extends Component {
 
     click = async () => {
       const { selectCompany } = this.state
+      selectCompany.conversationId = Office.context.mailbox.initialData.conversationId;
       localStorage.setItem('selectCompany', JSON.stringify(selectCompany));
-      if(selectCompany != null) {
-        this.props.changePage(PAGE_MESSAGE_CLASSIFICATIONS, 
-          selectCompany);
-      }
+       if(Office.context.mailbox.initialData.conversationId) {
+          this.props.changePage(PAGE_MESSAGE_CLASSIFICATIONS, 
+            selectCompany);
+        } else {
+          this.props.changePage(PAGE_DOCUMENT_ATTACHED, 
+            selectCompany);
+        }
     };
 
     render() {
