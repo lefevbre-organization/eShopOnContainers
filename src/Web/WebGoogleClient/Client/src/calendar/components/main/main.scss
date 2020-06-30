@@ -142,9 +142,27 @@
     color: #FFF !important;
 }
 
-
 .e-icon-dlg-close {
     color: #FFF !important;
+}
+
+.e-schedule .e-vertical-view .e-left-indent-wrap table tbody td {
+    background-color: #7F8CBB !important;
+}
+
+.e-schedule .e-vertical-view .e-header-cells.e-current-day {
+    color: #FFF !important;
+    background-color: #001978 !important;
+}
+
+.e-day-date-header e-current-day {
+    color: #FFF !important;
+    background-color: #001978 !important;
+}
+
+.e-schedule .e-agenda-view .e-day-date-header.e-current-day {
+    background-color: #001978 !important;
+    color: #FFF!important;
 }
 
 /*.e-twitter:before {
