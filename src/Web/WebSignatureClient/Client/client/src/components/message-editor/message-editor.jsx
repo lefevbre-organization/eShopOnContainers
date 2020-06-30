@@ -80,6 +80,8 @@ class MessageEditor extends Component {
     this.getDocumentsIds = this.getDocumentsIds.bind(this);
     this.getDocumentsNames = this.getDocumentsNames.bind(this);
     this.buildDocumentsInfo = this.buildDocumentsInfo.bind(this);
+
+    this.onChangeReminder = this.onChangeReminder.bind(this);
   }
 
   componentDidMount() {
@@ -99,6 +101,14 @@ class MessageEditor extends Component {
     this.props.setGuid(null);
 
     close(aplication);
+  }
+
+
+  onChangeReminder(reminder) {
+    this.setState({
+      selectedReminderOption: `option${reminder.option}`,
+      remainderDays: reminder.data
+    })
   }
 
   render() {
@@ -179,7 +189,7 @@ class MessageEditor extends Component {
           <div className={styles['side-container']}>
             <AttachmentsWidget></AttachmentsWidget>
             <ExpirationWidget></ExpirationWidget>
-            <RemindersWidget></RemindersWidget>
+            <RemindersWidget onChange={this.onChangeReminder}></RemindersWidget>
           </div>
           <div className={styles['action-buttons']}>
             <button
@@ -242,9 +252,9 @@ class MessageEditor extends Component {
       const content = this.getEditor().getContent();
       const { to, cc, subject } = this.props;
       const { lefebvre } = this.props;
-      const userBranding = lefebvre.userBrandings.find(
-        (b) => b.app === lefebvre.userApp
-      );
+      // const userBranding = lefebvre.userBrandings.find(
+      //   (b) => b.app === lefebvre.userApp
+      // );
 
       let reminders = [];
       switch (this.state.selectedReminderOption) {
@@ -339,7 +349,7 @@ class MessageEditor extends Component {
           expiration,
           lefebvre.userId,
           guid,
-          userBranding.externalId
+          ''
         );
       }
       //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
