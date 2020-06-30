@@ -9,7 +9,7 @@ Param(
     [parameter(Mandatory=$false)][string]$configFile,
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
-    [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webaddonlexon", "weboffice365addonlexon", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api", "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw", "webstatus"),
+    [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webaddonlexon", "weboffice365addonlexon", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api", "webdatabaseapigw", "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw", "webstatus"),
     [parameter(Mandatory=$false)][bool]$pushImages=$false,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webaddonlexon", "weboffice365addonlexon", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api", "ocelotapigw", "webstatuslef"),
     [parameter(Mandatory=$false)][string]$imageTag="linux-dev",
