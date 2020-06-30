@@ -53,8 +53,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             _clientLogin.BaseAddress = new Uri(_settings.Value.LoginUrl);
             _clientLogin.DefaultRequestHeaders.Add("Accept", "text/plain");
 
-            _clientOnline = _clientFactory.CreateClient();
-            _clientOnline.BaseAddress = new Uri(_settings.Value.OnlineUrl);
+            //_clientOnline = _clientFactory.CreateClient();
+            //_clientOnline.BaseAddress = new Uri(_settings.Value.OnlineUrl);
+
+            var handler = new HttpClientHandler()
+            {
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+            _clientOnline = new HttpClient(handler)
+            {
+                BaseAddress = new Uri(_settings.Value.OnlineUrl)
+            };
+
 
             var authData = Convert.ToBase64String(
                         System.Text.Encoding.ASCII.GetBytes($"{_settings.Value.OnlineLogin}:{_settings.Value.OnlinePassword}"));

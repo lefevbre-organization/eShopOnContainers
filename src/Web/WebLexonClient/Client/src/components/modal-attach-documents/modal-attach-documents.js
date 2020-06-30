@@ -25,13 +25,13 @@ class ModalAttachDocuments extends Component {
       entity: 0,
       step2Data: {
         id: -1,
-        idType: -1
+        idType: -1,
       },
       step3Data: {
-        selected: -1
+        selected: -1,
       },
       messages: [],
-      files: []
+      files: [],
     };
 
     this.onSelectedFiles = this.onSelectedFiles.bind(this);
@@ -45,8 +45,7 @@ class ModalAttachDocuments extends Component {
     this.setState({ messages: this.props.selectedMessages });
   }
 
-  componentDidUpdate(prevProps) {
-  }
+  componentDidUpdate(prevProps) {}
 
   downloadComplete() {
     this.setState({ downloading: false, complete: true });
@@ -64,7 +63,7 @@ class ModalAttachDocuments extends Component {
         messages: [],
         files: [],
         downloading: false,
-        complete: false
+        complete: false,
       });
     }, 1000);
     this.props.toggleModalAttachDocuments &&
@@ -76,10 +75,9 @@ class ModalAttachDocuments extends Component {
     if (step === 1 || step === 11) {
       this.setState({ step: 2 });
     } else if (step === 3) {
-      this.setState({ step: 5 })
-    }
-    else {
-      this.setState({ step: step + 1 })
+      this.setState({ step: 5 });
+    } else {
+      this.setState({ step: step + 1 });
     }
   }
 
@@ -87,11 +85,11 @@ class ModalAttachDocuments extends Component {
     const { step, entity, search } = this.state;
     if (step === 2 || step === 11) {
       if (step === 2 && entity !== 1) {
-        this.setState({ step: 11, });
+        this.setState({ step: 11 });
       } else {
         this.setState({ step: 1 });
       }
-      this.setState({ step2Data: { ...this.state.step2Data, id: -1 } })
+      this.setState({ step2Data: { ...this.state.step2Data, id: -1 } });
     } else if (step === 3) {
       this.setState({ step: 2 });
     } else if (step === 4) {
@@ -102,7 +100,6 @@ class ModalAttachDocuments extends Component {
       } else {
         this.setState({ step: 4 });
       }
-
     }
   }
 
@@ -133,7 +130,7 @@ class ModalAttachDocuments extends Component {
 
   save3Disabled() {
     const { files } = this.state;
-    return files.length === 0
+    return files.length === 0;
   }
 
   onSelectedFiles(fileSelected) {
@@ -141,12 +138,15 @@ class ModalAttachDocuments extends Component {
     let nf = [];
 
     if (fileSelected.checked === true) {
-      nf = [...files.filter(f => (f.idRelated !== fileSelected.idRelated)), fileSelected]
+      nf = [
+        ...files.filter((f) => f.idRelated !== fileSelected.idRelated),
+        fileSelected,
+      ];
     } else {
-      nf = [...files.filter(f => (f.idRelated !== fileSelected.idRelated))]
+      nf = [...files.filter((f) => f.idRelated !== fileSelected.idRelated)];
     }
 
-    this.setState({ files: nf })
+    this.setState({ files: nf });
   }
 
   renderButtons() {
@@ -240,7 +240,7 @@ class ModalAttachDocuments extends Component {
       case 5:
         return (
           <Fragment>
-            {complete === true &&
+            {complete === true && (
               <Button
                 disabled={this.state.downloading === true}
                 bsPrefix='btn btn-primary'
@@ -249,8 +249,8 @@ class ModalAttachDocuments extends Component {
                 }}>
                 {i18n.t('classify-emails.close')}
               </Button>
-            }
-            {complete === false &&
+            )}
+            {complete === false && (
               <Fragment>
                 <Button
                   disabled={this.state.downloading === true}
@@ -274,12 +274,12 @@ class ModalAttachDocuments extends Component {
                   onClick={() => {
                     this.setState({ downloading: true }, () => {
                       this.step5Ref.current.StartDownload();
-                    })
+                    });
                   }}>
                   {i18n.t('classify-emails.attach')}
                 </Button>
               </Fragment>
-            }
+            )}
           </Fragment>
         );
       default:
@@ -292,7 +292,7 @@ class ModalAttachDocuments extends Component {
       user,
       companySelected,
       showAttachDocuments,
-      toggleNotification
+      toggleNotification,
     } = this.props;
 
     const { showSpinner, step, search } = this.state;
@@ -322,14 +322,14 @@ class ModalAttachDocuments extends Component {
             </h5>
           </Modal.Header>
           <Modal.Body className='mimodal'>
-            <Container>
-              {showSpinner === true &&
-                <Spinner />
-              }
-              {showSpinner === false &&
+            <div>
+              {showSpinner === true && <Spinner />}
+              {showSpinner === false && (
                 <Fragment>
-                  < div
-                    style={{ display: this.state.step === 1 ? 'block' : 'none' }}>
+                  <div
+                    style={{
+                      display: this.state.step === 1 ? 'block' : 'none',
+                    }}>
                     <AttachDocumentsStep1
                       ref={this.step1Ref}
                       show={this.state.step === 1}
@@ -344,15 +344,16 @@ class ModalAttachDocuments extends Component {
                       }}></AttachDocumentsStep1>
                   </div>
                   <div
-                    style={{ display: this.state.step === 11 ? 'block' : 'none' }}>
+                    style={{
+                      display: this.state.step === 11 ? 'block' : 'none',
+                    }}>
                     <AttachDocumentsStep1b
                       show={this.state.step === 1}
-                      onChange={this.changeStep1Data}
-                    ></AttachDocumentsStep1b>
+                      onChange={this.changeStep1Data}></AttachDocumentsStep1b>
                   </div>
                   <div
                     style={{
-                      display: this.state.step === 2 ? 'block' : 'none'
+                      display: this.state.step === 2 ? 'block' : 'none',
                     }}>
                     <AttachDocumentsStep2
                       show={this.state.step === 2}
@@ -360,13 +361,13 @@ class ModalAttachDocuments extends Component {
                       bbdd={companySelected}
                       entity={this.state.entity}
                       toggleNotification={toggleNotification}
-                      onSelectedEntity={data =>
+                      onSelectedEntity={(data) =>
                         this.changeStep2Data(data)
                       }></AttachDocumentsStep2>
                   </div>
                   <div
                     style={{
-                      display: this.state.step === 3 ? 'block' : 'none'
+                      display: this.state.step === 3 ? 'block' : 'none',
                     }}>
                     <AttachDocumentsStep3
                       show={this.state.step === 3}
@@ -375,11 +376,11 @@ class ModalAttachDocuments extends Component {
                       entity={this.state.step2Data}
                       toggleNotification={toggleNotification}
                       onChange={this.onSelectedFiles}
-                      onSelectedDirectory={data => { }}></AttachDocumentsStep3>
+                      onSelectedDirectory={(data) => {}}></AttachDocumentsStep3>
                   </div>
                   <div
                     style={{
-                      display: this.state.step === 4 ? 'block' : 'none'
+                      display: this.state.step === 4 ? 'block' : 'none',
                     }}>
                     <AttachDocumentsStep4
                       show={this.state.step === 4}
@@ -390,7 +391,7 @@ class ModalAttachDocuments extends Component {
                       onSearchChange={(search) => {
                         this.setState({ search }, () => {
                           this.step1Ref.current.setSearch(this.state.search);
-                        })
+                        });
                       }}
                       entity={this.state.entity}
                       toggleNotification={toggleNotification}
@@ -398,7 +399,7 @@ class ModalAttachDocuments extends Component {
                   </div>
                   <div
                     style={{
-                      display: this.state.step === 5 ? 'block' : 'none'
+                      display: this.state.step === 5 ? 'block' : 'none',
                     }}>
                     <AttachDocumentsStep5
                       user={user}
@@ -406,17 +407,18 @@ class ModalAttachDocuments extends Component {
                       ref={this.step5Ref}
                       show={this.state.step === 5}
                       files={this.state.files}
-                      downloadComplete={this.downloadComplete}
-                    ></AttachDocumentsStep5>
+                      downloadComplete={
+                        this.downloadComplete
+                      }></AttachDocumentsStep5>
                   </div>
                 </Fragment>
-              }
-            </Container>
+              )}
+            </div>
           </Modal.Body>
           <Modal.Footer>{this.renderButtons()}</Modal.Footer>
         </Modal>
 
-        <style jsx>{`
+        <style jsx global>{`
           .e-checkbox-wrapper .e-frame.e-check,
           .e-checkbox-wrapper .e-checkbox:focus + .e-frame.e-check,
           .e-checkbox-wrapper:hover .e-frame.e-check {
@@ -929,24 +931,24 @@ class ModalAttachDocuments extends Component {
             }
           }
         `}</style>
-      </div >
+      </div>
     );
   }
 }
 
 ModalAttachDocuments.propTypes = {};
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     showAttachDocuments: state.documentsReducer.showAttachDocuments,
     companySelected: state.selections.companySelected,
-    selectedMessages: state.email.selectedMessages
+    selectedMessages: state.email.selectedMessages,
   };
 };
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   toggleModalAttachDocuments: () =>
-    dispatch(ACTIONS.toggleModalAttachDocuments())
+    dispatch(ACTIONS.toggleModalAttachDocuments()),
 });
 
 export default connect(

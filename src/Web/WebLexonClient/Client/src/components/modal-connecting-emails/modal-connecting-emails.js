@@ -23,16 +23,16 @@ class ModalConnectingEmails extends Component {
         actuation: false,
         copyDocuments: false,
         saveDocuments: false,
-        entity: 0
+        entity: 0,
       },
       step2Data: {
         id: -1,
-        idType: -1
+        idType: -1,
       },
       step3Data: {
-        selected: -1
+        selected: -1,
       },
-      messages: []
+      messages: [],
     };
 
     this.changeSubject = this.changeSubject.bind(this);
@@ -59,15 +59,15 @@ class ModalConnectingEmails extends Component {
           entity: 1,
           actuation: false,
           copyDocuments: false,
-          saveDocuments: false
+          saveDocuments: false,
         },
         step2Data: {
           id: -1,
-          idType: -1
+          idType: -1,
         },
         step3Data: {
-          selected: -1
-        }
+          selected: -1,
+        },
       });
     }, 1000);
     this.props.toggleModalDocuments && this.props.toggleModalDocuments();
@@ -124,7 +124,7 @@ class ModalConnectingEmails extends Component {
     if (this.state.step1Data.entity !== data.entity) {
       step2Data = {
         id: -1,
-        idType: -1
+        idType: -1,
       };
     }
 
@@ -289,7 +289,7 @@ class ModalConnectingEmails extends Component {
       user,
       companySelected,
       selectedMessages,
-      toggleNotification
+      toggleNotification,
     } = this.props;
 
     try {
@@ -446,7 +446,7 @@ class ModalConnectingEmails extends Component {
       user,
       companySelected,
       showModalDocuments,
-      toggleNotification
+      toggleNotification,
     } = this.props;
     const { messages, step1Data, step } = this.state;
 
@@ -479,7 +479,7 @@ class ModalConnectingEmails extends Component {
                 style={{ display: this.state.step === 1 ? 'block' : 'none' }}>
                 <ConnectingEmailsStep1
                   show={this.state.step === 1}
-                  onChange={data => {
+                  onChange={(data) => {
                     this.changeStep1Data(data);
                   }}></ConnectingEmailsStep1>
               </div>
@@ -491,7 +491,7 @@ class ModalConnectingEmails extends Component {
                   bbdd={companySelected}
                   entity={this.state.step1Data.entity}
                   toggleNotification={toggleNotification}
-                  onSelectedEntity={data =>
+                  onSelectedEntity={(data) =>
                     this.changeStep2Data(data)
                   }></ConnectingEmailsStep2>
               </div>
@@ -503,7 +503,7 @@ class ModalConnectingEmails extends Component {
                   bbdd={companySelected}
                   entity={this.state.step2Data}
                   toggleNotification={toggleNotification}
-                  onSelectedDirectory={data =>
+                  onSelectedDirectory={(data) =>
                     this.changeStep3Data(data)
                   }></ConnectingEmailsStep3>
               </div>
@@ -1040,16 +1040,16 @@ class ModalConnectingEmails extends Component {
 
 ModalConnectingEmails.propTypes = {};
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     showModalDocuments: state.documentsReducer.showModalDocuments,
     companySelected: state.selections.companySelected,
-    selectedMessages: state.email.selectedMessages
+    selectedMessages: state.email.selectedMessages,
   };
 };
 
-const mapDispatchToProps = dispatch => ({
-  toggleModalDocuments: () => dispatch(ACTIONS.toggleModalDocuments())
+const mapDispatchToProps = (dispatch) => ({
+  toggleModalDocuments: () => dispatch(ACTIONS.toggleModalDocuments()),
 });
 
 export default connect(
