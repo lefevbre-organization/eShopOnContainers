@@ -18,3 +18,4 @@ data:
   internalurls__centinela__hc: http://{{ .Values.app.svc.centinelaapi }}/hc
   internalurls__userutils__hc: http://{{ .Values.app.svc.userutilsapi }}/hc
   internalurls__signature__hc: http://{{ .Values.app.svc.signatureapi }}/hc
+  internalurls__database__hc: http://{{ .Values.app.svc.databaseapi }}/hc

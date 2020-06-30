@@ -82,7 +82,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             }
             catch (Exception ex)
             {
-                TraceOutputMessage(result.errors, $"Error al obtener el archivo {idFile}, -> {ex.Message}", "CentinelaGetDocumentError");
+                TraceOutputMessage(result.errors, $"Error al obtener el archivo {idFile}, -> {ex.Message}: {ex.InnerException}", "CentinelaGetDocumentError");
             }
 
             WriteError($"Salimos de FileGetAsync a las {DateTime.Now}");
@@ -119,7 +119,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             catch (Exception ex)
             {
                 //TraceMessage(result.errors, ex);
-                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message}", "598");
+                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message} : {ex.InnerException}", "598");
             }
             WriteError($"Salimos de FilePostAsync a las {DateTime.Now}");
 

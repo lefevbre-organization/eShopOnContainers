@@ -900,6 +900,11 @@ spec:
            configMapKeyRef:
              name: internalurls
              key: lexonmysql__hc
+        - name: DatabaseApi
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: database__hc
         - name: ApplicationInsights__InstrumentationKey
           valueFrom:
            configMapKeyRef:
@@ -912,3 +917,80 @@ spec:
       imagePullSecrets:
       - name: registry-key
 ---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: database
+spec:
+  paused: true
+  template:
+    metadata:
+      labels:
+        app: elefebvre
+        component: database
+    spec:
+      containers:
+      - name: userutils
+        image: elefebvreoncotainers/database.api
+        imagePullPolicy: Always
+        env:
+        - name: PATH_BASE
+          value: /database-api
+        - name: ConnectionString
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: database__ConnectionString
+        - name: OnlineUrl
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: database__OnlineUrl
+        - name: OnlineLogin
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: database__OnlineLogin
+        - name: OnlinePassword
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: database__OnlinePassword
+        - name: EventBusConnection
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EventBusConnection
+        - name: EventBusUserName
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EventBusUserName
+        - name: EventBusPassword
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EventBusPassword
+        - name: AzureServiceBusEnabled
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__UseAzureServiceBus
+        - name: ApplicationInsights__InstrumentationKey
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__InstrumentationKey
+        - name: UseLoadTest
+          valueFrom:
+           configMapKeyRef:
+             name: externalcfg
+             key: all__EnableLoadTest
+        - name: OrchestratorType
+          value: 'K8S'           
+        ports:
+        - containerPort: 80
+        
+      imagePullSecrets:
+      - name: registry-key
+
