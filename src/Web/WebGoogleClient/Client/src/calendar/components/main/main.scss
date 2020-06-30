@@ -128,6 +128,25 @@
     top: 1px;
 }
 
+//calendar customization
+.e-dlg-header-content {
+    background-color: #001978 !important;
+    color:white !important
+}
+
+.e-dialog .e-dlg-header-content + .e-dlg-content {
+    padding-top: 10px !important;
+}
+
+.e-dlg-header, .e-dlg-header * {
+    color: #FFF !important;
+}
+
+
+.e-icon-dlg-close {
+    color: #FFF !important;
+}
+
 /*.e-twitter:before {
     content: '\a705';
 }

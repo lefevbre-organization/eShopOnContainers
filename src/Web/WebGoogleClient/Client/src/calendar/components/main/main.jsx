@@ -138,6 +138,8 @@ export class Main extends Component {
         // Syncfusion omponent translation
         this.setGlobalization();
 
+        this.tabObj=undefined;
+
         //params for iframe enbebed functions
         if (this.props.location.search == "?layout=iframe") {
             this.layoutIframe = true;
@@ -590,45 +592,32 @@ export class Main extends Component {
         );
     }
 
-    selecting(args) {  
-
+    selecting(args) { 
         var formElement = this.scheduleObj.eventWindow.element.querySelector('.e-schedule-form');
         var validator = (formElement).ej2_instances[0];
         validator.validate();
 
-        if (validator.errorRules.length == 0 ) {
-            //if (args.selectingIndex == 1 && args.previousIndex == 0) {
-
-            //   // this.scheduleObj.eventWindow.eventSave();
-            //    //this.scheduleObj.eventWindow.renderEventWindow();
-            //    //this.onEventRendered(this.scheduleObj.eventWindow.dialogObject);
-
-
-            //   // this.scheduleObj.saveEvent(this.scheduleObj.eventWindow.eventData);
-            //    this.scheduleObj.addEvent(this.scheduleObj.eventWindow.eventData);
-                
-
-            //    //let val = this.cancel;
-            //    //this.scheduleObj.eventWindow.dialogObject.beforeClose = function (args) {
-            //    //   args.cancel = val;
-            //    //   alert("Don't Close the Appointment Window");
-            //    //}
-               
-           this.cancel = false;
-
-          // args.cancel = true           
-
-            //}
+        if (validator.errorRules.length == 0) {
+            this.cancel = false;
+            if (this.tabObj.selectingID == 1) {
+               // this.tabObj.refresh()               
+                let id = this.scheduleObj.eventWindow.eventData.Id;
+                if (id == undefined) {
+                    this.scheduleObj.addEvent(this.scheduleObj.eventWindow.getEventDataFromEditor().eventData);
+                }
+                else {
+                    this.scheduleObj.saveEvent(this.scheduleObj.eventWindow.eventData);
+                }               
+            }
         }
         else {
             args.cancel = true 
-        }
-        
+        }        
     }
 
     onPopupOpen(args) {
 
-       
+             
 
         if (args.type === 'QuickInfo') {
             var formElement = args.element.querySelector('.e-schedule-form');
@@ -638,7 +627,7 @@ export class Main extends Component {
             }          
 
         }
-        if (args.type === 'Editor') {
+        if (args.type === 'Editor') {           
 
             var dialogObj = args.element.ej2_instances[0];
             dialogObj.buttons[1].buttonModel.isPrimary = false;
@@ -720,7 +709,7 @@ export class Main extends Component {
                     let Element = args.element.querySelector('.e-dlg-content');
                     let row = createElement('div', { className: 'custom-tab-row' });
                     Element.firstChild.insertBefore(row, Element.firstChild.firstChild);
-                    let tabObj = new TabComponent({
+                    this.tabObj = new TabComponent({
                         items: [
                             { header: { text: 'EVENT', iconCss: 'e-twitter', iconPosition: 'right' }, content: formContainer },
                             { header: { text: 'LEX-ON', iconCss: 'e-twitter', iconPosition: 'right' }, content: this.tabContent },
@@ -731,15 +720,18 @@ export class Main extends Component {
                         //headerPlacement: 'Left',
                     });
                     //tabObj.select(1);
-                    tabObj.animation.previous = { duration: 100 };
-                    tabObj.animation.next = { duration: 100 };
-                    tabObj.animation.previous = { effect: 'FadeIn' };
-                    tabObj.animation.next = { effect: 'FadeIn' };
-                    tabObj.appendTo(row);                   
+                    this.tabObj.animation.previous = { duration: 100 };
+                    this.tabObj.animation.next = { duration: 100 };
+                    this.tabObj.animation.previous = { effect: 'FadeIn' };
+                    this.tabObj.animation.next = { effect: 'FadeIn' };
+                    this.tabObj.appendTo(row);                   
                 }
             }
             else {
                 console.log(this.tabInstance);
+                this.tabObj.selectedItem = 0;
+                this.tabObj.refresh();
+        //} 
             }
 
         }
