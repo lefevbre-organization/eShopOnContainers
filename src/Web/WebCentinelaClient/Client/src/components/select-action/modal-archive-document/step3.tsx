@@ -101,6 +101,8 @@ export class Step3 extends React.Component<Props, State> {
 
   public back() {
     const { route } = this.state;
+    this.setState({ rowSelected: -1 });
+
     if (route.length === 0) {
       return true;
     }

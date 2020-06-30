@@ -27,8 +27,10 @@ app:                                                  # app global settings
       centinelaapi: centinela-api                     # ingress entry for centinela api
       userutilsapi: userutils-api                     # ingress entry for userutils api
       signatureapigw: signatureapigw                  # ingress entry for signature api gw
-      signatureapi: signature-api                     # ingress entry for signature api      
-      addonlexon: webaddonlexon
+      databaseapigw: databaseapigw                    # ingress entry for database api gw
+      signatureapi: signature-api                     # ingress entry for signature api
+      databaseapi: database-api                       # ingress entry for database api     
+      addonlexon: webaddonlexon                       # ingress entry for addon lexon client
       office365addonlexon: weboffice365addonlexon
       
   svc:
@@ -53,6 +55,8 @@ app:                                                  # app global settings
       centinelaapi: centinela-api                     # ingress entry for centinela api
       userutilsapi: userutils-api                     # ingress entry for userutils api
       signatureapigw: signatureapigw                  # svc entry for signature api gw
+      databaseapigw: databaseapigw                    # svc entry for database api gw
       signatureapi: signature-api                     # svc entry for signature api
-      addonlexon: webaddonlexon
+      databaseapi: database-api                       # svc entry for database api
+      addonlexon: webaddonlexon                       # svc entry for addon lexon client
       office365addonlexon: weboffice365addonlexon

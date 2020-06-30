@@ -58,7 +58,11 @@ spec:
       - path: /websignatureapigw 
         backend:
           serviceName: ocelotapigw-sig
-          servicePort: 80          
+          servicePort: 80    
+      - path: /webdatabaseapigw 
+        backend:
+          serviceName: ocelotapigw-dat
+          servicePort: 80         
       - path: /lexon.api
         backend:
           serviceName: lexon.api
@@ -74,7 +78,11 @@ spec:
       - path: /signature.api
         backend:
           serviceName: signature.api
-          servicePort: 80                      
+          servicePort: 80  
+      - path: /database.api
+        backend:
+          serviceName: database.api
+          servicePort: 80                    
       - path: /centinela.api
         backend:
           serviceName: centinela.api

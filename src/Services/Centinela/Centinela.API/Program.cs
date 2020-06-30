@@ -1,5 +1,4 @@
-﻿using Centinela.API;
-using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Middlewares;
+﻿using Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Middlewares;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -128,6 +127,5 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API
               .UseConfiguration(configuration)
               .UseSerilog()
               .Build();
-
     }
 }

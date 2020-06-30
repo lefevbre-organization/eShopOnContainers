@@ -29,7 +29,12 @@
        },
        "onTriggerFunction": "buildAddOn"
      }],
-    
+     "composeTrigger": {
+      "selectActions": [{
+        "text": "LEX-ON",
+        "runFunction": "onGmailCompose"
+      }]
+     },
      "primaryColor": "#001978",
      "secondaryColor": "#001978"
    }

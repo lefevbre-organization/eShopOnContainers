@@ -19,14 +19,13 @@ function newConectionCallback(callbackRequest) {
   return HtmlService.createHtmlOutput('Success! <script>setTimeout(function() { top.window.close() }, 1)</script>');
 }
 
-
 function buildMessageClassificationCard(e) {
 
-  var logoutAction = getLogout();
+  var logoutAction = getLogout(null);
   
   var user = JSON.parse(cache.get('dataUser'));
   if (user == null) {
-    return logout();
+    return logout(e);
   }
   
   getAddonData(e);
@@ -47,15 +46,12 @@ function buildMessageClassificationCard(e) {
              '<br> <font color="#001978">' + addonData.name + '</font>')
   .setButton(CardService.newImageButton()
              .setAltText("Regresar a la lista de empresas")
-  .setIconUrl("https://www.dropbox.com/s/zmpwmcd333nfid0/Screenshot%202020-05-09%2011.47.42.png?raw=1")
+  .setIconUrl("https://www.dropbox.com/s/pzz6tu6pmitg0xg/Screenshot%202020-06-26%2009.03.03.png?raw=1")
   .setOnClickAction(cardChangeAction));
 
   var classifyMessages = CardService.newImage()
   .setAltText("Clasificar mensajes")
   .setImageUrl("https://www.dropbox.com/s/tt80ho1st9ei233/Screen%20Shot%202020-03-24%20at%202.18.20%20PM.png?raw=1");
-
-  var messageDescription =  CardService.newTextParagraph().
-  setText('Seleccione un mensaje y califíquelo en Lex-on. La relación establecida será visible en este panel.')
 
   var button = CardService.newImage()
   .setAltText("Nueva clasificación")
@@ -65,11 +61,6 @@ function buildMessageClassificationCard(e) {
       .setOpenAs(CardService.OpenAs.FULL_SIZE)
       .setOnClose(CardService.OnClose.RELOAD_ADD_ON));
      
-  var messageId = e.messageMetadata.messageId;
-  var thread = GmailApp.getMessageById(messageId).getThread();
-  var messageNumber = thread.getMessageCount();
-
-
   var imgClassifications = CardService.newImage()
   .setAltText("Clasificaciones")
   .setImageUrl("https://www.dropbox.com/s/z1pntri2wwo57fu/Screen%20Shot%202020-03-26%20at%207.02.50%20PM.png?raw=1")
@@ -81,7 +72,7 @@ function buildMessageClassificationCard(e) {
   var selectionCompany = CardService.newCardSection()
   .addWidget(companyIdentifiedText)
   .addWidget(classifyMessages)
-  .addWidget(messageNumber > 0 ? button : messageDescription);
+  .addWidget(button);
 
  if(classificationsResponse.data == null) {
    selectionCompany.addWidget(imgClassifications);
@@ -121,8 +112,7 @@ function buildMessageClassificationCard(e) {
 
    }
   
- }
-//  var account = Session.getEffectiveUser().getEmail();
+}
   var card = CardService.newCardBuilder()
     .setHeader(CardService.newCardHeader()
     .setImageUrl("http://www.derechopractico.es/wp-content/uploads/2019/03/Logo-Lefebvre.jpg")
@@ -148,8 +138,8 @@ function onChangeCompany(e) {
   cache.remove('getAddonData');
   cache.remove('companyData');
   cache.remove('selectCompany');
-  var HomeCard = buildAddOn(e);
+  var homeCard = buildAddOn(e);
   return CardService.newActionResponseBuilder()
-  .setNavigation(CardService.newNavigation().updateCard(HomeCard))
+  .setNavigation(CardService.newNavigation().updateCard(homeCard))
   .build();
 }

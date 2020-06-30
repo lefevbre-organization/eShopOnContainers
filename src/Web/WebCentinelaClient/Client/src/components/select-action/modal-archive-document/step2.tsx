@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, createRef } from 'react';
 import {
   GridComponent,
   ColumnsDirective,
@@ -44,11 +44,11 @@ interface State {
   search: string;
   lastPage: boolean;
   showSpinner: boolean;
+  productFilter: string;
 }
 
 export class Step2 extends React.Component<Props, State> {
   private toolbarOptions: any;
-  private gridRef: any;
   private allImplantations: any;
   private searchImplantations: any;
 
@@ -61,12 +61,12 @@ export class Step2 extends React.Component<Props, State> {
       rowSelected: -1,
       currentPage: 1,
       search: '',
-      lastPage: false
+      lastPage: false,
+      productFilter: ''
     };
     this.toolbarOptions = ['Search'];
     this.renderCheck = this.renderCheck.bind(this);
     this.onRowSelected = this.onRowSelected.bind(this);
-    this.gridRef = null;
     this.searchResultsByType = this.searchResultsByType.bind(this);
     this.onProductFilter = this.onProductFilter.bind(this);
   }
@@ -85,6 +85,7 @@ export class Step2 extends React.Component<Props, State> {
       this.setState({
         currentPage: 1,
         lastPage: this.searchImplantations.length <= 6,
+        counter: this.searchImplantations.length,
         implantations: _.slice(this.searchImplantations, 0, 6),
         showSpinner: false
       });
@@ -94,73 +95,6 @@ export class Step2 extends React.Component<Props, State> {
   setLoadingStatus(show: boolean) {
     this.setState({ showSpinner: show });
   }
-
-  // async componentDidUpdate(prevProps: Props, prevState: State) {
-  //   debugger;
-  //   const { user, toggleNotification } = this.props;
-  //   const { currentPage, search } = this.state;
-
-  //   if (prevProps.show === false && this.props.show === true) {
-  //     const opened = document.getElementsByClassName(
-  //       'lexon-clasification-list-searcher search-close-2 opened'
-  //     );
-  //     if (opened && opened.length > 0) {
-  //       const closeButton: any = document.getElementsByClassName(
-  //         'search-trigger-hide search-close-2'
-  //       )[0];
-  //       if (closeButton) {
-  //         closeButton.click();
-  //       }
-  //     }
-
-  //     this.setState({ currentPage: -1, search: '', showSpinner: true }, () => {
-  //       this.setState({ currentPage: 1 });
-  //     });
-  //     return;
-  //   }
-
-  //   if (prevProps.implantation !== this.props.implantation) {
-  //     this.setState({ rowSelected: -1 });
-  //   }
-
-  //   if (
-  //     (prevProps.show === false && this.props.show === true) ||
-  //     prevProps.implantation !== this.props.implantation ||
-  //     prevState.search !== this.state.search ||
-  //     (prevState.currentPage !== this.state.currentPage &&
-  //       this.state.currentPage > -1)
-  //   ) {
-  //     try {
-  //       this.setState({ showSpinner: true });
-  //       const response = await getUser(user);
-
-  //       // if (response && response.results && response.results.data) {
-  //       //   let lastPage = response.results.count < 6;
-  //       //   this.setState(
-  //       //     {
-  //       //       implantations: [...response.results.data],
-  //       //       counter: response.results.count,
-  //       //       lastPage,
-  //       //       showSpinner: false
-  //       //     },
-  //       //     () => {}
-  //       //   );
-  //       // }
-  //     } catch (err) {
-  //       toggleNotification &&
-  //         toggleNotification(
-  //           'Errores: ' + err.errors.map((e: any) => e.message).join('; '),
-  //           true
-  //         );
-  //       this.setState({
-  //         implantations: [],
-  //         counter: 0,
-  //         lastPage: false,
-  //         showSpinner: false
-  //       });
-  //     }
-  //   }
-  // }
 
   renderCheck(item: any) {
     const check = item.evaluationId === this.state.rowSelected ? 'checked' : '';
@@ -221,53 +155,28 @@ export class Step2 extends React.Component<Props, State> {
   }
 
   onProductFilter(search: string) {
-    if (this.state.search !== search) {
+    if (this.state.productFilter !== search) {
       this.setState(
         {
-          search: search || '',
+          //search: search || '',
           currentPage: 1,
           counter: 0,
+          productFilter: search,
           showSpinner: true
         },
         () => {
-          var re = new RegExp(search, 'i');
-          this.searchImplantations = this.allImplantations.filter(
-            (item: Evaluation) => {
-              if (item.productName.search(re) != -1) {
-                return true;
-              }
-              return false;
-            }
-          );
-
-          this.setState({
-            showSpinner: false,
-            lastPage: this.searchImplantations.length <= 6,
-            currentPage: 1,
-            counter: this.searchImplantations.length,
-            implantations: this.searchImplantations
-          });
-        }
-      );
-    }
-  }
-
-  searchResultsByType(search: string) {
-    if (this.state.search !== search) {
-      this.setState(
-        {
-          search: search || '',
-          currentPage: 1,
-          counter: 0,
-          showSpinner: true
-        },
-        () => {
-          var re = new RegExp(search, 'i');
+          var re =
+            this.state.search !== ''
+              ? new RegExp(this.state.search, 'i')
+              : new RegExp('.*', 'i');
+          var re2 =
+            search !== '' ? new RegExp(search, 'i') : new RegExp('.*', 'i');
           this.searchImplantations = this.allImplantations.filter(
             (item: Evaluation) => {
               if (
-                item.name.search(re) != -1 ||
-                item.clientName.search(re) != -1
+                (item.name.search(re) !== -1 ||
+                  item.clientName.search(re) !== -1) &&
+                item.productName.search(re2) !== -1
               ) {
                 return true;
               }
@@ -279,12 +188,54 @@ export class Step2 extends React.Component<Props, State> {
             showSpinner: false,
             lastPage: this.searchImplantations.length <= 6,
             currentPage: 1,
+            productFilter: search,
             counter: this.searchImplantations.length,
             implantations: this.searchImplantations
           });
         }
       );
     }
+  }
+
+  searchResultsByType(search: string) {
+    const { productFilter } = this.state;
+
+    this.setState(
+      {
+        search: search || '',
+        currentPage: 1,
+        counter: 0,
+        showSpinner: true
+      },
+      () => {
+        var re =
+          search !== '' ? new RegExp(search, 'i') : new RegExp('.*', 'i');
+        var re2 =
+          productFilter !== ''
+            ? new RegExp(productFilter, 'i')
+            : new RegExp('.*', 'i');
+        this.searchImplantations = this.allImplantations.filter(
+          (item: Evaluation) => {
+            if (
+              (item.name.search(re) != -1 ||
+                item.clientName.search(re) != -1) &&
+              item.productName.search(re2) !== -1
+            ) {
+              return true;
+            }
+            return false;
+          }
+        );
+
+        this.setState({
+          showSpinner: false,
+          lastPage: this.searchImplantations.length <= 6,
+          currentPage: 1,
+          counter: this.searchImplantations.length,
+          implantations: this.searchImplantations
+        });
+      }
+    );
   }
 
   render() {
@@ -343,12 +294,12 @@ export class Step2 extends React.Component<Props, State> {
                   />
                   <ColumnDirective
                     field="name"
+                    width="300"
                     headerText="Implantación"
                   ></ColumnDirective>
                   <ColumnDirective
                     field="clientName"
                     headerText="Organización"
-                    width="150"
                   ></ColumnDirective>
                 </ColumnsDirective>
               </GridComponent>

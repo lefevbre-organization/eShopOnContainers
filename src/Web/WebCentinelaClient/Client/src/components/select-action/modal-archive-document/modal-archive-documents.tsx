@@ -198,10 +198,12 @@ class ModalArchiveDocuments extends Component<Props, State> {
   prevStep() {
     const { step } = this.state;
     if (step === 2) {
-      this.setState({ step: 1 });
+      this.setState({ step: 1, instance: undefined });
     } else if (step === 3) {
       if (this.step3Ref.current.back() === true) {
-        this.setState({ step: 2 });
+        this.setState({ step: 2, instance: undefined });
+      } else {
+        this.setState({ instance: undefined });
       }
     }
   }

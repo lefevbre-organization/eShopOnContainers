@@ -64,6 +64,29 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         //}
 
         /// <summary>
+        /// Permite obtener los token mandando id por querystring
+        /// </summary>
+        /// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>
+        /// <returns></returns>
+        [HttpPut("token/mail")]
+        [ProducesResponseType(typeof(Result<TokenData>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<TokenData>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> TokenAsync(
+             string idClienteNavision = "E1621396"
+            , bool addTerminatorToToken = true
+            )
+        {
+            if (string.IsNullOrEmpty(idClienteNavision))
+                return BadRequest("id value invalid. Must be a valid user code in the enviroment");
+
+            var token = new TokenRequest() { idClienteNavision = idClienteNavision, idApp = _settings.Value.IdAppCentinela };
+
+            var result = await _service.GetGenericTokenAsync(token, addTerminatorToToken);
+            result.infos.Add(new Info() { code = "UserUtils.Centinea", message = "token/mail" });
+            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        /// <summary>
         /// Permite obtener los token necesarios mediante login y password y eligiendo la aplicación adecuada
         /// </summary>
         /// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>

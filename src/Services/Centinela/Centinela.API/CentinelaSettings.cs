@@ -6,6 +6,7 @@
         public string Database { get; set; }
         public string Collection { get; set; }
         public string CollectionEvents { get; set; }
+        public short Version { get; set; }
 
         public string CentinelaUrl { get; set; }
         public string CentinelaLogin { get; set; }

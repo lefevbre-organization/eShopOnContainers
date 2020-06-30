@@ -3,15 +3,23 @@ var MESSAGESPACES = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp
 var companyObj = {};
 var key = "AddonLexonSecret"
 
-function getLogout() {
+function getLogout(data) {
   var logoutAction = CardService.newCardAction()
-       .setText("logout").setOnClickAction(CardService.newAction()
-       .setFunctionName("logout"))
+  .setText("logout");
 
+  if(data != null) {
+    logoutAction.setOnClickAction(CardService.newAction()
+    .setFunctionName("logoutCompose"));
+  } else {
+    logoutAction.setOnClickAction(CardService.newAction()
+    .setFunctionName("logout"));
+  }
+  
+       
   return logoutAction
 }
 
-function buildHomeCard() { 
+function buildHomeCard(data) { 
     getCompanyList();
   
     var companylistText = CardService.newTextParagraph().
@@ -30,14 +38,19 @@ function buildHomeCard() {
        } 
  
     var action = CardService.newAction()
-        .setFunctionName('onSveCompany');
+        .setFunctionName('onSveCompany')
+        .setParameters(
+          { data: data != null ? data : 'gmailMessage' }
+        );
         
     var button = CardService.newImage()
     .setAltText("Entrar")
-       .setImageUrl("https://www.dropbox.com/s/042ic4nutt5re85/Screen%20Shot%202020-03-20%20at%207.17.27%20AM.png?raw=1")
-        .setOnClickAction(action);
-
-    var logoutAction = getLogout();
+    .setOnClickAction(action);
+    
+    data != null ? button.setImageUrl("https://www.dropbox.com/s/mztcrsla1ihh8ou/Screenshot%202020-06-25%2007.47.20.png?raw=1") 
+    : button.setImageUrl("https://www.dropbox.com/s/042ic4nutt5re85/Screen%20Shot%202020-03-20%20at%207.17.27%20AM.png?raw=1") 
+    
+    var logoutAction = getLogout(data);
  
     var sectionFormCompany = CardService.newCardSection()
      .addWidget(companylistText)
@@ -45,8 +58,10 @@ function buildHomeCard() {
      .addWidget(button);
   
     var user = JSON.parse(cache.get('dataUser'));
-    if (user == null) {
-      return logout();
+    if (user == null && data) {
+      return logoutCompose(data);
+    } else if(user == null && !data) {
+      return logout(data);
     }
   
     // var account = Session.getEffectiveUser().getEmail();
@@ -66,6 +81,7 @@ function buildHomeCard() {
 function handleCheckboxChange(e){
   selectCompany = e.formInput.selectCompany
   cache.put('selectCompany', JSON.stringify(selectCompany), 85900);
+  cache.put('selectCompanyCompose', JSON.stringify(selectCompany), 85900);
 }
 
 
@@ -81,12 +97,18 @@ function getSelectCompany(e) {
   }
 
   cache.put('companyData', JSON.stringify(companyObj), 85900);
-  
- var MessageClassificationCard = buildMessageClassificationCard(e);
+  if(e.parameters.data == 'gmailMessage') {
+    var messageClassificationCard = buildMessageClassificationCard(e);
     return CardService.newActionResponseBuilder()
-    .setNavigation(CardService.newNavigation().pushCard(MessageClassificationCard))
+    .setNavigation(CardService.newNavigation().pushCard(messageClassificationCard))
     .build();
-
+  }else {
+    var documentAttached = buildDocumentAttachedCard(e);
+    return CardService.newActionResponseBuilder()
+    .setNavigation(CardService.newNavigation().pushCard(documentAttached))
+    .build();
+  }
+ 
 }
 
 function getFirstTimeCompany(e) {
@@ -94,14 +116,22 @@ function getFirstTimeCompany(e) {
     var account = Session.getEffectiveUser().getEmail();
     companyResponse.data[0].account = account;
     cache.put('companyData', JSON.stringify(companyResponse.data[0]), 85900);
-    var MessageClassificationCard = buildMessageClassificationCard(e);
-    return CardService.newActionResponseBuilder()
-    .setNavigation(CardService.newNavigation().pushCard(MessageClassificationCard))
-    .build();
+    cache.put('companyDataCompose', JSON.stringify(companyResponse.data[0]), 85900);
+    if(e.parameters.data == 'gmailMessage') {
+      var messageClassificationCard = buildMessageClassificationCard(e);
+      return CardService.newActionResponseBuilder()
+      .setNavigation(CardService.newNavigation().pushCard(messageClassificationCard))
+      .build();
+    } else {
+      var documentAttached = buildDocumentAttachedCard(e);
+      return CardService.newActionResponseBuilder()
+      .setNavigation(CardService.newNavigation().pushCard(documentAttached))
+      .build();
+    }
+   
 }
 
 function onSveCompany(e) {
-  //Logger.log(e.parameters.name, e.parameters.bbdd)
   var selectCompany = JSON.parse(cache.get('selectCompany'));
   if(selectCompany) {
    return getSelectCompany(e);

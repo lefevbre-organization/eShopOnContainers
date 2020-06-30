@@ -34,6 +34,7 @@ namespace OcelotApiGw
                 .AddUrlGroup(new Uri(_cfg["CentinelaApiUrlHC"]), name: "centinelaapi-check", tags: new string[] { "centinelaapi" })
                 .AddUrlGroup(new Uri(_cfg["UserUtilsApiUrlHC"]), name: "userutilsapi-check", tags: new string[] { "userutilsapi" })
                 .AddUrlGroup(new Uri(_cfg["SignatureApiUrlHC"]), name: "signatureapi-check", tags: new string[] { "signatureapi" })
+                .AddUrlGroup(new Uri(_cfg["DatabaseApiUrlHC"]), name: "databaseapi-check", tags: new string[] { "databaseapi" })
                 ;
 
             services.AddCors(options =>
