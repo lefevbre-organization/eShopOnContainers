@@ -234,28 +234,20 @@ class ModalConnectingEmails extends Component {
           if (step1Data.saveDocuments === true) {
             // Save attachments
             const mime = parse(selectedMessages[i].raw);
-            for (let j = 0; j < mime.childNodes.length; j++) {
-              if (
-                mime.childNodes[j].raw.indexOf(
-                  'Content-Disposition: attachment;'
-                ) > -1
-              ) {
-                let rawAttach = base64js.fromByteArray(
-                  mime.childNodes[j].content
-                );
-                await uploadFile(
-                  step1Data.actuation === false
-                    ? step3Data.selected
-                    : undefined,
-                  step1Data.actuation === false ? step2Data.id : undefined,
-                  step1Data.actuation === false ? step2Data.idType : 45,
-                  step1Data.actuation === true ? sc[i] : undefined,
-                  this.props.companySelected.bbdd,
-                  this.props.user.idUser,
-                  mime.childNodes[j].contentType.params.name,
-                  rawAttach
-                );
-              }
+            const attachments = findAttachments(mime);
+
+            for (let j = 0; j < attachments.length; j++) {
+              let rawAttach = base64js.fromByteArray(attachments[j].content);
+              await uploadFile(
+                step1Data.actuation === false ? step3Data.selected : undefined,
+                step1Data.actuation === false ? step2Data.id : undefined,
+                step1Data.actuation === false ? step2Data.idType : 45,
+                step1Data.actuation === true ? sc[i] : undefined,
+                this.props.companySelected.bbdd,
+                this.props.user.idUser,
+                attachments[j].contentType.params.name,
+                rawAttach
+              );
             }
           }
         }
@@ -1056,3 +1048,37 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(ModalConnectingEmails);
+
+const findAttachments = (email) => {
+  let attachs = [];
+  if (email.childNodes) {
+    for (let i = 0; i < email.childNodes.length; i++) {
+      if (
+        email.childNodes[i]._isMultipart === false &&
+        isAttachment(email.childNodes[i].headers)
+      ) {
+        attachs.push({
+          ...email.childNodes[i],
+          checked: true,
+        });
+      } else {
+        attachs = [...attachs, ...findAttachments(email.childNodes[i])];
+      }
+    }
+  }
+  return attachs;
+};
+
+const isAttachment = (node) => {
+  let bRes = false;
+  if (node['x-attachment-id']) {
+    bRes = true;
+  } else if (
+    node['content-disposition'] &&
+    node['content-disposition'][0].params.filename
+  ) {
+    bRes = true;
+  }
+
+  return bRes;
+};
