@@ -45,7 +45,6 @@ class Login extends Component {
     this.setState({ isLoading: true });
      authenticator.authenticate('auth-lexon', true)
      .then(token => { 
-       console.log(token);
        localStorage.setItem('auth-lexon', JSON.stringify(token));
        if(this._isMounted){
         this.props.changePage(PAGE_SELECT_COMPANY);

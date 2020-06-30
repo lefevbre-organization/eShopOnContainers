@@ -16,7 +16,6 @@ class ListClassifications extends Component {
       selectCompany,
       removeClassification
      } = this.props
-     console.log(classifications);
       return (
         <Fragment>  
          <h2 className="lexon-title-list">CLASIFICACIONES:</h2>
