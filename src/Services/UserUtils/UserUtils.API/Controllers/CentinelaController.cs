@@ -82,7 +82,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
             var token = new TokenRequest() { idClienteNavision = idClienteNavision, idApp = _settings.Value.IdAppCentinela };
 
             var result = await _service.GetGenericTokenAsync(token, addTerminatorToToken);
-            result.infos.Add(new Info() { code = "UserUtils.Centinea", message = "token/mail" });
+            result.infos.Add(new Info() { code = "UserUtils.Centinela", message = "token/mail" });
             return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
