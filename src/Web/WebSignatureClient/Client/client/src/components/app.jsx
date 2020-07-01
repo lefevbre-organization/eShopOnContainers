@@ -463,7 +463,7 @@ class App extends Component {
     var self = this;
     //Starting poll to update the inbox automatically
     //this.startPoll();
-    setInterval(this.startPoll.bind(this),50000);
+    setInterval(this.startPoll.bind(this),500000);
     //adding connector App to right slide panel
     //setTimeout(function () { this.registerConnectorApp(); }, 2200);
     this.registerConnectorApp();

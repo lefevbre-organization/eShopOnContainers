@@ -9,7 +9,7 @@ import { getCredentials } from "../../selectors/application";
 import { getSelectedFolder } from "../../selectors/folders";
 import { getSelectedFolderMessageList } from "../../selectors/messages";
 import { prettyDate } from "../../services/prettify";
-import { selectSignature } from "../../actions/application";
+import { selectSignature, setTitle } from "../../actions/application";
 import { readMessageRaw } from "../../services/message-read";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
@@ -17,8 +17,9 @@ import mainCss from "../../styles/main.scss";
 import styles from "./message-list.scss";
 import { preloadSignatures, preloadSignatures2 } from "../../services/api-signaturit";
 import { backendRequest, backendRequestCompleted } from '../../actions/application';
-import { GridComponent} from '@syncfusion/ej2-react-grids';
+import { GridComponent, ColumnsDirective, ColumnDirective, Page, Inject, Resize, Filter, DetailRow, Sort, Group, Toolbar} from '@syncfusion/ej2-react-grids';
 import data from './dataSource.json';
+import materialize from '../../styles/signature/materialize.scss';
 
 class MessageList extends Component {
     constructor(props) {
@@ -28,6 +29,18 @@ class MessageList extends Component {
             sign_ready: false,
             rowCount: 0
         }
+        this.template = this.gridTemplate;
+        this.menuTemplate = this.menuGridTemplate;
+        this.statusTemplate = this.statusGridTemplate;
+        this.recipientsTable = this.recipientsGridTemplate;
+        this.filterType = [
+            { text: 'Menu', value: 'Menu' },
+            { text: 'Checkbox', value: 'CheckBox' },
+            { text: 'Excel', value: 'Excel' },
+        ];
+        this.filterSettings = { type: 'Menu' };
+        this.fields = { text: 'texto', value: 'valor' };
+        this.toolbarOptions = ['Search'];
     }
 
     getRowsCompleted() {
@@ -106,26 +119,170 @@ class MessageList extends Component {
       }
 
     getSignatures(signatures){
+        let filteredSignatures = [];
+        signatures.map( sig => {
+            if ((sig.status === 'En progreso' || sig.status === 'ready') && (this.props.signatureFilter === "En progreso")){
+                filteredSignatures.push(sig);
+            } else if ((sig.status === 'Completadas' || sig.status === 'completed') && (this.props.signatureFilter === "Completadas")){
+                filteredSignatures.push(sig);
+            } else if ((sig.status === 'Canceladas' || sig.status === 'canceled' || sig.status === 'expired' || sig.status ==='declined') && (this.props.signatureFilter === 'Canceladas')) {
+                filteredSignatures.push(sig);    
+            } else if (this.props.signatureFilter === "Mostrar todas") {
+                filteredSignatures.push(sig);
+            }
+        });
+        
+
         let res = [];
         console.log(signatures);
-        signatures.map(signature => {
+        filteredSignatures.map(signature => {
             let documentName = '';
             let subject = '';
             let recipients = '';
             let date = '';
             let status = '';
+
             documentName = signature.documents[0].file.name
-            subject = (signature.data.find(x => x.key === "subject")) ? signature.data.find(x => x.key === "subject").value : null;
-            recipients = this.getSigners(signature).length;
-            date = prettyDate(signature.created_at);
+            subject = (signature.data.find(x => x.key === "subject")) ? signature.data.find(x => x.key === "subject").value : 'Sin asunto';
+            recipients = `${signature.documents[0].email} ${this.getSigners(signature).length}`;
+            //date = signature.created_at//.split('T')[0];//prettyDate(signature.created_at);
+            date = new Date(signature.created_at).toLocaleString(navigator.language, {
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            })
             status = signature.documents[signature.documents.length-1].status;
-            res.push({Documento: documentName, Asunto: subject, Destinatarios: recipients, Fecha: date, Estado: status});
+            res.push({Id: signature.id, Documento: documentName, Asunto: subject, Destinatarios: recipients, Fecha: date, Estado: status});
         });
         return res;
     }
 
+    gridTemplate(props) {
+        
+        // //var src = 'src/grid/images/' + props.EmployeeID + '.png';
+        return (
+            <tr className={`templateRow`}>
+                <td className="optionMenu">
+                    <i className="material-icons">more_vert</i>
+                </td>
+                <td className={`${styles['resumen-firma']} documentName`}>
+                    {props.Documento}
+                </td>
+                <td className="subject">
+                    {props.Asunto}
+                </td>
+                <td className="recipients">
+                    {props.Destinatarios}
+                </td>
+                <td className="date">
+                    {props.Fecha}
+                </td>
+                <td className="status">
+                    {props.Estado}
+                </td>
+            </tr>
+        );
+
+    }
+
+    menuGridTemplate(props){
+        return (
+            <span>
+                <i className="material-icons">more_vert</i>
+            </span>
+        );
+    }
+
+    recipientsGridTemplate(props){
+        var chunks = props.Destinatarios.split(' ');
+        let recipientsClass;
+        switch (props.Estado) {
+            case 'canceled':
+            case 'declined':
+            case 'expired':
+                recipientsClass = 'cancelada';
+                break;           
+            case 'En progreso':
+            case 'ready':
+                recipientsClass = 'en-progreso';
+                break;
+            case 'Completadas':
+            case 'completed':
+                recipientsClass = 'completada';
+                break;
+            default:
+                break;
+        }
+        console.log(props);
+        return (
+            <div>
+                <span className='email'>
+                    {chunks[0].length > 22 ? chunks[0].substring(0,20)+' . . .' : chunks[0]}
+                </span>
+                <span className={`bola-firmantes ${recipientsClass}`}>
+                    {chunks[1]}
+                </span>
+            </div>
+        )
+    }
+
+    statusGridTemplate(props){
+        let status;
+        let status_style;
+
+
+        switch (props.Estado) {
+        case 'canceled':
+            status = 'Cancelado';
+            status_style = 'cancelada';
+            break;
+        case 'declined':
+            status = 'Declinado';
+            status_style = 'cancelada';
+            break;
+        case 'expired':
+            status = 'Expirado';
+            status_style = 'cancelada';
+            break;      
+        case 'completed':
+            status = 'Completado';
+            status_style = 'completada'
+            break;
+        case 'ready':
+            status = 'En progreso';
+            status_style = 'en-progreso'
+            break;
+        default:
+            break;
+        }
+        return (
+            <span className={`resumen-firma ' ${status_style}`}><b>{status}</b></span>
+        )
+    }
+
+    onRowSelected(event) {
+        console.log(event);
+        var signature = this.props.signatures.find(s => s.id === event.data.Id);
+        this.props.setTitle('PROGRESO DE FIRMA');
+        this.props.signatureClicked(signature);
+        // this.setState(
+        //   { rowSelected: event.data.idRelated + '_' + event.data.idType },
+        //   () => {
+        //     this.props.onSelectedEntity &&
+        //       this.props.onSelectedEntity({
+        //         ...event.data,
+        //         id: event.data.idRelated
+        //       });
+        //     this.gridRef && this.gridRef.refresh();
+        //   }
+        // );
+      }
+
+    
+
     render() {
+        //var firmas = this.props.signatures;
         var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [];
+        var customAttributes = {class: 'customcss'};
         // console.log('Entra en message-list: render');
         // console.log('State rowCount(): ' + this.state.rowCount);
         // console.log('ActiveRequests:' + this.props.activeRequests);
@@ -175,10 +332,87 @@ class MessageList extends Component {
         //     </div>
         // );
 
-        return( 
+        return( (firmas && firmas.length > 0) ?
             <div>
-                <GridComponent dataSource={firmas} />
+            <div>
+                <GridComponent 
+                    dataSource={firmas}
+                    allowSorting={true}
+                    allowResizing={true} 
+                    allowFiltering={true} 
+                    allowGrouping={false}
+                    allowPaging={(firmas.length > 10 ? true : false)} 
+                    allowPdfExport={true}
+                    allowTextWrap={false}
+                    height='auto'
+                    pageSettings={{pageCount: 5, pageSize: 10, pageSizeList: [8,12,9,5]}} 
+                    rowSelected={event => {
+                        this.onRowSelected(event);
+                    }}
+                    filterSettings={this.filterSettings}
+                    toolbar={this.toolbarOptions} 
+                >
+                    <ColumnsDirective>
+                        <ColumnDirective textAlign='center' headerText='Acciones' template={this.menuTemplate.bind(this)}  width='55' />
+                        <ColumnDirective field='Documento' textAlign='Left' headerText='Documento' />
+                        <ColumnDirective field='Asunto' textAlign='Left' headerText='Asunto' />
+                        <ColumnDirective field='Destinatarios' textAlign='Left' headerText='Destinatarios' width= '140' template={this.recipientsTable.bind(this)}/>
+                        <ColumnDirective field='Fecha' textAlign='Left' headerText='Fecha' width='115'/>
+                        <ColumnDirective field='Estado' textAlign='Left' headerText='Estado' width='115' template={this.statusTemplate.bind(this)} />
+                    </ColumnsDirective>
+                    <Inject services={[Filter, Page, Resize, Sort, Toolbar]}/>
+                    {/* <Inject services={[Resize]}/> */}
+                </GridComponent>
             </div>
+            <style jsx global>
+                {`
+                    .e-headercell{
+                        background-color: #001978 !important;
+                        color: white;  
+                    }
+                    .bola-firmantes.en-progreso{
+                        border-radius: 20px;
+                        color: #FFF;
+                        padding: 3px 15px;
+                        cursor: pointer;
+                        background: #e9a128;
+                    }
+                    .bola-firmantes.completada{
+                        border-radius: 20px;
+                        color: #FFF;
+                        padding: 3px 15px;
+                        cursor: pointer;
+                        background: #217e05;
+                    }
+                    .bola-firmantes.cancelada{
+                        border-radius: 20px;
+                        color: #FFF;
+                        padding: 3px 15px;
+                        cursor: pointer;
+                        background: #c90223;
+                    }
+                    .e-pager .e-currentitem, .e-pager .e-currentitem:hover {
+                        background: #001970;
+                        color: #fff;
+                        opacity: 1;
+                    }
+                    .e-grid .e-gridheader .e-icons:not(.e-icon-hide):not(.e-check):not(.e-stop) {
+                        color: #fff;
+                    
+                    }
+                    .resumen-firma.en-progreso {
+                        color: #e9a128;
+                    }
+                    .resumen-firma.completada {
+                        color: #217e05;
+                    }
+                    .resumen-firma.cancelada {
+                        color: #c90223;
+                    }
+                `}
+                </style>
+            </div>
+            : null
         )
     }
 
@@ -454,7 +688,8 @@ const mapDispatchToProps = dispatch => ({
         dispatch(selectSignature(signature));
     },
     backendRequest: () => dispatch(backendRequest()),
-    backendRequestCompleted: () => dispatch(backendRequestCompleted())
+    backendRequestCompleted: () => dispatch(backendRequestCompleted()),
+    setTitle: (title) => dispatch(setTitle(title))
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
@@ -462,7 +697,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
         preloadSignatures: filter => dispatchProps.preloadSignatures(filter, stateProps.credentials.encrypted),
         signatureClicked: signature => dispatchProps.signatureClicked(signature),
         backendRequest: () => dispatchProps.backendRequest(),
-        backendRequestCompleted: () => dispatchProps.backendRequestCompleted()
+        backendRequestCompleted: () => dispatchProps.backendRequestCompleted(),
+        setTitle: title => dispatchProps.setTitle(title)
     });
 
 export default connect(

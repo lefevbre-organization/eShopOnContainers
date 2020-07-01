@@ -98,7 +98,7 @@ export class TopBar extends Component {
       //   /> */}
       // <div className={styles['contenido-central']}>
         <div className={styles['pasos-firma']}>
-          <span className={styles['producto-procedente']}>LEX-ON</span> FIRMA <span className={styles.miga}>solicitud de firma</span>
+          <span className={styles['producto-procedente']}>LEX-ON</span> FIRMA <span className={styles.miga}>{title}</span>
         </div>
       // </div>
       // </header>

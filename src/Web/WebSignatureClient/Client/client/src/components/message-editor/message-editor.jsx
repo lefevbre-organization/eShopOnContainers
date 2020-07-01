@@ -8,7 +8,7 @@ import HeaderAddress from './header-address';
 import MceButton from './mce-button';
 import InsertLinkDialog from './insert-link-dialog';
 import { getCredentials } from '../../selectors/application';
-import { editMessage } from '../../actions/application';
+import { editMessage, setTitle } from '../../actions/application';
 import { sendMessage } from '../../services/smtp';
 import { getAddresses } from '../../services/message-addresses';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
@@ -97,6 +97,7 @@ class MessageEditor extends Component {
     }
 
     this.props.setGuid(null);
+    this.props.setTitle(this.props.application.signaturesFilterKey);
 
     close(aplication);
   }
@@ -741,6 +742,7 @@ const mapDispatchToProps = (dispatch) => ({
   setGuid: (guid) => dispatch(ACTIONS.setGUID(guid)),
   setAvailableSignatures: (num) =>
     dispatch(ACTIONS.setAvailableSignatures(num)),
+  setTitle: title => dispatch(setTitle(title))
 });
 
 export default connect(

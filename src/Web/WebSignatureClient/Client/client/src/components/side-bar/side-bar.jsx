@@ -13,6 +13,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import { getAvailableSignatures } from '../../services/api-signaturit';
 import { setAvailableSignatures } from '../../actions/lefebvre';
+import { setTitle } from '../../actions/application';
 
 class SideBar extends Component {
   constructor(props) {
@@ -98,6 +99,7 @@ class SideBar extends Component {
         alert('Ha agotado todas sus solicitudes de firma. Debe comprar más');
       } else {
         this.props.setAvailableSignatures(response);
+        this.props.setTitle('CREAR FIRMA');
         this.props.newMessage(lefebvre.sign);
       }
     })
@@ -107,6 +109,7 @@ class SideBar extends Component {
         alert('No se ha podido comprobar si tiene firmas disponibles');
         // this.props.setAvailableSignatures(1);
         this.props.newMessage(lefebvre.sign);
+        this.props.setTitle('CREAR FIRMA');
       }
     })
   }
@@ -167,14 +170,16 @@ const mapDispatchToProps = dispatch => ({
   moveFolderToFirstLevel: (user, folder) =>
     moveFolder(dispatch, user, folder, null),
   newMessage: sign => editNewMessage(dispatch, [], [], sign),
-  setAvailableSignatures: num => dispatch(setAvailableSignatures(num))
+  setAvailableSignatures: num => dispatch(setAvailableSignatures(num)),
+  setTitle: title => dispatch(setTitle(title))
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
   Object.assign({}, stateProps, dispatchProps, ownProps, {
     moveFolderToFirstLevel: folder =>
       dispatchProps.moveFolderToFirstLevel(stateProps.application.user, folder),
-    setAvailableSignatures: num => dispatchProps.setAvailableSignatures(num)
+    setAvailableSignatures: num => dispatchProps.setAvailableSignatures(num),
+    setTitle: title => dispatchProps.setTitle(title)
   });
 
 export default connect(

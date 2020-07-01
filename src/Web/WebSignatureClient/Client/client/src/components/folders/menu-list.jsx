@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import MenuItem from './menu-item';
-import {selectFolder} from '../../actions/application';
+import {selectFolder, setTitle} from '../../actions/application';
 import { setSignaturesFilterKey, selectSignature } from '../../actions/application';
 
 import {clearSelected} from '../../actions/messages';
@@ -61,6 +61,7 @@ export class MenuListClass extends Component {
     event.stopPropagation();
     this.props.signatureClicked(null);
     this.props.setSignaturesFilterKey(key);
+    this.props.setTitle(key);
   }
 }
 
@@ -80,14 +81,16 @@ const mapDispatchToProps = dispatch => ({
     resetFolderMessagesCache(dispatch, user, folder);
   },
   setSignaturesFilterKey: (key) => dispatch(setSignaturesFilterKey(key)),
-  signatureClicked: signature => dispatch(selectSignature(signature))
+  signatureClicked: signature => dispatch(selectSignature(signature)),
+  setTitle: title => dispatch(setTitle(title))
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => (Object.assign({}, stateProps, dispatchProps, ownProps, {
   selectFolder: folder =>
     dispatchProps.selectFolder(folder, stateProps.application.user),
   setSignaturesFilterKey: key => dispatchProps.setSignaturesFilterKey(key),
-  signatureClicked: signature => dispatchProps.signatureClicked(signature)
+  signatureClicked: signature => dispatchProps.signatureClicked(signature),
+  setTitle: title => dispatchProps.setTitle(title)
 }));
 
 const MenuList = connect(mapStateToProps, mapDispatchToProps, mergeProps)(MenuListClass);
