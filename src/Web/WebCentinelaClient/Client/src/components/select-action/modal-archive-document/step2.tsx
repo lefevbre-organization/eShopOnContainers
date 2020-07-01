@@ -276,7 +276,6 @@ export class Step2 extends React.Component<Props, State> {
             ></ImplantationListSearch>
             <div style={{ height: 300 }}>
               <GridComponent
-                ref={(g) => (this.gridRef = g)}
                 dataSource={implantations}
                 height={'300px'}
                 selectionSettings={{ type: 'Single', mode: 'Row' }}

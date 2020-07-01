@@ -37,26 +37,6 @@ class Classification extends Component {
         this.setState({ data: data.data });
     }
 
-    // removeClassification(classification) {
-    //     const user = base64Decode();
-    //     const mailbox = Office.context.mailbox;
-    //     removeClassification(
-    //       classification.idMail,
-    //       classification.entityIdType,
-    //       this.props.selectCompany.bbdd,
-    //       user.idUserApp,
-    //       mailbox.userProfile.emailAddress,
-    //       classification.idRelated,
-    //       this.props.selectCompany.idCompany
-    //     )
-    //       .then(response => {
-    //         this.getClassificationData();
-    //       })
-    //       .catch(error => {
-    //         console.log('error ->', error);
-    //       });
-    // }
-
     render() {
       return (
         <Fragment>

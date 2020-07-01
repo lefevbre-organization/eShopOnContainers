@@ -17,5 +17,8 @@
     "12": "Otros",
     "13": "Carpetas",
     "14": "Documentos"
+  },
+  "document-attached": {
+    "description": "Busca en los expedientes y contactos de LEX-ON y adjunta a tus correos los archivos que necesites."
   }
 }
