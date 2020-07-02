@@ -37,9 +37,15 @@ class DocumentAttached extends Component {
       localStorage.removeItem('selectCompany');
       this.props.changePage(PAGE_LOGIN);
     }
-  
+
+
+    addAttach = () => {
+      var options = { asyncContext: { var1: 1, var2: 2}};
+      Office.context.mailbox.item.addFileAttachmentAsync(`http://www.orimi.com/pdf-test.pdf`,
+      'test.pdf',);
+    }
      
-      render() {
+    render() {
        const { selectCompany, isOfficeInitialized } = this.props;
        const { user } = this.state;
        let conversationId = '';
@@ -64,14 +70,14 @@ class DocumentAttached extends Component {
              alt={"Documentos"} />
              <div className="content-document">
               <strong>{i18n.t('document-attached.description')}</strong>
-              <p className="document-add-more-container add-more">
+              <p className="document-add-more-container add-more" onClick={this.addAttach}>
                <span className="lf-icon-add"></span>
                <strong>Selecciona los archivos en LEX-ON</strong>
               </p>
              </div>
          </div>
         );
-      }
+    }
 }
 
 export default DocumentAttached
