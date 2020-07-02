@@ -6,13 +6,15 @@
     "https://www.googleapis.com/auth/gmail.addons.current.message.metadata",
     "https://www.googleapis.com/auth/script.external_request",
     "https://www.googleapis.com/auth/userinfo.email",
-    "https://www.googleapis.com/auth/drive"
+    "https://www.googleapis.com/auth/drive",
+    "https://www.googleapis.com/auth/script.send_mail"
   ],
   "urlFetchWhitelist": [
     "https://lexbox-test-apigwlex.lefebvre.es/api/v1/mysql/LexonMySql/",
     "https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Lexon/",
     "https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail/",
-    "https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/"
+    "https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTZ0uhONgIQGfVK7tXZF5ByMORRCeRUa_Iq2A&usqp=CAU"
   ],
  "addOns": {
   "common": {
@@ -29,12 +31,7 @@
        },
        "onTriggerFunction": "buildAddOn"
      }],
-     "composeTrigger": {
-      "selectActions": [{
-        "text": "LEX-ON",
-        "runFunction": "onGmailCompose"
-      }]
-     },
+  
      "primaryColor": "#001978",
      "secondaryColor": "#001978"
    }
