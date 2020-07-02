@@ -522,7 +522,6 @@ export const sendMessage = async ({ headers, body, attachments }) => {
       },
     });
     request.execute((err, res) => {
-      debugger;
       if (err.error) {
         reject(err.error);
       } else {
