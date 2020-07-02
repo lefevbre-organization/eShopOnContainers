@@ -110,6 +110,15 @@ class MessageList extends Component {
     const message = this.props.messages[index];
     const selected =
       this.props.selectedMessages.indexOf(message.messageId) > -1;
+
+    let attachments = false;
+    if (
+      this.props.downloadedMessages[message.messageId] &&
+      this.props.downloadedMessages[message.messageId].attachments
+    ) {
+      attachments =
+        this.props.downloadedMessages[message.messageId].attachments.length > 0;
+    }
     return (
       <li
         key={key}
@@ -147,6 +156,16 @@ class MessageList extends Component {
             {'outlined_flag'}
           </span>
           <span className={styles.subject}>{message.subject}</span>
+          {attachments && (
+            <span
+              className='lf-icon lf-icon-add'
+              style={{
+                fontWeight: 'bold',
+                fontSize: 18,
+                transform: 'rotateZ(27deg)',
+              }}></span>
+          )}
+
           <span className={styles.receivedDate}>
             {prettyDate(message.receivedDate)}
           </span>
@@ -261,7 +280,9 @@ class MessageList extends Component {
               },
             })
           );
-          console.log(`MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`);
+          console.log(
+            `MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`
+          );
         }
       }
 
@@ -292,7 +313,9 @@ class MessageList extends Component {
                 },
               })
             );
-            console.log(`MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`);
+            console.log(
+              `MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`
+            );
           }
           console.log('LoadedMessage: 4');
           window.dispatchEvent(new CustomEvent('LoadedMessage'));
@@ -339,7 +362,9 @@ class MessageList extends Component {
               },
             })
           );
-          console.log(`MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`);
+          console.log(
+            `MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`
+          );
           console.log('LoadedMessage: 3');
           window.dispatchEvent(new CustomEvent('LoadedMessage'));
         });
@@ -365,8 +390,9 @@ class MessageList extends Component {
             },
           })
         );
-        console.log(`MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`);
-
+        console.log(
+          `MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`
+        );
       }
     }
   }
