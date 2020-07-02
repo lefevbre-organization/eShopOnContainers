@@ -119,12 +119,19 @@ class ModalArchiveDocuments extends Component<Props, State> {
       bRes = true;
     } else if (
       node['content-disposition'] &&
-      node['content-disposition'][0].params.filename
+      node['content-disposition'][0].initial.indexOf('attachment') > -1 &&
+      node['content-disposition'][0].params.filename &&
+      this.isFileAllowed(node['content-disposition'][0].params.filename)
     ) {
       bRes = true;
     }
 
     return bRes;
+  }
+
+  isFileAllowed(name: string): boolean {
+    const fe = name.split('.').pop();
+    return extensionsAllowed.indexOf(fe ? fe.toUpperCase() : '') > -1;
   }
 
   findAttachments(email: any): any {
@@ -1058,3 +1065,83 @@ class ModalArchiveDocuments extends Component<Props, State> {
 }
 
 export default connector(ModalArchiveDocuments);
+
+const extensionsAllowed = [
+  'JPG',
+  'PNG',
+  'GIF',
+  'BMP',
+  'DIB',
+  'JPEG',
+  'TGA',
+  'TIF',
+  'TIFF',
+  'PCX',
+  'PIC',
+  'EMF',
+  'ICO',
+  'TXT',
+  'MDB',
+  'WRI',
+  'LOG',
+  'XPS',
+  'HTM',
+  'HTML',
+  'CSS',
+  'URL',
+  'XML',
+  'AVI',
+  'FLV',
+  'MP4',
+  'MKV',
+  'MOV',
+  'MPEG',
+  'MPG',
+  'DIVX',
+  'WMV',
+  'RAR',
+  'ZIP',
+  '7Z',
+  'PDF',
+  'DOC',
+  'XLS',
+  'PPT',
+  'DOC',
+  'XLS',
+  'PPT',
+  'EML',
+  'WAV',
+  'MP3',
+  'DOCX',
+  'DOCM',
+  'DOT',
+  'DOTX',
+  'DOTM',
+  'ODT',
+  'RTF',
+  'XLSX',
+  'XLM',
+  'XLSM',
+  'XLT',
+  'XLTX',
+  'XLTM',
+  'XLSB',
+  'XLAM',
+  'XLV',
+  'CSV',
+  'ODS',
+  'PPTX',
+  'PPTM',
+  'POT',
+  'POTX',
+  'POTM',
+  'PPA',
+  'PPAM',
+  'PPS',
+  'PPSX',
+  'PPSM',
+  'SLDX',
+  'SLDM',
+  'THMX',
+  'ODP'
+];
