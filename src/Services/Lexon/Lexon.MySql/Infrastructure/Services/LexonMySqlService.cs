@@ -3,11 +3,11 @@ using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
+//using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+//using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -316,50 +316,50 @@ namespace Lexon.MySql.Infrastructure.Services
             //limit -= 1;
         }
 
-        public async Task<Result<List<LexApp>>> GetUserMiniHubAsync(string idNavisionUser, bool onlyActives = true)
-        {
-            var result = new Result<List<LexApp>>(new List<LexApp>());
-            try
-            {
-                //string usuarioEncriptado = "f3NrcnZs";
-                //string user = "E0383956";
-                //http://led-pre-servicehub/Herramientas/Get?IdUsuarioPro=E0383956&IdUsuarioProEncriptado=f3NrcnZs&indMinuHub=1
-                var url = $"{_settings.Value.LexonHubUrl}?IdUsuarioPro={idNavisionUser}&IdUsuarioProEncriptado={idNavisionUser}&indMinuHub=1";
+        //public async Task<Result<List<LexApp>>> GetUserMiniHubAsync(string idNavisionUser, bool onlyActives = true)
+        //{
+        //    var result = new Result<List<LexApp>>(new List<LexApp>());
+        //    try
+        //    {
+        //        //string usuarioEncriptado = "f3NrcnZs";
+        //        //string user = "E0383956";
+        //        //http://led-pre-servicehub/Herramientas/Get?IdUsuarioPro=E0383956&IdUsuarioProEncriptado=f3NrcnZs&indMinuHub=1
+        //        var url = $"{_settings.Value.LexonHubUrl}?IdUsuarioPro={idNavisionUser}&IdUsuarioProEncriptado={idNavisionUser}&indMinuHub=1";
 
-                using (var response = await _client.GetAsync(url))
-                {
-                    if (response.IsSuccessStatusCode)
-                    {
-                        var rawResult = await response.Content.ReadAsStringAsync();
+        //        using (var response = await _client.GetAsync(url))
+        //        {
+        //            if (response.IsSuccessStatusCode)
+        //            {
+        //                var rawResult = await response.Content.ReadAsStringAsync();
 
-                        if (!string.IsNullOrEmpty(rawResult))
-                        {
-                            var resultado = (JsonConvert.DeserializeObject<LexApp[]>(rawResult));
-                            var listAll = resultado.ToList();
-                            result.data = onlyActives ? listAll.Where(x => x.indAcceso > 0).ToList() : listAll.ToList();
-                        }
-                    }
-                    else
-                    {
-                        result.errors.Add(new ErrorInfo
-                        {
-                            code = "533",
-                            detail = $"Error in callnto {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
-                        });
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                result.errors.Add(new ErrorInfo
-                {
-                    code = "534",
-                    detail = $"General error in call Minihub data",
-                    message = ex.Message
-                });
-            }
+        //                if (!string.IsNullOrEmpty(rawResult))
+        //                {
+        //                    var resultado = (JsonConvert.DeserializeObject<LexApp[]>(rawResult));
+        //                    var listAll = resultado.ToList();
+        //                    result.data = onlyActives ? listAll.Where(x => x.indAcceso > 0).ToList() : listAll.ToList();
+        //                }
+        //            }
+        //            else
+        //            {
+        //                result.errors.Add(new ErrorInfo
+        //                {
+        //                    code = "533",
+        //                    detail = $"Error in callnto {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
+        //                });
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        result.errors.Add(new ErrorInfo
+        //        {
+        //            code = "534",
+        //            detail = $"General error in call Minihub data",
+        //            message = ex.Message
+        //        });
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
     }
 }

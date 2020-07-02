@@ -65,7 +65,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 BaseAddress = new Uri(_settings.Value.OnlineUrl)
             };
 
-
             var authData = Convert.ToBase64String(
                         System.Text.Encoding.ASCII.GetBytes($"{_settings.Value.OnlineLogin}:{_settings.Value.OnlinePassword}"));
 
@@ -104,7 +103,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     {
                         result.errors.Add(new ErrorInfo
                         {
-                            code = "Error_EncodeUser_Service",
+                            code = "EncodeUser_StatusCode",
                             detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
                         });
                     }
@@ -114,8 +113,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 result.errors.Add(new ErrorInfo
                 {
-                    code = "Error_EncodeUser",
-                    detail = $"General error when call online service",
+                    code = "EncodeUser",
+                    detail = $"General error when call online service -> {ex.InnerException}",
                     message = ex.Message
                 });
             }
@@ -147,7 +146,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     {
                         result.errors.Add(new ErrorInfo
                         {
-                            code = "Error_DecodeUser_Service",
+                            code = "DecodeUser_WebStatus",
                             detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
                         });
                     }
@@ -157,8 +156,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 result.errors.Add(new ErrorInfo
                 {
-                    code = "Error_DecodeUser",
-                    detail = $"General error when call online service",
+                    code = "DecodeUser",
+                    detail = $"General error when call online service -> {ex.InnerException}",
                     message = ex.Message
                 });
             }
@@ -194,7 +193,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     {
                         result.errors.Add(new ErrorInfo
                         {
-                            code = "Error_Get_Minihub_Service",
+                            code = "Minihub_WebStatus",
                             detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
                         });
                     }
@@ -204,8 +203,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 result.errors.Add(new ErrorInfo
                 {
-                    code = "Error_Get_Minihub",
-                    detail = $"General error in call Minihub data",
+                    code = "Minihub",
+                    detail = $"General error in call Minihub data -> {ex.InnerException}",
                     message = ex.Message
                 });
             }
@@ -225,7 +224,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 errors.Add(new ErrorInfo
                 {
-                    code = "ErrorUpdateByPass",
+                    code = "UpdateByPass",
                     detail = $"General error in update bypass data",
                     message = ex.Message
                 });
@@ -259,7 +258,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     {
                         result.errors.Add(new ErrorInfo
                         {
-                            code = "Error_GetUserWithLogin_Service",
+                            code = "GetUserWithLogin_WebStatus",
                             detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
                         });
                     }
@@ -269,8 +268,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 result.errors.Add(new ErrorInfo
                 {
-                    code = "Error_GetUserWithLogin",
-                    detail = $"General error when call commontool service",
+                    code = "GetUserWithLogin",
+                    detail = $"General error when call commontool service -> {ex.InnerException}",
                     message = ex.Message
                 });
             }
@@ -305,7 +304,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     {
                         result.errors.Add(new ErrorInfo
                         {
-                            code = "Error_GetUserWithEntry_Service",
+                            code = "GetUserWithEntry_Webstatus",
                             detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
                         });
                     }
@@ -315,8 +314,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 result.errors.Add(new ErrorInfo
                 {
-                    code = "Error_GetUserWithEntry",
-                    detail = $"General error when call commontool service",
+                    code = "GetUserWithEntry",
+                    detail = $"General error when call commontool service -> {ex.InnerException}",
                     message = ex.Message
                 });
             }
@@ -348,7 +347,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     {
                         result.errors.Add(new ErrorInfo
                         {
-                            code = "Error_GetAreas_Service",
+                            code = "GetAreas_Webstatus",
                             detail = $"Error in call to {url} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
                         });
                     }
@@ -358,8 +357,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 result.errors.Add(new ErrorInfo
                 {
-                    code = "Error_GetAreas",
-                    detail = $"General error when call online service",
+                    code = "GetAreas",
+                    detail = $"General error when call online service -> {ex.InnerException}",
                     message = ex.Message
                 });
             }
@@ -415,7 +414,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                     {
                         result.errors.Add(new ErrorInfo
                         {
-                            code = "ErrorFinalLink_WebClient",
+                            code = "ErrorFinalLink_WebStatus",
                             detail = $"Error in call to {newUrl} with code-> {(int)response.StatusCode} - {response.ReasonPhrase}"
                         });
                     }
@@ -425,8 +424,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 result.errors.Add(new ErrorInfo
                 {
-                    code = "ErrorFinalLink",
-                    detail = $"General error in call Final Link",
+                    code = "FinalLink",
+                    detail = $"General error in call Final Link -> {ex.InnerException}",
                     message = ex.Message
                 });
             }
@@ -468,7 +467,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 result.errors.Add(new ErrorInfo
                 {
                     code = "Token Invalid",
-                    detail = $"Security error with token",
+                    detail = $"Security error with token -> {ex.InnerException}",
                     message = ex.Message
                 });
                 result.data.valid = false;
@@ -503,18 +502,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             AddClaimToPayload(payload, tokenRequest.idApp, nameof(tokenRequest.idApp));
             AddClaimToPayload(payload, GetLongIdUser(tokenRequest.idUserApp), nameof(tokenRequest.idUserApp));
             AddClaimToPayload(payload, tokenRequest.idUserApp, "idUser");
+            AddClaimToPayload(payload, tokenRequest.env, nameof(tokenRequest.env));
 
-            //if (tokenRequest is TokenRequestCentinelaViewFirm tokenRequestCentinelaViewFirm)
-            //{
-                if (tokenRequest is TokenRequestCentinelaNewFirm tokenRequestCentinela)
-                {
-                    AddClaimToPayload(payload, tokenRequestCentinela.guid, nameof(tokenRequestCentinela.guid));
-                    AddClaimToPayload(payload, tokenRequestCentinela.documentsId, nameof(tokenRequestCentinela.documentsId));
-                    AddClaimToPayload(payload, tokenRequestCentinela.recipientsId, nameof(tokenRequestCentinela.recipientsId));
-                    AddClaimToPayload(payload, tokenRequestCentinela.mailsAdmins, nameof(tokenRequestCentinela.mailsAdmins));
-                    AddClaimToPayload(payload, tokenRequestCentinela.logoUrl, nameof(tokenRequestCentinela.logoUrl));
-                }
-            //}
+            if (tokenRequest is TokenRequestCentinelaNewFirm tokenRequestCentinela)
+            {
+                AddClaimToPayload(payload, tokenRequestCentinela.guid, nameof(tokenRequestCentinela.guid));
+                AddClaimToPayload(payload, tokenRequestCentinela.documentsId, nameof(tokenRequestCentinela.documentsId));
+                AddClaimToPayload(payload, tokenRequestCentinela.recipientsId, nameof(tokenRequestCentinela.recipientsId));
+                AddClaimToPayload(payload, tokenRequestCentinela.mailsAdmins, nameof(tokenRequestCentinela.mailsAdmins));
+                AddClaimToPayload(payload, tokenRequestCentinela.logoUrl, nameof(tokenRequestCentinela.logoUrl));
+            }
+
             if (tokenRequest is TokenRequestNewMail tokenRequestNewMail)
             {
                 AddClaimToPayload(payload, tokenRequestNewMail.idEntity, nameof(tokenRequestNewMail.idEntity));
@@ -558,6 +556,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 return new TokenRequestOpenMail
                 {
                     idApp = idApp,
+                    env = token.env,
                     idClienteNavision = token.idClienteNavision,
                     bbdd = token.bbdd,
                     idEntity = token.idEntity,
@@ -575,6 +574,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 return new TokenRequestNewMail()
                 {
                     idApp = idApp,
+                    env = token.env,
                     idClienteNavision = token.idClienteNavision,
                     bbdd = token.bbdd,
                     idEntity = (int)token.idEntity,
@@ -587,17 +587,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 return new TokenRequestDataBase()
                 {
                     idApp = idApp,
+                    env =token.env,
                     idClienteNavision = token.idClienteNavision,
                     bbdd = token.bbdd
                 };
             }
             else if (token.login != null && token.password != null)
             {
-                return new TokenRequestLogin() { idApp = idApp, login = token.login, password = token.password };
+                return new TokenRequestLogin() { idApp = idApp, env= token.env, login = token.login, password = token.password };
             }
             else if (token.idClienteNavision != null)
             {
-                return new TokenRequest() { idApp = idApp, idClienteNavision = token.idClienteNavision };
+                return new TokenRequest() { idApp = idApp, env =token.env, idClienteNavision = token.idClienteNavision };
             }
 
             return null;

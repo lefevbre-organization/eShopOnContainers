@@ -41,6 +41,6 @@ namespace Lexon.MySql.Infrastructure.Services
 
         Result<LexNestedEntity> GetNestedFolderAsync(FolderNestedView entityFolder);
         Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch);
-        Task<Result<List<LexApp>>> GetUserMiniHubAsync(string idNavisionUser, bool onlyActives = true);
+        //Task<Result<List<LexApp>>> GetUserMiniHubAsync(string idNavisionUser, bool onlyActives = true);
     }
 }
