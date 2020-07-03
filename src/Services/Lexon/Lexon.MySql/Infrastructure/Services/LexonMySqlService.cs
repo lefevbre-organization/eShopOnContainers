@@ -207,12 +207,12 @@ namespace Lexon.MySql.Infrastructure.Services
 
         private async Task<List<string>> GetRolesOfUserAsync(string idClienteNavision, string login, string password)
         {
-            var apps = await GetUserMiniHubAsync(idClienteNavision);
+            //var apps = await GetUserMiniHubAsync(idClienteNavision);
             var appsWithAccess = new List<string>() { "lexonconnector", "centinelaconnector" };
-            foreach (var app in apps.data)
-            {
-                appsWithAccess.Add(app.descHerramienta);
-            }
+            //foreach (var app in apps.data)
+            //{
+            //    appsWithAccess.Add(app.descHerramienta);
+            //}
 
             var usuarioValido = !string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password);
             if (!string.IsNullOrEmpty(idClienteNavision) && usuarioValido)

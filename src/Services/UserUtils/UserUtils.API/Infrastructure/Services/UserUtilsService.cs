@@ -655,29 +655,21 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
         public async Task<Result<TokenData>> GetGenericTokenAsync(TokenRequest tokenRequest, bool addTerminatorToToken)
         {
-            //1. Validar usuario contra loginurl o minuhub (pensar si de hace con todos)
-            //4. Obtener roles y permisos de aplicación para el usuario (puede unificarse al paso 1)
             var result = await GetRolesAndValidate(tokenRequest);
-
             if (result.data?.valid == false) return result;
 
-            //2. Obtener datos de lexon (TODO: evaluar si es necesari, se puede obviar con el paso anterior u obtenemos un método más eficiente)
             if (tokenRequest.idApp == _settings.Value.IdAppLexon)
             {
                 Result<LexUser> lexUserResult = await GetLexonUserAsync(tokenRequest.idClienteNavision);
                 if (string.IsNullOrEmpty(lexUserResult?.data?.idNavision))
                     TraceOutputMessage(result.errors, $"Error get user from lexon", "Error Get Lexon Token");
                 tokenRequest.idUserApp = lexUserResult?.data?.idUser;
-                // tokenRequest.IdUser = "449";
             }
-
-            //3. Obtener contactos si se necesita (evaluar si tengo que pasarlo a otros métodos y quitarlos del general
-            //5. Construir token diferente según los datos proporcionados
             if (tokenRequest is TokenRequestNewMail || tokenRequest is TokenRequestOpenMail)
                 tokenRequest = await GetContactDataFromLexon((TokenRequestNewMail)tokenRequest);
 
-            if (tokenRequest is TokenRequestCentinelaNewFirm)
-                ((TokenRequestCentinelaNewFirm)tokenRequest).guid = Guid.NewGuid().ToString();
+            if (tokenRequest is TokenRequestCentinelaNewFirm firm)
+                firm.guid = Guid.NewGuid().ToString();
 
             var tokenString = await Task.Run(() =>
             {
