@@ -17,9 +17,27 @@ import mainCss from "../../styles/main.scss";
 import styles from "./message-list.scss";
 import { preloadSignatures, preloadSignatures2 } from "../../services/api-signaturit";
 import { backendRequest, backendRequestCompleted } from '../../actions/application';
-import { GridComponent, ColumnsDirective, ColumnDirective, Page, Inject, Resize, Filter, DetailRow, Sort, Group, Toolbar} from '@syncfusion/ej2-react-grids';
+import { GridComponent, ColumnsDirective, ColumnDirective, Page, Inject, Resize, Filter, DetailRow, Sort, Group, Toolbar, PdfExport, ExcelExport} from '@syncfusion/ej2-react-grids';
 import data from './dataSource.json';
 import materialize from '../../styles/signature/materialize.scss';
+import { L10n } from '@syncfusion/ej2-base';
+import { DataManager } from '@syncfusion/ej2-data';
+import { ClickEventArgs } from '@syncfusion/ej2-navigations';
+
+L10n.load({
+    'es-ES': {
+      'grid': {
+        'EmptyRecord': 'No hay datos que mostrar',
+        'StartsWith': 'Empieza por',
+        'EndsWith': 'Termina por',
+        'Contains': 'Contiene',
+        'Equal': 'Es igual a',
+        'NotEqual': 'No es igual a',
+        'Search': 'Buscar',
+        'PdfExport': 'Exportar a pdf'
+      }
+    }
+  });
 
 class MessageList extends Component {
     constructor(props) {
@@ -38,9 +56,19 @@ class MessageList extends Component {
             { text: 'Checkbox', value: 'CheckBox' },
             { text: 'Excel', value: 'Excel' },
         ];
-        this.filterSettings = { type: 'Menu' };
+        this.filterSettings = { 
+            type: 'Menu', 
+            ignoreAccent:true, 
+            operators: {
+                stringOperator: [
+                    { value: 'contains', text: 'Contiene' },
+                    { value: 'startsWith', text: 'Empieza por' }
+                ]
+             } 
+        };
         this.fields = { text: 'texto', value: 'valor' };
-        this.toolbarOptions = ['Search'];
+        this.toolbarOptions = ['Search', 'PdfExport'];
+        this.grid = null;
     }
 
     getRowsCompleted() {
@@ -187,7 +215,8 @@ class MessageList extends Component {
     menuGridTemplate(props){
         return (
             <span>
-                <i className="material-icons">more_vert</i>
+                {/* <i className="material-icons">more_vert</i> */}
+                <span className="lf-icon-filter-1"></span>
             </span>
         );
     }
@@ -277,9 +306,32 @@ class MessageList extends Component {
         // );
       }
 
-    
+    toolbarClick(event){
+        if (this.grid && event.item.id.includes('pdfexport') ) {
+            let pdfdata = [];
+            const query = this.grid.renderModule.data.generateQuery(); // get grid corresponding query
+            for(let i=0; i<query.queries.length; i++ ){
+              if(query.queries[i].fn === 'onPage'){
+                query.queries.splice(i,1);// remove page query to get all records
+                break;
+              }
+            }
+            new DataManager({ json: this.grid.currentViewData}).executeQuery(query)
+              .then((e) => {
+                pdfdata = e.result;   // get all filtered records
+                const exportProperties= {
+                  dataSource: pdfdata,
+                  pageOrientation: 'Landscape'
+                };
+                if (this.grid) {
+                  this.grid.pdfExport(exportProperties);
+                }
+            }).catch((e) => true);
+          }
+    }
 
     render() {
+        this.toolbarClick = this.toolbarClick.bind(this);
         //var firmas = this.props.signatures;
         var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [];
         var customAttributes = {class: 'customcss'};
@@ -343,6 +395,7 @@ class MessageList extends Component {
                     allowGrouping={false}
                     allowPaging={(firmas.length > 10 ? true : false)} 
                     allowPdfExport={true}
+                    allowExcelExport={true}
                     allowTextWrap={false}
                     height='auto'
                     pageSettings={{pageCount: 5, pageSize: 10, pageSizeList: [8,12,9,5]}} 
@@ -351,16 +404,19 @@ class MessageList extends Component {
                     }}
                     filterSettings={this.filterSettings}
                     toolbar={this.toolbarOptions} 
+                    locale ='es-ES'
+                    toolbarClick={this.toolbarClick}
+                    ref={g => this.grid = g}
                 >
                     <ColumnsDirective>
                         <ColumnDirective textAlign='center' headerText='Acciones' template={this.menuTemplate.bind(this)}  width='55' />
                         <ColumnDirective field='Documento' textAlign='Left' headerText='Documento' />
                         <ColumnDirective field='Asunto' textAlign='Left' headerText='Asunto' />
-                        <ColumnDirective field='Destinatarios' textAlign='Left' headerText='Destinatarios' width= '140' template={this.recipientsTable.bind(this)}/>
+                        <ColumnDirective field='Destinatarios' textAlign='Left' headerText='Destinatarios' width= '147' template={this.recipientsTable.bind(this)}/>
                         <ColumnDirective field='Fecha' textAlign='Left' headerText='Fecha' width='115'/>
-                        <ColumnDirective field='Estado' textAlign='Left' headerText='Estado' width='115' template={this.statusTemplate.bind(this)} />
+                        <ColumnDirective field='Estado' textAlign='Left' headerText='Estado' width='110' allowFiltering={false} template={this.statusTemplate.bind(this)} />
                     </ColumnsDirective>
-                    <Inject services={[Filter, Page, Resize, Sort, Toolbar]}/>
+                    <Inject services={[Filter, Page, Resize, Sort, Toolbar, PdfExport]}/>
                     {/* <Inject services={[Resize]}/> */}
                 </GridComponent>
             </div>
