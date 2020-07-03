@@ -10,7 +10,7 @@ Param(
     # [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webgoogleclient"),
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webaddonlexon", "weboffice365addonlexon", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api", "ocelotapigw", "webstatuslef"),
-    [parameter(Mandatory=$false)][string]$tagToPush="linux-dev-25",
+    [parameter(Mandatory=$false)][string]$tagToPush="linux-dev-26",
     [parameter(Mandatory=$false)][string]$initialTag="linux-dev",
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,

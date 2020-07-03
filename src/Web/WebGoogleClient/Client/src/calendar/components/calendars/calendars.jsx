@@ -191,7 +191,7 @@ export class Calendars extends React.Component {
                                         <ButtonComponent
                                             id="modify"
                                             disabled={this.state.buttonDisabled}
-                                            cssClass='e-primary'
+                                            cssClass='e-control e-btn e-lib e-primary e-event-save e-flat'
                                             onClick={ObjClick}
                                             ref={(scope) => { this.addBtn = scope }}
                                         > {ObjText}</ButtonComponent>

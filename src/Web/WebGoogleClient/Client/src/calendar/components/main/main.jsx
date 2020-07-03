@@ -592,26 +592,32 @@ export class Main extends Component {
         );
     }
 
-    selecting(args) { 
+    selectingTab(args) { 
         var formElement = this.scheduleObj.eventWindow.element.querySelector('.e-schedule-form');
         var validator = (formElement).ej2_instances[0];
         validator.validate();
 
-        if (validator.errorRules.length == 0) {
+        if (validator.errorRules.length <= 0) {
             this.cancel = false;
-            if (this.tabObj.selectingID == 1) {
-               // this.tabObj.refresh()               
+            if (this.tabObj.selectingID == 1 && this.scheduleObj.eventWindow.eventData.Id == undefined) {
+                // this.tabObj.refresh()               
                 let id = this.scheduleObj.eventWindow.eventData.Id;
                 if (id == undefined) {
                     this.scheduleObj.addEvent(this.scheduleObj.eventWindow.getEventDataFromEditor().eventData);
+                    //the id to pass to connector is = this.scheduleObj.eventWindow.eventData.Id);
+                    this.scheduleObj.eventWindow.eventData.typeEvent = "lexon";
                 }
                 else {
                     this.scheduleObj.saveEvent(this.scheduleObj.eventWindow.eventData);
-                }               
+                }
             }
+            //else if (this.tabObj.selectingID == 1 && this.scheduleObj.eventWindow.eventData.Id != undefined){
+            //    this.scheduleObj.saveEvent(this.scheduleObj.eventWindow.eventData);
+            //}
         }
         else {
-            args.cancel = true 
+            args.cancel = true          
+            
         }        
     }
 
@@ -715,7 +721,7 @@ export class Main extends Component {
                             { header: { text: 'LEX-ON', iconCss: 'e-twitter', iconPosition: 'right' }, content: this.tabContent },
                         ],
                         selectedItem: 0,
-                        selecting: this.selecting.bind(this)
+                        selecting: this.selectingTab.bind(this)
                    
                         //headerPlacement: 'Left',
                     });
@@ -823,27 +829,38 @@ export class Main extends Component {
 
             case 'eventCreated':
 
-                event = this.buildEventoGoogle(args.data[0]);
+                if (this.scheduleObj.eventWindow.eventData.typeEvent != "lexon" ) {
+                    event = this.buildEventoGoogle(args.data[0]);
 
-                //call function to add event
-                // this.addCalendarEventCRUD(args.data[0].CalendarId, event, args);   
-                addCalendarEvent(args.data[0].CalendarId, event)
-                    .then(result => {
-                        // refresh event data
-                        args.data[0].Id = result.id;
-                        args.data[0].ImageName = "lefebvre";
-                        args.data[0].Attendees = result.attendees;
-                        //args.data[0].ImageName = "lefebvre";
-                        this.setState({ tagAttendess: [] })
+                    //call function to add event
+                    // this.addCalendarEventCRUD(args.data[0].CalendarId, event, args);   
+                    addCalendarEvent(args.data[0].CalendarId, event)
+                        .then(result => {
+                            // refresh event data
+                            if (this.scheduleObj.eventWindow.eventData != undefined) {
+                                this.scheduleObj.eventWindow.eventData.Id = result.id;
+                            }
+                            
+                            // this.scheduleObj.eventWindow.resetForm();
+                            args.data[0].Id = result.id;
+                            args.data[0].ImageName = "lefebvre";
+                            args.data[0].Attendees = result.attendees;
+                            //args.data[0].ImageName = "lefebvre";
+                            this.setState({ tagAttendess: [] })
 
-                        this.scheduleObj.refreshEvents();
-                        this.toastObj.show(this.toasts[1]);
-                    })
-                    .catch(error => {
-                        this.toastObj.show(this.toasts[2]);
-                        console.log('error ->', error);
-                    })
-
+                            this.scheduleObj.refreshEvents();
+                            this.toastObj.show(this.toasts[1]);
+                        })
+                        .catch(error => {
+                            this.toastObj.show(this.toasts[2]);
+                            console.log('error ->', error);
+                        })
+                }
+                else {
+                    //this.scheduleObj.saveEvent(args.data[0]);
+                    args.cancel = true;
+                }
+                
                
                 break;
 
