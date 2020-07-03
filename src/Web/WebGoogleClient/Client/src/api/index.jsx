@@ -2,25 +2,26 @@ import { MAX_RESULTS } from '../constants';
 import { getBody, isHTML, base64MimeType, base64Data } from './utils';
 import base64url from 'base64url';
 import quotedPrintable from 'quoted-printable';
+import { Base64 } from 'js-base64';
 
-const getLabelDetailPromise = labelId => {
+const getLabelDetailPromise = (labelId) => {
   return new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.labels
       .get({
         userId: 'me',
-        id: labelId
+        id: labelId,
       })
-      .then(response => resolve(response));
+      .then((response) => resolve(response));
   });
 };
 
-const getLabelDetails = labelList => {
+const getLabelDetails = (labelList) => {
   return new Promise((resolve, reject) => {
-    const labelPromises = labelList.result.labels.map(el => {
+    const labelPromises = labelList.result.labels.map((el) => {
       return getLabelDetailPromise(el.id);
     });
 
-    Promise.all(labelPromises).then(response => resolve(response));
+    Promise.all(labelPromises).then((response) => resolve(response));
   });
 };
 
@@ -28,11 +29,11 @@ export const getLabelList = () =>
   new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.labels
       .list({
-        userId: 'me'
+        userId: 'me',
       })
       .then(getLabelDetails)
-      .then(response => {
-        resolve(response.map(el => el.result));
+      .then((response) => {
+        resolve(response.map((el) => el.result));
       });
   });
 
@@ -40,17 +41,17 @@ export const getMessageList = ({ labelIds, maxResults, q, pageToken }) =>
   new Promise((resolve, reject) => {
     getMessageRawList({ labelIds, maxResults, pageToken, q })
       .then(getMessageHeaders)
-      .then(messageResult =>
+      .then((messageResult) =>
         flattenMessagesWithLabel(messageResult.messages, labelIds).then(
-          labelMessagesDetails =>
+          (labelMessagesDetails) =>
             resolve({
               ...messageResult,
               messages: labelMessagesDetails.messages,
-              label: labelMessagesDetails.label
+              label: labelMessagesDetails.label,
             })
         )
       )
-      .catch(err => {
+      .catch((err) => {
         reject(err);
       });
   });
@@ -62,9 +63,9 @@ export const flattenMessagesWithLabel = (messages, labelIds) =>
         messages,
         label: {
           result: {
-            messagesTotal: 0
-          }
-        }
+            messagesTotal: 0,
+          },
+        },
       });
       return;
     }
@@ -72,12 +73,12 @@ export const flattenMessagesWithLabel = (messages, labelIds) =>
     window.gapi.client.gmail.users.labels
       .get({
         userId: 'me',
-        id: labelIds[0]
+        id: labelIds[0],
       })
-      .then(response =>
+      .then((response) =>
         resolve({
           messages,
-          label: response
+          label: response,
         })
       );
   });
@@ -90,63 +91,61 @@ const getMessageRawList = ({ labelIds, maxResults, pageToken, q = '' }) =>
         q,
         maxResults: maxResults || MAX_RESULTS,
         ...(labelIds && { labelIds }),
-        ...(pageToken && { pageToken })
+        ...(pageToken && { pageToken }),
       })
-      .then(response => resolve(response))
-      .catch(err => {
+      .then((response) => resolve(response))
+      .catch((err) => {
         reject(err);
       });
   });
 
-export const getMessageListWithRFC = q =>
+export const getMessageListWithRFC = (q) =>
   new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.messages
       .list({
         userId: 'me',
         q: `rfc822msgid:${q}`,
-        maxResults: 1
+        maxResults: 1,
       })
-      .then(response => resolve(response))
-      .catch(err => {
+      .then((response) => resolve(response))
+      .catch((err) => {
         reject(err);
       });
   });
 
-
-
-const getMessageHeaders = response => {
+const getMessageHeaders = (response) => {
   const messageResult = response.result;
 
   return new Promise((resolve, reject) => {
-    const headerPromises = (messageResult.messages || []).map(el => {
+    const headerPromises = (messageResult.messages || []).map((el) => {
       return getMessageHeader(el.id);
     });
 
-    Promise.all(headerPromises).then(messages =>
+    Promise.all(headerPromises).then((messages) =>
       resolve({
         ...messageResult,
-        messages
+        messages,
       })
     );
   });
 };
 
-export const getMessageHeadersFromId = messageIds => {
+export const getMessageHeadersFromId = (messageIds) => {
   return new Promise((resolve, reject) => {
-    const headerPromises = (messageIds || []).map(messageId => {
+    const headerPromises = (messageIds || []).map((messageId) => {
       return getMessageHeader(messageId);
     });
 
-    Promise.all(headerPromises).then(messages => {
+    Promise.all(headerPromises).then((messages) => {
       resolve({
         ...messageIds,
-        messages
+        messages,
       });
     });
   });
 };
 
-export const getMessageHeader = id => {
+export const getMessageHeader = (id) => {
   return new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.messages
       .get({
@@ -164,12 +163,12 @@ export const getMessageHeader = id => {
           'Reply-To',
           'From',
           'Subject',
-          'Return-Path'
+          'Return-Path',
           // See https://www.iana.org/assignments/message-headers/message-headers.xhtml
           // for more headers
-        ]
+        ],
       })
-      .then(response => {
+      .then((response) => {
         // console.log("response.result.payload.headers ->", response.result.payload.headers);
         resolve(response.result);
       });
@@ -182,14 +181,14 @@ export const getMessage = (messageId, format) => {
       .get({
         userId: 'me',
         id: messageId,
-        format: format || 'full'
+        format: format || 'full',
       })
-      .then(response => {
+      .then((response) => {
         const { result } = response;
 
         if (format === 'raw') {
           resolve({
-            result: base64url.decode(result.raw)
+            result: base64url.decode(result.raw),
           });
         } else {
           let body = getBody(result.payload, 'text/html');
@@ -218,12 +217,12 @@ export const getMessage = (messageId, format) => {
             result: {
               ...result,
               messageHeaders: response.result.payload.headers,
-              payload: undefined
-            }
+              payload: undefined,
+            },
           });
         }
       })
-      .catch(error => {
+      .catch((error) => {
         reject(error);
       });
   });
@@ -231,8 +230,11 @@ export const getMessage = (messageId, format) => {
 
 // Creates a random guid
 function uuidv4() {
-  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+    (
+      c ^
+      (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+    ).toString(16)
   );
 }
 
@@ -296,14 +298,20 @@ function parseAttachment(fileData) {
 function removeHtmlTags(body, imgList) {
   // var rex = /(<([^>]+)>)/ig;
   // return body.replace(rex, "");
-  body = body.replace(`<br>`, `\r\n`).replace(`</br>`, ``).replace(`<p>`, `\r\n`).replace(`</p>`, ``).replace(`<strong>`, `*`).replace(`</strong>`, `*`)
+  body = body
+    .replace(`<br>`, `\r\n`)
+    .replace(`</br>`, ``)
+    .replace(`<p>`, `\r\n`)
+    .replace(`</p>`, ``)
+    .replace(`<strong>`, `*`)
+    .replace(`</strong>`, `*`);
   for (let index = 0; index < imgList.length; index++) {
     const img = imgList[index];
-    body = body.replace(img, `\r\n[image: ${getContentName(img)}]`)
+    body = body.replace(img, `\r\n[image: ${getContentName(img)}]`);
   }
-  var temp = document.createElement("div");
+  var temp = document.createElement('div');
   temp.innerHTML = body;
-  return temp.textContent || temp.innerText || "";
+  return temp.textContent || temp.innerText || '';
 }
 
 // Gets all the <img src> tags of the email
@@ -318,11 +326,11 @@ function getEmbeddedImages(body) {
   }
   console.log('getEmbeddedImages:');
   console.log(images);
-  let imagesData = images.map(x => x.replace(/.*src="([^"]*)".*/, '$1'));
+  let imagesData = images.map((x) => x.replace(/.*src="([^"]*)".*/, '$1'));
   console.log('imagesData');
   console.log(imagesData);
   //return images;
-  return res
+  return res;
 }
 
 // Receives the list of images and generates a unique id for each of them.
@@ -342,8 +350,8 @@ function getContentType(imageTag) {
   let src;
   let srcSplitted;
   let contentType;
-  src = imageTag.replace(/.*src="([^"]*)".*/, '$1')
-  srcSplitted = src.split(';')
+  src = imageTag.replace(/.*src="([^"]*)".*/, '$1');
+  srcSplitted = src.split(';');
   contentType = srcSplitted[0].replace('data:', '');
   console.log('getContentType:' + contentType);
   return contentType;
@@ -362,7 +370,7 @@ function getImageData(imageTag) {
   let src;
   let srcSplitted;
   let imageData;
-  src = imageTag.replace(/.*src="([^"]*)".*/, '$1')
+  src = imageTag.replace(/.*src="([^"]*)".*/, '$1');
   srcSplitted = src.split(',');
   imageData = srcSplitted[1];
   imageData = parseAttachment(imageData);
@@ -376,7 +384,6 @@ function formatBodyImages(body, embedddedImagesList, embeddedImagesIds) {
     const element = embedddedImagesList[index];
     const src = element.replace(/.*src="([^"]*)".*/, '$1');
     body = body.replace(src, `cid:${embeddedImagesIds[index]}`);
-
   }
   return body;
 }
@@ -393,17 +400,24 @@ export const sendMessage = async ({ headers, body, attachments }) => {
   let formattedBody = body;
   let plainTextBody;
 
-  if (body.search("<img src=") !== -1) {
+  if (body.search('<img src=') !== -1) {
     embeddedImagesList = getEmbeddedImages(body);
     if (embeddedImagesList.length > 0) {
       embeddedImages = true;
     }
     for (let index = 0; index < embeddedImagesList.length; index++) {
       const element = embeddedImagesList[index];
-      formattedBody = formattedBody.replace(`${element}`, `${element.replace('>', ' nosend="1">')}`);
+      formattedBody = formattedBody.replace(
+        `${element}`,
+        `${element.replace('>', ' nosend="1">')}`
+      );
     }
     embeddedImagesIds = genEmbedImgIds(embeddedImagesList);
-    formattedBody = formatBodyImages(formattedBody, embeddedImagesList, embeddedImagesIds);
+    formattedBody = formatBodyImages(
+      formattedBody,
+      embeddedImagesList,
+      embeddedImagesIds
+    );
     plainTextBody = removeHtmlTags(body, embeddedImagesList);
   }
 
@@ -417,7 +431,13 @@ export const sendMessage = async ({ headers, body, attachments }) => {
   if (headers.Bcc && headers.Bcc.length > 0) {
     email += `Bcc: ${headers.Bcc}\r\n`;
   }
-  email += `Content-Type: ${((attachments && attachments.length > 0)) ? `multipart/mixed; ` : (embeddedImages ? `multipart/related;` : `multipart/alternative;`)} boundary="${guidGlobal}"\r\n`;
+  email += `Content-Type: ${
+    attachments && attachments.length > 0
+      ? `multipart/mixed; `
+      : embeddedImages
+      ? `multipart/related;`
+      : `multipart/alternative;`
+  } boundary="${guidGlobal}"\r\n`;
   email += `\r\n`;
   email += `--${guidGlobal}\r\n`;
   if (attachments && attachments.length > 0 && embeddedImages) {
@@ -436,23 +456,26 @@ export const sendMessage = async ({ headers, body, attachments }) => {
   //email += `${chunkString(removeHtmlTags(body))}\r\n`;
   //email += `${limitLineLengthPlain(plainTextBody)}\r\n`;
   if (embeddedImages) {
-    email += `${plainTextBody.length === 0 ? "" : quotedPrintable.encode(plainTextBody)}\r\n`;
-  }
-  else {
+    email += `${
+      plainTextBody.length === 0 ? '' : quotedPrintable.encode(plainTextBody)
+    }\r\n`;
+  } else {
     email += `${limitLineLengthPlain(plainTextBody)}\r\n`;
   }
   email += `\r\n`;
   email += `--${guidAlternative}\r\n`;
-  email += `Content-Type: text/html; charset="iso-8859-1"\r\n`
-  email += `Content-Transfer-Encoding: quoted-printable\r\n`
+  email += `Content-Type: text/html; charset="iso-8859-1"\r\n`;
+  email += `Content-Transfer-Encoding: quoted-printable\r\n`;
   email += `\r\n`;
   //email += `<div>${chunkString(body)}</div>\r\n`
   //email += `${limitLineLengthHtml(formattedBody)}\r\n`
-  email += `${formattedBody.length === 0 ? "" : quotedPrintable.encode(formattedBody)}\r\n`
+  email += `${
+    formattedBody.length === 0 ? '' : quotedPrintable.encode(formattedBody)
+  }\r\n`;
   email += `\r\n`;
   email += `--${guidAlternative}--\r\n`;
   if (embeddedImages) {
-    console.log('Enters here')
+    console.log('Enters here');
     for (var i = 0; i < embeddedImagesList.length; i++) {
       let imgName = getContentName(embeddedImagesList[i]);
       let imgType = getContentType(embeddedImagesList[i]);
@@ -461,7 +484,7 @@ export const sendMessage = async ({ headers, body, attachments }) => {
       if (attachments && attachments.length > 0 && embeddedImages) {
         email += `--${guidRelated}\r\n`;
       } else {
-        email += `--${guidGlobal}\r\n`
+        email += `--${guidGlobal}\r\n`;
       }
       email += `Content-type: ${imgType}; name="${imgName}"\r\n`;
       email += `Content-Disposition: inline; filename="${imgName}"\r\n`;
@@ -490,29 +513,34 @@ export const sendMessage = async ({ headers, body, attachments }) => {
   }
   email += `--${guidGlobal}--`;
 
-  return fetch(
-    'https://www.googleapis.com/upload/gmail/v1/users/me/messages/send?uploadType=multipart',
-    {
-      method: 'POST',
-      body: email,
-      headers: {
-        Authorization: `Bearer ${window.gapi.auth.getToken().access_token}`,
-        'Content-Type': 'message/rfc822'
+  return new Promise((resolve, reject) => {
+    const base64EncodedEmail = Base64.encodeURI(email);
+    const request = window.gapi.client.gmail.users.messages.send({
+      userId: 'me',
+      resource: {
+        raw: base64EncodedEmail,
+      },
+    });
+    request.execute((err, res) => {
+      if (err.error) {
+        reject(err.error);
+      } else {
+        resolve(err);
       }
-    }
-  );
+    });
+  });
 };
 
-export const setMessageAsRead = async messageId =>
+export const setMessageAsRead = async (messageId) =>
   new Promise((resolve, reject) => {
     window.gapi.client.gmail.users.messages
       .modify({
         userId: 'me',
         id: messageId,
         addLabelIds: [],
-        removeLabelIds: ['UNREAD']
+        removeLabelIds: ['UNREAD'],
       })
-      .then(response => {
+      .then((response) => {
         resolve(messageId);
       });
   });
@@ -524,9 +552,9 @@ export const batchModify = ({ ids, addLabelIds = [], removeLabelIds = [] }) =>
         userId: 'me',
         ids,
         addLabelIds,
-        removeLabelIds
+        removeLabelIds,
       })
-      .then(response => {
+      .then((response) => {
         resolve(ids);
       });
   });
@@ -544,10 +572,10 @@ export const getEventList = (idCalendar) =>
         singleEvents: true,
         orderBy: 'startTime',
       })
-      .then(response => {
-        resolve(response)
+      .then((response) => {
+        resolve(response);
       })
-      .catch(error => {
+      .catch((error) => {
         reject(error);
       });
   });
@@ -566,57 +594,49 @@ export const getEventList = (idCalendar) =>
 //             reject(error);
 //         });
 
-//    }); 
+//    });
 
 export const getCalendarList = () =>
   new Promise((resolve, reject) => {
     window.gapi.client.calendar.calendarList
-      .list({
+      .list({})
 
-      })
-
-      .then(response => {
+      .then((response) => {
         resolve(response.result);
       })
-      .catch(err => {
+      .catch((err) => {
         reject(err);
       });
-
   });
 
 export const addCalendarEvent = (calendar, event) =>
   new Promise((resolve, reject) => {
     window.gapi.client.calendar.events
       .insert({
-        calendarId: "primary",
-        resource: event
+        calendarId: 'primary',
+        resource: event,
       })
 
-      .then(response => {
+      .then((response) => {
         resolve(response.result);
       })
-      .catch(err => {
+      .catch((err) => {
         reject(err);
       });
-
   });
 
 export const deleteCalendarEvent = (calendar, eventId) =>
   new Promise((resolve, reject) => {
     window.gapi.client.calendar.events
       .delete({
-        calendarId: "primary",
-        eventId: eventId
+        calendarId: 'primary',
+        eventId: eventId,
       })
 
-      .then(response => {
+      .then((response) => {
         resolve(response.result);
       })
-      .catch(err => {
+      .catch((err) => {
         reject(err);
       });
-
   });
-
-
-

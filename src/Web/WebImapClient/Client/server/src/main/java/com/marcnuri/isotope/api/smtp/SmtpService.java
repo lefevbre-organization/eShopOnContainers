@@ -110,7 +110,7 @@ public class SmtpService {
     private Session session;
     private Transport smtpTransport;
     public Credentials originalCredentials;
-    public String sentFolderName;
+    public String sentFolderName = "";
 
     @Autowired
     public SmtpService(MailSSLSocketFactory mailSSLSocketFactory) {
@@ -237,6 +237,11 @@ public class SmtpService {
                 Folder[] f = folder.list("%");
                 for (int i = 0; i < f.length; i++)
                 processFolderElements(f[i], true, "    ");
+            }
+
+            //log.info("Sent folder Name: " + sentFolderName);
+            if (sentFolderName.isEmpty()){
+                searchSentFolderByName(folder, true, "");
             }
 
             //log.info("Sent folder Name: " + sentFolderName);
@@ -514,6 +519,38 @@ public class SmtpService {
             Folder[] f = folder.list();
             for (int i = 0; i < f.length; i++)
             processFolderElements(f[i], recurse, tab + "    ");
+            }
+        }
+    }
+
+    private void searchSentFolderByName(Folder folder, boolean recurse, String tab)
+					throws Exception {
+        // Uncomment this section to debug:
+        // log.info(tab + "Name:      " + folder.getName());
+        // log.info(tab + "Full Name: " + folder.getFullName());
+        // log.info(tab + "URL:       " + folder.getURLName());
+        // log.info(tab + "Name to lowerCase: " + folder.getFullName().toLowerCase());
+        // log.info(tab + (folder.getFullName().equalsIgnoreCase("sent")));
+
+        if (folder.getFullName().equalsIgnoreCase("sent") || 
+            folder.getFullName().equalsIgnoreCase("sent items") || 
+            folder.getFullName().equalsIgnoreCase("enviados") || 
+            folder.getFullName().equalsIgnoreCase("elementos enviados")){
+                log.info("folderFound");
+                sentFolderName = folder.getFullName();
+            }
+
+        if (sentFolderName.isEmpty()){
+            if ((folder.getType() & Folder.HOLDS_FOLDERS) != 0) {
+                if (recurse) {
+                    Folder[] f = folder.list();
+                    for (int i = 0; i < f.length; i++){
+                        if (!sentFolderName.isEmpty()){
+                            break;
+                        }
+                        searchSentFolderByName(f[i], recurse, tab + "    ");
+                    }
+                }
             }
         }
     }

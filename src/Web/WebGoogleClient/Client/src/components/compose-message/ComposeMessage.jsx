@@ -438,9 +438,6 @@ export class ComposeMessage extends PureComponent {
       body: this.state.content,
       attachments: Fileattached,
     })
-      .then(function (response) {
-        return response.json();
-      })
       .then((email) => {
         //this.sentEmail(email.id, this.state.subject);
         getMessageHeader(email.id)
@@ -458,7 +455,7 @@ export class ComposeMessage extends PureComponent {
           });
       })
       .catch((err) => {
-        console.log('Error getting Headers:' + err);
+        console.log('Error sending email:' + err);
       });
     this.resetFields();
     this.closeModal();

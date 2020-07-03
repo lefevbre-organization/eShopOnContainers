@@ -364,7 +364,7 @@ export const uploadFile = async (
   const body = {
     idNavision: navisionUser,
     conceptId,
-    name: doc.name,
+    name: sanitize(doc.name),
     contentFile: doc.content
   };
 
@@ -448,4 +448,10 @@ export const downloadFile = async (
   } catch (err) {
     throw err;
   }
+};
+
+const sanitize = (name: string): string => {
+  const regEx = new RegExp('[¨~#!%&¡¿{}¨´><`;,:]', 'gi');
+  const res = name.replace(regEx, '');
+  return res;
 };

@@ -19,6 +19,8 @@ export const FolderTypes = Object.freeze({
   FOLDER: {icon: 'folder_open'}
 });
 
+export const FolderNames = ['SENT', 'SENT ITEMS', 'ENVIADO', 'ENVIADOS', 'ELEMENTOS ENVIADOS'];
+
 
 /**
  * Finds the trash folder from within the current folder state's exploded items.
@@ -33,6 +35,12 @@ export const findTrashFolder = foldersState =>
 
 export const findSentFolder = foldersState =>
   Object.values(foldersState.explodedItems).find(f => f.type === FolderTypes.SENT);
+
+  export const findSentFolderByName = foldersState =>
+  Object.values(foldersState.explodedItems).find(f => f.fullName.toUpperCase() === 'SENT' || 
+    f.fullName.toUpperCase() === 'SENT ITEMS' || 
+    f.fullName.toUpperCase() === 'ENVIADOS'  ||
+    f.fullName.toUpperCase() === 'ELEMENTOS ENVIADOS');    
 
 /**
  * Returns the id of the provided folder and all its children.

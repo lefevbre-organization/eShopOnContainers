@@ -10,6 +10,9 @@ function buildDocumentAttachedCard(e) {
     
     var cardChangeAction = CardService.newAction()
           .setFunctionName('onChangeCompanyCompose')
+
+    var attach = CardService.newAction()
+    .setFunctionName('onAttach')
   
     var companyIdentifiedText = CardService.newKeyValue()
     .setContent('Empresa Identificada:' + 
@@ -30,7 +33,7 @@ function buildDocumentAttachedCard(e) {
      var fileSelectLexon = CardService.newKeyValue()
     .setContent('<font color="#001978">Selecciona los archivos en LEX-ON</font>')
     .setIconUrl("https://www.dropbox.com/s/vpqslp31gyxbmyh/Screenshot%202020-06-26%2008.54.47.png?raw=1")
-    .setOnClickAction(cardChangeAction);
+    .setOnClickAction(attach);
  
   
     var selectionCompany = CardService.newCardSection()
@@ -51,6 +54,25 @@ function buildDocumentAttachedCard(e) {
       return card.build();
 }
   
+
+function onAttach(e) {
+    // var now = new Date();
+
+    // var composeActionResponse = CardService.newComposeActionResponseBuilder()
+    //    .setGmailDraft(GmailApp.createDraft("mike@example.com", "current time", "The time is: " + now.toString()))
+    //    .build();
+    //  return composeActionResponse;
+
+    var updateDraftActionResponse = CardService.newUpdateDraftActionResponseBuilder()
+    .setUpdateDraftBodyAction(CardService.newUpdateDraftBodyAction()
+        .addUpdateContent(
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTZ0uhONgIQGfVK7tXZF5ByMORRCeRUa_Iq2A&usqp=CAU",
+                CardService.ContentType.IMMUTABLE_HTML)
+        .setUpdateType(CardService.UpdateDraftBodyType.IN_PLACE_INSERT))
+    .build();
+
+    return updateDraftActionResponse;
+}
  
 function onChangeCompanyCompose(e) {
   cache.remove('companyDataCompose');

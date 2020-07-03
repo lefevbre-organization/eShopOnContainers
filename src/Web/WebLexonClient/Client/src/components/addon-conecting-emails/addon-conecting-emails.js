@@ -496,7 +496,7 @@ class AddonConnectingEmails extends Component {
             </span>
           </h5>
         </header>
-        <div>
+        <div className="addon-container">
           <div style={{ display: this.state.step === 1 ? 'block' : 'none' }}>
             <ConnectingEmailsStep1
               show={this.state.step === 1}
