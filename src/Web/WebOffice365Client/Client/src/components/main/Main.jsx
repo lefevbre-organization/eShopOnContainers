@@ -42,6 +42,7 @@ import {
 } from '../../api_graph/accounts';
 import { PROVIDER } from '../../constants';
 import MessageNotFound from '../message-not-found/MessageNotFound';
+import CalendarComponent from '../../apps/calendar_content';
 
 export class Main extends Component {
   constructor(props) {
@@ -81,10 +82,10 @@ export class Main extends Component {
       e.emit('received', { text: 'Woohoo! Hello from Multi-channel app!' });
     });
 
-    this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
-    this.onSetSidebarOpenCalendar = this.onSetSidebarOpenCalendar.bind(this);
+    this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);   
     this.onSetSidebarOpenLexon = this.onSetSidebarOpenLexon.bind(this);
     this.onSetSidebarOpenQMemento = this.onSetSidebarOpenQMemento.bind(this);
+    this.onSetSidebarOpenCalendar = this.onSetSidebarOpenCalendar.bind(this);
     this.onSetSidebarOpenCompliance = this.onSetSidebarOpenCompliance.bind(
       this
     );
@@ -183,7 +184,7 @@ export class Main extends Component {
   onSetSidebarOpenCalendar(open) {
     this.setState({
       sidebarComponent: (
-        <SidebarComponent sidebarDocked={this.onSetSidebarDocked} />
+        <CalendarComponent sidebarDocked={this.onSetSidebarDocked} />
       ),
     });
     this.setState({ sidebarDocked: open });
@@ -756,19 +757,18 @@ export class Main extends Component {
                   </div>
                 )}
               </span>
-              {window.SHOW_EXPERIMENTAL === '1' && (
-                <span className='productsbutton'>
-                  <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
-                    <div>
-                      <img
-                        className='imgproductdisable'
-                        border='0'
-                        alt='Calendar'
-                        src='/assets/img/icon-calendar.png'></img>
+                {window.SHOW_EXPERIMENTAL === '1' && (
+                  <span className='productsbutton'>
+                    <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
+                       <img
+                          className='imgproduct'
+                          border='0'
+                          alt='Calendar'
+                          src='/assets/img/icon-calendar.png'>
+                       </img>
                     </div>
-                  </div>
-                </span>
-              )}
+                  </span>
+                )}
               {this.hasProduct('centinelaconnector') &&
                 window.SHOW_EXPERIMENTAL === '1' && (
                   <span className='productsbutton'>

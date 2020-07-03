@@ -614,7 +614,7 @@ export class Main extends Component {
             //else if (this.tabObj.selectingID == 1 && this.scheduleObj.eventWindow.eventData.Id != undefined){
             //    this.scheduleObj.saveEvent(this.scheduleObj.eventWindow.eventData);
             //}
-        } 
+        }
         else {
             args.cancel = true          
             

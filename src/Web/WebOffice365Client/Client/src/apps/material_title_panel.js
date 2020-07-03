@@ -1,6 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import "./material_title_panel.css";
+import { Router, Route, Link } from 'react-router-dom';
+
+
 
 const styles = {
   root: {
@@ -30,14 +33,24 @@ const MaterialTitlePanel = props => {
   return (
     <div style={rootStyle}>
       <div style={styles.header}>
-        <span>{props.title}</span>
+        <span>{props.title}</span>        
         <img
           className="headerButtons"
           alt={props.title}
           border="0"
-          src="/assets/img/buttons.png"
+          src="/assets/img/close.png"
           onClick={() => _handleOnClick()}
         ></img>
+                <Link to="chart" target="_blank" to="calendar" >
+              <img
+                      className="headerButtons"
+                      alt={props.title}
+                      border="0"
+                      src="/assets/img/expand.png"
+
+                  ></img>
+             </Link>
+        
       </div>
       {props.children}
     </div>

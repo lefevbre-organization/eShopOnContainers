@@ -39,8 +39,8 @@ const calendarContent = props => {
       style={style}
       sidebarDocked={sidebarDocked}
     >
-      <div style={styles.content}>      
-        <CalendarCard />                   
+      <div style={styles.content}>         
+         <CalendarCard />                   
       </div>
     </MaterialTitlePanel>
   );
