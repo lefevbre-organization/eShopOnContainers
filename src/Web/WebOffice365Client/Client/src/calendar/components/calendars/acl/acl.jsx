@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 import { ListViewComponent } from '@syncfusion/ej2-react-lists';
-import { addAcl, listAcl, deleteAcl } from "../../../../api/calendar-api";
+import { addAcl, listAcl, deleteAcl } from "../../../../api_graph/calendar-api";
 import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import { ComboBoxComponent } from '@syncfusion/ej2-react-dropdowns';
 import { ToastComponent } from '@syncfusion/ej2-react-notifications';

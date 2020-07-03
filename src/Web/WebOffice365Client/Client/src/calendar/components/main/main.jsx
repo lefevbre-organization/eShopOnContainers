@@ -9,8 +9,8 @@ import './main.scss';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import { getCalendars } from '../sidebar/sidebar.actions';
 import { selectCalendar } from '../sidebar/sidebar.actions';
-import { signOut } from '../../../api/authentication';
-import { signOutDisconnect } from '../../../api/authentication';
+import { signOut } from '../../../api_graph/authentication';
+//import { signOutDisconnect } from '../../../api/authentication';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import SidebarCnn from 'react-sidebar';
@@ -19,7 +19,7 @@ import LexonComponentCalendar from '../../../apps/lexon_content_calendar';
 import CalendarComponent from '../../../apps/calendar_content';
 import { Calendars } from '../calendars/calendars';
 import 'react-reflex/styles.css';
-import { resetDefaultAccount } from '../../../api/accounts';
+import { resetDefaultAccount } from '../../../api_graph/accounts';
 import {
     ScheduleComponent, ViewsDirective, ViewDirective,
     Day, Week, WorkWeek, Month, Agenda, Inject, Resize, DragAndDrop, DragEventArgs, ResourcesDirective, ResourceDirective,
@@ -27,7 +27,7 @@ import {
 import { DataManager, Query, Predicate } from '@syncfusion/ej2-data';
 import { ToastComponent, ToastCloseArgs } from '@syncfusion/ej2-react-notifications';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
-import { deleteCalendar, getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, listCalendarList, updateCalendarList } from '../../../api/calendar-api';
+import { deleteCalendar, getEventList, addCalendarEvent, deleteCalendarEvent, updateCalendarEvent, requestRecurringEvent, listCalendarList, updateCalendarList } from '../../../api_graph/calendar-api';
 import moment from 'moment';
 import groupBy from "lodash/groupBy";
 import orderBy from "lodash/orderBy";
@@ -51,7 +51,7 @@ export class Main extends Component {
         super(props);
         this.sidebarCalendarList = this.sidebarCalendarList.bind(this);
         this.onSignout = this.onSignout.bind(this);
-        this.onSignoutDisconnect = this.onSignoutDisconnect.bind(this);
+        //this.onSignoutDisconnect = this.onSignoutDisconnect.bind(this);
         this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
         this.onSetSidebarOpenCalendar = this.onSetSidebarOpenCalendar.bind(this);
         this.onSetSidebarOpenLexon = this.onSetSidebarOpenLexon.bind(this);
@@ -1039,20 +1039,20 @@ export class Main extends Component {
         //localStorage.clear();
     }
 
-    onSignoutDisconnect() {
-        console.log('IN ... onSignoutDisconnect');
-        const { userId, token } = this.props.lexon;
-        resetDefaultAccount(userId)
-            .then(result => {
-                signOutDisconnect();
-            })
-            .then(_ => {
-                const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}/` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
-                window.open(urlRedirect, '_self');
-            });
-        //sessionStorage.clear();
-        //localStorage.clear();
-    }
+    //onSignoutDisconnect() {
+    //    console.log('IN ... onSignoutDisconnect');
+    //    const { userId, token } = this.props.lexon;
+    //    resetDefaultAccount(userId)
+    //        .then(result => {
+    //            signOutDisconnect();
+    //        })
+    //        .then(_ => {
+    //            const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}/` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
+    //            window.open(urlRedirect, '_self');
+    //        });
+    //    //sessionStorage.clear();
+    //    //localStorage.clear();
+    //}
 
     setEmailTags(tag) {
         this.setState({ tagAttendess: [...tag] })

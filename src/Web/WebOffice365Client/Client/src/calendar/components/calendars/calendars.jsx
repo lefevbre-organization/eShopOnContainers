@@ -1,7 +1,7 @@
 import * as React from "react";
 import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import { ButtonComponent, ChangeEventArgs as CheckBoxChange } from '@syncfusion/ej2-react-buttons';
-import { getCalendar, addCalendar, updateCalendar } from "../../../api/calendar-api";
+import { getCalendar, addCalendar, updateCalendar } from "../../../api_graph/calendar-api";
 import { ToastComponent } from '@syncfusion/ej2-react-notifications';
 import { Acl } from './acl/acl';
 import i18n from 'i18next';

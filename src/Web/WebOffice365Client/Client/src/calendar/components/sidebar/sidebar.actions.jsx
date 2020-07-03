@@ -1,4 +1,4 @@
-import { listCalendarList } from "../../../api/calendar-api";
+import { listCalendarList } from "../../../api_graph/calendar-api";
 //import { setSearchQuery } from "../content/message-list/actions/message-list.actions";
 
 export const GET_CALENDARS = "GET_CALENDARS";
