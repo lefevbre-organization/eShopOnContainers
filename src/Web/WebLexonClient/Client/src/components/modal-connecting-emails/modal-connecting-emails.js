@@ -197,6 +197,7 @@ class ModalConnectingEmails extends Component {
     const { toggleNotification } = this.props;
     const { selectedMessages } = this.props;
     let notification = 0;
+    let error = false;
 
     this.closeDialog();
     let sc = null;
@@ -219,48 +220,86 @@ class ModalConnectingEmails extends Component {
           const subject = selectedMessages[i].subject;
 
           if (step1Data.copyDocuments === true) {
-            await uploadFile(
-              step1Data.actuation === false ? step3Data.selected : undefined,
-              step1Data.actuation === false ? step2Data.id : undefined,
-              step1Data.actuation === false ? step2Data.idType : 45,
-              step1Data.actuation === true ? sc[i] : undefined,
-              this.props.companySelected.bbdd,
-              this.props.user.idUser,
-              subject + '.eml',
-              raw
-            );
-          }
-
-          if (step1Data.saveDocuments === true) {
-            // Save attachments
-            const mime = parse(selectedMessages[i].raw);
-            const attachments = findAttachments(mime);
-
-            for (let j = 0; j < attachments.length; j++) {
-              let rawAttach = base64js.fromByteArray(attachments[j].content);
-              await uploadFile(
+            try {
+              const data = await uploadFile(
                 step1Data.actuation === false ? step3Data.selected : undefined,
                 step1Data.actuation === false ? step2Data.id : undefined,
                 step1Data.actuation === false ? step2Data.idType : 45,
                 step1Data.actuation === true ? sc[i] : undefined,
                 this.props.companySelected.bbdd,
                 this.props.user.idUser,
-                attachments[j].contentType.params.name,
-                rawAttach
+                subject + '.eml',
+                raw
               );
+              if (!data || data.response.status > 201) {
+                error = true;
+              }
+            } catch (err) {
+              console.log(err);
+              error = true;
+            }
+          }
+
+          if (step1Data.saveDocuments === true) {
+            console.log('uploadDocument: 0');
+
+            // Save attachments
+            const mime = parse(selectedMessages[i].raw);
+            const attachments = findAttachments(mime);
+
+            for (let j = 0; j < attachments.length; j++) {
+              let rawAttach = base64js.fromByteArray(attachments[j].content);
+              try {
+                const data = await uploadFile(
+                  step1Data.actuation === false
+                    ? step3Data.selected
+                    : undefined,
+                  step1Data.actuation === false ? step2Data.id : undefined,
+                  step1Data.actuation === false ? step2Data.idType : 45,
+                  step1Data.actuation === true ? sc[i] : undefined,
+                  this.props.companySelected.bbdd,
+                  this.props.user.idUser,
+                  attachments[j].contentType.params.name,
+                  rawAttach
+                );
+                console.log('uploadDocument: 1');
+                console.log(data);
+                if (!data || data.response.status > 201) {
+                  error = true;
+                }
+              } catch (err) {
+                console.log('uploadDocument: 2');
+                console.log(err);
+                error = true;
+              }
             }
           }
         }
       }
 
-      if (notification === 1) {
-        toggleNotification(i18n.t('classify-emails.classification-saved-ok'));
-      } else if (notification === 2) {
-        toggleNotification(i18n.t('classify-emails.documents-saved-ok'));
-      } else if (notification === 3) {
-        toggleNotification(
-          i18n.t('classify-emails.classification-docs-saved-ok')
-        );
+      debugger;
+      if (error) {
+        if (notification === 1) {
+          toggleNotification(
+            i18n.t('classify-emails.classification-saved-ko'),
+            true
+          );
+        } else if (notification > 1) {
+          toggleNotification(
+            i18n.t('classify-emails.documents-saved-ko'),
+            true
+          );
+        }
+      } else {
+        if (notification === 1) {
+          toggleNotification(i18n.t('classify-emails.classification-saved-ok'));
+        } else if (notification === 2) {
+          toggleNotification(i18n.t('classify-emails.documents-saved-ok'));
+        } else if (notification === 3) {
+          toggleNotification(
+            i18n.t('classify-emails.classification-docs-saved-ok')
+          );
+        }
       }
     } catch (err) {
       console.log(err);

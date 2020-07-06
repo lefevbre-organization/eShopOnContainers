@@ -44,7 +44,7 @@ interface Props {
   show: boolean;
   implantation: any;
   toggleNotification?: (msg: string, error: boolean) => void;
-  onInstanceSelected: (instance: CentInstance) => void;
+  onInstanceSelected: (instance?: CentInstance) => void;
   // onPhase: (id: Evaluation) => void;
 }
 interface State {
@@ -101,9 +101,9 @@ export class Step3 extends React.Component<Props, State> {
 
   public back() {
     const { route } = this.state;
-    this.setState({ rowSelected: -1 });
 
     if (route.length === 0) {
+      this.setState({ rowSelected: -1 });
       return true;
     }
 
@@ -283,11 +283,14 @@ export class Step3 extends React.Component<Props, State> {
       this.setState({
         route: rts,
         substep: 0,
+        rowSelected: -1,
         currentNodes: {
           node: 'root',
           items: [...this.state.phases]
         }
       });
+
+      this.props.onInstanceSelected && this.props.onInstanceSelected(undefined);
       return;
     }
 
@@ -308,11 +311,14 @@ export class Step3 extends React.Component<Props, State> {
     this.setState({
       route: rts,
       substep: 0,
+      rowSelected: -1,
       currentNodes: {
         node: cn,
         items: [...cn.children, ...cn.concepts]
       }
     });
+
+    this.props.onInstanceSelected && this.props.onInstanceSelected(undefined);
   }
 
   renderBreadcrumbs() {

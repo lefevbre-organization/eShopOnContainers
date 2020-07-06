@@ -31,7 +31,6 @@ export class MessageToolbar extends PureComponent {
 
   async componentDidMount() {
     if (
-      window.SHOW_EXPERIMENTAL === '1' &&
       this.props.messageResult.result.isReadReceiptRequested === true &&
       this.props.messageResult.result.isRead === false
     ) {
@@ -169,7 +168,7 @@ export class MessageToolbar extends PureComponent {
               justifyContent: 'flex-end',
               marginRight: 15,
             }}>
-            {confirmation === 1 && window.SHOW_EXPERIMENTAL === '1' && (
+            {confirmation === 1 && (
               <>
                 <div
                   id='Popover1'
@@ -201,7 +200,7 @@ export class MessageToolbar extends PureComponent {
                 </Popover>
               </>
             )}
-            {confirmation === 2 && window.SHOW_EXPERIMENTAL === '1' && (
+            {confirmation === 2 && (
               <>
                 <div
                   id='Popover2'
