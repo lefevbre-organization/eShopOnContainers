@@ -48,13 +48,13 @@ namespace Lexon.API.Controllers
         [Route("user")]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UsersAsync(string idUserNavision = "E1621396")
+        public async Task<IActionResult> UsersAsync(string idUserNavision = "E1621396", string env = "DEV")
 
         {
             if (string.IsNullOrEmpty(idUserNavision))
                 return BadRequest("idUser need a correct value");
 
-            var result = await _usersService.GetUserAsync(idUserNavision);
+            var result = await _usersService.GetUserAsync(idUserNavision, env);
 
             if (result.errors.Count() > 0 && result.data?.idUser == null)
             {
@@ -74,13 +74,13 @@ namespace Lexon.API.Controllers
         [Route("companies")]
         [ProducesResponseType(typeof(Result<IEnumerable<LexCompany>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexCompany>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CompaniesAsync(string idUser = "449")
+        public async Task<IActionResult> CompaniesAsync(string idUser = "449", string env = "DEV")
 
         {
             if (string.IsNullOrEmpty(idUser))
                 return (IActionResult)BadRequest("idUser need a correct value");
 
-            var result = await _usersService.GetCompaniesFromUserAsync(idUser);
+            var result = await _usersService.GetCompaniesFromUserAsync(idUser, env);
 
             if (result.errors.Count() > 0 && result.data?.Count() == 0)
             {

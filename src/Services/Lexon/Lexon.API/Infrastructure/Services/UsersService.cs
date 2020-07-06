@@ -41,7 +41,7 @@ namespace Lexon.Infrastructure.Services
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _usersRepository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
-            _clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
+            //_clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
             //_client = _clientFactory.CreateClient();
             //_client.BaseAddress = new Uri(_settings.Value.LexonMySqlUrl);
             //_client.DefaultRequestHeaders.Add("Accept", "text/plain");
@@ -52,10 +52,7 @@ namespace Lexon.Infrastructure.Services
                 ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
             };
 
-            _clientFiles = new HttpClient(handler)
-            {
-                BaseAddress = new Uri(_settings.Value.LexonFilesUrl)
-            };
+            _clientFiles = new HttpClient(handler){ BaseAddress = new Uri(_urlLexon) };
             _clientFiles.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
@@ -63,7 +60,7 @@ namespace Lexon.Infrastructure.Services
         private void GetUrlsByEnvironment(string environmet)
         {
             if (environmet == null)
-                environmet = _settings.Value.DefaultEnvironmet;
+                environmet = _settings.Value.DefaultEnvironment;
 
             _conn = _settings.Value.LexonUrls.First(x => x.env.Equals(environmet))?.conn;
             _urlLexon = _settings.Value.LexonUrls.First(x => x.env.Equals(environmet))?.url;
@@ -73,10 +70,10 @@ namespace Lexon.Infrastructure.Services
 
         #region user
 
-        public async Task<Result<LexUser>> GetUserAsync(string idNavisionUser)
+        public async Task<Result<LexUser>> GetUserAsync(string idNavisionUser, string env)
         {
             var result = new Result<LexUser>(new LexUser());
-            GetUrlsByEnvironment(null);
+            GetUrlsByEnvironment(env);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -104,12 +101,12 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        public async Task<Result<List<LexCompany>>> GetCompaniesFromUserAsync(string idUser)
+        public async Task<Result<List<LexCompany>>> GetCompaniesFromUserAsync(string idUser, string env)
         {
             var resultCompany = new Result<LexUser>(new LexUser());
             var result = new Result<List<LexCompany>>(new List<LexCompany>());
             var resultUser = new Result<LexUser>(new LexUser());
-            GetUrlsByEnvironment(null);
+            GetUrlsByEnvironment(env);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -1118,11 +1115,12 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<string>> FileGetAsync(EntitySearchById fileMail)
         {
             var result = new Result<string>(null);
+            GetUrlsByEnvironment(fileMail.env);
             try
             {
                 var lexonFile = new LexonGetFile
                 {
-                    idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd),
+                    idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd, fileMail.env),
                     idUser = fileMail.idUser,
                     idDocument = fileMail.idEntity ?? 0
                 };
@@ -1130,7 +1128,7 @@ namespace Lexon.Infrastructure.Services
                 var json = JsonConvert.SerializeObject(lexonFile);
                 byte[] buffer = Encoding.UTF8.GetBytes(json);
                 var dataparameters = Convert.ToBase64String(buffer);
-                var url = $"{_settings.Value.LexonFilesUrl}?option=com_lexon&task=hook.receive&type=repository&data={dataparameters}";
+                var url = $"{_urlLexon}?option=com_lexon&task=hook.receive&type=repository&data={dataparameters}";
                 WriteError($"Se hace llamada a {url} a las {DateTime.Now}");
                 using (var response = await _clientFiles.GetAsync(url))
                 {
@@ -1163,6 +1161,8 @@ namespace Lexon.Infrastructure.Services
         public async Task<Result<bool>> FilePostAsync(MailFileView fileMail)
         {
             var result = new Result<bool>(false);
+            GetUrlsByEnvironment(fileMail.env);
+
             try
             {
                 var lexonFile = await GetFileDataByTypeActuation(fileMail);
@@ -1199,7 +1199,6 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                //TraceMessage(result.errors, ex);
                 TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message} - {ex.InnerException?.Message}", "598");
             }
             WriteError($"Salimos de FilePostAsync a las {DateTime.Now}");
@@ -1211,7 +1210,7 @@ namespace Lexon.Infrastructure.Services
         {
             var lexonFile = new LexonPostFile
             {
-                idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd),
+                idCompany = await GetIdCompany(fileMail.idUser, fileMail.bbdd, fileMail.env),
                 fileName = fileMail.Name,
                 idUser = fileMail.idUser,
                 idEntityType = fileMail.idType ?? 0
@@ -1229,9 +1228,9 @@ namespace Lexon.Infrastructure.Services
             return lexonFile;
         }
 
-        private async Task<long> GetIdCompany(string idUser, string bbdd)
+        private async Task<long> GetIdCompany(string idUser, string bbdd, string env)
         {
-            var resultadoCompanies = await GetCompaniesFromUserAsync(idUser);
+            var resultadoCompanies = await GetCompaniesFromUserAsync(idUser, env);
             var companies = resultadoCompanies.data.Where(x => x.bbdd.ToLower().Contains(bbdd.ToLower()));
             var idCompany = companies?.FirstOrDefault()?.idCompany;
             return idCompany ?? 0; // "88";
@@ -1451,17 +1450,17 @@ namespace Lexon.Infrastructure.Services
 
         #endregion User and Companies
 
-        private void SerializeObjectToPost(object parameters, string path, out string url, out StringContent data)
-        {
-            url = $"{_settings.Value.LexonMySqlUrl}{path}";
-            TraceLog(parameters: new string[] { $"url={url}" });
-            var json = JsonConvert.SerializeObject(parameters);
-            data = new StringContent(json, Encoding.UTF8, "application/json");
-        }
+        //private void SerializeObjectToPost(object parameters, string path, out string url, out StringContent data)
+        //{
+        //    url = $"{_urlLexon}{path}";
+        //    TraceLog(parameters: new string[] { $"url={url}" });
+        //    var json = JsonConvert.SerializeObject(parameters);
+        //    data = new StringContent(json, Encoding.UTF8, "application/json");
+        //}
 
         private void SerializeObjectToPut(string textInBase64, string path, out string url, out ByteArrayContent byteArrayContent)
         {
-            url = $"{_settings.Value.LexonFilesUrl}{path}";
+            url = $"{_urlLexon}{path}";
             TraceLog(parameters: new string[] { $"url={url}" });
             byte[] newBytes = Convert.FromBase64String(textInBase64);
 

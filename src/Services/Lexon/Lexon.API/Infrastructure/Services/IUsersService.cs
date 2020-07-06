@@ -8,9 +8,9 @@ namespace Lexon.Infrastructure.Services
     public interface IUsersService
     {
 
-        Task<Result<LexUser>> GetUserAsync(string idNavisionUser);
+        Task<Result<LexUser>> GetUserAsync(string idNavisionUser, string env);
 
-        Task<Result<List<LexCompany>>> GetCompaniesFromUserAsync(string idUser);
+        Task<Result<List<LexCompany>>> GetCompaniesFromUserAsync(string idUser, string env);
 
         Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch);
 
