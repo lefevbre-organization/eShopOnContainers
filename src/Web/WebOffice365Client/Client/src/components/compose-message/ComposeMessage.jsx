@@ -140,6 +140,9 @@ export class ComposeMessage extends PureComponent {
     this.attachFromLexon = this.attachFromLexon.bind(this);
     this.onTogglePriority = this.onTogglePriority.bind(this);
     this.onToggleReadConfirmation = this.onToggleReadConfirmation.bind(this);
+    this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
+      this
+    );
 
     this.uppy = new Uppy({
       id: 'uppy1',
@@ -251,6 +254,14 @@ export class ComposeMessage extends PureComponent {
 
     window.dispatchEvent(new CustomEvent('OpenComposer'));
     window.addEventListener('AttachDocument', this.attachFromLexon);
+    window.addEventListener(
+      'GetUserFromCentinelaConnector',
+      this.handleGetUserFromLexonConnector
+    );
+  }
+
+  handleGetUserFromLexonConnector() {
+    window.dispatchEvent(new CustomEvent('OpenComposer'));
   }
 
   onTogglePriority() {
@@ -302,8 +313,10 @@ export class ComposeMessage extends PureComponent {
       this.props.lexon.idCaseFile === undefined
     ) {
       //this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
-      if (this.props.labelsResult.labelInbox === null){
-        getLabelInbox().then(label => this.props.history.push(`/${label.id}`));
+      if (this.props.labelsResult.labelInbox === null) {
+        getLabelInbox().then((label) =>
+          this.props.history.push(`/${label.id}`)
+        );
       } else {
         this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
       }
@@ -412,6 +425,10 @@ export class ComposeMessage extends PureComponent {
     //window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
     window.dispatchEvent(new CustomEvent('CloseComposer'));
     window.removeEventListener('AttachDocument', this.attachFromLexon);
+    window.removeEventListener(
+      'GetUserFromCentinelaConnector',
+      this.handleGetUserFromLexonConnector
+    );
 
     this.uppy.close();
   }
