@@ -437,7 +437,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
     }
   }
 
-  onInstanceSelected(inst: CentInstance) {
+  onInstanceSelected(inst?: CentInstance) {
     this.setState({ instance: inst });
   }
 
