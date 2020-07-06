@@ -82,7 +82,7 @@ export class Main extends Component {
       e.emit('received', { text: 'Woohoo! Hello from Multi-channel app!' });
     });
 
-    this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);   
+    this.onSetSidebarDocked = this.onSetSidebarDocked.bind(this);
     this.onSetSidebarOpenLexon = this.onSetSidebarOpenLexon.bind(this);
     this.onSetSidebarOpenQMemento = this.onSetSidebarOpenQMemento.bind(this);
     this.onSetSidebarOpenCalendar = this.onSetSidebarOpenCalendar.bind(this);
@@ -757,18 +757,17 @@ export class Main extends Component {
                   </div>
                 )}
               </span>
-                {window.SHOW_EXPERIMENTAL === '1' && (
-                  <span className='productsbutton'>
-                    <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
-                       <img
-                          className='imgproduct'
-                          border='0'
-                          alt='Calendar'
-                          src='/assets/img/icon-calendar.png'>
-                       </img>
-                    </div>
-                  </span>
-                )}
+              {window.SHOW_EXPERIMENTAL === '1' && (
+                <span className='productsbutton'>
+                  <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
+                    <img
+                      className='imgproduct'
+                      border='0'
+                      alt='Calendar'
+                      src='/assets/img/icon-calendar.png'></img>
+                  </div>
+                </span>
+              )}
               {this.hasProduct('centinelaconnector') &&
                 window.SHOW_EXPERIMENTAL === '1' && (
                   <span className='productsbutton'>
