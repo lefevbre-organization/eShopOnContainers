@@ -1063,9 +1063,12 @@ export class Main extends Component {
         const { leftSideBar } = this.state;
         const { lexon } = this.props;
 
-        if (this.props.calendarsResult.calendars.length < 1) {
-            return this.renderSpinner();
+        if (this.props.calendarsResult != undefined) {
+            if (this.props.calendarsResult.calendars.length < 1) {
+                return this.renderSpinner();
+            }
         }
+       
 
         return (
             <div id='target' className='control-section'>
@@ -1116,9 +1119,8 @@ export class Main extends Component {
                         {!this.layoutIframe ? (
                             <div >
                                 <Header
-                                    googleUser={this.props.googleUser}
+                                    microsoftUser={this.props.User}
                                     onSignout={this.onSignout}
-                                    onSignoutDisconnect={this.onSignout}
                                     setSearchQuery={this.props.setSearchQuery}
                                     getLabelMessages={this.getLabelMessages}
                                     searchQuery={this.props.searchQuery}
@@ -1132,7 +1134,7 @@ export class Main extends Component {
 
                         <section className='main hbox space-between'>
 
-                            <Sidebar
+                             <Sidebar
                                 sideBarCollapsed={!this.layoutIframe ? (false) : (true)}
                                 sideBarToggle={this.toggleSideBar}
                                 getCalendarList={this.sidebarCalendarList}

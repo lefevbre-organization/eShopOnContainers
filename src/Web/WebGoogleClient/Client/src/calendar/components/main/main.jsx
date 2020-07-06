@@ -1063,8 +1063,10 @@ export class Main extends Component {
         const { leftSideBar } = this.state;
         const { lexon } = this.props;
 
-        if (this.props.calendarsResult.calendars.length < 1) {
-            return this.renderSpinner();
+        if (this.props.calendarsResult != undefined) {
+            if (this.props.calendarsResult.calendars.length < 1) {
+                return this.renderSpinner();
+            }
         }
 
         return (

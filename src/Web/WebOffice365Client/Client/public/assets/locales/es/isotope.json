@@ -82,5 +82,38 @@
   "message-not-found": {
     "body": "No se encuentra el mensaje en el servidor",
     "ok": "Continuar"
+  },
+  "calendar-sidebar": {
+    "compose": "Nuevo Evento",
+    "mycalendars": "Mis calendarios",
+    "othercalendars": "Otros calendarios",
+    "configandshare": "Configurar y Compartir",
+    "remove": "Eliminar"
+  },
+  "schedule": {
+    "eventtype": "Tipo de evento",
+    "profesional-event": "Evento profesional",
+    "personal-event": "Evento personal",
+    "attendees": "Invite a los asistentes y presione enter",
+    "toast-processing": "Procesando",
+    "toast-process-complete": "Proceso completado",
+    "toast-process-error": "Error",
+    "validator-required": "Campo obligatorio"
+  },
+  "calendar": {
+    "title": "Configuración",
+    "modify": "Modidicar",
+    "add": "Añadir calendario",
+    "name": "Nombre",
+    "description": "Descripción",
+    "sharewithpeople": "Compartir con determinadas personas"
+  },
+  "acl": {
+    "permissions": "Permisos",
+    "emailaddresses": "Dirección de correo electrónico",
+    "freebusyreader": "Ver solo libre/ocupado",
+    "reader": "Ver todos los detalles de los eventos",
+    "writer": "Hacer cambios en eventos",
+    "owner": "Hacer cambios y gestionar el uso"
   }
 }

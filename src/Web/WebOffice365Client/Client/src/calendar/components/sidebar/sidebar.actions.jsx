@@ -8,7 +8,7 @@ export const getCalendars = () => dispatch => {
   listCalendarList().then(calendarList => {
     dispatch({
       type: GET_CALENDARS,
-      payload: calendarList.items
+      payload: calendarList.value
     });
   });
 };

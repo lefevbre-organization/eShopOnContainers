@@ -6,6 +6,7 @@ import AppContainerCalendar from './AppContainerCalendar';
 import UserLexon from './components/user-lexon/UserLexon';
 import UserCalendar from './components/user-lexon/UserCalendar';
 import "./App.css";
+import './lefebvre-material.css';
 
 class App extends Component {
     componentDidMount() {

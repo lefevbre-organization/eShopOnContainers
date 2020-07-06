@@ -1,20 +1,81 @@
 ﻿//Calendarlist Api
+import config from '../Config';
+import { UserAgentApplication } from 'msal';
 
-export const listCalendarList = () =>
-    new Promise((resolve, reject) => {
-        window.gapi.client.calendar.calendarList
-            .list({
+const graph = require('@microsoft/microsoft-graph-client');
+let userAgentApplication = null;
 
-            })
+export const getUserApplication = () => {
+    if (userAgentApplication === null) {
+        const redirectUri = window.location.origin;
 
-            .then(response => {
-                resolve(response.result);
-            })
-            .catch(err => {
+        userAgentApplication = new UserAgentApplication({
+            auth: {
+                clientId: config.appId,
+                redirectUri: redirectUri,
+                postLogoutRedirectUri: 'https://lexbox-test-webgraph.lefebvre.es',
+            },
+            cache: {
+                cacheLocation: 'localStorage',
+                storeAuthStateInCookie: true,
+            },
+        });
+
+        userAgentApplication.handleRedirectCallback((error, response) => { });
+    }
+
+    return userAgentApplication;
+};
+
+export const getAuthenticatedClient = (accessToken) => {
+    // Initialize Graph client
+    const client = graph.Client.init({
+        // Use the provided access token to authenticate
+        // requests
+        authProvider: (done) => {
+            done(null, accessToken.accessToken);
+        },
+    });
+
+    return client;
+};
+
+export const getAccessTokenSilent = async () => {
+    console.log(config.scopes);
+    return await window.msal.acquireTokenSilent({ scopes: config.scopes });
+};
+
+
+//export const listCalendarList = () =>
+//    new Promise((resolve, reject) => {
+//        window.gapi.client.calendar.calendarList
+//            .list({
+
+//            })
+
+//            .then(response => {
+//                resolve(response.result);
+//            })
+//            .catch(err => {
+//                reject(err);
+//            });
+
+//    });
+
+export const listCalendarList = () => {
+    return new Promise(async (resolve, reject) => {
+        const accessToken = await getAccessTokenSilent();
+        const client = getAuthenticatedClient(accessToken);
+        client
+            .api(`me/calendars`)
+            .get()
+            .then((response) =>
+                resolve(response))
+            .catch((err) => {
                 reject(err);
             });
-
     });
+};
 
 export const getCalendarList = (calendar) =>
     new Promise((resolve, reject) => {
