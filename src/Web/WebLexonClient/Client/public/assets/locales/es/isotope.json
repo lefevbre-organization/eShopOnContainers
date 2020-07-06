@@ -162,7 +162,8 @@
   "configuration": {
     "version": "Versión",
     "configuration": "OPCIONES DE CONFIGURACIÓN",
-    "classify-contacts": "Clasificar contactos automáticamente al enviar correo"
+    "classify-contacts": "Clasificar contactos automáticamente al enviar correo",
+    "import-contacts": "Importar contactos"
   },
   "new-folder-prompt": {
     "yes": "Crear",

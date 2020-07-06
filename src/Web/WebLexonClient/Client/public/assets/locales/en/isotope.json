@@ -160,7 +160,10 @@
     "client": "Client:"
   },
   "configuration": {
-    "version": "Version"
+    "import-contacts": "Import contacts",
+    "version": "Version",
+    "configuration": "CONFIGURATION OPTIONS",
+    "classify-contacts": "Automatically classify contacts when sending mail"
   },
   "new-folder-prompt": {
     "yes": "Create",
