@@ -119,7 +119,8 @@ class ModalArchiveDocuments extends Component<Props, State> {
       bRes = true;
     } else if (
       node['content-disposition'] &&
-      node['content-disposition'][0].initial.indexOf('attachment') > -1 &&
+      (node['content-disposition'][0].initial.indexOf('attachment') > -1 ||
+        node['content-disposition'][0].initial.indexOf('inline') > -1) &&
       node['content-disposition'][0].params.filename &&
       this.isFileAllowed(node['content-disposition'][0].params.filename)
     ) {
