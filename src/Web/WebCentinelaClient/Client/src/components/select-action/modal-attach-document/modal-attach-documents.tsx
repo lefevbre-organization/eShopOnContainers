@@ -420,7 +420,7 @@ class ModalAttachDocuments extends Component<Props, State> {
               <span className="lf-icon-compliance"></span>
 
               <span>
-                {i18n.t('modal-attach.title')} - {step}
+                {i18n.t('modal-attach.title')}
               </span>
             </h5>
           </Modal.Header>

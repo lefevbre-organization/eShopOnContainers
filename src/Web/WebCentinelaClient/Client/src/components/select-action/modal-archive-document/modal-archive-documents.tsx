@@ -15,6 +15,7 @@ import {
   CentInstance,
   uploadFile
 } from '../../../services/services-centinela';
+import { identity } from 'lodash';
 const parse = require('emailjs-mime-parser').default;
 const base64js = require('base64-js');
 
@@ -82,6 +83,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
     this.onCopyEmail = this.onCopyEmail.bind(this);
     this.onImplantation = this.onImplantation.bind(this);
     this.onInstanceSelected = this.onInstanceSelected.bind(this);
+    this.onChangeSelected = this.onChangeSelected.bind(this);
   }
 
   componentDidMount() {}
@@ -192,7 +194,8 @@ class ModalArchiveDocuments extends Component<Props, State> {
   nextStep() {
     const { step } = this.state;
     if (step === 1) {
-      this.setState({ step: 2 });
+      const selected = this.state.attachments.filter((m: any) => m.checked);
+      this.setState({ step: 2, copyAttachments: selected.length > 0 });
     } else if (step === 2) {
       this.setState({ step: 3 });
     } else if (step === 3) {
@@ -282,6 +285,11 @@ class ModalArchiveDocuments extends Component<Props, State> {
       instance
     } = this.state;
     if (step === 1 && (copyAttachments === true || copyEmail === true)) {
+      if (copyAttachments === true && copyEmail === false) {
+        const selected = this.state.attachments.filter((m: any) => m.checked);
+        return selected.length == 0;
+      }
+
       return false;
     }
     if (step === 2 && implantation && implantation.evaluationId > 0) {
@@ -442,6 +450,17 @@ class ModalArchiveDocuments extends Component<Props, State> {
     this.setState({ instance: inst });
   }
 
+  onChangeSelected(event: any, data: any) {
+    const aux = [...this.state.attachments];
+    for (let i = 0; i < aux.length; i++) {
+      if (aux[i] === data) {
+        aux[i].checked = event.checked;
+      }
+    }
+
+    this.setState({ attachments: [...aux] });
+  }
+
   render() {
     const { user, showAttachDocuments } = this.props;
     const { messages, step, implantation, copyAttachments } = this.state;
@@ -489,6 +508,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
                     attachments={attachments}
                     onCopyEmail={this.onCopyEmail}
                     onCopyAttachments={this.onCopyAttachments}
+                    onChange={this.onChangeSelected}
                   />
                 </div>
                 <div
