@@ -3,10 +3,9 @@ import {
   GridComponent,
   ColumnsDirective,
   ColumnDirective,
-  rowSelected,
   Inject,
   Sort,
-  Filter,
+  Filter
 } from '@syncfusion/ej2-react-grids';
 import { L10n } from '@syncfusion/ej2-base';
 import i18n from 'i18next';
@@ -16,7 +15,7 @@ import {
   getEvaluationById,
   getEvaluationTree,
   getInstances,
-  CentInstance,
+  CentInstance
 } from '../../../services/services-centinela';
 import ImplantationListSearch from '../implantation-list-search/implantation-list-search';
 import Spinner from '../../spinner/spinner';
@@ -33,15 +32,16 @@ L10n.load({
       Contains: 'Contiene',
       Equal: 'Igual',
       NotEqual: 'Distinto',
-      EnterValue: 'Texto para filtrar',
-    },
-  },
+      EnterValue: 'Texto para filtrar'
+    }
+  }
 });
 
 interface Props {
   user: string;
   show: boolean;
   implantation: any;
+  step: number;
   toggleNotification?: (msg: string, error: boolean) => void;
   onInstanceSelected: (instance: CentInstance) => void;
   // onPhase: (id: Evaluation) => void;
@@ -76,7 +76,7 @@ export class Step3 extends React.Component<Props, State> {
       substep: 0,
       currentNodes: { items: [] },
       rowSelected: -1,
-      showSpinner: true,
+      showSpinner: true
     };
     this.toolbarOptions = ['Search'];
     this.onRowSelected = this.onRowSelected.bind(this);
@@ -124,10 +124,19 @@ export class Step3 extends React.Component<Props, State> {
       }
     }
 
+    if (prevProps.show === true && this.props.show === false) {
+      console.log(this.state);
+      return;
+    }
+
     if (
       (prevProps.show === false && this.props.show === true) ||
       prevProps.implantation !== this.props.implantation
     ) {
+      if (prevProps.step === 4 && this.props.step === 3) {
+        this.setState({ rowSelected: -1 });
+        return;
+      }
       try {
         this.setState({ showSpinner: true });
         const response = await getEvaluationTree(
@@ -144,9 +153,9 @@ export class Step3 extends React.Component<Props, State> {
               phases: [...response.data],
               currentNodes: {
                 node: 'root',
-                items: [...response.data],
+                items: [...response.data]
               },
-              showSpinner: false,
+              showSpinner: false
             },
             () => {}
           );
@@ -159,7 +168,7 @@ export class Step3 extends React.Component<Props, State> {
           );
         this.setState({
           phases: [],
-          showSpinner: false,
+          showSpinner: false
         });
       }
     }
@@ -174,7 +183,7 @@ export class Step3 extends React.Component<Props, State> {
         {
           route: nr,
           substep: 1,
-          showSpinner: true,
+          showSpinner: true
         },
         () => {
           this.loadInstances(event.data.conceptId);
@@ -185,10 +194,27 @@ export class Step3 extends React.Component<Props, State> {
         route: nr,
         currentNodes: {
           node: 'id',
-          items: [...event.data.children, ...event.data.concepts],
-        },
+          items: [...event.data.children, ...event.data.concepts]
+        }
       });
     }
+  }
+
+  public back() {
+    const { route } = this.state;
+
+    if (route.length === 0) {
+      this.setState({ rowSelected: -1 });
+      return true;
+    }
+
+    if (route.length === 1) {
+      this.onBreadcrumb();
+    } else {
+      this.onBreadcrumb(route[route.length - 2]);
+    }
+
+    return false;
   }
 
   async loadInstances(conceptId: string) {
@@ -198,14 +224,14 @@ export class Step3 extends React.Component<Props, State> {
   }
 
   renderArrow(row: any) {
-    return <i className='lf-icon-angle-right row-arrow'></i>;
+    return <i className="lf-icon-angle-right row-arrow"></i>;
   }
 
   renderIcon(row: any) {
     if (!row.conceptId) {
-      return <i className='lf-icon-folder'></i>;
+      return <i className="lf-icon-folder"></i>;
     } else {
-      return <i className='lf-icon-compliance'></i>;
+      return <i className="lf-icon-compliance"></i>;
     }
   }
 
@@ -225,10 +251,11 @@ export class Step3 extends React.Component<Props, State> {
       this.setState({
         route: rts,
         substep: 0,
+        rowSelected: -1,
         currentNodes: {
           node: 'root',
-          items: [...this.state.phases],
-        },
+          items: [...this.state.phases]
+        }
       });
       return;
     }
@@ -250,10 +277,11 @@ export class Step3 extends React.Component<Props, State> {
     this.setState({
       route: rts,
       substep: 0,
+      rowSelected: -1,
       currentNodes: {
         node: cn,
-        items: [...cn.children, ...cn.concepts],
-      },
+        items: [...cn.children, ...cn.concepts]
+      }
     });
   }
 
@@ -265,11 +293,12 @@ export class Step3 extends React.Component<Props, State> {
     return (
       <div>
         <span
-          className='breadcrumb-first'
+          className="breadcrumb-first"
           onClick={() => {
             this.onBreadcrumb();
-          }}>
-          <i className='lf-icon-map-marker'></i>
+          }}
+        >
+          <i className="lf-icon-map-marker"></i>
         </span>
         {route.map((r: any, i: number, rt: any) => {
           if (i >= 0 && i < rt.length - 1) {
@@ -277,10 +306,11 @@ export class Step3 extends React.Component<Props, State> {
               <>
                 {i > 0 && <span>{' > '}</span>}
                 <span
-                  className='breadcrumb-link'
+                  className="breadcrumb-link"
                   onClick={() => {
                     this.onBreadcrumb(r);
-                  }}>
+                  }}
+                >
                   {r.name || r.title}
                 </span>
               </>
@@ -289,7 +319,7 @@ export class Step3 extends React.Component<Props, State> {
             return (
               <>
                 {i > 0 && <span>{' > '}</span>}
-                <span className='breadcrumb-last'>{r.name || r.title}</span>
+                <span className="breadcrumb-last">{r.name || r.title}</span>
               </>
             );
           }
@@ -332,30 +362,30 @@ export class Step3 extends React.Component<Props, State> {
       gridHeight,
       substep,
       showSpinner,
-      instances,
+      instances
     } = this.state;
     let height = 447 - gridHeight;
     if (show === false) return null;
 
     return (
       <Fragment>
-        <div className='step3-container'>
-          <div className='titles-container'>
-            <div className='section-title'>{implantation?.productName}</div>
-            <div className='section-title'>{implantation?.clientName}</div>
+        <div className="step3-container">
+          <div className="titles-container">
+            <div className="section-title">{implantation?.productName}</div>
+            <div className="section-title">{implantation?.clientName}</div>
           </div>
 
-          <section className='section-border'>
+          <section className="section-border">
             {showSpinner === true && (
-              <div className='spinner-wrapper'>
+              <div className="spinner-wrapper">
                 <Spinner />
               </div>
             )}
-            <div ref={this.crumbRef} className='breadcrumbs'>
+            <div ref={this.crumbRef} className="breadcrumbs">
               {this.renderBreadcrumbs()}
             </div>
             {substep === 0 && (
-              <div style={{ height }} className='substep0'>
+              <div style={{ height }} className="substep0">
                 <GridComponent
                   ref={(g) => (this.gridRef = g)}
                   dataSource={currentNodes.items}
@@ -364,26 +394,30 @@ export class Step3 extends React.Component<Props, State> {
                   locale={this.locale}
                   rowSelected={(event) => {
                     this.onRowSelected(event);
-                  }}>
+                  }}
+                >
                   <ColumnsDirective>
                     <ColumnDirective
-                      width='60'
-                      field='conceptId'
+                      width="60"
+                      field="conceptId"
                       headerText={''}
-                      template={this.renderIcon}></ColumnDirective>
+                      template={this.renderIcon}
+                    ></ColumnDirective>
                     <ColumnDirective
-                      field='name'
+                      field="name"
                       headerText={implantation?.Type}
-                      template={this.renderTitle}></ColumnDirective>
+                      template={this.renderTitle}
+                    ></ColumnDirective>
                     <ColumnDirective
-                      width='50'
-                      template={this.renderArrow}></ColumnDirective>
+                      width="50"
+                      template={this.renderArrow}
+                    ></ColumnDirective>
                   </ColumnsDirective>
                 </GridComponent>
               </div>
             )}
             {substep === 1 && (
-              <div style={{ height }} className='substep1'>
+              <div style={{ height }} className="substep1">
                 <GridComponent
                   ref={(g) => (this.gridRef = g)}
                   dataSource={instances}
@@ -395,36 +429,38 @@ export class Step3 extends React.Component<Props, State> {
                   locale={'es-ES'}
                   rowSelected={(event: any) => {
                     this.onInstanceSelected(event.data as CentInstance);
-                  }}>
+                  }}
+                >
                   <ColumnsDirective>
                     <ColumnDirective
-                      width='50'
+                      width="50"
                       field={'' + rowSelected}
                       headerText={''}
-                      template={this.renderInstanceCheck}></ColumnDirective>
+                      template={this.renderInstanceCheck}
+                    ></ColumnDirective>
                     <ColumnDirective
-                      field='title'
-                      headerText={i18n.t(
-                        'modal-archive.table-title'
-                      )}></ColumnDirective>
+                      field="title"
+                      headerText={i18n.t('modal-archive.table-title')}
+                    ></ColumnDirective>
                     <ColumnDirective
-                      width='150'
-                      field='author'
-                      headerText={i18n.t(
-                        'modal-archive.author'
-                      )}></ColumnDirective>
+                      width="150"
+                      field="author"
+                      headerText={i18n.t('modal-archive.author')}
+                    ></ColumnDirective>
                     <ColumnDirective
-                      width='120'
-                      field='creationDate'
+                      width="120"
+                      field="creationDate"
                       allowFiltering={false}
                       headerText={i18n.t('modal-archive.creation')}
-                      template={this.renderCreationDate}></ColumnDirective>
+                      template={this.renderCreationDate}
+                    ></ColumnDirective>
                     <ColumnDirective
-                      width='130'
+                      width="130"
                       allowFiltering={false}
-                      field='modificationDate'
+                      field="modificationDate"
                       headerText={i18n.t('modal-archive.modification')}
-                      template={this.renderModificationDate}></ColumnDirective>
+                      template={this.renderModificationDate}
+                    ></ColumnDirective>
                   </ColumnsDirective>
                   <Inject services={[Sort, Filter]} />
                 </GridComponent>
