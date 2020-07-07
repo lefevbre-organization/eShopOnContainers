@@ -153,7 +153,8 @@ class MessageClassifications extends Component {
         idUser: user.idUserApp,
         idClienteNav: user.idClienteNavision,
         userName: user.name,
-        email: user.login
+        email: user.login,
+        addonType: "MessageRead"
       }
        const msgRaw = await getRawAddon(
         addonData
@@ -216,7 +217,6 @@ class MessageClassifications extends Component {
      })
      .catch(error => {
       this.getClassifications();
-      console.log(addonData);
       removeRawAddon(addonData);
      });
     }
@@ -225,13 +225,6 @@ class MessageClassifications extends Component {
      const { selectCompany } = this.props;
      const { classifications, user } = this.state;
     
-    //  let conversationId = '';
-    //  if(isOfficeInitialized) {
-    //   conversationId = Office.context.mailbox.initialData.conversationId
-    //  }
-    //  if(conversationId == null) {
-    //    this.changeCompany();
-    //   } 
       return (
        <div className="">  
           <Header logout={this.logout} user={user} />

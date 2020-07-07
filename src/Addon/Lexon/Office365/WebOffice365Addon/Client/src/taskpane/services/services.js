@@ -198,5 +198,62 @@ export const removeRawAddon = async (addonData) => {
   } catch (err) {
     throw err;
   }
-
 }
+
+export const downloadFile = async (
+  idEntity,
+  bbdd,
+  idUser
+) => {
+  const url = `${window.API_GATEWAY}/lex/Lexon/entities/files/get`;
+  const body = {
+    idEntity,
+    bbdd,
+    idUser,
+  };
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/text',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (response.status !== 200) {
+      return response;
+    }
+
+    const reader = response.body.getReader();
+    let receivedLength = 0; // received that many bytes at the moment
+    let chunks = []; // array of received binary chunks (comprises the body)
+
+    while (true) {
+      const { done, value } = await reader.read();
+
+      if (done) {
+        break;
+      }
+
+      chunks.push(value);
+      receivedLength += value.length;
+    }
+
+    let chunksAll = new Uint8Array(receivedLength); // (4.1)
+    let position = 0;
+    for (let chunk of chunks) {
+      chunksAll.set(chunk, position); // (4.2)
+      position += chunk.length;
+    }
+
+    let result = new TextDecoder('utf-8').decode(chunksAll);
+
+    // We're done!
+    let commits = JSON.parse(result);
+
+    return { ...commits, status: 200 };
+  } catch (err) {
+    throw err;
+  }
+};

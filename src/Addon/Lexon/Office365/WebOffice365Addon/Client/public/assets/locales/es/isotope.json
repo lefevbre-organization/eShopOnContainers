@@ -19,6 +19,7 @@
     "14": "Documentos"
   },
   "document-attached": {
-    "description": "Busca en los expedientes y contactos de LEX-ON y adjunta a tus correos los archivos que necesites."
+    "description": "Busca en los expedientes y contactos de LEX-ON y adjunta a tus correos los archivos que necesites.",
+    "select-file": "Selecciona los archivos en LEX-ON"
   }
 }
