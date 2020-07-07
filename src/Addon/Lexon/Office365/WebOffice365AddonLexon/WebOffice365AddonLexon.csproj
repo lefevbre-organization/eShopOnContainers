@@ -18,6 +18,10 @@
     <StartAction>Project</StartAction>
     <ApplicationURL>http://localhost:5003</ApplicationURL>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'WebOffice365Addon' ">
+    <StartAction>Project</StartAction>
+    <ApplicationURL>http://localhost:5002</ApplicationURL>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Client\build\**" />
     <Content Remove="$(SpaRoot)**" />

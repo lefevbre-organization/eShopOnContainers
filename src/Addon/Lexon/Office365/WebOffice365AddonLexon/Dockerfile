@@ -5,7 +5,7 @@ EXPOSE 80
 
 FROM ${NODE_IMAGE} as node-build
 WORKDIR /web
-COPY src/Addon/Lexon/Office365/WebOffice365Addon/Client .
+COPY src/Addon/Lexon/Office365/WebOffice365AddonLexon/Client .
 RUN npm install
 RUN npm run build
 RUN ls -lha /web
@@ -44,7 +44,7 @@ COPY src/Web/WebImapClient/WebImapClient.csproj src/Web/WebImapClient/
 COPY src/Web/WebStatusLef/WebStatusLef.csproj src/Web/WebStatusLef/
 COPY src/Web/WebSignatureClient/WebSignatureClient.csproj src/Web/WebSignatureClient/
 COPY src/Web/WebCentinelaClient/WebCentinelaClient.csproj src/Web/WebCentinelaClient/
-COPY src/Addon/Lexon/Office365/WebOffice365Addon/WebOffice365Addon.csproj src/Addon/Lexon/Office365/WebOffice365Addon/
+COPY src/Addon/Lexon/Office365/WebOffice365AddonLexon/WebOffice365AddonLexon.csproj src/Addon/Lexon/Office365/WebOffice365AddonLexon/
 
 
 
@@ -54,8 +54,8 @@ COPY "NuGet.config" "NuGet.config"
 RUN dotnet restore eLefebvreOnContainers-ServicesAndWebApps.sln
 
 COPY . .
-COPY --from=node-build /web/build /src/src/Addon/Lexon/Office365/WebOffice365Addon/wwwroot
-WORKDIR /src/src/Addon/Lexon/Office365/WebOffice365Addon
+COPY --from=node-build /web/build /src/src/Addon/Lexon/Office365/WebOffice365AddonLexon/wwwroot
+WORKDIR /src/src/Addon/Lexon/Office365/WebOffice365AddonLexon
 #RUN ls -lha /src/src/Web/WebLexonClient/wwwroot
 RUN dotnet publish --no-restore -c Release -o /app
 
@@ -64,4 +64,4 @@ FROM build AS publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "WebOffice365Addon.dll"]
+ENTRYPOINT ["dotnet", "WebOffice365AddonLexon.dll"]

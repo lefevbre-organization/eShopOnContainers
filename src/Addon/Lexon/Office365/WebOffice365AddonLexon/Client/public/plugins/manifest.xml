@@ -10,7 +10,7 @@
   <HighResolutionIconUrl DefaultValue="https://lexbox-test-weboffice365addonlexon.lefebvre.es/assets/icon-lefebvre-80.jpg"/>
   <SupportUrl DefaultValue="https://www.contoso.com/help"/>
   <AppDomains>
-    <AppDomain>https://lexbox-test-weboffice365addonlexon.lefebvre.es</AppDomain>
+    <AppDomain>https://localhost:3020</AppDomain>
   </AppDomains>
   <Hosts>
     <Host Name="Mailbox"/>
@@ -23,7 +23,7 @@
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
-        <SourceLocation DefaultValue="https://lexbox-test-weboffice365addonlexon.lefebvre.es/taskpane.html"/>
+        <SourceLocation DefaultValue="https://localhost:3020/taskpane.html"/>
         <RequestedHeight>250</RequestedHeight>
       </DesktopSettings>
     </Form>
@@ -98,8 +98,8 @@
         <bt:Image id="Icon.80x80" DefaultValue="https://lexbox-test-weboffice365addonlexon.lefebvre.es/assets/icon-lefebvre-80.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="Commands.Url" DefaultValue="https://lexbox-test-weboffice365addonlexon.lefebvre.es/commands.html"/>
-        <bt:Url id="Taskpane.Url" DefaultValue="https://lexbox-test-weboffice365addonlexon.lefebvre.es/taskpane.html"/>
+        <bt:Url id="Commands.Url" DefaultValue="https://localhost:3020/commands.html"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:3020/taskpane.html"/>
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="GroupLabel" DefaultValue="Contoso Add-in"/>
@@ -111,7 +111,7 @@
     </Resources>
      <WebApplicationInfo>
         <Id>a8c9f1a1-3472-4a83-8725-4dfa74bac24d</Id>
-        <Resource>api://lexbox-test-weboffice365addonlexon.lefebvre.es/a8c9f1a1-3472-4a83-8725-4dfa74bac24d</Resource>
+        <Resource>api://localhost:3020/a8c9f1a1-3472-4a83-8725-4dfa74bac24d</Resource>
         <Scopes>
           <Scope>Files.Read.All</Scope>
           <Scope>profile</Scope>
