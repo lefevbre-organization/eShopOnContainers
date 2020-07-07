@@ -53,6 +53,8 @@ env:
       value: 'K8S'
     - name: DefaultEnvironment
       value: DEV
+    - name: UseMongo
+      value: false
     - name: LexonUrls__0__env
       value: DEVS
     - name: LexonUrls__0__conn

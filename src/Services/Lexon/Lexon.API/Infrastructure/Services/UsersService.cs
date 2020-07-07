@@ -4,17 +4,17 @@ using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using MySql.Data.MySqlClient;
-using System.Data;
 
 namespace Lexon.Infrastructure.Services
 {
@@ -22,19 +22,20 @@ namespace Lexon.Infrastructure.Services
     {
         public readonly IUsersRepository _usersRepository;
         private readonly IEventBus _eventBus;
-        private readonly IHttpClientFactory _clientFactory;
+        //private readonly IHttpClientFactory _clientFactory;
+
         //private readonly HttpClient _client;
         private readonly HttpClient _clientFiles;
+
         private readonly IOptions<LexonSettings> _settings;
         private string _conn;
         private string _urlLexon;
-
 
         public UsersService(
                 IOptions<LexonSettings> settings
                 , IUsersRepository usersRepository
                 , IEventBus eventBus
-                , IHttpClientFactory clientFactory
+                //, IHttpClientFactory clientFactory
                 , ILogger<UsersService> logger
             ) : base(logger)
         {
@@ -52,18 +53,17 @@ namespace Lexon.Infrastructure.Services
                 ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
             };
 
-            _clientFiles = new HttpClient(handler){ BaseAddress = new Uri(_urlLexon) };
+            _clientFiles = new HttpClient(handler) { BaseAddress = new Uri(_urlLexon) };
             _clientFiles.DefaultRequestHeaders.Add("Accept", "text/plain");
         }
 
-
-        private void GetUrlsByEnvironment(string environmet)
+        private void GetUrlsByEnvironment(string env)
         {
-            if (environmet == null)
-                environmet = _settings.Value.DefaultEnvironment;
+            if (env == null)
+                env = _settings.Value.DefaultEnvironment;
 
-            _conn = _settings.Value.LexonUrls.First(x => x.env.Equals(environmet))?.conn;
-            _urlLexon = _settings.Value.LexonUrls.First(x => x.env.Equals(environmet))?.url;
+            _conn = _settings.Value.LexonUrls.First(x => x.env.Equals(env))?.conn;
+            _urlLexon = _settings.Value.LexonUrls.First(x => x.env.Equals(env))?.url;
         }
 
         #region Mysql
@@ -88,22 +88,25 @@ namespace Lexon.Infrastructure.Services
                     TraceMessage(result.errors, ex);
                 }
             }
-            if (!string.IsNullOrEmpty(result.data?.name))
+
+            if (_settings.Value.UseMongo)
             {
-                await _usersRepository.UpsertUserAsync(result);
-            }
-            else
-            {
-                TraceOutputMessage(result.errors, "Mysql don´t recover the user", 2001);
-                var resultMongo = await _usersRepository.GetUserAsync(idNavisionUser);
-                AddToFinalResult(result, resultMongo);
+                if (!string.IsNullOrEmpty(result.data?.name))
+                {
+                    await _usersRepository.UpsertUserAsync(result);
+                }
+                else
+                {
+                    TraceOutputMessage(result.errors, "Mysql don´t recover the user", "Error_Mysql_Empty");
+                    var resultMongo = await _usersRepository.GetUserAsync(idNavisionUser);
+                    AddToFinalResult(result, resultMongo);
+                }
             }
             return result;
         }
 
         public async Task<Result<List<LexCompany>>> GetCompaniesFromUserAsync(string idUser, string env)
         {
-            var resultCompany = new Result<LexUser>(new LexUser());
             var result = new Result<List<LexCompany>>(new List<LexCompany>());
             var resultUser = new Result<LexUser>(new LexUser());
             GetUrlsByEnvironment(env);
@@ -114,7 +117,7 @@ namespace Lexon.Infrastructure.Services
                 {
                     var filtro = $"{{\"IdUser\":\"{idUser}\"}}";
                     await GetUserCommon(resultUser, conn, filtro);
-                    AddToFinalResult(result, resultCompany);
+                    AddToFinalResult(result, resultUser);
                 }
                 catch (Exception ex)
                 {
@@ -123,17 +126,19 @@ namespace Lexon.Infrastructure.Services
                 }
             }
 
-            if (!string.IsNullOrEmpty(resultCompany.data?.name))
+            if (_settings.Value.UseMongo)
             {
-                await _usersRepository.UpsertCompaniesAsync(resultCompany);
+                if (result.data?.Count > 0)
+                {
+                    await _usersRepository.UpsertCompaniesAsync(result, idUser);
+                }
+                else
+                {
+                    TraceOutputMessage(result.errors, "Mysql don´t recover the user with companies", "Error_Mysql_Empty");
+                    var resultMongo = await _usersRepository.GetUserAsync(idUser);
+                    AddToFinalResult(result, resultMongo);
+                }
             }
-            else
-            {
-                TraceOutputMessage(result.errors, "Mysql don´t recover the user with companies", 2001);
-                var resultMongo = await _usersRepository.GetUserAsync(idUser);
-                AddToFinalResult(result, resultMongo);
-            }
-
             return result;
         }
 
@@ -156,7 +161,8 @@ namespace Lexon.Infrastructure.Services
                 }
             }
         }
-        #endregion
+
+        #endregion user
 
         #region Classifications
 
@@ -200,7 +206,6 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-
         public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification)
         {
             var result = new Result<int>(0);
@@ -233,7 +238,6 @@ namespace Lexon.Infrastructure.Services
         }
 
         public async Task<Result<long>> RemoveClassificationFromListAsync(ClassificationRemoveView classificationRemove)
-        //public async Task<Result<int>> RemoveRelationMailAsync(ClassificationRemoveView classification)
         {
             var result = new Result<long>(0);
             GetUrlsByEnvironment(classificationRemove.env);
@@ -314,23 +318,21 @@ namespace Lexon.Infrastructure.Services
                 }
             }
 
-            //if (resultMySql.TengoActuaciones())
-            //    await _usersRepository.UpsertRelationsAsync(classificationSearch, resultMySql);
-            //else
-            //{
-            //    //var resultMongo = await _usersRepository.GetRelationsAsync(classificationSearch);
-            //    //resultMySql.DataActuation = resultMongo.DataActuation;
-            //}
+            if (_settings.Value.UseMongo)
+            {
+                if (resultMySql.TengoActuaciones())
+                    await _usersRepository.UpsertRelationsAsync(classification, resultMySql);
+                else
+                {
+                    var resultMongo = await _usersRepository.GetRelationsAsync(classification);
+                    resultMySql.DataActuation = resultMongo.DataActuation;
+                }
+            }
 
             return resultMySql;
         }
 
-        //public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch)
-        //{
-        //    return await GetEntitiesCommon(entitySearch, "/entities/search");
-        //}
-
-        public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch)
+         public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch)
         {
             var resultMySql = new MySqlCompany(_settings.Value.SP.SearchEntities, entitySearch.pageIndex, entitySearch.pageSize, ((EntitySearchView)entitySearch).bbdd, ((EntitySearchView)entitySearch).idType);
             GetUrlsByEnvironment(entitySearch.env);
@@ -434,10 +436,10 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync()
+        public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync(string env)
         {
             var resultMySql = new MySqlList<JosEntityTypeList, JosEntityType>(new JosEntityTypeList(), _settings.Value.SP.GetMasterEntities, 1, 0);
-            GetUrlsByEnvironment(null);
+            GetUrlsByEnvironment(env);
 
             using (MySqlConnection conn = new MySqlConnection(_conn))
             {
@@ -472,11 +474,12 @@ namespace Lexon.Infrastructure.Services
                 }
             }
 
+
             //await GetMasterEntitiesMongoAsync(result);
             return resultMySql;
         }
 
-        #endregion
+        #endregion Classifications
 
         #region Folders
 
@@ -645,7 +648,7 @@ namespace Lexon.Infrastructure.Services
             return result;
         }
 
-        #endregion
+        #endregion Folders
 
         public async Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch)
         {
@@ -858,7 +861,7 @@ namespace Lexon.Infrastructure.Services
 
         #endregion Common
 
-        #endregion
+        #endregion Mysql
 
         #region Classifications
 
@@ -1029,7 +1032,6 @@ namespace Lexon.Infrastructure.Services
 
         #endregion Classifications
 
-
         #region Entities
 
         //public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync()
@@ -1168,7 +1170,7 @@ namespace Lexon.Infrastructure.Services
                 var lexonFile = await GetFileDataByTypeActuation(fileMail);
                 lexonFile.fileName = RemoveProblematicChars(lexonFile.fileName);
                 var name = Path.GetFileNameWithoutExtension(lexonFile.fileName);
-  
+
                 name = string.Concat(name.Split(Path.GetInvalidFileNameChars()));
                 name = string.Concat(name.Split(Path.GetInvalidPathChars()));
                 var maxlenght = name.Length > 55 ? 55 : name.Length;
@@ -1332,7 +1334,7 @@ namespace Lexon.Infrastructure.Services
         //public async Task<MySqlCompany> GetEntitiesFoldersAsync(EntitySearchFoldersView entitySearch)
         //{
         //    //si no se marcar nada o se marca idParent solo se buscan carpetas, si se pide idFolder e idPArent nunca sera carpetas
-        //    if ((entitySearch.idFolder == null && entitySearch.idParent == null) 
+        //    if ((entitySearch.idFolder == null && entitySearch.idParent == null)
         //        || (entitySearch.idParent != null && entitySearch.idFolder == null))
         //        entitySearch.idType = (short?)LexonAdjunctionType.folders;
         //    else if(entitySearch.idFolder != null && entitySearch.idParent != null)

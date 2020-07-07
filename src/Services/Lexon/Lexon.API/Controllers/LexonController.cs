@@ -37,11 +37,12 @@ namespace Lexon.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("test")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
         public IActionResult Test()
         {
-            return Ok(new Result<bool>(true));
+            var data = $"Lexon.Api v.{ _settings.Version}";
+            return Ok(new Result<string>(data));
         }
 
         [HttpGet]
@@ -201,9 +202,9 @@ namespace Lexon.API.Controllers
         [HttpGet("entities/types")]
         [ProducesResponseType(typeof(MySqlList<JosEntityTypeList, JosEntityType>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(MySqlList<JosEntityTypeList, JosEntityType>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetEntitiesTypesAsync()
+        public async Task<IActionResult> GetEntitiesTypesAsync(string env = "DEV")
         {
-            var result = await _usersService.GetMasterEntitiesAsync();
+            var result = await _usersService.GetMasterEntitiesAsync(env);
             return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 

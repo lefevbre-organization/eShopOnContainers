@@ -26,6 +26,10 @@
         public string DefaultEnvironment { get; set; }
 
         public StoreProcedures SP { get; set; }
+
+        public string Version { get; set; }
+
+        public bool UseMongo { get; set; }
     }
 
     public class StoreProcedures

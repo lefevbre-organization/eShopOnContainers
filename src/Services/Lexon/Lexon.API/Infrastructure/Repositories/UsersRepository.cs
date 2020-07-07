@@ -570,40 +570,40 @@ namespace Lexon.API.Infrastructure.Repositories
             return result;
         }
 
-        public async Task<Result<bool>> UpsertCompaniesAsync(Result<LexUser> lexUser)
+        public async Task<Result<bool>> UpsertCompaniesAsync(Result<List<LexCompany>> companiesToInsert, string idUser)
         {
             var result = new Result<bool>();
-            var companiesToInsert = new List<LexCompany>();
-            var filterUser = GetFilterLexUser(lexUser.data.idUser);
+            //var companiesToInsert = new List<LexCompany>();
+            var filterUser = GetFilterLexUser(idUser);
 
             try
             {
                 var user = await _context.LexUsers.Find(filterUser).FirstOrDefaultAsync();
 
-                if (user != null)
-                {
-                    foreach (var comp in lexUser.data.companies)
-                    {
-                        var companySearch = user.companies.Where(x => x.bbdd.Equals(comp.bbdd) && x.idCompany == comp.idCompany).Count();
-                        if (companySearch == 0)
-                        {
-                            companiesToInsert.Add(comp);
-                        }
-                    }
-                }
+                //if (user != null)
+                //{
+                //    foreach (var comp in lexUser.data.companies)
+                //    {
+                //        var companySearch = user.companies.Where(x => x.bbdd.Equals(comp.bbdd) && x.idCompany == comp.idCompany).Count();
+                //        if (companySearch == 0)
+                //        {
+                //            companiesToInsert.Add(comp);
+                //        }
+                //    }
+                //}
 
-                var update = Builders<LexUser>.Update.AddToSetEach(x => x.companies, companiesToInsert?.ToArray());
+                var update = Builders<LexUser>.Update.AddToSetEach(x => x.companies, companiesToInsert.data?.ToArray());
                 var resultUpdate = await _context.LexUsers.UpdateOneAsync(filterUser, update);
 
                 if (resultUpdate.IsAcknowledged && resultUpdate.MatchedCount > 0 && resultUpdate.ModifiedCount > 0)
                 {
-                    TraceInfo(result.infos, $"Se modifica el usuario {lexUser.data.idUser} añadiendo {companiesToInsert.Count} empresas");
+                    TraceInfo(result.infos, $"Se modifica el usuario {idUser} añadiendo {companiesToInsert.data?.Count} empresas");
                     result.data = true;
                 }
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"fallo al  insertar o actualizar compañias para {lexUser.data.idUser}: {ex.Message}");
+                TraceInfo(result.infos, $"fallo al  insertar o actualizar compañias para {idUser}: {ex.Message}");
             }
 
             return result;
