@@ -1,13 +1,13 @@
 {{- if .Values.ingress.enabled -}}
-{{- $fullName := include "webaddonlexon.fullname" . -}}
+{{- $fullName := include "webaddonlauncher.fullname" . -}}
 {{- $ingressPath := include "pathBase" . -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ template "webaddonlexon.fullname" . }}
+  name: {{ template "webaddonlauncher.fullname" . }}
   labels:
-    app: {{ template "webaddonlexon.name" . }}
-    chart: {{ template "webaddonlexon.chart" . }}
+    app: {{ template "webaddonlauncher.name" . }}
+    chart: {{ template "webaddonlauncher.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 {{- with .Values.ingress.annotations }}
@@ -29,6 +29,6 @@ spec:
         paths:
           - path: {{ $ingressPath }}
             backend:
-              serviceName: {{ .Values.app.svc.addonlexon }}
+              serviceName: {{ .Values.app.svc.addonlauncher }}
               servicePort: http
 {{- end }}

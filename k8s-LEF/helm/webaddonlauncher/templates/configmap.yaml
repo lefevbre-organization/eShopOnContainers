@@ -1,4 +1,4 @@
-{{- $name := include "webaddonlexon.fullname" . -}}
+{{- $name := include "webaddonlauncher.fullname" . -}}
 {{- $identity := include "url-of" (list .Values.app.ingress.entries.identity .) -}}
 
 apiVersion: v1
@@ -6,8 +6,8 @@ kind: ConfigMap
 metadata:
   name: "cfg-{{ $name }}"
   labels:
-    app: {{ template "webaddonlexon.name" . }}
-    chart: {{ template "webaddonlexon.chart" .}}
+    app: {{ template "webaddonlauncher.name" . }}
+    chart: {{ template "webaddonlauncher.chart" .}}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 data:
