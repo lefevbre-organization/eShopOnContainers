@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace Lefebvre.eLefebvreOnContainers.Clients.WebAddonLexon.Server.Controllers
+namespace Lefebvre.eLefebvreOnContainers.Clients.WebAddonLauncher.Server.Controllers
 {
     public class HomeController : Controller
     {

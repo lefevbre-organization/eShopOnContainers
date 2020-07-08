@@ -1,5 +1,5 @@
 ﻿using HealthChecks.UI.Client;
-using Lefebvre.eLefebvreOnContainers.Clients.WebAddonLexon.Infrastructure;
+using Lefebvre.eLefebvreOnContainers.Clients.WebAddonLauncher.Infrastructure;
 //using Microsoft.ApplicationInsights.Extensibility;
 //using Microsoft.ApplicationInsights.ServiceFabric;
 using Microsoft.AspNetCore.Antiforgery;
@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 
-namespace Lefebvre.eLefebvreOnContainers.Clients.WebAddonLexon
+namespace Lefebvre.eLefebvreOnContainers.Clients.WebAddonLauncher
 {
     public class Startup
     {

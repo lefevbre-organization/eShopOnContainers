@@ -1,4 +1,4 @@
-﻿namespace Lefebvre.eLefebvreOnContainers.Clients.WebAddonLexon
+﻿namespace Lefebvre.eLefebvreOnContainers.Clients.WebAddonLauncher
 {
     public class AppSettings
     {

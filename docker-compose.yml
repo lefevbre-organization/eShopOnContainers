@@ -60,11 +60,11 @@ services:
     depends_on:
       - rabbitmq
 
-  webaddonlexon:
-    image: ${REGISTRY:-elefebvreoncontainers}/webaddonlexon:${PLATFORM:-linux}-${TAG:-dev}
+  webaddonlauncher:
+    image: ${REGISTRY:-elefebvreoncontainers}/webaddonlauncher:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
-      dockerfile: src/Web/WebAddonLexon/Dockerfile    
+      dockerfile: src/Web/WebAddonLauncher/Dockerfile    
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:12}
     depends_on:

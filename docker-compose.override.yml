@@ -126,7 +126,7 @@ services:
     ports:
       - "3005:80"
 
-  webaddonlexon:
+  webaddonlauncher:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80

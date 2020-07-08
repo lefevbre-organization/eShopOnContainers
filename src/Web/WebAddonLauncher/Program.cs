@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 
-namespace Lefebvre.eLefebvreOnContainers.Clients.WebAddonLexon
+namespace Lefebvre.eLefebvreOnContainers.Clients.WebAddonLauncher
 {
     public class Program
     {
