@@ -9,6 +9,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
         public string Collection { get; set; }
         public string CollectionByPass { get; set; }
         public short Version { get; set; }
+        public string DefaultEnvironment { get; set; }
+
         public string CollectionEvents { get; set; }
 
         public string MinihubUrl { get; set; }

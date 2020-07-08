@@ -656,6 +656,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         public async Task<Result<TokenData>> GetGenericTokenAsync(TokenRequest tokenRequest, bool addTerminatorToToken)
         {
             var result = await GetRolesAndValidate(tokenRequest);
+
+            if (string.IsNullOrEmpty(tokenRequest.env))
+                tokenRequest.env = _settings.Value.DefaultEnvironment;
+
             if (result.data?.valid == false) return result;
 
             if (tokenRequest.idApp == _settings.Value.IdAppLexon)

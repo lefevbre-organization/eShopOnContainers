@@ -35,7 +35,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
         public IActionResult Test()
         {
-            var data = $"UserUtils.Lexon v.{ _settings.Value.Version}";
+            var data = $"UserUtils.Lexon v.{ _settings.Value.Version} - DefaultEnv:{_settings.Value.DefaultEnvironment}";
             return Ok(new Result<string>(data));
         }
 
