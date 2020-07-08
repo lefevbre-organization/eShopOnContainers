@@ -271,6 +271,9 @@ namespace Lexon.API.Controllers
             if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0)
                 return BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
 
+            if (entitySearch.pageIndex == 0) entitySearch.pageIndex = 1;
+            if (entitySearch.pageSize == 0) entitySearch.pageSize = 10;
+            
             var entities = await _usersService.GetEntitiesAsync(entitySearch);
 
             return ResponseEntities(entities);
@@ -286,6 +289,9 @@ namespace Lexon.API.Controllers
 
             if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd))
                 return BadRequest("values invalid. Must be a valid user, bbdd ands idType to serach folders");
+            
+            if (entitySearch.pageIndex == 0) entitySearch.pageIndex = 1;
+            if (entitySearch.pageSize == 0) entitySearch.pageSize = 10;
 
             var entities = await _usersService.GetEntitiesFoldersAsync(entitySearch);
 

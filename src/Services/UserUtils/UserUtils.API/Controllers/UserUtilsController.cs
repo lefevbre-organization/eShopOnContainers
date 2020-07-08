@@ -205,7 +205,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         [ProducesResponseType(typeof(Result<UserUtilsModel>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<UserUtilsModel>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UserGetAsync(
-              [FromQuery] string IdNavision
+              [FromQuery] string IdNavision = "E1621396"
             )
         {
             if (string.IsNullOrEmpty(IdNavision))
