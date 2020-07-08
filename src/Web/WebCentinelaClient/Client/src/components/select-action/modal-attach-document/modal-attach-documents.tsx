@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component, Fragment, createRef } from 'react';
 import i18n from 'i18next';
 import { Button, Modal, Container } from 'react-bootstrap';
 import { connect, ConnectedProps } from 'react-redux';
@@ -62,8 +62,11 @@ interface State {
 class ModalAttachDocuments extends Component<Props, State> {
   private lastStep = -1;
   private step5Ref: any = null;
+  private step3Ref: any;
+
   constructor(props: Props) {
     super(props);
+    this.step3Ref = createRef();
 
     this.state = {
       complete: false,
@@ -177,13 +180,17 @@ class ModalAttachDocuments extends Component<Props, State> {
   prevStep() {
     const { step } = this.state;
     if (step === 2) {
-      this.setState({ step: 1 });
+      this.setState({ step: 1, instance: undefined });
     } else if (step === 3) {
-      this.setState({ step: 2 });
+      if (this.step3Ref.current.back() === true) {
+        this.setState({ step: 2, instance: undefined });
+      } else {
+        this.setState({ instance: undefined });
+      }
     } else if (step === 4) {
-      this.setState({ step: this.lastStep, files: [] });
+      this.setState({ step: this.lastStep, files: [], instance: undefined });
     } else if (step === 5) {
-      this.setState({ step: this.lastStep, files: [] });
+      this.setState({ step: this.lastStep, files: [], instance: undefined });
     }
   }
 
@@ -412,7 +419,9 @@ class ModalAttachDocuments extends Component<Props, State> {
             >
               <span className="lf-icon-compliance"></span>
 
-              <span>{i18n.t('modal-attach.title')}</span>
+              <span>
+                {i18n.t('modal-attach.title')}
+              </span>
             </h5>
           </Modal.Header>
           <Modal.Body className="mimodal">
@@ -455,7 +464,9 @@ class ModalAttachDocuments extends Component<Props, State> {
                   }}
                 >
                   <Step3
+                    ref={this.step3Ref}
                     user={user}
+                    step={step}
                     show={step === 3}
                     implantation={implantation}
                     onInstanceSelected={this.onInstanceSelected}

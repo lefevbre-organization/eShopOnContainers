@@ -10,6 +10,7 @@ interface Props {
   attachments: boolean;
   onCopyEmail: (check: boolean) => void;
   onCopyAttachments: (check: boolean) => void;
+  onChange: (event: any, data: any) => void;
 }
 
 interface State {
@@ -23,7 +24,13 @@ const getAttachmentName = (attach: any) => {
   return attach.headers['content-type'][0].params.name;
 };
 
-const MessageWithAttachments = ({ msg }: { msg: Message }) => {
+const MessageWithAttachments = ({
+  msg,
+  onChange
+}: {
+  msg: Message;
+  onChange: any;
+}) => {
   console.log('MessageWithAttachments.render');
   if (msg.attachments && msg.attachments.length > 0) {
     return (
@@ -40,6 +47,9 @@ const MessageWithAttachments = ({ msg }: { msg: Message }) => {
                 <CheckBoxComponent
                   cssClass="e-small"
                   checked={at.checked}
+                  change={(event) => {
+                    onChange && onChange(event, at);
+                  }}
                 ></CheckBoxComponent>
                 <span>{an}</span>
               </li>
@@ -162,7 +172,10 @@ export class Step1 extends React.Component<Props, State> {
                 <div className="file-list-wrapper">
                   <PerfectScrollbar>
                     {selected.map((sm: Message) => (
-                      <MessageWithAttachments msg={sm} />
+                      <MessageWithAttachments
+                        msg={sm}
+                        onChange={this.props.onChange}
+                      />
                     ))}
                   </PerfectScrollbar>
                 </div>
