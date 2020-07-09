@@ -515,12 +515,7 @@ export class Main extends Component {
                 "private": {
                     'eventType': 'profesional-event'
                 },
-            },
-
-            //'attendees': [               
-            //    { 'email': 'alberto.valverde.escribano@gmail.com' },
-            //    { 'email': 'albertovalverd@hotmail.com' }
-            //],
+            },            
 
             //'reminders': {
             //    'useDefault': false,
@@ -529,6 +524,7 @@ export class Main extends Component {
             //        { 'method': 'popup', 'minutes': 10 }
             //    ]
             //}
+
         }
 
         if (values.RecurrenceRule != undefined) { event.recurrence = ['RRULE:' + values.RecurrenceRule] };

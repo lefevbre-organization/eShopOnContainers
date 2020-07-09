@@ -5,7 +5,7 @@ import AppContainer from './AppContainer';
 import AppContainerCalendar from './AppContainerCalendar';
 import UserLexon from './components/user-lexon/UserLexon';
 import UserCalendar from './components/user-lexon/UserCalendar';
-import Jitsi from './calendar/components/main/main-JitsiMeet';
+//import Jitsi from './calendar/components/main/main-JitsiMeet';
 
 import './App.css';
 import './lefebvre-material.css';
@@ -49,7 +49,7 @@ class App extends Component {
           <Route exact path='/user/:idUser' component={UserLexon} />
           <Route exact path='/calendar/user/:idUser' component={UserCalendar} />
           <Route path='/calendar' component={AppContainerCalendar} />
-          <Route path='/jitsi' component={Jitsi} />
+         {/*<Route path='/jitsi' component={Jitsi} />*/}
           <Route path='/' component={AppContainer} />
           {/* <AppContainer /> */}
         </Switch>

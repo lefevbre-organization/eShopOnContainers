@@ -81,6 +81,8 @@ export class Sidebar extends PureComponent {
     //    this.navigateToList(0, this.DefaultCalendar);
     //}
 
+
+
     renderItems(calendarList) {
         if (calendarList.length === 0) {
             return <div />;
@@ -207,12 +209,7 @@ export class Sidebar extends PureComponent {
     render() {
         const { t } = this.props;
         const collapsed = this.props.sideBarCollapsed;    
-        const calendars = [];
-        if (this.props.calendarResult != undefined)
-        {
-            calendars = this.props.calendarResult.calendars;
-        }
-
+       
         return (
             //${ collapsed ? '' : styles['with-side-bar'] }
             <nav
@@ -256,7 +253,7 @@ export class Sidebar extends PureComponent {
                     component="ul"
                     className="d-flex flex-column border-0 m-0 sidebar"
                 >
-                    {this.renderItems(calendars)}
+                    {this.renderItems(this.props.calendarResult.calendars)}
                 </PerfectScrollbar>
             </nav>
         );
