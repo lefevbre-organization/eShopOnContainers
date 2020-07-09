@@ -30,7 +30,7 @@ app:                                                  # app global settings
       databaseapigw: databaseapigw                    # ingress entry for database api gw
       signatureapi: signature-api                     # ingress entry for signature api
       databaseapi: database-api                       # ingress entry for database api     
-      addonlexon: webaddonlexon                       # ingress entry for addon lexon client
+      addonlauncher: webaddonlauncher                 # ingress entry for addon launcher client
       office365addonlexon: weboffice365addonlexon
       
   svc:
@@ -58,5 +58,5 @@ app:                                                  # app global settings
       databaseapigw: databaseapigw                    # svc entry for database api gw
       signatureapi: signature-api                     # svc entry for signature api
       databaseapi: database-api                       # svc entry for database api
-      addonlexon: webaddonlexon                       # svc entry for addon lexon client
+      addonlauncher: webaddonlauncher                 # svc entry for addon launcher client
       office365addonlexon: weboffice365addonlexon
