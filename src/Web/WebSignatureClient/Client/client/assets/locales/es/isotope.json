@@ -9,7 +9,6 @@
     "ImapSSL": "IMAP SSL",
     "SMTP": "SMTP",
     "SmtpSSL": "SMTP SSL",
-    "SmtpTLS": "SMTP TLS",
     "SmtpUnsecured": "SMTP SIN SEGURIDAD",
     "actions": {
       "Login": "Acceder",
@@ -19,7 +18,19 @@
       "BLACKLISTED": "Servidor no autorizado",
       "IMAP": "Credenciales IMAP inválidas",
       "SMTP": "Credenciales SMTP inválidas"
-    }
+    },
+    "shop": "TIENDA",
+    "notClient": "No soy cliente",
+    "requestInfo": "Solicitar información",
+    "needHelp": "¿Necesitas ayuda?",
+    "phoneNumber": "91 210 80 00 - 902 44 33 55 |",
+    "client": "clientes@lefebvre.es",
+    "required": "Este campo es obligatorio.",
+    "email-error": "El campo debe tener formato de email.",
+    "user-error": "Usuario o Contraseña inválidos",
+    "user": "Usuario",
+    "password": "Contraseña",
+    "login": "INICIAR SESIÓN"
   },
   "sideBar": {
     "newRequest": "Nueva firma",

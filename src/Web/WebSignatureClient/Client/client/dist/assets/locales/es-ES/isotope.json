@@ -77,8 +77,8 @@
     "bcc": "bcc"
   },
   "messageEditor": {
-    "to": "para",
-    "cc": "cc",
+    "to": "Destinatarios",
+    "cc": "CC",
     "bcc": "bcc",
     "subject": "Asunto",
     "send": "Enviar",

@@ -1,0 +1,8 @@
+.input-group > .form-control {
+  height: 45px !important;
+}
+
+.btn-login {
+  height: 42px !important;
+  padding: 1px 6px !important;
+}

@@ -1,25 +1,17 @@
 {
   "login": {
-    "Login": "Inbox configuration",
-    "Host": "Host",
-    "Port": "Port",
-    "User": "User",
-    "Password": "Password",
-    "Advanced": "Advanced",
-    "ImapSSL": "IMAP SSL",
-    "SMTP": "SMTP",
-    "SmtpSSL": "SMTP SSL",
-    "SmtpTLS": "SMTP TLS",
-    "SmtpUnsecured": "SMTP NOT SECURED",
-    "actions": {
-      "Login": "Login",
-      "Cancel": "Cancel"
-    },
-    "errors": {
-      "BLACKLISTED": "Host is not whitelisted",
-      "IMAP": "Invalid IMAP credentials",
-      "SMTP": "Invalid SMTP credentials"
-    }
+    "shop": "SHOP",
+    "notClient": "I am not a customer",
+    "requestInfo": "Request information",
+    "needHelp": "Need help?",
+    "phoneNumber": "91 210 80 00 - 902 44 33 55 |",
+    "client": "clientes@lefebvre.es",
+    "required": "This field is required.",
+    "email-error": "The field must be a valid email.",
+    "user-error": "User or password not valid.",
+    "user": "User",
+    "password": "Passsord",
+    "login": "LOG IN"
   },
   "sideBar": {
     "newRequest": "New signature",

@@ -2,6 +2,8 @@ window.REACT_APP_ENVIRONMENT = "LOCAL";
 window.URL_DELETE_ACCOUNT = "https://lexbox-test-apigwacc.lefebvre.es/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider";
 window.URL_SELECT_ACCOUNT = "http://localhost:3010";
 window.URL_GET_ACCOUNTS = "https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail";
+window.URL_GET_USER = 'https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login';
+
 window.URL_MF_GOOGLE = "http://localhost:3001/user";
 window.URL_MF_OUTLOOK = "http://localhost:3002/user";
 window.URL_MF_IMAP = "http://localhost:9000/user";

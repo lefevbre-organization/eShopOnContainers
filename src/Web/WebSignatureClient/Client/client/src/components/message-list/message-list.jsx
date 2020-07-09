@@ -17,12 +17,14 @@ import mainCss from "../../styles/main.scss";
 import styles from "./message-list.scss";
 import { preloadSignatures, preloadSignatures2 } from "../../services/api-signaturit";
 import { backendRequest, backendRequestCompleted } from '../../actions/application';
-import { GridComponent, ColumnsDirective, ColumnDirective, Page, Inject, Resize, Filter, DetailRow, Sort, Group, Toolbar, PdfExport, ExcelExport} from '@syncfusion/ej2-react-grids';
+import { GridComponent, ColumnsDirective, ColumnDirective, Page, Inject, Resize, Filter, DetailRow, Sort, Group, Toolbar, PdfExport, ExcelExport } from '@syncfusion/ej2-react-grids';
 import data from './dataSource.json';
 import materialize from '../../styles/signature/materialize.scss';
 import { L10n } from '@syncfusion/ej2-base';
 import { DataManager } from '@syncfusion/ej2-data';
 import { ClickEventArgs } from '@syncfusion/ej2-navigations';
+import { DropDownButtonComponent } from '@syncfusion/ej2-react-splitbuttons';
+
 
 L10n.load({
     'es-ES': {
@@ -34,7 +36,12 @@ L10n.load({
         'Equal': 'Es igual a',
         'NotEqual': 'No es igual a',
         'Search': 'Buscar',
-        'PdfExport': 'Exportar a pdf'
+        'Pdfexport': 'PDF',
+        'Excelexport': 'EXCEL'
+      },
+      'pager': {
+        'pagerDropDown': 'Registros por página',
+        'pagerAllDropDown': 'Registros'
       }
     }
   });
@@ -51,6 +58,8 @@ class MessageList extends Component {
         this.menuTemplate = this.menuGridTemplate;
         this.statusTemplate = this.statusGridTemplate;
         this.recipientsTable = this.recipientsGridTemplate;
+        this.menuOptionSelected = this.dropDownOptionSelected;
+        this.recipientRender = this.dropDownRecipientRender;
         this.filterType = [
             { text: 'Menu', value: 'Menu' },
             { text: 'Checkbox', value: 'CheckBox' },
@@ -67,8 +76,21 @@ class MessageList extends Component {
              } 
         };
         this.fields = { text: 'texto', value: 'valor' };
-        this.toolbarOptions = ['Search', 'PdfExport'];
+        this.toolbarOptions = ['Search', 'PdfExport', 'ExcelExport', 'Print'];
         this.grid = null;
+        this.items = [
+            {
+                text: 'Editar',
+                iconCss: 'lf-icon-edit'
+            },
+            {   
+                separator: true
+            },
+            {
+                text: 'Cancelar',
+                iconCss: 'lf-icon-excel-software',
+            }
+        ];
     }
 
     getRowsCompleted() {
@@ -146,6 +168,22 @@ class MessageList extends Component {
         return result;
       }
 
+    getSignersNames(signature){
+        var lookup = {};
+        var items = signature.documents;
+        var result = [];
+    
+        for (var item, i = 0; item = items[i++];) {
+          var name = item.name;
+    
+          if (!(name in lookup)) {
+            lookup[name] = 1;
+            result.push(name);
+          }
+        }
+        return result;
+    }
+
     getSignatures(signatures){
         let filteredSignatures = [];
         signatures.map( sig => {
@@ -213,13 +251,29 @@ class MessageList extends Component {
     }
 
     menuGridTemplate(props){
+        // return (
+        //     <span>
+        //         {/* <i className="material-icons">more_vert</i> */}
+        //         <span className="lf-icon-filter-1"></span>
+        //     </span>
+        // );
         return (
-            <span>
-                {/* <i className="material-icons">more_vert</i> */}
-                <span className="lf-icon-filter-1"></span>
-            </span>
-        );
+            <div className='control-pane'>
+                <div className='control-section'>
+                    <div className='dropdownbutton-section'>
+                        <div id='dropdownbutton-control'>
+                            <div className='row'>
+                                <div className="col-xs-12">
+                                    <DropDownButtonComponent cssClass='e-caret-hide' items={this.items} iconCss={`lf-icon-kebab-menu`} select={this.menuOptionSelected.bind(this)}></DropDownButtonComponent>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>);
+       
     }
+
 
     recipientsGridTemplate(props){
         var chunks = props.Destinatarios.split(' ');
@@ -241,17 +295,65 @@ class MessageList extends Component {
             default:
                 break;
         }
+
+        let recipientsList = [];
+        let signature = this.props.signatures.find(s => s.id === props.Id)
+
+        if (signature ){
+            var names = this.getSignersNames(signature);
+            var emails = this.getSigners(signature);
+            names.forEach((name, i) => {
+                if (i === names.length -1 ){
+                    recipientsList.push(
+                        {
+                            text: name,
+                            cssClass: 'test'
+                        },
+                        {
+                            text: emails[i]
+                        }
+                    )  
+                } else {
+                    recipientsList.push(
+                        {
+                            text: name,
+                            cssClass: 'test'
+                        },
+                        {
+                            text: emails[i]
+                        },
+                        {   
+                            separator: true
+                        }
+                    )
+                }
+            });
+        }
+        
         console.log(props);
         return (
             <div>
                 <span className='email'>
                     {chunks[0].length > 22 ? chunks[0].substring(0,20)+' . . .' : chunks[0]}
                 </span>
+                
                 <span className={`bola-firmantes ${recipientsClass}`}>
-                    {chunks[1]}
+                    <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass='e-caret-hide test' items={recipientsList}>{chunks[1]}</DropDownButtonComponent>
                 </span>
             </div>
         )
+    }
+
+    dropDownRecipientRender(args){
+        if (args.item.text.includes('@')){
+            args.element.style.color = '#777777';
+            args.element.style.fontWeight = '400';
+            args.element.style.fontSize = '12px';
+            args.element.style.fontStyle = 'italic';
+            console.log(args);
+        } else if (args.item.separator){
+            args.element.style.color = '#001970';
+        }
     }
 
     statusGridTemplate(props){
@@ -327,7 +429,22 @@ class MessageList extends Component {
                   this.grid.pdfExport(exportProperties);
                 }
             }).catch((e) => true);
-          }
+        } else if (this.grid && event.item.id.includes('excel')){
+            this.grid.excelExport();
+        }
+    }
+
+    dropDownOptionSelected (args){
+        console.log(args);
+        if (args.item.text === 'Editar'){
+            const id = this.grid.getSelectedRecords()[0].Id;
+            const signature = this.props.signatures.find(s => s.id === id);
+            this.props.setTitle('PROGRESO DE FIRMA');
+            this.props.signatureClicked(signature);
+        } else if (args.item.text === 'Cancelar'){
+            //POR HACER
+        }
+        debugger;
     }
 
     render() {
@@ -397,26 +514,27 @@ class MessageList extends Component {
                     allowPdfExport={true}
                     allowExcelExport={true}
                     allowTextWrap={false}
-                    height='auto'
-                    pageSettings={{pageCount: 5, pageSize: 10, pageSizeList: [8,12,9,5]}} 
-                    rowSelected={event => {
-                        this.onRowSelected(event);
-                    }}
+                    height='400'
+                    pageSettings={{pageCount: 5, pageSize: 10, pageSizes: true, pagesSizeList: []}}//pageSizeList: [8,12,9,5]}} 
+                    // rowSelected={event => {
+                    //     this.onRowSelected(event);
+                    // }}
                     filterSettings={this.filterSettings}
                     toolbar={this.toolbarOptions} 
                     locale ='es-ES'
                     toolbarClick={this.toolbarClick}
                     ref={g => this.grid = g}
+                    hierarchyPrintMode={'All'}
                 >
                     <ColumnsDirective>
                         <ColumnDirective textAlign='center' headerText='Acciones' template={this.menuTemplate.bind(this)}  width='55' />
                         <ColumnDirective field='Documento' textAlign='Left' headerText='Documento' />
                         <ColumnDirective field='Asunto' textAlign='Left' headerText='Asunto' />
-                        <ColumnDirective field='Destinatarios' textAlign='Left' headerText='Destinatarios' width= '147' template={this.recipientsTable.bind(this)}/>
+                        <ColumnDirective field='Destinatarios' textAlign='Left' headerText='Destinatarios' width= '151' template={this.recipientsTable.bind(this)}/>
                         <ColumnDirective field='Fecha' textAlign='Left' headerText='Fecha' width='115'/>
                         <ColumnDirective field='Estado' textAlign='Left' headerText='Estado' width='110' allowFiltering={false} template={this.statusTemplate.bind(this)} />
                     </ColumnsDirective>
-                    <Inject services={[Filter, Page, Resize, Sort, Toolbar, PdfExport]}/>
+                    <Inject services={[Filter, Page, Resize, Sort, Toolbar, PdfExport, ExcelExport]}/>
                     {/* <Inject services={[Resize]}/> */}
                 </GridComponent>
             </div>
@@ -426,21 +544,21 @@ class MessageList extends Component {
                         background-color: #001978 !important;
                         color: white;  
                     }
-                    .bola-firmantes.en-progreso{
+                    .bola-firmantes.en-progreso .e-dropdown-btn.e-dropdown-btn.e-btn{
                         border-radius: 20px;
                         color: #FFF;
                         padding: 3px 15px;
                         cursor: pointer;
                         background: #e9a128;
                     }
-                    .bola-firmantes.completada{
+                    .bola-firmantes.completada .e-dropdown-btn.e-dropdown-btn.e-btn{
                         border-radius: 20px;
                         color: #FFF;
                         padding: 3px 15px;
                         cursor: pointer;
                         background: #217e05;
                     }
-                    .bola-firmantes.cancelada{
+                    .bola-firmantes.cancelada .e-dropdown-btn.e-dropdown-btn.e-btn{
                         border-radius: 20px;
                         color: #FFF;
                         padding: 3px 15px;
@@ -465,6 +583,75 @@ class MessageList extends Component {
                     .resumen-firma.cancelada {
                         color: #c90223;
                     }
+                    .e-dropdownbase .e-list-item.e-active.e-hover {
+                        color: #001970;
+                    }
+                    .e-dropdownbase .e-list-item.e-active, .e-dropdownbase .e-list-item.e-active.e-hover {
+                        background-color: #eee;
+                        border-color: #fff;
+                        color: #001970;
+                    }
+                    .e-dropdownbase .e-list-item.e-active.e-hover {
+                        color: #001970;
+                    }
+                    .e-toolbar .e-toolbar-items .e-toolbar-item .e-tbar-btn.e-btn.e-tbtn-txt .e-icons.e-btn-icon {
+                        padding: 0;
+                        color: #001970;
+                    }
+                    .e-toolbar .e-toolbar-items .e-toolbar-item .e-tbar-btn-text {
+                        color: #001970;
+                    }
+                    .e-toolbar .e-input-group .e-search .e-input{
+                        height: 0rem;
+                        border-bottom: 0px solid #9e9e9e;
+                    }
+                    .row{
+                        margin-left:auto;
+                        margin-right: auto;
+                        margin-bottom: 0px;
+                        display: inherit;
+                    }
+                    .e-dropdown-popup ul .e-item .e-menu-icon {
+                        font-weight: bold;
+                        color: #001970;
+                    }
+                    .e-dropdown-popup ul .e-item {
+                        font-weight: bold;
+                        color: #001970;
+                    }
+                    
+                    .e-input-group:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left), .e-input-group.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) .e-input-in-wrap, .e-input-group.e-control-wrapper:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left), .e-input-group.e-control-wrapper.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) .e-input-in-wrap, .e-float-input.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) .e-input-in-wrap, .e-float-input.e-control-wrapper.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) .e-input-in-wrap {
+                        border-color: #001970;
+                    }
+                    .e-input-group:not(.e-float-icon-left):not(.e-float-input)::before, .e-input-group:not(.e-float-icon-left):not(.e-float-input)::after, .e-input-group.e-float-icon-left:not(.e-float-input) .e-input-in-wrap::before, .e-input-group.e-float-icon-left:not(.e-float-input) .e-input-in-wrap::after, .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::before, .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::after, .e-input-group.e-control-wrapper.e-float-icon-left:not(.e-float-input) .e-input-in-wrap::before, .e-input-group.e-control-wrapper.e-float-icon-left:not(.e-float-input) .e-input-in-wrap::after {
+                        background: #001970;
+                    }
+                    .test{
+                        color: #fff;
+                    }
+                    input:not([type]), input[type=text]:not(.browser-default___2ZECf), input[type=password]:not(.browser-default___2ZECf), input[type=email]:not(.browser-default___2ZECf), input[type=url]:not(.browser-default___2ZECf), input[type=time]:not(.browser-default___2ZECf), input[type=date]:not(.browser-default___2ZECf), input[type=datetime]:not(.browser-default___2ZECf), input[type=datetime-local]:not(.browser-default___2ZECf), input[type=tel]:not(.browser-default___2ZECf), input[type=number]:not(.browser-default___2ZECf), input[type=search]:not(.browser-default___2ZECf), textarea.materialize-textarea___2dl8r {
+                        background-color: transparent;
+                        border: none;
+                        
+                        border-radius: 0;
+                        outline: none;
+                        height: 0rem;
+                        width: 100%;
+                        font-size: 16px;
+                        margin: 0 0 8px 0;
+                        padding: 0;
+                        box-shadow: none;
+                        box-sizing: content-box;
+                        transition: box-shadow .3s, border .3s;
+                    }
+                    .e-toolbar .e-toolbar-items {
+                        border-radius: 0 0 0 0;
+                        display: inline-block;
+                        height: 100%;
+                        min-height: 53px;
+                        vertical-align: middle;
+                    }
+                    
                 `}
                 </style>
             </div>
@@ -474,17 +661,11 @@ class MessageList extends Component {
 
     componentDidMount() {
         const { lefebvre } = this.props;
-        console.log('******************************');
-        console.log('******************************');
-        console.log('******************************');
-        console.log('');
         console.log('Message-list.ComponentDidMount: Llamando a preloadSignatures(lefebvre.userId)');
-        console.log('******************************');
-        console.log('******************************');
-        console.log('******************************');
-        console.log('');
     
         this.props.preloadSignatures(lefebvre.userId);
+
+        // window.addEventListener('resize', this.onresize.bind(this));
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -494,6 +675,15 @@ class MessageList extends Component {
             }
         }
     }
+
+    onresize(e) {     
+        
+        var rowHeight = this.grid.getRowHeight(); //height of the each row     
+        var gridHeight = Number(window.innerHeight - 120); //grid height
+        var pageSize = Number(this.grid.pageSettings.pageSize) + 10; //initial page size
+        var pageResize = (gridHeight - (pageSize * rowHeight)) / rowHeight;
+        this.grid.pageSettings.pageSize = pageSize + Math.round(pageResize);
+      }
 
 
     renderItem({ index, key, style }) {

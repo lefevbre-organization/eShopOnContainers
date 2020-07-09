@@ -5,7 +5,7 @@ const userLanguage = () => navigator.language;
 
 i18n.use(XHR).init({
   lng: userLanguage(),
-  fallbackLng: ['es', 'en'],
+  fallbackLng: ['es', 'en', 'es-ES'],
   ns: ["isotope"],
   defaultNS: "isotope",
   backend: {
