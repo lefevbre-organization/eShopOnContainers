@@ -19,4 +19,3 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Extensions
         }
     }
 }
-}
