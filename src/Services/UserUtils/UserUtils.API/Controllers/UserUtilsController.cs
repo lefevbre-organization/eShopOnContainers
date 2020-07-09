@@ -1,5 +1,6 @@
 ﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Services;
 using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models;
+using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
@@ -50,9 +51,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> TokenPostAsync(
-              [FromForm] string login
-             , [FromForm] string password
-             , [FromForm] short idApp
+              [FromForm] string login = "i.molina-ext@lefebvreelderecho.com"
+             , [FromForm] string password = "imolina2"
+             , [FromForm] short idApp = 2
              , [FromForm] bool addTerminatorToToken = true
             )
         {

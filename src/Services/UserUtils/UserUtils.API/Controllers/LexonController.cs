@@ -247,8 +247,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> TokenPostAsync(
-              [FromForm] string login
-             , [FromForm] string password
+              [FromForm] string login = "i.molina-ext@lefebvreelderecho.com"
+             , [FromForm] string password = "imolina2"
              , [FromForm] bool addTerminatorToToken = true
             )
         {
