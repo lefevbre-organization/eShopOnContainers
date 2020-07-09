@@ -5,23 +5,30 @@ import {
   PAGE_SELECT_ACTION,
   PAGE_CASEFILE,
   PAGE_CONFIGURATION,
-  PAGE_MESSAGE_CLASSIFICATIONS
+  PAGE_MESSAGE_CLASSIFICATIONS,
+  PAGE_DOCUMENT_ATTACHED
 } from '../../constants';
 import SelectCompany from '../select-company/select-company';
 import CaseFile from '../case-file/case-file';
 import SelectAction from '../select-action/select-action';
 import Configuration from '../configuration/configuration';
 import MessageClassifications from '../addon-conecting-emails/addon-conecting-emails';
+import AddonAttachDocument from '../addon-attach-documents/addon-attach-documents';
 import { connect } from 'react-redux';
 
 class Routing extends Component {
   constructor(props) {
     super(props);
-    let actualPage = props.addonData != null ? PAGE_MESSAGE_CLASSIFICATIONS  
-     : PAGE_SELECT_COMPANY;
+    let actualPage = PAGE_SELECT_COMPANY;
 
     if (props.casefile != null && props.casefile !== undefined) {
       actualPage = PAGE_CASEFILE;
+    } else if(props.addonData && 
+      props.addonData.addonType == "MessageRead") {
+      actualPage = PAGE_MESSAGE_CLASSIFICATIONS;
+    } else if(props.addonData && 
+      props.addonData.addonType == "MessageCompose") {
+      actualPage = PAGE_DOCUMENT_ATTACHED;
     }
 
     this.state = {
@@ -94,6 +101,16 @@ class Routing extends Component {
             bbddAddon={bbdd}
             addonData={addonData}
             toggleNotification={toggleNotification}
+          />
+        );
+
+      case PAGE_DOCUMENT_ATTACHED: 
+        return (
+          <AddonAttachDocument 
+           user={user} 
+           bbddAddon={bbdd}
+           addonData={addonData}
+           toggleNotification={toggleNotification}
           />
         );
 
