@@ -24,6 +24,7 @@ import { L10n } from '@syncfusion/ej2-base';
 import { DataManager } from '@syncfusion/ej2-data';
 import { ClickEventArgs } from '@syncfusion/ej2-navigations';
 import { DropDownButtonComponent } from '@syncfusion/ej2-react-splitbuttons';
+import { detailedDiff } from 'deep-object-diff';
 
 
 L10n.load({
@@ -675,6 +676,35 @@ class MessageList extends Component {
             }
         }
     }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        const difP = detailedDiff(this.props, nextProps);
+        const difSt = detailedDiff(this.state, nextState);
+    
+        if (
+          this.isEmpty(difP.updated) &&
+          this.isEmpty(difP.added) &&
+          this.isEmpty(difP.deleted) &&
+          this.isEmpty(difSt.updated) &&
+          this.isEmpty(difSt.added) &&
+          this.isEmpty(difSt.deleted)
+        ) {
+          return false;
+        }
+    
+        return true;
+    }
+
+    isEmpty(obj) {
+        for (var prop in obj) {
+          if (obj.hasOwnProperty(prop)) {
+            return false;
+          }
+        }
+      
+        return JSON.stringify(obj) === JSON.stringify({});
+    }
+      
 
     onresize(e) {     
         
