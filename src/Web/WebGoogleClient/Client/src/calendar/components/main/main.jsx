@@ -44,6 +44,7 @@ import timeZoneNames from 'cldr-data/main/es/timeZoneNames.json';
 import numberingSystems from 'cldr-data/supplemental/numberingSystems.json';
 import weekData from 'cldr-data/supplemental/weekData.json';// To load the culture based first day of week
 import i18n from 'i18next';
+import Reminder from "./reminder/reminder"
 
 export class Main extends Component {
 
@@ -92,6 +93,7 @@ export class Main extends Component {
             hidePromptDialog: false,
             calendarToEdit: undefined,
             tagAttendess: [],
+            reminders:[],
             eventType: undefined
             //externalcomponent: "<LexonComponent sidebarDocked={this.onSetSidebarDocked} />"
         };
@@ -371,6 +373,7 @@ export class Main extends Component {
                     ImageName: "lefebvre",
                     Attendees: attendees,
                     EventType: eventType,
+                    Reminders: event.reminders.overrides,
                 });
             }
         }
@@ -517,13 +520,12 @@ export class Main extends Component {
                 },
             },            
 
-            //'reminders': {
-            //    'useDefault': false,
-            //    'overrides': [
-            //        { 'method': 'email', 'minutes': 24 * 60 },
-            //        { 'method': 'popup', 'minutes': 10 }
-            //    ]
-            //}
+            'reminders': {
+                'useDefault': false,
+                'overrides': [
+                    { 'method': 'email', 'minutes': 24 * 60 }                   
+                ]
+            }
 
         }
 
@@ -617,9 +619,7 @@ export class Main extends Component {
         }        
     }
 
-    onPopupOpen(args) {
-
-             
+    onPopupOpen(args) {             
 
         if (args.type === 'QuickInfo') {
             var formElement = args.element.querySelector('.e-schedule-form');
@@ -652,6 +652,25 @@ export class Main extends Component {
             }
             else {
                 this.setState({ tagAttendess: [] })
+            }
+
+            // default values for Reminders coming from event args
+            if (args.data.Reminders != undefined) {
+                //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i]) 
+                var arr = [];
+                Object.keys(args.data.Reminders).forEach(function (key) {
+                    //arr.push(args.data.Reminders[key]);
+                    arr.push({
+                        title: args.data.Reminders[key].method,
+                        value: args.data.Reminders[key].minutes,
+                        id: 'id',
+                        icon: "delete-icon"
+                    });  
+                });
+                this.setState({ reminders: arr })
+            }
+            else {
+                this.setState({ reminders: [] })
             }
 
             //// default values for eventType coming from event args
@@ -699,8 +718,14 @@ export class Main extends Component {
                 // Adding attendees tag element
                 let containerTab = createElement('div', { className: 'custom-field-container' });
                 row.appendChild(containerTab);
-                var node = ReactDOM.findDOMNode(this.tagObj);
-                containerTab.appendChild(node);
+                var nodeA = ReactDOM.findDOMNode(this.tagObj);
+                containerTab.appendChild(nodeA);
+
+                // Adding reminder element               
+                
+                var nodeR = ReactDOM.findDOMNode(this.remObj);
+                containerTab.appendChild(nodeR);
+
 
             }
 
@@ -1167,6 +1192,13 @@ export class Main extends Component {
                                             // Return boolean to indicate validity
                                             return isEmail;
                                         }}
+                                    />
+                                </div>
+
+                                <div className="hidden">
+                                    <Reminder
+                                        reminders={this.state.reminders}
+                                        ref={rem => this.remObj = rem}
                                     />
                                 </div>
 
