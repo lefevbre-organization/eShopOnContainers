@@ -663,7 +663,7 @@ export class Main extends Component {
                     arr.push({
                         title: args.data.Reminders[key].method,
                         value: args.data.Reminders[key].minutes,
-                        id: 'id',
+                        id: 'n',
                         icon: "delete-icon"
                     });  
                 });
@@ -850,37 +850,40 @@ export class Main extends Component {
 
             case 'eventCreated':
 
-                if (this.scheduleObj.eventWindow.eventData.typeEvent != "lexon" ) {
-                    event = this.buildEventoGoogle(args.data[0]);
+                //if (this.scheduleObj.eventWindow.eventData != undefined) {
+                //    if (this.scheduleObj.eventWindow.eventData.typeEvent != "lexon") {
+                        event = this.buildEventoGoogle(args.data[0]);
 
-                    //call function to add event
-                    // this.addCalendarEventCRUD(args.data[0].CalendarId, event, args);   
-                    addCalendarEvent(args.data[0].CalendarId, event)
-                        .then(result => {
-                            // refresh event data
-                            if (this.scheduleObj.eventWindow.eventData != undefined) {
-                                this.scheduleObj.eventWindow.eventData.Id = result.id;
-                            }
-                            
-                            // this.scheduleObj.eventWindow.resetForm();
-                            args.data[0].Id = result.id;
-                            args.data[0].ImageName = "lefebvre";
-                            args.data[0].Attendees = result.attendees;
-                            //args.data[0].ImageName = "lefebvre";
-                            this.setState({ tagAttendess: [] })
+                        //call function to add event
+                        // this.addCalendarEventCRUD(args.data[0].CalendarId, event, args);   
+                        addCalendarEvent(args.data[0].CalendarId, event)
+                            .then(result => {
+                                // refresh event data
+                                if (this.scheduleObj.eventWindow.eventData != undefined) {
+                                    this.scheduleObj.eventWindow.eventData.Id = result.id;
+                                }
 
-                            this.scheduleObj.refreshEvents();
-                            this.toastObj.show(this.toasts[1]);
-                        })
-                        .catch(error => {
-                            this.toastObj.show(this.toasts[2]);
-                            console.log('error ->', error);
-                        })
-                }
-                else {
-                    //this.scheduleObj.saveEvent(args.data[0]);
-                    args.cancel = true;
-                }
+                                // this.scheduleObj.eventWindow.resetForm();
+                                args.data[0].Id = result.id;
+                                args.data[0].ImageName = "lefebvre";
+                                args.data[0].Attendees = result.attendees;
+                                //args.data[0].ImageName = "lefebvre";
+                                this.setState({ tagAttendess: [] })
+
+                                this.scheduleObj.refreshEvents();
+                                this.toastObj.show(this.toasts[1]);
+                            })
+                            .catch(error => {
+                                this.toastObj.show(this.toasts[2]);
+                                console.log('error ->', error);
+                            })
+                //    }
+                //    else {
+                //        //this.scheduleObj.saveEvent(args.data[0]);
+                //        args.cancel = true;
+                //    }
+                //}
+              
                 
                
                 break;
