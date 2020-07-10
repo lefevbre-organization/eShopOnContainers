@@ -111,6 +111,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
             return result.errors?.Count() > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
+        [HttpGet("contacts")]
+        [ProducesResponseType(typeof(Result<List<CenContact>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<List<CenContact>>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetContactsAsync(string idNavisionUser = "E1621396")
+        {
+            if (string.IsNullOrEmpty(idNavisionUser))
+                return (IActionResult)BadRequest("id user value invalid. Must be a valid iduser");
+
+            var result = await _service.GetContactsAsync(idNavisionUser);
+            return result.errors?.Count() > 0 ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
         [HttpGet("documents")]
         [ProducesResponseType(typeof(Result<List<CenDocument>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<List<CenDocument>>), (int)HttpStatusCode.BadRequest)]
