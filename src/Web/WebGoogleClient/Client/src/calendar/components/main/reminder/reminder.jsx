@@ -30,15 +30,15 @@ export class Reminder extends React.Component {
 
        // this.dataSource = this.props.reminders
 
-        //this.dataSource =
-        //[
-        //    {
-        //        title: 'hello',
-        //        value: 'world',
-        //        id: "n",
-        //        icon: "delete-icon"
-        //    }
-        //]
+        this.dataSource =
+        [
+            {
+                title: 'hello',
+                value: 'world',
+                id: "n",
+                icon: "delete-icon"
+            }
+        ]
 
                
     }
