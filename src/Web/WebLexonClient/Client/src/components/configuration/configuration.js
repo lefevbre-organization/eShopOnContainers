@@ -4,8 +4,9 @@ import i18n from 'i18next';
 import { connect } from 'react-redux';
 import Switch from 'react-switch';
 import { saveUserConfig } from '../../services/services-lexon';
-import ACTIONS from '../../actions/selections';
 import APP_ACTIONS from '../../actions/applicationAction';
+import DOC_ACTIONS from '../../actions/documentsAction';
+import ModalImportContacts from '../modal-import-contacts/modal-import-contacts';
 
 import { PAGE_SELECT_ACTION } from '../../constants';
 class Configuration extends Component {
@@ -86,14 +87,17 @@ class Configuration extends Component {
           </li>
           <li className='option-container'>
             <div className='row'>
-              <a
-                href='#'
+              <p
+                className='add-more'
+                style={{ cursor: 'pointer', marginTop: 30 }}
                 onClick={() => {
-                  alert('Importar contactos');
+                  this.props.toggleModalImportContacts();
                 }}>
-                <span className='icon lf-icon-contacts'></span>
-              </a>
-              <p>{i18n.t('configuration.import-contacts')}</p>
+                <a href='#'>
+                  <span className='icon lf-icon-contacts'></span>
+                </a>
+                <strong>{i18n.t('configuration.import-contacts')}</strong>
+              </p>
             </div>
           </li>
         </ul>
@@ -102,6 +106,7 @@ class Configuration extends Component {
             {i18n.t('configuration.version')}: {window.RELEASE}
           </div>
         </div>
+        <ModalImportContacts></ModalImportContacts>
         <style jsx>{`
           .version {
             position: absolute;
@@ -189,6 +194,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => ({
   setConfig: (item) => dispatch(APP_ACTIONS.setConfig(item)),
+  toggleModalImportContacts: () =>
+    dispatch(DOC_ACTIONS.toggleModalImportContacts()),
 });
-
 export default connect(mapStateToProps, mapDispatchToProps)(Configuration);

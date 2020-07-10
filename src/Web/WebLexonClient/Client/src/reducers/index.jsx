@@ -23,6 +23,7 @@ export const INITIAL_STATE = {
   documents: {
     showModalDocuments: false,
     showAttachDocuments: false,
+    showImportContacts: false,
   },
 };
 

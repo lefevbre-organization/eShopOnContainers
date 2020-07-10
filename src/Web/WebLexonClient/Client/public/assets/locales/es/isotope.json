@@ -168,5 +168,10 @@
   "new-folder-prompt": {
     "yes": "Crear",
     "no": "Cancelar"
+  },
+  "modal-import-contacts": {
+    "title": "Importar contactos de Lex-on",
+    "info": "Información sobre las fichas de contacto detectadas en Lex-on:",
+    "import": "Importar"
   }
 }
