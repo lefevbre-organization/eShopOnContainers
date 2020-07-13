@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import queryString from 'query-string';
-import Login from '../containers/Login'
+import lexonLogin from '../containers/Login'
+import centinelaLogin from '../containers/CentinelaLogin'
 import "bootstrap/dist/css/bootstrap.min.css"
 import '../App.css';
 
@@ -101,7 +102,10 @@ class App extends Component {
                   <div className="App-container">                       
                       <div id="lexon-app" />
                      <BrowserRouter>
-                       <Route exact path="/login" component={Login}></Route>
+                       <Switch>
+                        <Route exact path="/oauth_lexon" component={lexonLogin}></Route>
+                        <Route exact path="/oauth_centinela" component={centinelaLogin}></Route>
+                       </Switch>
                      </BrowserRouter>    
                   </div>
               </div>

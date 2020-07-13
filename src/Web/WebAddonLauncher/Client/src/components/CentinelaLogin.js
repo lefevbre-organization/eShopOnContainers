@@ -1,6 +1,6 @@
 import React from 'react';
 
- const LoginComponents = (children) =>  {
+ const CentinelaLogin = (children) =>  {
    const verificationLogin = children.errorsMessage.login ? (
      <div className="errorsMessage">{children.errorsMessage.login}</div>
       ) : null;
@@ -23,7 +23,7 @@ import React from 'react';
      <div className="offset-md-3 col-md-6">
        <div className="login-box">
          <div className="text-center login-title-space">
-         <img className="logo-lexon" src={children.logo} alt="logo" />
+         <img className="logo-centinela" src={children.logo} alt="logo" />
          </div>
            <div className="row">
              <div className="col-md-8 offset-md-2 mb-5">
@@ -80,4 +80,4 @@ import React from 'react';
 
   )}
 
-export default LoginComponents
+export default CentinelaLogin

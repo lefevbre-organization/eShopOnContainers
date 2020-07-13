@@ -30,7 +30,7 @@ function getTokenClient() {
 function getService() {
   getTokenClient();
   return OAuth2.createService('auth-lexon')
-    .setAuthorizationBaseUrl(urlFrontend + 'login')
+    .setAuthorizationBaseUrl(urlFrontend + 'oauth_lexon')
     .setTokenUrl(urlAuth)
     .setClientId(token)
     .setClientSecret(clientSecret)

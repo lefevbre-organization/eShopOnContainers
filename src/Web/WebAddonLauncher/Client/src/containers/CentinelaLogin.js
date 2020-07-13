@@ -3,13 +3,14 @@ import queryString from 'query-string';
 import validator from 'email-validator';
 import LoginHeader from '../components/LoginHeader';
 import LoginFooter from '../components/LoginFooter';
-import LoginComponents from '../components/LoginComponents';
-import { getUser } from "../services/services-lexon";
+import CentinelaLoginComponents from '../components/CentinelaLogin';
+import { getCentinelaUser } from "../services/services-lexon";
 
 import '../assets/styles/components/Login.css';
+import '../assets/styles/components/CentinelaLogin.css';
 import logoHeader from '../assets/img/LogoLefebvre.png';
 import shopHeader from '../assets/img/icon-shop.png';
-import logoLexon from '../assets/img/logo-lexon.png';
+import logoCentinela from '../assets/img/lefebvre-centinela.png';
 import logoFooter from '../assets/img/lefebvre-ij-bl-160x57.png';
 import iconFacebook from '../assets/img/icon-facebook-round.png'; 
 import iconLinkedin from '../assets/img/icon-linkedin-round.png';
@@ -18,7 +19,7 @@ import iconYoutube from '../assets/img/icon-youtube-round.png'
 import iconUser from '../assets/img/icon-user.png'
 import iconLock from '../assets/img/icon-lock.png'
 
-class Login extends Component {
+class CentinelaLogin extends Component {
 
   constructor(props) {
     super(props);
@@ -96,11 +97,11 @@ class Login extends Component {
 
   async getUser() {
     
-   const user = await getUser(
+   const user = await getCentinelaUser(
      this.state.form
    );
     if(user.result.data 
-      && user.result.data._login) {
+        && user.result.data.token) {
      this.goBackAddon();
      this.setState({
       errorsMessage: {
@@ -152,10 +153,10 @@ class Login extends Component {
         shopHeader={shopHeader} 
         shopTitle={this.state.shopTitle}
         />
-        <LoginComponents 
+        <CentinelaLoginComponents 
          iconUser={iconUser}
          iconLock={iconLock}
-         logo={logoLexon}
+         logo={logoCentinela}
          handleChange={this.handleChange}
          errorsMessage={this.state.errorsMessage}
          handleEventAddon={this.handleEventAddon}
@@ -181,4 +182,4 @@ class Login extends Component {
   }
 }
 
-export default Login
+export default CentinelaLogin
