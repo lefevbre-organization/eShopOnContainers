@@ -798,45 +798,45 @@ export class Main extends Component {
 
             case 'eventChanged':
 
-                // TO FIX BECOUSE REFRESH OF ATTENDES ARGS ARE NOT WORKING FINE
-                // Update current Event in calendar (not in google cloud)
-                //let att = this.state.tagAttendess;
-                //args.data.Attendees = [];
-                //if (att != undefined) {
-                //    Object.keys(att).forEach(function (key) {
-                //     args.data.Attendees.push({ 'email': att[key] });
-                //     });                           
-                //   }
-                //else {
-                //    args.data.Attendees = undefined;
-                //}
-                //this.scheduleObj.refreshEvents();
-                //this.scheduleObj.refresh();
+                var desc = this.scheduleObj.dataModule.dataManager.dataSource.json.find(function (e) {
+                    return e.Id == args.data.Id
+                })
 
-               // Update Reminders                
-                //let arrR = this.remObj.listviewInstance.dataSource;
-                //args.data.Reminders = [];               
-                //if (arrR.length > 0) {                   
-                //    Object.keys(arrR).forEach(function (key) {
-                //        //args.changedRecords.Reminders.push({
-                //        //    method: arrR[key].title,
-                //        //    minutes: arrR[key].value,
-                //        //});
-                 //        //args.data.Reminders.push({
-                //        //    method: arrR[key].title,
-                //        //    minutes: arrR[key].value,
-                //        //});
-                //        //this.scheduleObj.eventWindow.eventData.Reminders.Reminders.push({
-                //        //    method: arrR[key].title,
-                //        //    minutes: arrR[key].value,
-                //        //});
+                if (desc) {
+                    console.log(desc.description)
+                    //reset reminders
+                    desc.Reminders = [];                    
 
-                //    });
-                //}
+                    //Update Reminders                
+                    let arrR = this.remObj.listviewInstance.dataSource;
+                    if (arrR.length > 0) {
+                        Object.keys(arrR).forEach(function (key) {
+                            desc.Reminders.push({
+                                method: arrR[key].title,
+                                minutes: arrR[key].value,
+                            });
 
-              
+                        });
+                    }
+
+                    //reset attendess
+                    desc.Attendees = [];
+
+                    //Update Attendess    
+                    let att = this.state.tagAttendess;                    
+                    if (att != undefined) {
+                        Object.keys(att).forEach(function (key) {
+                         desc.Attendees.push({ 'email': att[key] });
+                         });                           
+                    }  
+
+                }
+
+                //Update the schedule datasource
+                this.scheduleObj.dataModule.dataManager.update()
+
+                //update the Event to call the api
                 event = this.buildEventoGoogle(args.data);
-
 
                 let itemToModify = args.data.Id
                 let calendarToModify = args.data.CalendarId
@@ -864,23 +864,10 @@ export class Main extends Component {
                     itemToModify = args.changedRecords[0].Id;
                     calendarToModify = args.changedRecords[0].CalendarId
                     event = this.buildEventoGoogle(args.changedRecords[0]);
-                }
-
-                // this.setState({ tagAttendess: [] })
+                }             
 
                 //call function to update event
-                this.updateCalendarEventCRUD(calendarToModify, itemToModify, event);  
-
-                //this.scheduleObj.eventWindow.eventData.Id = "pepe";
-                
-
-               // let obj = this.scheduleObj.eventsData.findIndex(args.data.Id)
-
-                //const getelem = this.scheduleObj.eventsData.find(id => id.Id === args.data.Id);
-                //getelem.Id = "pepe";
-                //this.scheduleObj.refresh();
-                //this.scheduleObj.dataBind();
-               
+                this.updateCalendarEventCRUD(calendarToModify, itemToModify, event);                
 
                 break;
 
@@ -982,7 +969,7 @@ export class Main extends Component {
         updateCalendarEvent(calendarId, item, event)
             .then(result => {
                 if (!hiddeMessage) {
-                    this.toastObj.show(this.toasts[1]);
+                    this.toastObj.show(this.toasts[1]);                   
                 }
             })
             .catch(error => {

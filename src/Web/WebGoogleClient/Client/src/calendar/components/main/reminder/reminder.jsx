@@ -40,11 +40,14 @@ export class Reminder extends React.Component {
     }
 
 
-  onAddReminder(args) {
+    onAddReminder(args) {   
+        let valueM = this.timeLogicTypetoMinutes(this.ReminType.value, this.numObj.value);
+        
+
     let dataReminder = {
       title: "email",
-      value: this.numObj.value,
-        minutesvalue: this.timeLogicTypetoMinutes(this.ReminType.value,this.numObj.value),
+        value: valueM,
+        minutesvalue: valueM,
       id: 'n',
       icon: 'delete-icon',
     };
@@ -118,34 +121,32 @@ export class Reminder extends React.Component {
     }
 
     timeMinutestoLogicType(time) { 
-
-        // only convert when minutes
-        if (this.ReminType.value == "1") {
-            if (time / 24 / 60 / 7 >= 1) {
+       
+        if (time / 24 / 60 / 7 >= 1 && Number.isInteger(time / 24 / 60 / 7 )) {                 
                 return time / 24 / 60 / 7 + " weeks";
             }
 
-            if (time / 24 / 60 >= 1) {
+        if (time / 24 / 60 >= 1 && Number.isInteger(time / 24 / 60)) {
                 return time / 24 / 60 + " days";
             }
 
-            if (time / 60 % 24 >= 1) {
-                return time / 60 % 24 + " hours";
+        if (time / 60 % 24 >= 1 && Number.isInteger(time / 60 % 24)) {
+           // return time / 60 % 24 + " hours";
+            return time / 60 + " hours";
             }
-
-            if (time % 60 >= 0) {
-                return time % 60 + " minutes";
-            }
-        }
-        else {
-            return time + " " + this.ReminType.text;
-        }
+            
+        return time  + " " + this.ReminType.text ;  
        
     }
 
     listTemplate(data) {
-        let value;
-        value = this.timeMinutestoLogicType(data.value);
+        //let value;
+        //if (this.ReminType.value == 1) {
+          let  value = this.timeMinutestoLogicType(data.value);
+        //}
+        //else {
+        //    value = data.value + " " + this.ReminType.text ;
+        //}
         return (
           <div className='e-list-wrapper'>
             <span className='e-list-content'>
