@@ -13,7 +13,7 @@ export class Reminder extends React.Component {
   constructor(props) {
     super(props);
     this.temp = 'roleData';
-    this.fields = { text: 'Text', value: 'Id' };
+    this.fields = { text: 'Text', value: 'Id', minutesvalue : '0' };
     this.value = 'minutes';
     this.fieldsList = { text: 'title', iconCss: 'icon' };
     this.onAddReminder = this.onAddReminder.bind(this);
@@ -37,12 +37,14 @@ export class Reminder extends React.Component {
     //        icon: "delete-icon"
     //    }
     //]
-  }
+    }
+
 
   onAddReminder(args) {
     let dataReminder = {
-      title: this.typeObj.value,
+      title: "email",
       value: this.numObj.value,
+        minutesvalue: this.timeLogicTypetoMinutes(this.ReminType.value,this.numObj.value),
       id: 'n',
       icon: 'delete-icon',
     };
@@ -56,87 +58,169 @@ export class Reminder extends React.Component {
   }
 
   onChange() {
-    let value = document.getElementById('value');
-    let text = document.getElementById('text');
+    //let value = document.getElementById('value');
+    //let text = document.getElementById('text');
+      switch (this.ReminType.value) {
+          case '1':
+              //minutes
+              this.numObj.max = 40320;
+              return
+          case '2':  
+              //hours
+              this.numObj.max = 672;
+              return
+          case '3':   
+              //days
+              this.numObj.max = 28;
+              return
+          case '4':
+              //weeks
+              this.numObj.max = 4;
+              return
+          default:  
+              this.numObj.max = 40320;
+      }  
+      
+
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.reminders !== this.props.reminders) {
-      setTimeout(() => {
-        const items = this.props.reminders;
-        this.listviewInstance.addItem(items);
+    componentDidUpdate(prevProps, prevState) {   
+        this.ReminType.value="1"
+        if (prevProps.reminders !== this.props.reminders) {
+            this.listviewInstance.dataSource = []
+        setTimeout(() => {
+            if (this.props.reminders.length > 0) {
+                const items = this.props.reminders;
+                this.listviewInstance.addItem(items);
+            }           
       });
     }
-  }
+    }
 
-  listTemplate(data) {
-    return (
-      <div className='e-list-wrapper'>
-        <span className='e-list-content'>
-          {data.title} ({data.value})
-        </span>
-        <span className='delete-icon' onClick={this.deleteItem.bind(this)} />
-      </div>
-    );
+    timeLogicTypetoMinutes(type, value) {
+        switch (type) {
+            case '1':
+                return value
+            case '2':
+                //hours to minutes
+                return value * 60;
+
+            case '3':
+                //days to minutes
+                return value * 1440
+
+            case '4':
+                //weeks to minutes
+                return value * 10080
+
+        }
+
+    }
+
+    timeMinutestoLogicType(time) { 
+
+        // only convert when minutes
+        if (this.ReminType.value == "1") {
+            if (time / 24 / 60 / 7 >= 1) {
+                return time / 24 / 60 / 7 + " weeks";
+            }
+
+            if (time / 24 / 60 >= 1) {
+                return time / 24 / 60 + " days";
+            }
+
+            if (time / 60 % 24 >= 1) {
+                return time / 60 % 24 + " hours";
+            }
+
+            if (time % 60 >= 0) {
+                return time % 60 + " minutes";
+            }
+        }
+        else {
+            return time + " " + this.ReminType.text;
+        }
+       
+    }
+
+    listTemplate(data) {
+        let value;
+        value = this.timeMinutestoLogicType(data.value);
+        return (
+          <div className='e-list-wrapper'>
+            <span className='e-list-content'>
+                  {value}
+            </span>
+            <span className='delete-icon' onClick={this.deleteItem.bind(this)} />
+          </div>
+        );
   }
 
   render() {
     return (
       <div>
-        <ListViewComponent
-          id='reminder-list'
-          dataSource={this.dataSource}
-          fields={this.fieldsList}
-          template={this.listTemplate.bind(this)}
-          ref={(listview) => {
-            this.listviewInstance = listview;
-          }}
-        />
-
-        <div className='row'>
-          <div className='col-xs-2 col-sm-2 col-lg-2 col-md-2'>
-            <div className='form-group'>
-              <div className='e-float-input'>
-                <NumericTextBoxComponent
-                  format=''
-                  value={60}
-                  ref={(nun) => {
-                    this.numObj = nun;
-                  }}></NumericTextBoxComponent>
-              </div>
-              <div id='noError' />
-            </div>
-          </div>
-          <div className='col-xs-4 col-sm-4 col-lg-4 col-md-4'>
-            <div className='form-group'>
-              <div className='e-float-input'>
-                <ComboBoxComponent
-                  id='type'
-                  floatLabelType='None'
-                  dataSource={this.datetimeData}
-                  ref={(combobox) => {
-                    this.typeObj = combobox;
+           
+          <div >
+              <ListViewComponent
+                  id='reminder-list'
+                  dataSource={this.dataSource}
+                  fields={this.fieldsList}
+                  template={this.listTemplate.bind(this)}
+                  ref={(listview) => {
+                            this.listviewInstance = listview;
                   }}
-                  fields={this.fields}
-                  change={this.onChange.bind(this)}
-                  value={this.value}
-                  popupHeight='220px'
-                />
-              </div>
-              <div id='noError' />
-            </div>
+              />
           </div>
-          <div className='col-xs-6 col-sm-6 col-lg-6 col-md-6'>
-            <div className='e-float-input'>
-              <ButtonComponent
-                cssClass='e-flat e-primary'
-                floatLabelType='None'
-                onClick={this.onAddReminder}>
-                Añadir Recordatorio
-              </ButtonComponent>
-            </div>
+               
+          <div className='row'>
+              <div className='col-xs-3 col-sm-3 col-lg-3 col-md-3'>
+                            <div className='form-group'>
+                                <div className='e-float-input'>
+                                    <NumericTextBoxComponent
+                                        format=''
+                                        value={60}
+                                        min='0'
+                                        max= '4320'
+                                        ref={(nun) => {
+                                            this.numObj = nun;
+                                        }}></NumericTextBoxComponent>
+                                </div>
+                                <div id='noError' />
+                            </div>
+                        </div>
+              <div className='col-xs-3 col-sm-3 col-lg-3 col-md-3'>
+                            <div className='form-group'>
+                                <div className='e-float-input'>
+                                    <ComboBoxComponent
+                                        id='type'
+                                        floatLabelType='None'
+                                        dataSource={this.datetimeData}
+                                        ref={(combobox) => {
+                                            this.ReminType = combobox;
+                                        }}
+                                        fields={this.fields}
+                                        change={this.onChange.bind(this)}
+                                        value={this.value}
+                                        popupHeight='220px'
+                                    />
+                                </div>
+                                <div id='noError' />
+                            </div>
+                        </div>
+              <div className='col-xs-4 col-sm-4 col-lg-4 col-md-4'>
+                            <div className='e-float-input'>
+                                <ButtonComponent
+                                    cssClass='e-flat e-primary'
+                                    floatLabelType='None'
+                                    onClick={this.onAddReminder}>
+                                    Añadir Recordatorio
+                  </ButtonComponent>
+                            </div>
+                            </div>
           </div>
-        </div>
+              
+             
+        
       </div>
     );
   }

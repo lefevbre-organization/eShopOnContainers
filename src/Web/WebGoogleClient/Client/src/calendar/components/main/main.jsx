@@ -65,6 +65,7 @@ export class Main extends Component {
         this.deleteCalendar = this.deleteCalendar.bind(this);
         this.calendarColorModify = this.calendarColorModify.bind(this);
         this.onEventRendered = this.onEventRendered.bind(this);
+        this.buildEventoGoogle = this.buildEventoGoogle.bind(this);
         //this.onBefoireClose = this.onBefoireClose.bind(this);
 
         this.cancel = false;
@@ -370,7 +371,7 @@ export class Main extends Component {
                     EndTime: new Date(end),
                     IsAllDay: !event.start.dateTime,
                     RecurrenceRule: recurrenceRule,
-                    ImageName: "lefebvre",
+                    ImageName: "icon-lefebvre-bl",
                     Attendees: attendees,
                     EventType: eventType,
                     Reminders: event.reminders.overrides,
@@ -499,8 +500,11 @@ export class Main extends Component {
         );
     }
 
-    buildEventoGoogle(values) {
+    
 
+    buildEventoGoogle(values) {      
+
+        //Event basic data
         var event = {
             'summary': values.Subject,
             'location': values.Location,
@@ -518,19 +522,14 @@ export class Main extends Component {
                 "private": {
                     'eventType': 'profesional-event'
                 },
-            },            
-
-            'reminders': {
-                'useDefault': false,
-                'overrides': [
-                    { 'method': 'email', 'minutes': 24 * 60 }                   
-                ]
-            }
+            }, 
 
         }
 
+        //Recurrence
         if (values.RecurrenceRule != undefined) { event.recurrence = ['RRULE:' + values.RecurrenceRule] };
 
+        //Atendees
         let arr = this.state.tagAttendess
         let ateendeeObj = [];
         if (arr.length > 0) {
@@ -540,22 +539,23 @@ export class Main extends Component {
         }
         event.attendees = ateendeeObj;
 
+        //Reminders      
 
-        // if (values.RecurrenceException != undefined) { event.RecurrenceException = [values.RecurrenceException] };
-
-        //if (values.IsAllDay != undefined) { event.isallday = values.IsAllDay };        
-
-        //'attendees': [
-        //    { 'email': 'lpage@example.com' },
-        //    { 'email': 'sbrin@example.com' },
-        //],
-        //'reminders': {
-        //    'useDefault': false,
-        //    'overrides': [
-        //        { 'method': 'email', 'minutes': 24 * 60 },
-        //        { 'method': 'popup', 'minutes': 10 },
-        //    ],
-        //},       
+        let reminders = []
+        let arrR = this.remObj.listviewInstance.dataSource;
+        if (arrR.length > 0) {
+          
+            event.reminders = {
+                'useDefault': false, 
+                'overrides':[],
+            }
+            Object.keys(arrR).forEach(function (key) {                 
+                event.reminders.overrides.push({
+                    method: arrR[key].title,
+                    minutes: arrR[key].minutesvalue,
+                });
+            });
+        }
 
         return event
     }
@@ -634,6 +634,7 @@ export class Main extends Component {
             var dialogObj = args.element.ej2_instances[0];
             dialogObj.buttons[1].buttonModel.isPrimary = false;
             args.element.style.width = "700px";
+            args.element.style.height = "750px";
 
             var formElement = args.element.querySelector('.e-schedule-form');
             if (formElement != null) {
@@ -655,6 +656,7 @@ export class Main extends Component {
             }
 
             // default values for Reminders coming from event args
+           
             if (args.data.Reminders != undefined) {
                 //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i]) 
                 var arr = [];
@@ -663,6 +665,7 @@ export class Main extends Component {
                     arr.push({
                         title: args.data.Reminders[key].method,
                         value: args.data.Reminders[key].minutes,
+                        minutesvalue: args.data.Reminders[key].minutes,
                         id: 'n',
                         icon: "delete-icon"
                     });  
@@ -692,7 +695,7 @@ export class Main extends Component {
             if (!args.element.querySelector('.custom-field-row')) {
                 let row = createElement('div', { className: 'custom-field-row' });
                 let formElement = args.element.querySelector('.e-schedule-form');
-                formElement.firstChild.insertBefore(row, formElement.firstChild.firstChild);
+                formElement.firstChild.insertBefore(row, formElement.lastChild.lastChild);
 
                 // Adding type of event element
                 //let containerEventType = createElement('div', { className: 'custom-field-container' });
@@ -810,6 +813,28 @@ export class Main extends Component {
                 //this.scheduleObj.refreshEvents();
                 //this.scheduleObj.refresh();
 
+               // Update Reminders                
+                //let arrR = this.remObj.listviewInstance.dataSource;
+                //args.data.Reminders = [];               
+                //if (arrR.length > 0) {                   
+                //    Object.keys(arrR).forEach(function (key) {
+                //        //args.changedRecords.Reminders.push({
+                //        //    method: arrR[key].title,
+                //        //    minutes: arrR[key].value,
+                //        //});
+                 //        //args.data.Reminders.push({
+                //        //    method: arrR[key].title,
+                //        //    minutes: arrR[key].value,
+                //        //});
+                //        //this.scheduleObj.eventWindow.eventData.Reminders.Reminders.push({
+                //        //    method: arrR[key].title,
+                //        //    minutes: arrR[key].value,
+                //        //});
+
+                //    });
+                //}
+
+              
                 event = this.buildEventoGoogle(args.data);
 
 
@@ -844,7 +869,18 @@ export class Main extends Component {
                 // this.setState({ tagAttendess: [] })
 
                 //call function to update event
-                this.updateCalendarEventCRUD(calendarToModify, itemToModify, event);
+                this.updateCalendarEventCRUD(calendarToModify, itemToModify, event);  
+
+                //this.scheduleObj.eventWindow.eventData.Id = "pepe";
+                
+
+               // let obj = this.scheduleObj.eventsData.findIndex(args.data.Id)
+
+                //const getelem = this.scheduleObj.eventsData.find(id => id.Id === args.data.Id);
+                //getelem.Id = "pepe";
+                //this.scheduleObj.refresh();
+                //this.scheduleObj.dataBind();
+               
 
                 break;
 
@@ -865,12 +901,14 @@ export class Main extends Component {
 
                                 // this.scheduleObj.eventWindow.resetForm();
                                 args.data[0].Id = result.id;
-                                args.data[0].ImageName = "lefebvre";
+                                args.data[0].ImageName = "icon-lefebvre-bl";
                                 args.data[0].Attendees = result.attendees;
                                 //args.data[0].ImageName = "lefebvre";
                                 this.setState({ tagAttendess: [] })
 
-                                this.scheduleObj.refreshEvents();
+                                args.data[0].Reminders = result.reminders.overrides;                                
+
+                               // this.scheduleObj.refreshEvents();
                                 this.toastObj.show(this.toasts[1]);
                             })
                             .catch(error => {
