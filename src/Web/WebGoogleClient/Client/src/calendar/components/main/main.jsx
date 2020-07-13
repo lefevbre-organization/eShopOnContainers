@@ -619,9 +619,46 @@ export class Main extends Component {
         }        
     }
 
-    onPopupOpen(args) {             
+    onPopupOpen(args) {   
+
+        // default values for Atendees coming from event args
+        if (args.data.Attendees != undefined) {
+            //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i]) 
+            var arr = [];
+            Object.keys(args.data.Attendees).forEach(function (key) {
+                arr.push(args.data.Attendees[key].email);
+            });
+              this.setState({ tagAttendess: arr })
+        }
+        else {
+              this.setState({ tagAttendess: [] })
+        }
+
+        // default values for Reminders coming from event args
+
+        if (args.data.Reminders != undefined) {
+            //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i]) 
+            var arr = [];
+            Object.keys(args.data.Reminders).forEach(function (key) {
+                //arr.push(args.data.Reminders[key]);
+                arr.push({
+                    title: args.data.Reminders[key].method,
+                    value: args.data.Reminders[key].minutes,
+                    minutesvalue: args.data.Reminders[key].minutes,
+                    id: 'n',
+                    icon: "delete-icon"
+                });
+            });
+              this.setState({ reminders: arr })
+        }
+        else {
+               this.setState({ reminders: [] })
+        }
+
+       
 
         if (args.type === 'QuickInfo') {
+           
             var formElement = args.element.querySelector('.e-schedule-form');
             if (formElement != null) {
                 var validator = (formElement).ej2_instances[0];
@@ -630,7 +667,7 @@ export class Main extends Component {
 
         }
         if (args.type === 'Editor') {           
-
+            
             var dialogObj = args.element.ej2_instances[0];
             dialogObj.buttons[1].buttonModel.isPrimary = false;
             args.element.style.width = "700px";
@@ -642,39 +679,7 @@ export class Main extends Component {
                 validator.addRules('Subject', { required: [true, i18n.t("schedule.validator-required")] });
             }  
 
-            // default values for Atendees coming from event args
-            if (args.data.Attendees != undefined) {
-                //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i]) 
-                var arr = [];
-                Object.keys(args.data.Attendees).forEach(function (key) {
-                    arr.push(args.data.Attendees[key].email);
-                });
-                this.setState({ tagAttendess: arr })
-            }
-            else {
-                this.setState({ tagAttendess: [] })
-            }
-
-            // default values for Reminders coming from event args
            
-            if (args.data.Reminders != undefined) {
-                //const peopleArray = Object.keys(args.data.Attendees).map(i => args.data.Attendees[i]) 
-                var arr = [];
-                Object.keys(args.data.Reminders).forEach(function (key) {
-                    //arr.push(args.data.Reminders[key]);
-                    arr.push({
-                        title: args.data.Reminders[key].method,
-                        value: args.data.Reminders[key].minutes,
-                        minutesvalue: args.data.Reminders[key].minutes,
-                        id: 'n',
-                        icon: "delete-icon"
-                    });  
-                });
-                this.setState({ reminders: arr })
-            }
-            else {
-                this.setState({ reminders: [] })
-            }
 
             //// default values for eventType coming from event args
             //let eventType;
