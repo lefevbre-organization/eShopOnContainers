@@ -29,7 +29,7 @@ class Login extends Component {
           baseUrl: `${window.URL_ADDON_LEXON}`,
           tokenUrl: `${window.API_GATEWAY}/utils/Lexon/token/login?addTerminatorToToken=true`,
           redirectUrl: `${window.URL_ADDON_LEXON_BASE}/taskpane.html`,
-          authorizeUrl: '/login',
+          authorizeUrl: '/oauth_lexon',
           scope: 'openid profile onelist offline_access',
           responseType: 'code',
           state: true
