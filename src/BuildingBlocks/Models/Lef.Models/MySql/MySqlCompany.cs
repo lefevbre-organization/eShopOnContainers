@@ -52,12 +52,12 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
                 if (DataFromMySql is LexCompany)
                     Result = (LexCompany)DataFromMySql;
                 else
-                    Infos.Add(new Info() { code = "510", message = "No puede obtenerse un LexCompany de los datos obtenidos en Mysql" });
+                    Infos.Add(new Info() { code = "MySqlCompany_conversion_LexCompany", message = "No puede obtenerse un LexCompany de los datos obtenidos en Mysql" });
 
                 if (Result.entities is LexEntity[])
                     Data = Result.entities.ToList();
                 else
-                    Infos.Add(new Info() { code = "511", message = "No puede obtenerse un conjuntos de entidades de los datos obtenidos en Mysql" });
+                    Infos.Add(new Info() { code = "MySqlCompany_conversion_LexEntity[]", message = "No puede obtenerse un conjuntos de entidades de los datos obtenidos en Mysql" });
 
                 CompleteData();
 
@@ -65,7 +65,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             }
             catch (Exception ex)
             {
-                Infos.Add(new Info() { code = "512", message = $"Error no controlado al parsear el objeto LexCompany de los datos obtenidos en Mysql + {ex.Message}" });
+                Infos.Add(new Info() { code = "MySqlCompany_conversion", message = $"Error no controlado al parsear el objeto LexCompany de los datos obtenidos en Mysql + {ex.Message}" });
             }
         }
 
@@ -76,11 +76,11 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
                 if (relationsMail is LexMailActuation)
                     CompleteDataRelations(relationsMail);
                 else
-                    Infos.Add(new Info() { code = "511", message = "No puede obtenerse las relaciones del mail de los datos obtenidos en Mysql" });
+                    Infos.Add(new Info() { code = "MySqlCompany_AddRelation", message = "No puede obtenerse las relaciones del mail de los datos obtenidos en Mysql" });
             }
             catch (Exception ex)
             {
-                Infos.Add(new Info() { code = "512", message = $"Error no controlado al parsear el objeto Relaciones de los datos obtenidos en Mysql + {ex.Message}" });
+                Infos.Add(new Info() { code = "MySqlCompany_AddRelation", message = $"Error no controlado al parsear el objeto Relaciones de los datos obtenidos en Mysql + {ex.Message}" });
             }
         }
 
@@ -109,7 +109,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
             }
             catch (Exception ex)
             {
-                Infos.Add(new Info() { code = "513", message = $"Error no controlado al completar datos de tipoEntidad en los datos obtenidos en Mysql + {ex.Message}" });
+                Infos.Add(new Info() { code = "MySqlCompany_CompleteData", message = $"Error no controlado al completar datos de tipoEntidad en los datos obtenidos en Mysql + {ex.Message}" });
             }
         }
 
