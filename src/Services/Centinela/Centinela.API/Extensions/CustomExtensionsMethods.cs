@@ -162,9 +162,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Extensions
                 //options.DescribeAllEnumsAsStrings();
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "Lefebvre Now - Lexon HTTP API",
+                    Title = "Lefebvre Now - Centinela HTTP API",
                     Version = "v1",
-                    Description = "The Lexon Microservice HTTP API. This is a Data-Driven/CRUD microservice sample"
+                    Description = "The Centinela Microservice HTTP API. This is a Data-Driven/CRUD microservice sample"
                 });
 
                 //options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
