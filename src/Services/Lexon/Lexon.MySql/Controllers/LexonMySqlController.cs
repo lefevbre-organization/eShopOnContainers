@@ -49,102 +49,114 @@ namespace Lexon.MySql.Controllers
             return Ok(result);
         }
 
-        [HttpGet("user/apps")]
-        [ProducesResponseType(typeof(Result<List<LexApp>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<List<LexApp>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UserMiniHubAsync(string idNavisionUser = "E1621396", bool onlyActives = true)
+        [HttpGet("user/getid")]
+        [ProducesResponseType(typeof(Result<LexUserSimple>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexUserSimple>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UserIdAsync(string idNavisionUser = "E1621396")
         {
             if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
-            var result = await _lexonService.GetUserMiniHubAsync(idNavisionUser, onlyActives);
-            return Ok(result);
+            Result<LexUserSimple> resultUser = await _lexonService.GetUserIdAsync(idNavisionUser);
+            return Ok(resultUser);
         }
 
-        /// <summary>
-        /// Permite obtener los token necesarios para operar con los microservicios de envio de correo
-        /// </summary>
-        /// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>
-        /// <returns></returns>
-        [HttpPut("token")]
-        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> TokenAsync(
-            [FromBody] TokenModelView tokenRequest
-            , bool addTerminatorToToken = true
-            )
-        {
-            if (string.IsNullOrEmpty(tokenRequest.idClienteNavision) 
-                && (string.IsNullOrEmpty(tokenRequest.login) && string.IsNullOrEmpty(tokenRequest.password)))
-                return BadRequest("id value invalid. Must be a valid user code in the enviroment or login and password");
+        //[HttpGet("user/apps")]
+        //[ProducesResponseType(typeof(Result<List<LexApp>>), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType(typeof(Result<List<LexApp>>), (int)HttpStatusCode.BadRequest)]
+        //public async Task<IActionResult> UserMiniHubAsync(string idNavisionUser = "E1621396", bool onlyActives = true)
+        //{
+        //    if (string.IsNullOrEmpty(idNavisionUser))
+        //        return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
-            var result = await _lexonService.GetUserAsync(
-                tokenRequest.idClienteNavision, tokenRequest.bbdd,
-                tokenRequest.provider, tokenRequest.mailAccount, tokenRequest.idMail, tokenRequest.folder,
-                tokenRequest.idEntityType, tokenRequest.idEntity,
-                tokenRequest.mailContacts, tokenRequest.login, tokenRequest.password,
-                addTerminatorToToken);
+        //    var result = await _lexonService.GetUserMiniHubAsync(idNavisionUser, onlyActives);
+        //    return Ok(result);
+        //}
+
+        ///// <summary>
+        ///// Permite obtener los token necesarios para operar con los microservicios de envio de correo
+        ///// </summary>
+        ///// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>
+        ///// <returns></returns>
+        //[HttpPut("token")]
+        //[ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
+        //public async Task<IActionResult> TokenAsync(
+        //    [FromBody] TokenModelView tokenRequest
+        //    , bool addTerminatorToToken = true
+        //    )
+        //{
+        //    if (string.IsNullOrEmpty(tokenRequest.idClienteNavision) 
+        //        && (string.IsNullOrEmpty(tokenRequest.login) && string.IsNullOrEmpty(tokenRequest.password)))
+        //        return BadRequest("id value invalid. Must be a valid user code in the enviroment or login and password");
+
+        //    var result = await _lexonService.GetUserAsync(
+        //        tokenRequest.idClienteNavision, tokenRequest.bbdd,
+        //        tokenRequest.provider, tokenRequest.mailAccount, tokenRequest.idMail, tokenRequest.folder,
+        //        tokenRequest.idEntityType, tokenRequest.idEntity,
+        //        tokenRequest.mailContacts, tokenRequest.login, tokenRequest.password,
+        //        addTerminatorToToken);
            
-            if(result?.data != null)
-                result.data.companies = null;
+        //    if(result?.data != null)
+        //        result.data.companies = null;
             
-            return  Ok(result);
-        }
+        //    return  Ok(result);
+        //}
 
-        /// <summary>
-        /// Permite validar el token a los clientes
-        /// </summary>
-        /// <returns></returns>
-        [HttpPut("token/validation")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> TokenValidationAsync(
-            [FromBody] string token
+        ///// <summary>
+        ///// Permite validar el token a los clientes
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpPut("token/validation")]
+        //[ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        //public async Task<IActionResult> TokenValidationAsync(
+        //    [FromBody] string token
 
-            )
-        {
-            if (string.IsNullOrEmpty(token))
-                return BadRequest("Must be a valid token code");
+        //    )
+        //{
+        //    if (string.IsNullOrEmpty(token))
+        //        return BadRequest("Must be a valid token code");
 
-            var result = new Result<bool>(true);
+        //    var result = new Result<bool>(true);
 
-            return Ok(result);
-        }
-        /// <summary>
-        /// Permite obtener los token necesarios para operar con los microservicios de envio de correo
-        /// </summary>
-        /// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>
-        /// <returns></returns>
-        [HttpPost("token"), Consumes("application/json","application/xml","application/x-www-form-urlencoded","multipart/form-data","text/plain; charset=utf-8","text/html")]
-        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> TokenPostAsync(
-              [FromForm] string login
-             ,[FromForm] string password
-             ,[FromForm] bool addTerminatorToToken = true
-            )
-        {
-            var tokenRequest = new TokenModelView
-            {
-                login = login,
-                password = password
-            };
-            if (string.IsNullOrEmpty(tokenRequest.idClienteNavision)
-                && (string.IsNullOrEmpty(tokenRequest.login) && string.IsNullOrEmpty(tokenRequest.password)))
-                return BadRequest("id value invalid. Must be a valid user code in the enviroment or login and password");
+        //    return Ok(result);
+        //}
+        ///// <summary>
+        ///// Permite obtener los token necesarios para operar con los microservicios de envio de correo
+        ///// </summary>
+        ///// <param name="addTerminatorToToken">opcional, agrega un slash para ayudar a terminar la uri</param>
+        ///// <returns></returns>
+        //[HttpPost("token"), Consumes("application/json","application/xml","application/x-www-form-urlencoded","multipart/form-data","text/plain; charset=utf-8","text/html")]
+        //[ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
+        //public async Task<IActionResult> TokenPostAsync(
+        //      [FromForm] string login
+        //     ,[FromForm] string password
+        //     ,[FromForm] bool addTerminatorToToken = true
+        //    )
+        //{
+        //    var tokenRequest = new TokenModelView
+        //    {
+        //        login = login,
+        //        password = password
+        //    };
+        //    if (string.IsNullOrEmpty(tokenRequest.idClienteNavision)
+        //        && (string.IsNullOrEmpty(tokenRequest.login) && string.IsNullOrEmpty(tokenRequest.password)))
+        //        return BadRequest("id value invalid. Must be a valid user code in the enviroment or login and password");
 
-            var result = await _lexonService.GetUserAsync(
-                tokenRequest.idClienteNavision, tokenRequest.bbdd,
-                tokenRequest.provider, tokenRequest.mailAccount, tokenRequest.idMail, tokenRequest.folder,
-                tokenRequest.idEntityType, tokenRequest.idEntity,
-                tokenRequest.mailContacts, tokenRequest.login, tokenRequest.password,
-                true);
+        //    var result = await _lexonService.GetUserAsync(
+        //        tokenRequest.idClienteNavision, tokenRequest.bbdd,
+        //        tokenRequest.provider, tokenRequest.mailAccount, tokenRequest.idMail, tokenRequest.folder,
+        //        tokenRequest.idEntityType, tokenRequest.idEntity,
+        //        tokenRequest.mailContacts, tokenRequest.login, tokenRequest.password,
+        //        true);
 
-            if (result?.data != null)
-                result.data.companies = null;
+        //    if (result?.data != null)
+        //        result.data.companies = null;
 
-            return Ok(result);
-        }
+        //    return Ok(result);
+        //}
 
         [HttpGet("companies")]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
@@ -203,6 +215,20 @@ namespace Lexon.MySql.Controllers
                 return BadRequest("values invalid. Must be a valid user, bbdd, idType and idEntity to get de Entity");
 
             var result = await _lexonService.GetEntityAsync(entitySearch);
+            return Ok(result);
+        }
+
+
+        [HttpPost("entities/contact/all")]
+        [ProducesResponseType(typeof(Result<List<LexContact>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<List<LexContact>>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetContactsAsync([FromBody] BaseView search)
+        {
+            if (string.IsNullOrEmpty(search.idUser) || string.IsNullOrEmpty(search.bbdd))
+                return BadRequest("values invalid. Must be a valid user and bbdd");
+
+            Result<List<LexContact>> result = await _lexonService.GetAllContactsAsync(search);
             return Ok(result);
         }
 
@@ -305,6 +331,21 @@ namespace Lexon.MySql.Controllers
                 return BadRequest("values invalid. Must be a valid user, idMail and bbdd to search the entities");
 
             var result = await _lexonService.GetRelationsAsync(classification);
+            return Ok(result);
+        }
+
+        [HttpPost("classifications/{idUser}/check")]
+        [ProducesResponseType(typeof(Result<LexUserSimpleCheck>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> CheckRelationsMailAsync(
+            [FromBody] MailInfo mail,
+            [FromRoute] string idUser = "449"
+            )
+        {
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(mail.Uid) || string.IsNullOrEmpty(mail.MailAccount))
+                return BadRequest("values invalid. Must be a valid idUser, idMail and account to search the relations of mail");
+
+            Result<LexUserSimpleCheck> result = await _lexonService.CheckRelationsMailAsync(idUser, mail);
             return Ok(result);
         }
     }

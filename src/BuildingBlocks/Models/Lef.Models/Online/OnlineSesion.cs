@@ -5,5 +5,4 @@
         public string JSESSIONID { get; set; }
 
     }
-
 }

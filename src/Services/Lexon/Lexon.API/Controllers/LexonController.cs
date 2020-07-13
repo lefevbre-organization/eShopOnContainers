@@ -70,6 +70,18 @@ namespace Lexon.API.Controllers
 
         }
 
+        [HttpGet("user/getid")]
+        [ProducesResponseType(typeof(Result<LexUserSimple>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<LexUserSimple>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> UserIdAsync(string idNavisionUser = "E1621396")
+        {
+            if (string.IsNullOrEmpty(idNavisionUser))
+                return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
+
+            Result<LexUserSimple> resultUser = await _usersService.GetUserIdAsync(idNavisionUser);
+            return Ok(resultUser);
+        }
+
         [HttpGet]
         [Route("companies")]
         [ProducesResponseType(typeof(Result<IEnumerable<LexCompany>>), (int)HttpStatusCode.OK)]
@@ -176,6 +188,34 @@ namespace Lexon.API.Controllers
                 return BadRequest("values invalid. Must be a valid user, bbdd, idType and idEntity to get de Entity");
 
             Result<LexContact> result = await _usersService.GetContactAsync(entitySearch);
+            return Ok(result);
+        }
+
+        [HttpPost("classifications/contact/all")]
+        [ProducesResponseType(typeof(Result<List<LexContact>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<List<LexContact>>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetContactsAsync([FromBody] BaseView search)
+        {
+            if (string.IsNullOrEmpty(search.idUser) || string.IsNullOrEmpty(search.bbdd))
+                return BadRequest("values invalid. Must be a valid user and bbdd");
+
+            Result<List<LexContact>> result = await _usersService.GetAllContactsAsync(search);
+            return Ok(result);
+        }
+
+        [HttpPost("classifications/{idUser}/check")]
+        [ProducesResponseType(typeof(Result<LexUserSimpleCheck>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> CheckRelationsMailAsync(
+            [FromBody] MailInfo mail,
+            [FromRoute] string idUser = "449"
+            )
+        {
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(mail.Uid) || string.IsNullOrEmpty(mail.MailAccount))
+                return BadRequest("values invalid. Must be a valid idUser, idMail and account to search the relations of mail");
+
+            Result<LexUserSimpleCheck> result = await _usersService.CheckRelationsMailAsync(idUser, mail);
             return Ok(result);
         }
 
