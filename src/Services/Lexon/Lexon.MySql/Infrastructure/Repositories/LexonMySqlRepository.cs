@@ -361,9 +361,9 @@ namespace Lexon.MySql.Infrastructure.Repositories
             {
                 foreach (var contact in result.data)
                 {
-                    if (contact.IdTipo == null) continue;
+                    if (contact.IdType == null) continue;
 
-                    contact.EntityType = contact.IdTipo != null ? Enum.GetName(typeof(LexonAdjunctionType), contact.IdTipo) : null;
+                    contact.EntityType = contact.IdType != null ? Enum.GetName(typeof(LexonAdjunctionType), contact.IdType) : null;
                     contact.Tags = new string[] { search.bbdd, search.idUser, contact.EntityType };
                 }
             }
