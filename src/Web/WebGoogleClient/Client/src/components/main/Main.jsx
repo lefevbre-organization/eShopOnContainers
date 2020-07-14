@@ -785,7 +785,7 @@ export class Main extends Component {
                   <span className='productsbutton'>
                     <div onClick={() => this.onSetSidebarOpenCentinela(true)}>
                        <img
-                          className='imgproductdisable'
+                          className='imgproduct'
                           border='0'
                           alt='Centinela'
                           src='/assets/img/icon-cn.svg'></img>
@@ -797,7 +797,7 @@ export class Main extends Component {
                   <span className='productsbutton'>
                     <div onClick={() => this.onSetSidebarOpenDatabase(true)}>
                        <img
-                          className='imgproductdisable'
+                          className='imgproduct'
                            border='0'
                            alt='Base de Datos'
                            src='/assets/img/icon-ne.svg'></img>
