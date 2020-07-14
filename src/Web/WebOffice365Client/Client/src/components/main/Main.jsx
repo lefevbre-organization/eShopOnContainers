@@ -738,6 +738,17 @@ export class Main extends Component {
             </article>
 
             <div className='productpanel'>
+              {window.SHOW_EXPERIMENTAL === '1' && (
+               <span className='productsbutton'>
+                  <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
+                     <img
+                       className='imgproduct'
+                         border='0'
+                         alt='Calendar'
+                         src='/assets/img/icon-cal.svg'></img>
+                  </div>
+               </span>
+             )}
               <span className='productsbutton'>
                 {lexon.user ? (
                   <div onClick={() => this.onSetSidebarOpenLexon(true)}>
@@ -745,7 +756,7 @@ export class Main extends Component {
                       className='imgproduct'
                       border='0'
                       alt='Lex-On'
-                      src='/assets/img/icon-lexon.png'></img>
+                      src='/assets/img/icon-lx.svg'></img>
                   </div>
                 ) : (
                   <div>
@@ -753,26 +764,19 @@ export class Main extends Component {
                       className='imgproductdisable'
                       border='0'
                       alt='Lex-On'
-                      src='/assets/img/icon-lexon.png'></img>
+                      src='/assets/img/icon-lx.svg'></img>
                   </div>
                 )}
-              </span>
-              {window.SHOW_EXPERIMENTAL === '1' && (
-                <span className='productsbutton'>
-                  <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
-                    <img
-                      className='imgproduct'
-                      border='0'
-                      alt='Calendar'
-                      src='/assets/img/icon-calendar.png'></img>
-                  </div>
-                </span>
-              )}
+              </span>              
               {this.hasProduct('centinelaconnector') &&
                 window.SHOW_EXPERIMENTAL === '1' && (
                   <span className='productsbutton'>
                     <div onClick={() => this.onSetSidebarOpenCentinela(true)}>
-                      <span className='lf-icon-compliance product-icon'></span>
+                       <img
+                         className='imgproduct'
+                         border='0'
+                         alt='Centinela'
+                         src='/assets/img/icon-cn.svg'></img>
                     </div>
                   </span>
                 )}
@@ -780,48 +784,14 @@ export class Main extends Component {
                 window.SHOW_EXPERIMENTAL === '1' && (
                   <span className='productsbutton'>
                     <div onClick={() => this.onSetSidebarOpenDatabase(true)}>
-                      <span className='lf-icon-qmemento product-icon'></span>
+                      <img
+                         className='imgproduct'
+                         border='0'
+                         alt='Base de datos'
+                         src='/assets/img/icon-ne.svg'></img>
                     </div>
                   </span>
-                )}
-              {/*<span className="productsbutton">
-                 <div onClick={() => this.onSetSidebarOpenQMemento(true)}> 
-                <div>
-                  <img
-                    className="imgproductdisable"
-                    border="0"
-                    alt="Calendar"
-                    src="/assets/img/icon-qmemento.png"
-                  ></img>
-                </div>
-              </span>
-              <span className="productsbutton">
-                 <div onClick={() => this.onSetSidebarOpenCompliance(true)}> 
-                <div>
-                  <img
-                    className="imgproductdisable"
-                    border="0"
-                    alt="Calendar"
-                    src="/assets/img/icon-compliance.png"
-                  ></img>
-                </div>
-              </span>
-
-              {/* <span className="productsbutton">
-                <button
-                  onClick={() => this.onSetSidebarDocked(false)}
-                  className="btn compose-btn"
-                >
-                  <img
-                    className=""
-                    border="0"
-                    alt="Calendar"
-                    src="/assets/img/icon-close-empty.png"
-                  ></img>
-                </button>
-              </span> 
-
-              <span className="spaceproduct"></span>*/}
+                )}              
             </div>
           </section>
         </Fragment>
