@@ -8,12 +8,12 @@ trigger:
   paths:
     include:
     - src/BuildingBlocks/*
-    - src/Web/WebAddonLexon/*
-    - k8s-LEF/helm/weblexon/*            
+    - src/Web/WebAddonLauncher/*
+    - k8s-LEF/helm/webaddonlauncher/*            
 jobs:
 - template: ../buildimages.yaml
   parameters:
-    services: webaddonlexon
+    services: webaddonlauncher
     registryEndpoint: $(registryEndpoint)          
     helmfrom: $(Build.SourcesDirectory)/k8s-LEF/helm
     helmto: $(Build.ArtifactStagingDirectory)/k8s-LEF/helm      
