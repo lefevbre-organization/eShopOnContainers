@@ -28,6 +28,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://0.0.0.0:80
+      - EvaluationTimeOnSeconds=90
+      - MinimumSecondsBetweenFailureNotifications=90
       - HealthChecksUI__HealthChecks__0__Name=WebPortalClient HTTP Check
       - HealthChecksUI__HealthChecks__0__Uri=http://webportalclient/hc
       - HealthChecksUI__HealthChecks__1__Name=WebGoogleClient HTTP Check
@@ -42,33 +44,33 @@ services:
       - HealthChecksUI__HealthChecks__5__Uri=http://account.api/hc
       - HealthChecksUI__HealthChecks__6__Name=Account API GW HTTP Check
       - HealthChecksUI__HealthChecks__6__Uri=http://webaccountapigw/hc
-      - HealthChecksUI__HealthChecks__7__Name=Lexon API GW HTTP Check
-      - HealthChecksUI__HealthChecks__7__Uri=http://weblexonapigw/hc
-      - HealthChecksUI__HealthChecks__8__Name=Lexon API HTTP Check
-      - HealthChecksUI__HealthChecks__8__Uri=http://lexon.api/hc
-      - HealthChecksUI__HealthChecks__9__Name=Lexon MySql API HTTP Check
-      - HealthChecksUI__HealthChecks__9__Uri=http://lexon.mysql.api/hc
+      - HealthChecksUI__HealthChecks__7__Name=Lexon API HTTP Check
+      - HealthChecksUI__HealthChecks__7__Uri=http://lexon.api/hc
+      - HealthChecksUI__HealthChecks__8__Name=Lexon MySql API HTTP Check
+      - HealthChecksUI__HealthChecks__8__Uri=http://lexon.mysql.api/hc
+      - HealthChecksUI__HealthChecks__9__Name=Lexon API GW HTTP Check
+      - HealthChecksUI__HealthChecks__9__Uri=http://weblexonapigw/hc
       - HealthChecksUI__HealthChecks__10__Name=Centinela API HTTP Check
       - HealthChecksUI__HealthChecks__10__Uri=http://centinela.api/hc
-      - HealthChecksUI__HealthChecks__11__Name=UserUtils API HTTP Check
-      - HealthChecksUI__HealthChecks__11__Uri=http://userutils.api/hc
-      - HealthChecksUI__HealthChecks__12__Name=Centinela GW HTTP Check
-      - HealthChecksUI__HealthChecks__12__Uri=http://webcentinelaapigw/hc
+      - HealthChecksUI__HealthChecks__11__Name=Centinela GW HTTP Check
+      - HealthChecksUI__HealthChecks__11__Uri=http://webcentinelaapigw/hc
+      - HealthChecksUI__HealthChecks__12__Name=UserUtils API HTTP Check
+      - HealthChecksUI__HealthChecks__12__Uri=http://userutils.api/hc
       - HealthChecksUI__HealthChecks__13__Name=Signature API HTTP Check
       - HealthChecksUI__HealthChecks__13__Uri=http://signature.api/hc
       - HealthChecksUI__HealthChecks__14__Name=Signature API GW HTTP Check
       - HealthChecksUI__HealthChecks__14__Uri=http://websignatureapigw/hc
-      - HealthChecksUI__HealthChecks__15__Name=WebSignatureClient HTTP Check
-      - HealthChecksUI__HealthChecks__15__Uri=http://websignatureclient/hc
-      - HealthChecksUI__HealthChecks__16__Name=WebCentinelaClient HTTP Check
-      - HealthChecksUI__HealthChecks__16__Uri=http://webcentinelaclient/hc
-      - HealthChecksUI__HealthChecks__17__Name=Database API HTTP Check
-      - HealthChecksUI__HealthChecks__17__Uri=http://database.api/hc
-      - HealthChecksUI__HealthChecks__18__Name=Database API GW HTTP Check
-      - HealthChecksUI__HealthChecks__18__Uri=http://webdatabaseapigw/hc
-      - HealthChecksUI__HealthChecks__19__Name=Addon Lexon Client HTTP Check
+      - HealthChecksUI__HealthChecks__15__Name=Database API HTTP Check
+      - HealthChecksUI__HealthChecks__15__Uri=http://database.api/hc
+      - HealthChecksUI__HealthChecks__16__Name=Database API GW HTTP Check
+      - HealthChecksUI__HealthChecks__16__Uri=http://webdatabaseapigw/hc
+      - HealthChecksUI__HealthChecks__17__Name=WebSignatureClient HTTP Check
+      - HealthChecksUI__HealthChecks__17__Uri=http://websignatureclient/hc
+      - HealthChecksUI__HealthChecks__18__Name=WebCentinelaClient HTTP Check
+      - HealthChecksUI__HealthChecks__18__Uri=http://webcentinelaclient/hc
+      - HealthChecksUI__HealthChecks__19__Name=Addon Launcher Check
       - HealthChecksUI__HealthChecks__19__Uri=http://webaddonlauncher/hc
-      - HealthChecksUI__HealthChecks__20__Name=Addon Offi365 Client HTTP Check
+      - HealthChecksUI__HealthChecks__20__Name=Addon Office365 Check
       - HealthChecksUI__HealthChecks__20__Uri=http://weboffice365addonlexon/hc
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
@@ -84,7 +86,6 @@ services:
       - OrchestratorType=${ORCHESTRATOR_TYPE}
       - AccountApiGatewayUrlHC=http://webaccountapigw/hc
       - LexonApiGatewayUrlHC=http://weblexonapigw/hc
-      - PortalUrlHC=http://webportalclient/user
 
     ports:
       - "3003:80"
@@ -120,8 +121,7 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - LexonApiUrlHC=http://lexon.api/hc
-#      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
 
     ports:
       - "3005:80"
