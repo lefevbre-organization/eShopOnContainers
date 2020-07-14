@@ -11,7 +11,7 @@ version: '3.4'
 services:
   seq:
     environment:
-      - ACCEPT_EULA=Y
+      - "ACCEPT_EULA=Y"
     ports:
       - "5340:80"
 
