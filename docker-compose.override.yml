@@ -84,8 +84,8 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+      - LexonApiUrlHC=http://lexon.api/hc
+      - AccountApiUrlHC=http://account.api/hc
 
     ports:
       - "3003:80"
@@ -97,7 +97,7 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+      - AccountApiUrlHC=http://account.api/hc
 
     ports:
       - "3000:80"
@@ -109,7 +109,7 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+      - AccountApiUrlHC=http://account.api/hc
 
     ports:
       - "3001:80"
@@ -133,8 +133,8 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
-      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+      - LexonApiUrlHC=http://lexon.api/hc
+      - AccountApiUrlHC=http://account.api/hc
     ports:
       - "3006:80"
 
@@ -145,8 +145,8 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
-      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+      - LexonApiUrlHC=http://lexon.api/hc
+      - AccountApiUrlHC=http://account.api/hc
     ports:
       - "3007:80"
 
@@ -157,7 +157,7 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+      - AccountApiUrlHC=http://account.api/hc
 
     ports:
       - "9000:80"

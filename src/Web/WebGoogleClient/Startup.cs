@@ -39,7 +39,7 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebGoogle
 
             services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
-                .AddUrlGroup(new Uri(Configuration["AccountApiGatewayUrlHC"]), name: "accountapigw-check", tags: new string[] { "accountapigw" })
+                .AddUrlGroup(new Uri(Configuration["AccountApiUrlHC"]), name: "accountapi-check", tags: new string[] { "accountapi" })
                 ;
             services.Configure<AppSettings>(Configuration);
 
