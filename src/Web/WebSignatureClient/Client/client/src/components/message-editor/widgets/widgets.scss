@@ -119,9 +119,48 @@ $flag-size: 18px;
 }
 
 .right {
+  margin-left: 5px;
   float: right;
 }
 
 .p10 {
   padding: 10px;
+}
+
+.action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  .action-button {
+    border-radius: 0;
+    padding: 11px 30px;
+
+    &.send {
+      margin-left: 0;
+    }
+
+    &.send:hover {
+      background: #9a9a9a;
+    }
+
+    &.cancel {
+      margin: 4px;
+      background-color: white;
+      color: $lefebvre-color;
+      border: 2px solid $lefebvre-color;
+
+      &:hover {
+        color: #9a9a9a;
+        border-color: #9a9a9a;
+      }
+    }
+  }
+}
+
+.days-input {
+  position: absolute;
+  width: 52px;
+  transform: translateX(159px);
+  z-index: 999;
 }
