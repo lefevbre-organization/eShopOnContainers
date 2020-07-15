@@ -1,8 +1,10 @@
-import React, { Component, Fragment } from 'react';
+import React, {Component, createRef, Fragment} from 'react';
 import i18n from 'i18next';
 import { Button, Modal } from 'react-bootstrap';
 import { connect } from 'react-redux';
 
+import { Step1 } from './step1';
+import { Step2 } from './step2';
 import ACTIONS from '../../actions/documentsAction';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import Spinner from '../spinner/spinner';
@@ -13,17 +15,30 @@ class ModalImportContacts extends Component {
 
     this.state = {
       showSpinner: false,
-      step: 1,
+      progress: -1,
+      step: 0,
+      contacts: []
     };
+
+    this.progresRef = createRef();
+
+    this.setLoading = this.setLoading.bind(this);
+    this.setProgress = this.setProgress.bind(this);
+    this.onContacts = this.onContacts.bind(this);
   }
 
-  componentDidMount() {}
-
-  componentDidUpdate(prevProps) {}
+  componentDidMount() {
+    this.setState({step: 1})
+  }
 
   downloadComplete() {}
 
+
   closeDialog() {
+    if(this.state.step === 2) {
+      this.setState({step: 1})
+      return;
+    }
     this.props.toggleImportContacts && this.props.toggleImportContacts();
   }
 
@@ -31,32 +46,45 @@ class ModalImportContacts extends Component {
 
   prevStep() {}
 
+  setLoading(loading) {
+    this.setState({ showSpinner: loading });
+  }
+
+  setProgress(progress) {
+    this.setState({ progress });
+  }
+
+  onContacts(contacts) {
+    this.setState({contacts: [...contacts]});
+  }
+
   renderButtons() {
+    const { step } = this.state;
     return (
       <Fragment>
         <Button
           bsPrefix='btn btn-outline-primary'
           onClick={() => {
             this.setState({ step: 1 });
-
             this.closeDialog();
           }}>
           {i18n.t('classify-emails.cancel')}
         </Button>
-        <Button
-          bsPrefix='btn btn-primary'
+        {step === 1 && <Button
+            disabled={this.state.showSpinner === true}
+            bsPrefix='btn btn-primary'
           onClick={() => {
             this.setState({ step: 2 });
           }}>
           {i18n.t('modal-import-contacts.import')}
-        </Button>
+        </Button> }
       </Fragment>
     );
   }
 
   render() {
-    const { showSpinner, step } = this.state;
-    const { showImportContacts } = this.props;
+    const { showSpinner, step, contacts } = this.state;
+    const { showImportContacts, user, bbdd } = this.props;
 
     return (
       <div className='modal-import-contacts'>
@@ -79,92 +107,28 @@ class ModalImportContacts extends Component {
                 alt='Lex-On'
                 src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
               <span>{i18n.t('modal-import-contacts.title')}</span>
-              {/* <span>{this.state.step}</span> */}
             </h5>
           </Modal.Header>
           <Modal.Body className='mimodal'>
             <div>{showSpinner === true && <Spinner />}</div>
-
-            <div>
+            <div style={{opacity: showSpinner?0:1}}>
               <div>
                 <h2 className='modal-subtitle'>
                   {i18n.t('modal-import-contacts.info')}
                 </h2>
               </div>
-              {step === 1 && (
-                <div className='panel-body'>
-                  <div className='panel-inner'>
-                    <div className='panel-inner-header'>
-                      <span className='panel-inner-header-number'>20000</span>
-                      <span className='panel-inner-header-text'>Nº TOTAL</span>
-                    </div>
-                    <div className='panel-inner-body'>
-                      <span className='lf-icon-contacts'></span>
-                      <ul>
-                        <li>
-                          <span className='entity-name'>Clientes</span>
-                          <span className='entity-number'>(10.000)</span>
-                        </li>
-                        <li>
-                          <span className='entity-name'>Contrarios</span>
-                          <span className='entity-number'>(1.000)</span>
-                        </li>
-                        <li>
-                          <span className='entity-name'>Proveedores</span>
-                          <span className='entity-number'>(500)</span>
-                        </li>
-                        <li>
-                          <span className='entity-name'>Abogados propios</span>
-                          <span className='entity-number'>(500)</span>
-                        </li>
-                        <li>
-                          <span className='entity-name'>
-                            Abogados contrarios
-                          </span>
-                          <span className='entity-number'>(100)</span>
-                        </li>
-                        <li>
-                          <span className='entity-name'>
-                            Procuradores propios
-                          </span>
-                          <span className='entity-number'>(200)</span>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div className='panel-inner'>
-                    <div className='panel-inner-header'>
-                      <span className='panel-inner-header-number'>19998</span>
-                      <span className='panel-inner-header-text'>VALIDADAS</span>
-                    </div>
-                    <div className='panel-inner-body'>
-                      <span className='lf-icon-check-round'></span>
-                    </div>
-                  </div>
-                  <div className='panel-inner'>
-                    <div className='panel-inner-header'>
-                      <span className='panel-inner-header-number'>2</span>
-                      <span className='panel-inner-header-text'>¡ERROR!</span>
-                    </div>
-                    <div className='panel-inner-body'>
-                      <span className='lf-icon-warning'></span>
-                    </div>
-                    <div className='panel-inner-bottom'>
-                      <span
-                        className='lf-icon-visible'
-                        style={{ flex: 0 }}></span>
-                      <span>VER INFORME DE ERRORES</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {step === 2 && <div className='panel-body'></div>}
+              {step === 1 && <Step1 onLoading={this.setLoading} onContacts={this.onContacts} user={user} bbdd={bbdd}/>}
+              {step === 2 && <Step2 onSetProgress={this.setProgress} contacts={contacts}/>}
             </div>
           </Modal.Body>
           <Modal.Footer>{this.renderButtons()}</Modal.Footer>
         </Modal>
 
         <style jsx global>{`
+          .modal-open .modal {
+          overflow-y: hidden;
+          }
+        
           .e-checkbox-wrapper .e-frame.e-check,
           .e-checkbox-wrapper .e-checkbox:focus + .e-frame.e-check,
           .e-checkbox-wrapper:hover .e-frame.e-check {
@@ -184,153 +148,7 @@ class ModalImportContacts extends Component {
             line-height: 24px;
           }
 
-          .panel-inner-body .lf-icon-contacts {
-            z-index: 0;
-            position: absolute;
-            color: #ccd1e4;
-            opacity: 0.2;
-          }
-
-          .panel-inner-body .lf-icon-warning {
-            color: #c43741;
-            opacity: 0.2;
-          }
-
-          .panel-inner-body .lf-icon-check-round {
-            color: green;
-            opacity: 0.2;
-          }
-
-          .panel-inner-body ul {
-            z-index: 1;
-            height: 340px;
-            width: 100%;
-            margin: 0;
-            padding: 10px;
-          }
-
-          .panel-inner-body ul li {
-            font-family: MTTMilano-Medium;
-            margin-top: 4px;
-            height: 30px;
-            border-bottom: 1px solid #ccd1e4;
-            display: flex;
-            justify-content: space-between;
-          }
-
-          .panel-inner-body ul li span {
-            font-size: 14px;
-          }
-
-          .panel-inner-body ul li span.entity-name {
-            color: #001978;
-          }
-
-          .panel-inner-body ul li span.entity-number {
-            color: #666;
-          }
-
-          .panel-body {
-            display: flex;
-            flex-direction: row;
-            margin-left: auto;
-            margin-right: auto;
-            margin-top: 20px;
-            box-sizing: border-box;
-            height: 490px;
-            width: 805px;
-            border: 1px solid #d2d2d2;
-            background-color: #ffffff;
-          }
-
-          .panel-inner {
-            flex: 1;
-            padding: 20px 10px;
-          }
-
-          .panel-inner-header {
-            background-color: #001978;
-            height: 75px;
-            justify-content: flex-start;
-            display: flex;
-          }
-
-          .panel-inner-header-number {
-            height: 33px;
-            width: 147px;
-            color: #ffffff;
-            font-family: MTTMilano-Medium;
-            font-size: 45px;
-            font-weight: bold;
-            letter-spacing: 0;
-            line-height: 24px;
-            justify-content: center;
-            align-items: center;
-            margin-left: 10px;
-            margin-top: 30px;
-            flex: 0;
-          }
-
-          .panel-inner-header-text {
-            height: 13px;
-            width: 87px;
-            color: #ffffff;
-            font-family: MTTMilano-Medium;
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 14px;
-            margin-left: 4px;
-          }
-
-          .panel-inner-body {
-            box-sizing: border-box;
-            height: 340px;
-            width: 248px;
-            background-color: #e5e8f1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 200px;
-          }
-
-          .panel-inner-bottom {
-            box-sizing: border-box;
-            height: 34px;
-            width: 248px;
-            background-color: #c43741;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-          }
-
-          .panel-inner-bottom span {
-            height: 11px;
-            width: 180px;
-            color: #ffffff;
-            font-family: MTTMilano-Medium;
-            font-size: 13px;
-            font-weight: bold;
-            line-height: 19px;
-            text-align: center;
-          }
-
-          .panel-inner-bottom span.lf-icon-visible {
-            font-size: 20px;
-          }
-
-          .panel-i .modal-subtitle {
-            margin-top: 20px;
-            height: 14px;
-            width: 100%;
-            color: #7f8cbb;
-            font-family: MTTMilano-Medium;
-            font-size: 18px;
-            font-weight: 500;
-            letter-spacing: 0;
-            line-height: 24px;
-            text-align: center;
-          }
+          
 
           .modal-footer .btn-primary:hover {
             color: white;
@@ -845,17 +663,18 @@ class ModalImportContacts extends Component {
 }
 
 ModalImportContacts.propTypes = {};
-
 const mapStateToProps = (state) => {
   return {
     showImportContacts: state.documentsReducer.showImportContacts,
     companySelected: state.selections.companySelected,
     selectedMessages: state.email.selectedMessages,
+    bbdd: state.selections.initialBBDD,
+    user: state.selections.user
   };
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  toggleImportContacts: () => dispatch(ACTIONS.toggleModalAttachDocuments()),
+  toggleImportContacts: () => dispatch(ACTIONS.toggleModalImportContacts()),
 });
 
 export default connect(

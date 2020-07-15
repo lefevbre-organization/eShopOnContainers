@@ -600,23 +600,3 @@ export const addCalendarEvent = (calendar, event) =>
       });
 
   });
-
-export const deleteCalendarEvent = (calendar, eventId) =>
-  new Promise((resolve, reject) => {
-    window.gapi.client.calendar.events
-      .delete({
-        calendarId: "primary",
-        eventId: eventId
-      })
-
-      .then(response => {
-        resolve(response.result);
-      })
-      .catch(err => {
-        reject(err);
-      });
-
-  });
-
-
-

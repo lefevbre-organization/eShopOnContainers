@@ -296,6 +296,7 @@ export const getUser = async (userNavision) => {
   }
 };
 
+
 export const saveUserConfig = (config, userId) => {
   return new Promise((resolve, reject) => {
     const url = `${window.URL_GET_ACCOUNTS}/${userId}/config/addorupdate`;
@@ -513,3 +514,72 @@ export const getRawAddon = async (
     throw err;
   }
 };
+
+export const getUserContacts = async (
+    bbdd,
+    idUser,
+) => {
+  const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/classifications/contact/all`;
+  const body = {
+    bbdd,
+    idUser,
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    const result = await response.json();
+
+    return { result };
+  } catch (err) {
+    throw err;
+  }
+};
+
+function get_contacts_mock_data() {
+  return { result: {
+    "errors": [],
+    "infos": [],
+    "data": [
+      {
+        "id": 1,
+        "idType": 2,
+        "idFolder": null,
+        "entityType": "clients",
+        "uid": null,
+        "tags": [
+          "lexon_admin_02",
+          "449",
+          "clients"
+        ],
+        "name": "Marina Palermo Calugar cambiado",
+        "email": null,
+        "phone": "654785415",
+        "mobilePhone": null
+      },
+      {
+        "id": 3,
+        "idType": 2,
+        "idFolder": 2592,
+        "entityType": "clients",
+        "uid": "a237f85f0640d5ceac3e3a2a64ee889b",
+        "tags": [
+          "lexon_admin_02",
+          "449",
+          "clients"
+        ],
+        "name": "Joaquim Vallejo Moya",
+        "email": "f.andorra@workguardian.com",
+        "phone": "943333446",
+        "mobilePhone": "653252525"
+      }
+    ]
+    }
+  }
+}
