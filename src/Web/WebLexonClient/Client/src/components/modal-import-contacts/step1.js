@@ -23,7 +23,6 @@ export class Step1 extends React.Component {
   async componentDidMount() {
     window.addEventListener('getContactListResult', this.contactListLoaded);
     window.dispatchEvent(new CustomEvent('getContactList'));
-
   }
 
   componentWillUnmount() {
@@ -38,7 +37,6 @@ export class Step1 extends React.Component {
     try {
       this.props.onLoading(true);
       const aux = await getUserContacts(bbdd, user);
-      aux.result.data = [ { ...aux.result.data[0], "email":"juandvallero@gmail.com"}];
       const counters = this.validateContacts(aux.result.data);
       const blackList = data.detail.contacts;
       const validContacts = _.uniqBy(aux.result.data, 'email').filter( itm => (itm.valid && blackList.indexOf(itm.email) === -1) )

@@ -649,7 +649,6 @@ export const uploadFileWithUploadSession = async (
 
 export const getContacts = () =>
   new Promise(async (resolve, reject) => {
-    //resolve(["aaaa@aa.com", "bbbb@bb.com", "ccc@cc.com", "dddd@dd.com"])
     const accessToken = await getAccessTokenSilent();
     const client = getAuthenticatedClient(accessToken);
     client
@@ -667,3 +666,34 @@ export const getContacts = () =>
         resolve(contacts);
       });
   });
+
+export const addContact = (contact) =>
+    new Promise(async (resolve, reject) => {
+      const accessToken = await getAccessTokenSilent();
+      const client = getAuthenticatedClient(accessToken);
+      const contactData = {
+        givenName: contact.name,
+        displayName: contact.name,
+        emailAddresses: [
+          {
+            address: contact.email,
+            name: contact.name
+          }
+
+        ],
+        businessPhones: [
+          contact.phone
+        ],
+        categories: ['Lexon', contact.tags[2]],
+        personalNotes: 'Lexon ' + contact.tags[2]
+      };
+
+      client
+          .api(`me/contacts`)
+          .post(contactData)
+          .then((response) => {
+            resolve(response);
+          }).catch((err)=> {
+            reject(err);
+      })
+    });

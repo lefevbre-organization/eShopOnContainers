@@ -172,6 +172,38 @@
   "modal-import-contacts": {
     "title": "Import contacts from Lex-on",
     "info": "Information about the contact cards detected in Lex-on:",
-    "import": "Import"
+    "import": "Import",
+    "ok": "The contact cards have been successfully imported into your account!",
+    "back": "Back",
+    "accept": "Accept",
+    "info-result": "Information about the import result",
+    "validated": "VALIDATED",
+    "error": "ERROR!",
+    "errors-report": "SEE REPORT OF ERRORS",
+    "ntotal": "TOTAL Nº",
+    "step2": {
+      "importing": "Importing",
+      "of": "de",
+      "importing1": "Importing contacts. Please do not close the window for the duration of the process."
+    },
+    "step3": {
+      "error1a": "Duplicate tab",
+      "error2a": "Email",
+      "error1b": "there is already a contact card associated with the same email address",
+      "error2b": "it is necessary to fill in this field to be able to import the file",
+      "validationErrors": "SHEETS WITH VALIDATION ERRORS",
+      "total": "TOTAL"
+    },
+    "step4": {
+      "error1a": "Duplicate tab",
+      "error2a": "Email",
+      "error1b": "there is already a contact card associated with the same email address",
+      "error2b": "it is necessary to fill in this field to be able to import the file",
+      "validationErrors": "SHEETS WITH VALIDATION ERRORS",
+      "total": "TOTAL",
+      "report1": "No contact card has been imported. Check the indicated fields and try to import again",
+      "report2a": "They have been imported correctly",
+      "report2b": "Valid contact tabs, but the following tabs with errors have been discarded. Check the indicated fields and try to import again."
+    }
   }
 }

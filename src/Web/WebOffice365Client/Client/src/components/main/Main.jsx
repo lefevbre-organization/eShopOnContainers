@@ -42,6 +42,7 @@ import {
 } from '../../api_graph/accounts';
 import { PROVIDER } from '../../constants';
 import MessageNotFound from '../message-not-found/MessageNotFound';
+import {addContact, getContacts} from "../../api_graph";
 
 export class Main extends Component {
   constructor(props) {
@@ -99,6 +100,9 @@ export class Main extends Component {
     this.changeLexonBBDD = this.changeLexonBBDD.bind(this);
     this.toggleSideBar = this.toggleSideBar.bind(this);
     this.toggleShowMessageNotFound = this.toggleShowMessageNotFound.bind(this);
+    this.uploadContact = this.uploadContact.bind(this);
+    this.getContactList = this.getContactList.bind(this);
+
     this.notFoundModal = props.notFoundModal;
   }
 
@@ -169,6 +173,20 @@ export class Main extends Component {
         },
       })
     );
+  }
+
+  async uploadContact(data) {
+    await addContact(data.detail.contact);
+    window.dispatchEvent(new CustomEvent('contactUploaded', { detail: { contact: data.detail.contact} }));
+  }
+
+  async getContactList() {
+    let contacts = [];
+
+    const aux = await getContacts();
+    contacts = [...aux];
+
+    window.dispatchEvent(new CustomEvent('getContactListResult', { detail: { contacts} }));
   }
 
   onSetSidebarOpenLexon(open) {
@@ -391,6 +409,9 @@ export class Main extends Component {
           console.error('error ->', error);
         });
     }
+
+    window.addEventListener('uploadContact', this.uploadContact);
+    window.addEventListener('getContactList', this.getContactList);
   }
 
   componentWillUnmount() {
@@ -403,6 +424,8 @@ export class Main extends Component {
       this.handleGetUserFromCentinelaConnector
     );
     window.removeEventListener('ChangedLexonBBDD', this.changeLexonBBDD);
+    window.removeEventListener('uploadContact', this.uploadContact);
+    window.removeEventListener('getContactList', this.getContactList);
   }
 
   componentDidUpdate(prevProps, prevState) {

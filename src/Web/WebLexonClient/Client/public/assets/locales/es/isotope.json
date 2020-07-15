@@ -204,7 +204,6 @@
       "report1": "No se ha importado ninguna ficha de contacto. Revisa los campos indicados y prueba a importar de nuevo",
       "report2a": "Se han importado correctamente",
       "report2b": "fichas de contacto válidas, pero las siguientes fichas con errores han sido descartadas. Revisa los campos indicados y prueba a importar de nuevo."
-
     }
   }
 }

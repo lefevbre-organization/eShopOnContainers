@@ -707,7 +707,7 @@ const mapStateToProps = (state) => {
     showImportContacts: state.documentsReducer.showImportContacts,
     companySelected: state.selections.companySelected,
     selectedMessages: state.email.selectedMessages,
-    bbdd: state.selections.initialBBDD,
+    bbdd: state.selections.companySelected.bbdd,
     user: state.selections.user
   };
 };
