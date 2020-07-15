@@ -162,10 +162,48 @@
   "configuration": {
     "version": "Versión",
     "configuration": "OPCIONES DE CONFIGURACIÓN",
-    "classify-contacts": "Clasificar contactos automáticamente al enviar correo"
+    "classify-contacts": "Clasificar contactos automáticamente al enviar correo",
+    "import-contacts": "Importar contactos"
   },
   "new-folder-prompt": {
     "yes": "Crear",
     "no": "Cancelar"
+  },
+  "modal-import-contacts": {
+    "title": "Importar contactos de Lex-on",
+    "info": "Información sobre las fichas de contacto detectadas en Lex-on:",
+    "import": "Importar",
+    "ok": "!Las fichas de contacto se han importado correctamente a tu cuenta!",
+    "back": "Volver",
+    "accept": "Aceptar",
+    "info-result": "Información sobre el resultado de la importación",
+    "validated": "VALIDADAS",
+    "error": "¡ERROR!",
+    "errors-report": "VER INFORME DE ERRORES",
+    "ntotal": "Nº TOTAL",
+    "step2": {
+      "importing": "Importando",
+      "of": "de",
+      "importing1": "Importando contactos. Por favor, no cierres la ventana mientras dure el proceso."
+    },
+    "step3" : {
+      "error1a": "Ficha duplicada",
+      "error2a": "Correo electrónico",
+      "error1b": "ya existe una ficha de contacto asociado a la misma dirección de correo",
+      "error2b": "es necesario cumplimentar este campo para poder importar la ficha",
+      "validationErrors": "FICHAS CON ERRORES DE VALIDACIÓN",
+      "total": "TOTAL"
+    },
+    "step4" : {
+      "error1a": "Ficha duplicada",
+      "error2a": "Correo electrónico",
+      "error1b": "ya existe una ficha de contacto asociado a la misma dirección de correo",
+      "error2b": "es necesario cumplimentar este campo para poder importar la ficha",
+      "validationErrors": "FICHAS CON ERRORES DE VALIDACIÓN",
+      "total": "TOTAL",
+      "report1": "No se ha importado ninguna ficha de contacto. Revisa los campos indicados y prueba a importar de nuevo",
+      "report2a": "Se han importado correctamente",
+      "report2b": "fichas de contacto válidas, pero las siguientes fichas con errores han sido descartadas. Revisa los campos indicados y prueba a importar de nuevo."
+    }
   }
 }

@@ -19,10 +19,12 @@ export const INITIAL_STATE = {
     companySelected: null,
     typeSelected: null,
     initialBBDD: null,
+    user: null
   },
   documents: {
     showModalDocuments: false,
     showAttachDocuments: false,
+    showImportContacts: false,
   },
 };
 

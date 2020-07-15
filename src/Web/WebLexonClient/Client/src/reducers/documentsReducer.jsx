@@ -6,16 +6,21 @@ const documentsReducer = (state = INITIAL_STATE.documents, action) => {
     case ACTIONS.Types.TOGGLE_MODAL_DOCUMENTS: {
       return {
         ...state,
-        showModalDocuments: !state.showModalDocuments
+        showModalDocuments: !state.showModalDocuments,
       };
     }
     case ACTIONS.Types.TOGGLE_MODAL_ATTACH_DOCUMENTS: {
       return {
         ...state,
-        showAttachDocuments: !state.showAttachDocuments
+        showAttachDocuments: !state.showAttachDocuments,
       };
     }
-
+    case ACTIONS.Types.TOGGLE_MODAL_IMPORT_CONTACTS: {
+      return {
+        ...state,
+        showImportContacts: !state.showImportContacts,
+      };
+    }
     default:
       return state;
   }

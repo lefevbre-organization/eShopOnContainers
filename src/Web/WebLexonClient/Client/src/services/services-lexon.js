@@ -516,3 +516,27 @@ export const getRawAddon = async (addonData) => {
     throw err;
   }
 };
+
+export const getUserContacts = async (bbdd, idUser) => {
+  const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/classifications/contact/all`;
+  const body = {
+    bbdd,
+    idUser,
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    const result = await response.json();
+
+    return { result };
+  } catch (err) {
+    throw err;
+  }
+};

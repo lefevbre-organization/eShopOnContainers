@@ -43,6 +43,7 @@ import {
 import { PROVIDER } from '../../constants';
 import MessageNotFound from '../message-not-found/MessageNotFound';
 import CalendarComponent from '../../apps/calendar_content';
+import { addContact, getContacts } from '../../api_graph';
 
 export class Main extends Component {
   constructor(props) {
@@ -100,6 +101,9 @@ export class Main extends Component {
     this.changeLexonBBDD = this.changeLexonBBDD.bind(this);
     this.toggleSideBar = this.toggleSideBar.bind(this);
     this.toggleShowMessageNotFound = this.toggleShowMessageNotFound.bind(this);
+    this.uploadContact = this.uploadContact.bind(this);
+    this.getContactList = this.getContactList.bind(this);
+
     this.notFoundModal = props.notFoundModal;
   }
 
@@ -169,6 +173,26 @@ export class Main extends Component {
           account: this.props.User.email,
         },
       })
+    );
+  }
+
+  async uploadContact(data) {
+    await addContact(data.detail.contact);
+    window.dispatchEvent(
+      new CustomEvent('contactUploaded', {
+        detail: { contact: data.detail.contact },
+      })
+    );
+  }
+
+  async getContactList() {
+    let contacts = [];
+
+    const aux = await getContacts();
+    contacts = [...aux];
+
+    window.dispatchEvent(
+      new CustomEvent('getContactListResult', { detail: { contacts } })
     );
   }
 
@@ -392,6 +416,9 @@ export class Main extends Component {
           console.error('error ->', error);
         });
     }
+
+    window.addEventListener('uploadContact', this.uploadContact);
+    window.addEventListener('getContactList', this.getContactList);
   }
 
   componentWillUnmount() {
@@ -404,6 +431,8 @@ export class Main extends Component {
       this.handleGetUserFromCentinelaConnector
     );
     window.removeEventListener('ChangedLexonBBDD', this.changeLexonBBDD);
+    window.removeEventListener('uploadContact', this.uploadContact);
+    window.removeEventListener('getContactList', this.getContactList);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -739,16 +768,16 @@ export class Main extends Component {
 
             <div className='productpanel'>
               {window.SHOW_EXPERIMENTAL === '1' && (
-               <span className='productsbutton'>
+                <span className='productsbutton'>
                   <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
-                     <img
-                       className='imgproduct'
-                         border='0'
-                         alt='Calendar'
-                         src='/assets/img/icon-cal.svg'></img>
+                    <img
+                      className='imgproduct'
+                      border='0'
+                      alt='Calendar'
+                      src='/assets/img/icon-cal.svg'></img>
                   </div>
-               </span>
-             )}
+                </span>
+              )}
               <span className='productsbutton'>
                 {lexon.user ? (
                   <div onClick={() => this.onSetSidebarOpenLexon(true)}>
@@ -767,16 +796,16 @@ export class Main extends Component {
                       src='/assets/img/icon-lx.svg'></img>
                   </div>
                 )}
-              </span>              
+              </span>
               {this.hasProduct('centinelaconnector') &&
                 window.SHOW_EXPERIMENTAL === '1' && (
                   <span className='productsbutton'>
                     <div onClick={() => this.onSetSidebarOpenCentinela(true)}>
-                       <img
-                         className='imgproduct'
-                         border='0'
-                         alt='Centinela'
-                         src='/assets/img/icon-cn.svg'></img>
+                      <img
+                        className='imgproduct'
+                        border='0'
+                        alt='Centinela'
+                        src='/assets/img/icon-cn.svg'></img>
                     </div>
                   </span>
                 )}
@@ -785,13 +814,13 @@ export class Main extends Component {
                   <span className='productsbutton'>
                     <div onClick={() => this.onSetSidebarOpenDatabase(true)}>
                       <img
-                         className='imgproduct'
-                         border='0'
-                         alt='Base de datos'
-                         src='/assets/img/icon-ne.svg'></img>
+                        className='imgproduct'
+                        border='0'
+                        alt='Base de datos'
+                        src='/assets/img/icon-ne.svg'></img>
                     </div>
                   </span>
-                )}              
+                )}
             </div>
           </section>
         </Fragment>
