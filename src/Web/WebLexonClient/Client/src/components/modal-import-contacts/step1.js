@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import i18n from 'i18next';
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import _ from 'lodash';
 
 import {getUserContacts} from '../../services/services-lexon';
 
@@ -15,8 +16,14 @@ export class Step1 extends React.Component {
       contacts: [],
       counters: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     };
+
+    this.contactListLoaded = this.contactListLoaded.bind(this);
   }
+
   async componentDidMount() {
+    window.addEventListener('getContactListResult', this.contactListLoaded);
+    window.dispatchEvent(new CustomEvent('getContactList'));
+
   }
 
   componentWillUnmount() {
@@ -31,16 +38,19 @@ export class Step1 extends React.Component {
     try {
       this.props.onLoading(true);
       const aux = await getUserContacts(bbdd, user);
+      aux.result.data = [ { ...aux.result.data[0], "email":"juandvallero@gmail.com"}];
       const counters = this.validateContacts(aux.result.data);
+      const blackList = data.detail.contacts;
       const validContacts = _.uniqBy(aux.result.data, 'email').filter( itm => (itm.valid && blackList.indexOf(itm.email) === -1) )
+      const errorContacts = _.difference(aux.result.data, validContacts);
 
       this.setState({
         contacts: aux.result.data,
-        valid: aux.result.data.filter(itm => itm.valid),
-        errors: aux.result.data.filter(itm => !itm.valid),
+        valid: validContacts,
+        errors: errorContacts,
         counters
       }, ()=>{
-        this.props.onContacts(aux.result.data)
+        this.props.onContacts(validContacts, errorContacts)
         this.props.onLoading(false);
       })
     } catch(err) {
@@ -70,53 +80,53 @@ export class Step1 extends React.Component {
           <div className='panel-inner'>
             <div className='panel-inner-header'>
               <span className='panel-inner-header-number'>{contacts.length}</span>
-              <span className='panel-inner-header-text'>Nº TOTAL</span>
+              <span className='panel-inner-header-text'>{i18n.t('modal-import-contacts.ntotal')}</span>
             </div>
             <PerfectScrollbar className='panel-inner-body'>
               <span className='lf-icon-contacts'></span>
               <ul>
                 { counters[2] > 0 && <li>
-                  <span className='entity-name'>Clientes</span>
+                  <span className='entity-name'>{i18n.t('classification.2')}</span>
                   <span className='entity-number'>({counters[2]})</span>
                 </li> }
                 { counters[3] > 0 && <li>
-                  <span className='entity-name'>Contrarios</span>
+                  <span className='entity-name'>{i18n.t('classification.3')}</span>
                   <span className='entity-number'>({counters[3]})</span>
                 </li> }
                 { counters[4] > 0 && <li>
-                  <span className='entity-name'>Proveedores</span>
+                  <span className='entity-name'>{i18n.t('classification.4')}</span>
                   <span className='entity-number'>({counters[4]})</span>
                 </li> }
                 { counters[5] > 0 && <li>
-                  <span className='entity-name'>Abogados propios</span>
+                  <span className='entity-name'>{i18n.t('classification.5')}</span>
                   <span className='entity-number'>({counters[5]})</span>
                 </li> }
                 { counters[6] > 0 && <li>
-                  <span className='entity-name'>Abogados contrarios</span>
+                  <span className='entity-name'>{i18n.t('classification.6')}</span>
                   <span className='entity-number'>({counters[6]})</span>
                 </li> }
                 { counters[7] > 0 && <li>
-                  <span className='entity-name'>Procuradores propios</span>
+                  <span className='entity-name'>{i18n.t('classification.7')}</span>
                   <span className='entity-number'>({counters[7]})</span>
                 </li> }
                 { counters[8] > 0 && <li>
-                  <span className='entity-name'>Procuradores contrarios</span>
+                  <span className='entity-name'>{i18n.t('classification.8')}</span>
                   <span className='entity-number'>({counters[8]})</span>
                 </li> }
                 { counters[9] > 0 && <li>
-                  <span className='entity-name'>Notarios</span>
+                  <span className='entity-name'>{i18n.t('classification.9')}</span>
                   <span className='entity-number'>({counters[9]})</span>
                 </li> }
                 { counters[10] > 0 && <li>
-                  <span className='entity-name'>Juzgados</span>
+                  <span className='entity-name'>{i18n.t('classification.10')}</span>
                   <span className='entity-number'>({counters[10]})</span>
                 </li> }
                 { counters[11] > 0 && <li>
-                  <span className='entity-name'>Aseguradoras</span>
+                  <span className='entity-name'>{i18n.t('classification.11')}</span>
                   <span className='entity-number'>({counters[11]})</span>
                 </li> }
                 { counters[12] > 0 && <li>
-                  <span className='entity-name'>Otros</span>
+                  <span className='entity-name'>{i18n.t('classification.12')}</span>
                   <span className='entity-number'>({counters[12]})</span>
                 </li> }
               </ul>
@@ -125,7 +135,7 @@ export class Step1 extends React.Component {
           <div className='panel-inner'>
             <div className='panel-inner-header'>
               <span className='panel-inner-header-number'>{valid.length}</span>
-              <span className='panel-inner-header-text'>VALIDADAS</span>
+              <span className='panel-inner-header-text'>{i18n.t('modal-import-contacts.validated')}</span>
             </div>
             <div className='panel-inner-body'>
               <span className='lf-icon-check-round'></span>
@@ -134,15 +144,15 @@ export class Step1 extends React.Component {
           <div className='panel-inner'>
             <div className='panel-inner-header'>
               <span className='panel-inner-header-number'>{errors.length}</span>
-              <span className='panel-inner-header-text'>¡ERROR!</span>
+              <span className='panel-inner-header-text'>{i18n.t('modal-import-contacts.error')}</span>
             </div>
             <div className='panel-inner-body'>
               <span className='lf-icon-warning'></span>
             </div>
-            <div className='panel-inner-bottom'>
+            { errors.length > 0 && <div className='panel-inner-bottom' onClick={ ()=>{ this.props.onShowErrors(); } }>
               <span className='lf-icon-visible' style={{ flex: 0 }}></span>
-              <span>VER INFORME DE ERRORES</span>
-            </div>
+              <span>{i18n.t('modal-import-contacts.errors-report')}</span>
+            </div>}
           </div>
         </div>
         <style jsx>{`

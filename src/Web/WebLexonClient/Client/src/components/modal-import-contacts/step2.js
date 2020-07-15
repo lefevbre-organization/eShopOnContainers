@@ -5,7 +5,7 @@ import {
     ProgressBarAnnotationsDirective,
     ProgressBarComponent
 } from "@syncfusion/ej2-react-progressbar";
-import _ from 'lodash';
+import i18n from 'i18next';
 
 export class Step2 extends React.Component {
     constructor(props) {
@@ -16,16 +16,13 @@ export class Step2 extends React.Component {
         };
         this.contacts = [];
         this.contactUploaded = this.contactUploaded.bind(this);
-        this.contactListLoaded = this.contactListLoaded.bind(this);
 
         this.itv = null;
     }
 
     componentDidMount() {
         this.setState({progress: 0}, ()=>{
-            console.log("******* CONTACTS: addEventListener: getContactListResult");
-            window.addEventListener('getContactListResult', this.contactListLoaded);
-
+            this.uploadContacts();
         });
     }
 
@@ -38,27 +35,29 @@ export class Step2 extends React.Component {
         }
     }
 
-    uploadContacts(blackList) {
+    uploadContacts() {
         window.addEventListener('contactUploaded', this.contactUploaded);
 
         const {contacts}=this.props;
-        const contactList = _.uniqBy(contacts, 'email').filter( itm => (itm.valid && blackList.indexOf(itm.email) === -1) );
 
-        if(contactList.length > 0) {
-            this.setState({validContacts: contactList.length}, ()=>{
+        if(contacts.length > 0) {
+            this.setState({validContacts: contacts.length}, ()=>{
                 this.itv = setInterval(()=> {
-                    if(contactList.length === 0) {
+                    if(contacts.length === 0) {
                         clearInterval(this.itv);
                         this.itv = null;
+                        this.props.onUploadCompleted();
                         return;
                     }
-                    const c = contactList.shift();
+                    const c = contacts.shift();
                     this.uploadContact(c);
                 }, 1000);
             })
         } else {
          // Proceso completado
-            this.setState({validContacts: 0});
+            this.setState({validContacts: 0}, ()=>{
+                this.props.onUploadCompleted();
+            });
         }
     }
 
@@ -88,10 +87,8 @@ export class Step2 extends React.Component {
         return (
             <Fragment>
                 <div className='panel-body'>
-                    <div className="advice">Importando contactos. Por favor, no cierres la ventana mientras dure el
-                        proceso.
-                    </div>
-                    <div className="advice"><p>Importando {progress} de {validContacts}</p></div>
+                    <div className="advice">{i18n.t('modal-import-contacts.step2.importing1')}</div>
+                    <div className="advice"><p>{i18n.t('modal-import-contacts.step2.importing')} {progress} {i18n.t('modal-import-contacts.step2.of')} {validContacts}</p></div>
 
                     <div className="progress-container">
                         <ProgressBarComponent id="label-container" ref={this.progresRef}

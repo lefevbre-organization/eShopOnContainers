@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 
 import { Step1 } from './step1';
 import { Step2 } from './step2';
+import { Step3 } from './step3';
+import { Step4 } from './step4';
 import ACTIONS from '../../actions/documentsAction';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import Spinner from '../spinner/spinner';
@@ -17,7 +19,9 @@ class ModalImportContacts extends Component {
       showSpinner: false,
       progress: -1,
       step: 0,
-      contacts: []
+      contacts: [],
+      errors: [],
+      numContacts: 0
     };
 
     this.progresRef = createRef();
@@ -25,14 +29,17 @@ class ModalImportContacts extends Component {
     this.setLoading = this.setLoading.bind(this);
     this.setProgress = this.setProgress.bind(this);
     this.onContacts = this.onContacts.bind(this);
+    this.showErrors = this.showErrors.bind(this);
+    this.uploadCompleted = this.uploadCompleted.bind(this);
   }
 
   componentDidMount() {
     this.setState({step: 1})
   }
 
-  downloadComplete() {}
-
+  showErrors() {
+    this.setState({step: 3});
+  }
 
   closeDialog() {
     if(this.state.step === 2) {
@@ -54,22 +61,35 @@ class ModalImportContacts extends Component {
     this.setState({ progress });
   }
 
-  onContacts(contacts) {
-    this.setState({contacts: [...contacts]});
+  onContacts(contacts, errors) {
+    this.setState({contacts: [...contacts], errors: [...errors], numContacts: contacts.length });
+  }
+
+  uploadCompleted() {
+    if(this.state.errors.length > 0) {
+      this.setState({step: 4})
+    } else {
+      this.setState({ step: 1}, ()=>{
+        this.closeDialog();
+        this.props.toggleNotification(i18n.t('modal-import-contacts.ok'), false);
+      });
+    }
   }
 
   renderButtons() {
     const { step } = this.state;
     return (
       <Fragment>
+        {step < 3 &&
         <Button
           bsPrefix='btn btn-outline-primary'
           onClick={() => {
-            this.setState({ step: 1 });
-            this.closeDialog();
+            this.setState({ step: 1 }, ()=>{
+              this.closeDialog();
+            });
           }}>
           {i18n.t('classify-emails.cancel')}
-        </Button>
+        </Button> }
         {step === 1 && <Button
             disabled={this.state.showSpinner === true}
             bsPrefix='btn btn-primary'
@@ -78,12 +98,30 @@ class ModalImportContacts extends Component {
           }}>
           {i18n.t('modal-import-contacts.import')}
         </Button> }
+        {step === 3 && <Button
+            disabled={this.state.showSpinner === true}
+            bsPrefix='btn btn-primary'
+            onClick={() => {
+              this.setState({ step: 1 });
+            }}>
+          {i18n.t('modal-import-contacts.back')}
+        </Button> }
+        {step === 4 && <Button
+            disabled={this.state.showSpinner === true}
+            bsPrefix='btn btn-primary'
+            onClick={() => {
+              this.setState({ step: 1 }, ()=>{
+                this.closeDialog();
+              });
+            }}>
+          {i18n.t('modal-import-contacts.accept')}
+        </Button> }
       </Fragment>
     );
   }
 
   render() {
-    const { showSpinner, step, contacts } = this.state;
+    const { showSpinner, step, contacts, errors, numContacts } = this.state;
     const { showImportContacts, user, bbdd } = this.props;
 
     return (
@@ -106,19 +144,20 @@ class ModalImportContacts extends Component {
                 border='0'
                 alt='Lex-On'
                 src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
-              <span>{i18n.t('modal-import-contacts.title')}</span>
+                <span>{i18n.t('modal-import-contacts.title')}</span>
             </h5>
           </Modal.Header>
           <Modal.Body className='mimodal'>
             <div>{showSpinner === true && <Spinner />}</div>
             <div style={{opacity: showSpinner?0:1}}>
               <div>
-                <h2 className='modal-subtitle'>
-                  {i18n.t('modal-import-contacts.info')}
-                </h2>
+                { step !== 4 && <h2 className='modal-subtitle'>{i18n.t('modal-import-contacts.info')}</h2> }
+                { step === 4 && <h2 className='modal-subtitle'>{i18n.t('modal-import-contacts.info-result')}</h2> }
               </div>
-              {step === 1 && <Step1 onLoading={this.setLoading} onContacts={this.onContacts} user={user} bbdd={bbdd}/>}
-              {step === 2 && <Step2 onSetProgress={this.setProgress} contacts={contacts}/>}
+              {step === 1 && <Step1 onLoading={this.setLoading} onContacts={this.onContacts} onShowErrors={this.showErrors} user={user} bbdd={bbdd}/>}
+              {step === 2 && <Step2 onSetProgress={this.setProgress} contacts={contacts} onUploadCompleted={this.uploadCompleted}/>}
+              {step === 3 && <Step3 errors={errors}/>}
+              {step===4 && <Step4 errors={errors} valids={numContacts}></Step4>}
             </div>
           </Modal.Body>
           <Modal.Footer>{this.renderButtons()}</Modal.Footer>

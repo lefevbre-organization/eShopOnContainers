@@ -9,6 +9,7 @@ import DOC_ACTIONS from '../../actions/documentsAction';
 import ModalImportContacts from '../modal-import-contacts/modal-import-contacts';
 
 import { PAGE_SELECT_ACTION } from '../../constants';
+import ModalConnectingEmails from "../modal-connecting-emails/modal-connecting-emails";
 class Configuration extends Component {
   constructor(props) {
     super(props);
@@ -106,7 +107,7 @@ class Configuration extends Component {
             {i18n.t('configuration.version')}: {window.RELEASE}
           </div>
         </div>
-        <ModalImportContacts></ModalImportContacts>
+        <ModalImportContacts toggleNotification={this.props.toggleNotification}></ModalImportContacts>
         <style jsx>{`
           .version {
             position: absolute;
