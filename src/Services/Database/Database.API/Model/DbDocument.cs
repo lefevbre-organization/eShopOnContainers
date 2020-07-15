@@ -2,10 +2,21 @@
 {
     public class DbDocument
     {
+
         public float SCORE { get; set; }
         public int? POSICION { get; set; }
         public float? BOOST { get; set; }
         public string TIPO_DOCUMENTO { get; set; } // "legislación",
+        public string EDF { get; set; } // "2010/112805",
+        public string EDC { get; set; } // "2010/112805",
+        public string EDD { get; set; } // "2010/112805",
+        public string EDH { get; set; } // "2010/112805",
+        public string EDJ { get; set; } // "2010/112805",
+        public string EDL { get; set; } // "2010/112805",
+        public string EDO { get; internal set; }
+        public string EDS { get; set; } // "2010/112805",
+        public string CODIGO { get; set; } // "2010/112805",
+        public string DESCRIPCION { get; set; } // "2010/112805",
         public string NREF { get; set; } // "2010/112805",
         public string FECHA { get; set; } // "02-07-2010",
         public string ANCHOR { get; set; } // "ART.93",
@@ -27,5 +38,8 @@
         public bool? MODIFICADA { get; set; }
         public bool? VACATIO_LEGIS { get; set; }
         public DbDocFragment[] FRAGMENTOS { get; set; }
+        public string RESUMEN { get; internal set; }
+        public string LINK_OPEN { get; internal set; }
+        public string[] AUTORES { get; internal set; }
     }
 }
