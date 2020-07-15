@@ -671,7 +671,7 @@ export class Main extends Component {
             var dialogObj = args.element.ej2_instances[0];
             dialogObj.buttons[1].buttonModel.isPrimary = false;
             args.element.style.width = "700px";
-            args.element.style.height = "750px";
+            args.element.style.height = "95%";
 
             var formElement = args.element.querySelector('.e-schedule-form');
             if (formElement != null) {

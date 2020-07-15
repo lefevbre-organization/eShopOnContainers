@@ -20,10 +20,10 @@ export class Reminder extends React.Component {
     this.dataSource = [];
 
     this.datetimeData = [
-      { Id: '1', Text: 'Minutes', Value: '60' },
-      { Id: '2', Text: 'Hours', Value: '60' },
-      { Id: '3', Text: 'Days', Value: '60' },
-      { Id: '4', Text: 'Weeks', Value: '60' },
+      { Id: '1', Text: 'Minutos', Value: '60' },
+      { Id: '2', Text: 'Horas', Value: '60' },
+      { Id: '3', Text: 'Dias', Value: '60' },
+      { Id: '4', Text: 'Semanas', Value: '60' },
     ];
 
     // this.dataSource = this.props.reminders
@@ -123,16 +123,16 @@ export class Reminder extends React.Component {
     timeMinutestoLogicType(time) { 
        
         if (time / 24 / 60 / 7 >= 1 && Number.isInteger(time / 24 / 60 / 7 )) {                 
-                return time / 24 / 60 / 7 + " weeks";
+                return time / 24 / 60 / 7 + " semanas";
             }
 
         if (time / 24 / 60 >= 1 && Number.isInteger(time / 24 / 60)) {
-                return time / 24 / 60 + " days";
+                return time / 24 / 60 + " días";
             }
 
         if (time / 60 % 24 >= 1 && Number.isInteger(time / 60 % 24)) {
            // return time / 60 % 24 + " hours";
-            return time / 60 + " hours";
+            return time / 60 + " horas";
             }
             
         return time  + " " + this.ReminType.text ;  
@@ -150,7 +150,7 @@ export class Reminder extends React.Component {
         return (
           <div className='e-list-wrapper'>
             <span className='e-list-content'>
-                  {value}
+               Correo electrónico   {value}
             </span>
             <span className='delete-icon' onClick={this.deleteItem.bind(this)} />
           </div>
