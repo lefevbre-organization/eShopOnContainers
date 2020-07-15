@@ -445,7 +445,6 @@ class MessageList extends Component {
         } else if (args.item.text === 'Cancelar'){
             //POR HACER
         }
-        debugger;
     }
 
     render() {
@@ -617,6 +616,10 @@ class MessageList extends Component {
                         color: #001970;
                     }
                     .e-dropdown-popup ul .e-item {
+                        font-weight: bold;
+                        color: #001970;
+                    }
+                    .e-dropdown-popup ul .e-item .e-hover {
                         font-weight: bold;
                         color: #001970;
                     }

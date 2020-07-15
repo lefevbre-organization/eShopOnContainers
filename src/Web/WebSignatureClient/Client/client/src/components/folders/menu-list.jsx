@@ -27,19 +27,19 @@ export class MenuListClass extends Component {
     return (
         // <div key={'firmas'} className={`${styles.itemContainer}`}>
         <div>
-          <div className={`${styles['title-nav-firmas']}`}><span class="lf-icon-signature"></span>firmas solicitadas</div>
+          <div className={`${styles['title-nav-firmas']}`}><span className="lf-icon-signature"></span>firmas solicitadas</div>
           <ul className={`${styles['nav-firmas']}`}>
                 <li className={`${styles.todas}`}>
-                    <a href="#" id={option3} onClick={event => this.onClick(event, option3)}><span class="lf-icon-folder"></span>Mostrar todas</a>
+                    <a href="#" id={option3} onClick={event => this.onClick(event, option3)}><span className="lf-icon-folder"></span>Mostrar todas</a>
                 </li>
                 <li className={`${styles['en-progreso']}`}>
-                    <a href="#" id={option1} onClick={event => this.onClick(event, option1)}><span class="lf-icon-folder"></span>En progreso</a>
+                    <a href="#" id={option1} onClick={event => this.onClick(event, option1)}><span className="lf-icon-folder"></span>En progreso</a>
                 </li>
                 <li className={`${styles.completadas}`}>
-                    <a href="#" id={option2} onClick={event => this.onClick(event, option2)}><span class="lf-icon-folder"></span>Completadas</a>
+                    <a href="#" id={option2} onClick={event => this.onClick(event, option2)}><span className="lf-icon-folder"></span>Completadas</a>
                 </li>
                 <li className={`${styles.canceladas}`}>
-                    <a href="#" id={option4} onClick={event => this.onClick(event, option4)}><span class="lf-icon-folder"></span>Canceladas</a>
+                    <a href="#" id={option4} onClick={event => this.onClick(event, option4)}><span className="lf-icon-folder"></span>Canceladas</a>
                 </li>
             </ul>
           {/* <MenuItem

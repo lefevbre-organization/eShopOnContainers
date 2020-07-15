@@ -140,7 +140,8 @@ class Login extends Component {
       domain: (window.REACT_APP_ENVIRONMENT==='LOCAL' ? 'localhost': 'lefebvre.es')
     });
     this.props.setUserCredentials(userId, userId, {authenticated: true, encrypted: cookie, salt: "1234", name: ""})
-    return <Redirect to="/" />
+    //return <Redirect to="/" />
+    this.props.history.push("/")
   };
 
   handleEventAddon = (e) => {
@@ -149,7 +150,7 @@ class Login extends Component {
     }
   };
 
-  render() {
+  componentDidMount(){
     const { user } = this.state.form.login;
     const { lefebvre } = this.props;
 
@@ -162,11 +163,17 @@ class Login extends Component {
     console.log(cookie);
     if (cookie){
         this.props.setUserCredentials(lefebvre.user, lefebvre.user, {authenticated: true, encrypted: cookie, salt: "1234", name: ""})
-        return <Redirect to="/" />
+        //return <Redirect to="/" />
+        this.props.history.push("/")
     }
     if (this.props.application.user.credentials) {
-        return <Redirect to="/" />;
+        //return <Redirect to="/" />;
+        this.props.history.push("/")
     }
+  }
+
+  render() {
+    
 
     return (
       <div className={loginStyle['wrapper']}>

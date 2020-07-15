@@ -463,7 +463,7 @@ class App extends Component {
     var self = this;
     //Starting poll to update the inbox automatically
     //this.startPoll();
-    setInterval(this.startPoll.bind(this),500000);
+    setInterval(this.startPoll.bind(this),20000);
     //adding connector App to right slide panel
     //setTimeout(function () { this.registerConnectorApp(); }, 2200);
     this.registerConnectorApp();
@@ -518,6 +518,10 @@ class App extends Component {
             let attachmentsList = [];
             let i = 0;
 
+            if (lefebvre.idDocuments.length > 0){
+              this.props.backendRequest();
+            }
+
             lefebvre.idDocuments.forEach(document => {
               this.props.getAttachmentCen(lefebvre.userId, document.docId)
               .then((attachment) => {
@@ -525,7 +529,7 @@ class App extends Component {
                   this.props.newMessage();
                 }
                 else {
-                  
+
                   const length = attachment.data.length;
                   const fileName = attachment.infos[0].message.split(":")[1].replace(/"/g,'').trim();
                   const newAttachment = {
@@ -540,11 +544,15 @@ class App extends Component {
                 i += 1;
 
                 if (i > 0 && i === attachmentsList.length){
+                  this.props.backendRequestCompleted();
                   this.props.setIdDocuments(documentsInfo);
                   this.props.newMessage(mailContacts, adminContacts, null, attachmentsList);
                 }
               })
-              .catch(() => this.props.newMessage(mailContacts, adminContacts));        
+              .catch(() => {
+                this.props.backendRequestCompleted();
+                this.props.newMessage(mailContacts, adminContacts);
+              });        
             });
           }
         }  
@@ -826,17 +834,17 @@ class App extends Component {
     //   this.pollStarted = true;
     //   //this.refreshPoll();
     // }
-    this.props.backendRequest();
+    //this.props.backendRequest();
     setTimeout(() => {
       const {lefebvre} = this.props;
-      if (this.props.application.selectedSignature === null){  
+      if (this.props.application.selectedSignature === null || this.props.application.selectedSignature === {}){  
         this.props.preloadSignatures(lefebvre.userId);
-        this.props.backendRequestCompleted();
+        //this.props.backendRequestCompleted();
       } else {
         this.props.preloadSignatures(lefebvre.userId);
         let signature = this.props.application.signatures.find(s => s.id === this.props.application.selectedSignature.id)
         this.props.signatureClicked(signature);
-        this.props.backendRequestCompleted();
+        //this.props.backendRequestCompleted();
       }
   
     }, 1000);

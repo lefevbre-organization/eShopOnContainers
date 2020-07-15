@@ -100,7 +100,7 @@ const LoginComponents = (children) => {
           </div>
           <div className='row'>
             <div className='login-help'>
-              <p className='pt-3 need-help mb-4'>{children.needHelp}</p>
+              <p className='pt-3 need-help mb-4'>{i18n.t('login.needHelp')}</p>
               <p className='client mt-n3'>
                 {i18n.t('login.phoneNumber')}
                 <a

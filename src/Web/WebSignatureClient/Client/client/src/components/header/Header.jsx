@@ -38,7 +38,7 @@ export class Header extends PureComponent {
               href='https://www.efl.es/'
               target='_blank'>
               <i className='lf-icon-shop front-login__go-shop-icon'></i>
-              <span data-translate='front-login.shop' class='ng-scope'>
+              <span data-translate='front-login.shop' className='ng-scope'>
                 TIENDA
               </span>
             </a>
