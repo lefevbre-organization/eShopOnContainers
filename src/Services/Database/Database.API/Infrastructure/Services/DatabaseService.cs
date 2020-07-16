@@ -159,8 +159,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                     if (!string.IsNullOrEmpty(rawResult))
                     {
                         var resultado = (JsonConvert.DeserializeObject<DbDocSearch>(rawResult));
-                        CompleteResultInfo(resultado, idNavisionUser, indice,  search, resultSession?.data);
-                        result.data = resultado;
+                        result.data  = await CompleteResultInfo(resultado, idNavisionUser, indice,  search, resultSession?.data);
+                        //result.data = resultado;
                     }
                 }
                 else
@@ -185,7 +185,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
             return result;
         }
 
-        private async void CompleteResultInfo(DbDocSearch resultado, string idNavisionUser, string indice, string search, string sesion)
+        private async Task<DbDocSearch> CompleteResultInfo(DbDocSearch resultado, string idNavisionUser, string indice, string search, string sesion)
         {
             var encodeUser = await GetEncodeUserAsync(idNavisionUser);
             //http://herculesppd.lefebvre.es/webclient46/seleccionProducto.do?producto=UNIVERSAL&orden=relevancia&universal=derecho&jsessionId=xxx&subindices=xxxx
@@ -347,6 +347,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
 
 
             }
+            return resultado;
         }
 
         public async Task<Result<DbDocCount>> GetDocumentsCountAsync(string idNavisionUser, string search)
