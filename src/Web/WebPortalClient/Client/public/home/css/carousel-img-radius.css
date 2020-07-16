@@ -1,0 +1,24 @@
+
+.carousel-indicators{
+    bottom:45px;
+}
+.carousel-inner{
+    padding-bottom: 46px;
+}
+.carousel-inner .cont-img{
+    border:1px solid #d1d1d1;
+}
+.carousel-inner .carousel-item{
+    background: transparent;
+    padding:15px 15px 50px 15px;
+}
+.carousel-indicators li{
+    border-radius:50%;
+    border:1px solid #7f8cbb;
+    width:12px;
+    height:12px;
+}
+.carousel-indicators li.active{
+    background: #7f8cbb;
+}
+
