@@ -52,6 +52,7 @@ import {
 } from '../../api/accounts';
 import { PROVIDER } from '../../constants';
 import { getMessageListWithRFC } from '../../api/';
+import {addContact, getContacts, searchContactByEmail} from "../../api/contacts-api";
 
 export class Main extends Component {
   constructor(props) {
@@ -107,6 +108,8 @@ export class Main extends Component {
 
     this.changeLexonBBDD = this.changeLexonBBDD.bind(this);
     this.toggleSideBar = this.toggleSideBar.bind(this);
+    this.uploadContact = this.uploadContact.bind(this);
+    this.getContactList = this.getContactList.bind(this);
   }
 
   toggleSideBar() {
@@ -158,6 +161,22 @@ export class Main extends Component {
     if (userId) {
       this.sendMessagePutUser(userId);
     }
+  }
+
+  async uploadContact(data) {
+    await addContact(data.detail.contact);
+    window.dispatchEvent(new CustomEvent('contactUploaded', { detail: { contact: data.detail.contact} }));
+  }
+
+  async getContactList() {
+    let contacts = [];
+
+    //for(;;) {
+      const aux = await getContacts();
+      contacts = [...aux];
+    //}
+
+    window.dispatchEvent(new CustomEvent('getContactListResult', { detail: { contacts} }));
   }
 
   onSetSidebarOpenCalendar(open) {
@@ -315,6 +334,9 @@ export class Main extends Component {
       );
     });
 
+    window.addEventListener('uploadContact', this.uploadContact);
+    window.addEventListener('getContactList', this.getContactList);
+
     const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
     const { userId, idCaseFile, bbdd, mailContacts } = this.props.lexon;
     const { googleUser } = this.props;
@@ -426,7 +448,6 @@ export class Main extends Component {
 
   componentWillUnmount() {
     window.removeEventListener('ChangedLexonBBDD', this.changeLexonBBDD);
-
     window.removeEventListener(
       'GetUserFromLexonConnector',
       this.handleGetUserFromLexonConnector
@@ -435,6 +456,7 @@ export class Main extends Component {
       'GetUserFromCentinelaConnector',
       this.handleGetUserFromCentinelaConnector
     );
+    window.removeEventListener('uploadContact', this.uploadContact);
   }
 
   handleGetUserFromCentinelaConnector() {

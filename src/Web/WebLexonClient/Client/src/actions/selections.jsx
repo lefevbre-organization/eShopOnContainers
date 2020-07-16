@@ -3,6 +3,7 @@ const Types = {
   SET_COMPANY_SELECTED: "SET_COMPANY_SELECTED",
   SET_TYPE_SELECTED: "SET_TYPE_SELECTED",
   SET_INITIAL_BBDD: "SET_INITIAL_BBDD",
+  SET_USER: "SET_USER",
   CLEAR_INITIAL_BBDD: "CLEAR_INITIAL_BBDD"
 };
 
@@ -22,6 +23,11 @@ const setInitialBBDD = item => ({
   payload: item
 })
 
+const setUser = item => ({
+  type: Types.SET_USER,
+  payload: item
+})
+
 const clearInitialBBDD = () => ({
   type: Types.CLEAR_INITIAL_BBDD
 })
@@ -30,6 +36,7 @@ export default {
   setCompanySelected,
   setTypeSelected,
   setInitialBBDD,
+  setUser,
   clearInitialBBDD,
   Types
 };

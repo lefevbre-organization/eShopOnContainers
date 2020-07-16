@@ -1,5 +1,6 @@
 ﻿using Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Repositories;
 using Lefebvre.eLefebvreOnContainers.Services.Database.API.Models;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
@@ -158,6 +159,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
                     if (!string.IsNullOrEmpty(rawResult))
                     {
                         var resultado = (JsonConvert.DeserializeObject<DbDocSearch>(rawResult));
+                        CompleteResultInfo(resultado, idNavisionUser, indice,  search, resultSession?.data);
                         result.data = resultado;
                     }
                 }
@@ -181,6 +183,170 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Database.API.Infrastructure.Se
             }
 
             return result;
+        }
+
+        private async void CompleteResultInfo(DbDocSearch resultado, string idNavisionUser, string indice, string search, string sesion)
+        {
+            var encodeUser = await GetEncodeUserAsync(idNavisionUser);
+            //http://herculesppd.lefebvre.es/webclient46/seleccionProducto.do?producto=UNIVERSAL&orden=relevancia&universal=derecho&jsessionId=xxx&subindices=xxxx
+            resultado.LINK_SEARCH = $"{_settings.Value.OnlineUrl}/seleccionProducto.do?producto={search}&orden=asc&universal={search}&jsessionId={sesion}&subindices={indice}";
+  
+            foreach (var doc in resultado.DOCUMENTOS)
+            {
+                //https://herculesppd.lefebvre.es/webclient46/login.do?ei=xxx&producto_inicial=UNIVERSAL&nref=xxx
+                doc.LINK_OPEN = $"{_settings.Value.OnlineUrl}/login.do?ei={encodeUser?.data}&producto_inicial={indice}&nref={doc.NREF}";
+
+                if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("mementos"))
+                {
+                    doc.ENTRADILLA = doc.TITULO;
+                    doc.TITULO = doc.TITULO;
+                    doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
+
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("jurisprudencia"))
+                {
+                    //doc.ENTRADILLA = doc.TITULO;
+                    doc.TITULO = $"{doc.DESCRIPCION} {doc.EDJ} {doc.NREF}".Trim();
+                    doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("doctrina"))
+                {
+                    //doc.ENTRADILLA = doc.TITULO;
+                    doc.TITULO = $"{doc.TITULO} {doc.EDD} {doc.NREF}".Trim();
+                    doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("legislación"))
+                {
+                    //doc.ENTRADILLA = doc.TITULO;
+                    doc.TITULO = $"{doc.TITULO} {doc.EDL} {doc.NREF}".Trim();
+                    doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("convenios"))
+                {
+                    //doc.ENTRADILLA = doc.TITULO;
+                    doc.TITULO = $"{doc.TITULO} {doc.BOLETIN} {doc.CODIGO}".Trim();
+                    doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("subvenciones"))
+                {
+                    doc.ENTRADILLA = doc.TITULO;
+                    doc.TITULO = $"{doc.TITULO} {doc.EDS} {doc.NREF}".Trim();
+                    doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
+
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("comentarios"))
+                {
+                    doc.ENTRADILLA = doc.ENTRADILLA;
+                    doc.TITULO = $"{doc.TITULO} {doc.EDC} {doc.NREF}".Trim();
+                    doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
+
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("apuntesConsejos"))
+                {
+                    doc.ENTRADILLA = doc.ENTRADILLA;
+                    doc.TITULO = $"{doc.TITULO} {doc.EDC} {doc.NREF}".Trim();
+                    doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("esquemas"))
+                {
+                    doc.ENTRADILLA = doc.TITULO;
+                    doc.TITULO = $"{doc.TITULO}".Trim();
+                   // doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().EndsWith("formularios"))
+                {
+                    doc.ENTRADILLA = doc.ENTRADILLA;
+                    doc.TITULO = $"{doc.TITULO} {doc.EDF} {doc.NREF}".Trim();
+                    doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().EndsWith("formulariosefl"))
+                {
+                    doc.ENTRADILLA = doc.ENTRADILLA;
+                    doc.TITULO = $"{doc.TITULO}".Trim();
+                    //doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("esquemasquantor"))
+                {
+                    doc.ENTRADILLA = doc.ENTRADILLA;
+                    doc.TITULO = $"{doc.TITULO}".Trim();
+                    //doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("bibliografia"))
+                {
+                    doc.ENTRADILLA = doc.ENTRADILLA;
+                    doc.TITULO = $"{doc.TITULO}".Trim();
+                    doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO} {doc.AUTORES} {doc.FECHA}";
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("actualidad"))
+                {
+                    doc.ENTRADILLA = doc.ENTRADILLA;
+                    doc.TITULO = $"{doc.TITULO}".Trim();
+                    doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO} {doc.AUTORES} {doc.FECHA}";
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("ejemplos"))
+                {
+                    doc.ENTRADILLA = doc.ENTRADILLA;
+                    doc.TITULO = $"{doc.FRAGMENTOS[0]?.TITULO}".Trim();
+                    doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("casospracticos"))
+                {
+                    doc.ENTRADILLA = doc.ENTRADILLA;
+                    doc.TITULO = $"{doc.TITULO}".Trim();
+                    //doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO} {doc.AUTORES} {doc.FECHA}";
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("doctrinalibros"))
+                {
+                    //doc.ENTRADILLA = doc.ENTRADILLA;
+                    doc.TITULO = $"{doc.TITULO}".Trim();
+                    //doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO} {doc.AUTORES} {doc.FECHA}";
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("doctrinaarticulos"))
+                {
+                    //doc.ENTRADILLA = doc.ENTRADILLA;
+                    doc.TITULO = $"{doc.TITULO}".Trim();
+                    doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("otra doc"))
+                {
+                    doc.ENTRADILLA = doc.ENTRADILLA;
+                    doc.TITULO = $"{doc.TITULO} {doc.EDO} {doc.NREF}".Trim();
+                    doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("notaspracticas"))
+                {
+                    doc.ENTRADILLA = doc.ENTRADILLA;
+                    doc.TITULO = $"{doc.TITULO}".Trim();
+                    doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("tendencias"))
+                {
+                    doc.ENTRADILLA = doc.ENTRADILLA;
+                    doc.TITULO = $"{doc.TITULO}".Trim();
+                    doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("novedades"))
+                {
+                    doc.ENTRADILLA = doc.ENTRADILLA;
+                    doc.TITULO = $"{doc.TITULO}".Trim();
+                    doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("eventos"))
+                {
+                    doc.ENTRADILLA = doc.ENTRADILLA;
+                    doc.TITULO = $"{doc.FRAGMENTOS[0]?.CONTENIDO} {doc.EDH} {doc.NREF}".Trim();
+                    doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
+                }
+                else if (doc.TIPO_DOCUMENTO.ToLower().StartsWith("empleopublico"))
+                {
+                    doc.ENTRADILLA = doc.ENTRADILLA;
+                    doc.TITULO = $"{doc.TITULO}".Trim();
+                    doc.RESUMEN = $"{doc.FRAGMENTOS[0]?.CONTENIDO}";
+                }
+
+
+
+            }
         }
 
         public async Task<Result<DbDocCount>> GetDocumentsCountAsync(string idNavisionUser, string search)

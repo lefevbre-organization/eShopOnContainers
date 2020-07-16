@@ -647,3 +647,51 @@ export const uploadFileWithUploadSession = async (
   return [];
 };
 
+export const getContacts = () =>
+  new Promise(async (resolve, reject) => {
+    const accessToken = await getAccessTokenSilent();
+    const client = getAuthenticatedClient(accessToken);
+    client
+      .api(`me/contacts?top=250`)
+      .get()
+      .then((response) => {
+        let arr = response.value;
+        let contacts = [];
+        if (arr) {
+          arr.map(function (item) {
+            if (item.emailAddresses.length > 0)
+              contacts.push(item.emailAddresses[0].address);
+          });
+        }
+        resolve(contacts);
+      });
+  });
+
+export const addContact = (contact) =>
+  new Promise(async (resolve, reject) => {
+    const accessToken = await getAccessTokenSilent();
+    const client = getAuthenticatedClient(accessToken);
+    const contactData = {
+      givenName: contact.name,
+      displayName: contact.name,
+      emailAddresses: [
+        {
+          address: contact.email,
+          name: contact.name,
+        },
+      ],
+      businessPhones: [contact.phone],
+      categories: ['Lexon', contact.tags[2]],
+      personalNotes: 'Lexon ' + contact.tags[2],
+    };
+
+    client
+      .api(`me/contacts`)
+      .post(contactData)
+      .then((response) => {
+        resolve(response);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });

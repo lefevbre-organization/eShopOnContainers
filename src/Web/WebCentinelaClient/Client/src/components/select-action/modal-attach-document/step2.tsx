@@ -83,13 +83,19 @@ export class Step2 extends React.Component<Props, State> {
       this.allImplantations = (response.data as CentUser).evaluations;
       this.searchImplantations = this.allImplantations;
 
-      this.setState({
-        currentPage: 1,
-        lastPage: this.searchImplantations.length <= 6,
-        counter: this.searchImplantations.length,
-        implantations: _.slice(this.searchImplantations, 0, 6),
-        showSpinner: false
-      });
+      if(this.state.productFilter !== '') {
+        this.setLoadingStatus(false);
+        this.onProductFilter(this.state.productFilter);
+      } else {
+        this.setState({
+          currentPage: 1,
+          lastPage: this.searchImplantations.length <= 6,
+          counter: this.searchImplantations.length,
+          implantations: _.slice(this.searchImplantations, 0, 6),
+          showSpinner: false
+        });
+
+      }
     }
   }
 

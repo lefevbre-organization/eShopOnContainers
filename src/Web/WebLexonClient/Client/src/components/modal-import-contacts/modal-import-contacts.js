@@ -1,538 +1,200 @@
-import React, { Component, Fragment, createRef } from 'react';
+import React, {Component, createRef, Fragment} from 'react';
 import i18n from 'i18next';
-import { Button, Modal, Container } from 'react-bootstrap';
-import { connect, ConnectedProps } from 'react-redux';
-import 'react-perfect-scrollbar/dist/css/styles.css';
-import { AppState } from '../../../store/store';
-import { bindActionCreators } from 'redux';
-import { ApplicationActions } from '../../../store/application/actions';
+import { Button, Modal } from 'react-bootstrap';
+import { connect } from 'react-redux';
+
 import { Step1 } from './step1';
 import { Step2 } from './step2';
 import { Step3 } from './step3';
 import { Step4 } from './step4';
-import { Step5 } from './step5';
-import {
-  Evaluation,
-  CentInstance,
-  Document
-} from '../../../services/services-centinela';
-const parse = require('emailjs-mime-parser').default;
-const base64js = require('base64-js');
+import ACTIONS from '../../actions/documentsAction';
+import 'react-perfect-scrollbar/dist/css/styles.css';
+import Spinner from '../spinner/spinner';
 
-const mapStateToProps = (state: AppState) => {
-  return {
-    showAttachDocuments: state.application.showAttachModal,
-    selected: state.messages.selected,
-    user: state.application.user
-  };
-};
-
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    ...bindActionCreators(
-      {
-        toggleAttachModal: ApplicationActions.toggleAttachModal
-      },
-      dispatch
-    )
-  };
-};
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-type ReduxProps = ConnectedProps<typeof connector>;
-
-interface Props extends ReduxProps {
-  toggleNotification: any;
-}
-
-interface State {
-  implantation: Evaluation | null;
-  complete: boolean;
-  search: string;
-  step: number;
-  entity: number;
-  messages: any;
-  files: any;
-  downloading: boolean;
-  copyEmail: boolean;
-  copyAttachments: boolean;
-  instance?: CentInstance;
-}
-
-class ModalAttachDocuments extends Component<Props, State> {
-  private lastStep = -1;
-  private step5Ref: any = null;
-  private step3Ref: any;
-
-  constructor(props: Props) {
-    super(props);
-    this.step3Ref = createRef();
+class ModalImportContacts extends Component {
+  constructor() {
+    super();
 
     this.state = {
-      complete: false,
-      implantation: null,
-      downloading: false,
-      search: '',
-      step: 1,
-      entity: 0,
-      messages: [],
-      files: [],
-      copyEmail: true,
-      copyAttachments: true,
-      instance: undefined
+      showSpinner: false,
+      progress: -1,
+      step: 0,
+      contacts: [],
+      errors: [],
+      numContacts: 0
     };
 
-    this.onInstanceSelected = this.onInstanceSelected.bind(this);
-    this.onImplantation = this.onImplantation.bind(this);
-    this.onDocumentSelected = this.onDocumentSelected.bind(this);
-    this.downloadComplete = this.downloadComplete.bind(this);
+    this.progresRef = createRef();
 
-    this.step5Ref = React.createRef();
+    this.setLoading = this.setLoading.bind(this);
+    this.setProgress = this.setProgress.bind(this);
+    this.onContacts = this.onContacts.bind(this);
+    this.showErrors = this.showErrors.bind(this);
+    this.uploadCompleted = this.uploadCompleted.bind(this);
   }
 
   componentDidMount() {
-    this.initMessages();
+    this.setState({step: 1})
   }
 
-  componentDidUpdate(prevProps: Props) {
-    if (prevProps.selected !== this.props.selected) {
-      this.initMessages();
-    }
-  }
-
-  downloadComplete() {
-    this.setState({ downloading: false, complete: true });
-  }
-
-  initMessages() {
-    const { selected } = this.props;
-    const messages = [];
-
-    // Parsing messages
-    for (let i = 0; i < selected.length; i++) {
-      const attchs = this.parseMessage(selected[i]);
-      const nm = Object.assign({}, selected[i], { attachments: attchs });
-      messages.push(nm);
-    }
-
-    this.setState({ messages });
-  }
-
-  parseMessage(message: any) {
-    const attachments = [];
-    if (message.raw) {
-      let mime = null;
-      try {
-        //console.log(message.raw)
-        mime = parse(message.raw);
-      } catch (err) {
-        console.log(err);
-      }
-
-      if (mime) {
-        for (let j = 0; j < mime.childNodes.length; j++) {
-          if (
-            mime.childNodes[j].raw.indexOf('Content-Disposition: attachment;') >
-            -1
-          ) {
-            const rawAttach = base64js.fromByteArray(
-              mime.childNodes[j].content
-            );
-            const name = mime.childNodes[j].contentType.params.name;
-            attachments.push({ name, checked: true });
-          }
-        }
-      }
-    }
-
-    return attachments;
+  showErrors() {
+    this.setState({step: 3});
   }
 
   closeDialog() {
-    const { toggleAttachModal } = this.props;
-    setTimeout(() => {
-      this.setState({
-        search: '',
-        step: 1,
-        entity: 0,
-        messages: [],
-        files: [],
-        complete: false
+    if(this.state.step === 2) {
+      this.setState({step: 1})
+      return;
+    }
+    this.props.toggleImportContacts && this.props.toggleImportContacts();
+  }
+
+  nextStep() {}
+
+  prevStep() {}
+
+  setLoading(loading) {
+    this.setState({ showSpinner: loading });
+  }
+
+  setProgress(progress) {
+    this.setState({ progress });
+  }
+
+  onContacts(contacts, errors) {
+    this.setState({contacts: [...contacts], errors: [...errors], numContacts: contacts.length });
+  }
+
+  uploadCompleted() {
+    if(this.state.errors.length > 0) {
+      this.setState({step: 4})
+    } else {
+      this.setState({ step: 1}, ()=>{
+        this.closeDialog();
+        this.props.toggleNotification(i18n.t('modal-import-contacts.ok'), false);
       });
-    }, 1000);
-    toggleAttachModal && toggleAttachModal();
-  }
-
-  nextStep() {
-    const { step } = this.state;
-    this.lastStep = step;
-    if (step === 1) {
-      this.setState({ step: 2 });
-    } else if (step === 2) {
-      this.setState({ step: 3 });
-    } else if (step === 3) {
-      this.setState({ step: 4 });
-    } else if (step === 4) {
-      this.setState({ step: 5 });
     }
-  }
-
-  prevStep() {
-    const { step } = this.state;
-    if (step === 2) {
-      this.setState({ step: 1, instance: undefined });
-    } else if (step === 3) {
-      if (this.step3Ref.current.back() === true) {
-        this.setState({ step: 2, instance: undefined });
-      } else {
-        this.setState({ instance: undefined });
-      }
-    } else if (step === 4) {
-      this.setState({ step: this.lastStep, files: [], instance: undefined });
-    } else if (step === 5) {
-      this.setState({ step: this.lastStep, files: [], instance: undefined });
-    }
-  }
-
-  saveDocuments() {
-    const { toggleNotification } = this.props;
-    toggleNotification(i18n.t('modal-attach.modal-save-ok'));
-  }
-
-  saveDisabled() {
-    const {
-      step,
-      copyAttachments,
-      copyEmail,
-      implantation,
-      instance
-    } = this.state;
-    if (step === 1 && (copyAttachments === true || copyEmail === true)) {
-      return false;
-    }
-    if (step === 2 && implantation && implantation.evaluationId > 0) {
-      return false;
-    }
-
-    if (step === 3 && instance) {
-      return false;
-    }
-
-    return true;
   }
 
   renderButtons() {
-    const { step, complete, files } = this.state;
-
-    switch (step) {
-      case 1:
-        return null;
-      case 2:
-        return (
-          <Fragment>
-            <Button
-              bsPrefix="btn btn-outline-primary"
-              onClick={() => {
+    const { step } = this.state;
+    return (
+      <Fragment>
+        {step < 3 &&
+        <Button
+          bsPrefix='btn btn-outline-primary'
+          onClick={() => {
+            this.setState({ step: 1 }, ()=>{
+              this.closeDialog();
+            });
+          }}>
+          {i18n.t('classify-emails.cancel')}
+        </Button> }
+        {step === 1 && <Button
+            disabled={this.state.showSpinner === true}
+            bsPrefix='btn btn-primary'
+          onClick={() => {
+            this.setState({ step: 2 });
+          }}>
+          {i18n.t('modal-import-contacts.import')}
+        </Button> }
+        {step === 3 && <Button
+            disabled={this.state.showSpinner === true}
+            bsPrefix='btn btn-primary'
+            onClick={() => {
+              this.setState({ step: 1 });
+            }}>
+          {i18n.t('modal-import-contacts.back')}
+        </Button> }
+        {step === 4 && <Button
+            disabled={this.state.showSpinner === true}
+            bsPrefix='btn btn-primary'
+            onClick={() => {
+              this.setState({ step: 1 }, ()=>{
                 this.closeDialog();
-              }}
-            >
-              {i18n.t('modal-attach.cancel')}
-            </Button>
-            <Button
-              bsPrefix="btn btn-outline-primary"
-              onClick={() => {
-                this.prevStep();
-              }}
-            >
-              {i18n.t('modal-attach.back')}
-            </Button>
-            <Button
-              disabled={this.saveDisabled()}
-              bsPrefix="btn btn-primary"
-              onClick={() => {
-                this.nextStep();
-              }}
-            >
-              {i18n.t('modal-attach.continue')}
-            </Button>
-          </Fragment>
-        );
-      case 3:
-        return (
-          <Fragment>
-            <Button
-              bsPrefix="btn btn-outline-primary"
-              onClick={() => {
-                this.closeDialog();
-              }}
-            >
-              {i18n.t('modal-attach.cancel')}
-            </Button>
-            <Button
-              bsPrefix="btn btn-outline-primary"
-              onClick={() => {
-                this.prevStep();
-              }}
-            >
-              {i18n.t('modal-attach.back')}
-            </Button>
-            <Button
-              disabled={this.saveDisabled()}
-              bsPrefix="btn btn-primary"
-              onClick={() => {
-                this.nextStep();
-              }}
-            >
-              {i18n.t('modal-attach.continue')}
-            </Button>
-          </Fragment>
-        );
-      case 4:
-        return (
-          <Fragment>
-            <Button
-              bsPrefix="btn btn-outline-primary"
-              onClick={() => {
-                this.closeDialog();
-              }}
-            >
-              {i18n.t('modal-attach.cancel')}
-            </Button>
-            <Button
-              bsPrefix="btn btn-outline-primary"
-              onClick={() => {
-                this.prevStep();
-              }}
-            >
-              {i18n.t('modal-attach.back')}
-            </Button>
-            <Button
-              disabled={files.length === 0}
-              bsPrefix="btn btn-primary"
-              onClick={() => {
-                this.nextStep();
-              }}
-            >
-              {i18n.t('modal-attach.continue')}
-            </Button>
-          </Fragment>
-        );
-      case 5:
-        return (
-          <Fragment>
-            {complete === true && (
-              <Button
-                disabled={this.state.downloading === true}
-                bsPrefix="btn btn-primary"
-                onClick={() => {
-                  this.closeDialog();
-                }}
-              >
-                {i18n.t('modal-attach.close')}
-              </Button>
-            )}
-            {complete === false && (
-              <>
-                <Button
-                  bsPrefix="btn btn-outline-primary"
-                  disabled={this.state.downloading === true}
-                  onClick={() => {
-                    this.closeDialog();
-                  }}
-                >
-                  {i18n.t('modal-attach.cancel')}
-                </Button>
-                <Button
-                  disabled={this.state.downloading === true}
-                  bsPrefix="btn btn-outline-primary"
-                  onClick={() => {
-                    this.prevStep();
-                  }}
-                >
-                  {i18n.t('modal-attach.back')}
-                </Button>
-                <Button
-                  disabled={files.length === 0}
-                  bsPrefix="btn btn-primary"
-                  onClick={() => {
-                    this.setState({ downloading: true }, () => {
-                      this.step5Ref.current.StartDownload();
-                    });
-                  }}
-                >
-                  {i18n.t('modal-attach.attach')}
-                </Button>
-              </>
-            )}
-          </Fragment>
-        );
-      default:
-        return null;
-    }
-  }
-
-  onInstanceSelected(inst: CentInstance) {
-    this.setState({ instance: inst });
-  }
-
-  onImplantation(imp: Evaluation) {
-    const { implantation } = this.state;
-    if (implantation?.evaluationId !== imp.evaluationId) {
-      this.setState({ implantation: imp });
-    }
-  }
-
-  onDocumentSelected({ data, checked }: any) {
-    const { files } = this.state;
-
-    if (checked === true) {
-      this.setState({ files: [...files, data] });
-    } else {
-      const nf = files.filter(
-        (f: Document) => f.documentObjectId !== data.documentObjectId
-      );
-
-      this.setState({ files: nf });
-    }
+              });
+            }}>
+          {i18n.t('modal-import-contacts.accept')}
+        </Button> }
+      </Fragment>
+    );
   }
 
   render() {
-    const { user, showAttachDocuments } = this.props;
-    const { step, implantation, search, files, instance } = this.state;
+    const { showSpinner, step, contacts, errors, numContacts } = this.state;
+    const { showImportContacts, user, bbdd } = this.props;
 
     return (
-      <div className="modal-connection-emails">
+      <div className='modal-import-contacts'>
         <Modal
-          show={showAttachDocuments}
+          show={showImportContacts}
           onHide={() => {
             this.closeDialog();
           }}
-          size="lg"
-          aria-labelledby="contained-modal-title-vcenter"
+          size='lg'
+          aria-labelledby='contained-modal-title-vcenter'
           centered
-          dialogClassName="modal"
-        >
-          <Modal.Header className="align-items-center" closeButton>
+          dialogClassName='modal'>
+          <Modal.Header className='align-items-center' closeButton>
             <h5
-              className="modal-title d-flex align-items-center"
-              id="documentarGuardardocumentacionLabel"
-            >
+              className='d-flex align-items-center modal-title'
+              id='documentarGuardardocumentacionLabel'>
               <img
                 className='imgproduct'
-                alt='Centinela'
-                src={`${(window as any).URL_MF_CENTINELA_BASE}/assets/img/icon-centinela.svg`}></img>
-              <span>
-                {i18n.t('modal-attach.title')}
-              </span>
+                border='0'
+                alt='Lex-On'
+                src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.svg`}></img>
+                <span>{i18n.t('modal-import-contacts.title')}</span>
             </h5>
           </Modal.Header>
-          <Modal.Body className="mimodal">
-            <Container>
-              <Fragment>
-                <div
-                  style={{
-                    display: step === 1 ? 'block' : 'none'
-                  }}
-                >
-                  <Step1
-                    onClickSearch={(search: string) => {
-                      this.setState({ step: 4, search, instance: undefined });
-                    }}
-                    onClickExploreImplantations={() => {
-                      this.setState({
-                        entity: 1,
-                        step: 2,
-                        search: '',
-                        instance: undefined
-                      });
-                    }}
-                  />
-                </div>
-                <div
-                  style={{
-                    display: step === 2 ? 'block' : 'none'
-                  }}
-                >
-                  <Step2
-                    user={user}
-                    show={step === 2}
-                    implantation={''}
-                    onImplantation={this.onImplantation}
-                  />
-                </div>
-                <div
-                  style={{
-                    display: this.state.step === 3 ? 'block' : 'none'
-                  }}
-                >
-                  <Step3
-                    ref={this.step3Ref}
-                    user={user}
-                    step={step}
-                    show={step === 3}
-                    implantation={implantation}
-                    onInstanceSelected={this.onInstanceSelected}
-                  />
-                </div>
-                <div
-                  style={{
-                    display: this.state.step === 4 ? 'block' : 'none'
-                  }}
-                >
-                  <Step4
-                    files={files}
-                    user={user}
-                    show={step === 4}
-                    instance={instance}
-                    search={search}
-                    onSearchChange={() => {}}
-                    onChange={this.onDocumentSelected}
-                  />
-                </div>
-                <div
-                  style={{
-                    display: this.state.step === 5 ? 'block' : 'none'
-                  }}
-                >
-                  <Step5
-                    ref={this.step5Ref}
-                    files={files}
-                    user={user}
-                    show={step === 5}
-                    downloadComplete={this.downloadComplete}
-                  />
-                </div>
-              </Fragment>
-            </Container>
+          <Modal.Body className='mimodal'>
+            <div>{showSpinner === true && <Spinner />}</div>
+            <div style={{opacity: showSpinner?0:1}}>
+              <div>
+                { step !== 4 && <h2 className='modal-subtitle'>{i18n.t('modal-import-contacts.info')}</h2> }
+                { step === 4 && <h2 className='modal-subtitle'>{i18n.t('modal-import-contacts.info-result')}</h2> }
+              </div>
+              {step === 1 && <Step1 onLoading={this.setLoading} onContacts={this.onContacts} onShowErrors={this.showErrors} user={user} bbdd={bbdd}/>}
+              {step === 2 && <Step2 onSetProgress={this.setProgress} contacts={contacts} onUploadCompleted={this.uploadCompleted}/>}
+              {step === 3 && <Step3 errors={errors}/>}
+              {step===4 && <Step4 errors={errors} valids={numContacts}></Step4>}
+            </div>
           </Modal.Body>
           <Modal.Footer>{this.renderButtons()}</Modal.Footer>
         </Modal>
 
-        <style jsx>{`
-          .modal-header h5 span {
-            color: white;
-            cursor: default;
+        <style jsx global>{`
+          .modal-open .modal {
+          overflow-y: hidden;
           }
-
-          .modal-header h5 span.lf-icon-compliance {
-            font-size: 28px !important;
-          }
-
-          .e-headercelldiv,
-          .e-grid .e-gridheader .e-sortfilter .e-headercelldiv {
-            text-overflow: unset !important;
-          }
+        
           .e-checkbox-wrapper .e-frame.e-check,
           .e-checkbox-wrapper .e-checkbox:focus + .e-frame.e-check,
           .e-checkbox-wrapper:hover .e-frame.e-check {
             background-color: #001978;
           }
 
+          .modal-subtitle {
+            margin-top: 20px;
+            text-align: center;
+            width: 100%;
+            height: 14px;
+            color: #7f8cbb;
+            font-family: MTTMilano-Medium;
+            font-size: 18px;
+            font-weight: 500;
+            letter-spacing: 0;
+            line-height: 24px;
+          }
+
+          
+
           .modal-footer .btn-primary:hover {
             color: white;
           }
 
           .modal-header h5 span {
+            font-family: MTTMilano-Medium;
             font-size: 22px !important;
             margin-left: 15px;
           }
@@ -552,7 +214,7 @@ class ModalAttachDocuments extends Component<Props, State> {
             height: 13px;
             color: #001978;
             font-family: MTTMilano-Medium;
-            font-size: 16px;
+            font-size: 16px !important;
             font-weight: 500;
             line-height: 16px;
           }
@@ -630,10 +292,6 @@ class ModalAttachDocuments extends Component<Props, State> {
 
           .container p {
             color: #001978;
-          }
-
-          .container {
-            max-width: none !important;
           }
 
           .btn-secundary {
@@ -1037,16 +695,28 @@ class ModalAttachDocuments extends Component<Props, State> {
               max-width: 900px;
             }
           }
-
-          .btn-primary:disabled {
-            background-color: #001978 !important;
-            border-color: #001978 !important;
-            color: white !important;
-          }
         `}</style>
       </div>
     );
   }
 }
 
-export default connector(ModalAttachDocuments);
+ModalImportContacts.propTypes = {};
+const mapStateToProps = (state) => {
+  return {
+    showImportContacts: state.documentsReducer.showImportContacts,
+    companySelected: state.selections.companySelected,
+    selectedMessages: state.email.selectedMessages,
+    bbdd: state.selections.companySelected.bbdd,
+    user: state.selections.user
+  };
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  toggleImportContacts: () => dispatch(ACTIONS.toggleModalImportContacts()),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ModalImportContacts);
