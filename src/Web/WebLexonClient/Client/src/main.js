@@ -280,6 +280,8 @@ class Main extends Component {
           config: result.config,
         });
         this.setState({ user: newUser });
+        this.props.setUser(newUser.idUser);
+
         getCompanies(newUser)
           .then((result) => {
             if (Array.isArray(result.errors)) {
@@ -437,6 +439,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => ({
   setInitialBBDD: (item) => dispatch(SELECTION_ACTIONS.setInitialBBDD(item)),
+  setUser: (item) => dispatch(SELECTION_ACTIONS.setUser(item)),
   addMessage: (item) => dispatch(ACTIONS.addMessage(item)),
   deleteMessage: (id) => dispatch(ACTIONS.deleteMessage(id)),
   addListMessages: (listMessages) =>

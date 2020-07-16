@@ -1,0 +1,2 @@
+export const PAGE_LOGIN = "PAGE_LOGIN";
+export const PAGE_ARCHIVE_MESSAGE = "PAGE_ARCHIVE_MESSAGE";

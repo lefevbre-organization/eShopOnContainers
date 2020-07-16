@@ -6,7 +6,7 @@ module.exports = {
         'mail.read',
         'mail.readwrite',
         'mail.send',
-        'contacts.read'
+        'contacts.readwrite'
     ]
 };
 

@@ -395,6 +395,16 @@ export const uploadFile = async (
   nameFile,
   contentFile
 ) => {
+
+  // Check namefile
+  debugger;
+  if(nameFile.length > 255) {
+    const extension = nameFile.split('.').pop();
+    const name = nameFile.substring(0, nameFile.length - (extension.length + 1));
+    const final = name.substring(0, 250) + "." + extension;
+    nameFile = final;
+  }
+
   const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/entities/files/post`;
   const body = {
     idParent: idFolder,
@@ -508,6 +518,30 @@ export const getRawAddon = async (addonData) => {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
+    });
+    const result = await response.json();
+
+    return { result };
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const getUserContacts = async (bbdd, idUser) => {
+  const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/classifications/contact/all`;
+  const body = {
+    bbdd,
+    idUser,
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
     });
     const result = await response.json();
 

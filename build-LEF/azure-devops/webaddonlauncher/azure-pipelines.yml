@@ -1,0 +1,19 @@
+variables:
+    registryEndpoint: lefebvre-docker
+trigger:
+  branches:
+    include:
+    - master
+    - dev
+  paths:
+    include:
+    - src/BuildingBlocks/*
+    - src/Web/WebAddonLauncher/*
+    - k8s-LEF/helm/webaddonlauncher/*            
+jobs:
+- template: ../buildimages.yaml
+  parameters:
+    services: webaddonlauncher
+    registryEndpoint: $(registryEndpoint)          
+    helmfrom: $(Build.SourcesDirectory)/k8s-LEF/helm
+    helmto: $(Build.ArtifactStagingDirectory)/k8s-LEF/helm      

@@ -8,6 +8,7 @@
     "@syncfusion/ej2-react-inputs": "^17.4.51",
     "@syncfusion/ej2-react-lists": "^17.4.47",
     "@syncfusion/ej2-react-navigations": "^17.4.50",
+    "@syncfusion/ej2-react-progressbar": "^18.2.44",
     "autoprefixer": "7.1.6",
     "babel-core": "^6.26.3",
     "babel-eslint": "7.2.3",

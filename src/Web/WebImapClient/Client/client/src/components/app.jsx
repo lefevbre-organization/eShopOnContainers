@@ -355,7 +355,7 @@ class App extends Component {
                     <img
                       border='0'
                       alt='Lex-On'
-                      src='/assets/images/icon-lexon.png'></img>
+                      src='/assets/images/icon-lx.svg'></img>
                   </IconButton>
                 ) : (
                   <IconButton>
@@ -363,7 +363,7 @@ class App extends Component {
                       disabled
                       border='0'
                       alt='Lex-On'
-                      src='/assets/images/icon-lexon.png'></img>
+                      src='/assets/images/icon-lx.svg'></img>
                   </IconButton>
                 )}
                 <div className={styles.btnselect}></div>
@@ -376,10 +376,13 @@ class App extends Component {
                   isotip-position='bottom-end'
                   isotip-size='small'>
                   <IconButton
-                    onClick={() => this.onSetSidebarOpenCentinela(true)}>
-                    <span className='lf-icon-compliance product-icon'></span>
+                  onClick={() => this.onSetSidebarOpenCentinela(true)}>
+                    <img
+                      disabled
+                      border='0'
+                      alt='Centinela'
+                      src='/assets/images/icon-cn.svg'></img>
                   </IconButton>
-
                   <div className={styles.btnselect}></div>
                 </span>
               ) : null}
@@ -393,7 +396,11 @@ class App extends Component {
                   isotip-size='small'>
                   <IconButton
                     onClick={() => this.onSetSidebarOpenDatabase(true)}>
-                    <span className='lf-icon-qmemento product-icon'></span>
+                    <img
+                       disabled
+                       border='0'
+                       alt='Base de datos'
+                       src='/assets/images/icon-ne.svg'></img>
                   </IconButton>
 
                   <div className={styles.btnselect}></div>

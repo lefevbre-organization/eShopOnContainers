@@ -417,8 +417,10 @@ class ModalAttachDocuments extends Component<Props, State> {
               className="modal-title d-flex align-items-center"
               id="documentarGuardardocumentacionLabel"
             >
-              <span className="lf-icon-compliance"></span>
-
+              <img
+                className='imgproduct'
+                alt='Centinela'
+                src={`${(window as any).URL_MF_CENTINELA_BASE}/assets/img/icon-centinela.svg`}></img>
               <span>
                 {i18n.t('modal-attach.title')}
               </span>
