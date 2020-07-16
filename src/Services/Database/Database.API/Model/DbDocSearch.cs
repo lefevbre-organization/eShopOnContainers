@@ -5,6 +5,7 @@
         public long? NUMERO_DOCUMENTOS { get; set; }
         public long? NUMERO_RESULTADOS { get; set; }
         public string CONSULTA { get; set; }
+        public string LINK_SEARCH { get; set; }
         public DbDocument[] DOCUMENTOS { get; set; }
        // public Faceta[] FACETAS { get; set; }
 
