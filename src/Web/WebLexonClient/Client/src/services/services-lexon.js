@@ -395,6 +395,16 @@ export const uploadFile = async (
   nameFile,
   contentFile
 ) => {
+
+  // Check namefile
+  debugger;
+  if(nameFile.length > 255) {
+    const extension = nameFile.split('.').pop();
+    const name = nameFile.substring(0, nameFile.length - (extension.length + 1));
+    const final = name.substring(0, 250) + "." + extension;
+    nameFile = final;
+  }
+
   const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/entities/files/post`;
   const body = {
     idParent: idFolder,
