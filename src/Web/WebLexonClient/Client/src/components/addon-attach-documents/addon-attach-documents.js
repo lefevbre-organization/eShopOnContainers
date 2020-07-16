@@ -321,7 +321,7 @@ class AddonAttachDocuments extends Component {
               className='imgproduct'
               border='0'
               alt='Lex-On'
-              src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
+              src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.svg`}></img>
             <span className="title-space">{i18n.t('modal-attach-documents.title')}</span>
             {/* <span>{this.state.step}</span> */}
           </h5>

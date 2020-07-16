@@ -143,7 +143,7 @@ class ModalImportContacts extends Component {
                 className='imgproduct'
                 border='0'
                 alt='Lex-On'
-                src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
+                src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.svg`}></img>
                 <span>{i18n.t('modal-import-contacts.title')}</span>
             </h5>
           </Modal.Header>

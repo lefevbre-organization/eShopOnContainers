@@ -490,7 +490,7 @@ class AddonConnectingEmails extends Component {
               class='imgproduct'
               border='0'
               alt='Lex-On'
-              src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
+              src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.svg`}></img>
             <span className='title-space'>
               {i18n.t('modal-conecting-emails.save-copy')}
             </span>
