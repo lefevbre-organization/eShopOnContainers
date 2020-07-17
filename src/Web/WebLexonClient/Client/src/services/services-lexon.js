@@ -397,7 +397,6 @@ export const uploadFile = async (
 ) => {
 
   // Check namefile
-  debugger;
   if(nameFile.length > 255) {
     const extension = nameFile.split('.').pop();
     const name = nameFile.substring(0, nameFile.length - (extension.length + 1));

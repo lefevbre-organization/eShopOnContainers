@@ -262,14 +262,10 @@ class ModalConnectingEmails extends Component {
                   attachments[j].contentType.params.name,
                   rawAttach
                 );
-                console.log('uploadDocument: 1');
-                console.log(data);
                 if (!data || data.response.status > 201) {
                   error = true;
                 }
               } catch (err) {
-                console.log('uploadDocument: 2');
-                console.log(err);
                 error = true;
               }
             }
@@ -277,7 +273,6 @@ class ModalConnectingEmails extends Component {
         }
       }
 
-      debugger;
       if (error) {
         if (notification === 1) {
           toggleNotification(
