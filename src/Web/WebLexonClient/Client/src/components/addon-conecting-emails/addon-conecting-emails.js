@@ -487,7 +487,7 @@ class AddonConnectingEmails extends Component {
             className='title d-flex align-items-center'
             id='documentarGuardardocumentacionLabel'>
             <img
-              class='imgproduct'
+              className='imgproduct'
               border='0'
               alt='Lex-On'
               src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.svg`}></img>
@@ -552,6 +552,10 @@ class AddonConnectingEmails extends Component {
             color: #fff;
             font-size: 22px;
             border-radius: 0;
+          }
+
+          .imgproduct {
+            height: 29px;
           }
 
           .addon-header .title {

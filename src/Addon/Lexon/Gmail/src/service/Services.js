@@ -196,7 +196,8 @@ function getAddonData(e) {
     idUser: user.idUserApp,
     idClienteNav: user.idClienteNavision,
     userName: user.name,
-    email: user.login
+    email: user.login,
+    addonType: 'MessageRead'
   };
   
   var header = {
