@@ -1,4 +1,4 @@
-var urlFrontend = "https://lexbox-test-webaddonlexon.lefebvre.es/";
+var urlFrontend = "https://lexbox-test-webaddonlauncher.lefebvre.es/";
 // var urlFrontend = "https://localhost:3000/";
 var apiEndpoint = "https://lexbox-test-apigwlex.lefebvre.es/api/v1/lex/Lexon/";
 var apiAccount = "https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail/";
