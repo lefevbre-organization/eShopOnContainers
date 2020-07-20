@@ -249,7 +249,7 @@ class MessageList extends Component {
       );
 
       if (checked === true) {
-        console.log('LoadingMessage: 3');
+        console.log('LoadingMessage: 4');
         window.dispatchEvent(new CustomEvent('LoadingMessage'));
       }
 
@@ -332,7 +332,7 @@ class MessageList extends Component {
       );
 
       if (checked === true) {
-        console.log('LoadingMessage: 4');
+        console.log('LoadingMessage: 5');
         window.dispatchEvent(new CustomEvent('LoadingMessage'));
         const rm = readMessageRaw(
           null,
