@@ -84,7 +84,7 @@ const LoginComponents = (children) => {
             </button>
             {verificationAuth}
           </div>
-          <div className='row'>
+                  {/* <div className='row'>
             <p className='mt-3 front-login__info-block'>
               {children.notClient}{' '}
               <a
@@ -96,7 +96,7 @@ const LoginComponents = (children) => {
                 {children.requestInfo}{' '}
               </a>
             </p>
-          </div>
+          </div>*/}
           <div className='row'>
             <div className='login-help'>
               <p className='pt-3 need-help mb-4'>{children.needHelp}</p>
