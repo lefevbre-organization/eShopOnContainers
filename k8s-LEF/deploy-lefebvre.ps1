@@ -14,7 +14,7 @@ Param(
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
     [parameter(Mandatory=$false)][string[]]$servicesToPush=("lexon.api"),
     # [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webaddonlauncher", "weboffice365addonlexon", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api", "ocelotapigw", "webstatuslef"),
-    [parameter(Mandatory=$false)][string]$imageEnv="dev-26.1",
+    [parameter(Mandatory=$false)][string]$imageEnv="dev-26.2",
     [parameter(Mandatory=$false)][string]$imagePlatform="linux",
     # [parameter(Mandatory=$false)][string]$imageTag="linux-dev",
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
