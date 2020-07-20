@@ -24,6 +24,10 @@ window.URL_MF_OUTLOOK = 'http://localhost:3002/user';
 window.URL_MF_IMAP = 'http://localhost:9000/user';
 window.URL_MF_LEXON = 'https://lexbox-test-weblexon.lefebvre.es/static/js/main.js';
 window.URL_MF_LEXON_BASE = 'https://lexbox-test-weblexon.lefebvre.es';
+
+window.URL_MF_LEXON = 'http://localhost:3004/static/js/main.js';
+window.URL_MF_LEXON_BASE = 'http://localhost:3004';
+
 window.URL_MF_CENTINELA = 'https://lexbox-test-webcentinela.lefebvre.es/static/js/main.js';
 window.URL_MF_CENTINELA_BASE = 'https://lexbox-test-webcentinela.lefebvre.es';
 

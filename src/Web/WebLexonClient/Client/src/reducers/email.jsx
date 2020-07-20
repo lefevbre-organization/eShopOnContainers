@@ -4,14 +4,11 @@ import ACTIONS from "../actions/email";
 const email = (state = INITIAL_STATE.email, action) => {
     switch(action.type) {        
         case ACTIONS.Types.ADD_MESSAGE: {
-            const index = state.selectedMessages.findIndex(message => message.id === action.payload.id)
-            if (index === -1) {
-                return {
-                    ...state,
-                    selectedMessages: [...state.selectedMessages, action.payload]                    
-                }
+            const aux = [...state.selectedMessages.filter(m => m.id !== action.payload.id), action.payload];
+            return {
+                ...state,
+                selectedMessages: aux
             }
-            return state;     
         }
 
         case ACTIONS.Types.DELETE_MESSAGE: {     
@@ -25,6 +22,7 @@ const email = (state = INITIAL_STATE.email, action) => {
             console.log("action ->", action);
             for (let i=0; i < action.payload.length; i++) {
                 const index = state.selectedMessages.findIndex(message => message.id === action.payload[i].id)
+
                 if (index > -1) {
                     state.selectedMessages.splice(index, 1);
                 }    
@@ -37,10 +35,8 @@ const email = (state = INITIAL_STATE.email, action) => {
 
         case ACTIONS.Types.ADD_LIST_MESSAGES: {
             for (let i=0; i < action.payload.length; i++) {
-                const index = state.selectedMessages.findIndex(message => message.id === action.payload[i].id)
-                if (index === -1) {
-                    state.selectedMessages.push(action.payload[i]);
-                }    
+                const aux = [...state.selectedMessages.filter(m => m.id !== action.payload[i].id), action.payload[i]];
+                state.selectedMessages = aux;
             }
             return {
                 ...state,
