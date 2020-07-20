@@ -47,10 +47,10 @@ env:
       value: 'True'
 configValues: |
  window.REACT_APP_ENVIRONMENT='PRODUCTION'
- window.GOOGLE_SCRIPT = "https://script.google.com/macros/d/17OVCKEejIyIITkMSVlF3KJelJFI1ouLFeoS2Wj4sO7U4hlS1URiK_Ntk/usercallback"
+ window.GOOGLE_SCRIPT='https://script.google.com/macros/d/17OVCKEejIyIITkMSVlF3KJelJFI1ouLFeoS2Wj4sO7U4hlS1URiK_Ntk/usercallback'
  window.API_GATEWAY='https://lexbox-test-apigwlex.lefebvre.es'
  window.URL_MF_LEXON='https://lexbox-test-weblexon.lefebvre.es/static/js/main.js'
  window.URL_GET_ACCOUNTS='https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail'
- window.URL_MF_LEXON_BASE = 'https://lexbox-test-weblexon.lefebvre.es'
- window.URL_GET_USER="https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login"
+ window.URL_MF_LEXON_BASE='https://lexbox-test-weblexon.lefebvre.es'
+ window.URL_GET_USER='https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils'
  window.RELEASE = 'RC 0.26'

@@ -23,7 +23,7 @@
   },
    "gmail": {
      "openLinkUrlPrefixes": [
-       "https://lexbox-test-webaddonlexon.lefebvre.es/",
+       "https://lexbox-test-webaddonlauncher.lefebvre.es/",
        "https://mail.google.com/"
      ], 
      "contextualTriggers": [{
