@@ -7,6 +7,13 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 import { AppState } from '../../../store/store';
 import { bindActionCreators } from 'redux';
 import { ApplicationActions } from '../../../store/application/actions';
+import {
+  diff,
+  addedDiff,
+  deletedDiff,
+  updatedDiff,
+  detailedDiff,
+} from 'deep-object-diff';
 import { Step1 } from './step1';
 import { Step2 } from './step2';
 import { Step3 } from './step3';
@@ -86,20 +93,16 @@ class ModalArchiveDocuments extends Component<Props, State> {
     this.onChangeSelected = this.onChangeSelected.bind(this);
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+  }
 
-  componentDidUpdate(prevProps: Props) {
-    console.log("Step1 componentDidUpdate: prevProps.showAttachDocuments" + JSON.stringify(prevProps.showAttachDocuments) );
-    console.log("Step1 componentDidUpdate: this.props.showAttachDocuments" + JSON.stringify(this.props.showAttachDocuments) );
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    console.log("componentDidUpdate")
+    console.log(`showAttachDocuments: ${prevProps.showAttachDocuments} => ${this.props.showAttachDocuments}`)
+    console.log(`step: ${prevState.step} => ${this.state.step}`)
+    console.log(`Selected: ${prevProps.selected.length} => ${this.props.selected.length}`)
 
-    // if (
-    //   (prevProps.showAttachDocuments === false &&
-    //     this.props.showAttachDocuments === true) ||
-    //   (prevProps.showAttachDocuments === true &&
-    //     this.props.showAttachDocuments === false)
-    // ) {
-      this.initMessages();
-    // }
+    this.initMessages();
   }
 
   initMessages() {
@@ -115,11 +118,19 @@ class ModalArchiveDocuments extends Component<Props, State> {
       messages.push(nm);
     }
 
+
+
     const m = JSON.stringify(messages);
     const a = JSON.stringify(attachments);
 
     const sm = JSON.stringify(this.state.messages);
     const sa = JSON.stringify(this.state.attachments);
+
+    const difP = detailedDiff(messages, this.state.messages);
+    const difSt = detailedDiff(attachments, this.state.attachments);
+    if(JSON.stringify(difP.updated).indexOf("checked") > -1 || JSON.stringify(difSt.updated).indexOf("checked") > -1) {
+      return;
+    }
 
     if( sm !== m || sa !== a) {
       this.setState({messages, attachments});

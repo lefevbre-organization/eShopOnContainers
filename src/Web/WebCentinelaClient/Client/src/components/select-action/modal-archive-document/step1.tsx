@@ -2,9 +2,6 @@ import React, { Fragment } from 'react';
 import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
 import i18n from 'i18next';
 import { Message } from '../../../store/messages/types';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import { at } from 'lodash';
-import {stringify} from "querystring";
 
 interface Props {
   selected: Message[];
@@ -32,8 +29,6 @@ const MessageWithAttachments = ({
   msg: Message;
   onChange: any;
 }) => {
-  console.log('MessageWithAttachments.render: ' + msg.attachments?.length);
-
   if (msg.attachments && msg.attachments.length > 0) {
      return (
       <div>
@@ -42,10 +37,10 @@ const MessageWithAttachments = ({
           {msg.subject}
         </div>
         <ul className="attachments">
-          {msg.attachments?.map((at) => {
+          {msg.attachments?.map((at, index: number) => {
             const an = getAttachmentName(at);
             return an ? (
-              <li>
+              <li key={'index' + index}>
                 <CheckBoxComponent
                   cssClass="e-small"
                   checked={at.checked}
