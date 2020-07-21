@@ -172,14 +172,14 @@ export class Step1 extends React.Component<Props, State> {
                   <span style={{ color: 'red' }}>*</span>
                 </span>
                 <div className="file-list-wrapper">
-                  <PerfectScrollbar>
+                  <div >
                     {selected.map((sm: Message) => (
                       <MessageWithAttachments
                         msg={sm}
                         onChange={this.props.onChange}
                       />
                     ))}
-                  </PerfectScrollbar>
+                  </div>
                 </div>
               </li>
             )}
