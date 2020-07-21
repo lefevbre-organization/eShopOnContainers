@@ -4,6 +4,7 @@ import i18n from 'i18next';
 import { Message } from '../../../store/messages/types';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { at } from 'lodash';
+import {stringify} from "querystring";
 
 interface Props {
   selected: Message[];
@@ -31,9 +32,10 @@ const MessageWithAttachments = ({
   msg: Message;
   onChange: any;
 }) => {
-  console.log('MessageWithAttachments.render');
+  console.log('MessageWithAttachments.render: ' + msg.attachments?.length);
+
   if (msg.attachments && msg.attachments.length > 0) {
-    return (
+     return (
       <div>
         <div className="subject">
           <i className="lf-icon-mail"></i>
