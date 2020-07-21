@@ -49,8 +49,6 @@ env:
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
-    - name: DefaultEnvironment
-      value: DEV
     - name: MinihubUrl
       value: 'http://led-pre-servicehub.eu.els.local/Herramientas/Get'
     - name: OnlineUrl
@@ -60,7 +58,7 @@ env:
     - name: CentinelaApiUrl
       value: 'http://centinela-api/api/v1/Centinela'
     - name: LexonApiUrl
-      value: 'http://lexon-api/api/v1/Lexon'
+      value: 'http://lexonmysql-api/api/v1/LexonMySql'
     - name: SignaturitApiUrl
       value: 'http://signature-api/api/v1/Signaturit'
     - name: ByPassUrls__0__NameService

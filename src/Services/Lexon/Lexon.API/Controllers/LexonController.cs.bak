@@ -37,25 +37,24 @@ namespace Lexon.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("test")]
-        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public IActionResult Test()
         {
-            var data = $"Lexon.Api v.{ _settings.Version}";
-            return Ok(new Result<string>(data));
+            return Ok(new Result<bool>(true));
         }
 
         [HttpGet]
         [Route("user")]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UsersAsync(string idUserNavision = "E1621396", string env = "DEV")
+        public async Task<IActionResult> UsersAsync(string idUserNavision = "E1621396")
 
         {
             if (string.IsNullOrEmpty(idUserNavision))
                 return BadRequest("idUser need a correct value");
 
-            var result = await _usersService.GetUserAsync(idUserNavision, env);
+            var result = await _usersService.GetUserAsync(idUserNavision);
 
             if (result.errors.Count() > 0 && result.data?.idUser == null)
             {
@@ -87,13 +86,13 @@ namespace Lexon.API.Controllers
         [Route("companies")]
         [ProducesResponseType(typeof(Result<IEnumerable<LexCompany>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexCompany>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CompaniesAsync(string idUser = "449", string env = "DEV")
+        public async Task<IActionResult> CompaniesAsync(string idUser = "449")
 
         {
             if (string.IsNullOrEmpty(idUser))
                 return (IActionResult)BadRequest("idUser need a correct value");
 
-            var result = await _usersService.GetCompaniesFromUserAsync(idUser, env);
+            var result = await _usersService.GetCompaniesFromUserAsync(idUser);
 
             if (result.errors.Count() > 0 && result.data?.Count() == 0)
             {
@@ -242,9 +241,9 @@ namespace Lexon.API.Controllers
         [HttpGet("entities/types")]
         [ProducesResponseType(typeof(MySqlList<JosEntityTypeList, JosEntityType>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(MySqlList<JosEntityTypeList, JosEntityType>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetEntitiesTypesAsync(string env = "DEV")
+        public async Task<IActionResult> GetEntitiesTypesAsync()
         {
-            var result = await _usersService.GetMasterEntitiesAsync(env);
+            var result = await _usersService.GetMasterEntitiesAsync();
             return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
@@ -312,9 +311,6 @@ namespace Lexon.API.Controllers
             if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0)
                 return BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
 
-            if (entitySearch.pageIndex == 0) entitySearch.pageIndex = 1;
-            if (entitySearch.pageSize == 0) entitySearch.pageSize = 10;
-            
             var entities = await _usersService.GetEntitiesAsync(entitySearch);
 
             return ResponseEntities(entities);
@@ -330,9 +326,6 @@ namespace Lexon.API.Controllers
 
             if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd))
                 return BadRequest("values invalid. Must be a valid user, bbdd ands idType to serach folders");
-            
-            if (entitySearch.pageIndex == 0) entitySearch.pageIndex = 1;
-            if (entitySearch.pageSize == 0) entitySearch.pageSize = 10;
 
             var entities = await _usersService.GetEntitiesFoldersAsync(entitySearch);
 

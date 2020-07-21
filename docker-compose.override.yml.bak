@@ -305,12 +305,11 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionString=${ELEF_MONGO_CONN:-mongodb://nosql.data}
       - Database=UserUtilsApiDB
-      - DefaultEnvironment=DEV
       - MinihubUrl=http://led-pre-servicehub/Herramientas/Get
       - OnlineUrl=https://herculesppd.lefebvre.es/webclient46/ws
       - LoginUrl=http://led-pre-servicecomtools
       - CentinelaApiUrl=http://centinela.api/api/v1/Centinela
-      - LexonApiUrl=http://lexon.api/api/v1/Lexon
+      - LexonApiUrl=http://lexon.mysql.api/api/v1/LexonMySql
       - SignaturitApiUrl=http://signature.api/api/v1/Signaturit
       - OnlineLogin=ws
       - OnlinePassword=22lcqsp11lsw

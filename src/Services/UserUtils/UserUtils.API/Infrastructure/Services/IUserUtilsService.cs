@@ -13,8 +13,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
         Task<Result<List<LefebvreApp>>> GetUserUtilsAsync(string idNavisionUser, bool onlyActives);
 
-        //Task<Result<TokenData>> GetTokenAsync(TokenModelBase tokenRequest, bool addTerminatorToToken);
-
         Task<Result<TokenData>> VadidateTokenAsync(TokenData tokenRequest);
 
         Task<Result<ServiceComUser>> GetUserDataWithLoginAsync(string login, string pass);
@@ -23,7 +21,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         Task<Result<TokenData>> GetGenericTokenAsync(TokenRequest tokenRequest, bool addTerminatorToToken = true);
 
         Task<Result<LexUser>> GetLexonGenericAsync(TokenModelView tokenRequest, short idApp ,  bool addTerminatorToToken = true);
-        //Task<Result<TokenData>> GetUserFromLoginAsync(int? idApp, string login, string password, bool addTerminatorToToken);
 
         Task<Result<ServiceComArea[]>> GetAreasByUserAsync(string idNavisionUser);
 

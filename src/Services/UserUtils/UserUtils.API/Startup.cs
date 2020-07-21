@@ -32,6 +32,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API
              .AddIntegrationServices(Configuration)
              .AddEventBus(Configuration)
              .AddSwagger()
+             .AddSwaggerGen(c =>
+             {
+                 c.OperationFilter<FormDataOperationFilter>();
+                 c.OperationFilter<MultiPartFormDataOperationFilter>();
+             })
              .AddHttpClient()
              .AddCustomHealthCheck(Configuration);
 

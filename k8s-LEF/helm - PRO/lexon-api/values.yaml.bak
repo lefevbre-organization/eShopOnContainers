@@ -1,9 +1,9 @@
 replicaCount: 1
 clusterName: eshop-aks
-pathBase: /userutils-api
+pathBase: /lexon-api
 
 image:
-  repository: elefebvreoncontainers/userutils.api
+  repository: elefebvreoncontainers/lexon.api
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -42,40 +42,17 @@ env:
     - name: IdentityUrlExternal
       key: urls__IdentityUrlExternal
     - name: ConnectionString
-      key: userutils__ConnectionString
+      key: lexon__ConnectionString
     - name: Database
-      key: userutils__Database
+      key: lexon__Database
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
-    - name: DefaultEnvironment
-      value: DEV
-    - name: MinihubUrl
-      value: 'http://led-pre-servicehub.eu.els.local/Herramientas/Get'
-    - name: OnlineUrl
-      value: 'https://herculesppd.lefebvre.es/webclient46/ws'
-    - name: LoginUrl
-      value: 'http://led-pre-servicecomtools.eu.els.local'
-    - name: CentinelaApiUrl
-      value: 'http://centinela-api/api/v1/Centinela'
-    - name: LexonApiUrl
-      value: 'http://lexon-api/api/v1/Lexon'
-    - name: SignaturitApiUrl
-      value: 'http://signature-api/api/v1/Signaturit'
-    - name: ByPassUrls__0__NameService
-      value: Lex-On
-    - name: ByPassUrls__0__UrlByPass
-      value: 'https://lexonapigw/api/v1/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}'
+    - name: LexonMySqlUrl
+      value: 'http://lexonmysql-api/api/v1/LexonMySql'
+    - name: LexonFilesUrl
+      value: 'https://www.lex-on.es/index.php'
     - name: OrchestratorType
       value: 'K8S'
-    - name: OnlineLogin
-      value: 'ws'
-    - name: OnlinePasssword
-      value: '22lcqsp11lsw'
-    - name: TokenCaducity
-      value: 150
-    - name: TokenKey
-      value: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9'
-
 

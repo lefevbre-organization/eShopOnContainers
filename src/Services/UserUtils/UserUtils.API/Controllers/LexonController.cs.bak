@@ -35,7 +35,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
         public IActionResult Test()
         {
-            var data = $"UserUtils.Lexon v.{ _settings.Value.Version} - DefaultEnv:{_settings.Value.DefaultEnvironment}";
+            var data = $"UserUtils.Lexon v.{ _settings.Value.Version}";
             return Ok(new Result<string>(data));
         }
 
@@ -247,8 +247,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> TokenPostAsync(
-              [FromForm] string login = "i.molina-ext@lefebvreelderecho.com"
-             , [FromForm] string password = "imolina2"
+              [FromForm] string login
+             , [FromForm] string password
              , [FromForm] bool addTerminatorToToken = true
             )
         {

@@ -34,7 +34,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
         public IActionResult Test()
         {
-            var data = $"UserUtils.Signaturit v.{ _settings.Value.Version} - DefaultEnv:{_settings.Value.DefaultEnvironment}";
+            var data = $"UserUtils.Signaturit v.{ _settings.Value.Version}";
             return Ok(new Result<string>(data));
         }
 

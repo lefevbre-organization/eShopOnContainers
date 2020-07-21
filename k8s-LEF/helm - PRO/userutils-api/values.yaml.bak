@@ -49,18 +49,16 @@ env:
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
-    - name: DefaultEnvironment
-      value: DEV
     - name: MinihubUrl
-      value: 'http://led-pre-servicehub.eu.els.local/Herramientas/Get'
+      value: 'http://led-servicehub_ntt.eu.els.local/Herramientas/Get'
     - name: OnlineUrl
-      value: 'https://herculesppd.lefebvre.es/webclient46/ws'
+      value: 'https://online.elderecho.com/ws'
     - name: LoginUrl
-      value: 'http://led-pre-servicecomtools.eu.els.local'
+      value: 'http://led-servicecomtools_ntt.eu.els.local'
     - name: CentinelaApiUrl
       value: 'http://centinela-api/api/v1/Centinela'
     - name: LexonApiUrl
-      value: 'http://lexon-api/api/v1/Lexon'
+      value: 'http://lexonmysql-api/api/v1/LexonMySql'
     - name: SignaturitApiUrl
       value: 'http://signature-api/api/v1/Signaturit'
     - name: ByPassUrls__0__NameService

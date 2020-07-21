@@ -603,7 +603,7 @@ namespace Lexon.API.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"fallo al  insertar o actualizar compañias para {idUser}: {ex.Message}");
+                TraceInfo(result.infos, $"fallo al  insertar o actualizar compañias para {lexUser.data.idUser}: {ex.Message}");
             }
 
             return result;
