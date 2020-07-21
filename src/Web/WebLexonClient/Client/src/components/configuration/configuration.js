@@ -55,6 +55,8 @@ class Configuration extends Component {
   }
 
   render() {
+    const { provider = '' } = this.props;
+
     return (
       <Fragment>
         <div className='container'>
@@ -86,7 +88,7 @@ class Configuration extends Component {
               <span>{i18n.t('configuration.classify-contacts')}</span>
             </div>
           </li>
-          <li className='option-container'>
+          { !provider.startsWith('IM') && <li className='option-container'>
             <div className='row'>
               <p
                 className='add-more'
@@ -100,7 +102,7 @@ class Configuration extends Component {
                 <strong>{i18n.t('configuration.import-contacts')}</strong>
               </p>
             </div>
-          </li>
+          </li> }
         </ul>
         <div className='version-container'>
           <div disabled className='version'>
@@ -190,6 +192,7 @@ Configuration.propTypes = {
 const mapStateToProps = (state) => {
   return {
     config: state.applicationReducer.config,
+    provider: state.selections.provider
   };
 };
 

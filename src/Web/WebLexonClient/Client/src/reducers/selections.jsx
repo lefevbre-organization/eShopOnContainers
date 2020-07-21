@@ -28,6 +28,12 @@ const selections = (state = INITIAL_STATE.selections, action) => {
         initialBBDD: action.payload
       }
     }
+    case ACTIONS.Types.SET_PROVIDER: {
+      return {
+        ...state,
+        provider: action.payload
+      }
+    }
     case ACTIONS.Types.CLEAR_INITIAL_BBDD: {
       return {
         ...state,
