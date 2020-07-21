@@ -168,8 +168,9 @@ export class Step1 extends React.Component<Props, State> {
                 </span>
                 <div className="file-list-wrapper">
                   <div >
-                    {selected.map((sm: Message) => (
+                    {selected.map((sm: Message, index:number) => (
                       <MessageWithAttachments
+                        key={'index' + index}
                         msg={sm}
                         onChange={this.props.onChange}
                       />

@@ -128,7 +128,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
 
     const difP = detailedDiff(messages, this.state.messages);
     const difSt = detailedDiff(attachments, this.state.attachments);
-    if(JSON.stringify(difP.updated).indexOf("checked") > -1 || JSON.stringify(difSt.updated).indexOf("checked") > -1) {
+    if(JSON.stringify((difP as any).updated).indexOf("checked") > -1 || JSON.stringify((difSt as any).updated).indexOf("checked") > -1) {
       return;
     }
 
