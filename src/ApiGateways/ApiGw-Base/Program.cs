@@ -24,6 +24,7 @@ namespace OcelotApiGw
             IWebHostBuilder builder = WebHost.CreateDefaultBuilder(args);
             builder.ConfigureServices(s => s.AddSingleton(builder))
                 .ConfigureAppConfiguration(ic => ic.AddJsonFile(Path.Combine("configuration", "configuration.json")))
+                .ConfigureAppConfiguration(ic => ic.AddJsonFile("appsettings.json"))
                 .UseStartup<Startup>()
                 .ConfigureLogging((hostingContext, loggingbuilder) =>
                 {
