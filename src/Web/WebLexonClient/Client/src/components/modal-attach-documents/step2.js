@@ -208,7 +208,7 @@ export class AttachDocumentsStep2 extends React.Component {
                       template={this.renderCheck}
                     />
                     <ColumnDirective
-                      field='name'
+                      field='code'
                       headerText='Código'
                       width='100'></ColumnDirective>
                     <ColumnDirective
