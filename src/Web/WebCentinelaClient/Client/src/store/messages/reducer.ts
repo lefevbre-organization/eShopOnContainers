@@ -20,10 +20,14 @@ const reducer = createReducer(InitialMessagesState, (handleAction) => [
 
 function handleAddMessageAction() {
   return (state: MessagesState, action: any) => {
-    const sel = _.uniqBy(_.concat(state.selected, action.payload), 'id');
+
+    console.log("Message Length 1: " + state.selected.length);
+    _.remove(state.selected, (m:any)=>m.id === action.payload.id)
+    const ns = _.concat(state.selected, action.payload);
+
     return {
       ...state,
-      selected: _.uniqBy(_.concat(state.selected, action.payload), 'id')
+      selected: ns
     };
   };
 }

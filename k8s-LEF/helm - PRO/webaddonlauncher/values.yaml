@@ -52,5 +52,5 @@ configValues: |
  window.URL_MF_LEXON='https://lexbox-weblexon.lefebvre.es/static/js/main.js'
  window.URL_GET_ACCOUNTS='https://lexbox-apigwacc.lefebvre.es/api/v2/accounts/usermail'
  window.URL_MF_LEXON_BASE = 'https://lexbox-weblexon.lefebvre.es'
- window.URL_GET_USER="https://lexbox-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login"
- window.RELEASE = 'RC 0.26'
+ window.URL_GET_USER='https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils'
+ window.RELEASE = 'RC 0.26.1'

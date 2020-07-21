@@ -9,7 +9,7 @@ Param(
     [parameter(Mandatory=$false)][string[]]$infras=("nosql-data"),
     # [parameter(Mandatory=$false)][string[]]$infras=("sql-data", "nosql-data", "rabbitmq"),
     [parameter(Mandatory=$false)][bool]$deployCharts=$true,
-    [parameter(Mandatory=$false)][string[]]$charts=("apigwlex", "lexon-api", "lexonmysql-api", "apigwacc", "account-api", "apigwcen", "centinela-api", "userutils-api", "apigwsig", "signature-api", "database-api", "apigwdat", "webcentinela", "webgoogle", "webgraph", "weblexon", "webaddonlauncher", "weboffice365addonlexon", "webportal", "webimap", "webimapserver", "websignature", "webstatus"),
+    [parameter(Mandatory=$false)][string[]]$charts=("apigwlex", "lexon-api", "lexonmysql-api", "apigwacc", "account-api", "apigwcen", "centinela-api", "userutils-api", "apigwsig", "signature-api", "database-api", "apigwdat", "webcentinela", "webgoogle", "webgraph", "weblexon", "webaddonlauncher", "weboffice365addonlexon", "webportal", "webimap", "webimapserver", "websignature", "webstatus", "webdatabase",),
     [parameter(Mandatory=$false)][string]$aksName="",
     [parameter(Mandatory=$false)][string]$aksRg="",
     [parameter(Mandatory=$false)][string]$imageTag="latest",

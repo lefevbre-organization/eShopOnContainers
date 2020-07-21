@@ -32,6 +32,7 @@ app:                                                  # app global settings
       databaseapi: database-api                       # ingress entry for database api     
       addonlauncher: webaddonlauncher                 # ingress entry for addon launcher client
       office365addonlexon: weboffice365addonlexon
+      database: webdatabase
       
   svc:
       identity: identity                              # svc entry for identity api
@@ -60,3 +61,4 @@ app:                                                  # app global settings
       databaseapi: database-api                       # svc entry for database api
       addonlauncher: webaddonlauncher                 # svc entry for addon launcher client
       office365addonlexon: weboffice365addonlexon
+      database: webdatabase
