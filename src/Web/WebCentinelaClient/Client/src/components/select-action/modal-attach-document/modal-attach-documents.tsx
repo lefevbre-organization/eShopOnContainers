@@ -188,7 +188,8 @@ class ModalAttachDocuments extends Component<Props, State> {
         this.setState({ instance: undefined });
       }
     } else if (step === 4) {
-      this.setState({ step: this.lastStep, files: [], instance: undefined });
+      const ls = this.lastStep === -1?1:this.lastStep;
+      this.setState({ step: ls, files: [], instance: undefined });
     } else if (step === 5) {
       this.setState({ step: this.lastStep, files: [], instance: undefined });
     }
