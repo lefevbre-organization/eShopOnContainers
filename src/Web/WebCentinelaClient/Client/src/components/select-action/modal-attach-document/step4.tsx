@@ -313,7 +313,7 @@ export class Step4 extends React.Component<Props, State> {
                     width="150"
                   ></ColumnDirective>
                   <ColumnDirective
-                    field="author"
+                    field="createdBy"
                     headerText="Autor"
                     width="80"
                   ></ColumnDirective>
