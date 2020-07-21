@@ -9,12 +9,14 @@ Param(
     [parameter(Mandatory=$false)][string]$configFile,
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
-    # [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webaddonlauncher", "database.api"),
-    [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webaddonlauncher", "weboffice365addonlexon", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api", "webdatabaseapigw", "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw", "webstatus", "webdatabase"),
+    # [parameter(Mandatory=$false)][string[]]$servicesToBuild=("weblexonapigw"),
+    [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webaddonlauncher", "weboffice365addonlexon", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api", "webdatabaseapigw", "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw", "webstatus"),
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
-    # [parameter(Mandatory=$false)][string[]]$servicesToPush=("webaddonlauncher", "database.api"),
-    [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webaddonlauncher", "weboffice365addonlexon", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api", "ocelotapigw", "webstatuslef", "webdatabase"),
-    [parameter(Mandatory=$false)][string]$imageTag="linux-dev",
+    # [parameter(Mandatory=$false)][string[]]$servicesToPush=("ocelotapigw"),
+    [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webaddonlauncher", "weboffice365addonlexon", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api", "ocelotapigw", "webstatuslef"),
+    [parameter(Mandatory=$false)][string]$imageEnv="dev-26",
+    [parameter(Mandatory=$false)][string]$imagePlatform="linux",
+    # [parameter(Mandatory=$false)][string]$imageTag="linux-dev",
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
     [parameter(Mandatory=$false)][bool]$deployCI=$false
@@ -33,7 +35,7 @@ function ExecKube($cmd) {
 }
 
 # Initialization
-
+$imageTag = $imagePlatform + "-" + $imageEnv
 $debugMode = $PSCmdlet.MyInvocation.BoundParameters["Debug"].IsPresent
 $useDockerHub = [string]::IsNullOrEmpty($registry)
 
@@ -84,7 +86,9 @@ if ($buildImages) {
         docker rmi -f $(docker images -a -q)
     }
     
-    # $env:TAG=$imageTag
+    $env:TAG=$imageEnv
+    $env:PLATFORM=$imagePlatform
+
     if($buildAll){
         Write-Host "Building All Docker images tagged with '$imageTag'" -ForegroundColor DarkBlue
         docker-compose -p .. -f ../docker-compose.yml build      

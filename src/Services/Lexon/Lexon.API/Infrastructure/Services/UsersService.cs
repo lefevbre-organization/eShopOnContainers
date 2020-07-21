@@ -389,7 +389,7 @@ namespace Lexon.Infrastructure.Services
             catch (Exception ex)
             {
                 //TraceMessage(result.errors, ex);
-                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message} - {ex.InnerException?.Message}", "598");
+                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message} - {ex.InnerException?.Message}", null,  "598");
             }
             WriteError($"Salimos de FilePostAsync a las {DateTime.Now}");
 
