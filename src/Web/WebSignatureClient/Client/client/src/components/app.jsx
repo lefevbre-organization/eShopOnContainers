@@ -1001,7 +1001,7 @@ const mapDispatchToProps = dispatch => ({
   //   dispatch(setSelected(messages, selected, shiftKey)),
   setGUID: guid => dispatch(setGUID(guid)),
   setSign: sign => dispatch(setSign(sign)),
-  preloadSignatures: (userId, auth) => preloadSignatures(dispatch, userId, auth),
+  preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth),
   signatureClicked: signature => dispatch(selectSignature(signature)),
   getAttachmentLex: (bbdd, id, user) => getAttachmentLex(bbdd, id, user),
   getAttachmentCen: (userId, documentId) => getAttachmentCen(userId, documentId),

@@ -96,7 +96,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  preloadSignatures: (userId, auth) => preloadSignatures(dispatch, userId, auth),
+  preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth),
   signatureClicked: signature => {dispatch(selectSignature(signature));},
   backendRequest: () => dispatch(backendRequest()),
   backendRequestCompleted: () => dispatch(backendRequestCompleted())
