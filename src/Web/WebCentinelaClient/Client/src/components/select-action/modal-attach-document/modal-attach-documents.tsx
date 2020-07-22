@@ -191,7 +191,7 @@ class ModalAttachDocuments extends Component<Props, State> {
       const ls = this.lastStep === -1?1:this.lastStep;
       this.setState({ step: ls, files: [], instance: undefined });
     } else if (step === 5) {
-      this.setState({ step: this.lastStep, files: [], instance: undefined });
+      this.setState({ step: this.lastStep, instance: undefined });
     }
   }
 
@@ -423,7 +423,7 @@ class ModalAttachDocuments extends Component<Props, State> {
                 alt='Centinela'
                 src={`${(window as any).URL_MF_CENTINELA_BASE}/assets/img/icon-centinela.svg`}></img>
               <span>
-                {i18n.t('modal-attach.title')}
+                {i18n.t('modal-attach.title')} - {this.state.step}
               </span>
             </h5>
           </Modal.Header>
@@ -484,6 +484,7 @@ class ModalAttachDocuments extends Component<Props, State> {
                     files={files}
                     user={user}
                     show={step === 4}
+                    step={step}
                     instance={instance}
                     search={search}
                     onSearchChange={() => {}}
