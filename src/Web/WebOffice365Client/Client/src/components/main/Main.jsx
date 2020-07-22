@@ -202,7 +202,9 @@ export class Main extends Component {
         <LexonComponent sidebarDocked={this.onSetSidebarDocked} />
       ),
     });
-    this.setState({ sidebarDocked: open });
+    this.setState({ sidebarDocked: open }, ()=>{
+      this.forceUpdate();
+    });
   }
 
   onSetSidebarOpenCalendar(open) {
@@ -211,7 +213,9 @@ export class Main extends Component {
         <CalendarComponent sidebarDocked={this.onSetSidebarDocked} />
       ),
     });
-    this.setState({ sidebarDocked: open });
+    this.setState({ sidebarDocked: open }, ()=>{
+      this.forceUpdate();
+    });
   }
 
   onSetSidebarOpenQMemento(open) {
@@ -221,8 +225,9 @@ export class Main extends Component {
         alt='Lefebvre'
         src='/assets/img/lexon-fake-null.png'></img>
     );
-    this.setState({ sidebarComponent: lexon });
-    this.setState({ sidebarDocked: open });
+    this.setState({ sidebarComponent: lexon, sidebarDocked: open }, ()=>{
+      this.forceUpdate();
+    });
   }
 
   onSetSidebarOpenCentinela(open) {
@@ -231,7 +236,9 @@ export class Main extends Component {
         <CentinelaComponent sidebarDocked={this.onSetSidebarDocked} />
       ),
     });
-    this.setState({ sidebarDocked: open });
+    this.setState({ sidebarDocked: open }, ()=>{
+      this.forceUpdate();
+    });
   }
 
   onSetSidebarOpenCompliance(open) {
@@ -241,8 +248,9 @@ export class Main extends Component {
         alt='Lefebvre'
         src='/assets/img/lexon-fake-null.png'></img>
     );
-    this.setState({ sidebarComponent: lexon });
-    this.setState({ sidebarDocked: open });
+    this.setState({ sidebarComponent: lexon, sidebarDocked: open }, ()=>{
+      this.forceUpdate();
+    });
   }
 
   onSetSidebarOpenDatabase(open) {
@@ -251,7 +259,9 @@ export class Main extends Component {
         <DatabaseComponent sidebarDocked={this.onSetSidebarDocked} />
       ),
     });
-    this.setState({ sidebarDocked: open });
+    this.setState({ sidebarDocked: open }, ()=>{
+      this.forceUpdate();
+    });
   }
 
   onSetSidebarDocked(open) {

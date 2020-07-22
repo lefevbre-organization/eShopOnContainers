@@ -252,6 +252,10 @@ class Main extends Component {
       });
     }
 
+    if(provider && provider !== '') {
+      this.props.setProvider(provider);
+    }
+
     if (bbdd && bbdd !== '') {
       this.setState(
         {
@@ -424,6 +428,12 @@ class Main extends Component {
           .container {
             max-width: unset;
           }
+          
+          .imgproduct {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+          }
         `}</style>
       </section>
     );
@@ -438,6 +448,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
+  setProvider: (item) => dispatch(SELECTION_ACTIONS.setProvider(item)),
   setInitialBBDD: (item) => dispatch(SELECTION_ACTIONS.setInitialBBDD(item)),
   setUser: (item) => dispatch(SELECTION_ACTIONS.setUser(item)),
   addMessage: (item) => dispatch(ACTIONS.addMessage(item)),

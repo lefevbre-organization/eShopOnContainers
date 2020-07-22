@@ -32,6 +32,15 @@ export function addressGroups(address) {
 }
 
 export class MessageViewer extends Component {
+  constructor() {
+    super();
+    this.handleGetUserFromConnector = this.handleGetUserFromConnector.bind(this);
+  }
+
+  handleGetUserFromConnector() {
+    this.clearSelectedList();
+  }
+
   render() {
     const folder = this.props.currentFolder;
     const message = this.props.selectedMessage;
@@ -118,7 +127,7 @@ export class MessageViewer extends Component {
       this.props.currentFolder.fullName
     );
 
-    console.log('LoadingMessage: 5');
+    console.log('LoadingMessage: 2');
     window.dispatchEvent(new CustomEvent('LoadingMessage'));
     readMessageRaw(
       null,
@@ -142,7 +151,6 @@ export class MessageViewer extends Component {
           },
         })
       );
-      console.log('LoadedMessage: 2');
       window.dispatchEvent(new CustomEvent('LoadedMessage'));
     });
   }
@@ -199,6 +207,8 @@ export class MessageViewer extends Component {
 
   componentDidMount() {
     this.clearSelectedList();
+    window.addEventListener('GetUserFromLexonConnector', this.handleGetUserFromConnector);
+    window.addEventListener('GetUserFromCentinelaConnector', this.handleGetUserFromConnector);
   }
 
   componentWillUnmount() {
@@ -211,6 +221,7 @@ export class MessageViewer extends Component {
       'GetUserFromLexonConnector',
       this.handleGetUserFromLexonConnector
     );
+    window.removeEventListener('GetUserFromCentinelaConnector', this.handleGetUserFromConnector);
 
     if (lexon.idCaseFile !== null && lexon.idCaseFile !== undefined) {
       window.dispatchEvent(new CustomEvent('RemoveCaseFile'));

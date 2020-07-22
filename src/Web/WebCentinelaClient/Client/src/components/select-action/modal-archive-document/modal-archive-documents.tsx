@@ -7,6 +7,13 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 import { AppState } from '../../../store/store';
 import { bindActionCreators } from 'redux';
 import { ApplicationActions } from '../../../store/application/actions';
+import {
+  diff,
+  addedDiff,
+  deletedDiff,
+  updatedDiff,
+  detailedDiff,
+} from 'deep-object-diff';
 import { Step1 } from './step1';
 import { Step2 } from './step2';
 import { Step3 } from './step3';
@@ -86,17 +93,16 @@ class ModalArchiveDocuments extends Component<Props, State> {
     this.onChangeSelected = this.onChangeSelected.bind(this);
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+  }
 
-  componentDidUpdate(prevProps: Props) {
-    if (
-      (prevProps.showAttachDocuments === false &&
-        this.props.showAttachDocuments === true) ||
-      (prevProps.showAttachDocuments === true &&
-        this.props.showAttachDocuments === false)
-    ) {
-      this.initMessages();
-    }
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    console.log("componentDidUpdate")
+    console.log(`showAttachDocuments: ${prevProps.showAttachDocuments} => ${this.props.showAttachDocuments}`)
+    console.log(`step: ${prevState.step} => ${this.state.step}`)
+    console.log(`Selected: ${prevProps.selected.length} => ${this.props.selected.length}`)
+
+    this.initMessages();
   }
 
   initMessages() {
@@ -112,7 +118,23 @@ class ModalArchiveDocuments extends Component<Props, State> {
       messages.push(nm);
     }
 
-    this.setState({ messages, attachments });
+
+
+    const m = JSON.stringify(messages);
+    const a = JSON.stringify(attachments);
+
+    const sm = JSON.stringify(this.state.messages);
+    const sa = JSON.stringify(this.state.attachments);
+
+    const difP = detailedDiff(messages, this.state.messages);
+    const difSt = detailedDiff(attachments, this.state.attachments);
+    if(JSON.stringify((difP as any).updated).indexOf("checked") > -1 || JSON.stringify((difSt as any).updated).indexOf("checked") > -1) {
+      return;
+    }
+
+    if( sm !== m || sa !== a) {
+      this.setState({messages, attachments});
+    }
   }
 
   isAttachment(node: any): boolean {
@@ -472,6 +494,9 @@ class ModalArchiveDocuments extends Component<Props, State> {
         break;
       }
     }
+    console.log("Step1 Render: " + JSON.stringify(attachments));
+    console.log("Step1 Render: " + JSON.stringify(messages.length));
+
     return (
       <div className="modal-connection-emails">
         <Modal
@@ -494,7 +519,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
                 alt='Centinela'
                 src={`${(window as any).URL_MF_CENTINELA_BASE}/assets/img/icon-centinela.svg`}></img>
 
-              <span>{i18n.t('modal-archive.title')}</span>
+              <span>{i18n.t('modal-archive.title')} </span>
               {/* <span>{step}</span> */}
             </h5>
           </Modal.Header>

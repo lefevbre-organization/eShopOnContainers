@@ -4,6 +4,96 @@ $row-height: 43px;
 $font-size: $font-size-body-2;
 $flag-size: 18px;
 
+// .e-headercell {
+//   .customcss{
+//     background-color: #001978;
+//     color: white;
+//     border-right: 1px solid #FFF;
+//     font-weight: 500;
+//   }
+// }
+
+.e-grid .e-rowcell{
+  background-color: #ecedee;
+  font-family: 'Bell MT';
+  color: 'red';
+  font-size: '20px';
+}
+
+.e-grid .e-headercell{
+  background-color: #2382c3;
+  color: white;
+  font-family: 'Bell MT';
+  font-size: '20px';
+}
+
+.resumen-firma {
+  border: 0;
+  border: 1px solid #001978;
+  margin-bottom: 20px;
+  width: 100%;
+  th {
+    background: #001978;
+    color: #FFF;
+    border-right: 1px solid #FFF;
+    font-weight: 500;
+    &:last-child {
+      border: 0
+    }
+  }
+  .en-progreso {
+    color: #e9a128;
+  }
+  .completada {
+    color: #217e05;
+  }
+  .cancelada {
+    color: #c90223;
+  }
+  .documento {
+    text-decoration: underline;
+  }
+  .tooltip-firmantes {
+    border: 1px solid #001978;
+    width: auto;
+    position: absolute;
+    background: #FFF;
+
+    li {
+      color: #001978;
+      font-weight: 600;
+      border-bottom: 1px solid #cbd2e6;
+      padding: 5px 10px;
+      .email {
+        display: block;
+        color: #777777;
+        font-weight: 400;
+        font-size: 12px;
+      }
+      &:last-child {
+        border-bottom: 0;
+      }
+
+    }
+  }
+  .bola-firmantes {
+    border-radius: 20px;
+    color: #FFF;
+    padding: 3px 15px;
+    cursor: pointer;
+    &.en-progreso {
+      background: #e9a128;
+    }
+    &.completada {
+      background: #217e05;
+    }
+    &.cancelada {
+      background: #c90223;
+    }
+  }
+
+}
+
 .messageList {
   position: relative;
   display: flex;

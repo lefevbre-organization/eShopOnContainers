@@ -1,4 +1,5 @@
 import { backendRequest, backendRequestCompleted, preDownloadSignatures } from '../actions/application';
+import { resolve } from 'path';
 
 
 /* 
@@ -44,7 +45,7 @@ export const getSignaturesById = async (id) => {
 // Preloads all signatures associated with an account
 export function preloadSignatures(dispatch, filters) {
   return new Promise((resolve, reject) => {
-    dispatch(backendRequest());
+    //dispatch(backendRequest());
     var request = require('request');
     var options = {
         'method': 'GET',
@@ -57,7 +58,7 @@ export function preloadSignatures(dispatch, filters) {
         if (error) {
           reject(error);
         }
-        dispatch(preDownloadSignatures(null));
+        //dispatch(preDownloadSignatures(null));
   
         console.log(response.body);
         let signatures = JSON.parse(response.body);
@@ -68,7 +69,7 @@ export function preloadSignatures(dispatch, filters) {
         dispatch(preDownloadSignatures(signatures));
         resolve(signatures);
     });
-    dispatch(backendRequestCompleted());
+    //dispatch(backendRequestCompleted());
   })
 }
 
@@ -528,7 +529,7 @@ export const createTemplate = async (templateInfo) => {
 // Preloads all signatures associated with an account calling internal proxy api
 export function preloadSignatures2(dispatch, filters, auth) {
   return new Promise((resolve, reject) => {
-    dispatch(backendRequest());
+    //dispatch(backendRequest());
     var request = require('request');
     var options = {
         'method': 'GET',
@@ -541,7 +542,7 @@ export function preloadSignatures2(dispatch, filters, auth) {
         if (error) {
           reject(error);
         }
-        dispatch(preDownloadSignatures(null));
+        //dispatch(preDownloadSignatures(null));
   
         console.log(response.body);
         let signatures = JSON.parse(response.body);
@@ -552,7 +553,7 @@ export function preloadSignatures2(dispatch, filters, auth) {
         dispatch(preDownloadSignatures(signatures));
         resolve(signatures);
     });
-    dispatch(backendRequestCompleted());
+    //dispatch(backendRequestCompleted());
   })
 }
 
@@ -571,6 +572,23 @@ export function preloadSignatures2(dispatch, filters, auth) {
     var ccData = [];
     var filesData = [];
     var customFieldsData = [];
+    var remindConfig = '';
+
+    switch (reminders[0]) {
+      case 0:
+        remindConfig = 'NoReminders';
+        break;
+      case 1:
+        remindConfig = 'Daily';
+        break;
+      case 7:
+        remindConfig = 'Weekly';
+        break;
+      default:
+        remindConfig = `Custom:${reminders[0]}`;
+        break;
+    }
+
     //var fileData = '';
     recipients.forEach(recipient => {
       recipientsData.push({name: recipient.split('@')[0], email: recipient})
@@ -595,6 +613,8 @@ export function preloadSignatures2(dispatch, filters, auth) {
     customFieldsData.push({name: "lefebvre_guid", value: guid});
     customFieldsData.push({name: "subject", value: subject});
     customFieldsData.push({name: "body", value: body});
+    customFieldsData.push({name: "reminders", value: remindConfig});
+    customFieldsData.push({name: "expiration", value: expiration});
     // customFieldsData.push({name: "expiration", value: expiration});
     // customFieldsData.push({name: "reminders", value: reminders});
     jsonObject.customFields = customFieldsData;
@@ -703,19 +723,27 @@ export const sendReminder2 = async (signatureId, auth) => {
 
 // Cancels a signature calling internal proxy api
 export const cancelSignature2 = async (signatureId, auth) => {
-  var myHeaders = new Headers();
-  myHeaders.append("Authorization", `${auth}`);
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", `${auth}`);
 
-  var requestOptions = {
-  method: 'PATCH',
-  headers: myHeaders,
-  redirect: 'follow'
-  };
+    var requestOptions = {
+    method: 'PATCH',
+    headers: myHeaders,
+    redirect: 'follow'
+    };
 
-  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/cancelSignature/${signatureId}`, requestOptions)
-  .then(response => response.text())
-  .then(result => console.log(result))
-  .catch(error => console.log('error', error));
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/cancelSignature/${signatureId}`, requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      console.log(result);
+      resolve(result);
+    })
+    .catch(error => {
+      console.log('error', error)
+      reject(error)
+    });
+  });
 }
 
 // Creates a new Branding calling internal proxy api

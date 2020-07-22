@@ -251,8 +251,8 @@ class App extends Component {
     );
 
     if (selectedMessages.length != selected.length) {
-      console.log('LoadingMessage: 2');
-      window.dispatchEvent(new CustomEvent('LoadingMessage'));
+      console.log('LoadingMessage: 3');
+      //window.dispatchEvent(new CustomEvent('LoadingMessage'));
     }
   }
 

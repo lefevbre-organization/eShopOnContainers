@@ -158,6 +158,11 @@ const application = (state = INITIAL_STATE.application, action = {}) => {
       newState.outbox.eventNotified = true;
       return newState;
     }
+
+    case ActionTypes.APPLICATION_TITLE: {
+      return {...state, title: action.payload
+    }
+    }
     default:
       return state;
   }

@@ -29,6 +29,7 @@ interface Props {
   instance?: CentInstance;
   onChange: any;
   onSearchChange: any;
+  step: number;
 }
 interface State {
   entities: any;
@@ -78,6 +79,9 @@ export class Step4 extends React.Component<Props, State> {
     const { currentPage } = this.state;
 
     if (prevProps.show === false && show === true) {
+      if(prevProps.step === 5 && this.props.step === 4) {
+        return;
+      }
       this.setState(
         {
           entities: [],
@@ -313,7 +317,7 @@ export class Step4 extends React.Component<Props, State> {
                     width="150"
                   ></ColumnDirective>
                   <ColumnDirective
-                    field="author"
+                    field="createdBy"
                     headerText="Autor"
                     width="80"
                   ></ColumnDirective>

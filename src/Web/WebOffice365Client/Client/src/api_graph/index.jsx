@@ -2,6 +2,7 @@
 import { base64Data } from './utils';
 import config from '../Config';
 import { UserAgentApplication } from 'msal';
+import {encode, decode}  from 'base64-arraybuffer';
 
 const graph = require('@microsoft/microsoft-graph-client');
 let userAgentApplication = null;
@@ -565,6 +566,16 @@ export const batchModify = async ({
 
 export const uploadFiles = async (emailId, attachments) => {
   for (var i = 0; i < attachments.length; i++) {
+
+    if(typeof attachments[i].content === 'string') {
+      const aux = decode(attachments[i].content.split(',')[1]);
+
+      if(aux.byteLength > 3145728) {
+        attachments[i].content = aux;
+        attachments[i].data.size = attachments[i].content.byteLength;
+      }
+    }
+
     if (attachments[i].data.size > 3145728) {
       await uploadFileWithUploadSession(
         emailId,
@@ -630,7 +641,7 @@ export const uploadFileWithUploadSession = async (
       .version('beta')
       .post(uploadSession);
 
-    console.log(content);
+
     await fetch(session.uploadUrl, {
       method: 'PUT',
       headers: {
@@ -660,7 +671,9 @@ export const getContacts = () =>
         if (arr) {
           arr.map(function (item) {
             if (item.emailAddresses.length > 0)
-              contacts.push(item.emailAddresses[0].address);
+              for(let i = 0; i < item.emailAddresses.length; i++) {
+                contacts.push(item.emailAddresses[i].address);
+              }
           });
         }
         resolve(contacts);
@@ -695,3 +708,4 @@ export const addContact = (contact) =>
         reject(err);
       });
   });
+

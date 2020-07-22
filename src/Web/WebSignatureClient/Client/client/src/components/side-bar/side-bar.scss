@@ -44,7 +44,7 @@
         min-height: 0 !important;
         padding-left: 8px;
         border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-        background-color: #f4f4f4;
+        //background-color: #f4f4f4;
         /*padding-right: 8px;*/
     }
 
@@ -69,6 +69,19 @@
     .scroll-style {
         /*overflow: hidden;*/
     }
+
+    .nueva-firma{
+        color:#001978;
+        padding:10px 15px;
+        text-transform: uppercase;
+        font-size:13px;
+        display: flex;
+        line-height:40px;
+        span{
+          font-size:40px;
+          margin-right:10px;
+        }
+      }
 }
 
 @media screen and (max-width: 600px) {

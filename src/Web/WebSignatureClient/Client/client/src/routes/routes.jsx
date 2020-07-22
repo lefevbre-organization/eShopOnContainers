@@ -4,7 +4,7 @@ import history from "./history";
 import PrivateRoute from "./private-route";
 import App from "../components/app";
 import UserLefebvre from "../components/user-lefebvre/UserLefebvre";
-import Login from "../components/login/login";
+import Login from "../components/login2/Login";
 import Settings from "../components/settings/settings";
 import "../styles/main.scss";
 import { Unauthorized } from "../components/unauthorized/unauthorized";

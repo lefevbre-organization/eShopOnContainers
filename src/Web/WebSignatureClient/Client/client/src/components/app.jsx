@@ -67,6 +67,7 @@ import { PROVIDER } from '../constants';
 
 import { preloadSignatures, preloadSignatures2, getSignatures, getAttachmentLex, getAttachmentCen } from "../services/api-signaturit";
 import { getFileType } from '../services/mimeType';
+import { backendRequest, backendRequestCompleted, preDownloadSignatures } from '../actions/messages';
 
 const MESSAGENOTFOUND_SNACKBAR_DURATION = 4000;
 
@@ -459,8 +460,10 @@ class App extends Component {
   async componentDidMount() {
     document.title = this.props.application.title;
     var { mailContacts, adminContacts } = this.props.lefebvre;
+    var self = this;
     //Starting poll to update the inbox automatically
-    this.startPoll();
+    //this.startPoll();
+    setInterval(this.startPoll.bind(this),20000);
     //adding connector App to right slide panel
     //setTimeout(function () { this.registerConnectorApp(); }, 2200);
     this.registerConnectorApp();
@@ -515,6 +518,10 @@ class App extends Component {
             let attachmentsList = [];
             let i = 0;
 
+            if (lefebvre.idDocuments.length > 0){
+              this.props.backendRequest();
+            }
+
             lefebvre.idDocuments.forEach(document => {
               this.props.getAttachmentCen(lefebvre.userId, document.docId)
               .then((attachment) => {
@@ -522,7 +529,7 @@ class App extends Component {
                   this.props.newMessage();
                 }
                 else {
-                  
+
                   const length = attachment.data.length;
                   const fileName = attachment.infos[0].message.split(":")[1].replace(/"/g,'').trim();
                   const newAttachment = {
@@ -537,11 +544,15 @@ class App extends Component {
                 i += 1;
 
                 if (i > 0 && i === attachmentsList.length){
+                  this.props.backendRequestCompleted();
                   this.props.setIdDocuments(documentsInfo);
                   this.props.newMessage(mailContacts, adminContacts, null, attachmentsList);
                 }
               })
-              .catch(() => this.props.newMessage(mailContacts, adminContacts));        
+              .catch(() => {
+                this.props.backendRequestCompleted();
+                this.props.newMessage(mailContacts, adminContacts);
+              });        
             });
           }
         }  
@@ -727,60 +738,60 @@ class App extends Component {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  async componentDidUpdate() {
-    if (
-      this.props.lefebvre.userId !== '' &&
-      this.props.outbox &&
-      this.props.outbox.sent &&
-      !this.props.outbox.eventNotified
-    ) {
-      this.sentEmail(
-        this.props.outbox.idMessage,
-        this.props.outbox.message.subject
-      );
+  // async componentDidUpdate() {
+  //   if (
+  //     this.props.lefebvre.userId !== '' &&
+  //     this.props.outbox &&
+  //     this.props.outbox.sent &&
+  //     !this.props.outbox.eventNotified
+  //   ) {
+  //     this.sentEmail(
+  //       this.props.outbox.idMessage,
+  //       this.props.outbox.message.subject
+  //     );
 
-      if (this.props.lefebvre.bbdd && this.props.email) {
-        try {
-          const user = await getUser(this.props.lefebvre.userId);
+  //     if (this.props.lefebvre.bbdd && this.props.email) {
+  //       try {
+  //         const user = await getUser(this.props.lefebvre.userId);
 
-          if (user && user.data && user.data.configUser) {
-            console.log(user)
+  //         if (user && user.data && user.data.configUser) {
+  //           console.log(user)
             
-            if (user.data.configUser.getContacts === true) {
-              const emailDate = new Date()
-                .toISOString()
-                .replace(/T/, ' ')
-                .replace(/\..+/, '');
+  //           if (user.data.configUser.getContacts === true) {
+  //             const emailDate = new Date()
+  //               .toISOString()
+  //               .replace(/T/, ' ')
+  //               .replace(/\..+/, '');
 
 
-              const folder = findSentFolder(this.props.folders);
+  //             const folder = findSentFolder(this.props.folders);
 
-              console.log(folder.fullName)
-              await classifyEmail(
-                this.props.outbox.idMessage,
-                this.props.outbox.message.subject,
-                emailDate,
-                this.props.outbox.message.recipients.map(rec => rec.address),
-                folder.fullName,
-                this.props.lefebvre.provider,
-                this.props.email,
-                this.props.lefebvre.bbdd,
-                user.data.lexonUserId
-              );
-            }
-          }
-        } catch (err) {
-          console.log(err)
-          debugger
-          //throw err;
-        }
-      }
+  //             console.log(folder.fullName)
+  //             await classifyEmail(
+  //               this.props.outbox.idMessage,
+  //               this.props.outbox.message.subject,
+  //               emailDate,
+  //               this.props.outbox.message.recipients.map(rec => rec.address),
+  //               folder.fullName,
+  //               this.props.lefebvre.provider,
+  //               this.props.email,
+  //               this.props.lefebvre.bbdd,
+  //               user.data.lexonUserId
+  //             );
+  //           }
+  //         }
+  //       } catch (err) {
+  //         console.log(err)
+  //         debugger
+  //         //throw err;
+  //       }
+  //     }
 
-      this.props.outboxEventNotified();
-    } else {
-      this.startPoll();
-    }
-  }
+  //     this.props.outboxEventNotified();
+  //   } else {
+  //     this.startPoll();
+  //   }
+  // }
 
   componentWillUnmount() {
     clearTimeout(this.refreshPollTimeout);
@@ -791,38 +802,52 @@ class App extends Component {
     );
   }
 
-  sentEmail(id, subject) {
-    const sentFolder = findSentFolder(this.props.folders);
+  // sentEmail(id, subject) {
+  //   const sentFolder = findSentFolder(this.props.folders);
 
-    window.dispatchEvent(
-      new CustomEvent('SentMessage', {
-        detail: {
-          idEmail: id,
-          subject: subject,
-          date: new Date()
-            .toISOString()
-            .replace(/T/, ' ')
-            .replace(/\..+/, ''),
-          folder: sentFolder.fullName,
-          //folder: this.props.application.selectedFolderId,
-          account: this.props.all.login.formValues.user,
-          provider: 'IMAP'
-        }
-      })
-    );
+  //   window.dispatchEvent(
+  //     new CustomEvent('SentMessage', {
+  //       detail: {
+  //         idEmail: id,
+  //         subject: subject,
+  //         date: new Date()
+  //           .toISOString()
+  //           .replace(/T/, ' ')
+  //           .replace(/\..+/, ''),
+  //         folder: sentFolder.fullName,
+  //         //folder: this.props.application.selectedFolderId,
+  //         account: this.props.all.login.formValues.user,
+  //         provider: 'IMAP'
+  //       }
+  //     })
+  //   );
     
-  }
+  // }
 
   startPoll() {
     // Start polling when everything is ready
-    if (
-      this.props.application.selectedFolderId &&
-      Object.keys(this.props.folders.explodedItems).length > 0 &&
-      !this.pollStarted
-    ) {
-      this.pollStarted = true;
-      this.refreshPoll();
-    }
+    // if (
+    //   this.props.application.selectedFolderId &&
+    //   Object.keys(this.props.folders.explodedItems).length > 0 &&
+    //   !this.pollStarted
+    // ) {
+    //   this.pollStarted = true;
+    //   //this.refreshPoll();
+    // }
+    //this.props.backendRequest();
+    setTimeout(() => {
+      const {lefebvre} = this.props;
+      if (this.props.application.selectedSignature === null || this.props.application.selectedSignature === {}){  
+        this.props.preloadSignatures(lefebvre.userId);
+        //this.props.backendRequestCompleted();
+      } else {
+        this.props.preloadSignatures(lefebvre.userId);
+        let signature = this.props.application.signatures.find(s => s.id === this.props.application.selectedSignature.id)
+        this.props.signatureClicked(signature);
+        //this.props.backendRequestCompleted();
+      }
+  
+    }, 1000);
   }
 
   /**
@@ -830,86 +855,86 @@ class App extends Component {
    *
    * @returns {Promise<void>}
    */
-  async refreshPoll() {
-    let keepPolling = true;
-    try {
-      if (this.props.lefebvre.idEmail && !this.props.lefebvre.emailShown) {
-        const folderPromise = this.props.reloadFolders();
-        await Promise.all([folderPromise]);
+  // async refreshPoll() {
+  //   let keepPolling = true;
+  //   try {
+  //     if (this.props.lefebvre.idEmail && !this.props.lefebvre.emailShown) {
+  //       const folderPromise = this.props.reloadFolders();
+  //       await Promise.all([folderPromise]);
 
-        if (Object.entries(this.props.folders.explodedItems).length > 0) {
-          var folderIdentifier = undefined;
-          var targetFolder = undefined;
-          const explodedItems = Object.entries(
-            this.props.folders.explodedItems
-          );
+  //       if (Object.entries(this.props.folders.explodedItems).length > 0) {
+  //         var folderIdentifier = undefined;
+  //         var targetFolder = undefined;
+  //         const explodedItems = Object.entries(
+  //           this.props.folders.explodedItems
+  //         );
 
-          explodedItems.some(folder => {
-            if (
-              folder[1].fullName.toUpperCase() ===
-              this.props.lefebvre.idFolder.toUpperCase()
-            ) {
-              console.log('*************** FOLDER FOUND2');
-              targetFolder = folder[1];
-              folderIdentifier = folder[0];
-              console.log('*************** FOLDER ID2: ' + folderIdentifier);
-            }
-            return (
-              folder[1].fullName.toUpperCase() ===
-              this.props.lefebvre.idFolder.toUpperCase()
-            );
-          });
+  //         explodedItems.some(folder => {
+  //           if (
+  //             folder[1].fullName.toUpperCase() ===
+  //             this.props.lefebvre.idFolder.toUpperCase()
+  //           ) {
+  //             console.log('*************** FOLDER FOUND2');
+  //             targetFolder = folder[1];
+  //             folderIdentifier = folder[0];
+  //             console.log('*************** FOLDER ID2: ' + folderIdentifier);
+  //           }
+  //           return (
+  //             folder[1].fullName.toUpperCase() ===
+  //             this.props.lefebvre.idFolder.toUpperCase()
+  //           );
+  //         });
 
-          if (targetFolder) {
-            this.props.selectFolder(targetFolder);
-            this.sleep(2000).then(() => {
-              const messages = Array.from(
-                this.props.messages.cache[
-                  this.props.application.selectedFolderId
-                ].values()
-              );
-              const message = messages.find(
-                e => e.messageId === this.props.lefebvre.idEmail
-              );
-              console.log({ messages });
+  //         if (targetFolder) {
+  //           this.props.selectFolder(targetFolder);
+  //           this.sleep(2000).then(() => {
+  //             const messages = Array.from(
+  //               this.props.messages.cache[
+  //                 this.props.application.selectedFolderId
+  //               ].values()
+  //             );
+  //             const message = messages.find(
+  //               e => e.messageId === this.props.lefebvre.idEmail
+  //             );
+  //             console.log({ messages });
 
-              if (message) {
-                console.log(
-                  '**************************** MESSAGE FOUND2:' + message.uid
-                );
-                this.props.messageClicked(message);
-                this.onSetSidebarOpenLexon(true);
-              } else {
-                console.log('**************************** MESSAGE NOT FOUND2:');
-                this.renderNotFoundModal();
-              }
-              // this.props.setEmailShown(true);
-            });
-          }
-        }
-      } else {
-        const folderPromise = this.props.reloadFolders();
-        const selectedFolder =
-          this.props.folders.explodedItems[
-            this.props.application.selectedFolderId
-          ] || {};
-        const messagePromise = this.props.reloadMessageCache(selectedFolder);
-        await Promise.all([folderPromise, messagePromise]);
-      }
-    } catch (e) {
-      console.log(`Error in refresh poll: ${e}`);
-      if (e instanceof AuthenticationException) {
-        keepPolling = false;
-        this.props.logout();
-      }
-    }
-    if (keepPolling) {
-      this.refreshPollTimeout = setTimeout(
-        this.refreshPoll.bind(this),
-        this.props.application.pollInterval
-      );
-    }
-  }
+  //             if (message) {
+  //               console.log(
+  //                 '**************************** MESSAGE FOUND2:' + message.uid
+  //               );
+  //               this.props.messageClicked(message);
+  //               this.onSetSidebarOpenLexon(true);
+  //             } else {
+  //               console.log('**************************** MESSAGE NOT FOUND2:');
+  //               this.renderNotFoundModal();
+  //             }
+  //             // this.props.setEmailShown(true);
+  //           });
+  //         }
+  //       }
+  //     } else {
+  //       const folderPromise = this.props.reloadFolders();
+  //       const selectedFolder =
+  //         this.props.folders.explodedItems[
+  //           this.props.application.selectedFolderId
+  //         ] || {};
+  //       const messagePromise = this.props.reloadMessageCache(selectedFolder);
+  //       await Promise.all([folderPromise, messagePromise]);
+  //     }
+  //   } catch (e) {
+  //     console.log(`Error in refresh poll: ${e}`);
+  //     if (e instanceof AuthenticationException) {
+  //       keepPolling = false;
+  //       this.props.logout();
+  //     }
+  //   }
+  //   if (keepPolling) {
+  //     this.refreshPollTimeout = setTimeout(
+  //       this.refreshPoll.bind(this),
+  //       this.props.application.pollInterval
+  //     );
+  //   }
+  // }
 
   toggleSideBar() {
     const toggleCollapsed = !this.state.sideBar.collapsed;
@@ -980,7 +1005,10 @@ const mapDispatchToProps = dispatch => ({
   signatureClicked: signature => dispatch(selectSignature(signature)),
   getAttachmentLex: (bbdd, id, user) => getAttachmentLex(bbdd, id, user),
   getAttachmentCen: (userId, documentId) => getAttachmentCen(userId, documentId),
-  setIdDocuments: ids => dispatch(setIdDocuments(ids))
+  setIdDocuments: ids => dispatch(setIdDocuments(ids)),
+  backendRequest: () => dispatch(backendRequest()),
+  backendRequestCompleted: () => dispatch(backendRequestCompleted())
+
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
@@ -1008,8 +1036,11 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
     signatureClicked: signature => dispatchProps.signatureClicked(signature),
     getAttachmentLex: (bbdd, id, user) => dispatchProps.getAttachmentLex(bbdd, id, user),
     getAttachmentCen: (userId, documentId) => dispatchProps.getAttachmentCen(userId, documentId),
-    setIdDocuments: ids => dispatchProps.setIdDocuments(ids)
+    setIdDocuments: ids => dispatchProps.setIdDocuments(ids),
+    backendRequest: () => dispatchProps.backendRequest(),
+    backendRequestCompleted: () => dispatchProps.backendRequestCompleted()
   });
+
 
 export default connect(
   mapStateToProps,

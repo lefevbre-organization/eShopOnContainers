@@ -2,6 +2,7 @@
 
 $global-spinner-color: #333333;
 
+  
 body {    
     width: 100%;
     /*min-width: 1008px;*/
@@ -142,3 +143,18 @@ body {
         }
     }*/
 }
+
+
+.e-rowcell{
+    background-color: #ecedee;
+    font-family: 'Bell MT';
+    color: 'red';
+    font-size: '20px';
+  }
+  
+  .e-headercell{
+    background-color: #001978 !important;
+    color: white;
+    font-family: 'Bell MT';
+    font-size: '20px';
+  }
