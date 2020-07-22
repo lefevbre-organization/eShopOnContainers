@@ -324,7 +324,7 @@ export class Main extends Component {
             colorExist = true
         }
         return (
-            <div Style="width: 95%;">               
+            <div Style="width: 98%;">               
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
                     <span className='eventicon'>
@@ -689,6 +689,12 @@ export class Main extends Component {
         // default values for EventType coming from event args
         if (args.data.EventType != undefined) {
             this.setState({ eventType: args.data.EventType.name })
+            this.drowDownListEventType.value = args.data.EventType.name
+        }
+        else
+        {
+            this.setState({ eventType: undefined })
+            //this.drowDownListEventType.value = undefined;
         }
         
 
@@ -879,6 +885,23 @@ export class Main extends Component {
                          });                           
                     }  
 
+                    //update eventType
+                    //Convert dropdown eventType in eventtype object to paint into schedule event
+                    if (desc.EventType != undefined && desc.EventType != null) {
+                        let item;
+                        item = this.eventTypeDataSource.find(x => x.text == desc.EventType)
+                        // create EventType with structure 
+                        let eventType = [];
+                        if (item != undefined) {
+                            eventType.name = item.text;
+                            eventType.id = item.id;
+                            eventType.color = item.backgroundColor;
+                            desc.EventType = eventType;
+                        }
+                    }                  
+
+
+
                 }
 
                 //Update the schedule datasource
@@ -942,7 +965,22 @@ export class Main extends Component {
                                 //args.data[0].ImageName = "lefebvre";
                                 this.setState({ tagAttendess: [] })
 
-                                args.data[0].Reminders = result.reminders.overrides;                                
+                                args.data[0].Reminders = result.reminders.overrides;   
+
+                                //Convert dropdown eventType in eventtype object to paint into schedule event
+                                if (args.data[0].EventType != undefined && args.data[0].EventType != null) {
+                                    let item;                                    
+                                    item = this.eventTypeDataSource.find(x => x.text == args.data[0].EventType)
+                                    // create EventType with structure 
+                                    let eventType = [];
+                                    if (item != undefined) {                                                                           
+                                        eventType.name = item.text;
+                                        eventType.id = item.id;
+                                        eventType.color = item.backgroundColor;
+                                        args.data[0].EventType = eventType; 
+                                    }
+                                }
+
 
                                // this.scheduleObj.refreshEvents();
                                 this.toastObj.show(this.toasts[1]);
