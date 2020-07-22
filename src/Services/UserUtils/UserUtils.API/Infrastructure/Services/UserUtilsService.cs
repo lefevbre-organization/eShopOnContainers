@@ -65,7 +65,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 BaseAddress = new Uri(_settings.Value.OnlineUrl)
             };
 
-
             var authData = Convert.ToBase64String(
                         System.Text.Encoding.ASCII.GetBytes($"{_settings.Value.OnlineLogin}:{_settings.Value.OnlinePassword}"));
 
@@ -505,14 +504,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             AddClaimToPayload(payload, tokenRequest.idUserApp, "idUser");
             AddClaimToPayload(payload, tokenRequest.env, nameof(tokenRequest.env));
 
-                if (tokenRequest is TokenRequestCentinelaNewFirm tokenRequestCentinela)
-                {
-                    AddClaimToPayload(payload, tokenRequestCentinela.guid, nameof(tokenRequestCentinela.guid));
-                    AddClaimToPayload(payload, tokenRequestCentinela.documentsId, nameof(tokenRequestCentinela.documentsId));
-                    AddClaimToPayload(payload, tokenRequestCentinela.recipientsId, nameof(tokenRequestCentinela.recipientsId));
-                    AddClaimToPayload(payload, tokenRequestCentinela.mailsAdmins, nameof(tokenRequestCentinela.mailsAdmins));
-                    AddClaimToPayload(payload, tokenRequestCentinela.logoUrl, nameof(tokenRequestCentinela.logoUrl));
-                }
+            if (tokenRequest is TokenRequestCentinelaNewFirm tokenRequestCentinela)
+            {
+                AddClaimToPayload(payload, tokenRequestCentinela.guid, nameof(tokenRequestCentinela.guid));
+                AddClaimToPayload(payload, tokenRequestCentinela.documentsId, nameof(tokenRequestCentinela.documentsId));
+                AddClaimToPayload(payload, tokenRequestCentinela.recipientsId, nameof(tokenRequestCentinela.recipientsId));
+                AddClaimToPayload(payload, tokenRequestCentinela.mailsAdmins, nameof(tokenRequestCentinela.mailsAdmins));
+                AddClaimToPayload(payload, tokenRequestCentinela.logoUrl, nameof(tokenRequestCentinela.logoUrl));
+            }
 
             if (tokenRequest is TokenRequestNewMail tokenRequestNewMail)
             {
@@ -669,7 +668,6 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 if (string.IsNullOrEmpty(lexUserResult?.data?.idUser))
                     TraceOutputMessage(result.errors, $"Error get user from lexon", "Error Get Lexon Token");
                 tokenRequest.idUserApp = lexUserResult?.data?.idUser;
-                // tokenRequest.IdUser = "449";
             }
             if (tokenRequest is TokenRequestNewMail || tokenRequest is TokenRequestOpenMail)
                 tokenRequest = await GetContactDataFromLexon((TokenRequestNewMail)tokenRequest);

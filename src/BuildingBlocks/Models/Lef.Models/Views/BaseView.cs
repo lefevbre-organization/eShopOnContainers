@@ -4,5 +4,7 @@
     { 
         public string bbdd { get; set; }
         public string idUser { get; set; }
+
+        public string env { get; set; }
     }
 }

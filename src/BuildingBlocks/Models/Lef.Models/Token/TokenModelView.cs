@@ -4,6 +4,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
 {
     public class TokenModelView
     {
+        public string env { get; set; }
         /// <summary>
         ///  Identificador de navision del cliente que se ha creado
         /// </summary>
