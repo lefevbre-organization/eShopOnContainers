@@ -155,12 +155,16 @@ export class Main extends Component {
         // to change when api would be ready
         this.eventTypeDataSource =
         [
-            { text: 'Profesional event', id: '1', backgroundColor:'#001978' },
-            { text: 'Personal event', id: '2', backgroundColor: '#FF5733' },
-            { text: 'Custom event', id: '3', backgroundColor: '#FF33E3' },
-            { text: 'Lawyer event', id: '4', backgroundColor: '#33FF76' },
-            { text: 'Same event', id: '5', backgroundColor: '#F9FF33' },
-            { text: 'Other event', id: '6', backgroundColor: '#C69AF3' },
+            { text: 'Profesional', id: '1', backgroundColor:'#001978' },
+            { text: 'Ceremonia', id: '2', backgroundColor: '#FF5733' },
+            { text: 'Conferencia', id: '3', backgroundColor: '#FF33E3' },
+            { text: 'Cursos', id: '4', backgroundColor: '#33FF76' },
+            { text: 'Reunion', id: '5', backgroundColor: '#F9FF33' },
+            { text: 'Presentación', id: '6', backgroundColor: '#F3D59A' },
+            { text: 'Seminarios', id: '7', backgroundColor: '#9AF3EA' },
+            { text: 'Aprendizaje', id: '7', backgroundColor: '#0F6259' },            
+            { text: 'Talleres', id: '8', backgroundColor: '#F8CBE9' },
+            { text: 'Otros', id: '9', backgroundColor: '#F5F3F4' },           
         ]; 
 
     }
@@ -320,7 +324,7 @@ export class Main extends Component {
             colorExist = true
         }
         return (
-            <div Style="width: 200px;">               
+            <div Style="width: 95%;">               
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
                     <span className='eventicon'>
@@ -555,7 +559,13 @@ export class Main extends Component {
 
         //event Type    
         if (values.EventType != undefined && values.EventType != null) {
-            let item = this.eventTypeDataSource.find(x => x.text == values.EventType)
+            let item;
+            if (values.EventType.name != undefined) {
+                item = this.eventTypeDataSource.find(x => x.text == values.EventType.name)
+            }
+            else {
+                item = this.eventTypeDataSource.find(x => x.text == values.EventType)
+            }
             event.extendedProperties = {
                 'private': {
                     'eventTypeName': item.text,
