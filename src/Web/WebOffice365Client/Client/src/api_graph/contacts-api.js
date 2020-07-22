@@ -3,6 +3,9 @@
  */
 export const getContacts = () =>
     new Promise((resolve, reject) => {
+        if(!window.gapi.client) {
+            resolve([]);
+        }
         window.gapi.client.people.people.connections
             .list({
                 resourceName: 'people/me',

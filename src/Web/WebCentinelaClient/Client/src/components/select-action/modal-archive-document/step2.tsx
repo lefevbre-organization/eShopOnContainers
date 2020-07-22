@@ -170,6 +170,7 @@ export class Step2 extends React.Component<Props, State> {
           showSpinner: true
         },
         () => {
+          this.onRowSelected({data: {evaluationId: -1 } });
           var re =
             this.state.search !== ''
               ? new RegExp(this.state.search, 'i')

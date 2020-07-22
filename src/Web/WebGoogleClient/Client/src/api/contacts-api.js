@@ -48,7 +48,7 @@ export const addContact = (contact) => {
                 ],
                 "biographies": [
                     {
-                        "value": contact.tags[2],
+                        "value": "Lexon " + contact.tags[2],
                         "contentType": "TEXT_PLAIN"
                     }
                 ]

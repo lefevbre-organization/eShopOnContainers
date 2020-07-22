@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
-import {translate} from 'react-i18next';
+import React, { Component } from 'react';
+import { translate } from 'react-i18next';
 import PropTypes from 'prop-types';
 import Autosuggest from 'react-autosuggest';
-import {validateEmail} from '../../services/validation';
+import { validateEmail } from '../../services/validation';
 import mainCss from '../../styles/main.scss';
 
 export class HeaderAddress extends Component {
@@ -28,11 +28,11 @@ export class HeaderAddress extends Component {
       className, chipClassName, autoSuggestClassName, autoSuggestMenuClassName,
       label, addresses, onAddressRemove
     } = this.props;
-    const {suggestions, value} = this.state;
+    const { suggestions, value } = this.state;
     return (
       <div className={`${className} ${mainCss['mdc-menu-surface--anchor']}`} onClick={() => this.fieldClick()}
         onDragOver={e => e.preventDefault()} onDrop={e => this.onDrop(e, id)}>
-        <label>{label}:</label>
+        <label>{label}</label>
         {addresses.map((address, index) => (
           <div key={index} className={`${chipClassName} ${mainCss['mdc-chip']}`}
             draggable={true}
@@ -85,20 +85,20 @@ export class HeaderAddress extends Component {
     target.setCustomValidity('');
   }
 
-  onSuggestionChange(event, {newValue}) {
-    this.setState({value: newValue});
+  onSuggestionChange(event, { newValue }) {
+    this.setState({ value: newValue });
   }
 
-  onSuggestionsFetchRequested({value}) {
-    this.setState({suggestions: this.props.getAddresses(value)});
+  onSuggestionsFetchRequested({ value }) {
+    this.setState({ suggestions: this.props.getAddresses(value) });
   }
 
   onSuggestionsClearRequested() {
-    this.setState({suggestions: []});
+    this.setState({ suggestions: [] });
   }
 
-  onSuggestionSelected(event, {suggestionValue}) {
-    this.setState({value: ''});
+  onSuggestionSelected(event, { suggestionValue }) {
+    this.setState({ value: '' });
     this.props.onAddressAdd(this.props.id, suggestionValue);
     setTimeout(() => HeaderAddress.clearValidation(this.inputRef.current.input));
   }
@@ -144,7 +144,7 @@ export class HeaderAddress extends Component {
         const id = target.id;
         const value = target.value.replace(/;/g, '');
         this.props.onAddressAdd(id, value);
-        this.setState({value: ''});
+        this.setState({ value: '' });
         target.focus();
         event.preventDefault();
       }
@@ -156,14 +156,14 @@ export class HeaderAddress extends Component {
     if (target.value.length > 0) {
       if (this.validateEmail(event)) {
         this.props.onAddressAdd(target.id, target.value);
-        this.setState({value: ''});
+        this.setState({ value: '' });
       }
     }
   }
 
   static onAddressDragStart(event, id, address) {
     event.stopPropagation();
-    const payload = {id, address};
+    const payload = { id, address };
     event.dataTransfer.setData('application/json', JSON.stringify(payload));
   }
 
@@ -203,9 +203,9 @@ HeaderAddress.defaultProps = {
   autoSuggestMenuClassName: '',
   addresses: [],
   label: '',
-  onAddressAdd: () => {},
-  onAddressRemove: () => {},
-  onAddressMove: () => {}
+  onAddressAdd: () => { },
+  onAddressRemove: () => { },
+  onAddressMove: () => { }
 };
 
 export default (translate()(HeaderAddress));

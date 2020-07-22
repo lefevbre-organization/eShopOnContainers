@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import MenuItem from './menu-item';
-import {selectFolder} from '../../actions/application';
+import {selectFolder, setTitle} from '../../actions/application';
 import { setSignaturesFilterKey, selectSignature } from '../../actions/application';
 
 import {clearSelected} from '../../actions/messages';
@@ -27,19 +27,19 @@ export class MenuListClass extends Component {
     return (
         // <div key={'firmas'} className={`${styles.itemContainer}`}>
         <div>
-          <div className={`${styles['title-nav-firmas']}`}><span class="lf-icon-signature"></span>firmas solicitadas</div>
+          <div className={`${styles['title-nav-firmas']}`}><span className="lf-icon-signature"></span>firmas solicitadas</div>
           <ul className={`${styles['nav-firmas']}`}>
                 <li className={`${styles.todas}`}>
-                    <a href="#" id={option3} onClick={event => this.onClick(event, option3)}><span class="lf-icon-folder"></span>Mostrar todas</a>
+                    <a href="#" id={option3} onClick={event => this.onClick(event, option3)}><span className="lf-icon-folder"></span>Mostrar todas</a>
                 </li>
                 <li className={`${styles['en-progreso']}`}>
-                    <a href="#" id={option1} onClick={event => this.onClick(event, option1)}><span class="lf-icon-folder"></span>En progreso</a>
+                    <a href="#" id={option1} onClick={event => this.onClick(event, option1)}><span className="lf-icon-folder"></span>En progreso</a>
                 </li>
                 <li className={`${styles.completadas}`}>
-                    <a href="#" id={option2} onClick={event => this.onClick(event, option2)}><span class="lf-icon-folder"></span>Completadas</a>
+                    <a href="#" id={option2} onClick={event => this.onClick(event, option2)}><span className="lf-icon-folder"></span>Completadas</a>
                 </li>
                 <li className={`${styles.canceladas}`}>
-                    <a href="#" id={option4} onClick={event => this.onClick(event, option4)}><span class="lf-icon-folder"></span>Canceladas</a>
+                    <a href="#" id={option4} onClick={event => this.onClick(event, option4)}><span className="lf-icon-folder"></span>Canceladas</a>
                 </li>
             </ul>
           {/* <MenuItem
@@ -59,8 +59,9 @@ export class MenuListClass extends Component {
 
   onClick(event, key) {
     event.stopPropagation();
-    this.props.setSignaturesFilterKey(key);
     this.props.signatureClicked(null);
+    this.props.setSignaturesFilterKey(key);
+    this.props.setTitle(key);
   }
 }
 
@@ -80,14 +81,16 @@ const mapDispatchToProps = dispatch => ({
     resetFolderMessagesCache(dispatch, user, folder);
   },
   setSignaturesFilterKey: (key) => dispatch(setSignaturesFilterKey(key)),
-  signatureClicked: signature => dispatch(selectSignature(signature))
+  signatureClicked: signature => dispatch(selectSignature(signature)),
+  setTitle: title => dispatch(setTitle(title))
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => (Object.assign({}, stateProps, dispatchProps, ownProps, {
   selectFolder: folder =>
     dispatchProps.selectFolder(folder, stateProps.application.user),
   setSignaturesFilterKey: key => dispatchProps.setSignaturesFilterKey(key),
-  signatureClicked: signature => dispatchProps.signatureClicked(signature)
+  signatureClicked: signature => dispatchProps.signatureClicked(signature),
+  setTitle: title => dispatchProps.setTitle(title)
 }));
 
 const MenuList = connect(mapStateToProps, mapDispatchToProps, mergeProps)(MenuListClass);

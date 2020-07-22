@@ -85,7 +85,7 @@ export const addClassification = async (
         mailAccount: user.account,
         uid: mail.id,
         folder: mail.folder,
-        subject: mail.subject,
+        subject: mail.subject.length > 250 ? mail.subject.substr(0, 250) : mail.subject,
         date: m,
       };
     }),

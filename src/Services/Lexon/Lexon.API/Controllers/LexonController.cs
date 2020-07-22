@@ -266,7 +266,8 @@ namespace Lexon.API.Controllers
         }
 
         [HttpPost("entities/files/post")]
-        [RequestSizeLimit(104857600)]
+        [RequestSizeLimit(52000000)]
+        //[DisableRequestSizeLimit]
         [ProducesResponseType(typeof(Result<MailFileView>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> FilePost(

@@ -453,7 +453,9 @@ class AddonAttachDocuments extends Component {
           }
 
           .imgproduct {
-            height: 29px;
+              width: 24px;
+              height: 24px;
+              cursor: pointer;
           }
           
           .addon-header .title {

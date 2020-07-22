@@ -162,3 +162,418 @@
     }
   }
 }
+
+.cont-generico{
+  border-radius:3px;
+  background-color:#e6e9f2;
+  border: 1px solid #cfd3e1;
+  -webkit-box-shadow: 0px 0px 7px 0px rgba(221,224,237,1);
+  -moz-box-shadow: 0px 0px 7px 0px rgba(221,224,237,1);
+  box-shadow: 0px 0px 7px 0px rgba(221,224,237,1);
+  padding:10px;
+  margin-bottom:20px;
+  .title-generico{
+    color:#001978;
+    text-transform:uppercase;
+    font-size:16px;
+    font-weight:700;
+  }
+  > span, .p10 > span.lf-icon-add{
+    font-size:24px;
+    vertical-align:bottom;
+    color:#001978;
+    margin-right:8px;
+  }
+  .lf-icon-trash{
+    color:#001978;
+    font-size:16px;
+  }
+  .firmar-hojas{
+    padding:15px 10px;
+    border-top:1px solid #dadde9;
+    margin-top:15px;
+    a{
+      text-decoration:underline;
+    }
+  }
+  form {
+    margin:15px 0;
+    label * {
+      color: #001978;
+    }
+    p {
+      &.formulario {
+        margin: 5px 0;
+        line-height:1.2;
+      }
+    }
+  }
+  p{
+    line-height:1.2;
+  }
+}
+
+
+.cont-progreso-peticion-firma {
+  border: 1px solid #001978;
+  border-top: 6px solid #001978;
+  margin: 20px;
+  padding: 15px;
+  width: 100%;
+  .cont-info-firmantes{
+    border-radius:3px;
+    background-color:#f4f4f4;
+    border: 1px solid #e3e4e8;
+    -webkit-box-shadow: 0px 0px 7px 0px rgba(227,228,232,1);
+    -moz-box-shadow: 0px 0px 7px 0px rgba(227,228,232,1);
+    box-shadow: 0px 0px 7px 0px rgba(227,228,232,1);
+    margin-bottom:20px;
+    font-size:16px;
+    color:#777;
+    margin-bottom: 20px;
+    .tit-firmante{
+      text-transform: uppercase;
+      color:#001978;
+      font-weight:600;
+      margin-right:20px;
+    }
+    .fecha{
+      color:#777;
+      font-size:13px;
+      padding-top:40px;
+    }
+    .name_firmante{
+      color:#001978;
+    }
+    .email{
+      color:#777;
+      padding-left: 10px;
+    }
+    .numero_firmante{
+      color:#001978;
+      font-weight:600;
+    }
+    .separador{
+      border-bottom: 2px solid #e6e9f2;
+    }
+    .seguimiento-firmante-individual {
+      width:20%;
+      text-align:center;
+      font-size:40px;
+      color:#001978;
+      float:left;
+      margin-top:20px;
+      &.no-completado{
+        color:#a0a1a4;
+        .linea{
+          border-bottom: 2px solid #a0a1a4!important;
+          &.primer-estado{
+            left: 46%!important;
+          }
+        }
+        .check-seguimiento{
+          top:15px!important;
+          width: 12px;
+          height: 12px;
+          border:3px solid #a0a1a4;
+        }
+        .estado{color:#777!important}
+      }
+      .cont-check-seguimiento {
+        position: relative;
+        .check-seguimiento {
+          position: absolute;
+          color: #001978;
+          top: 10px;
+          background: #f4f4f4;
+          border-radius: 50%;
+          left: 44%;
+          font-size: 18px;
+          z-index: 2;
+        }
+
+        .linea {
+          border-bottom: 2px solid #001978;
+          width: 90%;
+          margin-top: 20px;
+          position: absolute;
+          left: -46%;
+          z-index: 1;
+          &.primer-estado{
+            left: 46%!important;
+          }
+        }
+        .info{
+          color:#777;
+          font-size:13px;
+          padding-top:40px;
+          .estado{
+            color:#001978;
+            font-weight:500;
+            margin-bottom:10px;
+          }
+        }
+      }
+
+    }
+
+
+  }
+  .resumen-firma {
+    border: 0;
+    border: 1px solid #001978;
+    margin-bottom: 20px;
+    width: 100%;
+    th {
+      background: #001978;
+      color: #FFF;
+      border-right: 1px solid #FFF;
+      font-weight: 500;
+      &:last-child {
+        border: 0
+      }
+    }
+    .en-progreso {
+      color: #e9a128;
+    }
+    .completada {
+      color: #217e05;
+    }
+    .cancelada {
+      color: #c90223;
+    }
+    .documento {
+      text-decoration: underline;
+    }
+    .tooltip-firmantes {
+      border: 1px solid #001978;
+      width: auto;
+      position: absolute;
+      background: #FFF;
+
+      li {
+        color: #001978;
+        font-weight: 600;
+        border-bottom: 1px solid #cbd2e6;
+        padding: 5px 10px;
+        .email {
+          display: block;
+          color: #777777;
+          font-weight: 400;
+          font-size: 12px;
+        }
+        &:last-child {
+          border-bottom: 0;
+        }
+
+      }
+    }
+    .bola-firmantes {
+      border-radius: 20px;
+      color: #FFF;
+      padding: 3px 15px;
+      cursor: pointer;
+      &.en-progreso {
+        background: #e9a128;
+      }
+      &.completada {
+        background: #217e05;
+      }
+      &.cancelada {
+        background: #c90223;
+      }
+    }
+
+  }
+}
+
+.pasos-firma{
+  color:#001978;
+  font-size:22px;
+  text-transform: uppercase;
+  margin:15px;
+  .producto-procedente{
+    color:#001278;
+    opacity:0.7;
+    margin-right:15px;
+  }
+  .miga{
+    font-size:16px;
+    margin-left:20px;
+    padding-left:25px;
+    border-left:1px solid #001978;
+  }
+}
+.contenido-central{
+  padding-left:0!important;
+  background:#f9f9fa;
+  overflow-y: auto;
+  padding-right: 25px;
+  
+  .info-mail{
+    margin:10px 10px 10px 0;
+    padding:15px;
+    border:1px solid #e0e0e0;
+    .sim-mail{
+      width:100%;
+      li{
+        border-bottom:1px solid #e0e0e0;
+        line-height:20px;
+        margin-bottom:10px;
+        color:#001978;
+        font-weight: 500;
+        .contactos{
+          color:#001978;
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+.modal{
+  color:#FFF;
+  font-size:20px;
+  font-weight:400;
+  .close-alert{
+    background:transparent
+  }
+  .icon-alert{
+    font-size:100px;
+    margin-top:15px;
+  }
+  .w-75{
+    width:75%;
+  }
+  a{
+    color: #FFF;
+    &.underline{text-decoration:underline}
+  }
+  &.modal-warning{
+    background:#c5343f;
+  }
+  &.modal-ok {
+    background: #001978;
+  }
+}
+
+
+.pR0{
+  padding-right:0!important;
+}
+.p10{
+  padding:10px;
+}
+.p0{
+  padding:0!important;
+}
+.p15{
+  padding:15px;
+}
+.mT20{
+  margin-top:20px;
+}
+.mT40{
+  margin-top:40px;
+}
+.mB10{
+  margin-bottom:10px;
+}
+.upper{
+  text-transform:uppercase;
+}
+button:focus {
+  outline: none;
+  background-color: #9a9a9a;
+  border:2px solid #9a9a9a;
+  color:#FFF;
+}
+.btn {
+  background: #001978;
+  text-decoration: none;
+  color: #fff;
+  text-align: center;
+  letter-spacing: .5px;
+  font-size:13px;
+  box-shadow: none;
+  border-radius:3px;
+}
+
+.btn:hover {
+  background: #9a9a9a;
+  box-shadow: none;
+}
+
+.btn:active{
+  background: #9a9a9a;
+  box-shadow: none;
+}
+
+.btn:disabled{}
+
+.btn-gen{
+  background: #001978;
+  text-decoration: none;
+  color: #FFFFFF;
+  text-align: center;
+  letter-spacing: .5px;
+  font-size: 14px;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 11px 30px;
+  text-transform: uppercase;
+  border:2px solid #001978;
+  cursor: pointer;
+  font-weight:600;
+  display:inline-block;
+  cursor:pointer;
+
+}
+.btn-gen:hover, .btn-gen:active, .btn-gen:focus{
+  background: #9a9a9a;
+  border:2px solid #9a9a9a;
+  color:#FFF;
+}
+.btn-gen-border{
+  background: #ffffff;
+  text-decoration: none;
+  color: #001978;
+  text-align: center;
+  letter-spacing: .5px;
+  font-size: 14px;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 11px 30px;
+  text-transform: uppercase;
+  border:2px solid #001978;
+  cursor: pointer;
+  font-weight:600;
+  display:inline-block;
+  cursor:pointer;
+}
+
+.btn-gen-border:hover{
+  background: #ffffff;
+  color: #9a9a9a;
+  border:2px solid #9a9a9a;
+
+}
+
+a{
+  color:#001978;
+  text-decoration:none;
+}
+[type="radio"]:checked + span:after,
+[type="radio"].with-gap:checked + span:before,
+[type="radio"].with-gap:checked + span:after,
+[type="radio"]:not(:checked) + span:before,
+[type="radio"]:not(:checked) + span:after {
+  border: 1px solid #001978;
+}
+[type="radio"]:checked + span:after,
+[type="radio"].with-gap:checked + span:after {
+  background-color: #001978;
+}
+
+.clearfix {
+  clear: both;
+}

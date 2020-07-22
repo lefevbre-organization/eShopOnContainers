@@ -63,7 +63,9 @@ export class Step2 extends React.Component {
 
     uploadContact(contact) {
         this.contacts.push(contact);
-        window.dispatchEvent(new CustomEvent('uploadContact', { detail: { contact }}));
+        const tags = [...contact.tags];
+        tags[2] = i18n.t(`classification.${contact.idType}`);
+        window.dispatchEvent(new CustomEvent('uploadContact', { detail: { ...contact, tags }}));
     }
 
     contactUploaded(data) {

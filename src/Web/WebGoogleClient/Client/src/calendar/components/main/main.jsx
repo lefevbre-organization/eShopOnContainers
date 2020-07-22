@@ -451,7 +451,9 @@ export class Main extends Component {
                 <CalendarComponent sidebarDocked={this.onSetSidebarDocked} />
             )
         });
-        this.setState({ sidebarDocked: open });
+        this.setState({ sidebarDocked: open }, ()=>{
+            this.forceUpdate()
+        });
     }
 
     onSetSidebarOpenLexon(open) {
@@ -460,7 +462,9 @@ export class Main extends Component {
                 <LexonComponent sidebarDocked={this.onSetSidebarDocked} />
             )
         });
-        this.setState({ sidebarDocked: open });
+        this.setState({ sidebarDocked: open }, ()=>{
+            this.forceUpdate()
+        });
     }
 
     onSetSidebarDocked(open) {

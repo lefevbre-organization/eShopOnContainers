@@ -1,0 +1,565 @@
+@charset "UTF-8";
+body {
+  font-weight: 500; }
+
+.pR0 {
+  padding-right: 0 !important; }
+
+.p10 {
+  padding: 10px; }
+
+.p0 {
+  padding: 0 !important; }
+
+.p15 {
+  padding: 15px; }
+
+.mT20 {
+  margin-top: 20px; }
+
+.mT40 {
+  margin-top: 40px; }
+
+.mB10 {
+  margin-bottom: 10px; }
+
+.upper {
+  text-transform: uppercase; }
+
+button:focus {
+  outline: none;
+  background-color: #9a9a9a;
+  border: 2px solid #9a9a9a;
+  color: #FFF; }
+
+.btn {
+  background: #001978;
+  text-decoration: none;
+  color: #fff;
+  text-align: center;
+  letter-spacing: .5px;
+  font-size: 13px;
+  box-shadow: none;
+  border-radius: 3px; }
+
+.btn:hover {
+  background: #9a9a9a;
+  box-shadow: none; }
+
+.btn:active {
+  background: #9a9a9a;
+  box-shadow: none; }
+
+.btn-gen {
+  background: #001978;
+  text-decoration: none;
+  color: #FFFFFF;
+  text-align: center;
+  letter-spacing: .5px;
+  font-size: 14px;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 11px 30px;
+  text-transform: uppercase;
+  border: 2px solid #001978;
+  cursor: pointer;
+  font-weight: 600;
+  display: inline-block;
+  cursor: pointer; }
+
+.btn-gen:hover, .btn-gen:active, .btn-gen:focus {
+  background: #9a9a9a;
+  border: 2px solid #9a9a9a;
+  color: #FFF; }
+
+.btn-gen-border {
+  background: #ffffff;
+  text-decoration: none;
+  color: #001978;
+  text-align: center;
+  letter-spacing: .5px;
+  font-size: 14px;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 11px 30px;
+  text-transform: uppercase;
+  border: 2px solid #001978;
+  cursor: pointer;
+  font-weight: 600;
+  display: inline-block;
+  cursor: pointer; }
+
+.btn-gen-border:hover {
+  background: #ffffff;
+  color: #9a9a9a;
+  border: 2px solid #9a9a9a; }
+
+a {
+  color: #001978;
+  text-decoration: none; }
+
+[type="radio"]:checked + span:after,
+[type="radio"].with-gap:checked + span:before,
+[type="radio"].with-gap:checked + span:after,
+[type="radio"]:not(:checked) + span:before,
+[type="radio"]:not(:checked) + span:after {
+  border: 1px solid #001978; }
+
+[type="radio"]:checked + span:after,
+[type="radio"].with-gap:checked + span:after {
+  background-color: #001978; }
+
+.nueva-firma {
+  color: #001978;
+  padding: 10px 15px;
+  text-transform: uppercase;
+  font-size: 13px;
+  display: flex;
+  line-height: 40px; }
+  .nueva-firma span {
+    font-size: 40px;
+    margin-right: 10px; }
+
+.title-nav-firmas {
+  background: #001978;
+  color: #FFF;
+  text-transform: uppercase;
+  padding: 15px; }
+  .title-nav-firmas span {
+    font-size: 18px;
+    margin: 0 10px; }
+
+.nav-firmas {
+  margin: 0; }
+  .nav-firmas li.todas {
+    background: #e6e9f2; }
+    .nav-firmas li.todas a {
+      color: #001978; }
+      .nav-firmas li.todas a span:before {
+        color: #001978; }
+      .nav-firmas li.todas a:hover {
+        background: #001978;
+        color: #FFF; }
+        .nav-firmas li.todas a:hover span:before {
+          color: #FFF; }
+  .nav-firmas li.en-progreso {
+    background: rgba(234, 160, 1, 0.1); }
+    .nav-firmas li.en-progreso a {
+      color: #e9a128; }
+      .nav-firmas li.en-progreso a span:before {
+        color: #e9a128; }
+      .nav-firmas li.en-progreso a:hover {
+        background: #e9a128;
+        color: #FFF; }
+        .nav-firmas li.en-progreso a:hover span:before {
+          color: #FFF; }
+  .nav-firmas li.completadas {
+    background: rgba(33, 126, 5, 0.1); }
+    .nav-firmas li.completadas a {
+      color: #217e05; }
+      .nav-firmas li.completadas a span:before {
+        color: #217e05; }
+      .nav-firmas li.completadas a:hover {
+        background: #217e05;
+        color: #FFF; }
+        .nav-firmas li.completadas a:hover span:before {
+          color: #FFF; }
+  .nav-firmas li.canceladas {
+    background: rgba(202, 1, 35, 0.1); }
+    .nav-firmas li.canceladas a {
+      color: #c90223; }
+      .nav-firmas li.canceladas a span:before {
+        color: #c90223; }
+      .nav-firmas li.canceladas a:hover {
+        background: #c90223;
+        color: #FFF; }
+        .nav-firmas li.canceladas a:hover span:before {
+          color: #FFF; }
+  .nav-firmas li a {
+    padding: 13px 20px;
+    display: block;
+    margin-top: 1px; }
+    .nav-firmas li a span {
+      font-size: 14px; }
+      .nav-firmas li a span:before {
+        margin-right: 15px;
+        font-size: 20px; }
+
+.cont-generico {
+  border-radius: 3px;
+  background-color: #e6e9f2;
+  border: 1px solid #cfd3e1;
+  -webkit-box-shadow: 0px 0px 7px 0px #dde0ed;
+  -moz-box-shadow: 0px 0px 7px 0px #dde0ed;
+  box-shadow: 0px 0px 7px 0px #dde0ed;
+  padding: 10px;
+  margin-bottom: 20px; }
+  .cont-generico .title-generico {
+    color: #001978;
+    text-transform: uppercase;
+    font-size: 16px;
+    font-weight: 700; }
+  .cont-generico > span, .cont-generico .p10 > span.lf-icon-add {
+    font-size: 24px;
+    vertical-align: bottom;
+    color: #001978;
+    margin-right: 8px; }
+  .cont-generico .lf-icon-trash {
+    color: #001978;
+    font-size: 16px; }
+  .cont-generico .firmar-hojas {
+    padding: 15px 10px;
+    border-top: 1px solid #dadde9;
+    margin-top: 15px; }
+    .cont-generico .firmar-hojas a {
+      text-decoration: underline; }
+  .cont-generico form {
+    margin: 15px 0; }
+    .cont-generico form label * {
+      color: #001978; }
+    .cont-generico form p.formulario {
+      margin: 5px 0;
+      line-height: 1.2; }
+  .cont-generico p {
+    line-height: 1.2; }
+
+.pasos-firma {
+  color: #001978;
+  font-size: 22px;
+  text-transform: uppercase;
+  margin: 15px; }
+  .pasos-firma .producto-procedente {
+    color: #001278;
+    opacity: 0.7;
+    margin-right: 15px; }
+  .pasos-firma .miga {
+    font-size: 16px;
+    margin-left: 20px;
+    padding-left: 25px;
+    border-left: 1px solid #001978; }
+
+.contenido-central {
+  padding-left: 0 !important;
+  background: #f9f9fa; }
+  .contenido-central .info-mail {
+    margin: 10px 10px 10px 0;
+    padding: 15px;
+    border: 1px solid #e0e0e0; }
+    .contenido-central .info-mail .sim-mail {
+      width: 100%; }
+      .contenido-central .info-mail .sim-mail li {
+        border-bottom: 1px solid #e0e0e0;
+        line-height: 20px;
+        margin-bottom: 10px;
+        color: #001978;
+        font-weight: 500; }
+        .contenido-central .info-mail .sim-mail li .contactos {
+          color: #001978;
+          text-decoration: underline; }
+
+.modal {
+  color: #FFF;
+  font-size: 20px;
+  font-weight: 400; }
+  .modal .close-alert {
+    background: transparent; }
+  .modal .icon-alert {
+    font-size: 100px;
+    margin-top: 15px; }
+  .modal .w-75 {
+    width: 75%; }
+  .modal a {
+    color: #FFF; }
+    .modal a.underline {
+      text-decoration: underline; }
+  .modal.modal-warning {
+    background: #c5343f; }
+  .modal.modal-ok {
+    background: #001978; }
+
+.seleccion-contactos {
+  -webkit-box-shadow: 0px 0px 7px 0px #dde0ed;
+  -moz-box-shadow: 0px 0px 7px 0px #dde0ed;
+  box-shadow: 0px 0px 7px 0px #dde0ed;
+  padding: 0 !important;
+  z-index: 1;
+  position: absolute;
+  top: 70px;
+  background: #FFF;
+  display: none; }
+  .seleccion-contactos .buscador-contactos {
+    margin-left: 15px; }
+  .seleccion-contactos .input-field.left {
+    overflow: hidden;
+    margin: 15px 0 0 0; }
+  .seleccion-contactos .select-wrapper {
+    background: #ebedf4;
+    margin: 0 15px; }
+    .seleccion-contactos .select-wrapper input.select-dropdown {
+      border-bottom: 0;
+      color: #001978;
+      padding: 0 10px;
+      overflow: hidden; }
+    .seleccion-contactos .select-wrapper .dropdown-content {
+      background: #ebedf4;
+      width: 100% !important; }
+      .seleccion-contactos .select-wrapper .dropdown-content li:first-child {
+        border-bottom: 1px solid #a5aed0; }
+      .seleccion-contactos .select-wrapper .dropdown-content li > a,
+      .seleccion-contactos .select-wrapper .dropdown-content li > span {
+        color: #001978;
+        padding: 10px 16px; }
+    .seleccion-contactos .select-wrapper .caret {
+      color: #ebedf4; }
+      .seleccion-contactos .select-wrapper .caret:after {
+        bottom: 0;
+        position: absolute;
+        transform: rotate(135deg);
+        z-index: 2; }
+  .seleccion-contactos ::-webkit-input-placeholder {
+    color: #777; }
+  .seleccion-contactos :-ms-input-placeholder {
+    color: #777; }
+  .seleccion-contactos .input-field input[type=search],
+  .seleccion-contactos input[type=search]:not(.browser-default) {
+    background-color: #ebedf4 !important;
+    box-shadow: none;
+    border: 0;
+    color: #777;
+    padding-left: 30px;
+    margin-left: 15px; }
+  .seleccion-contactos .lf-icon-search {
+    top: 17px;
+    left: 35px;
+    position: absolute; }
+  .seleccion-contactos hr {
+    border: 0;
+    border-bottom: 1px solid #001978;
+    margin: 0; }
+  .seleccion-contactos .contactos {
+    padding: 0;
+    margin: 0 0 40px 0; }
+    .seleccion-contactos .contactos li {
+      padding: 15px;
+      border-bottom: 1px solid #ccd1e4; }
+      .seleccion-contactos .contactos li [type="checkbox"].filled-in:checked + span:not(.lever):before {
+        top: 12px; }
+      .seleccion-contactos .contactos li [type="checkbox"].filled-in:checked + span:not(.lever):after {
+        top: 14px;
+        width: 18px;
+        height: 18px;
+        border: 1px solid #001978;
+        background-color: #001978; }
+      .seleccion-contactos .contactos li [type="checkbox"].filled-in:not(:checked) + span:not(.lever):after {
+        height: 18px;
+        width: 18px;
+        border: 1px solid #001978;
+        top: 14px; }
+      .seleccion-contactos .contactos li label {
+        color: #001978;
+        font-weight: 600; }
+        .seleccion-contactos .contactos li label .email {
+          clear: both;
+          color: #777;
+          font-weight: 400;
+          font-size: 14px;
+          padding-left: 35px; }
+  .seleccion-contactos .cont-inf-seleccionados {
+    margin: 15px 0; }
+    .seleccion-contactos .cont-inf-seleccionados .contactos-seleccionados {
+      font-size: 12px;
+      color: #001978;
+      margin-top: 15px; }
+
+/* Progreso petición */
+.cont-progreso-peticion-firma {
+  border: 1px solid #001978;
+  border-top: 6px solid #001978;
+  margin: 20px;
+  padding: 15px; }
+  .cont-progreso-peticion-firma .cont-info-firmantes {
+    border-radius: 3px;
+    background-color: #f4f4f4;
+    border: 1px solid #e3e4e8;
+    -webkit-box-shadow: 0px 0px 7px 0px #e3e4e8;
+    -moz-box-shadow: 0px 0px 7px 0px #e3e4e8;
+    box-shadow: 0px 0px 7px 0px #e3e4e8;
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #777;
+    margin-bottom: 20px; }
+    .cont-progreso-peticion-firma .cont-info-firmantes .tit-firmante {
+      text-transform: uppercase;
+      color: #001978;
+      font-weight: 600;
+      margin-right: 20px; }
+    .cont-progreso-peticion-firma .cont-info-firmantes .name_firmante {
+      color: #001978; }
+    .cont-progreso-peticion-firma .cont-info-firmantes .email {
+      color: #777;
+      padding-left: 10px; }
+    .cont-progreso-peticion-firma .cont-info-firmantes .numero_firmante {
+      color: #001978;
+      font-weight: 600; }
+    .cont-progreso-peticion-firma .cont-info-firmantes .separador {
+      border-bottom: 2px solid #e6e9f2; }
+    .cont-progreso-peticion-firma .cont-info-firmantes .seguimiento-firmante-individual {
+      width: 20%;
+      text-align: center;
+      font-size: 40px;
+      color: #001978;
+      float: left;
+      margin-top: 20px; }
+      .cont-progreso-peticion-firma .cont-info-firmantes .seguimiento-firmante-individual.no-completado {
+        color: #a0a1a4; }
+        .cont-progreso-peticion-firma .cont-info-firmantes .seguimiento-firmante-individual.no-completado .linea {
+          border-bottom: 2px solid #a0a1a4 !important; }
+          .cont-progreso-peticion-firma .cont-info-firmantes .seguimiento-firmante-individual.no-completado .linea.primer-estado {
+            left: 46% !important; }
+        .cont-progreso-peticion-firma .cont-info-firmantes .seguimiento-firmante-individual.no-completado .check-seguimiento {
+          top: 15px !important;
+          width: 12px;
+          height: 12px;
+          border: 3px solid #a0a1a4; }
+        .cont-progreso-peticion-firma .cont-info-firmantes .seguimiento-firmante-individual.no-completado .estado {
+          color: #777 !important; }
+      .cont-progreso-peticion-firma .cont-info-firmantes .seguimiento-firmante-individual .cont-check-seguimiento {
+        position: relative; }
+        .cont-progreso-peticion-firma .cont-info-firmantes .seguimiento-firmante-individual .cont-check-seguimiento .check-seguimiento {
+          position: absolute;
+          color: #001978;
+          top: 10px;
+          background: #f4f4f4;
+          border-radius: 50%;
+          left: 44%;
+          font-size: 18px;
+          z-index: 2; }
+        .cont-progreso-peticion-firma .cont-info-firmantes .seguimiento-firmante-individual .cont-check-seguimiento .linea {
+          border-bottom: 2px solid #001978;
+          width: 90%;
+          margin-top: 20px;
+          position: absolute;
+          left: -46%;
+          z-index: 1; }
+          .cont-progreso-peticion-firma .cont-info-firmantes .seguimiento-firmante-individual .cont-check-seguimiento .linea.primer-estado {
+            left: 46% !important; }
+        .cont-progreso-peticion-firma .cont-info-firmantes .seguimiento-firmante-individual .cont-check-seguimiento .info {
+          color: #777;
+          font-size: 13px;
+          padding-top: 40px; }
+          .cont-progreso-peticion-firma .cont-info-firmantes .seguimiento-firmante-individual .cont-check-seguimiento .info .estado {
+            color: #001978;
+            font-weight: 500;
+            margin-bottom: 10px; }
+  .cont-progreso-peticion-firma .resumen-firma {
+    border: 0;
+    border: 1px solid #001978;
+    margin-bottom: 20px; }
+    .cont-progreso-peticion-firma .resumen-firma th {
+      background: #001978;
+      color: #FFF;
+      border-right: 1px solid #FFF;
+      font-weight: 500; }
+      .cont-progreso-peticion-firma .resumen-firma th:last-child {
+        border: 0; }
+    .cont-progreso-peticion-firma .resumen-firma .en-progreso {
+      color: #e9a128; }
+    .cont-progreso-peticion-firma .resumen-firma .completada {
+      color: #217e05; }
+    .cont-progreso-peticion-firma .resumen-firma .cancelada {
+      color: #c90223; }
+    .cont-progreso-peticion-firma .resumen-firma .documento {
+      text-decoration: underline; }
+    .cont-progreso-peticion-firma .resumen-firma .tooltip-firmantes {
+      border: 1px solid #001978;
+      width: auto;
+      position: absolute;
+      background: #FFF; }
+      .cont-progreso-peticion-firma .resumen-firma .tooltip-firmantes li {
+        color: #001978;
+        font-weight: 600;
+        border-bottom: 1px solid #cbd2e6;
+        padding: 5px 10px; }
+        .cont-progreso-peticion-firma .resumen-firma .tooltip-firmantes li .email {
+          display: block;
+          color: #777777;
+          font-weight: 400;
+          font-size: 12px; }
+        .cont-progreso-peticion-firma .resumen-firma .tooltip-firmantes li:last-child {
+          border-bottom: 0; }
+    .cont-progreso-peticion-firma .resumen-firma .bola-firmantes {
+      border-radius: 20px;
+      color: #FFF;
+      padding: 3px 15px;
+      cursor: pointer; }
+      .cont-progreso-peticion-firma .resumen-firma .bola-firmantes.en-progreso {
+        background: #e9a128; }
+      .cont-progreso-peticion-firma .resumen-firma .bola-firmantes.completada {
+        background: #217e05; }
+      .cont-progreso-peticion-firma .resumen-firma .bola-firmantes.cancelada {
+        background: #c90223; }
+
+/* página de éxito */
+.cont-confirmacion {
+  float: none !important;
+  margin: 0 auto;
+  color: #001978; }
+  .cont-confirmacion .cont-outline {
+    border: 1px solid #808dbc;
+    padding-top: 30px;
+    margin: 50px 0; }
+    .cont-confirmacion .cont-outline .icono-confirmacion {
+      font-size: 120px;
+      color: #001978;
+      display: block;
+      margin: 20px 0; }
+    .cont-confirmacion .cont-outline .text-confirmacion {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 40px; }
+      .cont-confirmacion .cont-outline .text-confirmacion span {
+        font-size: 18px;
+        display: block;
+        font-weight: 400; }
+  .cont-confirmacion .end-confirmacion {
+    background: #e6e9f1;
+    padding: 20px;
+    font-size: 20px; }
+    .cont-confirmacion .end-confirmacion a {
+      color: #6676b0;
+      font-size: 19px; }
+      .cont-confirmacion .end-confirmacion a.mail {
+        color: #001978;
+        font-size: 17px; }
+
+/* panel de usuario */
+.cont-panel {
+  border: 1px solid #cdd1e0;
+  margin: 50px 0;
+  box-shadow: 0px 0px 12px 0px #e0e0e0;
+  font-size: 16px;
+  color: #001978;
+  padding: 15px;
+  font-weight: 500; }
+  .cont-panel .resumen-firmas-disponibles {
+    border-bottom: 1px solid #001978;
+    margin-bottom: 15px; }
+    .cont-panel .resumen-firmas-disponibles .num {
+      background: #001978;
+      color: #FFF;
+      text-align: center;
+      padding: 2px 10px;
+      font-size: 14px;
+      float: right;
+      width: 70px; }
+  .cont-panel .resumen-firmas-consumidas {
+    border-bottom: 1px solid #94969c;
+    color: #94969c; }
+    .cont-panel .resumen-firmas-consumidas .num {
+      background: #94969c;
+      color: #FFF;
+      text-align: center;
+      padding: 2px 10px;
+      font-size: 14px;
+      float: right;
+      width: 70px; }

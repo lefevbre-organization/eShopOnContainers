@@ -9,6 +9,7 @@ using Ocelot.Middleware;
 using System;
 using HealthChecks.UI.Client;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace OcelotApiGw
 {
@@ -74,7 +75,12 @@ namespace OcelotApiGw
                     };
                 });
 
+
             services.AddOcelot(_cfg);
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.Limits.MaxRequestBodySize = 5200000000; // if don't set default value is: 30 MB
+            });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

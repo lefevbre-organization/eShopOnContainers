@@ -102,7 +102,7 @@ module.exports = {
   },
   module: {
     rules: [
-      // Support for NON-inlined web-workers (NOT necessary now)
+      // //Support for NON-inlined web-workers (NOT necessary now)
       // {
       //   test: /\.worker\.js$/,
       //   exclude: /node_modules/,
@@ -115,7 +115,10 @@ module.exports = {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader'
+          loader: 'babel-loader',
+          options: {
+            plugins:['@babel/plugin-proposal-class-properties']
+          }
         }
       },
       {

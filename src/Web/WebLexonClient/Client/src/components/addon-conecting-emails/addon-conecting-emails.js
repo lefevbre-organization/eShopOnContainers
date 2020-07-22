@@ -554,10 +554,6 @@ class AddonConnectingEmails extends Component {
             border-radius: 0;
           }
 
-          .imgproduct {
-            height: 29px;
-          }
-
           .addon-header .title {
             margin-left: 20px;
             font-size: 22px;

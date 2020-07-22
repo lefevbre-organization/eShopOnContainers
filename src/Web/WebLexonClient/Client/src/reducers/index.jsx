@@ -19,6 +19,7 @@ export const INITIAL_STATE = {
     companySelected: null,
     typeSelected: null,
     initialBBDD: null,
+    provider: null,
     user: null
   },
   documents: {

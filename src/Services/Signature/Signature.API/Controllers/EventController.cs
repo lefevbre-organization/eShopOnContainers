@@ -14,7 +14,6 @@
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Mvc;
     using Signature.API.Model;
     using RestSharp;
     using System.Web;
