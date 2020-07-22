@@ -91,10 +91,14 @@ class ModalAttachDocuments extends Component<Props, State> {
   }
 
   componentDidMount() {
+    console.log("ModalAttachDocuments: componentDidMount");
+
     this.initMessages();
   }
 
   componentDidUpdate(prevProps: Props) {
+    console.log("ModalAttachDocuments: componentDidUpdate");
+
     if (prevProps.selected !== this.props.selected) {
       this.initMessages();
     }

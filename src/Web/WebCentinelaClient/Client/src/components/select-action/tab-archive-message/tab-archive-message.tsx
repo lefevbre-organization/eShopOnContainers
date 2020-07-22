@@ -8,7 +8,8 @@ import ModalArchiveDocuments from '../modal-archive-document/modal-archive-docum
 const mapStateToProps = (state: AppState) => {
   return {
     user: state.application.user,
-    selectedMessages: state.messages.selected
+    selectedMessages: state.messages.selected,
+    showArchiveModal: state.application.showArchiveModal,
   };
 };
 
@@ -67,8 +68,8 @@ class TabArchiveMessage extends Component<Props, State> {
 
     return (
       <Fragment>
-        <ModalArchiveDocuments toggleNotification={toggleNotification} />
-        {/* 
+        {this.props.showArchiveModal && <ModalArchiveDocuments toggleNotification={toggleNotification} />
+        {/*
         <ConfirmRemoveClassification
           user={user}
           initialModalState={showConfirmRemoveClassification}
