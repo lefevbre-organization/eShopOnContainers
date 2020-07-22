@@ -27,10 +27,10 @@ spec:
       - name: {{ .Values.inf.registry.secretName }}
       {{- end }}
       hostAliases:
-      - ip: "10.38.6.5"
+      - ip: "192.168.131.44"
         hostnames:
-        - "led-servicecomtools.eu.els.local"
-        - "led-servicehub.eu.els.local"
+        - "led-servicecomtools-ntt.eu.els.local"
+        - "led-servicehub-ntt.eu.els.local"
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ template "fqdn-image" . }}:{{ .Values.image.tag }}"
