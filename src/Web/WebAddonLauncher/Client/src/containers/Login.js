@@ -4,7 +4,7 @@ import validator from 'email-validator';
 import LoginHeader from '../components/LoginHeader';
 import LoginFooter from '../components/LoginFooter';
 import LoginComponents from '../components/LoginComponents';
-import { getUser } from "../services/services-lexon";
+import { getUser, base64Decode } from "../services/services-lexon";
 
 import '../assets/styles/components/Login.css';
 import logoHeader from '../assets/img/LogoLefebvre.png';
@@ -94,19 +94,39 @@ class Login extends Component {
     return true;
   }
 
+  validateUser = (userBase64Decode) => {
+    let role = userBase64Decode.roles.some(role => {
+      return (role === "Lex-On");    
+     });
+     if(role) {
+       this.setState({
+       errorsMessage: {
+         auth: ''
+       }
+      });
+     this.goBackAddon(); 
+     } else {
+       this.setState({
+         errorsMessage: {
+          auth: 'El usuario no tiene acceso a Lex-On.'
+         }
+       });
+     }
+  }
+
   async getUser() {
     
    const user = await getUser(
      this.state.form
    );
-    if(user.result.data 
-      && user.result.data._login) {
-     this.goBackAddon();
+    if(user.result.data.token) {
+     const userBase64Decode = base64Decode(user);
      this.setState({
       errorsMessage: {
         auth: ''
       }
     });
+     this.validateUser(userBase64Decode);
     } else {
       this.setState({
         errorsMessage: {

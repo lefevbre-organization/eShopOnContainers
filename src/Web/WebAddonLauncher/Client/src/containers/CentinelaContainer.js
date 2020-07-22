@@ -6,8 +6,12 @@ class CentinelaContainer extends Component {
         super(props);
 
         this.handleGetUserFromCentinelaConnector = this.handleGetUserFromCentinelaConnector.bind(
-            this
-          );
+          this
+        );
+
+        this.handleGetAddonsInfoFromCentinelaConnector = this.handleGetAddonsInfoFromCentinelaConnector.bind(
+          this
+        );
     }
 
 
@@ -15,6 +19,10 @@ class CentinelaContainer extends Component {
         window.addEventListener(
          'GetUserFromCentinelaConnector',
          this.handleGetUserFromCentinelaConnector
+        );
+        window.addEventListener(
+          'GetAddonsInfoFromCentinelaConnector',
+          this.handleGetAddonsInfoFromCentinelaConnector
         );
     }
 
@@ -24,13 +32,16 @@ class CentinelaContainer extends Component {
             'GetUserFromCentinelaConnector',
             this.handleGetUserFromCentinelaConnector
         );
+        window.removeEventListener(
+          'GetAddonsInfoFromCentinelaConnector',
+          this.handleGetAddonsInfoFromCentinelaConnector
+        );
     }
     
 
     handleGetUserFromCentinelaConnector() {
         console.log('Centinela GetUserFromCentinela received');
         const values = queryString.parse(window.location.search);  
-        console.log(values.addonData);  
         if (values && values.addonData 
           && Object.keys(values).length > 0) {
           const payload = values.addonData.split('.')[1];
@@ -39,13 +50,11 @@ class CentinelaContainer extends Component {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
            }).join(''));
           const addonData = JSON.parse(jsonPayload);
-          console.log(addonData); 
           this.sendMessageCentinelaPutUser(addonData.idClienteNav, addonData);
        }
     }
     
     sendMessageCentinelaPutUser(user, addonData) {
-        window.addonData = addonData;
         window.dispatchEvent(
           new CustomEvent('PutUserFromCentinelaConnector', {
             detail: {
@@ -59,9 +68,18 @@ class CentinelaContainer extends Component {
               }],
               provider: addonData.provider,
               account: addonData.account,
+              addonType: addonData.addonType
             },
           })
         );
+    }
+
+    handleGetAddonsInfoFromCentinelaConnector() {
+      window.dispatchEvent(
+        new CustomEvent('PutAddonFromCentinelaConnector', {
+          
+        })
+      );
     }
     
     render() {
