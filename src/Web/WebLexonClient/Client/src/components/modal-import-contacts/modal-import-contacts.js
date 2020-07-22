@@ -165,7 +165,7 @@ class ModalImportContacts extends Component {
 
         <style jsx global>{`
           .modal-open .modal {
-          overflow-y: hidden;
+          overflow-y: auto;
           }
         
           .e-checkbox-wrapper .e-frame.e-check,
