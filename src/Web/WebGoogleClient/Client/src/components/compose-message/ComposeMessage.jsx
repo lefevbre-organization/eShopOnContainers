@@ -142,6 +142,9 @@ export class ComposeMessage extends PureComponent {
     this.handleRemoveAddress = this.removeAddress.bind(this);
     this.handleMoveAddress = this.moveAddress.bind(this);
     this.attachFromLexon = this.attachFromLexon.bind(this);
+    this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
+      this
+    );
 
     this.uppy = new Uppy({
       id: 'uppy1',
@@ -235,6 +238,14 @@ export class ComposeMessage extends PureComponent {
 
     window.dispatchEvent(new CustomEvent('OpenComposer'));
     window.addEventListener('AttachDocument', this.attachFromLexon);
+    window.addEventListener(
+      'GetUserFromCentinelaConnector',
+      this.handleGetUserFromLexonConnector
+    );
+  }
+
+  handleGetUserFromLexonConnector() {
+    window.dispatchEvent(new CustomEvent('OpenComposer'));
   }
 
   attachFromLexon(event) {
@@ -369,6 +380,10 @@ export class ComposeMessage extends PureComponent {
     window.dispatchEvent(new CustomEvent('CloseComposer'));
     window.dispatchEvent(new CustomEvent('RemoveCaseFile'));
     window.removeEventListener('AttachDocument', this.attachFromLexon);
+    window.removeEventListener(
+      'GetUserFromCentinelaConnector',
+      this.handleGetUserFromLexonConnector
+    );
 
     this.uppy.close();
   }
@@ -438,9 +453,6 @@ export class ComposeMessage extends PureComponent {
       body: this.state.content,
       attachments: Fileattached,
     })
-      .then(function (response) {
-        return response.json();
-      })
       .then((email) => {
         //this.sentEmail(email.id, this.state.subject);
         getMessageHeader(email.id)
@@ -458,7 +470,7 @@ export class ComposeMessage extends PureComponent {
           });
       })
       .catch((err) => {
-        console.log('Error getting Headers:' + err);
+        console.log('Error sending email:' + err);
       });
     this.resetFields();
     this.closeModal();

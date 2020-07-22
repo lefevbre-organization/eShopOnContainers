@@ -3,3 +3,4 @@ ingress:
     kubernetes.io/ingress.class: addon-http-application-routing
     ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    ingress.kubernetes.io/proxy-body-size: "50mb"

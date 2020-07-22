@@ -113,7 +113,7 @@ class MenuMinihub extends Component {
                     <span>{i18n.t('menu-minihub.products')}</span>
                   </div>                                
                 </div> 
-                  <Fragment>
+                 <Fragment>
                     <div className='accounts-container menu-main-panel'>
                       <PerfectScrollbar options={{ suppressScrollX: true }}>
                         <div className="menu-header__body-generic">

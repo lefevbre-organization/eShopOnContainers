@@ -30,8 +30,8 @@ export const ProductFilter = ({ products, onFilter }: Props) => {
   return (
     <>
       <div className={`fpdropdown ${filter !== '' ? 'fpactive' : ''}`}>
-        <div className={`fpheader`}>
-          <div className="fpheader-left" onClick={toggleContent}>
+        <div className={`fpheader`} onClick={toggleContent}>
+          <div className="fpheader-left">
             <i className="lf-icon-filter-1"></i>
             <span style={{ marginLeft: 10, maxWidth: 280, overflow: 'hidden' }}>
               {filter === '' && i18n.t('modal-archive.filter-by-product')}
@@ -98,6 +98,7 @@ export const ProductFilter = ({ products, onFilter }: Props) => {
             font-size: 14px;
             padding: 7px;
             border: 1px solid #d2d2d2;
+            z-index: 20;
           }
 
           .fpdropdown.fpactive {
@@ -114,6 +115,7 @@ export const ProductFilter = ({ products, onFilter }: Props) => {
             margin-left: 10px;
             text-overflow: ellipsis;
             white-space: pre;
+            z-index: 20;
           }
 
           .fpdropdown .fpheader .fpheader-left {
@@ -124,7 +126,7 @@ export const ProductFilter = ({ products, onFilter }: Props) => {
 
           .fpdropdown-body {
             background-color: #fff;
-            height: 200px;
+            max-height: 200px;
             width: 300px;
             position: absolute;
             top: 40px;
@@ -139,6 +141,7 @@ export const ProductFilter = ({ products, onFilter }: Props) => {
             cursor: pointer;
             color: #7c868c;
             padding: 0;
+            margin-bottom: 0;
           }
 
           .fpdropdown-body .lf-icon-check {

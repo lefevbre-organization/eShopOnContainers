@@ -114,3 +114,81 @@ spec:
             path: configuration.json
       imagePullSecrets:
       - name: registry-key
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: apigwsig
+spec:
+  paused: true
+  template:
+    metadata:
+      labels:
+        app: elefebvre
+        component: apigwsig
+    spec:
+      containers:
+      - name: apigwsig
+        image: elefebvreoncotainers/ocelotapigw
+        imagePullPolicy: Always
+        env:
+        - name: PATH_BASE
+          value: /websignatureapigw        
+        - name: IdentityUrl
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: identity                
+        ports:
+        - containerPort: 80   
+        volumeMounts:
+        - name: config
+          mountPath: /app/configuration            
+      volumes:
+      - name: config
+        configMap:
+          name: ocelot
+          items:
+          - key: sig
+            path: configuration.json
+      imagePullSecrets:
+      - name: registry-key
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: apigwdat
+spec:
+  paused: true
+  template:
+    metadata:
+      labels:
+        app: elefebvre
+        component: apigwdat
+    spec:
+      containers:
+      - name: apigwdat
+        image: elefebvreoncotainers/ocelotapigw
+        imagePullPolicy: Always
+        env:
+        - name: PATH_BASE
+          value: /webdatabaseapigw        
+        - name: IdentityUrl
+          valueFrom:
+           configMapKeyRef:
+             name: internalurls
+             key: identity                
+        ports:
+        - containerPort: 80   
+        volumeMounts:
+        - name: config
+          mountPath: /app/configuration            
+      volumes:
+      - name: config
+        configMap:
+          name: ocelot
+          items:
+          - key: dat
+            path: configuration.json
+      imagePullSecrets:
+      - name: registry-key

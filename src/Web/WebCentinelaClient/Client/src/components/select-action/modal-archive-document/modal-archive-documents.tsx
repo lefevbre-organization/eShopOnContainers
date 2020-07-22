@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component, Fragment, createRef } from 'react';
 import i18n from 'i18next';
 import { Base64 } from 'js-base64';
 import { Button, Modal, Container } from 'react-bootstrap';
@@ -7,6 +7,13 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 import { AppState } from '../../../store/store';
 import { bindActionCreators } from 'redux';
 import { ApplicationActions } from '../../../store/application/actions';
+import {
+  diff,
+  addedDiff,
+  deletedDiff,
+  updatedDiff,
+  detailedDiff,
+} from 'deep-object-diff';
 import { Step1 } from './step1';
 import { Step2 } from './step2';
 import { Step3 } from './step3';
@@ -15,6 +22,7 @@ import {
   CentInstance,
   uploadFile
 } from '../../../services/services-centinela';
+import { identity } from 'lodash';
 const parse = require('emailjs-mime-parser').default;
 const base64js = require('base64-js');
 
@@ -52,14 +60,17 @@ interface State {
   entity: number;
   messages: any;
   files: any;
+  attachments: any;
   copyEmail: boolean;
   copyAttachments: boolean;
   instance?: CentInstance;
 }
 
 class ModalArchiveDocuments extends Component<Props, State> {
+  private step3Ref: any;
   constructor(props: Props) {
     super(props);
+    this.step3Ref = createRef();
 
     this.state = {
       complete: false,
@@ -69,6 +80,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
       entity: 0,
       messages: [],
       files: [],
+      attachments: [],
       copyEmail: true,
       copyAttachments: true,
       instance: undefined
@@ -78,37 +90,97 @@ class ModalArchiveDocuments extends Component<Props, State> {
     this.onCopyEmail = this.onCopyEmail.bind(this);
     this.onImplantation = this.onImplantation.bind(this);
     this.onInstanceSelected = this.onInstanceSelected.bind(this);
+    this.onChangeSelected = this.onChangeSelected.bind(this);
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+  }
 
-  componentDidUpdate(prevProps: Props) {
-    if (
-      (prevProps.showAttachDocuments === false &&
-        this.props.showAttachDocuments === true) ||
-      (prevProps.showAttachDocuments === true &&
-        this.props.showAttachDocuments === false)
-    ) {
-      this.initMessages();
-    }
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    console.log("componentDidUpdate")
+    console.log(`showAttachDocuments: ${prevProps.showAttachDocuments} => ${this.props.showAttachDocuments}`)
+    console.log(`step: ${prevState.step} => ${this.state.step}`)
+    console.log(`Selected: ${prevProps.selected.length} => ${this.props.selected.length}`)
+
+    this.initMessages();
   }
 
   initMessages() {
     const { selected } = this.props;
     const messages = [];
+    let attachments: any = [];
 
     // Parsing messages
     for (let i = 0; i < selected.length; i++) {
-      const attchs = this.parseMessage(selected[i]);
+      const attchs: any = this.parseMessage(selected[i]);
+      attachments = [...attachments, ...attchs];
       const nm = Object.assign({}, selected[i], { attachments: attchs });
       messages.push(nm);
     }
 
-    this.setState({ messages });
+
+
+    const m = JSON.stringify(messages);
+    const a = JSON.stringify(attachments);
+
+    const sm = JSON.stringify(this.state.messages);
+    const sa = JSON.stringify(this.state.attachments);
+
+    const difP = detailedDiff(messages, this.state.messages);
+    const difSt = detailedDiff(attachments, this.state.attachments);
+    if(JSON.stringify((difP as any).updated).indexOf("checked") > -1 || JSON.stringify((difSt as any).updated).indexOf("checked") > -1) {
+      return;
+    }
+
+    if( sm !== m || sa !== a) {
+      this.setState({messages, attachments});
+    }
+  }
+
+  isAttachment(node: any): boolean {
+    let bRes = false;
+    if (node['x-attachment-id']) {
+      bRes = true;
+    } else if (
+      node['content-disposition'] &&
+      (node['content-disposition'][0].initial.indexOf('attachment') > -1 ||
+        node['content-disposition'][0].initial.indexOf('inline') > -1) &&
+      node['content-disposition'][0].params.filename &&
+      this.isFileAllowed(node['content-disposition'][0].params.filename)
+    ) {
+      bRes = true;
+    }
+
+    return bRes;
+  }
+
+  isFileAllowed(name: string): boolean {
+    const fe = name.split('.').pop();
+    return extensionsAllowed.indexOf(fe ? fe.toUpperCase() : '') > -1;
+  }
+
+  findAttachments(email: any): any {
+    let attachs: any = [];
+    if (email.childNodes) {
+      for (let i = 0; i < email.childNodes.length; i++) {
+        if (
+          email.childNodes[i]._isMultipart === false &&
+          this.isAttachment(email.childNodes[i].headers)
+        ) {
+          attachs.push({
+            ...email.childNodes[i],
+            checked: true
+          });
+        } else {
+          attachs = [...attachs, ...this.findAttachments(email.childNodes[i])];
+        }
+      }
+    }
+    return attachs;
   }
 
   parseMessage(message: any) {
-    const attachments = [];
+    let attachments = [];
     if (message.raw) {
       let mime = null;
       try {
@@ -119,18 +191,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
       }
 
       if (mime) {
-        for (let j = 0; j < mime.childNodes.length; j++) {
-          if (
-            mime.childNodes[j].raw.indexOf('Content-Disposition: attachment;') >
-            -1
-          ) {
-            const rawAttach = base64js.fromByteArray(
-              mime.childNodes[j].content
-            );
-            const name = mime.childNodes[j].contentType.params.name;
-            attachments.push({ name, checked: true });
-          }
-        }
+        attachments = this.findAttachments(mime);
       }
     }
 
@@ -155,7 +216,8 @@ class ModalArchiveDocuments extends Component<Props, State> {
   nextStep() {
     const { step } = this.state;
     if (step === 1) {
-      this.setState({ step: 2 });
+      const selected = this.state.attachments.filter((m: any) => m.checked);
+      this.setState({ step: 2, copyAttachments: selected.length > 0 });
     } else if (step === 2) {
       this.setState({ step: 3 });
     } else if (step === 3) {
@@ -169,28 +231,20 @@ class ModalArchiveDocuments extends Component<Props, State> {
   prevStep() {
     const { step } = this.state;
     if (step === 2) {
-      this.setState({ step: 1 });
+      this.setState({ step: 1, instance: undefined });
     } else if (step === 3) {
-      this.setState({ step: 2 });
+      if (this.step3Ref.current.back() === true) {
+        this.setState({ step: 2, instance: undefined });
+      } else {
+        this.setState({ instance: undefined });
+      }
     }
-
-    // } else if (step === 3) {
-    //   this.setState({ step: 2 });
-    // } else if (step === 4) {
-    //   this.setState({ step: 1 });
-    // } else if (step === 5) {
-    //   if (search.trim() === '') {
-    //     this.setState({ step: 3 });
-    //   } else {
-    //     this.setState({ step: 4 });
-    //   }
-    // }
   }
 
   async saveDocuments() {
     const { toggleNotification } = this.props;
     const { messages, instance } = this.state;
-    let result = false;
+    let result = true;
 
     for (let m = 0; m < messages.length; m++) {
       if (messages[m] && messages[m].raw) {
@@ -208,41 +262,28 @@ class ModalArchiveDocuments extends Component<Props, State> {
             }
           );
 
-          if (r1 === 200 || r1 === 201) {
-            result = true;
+          if (r1 !== 200 && r1 !== 201) {
+            result = false;
           }
         }
 
         if (this.state.copyAttachments) {
-          // Upload attachments
-          for (let j = 0; j < mime.childNodes.length; j++) {
-            if (
-              mime.childNodes[j].raw.indexOf(
-                'Content-Disposition: attachment;'
-              ) > -1
-            ) {
-              for (let k = 0; k < messages[m].attachments.length; k++) {
-                if (
-                  messages[m].attachments[k].name ===
-                    mime.childNodes[j].contentType.params.name &&
-                  messages[m].attachments[k].checked === true
-                ) {
-                  let rawAttach = base64js.fromByteArray(
-                    mime.childNodes[j].content
-                  );
-                  const r2 = await uploadFile(
-                    this.props.user,
-                    instance?.conceptObjectId || 0,
-                    {
-                      name: mime.childNodes[j].contentType.params.name,
-                      content: rawAttach
-                    }
-                  );
+          for (let j = 0; j < this.state.attachments.length; j++) {
+            const node = this.state.attachments[j];
 
-                  if (r2 === 200 || r2 === 201) {
-                    result = true;
-                  }
+            if (node.checked === true) {
+              let rawAttach = base64js.fromByteArray(node.content);
+              const r2 = await uploadFile(
+                this.props.user,
+                instance?.conceptObjectId || 0,
+                {
+                  name: node.contentType.params.name,
+                  content: rawAttach
                 }
+              );
+
+              if (r2 !== 200 && r2 !== 201) {
+                result = false;
               }
             }
           }
@@ -266,6 +307,11 @@ class ModalArchiveDocuments extends Component<Props, State> {
       instance
     } = this.state;
     if (step === 1 && (copyAttachments === true || copyEmail === true)) {
+      if (copyAttachments === true && copyEmail === false) {
+        const selected = this.state.attachments.filter((m: any) => m.checked);
+        return selected.length == 0;
+      }
+
       return false;
     }
     if (step === 2 && implantation && implantation.evaluationId > 0) {
@@ -422,8 +468,19 @@ class ModalArchiveDocuments extends Component<Props, State> {
     }
   }
 
-  onInstanceSelected(inst: CentInstance) {
+  onInstanceSelected(inst?: CentInstance) {
     this.setState({ instance: inst });
+  }
+
+  onChangeSelected(event: any, data: any) {
+    const aux = [...this.state.attachments];
+    for (let i = 0; i < aux.length; i++) {
+      if (aux[i] === data) {
+        aux[i].checked = event.checked;
+      }
+    }
+
+    this.setState({ attachments: [...aux] });
   }
 
   render() {
@@ -437,6 +494,9 @@ class ModalArchiveDocuments extends Component<Props, State> {
         break;
       }
     }
+    console.log("Step1 Render: " + JSON.stringify(attachments));
+    console.log("Step1 Render: " + JSON.stringify(messages.length));
+
     return (
       <div className="modal-connection-emails">
         <Modal
@@ -454,9 +514,12 @@ class ModalArchiveDocuments extends Component<Props, State> {
               className="modal-title d-flex align-items-center"
               id="documentarGuardardocumentacionLabel"
             >
-              <span className="lf-icon-compliance"></span>
+              <img
+                className='imgproduct'
+                alt='Centinela'
+                src={`${(window as any).URL_MF_CENTINELA_BASE}/assets/img/icon-centinela.svg`}></img>
 
-              <span>{i18n.t('modal-archive.title')}</span>
+              <span>{i18n.t('modal-archive.title')} </span>
               {/* <span>{step}</span> */}
             </h5>
           </Modal.Header>
@@ -473,6 +536,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
                     attachments={attachments}
                     onCopyEmail={this.onCopyEmail}
                     onCopyAttachments={this.onCopyAttachments}
+                    onChange={this.onChangeSelected}
                   />
                 </div>
                 <div
@@ -494,6 +558,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
                   }}
                 >
                   <Step3
+                    ref={this.step3Ref}
                     user={user}
                     show={step === 3}
                     implantation={implantation}
@@ -629,6 +694,10 @@ class ModalArchiveDocuments extends Component<Props, State> {
             line-height: 2;
           }
 
+          .container {
+            max-width: none !important;
+          }
+
           .container p {
             color: #001978;
           }
@@ -650,6 +719,10 @@ class ModalArchiveDocuments extends Component<Props, State> {
             background-color: #001978 !important;
             border: 2px solid #001978 !important;
             color: #ffff !important;
+          }
+
+          .btn-outline-primary:focus {
+            border-color: #001978 !important;
           }
 
           strong {
@@ -1041,3 +1114,83 @@ class ModalArchiveDocuments extends Component<Props, State> {
 }
 
 export default connector(ModalArchiveDocuments);
+
+const extensionsAllowed = [
+  'JPG',
+  'PNG',
+  'GIF',
+  'BMP',
+  'DIB',
+  'JPEG',
+  'TGA',
+  'TIF',
+  'TIFF',
+  'PCX',
+  'PIC',
+  'EMF',
+  'ICO',
+  'TXT',
+  'MDB',
+  'WRI',
+  'LOG',
+  'XPS',
+  'HTM',
+  'HTML',
+  'CSS',
+  'URL',
+  'XML',
+  'AVI',
+  'FLV',
+  'MP4',
+  'MKV',
+  'MOV',
+  'MPEG',
+  'MPG',
+  'DIVX',
+  'WMV',
+  'RAR',
+  'ZIP',
+  '7Z',
+  'PDF',
+  'DOC',
+  'XLS',
+  'PPT',
+  'DOC',
+  'XLS',
+  'PPT',
+  'EML',
+  'WAV',
+  'MP3',
+  'DOCX',
+  'DOCM',
+  'DOT',
+  'DOTX',
+  'DOTM',
+  'ODT',
+  'RTF',
+  'XLSX',
+  'XLM',
+  'XLSM',
+  'XLT',
+  'XLTX',
+  'XLTM',
+  'XLSB',
+  'XLAM',
+  'XLV',
+  'CSV',
+  'ODS',
+  'PPTX',
+  'PPTM',
+  'POT',
+  'POTX',
+  'POTM',
+  'PPA',
+  'PPAM',
+  'PPS',
+  'PPSX',
+  'PPSM',
+  'SLDX',
+  'SLDM',
+  'THMX',
+  'ODP'
+];

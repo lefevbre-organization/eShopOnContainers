@@ -33,7 +33,7 @@ class Main extends Component {
       idCompany: null,
       provider: null,
       account: null,
-      isAddon: false
+      isAddon: false,
     };
 
     this.handleSentMessage = this.handleSentMessage.bind(this);
@@ -43,7 +43,9 @@ class Main extends Component {
     this.handlePutUserFromLexonConnector = this.handlePutUserFromLexonConnector.bind(
       this
     );
-    this.handlePutAddonFromLexonConnector = this.handlePutAddonFromLexonConnector.bind(this);
+    this.handlePutAddonFromLexonConnector = this.handlePutAddonFromLexonConnector.bind(
+      this
+    );
     this.toggleNotification = this.toggleNotification.bind(this);
     this.handleOpenComposer = this.handleOpenComposer.bind(this);
     this.handleCloseComposer = this.handleCloseComposer.bind(this);
@@ -98,9 +100,9 @@ class Main extends Component {
       this.handlePutUserFromLexonConnector
     );
     window.removeEventListener(
-      'GoBacPutAddonFromLexonConnectorkAddon', 
-       this.handlePutAddonFromLexonConnector
-      );
+      'GoBacPutAddonFromLexonConnectorkAddon',
+      this.handlePutAddonFromLexonConnector
+    );
     window.removeEventListener('OpenComposer', this.handleOpenComposer);
     window.removeEventListener('CloseComposer', this.handleCloseComposer);
   }
@@ -250,6 +252,10 @@ class Main extends Component {
       });
     }
 
+    if(provider && provider !== '') {
+      this.props.setProvider(provider);
+    }
+
     if (bbdd && bbdd !== '') {
       this.setState(
         {
@@ -278,6 +284,8 @@ class Main extends Component {
           config: result.config,
         });
         this.setState({ user: newUser });
+        this.props.setUser(newUser.idUser);
+
         getCompanies(newUser)
           .then((result) => {
             if (Array.isArray(result.errors)) {
@@ -324,20 +332,20 @@ class Main extends Component {
   }
 
   async handlePutAddonFromLexonConnector(event) {
-    this.setState({isAddon: true});
+    this.setState({ isAddon: true });
   }
 
   closeLexonConnector(message) {
-    if(!message && this.state.isAddon) {
+    if (!message && this.state.isAddon) {
       const values = queryString.parse(window.location.search);
-      let redirect_uri = values.redirect_uri ? values.redirect_uri 
-      : window.GOOGLE_SCRIPT
+      let redirect_uri = values.redirect_uri
+        ? values.redirect_uri
+        : window.GOOGLE_SCRIPT;
       window.location.replace(
         `${redirect_uri}` + '?success=1' + '&state=' + values.state
       );
       localStorage.removeItem('oldTime');
     }
-   
   }
 
   toggleNotification(message, error = false) {
@@ -393,28 +401,41 @@ class Main extends Component {
     console.log('Rendering initial DDBB: ' + bbdd);
 
     return (
-      <Fragment>
-        {/* <Header title={"LEX-ON"} /> */}
-        {errors && errors.length > 0 && this.renderErrors()}
-        <Notification
-          initialModalState={showNotification}
-          toggleNotification={this.toggleNotification}
-          message={messageNotification}
-          error={errorNotification}
-        />
-
-        {errors && errors.length === 0 && (
-          <Routing
-            addonData={addonData}
-            user={user}
-            companies={companies}
+      <section>
+        <Fragment>
+          {/* <Header title={"LEX-ON"} /> */}
+          {errors && errors.length > 0 && this.renderErrors()}
+          <Notification
+            initialModalState={showNotification}
             toggleNotification={this.toggleNotification}
-            casefile={idCaseFile}
-            bbdd={bbdd}
-            company={idCompany}
+            message={messageNotification}
+            error={errorNotification}
           />
-        )}
-      </Fragment>
+
+          {errors && errors.length === 0 && (
+            <Routing
+              addonData={addonData}
+              user={user}
+              companies={companies}
+              toggleNotification={this.toggleNotification}
+              casefile={idCaseFile}
+              bbdd={bbdd}
+              company={idCompany}
+            />
+          )}
+        </Fragment>
+        <style jsx global>{`
+          .container {
+            max-width: unset;
+          }
+          
+          .imgproduct {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+          }
+        `}</style>
+      </section>
     );
   }
 }
@@ -427,7 +448,9 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
+  setProvider: (item) => dispatch(SELECTION_ACTIONS.setProvider(item)),
   setInitialBBDD: (item) => dispatch(SELECTION_ACTIONS.setInitialBBDD(item)),
+  setUser: (item) => dispatch(SELECTION_ACTIONS.setUser(item)),
   addMessage: (item) => dispatch(ACTIONS.addMessage(item)),
   deleteMessage: (id) => dispatch(ACTIONS.deleteMessage(id)),
   addListMessages: (listMessages) =>

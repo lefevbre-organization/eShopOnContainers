@@ -9,10 +9,14 @@ Param(
     [parameter(Mandatory=$false)][string]$configFile,
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
-    [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webaddonlexon", "weboffice365addonlexon", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw", "webstatus"),
+    # [parameter(Mandatory=$false)][string[]]$servicesToBuild=("weblexonapigw"),
+    [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webaddonlauncher", "weboffice365addonlexon", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api", "webdatabaseapigw", "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw", "webstatus"),
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
-    [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webaddonlexon", "weboffice365addonlexon", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "ocelotapigw", "webstatuslef"),
-    [parameter(Mandatory=$false)][string]$imageTag="linux-dev",
+    # [parameter(Mandatory=$false)][string[]]$servicesToPush=("ocelotapigw"),
+    [parameter(Mandatory=$false)][string[]]$servicesToPush=("webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webaddonlauncher", "weboffice365addonlexon", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api", "ocelotapigw", "webstatuslef"),
+    [parameter(Mandatory=$false)][string]$imageEnv="dev-26",
+    [parameter(Mandatory=$false)][string]$imagePlatform="linux",
+    # [parameter(Mandatory=$false)][string]$imageTag="linux-dev",
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
     [parameter(Mandatory=$false)][bool]$deployInfrastructure=$false,
     [parameter(Mandatory=$false)][bool]$deployCI=$false
@@ -31,7 +35,7 @@ function ExecKube($cmd) {
 }
 
 # Initialization
-
+$imageTag = $imagePlatform + "-" + $imageEnv
 $debugMode = $PSCmdlet.MyInvocation.BoundParameters["Debug"].IsPresent
 $useDockerHub = [string]::IsNullOrEmpty($registry)
 
@@ -82,7 +86,9 @@ if ($buildImages) {
         docker rmi -f $(docker images -a -q)
     }
     
-    # $env:TAG=$imageTag
+    $env:TAG=$imageEnv
+    $env:PLATFORM=$imagePlatform
+
     if($buildAll){
         Write-Host "Building All Docker images tagged with '$imageTag'" -ForegroundColor DarkBlue
         docker-compose -p .. -f ../docker-compose.yml build      
@@ -163,7 +169,13 @@ if ($deployKubernetes){
 
     Write-Host 'Deploying ocelot APIGW from ocelot/deployment-lef.yaml y ocelot/service-lef.yaml ans config files' -ForegroundColor Yellow
 
-    ExecKube "create configmap ocelot --from-file=mm=ocelot/configuration-web-account.json --from-file=ws=ocelot/configuration-web-lexon.json "
+    ExecKube "create configmap ocelot `
+        --from-file=mm=ocelot/configuration-web-account.json `
+        --from-file=mm=ocelot/configuration-web-lexon.json `
+        --from-file=mm=ocelot/configuration-web-centinela.json`
+        --from-file=mm=ocelot/configuration-web-database.json `
+        --from-file=ws=ocelot/configuration-web-signature.json "
+
     ExecKube -cmd "apply -f ocelot/deployment-lef.yaml"
     ExecKube -cmd "apply -f ocelot/service-lef.yaml"
 
@@ -178,6 +190,12 @@ if ($deployKubernetes){
     ExecKube -cmd 'create configmap urls `
         --from-literal=apigwlex_e=http://$($externalDns)/weblexonapigw `
         --from-literal=apigwacc_e=http://$($externalDns)/webaccountapigw `
+        --from-literal=apigwcen_e=http://$($externalDns)/webcentinelaapigw `
+        --from-literal=apigwsig_e=http://$($externalDns)/websignatureapigw `
+        --from-literal=apigwdat_e=http://$($externalDns)/webdatabaseapigw `
+        --from-literal=database_e=http://$($externalDns)/database-api `
+        --from-literal=userutils_e=http://$($externalDns)/userutils-api `
+        --from-literal=signature_e=http://$($externalDns)/signature-api `
         --from-literal=lexon_e=http://$($externalDns)/lexon-api `
         --from-literal=account_e=http://$($externalDns)/account-api `
         --from-literal=lexonapi_e=http://$($externalDns)/lexon-mysql-api' 
@@ -201,6 +219,9 @@ if ($deployKubernetes){
     ExecKube -cmd 'set image deployments/lexon lexon=${registryPath}${dockerOrg}/lexon.api:$imageTag'
     ExecKube -cmd 'set image deployments/lexonmysql lexonmysql=${registryPath}${dockerOrg}/lexonmysql.api:$imageTag'
     ExecKube -cmd 'set image deployments/account account=${registryPath}${dockerOrg}/account.api:$imageTag'
+    ExecKube -cmd 'set image deployments/centinela centinela=${registryPath}${dockerOrg}/centinela.api:$imageTag'
+    ExecKube -cmd 'set image deployments/signature signature=${registryPath}${dockerOrg}/signature.api:$imageTag'
+    ExecKube -cmd 'set image deployments/database database=${registryPath}${dockerOrg}/database.api:$imageTag'
     ExecKube -cmd 'set image deployments/webportalclient webportalclient=${registryPath}${dockerOrg}/webportalclient.api:$imageTag'
     ExecKube -cmd 'set image deployments/webgoogleclient webgoogleclient=${registryPath}${dockerOrg}/webgoogleclient:$imageTag'
     ExecKube -cmd 'set image deployments/webofficeclient webofficeclient=${registryPath}${dockerOrg}/webofficeclient:$imageTag'
@@ -213,11 +234,16 @@ if ($deployKubernetes){
     ExecKube -cmd 'set image deployments/apigwlex apigwlex=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
     ExecKube -cmd 'set image deployments/apigwacc apigwacc=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
 	ExecKube -cmd 'set image deployments/apigwsig apigwsig=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
+	ExecKube -cmd 'set image deployments/apigwcen apigwcen=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
+	ExecKube -cmd 'set image deployments/apigwdat apigwdat=${registryPath}${dockerOrg}/ocelotapigw:$imageTag'
 
     Write-Host "Execute rollout..." -ForegroundColor Yellow
     ExecKube -cmd 'rollout resume deployments/lexon'
     ExecKube -cmd 'rollout resume deployments/lexonmysql'
     ExecKube -cmd 'rollout resume deployments/account'
+    ExecKube -cmd 'rollout resume deployments/centinela'
+    ExecKube -cmd 'rollout resume deployments/signature'
+    ExecKube -cmd 'rollout resume deployments/database'
     ExecKube -cmd 'rollout resume deployments/webportalclient'
     ExecKube -cmd 'rollout resume deployments/webgoogleclient'
     ExecKube -cmd 'rollout resume deployments/webofficeclient'
@@ -229,6 +255,8 @@ if ($deployKubernetes){
     ExecKube -cmd 'rollout resume deployments/apigwlex'
     ExecKube -cmd 'rollout resume deployments/apigwacc'
 	ExecKube -cmd 'rollout resume deployments/apigwsig'
+	ExecKube -cmd 'rollout resume deployments/apigwcen'
+	ExecKube -cmd 'rollout resume deployments/apigwdat'
 
     Write-Host "Adding/Updating ingress resource from ingress-lef.yalm..." -ForegroundColor Yellow
     ExecKube -cmd 'apply -f ingress-lef.yaml'

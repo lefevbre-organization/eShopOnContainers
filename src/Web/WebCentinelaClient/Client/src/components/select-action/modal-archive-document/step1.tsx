@@ -2,13 +2,13 @@ import React, { Fragment } from 'react';
 import { CheckBoxComponent } from '@syncfusion/ej2-react-buttons';
 import i18n from 'i18next';
 import { Message } from '../../../store/messages/types';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 
 interface Props {
   selected: Message[];
   attachments: boolean;
   onCopyEmail: (check: boolean) => void;
   onCopyAttachments: (check: boolean) => void;
+  onChange: (event: any, data: any) => void;
 }
 
 interface State {
@@ -18,27 +18,40 @@ interface State {
   entity: number;
 }
 
-const MessageWithAttachments = ({ msg }: { msg: Message }) => {
-  console.log('MessageWithAttachments.render');
+const getAttachmentName = (attach: any) => {
+  return attach.headers['content-type'][0].params.name;
+};
+
+const MessageWithAttachments = ({
+  msg,
+  onChange
+}: {
+  msg: Message;
+  onChange: any;
+}) => {
   if (msg.attachments && msg.attachments.length > 0) {
-    return (
+     return (
       <div>
         <div className="subject">
           <i className="lf-icon-mail"></i>
           {msg.subject}
         </div>
         <ul className="attachments">
-          {msg.attachments?.map((at) =>
-            at.name ? (
-              <li>
+          {msg.attachments?.map((at, index: number) => {
+            const an = getAttachmentName(at);
+            return an ? (
+              <li key={'index' + index}>
                 <CheckBoxComponent
                   cssClass="e-small"
                   checked={at.checked}
+                  change={(event) => {
+                    onChange && onChange(event, at);
+                  }}
                 ></CheckBoxComponent>
-                <span>{at.name}</span>
+                <span>{an}</span>
               </li>
-            ) : null
-          )}
+            ) : null;
+          })}
         </ul>
 
         <style jsx>{`
@@ -154,11 +167,15 @@ export class Step1 extends React.Component<Props, State> {
                   <span style={{ color: 'red' }}>*</span>
                 </span>
                 <div className="file-list-wrapper">
-                  <PerfectScrollbar>
-                    {selected.map((sm: Message) => (
-                      <MessageWithAttachments msg={sm} />
+                  <div >
+                    {selected.map((sm: Message, index:number) => (
+                      <MessageWithAttachments
+                        key={'index' + index}
+                        msg={sm}
+                        onChange={this.props.onChange}
+                      />
                     ))}
-                  </PerfectScrollbar>
+                  </div>
                 </div>
               </li>
             )}
@@ -176,7 +193,8 @@ export class Step1 extends React.Component<Props, State> {
               margin-right: auto;
               margin-top: 20px;
               width: 400px;
-              height: 300px;
+              height: 220px;
+              overflow-y: auto;
             }
 
             ol {

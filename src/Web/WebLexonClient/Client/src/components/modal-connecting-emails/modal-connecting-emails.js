@@ -23,16 +23,16 @@ class ModalConnectingEmails extends Component {
         actuation: false,
         copyDocuments: false,
         saveDocuments: false,
-        entity: 0
+        entity: 0,
       },
       step2Data: {
         id: -1,
-        idType: -1
+        idType: -1,
       },
       step3Data: {
-        selected: -1
+        selected: -1,
       },
-      messages: []
+      messages: [],
     };
 
     this.changeSubject = this.changeSubject.bind(this);
@@ -59,15 +59,15 @@ class ModalConnectingEmails extends Component {
           entity: 1,
           actuation: false,
           copyDocuments: false,
-          saveDocuments: false
+          saveDocuments: false,
         },
         step2Data: {
           id: -1,
-          idType: -1
+          idType: -1,
         },
         step3Data: {
-          selected: -1
-        }
+          selected: -1,
+        },
       });
     }, 1000);
     this.props.toggleModalDocuments && this.props.toggleModalDocuments();
@@ -124,7 +124,7 @@ class ModalConnectingEmails extends Component {
     if (this.state.step1Data.entity !== data.entity) {
       step2Data = {
         id: -1,
-        idType: -1
+        idType: -1,
       };
     }
 
@@ -197,6 +197,7 @@ class ModalConnectingEmails extends Component {
     const { toggleNotification } = this.props;
     const { selectedMessages } = this.props;
     let notification = 0;
+    let error = false;
 
     this.closeDialog();
     let sc = null;
@@ -219,31 +220,37 @@ class ModalConnectingEmails extends Component {
           const subject = selectedMessages[i].subject;
 
           if (step1Data.copyDocuments === true) {
-            await uploadFile(
-              step1Data.actuation === false ? step3Data.selected : undefined,
-              step1Data.actuation === false ? step2Data.id : undefined,
-              step1Data.actuation === false ? step2Data.idType : 45,
-              step1Data.actuation === true ? sc[i] : undefined,
-              this.props.companySelected.bbdd,
-              this.props.user.idUser,
-              subject + '.eml',
-              raw
-            );
+            try {
+              const data = await uploadFile(
+                step1Data.actuation === false ? step3Data.selected : undefined,
+                step1Data.actuation === false ? step2Data.id : undefined,
+                step1Data.actuation === false ? step2Data.idType : 45,
+                step1Data.actuation === true ? sc[i] : undefined,
+                this.props.companySelected.bbdd,
+                this.props.user.idUser,
+                subject + '.eml',
+                raw
+              );
+              if (!data || data.response.status > 201) {
+                error = true;
+              }
+            } catch (err) {
+              console.log(err);
+              error = true;
+            }
           }
 
           if (step1Data.saveDocuments === true) {
+            console.log('uploadDocument: 0');
+
             // Save attachments
             const mime = parse(selectedMessages[i].raw);
-            for (let j = 0; j < mime.childNodes.length; j++) {
-              if (
-                mime.childNodes[j].raw.indexOf(
-                  'Content-Disposition: attachment;'
-                ) > -1
-              ) {
-                let rawAttach = base64js.fromByteArray(
-                  mime.childNodes[j].content
-                );
-                await uploadFile(
+            const attachments = findAttachments(mime);
+
+            for (let j = 0; j < attachments.length; j++) {
+              let rawAttach = base64js.fromByteArray(attachments[j].content);
+              try {
+                const data = await uploadFile(
                   step1Data.actuation === false
                     ? step3Data.selected
                     : undefined,
@@ -252,23 +259,42 @@ class ModalConnectingEmails extends Component {
                   step1Data.actuation === true ? sc[i] : undefined,
                   this.props.companySelected.bbdd,
                   this.props.user.idUser,
-                  mime.childNodes[j].contentType.params.name,
+                  attachments[j].contentType.params.name,
                   rawAttach
                 );
+                if (!data || data.response.status > 201) {
+                  error = true;
+                }
+              } catch (err) {
+                error = true;
               }
             }
           }
         }
       }
 
-      if (notification === 1) {
-        toggleNotification(i18n.t('classify-emails.classification-saved-ok'));
-      } else if (notification === 2) {
-        toggleNotification(i18n.t('classify-emails.documents-saved-ok'));
-      } else if (notification === 3) {
-        toggleNotification(
-          i18n.t('classify-emails.classification-docs-saved-ok')
-        );
+      if (error) {
+        if (notification === 1) {
+          toggleNotification(
+            i18n.t('classify-emails.classification-saved-ko'),
+            true
+          );
+        } else if (notification > 1) {
+          toggleNotification(
+            i18n.t('classify-emails.documents-saved-ko'),
+            true
+          );
+        }
+      } else {
+        if (notification === 1) {
+          toggleNotification(i18n.t('classify-emails.classification-saved-ok'));
+        } else if (notification === 2) {
+          toggleNotification(i18n.t('classify-emails.documents-saved-ok'));
+        } else if (notification === 3) {
+          toggleNotification(
+            i18n.t('classify-emails.classification-docs-saved-ok')
+          );
+        }
       }
     } catch (err) {
       console.log(err);
@@ -289,7 +315,7 @@ class ModalConnectingEmails extends Component {
       user,
       companySelected,
       selectedMessages,
-      toggleNotification
+      toggleNotification,
     } = this.props;
 
     try {
@@ -446,7 +472,7 @@ class ModalConnectingEmails extends Component {
       user,
       companySelected,
       showModalDocuments,
-      toggleNotification
+      toggleNotification,
     } = this.props;
     const { messages, step1Data, step } = this.state;
 
@@ -469,7 +495,7 @@ class ModalConnectingEmails extends Component {
                 class='imgproduct'
                 border='0'
                 alt='Lex-On'
-                src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
+                src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.svg`}></img>
               <span>{i18n.t('modal-conecting-emails.save-copy')}</span>
             </h5>
           </Modal.Header>
@@ -479,7 +505,7 @@ class ModalConnectingEmails extends Component {
                 style={{ display: this.state.step === 1 ? 'block' : 'none' }}>
                 <ConnectingEmailsStep1
                   show={this.state.step === 1}
-                  onChange={data => {
+                  onChange={(data) => {
                     this.changeStep1Data(data);
                   }}></ConnectingEmailsStep1>
               </div>
@@ -491,7 +517,7 @@ class ModalConnectingEmails extends Component {
                   bbdd={companySelected}
                   entity={this.state.step1Data.entity}
                   toggleNotification={toggleNotification}
-                  onSelectedEntity={data =>
+                  onSelectedEntity={(data) =>
                     this.changeStep2Data(data)
                   }></ConnectingEmailsStep2>
               </div>
@@ -503,7 +529,7 @@ class ModalConnectingEmails extends Component {
                   bbdd={companySelected}
                   entity={this.state.step2Data}
                   toggleNotification={toggleNotification}
-                  onSelectedDirectory={data =>
+                  onSelectedDirectory={(data) =>
                     this.changeStep3Data(data)
                   }></ConnectingEmailsStep3>
               </div>
@@ -1040,19 +1066,53 @@ class ModalConnectingEmails extends Component {
 
 ModalConnectingEmails.propTypes = {};
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     showModalDocuments: state.documentsReducer.showModalDocuments,
     companySelected: state.selections.companySelected,
-    selectedMessages: state.email.selectedMessages
+    selectedMessages: state.email.selectedMessages,
   };
 };
 
-const mapDispatchToProps = dispatch => ({
-  toggleModalDocuments: () => dispatch(ACTIONS.toggleModalDocuments())
+const mapDispatchToProps = (dispatch) => ({
+  toggleModalDocuments: () => dispatch(ACTIONS.toggleModalDocuments()),
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(ModalConnectingEmails);
+
+const findAttachments = (email) => {
+  let attachs = [];
+  if (email.childNodes) {
+    for (let i = 0; i < email.childNodes.length; i++) {
+      if (
+        email.childNodes[i]._isMultipart === false &&
+        isAttachment(email.childNodes[i].headers)
+      ) {
+        attachs.push({
+          ...email.childNodes[i],
+          checked: true,
+        });
+      } else {
+        attachs = [...attachs, ...findAttachments(email.childNodes[i])];
+      }
+    }
+  }
+  return attachs;
+};
+
+const isAttachment = (node) => {
+  let bRes = false;
+  if (node['x-attachment-id']) {
+    bRes = true;
+  } else if (
+    node['content-disposition'] &&
+    node['content-disposition'][0].params.filename
+  ) {
+    bRes = true;
+  }
+
+  return bRes;
+};

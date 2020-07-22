@@ -3,6 +3,7 @@ import { signedOutReducer } from './gapi.reducers';
 import { signInStatusResult } from './gapi.reducers';
 import { lexon } from './lexon';
 import { currentUser } from './user';
+import { calendarsResult } from '../calendar/components/sidebar/sidebarCalendar.reducers';
 
 import { labelsResult } from '../components/sidebar/sidebar.reducers';
 import {
@@ -17,6 +18,7 @@ import {
 export default combineReducers({
   signedOutReducer,
   signInStatusResult,
+  calendarsResult,
   currentUser,
   lexon,
   labelsResult,

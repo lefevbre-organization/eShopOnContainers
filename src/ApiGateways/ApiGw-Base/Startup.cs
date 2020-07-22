@@ -9,6 +9,7 @@ using Ocelot.Middleware;
 using System;
 using HealthChecks.UI.Client;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace OcelotApiGw
 {
@@ -34,6 +35,7 @@ namespace OcelotApiGw
                 .AddUrlGroup(new Uri(_cfg["CentinelaApiUrlHC"]), name: "centinelaapi-check", tags: new string[] { "centinelaapi" })
                 .AddUrlGroup(new Uri(_cfg["UserUtilsApiUrlHC"]), name: "userutilsapi-check", tags: new string[] { "userutilsapi" })
                 .AddUrlGroup(new Uri(_cfg["SignatureApiUrlHC"]), name: "signatureapi-check", tags: new string[] { "signatureapi" })
+                .AddUrlGroup(new Uri(_cfg["DatabaseApiUrlHC"]), name: "databaseapi-check", tags: new string[] { "databaseapi" })
                 ;
 
             services.AddCors(options =>
@@ -73,7 +75,12 @@ namespace OcelotApiGw
                     };
                 });
 
+
             services.AddOcelot(_cfg);
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.Limits.MaxRequestBodySize = 5200000000; // if don't set default value is: 30 MB
+            });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

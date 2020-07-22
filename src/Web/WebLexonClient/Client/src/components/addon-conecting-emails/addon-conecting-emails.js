@@ -12,7 +12,7 @@ import { ConnectingEmailsStep4 } from '../modal-connecting-emails/step4';
 import {
   addClassification,
   uploadFile,
-  getRawAddon
+  getRawAddon,
 } from '../../services/services-lexon';
 import ACTIONS from '../../actions/documentsAction';
 import 'react-perfect-scrollbar/dist/css/styles.css';
@@ -39,7 +39,7 @@ class AddonConnectingEmails extends Component {
       },
       messages: [],
       rawAddon: null,
-      expirationTime: null
+      expirationTime: null,
     };
 
     this.changeSubject = this.changeSubject.bind(this);
@@ -47,8 +47,8 @@ class AddonConnectingEmails extends Component {
 
   componentDidMount() {
     this.getSessionInfo();
-    this.setState({ 
-      messages: this.props.selectedMessages
+    this.setState({
+      messages: this.props.selectedMessages,
     });
   }
 
@@ -63,8 +63,9 @@ class AddonConnectingEmails extends Component {
 
   goBackAddon() {
     const values = queryString.parse(window.location.search);
-    let redirect_uri = values.redirect_uri ? values.redirect_uri 
-    : window.GOOGLE_SCRIPT
+    let redirect_uri = values.redirect_uri
+      ? values.redirect_uri
+      : window.GOOGLE_SCRIPT;
     window.location.replace(
       `${redirect_uri}` + '?success=1' + '&state=' + values.state
     );
@@ -121,27 +122,26 @@ class AddonConnectingEmails extends Component {
     var currentTime = date.getTime();
     var oldTime = parseInt(localStorage.getItem('oldTime'));
     var milliseconds = Math.abs(oldTime - currentTime);
-    var minute = parseInt(milliseconds/60000);
+    var minute = parseInt(milliseconds / 60000);
     var expirationTime = 30 - minute;
-    this.setState({expirationTime: expirationTime});
-    if(expirationTime == 1){
+    this.setState({ expirationTime: expirationTime });
+    if (expirationTime == 1) {
       this.goBackAddon();
     }
   }
 
-  getSessionInfo() {  
+  getSessionInfo() {
     var date = new Date();
     var time = date.getTime();
     var oldTime = localStorage.getItem('oldTime');
-    if(!oldTime) {
+    if (!oldTime) {
       localStorage.setItem('oldTime', time);
-    } 
+    }
     this.getExpirationTime();
     setTimeout(() => {
       this.getSessionInfo();
     }, 60000);
   }
-
 
   changeStep1Data(data) {
     let step2Data = this.state.step2Data;
@@ -209,7 +209,6 @@ class AddonConnectingEmails extends Component {
       step1Data.copyDocuments === false &&
       step1Data.saveDocuments === false
     ) {
-      
       this.saveClassifications();
     } else {
       this.nextStep();
@@ -225,9 +224,7 @@ class AddonConnectingEmails extends Component {
     let sc = null;
     //  await getMessage(selectedMessages[0].id, 'raw');
 
-    const msgRaw = await getRawAddon(
-      addonData
-    );
+    const msgRaw = await getRawAddon(addonData);
 
     try {
       if (step1Data.actuation === true) {
@@ -283,7 +280,6 @@ class AddonConnectingEmails extends Component {
                   mime.childNodes[j].contentType.params.name,
                   rawAttach
                 );
-                
               }
             }
           }
@@ -482,11 +478,7 @@ class AddonConnectingEmails extends Component {
       showModalDocuments,
       toggleNotification,
     } = this.props;
-    const { 
-      messages, 
-      step1Data, 
-      step
-    } = this.state;
+    const { messages, step1Data, step } = this.state;
     console.log('Data addon --->', addonData);
     return (
       <div className=''>
@@ -495,16 +487,16 @@ class AddonConnectingEmails extends Component {
             className='title d-flex align-items-center'
             id='documentarGuardardocumentacionLabel'>
             <img
-              class='imgproduct'
+              className='imgproduct'
               border='0'
               alt='Lex-On'
-              src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.png`}></img>
+              src={`${window.URL_MF_LEXON_BASE}/assets/img/icon-lexon.svg`}></img>
             <span className='title-space'>
               {i18n.t('modal-conecting-emails.save-copy')}
             </span>
           </h5>
         </header>
-        <Container>
+        <div className="addon-container">
           <div style={{ display: this.state.step === 1 ? 'block' : 'none' }}>
             <ConnectingEmailsStep1
               show={this.state.step === 1}
@@ -546,7 +538,7 @@ class AddonConnectingEmails extends Component {
               messages={messages}
               onChange={this.changeSubject}></ConnectingEmailsStep4>
           </div>
-        </Container>
+        </div>
 
         <div>{this.renderButtons()}</div>
 
@@ -575,6 +567,7 @@ class AddonConnectingEmails extends Component {
           .container {
             padding-top: 48px;
             text-align: start;
+            background-color: red;
           }
 
           #lexon-app .e-checkbox-wrapper .e-frame.e-check,

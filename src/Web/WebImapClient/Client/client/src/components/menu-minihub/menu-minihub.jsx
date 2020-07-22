@@ -296,7 +296,7 @@ class MenuMinihub extends Component {
           .menu-header__text-products {
             color: #9A9898;
             font-family: MTTMilano;
-            font-size: 14px;
+            font-size: 12px !important;
             line-height: 20px;
           }
 

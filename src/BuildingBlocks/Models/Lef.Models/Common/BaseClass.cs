@@ -95,6 +95,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
         public void TraceOutputMessage(
             List<ErrorInfo> errors,
             object exMessage,
+            string detailError = null,
             object codeError = null,
             [System.Runtime.CompilerServices.CallerLineNumber] int sourceLineNumber = 0,
             [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
@@ -112,6 +113,7 @@ namespace Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models
                 member = memberName,
                 source = sourceFilePath,
                 line = sourceLineNumber,
+                detail = detailError
             };
 
             WriteError(errorInfo);

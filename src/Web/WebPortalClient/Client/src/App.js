@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 
 import './App.css';
 
@@ -14,8 +14,9 @@ class App extends Component {
     window.opener = null;
   }
 
-  render() {
-    return (
+    render() {
+        
+     return (
       <Switch>
         <Route
           path='/user/:userId?/encrypt/:encrypt?'
@@ -26,8 +27,9 @@ class App extends Component {
           component={PageGoToLegacy}
         />
         <Route path='/access/:token' component={PageGoTo} />
-        <Route path='/user/:userId?' component={PageGoTo} />
-        <Route component={Login} />
+            <Route path='/user/:userId?' component={PageGoTo} />           
+            <Route path='/login' component={Login} />
+            <Route exact path="/" render={() => { window.location.href = "home/index.html" }} />
       </Switch>
     );
   }

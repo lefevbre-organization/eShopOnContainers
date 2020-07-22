@@ -63,7 +63,7 @@
   },
   "menu-minihub": {
     "products": "Productos Lefebvre",
-    "footer": "Utilizar este menú para acceder a los productos de Lefebvre."
+    "footer": "Utiliza este menú para iniciar directamente otro producto de Lefebvre."
   },
   "header": {
     "search": "Buscar",
@@ -92,9 +92,11 @@
     "eventtype": "Tipo de evento",
     "profesional-event": "Evento profesional",
     "personal-event": "Evento personal",
+    "attendees": "Invite a los asistentes y presione enter",
     "toast-processing": "Procesando",
     "toast-process-complete": "Proceso completado",
-    "toast-process-error": "Error"
+    "toast-process-error": "Error",
+    "validator-required": "Campo obligatorio"
   },
   "calendar": {
     "title": "Configuración",

@@ -100,7 +100,23 @@ env:
     - name: HealthChecksUI__HealthChecks__16__Name
       key: name__webcentinela__hc
     - name: HealthChecksUI__HealthChecks__16__Uri
-      key: internalurls__webcentinela__hc      
+      key: internalurls__webcentinela__hc       
+    - name: HealthChecksUI__HealthChecks__17__Name
+      key: name__databaseapi__hc
+    - name: HealthChecksUI__HealthChecks__17__Uri
+      key: internalurls__databaseapi__hc
+    - name: HealthChecksUI__HealthChecks__18__Name
+      key: name__databaseapigw__hc
+    - name: HealthChecksUI__HealthChecks__18__Uri
+      key: internalurls__databaseapigw__hc
+    - name: HealthChecksUI__HealthChecks__19__Name
+      key: name__webaddonlexon__hc
+    - name: HealthChecksUI__HealthChecks__19__Uri
+      key: internalurls__webaddonlexon__hc
+    - name: HealthChecksUI__HealthChecks__20__Name
+      key: name__weboffice365addonlexon__hc
+    - name: HealthChecksUI__HealthChecks__20__Uri
+      key: internalurls__weboffice365addonlexon__hc         
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT

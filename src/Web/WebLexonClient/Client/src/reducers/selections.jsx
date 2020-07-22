@@ -16,10 +16,22 @@ const selections = (state = INITIAL_STATE.selections, action) => {
         typeSelected: action.payload
       };
     }
+    case ACTIONS.Types.SET_USER: {
+      return {
+        ...state,
+        user: action.payload
+      }
+    }
     case ACTIONS.Types.SET_INITIAL_BBDD: {
       return {
         ...state,
         initialBBDD: action.payload
+      }
+    }
+    case ACTIONS.Types.SET_PROVIDER: {
+      return {
+        ...state,
+        provider: action.payload
       }
     }
     case ACTIONS.Types.CLEAR_INITIAL_BBDD: {

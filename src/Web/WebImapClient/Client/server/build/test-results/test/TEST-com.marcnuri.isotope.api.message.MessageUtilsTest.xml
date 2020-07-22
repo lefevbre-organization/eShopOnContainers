@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.marcnuri.isotope.api.message.MessageUtilsTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2020-03-04T12:26:02" hostname="DESKTOP-U7U4TE6" time="0.118">
+<testsuite name="com.marcnuri.isotope.api.message.MessageUtilsTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2020-06-26T10:32:33" hostname="DESKTOP-U7U4TE6" time="0.125">
   <properties/>
-  <testcase name="getRecipientAddresses_validMessageNoRecipients_shouldReturnAddresses" classname="com.marcnuri.isotope.api.message.MessageUtilsTest" time="0.048"/>
+  <testcase name="getRecipientAddresses_validMessageNoRecipients_shouldReturnAddresses" classname="com.marcnuri.isotope.api.message.MessageUtilsTest" time="0.051"/>
   <testcase name="getRecipientAddresses_validMessage_shouldReturnAddresses" classname="com.marcnuri.isotope.api.message.MessageUtilsTest" time="0.004"/>
   <testcase name="getRecipientAddresses_invalidMessage_shouldThrowException" classname="com.marcnuri.isotope.api.message.MessageUtilsTest" time="0.0"/>
-  <testcase name="envelopeFetch_validFolderAndEmptyMessageArray_shouldNotFetchMessages" classname="com.marcnuri.isotope.api.message.MessageUtilsTest" time="0.041"/>
-  <testcase name="envelopeFetch_validFolderAndMessageArray_shouldFetchMessages" classname="com.marcnuri.isotope.api.message.MessageUtilsTest" time="0.024"/>
+  <testcase name="envelopeFetch_validFolderAndEmptyMessageArray_shouldNotFetchMessages" classname="com.marcnuri.isotope.api.message.MessageUtilsTest" time="0.042"/>
+  <testcase name="envelopeFetch_validFolderAndMessageArray_shouldFetchMessages" classname="com.marcnuri.isotope.api.message.MessageUtilsTest" time="0.028"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

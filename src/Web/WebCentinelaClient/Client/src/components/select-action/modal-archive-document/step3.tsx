@@ -44,7 +44,7 @@ interface Props {
   show: boolean;
   implantation: any;
   toggleNotification?: (msg: string, error: boolean) => void;
-  onInstanceSelected: (instance: CentInstance) => void;
+  onInstanceSelected: (instance?: CentInstance) => void;
   // onPhase: (id: Evaluation) => void;
 }
 interface State {
@@ -99,6 +99,23 @@ export class Step3 extends React.Component<Props, State> {
     this.crumbRef = createRef();
   }
 
+  public back() {
+    const { route } = this.state;
+
+    if (route.length === 0) {
+      this.setState({ rowSelected: -1 });
+      return true;
+    }
+
+    if (route.length === 1) {
+      this.onBreadcrumb();
+    } else {
+      this.onBreadcrumb(route[route.length - 2]);
+    }
+
+    return false;
+  }
+
   async componentDidUpdate(prevProps: Props, prevState: State) {
     const { user, toggleNotification, implantation } = this.props;
     const { gridHeight } = this.state;
@@ -116,7 +133,7 @@ export class Step3 extends React.Component<Props, State> {
         }
       }
 
-      return;
+      //      return;
     }
 
     if (this.crumbRef && this.crumbRef.current) {
@@ -171,6 +188,20 @@ export class Step3 extends React.Component<Props, State> {
           showSpinner: false
         });
       }
+    }
+
+    if (prevProps.show === true && this.props.show === false) {
+      const state = {
+        phases: [],
+        route: [],
+        instances: [],
+        gridHeight: 0,
+        substep: 0,
+        currentNodes: { items: [] },
+        rowSelected: -1,
+        showSpinner: true
+      };
+      this.setState(state);
     }
   }
 
@@ -252,11 +283,14 @@ export class Step3 extends React.Component<Props, State> {
       this.setState({
         route: rts,
         substep: 0,
+        rowSelected: -1,
         currentNodes: {
           node: 'root',
           items: [...this.state.phases]
         }
       });
+
+      this.props.onInstanceSelected && this.props.onInstanceSelected(undefined);
       return;
     }
 
@@ -277,11 +311,14 @@ export class Step3 extends React.Component<Props, State> {
     this.setState({
       route: rts,
       substep: 0,
+      rowSelected: -1,
       currentNodes: {
         node: cn,
         items: [...cn.children, ...cn.concepts]
       }
     });
+
+    this.props.onInstanceSelected && this.props.onInstanceSelected(undefined);
   }
 
   renderBreadcrumbs() {
@@ -338,7 +375,8 @@ export class Step3 extends React.Component<Props, State> {
   }
 
   renderInstanceCheck(row: CentInstance) {
-    const check = row.conceptId === this.state.rowSelected ? 'checked' : '';
+    const check =
+      row.conceptObjectId === this.state.rowSelected ? 'checked' : '';
     return (
       <div className={`row-check ${check}`}>
         <div className={`row-check-inner ${check}`}></div>
@@ -347,7 +385,7 @@ export class Step3 extends React.Component<Props, State> {
   }
 
   onInstanceSelected(instance: CentInstance) {
-    this.setState({ rowSelected: instance.conceptId }, () => {
+    this.setState({ rowSelected: instance.conceptObjectId }, () => {
       this.props.onInstanceSelected(instance);
     });
   }

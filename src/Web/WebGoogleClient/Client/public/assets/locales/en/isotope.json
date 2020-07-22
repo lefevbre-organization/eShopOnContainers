@@ -92,9 +92,11 @@
     "eventtype": "Event Type",
     "profesional-event": "Profesional Event",
     "personal-event": "Personal Event",
+    "attendees": "Invite attendees and press enter",
     "toast-processing": "Processing",
     "toast-process-complete": "Process complete",
-    "toast-process-error": "Error"
+    "toast-process-error": "Error",
+    "validator-required": "Field is required"
   },
   "calendar": {
     "title": "Calendar Configuration",

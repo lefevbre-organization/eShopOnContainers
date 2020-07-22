@@ -107,6 +107,7 @@ export class MessageList extends Component {
       window.dispatchEvent(new CustomEvent('LoadingMessage'));
       const msgRaw = await getMessage(msg.id, 'raw');
       message.raw = msgRaw;
+      this.props.addMessage(message);
     }
 
     window.dispatchEvent(

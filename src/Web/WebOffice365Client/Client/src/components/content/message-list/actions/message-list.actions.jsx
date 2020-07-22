@@ -214,6 +214,7 @@ export const addMessage = (message) => (dispatch) => {
     subject: message.subject,
     sentDateTime: message.sentDateTime,
     folder: message.folder,
+    raw: message.raw,
   };
 
   dispatch({

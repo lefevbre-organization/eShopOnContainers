@@ -62,6 +62,14 @@ services:
       - HealthChecksUI__HealthChecks__15__Uri=http://websignatureclient/hc
       - HealthChecksUI__HealthChecks__16__Name=WebCentinelaClient HTTP Check
       - HealthChecksUI__HealthChecks__16__Uri=http://webcentinelaclient/hc
+      - HealthChecksUI__HealthChecks__17__Name=Database API HTTP Check
+      - HealthChecksUI__HealthChecks__17__Uri=http://database.api/hc
+      - HealthChecksUI__HealthChecks__18__Name=Database API GW HTTP Check
+      - HealthChecksUI__HealthChecks__18__Uri=http://webdatabaseapigw/hc
+      - HealthChecksUI__HealthChecks__19__Name=Addon Lexon Client HTTP Check
+      - HealthChecksUI__HealthChecks__19__Uri=http://webaddonlauncher/hc
+      - HealthChecksUI__HealthChecks__20__Name=Addon Offi365 Client HTTP Check
+      - HealthChecksUI__HealthChecks__20__Uri=http://weboffice365addonlexon/hc
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
     ports:
@@ -118,7 +126,7 @@ services:
     ports:
       - "3005:80"
 
-  webaddonlexon:
+  webaddonlauncher:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://0.0.0.0:80
@@ -200,6 +208,7 @@ services:
       - CentinelaApiUrlHC=http://centinela.api/hc
       - UserUtilsApiUrlHC=http://userutils.api/hc
       - SignatureApiUrlHC=http://signature.api/hc
+      - DatabaseApiUrlHC=http://database.api/hc
     ports:
       - "8083:80"   
     volumes:
@@ -212,7 +221,7 @@ services:
       - ConnectionString=${ELEF_MONGO_CONN:-mongodb://nosql.data}
       - Database=${ELEF_MONGO_LEXON_DB:-LexonApiDB}
       - LexonMySqlUrl=http://lexon.mysql.api/api/v1/LexonMySql
-      - LexonFilesUrl=http://www-led-pre.lex-on.es/index.php
+      - LexonFilesUrl=https://www-led-pre.lex-on.es/index.php
 #      - LexonFilesUrl=https:/led-dev-lexon/index.php
 #      - LexonFilesUrl=https://10.38.6.18/index.php
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
@@ -248,6 +257,7 @@ services:
       - CentinelaApiUrlHC=http://centinela.api/hc
       - UserUtilsApiUrlHC=http://userutils.api/hc
       - SignatureApiUrlHC=http://signature.api/hc
+      - DatabaseApiUrlHC=http://database.api/hc
     ports:
       - "8086:80"   
     volumes:
@@ -311,6 +321,7 @@ services:
       - CentinelaApiUrlHC=http://centinela.api/hc
       - UserUtilsApiUrlHC=http://userutils.api/hc
       - SignatureApiUrlHC=http://signature.api/hc
+      - DatabaseApiUrlHC=http://database.api/hc
     ports:
       - "8089:80"   
     volumes:
@@ -343,8 +354,42 @@ services:
       - CentinelaApiUrlHC=http://centinela.api/hc
       - UserUtilsApiUrlHC=http://userutils.api/hc
       - SignatureApiUrlHC=http://signature.api/hc
+      - DatabaseApiUrlHC=http://database.api/hc
     ports:
       - "8091:80"   
     volumes:
       - ./src/ApiGateways/Web.Bff.Signature/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
-    
+ 
+  database.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionString=${ELEF_MONGO_CONN:-mongodb://nosql.data}
+      - Database=DatabaseApiDB
+      - OnlineUrl=https://herculesppd.lefebvre.es/webclient46
+      - OnlineLogin=ws
+      - OnlinePassword=22lcqsp11lsw
+      - IdAppNavision=5
+      - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
+      - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
+      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}        
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - UseLoadTest=${USE_LOADTEST:-False}
+    ports:
+      - "8092:80"  
+
+  webdatabaseapigw:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - LexonApiUrlHC=http://lexon.api/hc
+      - LexonMySqlApiUrlHC=http://lexon.mysql.api/hc
+      - AccountApiUrlHC=http://account.api/hc
+      - CentinelaApiUrlHC=http://centinela.api/hc
+      - UserUtilsApiUrlHC=http://userutils.api/hc
+      - SignatureApiUrlHC=http://signature.api/hc
+      - DatabaseApiUrlHC=http://database.api/hc
+    ports:
+      - "8093:80"   
+    volumes:
+      - ./src/ApiGateways/Web.Bff.Database/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}

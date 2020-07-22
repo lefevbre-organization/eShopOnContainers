@@ -38,7 +38,7 @@ import { getSelectedFolder } from '../selectors/folders';
 
 import { AuthenticationException } from '../services/fetch';
 import { editNewMessage, clearSelectedMessage } from '../services/application';
-import { getFolders, findSentFolder } from '../services/folder';
+import { getFolders, findSentFolder, findSentFolderByName } from '../services/folder';
 import { resetFolderMessagesCache } from '../services/message';
 import { readMessage } from '../services/message-read';
 import { persistApplicationNewMessageContent } from '../services/indexed-db';
@@ -251,8 +251,8 @@ class App extends Component {
     );
 
     if (selectedMessages.length != selected.length) {
-      console.log('LoadingMessage: 2');
-      window.dispatchEvent(new CustomEvent('LoadingMessage'));
+      console.log('LoadingMessage: 3');
+      //window.dispatchEvent(new CustomEvent('LoadingMessage'));
     }
   }
 
@@ -355,7 +355,7 @@ class App extends Component {
                     <img
                       border='0'
                       alt='Lex-On'
-                      src='/assets/images/icon-lexon.png'></img>
+                      src='/assets/images/icon-lx.svg'></img>
                   </IconButton>
                 ) : (
                   <IconButton>
@@ -363,7 +363,7 @@ class App extends Component {
                       disabled
                       border='0'
                       alt='Lex-On'
-                      src='/assets/images/icon-lexon.png'></img>
+                      src='/assets/images/icon-lx.svg'></img>
                   </IconButton>
                 )}
                 <div className={styles.btnselect}></div>
@@ -376,10 +376,13 @@ class App extends Component {
                   isotip-position='bottom-end'
                   isotip-size='small'>
                   <IconButton
-                    onClick={() => this.onSetSidebarOpenCentinela(true)}>
-                    <span className='lf-icon-compliance product-icon'></span>
+                  onClick={() => this.onSetSidebarOpenCentinela(true)}>
+                    <img
+                      disabled
+                      border='0'
+                      alt='Centinela'
+                      src='/assets/images/icon-cn.svg'></img>
                   </IconButton>
-
                   <div className={styles.btnselect}></div>
                 </span>
               ) : null}
@@ -393,7 +396,11 @@ class App extends Component {
                   isotip-size='small'>
                   <IconButton
                     onClick={() => this.onSetSidebarOpenDatabase(true)}>
-                    <span className='lf-icon-qmemento product-icon'></span>
+                    <img
+                       disabled
+                       border='0'
+                       alt='Base de datos'
+                       src='/assets/images/icon-ne.svg'></img>
                   </IconButton>
 
                   <div className={styles.btnselect}></div>
@@ -765,7 +772,9 @@ class App extends Component {
                 .replace(/T/, ' ')
                 .replace(/\..+/, '');
 
-              const folder = findSentFolder(this.props.folders);
+              var folder = findSentFolder(this.props.folders);
+
+              (folder === null || folder === undefined || folder === '') ? folder = findSentFolderByName(this.props.folders) : null
 
               await classifyEmail(
                 this.props.outbox.idMessage,
@@ -811,7 +820,10 @@ class App extends Component {
   }
 
   sentEmail(id, subject) {
-    const sentFolder = findSentFolder(this.props.folders);
+    var sentFolder = findSentFolder(this.props.folders);
+
+    (sentFolder === null || sentFolder === undefined || sentFolder === '') ? sentFolder = findSentFolderByName(this.props.folders) : null
+
 
     window.dispatchEvent(
       new CustomEvent('SentMessage', {

@@ -69,13 +69,13 @@ namespace Lexon.Infrastructure.Services
                         result = await response.Content.ReadAsAsync<Result<List<int>>>();
 
                         if (result.data?.Count == 0)
-                            TraceOutputMessage(result.errors, "Mysql don´t create the classification", 2001);
+                            TraceOutputMessage(result.errors, "Mysql don´t create the classification", null, 2001);
                         //else
                         //    await AddClassificationToListMongoAsync(classificationAdd, result);
                     }
                     else
                     {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", null, 2003);
                     }
                 }
             }
@@ -122,11 +122,11 @@ namespace Lexon.Infrastructure.Services
                         result = await response.Content.ReadAsAsync<Result<int>>();
 
                         if (result.data == 0)
-                            TraceOutputMessage(result.errors, "Mysql don´t create the classification of contacts", 2001);
+                            TraceOutputMessage(result.errors, "Mysql don´t create the classification of contacts", null, 2001);
                     }
                     else
                     {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", null, 2003);
                     }
                 }
             }
@@ -152,13 +152,13 @@ namespace Lexon.Infrastructure.Services
                         result = await response.Content.ReadAsAsync<Result<long>>();
 
                         if (result.data == 0)
-                            TraceOutputMessage(result.errors, "Mysql don´t remove the classification", 2001);
+                            TraceOutputMessage(result.errors, "Mysql don´t remove the classification", null, 2001);
                         //else
                         //    await RemoveClassificationFromListMongoAsync(classificationRemove, result);
                     }
                     else
                     {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", null , 2003);
                     }
                 }
             }
@@ -201,7 +201,7 @@ namespace Lexon.Infrastructure.Services
                     if (response.IsSuccessStatusCode)
                         resultMySql = await response.Content.ReadAsAsync<MySqlCompany>();
                     else
-                        TraceOutputMessage(resultMySql.Errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", 2003);
+                        TraceOutputMessage(resultMySql.Errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", null, 2003);
                 }
             }
             catch (Exception ex)
@@ -239,11 +239,11 @@ namespace Lexon.Infrastructure.Services
                         resultMySql = await response.Content.ReadAsAsync<MySqlList<JosEntityTypeList, JosEntityType>>();
                         resultMySql.result = null;
                         if (!resultMySql.TengoLista())
-                            TraceOutputMessage(resultMySql.Errors, "Mysql don´t recover the master´s entities", 2001);
+                            TraceOutputMessage(resultMySql.Errors, "Mysql don´t recover the master´s entities", null, 2001);
                     }
                     else
                     {
-                        TraceOutputMessage(resultMySql.Errors, $"Response not ok with mysql.api with code->{response.StatusCode} - {response.ReasonPhrase}", 2003);
+                        TraceOutputMessage(resultMySql.Errors, $"Response not ok with mysql.api with code->{response.StatusCode} - {response.ReasonPhrase}", null, 2003);
                     }
                 }
             }
@@ -288,11 +288,11 @@ namespace Lexon.Infrastructure.Services
                         result = await response.Content.ReadAsAsync<Result<long>>();
 
                         if (result.data == 0)
-                            TraceOutputMessage(result.errors, "Mysql don´t create the folder", 2001);
+                            TraceOutputMessage(result.errors, "Mysql don´t create the folder", null, 2001);
                     }
                     else
                     {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", null, 2003);
                     }
                 }
             }
@@ -336,7 +336,7 @@ namespace Lexon.Infrastructure.Services
                     else
                     {
                         var responseText = await response.Content.ReadAsStringAsync();
-                        TraceOutputMessage(result.errors, $"Response not ok : {responseText} with lexon-dev with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", 2003);
+                        TraceOutputMessage(result.errors, $"Response not ok : {responseText} with lexon-dev with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", null, 2003);
                     }
                 }
             }
@@ -382,14 +382,14 @@ namespace Lexon.Infrastructure.Services
                     }
                     else
                     {
-                        TraceOutputMessage(result.errors, $"Response not ok : {responseText} with lexon-dev with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", 2003);
+                        TraceOutputMessage(result.errors, $"Response not ok : {responseText} with lexon-dev with code-> {(int)response.StatusCode} - {response.ReasonPhrase}",null,  2003);
                     }
                 }
             }
             catch (Exception ex)
             {
                 //TraceMessage(result.errors, ex);
-                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message} - {ex.InnerException?.Message}", "598");
+                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message} - {ex.InnerException?.Message}", null,  "598");
             }
             WriteError($"Salimos de FilePostAsync a las {DateTime.Now}");
 
@@ -440,11 +440,11 @@ namespace Lexon.Infrastructure.Services
                         result = await response.Content.ReadAsAsync<Result<LexNestedEntity>>();
 
                         if (result.data == null)
-                            TraceOutputMessage(result.errors, "Mysql don´t get the nested folders", 2001);
+                            TraceOutputMessage(result.errors, "Mysql don´t get the nested folders",null,  2001);
                     }
                     else
                     {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", null, 2003);
                     }
                 }
             }
@@ -471,7 +471,7 @@ namespace Lexon.Infrastructure.Services
                     }
                     else
                     {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", null, 2003);
                     }
                 }
             }
@@ -500,7 +500,7 @@ namespace Lexon.Infrastructure.Services
                     if (response.IsSuccessStatusCode)
                         resultMySql = await response.Content.ReadAsAsync<MySqlCompany>();
                     else
-                        TraceOutputMessage(resultMySql.Errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", 2003);
+                        TraceOutputMessage(resultMySql.Errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", null, 2003);
                 }
             }
             catch (Exception ex)
@@ -560,7 +560,7 @@ namespace Lexon.Infrastructure.Services
                     }
                     else
                     {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", null, 2003);
                     }
                 }
             }
@@ -575,7 +575,7 @@ namespace Lexon.Infrastructure.Services
             }
             else
             {
-                TraceOutputMessage(result.errors, "Mysql don´t recover the user", 2001);
+                TraceOutputMessage(result.errors, "Mysql don´t recover the user", null, 2001);
                 var resultMongo = await _usersRepository.GetUserAsync(idNavisionUser);
                 AddToFinalResult(result, resultMongo);
             }
@@ -608,7 +608,7 @@ namespace Lexon.Infrastructure.Services
                     }
                     else
                     {
-                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
+                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", null, 2003);
                     }
                 }
             }
@@ -623,7 +623,7 @@ namespace Lexon.Infrastructure.Services
             }
             else
             {
-                TraceOutputMessage(result.errors, "Mysql don´t recover the user with companies", 2001);
+                TraceOutputMessage(result.errors, "Mysql don´t recover the user with companies", null, 2001);
                 var resultMongo = await _usersRepository.GetUserAsync(idUser);
                 AddToFinalResult(result, resultMongo);
             }
@@ -671,7 +671,82 @@ namespace Lexon.Infrastructure.Services
                     if (response.IsSuccessStatusCode)
                         resultContact = await response.Content.ReadAsAsync<Result<LexContact>>();
                     else
-                        TraceOutputMessage(resultContact.errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", 2003);
+                        TraceOutputMessage(resultContact.errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", null,  2003);
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(resultContact.errors, ex);
+            }
+            return resultContact;
+        }
+
+        public async Task<Result<LexUserSimple>> GetUserIdAsync(string idNavisionUser)
+        {
+            var result = new Result<LexUserSimple>(new LexUserSimple());
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/user/getid?idNavisionUser={idNavisionUser}");
+            TraceLog(parameters: new string[] { $"request:{request}" });
+
+            try
+            {
+                using (var response = await _client.SendAsync(request))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        result = await response.Content.ReadAsAsync<Result<LexUserSimple>>();
+                        result.data.idNavision = idNavisionUser;
+                    }
+                    else
+                    {
+                        TraceOutputMessage(result.errors, "Response not ok with mysql.api", null, 2003);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+
+            return result;
+        }
+
+        public async Task<Result<List<LexContact>>> GetAllContactsAsync(BaseView search)
+        {
+            var resultContact = new Result<List<LexContact>>(new List<LexContact>());
+
+            try
+            {
+                var path = $"/entities/contact/all";
+                SerializeObjectToPost(search, path, out string url, out StringContent data);
+                using (var response = await _client.PostAsync(url, data))
+                {
+                    if (response.IsSuccessStatusCode)
+                        resultContact = await response.Content.ReadAsAsync<Result<List<LexContact>>>();
+                    else
+                        TraceOutputMessage(resultContact.errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", null, 2003);
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(resultContact.errors, ex);
+            }
+            return resultContact;
+        }
+        public async Task<Result<LexUserSimpleCheck>> CheckRelationsMailAsync(string idUser, MailInfo mail)
+        {
+            var resultContact = new Result<LexUserSimpleCheck>(new LexUserSimpleCheck());
+
+            try
+            {
+                var path = $"/classifications/{idUser}/check";
+                SerializeObjectToPost(mail, path, out string url, out StringContent data);
+                using (var response = await _client.PostAsync(url, data))
+                {
+                    if (response.IsSuccessStatusCode)
+                        resultContact = await response.Content.ReadAsAsync<Result<LexUserSimpleCheck>>();
+                    else
+                        TraceOutputMessage(resultContact.errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", null, 2003);
                 }
             }
             catch (Exception ex)

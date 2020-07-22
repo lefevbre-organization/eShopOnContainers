@@ -52,7 +52,7 @@ env:
     - name: MinihubUrl
       value: 'http://led-pre-servicehub.eu.els.local/Herramientas/Get'
     - name: OnlineUrl
-      value: 'http://herculesppd.lefebvre.es/webclient46/ws'
+      value: 'https://herculesppd.lefebvre.es/webclient46/ws'
     - name: LoginUrl
       value: 'http://led-pre-servicecomtools.eu.els.local'
     - name: CentinelaApiUrl

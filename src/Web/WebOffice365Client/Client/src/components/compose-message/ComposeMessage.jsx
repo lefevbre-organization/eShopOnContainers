@@ -140,6 +140,9 @@ export class ComposeMessage extends PureComponent {
     this.attachFromLexon = this.attachFromLexon.bind(this);
     this.onTogglePriority = this.onTogglePriority.bind(this);
     this.onToggleReadConfirmation = this.onToggleReadConfirmation.bind(this);
+    this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
+      this
+    );
 
     this.uppy = new Uppy({
       id: 'uppy1',
@@ -251,6 +254,14 @@ export class ComposeMessage extends PureComponent {
 
     window.dispatchEvent(new CustomEvent('OpenComposer'));
     window.addEventListener('AttachDocument', this.attachFromLexon);
+    window.addEventListener(
+      'GetUserFromCentinelaConnector',
+      this.handleGetUserFromLexonConnector
+    );
+  }
+
+  handleGetUserFromLexonConnector() {
+    window.dispatchEvent(new CustomEvent('OpenComposer'));
   }
 
   onTogglePriority() {
@@ -302,8 +313,10 @@ export class ComposeMessage extends PureComponent {
       this.props.lexon.idCaseFile === undefined
     ) {
       //this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
-      if (this.props.labelsResult.labelInbox === null){
-        getLabelInbox().then(label => this.props.history.push(`/${label.id}`));
+      if (this.props.labelsResult.labelInbox === null) {
+        getLabelInbox().then((label) =>
+          this.props.history.push(`/${label.id}`)
+        );
       } else {
         this.props.history.push(`/${this.props.labelsResult.labelInbox.id}`);
       }
@@ -360,8 +373,6 @@ export class ComposeMessage extends PureComponent {
     );
 
     setTimeout(async () => {
-      console.log(this.props);
-      debugger;
       if (this.props.lexon.bbdd && this.props.lexon.account) {
         try {
           const user = await getUser(this.props.lexon.userId);
@@ -412,6 +423,10 @@ export class ComposeMessage extends PureComponent {
     //window.dispatchEvent(new CustomEvent("RemoveCaseFile"));
     window.dispatchEvent(new CustomEvent('CloseComposer'));
     window.removeEventListener('AttachDocument', this.attachFromLexon);
+    window.removeEventListener(
+      'GetUserFromCentinelaConnector',
+      this.handleGetUserFromLexonConnector
+    );
 
     this.uppy.close();
   }
@@ -830,23 +845,21 @@ export class ComposeMessage extends PureComponent {
                   justifyContent: 'flex-end',
                   marginRight: 15,
                 }}>
-                {window.SHOW_EXPERIMENTAL === '1' && (
-                  <div className='receipt-wrapper'>
-                    {readConfirmation && (
-                      <i
-                        className='lf lf-icon-switch-right icon-priority'
-                        onClick={this.onToggleReadConfirmation}></i>
-                    )}
-                    {!readConfirmation && (
-                      <i
-                        className='lf lf-icon-switch-left icon-priority'
-                        onClick={this.onToggleReadConfirmation}></i>
-                    )}
-                    <span className='priority-text'>
-                      {i18n.t('compose-message.read-confirmation')}
-                    </span>
-                  </div>
-                )}
+                <div className='receipt-wrapper'>
+                  {readConfirmation && (
+                    <i
+                      className='lf lf-icon-switch-right icon-priority'
+                      onClick={this.onToggleReadConfirmation}></i>
+                  )}
+                  {!readConfirmation && (
+                    <i
+                      className='lf lf-icon-switch-left icon-priority'
+                      onClick={this.onToggleReadConfirmation}></i>
+                  )}
+                  <span className='priority-text'>
+                    {i18n.t('compose-message.read-confirmation')}
+                  </span>
+                </div>
               </div>
             </div>
           </div>

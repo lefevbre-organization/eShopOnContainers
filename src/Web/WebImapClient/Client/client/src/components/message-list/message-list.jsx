@@ -102,7 +102,9 @@ class MessageList extends Component {
   }
 
   componentDidUpdate(previousProps) {
-    this.preloadMessages(previousProps);
+    if( JSON.stringify(previousProps.messages) !== JSON.stringify(this.props.messages)) {
+      this.preloadMessages(previousProps);
+    }
   }
 
   renderItem({ index, key, style }) {
@@ -110,6 +112,15 @@ class MessageList extends Component {
     const message = this.props.messages[index];
     const selected =
       this.props.selectedMessages.indexOf(message.messageId) > -1;
+
+    let attachments = false;
+    if (
+      this.props.downloadedMessages[message.messageId] &&
+      this.props.downloadedMessages[message.messageId].attachments
+    ) {
+      attachments =
+        this.props.downloadedMessages[message.messageId].attachments.length > 0;
+    }
     return (
       <li
         key={key}
@@ -147,6 +158,16 @@ class MessageList extends Component {
             {'outlined_flag'}
           </span>
           <span className={styles.subject}>{message.subject}</span>
+          {attachments && (
+            <span
+              className='lf-icon lf-icon-add'
+              style={{
+                fontWeight: 'bold',
+                fontSize: 18,
+                transform: 'rotateZ(27deg)',
+              }}></span>
+          )}
+
           <span className={styles.receivedDate}>
             {prettyDate(message.receivedDate)}
           </span>
@@ -228,7 +249,7 @@ class MessageList extends Component {
       );
 
       if (checked === true) {
-        console.log('LoadingMessage: 3');
+        console.log('LoadingMessage: 4');
         window.dispatchEvent(new CustomEvent('LoadingMessage'));
       }
 
@@ -261,7 +282,9 @@ class MessageList extends Component {
               },
             })
           );
-          console.log(`MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`);
+          console.log(
+            `MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`
+          );
         }
       }
 
@@ -292,7 +315,9 @@ class MessageList extends Component {
                 },
               })
             );
-            console.log(`MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`);
+            console.log(
+              `MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`
+            );
           }
           console.log('LoadedMessage: 4');
           window.dispatchEvent(new CustomEvent('LoadedMessage'));
@@ -307,7 +332,7 @@ class MessageList extends Component {
       );
 
       if (checked === true) {
-        console.log('LoadingMessage: 4');
+        console.log('LoadingMessage: 5');
         window.dispatchEvent(new CustomEvent('LoadingMessage'));
         const rm = readMessageRaw(
           null,
@@ -339,7 +364,9 @@ class MessageList extends Component {
               },
             })
           );
-          console.log(`MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`);
+          console.log(
+            `MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`
+          );
           console.log('LoadedMessage: 3');
           window.dispatchEvent(new CustomEvent('LoadedMessage'));
         });
@@ -365,8 +392,9 @@ class MessageList extends Component {
             },
           })
         );
-        console.log(`MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`);
-
+        console.log(
+          `MessageId: ${message.messageId} - Folder: ${this.props.selectedFolder.fullName}`
+        );
       }
     }
   }
@@ -374,29 +402,58 @@ class MessageList extends Component {
   /**
    * Preloads latest received messages whenever <b>new</b> messages are loaded in the list
    */
-  preloadMessages(previousProps) {
+  preloadMessages(previousProps, preloaded) {
+    console.log(`Previous: ${previousProps.messages.length}   Current: ${this.props.messages.length}`)
     const messagesToPreload = 15;
-    const previousIds = previousProps.messages
-      .slice(0, messagesToPreload)
-      .map((m) => m.messageId);
+    // const previousIds = previousProps.messages
+    //   .slice(0, messagesToPreload)
+    //   .map((m) => m.messageId);
+    const previousIds = [];
     const currentIds = this.props.messages
-      .slice(0, messagesToPreload)
+        //.slice(0, messagesToPreload)
       .map((m) => m.messageId);
+
     if (currentIds.some((id) => !previousIds.includes(id))) {
       const latestMessagesUids = this.props.messages
-        .slice(0, messagesToPreload)
+        //.slice(0, messagesToPreload)
         .filter(
           (m) =>
             !Object.keys(this.props.downloadedMessages).includes(m.messageId)
         )
         .map((m) => m.uid);
-      console.log(this.props.all);
-      if ('null' != this.props.selectedFolder) {
-        this.props.preloadMessages(
-          this.props.selectedFolder,
-          latestMessagesUids
-        );
-      }
+
+        const itv = setInterval( ()=> {
+          console.log("Preloading messages...")
+          const aux = [];
+          for(let i = 0; i < messagesToPreload; i++) {
+            if(latestMessagesUids.length > 0) {
+              aux.push(latestMessagesUids.shift());
+            } else {
+              break;
+            }
+          }
+          if ('null' != this.props.selectedFolder) {
+            this.props.preloadMessages(
+                this.props.selectedFolder,
+                aux
+            );
+
+            if(latestMessagesUids.length === 0) {
+              clearInterval(itv);
+            }
+          } else {
+              clearInterval(itv);
+          }
+        }, 10000);
+      // for(let i = 0; i < latestMessagesUids.length; i+=15) {
+      //   if ('null' != this.props.selectedFolder) {
+      //     this.props.preloadMessages(
+      //         this.props.selectedFolder,
+      //         latestMessagesUids.slice(i, i+15)
+      //     );
+      //   }
+      //
+      // }
     }
   }
 }

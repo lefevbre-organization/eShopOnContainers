@@ -46,6 +46,8 @@ env:
       key: internalurls__userutils__hc
     - name: SignatureApiUrlHC
       key: internalurls__signature__hc
+    - name: DatabaseApiUrlHC
+      key: internalurls__database__hc
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development

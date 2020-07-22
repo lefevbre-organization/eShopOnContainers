@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Autosuggest from 'react-autosuggest';
 import {validateEmail} from '../../services/validation';
 import mainCss from './composeMessage.scss';
-import { getContacts } from "../../api_graph/index";
+import { getContacts } from "../../api_graph/contacts-api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 
@@ -74,7 +74,7 @@ export class HeaderAddress extends Component {
       <style jsx>{`
           .header-address-suggestions-container {
             position: absolute;
-            z-index: 2;
+            z-index: 110;
             background-color: white;
             box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
           }

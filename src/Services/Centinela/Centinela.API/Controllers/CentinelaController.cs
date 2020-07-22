@@ -40,9 +40,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public IActionResult Test()
         {
-            _log.LogDebug("test");
-            System.Diagnostics.Trace.WriteLine("test");
-            return Ok(new Result<bool>(true));
+            var data = $"Centinela v.{ _settings.Value.Version}";
+            System.Diagnostics.Trace.WriteLine(data);
+            _log.LogDebug(data);
+            return Ok(new Result<string>(data));
         }
 
         /// <summary>
@@ -107,6 +108,18 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
                 return (IActionResult)BadRequest("id user value invalid. Must be a valid iduser");
 
             var result = await _service.GetConceptsByTypeAsync(idNavisionUser, idConcept);
+            return result.errors?.Count() > 0 ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpGet("contacts")]
+        [ProducesResponseType(typeof(Result<List<CenContact>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<List<CenContact>>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> GetContactsAsync(string idNavisionUser = "E1621396")
+        {
+            if (string.IsNullOrEmpty(idNavisionUser))
+                return (IActionResult)BadRequest("id user value invalid. Must be a valid iduser");
+
+            var result = await _service.GetContactsAsync(idNavisionUser);
             return result.errors?.Count() > 0 ? (IActionResult)BadRequest(result) : Ok(result);
         }
 

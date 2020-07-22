@@ -112,7 +112,7 @@ public class MessageUtils {
 <span class="nc" id="L112">                ret = String.format(&quot;&lt;pre&gt;%s&lt;/pre&gt;&quot;, HtmlUtils.htmlEscape(bp.getContent().toString()));</span>
             }
 <span class="nc bnc" id="L114" title="All 2 branches missed.">            if (bp.getContentType().toLowerCase().startsWith(MediaType.TEXT_HTML_VALUE)) {</span>
-<span class="nc" id="L115">                ret = (bp.getContent().toString());</span>
+<span class="nc" id="L115">                ret += (bp.getContent().toString());</span>
             }
 <span class="nc bnc" id="L117" title="All 2 branches missed.">            if (bp.getContentType().toLowerCase().startsWith(MULTIPART_MIME_TYPE)) {</span>
 <span class="nc" id="L118">                ret = extractContent((Multipart) bp.getContent());</span>
@@ -136,7 +136,7 @@ public class MessageUtils {
 
 <span class="nc bnc" id="L137" title="All 2 branches missed.">        return Boolean.TRUE.equals(contentId) ?</span>
 <span class="nc" id="L138">                extractEmbeddedBodypart(mp, id) : // Embedded contentId</span>
-<span class="nc" id="L139">                extractAttachmentBodypart(mp, id); // Attachment</span>
+<span class="nc" id="L139">                extractAttachmentBodypart(mp, id,null); // Attachment</span>
     }
 
     /**
@@ -208,24 +208,29 @@ public class MessageUtils {
      * @throws MessagingException for any IMAP exception
      * @throws IOException for IO problems when reading the content
      */
-    @Nullable private static BodyPart extractAttachmentBodypart(@NonNull Multipart multipart, @NonNull String id)
+    @Nullable private static BodyPart extractAttachmentBodypart(@NonNull Multipart multipart, @NonNull String id, @Nullable BodyPart finalbp)
             throws MessagingException, IOException {
 
-<span class="nc bnc" id="L214" title="All 2 branches missed.">        for (int it = 0; it &lt; multipart.getCount(); it++) {</span>
-<span class="nc" id="L215">            final BodyPart bp = multipart.getBodyPart(it);</span>
-<span class="nc bnc" id="L216" title="All 4 branches missed.">            if (bp.getDisposition() != null &amp;&amp; Part.ATTACHMENT.equalsIgnoreCase(bp.getDisposition())) {</span>
+                
+<span class="nc bnc" id="L215" title="All 2 branches missed.">        for (int it = 0; it &lt; multipart.getCount(); it++) {</span>
+<span class="nc" id="L216">            final BodyPart bp = multipart.getBodyPart(it);</span>
+<span class="nc bnc" id="L217" title="All 2 branches missed.">            if (bp.getContentType().toLowerCase().startsWith(MULTIPART_MIME_TYPE)) {</span>
+<span class="nc" id="L218">                finalbp = extractAttachmentBodypart((Multipart) bp.getContent(), id, finalbp);</span>
+            }
+<span class="nc bnc" id="L220" title="All 6 branches missed.">            if (bp.getDisposition() != null &amp;&amp; (Part.ATTACHMENT.equalsIgnoreCase(bp.getDisposition()) || Part.INLINE.equalsIgnoreCase(bp.getDisposition()))) {</span>
                 // Regular file
-<span class="nc bnc" id="L218" title="All 2 branches missed.">                if (id.equals(MimeUtility.decodeText(bp.getFileName()))) {</span>
-<span class="nc" id="L219">                    return bp;</span>
+<span class="nc bnc" id="L222" title="All 2 branches missed.">                if (id.equals(MimeUtility.decodeText(bp.getFileName()))) {</span>
+<span class="nc" id="L223">                    return bp;</span>
                 }
                 // Embedded message
-<span class="nc bnc" id="L222" title="All 4 branches missed.">                if(bp.getContentType().toLowerCase().startsWith(&quot;message/&quot;) &amp;&amp; bp.getContent() instanceof MimeMessage</span>
-<span class="nc bnc" id="L223" title="All 2 branches missed.">                        &amp;&amp; ((MimeMessage)bp.getContent()).getSubject().equals(id)) {</span>
-<span class="nc" id="L224">                    return bp;</span>
+<span class="nc bnc" id="L226" title="All 4 branches missed.">                if(bp.getContentType().toLowerCase().startsWith(&quot;message/&quot;) &amp;&amp; bp.getContent() instanceof MimeMessage</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">                        &amp;&amp; ((MimeMessage)bp.getContent()).getSubject().equals(id)) {</span>
+<span class="nc" id="L228">                    return bp;</span>
                 }
             }
-        }
-<span class="nc" id="L228">        return null;</span>
+        }  
+
+<span class="nc" id="L233">        return finalbp;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>

@@ -34,5 +34,8 @@ namespace Lexon.Infrastructure.Services
         Task<Result<bool>> FilePostAsync(MailFileView fileMail);
         Task<Result<string>> FileGetAsync(EntitySearchById fileMail);
         Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch);
+        Task<Result<LexUserSimple>> GetUserIdAsync(string idNavisionUser);
+        Task<Result<List<LexContact>>> GetAllContactsAsync(BaseView search);
+        Task<Result<LexUserSimpleCheck>> CheckRelationsMailAsync(string idUser, MailInfo mail);
     }
 }
