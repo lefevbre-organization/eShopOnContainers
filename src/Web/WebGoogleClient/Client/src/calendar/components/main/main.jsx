@@ -141,7 +141,8 @@ export class Main extends Component {
         // Syncfusion omponent translation
         this.setGlobalization();
 
-        this.tabObj=undefined;
+        this.tabObj = undefined;
+        this.drowDownListEventType = undefined;
 
         //params for iframe enbebed functions
         if (this.props.location.search == "?layout=iframe") {
@@ -151,6 +152,16 @@ export class Main extends Component {
             this.layoutIframe = false;
         }
 
+        // to change when api would be ready
+        this.eventTypeDataSource =
+        [
+            { text: 'Profesional event', id: '1', backgroundColor:'#001978' },
+            { text: 'Personal event', id: '2', backgroundColor: '#FF5733' },
+            { text: 'Custom event', id: '3', backgroundColor: '#FF33E3' },
+            { text: 'Lawyer event', id: '4', backgroundColor: '#33FF76' },
+            { text: 'Same event', id: '5', backgroundColor: '#F9FF33' },
+            { text: 'Other event', id: '6', backgroundColor: '#C69AF3' },
+        ]; 
 
     }
 
@@ -304,9 +315,25 @@ export class Main extends Component {
     }
 
     eventTemplate(props) {
+        let colorExist = false;
+        if (props.EventType != undefined) {
+            colorExist = true
+        }
         return (
-            <div>
-                <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>
+            <div Style="width: 200px;">
+               
+                {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
+                <div className="image">
+                    <span className='eventicon'>
+                        <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}
+                        {colorExist ? (
+                            <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot floatleft'></span>
+                        ) : (
+                                ''
+                            )}                       
+                    </span>
+                </div>
+
                 {/* <div className="subject">{props.Subject}</div>
                <div className="time">Time: {this.getTimeString(props.StartTime)} - {this.getTimeString(props.EndTime)}</div>*/}
 
@@ -356,9 +383,11 @@ export class Main extends Component {
                 }
 
                 // EventType  
-                let eventType
+                let eventType =[];
                 if (event.extendedProperties != undefined) {
-                    eventType = event.extendedProperties.private.eventType;
+                    eventType.name = event.extendedProperties.private.eventTypeName;
+                    eventType.id = event.extendedProperties.private.eventTypeId;
+                    eventType.color = event.extendedProperties.private.eventTypeColor;
                 }
 
                 this.scheduleData.push({
@@ -517,14 +546,28 @@ export class Main extends Component {
             'end': {
                 'dateTime': values.EndTime,
                 'timeZone': 'Europe/Madrid',
-            },
-            "extendedProperties": {
-                "private": {
-                    'eventType': 'profesional-event'
-                },
-            }, 
+            },         
 
         }
+
+        //event Type    
+        if (values.EventType != undefined && values.EventType != null) {
+            let item = this.eventTypeDataSource.find(x => x.text == values.EventType)
+            event.extendedProperties = {
+                'private': {
+                    'eventTypeName': item.text,
+                    'eventTypeId': item.id,
+                    'eventTypeColor': item.backgroundColor,
+                },
+            }
+        }
+       
+
+        //"extendedProperties": {
+        //    "private": {
+        //        'eventType': '1'
+        //    },
+        //}, 
 
         //Recurrence
         if (values.RecurrenceRule != undefined) { event.recurrence = ['RRULE:' + values.RecurrenceRule] };
@@ -619,7 +662,22 @@ export class Main extends Component {
         }        
     }
 
+    eventTypeTemplate(data) {       
+        return ( 
+           <div className="typeitem">
+              <span> <span Style={`background-color: ${data.backgroundColor}`} className='dot'></span>  <span className='name'>{data.text}</span></span>
+           </div>
+        );       
+    }   
+
     onPopupOpen(args) {   
+
+        
+        // default values for EventType coming from event args
+        if (args.data.EventType != undefined) {
+            this.setState({ eventType: args.data.EventType.name })
+        }
+        
 
         // default values for Atendees coming from event args
         if (args.data.Attendees != undefined) {
@@ -702,26 +760,24 @@ export class Main extends Component {
                 let formElement = args.element.querySelector('.e-schedule-form');
                 formElement.firstChild.insertBefore(row, formElement.lastChild.lastChild);
 
-                // Adding type of event element
-                //let containerEventType = createElement('div', { className: 'custom-field-container' });
-                //row.appendChild(containerEventType);
-                //let inputEle = createElement('input', {
-                //    className: 'e-field', attrs: { name: 'EventType' }
-                //});
-                //containerEventType.appendChild(inputEle);
+                // Adding event type element
+                let containerEventType = createElement('div', { className: 'custom-field-container' });
+                row.appendChild(containerEventType);
+                let inputEle = createElement('input', {
+                    className: 'e-field', attrs: { name: 'EventType' }
+                });
+                containerEventType.appendChild(inputEle);
 
-                //let drowDownList = new DropDownList({
-                //    dataSource: [
-                //        { text: i18n.t("schedule.profesional-event"), value: 'profesional-event' },
-                //        { text: i18n.t("schedule.personal-event"), value: 'personal-event' },
-                //    ],
-                //    fields: { text: 'text', value: 'value' },
-                //    value: this.state.eventType,
-                //    floatLabelType: 'Always', placeholder: i18n.t("schedule.eventtype")
-                //});
-                //drowDownList.appendTo(inputEle);
-                //inputEle.setAttribute('name', 'EventType');
+                this.drowDownListEventType = new DropDownList({
+                    itemTemplate: this.eventTypeTemplate = this.eventTypeTemplate.bind(this) ,
+                    dataSource: this.eventTypeDataSource,
+                    value: this.state.eventType,
+                    floatLabelType: 'Always', placeholder: i18n.t("schedule.eventtype")
+                });
+                this.drowDownListEventType.appendTo(inputEle);
+                inputEle.setAttribute('name', 'EventType');
 
+               
 
                 // Adding attendees tag element
                 let containerTab = createElement('div', { className: 'custom-field-container' });
@@ -729,11 +785,9 @@ export class Main extends Component {
                 var nodeA = ReactDOM.findDOMNode(this.tagObj);
                 containerTab.appendChild(nodeA);
 
-                // Adding reminder element               
-                
+                // Adding reminder element  
                 var nodeR = ReactDOM.findDOMNode(this.remObj);
                 containerTab.appendChild(nodeR);
-
 
             }
 
@@ -771,29 +825,6 @@ export class Main extends Component {
 
         }
       
-    }
-
-    onDataBound() {   
-        //this.scheduleObj.eventWindow.dialogObject.beforeClose = function (args) {
-        //    args.cancel = this.cancel;
-        //    this.cancel = false;
-        //}
-    }
-
-    onActionBegin(args) {
-        //if (args.requestType === 'eventCreate' || args.requestType === 'eventChange') {
-        //    var subject = (args.requestType === 'eventCreate') ? args.data[0].Subject : args.data.Subject;
-        //    //if (subject == 'New') {
-        //        args.cancel = true;
-        //        this.cancel = true;
-        //        let val = this.cancel;
-        //        this.scheduleObj.eventWindow.dialogObject.beforeClose = function (args) {
-        //            args.cancel = val;
-        //            alert("Don't Close the Appointment Window");
-        //        }
-        //        this.cancel = false;
-        //    //}
-        //}
     } 
 
     onEventRendered(args) {
@@ -987,7 +1018,6 @@ export class Main extends Component {
         this.scheduleObj.showSpinner();
         let predicate;
 
-
         getEventList(calendar, this.scheduleObj.selectedDate)
             .then(result => {
                 this.defaultCalendar = calendar;
@@ -1089,8 +1119,6 @@ export class Main extends Component {
                 const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}/` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
                 window.open(urlRedirect, '_self');
             });
-        //sessionStorage.clear();
-        //localStorage.clear();
     }
 
     onSignoutDisconnect() {
@@ -1104,8 +1132,6 @@ export class Main extends Component {
                 const urlRedirect = (token) ? `${window.URL_SELECT_ACCOUNT}/access/${token}/` : `${window.URL_SELECT_ACCOUNT}/user/${userId}/encrypt/0`;
                 window.open(urlRedirect, '_self');
             });
-        //sessionStorage.clear();
-        //localStorage.clear();
     }
 
     setEmailTags(tag) {
@@ -1157,8 +1183,7 @@ export class Main extends Component {
                             right: 0,
                             bottom: 0,
                             opacity: 0,
-                            visibility: 'hidden',
-                            //transition: "opacity .3s ease-out, visibility .0s ease-out",
+                            visibility: 'hidden',                           
                             backgroundColor: 'rgba(0,0,0,.3)'
                         },
                         dragHandle: {
@@ -1187,7 +1212,6 @@ export class Main extends Component {
                             )}
 
                         <section className='main hbox space-between'>
-
                             <Sidebar
                                 sideBarCollapsed={!this.layoutIframe ? (false) : (true)}
                                 sideBarToggle={this.toggleSideBar}
@@ -1203,8 +1227,7 @@ export class Main extends Component {
                                 onCalendarColorModify={this.calendarColorModify}
 
                             />
-                            <article className='d-flex flex-column position-relative'>
-                                {/*<Switch>*/}
+                            <article className='d-flex flex-column position-relative'>                              
                                 <div className="hidden">
                                     <ReactTagInput
                                         onkeypress="alert('')"
@@ -1245,10 +1268,7 @@ export class Main extends Component {
                                                 allowKeyboardInteraction={true}
                                                 height='650px'
                                                 views={this.viewsCollections}
-                                                actionComplete={this.onEventRendered.bind(this)}
-                                                //dataBound={this.onDataBound.bind(this)}
-                                                //actionBegin={this.onActionBegin.bind(this)}
-                                                //beforeClose={this.onBeforeClose.bind(this)}
+                                                actionComplete={this.onEventRendered.bind(this)}                                               
                                                 popupOpen={this.onPopupOpen.bind(this)}
                                                 eventSettings={
                                                     {
@@ -1258,13 +1278,10 @@ export class Main extends Component {
                                                         }
                                                     }
 
-
                                                 }
                                                 dragStart={(this.onEventDragStart.bind(this))}
                                                 eventClick={(this.onEventClick.bind(this))}
-                                                dragStop={(this.onEventDragStop.bind(this))}>
-                                                {/* editorTemplate={this.editorTemplate.bind(this)}*/}
-
+                                                dragStop={(this.onEventDragStop.bind(this))}>                                              
                                                 <ViewsDirective>
                                                     <ViewDirective option='Day' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='Week' eventTemplate={this.eventTemplate.bind(this)} />
@@ -1272,21 +1289,10 @@ export class Main extends Component {
                                                     <ViewDirective option='Month' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='Agenda' eventTemplate={this.eventTemplate.bind(this)} />
                                                 </ViewsDirective>
-
-
-
-                                                <ResourcesDirective>
-
-                                                    {/* <ResourceDirective field='AttendeesId' title='Attendees' name='MeetingRoom' allowMultiple={true} >
-                                                    </ResourceDirective> */}
-
-                                                    <ResourceDirective field='CalendarId' title={i18n.t("calendar-sidebar.mycalendars")} name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor'>
-                                                    </ResourceDirective>
-
-                                                </ResourcesDirective>
-
-
-
+                                                <ResourcesDirective> 
+                                                    {/*<ResourceDirective field='eventType' title={i18n.t("schedule.eventtype")} name='eventType' allowMultiple={false} dataSource={this.eventTypeDataSource} textField='text' idField='id' colorField='backgroundColor' />  */}                                
+                                                    <ResourceDirective field='CalendarId' title={i18n.t("calendar-sidebar.mycalendars")} name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor' />            
+                                                </ResourcesDirective>                                                   
                                                 <Inject services={[Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop]} />
                                             </ScheduleComponent>
                                         </div>
@@ -1321,38 +1327,13 @@ export class Main extends Component {
                                         close={this.dialogClose.bind(this)}
                                     /> : ''}</div>
                                 </DialogComponent>
-
-                                {/*</Switch>*/}
                             </article>
-
-                            {/* <div className='productpanel'>
-                                <span className='productsbutton'>
-                                    {lexon.user ? (
-                                        <div onClick={() => this.onSetSidebarOpenLexon(true)}>
-                                            <img
-                                                className='imgproduct'
-                                                border='0'
-                                                alt='Lex-On'
-                                                src='/assets/img/icon-lexon.png'></img>
-                                        </div>
-                                    ) : (
-                                            <div>
-                                                <img
-                                                    className='imgproductdisable'
-                                                    border='0'
-                                                    alt='Lex-On'
-                                                    src='/assets/img/icon-lexon.png'></img>
-                                            </div>
-                                        )}
-                                </span>
-                            </div>*/}
                         </section>
                     </Fragment>
                 </SidebarCnn>
             </div>
         );
     }
-
 }
 
 const mapStateToProps = state => ({
