@@ -38,7 +38,7 @@ export function sendMessage(
     attachments: normalizedAttachments,
     subject: subject,
     content: sanitize.sanitize(content),
-  };
+  };  
   const postMessageRequest = new XMLHttpRequest();
   postMessageRequest.open('POST', URLS.SMTP);
   postMessageRequest.setRequestHeader(
