@@ -26,6 +26,7 @@ export function sendMessage(
     content,
   }
 ) {
+  const normalizedAttachments = attachments.map( at => ({ ...at, fileName: removeAccents(at.fileName)}));
   const message = {
     recipients: [
       ...to.map((address) => ({ type: 'To', address: address })),
@@ -34,10 +35,10 @@ export function sendMessage(
     ],
     inReplyTo,
     references,
-    attachments,
+    attachments: normalizedAttachments,
     subject: subject,
     content: sanitize.sanitize(content),
-  };
+  };  
   const postMessageRequest = new XMLHttpRequest();
   postMessageRequest.open('POST', URLS.SMTP);
   postMessageRequest.setRequestHeader(
@@ -74,4 +75,8 @@ export function sendMessage(
   postMessageRequest.onerror = errorHandler;
   dispatch(sendMessageAction(message));
   postMessageRequest.send(JSON.stringify(message));
+}
+
+const removeAccents = (str) => {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
