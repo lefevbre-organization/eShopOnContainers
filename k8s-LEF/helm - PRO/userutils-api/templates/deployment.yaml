@@ -26,6 +26,11 @@ spec:
       imagePullSecrets:
       - name: {{ .Values.inf.registry.secretName }}
       {{- end }}
+      hostAliases:
+      - ip: "10.38.6.5"
+        hostnames:
+        - "led-servicecomtools.eu.els.local"
+        - "led-servicehub.eu.els.local"
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ template "fqdn-image" . }}:{{ .Values.image.tag }}"
