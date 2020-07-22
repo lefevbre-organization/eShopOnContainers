@@ -22,11 +22,7 @@ namespace Lexon.Infrastructure.Services
     {
         public readonly IUsersRepository _usersRepository;
         private readonly IEventBus _eventBus;
-        //private readonly IHttpClientFactory _clientFactory;
-
-        //private readonly HttpClient _client;
         private readonly HttpClient _clientFiles;
-
         private readonly IOptions<LexonSettings> _settings;
         private string _conn;
         private string _urlLexon;
@@ -35,17 +31,12 @@ namespace Lexon.Infrastructure.Services
                 IOptions<LexonSettings> settings
                 , IUsersRepository usersRepository
                 , IEventBus eventBus
-                //, IHttpClientFactory clientFactory
                 , ILogger<UsersService> logger
             ) : base(logger)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _usersRepository = usersRepository ?? throw new ArgumentNullException(nameof(usersRepository));
             _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
-            //_clientFactory = clientFactory ?? throw new ArgumentNullException(nameof(clientFactory));
-            //_client = _clientFactory.CreateClient();
-            //_client.BaseAddress = new Uri(_settings.Value.LexonMySqlUrl);
-            //_client.DefaultRequestHeaders.Add("Accept", "text/plain");
             GetUrlsByEnvironment(null);
 
             var handler = new HttpClientHandler()
@@ -65,8 +56,6 @@ namespace Lexon.Infrastructure.Services
             _conn = _settings.Value.LexonUrls.First(x => x.env.Equals(env))?.conn;
             _urlLexon = _settings.Value.LexonUrls.First(x => x.env.Equals(env))?.url;
         }
-
-        #region Mysql
 
         #region user
 
@@ -97,12 +86,19 @@ namespace Lexon.Infrastructure.Services
                 }
                 else
                 {
-                    TraceOutputMessage(result.errors, "Mysql don´t recover the user", "Error_Mysql_Empty");
+                    TraceOutputMessage(result.errors, "Mysql don´t recover the user", null, "Mysql_Empty");
                     var resultMongo = await _usersRepository.GetUserAsync(idNavisionUser);
                     AddToFinalResult(result, resultMongo);
                 }
             }
             return result;
+        }
+
+        private static void AddToFinalResult(Result<LexUser> result, Result<LexUser> resultPreview)
+        {
+            result.errors.AddRange(resultPreview.errors);
+            result.infos.AddRange(resultPreview.infos);
+            result.data = resultPreview.data;
         }
 
         public async Task<Result<List<LexCompany>>> GetCompaniesFromUserAsync(string idUser, string env)
@@ -134,12 +130,19 @@ namespace Lexon.Infrastructure.Services
                 }
                 else
                 {
-                    TraceOutputMessage(result.errors, "Mysql don´t recover the user with companies", "Error_Mysql_Empty");
+                    TraceOutputMessage(result.errors, "Mysql don´t recover the user with companies", null, "Mysql Recover");
                     var resultMongo = await _usersRepository.GetUserAsync(idUser);
                     AddToFinalResult(result, resultMongo);
                 }
             }
             return result;
+        }
+
+        private static void AddToFinalResult(Result<List<LexCompany>> result, Result<LexUser> resultPreliminar)
+        {
+            result.errors.AddRange(resultPreliminar.errors);
+            result.infos.AddRange(resultPreliminar.infos);
+            result.data = resultPreliminar.data?.companies?.ToList();
         }
 
         private async Task GetUserCommon(Result<LexUser> result, MySqlConnection conn, string filtro)
@@ -151,7 +154,7 @@ namespace Lexon.Infrastructure.Services
                 AddListSearchParameters(0, 1, null, null, command);
                 using (var reader = await command.ExecuteReaderAsync())
                 {
-                    TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                    TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
                     if (EvaluateErrorCommand(result.errors, command) == 0)
                         while (reader.Read())
                         {
@@ -160,6 +163,44 @@ namespace Lexon.Infrastructure.Services
                         }
                 }
             }
+        }
+
+        public async Task<Result<LexUserSimple>> GetUserIdAsync(string idNavisionUser, string env)
+        {
+            var result = new Result<LexUserSimple>(new LexUserSimple());
+            GetUrlsByEnvironment(env);
+
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    var filtro = $"{{\"NavisionId\":\"{idNavisionUser}\",\"User\":1}}";
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetCompanies, conn))
+                    {
+                        AddCommonParameters("0", command, "P_FILTER", filtro);
+                        AddListSearchParameters(0, 1, null, null, command);
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
+                            if (EvaluateErrorCommand(result.errors, command) == 0)
+                                while (reader.Read())
+                                {
+                                    var rawJson = reader.GetValue(0).ToString();
+                                    result.data = JsonConvert.DeserializeObject<LexUserSimple>(rawJson);
+                                    result.data.idNavision = idNavisionUser;
+                                }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    result.data = null;
+                    TraceMessage(result.errors, ex);
+                }
+            }
+
+            return result;
         }
 
         #endregion user
@@ -187,16 +228,17 @@ namespace Lexon.Infrastructure.Services
                             AddCommonParameters(classificationAdd.idUser, command, "P_JSON", filtro, true);
                             await command.ExecuteNonQueryAsync();
                             TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
-                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
                             result.data.Add(GetIntOutputParameter(command.Parameters["P_ID"].Value));
                         }
                     }
                 }
 
-                if (result.data?.Count == 0)
-                    TraceOutputMessage(result.errors, "Mysql don´t create the classification", 2001);
-                //else
-                //    await AddClassificationToListMongoAsync(classificationAdd, result);
+                if (_settings.Value.UseMongo)
+                {
+                    if (result.data?.Count > 0)
+                        await AddClassificationToListMongoAsync(classificationAdd, result);
+                }
             }
             catch (Exception ex)
             {
@@ -204,6 +246,26 @@ namespace Lexon.Infrastructure.Services
             }
 
             return result;
+        }
+
+        private async Task AddClassificationToListMongoAsync(ClassificationAddView classificationAdd, Result<List<int>> result)
+        {
+            try
+            {
+                var resultMongo = await _usersRepository.AddClassificationToListAsync(classificationAdd);
+
+                if (resultMongo.infos.Count > 0)
+                    result.infos.AddRange(resultMongo.infos);
+                else if (resultMongo.data == 0)
+                    result.infos.Add(new Info() { code = "error_actuation_mongo", message = "error when add classification" });
+                else
+                    result.infos.Add(new Info() { code = "add_actuations_mong", message = "add classification to mongo" });
+
+            }
+            catch (Exception ex)
+            {
+                TraceInfo(result.infos, $"Error al añadir actuaciones para  {classificationAdd.idRelated}: {ex.Message}");
+            }
         }
 
         public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification)
@@ -225,7 +287,7 @@ namespace Lexon.Infrastructure.Services
                         await command.ExecuteNonQueryAsync();
                         result.data = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString()) ? -1 : 1;
                         TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
-                        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
                     }
                 }
                 catch (Exception ex)
@@ -233,7 +295,14 @@ namespace Lexon.Infrastructure.Services
                     TraceMessage(result.errors, ex);
                 }
             }
-            //  await AddClassificationToListMongoAsync(idUser, bbdd, listaMails, idRelated, idType, result);
+            if (_settings.Value.UseMongo)
+            {
+                if (result.data == 1)
+                {
+                    //await AddClassificationToListMongoAsync(classification, result) idUser, bbdd, listaMails, idRelated, idType, result);
+                    //await AddClassificationToListMongoAsync(classificationAdd, result);
+                }
+            }
             return result;
         }
 
@@ -256,7 +325,7 @@ namespace Lexon.Infrastructure.Services
                         await command.ExecuteNonQueryAsync();
                         result.data = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString()) ? -1 : 1;
                         TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
-                        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
                     }
                 }
                 catch (Exception ex)
@@ -265,13 +334,34 @@ namespace Lexon.Infrastructure.Services
                 }
             }
 
-            if (result.data == 0)
-                TraceOutputMessage(result.errors, "Mysql don´t remove the classification", 2001);
-            //else
-            //    await RemoveClassificationFromListMongoAsync(classificationRemove, result);
-
+            if (_settings.Value.UseMongo)
+            {
+                if (result.data == 0)
+                    TraceOutputMessage(result.errors, "Mysql don´t remove the classification", null, "MySql Remove Data");
+                //else
+                //    await RemoveClassificationFromListMongoAsync(classificationRemove, result);
+            }
             return result;
         }
+
+        //private async Task RemoveClassificationFromListMongoAsync(ClassificationRemoveView classificationRemove, Result<long> result)
+        //{
+        //    try
+        //    {
+        //        var resultMongo = await _usersRepository.RemoveClassificationFromListAsync(classificationRemove);
+
+        //        if (resultMongo.infos.Count > 0)
+        //            result.infos.AddRange(resultMongo.infos);
+        //        else if (resultMongo.data == 0)
+        //            result.infos.Add(new Info() { code = "error_actuation_mongo", message = "error when remove classification" });
+        //        else
+        //            result.data = resultMongo.data;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TraceInfo(result.infos, $"Error al eliminar actuaciones para  {classificationRemove.idRelated}: {ex.Message}");
+        //    }
+        //}
 
         public async Task<MySqlCompany> GetClassificationsFromMailAsync(ClassificationSearchView classification)
         {
@@ -304,7 +394,7 @@ namespace Lexon.Infrastructure.Services
                                 else
                                 {
                                     if (resultMySql.Infos.Count > 1)
-                                        TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
+                                        TraceOutputMessage(resultMySql.Errors, "MySql get and empty string with this search", null, "MySql Recover");
                                     else
                                         resultMySql.Infos.Add(new Info() { code = "515", message = "MySql get and empty string with this search" });
                                 }
@@ -332,7 +422,7 @@ namespace Lexon.Infrastructure.Services
             return resultMySql;
         }
 
-         public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch)
+        public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch)
         {
             var resultMySql = new MySqlCompany(_settings.Value.SP.SearchEntities, entitySearch.pageIndex, entitySearch.pageSize, ((EntitySearchView)entitySearch).bbdd, ((EntitySearchView)entitySearch).idType);
             GetUrlsByEnvironment(entitySearch.env);
@@ -363,7 +453,7 @@ namespace Lexon.Infrastructure.Services
                                 else
                                 {
                                     if (resultMySql.Infos.Count > 1)
-                                        TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
+                                        TraceOutputMessage(resultMySql.Errors, "MySql get and empty string with this search", null, "MySql Recover");
                                     else
                                         resultMySql.Infos.Add(new Info() { code = "515", message = "MySql get and empty string with this search" });
                                 }
@@ -377,13 +467,16 @@ namespace Lexon.Infrastructure.Services
                 }
             }
 
-            //if (resultMySql.TengoLista())
-            //    await _usersRepository.UpsertEntitiesAsync(entitySearch, resultMySql);
-            //else
-            //{
-            //    //var resultMongo = await _usersRepository.GetEntitiesAsync(entitySearch);
-            //    //resultMySql.Data = resultMongo.Data;
-            //}
+            if (_settings.Value.UseMongo)
+            {
+                if (resultMySql.TengoLista())
+                    await _usersRepository.UpsertEntitiesAsync(entitySearch, resultMySql);
+                else
+                {
+                    var resultMongo = await _usersRepository.GetEntitiesAsync(entitySearch);
+                    resultMySql.Data = resultMongo.Data;
+                }
+            }
 
             return resultMySql;
         }
@@ -405,7 +498,7 @@ namespace Lexon.Infrastructure.Services
                         AddCommonParameters(entitySearch.idUser, command, "P_FILTER", filtro);
                         using (var reader = await command.ExecuteReaderAsync())
                         {
-                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
                             if (EvaluateErrorCommand(result.errors, command) == 0)
                                 while (reader.Read())
                                 {
@@ -418,7 +511,7 @@ namespace Lexon.Infrastructure.Services
                                     else
                                     {
                                         if (resultMySql.Infos.Count > 1)
-                                            TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
+                                            TraceOutputMessage(resultMySql.Errors, "MySql get and empty string with this search", null, "MySql Recover");
                                         else
                                             resultMySql.Infos.Add(new Info() { code = "515", message = "MySql get and empty string with this search" });
                                     }
@@ -474,9 +567,161 @@ namespace Lexon.Infrastructure.Services
                 }
             }
 
-
-            //await GetMasterEntitiesMongoAsync(result);
+            if (_settings.Value.UseMongo)
+            {
+                //await GetMasterEntitiesMongoAsync(resultMySql);
+            }
             return resultMySql;
+        }
+
+        public async Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch)
+        {
+            var result = new Result<LexContact>(new LexContact());
+            GetUrlsByEnvironment(entitySearch.env);
+
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    var filtro = GiveMeEntityFilter(entitySearch);
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetContact, conn))
+                    {
+                        AddCommonParameters(entitySearch.idUser, command, "P_FILTER", filtro);
+                        AddListSearchParameters(1, 1, "ts", "desc", command);
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
+                            if (EvaluateErrorCommand(result.errors, command) == 0)
+                                while (reader.Read())
+                                {
+                                    var rawResult = reader.GetValue(0).ToString();
+                                    if (!string.IsNullOrEmpty(rawResult))
+                                    {
+                                        var lista = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
+                                        result.data = lista?.FirstOrDefault();
+                                    }
+                                    else
+                                    {
+                                        TraceOutputMessage(result.errors, "MySql get and empty string with this search", null, "MySql Recover");
+                                    }
+                                }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TraceMessage(result.errors, ex);
+                }
+            }
+
+            return result;
+        }
+
+        public async Task<Result<List<LexContact>>> GetAllContactsAsync(BaseView search)
+        {
+            var result = new Result<List<LexContact>>(new List<LexContact>());
+            GetUrlsByEnvironment(search.env);
+
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    var filtro = GiveMeBaseFilter(search.bbdd, search.idUser);
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetAllContacts, conn))
+                    {
+                        AddCommonParameters(search.idUser, command, "P_FILTER", filtro);
+                        AddListSearchParameters(1, 1, "ts", "desc", command);
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
+                            if (EvaluateErrorCommand(result.errors, command) == 0)
+                                while (reader.Read())
+                                {
+                                    var rawResult = reader.GetValue(0).ToString();
+                                    if (!string.IsNullOrEmpty(rawResult))
+                                    {
+                                        result.data = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
+                                        CompleteContacts(search, result);
+                                    }
+                                    else
+                                    {
+                                        TraceOutputMessage(result.errors, "2004", "MySql get and empty string with this search");
+                                    }
+                                }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TraceMessage(result.errors, ex);
+                }
+            }
+            return result;
+        }
+
+        private void CompleteContacts(BaseView search, Result<List<LexContact>> result)
+        {
+            try
+            {
+                foreach (var contact in result.data)
+                {
+                    if (contact.IdType == null) continue;
+
+                    contact.EntityType = contact.IdType != null ? Enum.GetName(typeof(LexonAdjunctionType), contact.IdType) : null;
+                    contact.Tags = new string[] { search.bbdd, search.idUser, contact.EntityType };
+                }
+            }
+            catch (Exception ex)
+            {
+                result.infos.Add(new Info() { code = "ErorCompleteContact", message = $"Error no controlado al completar datos del contacto + {ex.Message}" });
+            }
+        }
+
+        public async Task<Result<LexUserSimpleCheck>> CheckRelationsMailAsync(string idUser, string env, MailInfo mail)
+        {
+            var result = new Result<LexUserSimpleCheck>(new LexUserSimpleCheck());
+            GetUrlsByEnvironment(env);
+
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    var filtro = GiveMeCheckMailFilter(idUser, mail);
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.CheckRelations, conn))
+                    {
+                        AddCommonParameters(idUser, command, "P_FILTER", filtro);
+                        AddListSearchParameters(1, 1, "ts", "desc", command);
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
+                            if (EvaluateErrorCommand(result.errors, command) == 0)
+                                while (reader.Read())
+                                {
+                                    var rawResult = reader.GetValue(0).ToString();
+                                    if (!string.IsNullOrEmpty(rawResult))
+                                    {
+                                        result.data = (JsonConvert.DeserializeObject<LexUserSimpleCheck>(rawResult));
+                                    }
+                                    else
+                                    {
+                                        TraceOutputMessage(result.errors, "2004", "MySql get and empty string with this search");
+                                    }
+                                }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TraceMessage(result.errors, ex);
+                }
+            }
+            return result;
         }
 
         #endregion Classifications
@@ -601,7 +846,7 @@ namespace Lexon.Infrastructure.Services
                                 else
                                 {
                                     if (resultMySql.Infos.Count > 1)
-                                        TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
+                                        TraceOutputMessage(resultMySql.Errors, "MySql get and empty string with this search", null, "MySql Recover");
                                     else
                                         resultMySql.Infos.Add(new Info() { code = "515", message = "MySql get and empty string with this search" });
                                 }
@@ -635,7 +880,7 @@ namespace Lexon.Infrastructure.Services
 
                         await command.ExecuteNonQueryAsync();
                         TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
-                        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
+                        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
                         result.data = GetIntOutputParameter(command.Parameters["P_ID"].Value);
                     }
                 }
@@ -649,52 +894,6 @@ namespace Lexon.Infrastructure.Services
         }
 
         #endregion Folders
-
-        public async Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch)
-        {
-            var result = new Result<LexContact>(new LexContact());
-            GetUrlsByEnvironment(entitySearch.env);
-
-            using (MySqlConnection conn = new MySqlConnection(_conn))
-            {
-                try
-                {
-                    var filtro = GiveMeEntityFilter(entitySearch);
-                    conn.Open();
-                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.GetContact, conn))
-                    {
-                        AddCommonParameters(entitySearch.idUser, command, "P_FILTER", filtro);
-                        AddListSearchParameters(1, 1, "ts", "desc", command);
-
-                        using (var reader = await command.ExecuteReaderAsync())
-                        {
-                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, command.Parameters["P_IDERROR"].Value);
-                            if (EvaluateErrorCommand(result.errors, command) == 0)
-                                while (reader.Read())
-                                {
-                                    var rawResult = reader.GetValue(0).ToString();
-                                    if (!string.IsNullOrEmpty(rawResult))
-                                    {
-                                        var lista = (JsonConvert.DeserializeObject<LexContact[]>(rawResult).ToList());
-                                        result.data = lista?.FirstOrDefault();
-                                    }
-                                    else
-                                    {
-                                        TraceOutputMessage(result.errors, "2004", "MySql get and empty string with this search");
-                                    }
-                                }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    TraceMessage(result.errors, ex);
-                }
-            }
-
-            return result;
-        }
-
         #region Common
 
         private void AddCommonParameters(string idUser, MySqlCommand command, string nameFilter = "P_FILTER", string filterValue = "{}", bool addParameterId = false)
@@ -730,10 +929,15 @@ namespace Lexon.Infrastructure.Services
             if (command.Parameters["P_IDERROR"].Value is int)
             {
                 int.TryParse(command.Parameters["P_IDERROR"].Value.ToString(), out idError);
-                TraceOutputMessage(errors, command.Parameters["P_ERROR"].Value, idError);
+                TraceOutputMessage(errors, command.Parameters["P_ERROR"].Value, null, idError);
             }
 
             return idError;
+        }
+
+        private string GiveMeBaseFilter(string bbdd, string idUser)
+        {
+            return $"{{ {GetUserFilter(bbdd, idUser)} }}";
         }
 
         private string GiveMeRelationFilter(string bbdd, string idUser, MailInfo mailInfo, short? idType, long? idRelated, string[] contactList)
@@ -839,6 +1043,22 @@ namespace Lexon.Infrastructure.Services
             return "";
         }
 
+        private string GiveMeCheckMailFilter(string idUser, MailInfo mail)
+        {
+            return $"{{ " +
+                    GetUserFilter(null, idUser) +
+                    GetMailIdFilter(mail) +
+                    $" }}";
+        }
+
+        private string GetMailIdFilter(MailInfo mail)
+        {
+            return $"{GetTextFilter("Provider", mail.Provider)}" +
+                $"{GetTextFilter("MailAccount", mail.MailAccount)}" +
+                $"{GetTextFilter("Uid", mail.Uid)}" +
+                $"{GetTextFilter("Folder", mail.Folder)}";
+        }
+
         private string GetLongFilter(string name, long? param, bool withComma = true)
         {
             var comma = withComma ? ", " : "";
@@ -861,258 +1081,9 @@ namespace Lexon.Infrastructure.Services
 
         #endregion Common
 
-        #endregion Mysql
 
-        #region Classifications
+        #region Files
 
-        //public async Task<Result<List<int>>> AddClassificationToListAsync(ClassificationAddView classificationAdd)
-        //{
-        //    var result = new Result<List<int>>(new List<int>());
-
-        //    SerializeObjectToPost(classificationAdd, "/classifications/add", out string url, out StringContent data);
-        //    try
-        //    {
-        //        using (var response = await _client.PostAsync(url, data))
-        //        {
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                result = await response.Content.ReadAsAsync<Result<List<int>>>();
-
-        //                if (result.data?.Count == 0)
-        //                    TraceOutputMessage(result.errors, "Mysql don´t create the classification", 2001);
-        //                //else
-        //                //    await AddClassificationToListMongoAsync(classificationAdd, result);
-        //            }
-        //            else
-        //            {
-        //                TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(result.errors, ex);
-        //    }
-
-        //    return result;
-        //}
-
-        private async Task AddClassificationToListMongoAsync(ClassificationAddView classificationAdd, Result<List<int>> result)
-        {
-            try
-            {
-                var resultMongo = await _usersRepository.AddClassificationToListAsync(classificationAdd);
-
-                if (resultMongo.infos.Count > 0)
-                    result.infos.AddRange(resultMongo.infos);
-                else if (resultMongo.data == 0)
-                    result.infos.Add(new Info() { code = "error_actuation_mongo", message = "error when add classification" });
-                else
-                    result.infos.Add(new Info() { code = "add_actuations_mong", message = "add classification to mongo" });
-
-                //    result.data.Add((int)resultMongo.data);
-            }
-            catch (Exception ex)
-            {
-                TraceInfo(result.infos, $"Error al añadir actuaciones para  {classificationAdd.idRelated}: {ex.Message}");
-            }
-        }
-
-        //public async Task<Result<int>> AddRelationContactsMailAsync(ClassificationContactsView classification)
-        //{
-        //    var result = new Result<int>(0);
-
-        //    SerializeObjectToPost(classification, "/classifications/contacts/add", out string url, out StringContent data);
-        //    try
-        //    {
-        //        using (var response = await _client.PostAsync(url, data))
-        //        {
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                result = await response.Content.ReadAsAsync<Result<int>>();
-
-        //                if (result.data == 0)
-        //                    TraceOutputMessage(result.errors, "Mysql don´t create the classification of contacts", 2001);
-        //            }
-        //            else
-        //            {
-        //                TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(result.errors, ex);
-        //    }
-        //    //  await AddClassificationToListMongoAsync(idUser, bbdd, listaMails, idRelated, idType, result);
-        //    return result;
-        //}
-
-        //public async Task<Result<long>> RemoveClassificationFromListAsync(ClassificationRemoveView classificationRemove)
-        //{
-        //    var result = new Result<long>(0);
-        //    SerializeObjectToPost(classificationRemove, "/classifications/delete", out string url, out StringContent data);
-
-        //    try
-        //    {
-        //        using (var response = await _client.PostAsync(url, data))
-        //        {
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                result = await response.Content.ReadAsAsync<Result<long>>();
-
-        //                if (result.data == 0)
-        //                    TraceOutputMessage(result.errors, "Mysql don´t remove the classification", 2001);
-        //                //else
-        //                //    await RemoveClassificationFromListMongoAsync(classificationRemove, result);
-        //            }
-        //            else
-        //            {
-        //                TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceInfo(result.infos, $"Error al eliminar actuaciones para  {classificationRemove.idRelated}: {ex.Message}");
-        //    }
-
-        //    return result;
-        //}
-
-        private async Task RemoveClassificationFromListMongoAsync(ClassificationRemoveView classificationRemove, Result<long> result)
-        {
-            try
-            {
-                var resultMongo = await _usersRepository.RemoveClassificationFromListAsync(classificationRemove);
-
-                if (resultMongo.infos.Count > 0)
-                    result.infos.AddRange(resultMongo.infos);
-                else if (resultMongo.data == 0)
-                    result.infos.Add(new Info() { code = "error_actuation_mongo", message = "error when remove classification" });
-                else
-                    result.data = resultMongo.data;
-            }
-            catch (Exception ex)
-            {
-                TraceInfo(result.infos, $"Error al eliminar actuaciones para  {classificationRemove.idRelated}: {ex.Message}");
-            }
-        }
-
-        //public async Task<MySqlCompany> GetClassificationsFromMailAsync(ClassificationSearchView classificationSearch)
-        //{
-        //    var resultMySql = new MySqlCompany();
-        //    SerializeObjectToPost(classificationSearch, "/classifications/search", out string url, out StringContent data);
-
-        //    try
-        //    {
-        //        using (var response = await _client.PostAsync(url, data))
-        //        {
-        //            if (response.IsSuccessStatusCode)
-        //                resultMySql = await response.Content.ReadAsAsync<MySqlCompany>();
-        //            else
-        //                TraceOutputMessage(resultMySql.Errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", 2003);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(resultMySql.Errors, ex);
-        //    }
-
-        //    //if (resultMySql.TengoActuaciones())
-        //    //    await _usersRepository.UpsertRelationsAsync(classificationSearch, resultMySql);
-        //    //else
-        //    //{
-        //    //    //var resultMongo = await _usersRepository.GetRelationsAsync(classificationSearch);
-        //    //    //resultMySql.DataActuation = resultMongo.DataActuation;
-        //    //}
-
-        //    return resultMySql;
-        //}
-
-        #endregion Classifications
-
-        #region Entities
-
-        //public async Task<MySqlList<JosEntityTypeList, JosEntityType>> GetMasterEntitiesAsync()
-        //{
-        //    var resultMySql = new MySqlList<JosEntityTypeList, JosEntityType>();
-        //    var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/entities/masters");
-        //    TraceLog(parameters: new string[] { $"request:{request}" });
-
-        //    try
-        //    {
-        //        using (var response = await _client.SendAsync(request))
-        //        {
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                resultMySql = await response.Content.ReadAsAsync<MySqlList<JosEntityTypeList, JosEntityType>>();
-        //                resultMySql.result = null;
-        //                if (!resultMySql.TengoLista())
-        //                    TraceOutputMessage(resultMySql.Errors, "Mysql don´t recover the master´s entities", 2001);
-        //            }
-        //            else
-        //            {
-        //                TraceOutputMessage(resultMySql.Errors, $"Response not ok with mysql.api with code->{response.StatusCode} - {response.ReasonPhrase}", 2003);
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(resultMySql.Errors, ex);
-        //    }
-        //    //await GetMasterEntitiesMongoAsync(result);
-        //    return resultMySql;
-        //}
-
-        //private async Task GetMasterEntitiesMongoAsync(Result<List<LexonEntityType>> result)
-        //{
-        //    try
-        //    {
-        //        var resultMongo = await _usersRepository.GetClassificationMasterListAsync();
-
-        //        if (resultMongo.errors.Count > 0)
-        //            result.errors.AddRange(resultMongo.errors);
-        //        else if (resultMongo.data.Count == 0)
-        //            TraceOutputMessage(result.errors, "MongoDb don´t recover the master´s entities", 2002);
-        //        else
-        //            result.data = resultMongo.data;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(result.errors, ex);
-        //    }
-        //}
-
-        //public async Task<Result<long>> AddFolderToEntityAsync(FolderToEntity entityFolder)
-        //{
-        //    var result = new Result<long>(0);
-
-        //    SerializeObjectToPost(entityFolder, "/entities/folders/add", out string url, out StringContent data);
-        //    try
-        //    {
-        //        using (var response = await _client.PostAsync(url, data))
-        //        {
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                result = await response.Content.ReadAsAsync<Result<long>>();
-
-        //                if (result.data == 0)
-        //                    TraceOutputMessage(result.errors, "Mysql don´t create the folder", 2001);
-        //            }
-        //            else
-        //            {
-        //                TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(result.errors, ex);
-        //    }
-
-        //    return result;
-        //}
 
         public async Task<Result<string>> FileGetAsync(EntitySearchById fileMail)
         {
@@ -1159,7 +1130,6 @@ namespace Lexon.Infrastructure.Services
             WriteError($"Salimos de FileGetAsync a las {DateTime.Now}");
             return result;
         }
-
         public async Task<Result<bool>> FilePostAsync(MailFileView fileMail)
         {
             var result = new Result<bool>(false);
@@ -1195,7 +1165,7 @@ namespace Lexon.Infrastructure.Services
                     }
                     else
                     {
-                        TraceOutputMessage(result.errors, $"Response not ok : {responseText} with lexon-dev with code-> {(int)response.StatusCode} - {response.ReasonPhrase}",null,  2003);
+                        TraceOutputMessage(result.errors, $"Response not ok : {responseText} with lexon-dev with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", null, 2003);
                     }
                 }
             }
@@ -1206,6 +1176,16 @@ namespace Lexon.Infrastructure.Services
             WriteError($"Salimos de FilePostAsync a las {DateTime.Now}");
 
             return result;
+        }
+
+        private void SerializeObjectToPut(string textInBase64, string path, out string url, out ByteArrayContent byteArrayContent)
+        {
+            url = $"{_urlLexon}{path}";
+            TraceLog(parameters: new string[] { $"url={url}" });
+            byte[] newBytes = Convert.FromBase64String(textInBase64);
+
+            byteArrayContent = new ByteArrayContent(newBytes);
+            byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("application/bson");
         }
 
         private async Task<LexonPostFile> GetFileDataByTypeActuation(MailFileView fileMail)
@@ -1238,259 +1218,7 @@ namespace Lexon.Infrastructure.Services
             return idCompany ?? 0; // "88";
         }
 
-        //public async Task<Result<LexNestedEntity>> GetNestedFolderAsync(FolderNestedView entityFolder)
-        //{
-        //    var result = new Result<LexNestedEntity>(new LexNestedEntity());
 
-        //    SerializeObjectToPost(entityFolder, "/entities/folders/nested", out string url, out StringContent data);
-        //    try
-        //    {
-        //        using (var response = await _client.PostAsync(url, data))
-        //        {
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                result = await response.Content.ReadAsAsync<Result<LexNestedEntity>>();
-
-        //                if (result.data == null)
-        //                    TraceOutputMessage(result.errors, "Mysql don´t get the nested folders", 2001);
-        //            }
-        //            else
-        //            {
-        //                TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(result.errors, ex);
-        //    }
-
-        //    return result;
-        //}
-
-        //public async Task<Result<LexEntity>> GetEntityById(EntitySearchById entitySearch)
-        //{
-        //    var result = new Result<LexEntity>(new LexEntity());
-        //    SerializeObjectToPost(entitySearch, "/entities/getbyid", out string url, out StringContent data);
-
-        //    try
-        //    {
-        //        using (var response = await _client.PostAsync(url, data))
-        //        {
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                result = await response.Content.ReadAsAsync<Result<LexEntity>>();
-        //            }
-        //            else
-        //            {
-        //                TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(result.errors, ex);
-        //    }
-
-        //    return result;
-        //}
-
-        //public async Task<MySqlCompany> GetEntitiesAsync(EntitySearchView entitySearch)
-        //{
-        //    return await GetEntitiesCommon(entitySearch, "/entities/search");
-        //}
-
-        //private async Task<MySqlCompany> GetEntitiesCommon(EntitySearchView entitySearch, string path)
-        //{
-        //    var resultMySql = new MySqlCompany();
-
-        //    try
-        //    {
-        //        SerializeObjectToPost(entitySearch, path, out string url, out StringContent data);
-        //        using (var response = await _client.PostAsync(url, data))
-        //        {
-        //            if (response.IsSuccessStatusCode)
-        //                resultMySql = await response.Content.ReadAsAsync<MySqlCompany>();
-        //            else
-        //                TraceOutputMessage(resultMySql.Errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", 2003);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(resultMySql.Errors, ex);
-        //    }
-
-        //    //if (resultMySql.TengoLista())
-        //    //    await _usersRepository.UpsertEntitiesAsync(entitySearch, resultMySql);
-        //    //else
-        //    //{
-        //    //    //var resultMongo = await _usersRepository.GetEntitiesAsync(entitySearch);
-        //    //    //resultMySql.Data = resultMongo.Data;
-        //    //}
-
-        //    return resultMySql;
-        //}
-
-        //public async Task<MySqlCompany> GetEntitiesFoldersAsync(EntitySearchFoldersView entitySearch)
-        //{
-        //    //si no se marcar nada o se marca idParent solo se buscan carpetas, si se pide idFolder e idPArent nunca sera carpetas
-        //    if ((entitySearch.idFolder == null && entitySearch.idParent == null)
-        //        || (entitySearch.idParent != null && entitySearch.idFolder == null))
-        //        entitySearch.idType = (short?)LexonAdjunctionType.folders;
-        //    else if(entitySearch.idFolder != null && entitySearch.idParent != null)
-        //        entitySearch.idType = (short?)LexonAdjunctionType.documents;
-
-        //    var result = await GetEntitiesCommon(entitySearch, "/entities/folders/search");
-
-        //    if(entitySearch.idType == (short?)LexonAdjunctionType.files || entitySearch.idType == (short?)LexonAdjunctionType.folders)
-        //    {
-        //        result.Data = result.Data?.FindAll(entity => entity.idType == entitySearch.idType);
-        //        result.Count = result.Data?.Count();
-        //    };
-        //    return result;
-        //}
-
-        #endregion Entities
-
-        #region User and Companies
-
-        //public async Task<Result<LexUser>> GetUserAsync(string idNavisionUser)
-        //{
-        //    var result = new Result<LexUser>(new LexUser());
-
-        //    var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/user?idNavisionUser={idNavisionUser}");
-        //    TraceLog(parameters: new string[] { $"request:{request}" });
-
-        //    try
-        //    {
-        //        using (var response = await _client.SendAsync(request))
-        //        {
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                result = await response.Content.ReadAsAsync<Result<LexUser>>();
-        //                result.data.idNavision = idNavisionUser;
-        //            }
-        //            else
-        //            {
-        //                TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(result.errors, ex);
-        //    }
-
-        //    if (!string.IsNullOrEmpty(result.data?.name))
-        //    {
-        //        await _usersRepository.UpsertUserAsync(result);
-        //    }
-        //    else
-        //    {
-        //        TraceOutputMessage(result.errors, "Mysql don´t recover the user", 2001);
-        //        var resultMongo = await _usersRepository.GetUserAsync(idNavisionUser);
-        //        AddToFinalResult(result, resultMongo);
-        //    }
-
-        //    return result;
-        //}
-
-        private static void AddToFinalResult(Result<LexUser> result, Result<LexUser> resultPreview)
-        {
-            result.errors.AddRange(resultPreview.errors);
-            result.infos.AddRange(resultPreview.infos);
-            result.data = resultPreview.data;
-        }
-
-        //public async Task<Result<List<LexCompany>>> GetCompaniesFromUserAsync(string idUser)
-        //{
-        //    var resultCompany = new Result<LexUser>(new LexUser());
-        //    var result = new Result<List<LexCompany>>(new List<LexCompany>());
-        //    var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonMySqlUrl}/companies?idUser={idUser}");
-        //    TraceLog(parameters: new string[] { $"request:{request}" });
-
-        //    try
-        //    {
-        //        using (var response = await _client.SendAsync(request))
-        //        {
-        //            if (response.IsSuccessStatusCode)
-        //            {
-        //                resultCompany = await response.Content.ReadAsAsync<Result<LexUser>>();
-        //                AddToFinalResult(result, resultCompany);
-        //            }
-        //            else
-        //            {
-        //                TraceOutputMessage(result.errors, "Response not ok with mysql.api", 2003);
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(result.errors, ex);
-        //    }
-
-        //    if (!string.IsNullOrEmpty(resultCompany.data?.name))
-        //    {
-        //        await _usersRepository.UpsertCompaniesAsync(resultCompany);
-        //    }
-        //    else
-        //    {
-        //        TraceOutputMessage(result.errors, "Mysql don´t recover the user with companies", 2001);
-        //        var resultMongo = await _usersRepository.GetUserAsync(idUser);
-        //        AddToFinalResult(result, resultMongo);
-        //    }
-
-        //    return result;
-        //}
-
-        private static void AddToFinalResult(Result<List<LexCompany>> result, Result<LexUser> resultPreliminar)
-        {
-            result.errors.AddRange(resultPreliminar.errors);
-            result.infos.AddRange(resultPreliminar.infos);
-            result.data = resultPreliminar.data?.companies?.ToList();
-        }
-
-        #endregion User and Companies
-
-        //private void SerializeObjectToPost(object parameters, string path, out string url, out StringContent data)
-        //{
-        //    url = $"{_urlLexon}{path}";
-        //    TraceLog(parameters: new string[] { $"url={url}" });
-        //    var json = JsonConvert.SerializeObject(parameters);
-        //    data = new StringContent(json, Encoding.UTF8, "application/json");
-        //}
-
-        private void SerializeObjectToPut(string textInBase64, string path, out string url, out ByteArrayContent byteArrayContent)
-        {
-            url = $"{_urlLexon}{path}";
-            TraceLog(parameters: new string[] { $"url={url}" });
-            byte[] newBytes = Convert.FromBase64String(textInBase64);
-
-            byteArrayContent = new ByteArrayContent(newBytes);
-            byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("application/bson");
-        }
-
-        //public async Task<Result<LexContact>> GetContactAsync(EntitySearchById entitySearch)
-        //{
-        //    var resultContact = new Result<LexContact>(new LexContact());
-
-        //    try
-        //    {
-        //        var path = $"/entities/contact/getbyid";
-        //        SerializeObjectToPost(entitySearch, path, out string url, out StringContent data);
-        //        using (var response = await _client.PostAsync(url, data))
-        //        {
-        //            if (response.IsSuccessStatusCode)
-        //                resultContact = await response.Content.ReadAsAsync<Result<LexContact>>();
-        //            else
-        //                TraceOutputMessage(resultContact.errors, $"Response not ok with mysql.api with code-> {response.StatusCode} - {response.ReasonPhrase}", 2003);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceMessage(resultContact.errors, ex);
-        //    }
-        //    return resultContact;
-        //}
+        #endregion Files
     }
 }

@@ -46,6 +46,9 @@
         public string AddContactRelations { get; set; }
         public string GetEntity { get; set; }
         public string GetContact { get; set; }
+
+        public string GetAllContacts { get; set; }
+        public string CheckRelations { get; set; }
     }
 
     public class EnvironmentModel

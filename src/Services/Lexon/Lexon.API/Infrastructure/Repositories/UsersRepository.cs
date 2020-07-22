@@ -54,6 +54,8 @@ namespace Lexon.API.Infrastructure.Repositories
 
                 var companies = user?.companies?.ToList();
                 result.data = companies ?? new List<LexCompany>();
+                TraceInfo(result.infos, $"Atención, Datos obtenidos desde Mongo");
+
             }
             catch (Exception ex)
             {
@@ -89,6 +91,8 @@ namespace Lexon.API.Infrastructure.Repositories
             try
             {
                 result.data = await _context.LexUsers.Find(filter).SingleAsync();
+                TraceInfo(result.infos, $"Atención, Datos obtenidos desde Mongo");
+
             }
             catch (Exception ex)
             {
@@ -118,6 +122,8 @@ namespace Lexon.API.Infrastructure.Repositories
 
                 company.entities = entidades;
                 result.AddData(company);
+
+                TraceInfo(result.Infos, $"Atención, Datos obtenidos desde Mongo");
             }
             catch (Exception ex)
             {
@@ -184,6 +190,8 @@ namespace Lexon.API.Infrastructure.Repositories
                     actuaciones = relations
                 };
                 result.AddRelationsMail(lexMailActuacion);
+                TraceInfo(result.Infos, $"Atención, Datos obtenidos desde Mongo");
+
             }
             catch (Exception ex)
             {
@@ -298,6 +306,8 @@ namespace Lexon.API.Infrastructure.Repositories
                     .FirstOrDefaultAsync();
 
                 result.data = master?.list?.ToList();
+                TraceInfo(result.infos, $"Atención, Datos obtenidos desde Mongo");
+
             }
             catch (Exception ex)
             {

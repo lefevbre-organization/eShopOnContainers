@@ -74,12 +74,12 @@ namespace Lexon.API.Controllers
         [HttpGet("user/getid")]
         [ProducesResponseType(typeof(Result<LexUserSimple>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexUserSimple>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UserIdAsync(string idNavisionUser = "E1621396")
+        public async Task<IActionResult> UserIdAsync(string idNavisionUser = "E1621396", string env = "DEV")
         {
             if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
-            Result<LexUserSimple> resultUser = await _usersService.GetUserIdAsync(idNavisionUser);
+            Result<LexUserSimple> resultUser = await _usersService.GetUserIdAsync(idNavisionUser, env);
             return Ok(resultUser);
         }
 
@@ -210,13 +210,14 @@ namespace Lexon.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CheckRelationsMailAsync(
             [FromBody] MailInfo mail,
-            [FromRoute] string idUser = "449"
+            [FromRoute] string idUser = "449",
+            [FromQuery] string env = "DEV"
             )
         {
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(mail.Uid) || string.IsNullOrEmpty(mail.MailAccount))
                 return BadRequest("values invalid. Must be a valid idUser, idMail and account to search the relations of mail");
 
-            Result<LexUserSimpleCheck> result = await _usersService.CheckRelationsMailAsync(idUser, mail);
+            Result<LexUserSimpleCheck> result = await _usersService.CheckRelationsMailAsync(idUser, env, mail);
             return Ok(result);
         }
 
