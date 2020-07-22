@@ -32,9 +32,9 @@ env:
     - name: ApplicationInsights__InstrumentationKey
       key: all__InstrumentationKey
     - name: UseLoadTest
-      key: all__EnableLoadTest
-    - name: LexonApiUrlHC
-      key: internalurls__lexonapi__hc
+      key: all_EnableLoadTest
+    - name: LexonApiGatewayUrlHC
+      key: internalurls__lexonapigw__hc
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT

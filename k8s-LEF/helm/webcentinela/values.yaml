@@ -33,7 +33,9 @@ env:
       key: all__InstrumentationKey
     - name: UseLoadTest
       key: all__EnableLoadTest
-      # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
+    - name: CentinelaApiUrlHC
+      key: internalurls__centinelaapi__hc
+  # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
