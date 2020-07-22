@@ -66,7 +66,7 @@ env:
     - name: ByPassUrls__0__NameService
       value: Lex-On
     - name: ByPassUrls__0__UrlByPass
-      value: 'https://lexonapigw/api/v1/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}'
+      value: 'https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}'
     - name: OrchestratorType
       value: 'K8S'
     - name: OnlineLogin
