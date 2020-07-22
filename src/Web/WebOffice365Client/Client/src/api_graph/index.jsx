@@ -671,7 +671,9 @@ export const getContacts = () =>
         if (arr) {
           arr.map(function (item) {
             if (item.emailAddresses.length > 0)
-              contacts.push(item.emailAddresses[0].address);
+              for(let i = 0; i < item.emailAddresses.length; i++) {
+                contacts.push(item.emailAddresses[i].address);
+              }
           });
         }
         resolve(contacts);

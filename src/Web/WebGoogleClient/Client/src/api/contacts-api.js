@@ -16,7 +16,9 @@ export const getContacts = (token) =>
                 if(arr) {
                     arr.map(function (item) {
                         if (typeof item.emailAddresses !== 'undefined') {
-                            contacts.push(item.emailAddresses[0].value);
+                            for(let i = 0; i < item.emailAddresses.length; i++) {
+                                contacts.push(item.emailAddresses[i].value);
+                            }
                         }
                     });
                 }
