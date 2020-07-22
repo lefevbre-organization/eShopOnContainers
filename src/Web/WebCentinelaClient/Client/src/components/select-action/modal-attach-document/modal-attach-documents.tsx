@@ -60,7 +60,7 @@ interface State {
 }
 
 class ModalAttachDocuments extends Component<Props, State> {
-  private lastStep = -1;
+  private lastStep:any = [];
   private step5Ref: any = null;
   private step3Ref: any;
 
@@ -165,7 +165,7 @@ class ModalAttachDocuments extends Component<Props, State> {
 
   nextStep() {
     const { step } = this.state;
-    this.lastStep = step;
+    this.lastStep.push(step);
     if (step === 1) {
       this.setState({ step: 2 });
     } else if (step === 2) {
@@ -179,19 +179,23 @@ class ModalAttachDocuments extends Component<Props, State> {
 
   prevStep() {
     const { step } = this.state;
+    const ls = this.lastStep.pop();
+
     if (step === 2) {
       this.setState({ step: 1, instance: undefined });
     } else if (step === 3) {
       if (this.step3Ref.current.back() === true) {
-        this.setState({ step: 2, instance: undefined });
+        this.setState({ step: ls, instance: undefined });
       } else {
+        if(this.lastStep[this.lastStep.lenngth -1] !== ls) {
+          this.lastStep.push(ls);
+        }
         this.setState({ instance: undefined });
       }
     } else if (step === 4) {
-      const ls = this.lastStep === -1?1:this.lastStep;
       this.setState({ step: ls, files: [], instance: undefined });
     } else if (step === 5) {
-      this.setState({ step: this.lastStep, instance: undefined });
+      this.setState({ step: ls, instance: undefined });
     }
   }
 
@@ -423,7 +427,7 @@ class ModalAttachDocuments extends Component<Props, State> {
                 alt='Centinela'
                 src={`${(window as any).URL_MF_CENTINELA_BASE}/assets/img/icon-centinela.svg`}></img>
               <span>
-                {i18n.t('modal-attach.title')} - {this.state.step}
+                {i18n.t('modal-attach.title')}
               </span>
             </h5>
           </Modal.Header>
@@ -437,9 +441,11 @@ class ModalAttachDocuments extends Component<Props, State> {
                 >
                   <Step1
                     onClickSearch={(search: string) => {
+                      this.lastStep = [1];
                       this.setState({ step: 4, search, instance: undefined });
                     }}
                     onClickExploreImplantations={() => {
+                      this.lastStep = [1];
                       this.setState({
                         entity: 1,
                         step: 2,
