@@ -320,8 +320,7 @@ export class Main extends Component {
             colorExist = true
         }
         return (
-            <div Style="width: 200px;">
-               
+            <div Style="width: 200px;">               
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
                     <span className='eventicon'>
