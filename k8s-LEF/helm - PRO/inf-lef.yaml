@@ -38,6 +38,9 @@ inf:
   misc:                     # inf.misc contains miscellaneous configuration related to infrastructure
     useLoadTest: false      # If running under loading test or not
     useAzureStorage: false  # If catalog api uses azure storage or not
+  version:
+    major: 0
+    minor: 27
 #  registry:                # Uncomment "registry" to specify registry secret
 #    secretName:            # secretName is the name of the secret inside k8s   
 #    server:                # Registry login server

@@ -32,7 +32,7 @@ env:
     - name: ApplicationInsights__InstrumentationKey
       key: all__InstrumentationKey
     - name: UseLoadTest
-      key: all_EnableLoadTest
+      key: all__EnableLoadTest
     - name: LexonApiGatewayUrlHC
       key: internalurls__lexonapigw__hc
     - name: AccountApiGatewayUrlHC
@@ -53,4 +53,5 @@ configValues: |
  window.URL_GET_ACCOUNTS='https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail'
  window.URL_MF_LEXON_BASE='https://lexbox-test-weblexon.lefebvre.es'
  window.URL_GET_USER='https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils'
- window.RELEASE = 'RC 0.27'
+ window.RELEASE = all__version
+

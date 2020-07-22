@@ -32,7 +32,7 @@ env:
     - name: ApplicationInsights__InstrumentationKey
       key: all__InstrumentationKey
     - name: UseLoadTest
-      key: all_EnableLoadTest
+      key: all__EnableLoadTest
     - name: AccountApiGatewayUrlHC
       key: internalurls__accountapigw__hc
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
@@ -62,4 +62,4 @@ configValues: |
   window.URL_MF_DATABASE='http://localhost:3006/static/js/main.js'
   window.URL_MF_DATABASE_BASE='http://localhost:3006'
   window.SHOW_EXPERIMENTAL='1'  
-  window.RELEASE = 'RC 0.27'
+  window.RELEASE = all__version

@@ -32,7 +32,7 @@ env:
     - name: ApplicationInsights__InstrumentationKey
       key: all__InstrumentationKey
     - name: UseLoadTest
-      key: all_EnableLoadTest
+      key: all__EnableLoadTest
     - name: SignatureApiUrlHC
       key: internalurls__signatureapi__hc
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
@@ -46,4 +46,4 @@ env:
 configValues: |
   window.REACT_APP_ENVIRONMENT='PRODUCTION'
   window.API_SIGN_GATEWAY = "https://lexbox-test-apigwsig.lefebvre.es/api/v1/signservice";
-  window.RELEASE = 'RC 0.27'
+  window.RELEASE = all__version

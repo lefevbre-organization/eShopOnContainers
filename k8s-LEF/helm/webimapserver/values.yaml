@@ -39,7 +39,7 @@ env:
     - name: AzureServiceBusEnabled
       key: all__UseAzureServiceBus
     - name: UseLoadTest
-      key: all_EnableLoadTest    
+      key: all__EnableLoadTest    
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
