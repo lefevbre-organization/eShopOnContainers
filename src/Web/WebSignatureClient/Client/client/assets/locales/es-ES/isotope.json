@@ -147,5 +147,13 @@
   },
   "msgNotFoundSnackbar": {
     "error": "Mensaje no encontrado en el servidor"
+  },
+  "footer": {
+    "all-reserved-right": "©2020 Lefebvre. Todos los derechos reservados. ",
+    "legal-warning": "Aviso legal",
+    "privacy-policy": "Política de privacidad",
+    "cookies-policy": "Política de cookies",
+    "version": "Versión",
+    "terms-and-conditions": "Términos y condiciones"
   }
 }

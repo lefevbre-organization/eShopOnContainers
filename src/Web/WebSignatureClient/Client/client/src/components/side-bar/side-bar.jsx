@@ -28,6 +28,8 @@ class SideBar extends Component {
     this.handleOnDragLeave = this.onDragLeave.bind(this);
     this.handleOnDrop = this.onDrop.bind(this);
     this.handleOnNewMessage = this.onNewMessage.bind(this);
+    
+    //Sin firmas 
     this.animationSettings = { effect: 'None' };
     this.alertButtonRef = element => {
       this.alertButtonEle = element;
@@ -72,7 +74,9 @@ class SideBar extends Component {
     const { dragOver } = this.state;
     const contenido = `
       <img border='0' src='assets/images/icon-warning.png'></img>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;'>Lo sentimos has agotado el número máximo de firmas contratadas. Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 911231231 o pinchando aquí</div>`;
+      <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+        Lo sentimos has agotado el número máximo de firmas contratadas. Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 911231231 o pinchando aquí
+      </div>`;
     
     // const contenido = `
     //   <div id='demo-modal' className='modal modal-warning'>
@@ -198,7 +202,7 @@ class SideBar extends Component {
     .then(response => {
       setAvailableSignatures(response);
       if (response === false || response === "false"){
-        alert('Ha agotado todas sus solicitudes de firma. Debe comprar más');
+        //alert('Ha agotado todas sus solicitudes de firma. Debe comprar más');
         this.setState({ hideAlertDialog: true });
       } else {
         this.props.setAvailableSignatures(response);

@@ -32,7 +32,7 @@ import { getUser } from '../../services/accounts';
 import * as uuid from 'uuid/v4';
 import { getUrlType } from '../../services/jwt';
 import { getFileType } from '../../services/mimeType';
-import { AttachmentsWidget } from './widgets/attachments-widget';
+import  AttachmentsWidget  from './widgets/attachments-widget2';
 import { ExpirationWidget } from './widgets/expiration-widget';
 import { RemindersWidget } from './widgets/reminders-widget';
 
@@ -82,6 +82,7 @@ class MessageEditor extends Component {
     this.buildDocumentsInfo = this.buildDocumentsInfo.bind(this);
 
     this.onChangeReminder = this.onChangeReminder.bind(this);
+    this.onChangeExpiration = this.onChangeExpiration.bind(this);
   }
 
   componentDidMount() {
@@ -108,7 +109,14 @@ class MessageEditor extends Component {
   onChangeReminder(reminder) {
     this.setState({
       selectedReminderOption: `option${reminder.option}`,
-      remainderDays: reminder.data
+      reminderDays: reminder.data
+    })
+  }
+
+  onChangeExpiration(expiration) {
+    this.setState({
+      selectedExpirationOption: `exp_option${expiration.option}`,
+      expirationDays: expiration.data
     })
   }
 
@@ -188,23 +196,26 @@ class MessageEditor extends Component {
             />
           </div>
           <div className={styles['side-container']}>
-            <AttachmentsWidget></AttachmentsWidget>
-            <ExpirationWidget></ExpirationWidget>
+            <AttachmentsWidget 
+              // onAttachButton={this.onAttachButton()} 
+              // onAttachSelected={this.onAttachSelected()}
+              // removeAttachment={this.removeAttachment()}
+            ></AttachmentsWidget>
+            <ExpirationWidget onChange={this.onChangeExpiration}></ExpirationWidget>
             <RemindersWidget onChange={this.onChangeReminder}></RemindersWidget>
           </div>
           <div className={styles['action-buttons']}>
             <button
-              className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']}
-            ${styles['action-button']} ${styles.cancel}`}
+              className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']} ${styles['action-button']} ${styles.cancel}`}
               onClick={() => this.removeMessageEditor(application)}>
               Descartar
             </button>
             <button
-              className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']}
-            ${styles['action-button']} ${styles.send}`}
+              className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']} ${styles['action-button']} ${styles.send}`}
               onClick={this.handleSubmit}>
               {t('messageEditor.send')}
             </button>
+                        
           </div>
         </div>
 
@@ -220,33 +231,18 @@ class MessageEditor extends Component {
           url={this.state.linkDialogUrl}
           insertLink={this.handleEditorInsertLink}
         />
+        {/* <style jsx global>
+        {`
+          input:not([type]){
+            border-bottom: 1px solid #001970 !important
+          }
+        `}
+        </style> */}
       </div>
     );
   }
 
-  renderEditorButtons() {
-    return (
-      <div className={`${mainCss['mdc-card']} ${styles['button-container']}`}>
-        {Object.entries(EDITOR_BUTTONS).map(([k, b]) => (
-          <MceButton
-            key={k}
-            className={styles.button}
-            activeClassName={styles.active}
-            iconClassName={styles.buttonIcon}
-            active={
-              this.state.editorState && this.state.editorState[k] === true
-            }
-            label={b.label}
-            icon={b.icon}
-            onToggle={() =>
-              b.toggleFunction(this.getEditor(), b, this.handleSetState)
-            }
-          />
-        ))}
-      </div>
-    );
-  }
-
+  
   submit() {
     if (this.headerFormRef.current.reportValidity()) {
       // Get content directly from editor, state content may not contain latest changes
@@ -260,7 +256,7 @@ class MessageEditor extends Component {
       let reminders = [];
       switch (this.state.selectedReminderOption) {
         case 'option1':
-          reminders = this.state.reminderDays;
+          reminders.push(this.state.reminderDays);
           break;
         case 'option2':
           if (this.state.selectedExpirationOption === 'exp_option1') {

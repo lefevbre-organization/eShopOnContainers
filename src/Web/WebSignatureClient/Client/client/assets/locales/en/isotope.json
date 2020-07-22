@@ -10,7 +10,7 @@
     "email-error": "The field must be a valid email.",
     "user-error": "User or password not valid.",
     "user": "User",
-    "password": "Passsord",
+    "password": "Password",
     "login": "LOG IN"
   },
   "sideBar": {
@@ -129,5 +129,13 @@
   },
   "msgNotFoundSnackbar": {
     "error": "Message not found in server"
+  },
+  "footer": {
+    "all-reserved-right": "©2020 Lefebvre. All rights reserved. ",
+    "legal-warning": "Legal warning",
+    "privacy-policy": "Privacy policy",
+    "cookies-policy": "Cookies policy",
+    "version": "Version",
+    "terms-and-conditions": "Terms and conditions"
   }
 }

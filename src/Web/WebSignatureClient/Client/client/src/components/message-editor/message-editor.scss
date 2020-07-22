@@ -80,7 +80,7 @@ $flag-size: 18px;
       display: flex;
       flex-wrap: wrap;
       padding: $header-field-spacing 0;
-      border-bottom: 1px solid $editor-border-color;
+      //border-bottom: 1px solid $editor-border-color;
       .chip {
         @include mdc-chip-fill-color($header-chip-fill-color);
         @include mdc-chip-outline(1px, solid, $header-chip-outline-color);
@@ -103,11 +103,14 @@ $flag-size: 18px;
         color: $lefebvre-color;
         font-weight: bold;
         line-height: $header-chip-height;
+        font-size: 15px;
       }
 
       .autoSuggest {
-        display: flex;
-        flex: 1;
+        //display: flex;
+        //flex: 1;
+        height: 25px;
+        width: 100%;
 
         .autoSuggestMenu {
           left: 0;
@@ -118,6 +121,14 @@ $flag-size: 18px;
         input {
           min-width: 60px;
           flex: 1;
+          height: 25px;
+          // border-bottom: 0px;
+          // box-shadow: 0px;
+          &:focus{
+            color: #001970;
+            border-bottom: 1px solid #001970 !important;
+            box-shadow: 0 1px 0 0 #001970 !important;
+          }
         }
       }
     }
@@ -126,6 +137,12 @@ $flag-size: 18px;
       input {
         padding: $header-field-spacing 0;
         width: 100%;
+
+        &:focus{
+          color: #001970;
+          border-bottom: 1px solid #001970 !important;
+          box-shadow: 0 1px 0 0 #001970 !important;
+        }
       }
 
       input::placeholder {

@@ -585,7 +585,7 @@ export function preloadSignatures2(dispatch, filters, auth) {
         remindConfig = 'Weekly';
         break;
       default:
-        remindConfig = 'Unknown';
+        remindConfig = `Custom:${reminders[0]}`;
         break;
     }
 
@@ -614,7 +614,7 @@ export function preloadSignatures2(dispatch, filters, auth) {
     customFieldsData.push({name: "subject", value: subject});
     customFieldsData.push({name: "body", value: body});
     customFieldsData.push({name: "reminders", value: remindConfig});
-    customFieldsData.push({name: "expiration", value: reminders});
+    customFieldsData.push({name: "expiration", value: expiration});
     // customFieldsData.push({name: "expiration", value: expiration});
     // customFieldsData.push({name: "reminders", value: reminders});
     jsonObject.customFields = customFieldsData;

@@ -67,14 +67,18 @@ export const RemindersWidget = ({ onChange }) => {
         <>
           <form action='#'>
             <p className={styles.form}>
-              <input type="number" min="1" className={styles["days-input"]} disabled={option !== 1} value={days} onChange={
-                event => {
-                  setDays(event.currentTarget.valueAsNumber)
-                }
-              }></input>
               <RadioButtonComponent name="reminder" label='Recordatorio cada _______ días' checked={option === 1} change={() => {
                 setOption(1);
               }} />
+              <span>
+                {(option === 1) ? 
+                  <input type="number" min="1" className={styles["days-input"]} disabled={option !== 1} value={days} onChange={
+                    event => {
+                      setDays(event.currentTarget.valueAsNumber)
+                    }
+                  }></input>
+                : null}
+              </span>
               <RadioButtonComponent name="reminder" label='Recordatorio diario' checked={option === 2} change={() => {
                 setOption(2);
               }} />

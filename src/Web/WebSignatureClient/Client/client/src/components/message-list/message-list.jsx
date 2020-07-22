@@ -15,7 +15,7 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import mainCss from "../../styles/main.scss";
 import styles from "./message-list.scss";
-import { preloadSignatures, preloadSignatures2 } from "../../services/api-signaturit";
+import { preloadSignatures, preloadSignatures2, cancelSignature2 } from "../../services/api-signaturit";
 import { backendRequest, backendRequestCompleted } from '../../actions/application';
 import { GridComponent, ColumnsDirective, ColumnDirective, Page, Inject, Resize, Filter, DetailRow, Sort, Group, Toolbar, PdfExport, ExcelExport } from '@syncfusion/ej2-react-grids';
 import data from './dataSource.json';
@@ -25,6 +25,7 @@ import { DataManager } from '@syncfusion/ej2-data';
 import { ClickEventArgs } from '@syncfusion/ej2-navigations';
 import { DropDownButtonComponent } from '@syncfusion/ej2-react-splitbuttons';
 import { detailedDiff } from 'deep-object-diff';
+import { DialogComponent } from '@syncfusion/ej2-react-popups';
 
 
 L10n.load({
@@ -42,7 +43,10 @@ L10n.load({
       },
       'pager': {
         'pagerDropDown': 'Registros por página',
-        'pagerAllDropDown': 'Registros'
+        'pagerAllDropDown': 'Registros',
+        'totalItemsInfo': '({0} ítems)',
+        'currentPageInfo': 'Página {0} de {1}',
+        'All': 'Todo'
       }
     }
   });
@@ -53,7 +57,11 @@ class MessageList extends Component {
         console.log('Entra en message-list');
         this.state = {
             sign_ready: false,
-            rowCount: 0
+            rowCount: 0,
+            hideAlertDialog: false,
+            hideConfirmDialog: false,
+            signatureId: '',
+            auth: ''
         }
         this.template = this.gridTemplate;
         this.menuTemplate = this.menuGridTemplate;
@@ -90,6 +98,37 @@ class MessageList extends Component {
             {
                 text: 'Cancelar',
                 iconCss: 'lf-icon-excel-software',
+            }
+        ];
+        this.dialogClose = this.dialogClose;
+        this.dialogOpen = this.dialogOpen;
+
+        //Sin firmas 
+        this.animationSettings = { effect: 'None' };
+        // this.alertButtonRef = element => {
+        //   this.alertButtonEle = element;
+        // };
+        this.alertButtons = [{
+            // Click the footer buttons to hide the Dialog
+            click: () => {
+                this.setState({ hideAlertDialog: false });
+            },
+            buttonModel: { content: 'Aceptar', isPrimary: true }
+        }];
+
+        this.confirmButtons = [
+            {
+                click: () => {
+                    this.setState({ hideConfirmDialog: false });
+                    this.onCancelSignatureOk();
+                },
+                buttonModel: { content: 'Si', isPrimary: true }
+            },
+            {
+                click: () => {
+                this.setState({ hideConfirmDialog: false });
+                },
+                buttonModel: { content: 'No', isPrimary: true }
             }
         ];
     }
@@ -443,11 +482,54 @@ class MessageList extends Component {
             this.props.setTitle('PROGRESO DE FIRMA');
             this.props.signatureClicked(signature);
         } else if (args.item.text === 'Cancelar'){
-            //POR HACER
+            const id = this.grid.getSelectedRecords()[0].Id;
+            const auth = this.props.auth;
+            this.setState({ hideConfirmDialog: true, signatureId: id, auth: auth });
         }
     }
 
+    onCancelSignature(signatureId, auth){
+        this.setState({ hideConfirmDialog: true, signatureId: signatureId, auth: auth });
+        //cancelSignature2(signatureId, auth);
+    }
+
+    onCancelSignatureOk(){
+        const signatureId = this.state.signatureId;
+        const auth = this.state.auth;
+    
+        cancelSignature2(signatureId, auth)
+        .then(() => {
+          this.setState({ hideAlertDialog: true, signatureId: '', auth: '' });
+        })
+        .catch(() => {
+          this.setState({ hideAlertDialog: true, signatureId: '', auth: '' });
+        });
+    }
+
+    dialogClose(){
+        this.setState({
+            hideAlertDialog: false,
+            hideConfirmDialog: false
+        });
+    }
+
+    dialogOpen(){
+        this.alertDialogInstance.cssClass = 'e-fixed';
+    }
+
     render() {
+        const contenido = `
+            <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
+            <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+            Petición cancelada correctamente.
+            </div>`;
+
+        const contenido2 = `
+            <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
+            <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+            ¿Está seguro de que quiere cancelar la firma seleccionada?
+            </div>`;
+
         this.toolbarClick = this.toolbarClick.bind(this);
         //var firmas = this.props.signatures;
         var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [];
@@ -537,6 +619,35 @@ class MessageList extends Component {
                     <Inject services={[Filter, Page, Resize, Sort, Toolbar, PdfExport, ExcelExport]}/>
                     {/* <Inject services={[Resize]}/> */}
                 </GridComponent>
+                <DialogComponent 
+                    id="infoDialog" 
+                    //header=' ' 
+                    visible={this.state.hideAlertDialog} 
+                    animationSettings={this.animationSettings} 
+                    width='500px' 
+                    content={contenido}
+                    ref={alertdialog => this.alertDialogInstance = alertdialog} 
+                    //target='#target' 
+                    //buttons={this.alertButtons} 
+                    open={this.dialogOpen.bind(this)} 
+                    close={this.dialogClose.bind(this)}
+                    showCloseIcon={true}
+                    //position={ this.position }
+                />
+                <DialogComponent 
+                    id="confirmDialog" 
+                    header=' ' 
+                    visible={this.state.hideConfirmDialog} 
+                    //showCloseIcon={true} 
+                    animationSettings={this.animationSettings} 
+                    width='400px' 
+                    content={contenido2} 
+                    ref={dialog => this.confirmDialogInstance = dialog} 
+                    //target='#target' 
+                    buttons={this.confirmButtons} 
+                    open={() => this.dialogOpen} 
+                    close={() => this.dialogClose}
+                />
             </div>
             <style jsx global>
                 {`
@@ -619,10 +730,6 @@ class MessageList extends Component {
                         font-weight: bold;
                         color: #001970;
                     }
-                    .e-dropdown-popup ul .e-item .e-hover {
-                        font-weight: bold;
-                        color: #001970;
-                    }
                     
                     .e-input-group:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left), .e-input-group.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) .e-input-in-wrap, .e-input-group.e-control-wrapper:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left), .e-input-group.e-control-wrapper.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) .e-input-in-wrap, .e-float-input.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) .e-input-in-wrap, .e-float-input.e-control-wrapper.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) .e-input-in-wrap {
                         border-color: #001970;
@@ -655,6 +762,43 @@ class MessageList extends Component {
                         min-height: 53px;
                         vertical-align: middle;
                     }
+
+
+                    
+                    #infoDialog, #confirmDialog{
+                        max-height: 927px;
+                        width: 300px;
+                        left: 770px;
+                        top: 392.5px;
+                        z-index: 1001;
+                        transform: translateY(+150%);
+                    }
+                    #confirmDialog_dialog-header, #confirmDialog_title, #onfirmDialog_dialog-content, .e-footer-content{
+                        background: #001970;
+                        color: #fff;
+                        display:flex;
+                    }
+                    #infoDialog_dialog-header, #infoDialog_title, #infoDialog_dialog-content, .e-footer-content{
+                        background: #001970;
+                        color: #fff;
+                        display:flex;
+                    }
+                    #confirmDialog_dialog-header, #confirmDialog_title, #confirmDialog_dialog-content, .e-footer-content{
+                        background: #001970;
+                        color: #fff;
+                        display:flex;
+                    }
+                    .e-btn.e-flat.e-primary {
+                        color: #fff !important;
+                    }
+                    .e-btn-icon .e-icon-dlg-close .e-icons{
+                        color: #fff;
+                    }
+                    .e-dialog .e-dlg-header-content .e-btn.e-dlg-closeicon-btn{
+                        margin-right: 0;
+                        margin-left: auto;
+                        color: #fff
+                    }
                     
                 `}
                 </style>
@@ -683,17 +827,47 @@ class MessageList extends Component {
     shouldComponentUpdate(nextProps, nextState) {
         const difP = detailedDiff(this.props, nextProps);
         const difSt = detailedDiff(this.state, nextState);
-    
-        if (
-          this.isEmpty(difP.updated) &&
-          this.isEmpty(difP.added) &&
-          this.isEmpty(difP.deleted) &&
-          this.isEmpty(difSt.updated) &&
-          this.isEmpty(difSt.added) &&
-          this.isEmpty(difSt.deleted)
-        ) {
-          return false;
+
+        if (difP && difP.updated !== undefined){
+            if (difP.updated.hasOwnProperty('preloadSignatures') 
+                && difP.updated.hasOwnProperty('backendRequest') && difP.updated.hasOwnProperty('backendRequestCompleted')
+                && difP.updated.hasOwnProperty('signatureClicked') && difP.updated.hasOwnProperty('setTitle')
+                && Object.keys(difP.updated).length === 5
+                && Object.keys(difP.added).length === 0
+                && Object.keys(difP.deleted).length === 0){
+                    return false;
+            }
+        } else {
+            if (
+                this.isEmpty(difP.updated) &&
+                this.isEmpty(difP.added) &&
+                this.isEmpty(difP.deleted) &&
+                this.isEmpty(difSt.updated) &&
+                this.isEmpty(difSt.added) &&
+                this.isEmpty(difSt.deleted)
+              ) {
+                return false;
+              }
         }
+    
+        // if (difP && difP.updated !== undefined
+        //     && difP.updated.hasOwnProperty('preloadSignatures') 
+        //     && difP.update.hasOwnProperty('backendRequest') && difP.update.hasOwnProperty('backendRequestCompleted')
+        //     && difP.update.hasOwnProperty('signatureClicked') && difP.update.hasOwnProperty('setTitle')
+        //     && Object.keys(difP.updated).length === 5){
+        //         return false;
+        // } else {
+        //     if (
+        //         this.isEmpty(difP.updated) &&
+        //         this.isEmpty(difP.added) &&
+        //         this.isEmpty(difP.deleted) &&
+        //         this.isEmpty(difSt.updated) &&
+        //         this.isEmpty(difSt.added) &&
+        //         this.isEmpty(difSt.deleted)
+        //       ) {
+        //         return false;
+        //       }
+        // }
     
         return true;
     }
@@ -958,6 +1132,7 @@ const mapStateToProps = state => ({
     signatures: state.application.signatures,
     signatureFilter: state.application.signaturesFilterKey,
     lefebvre: state.lefebvre,
+    auth: state.application.user.credentials.encrypted,
     all: state
 });
 

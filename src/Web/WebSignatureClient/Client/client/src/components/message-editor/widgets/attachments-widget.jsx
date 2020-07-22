@@ -12,12 +12,12 @@ export const AttachmentsWidget = () => {
                 className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']} ${styles['right']}`}>
                 adjuntar documento
             </button>
-            <div class="clearfix"></div>
+            <div className="clearfix"></div>
         </div>
         <div className={styles["sign"]}>
-            <span class="lf-icon-check"></span>
+            <span className="lf-icon-check"></span>
             <a href="#">Firmar documento en una sola hoja</a>
         </div>
-        <div class="clearfix"></div>
+        <div className="clearfix"></div>
     </div>)
 }
