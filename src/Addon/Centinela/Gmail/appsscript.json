@@ -10,7 +10,8 @@
     "https://www.googleapis.com/auth/script.send_mail"
   ],
   "urlFetchWhitelist": [
-    "https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/token"
+    "https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/token",
+    "https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail/"
   ],
  "addOns": {
   "common": {
@@ -19,7 +20,7 @@
   },
    "gmail": {
      "openLinkUrlPrefixes": [
-       "https://lexbox-test-webaddonlauncher.lefebvre.es/",
+       "https://localhost:3000/",
        "https://mail.google.com/"
      ], 
      "contextualTriggers": [{
