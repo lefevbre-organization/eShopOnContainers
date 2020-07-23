@@ -479,6 +479,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
           onHide={() => {
             this.closeDialog();
           }}
+
           size="lg"
           aria-labelledby="contained-modal-title-vcenter"
           centered
@@ -494,7 +495,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
                 alt='Centinela'
                 src={`${(window as any).URL_MF_CENTINELA_BASE}/assets/img/icon-centinela.svg`}></img>
 
-              <span>{i18n.t('modal-archive.title')} </span>
+              <span>{i18n.t('modal-archive.title')}</span>
               {/* <span>{step}</span> */}
             </h5>
           </Modal.Header>

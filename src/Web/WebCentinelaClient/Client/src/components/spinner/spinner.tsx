@@ -35,7 +35,7 @@ const Spinner = () => {
         }
 
         .preloader-holder {
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 46 46' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E\a             %3Cpolygon fill='%23fff' points='17.604 39.498 39.607 39.498 39.607 4.504 44.008 4.504 44.008 44 17.604 44'%3E%3C/polygon%3E\a             %3Cpolygon fill='%23fff' points='13.201 26.475 30.806 26.475 30.806 30.025 13.201 30.025'%3E%3C/polygon%3E\a             %3Cpolygon fill='%23fff' points='13.201 13.473 30.806 13.473 30.806 17.027 13.201 17.027'%3E%3C/polygon%3E\a             %3Cpolygon fill='%23fff' points='4.402 39.498 0 39.498 0 0 26.404 0 26.404 4.504 4.402 4.504'%3E%3C/polygon%3E\a             %3C/svg%3E	");
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 46 46' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Cpolygon fill='%23fff' points='17.604 39.498 39.607 39.498 39.607 4.504 44.008 4.504 44.008 44 17.604 44'%3E%3C/polygon%3E%3Cpolygon fill='%23fff' points='13.201 26.475 30.806 26.475 30.806 30.025 13.201 30.025'%3E%3C/polygon%3E%3Cpolygon fill='%23fff' points='13.201 13.473 30.806 13.473 30.806 17.027 13.201 17.027'%3E%3C/polygon%3E%3Cpolygon fill='%23fff' points='4.402 39.498 0 39.498 0 0 26.404 0 26.404 4.504 4.402 4.504'%3E%3C/polygon%3E%3C/svg%3E	");
           width: 46px;
           height: 46px;
           position: fixed;
@@ -77,7 +77,7 @@ const Spinner = () => {
         }
     `}</style>
     </Fragment>
-    
+
   );
 };
 
