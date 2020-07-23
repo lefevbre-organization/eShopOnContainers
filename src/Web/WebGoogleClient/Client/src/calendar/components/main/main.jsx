@@ -855,8 +855,17 @@ export class Main extends Component {
 
             case 'eventChanged':
 
+                let idEvent;
+                if (args.data[0] != undefined) {
+                    idEvent = args.data[0].Id
+                }
+                else {
+                    idEvent = args.data.Id
+                }                   
+
+
                 var desc = this.scheduleObj.dataModule.dataManager.dataSource.json.find(function (e) {
-                    return e.Id == args.data.Id
+                    return e.Id == idEvent
                 })
 
                 if (desc) {
