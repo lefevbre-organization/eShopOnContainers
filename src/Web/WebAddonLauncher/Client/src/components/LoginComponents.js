@@ -61,8 +61,8 @@ import React from 'react';
                 </button>
                 { verificationAuth }
                </div>
-                <p className="mt-3 front-login__info-block">{children.notClient} <a className="front-login__info-block-link" 
-                href="https://espaciolefebvre.lefebvre.es/solicitar-informacion"> {children.requestInfo} </a></p>
+                {/* <p className="mt-3 front-login__info-block">{children.notClient} <a className="front-login__info-block-link" 
+                href="https://espaciolefebvre.lefebvre.es/solicitar-informacion"> {children.requestInfo} </a></p> */}
              </div>
              </div>
             <div className="login-help">
