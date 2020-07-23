@@ -65,7 +65,7 @@ import React from 'react';
                 href="https://espaciolefebvre.lefebvre.es/solicitar-informacion"> {children.requestInfo} </a></p> */}
              </div>
              </div>
-            <div className="login-help">
+            <div className="login-help-centinela">
              <p className="pt-3 need-help mb-4">
               {children.needHelp}
              </p>
