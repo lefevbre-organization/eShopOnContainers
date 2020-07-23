@@ -4,7 +4,7 @@ import validator from 'email-validator';
 import LoginHeader from '../components/LoginHeader';
 import LoginFooter from '../components/LoginFooter';
 import CentinelaLoginComponents from '../components/CentinelaLogin';
-import { getCentinelaUser } from "../services/services-lexon";
+import { getCentinelaUser, base64Decode } from "../services/services-lexon";
 
 import '../assets/styles/components/Login.css';
 import '../assets/styles/components/CentinelaLogin.css';
@@ -95,19 +95,39 @@ class CentinelaLogin extends Component {
     return true;
   }
 
+  validateUser = (userBase64Decode) => {
+    let role = userBase64Decode.roles.some(role => {
+      return (role === "Centinela");    
+     });
+     if(role) {
+       this.setState({
+       errorsMessage: {
+         auth: ''
+       }
+      });
+     this.goBackAddon(); 
+     } else {
+       this.setState({
+         errorsMessage: {
+          auth: 'El usuario no tiene acceso a Centinela.'
+         }
+       });
+     }
+  }
+
   async getUser() {
     
    const user = await getCentinelaUser(
      this.state.form
    );
-    if(user.result.data 
-        && user.result.data.token) {
-     this.goBackAddon();
-     this.setState({
-      errorsMessage: {
-        auth: ''
-      }
-    });
+    if(user.result.data.token) {
+      const userBase64Decode = base64Decode(user);
+      this.setState({
+       errorsMessage: {
+         auth: ''
+       }
+     });
+      this.validateUser(userBase64Decode);
     } else {
       this.setState({
         errorsMessage: {

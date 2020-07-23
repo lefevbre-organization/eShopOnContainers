@@ -429,6 +429,7 @@ class ModalAttachDocuments extends Component<Props, State> {
               <img
                 className='imgproduct'
                 alt='Centinela'
+                style={{width:24, height:24}}
                 src={`${(window as any).URL_MF_CENTINELA_BASE}/assets/img/icon-centinela.svg`}></img>
               <span>
                 {i18n.t('modal-attach.title')}
