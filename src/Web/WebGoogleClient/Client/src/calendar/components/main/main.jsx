@@ -689,7 +689,9 @@ export class Main extends Component {
         // default values for EventType coming from event args
         if (args.data.EventType != undefined) {
             this.setState({ eventType: args.data.EventType.name })
-            this.drowDownListEventType.value = args.data.EventType.name
+            if (this.drowDownListEventType != undefined) {
+                this.drowDownListEventType.value = args.data.EventType.name
+            }           
         }
         else
         {
@@ -1189,6 +1191,15 @@ export class Main extends Component {
         this.setState({ tagAttendess: [...tag] })
     }
 
+    onActionBegin(args) {
+        if (args.requestType === 'toolbarItemRendering') {
+            let userIconItem = {
+                align: 'Right', prefixIcon: 'user-icon', text: 'Configuración', cssClass: 'e-schedule-user-icon'
+            };
+            args.items.push(userIconItem);
+        }
+    }
+
     render() {
         const { t } = this.props;
         const { leftSideBar } = this.state;
@@ -1321,6 +1332,7 @@ export class Main extends Component {
                                                 views={this.viewsCollections}
                                                 actionComplete={this.onEventRendered.bind(this)}                                               
                                                 popupOpen={this.onPopupOpen.bind(this)}
+                                                actionBegin={this.onActionBegin.bind(this)}
                                                 eventSettings={
                                                     {
                                                         dataSource: this.scheduleData,
