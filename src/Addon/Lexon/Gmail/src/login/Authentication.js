@@ -54,7 +54,7 @@ function create3PAuthorizationUi() {
     .setImageUrl("https://www.dropbox.com/s/csqs86p9kjgy80w/Screenshot%202020-04-20%2009.44.01.png?raw=1");
 
     var icon = CardService.newImage()
-    .setAltText("Icon")
+    .setAltText("Lex-on")
     .setImageUrl("https://www.dropbox.com/s/sspa471xfkibxvs/Screenshot%202020-04-20%2010.03.08.png?raw=1");
 
     var loginButton = CardService.newImage()

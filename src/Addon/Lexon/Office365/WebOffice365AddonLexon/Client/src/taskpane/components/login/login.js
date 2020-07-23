@@ -69,12 +69,12 @@ class Login extends Component {
 
     return (
       <div className="ms-welcome">
-       {!isLoading ? <LoginHeader logo="assets/logo-filled.png" title={'logo'} /> 
+       {!isLoading ? <LoginHeader logo="assets/logo-filled.png" title={'Logo'} /> 
        : null}
         {isLoading ? <Spinner /> :
         <div className="text-center">
          <img align="center" src="../../assets/logo-2.png" className="logo-2-space" 
-         alt="lexon" title="lexon" />
+         alt="Lex-on" title="Lex-on" />
           <Button
             className="popupButton 
             btn-login ms-Button ms-Button--primary 
