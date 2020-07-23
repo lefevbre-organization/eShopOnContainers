@@ -68,7 +68,7 @@ class TabArchiveMessage extends Component<Props, State> {
 
     return (
       <Fragment>
-        {this.props.showArchiveModal && <ModalArchiveDocuments toggleNotification={toggleNotification} />
+        {this.props.showArchiveModal && <ModalArchiveDocuments toggleNotification={toggleNotification} /> }
         {/*
         <ConfirmRemoveClassification
           user={user}
