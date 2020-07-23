@@ -91,7 +91,7 @@ var scopes = [
     var accessToken = e.messageMetadata.accessToken;
     GmailApp.setCurrentMessageAccessToken(accessToken);
     checkAuth();
-    return buildHomeCard();
+    return buildHomeCard(e);
   }
   
   function logout(e) { 

@@ -14,7 +14,6 @@ class CentinelaContainer extends Component {
         );
     }
 
-
     componentDidMount() {
         window.addEventListener(
          'GetUserFromCentinelaConnector',
@@ -25,7 +24,6 @@ class CentinelaContainer extends Component {
           this.handleGetAddonsInfoFromCentinelaConnector
         );
     }
-
 
     componentWillUnmount() {
         window.removeEventListener(
@@ -38,7 +36,6 @@ class CentinelaContainer extends Component {
         );
     }
     
-
     handleGetUserFromCentinelaConnector() {
         console.log('Centinela GetUserFromCentinela received');
         const values = queryString.parse(window.location.search);  
@@ -68,7 +65,8 @@ class CentinelaContainer extends Component {
               }],
               provider: addonData.provider,
               account: addonData.account,
-              addonType: addonData.addonType
+              addonType: addonData.addonType,
+              messageById: addonData.messageById
             },
           })
         );
