@@ -368,8 +368,7 @@ class App extends Component {
                 )}
                 <div className={styles.btnselect}></div>
               </span>
-              {this.hasProduct('centinelaconnector') &&
-              window.SHOW_EXPERIMENTAL === '1' ? (
+              {this.hasProduct('centinelaconnector') ? (
                 <span
                   className={styles.productsbutton}
                   isotip={t('productBar.centinela')}

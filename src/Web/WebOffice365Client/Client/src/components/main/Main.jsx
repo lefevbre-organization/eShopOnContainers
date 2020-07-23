@@ -807,8 +807,7 @@ export class Main extends Component {
                   </div>
                 )}
               </span>
-              {this.hasProduct('centinelaconnector') &&
-                window.SHOW_EXPERIMENTAL === '1' && (
+              {this.hasProduct('centinelaconnector') && (
                   <span className='productsbutton'>
                     <div onClick={() => this.onSetSidebarOpenCentinela(true)}>
                       <img
