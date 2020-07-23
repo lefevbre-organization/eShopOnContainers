@@ -29,6 +29,7 @@ interface Props {
   instance?: CentInstance;
   onChange: any;
   onSearchChange: any;
+  step: number;
 }
 interface State {
   entities: any;
@@ -48,6 +49,9 @@ type IFilterOptions = {
 export class Step4 extends React.Component<Props, State> {
   private FilterOptions: IFilterOptions = { type: 'Menu' };
   private searchRef: any;
+  private searchRef2: any;
+  private instance: any;
+  private allFiles: any;
 
   constructor(props: Props) {
     super(props);
@@ -70,6 +74,7 @@ export class Step4 extends React.Component<Props, State> {
     this.renderOrigin = this.renderOrigin.bind(this);
     this.renderDate = this.renderDate.bind(this);
     this.onChangeFile = this.onChangeFile.bind(this);
+    this.searchFilesByType = this.searchFilesByType.bind(this);
     this.searchRef = React.createRef();
   }
 
@@ -78,6 +83,9 @@ export class Step4 extends React.Component<Props, State> {
     const { currentPage } = this.state;
 
     if (prevProps.show === false && show === true) {
+      if(prevProps.step === 5 && this.props.step === 4) {
+        return;
+      }
       this.setState(
         {
           entities: [],
@@ -86,13 +94,15 @@ export class Step4 extends React.Component<Props, State> {
           lastPage: false,
           totalResults: -1,
           currentPage: 0,
-          search: '',
+          //search: '',
           counter: 0
         },
         () => {
           if (instance) {
+            this.instance = instance;
             this.searchResultsByInstance(instance);
           } else {
+            this.instance = null;
             this.searchResultsByType(search);
           }
           this.setState({ currentPage: 1 }, () => {
@@ -135,11 +145,48 @@ export class Step4 extends React.Component<Props, State> {
     }
   }
 
+  searchFilesByType(search: any) {
+    const { currentPage, showSpinner } = this.state;
+    if (showSpinner) {
+      return;
+    }
+
+    if(search === "" && this.instance) {
+      this.searchResultsByInstance(this.instance)
+      return;
+    }
+
+    this.setState(
+      {
+        search: search || '',
+        showSpinner: true,
+        currentPage,
+        lastPage: true,
+        counter: 0
+      },
+      async () => {
+        //const response = await getResults(user, search);
+        const entities = this.allFiles.filter( (et:any) => et.name.indexOf(search) > -1);
+
+        this.setState({
+          entities: entities,
+          showSpinner: false,
+          totalResults: entities.length,
+          lastPage: entities.length <= 6
+        });
+      }
+    );
+  }
+
   searchResultsByType(search: any) {
     const { user, onSearchChange } = this.props;
     const { currentPage, showSpinner } = this.state;
     if (showSpinner) {
       return;
+    }
+
+    if(this.instance) {
+      return this.searchFilesByType(search)
     }
 
     if (search !== this.props.search) {
@@ -188,6 +235,7 @@ export class Step4 extends React.Component<Props, State> {
           instance.conceptObjectId
         );
 
+        this.allFiles = [...response.data];
         this.setState({
           entities: response.data,
           showSpinner: false,
@@ -270,14 +318,12 @@ export class Step4 extends React.Component<Props, State> {
             <div className="panel-right">
               <div className="panel-right-top">
                 <span className="section-title"></span>
-                {!instance && (
                   <ImplantationListSearch
                     ref={this.searchRef}
                     closeClassName="search-close-3"
                     searchResultsByType={this.searchResultsByType}
                     countResults={entities.length}
                   ></ImplantationListSearch>
-                )}
               </div>
 
               {this.state.showSpinner === true && (

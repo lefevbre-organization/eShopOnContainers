@@ -79,13 +79,14 @@ export const addClassification = async (
   const body = {
     listaMails: listMails.map((mail) => {
       const m = moment(mail.sentDateTime).format('YYYY-MM-DD HH:mm:ss');
-      console.log('addClassfication: ' + m);
+      const subject = mail.subject.replace(/'/g, "");
+
       return {
         provider: user.provider,
         mailAccount: user.account,
         uid: mail.id,
         folder: mail.folder,
-        subject: mail.subject.length > 250 ? mail.subject.substr(0, 250) : mail.subject,
+        subject: subject.length > 250 ? subject.substr(0, 250) : subject,
         date: m,
       };
     }),

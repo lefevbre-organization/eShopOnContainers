@@ -63,9 +63,13 @@ class ImplantationListSearch extends Component<Props, State> {
   }
 
   Search(text: string) {
-    this.setState({ search: text, showSearch: true }, () => {
-      this._handleOnclickSearch(null);
-    });
+    if(text === "") {
+      this.setState({search:"", showSearch: false});
+    } else {
+      this.setState({search: text, showSearch: true}, () => {
+        this._handleOnclickSearch(null);
+      });
+    }
   }
 
   render() {

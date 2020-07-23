@@ -94,15 +94,10 @@ class ModalArchiveDocuments extends Component<Props, State> {
   }
 
   componentDidMount() {
+    this.initMessages();
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
-    console.log("componentDidUpdate")
-    console.log(`showAttachDocuments: ${prevProps.showAttachDocuments} => ${this.props.showAttachDocuments}`)
-    console.log(`step: ${prevState.step} => ${this.state.step}`)
-    console.log(`Selected: ${prevProps.selected.length} => ${this.props.selected.length}`)
-
-    this.initMessages();
   }
 
   initMessages() {
@@ -117,24 +112,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
       const nm = Object.assign({}, selected[i], { attachments: attchs });
       messages.push(nm);
     }
-
-
-
-    const m = JSON.stringify(messages);
-    const a = JSON.stringify(attachments);
-
-    const sm = JSON.stringify(this.state.messages);
-    const sa = JSON.stringify(this.state.attachments);
-
-    const difP = detailedDiff(messages, this.state.messages);
-    const difSt = detailedDiff(attachments, this.state.attachments);
-    if(JSON.stringify((difP as any).updated).indexOf("checked") > -1 || JSON.stringify((difSt as any).updated).indexOf("checked") > -1) {
-      return;
-    }
-
-    if( sm !== m || sa !== a) {
-      this.setState({messages, attachments});
-    }
+    this.setState({messages, attachments});
   }
 
   isAttachment(node: any): boolean {
@@ -184,7 +162,6 @@ class ModalArchiveDocuments extends Component<Props, State> {
     if (message.raw) {
       let mime = null;
       try {
-        //console.log(message.raw)
         mime = parse(message.raw);
       } catch (err) {
         console.log(err);
@@ -494,8 +471,6 @@ class ModalArchiveDocuments extends Component<Props, State> {
         break;
       }
     }
-    console.log("Step1 Render: " + JSON.stringify(attachments));
-    console.log("Step1 Render: " + JSON.stringify(messages.length));
 
     return (
       <div className="modal-connection-emails">
@@ -504,6 +479,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
           onHide={() => {
             this.closeDialog();
           }}
+
           size="lg"
           aria-labelledby="contained-modal-title-vcenter"
           centered
@@ -519,7 +495,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
                 alt='Centinela'
                 src={`${(window as any).URL_MF_CENTINELA_BASE}/assets/img/icon-centinela.svg`}></img>
 
-              <span>{i18n.t('modal-archive.title')} </span>
+              <span>{i18n.t('modal-archive.title')}</span>
               {/* <span>{step}</span> */}
             </h5>
           </Modal.Header>

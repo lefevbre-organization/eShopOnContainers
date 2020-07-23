@@ -27,7 +27,8 @@ export class Step1 extends React.Component<Props, State> {
 
   async componentDidMount() {}
 
-  componentDidUpdate() {}
+  componentDidUpdate(prevProps: Props) {
+  }
 
   setSearch(search: string) {
     this.setState({ searchText: search });
