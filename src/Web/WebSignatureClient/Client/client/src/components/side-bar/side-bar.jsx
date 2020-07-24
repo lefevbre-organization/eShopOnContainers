@@ -196,7 +196,7 @@ class SideBar extends Component {
   }
 
   onNewMessage() {
-    const { lefebvre } = this.props;
+    const { lefebvre, t } = this.props;
 
     getAvailableSignatures(lefebvre.idUserApp, 1)
     .then(response => {
@@ -206,7 +206,7 @@ class SideBar extends Component {
         this.setState({ hideAlertDialog: true });
       } else {
         this.props.setAvailableSignatures(response);
-        this.props.setTitle('CREAR FIRMA');
+        this.props.setTitle(t('messageEditor.title'));
         this.props.newMessage(lefebvre.sign);
       }
     })
@@ -217,7 +217,7 @@ class SideBar extends Component {
         this.setState({ hideAlertDialog: true });
         // this.props.setAvailableSignatures(1);
         this.props.newMessage(lefebvre.sign);
-        this.props.setTitle('CREAR FIRMA');
+        this.props.setTitle(t('messageEditor.title'));
       }
     })
   }

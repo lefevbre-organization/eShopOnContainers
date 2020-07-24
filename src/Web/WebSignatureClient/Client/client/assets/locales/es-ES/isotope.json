@@ -38,7 +38,12 @@
     "errors": {
       "noSSL": "La conexión al servidor no es segura",
       "diskQuotaExceeded": "Cuota de disco sobrepasada (IndexedDB)"
-    }
+    },
+    "filterMenu": "FIRMAS SOLICITADAS",
+    "filterAll": "Mostrar todas",
+    "filterInProgress": "En progreso",
+    "filterCompleted": "Completadas",
+    "filterCancelled": "Canceladas"
   },
   "topBar": {
     "showSideBar": "Mostrar barra lateral",
@@ -55,7 +60,8 @@
       "message": "Esta acción eliminará permenentemente los mensajes de la basura. ¿Seguro que quieres continuar?",
       "delete": "Borrar",
       "cancel": "Cancelar"
-    }
+    },
+    "app": "FIRMA"
   },
   "mainBar": {
     "quickModules": "Aplicaciones de Lefebvre",
@@ -94,13 +100,15 @@
     "bcc": "bcc",
     "subject": "Asunto",
     "send": "Enviar",
+    "discard": "Descartar",
     "dropZoneMessage": "Deposita aquí ficheros",
     "attach": "ADJUNTAR",
     "insertLinkDialog": {
       "title": "Insertar Enlace",
       "cancel": "Cancelar",
       "ok": "Ok"
-    }
+    },
+    "title": "CREAR NUEVA FIRMA"
   },
   "forwardAction": {
     "From": "De",
@@ -155,5 +163,109 @@
     "cookies-policy": "Política de cookies",
     "version": "Versión",
     "terms-and-conditions": "Términos y condiciones"
+  },
+  "signaturesGrid": {
+    "menuEdit": "Editar",
+    "menuCancel": "Cancelar",
+    "columnAction": "Acciones",
+    "columnDocument": "Documento",
+    "columnSubject": "Asunto",
+    "columnSigners": "Destinatarios",
+    "columnDate": "Fecha",
+    "columnStatus": "Estado",
+    "statusCancelled": "Cancelado",
+    "statusCompleted": "Completado",
+    "statusExpired": "Expirado",
+    "statusDeclined": "Declinado",
+    "statusInProgress": "En progreso"
+  },
+  "confirmationModal": {
+    "yes": "Si",
+    "no": "No"
+  },
+  "cancelledSignatureModal": {
+    "text": "Petición cancelada correctamente."
+  },
+  "cancelConfirmationModal": {
+    "text": "¿Está seguro de que quiere cancelar la firma seleccionada?",
+    "text2": "¿Está seguro de que quiere cancelar el proceso de firma actual?"
+  },
+  "reminderSentModal": {
+    "text": "Se acaba de enviar un recordatorio"
+  },
+  "attachmentsWidget": {
+    "title": "ARCHIVOS ADJUNTOS",
+    "attachButton": "ADJUNTAR DOCUMENTO",
+    "pagesConfiguration": "Firmar documento en una sola hoja"
+  },
+  "expirationWidget":{
+    "title": "PLAZOS DE EXPIRACIÓN DE FIRMA",
+    "subtitle": "Actualmente no hay ningún plazo de expiración activado.",
+    "addButton": "AÑADIR",
+    "acceptButton": "ACEPTAR",
+    "cancelButton": "CANCELAR",
+    "deleteButton": "ELIMINAR",
+    "modifyButton": "MODIFICAR",
+    "option1": "Expirar dentro de ___ días",
+    "option2": "No expirar nunca"
+  },
+  "reminderWidget":{
+    "title": "RECORDATORIOS PROGRAMADOS",
+    "subtitle": "Actualmente no hay recordatorios programados.",
+    "addButton": "AÑADIR",
+    "acceptButton": "ACEPTAR",
+    "cancelButton": "CANCELAR",
+    "deleteButton": "ELIMINAR",
+    "modifyButton": "MODIFICAR",
+    "option1": "Recordatorios cada ___ días",
+    "option2": "Recordatorios diarios",
+    "option3": "Recordatorios semanales"
+  },
+  "signatureViewer":{
+    "grid": {
+      "document": "Documento",
+      "subject": "Asunto",
+      "signers": "Firmantes",
+      "date": "Fecha",
+      "status": "Estado"
+    },
+    "buttons": {
+      "cancel": "CANCELAR FIRMA",
+      "reminder": "ENVIAR RECORDATORIO AHORA",
+      "download": "DESCARGAR DOCUMENTO",
+      "downloadTrail": "DESCARGAR AUDITORÍA"
+    },
+    "signerCard": {
+      "title": {
+        "signers": "FIRMANTES",
+        "signer": "Firmante"
+      },
+      "body": {
+        "title": "PROGRESO PETICIÓN",
+        "emailSent": "Email enviado",
+        "emailDelivered": "Email entregado",
+        "emailOpened": "Email abierto",
+        "docOpened": "Documento abierto",
+        "docSigned": "Documento firmado"
+      },
+      "footer": {
+        "title": "RECORDATORIOS ENVIADOS"
+      }
+    },
+    "widgets": {
+      "expiration": {
+        "title": "PLAZOS DE EXPIRACIÓN DE FIRMA",
+        "notConfigured": "No hay fecha de expiración programada.",
+        "doesntExpires": "La solicitud no expira",
+        "expires": "Expira en ___ días."
+      },
+      "reminders": {
+        "title": "RECORDATORIOS PROGRAMADOS",
+        "notConfigured": "No hay recordatorios programados.",
+        "daily": "Recordatorios diarios",
+        "weekly": "Recordatorios semanales"
+      }
+    },
+    "title": "DETALLES DE LA FIRMA"
   }
 }

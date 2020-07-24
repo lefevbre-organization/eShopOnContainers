@@ -33,17 +33,17 @@
     "login": "INICIAR SESIÓN"
   },
   "sideBar": {
-    "newRequest": "Nueva firma",
+    "newRequest": "Nouvelle signature",
     "hide": "Ocultar barra lateral",
     "errors": {
       "noSSL": "La conexión al servidor no es segura",
       "diskQuotaExceeded": "Cuota de disco sobrepasada (IndexedDB)"
     },
-    "filterMenu": "FIRMAS SOLICITADAS",
-    "filterAll": "Mostrar todas",
-    "filterInProgress": "En progreso",
-    "filterCompleted": "Completadas",
-    "filterCancelled": "Canceladas"
+    "filterMenu": "Signatures demandées",
+    "filterAll": "Montrer toutes",
+    "filterInProgress": "En progrés",
+    "filterCompleted": "Complétées",
+    "filterCancelled": "Anulées"
   },
   "topBar": {
     "showSideBar": "Mostrar barra lateral",
@@ -54,7 +54,6 @@
     "delete": "Borrar",
     "markUnread": "Marcar como no leído",
     "markRead": "Marcar como leído",
-    "search": "Buscar",
     "returnlexon": "Volver a Lex-on",
     "deleteFromTrashDialog": {
       "title": "Confirmar borrado",
@@ -62,7 +61,7 @@
       "delete": "Borrar",
       "cancel": "Cancelar"
     },
-    "app": "FIRMA"
+    "app": "SIGNATURE"
   },
   "mainBar": {
     "quickModules": "Aplicaciones de Lefebvre",
@@ -96,12 +95,12 @@
     "bcc": "bcc"
   },
   "messageEditor": {
-    "to": "Destinatarios",
-    "cc": "Cc",
+    "to": "Destinataires",
+    "cc": "CC",
     "bcc": "bcc",
-    "subject": "Asunto",
-    "send": "Enviar",
-    "discard": "Descartar",
+    "subject": "Sujet",
+    "send": "Envoyé",
+    "discard": "Éliminer",
     "dropZoneMessage": "Deposita aquí ficheros",
     "attach": "ADJUNTAR",
     "insertLinkDialog": {
@@ -109,7 +108,7 @@
       "cancel": "Cancelar",
       "ok": "Ok"
     },
-    "title": "CREAR NUEVA FIRMA"
+    "title": "CRÉER UNE SIGNATURE"
   },
   "forwardAction": {
     "From": "De",
@@ -151,7 +150,7 @@
     "edit-basic-data": "EDITAR DATOS BÁSICOS",
     "reset-pwd": "RESETEAR CONTRASEÑA",
     "add-other-account": "AÑADIR OTRA CUENTA",
-    "close-session": "CERRAR SESIÓN",
+    "close-session": "FERMER LA SESSION",
     "version": "Versión"
   },
   "msgNotFoundSnackbar": {
@@ -166,107 +165,107 @@
     "terms-and-conditions": "Términos y condiciones"
   },
   "signaturesGrid": {
-    "menuEdit": "Editar",
-    "menuCancel": "Cancelar",
-    "columnAction": "Acciones",
-    "columnDocument": "Documento",
-    "columnSubject": "Asunto",
-    "columnSigners": "Destinatarios",
-    "columnDate": "Fecha",
-    "columnStatus": "Estado",
-    "statusCancelled": "Cancelado",
-    "statusCompleted": "Completado",
-    "statusExpired": "Expirado",
-    "statusDeclined": "Declinado",
-    "statusInProgress": "En progreso"
+    "menuEdit": "Éditer",
+    "menuCancel": "Anuler",
+    "columnAction": "Actions",
+    "columnDocument": "Document",
+    "columnSubject": "Sujet",
+    "columnSigners": "Destinataires",
+    "columnDate": "Date",
+    "columnStatus": "État",
+    "statusCancelled": "Annulée",
+    "statusCompleted": "Complétée",
+    "statusExpired": "Périmé",
+    "statusDeclined": "Décliné",
+    "statusInProgress": "En progrés"
   },
   "confirmationModal": {
-    "yes": "Si",
-    "no": "No"
+    "yes": "Oui",
+    "no": "Non"
   },
   "cancelledSignatureModal": {
-    "text": "Petición cancelada correctamente."
+    "text": "Demande annulée avec succès."
   },
   "cancelConfirmationModal": {
-    "text": "¿Está seguro de que quiere cancelar la firma seleccionada?",
-    "text2": "¿Está seguro de que quiere cancelar el proceso de firma actual?"
+    "text": "Voulez-vous vraiment annuler la signature sélectionnée?",
+    "text2": "Voulez-vous vraiment annuler le processus de signature en cours?"
   },
   "reminderSentModal": {
-    "text": "Se acaba de enviar un recordatorio"
+    "text": "Rappel envoyé"
   },
   "attachmentsWidget": {
-    "title": "ARCHIVOS ADJUNTOS",
-    "attachButton": "ADJUNTAR DOCUMENTO",
-    "pagesConfiguration": "Firmar documento en una sola hoja"
+    "title": "pièces jointes",
+    "attachButton": "Ajouter document",
+    "pagesConfiguration": "Signer le document sur une seule feuille"
   },
   "expirationWidget":{
-    "title": "PLAZOS DE EXPIRACIÓN DE FIRMA",
-    "subtitle": "Actualmente no hay ningún plazo de expiración activado.",
-    "addButton": "AÑADIR",
-    "acceptButton": "ACEPTAR",
-    "cancelButton": "CANCELAR",
-    "deleteButton": "ELIMINAR",
-    "modifyButton": "MODIFICAR",
-    "option1": "Expirar dentro de ___ días",
-    "option2": "No expirar nunca"
+    "title": "Délais d expiration de signature",
+    "subtitle": "Il n'y a pas de période d'expiration activée",
+    "addButton": "AJOUTER",
+    "acceptButton": "ACCEPTER",
+    "cancelButton": "ANULER",
+    "deleteButton": "SUPPRIMER",
+    "modifyButton": "MODIFIER",
+    "option1": "Expire dans ___ jours",
+    "option2": "N' expire jamais"
   },
   "reminderWidget":{
-    "title": "RECORDATORIOS PROGRAMADOS",
-    "subtitle": "Actualmente no hay recordatorios programados.",
-    "addButton": "AÑADIR",
-    "acceptButton": "ACEPTAR",
-    "cancelButton": "CANCELAR",
-    "deleteButton": "ELIMINAR",
-    "modifyButton": "MODIFICAR",
-    "option1": "Recordatorios cada ___ días",
-    "option2": "Recordatorios diarios",
-    "option3": "Recordatorios semanales"
+    "title": "Rappels programmés",
+    "subtitle": "Il n'y a pas de rappels programmés.",
+    "addButton": "AJOUTER",
+    "acceptButton": "ACCEPTER",
+    "cancelButton": "ANULER",
+    "deleteButton": "SUPPRIMER",
+    "modifyButton": "MODIFIER",
+    "option1": "Rappels dans ___ jours",
+    "option2": "Rappels par semaine",
+    "option3": "Rappels par jour"
   },
   "signatureViewer":{
     "grid": {
-      "document": "Documento",
-      "subject": "Asunto",
-      "signers": "Firmantes",
-      "date": "Fecha",
-      "status": "Estado"
+      "document": "Document",
+      "subject": "Sujet",
+      "signers": "Destinataires",
+      "date": "Date",
+      "status": "État"
     },
     "buttons": {
-      "cancel": "CANCELAR FIRMA",
-      "reminder": "ENVIAR RECORDATORIO AHORA",
-      "download": "DESCARGAR DOCUMENTO",
-      "downloadTrail": "DESCARGAR AUDITORÍA"
+      "cancel": "ANULER SIGNATURE",
+      "reminder": "ENVOYER RAPPEL MAINTENANT",
+      "download": "TÉLÉCHARGER DOCUMENT",
+      "downloadTrail": "TÉLÉCHARGER AUDIT"
     },
     "signerCard": {
       "title": {
-        "signers": "FIRMANTES",
-        "signer": "Firmante"
+        "signers": "SIGNANTS",
+        "signer": "SIGNATAIRE"
       },
       "body": {
-        "title": "PROGRESO PETICIÓN",
-        "emailSent": "Email enviado",
-        "emailDelivered": "Email entregado",
-        "emailOpened": "Email abierto",
-        "docOpened": "Documento abierto",
-        "docSigned": "Documento firmado"
+        "title": "Progrés de demande",
+        "emailSent": "Email ennvoyé",
+        "emailDelivered": "Email remis",
+        "emailOpened": "Email ouvert",
+        "docOpened": "Document ouvert",
+        "docSigned": "Documento signé"
       },
       "footer": {
-        "title": "RECORDATORIOS ENVIADOS"
+        "title": "Rappels envoyés"
       }
     },
     "widgets": {
       "expiration": {
-        "title": "PLAZOS DE EXPIRACIÓN DE FIRMA",
-        "notConfigured": "No hay fecha de expiración programada.",
-        "doesntExpires": "La solicitud no expira",
-        "expires": "Expira en ___ días."
+        "title": "Délais d expiration de signature",
+        "notConfigured": "Il n'y a pas de période d'expiration activée",
+        "doesntExpires": "N' expire jamais",
+        "expires": "Expire dans ___ jours"
       },
       "reminders": {
-        "title": "RECORDATORIOS PROGRAMADOS",
-        "notConfigured": "No hay recordatorios programados.",
-        "daily": "Recordatorios diarios",
-        "weekly": "Recordatorios semanales"
+        "title": "Rappels programmés",
+        "notConfigured": "Il n'y a pas de rappels programmés.",
+        "daily": "Rappels par jour",
+        "weekly": "Rappels par semaine"
       }
     },
-    "title": "DETALLES DE LA FIRMA"
-  }  
+    "title": "DÉTAILS DE LA SIGNATURE"
+  }
 }

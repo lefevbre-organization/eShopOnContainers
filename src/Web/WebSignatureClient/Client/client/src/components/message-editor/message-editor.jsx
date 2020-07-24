@@ -100,7 +100,8 @@ class MessageEditor extends Component {
     }
 
     this.props.setGuid(null);
-    this.props.setTitle(this.props.application.signaturesFilterKey);
+    //this.props.setTitle(this.props.application.signaturesFilterKey);
+    this.props.setTitle('');
 
     close(aplication);
   }
@@ -208,7 +209,7 @@ class MessageEditor extends Component {
             <button
               className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']} ${styles['action-button']} ${styles.cancel}`}
               onClick={() => this.removeMessageEditor(application)}>
-              Descartar
+              {t('messageEditor.discard')}
             </button>
             <button
               className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']} ${styles['action-button']} ${styles.send}`}

@@ -19,7 +19,12 @@
     "errors": {
       "noSSL": "Connection to server is not secure",
       "diskQuotaExceeded": "Disk quota exceeded (IndexedDB)"
-    }
+    },
+    "filterMenu": "SIGNATURES",
+    "filterAll": "Show all",
+    "filterInProgress": "In progress",
+    "filterCompleted": "Completed",
+    "filterCancelled": "Cancelled"
   },
   "topBar": {
     "showSideBar": "Show sidebar",
@@ -37,7 +42,8 @@
       "message": "This will permanently delete messages from Trash. Are you sure you want to continue?",
       "delete": "Delete",
       "cancel": "Cancel"
-    }
+    },
+    "app": "SIGNATURE"
   },
   "mainBar": {
     "quickModules": "Lefebvre apps",
@@ -71,18 +77,20 @@
     "bcc": "bcc"
   },
   "messageEditor": {
-    "to": "to",
-    "cc": "cc",
+    "to": "Recipients",
+    "cc": "Cc",
     "bcc": "bcc",
     "subject": "Subject",
     "send": "Send",
+    "discard": "Discard",
     "dropZoneMessage": "Drop files here",
     "attach": "ATTACH",
     "insertLinkDialog": {
       "title": "Insert Link",
       "cancel": "Cancel",
       "ok": "Ok"
-    }
+    },
+    "title": "CREATE NEW SIGNATURE"
   },
   "forwardAction": {
     "From": "From",
@@ -137,5 +145,109 @@
     "cookies-policy": "Cookies policy",
     "version": "Version",
     "terms-and-conditions": "Terms and conditions"
-  }
+  },
+  "signaturesGrid": {
+    "menuEdit": "Edit",
+    "menuCancel": "Cancel",
+    "columnAction": "Actions",
+    "columnDocument": "Document",
+    "columnSubject": "Subject",
+    "columnSigners": "Recipients",
+    "columnDate": "Date",
+    "columnStatus": "Status",
+    "statusCancelled": "Cancelled",
+    "statusCompleted": "Completed",
+    "statusExpired": "Expired",
+    "statusDeclined": "Declined",
+    "statusInProgress": "In progress"
+  },
+  "confirmationModal": {
+    "yes": "Yes",
+    "no": "No"
+  },
+  "cancelledSignatureModal": {
+    "text": "Signature request succesfully cancelled"
+  },
+  "cancelConfirmationModal": {
+    "text": "The selected signature request will be cancelled. Are you sure?",
+    "text2": "Please confirm you want to cancel this signature request."
+  },
+  "reminderSentModal": {
+    "text": "A reminder has been sent"
+  },
+  "attachmentsWidget": {
+    "title": "ATTACHED FILES",
+    "attachButton": "ATTACH FILE",
+    "pagesConfiguration": "Single page signature"
+  },
+  "expirationWidget":{
+    "title": "EXPIRATION CONFIGURATION",
+    "subtitle": "There's no expiration term activated",
+    "addButton": "ADD",
+    "acceptButton": "ACCEPT",
+    "cancelButton": "CANCEL",
+    "deleteButton": "DELETE",
+    "modifyButton": "MODIFY",
+    "option1": "Expire in ___ days",
+    "option2": "Never expire"
+  },
+  "reminderWidget":{
+    "title": "REMINDERS CONFIGURATION",
+    "subtitle": "There aren't any reminders configured.",
+    "addButton": "ADD",
+    "acceptButton": "ACCEPT",
+    "cancelButton": "CANCEL",
+    "deleteButton": "DELETE",
+    "modifyButton": "MODIFY",
+    "option1": "Reminder every ___ days",
+    "option2": "Daily reminders",
+    "option3": "Weekly reminders"
+  },
+  "signatureViewer":{
+    "grid": {
+      "document": "Document",
+      "subject": "Subject",
+      "signers": "Signers",
+      "date": "Date",
+      "status": "Status"
+    },
+    "buttons": {
+      "cancel": "CANCEL SIGNATURE",
+      "reminder": "SEND REMINDER NOW",
+      "download": "DOWNLOAD DOCUMENT",
+      "downloadTrail": "DOWNLOAD AUDIT"
+    },
+    "signerCard": {
+      "title": {
+        "signers": "SIGNERS",
+        "signer": "Signer"
+      },
+      "body": {
+        "title": "SIGNATURE PROGRESS",
+        "emailSent": "Email sent",
+        "emailDelivered": "Email delivered",
+        "emailOpened": "Email opened",
+        "docOpened": "Document opened",
+        "docSigned": "Document signed"
+      },
+      "footer": {
+        "title": "SENT REMINDERS"
+      }
+    },
+    "widgets": {
+      "expiration": {
+        "title": "EXPIRATION CONFIGURATION",
+        "notConfigured": "There's no expiration term activated",
+        "doesntExpires": "Never expires",
+        "expires": "Expires in ___ days"
+      },
+      "reminders": {
+        "title": "REMINDERS CONFIGURATION",
+        "notConfigured": "There aren't any reminders configured.",
+        "daily": "Daily reminders",
+        "weekly": "Weekly reminders"
+      }
+    },
+    "title": "SIGNATURE DETAILS"
+  }  
 }

@@ -19,6 +19,8 @@ import {
 } from '../../services/message';
 import styles from './top-bar.scss';
 import mainCss from '../../styles/main.scss';
+import i18n from '../../services/i18n';
+
 
 export class TopBar extends Component {
   constructor(props) {
@@ -98,7 +100,7 @@ export class TopBar extends Component {
       //   /> */}
       // <div className={styles['contenido-central']}>
         <div className={styles['pasos-firma']}>
-          <span className={styles['producto-procedente']}>LEX-ON</span> FIRMA <span className={styles.miga}>{title}</span>
+          <span className={styles['producto-procedente']}>LEX-ON</span> {i18n.t('topBar.app')} <span className={styles.miga}>{title}</span>
         </div>
       // </div>
       // </header>

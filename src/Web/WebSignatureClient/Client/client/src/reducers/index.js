@@ -7,7 +7,7 @@ import lefebvre from './lefebvre';
 
 export const INITIAL_STATE = {
     application: {
-        title: 'Signature',
+        title: '',
         user: {},
         newMessage: null,
         selectedFolderId: {},
