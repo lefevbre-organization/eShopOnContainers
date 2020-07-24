@@ -25,7 +25,9 @@ inf:
     signature:
       database: signature   
     database:
-      database: DatabaseApiDb  
+      database: DatabaseApiDb
+    conference:
+      database: ConferenceApiDb    
 
   eventbus:
     svc: rabbitmq           # Name of k8s svc for rabbitmq

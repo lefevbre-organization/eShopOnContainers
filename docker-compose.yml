@@ -233,3 +233,12 @@ services:
       - nosql.data
       - rabbitmq
       - database.api
+
+  conference.api:
+    image: ${REGISTRY:-elefebvreoncontainers}/conference.api:${PLATFORM:-linux}-${TAG:-dev}
+    build:
+      context: .
+      dockerfile: src/Services/Conference/Conference.API/Dockerfile    
+    depends_on:
+      - nosql.data
+      - rabbitmq

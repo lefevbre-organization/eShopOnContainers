@@ -393,3 +393,19 @@ services:
       - "8093:80"   
     volumes:
       - ./src/ApiGateways/Web.Bff.Database/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
+
+  conference.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionString=${ELEF_MONGO_CONN:-mongodb://nosql.data}
+      - Database=ConferenceApiDB
+      - IdAppNavision=6
+      - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
+      - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
+      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}        
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - UseLoadTest=${USE_LOADTEST:-False}
+    ports:
+      - "8094:80" 
