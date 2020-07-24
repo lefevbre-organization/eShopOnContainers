@@ -9,6 +9,7 @@ import { ConnectingEmailsStep1 } from '../modal-connecting-emails/step1';
 import { ConnectingEmailsStep2 } from '../modal-connecting-emails/step2';
 import { ConnectingEmailsStep3 } from '../modal-connecting-emails/step3';
 import { ConnectingEmailsStep4 } from '../modal-connecting-emails/step4';
+import Spinner from '../spinner/spinner';
 import {
   addClassification,
   uploadFile,
@@ -40,6 +41,7 @@ class AddonConnectingEmails extends Component {
       messages: [],
       rawAddon: null,
       expirationTime: null,
+      isLoading: false
     };
 
     this.changeSubject = this.changeSubject.bind(this);
@@ -189,6 +191,7 @@ class AddonConnectingEmails extends Component {
   }
 
   onSave() {
+    this.setState({isLoading: true});
     if (this.state.step === 2) {
       this.onSaveStep2();
     } else if (this.state.step === 4 || this.state.step === 3) {
@@ -220,7 +223,6 @@ class AddonConnectingEmails extends Component {
     const { toggleNotification } = this.props;
     const { selectedMessages, addonData } = this.props;
     let notification = 0;
-
     let sc = null;
     //  await getMessage(selectedMessages[0].id, 'raw');
 
@@ -285,7 +287,7 @@ class AddonConnectingEmails extends Component {
           }
         }
       }
-
+      this.setState({isLoading: false});
       if (notification === 1) {
         toggleNotification(i18n.t('classify-emails.classification-saved-ok'));
       } else if (notification === 2) {
@@ -296,6 +298,7 @@ class AddonConnectingEmails extends Component {
         );
       }
     } catch (err) {
+      this.setState({isLoading: false});
       console.log(err);
       if (notification === 1) {
         toggleNotification(
@@ -478,8 +481,13 @@ class AddonConnectingEmails extends Component {
       showModalDocuments,
       toggleNotification,
     } = this.props;
-    const { messages, step1Data, step } = this.state;
-    console.log('Data addon --->', addonData);
+    const { 
+      messages, 
+      step1Data, 
+      step, 
+      isLoading 
+    } = this.state;
+
     return (
       <div className=''>
         <header className='addon-header'>
@@ -496,6 +504,11 @@ class AddonConnectingEmails extends Component {
             </span>
           </h5>
         </header>
+        {isLoading === true && (
+          <div className='spinner'>
+            <Spinner />
+          </div>
+        )}
         <div className="addon-container">
           <div style={{ display: this.state.step === 1 ? 'block' : 'none' }}>
             <ConnectingEmailsStep1
@@ -552,6 +565,10 @@ class AddonConnectingEmails extends Component {
             color: #fff;
             font-size: 22px;
             border-radius: 0;
+          }
+
+          .imgproduct {
+            height: 29px;
           }
 
           .addon-header .title {
