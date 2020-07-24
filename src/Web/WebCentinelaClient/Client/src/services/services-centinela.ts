@@ -455,3 +455,29 @@ const sanitize = (name: string): string => {
   const res = name.replace(regEx, '');
   return res;
 };
+
+export const getRawAddon = async (addonData: any) => {
+  const url =
+    `${(window as any).URL_GET_ACCOUNTS}/${addonData.user}/raw?` +
+    'provider=' +
+    addonData.provider +
+    '&account=' +
+    addonData.account +
+    '&messageId=' +
+    addonData.messageById;
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+    const result = await response.json();
+
+    return { result };
+  } catch (err) {
+    throw err;
+  }
+};

@@ -4,9 +4,11 @@ import {
   PAGE_SELECT_ACTION,
   PAGE_CONFIGURATION,
   PAGE_ARCHIVEFILE,
+  PAGE_ARCHIVE_DOCUMENT_ADDON
 } from '../../constants';
 import { connect } from 'react-redux';
 import SelectAction from '../select-action/select-action';
+import AddonArchiveDocument from '../select-action/addon-archive-document/addon-archive-document';
 import { AppState } from '../../store/store';
 
 interface State {
@@ -16,19 +18,26 @@ interface State {
 interface Props {
   composerOpen: boolean;
   toggleNotification: () => void;
+  addonType?: string;
+  addonData?: any;
 }
 
 class Routing extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-
+    
     let actualPage = PAGE_SELECT_ACTION;
 
     this.state = {
       actualPage: actualPage,
     };
-
     this.changePage = this.changePage.bind(this);
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    if(prevProps.addonType !== this.props.addonType) {
+      this.changePage(PAGE_ARCHIVE_DOCUMENT_ADDON);
+    }
   }
 
   changePage(page: string) {
@@ -37,13 +46,19 @@ class Routing extends Component<Props, State> {
 
   renderPage() {
     const { actualPage } = this.state;
-    const { toggleNotification, composerOpen } = this.props;
+    const { 
+      toggleNotification, 
+      composerOpen, 
+      addonData 
+    } = this.props;
 
     switch (actualPage) {
       case PAGE_SELECT_COMPANY:
         return <div>PAGE_SELECT_COMPANY</div>;
+
       case PAGE_ARCHIVEFILE:
         return <div>PAGE_SELECT_COMPANY</div>;
+
       case PAGE_SELECT_ACTION:
         return (
           <SelectAction
@@ -52,8 +67,18 @@ class Routing extends Component<Props, State> {
             composerOpen={composerOpen}
           />
         );
+
       case PAGE_CONFIGURATION:
         return <div>PAGE_CONFIGURATION</div>;
+
+      case PAGE_ARCHIVE_DOCUMENT_ADDON: 
+      return (
+        <AddonArchiveDocument 
+          toggleNotification={toggleNotification}
+          addonData={addonData}
+        />
+      )
+
       default:
         return <div>default</div>;
     }

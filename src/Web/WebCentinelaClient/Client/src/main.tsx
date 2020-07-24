@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect, ConnectedProps } from 'react-redux';
 import i18n from 'i18next';
+import queryString from 'query-string';
 import './main.css';
 import Routing from './components/routing/routing';
 import Spinner from './components/spinner/spinner';
@@ -15,6 +16,9 @@ interface State {
   showNotification: boolean;
   messageNotification: string;
   errorNotification: boolean;
+  addonType: any;
+  addonData: any;
+  isAddon: boolean;
 }
 
 const mapStateToProps = (state: any) => {
@@ -59,6 +63,9 @@ class Main extends Component<Props, State> {
       showNotification: false,
       messageNotification: '',
       errorNotification: false,
+      addonType: null,
+      addonData: null,
+      isAddon: false
     };
 
     this.toggleNotification = this.toggleNotification.bind(this);
@@ -69,6 +76,9 @@ class Main extends Component<Props, State> {
     this.handleCloseComposer = this.handleCloseComposer.bind(this);
     this.handleMessageSelected = this.handleMessageSelected.bind(this);
     this.handlePutUserFromCentinelaConnector = this.handlePutUserFromCentinelaConnector.bind(
+      this
+    );
+    this.handlePutAddonFromCentinelaConnector = this.handlePutAddonFromCentinelaConnector.bind(
       this
     );
     this.handleListMessagesSelected = this.handleListMessagesSelected.bind(
@@ -88,8 +98,12 @@ class Main extends Component<Props, State> {
       'PutUserFromCentinelaConnector',
       this.handlePutUserFromCentinelaConnector
     );
-
+    window.addEventListener(
+      'PutAddonFromCentinelaConnector',
+      this.handlePutAddonFromCentinelaConnector
+    );
     this.sendMessageGetUser();
+    this.sendMessageGetAddonsInfo();
   }
 
   componentWillUnmount() {
@@ -107,6 +121,10 @@ class Main extends Component<Props, State> {
     window.addEventListener(
       'PutUserFromCentinelaConnector',
       this.handlePutUserFromCentinelaConnector
+    );
+    window.removeEventListener(
+      'PutAddonFromCentinelaConnector',
+      this.handlePutAddonFromCentinelaConnector
     );
   }
 
@@ -131,6 +149,10 @@ class Main extends Component<Props, State> {
     window.dispatchEvent(new CustomEvent('GetUserFromCentinelaConnector'));
   }
 
+  sendMessageGetAddonsInfo() {
+    window.dispatchEvent(new CustomEvent('GetAddonsInfoFromCentinelaConnector'));
+  }
+
   // TODO: Check this any type
   async handlePutUserFromCentinelaConnector(event: any) {
     console.log(
@@ -138,7 +160,10 @@ class Main extends Component<Props, State> {
     );
     console.log(event.detail);
 
-    const { user, selectedMessages } = event.detail;
+    const { user, selectedMessages, addonType } = event.detail;
+    if (addonType != null && addonType !== undefined) {
+      this.setState({ addonType, addonData: event.detail });
+    }
     this.props.setCurrentUser(user);
 
     selectedMessages.forEach((message: Message) => {
@@ -179,7 +204,24 @@ class Main extends Component<Props, State> {
       : deleteListMessages(event.detail.listMessages);
   }
 
+  async handlePutAddonFromCentinelaConnector(event: any) {
+    this.setState({ isAddon: true });
+  }
+
+  closeLexonConnector(message?: string) {
+    if (!message && this.state.isAddon) {
+      const values = queryString.parse(window.location.search);
+      let redirect_uri = values.redirect_uri
+        ? values.redirect_uri
+        : (window as any).GOOGLE_SCRIPT_CENTINELA;
+      window.location.replace(
+        `${redirect_uri}` + '?success=1' + '&state=' + values.state
+      );
+    }
+  }
+
   toggleNotification(message?: string, error?: boolean) {
+    this.closeLexonConnector(message);
     this.setState((state) => ({
       showNotification: !state.showNotification,
       messageNotification: message || '',
@@ -214,6 +256,8 @@ class Main extends Component<Props, State> {
       showNotification,
       messageNotification,
       errorNotification,
+      addonType,
+      addonData
     } = this.state;
     const { errors, isLoading } = this.props;
 
@@ -232,7 +276,11 @@ class Main extends Component<Props, State> {
           </div>
         )}
         {errors && errors.length === 0 && (
-          <Routing toggleNotification={this.toggleNotification} />
+          <Routing 
+          toggleNotification={this.toggleNotification} 
+          addonType={addonType}
+          addonData={addonData}
+          />
         )}
 
         <style jsx>{`
