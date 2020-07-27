@@ -1,3 +1,7 @@
+body.waiting * {
+  cursor: progress;
+}
+
 .wrapper {
   overflow: hidden;
   display: table;

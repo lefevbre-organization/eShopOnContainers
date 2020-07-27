@@ -99,6 +99,7 @@ class Login extends Component {
       return (role === "Lex-On");    
      });
      if(role) {
+      $('body').removeClass('waiting');
        this.setState({
        errorsMessage: {
          auth: ''
@@ -106,6 +107,7 @@ class Login extends Component {
       });
      this.goBackAddon(); 
      } else {
+      $('body').removeClass('waiting');
        this.setState({
          errorsMessage: {
           auth: 'El usuario no tiene acceso a Lex-On.'
@@ -128,6 +130,7 @@ class Login extends Component {
     });
      this.validateUser(userBase64Decode);
     } else {
+      $('body').removeClass('waiting');
       this.setState({
         errorsMessage: {
           auth: 'Usuario o Contraseña inválidos.'
@@ -145,6 +148,7 @@ class Login extends Component {
 
   handleEventAddon = (e) => {
     if (this.validateForm()) {
+      $('body').addClass('waiting');
        this.getUser();
     };
   }
