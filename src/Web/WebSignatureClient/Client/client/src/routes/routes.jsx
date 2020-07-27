@@ -9,6 +9,7 @@ import Settings from "../components/settings/settings";
 import "../styles/main.scss";
 import { Unauthorized } from "../components/unauthorized/unauthorized";
 import { Expired } from "../components/expired/expired";
+import { Completed } from "../components/completed/completed";
 
 class Routes extends Component {
     componentDidMount() {
@@ -30,6 +31,7 @@ class Routes extends Component {
                     <Route exact path="/login" component={Login} />
                     <Route exact path="/unauthorized" component={Unauthorized} />
                     <Route exact path="/expired" component={Expired} />
+                    <Route exact path="/completed" component={Completed} />
 
                     <PrivateRoute exact path="/" component={App} />
                     <PrivateRoute exact path="/settings" component={Settings} />

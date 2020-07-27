@@ -1,8 +1,8 @@
 import React from "react";
-import styles from "./unauthorized.scss";
+import styles from "./completed.scss";
 import materialize from '../../styles/signature/materialize.scss';
 
-export const Unauthorized = () => {
+export const Completed = () => {
   document.body.style.background = "white"; //Hides spinner
   return (
     <div className={styles['container']}>
@@ -10,10 +10,10 @@ export const Unauthorized = () => {
         <div className={`${materialize['col']} ${materialize['l4']} ${materialize['center-align']} ${styles['cont-confirmacion']}`}>
           <div className={`${styles['cont-outline']}`}>
             <img src="/assets/images/logo-lefebvre.jpg"/>
-            <span className={`lf-icon-close-round ${styles['icono-confirmacion']}`} />
+            <span className={`lf-icon-check-round ${styles['icono-confirmacion']}`} />
             <p className={styles['text-confirmacion']}>
-              Error de acceso.
-              <span>No tiene permiso para usar esta aplicación.</span>
+              El documento se ha firmado correctamente.
+              <span>Te hemos enviado una copia a tu dirección de email.</span>
             </p>
             <div className={styles['end-confirmacion']}>
               ¿Necesitas ayuda?<br/>
@@ -23,5 +23,5 @@ export const Unauthorized = () => {
         </div>
       </div>
     </div>
-  );
-};
+  );  
+}
