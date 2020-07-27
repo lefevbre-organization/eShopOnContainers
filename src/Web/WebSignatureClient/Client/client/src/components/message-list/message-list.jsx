@@ -26,6 +26,7 @@ import { ClickEventArgs } from '@syncfusion/ej2-navigations';
 import { DropDownButtonComponent } from '@syncfusion/ej2-react-splitbuttons';
 import { detailedDiff } from 'deep-object-diff';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
+import i18n from '../../services/i18n';
 
 
 L10n.load({
@@ -39,7 +40,8 @@ L10n.load({
         'NotEqual': 'No es igual a',
         'Search': 'Buscar',
         'Pdfexport': 'PDF',
-        'Excelexport': 'EXCEL'
+        'Excelexport': 'EXCEL',
+        'Print': 'Imprimir'
       },
       'pager': {
         'pagerDropDown': 'Registros por página',
@@ -48,6 +50,48 @@ L10n.load({
         'currentPageInfo': 'Página {0} de {1}',
         'All': 'Todo'
       }
+    },
+    'en-GB': {
+        'grid': {
+          'EmptyRecord': 'No records to show',
+          'StartsWith': 'Starts with',
+          'EndsWith': 'Ends with',
+          'Contains': 'Contains',
+          'Equal': 'Equal to',
+          'NotEqual': 'Not equal to',
+          'Search': 'Search',
+          'Pdfexport': 'PDF',
+          'Excelexport': 'EXCEL',
+          'Print': 'Print'
+        },
+        'pager': {
+          'pagerDropDown': 'Items per page',
+          'pagerAllDropDown': 'Items',
+          'totalItemsInfo': '({0} total items)',
+          'currentPageInfo': 'Page {0} out of {1}',
+          'All': 'All'
+        }
+    },
+    'fr': {
+        'grid': {
+            'EmptyRecord': 'Pas de registres á montrer',
+            'StartsWith': 'Commence par',
+            'EndsWith': 'Finit par',
+            'Contains': 'Contient',
+            'Equal': 'Equal to',
+            'NotEqual': 'Not equal to',
+            'Search': 'Chercher',
+            'Pdfexport': 'PDF',
+            'Excelexport': 'EXCEL',
+            'Print': 'Printer'
+          },
+          'pager': {
+            'pagerDropDown': 'Registres par page',
+            'pagerAllDropDown': 'Items',
+            'totalItemsInfo': '({0} total items)',
+            'currentPageInfo': 'Page {0} out of {1}',
+            'All': 'Tout'
+          }        
     }
   });
 
@@ -87,19 +131,6 @@ class MessageList extends Component {
         this.fields = { text: 'texto', value: 'valor' };
         this.toolbarOptions = ['Search', 'PdfExport', 'ExcelExport', 'Print'];
         this.grid = null;
-        this.items = [
-            {
-                text: 'Editar',
-                iconCss: 'lf-icon-edit'
-            },
-            {   
-                separator: true
-            },
-            {
-                text: 'Cancelar',
-                iconCss: 'lf-icon-excel-software',
-            }
-        ];
         this.dialogClose = this.dialogClose;
         this.dialogOpen = this.dialogOpen;
 
@@ -131,36 +162,6 @@ class MessageList extends Component {
                 buttonModel: { content: 'No', isPrimary: true }
             }
         ];
-    }
-
-    getRowsCompleted() {
-        let i = 0;
-        const signatures = this.props.signatures;
-        signatures.map(e => {
-            e.documents.some(d => {
-                if (d.status !== 'canceled' && d.status !== 'ready' && d.status !== 'declined' && d.status !== 'expired' && d.status === 'completed'){
-                    i+=1;
-                    return true;
-                }
-            })
-        });
-        return i;
-    }
-
-    getRowsInProgress(){
-        let i = 0;
-        const signatures = this.props.signatures;
-
-        signatures.map(e => {
-            e.documents.some(d => {
-                if (d.status !== 'canceled' && d.status !== 'declined' && d.status !== 'expired' && d.status === 'ready'){
-                    console.log('');
-                    i+=1;
-                    return true;
-                }
-            })
-        });
-        return i;
     }
 
     getCount(){
@@ -263,7 +264,7 @@ class MessageList extends Component {
     }
 
     gridTemplate(props) {
-        
+        debugger;
         // //var src = 'src/grid/images/' + props.EmployeeID + '.png';
         return (
             <tr className={`templateRow`}>
@@ -291,12 +292,20 @@ class MessageList extends Component {
     }
 
     menuGridTemplate(props){
-        // return (
-        //     <span>
-        //         {/* <i className="material-icons">more_vert</i> */}
-        //         <span className="lf-icon-filter-1"></span>
-        //     </span>
-        // );
+        var items = [
+            {
+                text: i18n.t('signaturesGrid.menuEdit'),
+                iconCss: 'lf-icon-edit'
+            },
+            {   
+                separator: true
+            },
+            {
+                text: i18n.t('signaturesGrid.menuCancel'),
+                iconCss: 'lf-icon-excel-software',
+            }
+        ];
+
         return (
             <div className='control-pane'>
                 <div className='control-section'>
@@ -304,7 +313,7 @@ class MessageList extends Component {
                         <div id='dropdownbutton-control'>
                             <div className='row'>
                                 <div className="col-xs-12">
-                                    <DropDownButtonComponent cssClass='e-caret-hide' items={this.items} iconCss={`lf-icon-kebab-menu`} select={this.menuOptionSelected.bind(this)}></DropDownButtonComponent>
+                                    <DropDownButtonComponent cssClass='e-caret-hide' items={items} iconCss={`lf-icon-kebab-menu`} select={this.menuOptionSelected.bind(this)}></DropDownButtonComponent>
                                 </div>
                             </div>
                         </div>
@@ -403,23 +412,23 @@ class MessageList extends Component {
 
         switch (props.Estado) {
         case 'canceled':
-            status = 'Cancelado';
+            status = i18n.t('signaturesGrid.statusCancelled');
             status_style = 'cancelada';
             break;
         case 'declined':
-            status = 'Declinado';
+            status = i18n.t('signaturesGrid.statusDeclined');
             status_style = 'cancelada';
             break;
         case 'expired':
-            status = 'Expirado';
+            status = i18n.t('signaturesGrid.statusExpired');
             status_style = 'cancelada';
             break;      
         case 'completed':
-            status = 'Completado';
+            status = i18n.t('signaturesGrid.statusCompleted');
             status_style = 'completada'
             break;
         case 'ready':
-            status = 'En progreso';
+            status = i18n.t('signaturesGrid.statusInProgress');
             status_style = 'en-progreso'
             break;
         default:
@@ -433,7 +442,7 @@ class MessageList extends Component {
     onRowSelected(event) {
         console.log(event);
         var signature = this.props.signatures.find(s => s.id === event.data.Id);
-        this.props.setTitle('PROGRESO DE FIRMA');
+        this.props.setTitle(i18n.t('signatureViewer.title'));
         this.props.signatureClicked(signature);
         // this.setState(
         //   { rowSelected: event.data.idRelated + '_' + event.data.idType },
@@ -476,12 +485,12 @@ class MessageList extends Component {
 
     dropDownOptionSelected (args){
         console.log(args);
-        if (args.item.text === 'Editar'){
+        if (args.item.text === i18n.t('signaturesGrid.menuEdit')){
             const id = this.grid.getSelectedRecords()[0].Id;
             const signature = this.props.signatures.find(s => s.id === id);
             this.props.setTitle('PROGRESO DE FIRMA');
             this.props.signatureClicked(signature);
-        } else if (args.item.text === 'Cancelar'){
+        } else if (args.item.text === i18n.t('signaturesGrid.menuCancel')){
             const id = this.grid.getSelectedRecords()[0].Id;
             const auth = this.props.auth;
             this.setState({ hideConfirmDialog: true, signatureId: id, auth: auth });
@@ -521,67 +530,35 @@ class MessageList extends Component {
         const contenido = `
             <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
             <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
-            Petición cancelada correctamente.
+            ${i18n.t('cancelledSignatureModal.text')}
             </div>`;
 
         const contenido2 = `
             <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
             <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
-            ¿Está seguro de que quiere cancelar la firma seleccionada?
+            ${i18n.t('cancelConfirmationModal.text')}
             </div>`;
+
+        const confirmButtons = [
+            {
+                click: () => {
+                    this.setState({ hideConfirmDialog: false });
+                    this.onCancelSignatureOk();
+                },
+                buttonModel: { content: i18n.t('confirmationModal.yes'), isPrimary: true }
+            },
+            {
+                click: () => {
+                this.setState({ hideConfirmDialog: false });
+                },
+                buttonModel: { content: i18n.t('confirmationModal.no'), isPrimary: true }
+            }
+        ];
 
         this.toolbarClick = this.toolbarClick.bind(this);
         //var firmas = this.props.signatures;
         var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [];
         var customAttributes = {class: 'customcss'};
-        // console.log('Entra en message-list: render');
-        // console.log('State rowCount(): ' + this.state.rowCount);
-        // console.log('ActiveRequests:' + this.props.activeRequests);
-
-        // return (
-        //     <div className={`${styles.messageList} ${this.props.className}`}>
-        //         <Spinner
-        //             visible={
-        //                 this.props.activeRequests > 0 //|| this.state.rowCount === 0
-        //             }
-        //         />
-        //         {(this.state.rowCount === 0) ? <center><h3>No tiene firmas que mostrar</h3></center> : null }
-                
-        //         { !(this.state.sign_ready) ? null : (
-        //             <Fragment>
-        //                 <PerfectScrollbar>
-        //                     <ul className={`${mainCss["mdc-list"]} ${styles.list}`}>
-        //                         <AutoSizer defaultHeight={100}>
-        //                             {({ height, width }) => (
-        //                                 <List
-        //                                     className={styles.virtualList}
-        //                                     height={height}
-        //                                     width={width}
-        //                                     rowRenderer={this.renderItem.bind(this)}
-        //                                     //rowCount={this.props.messages.length}
-        //                                     //rowCount={(this.props.signatureFilter === "Mostrar todas") ? this.props.signatures.length : ((this.props.signatureFilter === "Completadas") ? this.getRowsCompleted() : ((this.props.signatureFilter==='En Progreso') ? this.getRowsInProgress() : this.props.signatures.length)) }
-        //                                     //rowCount = { this.state.rowCount}
-        //                                     //rowCount = {this.props.signatures.length}
-        //                                     rowCount = {this.getCount()}
-        //                                     rowHeight={52}
-        //                                 />
-        //                             )}
-        //                         </AutoSizer>
-        //                     </ul>
-        //                 </PerfectScrollbar>
-        //             </Fragment>
-        //         )}
-        //         {this.props.activeRequests > 0 && this.props.messages.length > 0 
-        //             ? (
-        //                 <Spinner
-        //                     className={styles.listSpinner}
-        //                     canvasClassName={styles.listSpinnerCanvas}
-        //                 />
-        //                 ) 
-        //             : null
-        //         }
-        //     </div>
-        // );
 
         return( (firmas && firmas.length > 0) ?
             <div>
@@ -603,18 +580,18 @@ class MessageList extends Component {
                     // }}
                     filterSettings={this.filterSettings}
                     toolbar={this.toolbarOptions} 
-                    locale ='es-ES'
+                    locale ={navigator.language}
                     toolbarClick={this.toolbarClick}
                     ref={g => this.grid = g}
                     hierarchyPrintMode={'All'}
                 >
                     <ColumnsDirective>
-                        <ColumnDirective textAlign='center' headerText='Acciones' template={this.menuTemplate.bind(this)}  width='55' />
-                        <ColumnDirective field='Documento' textAlign='Left' headerText='Documento' />
-                        <ColumnDirective field='Asunto' textAlign='Left' headerText='Asunto' />
-                        <ColumnDirective field='Destinatarios' textAlign='Left' headerText='Destinatarios' width= '151' template={this.recipientsTable.bind(this)}/>
-                        <ColumnDirective field='Fecha' textAlign='Left' headerText='Fecha' width='115'/>
-                        <ColumnDirective field='Estado' textAlign='Left' headerText='Estado' width='110' allowFiltering={false} template={this.statusTemplate.bind(this)} />
+                        <ColumnDirective textAlign='center' headerText={i18n.t('signaturesGrid.columnAction')} template={this.menuTemplate.bind(this)}  width='55' />
+                        <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')}/>
+                        <ColumnDirective field='Asunto' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSubject')} />
+                        <ColumnDirective field='Destinatarios' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSigners')} width= '151' template={this.recipientsTable.bind(this)}/>
+                        <ColumnDirective field='Fecha' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDate')} width='115'/>
+                        <ColumnDirective field='Estado' textAlign='Left' headerText={i18n.t('signaturesGrid.columnStatus')} width='110' allowFiltering={false} template={this.statusTemplate.bind(this)} />
                     </ColumnsDirective>
                     <Inject services={[Filter, Page, Resize, Sort, Toolbar, PdfExport, ExcelExport]}/>
                     {/* <Inject services={[Resize]}/> */}
@@ -644,7 +621,7 @@ class MessageList extends Component {
                     content={contenido2} 
                     ref={dialog => this.confirmDialogInstance = dialog} 
                     //target='#target' 
-                    buttons={this.confirmButtons} 
+                    buttons={confirmButtons} 
                     open={() => this.dialogOpen} 
                     close={() => this.dialogClose}
                 />

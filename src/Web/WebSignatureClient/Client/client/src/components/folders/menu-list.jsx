@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import i18n from '../../services/i18n';
+
 import MenuItem from './menu-item';
 import {selectFolder, setTitle} from '../../actions/application';
 import { setSignaturesFilterKey, selectSignature } from '../../actions/application';
@@ -27,19 +29,19 @@ export class MenuListClass extends Component {
     return (
         // <div key={'firmas'} className={`${styles.itemContainer}`}>
         <div>
-          <div className={`${styles['title-nav-firmas']}`}><span className="lf-icon-signature"></span>firmas solicitadas</div>
+          <div className={`${styles['title-nav-firmas']}`}><span className="lf-icon-signature"></span>{i18n.t('sideBar.filterMenu')}</div>
           <ul className={`${styles['nav-firmas']}`}>
                 <li className={`${styles.todas}`}>
-                    <a href="#" id={option3} onClick={event => this.onClick(event, option3)}><span className="lf-icon-folder"></span>Mostrar todas</a>
+                    <a href="#" id={option3} onClick={event => this.onClick(event, option3)}><span className="lf-icon-folder"></span>{i18n.t('sideBar.filterAll')}</a>
                 </li>
                 <li className={`${styles['en-progreso']}`}>
-                    <a href="#" id={option1} onClick={event => this.onClick(event, option1)}><span className="lf-icon-folder"></span>En progreso</a>
+                    <a href="#" id={option1} onClick={event => this.onClick(event, option1)}><span className="lf-icon-folder"></span>{i18n.t('sideBar.filterInProgress')}</a>
                 </li>
                 <li className={`${styles.completadas}`}>
-                    <a href="#" id={option2} onClick={event => this.onClick(event, option2)}><span className="lf-icon-folder"></span>Completadas</a>
+                    <a href="#" id={option2} onClick={event => this.onClick(event, option2)}><span className="lf-icon-folder"></span>{i18n.t('sideBar.filterCompleted')}</a>
                 </li>
                 <li className={`${styles.canceladas}`}>
-                    <a href="#" id={option4} onClick={event => this.onClick(event, option4)}><span className="lf-icon-folder"></span>Canceladas</a>
+                    <a href="#" id={option4} onClick={event => this.onClick(event, option4)}><span className="lf-icon-folder"></span>{i18n.t('sideBar.filterCancelled')}</a>
                 </li>
             </ul>
           {/* <MenuItem
@@ -61,7 +63,7 @@ export class MenuListClass extends Component {
     event.stopPropagation();
     this.props.signatureClicked(null);
     this.props.setSignaturesFilterKey(key);
-    this.props.setTitle(key);
+    this.props.setTitle(event.currentTarget.childNodes[1].textContent);
   }
 }
 

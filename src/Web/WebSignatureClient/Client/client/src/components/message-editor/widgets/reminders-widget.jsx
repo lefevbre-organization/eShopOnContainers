@@ -3,6 +3,7 @@ import { RadioButtonComponent } from '@syncfusion/ej2-react-buttons';
 import styles from './widgets.scss';
 import mainCss from '../../../styles/main.scss';
 import { useState } from 'react';
+import i18n from 'i18next';
 
 
 export const RemindersWidget = ({ onChange }) => {
@@ -13,10 +14,10 @@ export const RemindersWidget = ({ onChange }) => {
 
   return (<div className={styles.widget}>
     <div className={styles.p10}>
-      <span className={`lf-icon-calendar ${styles['title-icon']}`}></span><span className={styles["generic-title"]}>RECORDATORIOS PROGRAMADOS</span>
+      <span className={`lf-icon-calendar ${styles['title-icon']}`}></span><span className={styles["generic-title"]}>{i18n.t('reminderWidget.title')}</span>
       {enabled === false && optionSelected === 0 &&
         <>
-          <p className={styles.subtitle}>Actualmente no hay recordatorios programados.</p>
+          <p className={styles.subtitle}>{i18n.t('reminderWidget.subtitle')}</p>
           <div className={styles['action-buttons']}>
             <button
               className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']}  ${styles['action-button']}  ${styles.right}`}
@@ -24,16 +25,16 @@ export const RemindersWidget = ({ onChange }) => {
                 setEnabled(true);
               }}
             >
-              AÑADIR
+              {i18n.t('reminderWidget.addButton')}
             </button>
           </div>
         </>
       }
       {enabled === false && optionSelected > 0 &&
         <>
-          {optionSelected === 1 && <p className={styles.subtitle}>Recordatorio cada {days} días</p>}
-          {optionSelected === 2 && <p className={styles.subtitle}>Recordatorio diario</p>}
-          {optionSelected === 3 && <p className={styles.subtitle}>Recordatorio semanal</p>}
+          {optionSelected === 1 && <p className={styles.subtitle}> {i18n.t('reminderWidget.option1').replace('___', days)} </p>}
+          {optionSelected === 2 && <p className={styles.subtitle}> {i18n.t('reminderWidget.option2')}</p>}
+          {optionSelected === 3 && <p className={styles.subtitle}> {i18n.t('reminderWidget.option3')}</p>}
 
           <div className={styles['action-buttons']}>
             <button
@@ -48,7 +49,7 @@ export const RemindersWidget = ({ onChange }) => {
                 }
               }}
             >
-              ELIMINAR
+              {i18n.t('reminderWidget.deleteButton')}
             </button>
             <button
               className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']}  ${styles['action-button']} `}
@@ -57,7 +58,7 @@ export const RemindersWidget = ({ onChange }) => {
                 setOption(optionSelected);
               }}
             >
-              MODIFICAR
+              {i18n.t('reminderWidget.modifyButton')}
             </button>
 
           </div>
@@ -67,7 +68,7 @@ export const RemindersWidget = ({ onChange }) => {
         <>
           <form action='#'>
             <p className={styles.form}>
-              <RadioButtonComponent name="reminder" label='Recordatorio cada _______ días' checked={option === 1} change={() => {
+              <RadioButtonComponent name="reminder" label={i18n.t('reminderWidget.option1')} checked={option === 1} change={() => {
                 setOption(1);
               }} />
               <span>
@@ -79,10 +80,10 @@ export const RemindersWidget = ({ onChange }) => {
                   }></input>
                 : null}
               </span>
-              <RadioButtonComponent name="reminder" label='Recordatorio diario' checked={option === 2} change={() => {
+              <RadioButtonComponent name="reminder" label={i18n.t('reminderWidget.option2')} checked={option === 2} change={() => {
                 setOption(2);
               }} />
-              <RadioButtonComponent name="reminder" label='Recordatorio semanal' checked={option === 3} change={() => {
+              <RadioButtonComponent name="reminder" label={i18n.t('reminderWidget.option3')} checked={option === 3} change={() => {
                 setOption(3);
               }} />
             </p>
@@ -95,7 +96,7 @@ export const RemindersWidget = ({ onChange }) => {
                 setOption(0);
               }}
             >
-              CANCELAR
+              {i18n.t('reminderWidget.cancelButton')}
             </button>
             <button
               className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']}  ${styles['action-button']} `}
@@ -107,7 +108,7 @@ export const RemindersWidget = ({ onChange }) => {
                 onChange && onChange({ option: option, data: days });
               }}
             >
-              ACEPTAR
+              {i18n.t('reminderWidget.acceptButton')}
             </button>
 
           </div>

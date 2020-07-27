@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import styles from './widgets.scss';
 import mainCss from '../../../styles/main.scss';
 import { editMessage } from '../../../actions/application';
+import i18n from 'i18next';
 
 class AttachmentsWidget extends Component{
     constructor(props){
@@ -24,7 +25,7 @@ class AttachmentsWidget extends Component{
     render(){
         return (<div className={styles['widget']}>
         <div className={styles['p10']}>
-            <span className={"lf-icon-add " + styles['title-icon']}></span><span className={styles["generic-title"]}>Archivos adjuntos</span>
+    <span className={"lf-icon-add " + styles['title-icon']}></span><span className={styles["generic-title"]}>{i18n.t('attachmentsWidget.title')}</span>
             {this.props.attachments.map((a, i) => (
                 <p id={`p_${i}`} className={styles["subtitle"]}>{a.fileName} 
                     <a id={`a_${i}`} href="#" onClick={() => this.removeAttachment(a)}>
@@ -36,7 +37,7 @@ class AttachmentsWidget extends Component{
                 className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']} ${styles['right']}`}
                 onClick={this.onAttachButton}
             >
-                adjuntar documento
+                {i18n.t('attachmentsWidget.attachButton')}
                 <input
                     ref={r => (this.fileInput = r)}
                     id='file-input'
@@ -50,7 +51,7 @@ class AttachmentsWidget extends Component{
         </div>
         <div className={styles["sign"]}>
             <span className="lf-icon-check"></span>
-            <a href="#">Firmar documento en una sola hoja</a>
+            <a href="#"> {i18n.t('attachmentsWidget.pagesConfiguration')}</a>
         </div>
         <div className="clearfix"></div>
     </div>)

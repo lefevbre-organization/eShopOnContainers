@@ -11,6 +11,7 @@ import materialize from '../../styles/signature/materialize.scss';
 import { downloadSignedDocument,  downloadSignedDocument2, downloadTrailDocument, downloadTrailDocument2, sendReminder, sendReminder2, cancelSignature, cancelSignature2 } from "../../services/api-signaturit";
 import { NOT_BOOTSTRAPPED } from 'single-spa';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
+import i18n from 'i18next';
 
 export function addressGroups(address) {
   const ret = {
@@ -216,73 +217,73 @@ export class MessageViewer extends Component {
     const contenido = `
     <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
     <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
-      Se acaba de enviar un recordatorio.
+      ${i18n.t('reminderSentModal.text')}
     </div>`;
 
     const contenido2 = `
     <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
     <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
-      Petición cancelada correctamente.
+      ${i18n.t('cancelledSignatureModal.text')}
     </div>`;
 
     const contenido3 = `
     <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
     <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
-      ¿Está seguro de que quiere cancelar el proceso de firma actual?
+      ${i18n.t('cancelConfirmationModal.text2')}
     </div>`;
 
     let reminderText;
     let expirationDays = signature.data.find(x => x.key === 'expiration');
-    let expirationText = 'La solicitud no expira.';
+    let expirationText = i18n.t('signatureViewer.widgets.expiration.doesntExpires');
     let passedTime =  this.getDaysBetweenDates(new Date(signature.created_at), new Date());
     let reminderConfig = signature.data.find(x => x.key === "reminders");
     
     if (reminderConfig === undefined || reminderConfig === null){
-      reminderText = 'No hay recordatorios programados.';
+      reminderText = i18n.t('signatureViewer.widgets.reminders.notConfigured');;
     } else {
       switch (signature.data.find(x => x.key === "reminders").value) {
         case 'NoReminders':
-          reminderText = 'No hay recordatorios programados.';
+          reminderText = i18n.t('signatureViewer.widgets.reminders.notConfigured');
           break;
         case 'Daily':
-          reminderText = 'Recodatorios diarios';
+          reminderText = i18n.t('signatureViewer.widgets.reminders.daily');
           break;
         case 'Weekly':
-          reminderText = 'Recordatorios semanales';
+          reminderText = i18n.t('signatureViewer.widgets.reminders.weekly');
           break;
         default:
-          reminderText = 'No hay recordatorios programados.'
+          reminderText = i18n.t('signatureViewer.widgets.reminders.notConfigured');
           break;
       }
     }
     
     if ((expirationDays && expirationDays.value === 0) || expirationDays === undefined){
-      expirationText = 'No hay fecha de expiración programada.'
+      expirationText = i18n.t('signatureViewer.widgets.expiration.notConfigured');
     }
     else {
-      expirationText = `Expira en ${expirationDays.value - passedTime} días.`
+      expirationText = i18n.t('signatureViewer.widgets.expiration.expires').replace('___', expirationDays.value - passedTime);
     }
 
 
     switch (signature.status) {
       case 'canceled':
-        status = 'Cancelado';
+        status = i18n.t('signaturesGrid.statusCancelled');
         status_style = 'cancelada';
         break;
       case 'declined':
-        status = 'Declinado';
+        status = i18n.t('signaturesGrid.statusDeclined');
         status_style = 'cancelada';
         break;
       case 'expired':
-        status = 'Expirado';
+        status = i18n.t('signaturesGrid.statusExpired');
         status_style = 'cancelada';
         break;      
       case 'completed':
-        status = 'Completado';
+        status = i18n.t('signaturesGrid.statusCompleted');
         status_style = 'completada'
         break;
       case 'ready':
-        status = 'En progreso';
+        status = i18n.t('signaturesGrid.statusInProgress');
         status_style = 'en-progreso'
         break;
       default:
@@ -295,11 +296,11 @@ export class MessageViewer extends Component {
         <table className={styles['resumen-firma']}>
           <tbody>
             <tr>
-              <th>Documento</th>
-              <th>Asunto</th>
-              <th>Firmantes</th>
-              <th>Fecha</th>
-              <th>Estado</th>
+              <th>{i18n.t('signatureViewer.grid.document')}</th>
+              <th>{i18n.t('signatureViewer.grid.subject')}</th>
+              <th>{i18n.t('signatureViewer.grid.signers')}</th>
+              <th>{i18n.t('signatureViewer.grid.date')}</th>
+              <th>{i18n.t('signatureViewer.grid.status')}</th>
             </tr>            
             <tr>
                 <td className={styles.documento}><a href="#">{signature.documents[0].file.name}</a></td>
@@ -326,25 +327,25 @@ export class MessageViewer extends Component {
           href="#demo-modal2" 
           onClick={() => this.onCancelSignature(signature.id, this.props.auth)} 
           disabled={signature.status==='canceled' || signature.status ==='completed'}>
-            cancelar firma
+            {i18n.t('signatureViewer.buttons.cancel')}
         </button>
         <button 
           className={`${styles['btn-gen']} modal-trigger right`} 
           href="#demo-modal1"
           onClick={() => this.onSendReminder(signature.id, this.props.auth)} 
           disabled={signature.status==='canceled' || signature.status ==='completed'}>
-            Enviar recordatorio ahora
+           {i18n.t('signatureViewer.buttons.reminder')}
         </button>
         <div className={styles.clearfix}></div>
         <div className={`${materialize.row} ${styles['mT20']}`}>
             <div className={`${materialize.col} ${materialize['l4']} right`}>
                 <div className={styles['cont-generico']}>
-                    <span className="lf-icon-calendar-cross"></span><span className={styles['title-generico']}>plazos de expiración de firma</span>
+                    <span className="lf-icon-calendar-cross"></span><span className={styles['title-generico']}>{i18n.t('signatureViewer.widgets.expiration.title')}</span>
                     <p style={{paddingTop: '10px'}}>{expirationText}</p>
                     <div className={styles.clearfix}></div>
                 </div>
                 <div className={styles['cont-generico']}>
-                    <span className="lf-icon-calendar"></span><span className={styles['title-generico']}>recordatorios programados</span>
+                    <span className="lf-icon-calendar"></span><span className={styles['title-generico']}>{i18n.t('signatureViewer.widgets.reminders.title')}</span>
                     <p style={{paddingTop: '10px'}}>{reminderText}</p>
                     <div className={styles.clearfix}></div>
                 </div>
@@ -352,13 +353,13 @@ export class MessageViewer extends Component {
                   className={`${styles['btn-gen']} modal-trigger ${styles.mB10} right`}
                   onClick={() => downloadSignedDocument2(signature.id, signature.documents[0].id, signature.documents[0].file.name, this.props.auth)} 
                   disabled={signature.status !=='completed'}>
-                    Descargar documento
+                    {i18n.t('signatureViewer.buttons.download')}
                 </button> 
                 <button 
                   className={`${styles['btn-gen']} modal-trigger right`}
                   onClick={() => downloadTrailDocument2(signature.id, signature.documents[0].id, signature.documents[0].file.name, this.props.auth)} 
                   disabled={signature.status !=='completed'}>
-                    Descargar auditoria
+                    {i18n.t('signatureViewer.buttons.downloadTrail')}
                 </button>
             </div>            
             <div className={`${materialize.col} ${materialize['l8']} left`}>
@@ -368,20 +369,20 @@ export class MessageViewer extends Component {
               
                 <div className={styles['cont-info-firmantes']}>
                   <div className={`${styles.p15} ${styles.separador}`}>
-                      <div className={`${styles['tit-firmante']} left`}>FIRMANTES</div>
+                      <div className={`${styles['tit-firmante']} left`}>{i18n.t('signatureViewer.signerCard.title.signers')}</div>
                         <span className={`${styles['name_firmante']} left`}>{signer.name}:</span>
                         <span className={styles.email}>{signer.email}</span>
-                        <span className={`${styles['numero_firmante']} right`}>Firmante {i}</span>
+                        <span className={`${styles['numero_firmante']} right`}>{i18n.t('signatureViewer.signerCard.title.signer')} {i}</span>
                       </div>
                       <div className={`${styles.p15} ${styles.separador}`}>
-                        <div className={styles['tit-firmante']}>PROGRESO peticion</div>
+                        <div className={styles['tit-firmante']}>{i18n.t('signatureViewer.signerCard.body.title')}</div>
                         <div className={`${styles['seguimiento-firmante-individual']} ${((this.getEventStatus(signer, 'email_processed') === false) ? styles['no-completado']: ``)}`}>
                           <span className="lf-icon-send"></span>
                           <div className={styles['cont-check-seguimiento']}>
                               <span className={`${((this.getEventStatus(signer, 'email_processed')) ? `lf-icon-check-round-full `: ``)} ${styles['check-seguimiento']}`}></span>
                               <div className={`${styles.linea} ${styles['primer-estado']}`}></div>
                               <div className={styles.info}>
-                                <div className={styles.estado}> Email enviado</div>
+                                <div className={styles.estado}> {i18n.t('signatureViewer.signerCard.body.emailSent')}</div>
                                 {this.getEventDate(signer, 'email_processed').split(' ')[0]}<br/>
                                 {this.getEventDate(signer, 'email_processed').split(' ')[1]}
                               </div>
@@ -395,7 +396,7 @@ export class MessageViewer extends Component {
                               <span className={`${((this.getEventStatus(signer, 'email_delivered')) ? `lf-icon-check-round-full `: ``)} ${styles['check-seguimiento']}`}></span>
                               <div className={styles.linea}></div>
                               <div className={styles.info}>
-                                  <div className={styles.estado}> Email entregado</div>
+                                  <div className={styles.estado}> {i18n.t('signatureViewer.signerCard.body.emailDelivered')}</div>
                                     {this.getEventDate(signer, 'email_delivered').split(' ')[0]}<br/>
                                     {this.getEventDate(signer, 'email_delivered').split(' ')[1]}
                               </div>
@@ -410,7 +411,7 @@ export class MessageViewer extends Component {
                               <div className={styles.linea}></div>
                               <div className={styles.info}>
                                   <div className={styles.estado}>
-                                      Email abierto
+                                    {i18n.t('signatureViewer.signerCard.body.emailOpened')}
                                   </div>
                                     {this.getEventDate(signer, 'email_opened').split(' ')[0]}<br/>
                                     {this.getEventDate(signer, 'email_opened').split(' ')[1]}
@@ -425,7 +426,7 @@ export class MessageViewer extends Component {
                               <span className={`${((this.getEventStatus(signer, 'document_opened')) ? `lf-icon-check-round-full `: ``)} ${styles['check-seguimiento']}`}></span>
                               <div className={styles.linea}></div>
                                 <div className={styles.info}>
-                                      <div className={styles.estado}>Documento abierto</div>
+                                      <div className={styles.estado}>{i18n.t('signatureViewer.signerCard.body.docOpened')}</div>
                                         {this.getEventDate(signer, 'document_opened').split(' ')[0]}<br/>
                                         {this.getEventDate(signer, 'document_opened').split(' ')[1]}
                                 </div>
@@ -439,7 +440,7 @@ export class MessageViewer extends Component {
                               <span className={`${((this.getEventStatus(signer, 'document_signed')) ? `lf-icon-check-round-full `: ``)} ${styles['check-seguimiento']}`}></span>
                               <div className={styles.linea}></div>
                               <div className={styles.info}>
-                                  <div className={styles.estado}>Documento firmado</div>
+                                  <div className={styles.estado}>{i18n.t('signatureViewer.signerCard.body.docSigned')}</div>
                                     {this.getEventDate(signer, 'document_signed').split(' ')[0]}<br/>
                                     {this.getEventDate(signer, 'document_signed').split(' ')[1]}
 
@@ -450,7 +451,7 @@ export class MessageViewer extends Component {
                         <div className={styles.clearfix}></div>
                       </div>
                       <div className={styles.p15}>
-                        <div className={styles['tit-firmante']}>recordatorios enviados</div>
+                        <div className={styles['tit-firmante']}>{i18n.t('signatureViewer.signerCard.footer.title')}</div>
                         <p>{
                           signer.events.map(x => 
                             { 

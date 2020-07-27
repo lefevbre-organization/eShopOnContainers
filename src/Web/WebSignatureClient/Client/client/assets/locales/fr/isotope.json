@@ -1,0 +1,271 @@
+{
+  "login": {
+    "Login": "Configuración de correo",
+    "Host": "Servidor",
+    "Port": "Puerto",
+    "User": "Usuario",
+    "Password": "Contraseña",
+    "Advanced": "Avanzado",
+    "ImapSSL": "IMAP SSL",
+    "SMTP": "SMTP",
+    "SmtpSSL": "SMTP SSL",
+    "SmtpUnsecured": "SMTP SIN SEGURIDAD",
+    "actions": {
+      "Login": "Acceder",
+      "Cancel": "Cancelar"
+    },
+    "errors": {
+      "BLACKLISTED": "Servidor no autorizado",
+      "IMAP": "Credenciales IMAP inválidas",
+      "SMTP": "Credenciales SMTP inválidas"
+    },
+    "shop": "TIENDA",
+    "notClient": "No soy cliente",
+    "requestInfo": "Solicitar información",
+    "needHelp": "¿Necesitas ayuda?",
+    "phoneNumber": "91 210 80 00 - 902 44 33 55 |",
+    "client": "clientes@lefebvre.es",
+    "required": "Este campo es obligatorio.",
+    "email-error": "El campo debe tener formato de email.",
+    "user-error": "Usuario o Contraseña inválidos",
+    "user": "Usuario",
+    "password": "Contraseña",
+    "login": "INICIAR SESIÓN"
+  },
+  "sideBar": {
+    "newRequest": "Nouvelle signature",
+    "hide": "Ocultar barra lateral",
+    "errors": {
+      "noSSL": "La conexión al servidor no es segura",
+      "diskQuotaExceeded": "Cuota de disco sobrepasada (IndexedDB)"
+    },
+    "filterMenu": "Signatures demandées",
+    "filterAll": "Montrer toutes",
+    "filterInProgress": "En progrés",
+    "filterCompleted": "Complétées",
+    "filterCancelled": "Anulées"
+  },
+  "topBar": {
+    "showSideBar": "Mostrar barra lateral",
+    "backToList": "Volver a la lista",
+    "quickFilter": "Filtrar",
+    "replyAll": "Responder a todos",
+    "forward": "Reenviar",
+    "delete": "Borrar",
+    "markUnread": "Marcar como no leído",
+    "markRead": "Marcar como leído",
+    "returnlexon": "Volver a Lex-on",
+    "deleteFromTrashDialog": {
+      "title": "Confirmar borrado",
+      "message": "Esta acción eliminará permenentemente los mensajes de la basura. ¿Seguro que quieres continuar?",
+      "delete": "Borrar",
+      "cancel": "Cancelar"
+    },
+    "app": "SIGNATURE"
+  },
+  "mainBar": {
+    "quickModules": "Aplicaciones de Lefebvre",
+    "quickUser": "Cuenta de usuario"
+  },
+  "productBar": {
+    "lexon": "LEX-ON",
+    "database": "Base de datos",
+    "compliance": "Centinela",
+    "calendar": "Calendario"
+  },
+  "messageList": {
+    "emptyFolder": "Vaciar carpeta",
+    "clearFolderDialog": {
+      "title": "Vaciar carpeta",
+      "message": "¿Seguro que desea eliminar todos los elementos de la papelera?",
+      "deleteAll": "Eliminar todo",
+      "cancel": "Cancelar"
+    },
+    "moveEmails": "Moviendo {{emailCount}} e-mails",
+    "filters": {
+      "All": "Todos",
+      "Read": "Leídos",
+      "Unread": "No Leídos",
+      "Flagged": "Marcados"
+    }
+  },
+  "messageViewer": {
+    "to": "para",
+    "cc": "cc",
+    "bcc": "bcc"
+  },
+  "messageEditor": {
+    "to": "Destinataires",
+    "cc": "CC",
+    "bcc": "bcc",
+    "subject": "Sujet",
+    "send": "Envoyé",
+    "discard": "Éliminer",
+    "dropZoneMessage": "Deposita aquí ficheros",
+    "attach": "ADJUNTAR",
+    "insertLinkDialog": {
+      "title": "Insertar Enlace",
+      "cancel": "Cancelar",
+      "ok": "Ok"
+    },
+    "title": "CRÉER UNE SIGNATURE"
+  },
+  "forwardAction": {
+    "From": "De",
+    "To": "Para",
+    "Cc": "Cc",
+    "Date": "Fecha",
+    "Subject": "Asunto"
+  },
+  "replyAction": {
+    "From": "De",
+    "Date": "Fecha",
+    "Subject": "Asunto"
+  },
+  "messageSnackbar": {
+    "sendingMessage": "Envíando mensaje ({{progress}}%)",
+    "messageSent": "Mensaje enviado",
+    "messageError": "Error enviando mensaje",
+    "retry": "Reintentar"
+  },
+  "createFolderDialog": {
+    "title": "Crear carpeta",
+    "message": "Por favor, introduce el nombre para la nueva carpeta",
+    "folderNameLabel": "Nuevo nombre de carpeta",
+    "cancel": "Cancelar",
+    "create": "Crear"
+  },
+  "renameFolderDialog": {
+    "title": "Renombrar carpeta",
+    "message": "Por favor, introduce el nuevo nombre para la carpeta {{folderName}}",
+    "folderNameLabel": "Nuevo nombre de carpeta",
+    "cancel": "Cancelar",
+    "rename": "Renombrar"
+  },
+  "notifications": {
+    "newMail": "New messages received"
+  },
+  "menu-user": {
+    "user": "Usuario",
+    "edit-basic-data": "EDITAR DATOS BÁSICOS",
+    "reset-pwd": "RESETEAR CONTRASEÑA",
+    "add-other-account": "AÑADIR OTRA CUENTA",
+    "close-session": "FERMER LA SESSION",
+    "version": "Versión"
+  },
+  "msgNotFoundSnackbar": {
+    "error": "Mensaje no encontrado en el servidor"
+  },
+  "footer": {
+    "all-reserved-right": "©2020 Lefebvre. Todos los derechos reservados. ",
+    "legal-warning": "Aviso legal",
+    "privacy-policy": "Política de privacidad",
+    "cookies-policy": "Política de cookies",
+    "version": "Versión",
+    "terms-and-conditions": "Términos y condiciones"
+  },
+  "signaturesGrid": {
+    "menuEdit": "Éditer",
+    "menuCancel": "Anuler",
+    "columnAction": "Actions",
+    "columnDocument": "Document",
+    "columnSubject": "Sujet",
+    "columnSigners": "Destinataires",
+    "columnDate": "Date",
+    "columnStatus": "État",
+    "statusCancelled": "Annulée",
+    "statusCompleted": "Complétée",
+    "statusExpired": "Périmé",
+    "statusDeclined": "Décliné",
+    "statusInProgress": "En progrés"
+  },
+  "confirmationModal": {
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "cancelledSignatureModal": {
+    "text": "Demande annulée avec succès."
+  },
+  "cancelConfirmationModal": {
+    "text": "Voulez-vous vraiment annuler la signature sélectionnée?",
+    "text2": "Voulez-vous vraiment annuler le processus de signature en cours?"
+  },
+  "reminderSentModal": {
+    "text": "Rappel envoyé"
+  },
+  "attachmentsWidget": {
+    "title": "pièces jointes",
+    "attachButton": "Ajouter document",
+    "pagesConfiguration": "Signer le document sur une seule feuille"
+  },
+  "expirationWidget":{
+    "title": "Délais d expiration de signature",
+    "subtitle": "Il n'y a pas de période d'expiration activée",
+    "addButton": "AJOUTER",
+    "acceptButton": "ACCEPTER",
+    "cancelButton": "ANULER",
+    "deleteButton": "SUPPRIMER",
+    "modifyButton": "MODIFIER",
+    "option1": "Expire dans ___ jours",
+    "option2": "N' expire jamais"
+  },
+  "reminderWidget":{
+    "title": "Rappels programmés",
+    "subtitle": "Il n'y a pas de rappels programmés.",
+    "addButton": "AJOUTER",
+    "acceptButton": "ACCEPTER",
+    "cancelButton": "ANULER",
+    "deleteButton": "SUPPRIMER",
+    "modifyButton": "MODIFIER",
+    "option1": "Rappels dans ___ jours",
+    "option2": "Rappels par semaine",
+    "option3": "Rappels par jour"
+  },
+  "signatureViewer":{
+    "grid": {
+      "document": "Document",
+      "subject": "Sujet",
+      "signers": "Destinataires",
+      "date": "Date",
+      "status": "État"
+    },
+    "buttons": {
+      "cancel": "ANULER SIGNATURE",
+      "reminder": "ENVOYER RAPPEL MAINTENANT",
+      "download": "TÉLÉCHARGER DOCUMENT",
+      "downloadTrail": "TÉLÉCHARGER AUDIT"
+    },
+    "signerCard": {
+      "title": {
+        "signers": "SIGNANTS",
+        "signer": "SIGNATAIRE"
+      },
+      "body": {
+        "title": "Progrés de demande",
+        "emailSent": "Email ennvoyé",
+        "emailDelivered": "Email remis",
+        "emailOpened": "Email ouvert",
+        "docOpened": "Document ouvert",
+        "docSigned": "Documento signé"
+      },
+      "footer": {
+        "title": "Rappels envoyés"
+      }
+    },
+    "widgets": {
+      "expiration": {
+        "title": "Délais d expiration de signature",
+        "notConfigured": "Il n'y a pas de période d'expiration activée",
+        "doesntExpires": "N' expire jamais",
+        "expires": "Expire dans ___ jours"
+      },
+      "reminders": {
+        "title": "Rappels programmés",
+        "notConfigured": "Il n'y a pas de rappels programmés.",
+        "daily": "Rappels par jour",
+        "weekly": "Rappels par semaine"
+      }
+    },
+    "title": "DÉTAILS DE LA SIGNATURE"
+  }
+}
