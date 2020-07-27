@@ -35,7 +35,7 @@ class CentinelaLogin extends Component {
         password: '',
         auth: ''
       },
-
+      keyCodeEnter: 13,
       shopTitle: 'TIENDA',
       notClient: 'No soy cliente.',
       requestInfo: 'Solicitar información',
@@ -150,6 +150,12 @@ class CentinelaLogin extends Component {
     };
   }
 
+  keyUpHandler = (event) => {
+    if(event.keyCode === this.state.keyCodeEnter) {
+      this.handleEventAddon();
+    }
+  }
+
   goToSocial = (value) => {
    switch (value) {
      case 'f':
@@ -180,6 +186,7 @@ class CentinelaLogin extends Component {
          handleChange={this.handleChange}
          errorsMessage={this.state.errorsMessage}
          handleEventAddon={this.handleEventAddon}
+         keyUpHandler={this.keyUpHandler}
          notClient={this.state.notClient}
          requestInfo={this.state.requestInfo}
          needHelp={this.state.needHelp}

@@ -35,7 +35,8 @@ import React from 'react';
                     </span>
                   </div>
                  <input type="text" name="login" className="form-control login-input" 
-                  placeholder="Usuario" onChange={children.handleChange} />
+                  placeholder="Usuario" onChange={children.handleChange} 
+                  onKeyUp={children.keyUpHandler} />
                   {verificationLogin || verificationEmail ? <i className="lf-icon-close-round-full front-login__input-error-icon"></i> 
                    : null} 
                  </div>
@@ -50,7 +51,8 @@ import React from 'react';
                     </span>
                   </div>
                    <input type="password" name="password" className="form-control login-input" 
-                    onChange={children.handleChange} placeholder="Contraseña" />
+                    onChange={children.handleChange} placeholder="Contraseña" 
+                    onKeyUp={children.keyUpHandler} />
                    {verificationPassword ?  <i className="lf-icon-close-round-full front-login__input-error-icon"></i> 
                    : null} 
                  </div>
