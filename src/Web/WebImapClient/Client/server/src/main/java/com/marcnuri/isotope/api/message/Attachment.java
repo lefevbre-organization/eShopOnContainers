@@ -47,6 +47,11 @@ public class Attachment extends IsotopeResource implements Serializable {
         this.size = size;
     }
 
+    public Attachment() {
+        super();
+    }
+
+
     public String getContentId() {
         return contentId;
     }
