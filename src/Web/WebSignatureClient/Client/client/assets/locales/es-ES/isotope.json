@@ -267,5 +267,20 @@
       }
     },
     "title": "DETALLES DE LA FIRMA"
+  },
+  "completedPage":{
+    "title": "El documento se ha firmado correctamente.",
+    "subtitle": "Te hemos enviado una copia a tu dirección de email.",
+    "footer": "¿Necesitas ayuda?"
+  },
+  "expiredPage":{
+    "title": "Su sesión ha expirado.",
+    "subtitle": "Por favor inice sesión nuevamente.",
+    "footer": "¿Necesitas ayuda?"
+  },
+  "unauthorizedPage":{
+    "title": "Error de acceso.",
+    "subtitle": "No tiene permiso para usar esta aplicación.",
+    "footer": "¿Necesitas ayuda?"
   }
 }
