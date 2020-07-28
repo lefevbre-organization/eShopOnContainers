@@ -403,48 +403,48 @@ class MessageList extends Component {
    * Preloads latest received messages whenever <b>new</b> messages are loaded in the list
    */
   preloadMessages(previousProps, preloaded) {
-    console.log(`Previous: ${previousProps.messages.length}   Current: ${this.props.messages.length}`)
-    const messagesToPreload = 15;
-    // const previousIds = previousProps.messages
-    //   .slice(0, messagesToPreload)
+    // console.log(`Previous: ${previousProps.messages.length}   Current: ${this.props.messages.length}`)
+    // const messagesToPreload = 15;
+    // // const previousIds = previousProps.messages
+    // //   .slice(0, messagesToPreload)
+    // //   .map((m) => m.messageId);
+    // const previousIds = [];
+    // const currentIds = this.props.messages
+    //     //.slice(0, messagesToPreload)
     //   .map((m) => m.messageId);
-    const previousIds = [];
-    const currentIds = this.props.messages
-        //.slice(0, messagesToPreload)
-      .map((m) => m.messageId);
-
-    if (currentIds.some((id) => !previousIds.includes(id))) {
-      const latestMessagesUids = this.props.messages
-        //.slice(0, messagesToPreload)
-        .filter(
-          (m) =>
-            !Object.keys(this.props.downloadedMessages).includes(m.messageId)
-        )
-        .map((m) => m.uid);
-
-        const itv = setInterval( ()=> {
-          console.log("Preloading messages...")
-          const aux = [];
-          for(let i = 0; i < messagesToPreload; i++) {
-            if(latestMessagesUids.length > 0) {
-              aux.push(latestMessagesUids.shift());
-            } else {
-              break;
-            }
-          }
-          if ('null' != this.props.selectedFolder) {
-            this.props.preloadMessages(
-                this.props.selectedFolder,
-                aux
-            );
-
-            if(latestMessagesUids.length === 0) {
-              clearInterval(itv);
-            }
-          } else {
-              clearInterval(itv);
-          }
-        }, 10000);
+    //
+    // if (currentIds.some((id) => !previousIds.includes(id))) {
+    //   const latestMessagesUids = this.props.messages
+    //     //.slice(0, messagesToPreload)
+    //     .filter(
+    //       (m) =>
+    //         !Object.keys(this.props.downloadedMessages).includes(m.messageId)
+    //     )
+    //     .map((m) => m.uid);
+    //
+    //     const itv = setInterval( ()=> {
+    //       console.log("Preloading messages...")
+    //       const aux = [];
+    //       for(let i = 0; i < messagesToPreload; i++) {
+    //         if(latestMessagesUids.length > 0) {
+    //           aux.push(latestMessagesUids.shift());
+    //         } else {
+    //           break;
+    //         }
+    //       }
+    //       if ('null' != this.props.selectedFolder) {
+    //         this.props.preloadMessages(
+    //             this.props.selectedFolder,
+    //             aux
+    //         );
+    //
+    //         if(latestMessagesUids.length === 0) {
+    //           clearInterval(itv);
+    //         }
+    //       } else {
+    //           clearInterval(itv);
+    //       }
+    //     }, 10000);
       // for(let i = 0; i < latestMessagesUids.length; i+=15) {
       //   if ('null' != this.props.selectedFolder) {
       //     this.props.preloadMessages(
@@ -454,7 +454,7 @@ class MessageList extends Component {
       //   }
       //
       // }
-    }
+    //}
   }
 }
 
