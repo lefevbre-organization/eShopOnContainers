@@ -6,7 +6,18 @@
     "trash": "Trash",
     "spam": "Spam",
     "compose": "Compose",
-    "labels": "LABELS"
+    "labels": "LABELS",
+    "draft": "Drafts",
+    "starred": "Starred",
+    "forums": "Forums",
+    "personal": "Personal",
+    "promotions": "Promotions",
+    "social": "Social",
+    "updates": "Updates",
+    "chat": "Chat",
+    "important": "Important",
+    "unread": "Unread",
+    "more": "More"
   },
   "message-list": {
     "no-message": "There are no messages with this label.",

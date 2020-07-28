@@ -17,7 +17,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import MessageToolbar from '../message-toolbar/MessageToolbar';
 import './messageContent.scss';
 import MessageHeader from './messageHeader';
-import { setMessageAsRead, getMessage } from '../../../../api';
+import { setMessageAsRead, getMessage, getLabelList } from '../../../../api';
 import MessageNotFound from '../../../message-not-found/MessageNotFound';
 import i18n from 'i18next';
 
@@ -396,10 +396,11 @@ export class MessageContent extends Component {
     }
   }
 
-  markEmailAsRead(message) {
+  async markEmailAsRead(message) {
     const found = message.labelIds.find((elem) => elem === 'UNREAD');
     if (found) {
-      setMessageAsRead(message.id);
+      await setMessageAsRead(message.id);
+      this.props.getLabelList();
       this.refresh = true;
     }
   }
@@ -499,6 +500,7 @@ const mapDispatchToProps = (dispatch) =>
       setOpenMessage,
       addOpenMessageAttachment,
       clearOpenMessageAttachment,
+      getLabelList
     },
     dispatch
   );

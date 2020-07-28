@@ -89,7 +89,36 @@ export const getLabelList = async () => {
   const client = await getAuthenticatedClient(accessToken);
 
   try {
-    const folders = await client.api('/me/mailFolders?$top=200').get();
+    let folders = await client.api('/me/mailFolders?$top=200').get();
+    let allFolders = [];
+
+    const loadSubchilds = async (res) => {
+      let childs = [];
+      for(let i = 0; i < res.length; res++) {
+        if (res[i].childFolderCount > 0) {
+          const cres = await client.api(`/me/mailFolders/${res[i].id}/childFolders`).get();
+          childs = [...cres.value, ...await loadSubchilds(cres.value)];
+        }
+      }
+      return childs;
+    }
+
+    const childs = await loadSubchilds(folders.value);
+    allFolders = [...folders.value.map( f => ({...f, parentFolderId: undefined}) ), ...childs];
+
+    return allFolders;
+  } catch (err) {
+    console.log(err);
+  }
+
+  return [];
+};
+
+export const getChildLabel = async (parentId) => {
+  const accessToken = await getAccessTokenSilent();  const client = await getAuthenticatedClient(accessToken);
+
+  try {
+    const folders = await client.api(`/me/mailFolders/${parentId}/childFolders?$top=200`).get();
     return folders.value;
   } catch (err) {
     console.log(err);

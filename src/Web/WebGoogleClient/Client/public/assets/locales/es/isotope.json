@@ -6,7 +6,18 @@
     "trash": "Papelera",
     "spam": "Spam",
     "compose": "Nuevo correo",
-    "labels": "ETIQUETAS"
+    "labels": "ETIQUETAS",
+    "draft": "Borradores",
+    "starred": "Destacados",
+    "forums": "Forums",
+    "personal": "Personal",
+    "promotions": "Promociones",
+    "social": "Social",
+    "updates": "Notificaciones",
+    "chat": "Chat",
+    "important": "Importantes",
+    "unread": "No leidos",
+    "more": "Más"
   },
   "message-list": {
     "no-message": "No hay mensajes para esta etiqueta.",
