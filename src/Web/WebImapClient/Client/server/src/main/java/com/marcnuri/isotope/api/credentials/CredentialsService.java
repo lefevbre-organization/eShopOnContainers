@@ -83,6 +83,7 @@ public class CredentialsService {
             }
             final Credentials credentials =  decrypt(encryptedCredentials,salt);
             if (credentials.getExpiryDate().compareTo(ZonedDateTime.now(ZoneOffset.UTC)) < 0) {
+                log.info("Credenciales expiradas:"+ credentials.getUser() + " " + credentials.getExpiryDate());
                 throw new AuthenticationException("Expired credentials");
             }
             credentials.setAuthenticated(true);

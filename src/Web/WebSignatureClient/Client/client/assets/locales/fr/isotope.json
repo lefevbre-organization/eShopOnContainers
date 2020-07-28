@@ -267,5 +267,20 @@
       }
     },
     "title": "DÉTAILS DE LA SIGNATURE"
+  },
+  "completedPage":{
+    "title": "Le document a été signé avec succès.",
+    "subtitle": "Nous avons envoyé une copie à votre adresse e-mail.",
+    "footer": "Tu as besoin d'aide?"
+  },
+  "expiredPage":{
+    "title": "Votre session a expiré.",
+    "subtitle": "Veuillez vous reconnecter.",
+    "footer": "Tu as besoin d'aide?"
+  },
+  "unauthorizedPage":{
+    "title": "Erreur d'accès",
+    "subtitle": "Vous n'êtes pas autorisé à utiliser cette application.",
+    "footer": "Tu as besoin d'aide?"
   }
 }

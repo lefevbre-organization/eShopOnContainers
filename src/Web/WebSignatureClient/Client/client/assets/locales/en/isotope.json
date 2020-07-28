@@ -249,5 +249,20 @@
       }
     },
     "title": "SIGNATURE DETAILS"
+  },
+  "completedPage":{
+    "title": "Document has been signed successfully.",
+    "subtitle": "A copy has been sent to your email account.",
+    "footer": "Need help?"
+  },
+  "expiredPage":{
+    "title": "Your session has expired.",
+    "subtitle": "Please log in again.",
+    "footer": "Need help?"
+  },
+  "unauthorizedPage":{
+    "title": "Access error.",
+    "subtitle": "You don't have permission to use this application.",
+    "footer": "Need help?"
   }  
 }

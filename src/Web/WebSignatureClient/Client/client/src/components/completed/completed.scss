@@ -1,0 +1,40 @@
+/* página de éxito */
+.cont-confirmacion{
+    float:none!important;
+    margin:0 auto;
+    color:#001978;
+    .cont-outline{
+      border:1px solid #808dbc;
+      padding-top:30px;
+      margin:50px 0;
+      .icono-confirmacion{
+        font-size:120px;
+        color:#001978;
+        display: block;
+        margin:20px 0;
+      }
+      .text-confirmacion{
+        font-size: 22px;
+        font-weight:bold;
+        margin-bottom:40px;
+        span{
+          font-size:18px;
+          display:block;
+          font-weight: 400;
+        }
+      }
+    }
+    .end-confirmacion{
+      background:#e6e9f1;
+      padding:20px;
+      font-size:20px;
+      a{
+        color:#6676b0;
+        font-size:19px;
+        &.mail{
+          color:#001978;
+          font-size:17px;
+        }
+      }
+    }
+  }

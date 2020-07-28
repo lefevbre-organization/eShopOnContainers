@@ -18,7 +18,6 @@ import styles from "./message-list.scss";
 import { preloadSignatures, preloadSignatures2, cancelSignature2 } from "../../services/api-signaturit";
 import { backendRequest, backendRequestCompleted } from '../../actions/application';
 import { GridComponent, ColumnsDirective, ColumnDirective, Page, Inject, Resize, Filter, DetailRow, Sort, Group, Toolbar, PdfExport, ExcelExport } from '@syncfusion/ej2-react-grids';
-import data from './dataSource.json';
 import materialize from '../../styles/signature/materialize.scss';
 import { L10n } from '@syncfusion/ej2-base';
 import { DataManager } from '@syncfusion/ej2-data';
