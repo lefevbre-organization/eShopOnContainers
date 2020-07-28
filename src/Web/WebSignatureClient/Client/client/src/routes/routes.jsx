@@ -7,9 +7,9 @@ import UserLefebvre from "../components/user-lefebvre/UserLefebvre";
 import Login from "../components/login2/Login";
 import Settings from "../components/settings/settings";
 import "../styles/main.scss";
-import { Unauthorized } from "../components/unauthorized/unauthorized";
-import { Expired } from "../components/expired/expired";
-import { Completed } from "../components/completed/completed";
+import Unauthorized from "../components/unauthorized/Unauthorized";
+import Expired from "../components/expired/Expired";
+import Completed from "../components/completed/Completed";
 
 class Routes extends Component {
     componentDidMount() {
