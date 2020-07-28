@@ -106,6 +106,7 @@ b {
   background-color: #001978 !important;
   margin-top: 28px;
   cursor: pointer;
+  background: #001978 !important;
 }
 
 .btn-login:focus {

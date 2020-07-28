@@ -44,17 +44,17 @@
 
 .title-user-email {
   color: #001978;
-  font-family: "MTT Milano";
+  font-family: "MTTMilano";
   font-size: 12px;
-  letter-spacing: 0;
   line-height: 0;
+  letter-spacing: normal;
 }
 
 .title-user-name {
   color: #001978;
-  font-family: "MTT Milano";
+  font-family: "MTTMilano-Bold";
   font-size: 12px;
-  letter-spacing: 0;
+  letter-spacing: normal;
   line-height: 0;
 }
 

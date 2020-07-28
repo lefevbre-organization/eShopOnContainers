@@ -100,7 +100,7 @@ class CentinelaLogin extends Component {
       return (role === "Centinela");    
      });
      if(role) {
-      $('body').removeClass('waiting');
+      window.$('body').removeClass('waiting');
        this.setState({
        errorsMessage: {
          auth: ''
@@ -108,7 +108,7 @@ class CentinelaLogin extends Component {
       });
      this.goBackAddon(); 
      } else {
-      $('body').removeClass('waiting');
+      window.$('body').removeClass('waiting');
        this.setState({
          errorsMessage: {
           auth: 'El usuario no tiene acceso a Centinela.'
@@ -131,7 +131,7 @@ class CentinelaLogin extends Component {
      });
       this.validateUser(userBase64Decode);
     } else {
-      $('body').removeClass('waiting');
+      window.$('body').removeClass('waiting');
       this.setState({
         errorsMessage: {
           auth: 'Usuario o Contraseña inválidos.'
@@ -149,7 +149,7 @@ class CentinelaLogin extends Component {
 
   handleEventAddon = (e) => {
     if (this.validateForm()) {
-      $('body').addClass('waiting');
+      window.$('body').addClass('waiting');
        this.getUser();
     };
   }

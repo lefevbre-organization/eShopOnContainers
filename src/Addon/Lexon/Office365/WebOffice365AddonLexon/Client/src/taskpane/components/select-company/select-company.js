@@ -17,8 +17,7 @@ class SelectCompany extends Component {
           companies: [],
           newCompanies: [],
           selectCompany: null,
-          user: null,
-          isDisabled: true
+          user: null
         };
       }
 
@@ -43,6 +42,7 @@ class SelectCompany extends Component {
           newCompanies: newCompanies, 
           companies: result.companies
         });
+        this._onChange(null, newCompanies[0]);
       })
       .catch((errors) => {
         console.log(errors);
@@ -60,12 +60,11 @@ class SelectCompany extends Component {
     }
 
     _onChange = (e, option) => {
-      const { companies, isDisabled } = this.state
+      const { companies } = this.state
       companies.forEach(company => {
         if(company.bbdd == option.key) {
           this.setState({
-            selectCompany: company, 
-            isDisabled: false
+            selectCompany: company
           });
         }
       });
@@ -87,7 +86,6 @@ class SelectCompany extends Component {
     render() {
      const { 
        newCompanies, 
-       isDisabled,
        user
      } = this.state
       const options = newCompanies;
@@ -98,14 +96,19 @@ class SelectCompany extends Component {
            <p>Selecciona una empresa:</p>
          </div>
          <div className="select-group">
-         <ChoiceGroup 
+           {options.length > 0 ? 
+            <ChoiceGroup 
+            defaultSelectedKey={options[0].key}
             options={options} 
-            onChange={this._onChange} />
+            onChange={this._onChange}
+            />
+            : null 
+          }
+         
          </div>
          <div className="justify-content-center">
           <Button
              className="btn-primary"
-             disabled={isDisabled}
              onClick={this.click}
            >
              Entrar
