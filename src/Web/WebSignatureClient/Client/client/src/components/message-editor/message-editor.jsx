@@ -213,6 +213,7 @@ class MessageEditor extends Component {
             </button>
             <button
               className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']} ${styles['action-button']} ${styles.send}`}
+              disabled={this.props.attachments.length === 0}
               onClick={this.handleSubmit}>
               {t('messageEditor.send')}
             </button>

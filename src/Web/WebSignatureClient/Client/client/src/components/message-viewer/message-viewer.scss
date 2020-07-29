@@ -508,8 +508,6 @@ button:focus {
   box-shadow: none;
 }
 
-.btn:disabled{}
-
 .btn-gen{
   background: #001978;
   text-decoration: none;
@@ -533,6 +531,12 @@ button:focus {
   border:2px solid #9a9a9a;
   color:#FFF;
 }
+
+.btn-gen:disabled{
+  background: #9a9a9a;
+  cursor: not-allowed;
+}
+
 .btn-gen-border{
   background: #ffffff;
   text-decoration: none;
@@ -556,6 +560,13 @@ button:focus {
   color: #9a9a9a;
   border:2px solid #9a9a9a;
 
+}
+
+.btn-gen-border:disabled{
+  background: #ffffff;
+  color: #9a9a9a;
+  border:2px solid #9a9a9a;
+  cursor: not-allowed;
 }
 
 a{

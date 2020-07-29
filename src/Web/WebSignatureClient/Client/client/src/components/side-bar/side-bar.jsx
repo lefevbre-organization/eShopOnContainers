@@ -75,7 +75,8 @@ class SideBar extends Component {
     const contenido = `
       <img border='0' src='assets/images/icon-warning.png'></img>
       <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
-        Lo sentimos has agotado el número máximo de firmas contratadas. Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 911231231 o pinchando aquí
+        Lo sentimos has agotado el número máximo de firmas contratadas. 
+        Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 912108000 o pinchando <a href='https://www.efl.es/atencion-al-cliente' style='color: white'><u>aquí</u></a>
       </div>`;
     
     // const contenido = `
@@ -213,7 +214,7 @@ class SideBar extends Component {
     .catch(err => {
       if (err.message === "Failed to fetch"){
         //Mostrar aviso no se han podido recuperar firmas
-        alert('No se ha podido comprobar si tiene firmas disponibles');
+        //alert('No se ha podido comprobar si tiene firmas disponibles');
         this.setState({ hideAlertDialog: true });
         // this.props.setAvailableSignatures(1);
         this.props.newMessage(lefebvre.sign);

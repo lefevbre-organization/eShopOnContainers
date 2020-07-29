@@ -23,38 +23,40 @@ class AttachmentsWidget extends Component{
     }
 
     render(){
-        return (<div className={styles['widget']}>
-        <div className={styles['p10']}>
-    <span className={"lf-icon-add " + styles['title-icon']}></span><span className={styles["generic-title"]}>{i18n.t('attachmentsWidget.title')}</span>
-            {this.props.attachments.map((a, i) => (
-                <p id={`p_${i}`} className={styles["subtitle"]}>{a.fileName} 
-                    <a id={`a_${i}`} href="#" onClick={() => this.removeAttachment(a)}>
-                        <span id={`s_${i}`} className={`lf-icon-trash right ${styles["icon-trash"]} ${styles['right']}`}></span> 
-                    </a>
-                </p>
-            ))}
-            <button
-                className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']} ${styles['right']}`}
-                onClick={this.onAttachButton}
-            >
-                {i18n.t('attachmentsWidget.attachButton')}
-                <input
-                    ref={r => (this.fileInput = r)}
-                    id='file-input'
-                    type='file'
-                    name='name'
-                    style={{ display: 'none' }}
-                    multiple={true}
-                />
-            </button>
-            <div className="clearfix"></div>
-        </div>
-        <div className={styles["sign"]}>
-            <span className="lf-icon-check"></span>
-            <a href="#"> {i18n.t('attachmentsWidget.pagesConfiguration')}</a>
-        </div>
-        <div className="clearfix"></div>
-    </div>)
+        return (
+            <div className={styles['widget']}>
+                <div className={styles['p10']}>
+                    <span className={"lf-icon-add " + styles['title-icon']}></span><span className={styles["generic-title"]}>{i18n.t('attachmentsWidget.title')}</span>
+                    {this.props.attachments.map((a, i) => (
+                        <p id={`p_${i}`} className={styles["subtitle"]}>{a.fileName} 
+                            <a id={`a_${i}`} href="#" onClick={() => this.removeAttachment(a)}>
+                                <span id={`s_${i}`} className={`lf-icon-trash right ${styles["icon-trash"]} ${styles['right']}`}></span> 
+                            </a>
+                        </p>
+                    ))}
+                    <button
+                        className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']} ${styles['right']}`}
+                        onClick={this.onAttachButton}
+                        disabled={this.props.attachments.length > 0}
+                    >
+                        {i18n.t('attachmentsWidget.attachButton')}
+                        <input
+                            ref={r => (this.fileInput = r)}
+                            id='file-input'
+                            type='file'
+                            name='name'
+                            style={{ display: 'none' }}
+                            multiple={true}
+                        />
+                    </button>
+                    <div className="clearfix"></div>
+                </div>
+                <div className={styles["sign"]}>
+                    <span className="lf-icon-check"></span>
+                    <a href="#"> {i18n.t('attachmentsWidget.pagesConfiguration')}</a>
+                </div>
+                <div className="clearfix"></div>
+            </div>)
     }
 
     onAttachButton() {
