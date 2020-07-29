@@ -35,6 +35,7 @@ class ArchiveMessage extends Component {
       const user = base64Decode();
       this.setState({ user: user });
       this.getMessageRaw();
+      this.getAddonData();
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -44,6 +45,7 @@ class ArchiveMessage extends Component {
             this.setState({messageRaw: asyncResult.value });
           }
         );
+        this.getAddonData();
       }
     }
 
@@ -128,7 +130,6 @@ class ArchiveMessage extends Component {
       if(msgRaw.result.data == null) {
         saveMessageRaw(addonData, this.state.messageRaw);
       }
-      console.log(msgRaw);
       this.setState({addonData: addonData});
       this.getAddonDataToken(addonData)
     }

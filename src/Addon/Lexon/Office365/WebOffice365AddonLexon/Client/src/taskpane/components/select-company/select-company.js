@@ -7,7 +7,7 @@ import {
   PAGE_LOGIN, 
   PAGE_MESSAGE_CLASSIFICATIONS,
   PAGE_DOCUMENT_ATTACHED
- } from "../../constants";
+} from "../../constants";
 
 class SelectCompany extends Component {
     _isMounted = false;
