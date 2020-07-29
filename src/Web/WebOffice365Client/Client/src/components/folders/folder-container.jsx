@@ -15,7 +15,7 @@ import { withTranslation } from "react-i18next";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PerfectScrollbar from "react-perfect-scrollbar";
 
-const nodeTemplate = (data) => {
+function nodeTemplate(data) {
     return (
         <div>
             <div className="treeviewdiv">
@@ -30,14 +30,13 @@ const nodeTemplate = (data) => {
 };
 
 class FolderContainer extends Component {
-
     constructor(props) {
         super(props);
 
         this.tree = [];
         this.state = {
             showTree: false,
-            fields: { dataSource: this.props.folderTree.map( f => ({...f, hasChildren: f.childFolderCount > 0})), id: 'id', parentID: 'parentFolderId', text: 'displayName', }
+            fields: { dataSource: this.props.folderTree.map( f => ({...f, hasChildren: f.childFolderCount > 0})), id: 'id', parentID: 'parentFolderId', text: 'displayName', },
         };
         this.treeViewRef = createRef();
         this.navigateToList = this.navigateToList.bind(this);
@@ -57,23 +56,11 @@ class FolderContainer extends Component {
                      id: 'id',
                      parentID: 'parentFolderId',
                      text: 'displayName',
-                 }
-                 }, ()=>{
+                 },
+             }, ()=>{
                  this.setState({showTree: true});
              });
          }
-    }
-
-    getDerivedStateFromError() {
-        this.setState({
-            showTree: true,
-            fields: {
-                dataSource: this.props.folderTree.map( f => ({...f, hasChildren: f.childFolderCount > 0})),
-                id: 'id',
-                parentID: 'parentFolderId',
-                text: 'displayName',
-            }
-        });
     }
 
     componentDidCatch(error, info) {
@@ -100,22 +87,15 @@ class FolderContainer extends Component {
                     ></img>
                     {t("sidebar.folders")}
                 </div>
-                { showTree &&
-                    <TreeViewComponent  id='foldertree'
-                                        ref={this.treeViewRef}
-                        //allowDragAndDrop={true}
-                                        fields={this.state.fields}
-                        //enablePersistence={true}
-                                        nodeSelected={this.navigateToList}
-                                        animation={{
-                                            expand: {
-                                                duration: 100
-                                            },
-                                            collapse: {
-                                                duration: 100
-                                            }
-                                        }}
-                                        nodeTemplate={nodeTemplate}
+                {showTree &&
+                    <TreeViewComponent id='foldertree'
+                                       ref={this.treeViewRef}
+                                        //allowDragAndDrop={true}
+                                       fields={this.state.fields}
+                                       enablePersistence={true}
+                                       loadOnDemand={false}
+                                       nodeSelected={this.navigateToList}
+                                       nodeTemplate={nodeTemplate}
                     >
                     </TreeViewComponent>
                 }
