@@ -109,6 +109,7 @@ namespace Signature.API.Infrastructure.Services
             request.AddParameter("branding_id", signatureInfo.brandingId);
             request.AddParameter("reminders", signatureInfo.reminders);
             request.AddParameter("expire_time", signatureInfo.reminders);
+            request.AddParameter("callback_url", _settings.Value.CallBackUrl.ToString());
 
             IRestResponse response = await client.ExecuteAsync(request);
             Console.WriteLine(response.Content);
