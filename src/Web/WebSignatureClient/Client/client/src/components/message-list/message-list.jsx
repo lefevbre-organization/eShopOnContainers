@@ -556,7 +556,7 @@ class MessageList extends Component {
 
         this.toolbarClick = this.toolbarClick.bind(this);
         //var firmas = this.props.signatures;
-        var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [];
+        var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [{}];
         var customAttributes = {class: 'customcss'};
 
         return( (firmas && firmas.length > 0) ?

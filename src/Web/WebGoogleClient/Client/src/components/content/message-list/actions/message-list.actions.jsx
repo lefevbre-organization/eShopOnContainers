@@ -1,8 +1,8 @@
-import { getMessageList } from '../../../../api';
+import {getLabelList, getMessageList} from '../../../../api';
 import { getMessage } from '../../../../api';
 import { getMessageHeader } from '../../../../api';
 import { batchModify } from '../../../../api';
-import { selectLabel } from '../../../sidebar/sidebar.actions';
+import {GET_LABELS, getLabels, selectLabel} from '../../../sidebar/sidebar.actions';
 
 export const GET_MESSAGES = 'GET_MESSAGES';
 export const GET_MESSAGES_LOAD_IN_PROGRESS = 'GET_MESSAGES_LOAD_IN_PROGRESS';
@@ -148,11 +148,19 @@ export const modifyMessages = ({
   removeLabelIds = [],
 }) => (dispatch) => {
   batchModify({ ids, addLabelIds, removeLabelIds })
-    .then((modifiedIds) => {
+    .then( async (modifiedIds) => {
       dispatch({
         type: MODIFY_MESSAGES_SUCCESS,
         payload: { modifiedIds, addLabelIds, removeLabelIds },
       });
+      setTimeout(()=>{
+        getLabelList().then(labelList => {
+          dispatch({
+            type: GET_LABELS,
+            payload: labelList
+          });
+        });
+      }, 100);
     })
     .catch((error) => {
       dispatch({

@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import i18n from '../../services/i18n';
 
 import MenuItem from './menu-item';
-import {selectFolder, setTitle} from '../../actions/application';
+import {selectFolder, setTitle, editMessage} from '../../actions/application';
 import { setSignaturesFilterKey, selectSignature } from '../../actions/application';
 
 import {clearSelected} from '../../actions/messages';
@@ -12,6 +12,7 @@ import {resetFolderMessagesCache} from '../../services/message';
 import {getSelectedFolder} from '../../selectors/folders';
 import styles from './menu-list.scss';
 import mainCss from '../../styles/main.scss';
+import { persistApplicationNewMessageContent } from '../../services/indexed-db';
 
 export const DroppablePayloadTypes = {
   FOLDER: 'FOLDER',
@@ -62,6 +63,7 @@ export class MenuListClass extends Component {
   onClick(event, key) {
     event.stopPropagation();
     this.props.signatureClicked(null);
+    this.props.close(this.props.application);
     this.props.setSignaturesFilterKey(key);
     this.props.setTitle(event.currentTarget.childNodes[1].textContent);
   }
@@ -84,7 +86,13 @@ const mapDispatchToProps = dispatch => ({
   },
   setSignaturesFilterKey: (key) => dispatch(setSignaturesFilterKey(key)),
   signatureClicked: signature => dispatch(selectSignature(signature)),
-  setTitle: title => dispatch(setTitle(title))
+  setTitle: title => dispatch(setTitle(title)),
+  close: (application) => {
+    dispatch(editMessage(null));
+    // Clear content (editorBlur may be half way through -> force a message in the service worker to clear content after)
+    // noinspection JSIgnoredPromiseFromCall
+    persistApplicationNewMessageContent(application, '');
+  }
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => (Object.assign({}, stateProps, dispatchProps, ownProps, {

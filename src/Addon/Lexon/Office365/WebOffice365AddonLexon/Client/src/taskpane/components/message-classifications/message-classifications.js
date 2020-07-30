@@ -11,6 +11,7 @@ import {
 } from '../../services/services';
 import Header from '../header/header';
 import ListClassifications from '../list-classifications/list-classifications'
+import Spinner from '../spinner/spinner';
 import { PAGE_LOGIN, PAGE_SELECT_COMPANY } from "../../constants";
 
 import '../message-classifications/message-classifications.css';
@@ -26,7 +27,8 @@ class MessageClassifications extends Component {
          classifications: null,
          messageRaw: null,
          user: null,
-         isOfficeInitialized: false
+         isOfficeInitialized: false,
+         isLoading: false
         };
       }
 
@@ -34,11 +36,10 @@ class MessageClassifications extends Component {
       if (OfficeHelpers.Authenticator.isAuthDialog()) {
         return;
       }
-  
       this._isMounted = true;
       this.getClassifications();
       this.getMessageRaw();
-
+      this.getAddonData();
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -53,6 +54,7 @@ class MessageClassifications extends Component {
             this.setState({messageRaw: asyncResult.value });
           }
         );
+        this.getAddonData();
       }
     }
     
@@ -92,9 +94,8 @@ class MessageClassifications extends Component {
      
     }
 
-    getProviderClasification(jwt) {
+    getProviderLexon(jwt) {
       let authenticator = new OfficeHelpers.Authenticator();
-      // tokenUrl: 'https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login',
       authenticator.endpoints.add("lexon", { 
         provider: 'lexon',
         clientId: 'a8c9f1a1-3472-4a83-8725-4dfa74bac24d',
@@ -131,8 +132,9 @@ class MessageClassifications extends Component {
       signature = base64url(signature);
 
       const jwt =  token + "." + signature;
+  
       this.setState({addonDataToken: jwt});
-      this.getProviderClasification(jwt);
+      this.getProviderLexon(jwt);
     }
 
     getAddonData = async () =>   {
@@ -182,6 +184,7 @@ class MessageClassifications extends Component {
     removeClassification = (classification, selectCompany) => {
       const user = base64Decode();
       const mailbox = Office.context.mailbox;
+      this.setState({ isLoading: true });
       removeClassification(
         classification.idMail,
         classification.entityIdType,
@@ -193,9 +196,11 @@ class MessageClassifications extends Component {
       )
        .then(response => {
           this.getClassifications();
+          this.setState({ isLoading: false });
         })
         .catch(error => {
           console.log('error ->', error);
+          this.setState({ isLoading: false });
         });
      
     }
@@ -209,22 +214,29 @@ class MessageClassifications extends Component {
         messageById: mailbox.item.internetMessageId,
         idClienteNav: user.idClienteNavision,
       }
-   
       this.getAddonData();
+      this.setState({ isLoading: true });
       let authenticator = new OfficeHelpers.Authenticator();
       authenticator.authenticate('lexon', true)
      .then(token => { 
+      this.setState({ isLoading: false });
      })
      .catch(error => {
       this.getClassifications();
       removeRawAddon(addonData);
+      this.setState({ isLoading: false });
      });
     }
 
     render() {
      const { selectCompany } = this.props;
-     const { classifications, user } = this.state;
-    
+     const { classifications, user, isLoading } = this.state;
+     
+     if(isLoading) {
+       return (
+        <Spinner />
+       )
+     }
       return (
        <div className="">  
           <Header logout={this.logout} user={user} />

@@ -55,3 +55,47 @@ a, a:hover {
   white-space: nowrap;
   border: 0;
 }
+
+.btn-modal-save {
+  text-transform: uppercase;
+  font-size: 13px;
+  font-family: MTTMilano-Bold,Lato,Arial,sans-serif;
+  letter-spacing: .7px;
+  color: #001978;
+  padding: 10px;
+  background-color: #fff;
+}
+
+.btn-modal-save:hover {
+  background-color: #e5e8f1;
+  background: #e5e8f1;
+  color: #001978;
+}
+
+.btn-modal-save:active {
+  background-color: #e5e8f1;
+  background: #e5e8f1;
+  color: #001978;
+}
+
+.btn-modal-close {
+  text-transform: uppercase;
+  font-size: 13px;
+  font-family: MTTMilano-Bold,Lato,Arial,sans-serif;
+  letter-spacing: .7px;
+  color: #fff;
+  padding: 10px;
+  background-color: #001978;
+}
+
+.btn-modal-close:hover {
+  background-color: #e5e8f1;
+  background: #e5e8f1;
+  color: #001978;
+}
+
+.btn-modal-close:active {
+  background-color: #e5e8f1;
+  background: #e5e8f1;
+  color: #001978;
+}

@@ -1,6 +1,7 @@
-import { getLabelList, getLabelInbox } from "../../api_graph";
+import { getLabelList, getLabelInbox, getChildLabel } from "../../api_graph";
 
 export const GET_LABELS = "GET_LABELS";
+export const GET_CHILD_LABEL = "GET_CHILD_LABELS";
 export const SELECT_LABEL = "SELECT_LABEL";
 export const INBOX_LABEL = "INBOX_LABEL";
 
@@ -12,6 +13,15 @@ export const getLabels = () => dispatch => {
     });
   });
 };
+
+// export const getChildLabel = () => dispatch => {
+//   getChildLabel().then(labelList => {
+//     dispatch({
+//       type: GET_CHILD_LABEL,
+//       payload: labelList
+//     });
+//   });
+// };
 
 export const selectLabel = labelId => dispatch => {
   //dispatch(setSearchQuery(""));

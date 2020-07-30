@@ -47,7 +47,7 @@ const calendarContent = props => {
 };
 
 calendarContent.propTypes = {
-  style: PropTypes.object
+   style: PropTypes.object
 };
 
 export default calendarContent;

@@ -334,6 +334,7 @@ services:
       - ConnectionString=${ELEF_MONGO_DB:-mongodb://nosql.data}
       - Database=signature
       - SignaturitApiUrl=https://api.signaturit.com/v3
+      - CallBackUrl=https://lexbox-test-websignature.lefebvre.es/completed
       - LexonFilesUrl=https://10.38.6.18/index.php
       - LexonApiGwUrl=https://lexbox-test-apigwlex.lefebvre.es/api/v1
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}

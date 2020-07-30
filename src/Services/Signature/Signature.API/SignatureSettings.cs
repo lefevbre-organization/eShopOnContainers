@@ -19,6 +19,7 @@
         public string CentinelaApiGwUrl { get; set; }
 
         public string SignaturitApiUrl { get; set; }
+        public string CallBackUrl { get; set; }
 
         public string EventBusConnection { get; set; }
         public string EventBusUserName { get; set; }

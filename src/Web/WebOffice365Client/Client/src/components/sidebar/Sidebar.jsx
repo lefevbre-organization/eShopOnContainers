@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 import './sidebar.scss';
 import { setPageTokens } from '../content/message-list/actions/message-list.actions';
+import FolderContainer from "../folders/folder-container";
 
 export class Sidebar extends Component {
   constructor(props) {
@@ -232,11 +233,7 @@ export class Sidebar extends Component {
             </div>
           </div>
         </div>
-        <PerfectScrollbar
-          component='ul'
-          className='d-flex flex-column border-0 m-0 sidebar'>
-          {this.renderItems(this.props.labelsResult.labels)}
-        </PerfectScrollbar>
+        <FolderContainer folderTree={this.props.labelsResult.labels} onLabelClick={this.props.onLabelClick}></FolderContainer>
       </nav>
     );
   }
