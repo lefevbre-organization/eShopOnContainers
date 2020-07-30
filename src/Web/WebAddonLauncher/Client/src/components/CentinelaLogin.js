@@ -22,7 +22,7 @@ import React from 'react';
     <div className="row">
      <div className="offset-md-3 col-md-6">
        <div className="login-box">
-         <div className="text-center login-title-space">
+         <div className="text-center login-centinela-title-space">
          <img className="logo-centinela" src={children.logo} alt="logo" />
          </div>
            <div className="row">

@@ -8,6 +8,7 @@ import { AppState } from '../../../store/store';
 import { bindActionCreators } from 'redux';
 import { ApplicationActions } from '../../../store/application/actions';
 import queryString from 'query-string';
+import Spinner from '../../spinner/spinner';
 import { Step1 } from '../modal-archive-document/step1';
 import { Step2 } from '../modal-archive-document/step2';
 import { Step3 } from '../modal-archive-document/step3';
@@ -60,6 +61,7 @@ interface State {
   copyEmail: boolean;
   copyAttachments: boolean;
   instance?: CentInstance;
+  isLoading: boolean;
 }
 
 class AddonArchiveDocuments extends Component<Props, State> {
@@ -79,7 +81,8 @@ class AddonArchiveDocuments extends Component<Props, State> {
       attachments: [],
       copyEmail: true,
       copyAttachments: true,
-      instance: undefined
+      instance: undefined,
+      isLoading: false
     };
 
     this.onCopyAttachments = this.onCopyAttachments.bind(this);
@@ -190,6 +193,7 @@ class AddonArchiveDocuments extends Component<Props, State> {
     } else if (step === 2) {
       this.setState({ step: 3 });
     } else if (step === 3) {
+      this.setState({isLoading: true});
       this.saveDocuments();
     } // else {
     //   this.setState({ step: step + 1 });
@@ -264,7 +268,7 @@ class AddonArchiveDocuments extends Component<Props, State> {
         }
       }
     }
-
+    this.setState({isLoading: false});
     if (result) {
       toggleNotification(i18n.t('modal-archive.modal-save-ok'));
     } else {
@@ -459,7 +463,13 @@ class AddonArchiveDocuments extends Component<Props, State> {
 
   render() {
     const { user, showAttachDocuments } = this.props;
-    const { messages, step, implantation, copyAttachments } = this.state;
+    const { 
+      messages, 
+      step, 
+      implantation, 
+      copyAttachments, 
+      isLoading 
+    } = this.state;
     let attachments = false;
     for (let i = 0; i < messages.length; i++) {
       const msg = messages[i];
@@ -483,6 +493,11 @@ class AddonArchiveDocuments extends Component<Props, State> {
               <span className="title-space">{i18n.t('modal-archive.title')}</span>
             </h5>
           </header>
+          {isLoading && (
+           <div className='spinner-wrapper'>
+            <Spinner />
+           </div>
+           )}
             <Container>
               <Fragment>
                 <div
@@ -992,6 +1007,10 @@ class AddonArchiveDocuments extends Component<Props, State> {
             cursor: pointer;
             color: #001978;
           }
+          .e-grid .e-rowcell {
+            text-align: left;
+          }
+          
         `}</style>
       </div>
     );

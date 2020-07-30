@@ -9,3 +9,13 @@
   background-color: #E5E8F1;
   margin-top: 19px;
 }
+
+.login-centinela-title-space {
+  margin-bottom: 39px !important;
+}
+
+@media (max-width: 824px){
+  .login-centinela-title-space {
+    margin-bottom: 39px!important;
+ } 
+}
