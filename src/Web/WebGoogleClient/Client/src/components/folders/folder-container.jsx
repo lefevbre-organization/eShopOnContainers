@@ -16,6 +16,7 @@ import * as _ from 'lodash';
 import * as uuid from 'uuid/v4';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PerfectScrollbar from "react-perfect-scrollbar";
+import {updateLabelName} from "../../api";
 
 const nodeTemplate = (data) => {
     return (
@@ -44,6 +45,7 @@ class FolderContainer extends Component {
         };
         this.treeViewRef = createRef();
         this.navigateToList = this.navigateToList.bind(this);
+        this.onDropNode = this.onDropNode.bind(this);
     }
 
     navigateToList(evt) {
@@ -83,10 +85,10 @@ class FolderContainer extends Component {
                     {showTree &&
                     <TreeViewComponent id='foldertree'
                                        ref={this.treeViewRef}
-                        //allowDragAndDrop={true}
+                                        allowDragAndDrop={true}
                                        fields={this.state.fields}
                                        loadOnDemand={false}
-                        //enablePersistence={true}
+                                       enablePersistence={true}
                                        nodeSelected={this.navigateToList}
                                        animation={{
                                            expand: {
@@ -97,6 +99,7 @@ class FolderContainer extends Component {
                                            }
                                        }}
                                        nodeTemplate={nodeTemplate}
+                                       nodeDropped={this.onDropNode}
                     >
                     </TreeViewComponent>
                     }
@@ -182,6 +185,16 @@ class FolderContainer extends Component {
                 </style>
             </div>
         );
+    }
+
+    async onDropNode(event) {
+        const { droppedNodeData, draggedNodeData } = event;
+        for(let i = 0; i < this.props.folderTree.length; i++) {
+            if(this.props.folderTree[i].id === droppedNodeData.id) {
+                const newName = `${this.props.folderTree[i].name}/${draggedNodeData.text}`
+                await updateLabelName(draggedNodeData.id, newName);
+            }
+        }
     }
 
     prepareTree() {

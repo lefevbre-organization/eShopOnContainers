@@ -1,8 +1,8 @@
-import { getMessageList } from '../../../../api_graph';
+import {getLabelList, getMessageList} from '../../../../api_graph';
 import { getMessage } from '../../../../api_graph';
 import { getMessageHeader } from '../../../../api_graph';
 import { batchModify } from '../../../../api_graph';
-import { selectLabel } from '../../../sidebar/sidebar.actions';
+import {GET_LABELS, selectLabel} from '../../../sidebar/sidebar.actions';
 
 export const GET_MESSAGES = 'GET_MESSAGES';
 export const GET_MESSAGES_LOAD_IN_PROGRESS = 'GET_MESSAGES_LOAD_IN_PROGRESS';
@@ -200,6 +200,14 @@ export const modifyMessages = ({
       type: MODIFY_MESSAGES_SUCCESS,
       payload: { modifiedIds, addLabelIds, removeLabelIds },
     });
+    setTimeout(()=>{
+      getLabelList().then(labelList => {
+        dispatch({
+          type: GET_LABELS,
+          payload: labelList
+        });
+      });
+    }, 100);
   } catch (err) {
     dispatch({
       type: MODIFY_MESSAGES_FAILED,

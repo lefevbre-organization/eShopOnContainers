@@ -37,6 +37,21 @@ export const getLabelList = () =>
       });
   });
 
+export const updateLabelName = (labelId, newName) => {
+  return new Promise((resolve, reject) => {
+    window.gapi.client.gmail.users.labels
+        .update({
+          userId: 'me',
+          id: labelId,
+          resource: {
+            'id': labelId,
+            name: newName
+          }
+        })
+        .then((response) => resolve(response));
+  });
+};
+
 export const getMessageList = ({ labelIds, maxResults, q, pageToken }) =>
   new Promise((resolve, reject) => {
     getMessageRawList({ labelIds, maxResults, pageToken, q })

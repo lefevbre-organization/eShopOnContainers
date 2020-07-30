@@ -227,7 +227,7 @@ export class MessageContent extends Component {
           body.style.fontSize = '13px';
           body.innerHTML = this.props.emailMessageResult.body.content;
 
-          //Adding attach files
+          //Adding attach filesPORT
           var attach = emailMessageResult.attach;
           if (typeof attach !== 'undefined' && attach.length > 0) {
             var iframe = document.getElementById('message-iframe');

@@ -13,7 +13,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { withTranslation } from "react-i18next";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import PerfectScrollbar from "react-perfect-scrollbar";
+import {updateLabelName} from "../../api_graph";
 
 function nodeTemplate(data) {
     return (
@@ -40,6 +40,7 @@ class FolderContainer extends Component {
         };
         this.treeViewRef = createRef();
         this.navigateToList = this.navigateToList.bind(this);
+        this.onDropNode = this.onDropNode.bind(this);
     }
 
     navigateToList(evt) {
@@ -48,6 +49,7 @@ class FolderContainer extends Component {
     }
 
     componentDidUpdate(prevProps) {
+        console.log("***** TreeView: COMPONENT DID UPDATE");
          if( JSON.stringify(this.props.folderTree) !== JSON.stringify(prevProps.folderTree)) {
              this.setState({
                  showTree: false,
@@ -90,16 +92,24 @@ class FolderContainer extends Component {
                 {showTree &&
                     <TreeViewComponent id='foldertree'
                                        ref={this.treeViewRef}
-                                        //allowDragAndDrop={true}
+                                        allowDragAndDrop={true}
                                        fields={this.state.fields}
                                        enablePersistence={true}
                                        loadOnDemand={false}
                                        nodeSelected={this.navigateToList}
                                        nodeTemplate={nodeTemplate}
+                                       nodeDropped={this.onDropNode}
+                                       animation={{
+                                           expand: {
+                                               duration: 100
+                                           },
+                                           collapse: {
+                                               duration: 100
+                                           }
+                                       }}
                     >
                     </TreeViewComponent>
                 }
-                {/*</PerfectScrollbar>*/}
                 <style jsx global>{`
                     .tree-scrollbar {
                         height: calc(100% - 128px);
@@ -182,95 +192,16 @@ class FolderContainer extends Component {
         );
     }
 
-
-
-    // showLabel(node) {
-    //     if(node.labelListVisibility === 'labelHide') {
-    //         return false;
-    //     }
-    //
-    //     if(node.name === 'UNREAD') {
-    //         return false;
-    //     }
-    //
-    //     return true;
-    // }
-
-    // getIcon(node) {
-    //     switch(node.name) {
-    //         case "INBOX":
-    //             return faInbox;
-    //         case "SENT":
-    //             return faEnvelopeSquare;
-    //         case "TRASH":
-    //             return faTrashAlt;
-    //         case "SPAM":
-    //             return faExclamationTriangle;
-    //         case "DRAFT":
-    //             return faFile;
-    //         case "STARRED":
-    //             return faStar;
-    //         case "UNREAD":
-    //             return faEyeSlash;
-    //         case "CHAT":
-    //             return faCommentDots;
-    //         case "IMPORTANT":
-    //             return faBookmark;
-    //         case "CATEGORY_PERSONAL":
-    //             return faFolder;
-    //         case "CATEGORY_FORUMS":
-    //             return faFolder;
-    //         case "CATEGORY_PROMOTIONS":
-    //             return faFolder;
-    //         case "CATEGORY_SOCIAL":
-    //             return faFolder;
-    //         case "CATEGORY_UPDATES":
-    //             return faFolder;
-    //         default:
-    //             return faFolder;
-    //     }
-    // }
-
-    // getNodeName(folderName) {
-    //     const { t } =this.props;
-    //     return  folderName;
-    //
-    //     // const parts = folderName.split("/");
-    //     // const name = parts.pop();
-    //     //
-    //     // switch(name) {
-    //     //     case "INBOX":
-    //     //         return t("sidebar.inbox");
-    //     //     case "SENT":
-    //     //         return t("sidebar.sent");
-    //     //     case "TRASH":
-    //     //         return t("sidebar.trash");
-    //     //     case "SPAM":
-    //     //         return t("sidebar.spam");
-    //     //     case "DRAFT":
-    //     //         return t("sidebar.draft");
-    //     //     case "STARRED":
-    //     //         return t("sidebar.starred");
-    //     //     case "UNREAD":
-    //     //         return t('sidebar.unread');
-    //     //     case "CHAT":
-    //     //         return t('sidebar.chat');
-    //     //     case "IMPORTANT":
-    //     //         return t('sidebar.important');
-    //     //     case "CATEGORY_PERSONAL":
-    //     //         return t('sidebar.personal');
-    //     //     case "CATEGORY_FORUMS":
-    //     //         return t('sidebar.forums');
-    //     //     case "CATEGORY_PROMOTIONS":
-    //     //         return t('sidebar.promotions');
-    //     //     case "CATEGORY_SOCIAL":
-    //     //         return t('sidebar.social');
-    //     //     case "CATEGORY_UPDATES":
-    //     //         return t('sidebar.updates');
-    //     //     default:
-    //     //         return name;
-    //     // }
-    // }
+    async onDropNode(event) {
+        const { droppedNodeData, draggedNodeData } = event;
+        for(let i = 0; i < this.props.folderTree.length; i++) {
+            if(this.props.folderTree[i].id === droppedNodeData.id) {
+                console.log(draggedNodeData)
+                console.log(this.props.folderTree[i])
+                await updateLabelName(draggedNodeData.id, this.props.folderTree[i].id);
+            }
+        }
+    }
 }
 
 function mapStateToProps(state) {

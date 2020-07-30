@@ -91,20 +91,30 @@ export const getLabelList = async () => {
   try {
     let folders = await client.api('/me/mailFolders?$top=200').get();
     let allFolders = [];
+    let nodes = [];
+    if(folders && folders.value && folders.value.length > 0) {
+      nodes = [...folders.value.map( f => ({...f, parentFolderId: undefined}) )];
+    }
 
     const loadSubchilds = async (res) => {
       let childs = [];
-      for(let i = 0; i < res.length; res++) {
+      for(let i = 0; i < res.length; i++) {
         if (res[i].childFolderCount > 0) {
           const cres = await client.api(`/me/mailFolders/${res[i].id}/childFolders`).get();
-          childs = [...cres.value, ...await loadSubchilds(cres.value)];
+          if(cres && cres.value && cres.value.length > 0) {
+            nodes = nodes.concat(cres.value);
+
+            const cresChilrens = await loadSubchilds(cres.value);
+            if(cresChilrens && cresChilrens.value && cresChilrens.value.length > 0) {
+              nodes = nodes.concat(cresChilrens.value)
+            }
+          }
         }
       }
-      return childs;
     }
 
     const childs = await loadSubchilds(folders.value);
-    allFolders = [...folders.value.map( f => ({...f, parentFolderId: undefined}) ), ...childs];
+    allFolders = [...nodes];
 
     return allFolders;
   } catch (err) {
@@ -125,6 +135,22 @@ export const getChildLabel = async (parentId) => {
   }
 
   return [];
+};
+
+export const updateLabelName = async (labelId, destinationId) => {
+  const accessToken = await getAccessTokenSilent();
+  const client = await getAuthenticatedClient(accessToken);
+
+  try {
+    const mailFolder = await client.api(`/me/mailFolders/${labelId}/move`).post({
+      destinationId: destinationId
+    });
+    return mailFolder;
+  } catch (err) {
+    console.log(err);
+  }
+
+  return null;
 };
 
 export const getLabelInbox = () =>
