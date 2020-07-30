@@ -869,7 +869,9 @@ class AddonAttachDocuments extends Component {
             cursor: pointer;
             color: #001978;
           }
-
+          .lx-progress-label-percent {
+            line-height: 22px;
+          }
         `}</style>
       </div>
     );

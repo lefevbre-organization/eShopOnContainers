@@ -223,8 +223,8 @@ class AddonConnectingEmails extends Component {
     const { toggleNotification } = this.props;
     const { selectedMessages, addonData } = this.props;
     let notification = 0;
+    let error = false;
     let sc = null;
-    //  await getMessage(selectedMessages[0].id, 'raw');
 
     const msgRaw = await getRawAddon(addonData);
 
@@ -246,31 +246,34 @@ class AddonConnectingEmails extends Component {
           const subject = selectedMessages[i].subject;
 
           if (step1Data.copyDocuments === true) {
-            await uploadFile(
-              step1Data.actuation === false ? step3Data.selected : undefined,
-              step1Data.actuation === false ? step2Data.id : undefined,
-              step1Data.actuation === false ? step2Data.idType : 45,
-              step1Data.actuation === true ? sc[i] : undefined,
-              this.props.bbddAddon.bbdd,
-              this.props.user.idUser,
-              subject + '.eml',
-              raw
-            );
+            try {
+              const data = await uploadFile(
+                step1Data.actuation === false ? step3Data.selected : undefined,
+                step1Data.actuation === false ? step2Data.id : undefined,
+                step1Data.actuation === false ? step2Data.idType : 45,
+                step1Data.actuation === true ? sc[i] : step2Data.id,
+                this.props.bbddAddon.bbdd,
+                this.props.user.idUser,
+                subject + '.eml',
+                raw
+              );
+              if (!data || data.response.status > 201) {
+                error = true;
+              }
+            } catch (err) {
+              console.log(err);
+              error = true;
+            }
           }
-
+          
           if (step1Data.saveDocuments === true) {
             // Save attachments
             const mime = parse(msgRaw.result.data.raw);
-            for (let j = 0; j < mime.childNodes.length; j++) {
-              if (
-                mime.childNodes[j].raw.indexOf(
-                  'Content-Disposition: attachment;'
-                ) > -1
-              ) {
-                let rawAttach = base64js.fromByteArray(
-                  mime.childNodes[j].content
-                );
-                await uploadFile(
+            const attachments = findAttachments(mime);
+            for (let j = 0; j < attachments.length; j++) {
+              let rawAttach = base64js.fromByteArray(attachments[j].content);
+              try {
+                const data = await uploadFile(
                   step1Data.actuation === false
                     ? step3Data.selected
                     : undefined,
@@ -279,9 +282,14 @@ class AddonConnectingEmails extends Component {
                   step1Data.actuation === true ? sc[i] : undefined,
                   this.props.bbddAddon.bbdd,
                   this.props.user.idUser,
-                  mime.childNodes[j].contentType.params.name,
+                  attachments[j].contentType.params.name,
                   rawAttach
                 );
+                if (!data || data.response.status > 201) {
+                  error = true;
+                }
+              } catch (err) {
+                error = true;
               }
             }
           }
@@ -487,7 +495,7 @@ class AddonConnectingEmails extends Component {
       step, 
       isLoading 
     } = this.state;
-
+    console.log(addonData);
     return (
       <div className=''>
         <header className='addon-header'>
@@ -575,6 +583,94 @@ class AddonConnectingEmails extends Component {
             margin-left: 20px;
             font-size: 22px;
             margin-top: 12px;
+          }
+
+          .modal-header .close {
+            font-family: MTTMilano, Lato, Arial, sans-serif;
+            opacity: 1;
+            color: #fff;
+            font-size: 16px;
+            text-shadow: 0 0 0;
+            position: relative;
+            top: 0px;
+          }
+
+          .modal-header .close span:first-child {
+            color: #001978;
+            display: none;
+         }
+
+          .modal-content {
+           border: 0;
+           border-radius: 0;
+          }
+
+          .modal-header .close:before {
+           content: '\\e938';
+           color: #fff;
+           font-family: 'lf-font' !important;
+           speak: none;
+           font-style: normal;
+           font-weight: normal;
+           font-variant: normal;
+           text-transform: none;
+           line-height: 1;
+           -webkit-font-smoothing: antialiased;
+           -moz-osx-font-smoothing: grayscale;
+          }
+
+          .prompt .modal-header {
+            font-size: 22px;
+            border-radius: 0;
+            border: 0;
+          }
+
+          .prompt .modal-header .close:before {
+            color: #001978 !important;
+          }
+
+          .modal-footer {
+            border: 0;
+            border-radius: 0;
+            justify-content: flex-end !important;
+            background-color: #ffffff;
+          }
+    
+          .btn-primary-white {
+            text-transform: uppercase;
+            font-size: 13px;
+            font-family: MTTMilano-Bold, Lato, Arial, sans-serif;
+            letter-spacing: 0.7px;
+            color: rgb(0, 25, 120);
+            padding: 10px;
+          }
+
+          .btn-outline-secondary-white {
+            text-transform: uppercase;
+            font-size: 13px;
+            font-family: MTTMilano-Bold, Lato, Arial, sans-serif;
+            letter-spacing: 0.7px;
+            color: rgb(255, 255, 255);
+            background-color: rgb(0, 25, 120);
+            padding: 10px;
+            margin-right: 36px;
+          }
+
+          .btn-outline-secondary-white, 
+          .btn-primary-white {
+            min-width: 80px;
+            border-radius: 0px;
+            border-width: 2px;
+            border-style: solid;
+            border-color: rgb(255, 255, 255);
+            border-image: initial;
+          }
+        
+          .btn-outline-secondary-white:hover, 
+          .btn-primary-white:hover {
+            background-color: rgb(229, 232, 241);
+            color: rgb(0, 25, 120);
+            border-color: rgb(255, 255, 255);
           }
 
           .title-space {
@@ -1018,3 +1114,38 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(AddonConnectingEmails);
+
+const findAttachments = (email) => {
+  let attachs = [];
+  if (email.childNodes) {
+    for (let i = 0; i < email.childNodes.length; i++) {
+      if (
+        email.childNodes[i]._isMultipart === false &&
+        isAttachment(email.childNodes[i].headers)
+      ) {
+        attachs.push({
+          ...email.childNodes[i],
+          checked: true,
+        });
+      } else {
+        attachs = [...attachs, ...findAttachments(email.childNodes[i])];
+      }
+    }
+  }
+  return attachs;
+};
+
+const isAttachment = (node) => {
+  let bRes = false;
+  if (node['x-attachment-id']) {
+    bRes = true;
+  } else if (
+    node['content-disposition'] &&
+    node['content-disposition'][0].params.filename
+  ) {
+    bRes = true;
+  }
+
+  return bRes;
+};
+
