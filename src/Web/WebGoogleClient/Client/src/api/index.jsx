@@ -548,7 +548,6 @@ export const sendMessage = async ({ headers, body, attachments }) => {
 
 export const setMessageAsRead = async (messageId) =>
   new Promise((resolve, reject) => {
-    debugger
     window.gapi.client.gmail.users.messages
       .modify({
         userId: 'me',
