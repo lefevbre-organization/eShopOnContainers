@@ -36,7 +36,7 @@ import { TabComponent, TabItemDirective, TabItemsDirective } from '@syncfusion/e
 import ReactTagInput from "@pathofdev/react-tag-input/";
 import "@pathofdev/react-tag-input/build/index.css";
 import { DropDownList } from '@syncfusion/ej2-dropdowns';
-import { setCulture, L10n, loadCldr, Internationalization } from '@syncfusion/ej2-base';
+import { setCulture, L10n, loadCldr, Internationalization, compile } from '@syncfusion/ej2-base';
 import currencies from 'cldr-data/main/es/currencies.json';
 import gregorian from 'cldr-data/main/es/ca-gregorian.json';
 import numbers from 'cldr-data/main/es/numbers.json';
@@ -45,6 +45,8 @@ import numberingSystems from 'cldr-data/supplemental/numberingSystems.json';
 import weekData from 'cldr-data/supplemental/weekData.json';// To load the culture based first day of week
 import i18n from 'i18next';
 import Reminder from "./reminder/reminder"
+import { Popup } from '@syncfusion/ej2-popups';
+import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 
 export class Main extends Component {
 
@@ -165,7 +167,26 @@ export class Main extends Component {
             { text: 'Aprendizaje', id: '7', backgroundColor: '#0F6259' },            
             { text: 'Talleres', id: '8', backgroundColor: '#F8CBE9' },
             { text: 'Otros', id: '9', backgroundColor: '#F5F3F4' },           
-        ]; 
+            ]; 
+
+        this.items = [
+            {
+                text: 'Dashboard',
+                iconCss: 'e-ddb-icons e-dashboard'
+            },
+            {
+                text: 'Notifications',
+                iconCss: 'e-ddb-icons e-notifications',
+            },
+            {
+                text: 'User Settings',
+                iconCss: 'e-ddb-icons e-settings',
+            },
+            {
+                text: 'Log Out',
+                iconCss: 'e-ddb-icons e-logout'
+            }
+        ];
 
     }
 
@@ -849,9 +870,46 @@ export class Main extends Component {
     } 
 
     onEventRendered(args) {
+
         let event;       
 
         switch (args.requestType) {
+
+            case 'toolBarItemRendered':
+
+                let scheduleElement = document.getElementById('schedule');
+                if (args.requestType === 'toolBarItemRendered') {
+                    let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon');
+                    userIconEle.onclick = () => {
+                        this.profilePopup.relateTo = userIconEle;
+                        this.profilePopup.dataBind();
+                        if (this.profilePopup.element.classList.contains('e-popup-close')) {
+                            this.profilePopup.show();
+                        }
+                        else {
+                            this.profilePopup.hide();
+                        }
+                    };
+                }
+                let userContentEle = createElement('div', {
+                    className: 'e-profile-wrapper'
+                });
+                scheduleElement.parentElement.appendChild(userContentEle);
+                let userIconEle = scheduleElement.querySelector('.e-schedule-user-icon'); 
+                let output = this.buttonEventTypeObj.element;
+                this.profilePopup = new Popup(userContentEle, {
+                    content: output,
+                    relateTo: userIconEle,
+                    position: { X: 'left', Y: 'bottom' },
+                    collision: { X: 'flip', Y: 'flip' },
+                    targetType: 'relative',
+                    viewPortElement: scheduleElement,
+                    width: 150,
+                    height: 60
+                });
+                this.profilePopup.hide();
+
+                break;
 
             case 'eventChanged':
 
@@ -1202,11 +1260,18 @@ export class Main extends Component {
 
     onActionBegin(args) {
         if (args.requestType === 'toolbarItemRendering') {
-            let userIconItem = {
-                align: 'Right', prefixIcon: 'user-icon', text: 'Configuración', cssClass: 'e-schedule-user-icon'
-            };
-            args.items.push(userIconItem);
+            if (args.requestType === 'toolbarItemRendering') {
+                let userIconItem = {
+                    align: 'Right', prefixIcon: 'user-icon', text: 'Configuration', cssClass: 'e-schedule-user-icon'
+                };
+                args.items.push(userIconItem);
+            }
         }
+    }
+
+    onEventTypeClick() {
+        this.profilePopup.hide();
+        alert('Open type of event screen');        
     }
 
     render() {
@@ -1329,10 +1394,20 @@ export class Main extends Component {
                                     />
                                 </div>
 
+                                <div className="hidden">
+                                    <ButtonComponent
+                                        cssClass='e-flat e-primary'
+                                        onClick={this.onEventTypeClick.bind(this)}
+                                        ref={but => this.buttonEventTypeObj = but}
+                                    >Tipos de eventos</ButtonComponent>
+                                </div>
+
                                 <div className='schedule-control-section'>
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
                                             <ScheduleComponent
+                                                id="schedule"
+                                                cssClass='schedule-header-bar'
                                                 ref={schedule => this.scheduleObj = schedule}
                                                 width='100%'
                                                 currentView="Month"
@@ -1342,6 +1417,7 @@ export class Main extends Component {
                                                 actionComplete={this.onEventRendered.bind(this)}                                               
                                                 popupOpen={this.onPopupOpen.bind(this)}
                                                 actionBegin={this.onActionBegin.bind(this)}
+                                                //actionComplete={this.onActionComplete.bind(this)}
                                                 eventSettings={
                                                     {
                                                         dataSource: this.scheduleData,
