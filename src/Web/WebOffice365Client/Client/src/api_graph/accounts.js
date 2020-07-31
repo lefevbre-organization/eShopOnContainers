@@ -1,4 +1,5 @@
 import * as moment from 'moment';
+import jwt_decode from 'jwt-decode';
 
 export const getUser = async userId => {
   const url = `${window.URL_GET_ACCOUNTS}/${userId}`;
@@ -12,6 +13,8 @@ export const getUser = async userId => {
     const res2 = await fetch(url2, { method: 'GET' });
     const navUser = await res2.json();
     user.data.lexonUserId = navUser.data.idUser;
+    const userData = jwt_decode(navUser.data.token, {complete: true});
+    user.data.tokenDecoded = userData;
 
     return user;
   } catch (err) {

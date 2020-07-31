@@ -24,6 +24,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import i18n from 'i18next';
 import { signOut } from '../../api_graph/authentication';
+import CU_ACTIONS from "../../actions/user";
 
 class MenuUser extends Component {
   constructor(props) {
@@ -459,9 +460,11 @@ MenuUser.propTypes = {
 };
 
 const mapDispatchToProps = (dispatch) =>
-  bindActionCreators({ setSign: ACTIONS.setSign }, dispatch);
+    ({ ...bindActionCreators({ setSign: ACTIONS.setSign }, dispatch),
+      setCurrentUser: (payload) => dispatch(CU_ACTIONS.setCurrentUser(payload)),
+    });
 
-const mapStateToProps = (state) => ({
+  const mapStateToProps = (state) => ({
   lexon: state.lexon,
 });
 

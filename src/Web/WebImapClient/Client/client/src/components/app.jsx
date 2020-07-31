@@ -116,10 +116,6 @@ class App extends Component {
   }
 
   hasProduct(product) {
-    if (SHOW_EXPERIMENTAL === '1') {
-      return true;
-    }
-
     if (this.props.currentUser && this.props.currentUser.roles) {
       return this.props.currentUser.roles.indexOf(product) > -1;
     }
@@ -350,21 +346,14 @@ class App extends Component {
                 isotip={t('productBar.lexon')}
                 isotip-position='bottom-end'
                 isotip-size='small'>
-                {lexon.user ? (
+                {lexon.user && this.hasProduct('centinelaconnector') ? (
                   <IconButton onClick={() => this.onSetSidebarOpenLexon(true)}>
                     <img
                       border='0'
                       alt='Lex-On'
                       src='/assets/images/icon-lx.svg'></img>
                   </IconButton>
-                ) : (
-                  <IconButton>
-                    <img
-                      disabled
-                      border='0'
-                      alt='Lex-On'
-                      src='/assets/images/icon-lx.svg'></img>
-                  </IconButton>
+                ) : null
                 )}
                 <div className={styles.btnselect}></div>
               </span>
@@ -377,14 +366,14 @@ class App extends Component {
                   <IconButton
                   onClick={() => this.onSetSidebarOpenCentinela(true)}>
                     <img
-                      disabled
                       border='0'
                       alt='Centinela'
                       src='/assets/images/icon-cn.svg'></img>
                   </IconButton>
                   <div className={styles.btnselect}></div>
                 </span>
-              ) : null}
+              ) : null
+              }
 
               {this.hasProduct('databaseconnector') &&
               window.SHOW_EXPERIMENTAL === '1' ? (

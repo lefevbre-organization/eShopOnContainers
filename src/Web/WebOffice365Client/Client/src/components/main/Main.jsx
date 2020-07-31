@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
 import * as uuid from 'uuid/v4';
 import ACTIONS from '../../actions/lexon';
+import CU_ACTIONS from '../../actions/user';
 import Cookies from 'js-cookie';
 import { detailedDiff } from 'deep-object-diff';
 import Header from '../header/Header';
@@ -359,7 +360,6 @@ export class Main extends Component {
     const idEmail = this.props.idEmail;
     if (userId !== null && email !== null) {
       const user = await getUser(userId);
-      console.log(user);
 
       let sign = '';
       const account = user.data.accounts.filter((a) => a.email === email);
@@ -595,12 +595,8 @@ export class Main extends Component {
   }
 
   hasProduct(product) {
-    if (window.SHOW_EXPERIMENTAL === '1') {
-      return true;
-    }
-
     if (this.props.currentUser && this.props.currentUser.roles) {
-      return this.props.currentUser.roles.indexOf(product) > -1;
+      return this.props.currentUser.roles.indexOf(product) > -1
     }
 
     return false;
@@ -789,7 +785,7 @@ export class Main extends Component {
                 </span>
               )}
               <span className='productsbutton'>
-                {lexon.user ? (
+                {lexon.user && this.hasProduct('lexonconnector') ? (
                   <div onClick={() => this.onSetSidebarOpenLexon(true)}>
                     <img
                       className='imgproduct'
@@ -869,6 +865,7 @@ const mapDispatchToProps = (dispatch) =>
       setBBDD: ACTIONS.setBBDD,
       setGUID: ACTIONS.setGUID,
       setSign: ACTIONS.setSign,
+      setCurrentUser: CU_ACTIONS.setCurrentUser
     },
     dispatch
   );

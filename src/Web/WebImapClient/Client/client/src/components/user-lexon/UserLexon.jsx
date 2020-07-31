@@ -183,7 +183,7 @@ class UserLexon extends Component {
     const { lexon } = this.props;
     try {
       const result = getUser(lexon.userId);
-      console.log('LEXON USER**************: ' + lexon.userId);
+      this.props.setCurrentUser(result.data.tokenDecoded);
 
       if (result.errors.length === 0) {
         const accountsByProvider = result.data.accounts.filter(

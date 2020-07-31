@@ -4,6 +4,7 @@ import { bindActionCreators, compose } from 'redux';
 import * as uuid from 'uuid/v4';
 import * as base64 from 'base-64';
 import ACTIONS from '../../actions/lexon';
+import CU_ACTIONS from '../../actions/user';
 
 import {
   diff,
@@ -378,6 +379,7 @@ export class Main extends Component {
     if (userId !== null && email !== null) {
       const user = await getUser(userId);
       console.log(user);
+      this.props.setCurrentUser(user.data.tokenDecoded);
 
       let sign = '';
       const account = user.data.accounts.filter((a) => a.email === email);
@@ -929,6 +931,7 @@ const mapDispatchToProps = (dispatch) =>
       setBBDD: ACTIONS.setBBDD,
       setGUID: ACTIONS.setGUID,
       setSign: ACTIONS.setSign,
+      setCurrentUser: CU_ACTIONS.setCurrentUser
     },
     dispatch
   );

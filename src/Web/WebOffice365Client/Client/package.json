@@ -36,6 +36,7 @@
     "i18next-xhr-backend": "^3.0.0",
     "js-base64": "^2.5.1",
     "js-cookie": "^2.2.1",
+    "jwt-decode": "^2.2.0",
     "moment": "^2.22.2",
     "msal": "^1.2.1",
     "njwt": "^1.0.0",

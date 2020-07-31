@@ -24,6 +24,7 @@ import {
 } from '../../services/accounts';
 import { setSign } from '../../actions/lexon';
 import UserSign from './menu-user-sign';
+import {setCurrentUser} from "../../actions/user";
 
 class MenuUser extends Component {
     constructor(props) {
@@ -54,6 +55,8 @@ class MenuUser extends Component {
         if (lexon.userId) {
             getUser(lexon.userId)
                 .then(result => {
+                    this.props.setCurrentUser(result.data.tokenDecoded);
+
                     if (result.errors.length === 0) {
                         this.setState({
                             sign: result.data.accounts[0].sign,
@@ -499,7 +502,11 @@ const mapDispatchToProps = dispatch => ({
     },
     setSign: sign => {
         dispatch(setSign(sign));
+    },
+    setCurrentUser: user => {
+        dispatch(setCurrentUser(user));
     }
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MenuUser);

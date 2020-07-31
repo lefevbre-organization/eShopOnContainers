@@ -11,7 +11,7 @@ const defaultUser = {
 
 export const currentUser = (state = defaultUser, action = {}) => {
   switch (action.type) {
-    case ActionTypes.SET_CURENT_USER:
+    case ActionTypes.SET_CURRENT_USER:
       return {
         ...state,
         ...action.payload,

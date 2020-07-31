@@ -124,6 +124,7 @@ class UserLexon extends Component {
 
     try {
       const result = await getUser(lexon.userId);
+      this.props.setCurrentUser(result.data.tokenDecoded);
 
       if (result.errors.length === 0) {
         const accountsByProvider = result.data.accounts.filter(
