@@ -44,6 +44,7 @@ COPY src/Web/WebStatusLef/WebStatusLef.csproj src/Web/WebStatusLef/
 COPY src/Web/WebSignatureClient/WebSignatureClient.csproj src/Web/WebSignatureClient/
 COPY src/Web/WebCentinelaClient/WebCentinelaClient.csproj src/Web/WebCentinelaClient/
 COPY src/Addon/Lexon/Office365/WebOffice365AddonLexon/WebOffice365AddonLexon.csproj src/Addon/Lexon/Office365/WebOffice365AddonLexon/
+COPY src/Addon/Centinela/Office365/WebOffice365AddonCentinela/WebOffice365AddonCentinela.csproj src/Addon/Centinela/Office365/WebOffice365AddonCentinela/
 
 COPY "docker-compose.dcproj" "docker-compose.dcproj"
 COPY "NuGet.config" "NuGet.config"

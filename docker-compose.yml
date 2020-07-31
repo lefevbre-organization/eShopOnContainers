@@ -79,6 +79,16 @@ services:
         NODE_IMAGE: ${NODE_IMAGE:-node:12}
     depends_on:
       - rabbitmq
+
+   weboffice365addoncentinela:
+    image: ${REGISTRY:-elefebvreoncontainers}/weboffice365addoncentinela:${PLATFORM:-linux}-${TAG:-dev}
+    build:
+      context: .
+      dockerfile: src/Addon/Centinela/Office365/WebOffice365AddonCentinela/Dockerfile    
+      args:
+       NODE_IMAGE: ${NODE_IMAGE:-node:12}
+    depends_on:
+      - rabbitmq
   
   account.api:
     image: ${REGISTRY:-elefebvreoncontainers}/account.api:${PLATFORM:-linux}-${TAG:-dev}
