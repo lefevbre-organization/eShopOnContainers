@@ -80,7 +80,7 @@ services:
     depends_on:
       - rabbitmq
 
-   weboffice365addoncentinela:
+  weboffice365addoncentinela:
     image: ${REGISTRY:-elefebvreoncontainers}/weboffice365addoncentinela:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
