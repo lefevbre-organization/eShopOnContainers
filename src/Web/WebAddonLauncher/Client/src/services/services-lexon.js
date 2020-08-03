@@ -53,3 +53,29 @@ export const base64Decode = (user) => {
    }).join(''));
   return JSON.parse(jsonPayload);
 }
+
+export const getRawAddon = async (addonData) => {
+  const url =
+    `${window.URL_GET_ACCOUNTS}/${addonData.idClienteNav}/raw?` +
+    'provider=' +
+    addonData.provider +
+    '&account=' +
+    addonData.account +
+    '&messageId=' +
+    addonData.messageById;
+
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
+    const result = await response.json();
+
+    return { result };
+  } catch (err) {
+    throw err;
+  }
+};

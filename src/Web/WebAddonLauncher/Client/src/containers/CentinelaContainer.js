@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import queryString from 'query-string';
+import { getRawAddon } from '../services/services-lexon';
 
 class CentinelaContainer extends Component {
     constructor(props) {
@@ -51,7 +52,8 @@ class CentinelaContainer extends Component {
        }
     }
     
-    sendMessageCentinelaPutUser(user, addonData) {
+    async sendMessageCentinelaPutUser(user, addonData) {
+      const msgRaw = await getRawAddon(addonData);
         window.dispatchEvent(
           new CustomEvent('PutUserFromCentinelaConnector', {
             detail: {
@@ -61,7 +63,7 @@ class CentinelaContainer extends Component {
                 subject: addonData.subject,
                 folder: addonData.folder,
                 sentDateTime: addonData.sentDateTime,
-                raw: addonData.raw
+                raw: msgRaw.result.data.raw
               }],
               provider: addonData.provider,
               account: addonData.account,

@@ -7,7 +7,8 @@ import {
   removeClassification,
   getRawAddon,
   saveMessageRaw,
-  removeRawAddon
+  removeRawAddon,
+  getMessageHeader
 } from '../../services/services';
 import Header from '../header/header';
 import ListClassifications from '../list-classifications/list-classifications'
@@ -49,12 +50,8 @@ class MessageClassifications extends Component {
           return this.changeCompany();
         }
         this.getClassifications();
-        Office.context.mailbox.item.getAllInternetHeadersAsync(
-          (asyncResult) => {
-            this.setState({messageRaw: asyncResult.value });
-          }
-        );
-        this.getAddonData();
+        this.getMessageRaw();
+        this.getAddonData(); 
       }
     }
     
@@ -85,10 +82,13 @@ class MessageClassifications extends Component {
     getMessageRaw = () => {
       const { isOfficeInitialized } = this.props;
       if(isOfficeInitialized) {
-        Office.context.mailbox.item.getAllInternetHeadersAsync(
-          (asyncResult) => {
-            this.setState({messageRaw: asyncResult.value });
-          }
+        const itemId = Office.context.mailbox.item.itemId;
+        easyEws.getMailItemMimeContent(itemId, (mimeContent) => {
+          const jsonPayload = decodeURIComponent(atob(mimeContent).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+           }).join(''));
+          this.setState({ messageRaw: jsonPayload });
+         }
         );
       }
      
@@ -148,7 +148,7 @@ class MessageClassifications extends Component {
         account: mailbox.userProfile.emailAddress,
         provider: 'OU',
         messageId: mailbox.item.internetMessageId,
-        messageById: mailbox.item.internetMessageId,
+        messageById: (mailbox.item.internetMessageId).replaceAll('+', ''),
         subject: mailbox.item.subject,
         folder: mailbox.item.itemType,
         sentDateTime: mailbox.item.dateTimeCreated,
@@ -158,9 +158,11 @@ class MessageClassifications extends Component {
         email: user.login,
         addonType: "MessageRead"
       }
+
        const msgRaw = await getRawAddon(
         addonData
       );
+
       if(msgRaw.result.data == null) {
         saveMessageRaw(addonData, this.state.messageRaw);
       }
@@ -211,7 +213,7 @@ class MessageClassifications extends Component {
       const addonData = {
         account: mailbox.userProfile.emailAddress,
         provider: 'OU',
-        messageById: mailbox.item.internetMessageId,
+        messageById: (mailbox.item.internetMessageId).replaceAll('+', ''),
         idClienteNav: user.idClienteNavision,
       }
       this.getAddonData();

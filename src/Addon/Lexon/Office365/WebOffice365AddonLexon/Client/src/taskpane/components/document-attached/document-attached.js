@@ -27,6 +27,7 @@ class DocumentAttached extends Component {
       }
       const user = base64Decode();
       this.setState({ user: user });
+      this.getAddonData();
     }
 
 
@@ -36,6 +37,7 @@ class DocumentAttached extends Component {
           if(conversationId) {
             return this.changeCompany();
           }
+          this.getAddonData();
         }
     }
   

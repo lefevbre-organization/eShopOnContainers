@@ -10,8 +10,8 @@
   <HighResolutionIconUrl DefaultValue="https://lexbox-test-weboffice365addonlexon.lefebvre.es/assets/icon-lefebvre-80.jpg"/>
   <SupportUrl DefaultValue="https://www.contoso.com/help"/>
   <AppDomains>
-    <AppDomain>https://lexbox-test-weboffice365addonlexon.lefebvre.es</AppDomain>
-    <AppDomain>https://lexbox-test-webaddonlauncher.lefebvre.es</AppDomain>
+    <!-- <AppDomain>https://localhost:3000</AppDomain>  -->
+    <AppDomain>https://lexbox-test-webaddonlauncher.lefebvre.es</AppDomain> 
   </AppDomains>
   <Hosts>
     <Host Name="Mailbox"/>
@@ -29,7 +29,8 @@
       </DesktopSettings>
     </Form>
   </FormSettings>
-  <Permissions>ReadWriteItem</Permissions>
+  <!-- <Permissions>ReadWriteItem</Permissions> -->
+  <Permissions>ReadWriteMailbox</Permissions>
   <Rule xsi:type="RuleCollection" Mode="Or">
     <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
   </Rule>

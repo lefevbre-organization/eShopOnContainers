@@ -279,7 +279,7 @@ class AddonConnectingEmails extends Component {
                     : undefined,
                   step1Data.actuation === false ? step2Data.id : undefined,
                   step1Data.actuation === false ? step2Data.idType : 45,
-                  step1Data.actuation === true ? sc[i] : undefined,
+                  step1Data.actuation === true ? sc[i] : step2Data.id,
                   this.props.bbddAddon.bbdd,
                   this.props.user.idUser,
                   attachments[j].contentType.params.name,
