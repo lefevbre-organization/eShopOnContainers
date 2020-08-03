@@ -30,7 +30,6 @@ export const getRawAddon = async (
   const url = `${window.URL_GET_ACCOUNTS}/${addonData.idClienteNav}/raw?`
   + 'provider='+ addonData.provider + '&account=' + 
   addonData.account +'&messageId=' + addonData.messageById;
-  console.log(addonData.idClienteNav, addonData.provider, addonData.account, addonData.messageById);
   try {
     const response = await fetch(url, {
       method: 'GET',

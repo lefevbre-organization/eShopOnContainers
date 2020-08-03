@@ -40,11 +40,7 @@ class ArchiveMessage extends Component {
 
     componentDidUpdate(prevProps, prevState) {
       if(prevProps.isOfficeInitialized !== this.props.isOfficeInitialized) {
-        Office.context.mailbox.item.getAllInternetHeadersAsync(
-          (asyncResult) => {
-            this.setState({messageRaw: asyncResult.value });
-          }
-        );
+        this.getMessageRaw();
         this.getAddonData();
       }
     }
@@ -56,10 +52,13 @@ class ArchiveMessage extends Component {
     getMessageRaw = () => {
       const { isOfficeInitialized } = this.props;
       if(isOfficeInitialized) {
-        Office.context.mailbox.item.getAllInternetHeadersAsync(
-          (asyncResult) => {
-            this.setState({messageRaw: asyncResult.value });
-          }
+        const itemId = Office.context.mailbox.item.itemId;
+        easyEws.getMailItemMimeContent(itemId, (mimeContent) => {
+          const jsonPayload = decodeURIComponent(atob(mimeContent).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+           }).join(''));
+          this.setState({ messageRaw: jsonPayload });
+         }
         );
       }
     }
@@ -113,7 +112,7 @@ class ArchiveMessage extends Component {
         account: mailbox.userProfile.emailAddress,
         provider: 'OU',
         messageId: mailbox.item.internetMessageId,
-        messageById: mailbox.item.internetMessageId,
+        messageById: (mailbox.item.internetMessageId).replaceAll('+', ''),
         subject: mailbox.item.subject,
         folder: mailbox.item.itemType,
         sentDateTime: mailbox.item.dateTimeCreated,
@@ -145,7 +144,7 @@ class ArchiveMessage extends Component {
       const addonData = {
         account: mailbox.userProfile.emailAddress,
         provider: 'OU',
-        messageById: mailbox.item.internetMessageId,
+        messageById: (mailbox.item.internetMessageId).replaceAll('+', ''),
         idClienteNav: user.idClienteNavision,
       }
    

@@ -15,8 +15,7 @@ import { Step3 } from '../modal-archive-document/step3';
 import {
   Evaluation,
   CentInstance,
-  uploadFile,
-  getRawAddon
+  uploadFile
 } from '../../../services/services-centinela';
 import { identity } from 'lodash';
 const parse = require('emailjs-mime-parser').default;
@@ -101,17 +100,18 @@ class AddonArchiveDocuments extends Component<Props, State> {
   }
 
   initMessages() {
-    const { selected } = this.props;
+    const { selected, addonData } = this.props;
     const messages = [];
     let attachments: any = [];
-
     // Parsing messages
-    for (let i = 0; i < selected.length; i++) {
-      const attchs: any = this.parseMessage(selected[i]);
+    for (let i = 0; i < addonData.selectedMessages.length; i++) {
+      const selected = addonData.selectedMessages[i];
+      const attchs: any = this.parseMessage(selected);
       attachments = [...attachments, ...attchs];
-      const nm = Object.assign({}, selected[i], { attachments: attchs });
+      const nm = Object.assign({}, selected, { attachments: attchs });
       messages.push(nm);
     }
+
     this.setState({messages, attachments});
   }
 
@@ -214,23 +214,16 @@ class AddonArchiveDocuments extends Component<Props, State> {
   }
 
   async saveDocuments() {
-    const { 
-      toggleNotification, 
-      selected, 
-      addonData  
-    } = this.props;
+    const { toggleNotification } = this.props;
     const { messages, instance } = this.state;
-
     let result = true;
 
-    const msgRaw = await getRawAddon(addonData);
-
     for (let m = 0; m < messages.length; m++) {
-      if (messages[m] && msgRaw.result.data.raw) {
-        const mime = parse(msgRaw.result.data.raw);
+      if (messages[m] && messages[m].raw) {
+        const mime = parse(messages[m].raw);
         if (this.state.copyEmail) {
           // Upload eml file
-          const raw = Base64.encode(msgRaw.result.data.raw, false);
+          const raw = Base64.encode(messages[m].raw, false);
           const r1 = await uploadFile(
             this.props.user,
             instance?.conceptObjectId || 0,
@@ -1009,6 +1002,9 @@ class AddonArchiveDocuments extends Component<Props, State> {
           }
           .e-grid .e-rowcell {
             text-align: left;
+          }
+          .attachments {
+            list-style: none;
           }
           
         `}</style>
