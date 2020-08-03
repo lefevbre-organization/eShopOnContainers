@@ -29,6 +29,6 @@ spec:
         paths:
           - path: {{ $ingressPath }}
             backend:
-              serviceName: {{ .Values.app.svc.office365addonlexon }}
+              serviceName: {{ .Values.app.svc.office365addoncentinela }}
               servicePort: http
 {{- end }}

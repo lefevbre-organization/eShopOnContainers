@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.app.svc.office365addonlexon }}
+  name: {{ .Values.app.svc.office365addoncentinela }}
   labels:
     app: {{ template "weboffice365addoncentinela.name" . }}
     chart: {{ template "weboffice365addoncentinela.chart" . }}
