@@ -35,6 +35,7 @@ import { getFileType } from '../../services/mimeType';
 import  AttachmentsWidget  from './widgets/attachments-widget2';
 import { ExpirationWidget } from './widgets/expiration-widget';
 import { RemindersWidget } from './widgets/reminders-widget';
+import { DialogComponent } from '@syncfusion/ej2-react-popups';
 
 class MessageEditor extends Component {
   constructor(props) {
@@ -51,6 +52,7 @@ class MessageEditor extends Component {
       reminderDays: 0,
       selectedExpirationOption: 'exp_option1',
       expirationDays: 7,
+      hideAlertDialog: false
     };
 
     this.fileInput = null;
@@ -83,7 +85,23 @@ class MessageEditor extends Component {
 
     this.onChangeReminder = this.onChangeReminder.bind(this);
     this.onChangeExpiration = this.onChangeExpiration.bind(this);
+
+    this.dialogClose = this.dialogClose;
+    this.dialogOpen = this.dialogOpen;
+    this.animationSettings = { effect: 'None' };
+
   }
+
+
+  dialogClose(){
+    this.setState({
+        hideAlertDialog: false
+    });
+}
+
+dialogOpen(){
+    this.alertDialogInstance.cssClass = 'e-fixed';
+}
 
   componentDidMount() {
     if (this.fileInput) {
@@ -122,6 +140,18 @@ class MessageEditor extends Component {
   }
 
   render() {
+    const contenido = `
+      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+        ${i18n.t('noSignersModal.text')}
+      </div>`;
+
+    const contenido2 = `
+      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+        ${i18n.t('noAttachmentsModal.text')}
+      </div>`;
+
     const {
       t,
       className,
@@ -213,7 +243,7 @@ class MessageEditor extends Component {
             </button>
             <button
               className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']} ${styles['action-button']} ${styles.send}`}
-              disabled={this.props.attachments.length === 0}
+              //disabled={this.props.attachments.length === 0}
               onClick={this.handleSubmit}>
               {t('messageEditor.send')}
             </button>
@@ -233,6 +263,46 @@ class MessageEditor extends Component {
           url={this.state.linkDialogUrl}
           insertLink={this.handleEditorInsertLink}
         />
+        <DialogComponent 
+                    id="info2Dialog" 
+                    //header=' ' 
+                    visible={this.state.hideAlertDialog} 
+                    animationSettings={this.animationSettings} 
+                    width='500px' 
+                    content={(this.props.attachments.length === 0 ? contenido2 : contenido)}
+                    ref={alertdialog => this.alertDialogInstance = alertdialog} 
+                    //target='#target' 
+                    //buttons={this.alertButtons} 
+                    open={this.dialogOpen.bind(this)} 
+                    close={this.dialogClose.bind(this)}
+                    showCloseIcon={true}
+                    //position={ this.position }
+        />
+        <style jsx global>
+          {` 
+            #info2Dialog {
+              max-height: 927px;
+              width: 300px;
+              left: 770px;
+              top: 392.5px;
+              z-index: 1001;
+              transform: translateY(+150%);
+            }
+            #info2Dialog_dialog-header, #info2Dialog_title, #info2Dialog_dialog-content, #info2Dialog.e-footer-content{
+              background: #001970;
+              color: #fff;
+              display:flex;
+            }
+            .e-dialog .e-dlg-header-content .e-btn.e-dlg-closeicon-btn{
+              margin-right: 0;
+              margin-left: auto;
+              color: #fff
+            }
+            .e-dialog .e-btn .e-btn-icon.e-icon-dlg-close{
+              color: white;
+            }
+          `}
+        </style>
         {/* <style jsx global>
         {`
           input:not([type]){
@@ -246,112 +316,116 @@ class MessageEditor extends Component {
 
   
   submit() {
-    if (this.headerFormRef.current.reportValidity()) {
-      // Get content directly from editor, state content may not contain latest changes
-      const content = this.getEditor().getContent();
-      const { to, cc, subject } = this.props;
-      const { lefebvre } = this.props;
-      // const userBranding = lefebvre.userBrandings.find(
-      //   (b) => b.app === lefebvre.userApp
-      // );
-
-      let reminders = [];
-      switch (this.state.selectedReminderOption) {
-        case 'option1':
-          reminders.push(this.state.reminderDays);
-          break;
-        case 'option2':
-          if (this.state.selectedExpirationOption === 'exp_option1') {
-            for (let index = 0; index < this.state.expirationDays; index++) {
-              reminders[index] = index + 1;
-              //reminders.push(index + 1);
+    if (this.props.to.length === 0){
+      this.setState({ hideAlertDialog: true });
+    } else {
+      if (this.headerFormRef.current.reportValidity()) {
+        // Get content directly from editor, state content may not contain latest changes
+        const content = this.getEditor().getContent();
+        const { to, cc, subject } = this.props;
+        const { lefebvre } = this.props;
+        // const userBranding = lefebvre.userBrandings.find(
+        //   (b) => b.app === lefebvre.userApp
+        // );
+  
+        let reminders = [];
+        switch (this.state.selectedReminderOption) {
+          case 'option1':
+            reminders.push(this.state.reminderDays);
+            break;
+          case 'option2':
+            if (this.state.selectedExpirationOption === 'exp_option1') {
+              for (let index = 0; index < this.state.expirationDays; index++) {
+                reminders[index] = index + 1;
+                //reminders.push(index + 1);
+              }
+            } else {
+              for (let index = 0; index < 30; index++) {
+                reminders[index] = index + 1;
+              }
             }
-          } else {
-            for (let index = 0; index < 30; index++) {
-              reminders[index] = index + 1;
-            }
-          }
-          break;
-        case 'option3':
-          if (this.state.selectedExpirationOption === 'exp_option1') {
-            for (let index = 0; index < this.state.expirationDays; index++) {
-              if (7 * (index + 1) < this.state.expirationDays) {
+            break;
+          case 'option3':
+            if (this.state.selectedExpirationOption === 'exp_option1') {
+              for (let index = 0; index < this.state.expirationDays; index++) {
+                if (7 * (index + 1) < this.state.expirationDays) {
+                  reminders[index] = 7 * (index + 1);
+                }
+              }
+            } else {
+              for (let index = 0; index < 30; index++) {
                 reminders[index] = 7 * (index + 1);
               }
             }
-          } else {
-            for (let index = 0; index < 30; index++) {
-              reminders[index] = 7 * (index + 1);
-            }
-          }
-          break;
-        case 'option4':
-          reminders = 0;
-          break;
-        default:
-          reminders = 0;
-          break;
-      }
-
-      let expiration;
-      switch (this.state.selectedExpirationOption) {
-        case 'exp_option1':
-          expiration = this.state.expirationDays;
-          break;
-        case 'exp_option2':
-          expiration = 0;
-          break;
-        default:
-          break;
-      }
-
-      console.log('Recordatorios y exp: ');
-      console.log({ reminders });
-      console.log(expiration);
-
-      let guid = lefebvre.guid;
-      if (guid === null) {
-        guid = uuid();
-      }
-
-      // if (document.getElementById('file-input').files[0]){
-      //     var reader = new FileReader();
-      //     reader.readAsDataURL(document.getElementById('file-input').files[0]);
-      //     reader.onloadend = (evt) => {
-      //        console.log(evt.target.result);
-      //        var fileData = evt.target.result.split('base64,')[1];
-      //        this.callApis(to, subject, content.innerHTML, document.getElementById('file-input').files[0], fileData, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
-      //     }
-      //     reader.onerror = function (evt) {
-      //         console.log("error reading file");
-      //     }
-      // } else
-      if (this.props.attachments) {
-        let attachmentsList = [];
-        this.props.attachments.forEach((attachment) => {
-          //var attachment = this.props.attachments[0];
-          var file = new File([attachment.content], attachment.fileName, {
-            type: getFileType(attachment.fileName),
-            lastModified: new Date(),
+            break;
+          case 'option4':
+            reminders = 0;
+            break;
+          default:
+            reminders = 0;
+            break;
+        }
+  
+        let expiration;
+        switch (this.state.selectedExpirationOption) {
+          case 'exp_option1':
+            expiration = this.state.expirationDays;
+            break;
+          case 'exp_option2':
+            expiration = 0;
+            break;
+          default:
+            break;
+        }
+  
+        console.log('Recordatorios y exp: ');
+        console.log({ reminders });
+        console.log(expiration);
+  
+        let guid = lefebvre.guid;
+        if (guid === null) {
+          guid = uuid();
+        }
+  
+        // if (document.getElementById('file-input').files[0]){
+        //     var reader = new FileReader();
+        //     reader.readAsDataURL(document.getElementById('file-input').files[0]);
+        //     reader.onloadend = (evt) => {
+        //        console.log(evt.target.result);
+        //        var fileData = evt.target.result.split('base64,')[1];
+        //        this.callApis(to, subject, content.innerHTML, document.getElementById('file-input').files[0], fileData, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
+        //     }
+        //     reader.onerror = function (evt) {
+        //         console.log("error reading file");
+        //     }
+        // } else
+        if (this.props.attachments) {
+          let attachmentsList = [];
+          this.props.attachments.forEach((attachment) => {
+            //var attachment = this.props.attachments[0];
+            var file = new File([attachment.content], attachment.fileName, {
+              type: getFileType(attachment.fileName),
+              lastModified: new Date(),
+            });
+            attachmentsList.push(file);
+            debugger;
           });
-          attachmentsList.push(file);
-          debugger;
-        });
-        //this.callApis(to, subject, content.innerHTML, file, this.props.attachments[0].content, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
-        this.callApis(
-          to,
-          cc,
-          subject,
-          content.innerHTML,
-          this.props.attachments,
-          reminders,
-          expiration,
-          lefebvre.userId,
-          guid,
-          ''
-        );
+          //this.callApis(to, subject, content.innerHTML, file, this.props.attachments[0].content, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
+          this.callApis(
+            to,
+            cc,
+            subject,
+            content.innerHTML,
+            this.props.attachments,
+            reminders,
+            expiration,
+            lefebvre.userId,
+            guid,
+            ''
+          );
+        }
+        //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
       }
-      //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
     }
   }
 

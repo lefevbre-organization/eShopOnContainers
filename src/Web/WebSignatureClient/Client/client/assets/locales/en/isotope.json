@@ -175,6 +175,12 @@
   "reminderSentModal": {
     "text": "A reminder has been sent"
   },
+  "noSignersModal": {
+    "text": "At least one signer must be specified in order to send the request."
+  },
+  "noAttachmentsModal": {
+    "text": "A document must be attached in order to send the request."
+  },
   "attachmentsWidget": {
     "title": "ATTACHED FILES",
     "attachButton": "ATTACH FILE",
