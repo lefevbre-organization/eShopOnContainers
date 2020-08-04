@@ -201,6 +201,10 @@ class ComposeMessageEditor extends React.Component {
     return '';
   }
 
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    return false;
+  }
+
   render() {
     const { onChange, defaultValue = '' } = this.props;
     return (
