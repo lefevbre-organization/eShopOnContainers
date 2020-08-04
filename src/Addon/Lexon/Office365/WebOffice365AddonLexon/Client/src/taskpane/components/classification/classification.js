@@ -1,10 +1,10 @@
 import React, { Component, Fragment } from 'react';
-import { Dialog, DialogType, DialogFooter, PrimaryButton } from 'office-ui-fabric-react';
 import { 
  base64Decode,
  removeClassification
 } from '../../services/services';
 import i18n from 'i18next';
+import Prompt from '../prompt/prompt';
 import '../classification/classification.css';
 
 class Classification extends Component {
@@ -48,36 +48,30 @@ class Classification extends Component {
     } 
 
     render() {
-      const dialogContentProps = {
-        type: DialogType.normal,
-        closeButtonAriaLabel: "Close",
-      };
-      const modalProps = {
-        isBlocking: false
-      }
+      const { 
+       selectCompany, 
+       classification,
+       removeClassification
+      } = this.props;
       return (
         <Fragment>
          {this.state.data ? <li className="lexon-item">
            <p>
-             <strong>{i18n.t(`classification.${this.state.data.idType}`)}</strong>
+             <strong>
+               {i18n.t(`classification.${this.state.data.idType}`)}
+             </strong>
              <span>{this.state.data.name}</span>
            </p>
            <p>{this.state.data.description}</p>
            <p>{this.state.data.intervening}</p>
-           <Dialog 
-            hidden={this.state.isOpen} 
-            dialogContentProps={dialogContentProps}
-            onDismiss={this.close} 
-            modalProps={modalProps} > 
-          <h3>¿Desea eliminar esta clasificación?</h3> 
-          <DialogFooter> 
-            <PrimaryButton className="btn-modal-close" onClick={this.close} text="No" />
-            <PrimaryButton className="btn-modal-save" 
-            onClick={() => this.props.removeClassification(
-                 this.props.classification, this.props.selectCompany )} 
-            text="Si" />
-          </DialogFooter> 
-        </Dialog> 
+          <Prompt 
+           removeClassification={removeClassification}
+           classification={classification}
+           selectCompany={selectCompany}
+           isOpen={this.state.isOpen}
+           open={this.open}
+           close={this.close}
+          />
           <p className='text-right tools-bar'>
           <a
              href='#/'
@@ -88,16 +82,6 @@ class Classification extends Component {
              </strong>
              <span className='lf-icon-trash'></span>
            </a>
-           {/* <a
-             href='#/'
-             title={i18n.t('classification.remove-document')}
-             onClick={() => this.props.removeClassification(
-                 this.props.classification, this.props.selectCompany )} >
-             <strong className='sr-only sr-only-focusable'>
-               {i18n.t('classification.remove-document')}
-             </strong>
-             <span className='lf-icon-trash'></span>
-           </a> */}
           </p>
           </li> : null }
         </Fragment>

@@ -56,10 +56,10 @@ class DocumentAttached extends Component {
       this.props.changePage(PAGE_LOGIN);
     }
 
-    getProviderClasification(jwt) {
+    getProviderLexonDocumentAttachment(jwt) {
         let authenticator = new OfficeHelpers.Authenticator();
-        authenticator.endpoints.add("attached", { 
-          provider: 'attached',
+        authenticator.endpoints.add("lexonDocumentAttachment", { 
+          provider: 'lexonDocumentAttachment',
           clientId: 'a8c9f1a1-3472-4a83-8725-4dfa74bac24d',
           baseUrl: `${window.URL_ADDON_LEXON}`,
           redirectUrl: `${window.URL_ADDON_LEXON_BASE}/taskpane.html`,
@@ -94,7 +94,7 @@ class DocumentAttached extends Component {
         signature = base64url(signature);
   
         const jwt =  token + "." + signature;
-        this.getProviderClasification(jwt);
+        this.getProviderLexonDocumentAttachment(jwt);
     }
 
     getAddonData = async () =>   {
@@ -129,7 +129,7 @@ class DocumentAttached extends Component {
      const { user } = this.state;
      let authenticator = new OfficeHelpers.Authenticator();
      this.setState({ isLoading: true });
-      authenticator.authenticate('attached', true)
+      authenticator.authenticate('lexonDocumentAttachment', true)
      .then(data => { 
       const files = JSON.parse(data.files);
       files.forEach(file => {

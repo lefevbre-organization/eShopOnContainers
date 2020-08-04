@@ -94,10 +94,10 @@ class MessageClassifications extends Component {
      
     }
 
-    getProviderLexon(jwt) {
+    getProviderLexonMessageClassification(jwt) {
       let authenticator = new OfficeHelpers.Authenticator();
-      authenticator.endpoints.add("lexon", { 
-        provider: 'lexon',
+      authenticator.endpoints.add("lexonMessageClassification", { 
+        provider: 'lexonMessageClassification',
         clientId: 'a8c9f1a1-3472-4a83-8725-4dfa74bac24d',
         baseUrl: `${window.URL_ADDON_LEXON}`,
         redirectUrl: `${window.URL_ADDON_LEXON_BASE}/taskpane.html`,
@@ -134,7 +134,7 @@ class MessageClassifications extends Component {
       const jwt =  token + "." + signature;
   
       this.setState({addonDataToken: jwt});
-      this.getProviderLexon(jwt);
+      this.getProviderLexonMessageClassification(jwt);
     }
 
     getAddonData = async () =>   {
@@ -219,7 +219,7 @@ class MessageClassifications extends Component {
       this.getAddonData();
       this.setState({ isLoading: true });
       let authenticator = new OfficeHelpers.Authenticator();
-      authenticator.authenticate('lexon', true)
+      authenticator.authenticate('lexonMessageClassification', true)
      .then(token => { 
       this.setState({ isLoading: false });
      })
