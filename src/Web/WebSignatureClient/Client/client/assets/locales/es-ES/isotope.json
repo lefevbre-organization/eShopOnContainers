@@ -193,6 +193,12 @@
   "reminderSentModal": {
     "text": "Se acaba de enviar un recordatorio"
   },
+  "noSignersModal": {
+    "text": "Debe especificar al menos un firmante para poder enviar la solicitud."
+  },
+  "noAttachmentsModal": {
+    "text": "Debe adjuntar un documento para poder enviar la solicitud."
+  },
   "attachmentsWidget": {
     "title": "ARCHIVOS ADJUNTOS",
     "attachButton": "ADJUNTAR DOCUMENTO",

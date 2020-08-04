@@ -193,6 +193,12 @@
   "reminderSentModal": {
     "text": "Rappel envoyé"
   },
+  "noSignersModal": {
+    "text": "Vous devez spécifier au moins un signataire pour envoyer la demande."
+  },
+  "noAttachmentsModal": {
+    "text": "Vous devez joindre un document pour l'envoyer la demande."
+  },
   "attachmentsWidget": {
     "title": "pièces jointes",
     "attachButton": "Ajouter document",
