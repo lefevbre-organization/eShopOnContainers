@@ -51,21 +51,21 @@ function create3PAuthorizationUi() {
 
     var logo = CardService.newImage()
     .setAltText("Logo")
-    .setImageUrl("https://www.dropbox.com/s/csqs86p9kjgy80w/Screenshot%202020-04-20%2009.44.01.png?raw=1");
+    .setImageUrl("https://www.dropbox.com/s/csqs86p9kjgy80w/logo-lexon.png?raw=1");
 
     var icon = CardService.newImage()
     .setAltText("Lex-on")
-    .setImageUrl("https://www.dropbox.com/s/sspa471xfkibxvs/Screenshot%202020-04-20%2010.03.08.png?raw=1");
+    .setImageUrl("https://www.dropbox.com/s/sspa471xfkibxvs/lexon.png?raw=1");
 
     var loginButton = CardService.newImage()
     .setAltText("Login")
-     .setImageUrl("https://www.dropbox.com/s/otg9e2qyo99vs9h/Screenshot%202020-04-20%2010.12.01.png?raw=1")
+     .setImageUrl("https://www.dropbox.com/s/fm96fyc83ujsfhp/button.png?raw=1")
      .setAuthorizationAction(CardService.newAuthorizationAction()
             .setAuthorizationUrl(authUrl));
             
    var reserved = CardService.newImage()
     .setAltText("©2020 Lefebvre. Todos los derechos reservados.")
-    .setImageUrl("https://www.dropbox.com/s/sksg0u2iezrywje/Screenshot%202020-04-20%2011.01.43.png?raw=1");
+    .setImageUrl("https://www.dropbox.com/s/tuifhvnq8mfg5if/lefebvre.png?raw=1");
 
     var card = CardService.newCardBuilder()
         .addSection(CardService.newCardSection()

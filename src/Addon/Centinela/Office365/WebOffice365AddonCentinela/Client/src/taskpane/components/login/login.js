@@ -61,18 +61,18 @@ class Login extends Component {
     
     if (!isOfficeInitialized) {
       return (
-        <Progress title={title} logo="assets/logo-filled.png"  />
+        <Progress title={title} logo="assets/llefebvre-centinela.png"  />
       );
     }
 
     return (
       <div className="ms-welcome">
-       {/* {!isLoading ? <LoginHeader logo="assets/logo-filled.png" title={'logo'} /> 
-       : null} */}
+       {!isLoading ? <LoginHeader logo="assets/lefebvre-centinela.png" title={'Logo'} /> 
+       : null}
         {isLoading ? <Spinner /> :
         <div className="text-center">
-         {/* <img align="center" src="../../assets/logo-2.png" className="logo-2-space" 
-         alt="lexon" title="lexon" /> */}
+         <img align="center" src="assets/iconos-circulo-centinela.png" className="logo-2-space" 
+         alt="Centinela" title="Centinela" />
           <Button
             className="popupButton 
             btn-login ms-Button ms-Button--primary 
@@ -81,8 +81,7 @@ class Login extends Component {
           >
             {i18n.t('login.button-title')}
           </Button>
-           
-          {/* <p align="center" className="reserved">©2020 Lefebvre. Todos los derechos reservados.</p> */}
+          <p align="center" className="reserved">©2020 Lefebvre. Todos los derechos reservados.</p>
           </div> }
       </div>
     );

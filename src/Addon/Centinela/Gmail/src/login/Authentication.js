@@ -49,17 +49,31 @@ var scopes = [
       var service = getService()
       var authUrl = service.getAuthorizationUrl()
   
-   
+    var logo = CardService.newImage()
+     .setAltText("Logo")
+     .setImageUrl("https://www.dropbox.com/s/12xkwb9yb0vqvs9/logo-centinela.png?raw=1");
+
+    var logoCentinela = CardService.newImage()
+     .setAltText("Centinela")
+     .setImageUrl("https://www.dropbox.com/s/ahkf3myhhsgbiv8/centinela.png?raw=1");
+
     var loginButton = CardService.newImage()
       .setAltText("Login")
-       .setImageUrl("https://www.dropbox.com/s/otg9e2qyo99vs9h/Screenshot%202020-04-20%2010.12.01.png?raw=1")
+       .setImageUrl("https://www.dropbox.com/s/fm96fyc83ujsfhp/button.png?raw=1")
        .setAuthorizationAction(CardService.newAuthorizationAction()
               .setAuthorizationUrl(authUrl));
+
+    var reserved = CardService.newImage()
+     .setAltText("©2020 Lefebvre. Todos los derechos reservados.")
+     .setImageUrl("https://www.dropbox.com/s/tuifhvnq8mfg5if/lefebvre.png?raw=1");
               
-  
+     
       var card = CardService.newCardBuilder()
           .addSection(CardService.newCardSection()
-          .addWidget(loginButton))
+          .addWidget(logo)
+          .addWidget(logoCentinela)
+          .addWidget(loginButton)
+          .addWidget(reserved))
           .build()
       return [card]
   }
