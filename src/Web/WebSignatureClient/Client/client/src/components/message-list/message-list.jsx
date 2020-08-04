@@ -291,20 +291,31 @@ class MessageList extends Component {
     }
 
     menuGridTemplate(props){
-        var items = [
-            {
-                text: i18n.t('signaturesGrid.menuEdit'),
-                iconCss: 'lf-icon-edit'
-            },
-            {   
-                separator: true
-            },
-            {
-                text: i18n.t('signaturesGrid.menuCancel'),
-                iconCss: 'lf-icon-excel-software',
-            }
-        ];
+        let items = [];
 
+        if (props.Estado === "ready"){
+            items = [
+                {
+                    text: i18n.t('signaturesGrid.menuEdit'),
+                    iconCss: 'lf-icon-edit'
+                },
+                {   
+                    separator: true
+                },
+                {
+                    text: i18n.t('signaturesGrid.menuCancel'),
+                    iconCss: 'lf-icon-excel-software'
+                }
+            ];
+        } else {
+            items = [
+                {
+                    text: i18n.t('signaturesGrid.menuEdit'),
+                    iconCss: 'lf-icon-edit'
+                }
+            ];
+        }
+        
         return (
             <div className='control-pane'>
                 <div className='control-section'>
