@@ -529,31 +529,31 @@ export const createTemplate = async (templateInfo) => {
 // Preloads all signatures associated with an account calling internal proxy api
 export function preloadSignatures2(dispatch, filters, auth) {
   return new Promise((resolve, reject) => {
-    //dispatch(backendRequest());
-    var request = require('request');
-    var options = {
-        'method': 'GET',
-        'url': `${window.API_SIGN_GATEWAY}/Signaturit/getSignatures/${filters}`,
-        'headers': {
-            'Authorization': `${auth}`
-    }
+
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", `${auth}`);
+    
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
     };
-    request(options, function (error, response) { 
-        if (error) {
-          reject(error);
-        }
-        //dispatch(preDownloadSignatures(null));
-  
-        console.log(response.body);
-        let signatures = JSON.parse(response.body);
+    
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/getSignatures/${filters}`, requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        let signatures = result;
         console.log('Datos recibidos de signaturit - GetSignatures:');
         console.log({signatures});
         signatures = calculateStatus(signatures);
         console.log({signatures});
         dispatch(preDownloadSignatures(signatures));
-        resolve(signatures);
-    });
-    //dispatch(backendRequestCompleted());
+      })
+      .catch(error => {
+        console.log('error', error);
+        reject(error);
+      });
   })
 }
 

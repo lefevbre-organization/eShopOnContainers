@@ -259,7 +259,7 @@ class MessageList extends Component {
             status = signature.documents[signature.documents.length-1].status;
             res.push({Id: signature.id, Documento: documentName, Asunto: subject, Destinatarios: recipients, Fecha: date, Estado: status});
         });
-        return res;
+        return (res.length === 0 ? [{}] : res);
     }
 
     gridTemplate(props) {
