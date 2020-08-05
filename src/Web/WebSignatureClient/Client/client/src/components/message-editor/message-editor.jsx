@@ -52,7 +52,8 @@ class MessageEditor extends Component {
       reminderDays: 0,
       selectedExpirationOption: 'exp_option1',
       expirationDays: 7,
-      hideAlertDialog: false
+      hideAlertDialog: false,
+      bigAttachments: false
     };
 
     this.fileInput = null;
@@ -95,13 +96,13 @@ class MessageEditor extends Component {
 
   dialogClose(){
     this.setState({
-        hideAlertDialog: false
+        hideAlertDialog: false, bigAttachments: false
     });
-}
+  }
 
-dialogOpen(){
-    this.alertDialogInstance.cssClass = 'e-fixed';
-}
+  dialogOpen(){
+      this.alertDialogInstance.cssClass = 'e-fixed';
+  }
 
   componentDidMount() {
     if (this.fileInput) {
@@ -140,17 +141,24 @@ dialogOpen(){
   }
 
   render() {
-    const contenido = `
+    const noSignersModal = `
       <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
       <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
         ${i18n.t('noSignersModal.text')}
       </div>`;
 
-    const contenido2 = `
+    const noAttachModal = `
       <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
       <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
         ${i18n.t('noAttachmentsModal.text')}
       </div>`;
+
+    const bigFileModal = `
+      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+        ${i18n.t('bigFileModal.text')}
+      </div>
+    `;
 
     const {
       t,
@@ -264,19 +272,19 @@ dialogOpen(){
           insertLink={this.handleEditorInsertLink}
         />
         <DialogComponent 
-                    id="info2Dialog" 
-                    //header=' ' 
-                    visible={this.state.hideAlertDialog} 
-                    animationSettings={this.animationSettings} 
-                    width='500px' 
-                    content={(this.props.attachments.length === 0 ? contenido2 : contenido)}
-                    ref={alertdialog => this.alertDialogInstance = alertdialog} 
-                    //target='#target' 
-                    //buttons={this.alertButtons} 
-                    open={this.dialogOpen.bind(this)} 
-                    close={this.dialogClose.bind(this)}
-                    showCloseIcon={true}
-                    //position={ this.position }
+          id="info2Dialog" 
+          //header=' ' 
+          visible={this.state.hideAlertDialog} 
+          animationSettings={this.animationSettings} 
+          width='500px' 
+          content={(this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : noSignersModal))}
+          ref={alertdialog => this.alertDialogInstance = alertdialog} 
+          //target='#target' 
+          //buttons={this.alertButtons} 
+          open={this.dialogOpen.bind(this)} 
+          close={this.dialogClose.bind(this)}
+          showCloseIcon={true}
+          //position={ this.position }
         />
         <style jsx global>
           {` 
@@ -314,11 +322,21 @@ dialogOpen(){
     );
   }
 
+  bigAttachments(){
+    let maxSize = 15000000;
+    let totalSize = 0
+    this.props.attachments.map(attachment => totalSize = totalSize + attachment.size);
+    return (totalSize >= maxSize);
+  }
+
   
   submit() {
     if (this.props.to.length === 0){
       this.setState({ hideAlertDialog: true });
-    } else {
+    } if (this.bigAttachments()){
+      this.setState({ hideAlertDialog: true, bigAttachments: true});
+    }
+    else {
       if (this.headerFormRef.current.reportValidity()) {
         // Get content directly from editor, state content may not contain latest changes
         const content = this.getEditor().getContent();

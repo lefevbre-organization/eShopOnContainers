@@ -199,6 +199,9 @@
   "noAttachmentsModal": {
     "text": "Vous devez joindre un document pour l'envoyer la demande."
   },
+  "bigFileModal": {
+    "text": "La taille maximale des pièces jointes ne doit pas dépasser 15MB."
+  },
   "attachmentsWidget": {
     "title": "pièces jointes",
     "attachButton": "Ajouter document",

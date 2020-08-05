@@ -181,6 +181,9 @@
   "noAttachmentsModal": {
     "text": "A document must be attached in order to send the request."
   },
+  "bigFileModal": {
+    "text": "Max size of attached files must be lower than 15MB."
+  },
   "attachmentsWidget": {
     "title": "ATTACHED FILES",
     "attachButton": "ATTACH FILE",
