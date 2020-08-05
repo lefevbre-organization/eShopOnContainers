@@ -58,4 +58,4 @@ configValues: |
   window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies'
   window.PRIVACY_POLICY_URL = 'https://lefebvre.es/politica-privacidad'
   window.LEGAL_WARNING_URL = 'https://lefebvre.es/aviso-legal'
-  window.RELEASE = 'RC 0.27'
+  window.RELEASE = 'RC 0.28'

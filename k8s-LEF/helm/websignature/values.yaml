@@ -53,4 +53,4 @@ configValues: |
   window.LEGAL_WARNING_URL = 'https://lefebvre.es/aviso-legal'
   window.URL_GET_ACCOUNTS = 'https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail'
   window.URL_GET_USER = 'https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login'
-  window.RELEASE = 'RC 0.27'
+  window.RELEASE = 'RC 0.28'
