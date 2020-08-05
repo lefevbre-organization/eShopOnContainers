@@ -199,6 +199,9 @@
   "noAttachmentsModal": {
     "text": "Debe adjuntar un documento para poder enviar la solicitud."
   },
+  "bigFileModal": {
+    "text": "El tamaño máximo de los archivos adjuntos no puede superar 15MB."
+  },
   "attachmentsWidget": {
     "title": "ARCHIVOS ADJUNTOS",
     "attachButton": "ADJUNTAR DOCUMENTO",

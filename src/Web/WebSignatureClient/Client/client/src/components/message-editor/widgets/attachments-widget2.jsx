@@ -28,7 +28,7 @@ class AttachmentsWidget extends Component{
                 <div className={styles['p10']}>
                     <span className={"lf-icon-add " + styles['title-icon']}></span><span className={styles["generic-title"]}>{i18n.t('attachmentsWidget.title')}</span>
                     {this.props.attachments.map((a, i) => (
-                        <p id={`p_${i}`} className={styles["subtitle"]}>{a.fileName} 
+                        <p id={`p_${i}`} className={styles["subtitle"]}>{a.fileName} - ({(a.size / 1000000).toFixed(2)} MB)
                             <a id={`a_${i}`} href="#" onClick={() => this.removeAttachment(a)}>
                                 <span id={`s_${i}`} className={`lf-icon-trash right ${styles["icon-trash"]} ${styles['right']}`}></span> 
                             </a>
