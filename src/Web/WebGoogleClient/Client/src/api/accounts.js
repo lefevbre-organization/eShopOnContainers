@@ -20,6 +20,66 @@ export const getUser = async (userId) => {
   }
 };
 
+export const getEventTypes = async (userId, account) => {
+    const url = `${window.URL_GET_ACCOUNTS}/${userId}/account/addorupdate`;
+    try {
+        //const res = await fetch(url, {
+        //    method: 'POST',
+        //    headers: {
+        //        'Content-Type': 'application/json',
+        //    },
+        //    body: JSON.stringify(account),
+        //});
+
+        //const user = await res.json();
+        //return user;
+
+        return true
+    } catch (err) {
+        throw err;
+    }
+};
+
+export const addOrUpdateEventType = async (userId, account, eventType) => {
+    const url = `${window.URL_GET_ACCOUNTS}/${userId}/account/addorupdate`;
+    try {
+        //const res = await fetch(url, {
+        //    method: 'POST',
+        //    headers: {
+        //        'Content-Type': 'application/json',
+        //    },
+        //    body: JSON.stringify(account),
+        //});
+
+        //const user = await res.json();
+        //return user;
+
+        return true
+    } catch (err) {
+        throw err;
+    }
+};
+
+export const deleteEventType = async (userId,eventTypeId) => {
+    const url = `${window.URL_GET_ACCOUNTS}/${userId}/account/addorupdate`;
+    try {
+        //const res = await fetch(url, {
+        //    method: 'POST',
+        //    headers: {
+        //        'Content-Type': 'application/json',
+        //    },
+        //    body: JSON.stringify(account),
+        //});
+
+        //const user = await res.json();
+        //return user;
+
+        return true
+    } catch (err) {
+        throw err;
+    }
+};
+
 export const addOrUpdateAccount = async (userId, account) => {
   const url = `${window.URL_GET_ACCOUNTS}/${userId}/account/addorupdate`;
   try {

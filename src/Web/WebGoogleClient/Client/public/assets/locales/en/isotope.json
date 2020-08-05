@@ -124,5 +124,11 @@
     "reader": "reader",
     "writer": "writer",
     "owner": "owner"
+  },
+  "eventtype": {
+    "name": "Name",
+    "color": "Color",
+    "add": "Add",
+    "cancel": "Cancel"
   }
 }

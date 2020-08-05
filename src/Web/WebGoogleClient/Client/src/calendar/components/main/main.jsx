@@ -47,6 +47,8 @@ import i18n from 'i18next';
 import Reminder from "./reminder/reminder"
 import { Popup } from '@syncfusion/ej2-popups';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
+import { Eventtypes } from '../eventtypes/eventtypes';
+
 
 export class Main extends Component {
 
@@ -94,6 +96,7 @@ export class Main extends Component {
                 collapsed: false
             },
             hidePromptDialog: false,
+            hidePromptEventTypeDialog: false,
             calendarToEdit: undefined,
             tagAttendess: [],
             reminders:[],
@@ -300,6 +303,29 @@ export class Main extends Component {
         //this.spanEle.classList.remove('e-input-focus');
     }
 
+    // EventType View Dialog
+    openEventTypeView(args) {  
+        this.setState(
+            {
+                hidePromptEventTypeDialog: true
+            });
+    }
+
+    // Event Type View Dialog
+    dialogEventTypeClose(args) {
+        if (args == undefined) {
+            //this.LoadCalendarList(true)
+            //this.sidebarCalendarList();
+
+            this.toastObj.show(this.toasts[1]);
+        }
+        this.setState({
+            hidePromptEventTypeDialog: false
+        });
+
+        //this.promptButtonEle.style.display = 'inline-block';
+    }
+
     toastCusAnimation = {
         hide: { duration: '1' },
         show: { duration: '200' }
@@ -414,6 +440,13 @@ export class Main extends Component {
                     eventType.color = event.extendedProperties.private.eventTypeColor;
                 }
 
+                let reminders = []
+                if (event.reminders != undefined)
+                {
+                    reminders = event.reminders.overrides;
+                }
+
+
                 this.scheduleData.push({
                     Id: event.id,
                     CalendarId: calendarId,
@@ -427,7 +460,7 @@ export class Main extends Component {
                     ImageName: "icon-lefebvre-bl",
                     Attendees: attendees,
                     EventType: eventType,
-                    Reminders: event.reminders.overrides,
+                    Reminders: reminders,
                 });
             }
         }
@@ -1271,7 +1304,7 @@ export class Main extends Component {
 
     onEventTypeClick() {
         this.profilePopup.hide();
-        alert('Open type of event screen');        
+        this.openEventTypeView(); 
     }
 
     render() {
@@ -1406,6 +1439,7 @@ export class Main extends Component {
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
                                             <ScheduleComponent
+                                                delayUpdate='false' 
                                                 id="schedule"
                                                 cssClass='schedule-header-bar'
                                                 ref={schedule => this.scheduleObj = schedule}
@@ -1471,6 +1505,23 @@ export class Main extends Component {
                                     open={this.dialogOpen.bind(this)}
                                     close={this.dialogClose.bind(this)}>
                                     <div>{(this.state.hidePromptDialog) ? <Calendars
+                                        calendarId={this.state.calendarToEdit}
+                                        close={this.dialogClose.bind(this)}
+                                    /> : ''}</div>
+                                </DialogComponent>
+                                <DialogComponent
+                                    id='eventTypes'
+                                    isModal={true}
+                                    header="Event Types"
+                                    visible={this.state.hidePromptEventTypeDialog}
+                                    showCloseIcon={true}
+                                    animationSettings={this.animationSettings}
+                                    width='575px'
+                                    ref={dialog => this.promptDialogEventTypeInstance = dialog}
+                                    target='#target'
+                                    open={this.dialogOpen.bind(this)}
+                                    close={this.dialogEventTypeClose.bind(this)}>
+                                    <div>{(this.state.hidePromptEventTypeDialog) ? <Eventtypes
                                         calendarId={this.state.calendarToEdit}
                                         close={this.dialogClose.bind(this)}
                                     /> : ''}</div>
