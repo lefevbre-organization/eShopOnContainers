@@ -128,6 +128,8 @@
   "eventtype": {
     "name": "Name",
     "color": "Color",
+    "required-name": "Name is required",
+    "required-color": "Color is required",
     "add": "Add",
     "cancel": "Cancel"
   }

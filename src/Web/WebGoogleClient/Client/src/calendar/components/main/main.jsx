@@ -47,7 +47,7 @@ import i18n from 'i18next';
 import Reminder from "./reminder/reminder"
 import { Popup } from '@syncfusion/ej2-popups';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
-import { Eventtypes } from '../eventtypes/eventtypes';
+import { Eventtype } from '../eventtypes/eventtype';
 
 
 export class Main extends Component {
@@ -1439,7 +1439,7 @@ export class Main extends Component {
                                     <div className='col-lg-12 control-section'>
                                         <div className='control-wrapper'>
                                             <ScheduleComponent
-                                                delayUpdate='false' 
+                                                //delayUpdate='false' 
                                                 id="schedule"
                                                 cssClass='schedule-header-bar'
                                                 ref={schedule => this.scheduleObj = schedule}
@@ -1521,7 +1521,7 @@ export class Main extends Component {
                                     target='#target'
                                     open={this.dialogOpen.bind(this)}
                                     close={this.dialogEventTypeClose.bind(this)}>
-                                    <div>{(this.state.hidePromptEventTypeDialog) ? <Eventtypes
+                                    <div>{(this.state.hidePromptEventTypeDialog) ? <Eventtype
                                         calendarId={this.state.calendarToEdit}
                                         close={this.dialogClose.bind(this)}
                                     /> : ''}</div>
