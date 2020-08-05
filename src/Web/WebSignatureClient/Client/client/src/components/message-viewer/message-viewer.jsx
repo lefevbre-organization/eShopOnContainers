@@ -303,7 +303,7 @@ export class MessageViewer extends Component {
               <th>{i18n.t('signatureViewer.grid.status')}</th>
             </tr>            
             <tr>
-                <td className={styles.documento}><a href="#">{signature.documents[0].file.name}</a></td>
+                <td className={styles.documento}>{signature.documents[0].file.name}</td>
                 <td>{(signature.data.find(x => x.key === "subject")) ? signature.data.find(x => x.key === "subject").value : "Sin asunto"} </td>
                 <td>
                     {/* <ul className={styles['tooltip-firmantes']}>
