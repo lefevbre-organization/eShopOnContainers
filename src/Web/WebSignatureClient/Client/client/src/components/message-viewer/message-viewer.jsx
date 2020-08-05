@@ -237,6 +237,7 @@ export class MessageViewer extends Component {
     let expirationText = i18n.t('signatureViewer.widgets.expiration.doesntExpires');
     let passedTime =  this.getDaysBetweenDates(new Date(signature.created_at), new Date());
     let reminderConfig = signature.data.find(x => x.key === "reminders");
+    let remindersSent = false;
     
     if (reminderConfig === undefined || reminderConfig === null){
       reminderText = i18n.t('signatureViewer.widgets.reminders.notConfigured');;
@@ -452,18 +453,22 @@ export class MessageViewer extends Component {
                       </div>
                       <div className={styles.p15}>
                         <div className={styles['tit-firmante']}>{i18n.t('signatureViewer.signerCard.footer.title')}</div>
-                        <p>{
-                          signer.events.map(x => 
-                            { 
-                              if (x.type === 'reminder_email_processed'){
-                                return (
-                                  <span className={styles.fecha}>
-                                  {`${this.getSingleEventDate(x, 'reminder_email_processed')}`}<br/>
-                                  </span>
-                                )
+                        <p>
+                          {
+                            signer.events.map(event => 
+                              { 
+                                if (event.type === 'reminder_email_processed'){
+                                  remindersSent = true;
+                                  return (
+                                    <span className={styles.fecha}>
+                                      {`${this.getSingleEventDate(event, 'reminder_email_processed')}`}<br/>
+                                    </span>
+                                  )
+                                }
                               }
-                            }
-                          )}
+                            )
+                          }
+                          {(remindersSent ? null : i18n.t('signatureViewer.signerCard.footer.subtitle'))}
                         </p>
                       </div>
                   </div>

@@ -258,7 +258,8 @@
         "docSigned": "Documento signé"
       },
       "footer": {
-        "title": "Rappels envoyés"
+        "title": "Rappels envoyés",
+        "subtitle": "Aucun rappel n'a été envoyé à ce signataire"
       }
     },
     "widgets": {

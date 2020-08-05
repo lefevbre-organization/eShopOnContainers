@@ -259,7 +259,8 @@
         "docSigned": "Documento firmado"
       },
       "footer": {
-        "title": "RECORDATORIOS ENVIADOS"
+        "title": "RECORDATORIOS ENVIADOS",
+        "subtitle": "A este firmante no se le ha enviado ningún recordatorio."
       }
     },
     "widgets": {

@@ -240,7 +240,8 @@
         "docSigned": "Document signed"
       },
       "footer": {
-        "title": "SENT REMINDERS"
+        "title": "SENT REMINDERS",
+        "subtitle": "No reminders have been sent to this signer."
       }
     },
     "widgets": {
