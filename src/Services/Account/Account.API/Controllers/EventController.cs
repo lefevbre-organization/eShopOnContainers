@@ -21,7 +21,7 @@ namespace Account.API.Controllers
 
     #endregion
 
-    [Route("api/v2/eventypes")]
+    [Route("api/v2/events")]
     [ApiController]
     public class EventController : Controller
     {

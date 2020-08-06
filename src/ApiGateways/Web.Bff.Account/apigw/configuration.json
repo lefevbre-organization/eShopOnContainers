@@ -76,8 +76,8 @@
           "Port": 80
         }
       ],
-      "UpstreamPathTemplate": "/api/{version}/events/{everything}",
-      "DownstreamPathTemplate": "/api/{version}/{everything}"
+      "UpstreamPathTemplate": "/api/{version}/ev/{everything}",
+      "DownstreamPathTemplate": "/api/{version}/events/{everything}"
     },
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
