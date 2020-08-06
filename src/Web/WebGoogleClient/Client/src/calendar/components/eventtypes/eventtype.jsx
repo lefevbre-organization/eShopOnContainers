@@ -12,27 +12,25 @@ import './eventtype.scss';
 
 export class Eventtype extends React.Component {
     constructor(props) {
-
         super(props);
         this.state = {
             errorName: "",
             errorColor: "",
             color: undefined,
-            name: "",
+            name: undefined,
+            editmode: false,
             editmode: false,
         }; 
 
-
+        this.position = { X: 'Center', Y: 'Bottom' };
+         
         this.roundedPaletteColors = {
             'custom1': ['#914150', '#435850', '#b69e70','#5c4b98'
                 , '#bc4594', '#d8da62', '#ddc9a2', '#466ab0',
                 '#eb9fb3', '#879096', '#dec365', '#68c5c3',]
-        };      
+        };  
 
-       
-        this.position = { X: 'Center', Y: 'Bottom' };  
-        this.fieldsList = { Id: "0", Text: "text", Color: "#dec365" };
-
+        //to delete
         this.eventTypeData = [
             { "Id": "1", "Text": "personal", "Color": "#dec365"},
             { "Id": "2", "Text": "meeting", "Color": "#ddc9a2"},
@@ -55,15 +53,9 @@ export class Eventtype extends React.Component {
         args.element.classList.add('e-rounded-palette');
     }
 
-    roundedPaletteChange(args) {
-        //var color = this.colorObj.value.substr(0, 7);
-      //  this.props.onCalendarColorModify(this.props.id, args.currentValue.hex)
+    roundedPaletteChange(args) {      
         this.setState({ color: args.currentValue.hex })
-
     }
-
-
-    
 
     listTemplate(data) {
         return (<div className="text-content"> 
@@ -71,13 +63,18 @@ export class Eventtype extends React.Component {
             {data.Text} 
             <span className="delete-icon" onClick={this.deleteEventTypem.bind(this)} />
             <span className="delete-icon" onClick={this.onModifyEventTypeState.bind(this)} />
+            <span className='id hidden'>{data.Id}</span>
         </div>);
     }  
 
     onModifyEventTypeState(args) {
         this.setState({ editmode: true })
+
+        let idEventType = args.target.parentElement.lastChild.innerText
+
+       
         var itemE = this.eventTypeData.find(function (e) {
-            return e.Text == args.target.parentElement.innerText
+            return e.Id == idEventType
         })
         this.setState({ name: itemE.Text });
         this.setState({ color: itemE.Color });
@@ -86,11 +83,20 @@ export class Eventtype extends React.Component {
         //})
         //item.Text = "probando"
         //this.listEventType.refresh();
-       // alert(item)      
+       // alert(item)   
+      
+        
+    }
+
+    onAddNewEvent() {
+        this.setState({ newmode: true });
+        this.setState({ name: undefined });
+        this.setState({ color: undefined });
     }
 
     onCancelEventType() {
         this.setState({ editmode: false })
+        this.setState({ newmode: false })
     }
 
 
@@ -110,8 +116,7 @@ export class Eventtype extends React.Component {
         }
         else {
             this.setState({ errorColor: '' })
-        }
-        
+        }        
       
         let dataEventType = {
             "Id": "id",
@@ -124,7 +129,6 @@ export class Eventtype extends React.Component {
         this.toastObj.show(this.toasts[0]);
         addOrUpdateEventType("", "", dataEventType)
             .then(result => {
-
                 this.toastObj.hide('All');
                 this.toastObj.showProgressBar = false;
                 this.toastObj.timeOut = 1000;
@@ -143,7 +147,6 @@ export class Eventtype extends React.Component {
                     this.toastObj.timeOut = 1000;
                     this.toastObj.show(this.toasts[2]);
                 }
-
             });
     }
 
@@ -179,56 +182,33 @@ export class Eventtype extends React.Component {
         //        }
         //    });
 
-    }
-
-    //onChange() {
-    //    let value = document.getElementById('value');
-    //    let text = document.getElementById('text');
-    //}
+    }  
 
     componentDidUpdate() {
         if (this.state.editmode) {
             this.colorObj.value = this.state.color;
             this.TitleTypeEventObj.value = this.state.name;
         }
-    }
+    }    
 
-    //componentDidMount() {  
+    render() {   
 
-    //    //if (this.state.editmode) {
-    //    //    this.colorObj.value = this.state.color;
-    //    //    this.TitleTypeEventObj.value = this.state.name;
-    //    //}
-       
-    //    //let dataEventTypeTemplate = {
-    //    //    text: this.TitleTypeEventObj.value,
-    //    //    color: this.colorObj.value,
-    //    //    id: "id",
-    //    //    iconDelete: "delete-icon"
-    //    //};
-    //    //this.listEventType.addItem([dataEventTypeTemplate]);
+        var ObjClick;
+        var ObjText;
+        if (this.state.newmode) {
+           // ObjClick = this.onModifyClick
+            ObjText = i18n.t("eventtype.add")
+        }
+        else {
+           // ObjClick = this.onAddEventType.bind(this)
+            ObjText = i18n.t("eventtype.modify")
+        }
 
-    //    //this.colorObj.value ="#914150"
-    //        //getEventTypes("id","account")
-    //        //    .then(result => {
-    //        //        this.nameObj.value = result.summary;
-    //        //        if (result.description !== undefined) {
-    //        //            this.descriptionObj.value = result.description;
-    //        //        }
-    //        //    })
-    //        //    .catch(error => {
-    //        //        console.log('error ->', error);
-    //        //    });           
-       
-    //}
-
-    render() {     
-
-        return (    
+        return (   
 
             <div className="row custom-margin custom-padding-5 material2">
                 <div className="col-xs-12 col-sm-12 col-lg-12 col-md-12">                   
-                        {this.state.editmode ? (
+                    {this.state.editmode || this.state.newmode ? (
                             <div>
                                 <div className="form-group">
                                     <div className="e-float-input">
@@ -253,15 +233,15 @@ export class Eventtype extends React.Component {
 
                                 <div className="e-footer-content">
                                     <ButtonComponent
-                                        id="add"
+                                        id="actionbutton"
                                         //disabled={this.state.buttonDisabled}
                                         cssClass='e-control e-btn e-lib e-primary e-event-save e-flat'
                                         onClick={this.onAddEventType.bind(this)}
                                         ref={(scope) => { this.addBtn = scope }}
-                                    > {i18n.t("eventtype.add")}</ButtonComponent>
+                                     > {ObjText}</ButtonComponent>
 
                                     <ButtonComponent
-                                        id="cancel"
+                                        id="cancelbutton"
                                         //disabled={this.state.buttonDisabled}
                                         cssClass='e-control e-btn e-lib e-event-cancel e-flat'
                                         onClick={this.onCancelEventType.bind(this)}
@@ -284,12 +264,21 @@ export class Eventtype extends React.Component {
                             <div>
                                 <ListViewComponent
                                     id="sample-list"
-                                    dataSource={this.eventTypeData}
-                                    // fields={this.fieldsList}
+                                    dataSource={this.eventTypeData}                                    
                                     template={this.listTemplate.bind(this)} ref={listview => {
                                         this.listEventType = listview;
                                     }} />
+
+                                <div className="e-footer-content">
+                                    <ButtonComponent
+                                        id="neweventbutton"
+                                        //disabled={this.state.buttonDisabled}
+                                        cssClass='e-control e-btn e-lib e-primary e-event-save e-flat'
+                                        onClick={this.onAddNewEvent.bind(this)}
+                                        ref={(scope) => { this.addBtn = scope }}
+                                    > {i18n.t("eventtype.newevent")}</ButtonComponent>                                    
                                 </div>
+                            </div>
                             )}
                 </div>
             </div>

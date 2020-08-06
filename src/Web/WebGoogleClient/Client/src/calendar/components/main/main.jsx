@@ -1512,7 +1512,7 @@ export class Main extends Component {
                                 <DialogComponent
                                     id='eventTypes'
                                     isModal={true}
-                                    header="Event Types"
+                                    header={i18n.t("eventtype.title")}
                                     visible={this.state.hidePromptEventTypeDialog}
                                     showCloseIcon={true}
                                     animationSettings={this.animationSettings}

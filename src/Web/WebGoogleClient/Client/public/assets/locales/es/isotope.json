@@ -126,11 +126,14 @@
     "owner": "Hacer cambios y gestionar el uso"
   },
   "eventtype": {
+    "title": "Tipo de Eventos",
     "name": "Nombre",
     "color": "Color",
     "required-name": "El nombre es obligatorio",
     "required-color": "Es necesario seleccionar un color",
     "add": "Añadir",
-    "cancel": "Cancelar"
+    "modify": "Modificar",
+    "cancel": "Cancelar",
+    "newevent": "Añadir tipología"
   }
 }

@@ -20,8 +20,8 @@ export const getUser = async (userId) => {
   }
 };
 
-export const getEventTypes = async (userId, account) => {
-    const url = `${window.URL_GET_ACCOUNTS}/${userId}/account/addorupdate`;
+export const getEventTypes = async (account) => {
+   // const url = `${window.URL_GET_ACCOUNTS}/${userId}/account/addorupdate`;
     try {
         //const res = await fetch(url, {
         //    method: 'POST',
@@ -40,8 +40,8 @@ export const getEventTypes = async (userId, account) => {
     }
 };
 
-export const addOrUpdateEventType = async (userId, account, eventType) => {
-    const url = `${window.URL_GET_ACCOUNTS}/${userId}/account/addorupdate`;
+export const addOrUpdateEventType = async (account, eventTypeName) => {
+  //  const url = `${window.URL_GET_ACCOUNTS}/${userId}/account/addorupdate`;
     try {
         //const res = await fetch(url, {
         //    method: 'POST',
@@ -60,8 +60,8 @@ export const addOrUpdateEventType = async (userId, account, eventType) => {
     }
 };
 
-export const deleteEventType = async (userId,eventTypeId) => {
-    const url = `${window.URL_GET_ACCOUNTS}/${userId}/account/addorupdate`;
+export const deleteEventType = async (account, eventTypeName) => {
+ //   const url = `${window.URL_GET_ACCOUNTS}/${userId}/account/addorupdate`;
     try {
         //const res = await fetch(url, {
         //    method: 'POST',
