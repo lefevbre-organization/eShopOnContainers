@@ -61,5 +61,20 @@
         public async Task<Result<RawMessageProvider>> CreateRaw(RawMessageProvider rawMessage) => await _accountsRepository.CreateRaw(rawMessage);
 
         public async Task<Result<bool>> DeleteRaw(RawMessageProvider rawMessage) => await _accountsRepository.DeleteRaw(rawMessage);
+
+        public Task<Result<AccountEvents>> GetEventsByAccount(string account)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<AccountEvents>> UpsertAccountEvents(AccountEvents accountIn)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Result<bool>> RemoveEvent(string email, int idEvent)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
