@@ -124,5 +124,16 @@
     "reader": "reader",
     "writer": "writer",
     "owner": "owner"
+  },
+  "eventtype": {
+    "title": "Type of events",
+    "name": "Name",
+    "color": "Color",
+    "required-name": "Name is required",
+    "required-color": "Color is required",
+    "add": "Add",
+    "modify": "Modify",
+    "cancel": "Cancel",
+    "newevent": "Add typology"
   }
 }

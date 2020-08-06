@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, ButtonType } from "office-ui-fabric-react";
+import { PrimaryButton } from "office-ui-fabric-react";
 import LoginHeader from "../header/login-header";
 import Progress from "../Progress";
 import Spinner from '../spinner/spinner';
@@ -75,7 +75,7 @@ class Login extends Component {
         <div className="text-center">
          <img align="center" src="../../assets/logo-2.png" className="logo-2-space" 
          alt="Lex-on" title="Lex-on" />
-          <Button
+          <PrimaryButton
             className="popupButton 
             btn-login ms-Button ms-Button--primary 
             ms-Button-label btn-label"
@@ -84,7 +84,7 @@ class Login extends Component {
             onClick={this.click}
           >
             INICIAR SESIÓN
-          </Button>
+          </PrimaryButton>
            
           <p align="center" className="reserved">©2020 Lefebvre. Todos los derechos reservados.</p>
           </div> }
