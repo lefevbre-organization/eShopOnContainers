@@ -42,6 +42,6 @@
         Task<Result<bool>> DeleteRaw(RawMessageProvider rawMessage);
         Task<Result<AccountEvents>> GetEventsByAccount(string account);
         Task<Result<AccountEvents>> UpsertAccountEvents(AccountEvents accountIn);
-        Task<Result<bool>> RemoveEvent(string email, int idEvent);
+        Task<Result<bool>> RemoveEvent(string email, string idEvent);
     }
 }

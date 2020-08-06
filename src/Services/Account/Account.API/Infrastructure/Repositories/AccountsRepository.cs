@@ -40,7 +40,7 @@
             {
                 var resultReplace = await _context.Accounts.ReplaceOneAsync(GetFilterUser(userMail.User, false), userMail, GetUpsertOptions());
 
-                userMail.Id = ManageCreateUser($"Don´t insert or modify the user {userMail.User}",
+                userMail.Id = ManageUpsert<UserMail>($"Don´t insert or modify the user {userMail.User}",
                     $"Se modifica el usuario {userMail.User}",
                     $"Se inserta el usuario {userMail.User} con {resultReplace.UpsertedId}",
                      result, resultReplace);
@@ -57,7 +57,28 @@
             return result;
         }
 
-        private string ManageCreateUser(string msgError, string msgModify, string msgInsert, Result<UserMail> result, ReplaceOneResult resultReplace)
+        //private string ManageCreateUser(string msgError, string msgModify, string msgInsert, Result<UserMail> result, ReplaceOneResult resultReplace)
+        //{
+        //    if (resultReplace.IsAcknowledged)
+        //    {
+        //        if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
+        //        {
+        //            TraceInfo(result.infos, msgModify);
+        //        }
+        //        else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
+        //        {
+        //            TraceInfo(result.infos, msgInsert);
+        //            return resultReplace.UpsertedId.ToString();
+        //        }
+        //    }
+        //    else
+        //    {
+        //        TraceMessage(result.errors, new Exception(msgError), "CreateUserError");
+        //    }
+        //    return null;
+        //}
+
+        private string ManageUpsert<T>(string msgError, string msgModify, string msgInsert, Result<T> result, ReplaceOneResult resultReplace)
         {
             if (resultReplace.IsAcknowledged)
             {
@@ -73,31 +94,31 @@
             }
             else
             {
-                TraceMessage(result.errors, new Exception(msgError), "CreateUserError");
+                TraceMessage(result.errors, new Exception(msgError), "Upsert Error");
             }
             return null;
         }
 
-        private string ManageCreateRawMessage(string msgError, string msgModify, string msgInsert, Result<RawMessageProvider> result, ReplaceOneResult resultReplace)
-        {
-            if (resultReplace.IsAcknowledged)
-            {
-                if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
-                {
-                    TraceInfo(result.infos, msgModify);
-                }
-                else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
-                {
-                    TraceInfo(result.infos, msgInsert);
-                    return resultReplace.UpsertedId.ToString();
-                }
-            }
-            else
-            {
-                TraceMessage(result.errors, new Exception(msgError), "CreateRawError");
-            }
-            return null;
-        }
+        //private string ManageCreateRawMessage(string msgError, string msgModify, string msgInsert, Result<RawMessageProvider> result, ReplaceOneResult resultReplace)
+        //{
+        //    if (resultReplace.IsAcknowledged)
+        //    {
+        //        if (resultReplace.MatchedCount > 0 && resultReplace.ModifiedCount > 0)
+        //        {
+        //            TraceInfo(result.infos, msgModify);
+        //        }
+        //        else if (resultReplace.MatchedCount == 0 && resultReplace.IsModifiedCountAvailable && resultReplace.ModifiedCount == 0)
+        //        {
+        //            TraceInfo(result.infos, msgInsert);
+        //            return resultReplace.UpsertedId.ToString();
+        //        }
+        //    }
+        //    else
+        //    {
+        //        TraceMessage(result.errors, new Exception(msgError), "CreateRawError");
+        //    }
+        //    return null;
+        //}
 
         public async Task<Result<UserMail>> GetUser(string user)
         {
@@ -516,13 +537,19 @@
             }
         }
 
-        private void ReviewRawMessage(RawMessageProvider rawMessage)
+        private void ReviewAccountEventsMail(AccountEvents account)
         {
-            rawMessage.User = rawMessage.User.ToUpperInvariant();
-            rawMessage.Provider = rawMessage.Provider.ToUpperInvariant();
-            rawMessage.Account = rawMessage.Account.ToUpperInvariant();
-            rawMessage.MessageId = rawMessage.MessageId.ToUpperInvariant();
-            
+            account.email = account.email.ToUpperInvariant();
+
+            var eventsList = account.eventTypes.ToList();
+
+            if (eventsList.Count > 0)
+            {
+                foreach (var ev in eventsList)
+                {
+                    ReviewEvents(ev);
+                }
+            }
         }
 
         private static void ReviewAccountMail(Account acc)
@@ -532,6 +559,23 @@
             acc.defaultAccount = true;
             if (acc.mails == null)
                 acc.mails = new List<MailRelation>();
+        }
+
+        private void ReviewRawMessage(RawMessageProvider rawMessage)
+        {
+            rawMessage.User = rawMessage.User.ToUpperInvariant();
+            rawMessage.Provider = rawMessage.Provider.ToUpperInvariant();
+            rawMessage.Account = rawMessage.Account.ToUpperInvariant();
+            rawMessage.MessageId = rawMessage.MessageId.ToUpperInvariant();
+            
+        }
+
+        private static void ReviewEvents(EventType eve)
+        {
+            if (string.IsNullOrEmpty(eve.idEvent))
+                eve.idEvent = Guid.NewGuid().ToString(); 
+            eve.name = eve.name.ToUpperInvariant();
+            eve.color = eve.color.ToLowerInvariant();
         }
 
         private static Predicate<Account> GetFilterProviderMail(string provider, string mail)
@@ -552,6 +596,19 @@
             {
                 { "i.provider", provider.ToUpperInvariant() },
                 { "i.email", mail.ToLowerInvariant() }
+            };
+            var doc = new BsonDocument(dictionary);
+            var docarrayFilter = new BsonDocumentArrayFilterDefinition<BsonDocument>(doc);
+            arrayFilters.Add(docarrayFilter);
+            return arrayFilters;
+        }
+
+        private static List<ArrayFilterDefinition> GetFilterFromAccountEvent(string idEvent)
+        {
+            var arrayFilters = new List<ArrayFilterDefinition>();
+            var dictionary = new Dictionary<string, string>
+            {
+                { "i.id", idEvent },
             };
             var doc = new BsonDocument(dictionary);
             var docarrayFilter = new BsonDocumentArrayFilterDefinition<BsonDocument>(doc);
@@ -580,6 +637,12 @@
             }
 
             return Builders<UserMail>.Filter.Eq(u => u.User, idUser.ToUpperInvariant());
+        }
+
+        private static FilterDefinition<AccountEvents> GetFilterAccountEvents(string mail)
+        {
+            
+            return Builders<AccountEvents>.Filter.Eq(u => u.email, mail.ToUpperInvariant());
         }
 
         private static FilterDefinition<RawMessageProvider> GetFilterRawMessage(string idUser, string provider, string account, string messageId)
@@ -643,7 +706,7 @@
                     rawMessage,
                     GetUpsertOptions());
 
-                rawMessage.Id = ManageCreateRawMessage($"Don´t insert or modify the raw {rawMessage.User}",
+                rawMessage.Id = ManageUpsert<RawMessageProvider>($"Don´t insert or modify the raw {rawMessage.User}",
                     $"Se modifica el usuario {rawMessage.User}",
                     $"Se inserta el usuario {rawMessage.User} con {resultReplace.UpsertedId}",
                      result, resultReplace);
@@ -680,6 +743,80 @@
             {
                 TraceMessage(result.errors, ex);
             }
+            return result;
+        }
+
+        public async Task<Result<AccountEvents>> GetEventsByAccount(string account)
+        {
+            var result = new Result<AccountEvents>();
+            try
+            {
+                result.data = await _context.AccountEvents.Find(GetFilterAccountEvents(account)).FirstOrDefaultAsync();
+
+                if (result.data == null)
+                    TraceMessage(result.errors, new Exception($"No se encuentra ningún evento para esa cuenta {account}"), "1003");
+                else
+                {
+                    var orderEvents = result.data?.eventTypes.OrderByDescending(x => x.name).ToList();
+                    if (orderEvents != null)
+                        result.data.eventTypes = orderEvents.ToArray();
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
+
+        public async Task<Result<AccountEvents>> UpsertAccountEvents(AccountEvents accountIn)
+        {
+            var result = new Result<AccountEvents>();
+            ReviewAccountEventsMail(accountIn);
+
+            try
+            {
+                var resultReplace = await _context.AccountEvents.ReplaceOneAsync(GetFilterAccountEvents(accountIn.email), accountIn, GetUpsertOptions());
+
+                accountIn.Id = ManageUpsert<AccountEvents>($"Don´t insert or modify the user {accountIn.email}",
+                    $"Se modifica la cuenta {accountIn.email}",
+                    $"Se inserta la cuenta {accountIn.email} con {resultReplace.UpsertedId}",
+                     result, resultReplace);
+
+                result.data = accountIn;
+
+                //var eventAssoc = new AddUserMailIntegrationEvent(userMail.User, userMail.configUser);
+                //_eventBus.Publish(eventAssoc);
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
+
+        public async Task<Result<bool>> RemoveEvent(string email, string idEvent)
+        {
+            var result = new Result<bool>();
+            var arrayFilters = GetFilterFromAccountEvent(idEvent);
+
+            try
+            {
+                var resultUpdate = await _context.AccountEvents.UpdateOneAsync(
+                    GetFilterAccountEvents(email),
+                    Builders<AccountEvents>.Update.Pull($"events.$[i]", idEvent),
+                    new UpdateOptions { ArrayFilters = arrayFilters }
+                );
+
+                ManageUpdate($"Don´t remove the relation in event of account {email}",
+                    $"Se elimina evento en la cuenta {email} evento: {idEvent}",
+                    result, resultUpdate);
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+
             return result;
         }
 

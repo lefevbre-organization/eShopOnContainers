@@ -62,19 +62,13 @@
 
         public async Task<Result<bool>> DeleteRaw(RawMessageProvider rawMessage) => await _accountsRepository.DeleteRaw(rawMessage);
 
-        public Task<Result<AccountEvents>> GetEventsByAccount(string account)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<Result<AccountEvents>> GetEventsByAccount(string account) 
+            => await _accountsRepository.GetEventsByAccount(account);
 
-        public Task<Result<AccountEvents>> UpsertAccountEvents(AccountEvents accountIn)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<Result<AccountEvents>> UpsertAccountEvents(AccountEvents accountIn) 
+            => await _accountsRepository.UpsertAccountEvents(accountIn);
 
-        public Task<Result<bool>> RemoveEvent(string email, int idEvent)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<Result<bool>> RemoveEvent(string email, string idEvent) 
+            => await _accountsRepository.RemoveEvent(email, idEvent);
     }
 }

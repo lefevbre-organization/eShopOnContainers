@@ -13,7 +13,7 @@ namespace Account.API.Model
         public string Id { get; set; }
         public string email { get; set; }
 
-        public EventType[] events { get; set; }
+        public EventType[] eventTypes { get; set; }
 
     }
 }

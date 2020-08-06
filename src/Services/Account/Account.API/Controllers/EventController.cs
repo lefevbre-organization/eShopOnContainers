@@ -21,7 +21,7 @@ namespace Account.API.Controllers
 
     #endregion
 
-    [Route("api/v2/events")]
+    [Route("api/v2/eventypes")]
     [ApiController]
     public class EventController : Controller
     {
@@ -56,7 +56,7 @@ namespace Account.API.Controllers
         [ProducesResponseType(typeof(Result<AccountEvents>), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(Result<AccountEvents>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetByAccount(
-            [FromQuery] string email)
+            [FromBody] string email)
         {
             if (string.IsNullOrEmpty(email))
                 return BadRequest("email invalid. Must be a valid account to search the events");
@@ -81,15 +81,15 @@ namespace Account.API.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost("delete/{idEvent}")]
+        [HttpPost("delete")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> DeleteUser(
-            [FromQuery] string email,
-            [FromRoute] int idEvent
+            [FromBody] string email,
+            [FromBody] string idEvent
             )
         {
-            if (string.IsNullOrEmpty(email) ||  idEvent >= 0 )
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(idEvent))
                 return BadRequest("values invalid. Must be a valid email and idevent to delete the event");
 
             Result<bool> result = await _service.RemoveEvent(email, idEvent);
