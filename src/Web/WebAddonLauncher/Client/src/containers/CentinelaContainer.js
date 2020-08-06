@@ -54,6 +54,7 @@ class CentinelaContainer extends Component {
     
     async sendMessageCentinelaPutUser(user, addonData) {
       const msgRaw = await getRawAddon(addonData);
+    
         window.dispatchEvent(
           new CustomEvent('PutUserFromCentinelaConnector', {
             detail: {
@@ -63,7 +64,7 @@ class CentinelaContainer extends Component {
                 subject: addonData.subject,
                 folder: addonData.folder,
                 sentDateTime: addonData.sentDateTime,
-                raw: msgRaw.result.data.raw
+                raw: msgRaw.result.data ? msgRaw.result.data.raw : ''
               }],
               provider: addonData.provider,
               account: addonData.account,
@@ -72,6 +73,7 @@ class CentinelaContainer extends Component {
             },
           })
         );
+ 
     }
 
     handleGetAddonsInfoFromCentinelaConnector() {

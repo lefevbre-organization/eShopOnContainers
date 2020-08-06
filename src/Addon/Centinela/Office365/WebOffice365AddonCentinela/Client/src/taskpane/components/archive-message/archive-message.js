@@ -63,10 +63,10 @@ class ArchiveMessage extends Component {
       }
     }
 
-    getProviderCentienla(jwt) {
+    getProviderCentinelaArchiveMessage(jwt) {
       let authenticator = new OfficeHelpers.Authenticator();
-      authenticator.endpoints.add("centinela", { 
-        provider: 'centinela',
+      authenticator.endpoints.add("centinelaArchiveMessage", { 
+        provider: 'centinelaArchiveMessage',
         clientId: 'a8c9f1a1-3472-4a83-8725-4dfa74bac24d',
         baseUrl: `${window.URL_ADDON_CENTINELA}`,
         redirectUrl: `${window.URL_ADDON_CENTINELA_BASE}/taskpane.html`,
@@ -102,7 +102,7 @@ class ArchiveMessage extends Component {
       const jwt =  token + "." + signature;
       
       this.setState({addonDataToken: jwt});
-      this.getProviderCentienla(jwt);
+      this.getProviderCentinelaArchiveMessage(jwt);
     }
 
     getAddonData = async () =>   {
@@ -150,7 +150,7 @@ class ArchiveMessage extends Component {
    
       this.getAddonData();
       let authenticator = new OfficeHelpers.Authenticator();
-      authenticator.authenticate('centinela', true)
+      authenticator.authenticate('centinelaArchiveMessage', true)
      .then(token => { 
      })
      .catch(error => {
