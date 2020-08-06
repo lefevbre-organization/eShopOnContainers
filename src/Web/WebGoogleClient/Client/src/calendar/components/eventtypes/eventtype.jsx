@@ -19,7 +19,7 @@ export class Eventtype extends React.Component {
             color: undefined,
             name: undefined,
             editmode: false,
-            editmode: false,
+            newmode: false,
         }; 
 
         this.position = { X: 'Center', Y: 'Bottom' };
@@ -136,6 +136,7 @@ export class Eventtype extends React.Component {
 
                 this.eventTypeData.push(dataEventType);
                 this.setState({ editmode: false })
+                this.setState({ newmode: false })
                 //this.listEventType.addItem([dataEventType]);
 
             })
