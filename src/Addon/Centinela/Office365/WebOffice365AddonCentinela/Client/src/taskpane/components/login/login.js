@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, ButtonType } from "office-ui-fabric-react";
+import { PrimaryButton } from "office-ui-fabric-react";
 import i18n from 'i18next';
 import LoginHeader from "../header/login-header";
 import Progress from "../Progress";
@@ -61,7 +61,7 @@ class Login extends Component {
     
     if (!isOfficeInitialized) {
       return (
-        <Progress title={title} logo="assets/llefebvre-centinela.png"  />
+        <Progress title={title} logo="assets/lefebvre-centinela.png"  />
       );
     }
 
@@ -73,14 +73,14 @@ class Login extends Component {
         <div className="text-center">
          <img align="center" src="assets/iconos-circulo-centinela.png" className="logo-2-space" 
          alt="Centinela" title="Centinela" />
-          <Button
+          <PrimaryButton
             className="popupButton 
             btn-login ms-Button ms-Button--primary 
             ms-Button-label btn-label"
             onClick={this.click}
           >
             {i18n.t('login.button-title')}
-          </Button>
+          </PrimaryButton>
           <p align="center" className="reserved">©2020 Lefebvre. Todos los derechos reservados.</p>
           </div> }
       </div>
