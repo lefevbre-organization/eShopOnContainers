@@ -202,6 +202,9 @@
   "bigFileModal": {
     "text": "La taille maximale des pièces jointes ne doit pas dépasser 15MB."
   },
+  "attachNotFoundCentinela":{
+    "text": "Impossible de télécharger les documents."
+  },
   "attachmentsWidget": {
     "title": "pièces jointes",
     "attachButton": "Ajouter document",

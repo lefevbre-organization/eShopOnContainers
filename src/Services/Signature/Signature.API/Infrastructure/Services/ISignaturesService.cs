@@ -31,5 +31,7 @@
         //Task<Result<int>> DecAvailableSignatures(string user);
 
         Task<Result<bool>> SaveEvent(EventInfo info);
+
+        Task<RestSharp.IRestResponse> checkAvailableSignatures(string user, int nDocuments);
     }
 }

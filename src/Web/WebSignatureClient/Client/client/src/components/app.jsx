@@ -99,7 +99,8 @@ class App extends Component {
           src='/assets/images/lexon-fake.png'></img>
       ),
       actualSidebarComponent: 0,
-      isUpdatedDefaultAccount: (this.props.application.user) ? true: false
+      isUpdatedDefaultAccount: (this.props.application.user) ? true: false,
+      attachmentsDownloadError: false
     };
 
     this.toggleSideBar = this.toggleSideBar.bind(this);
@@ -110,6 +111,7 @@ class App extends Component {
     this.onSetSidebarOpenCompliance = this.onSetSidebarOpenCompliance.bind(this);
     this.onSetSidebarOpenDatabase = this.onSetSidebarOpenDatabase.bind(this);
     this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(this);
+    this.resetDownloadError = this.resetDownloadError.bind(this);
   }
 
   onSetSidebarOpenCalendar(open) {
@@ -405,13 +407,17 @@ class App extends Component {
     this.props.history.push('/#/lexon-connector');
   }
 
+  resetDownloadError(){
+    this.setState({ attachmentsDownloadError: false});
+  }
+
   renderContent() {
     const { application } = this.props;
     if (
       application.newMessage &&
       Object.keys(application.newMessage).length > 0
     ) {
-      return <MessageEditor className={styles['message-viewer']} />;
+      return <MessageEditor className={styles['message-viewer']} attachmentsDownloadError={this.state.attachmentsDownloadError} onShowError={this.resetDownloadError} />;
     } //else if (application.selectedMessage && Object.keys(application.selectedMessage).length > 0) {
       else if (application.selectedSignature && Object.keys(application.selectedSignature).length > 0) {
       return <MessageViewer className={styles['message-viewer']} />;
@@ -513,7 +519,7 @@ class App extends Component {
             })
             .catch(() => this.props.newMessage(mailContacts, adminContacts));
           } 
-          else if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela") && lefebvre.idDocuments && lefebvre.idDocuments.length > 0){
+          else if ((lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2") && lefebvre.idDocuments && lefebvre.idDocuments.length > 0){
             let documentsInfo = []; 
             let attachmentsList = [];
             let i = 0;
@@ -526,7 +532,8 @@ class App extends Component {
               this.props.getAttachmentCen(lefebvre.userId, document.docId)
               .then((attachment) => {
                 if (attachment.data === null) { //El fichero no existe o no se ha podido recuperar
-                  this.props.newMessage();
+                  this.setState({attachmentsDownloadError: true})
+                  this.props.newMessage(mailContacts, adminContacts);
                 }
                 else {
 

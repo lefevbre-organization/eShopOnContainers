@@ -184,6 +184,9 @@
   "bigFileModal": {
     "text": "Max size of attached files must be lower than 15MB."
   },
+  "attachNotFoundCentinela":{
+    "text": "Document's couldn't be retrieved from Centinela."
+  },
   "attachmentsWidget": {
     "title": "ATTACHED FILES",
     "attachButton": "ATTACH FILE",

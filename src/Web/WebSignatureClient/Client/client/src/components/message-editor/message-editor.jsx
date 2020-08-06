@@ -53,7 +53,8 @@ class MessageEditor extends Component {
       selectedExpirationOption: 'exp_option1',
       expirationDays: 7,
       hideAlertDialog: false,
-      bigAttachments: false
+      bigAttachments: false,
+      centinelaDownloadError: (props.attachmentsDownloadError !== undefined) ? props.attachmentsDownloadError : false
     };
 
     this.fileInput = null;
@@ -95,8 +96,11 @@ class MessageEditor extends Component {
 
 
   dialogClose(){
+    if (this.state.centinelaDownloadError === true){
+      this.props.onShowError();
+    }
     this.setState({
-        hideAlertDialog: false, bigAttachments: false
+        hideAlertDialog: false, bigAttachments: false, centinelaDownloadError: false
     });
   }
 
@@ -160,6 +164,13 @@ class MessageEditor extends Component {
       </div>
     `;
 
+    const attachNotFound = `
+      <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+        ${i18n.t('attachNotFoundCentinela.text')}
+      </div>
+    `;
+
     const {
       t,
       className,
@@ -171,6 +182,9 @@ class MessageEditor extends Component {
       subject,
       content,
     } = this.props;
+
+    console.log(this.state.centinelaDownloadError);
+    console.log(this.props.attachmentsDownloadError);
 
     return (
       <div
@@ -274,10 +288,11 @@ class MessageEditor extends Component {
         <DialogComponent 
           id="info2Dialog" 
           //header=' ' 
-          visible={this.state.hideAlertDialog} 
+          visible={this.state.hideAlertDialog || this.state.centinelaDownloadError} 
           animationSettings={this.animationSettings} 
           width='500px' 
-          content={(this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : noSignersModal))}
+          content={(this.state.centinelaDownloadError === true ? attachNotFound : (this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : noSignersModal)))}
+          //content={(this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : noSignersModal))}
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
           //target='#target' 
           //buttons={this.alertButtons} 
@@ -331,9 +346,9 @@ class MessageEditor extends Component {
 
   
   submit() {
-    if (this.props.to.length === 0){
+    if (this.props.to.length === 0 || this.props.attachments.length === 0){
       this.setState({ hideAlertDialog: true });
-    } if (this.bigAttachments()){
+    } else if (this.bigAttachments()){
       this.setState({ hideAlertDialog: true, bigAttachments: true});
     }
     else {

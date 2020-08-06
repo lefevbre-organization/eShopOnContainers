@@ -177,5 +177,24 @@
         //    return Ok(response.Content);
         //}
 
+        [HttpGet]
+        [Route("{user}/checkAvailableSignatures/{nDocuments}")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> checkAvailableSignatures([FromRoute] string user , [FromRoute] int nDocuments)
+        {
+            if (string.IsNullOrEmpty(user))
+                return (IActionResult)BadRequest("invalid user value");
+            if (nDocuments < 1)
+                return (IActionResult)BadRequest("invalid nDocuments value");
+
+            var result = await _signaturesService.checkAvailableSignatures(user, nDocuments);
+
+            return (IActionResult)Ok(result.Content);
+            //return (IActionResult)Ok(false);
+        }
+
     }
 }

@@ -13,12 +13,12 @@ window.URL_MF_LEXON_BASE = "http://localhost:3004/"
 //window.URL_MF_LEXON_BASE = "https://lexbox-test-weblexon.lefebvre.es";
 window.API_GATEWAY = "https://lexbox-test-apigwlex.lefebvre.es";
 window.API_ACC_GATEWAY = "https://lexbox-test-apigwacc.lefebvre.es";
-window.API_CHECK_CREDITS = "http://led-serviceclaves/FirmaDigital";
+window.API_CHECK_CREDITS = "https://led-pre-serviceclaves.lefebvre.es/FirmaDigital";
 window.RELEASE = 'RC DEV';
 window.URL_MF_SIGNATURIT = "http://localhost:3020";
 
 // Bloque para probar arrancando el api sin el F5
-//window.API_SIGN_GATEWAY = "https://localhost:44375/api/v1";
+window.API_SIGN_GATEWAY = "https://localhost:44375/api/v1";
 // window.URL_SIGNATURES_API = "https://localhost:44375/api/v1/Signatures";
 // window.URL_BRANDINGS_API = "https://localhost:44375/api/v1/Brandings";
 // window.URL_SIGNATURIT_API = "https://localhost:44375/api/v1/Signaturit"
@@ -30,7 +30,7 @@ window.URL_MF_SIGNATURIT = "http://localhost:3020";
 // window.URL_SIGNATURIT_API = "http://localhost:8091/api/v1/signservice/Signaturit";
 
 // Bloque para probar contra pre
-window.API_SIGN_GATEWAY = "https://lexbox-test-apigwsig.lefebvre.es/api/v1/signservice";
+//window.API_SIGN_GATEWAY = "https://lexbox-test-apigwsig.lefebvre.es/api/v1/signservice";
 
 window.TERMS_AND_CONDITIONS_URL = 'https://lefebvre.es/aviso-legal';
 window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies';

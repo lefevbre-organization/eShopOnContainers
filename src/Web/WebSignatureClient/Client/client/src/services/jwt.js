@@ -24,7 +24,7 @@ export const getGuid = payload =>{
 }
 
 export const getApp = payload =>{
-  return(payload.hasOwnProperty('app') ? payload.app : "lefebvre");
+  return(payload.hasOwnProperty('idApp') ? (payload.idApp === 2 ? 'centinela' : (payload.idApp === 1 ? 'lexon' : 'lefebvre')) : "lefebvre");
 }
 
 export const getUserName = payload =>{

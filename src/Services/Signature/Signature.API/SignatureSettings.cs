@@ -17,6 +17,7 @@
         public string LexonApiGwUrl { get; set; }
 
         public string CentinelaApiGwUrl { get; set; }
+        public string ModulosComunes { get; set; }
 
         public string SignaturitApiUrl { get; set; }
         public string CallBackUrl { get; set; }

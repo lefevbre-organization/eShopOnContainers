@@ -202,6 +202,9 @@
   "bigFileModal": {
     "text": "El tamaño máximo de los archivos adjuntos no puede superar 15MB."
   },
+  "attachNotFoundCentinela":{
+    "text": "No se han podido descargar los documentos desde Centinela."
+  },
   "attachmentsWidget": {
     "title": "ARCHIVOS ADJUNTOS",
     "attachButton": "ADJUNTAR DOCUMENTO",

@@ -159,7 +159,7 @@ class SideBar extends Component {
           <MenuContainer />
         </PerfectScrollbar>
         <DialogComponent 
-          id="alertDialog" 
+          id="noSignaturesDialog" 
           header=' ' 
           visible={this.state.hideAlertDialog} 
           animationSettings={this.animationSettings} 
@@ -174,7 +174,7 @@ class SideBar extends Component {
         ></DialogComponent>
         <style jsx global>
           {`
-            #alertDialog{
+            #noSignaturesDialog{
               max-height: 927px;
               width: 300px;
               left: 770px;
@@ -182,7 +182,7 @@ class SideBar extends Component {
               z-index: 1001;
               transform: translateY(+200%);
             }
-            #alertDialog_dialog-header, #alertDialog_title, #alertDialog_dialog-content, .e-footer-content{
+            #noSignaturesDialog_dialog-header, #noSignaturesDialog_title, #noSignaturesDialog_dialog-content, .e-footer-content{
               background: #c5343f;
               color: #fff;
               display:flex;
@@ -205,6 +205,10 @@ class SideBar extends Component {
       if (response === false || response === "false"){
         //alert('Ha agotado todas sus solicitudes de firma. Debe comprar más');
         this.setState({ hideAlertDialog: true });
+        // Lo pongo para poder probar siempre aunque devuelva false, luego hay que quitar las tres líneas que siguen este comentario.
+        this.props.setAvailableSignatures(response);
+        this.props.setTitle(t('messageEditor.title'));
+        this.props.newMessage(lefebvre.sign);
       } else {
         this.props.setAvailableSignatures(response);
         this.props.setTitle(t('messageEditor.title'));

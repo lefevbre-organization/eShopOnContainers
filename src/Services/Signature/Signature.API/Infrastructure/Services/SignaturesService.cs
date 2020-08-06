@@ -251,5 +251,29 @@
             return result;
         }
         #endregion
+
+        #region modulosComunes
+        public async Task<IRestResponse> checkAvailableSignatures(string user, int nDocuments)
+        {
+            var client = new RestClient($"{_settings.Value.ModulosComunes}/FirmaDigital/ComprobarPuedeCrearFirmaDigital?IdClientNav={user}&NumDocuments={nDocuments}&idUic=1");
+            client.Timeout = _timeout;
+            var request = new RestRequest(Method.GET);
+            IRestResponse response = await client.ExecuteAsync(request);
+            Console.WriteLine(response.Content);
+
+            return response;
+        }
+        #endregion
     }
 }
+
+
+
+
+
+
+
+
+
+
+
