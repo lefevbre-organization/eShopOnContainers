@@ -1,16 +1,16 @@
-﻿namespace Account.API.Model
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Model
 {
     #region Using
 
     using MongoDB.Bson;
     using MongoDB.Bson.Serialization.Attributes;
     using System.Collections.Generic;
+
     #endregion Using
 
     [BsonIgnoreExtraElements]
     public class UserMail : MongoModel
     {
-        internal string guid;
 
         [BsonId]
         [BsonIgnoreIfDefault]
@@ -23,28 +23,9 @@
         [BsonElement("user")]
         public string User { get; set; }
 
-        ///// <summary>
-        ///// Obsoleta, en la siguiente versión deberá usarse la coleccion de Accounts.
-        ///// Proveedor de correo (GO, OU, IM)
-        ///// </summary>
-        //[BsonElement("provider")]
-        //public string Provider { get; set; }
-
 
         public ConfigUserLexon configUser { get; set; }
 
-        ///// <summary>
-        ///// Obsoleta, en la siguiente versión deberá usarse la coleccion de Accounts.
-        ///// Indicador de si es la cuenta por defecto
-        ///// </summary>
-        //[BsonElement("defaultAccount")]
-        //public bool DefaultAccount { get; set; }
-
-        ///// <summary>
-        ///// Obsoleta, en la siguiente versión deberá usarse la coleccion de Accounts.
-        ///// identificador único usado para refrescar la pantalla de selección de cuentas
-        ///// </summary>
-        //public string guid { get; set; }
 
         /// <summary>
         /// Lista de cuentas asociadas a un usuario
@@ -52,8 +33,6 @@
         public List<Account> accounts { get; set; }
         public bool state { get; set; }
 
-        //[BsonElement("email")]
-        //public string Email { get;  set; }
 
     }
 }

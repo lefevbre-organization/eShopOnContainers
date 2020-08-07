@@ -1,4 +1,4 @@
-﻿namespace Account.API.Extensions
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Extensions
 {
     #region Using
 

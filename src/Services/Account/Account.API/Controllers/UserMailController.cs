@@ -1,4 +1,4 @@
-﻿namespace Account.API.Controllers
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Controllers
 {
     #region Usings
 

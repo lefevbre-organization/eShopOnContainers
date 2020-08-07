@@ -1,4 +1,4 @@
-﻿namespace Account.API
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API
 {
     public class AccountSettings
     {
@@ -18,6 +18,6 @@
         public EventBusSettings EventBus { get; set; }
         public string Collection { get;  set; }
         public string CollectionRaw { get;  set; }
-        public string CollectionEvents { get; set; }
+        public string CollectionCalendar { get; set; }
     }
 }

@@ -1,10 +1,12 @@
-﻿namespace Account.API.Infrastructure.Repositories
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Repositories
 {
+    #region using
     using Account.API.Model;
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
+    #endregion
     public interface IAccountsRepository
     {
         Task<Result<UserMail>> Create(UserMail account);
@@ -37,5 +39,9 @@
         Task<Result<RawMessageProvider>> GetRawUser(string user, string provider, string account, string messageId);
         Task<Result<RawMessageProvider>> CreateRaw(RawMessageProvider rawMessage);
         Task<Result<bool>> DeleteRaw(RawMessageProvider rawMessage);
+        Task<Result<AccountEvents>> GetEventsByAccount(string account);
+        Task<Result<AccountEvents>> UpsertAccountEvents(AccountEvents accountIn);
+        Task<Result<bool>> RemoveEvent(string email, string idEvent);
+        Task<Result<EventType>> AddEvent(string email, EventType eventType);
     }
 }

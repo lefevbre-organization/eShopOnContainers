@@ -1,4 +1,4 @@
-﻿namespace Account.API.Infrastructure.Services
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Services
 {
     #region Using
 
@@ -40,5 +40,9 @@
         Task<Result<RawMessageProvider>> GetRawUser(string user, string provider, string account, string messageId);
         Task<Result<RawMessageProvider>> CreateRaw(RawMessageProvider rawMessage);
         Task<Result<bool>> DeleteRaw(RawMessageProvider rawMessage);
+        Task<Result<AccountEvents>> GetEventsByAccount(string account);
+        Task<Result<AccountEvents>> UpsertAccountEvents(AccountEvents accountIn);
+        Task<Result<bool>> RemoveEvent(string email, string idEvent);
+        Task<Result<EventType>> AddEvent(string email, EventType eventType);
     }
 }

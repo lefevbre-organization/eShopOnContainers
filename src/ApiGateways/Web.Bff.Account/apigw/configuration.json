@@ -68,6 +68,18 @@
       "DownstreamPathTemplate": "/api/{version}/{everything}"
     },
     {
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [ "POST", "PUT", "GET", "DELETE" ],
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "account.api",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/{version}/ev/{everything}",
+      "DownstreamPathTemplate": "/api/{version}/events/{everything}"
+    },
+    {
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "POST", "PUT", "GET" ],

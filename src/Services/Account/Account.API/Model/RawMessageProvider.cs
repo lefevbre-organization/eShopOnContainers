@@ -1,7 +1,6 @@
-﻿namespace Account.API.Model
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Model
 {
     using MongoDB.Bson;
-
     using MongoDB.Bson.Serialization.Attributes;
 
     public class RawMessageProvider
