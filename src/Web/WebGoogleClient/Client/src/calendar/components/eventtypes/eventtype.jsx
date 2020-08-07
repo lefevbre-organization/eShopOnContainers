@@ -18,7 +18,7 @@ export class Eventtype extends React.Component {
             errorColor: "",
             color: undefined,
             name: undefined,
-            editmode: false,
+            updatemode: false,
             newmode: false,
         }; 
 
@@ -30,12 +30,8 @@ export class Eventtype extends React.Component {
                 '#eb9fb3', '#879096', '#dec365', '#68c5c3',]
         };  
 
-        //to delete
-        this.eventTypeData = [
-            { "Id": "1", "Text": "personal", "Color": "#dec365"},
-            { "Id": "2", "Text": "meeting", "Color": "#ddc9a2"},
-            { "Id": "3", "Text": "gym", "Color": "#bc4594" }          
-        ];
+      
+        this.eventTypeData = [];
 
         this.toasts = [
             { content: i18n.t("schedule.toast-processing"), cssClass: 'e-toast-black', icon: '' },
@@ -61,18 +57,15 @@ export class Eventtype extends React.Component {
         return (<div className="text-content"> 
             <span Style={`background-color: ${data.Color}; margin-right: 20px`} className='dot'></span>
             {data.Text} 
-            <span className="delete-icon" onClick={this.deleteEventTypem.bind(this)} />
+            <span className="delete-icon" onClick={this.deleteEventType.bind(this)} />
             <span className="delete-icon" onClick={this.onModifyEventTypeState.bind(this)} />
             <span className='id hidden'>{data.Id}</span>
         </div>);
     }  
 
     onModifyEventTypeState(args) {
-        this.setState({ editmode: true })
-
-        let idEventType = args.target.parentElement.lastChild.innerText
-
-       
+        this.setState({ updatemode: true })
+        let idEventType = args.target.parentElement.lastChild.innerText       
         var itemE = this.eventTypeData.find(function (e) {
             return e.Id == idEventType
         })
@@ -88,19 +81,67 @@ export class Eventtype extends React.Component {
         
     }
 
-    onAddNewEvent() {
-        this.setState({ newmode: true });
-        this.setState({ name: undefined });
-        this.setState({ color: undefined });
+    newState() {
+       this.setState({ newmode: true });
+       this.setState({ name: undefined });
+       this.setState({ color: undefined });
     }
 
-    onCancelEventType() {
-        this.setState({ editmode: false })
-        this.setState({ newmode: false })
+    cancelState() {
+       this.setState({ updatemode: false })
+       this.setState({ newmode: false })
     }
 
+    updateState() {
+       this.setState({ updatemode: false })
+       this.setState({ newmode: false })
+    }
 
-    onAddEventType(args) {
+    deleteEventType(args) {
+        args.stopPropagation();
+        let liItem = args.target.parentElement.parentElement;
+        this.listEventType.removeElement(liItem);
+        function remove(array, element) {
+            return array.filter(el => el.Text !== element);
+        }
+        let vowels = remove(this.eventTypeData, args.target.parentElement.innerText);
+        this.eventTypeData = [];
+        this.eventTypeData = vowels;
+
+        let dataEventTypeAPI = {
+            
+            "idEvent": args.target.parentElement.lastChild.innerText,
+             "email": "alberto.valverde.escribano@gmail.com"
+        }
+
+       
+
+        //this.toastObj.timeOut = 10000;
+        //this.toastObj.showProgressBar = true
+        //this.toastObj.show(this.toasts[0]);
+
+        deleteEventType(dataEventTypeAPI)
+            .then(result => {
+                //this.toastObj.hide('All');
+                //this.toastObj.showProgressBar = false
+                //this.toastObj.timeOut = 1000;
+                //this.toastObj.show(this.toasts[1]);
+                //this.listEventType.removeItem(liItem);
+                this.props.getlistEventTypes();
+            })
+            .catch(error => {
+                console.log('error ->', error);
+                if (this.toastObj != undefined) {
+                    this.toastObj.showProgressBar = false;
+                    this.toastObj.hide('All');
+                    this.toastObj.timeOut = 1000;
+                    this.toastObj.show(this.toasts[2]);
+                }
+            });
+
+    } 
+
+    AddEventType(args) {
 
         if (this.TitleTypeEventObj.value == undefined) {
             this.setState({ errorName: 'Dato obligatorio' })
@@ -124,10 +165,21 @@ export class Eventtype extends React.Component {
             "Color": this.state.color 
         }
 
+
+        let dataEventTypeAPI = {
+            "email": "alberto.valverde.escribano@gmail.com",
+            "eventType": 
+                {
+                    "name": this.TitleTypeEventObj.value,
+                    "color": this.state.color 
+                }
+           
+        } 
+
         this.toastObj.timeOut = 10000;
         this.toastObj.showProgressBar = true;
         this.toastObj.show(this.toasts[0]);
-        addOrUpdateEventType("", "", dataEventType)
+        addOrUpdateEventType(dataEventTypeAPI)
             .then(result => {
                 this.toastObj.hide('All');
                 this.toastObj.showProgressBar = false;
@@ -135,9 +187,11 @@ export class Eventtype extends React.Component {
                 this.toastObj.show(this.toasts[1]);
 
                 this.eventTypeData.push(dataEventType);
-                this.setState({ editmode: false })
+                this.setState({ updatemode: false })
                 this.setState({ newmode: false })
                 //this.listEventType.addItem([dataEventType]);
+
+                this.props.getlistEventTypes();
 
             })
             .catch(error => {
@@ -151,65 +205,72 @@ export class Eventtype extends React.Component {
             });
     }
 
-    deleteEventTypem(args) {
-        args.stopPropagation();
-        let liItem = args.target.parentElement.parentElement;
-        this.listEventType.removeElement(liItem);
-        function remove(array, element) {
-            return array.filter(el => el.Text !== element);
+    onPressActionButton(args) { 
+        switch (args.target.id) {           
+            case 'newevent': 
+                this.newState();
+                return;
+            case 'updateevent':
+                this.updateState();
+                return;
+            case 'cancel':
+                this.cancelState();
+                return;           
+            default:
+                return ;
         }
-        let vowels = remove(this.eventTypeData, args.target.parentElement.innerText);
-        this.eventTypeData = [];
-        this.eventTypeData = vowels;
+    }
 
-        //this.toastObj.timeOut = 10000;
-        //this.toastObj.showProgressBar = true
-        //this.toastObj.show(this.toasts[0]);
-        //deleteEventType(this.state.calendarid, liItem.dataset.uid)
-        //    .then(result => {
-        //        this.toastObj.hide('All');
-        //        this.toastObj.showProgressBar = false
-        //        this.toastObj.timeOut = 1000;
-        //        this.toastObj.show(this.toasts[1]);
-        //        this.listEventType.removeItem(liItem);
-        //    })
-        //    .catch(error => {
-        //        console.log('error ->', error);
-        //        if (this.toastObj != undefined) {
-        //            this.toastObj.showProgressBar = false;
-        //            this.toastObj.hide('All');
-        //            this.toastObj.timeOut = 1000;
-        //            this.toastObj.show(this.toasts[2]);
-        //        }
-        //    });
+    onDataBinding(items) {
+        if (items.length > 0) {
+            for (let i = 0; i < items.length; i++) {
+                let evt = items[i];                 
+                this.eventTypeData.push({                   
+                    Id: evt.idEvent,
+                    Text: evt.name,
+                    Color: evt.color,                   
+                });
+            }
+        }
+        this.listEventType.refresh();
+    }
 
-    }  
+    getlistEventTypes() {
+        getEventTypes("alberto.valverde.escribano@gmail.com")
+            .then(result => {
+                this.onDataBinding(result.data.eventTypes)
+            })
+            .catch(error => {
+                console.log('error ->', error);
+            });
+    }
+
+    componentDidMount() {      
+     this.getlistEventTypes();       
+    }    
 
     componentDidUpdate() {
-        if (this.state.editmode) {
+        if (this.state.updatemode) {
             this.colorObj.value = this.state.color;
             this.TitleTypeEventObj.value = this.state.name;
         }
     }    
 
-    render() {   
-
-        var ObjClick;
+    render() {  
+        var ObjId;
         var ObjText;
         if (this.state.newmode) {
-           // ObjClick = this.onModifyClick
+            ObjId = "newevent"
             ObjText = i18n.t("eventtype.add")
         }
         else {
-           // ObjClick = this.onAddEventType.bind(this)
+            ObjId = "updateevent"
             ObjText = i18n.t("eventtype.modify")
         }
-
-        return (   
-
+        return (  
             <div className="row custom-margin custom-padding-5 material2">
                 <div className="col-xs-12 col-sm-12 col-lg-12 col-md-12">                   
-                    {this.state.editmode || this.state.newmode ? (
+                    {this.state.updatemode || this.state.newmode ? (
                             <div>
                                 <div className="form-group">
                                     <div className="e-float-input">
@@ -234,22 +295,19 @@ export class Eventtype extends React.Component {
 
                                 <div className="e-footer-content">
                                     <ButtonComponent
-                                        id="actionbutton"
-                                        //disabled={this.state.buttonDisabled}
+                                        id={ObjId}                                       
                                         cssClass='e-control e-btn e-lib e-primary e-event-save e-flat'
-                                        onClick={this.onAddEventType.bind(this)}
+                                        onClick={this.AddEventType.bind(this)}
                                         ref={(scope) => { this.addBtn = scope }}
                                      > {ObjText}</ButtonComponent>
 
                                     <ButtonComponent
-                                        id="cancelbutton"
-                                        //disabled={this.state.buttonDisabled}
+                                        id="cancel"                                        
                                         cssClass='e-control e-btn e-lib e-event-cancel e-flat'
-                                        onClick={this.onCancelEventType.bind(this)}
+                                    onClick={this.onPressActionButton.bind(this)}
                                         ref={(scope) => { this.addBtn = scope }}
                                     > {i18n.t("eventtype.cancel")}</ButtonComponent>
                                  </div>
-
                                 <ToastComponent ref={(toast) => { this.toastObj = toast; }}
                                     id='toast_pos'
                                     content='Action successfully completed.'
@@ -272,10 +330,9 @@ export class Eventtype extends React.Component {
 
                                 <div className="e-footer-content">
                                     <ButtonComponent
-                                        id="neweventbutton"
-                                        //disabled={this.state.buttonDisabled}
+                                        id="newevent"                                       
                                         cssClass='e-control e-btn e-lib e-primary e-event-save e-flat'
-                                        onClick={this.onAddNewEvent.bind(this)}
+                                        onClick={this.onPressActionButton.bind(this)}
                                         ref={(scope) => { this.addBtn = scope }}
                                     > {i18n.t("eventtype.newevent")}</ButtonComponent>                                    
                                 </div>

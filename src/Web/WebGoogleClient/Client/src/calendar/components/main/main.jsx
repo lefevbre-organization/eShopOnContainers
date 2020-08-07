@@ -48,6 +48,7 @@ import Reminder from "./reminder/reminder"
 import { Popup } from '@syncfusion/ej2-popups';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 import { Eventtype } from '../eventtypes/eventtype';
+import { getEventTypes} from "../../../api/accounts";
 
 
 export class Main extends Component {
@@ -160,16 +161,16 @@ export class Main extends Component {
         // to change when api would be ready
         this.eventTypeDataSource =
         [
-            { text: 'Profesional', id: '1', backgroundColor:'#001978' },
-            { text: 'Ceremonia', id: '2', backgroundColor: '#FF5733' },
-            { text: 'Conferencia', id: '3', backgroundColor: '#FF33E3' },
-            { text: 'Cursos', id: '4', backgroundColor: '#33FF76' },
-            { text: 'Reunion', id: '5', backgroundColor: '#F9FF33' },
-            { text: 'Presentación', id: '6', backgroundColor: '#F3D59A' },
-            { text: 'Seminarios', id: '7', backgroundColor: '#9AF3EA' },
-            { text: 'Aprendizaje', id: '7', backgroundColor: '#0F6259' },            
-            { text: 'Talleres', id: '8', backgroundColor: '#F8CBE9' },
-            { text: 'Otros', id: '9', backgroundColor: '#F5F3F4' },           
+            //{ text: 'Profesional', id: '1', backgroundColor:'#001978' },
+            //{ text: 'Ceremonia', id: '2', backgroundColor: '#FF5733' },
+            //{ text: 'Conferencia', id: '3', backgroundColor: '#FF33E3' },
+            //{ text: 'Cursos', id: '4', backgroundColor: '#33FF76' },
+            //{ text: 'Reunion', id: '5', backgroundColor: '#F9FF33' },
+            //{ text: 'Presentación', id: '6', backgroundColor: '#F3D59A' },
+            //{ text: 'Seminarios', id: '7', backgroundColor: '#9AF3EA' },
+            //{ text: 'Aprendizaje', id: '7', backgroundColor: '#0F6259' },            
+            //{ text: 'Talleres', id: '8', backgroundColor: '#F8CBE9' },
+            //{ text: 'Otros', id: '9', backgroundColor: '#F5F3F4' },           
             ]; 
 
         this.items = [
@@ -560,7 +561,35 @@ export class Main extends Component {
 
         this.sidebarCalendarList();
         this.LoadCalendarList();
+        this.getlistEventTypes();
     }
+
+    onDataBindingEventTypeList(items) {   
+        this.eventTypeDataSource = [];
+        if (items.length > 0) {         
+            for (let i = 0; i < items.length; i++) {
+                let evt = items[i]; 
+                this.eventTypeDataSource.push({                   
+                    text: evt.name,
+                    id: evt.idEvent,
+                    backgroundColor: evt.color,
+                });
+            }
+        }
+        this.drowDownListEventType.dataSource = this.eventTypeDataSource;      
+    }
+
+    getlistEventTypes() {
+        
+        getEventTypes("alberto.valverde.escribano@gmail.com")
+            .then(result => {
+                this.onDataBindingEventTypeList(result.data.eventTypes)
+            })
+            .catch(error => {
+                console.log('error ->', error);
+            });
+    }
+
 
     LoadCalendarList(DisableloadSchedule) {
         this.resourceCalendarData = []
@@ -1000,9 +1029,7 @@ export class Main extends Component {
                             eventType.color = item.backgroundColor;
                             desc.EventType = eventType;
                         }
-                    }                  
-
-
+                    }   
 
                 }
 
@@ -1522,7 +1549,8 @@ export class Main extends Component {
                                     open={this.dialogOpen.bind(this)}
                                     close={this.dialogEventTypeClose.bind(this)}>
                                     <div>{(this.state.hidePromptEventTypeDialog) ? <Eventtype
-                                        calendarId={this.state.calendarToEdit}
+                                        getlistEventTypes={this.getlistEventTypes.bind(this)}
+                                        //calendarId={this.state.calendarToEdit}
                                         close={this.dialogClose.bind(this)}
                                     /> : ''}</div>
                                 </DialogComponent>

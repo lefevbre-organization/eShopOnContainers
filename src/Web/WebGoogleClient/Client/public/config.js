@@ -7,7 +7,9 @@ window.URL_DELETE_ACCOUNT =
   'https://lexbox-test-apigwacc.lefebvre.es/api/v1/accounts/emailuseraccount/deleteaccountbyuserandprovider';
 window.URL_SELECT_ACCOUNT = 'http://localhost:3010';
 window.URL_GET_ACCOUNTS =
-  'https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail';
+    'https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail';
+window.URL_GET_EVENTSTYPE =
+    'https://lexbox-test-apigwacc.lefebvre.es/api/v2';
 
 // window.URL_UPDATE_DEFAULTACCOUNT =
 //     'http://localhost:8083/api/v1/accounts/emailuseraccount/updatedefaultaccount';

@@ -126,7 +126,7 @@
     "owner": "Hacer cambios y gestionar el uso"
   },
   "eventtype": {
-    "title": "Tipo de Eventos",
+    "title": "Tipos de Eventos",
     "name": "Nombre",
     "color": "Color",
     "required-name": "El nombre es obligatorio",
