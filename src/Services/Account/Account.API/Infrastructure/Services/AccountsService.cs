@@ -70,5 +70,8 @@
 
         public async Task<Result<bool>> RemoveEvent(string email, string idEvent) 
             => await _accountsRepository.RemoveEvent(email, idEvent);
+
+        public async Task<Result<EventType>> AddEvent(string email, EventType eventType)
+         => await _accountsRepository.AddEvent(email, eventType);
     }
 }

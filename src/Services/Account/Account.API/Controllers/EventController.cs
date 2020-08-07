@@ -52,7 +52,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Controllers
         }
 
 
-        [HttpGet()]
+        [HttpPost("get")]
         [ProducesResponseType(typeof(Result<AccountEvents>), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(Result<AccountEvents>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetByAccount(
@@ -69,7 +69,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(Result<AccountEvents>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<AccountEvents>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> PostUser(
+        public async Task<IActionResult> PostAccount(
             [FromBody] AccountEvents accountIn
             )
         {
@@ -81,10 +81,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost("delete")]
+        [HttpPost("eventtype/delete")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> DeleteUser(
+        public async Task<IActionResult> DeleteAccountEvent(
             [FromBody] AccountEventElementRequest accountIn
             )
         {
@@ -92,6 +92,21 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Controllers
                 return BadRequest("values invalid. Must be a valid email and idevent to delete the event");
 
             Result<bool> result = await _service.RemoveEvent(accountIn.Email, accountIn.IdEvent);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpPost("eventtype/add")]
+        [ProducesResponseType(typeof(Result<EventType>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<EventType>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddAccountEvent(
+            [FromBody] AccountEventRequestAdd accountIn
+        )
+        {
+            if (string.IsNullOrEmpty(accountIn.Email) || accountIn.eventType == null)
+                return BadRequest("values invalid. Must be a valid email and idevent to delete the event");
+
+            Result<EventType> result = await _service.AddEvent(accountIn.Email, accountIn.eventType);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
