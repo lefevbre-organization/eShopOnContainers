@@ -1,9 +1,8 @@
-﻿namespace Account.API.Extensions
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Extensions
 {
     #region Using
 
     using Autofac;
-    using API;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus;

@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Account.API.Model
+namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Model
 {
  
 

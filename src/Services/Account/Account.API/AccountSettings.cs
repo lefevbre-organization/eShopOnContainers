@@ -1,4 +1,4 @@
-﻿namespace Account.API
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API
 {
     public class AccountSettings
     {

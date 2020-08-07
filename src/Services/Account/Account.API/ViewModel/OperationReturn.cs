@@ -1,4 +1,4 @@
-﻿namespace Account.API.ViewModel
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.ViewModel
 {
     public class OperationReturn
     {

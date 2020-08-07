@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Account.API.Controllers
+namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Controllers
 {
     #region Usings
-
+    
+    using Account.API.ViewModel;
     using Infrastructure.Services;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
@@ -15,7 +16,6 @@ namespace Account.API.Controllers
     using Microsoft.Extensions.Options;
     using Model;
     using System;
-    using System.Collections.Generic;
     using System.Net;
     using System.Threading.Tasks;
 
@@ -56,12 +56,12 @@ namespace Account.API.Controllers
         [ProducesResponseType(typeof(Result<AccountEvents>), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(Result<AccountEvents>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetByAccount(
-            [FromBody] string email)
+            [FromBody] AccountEventRequest accountIn)
         {
-            if (string.IsNullOrEmpty(email))
+            if (string.IsNullOrEmpty(accountIn.Email))
                 return BadRequest("email invalid. Must be a valid account to search the events");
 
-            Result<AccountEvents> result = await _service.GetEventsByAccount(email);
+            Result<AccountEvents> result = await _service.GetEventsByAccount(accountIn.Email);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
@@ -85,14 +85,13 @@ namespace Account.API.Controllers
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> DeleteUser(
-            [FromBody] string email,
-            [FromBody] string idEvent
+            [FromBody] AccountEventElementRequest accountIn
             )
         {
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(idEvent))
+            if (string.IsNullOrEmpty(accountIn.Email) || string.IsNullOrEmpty(accountIn.IdEvent))
                 return BadRequest("values invalid. Must be a valid email and idevent to delete the event");
 
-            Result<bool> result = await _service.RemoveEvent(email, idEvent);
+            Result<bool> result = await _service.RemoveEvent(accountIn.Email, accountIn.IdEvent);
 
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }

@@ -1,6 +1,6 @@
-﻿namespace Account.API.Infrastructure
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure
 {
-    #region
+    #region using
 
     using Model;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
@@ -17,7 +17,7 @@
     using System.Threading.Tasks;
     using Microsoft.Extensions.Configuration;
 
-    #endregion
+    #endregion using
 
     //TODO: https://www.mongodb.com/blog/post/working-with-mongodb-transactions-with-c-and-the-net-framework
 

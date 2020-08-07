@@ -1,5 +1,6 @@
-﻿namespace Account.API.Infrastructure.Repositories
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Repositories
 {
+    #region using
     using Account.API.Model;
     using IntegrationEvents.Events;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
@@ -13,6 +14,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    #endregion using
 
     public class AccountsRepository : BaseClass<AccountsRepository>, IAccountsRepository
     {

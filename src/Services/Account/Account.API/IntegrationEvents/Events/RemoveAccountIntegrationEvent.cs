@@ -1,6 +1,5 @@
-﻿namespace Account.API.IntegrationEvents.Events
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.IntegrationEvents.Events
 {
-
 
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Events;
 

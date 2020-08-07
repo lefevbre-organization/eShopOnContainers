@@ -1,4 +1,4 @@
-﻿namespace Account.API.IntegrationEvents
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.IntegrationEvents
 {
     #region Using
 

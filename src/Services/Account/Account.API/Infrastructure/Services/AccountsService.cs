@@ -1,9 +1,9 @@
-﻿namespace Account.API.Infrastructure.Services
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Services
 {
-    using Account.API.Model;
 
     #region Using
 
+    using Account.API.Model;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
     using Repositories;
