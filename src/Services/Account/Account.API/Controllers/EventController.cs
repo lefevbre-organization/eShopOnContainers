@@ -66,7 +66,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Controllers
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
-        [HttpPost]
+        [HttpPost("post")]
         [ProducesResponseType(typeof(Result<AccountEvents>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<AccountEvents>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> PostAccount(
