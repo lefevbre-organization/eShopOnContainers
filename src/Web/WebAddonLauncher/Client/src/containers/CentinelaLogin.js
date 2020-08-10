@@ -35,6 +35,7 @@ class CentinelaLogin extends Component {
         password: '',
         auth: ''
       },
+      isloading: false,
       keyCodeEnter: 13,
       shopTitle: 'TIENDA',
       notClient: 'No soy cliente.',
@@ -100,7 +101,6 @@ class CentinelaLogin extends Component {
       return (role === "Centinela");    
      });
      if(role) {
-      window.$('body').removeClass('waiting');
        this.setState({
        errorsMessage: {
          auth: ''
@@ -108,6 +108,7 @@ class CentinelaLogin extends Component {
       });
      this.goBackAddon(); 
      } else {
+      this.setState({isloading: false});
       window.$('body').removeClass('waiting');
        this.setState({
          errorsMessage: {
@@ -131,6 +132,7 @@ class CentinelaLogin extends Component {
      });
       this.validateUser(userBase64Decode);
     } else {
+      this.setState({isloading: false});
       window.$('body').removeClass('waiting');
       this.setState({
         errorsMessage: {
@@ -141,6 +143,8 @@ class CentinelaLogin extends Component {
   }
 
   goBackAddon = () => {
+    this.setState({isloading: false});
+    window.$('body').removeClass('waiting');
     const values = queryString.parse(this.props.location.search);
     window.location.replace(values.redirect_uri + '?success=1&response_type=' + 
     values.response_type + '&state=' + values.state + '&login=' 
@@ -149,7 +153,8 @@ class CentinelaLogin extends Component {
 
   handleEventAddon = (e) => {
     if (this.validateForm()) {
-      window.$('body').addClass('waiting');
+       window.$('body').addClass('waiting');
+       this.setState({isloading: true});
        this.getUser();
     };
   }
@@ -196,6 +201,7 @@ class CentinelaLogin extends Component {
          needHelp={this.state.needHelp}
          phoneNumber={this.state.phoneNumber}
          client={this.state.client}
+         isloading={this.state.isloading}
         />
     
         <LoginFooter 

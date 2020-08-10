@@ -177,7 +177,9 @@
     "statusCompleted": "Complétée",
     "statusExpired": "Périmé",
     "statusDeclined": "Décliné",
-    "statusInProgress": "En progrés"
+    "statusInProgress": "En progrés",
+    "statusError": "Erreur",
+    "statusPending": "En attente"
   },
   "confirmationModal": {
     "yes": "Oui",

@@ -34,6 +34,7 @@ class Login extends Component {
         password: '',
         auth: ''
       },
+      isloading: false,
       keyCodeEnter: 13,
       shopTitle: 'TIENDA',
       notClient: 'No soy cliente.',
@@ -99,7 +100,6 @@ class Login extends Component {
       return (role === "Lex-On");    
      });
      if(role) {
-      window.$('body').removeClass('waiting');
        this.setState({
        errorsMessage: {
          auth: ''
@@ -107,6 +107,7 @@ class Login extends Component {
       });
      this.goBackAddon(); 
      } else {
+      this.setState({isloading: false});
       window.$('body').removeClass('waiting');
        this.setState({
          errorsMessage: {
@@ -130,6 +131,7 @@ class Login extends Component {
     });
      this.validateUser(userBase64Decode);
     } else {
+      this.setState({isloading: false});
       window.$('body').removeClass('waiting');
       this.setState({
         errorsMessage: {
@@ -140,6 +142,8 @@ class Login extends Component {
   }
 
   goBackAddon = () => {
+    this.setState({isloading: false});
+    window.$('body').removeClass('waiting');
     const values = queryString.parse(this.props.location.search);
     window.location.replace(values.redirect_uri + '?success=1&response_type=' + 
     values.response_type + '&state=' + values.state + '&login=' 
@@ -148,6 +152,7 @@ class Login extends Component {
 
   handleEventAddon = (e) => {
     if (this.validateForm()) {
+      this.setState({isloading: true});
       window.$('body').addClass('waiting');
        this.getUser();
     };

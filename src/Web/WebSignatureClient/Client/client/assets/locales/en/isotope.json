@@ -159,7 +159,9 @@
     "statusCompleted": "Completed",
     "statusExpired": "Expired",
     "statusDeclined": "Declined",
-    "statusInProgress": "In progress"
+    "statusInProgress": "In progress",
+    "statusError": "Error",
+    "statusPending": "Pending"
   },
   "confirmationModal": {
     "yes": "Yes",

@@ -366,7 +366,7 @@ class MessageEditor extends Component {
           case 'option1': // every x days
             if (this.state.selectedExpirationOption === 'exp_option1') {
               for (let index = 0; index < this.state.expirationDays; index++) {
-                if (this.state.reminderDays * (index + 1) < this.state.expirationDays) {
+                if (this.state.reminderDays * (index + 1) <= this.state.expirationDays) {
                   reminders[index] = this.state.reminderDays * (index + 1);
                 }
               }

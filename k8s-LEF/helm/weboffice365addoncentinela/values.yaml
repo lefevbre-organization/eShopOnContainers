@@ -50,5 +50,6 @@ configValues: |
  window.URL_ADDON_LEXON_BASE='https://lexbox-test-weboffice365addoncentinela.lefebvre.es';
  window.URL_ADDON_LEXON='https://lexbox-test-webaddonlauncher.lefebvre.es';
  window.API_GATEWAY='https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen';
+ window.URL_GET_TOKEN='https://lexbox-test-apigwlex.lefebvre.es/api/v1';
  window.URL_GET_ACCOUNTS='https://lexbox-test-apigwlex.lefebvre.es/api/v2/accounts/usermail';
  window.RELEASE='RC 0.28';
