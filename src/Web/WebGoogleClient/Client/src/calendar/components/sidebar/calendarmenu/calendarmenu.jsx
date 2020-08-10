@@ -18,11 +18,14 @@ export class CalendarMenu extends PureComponent {
   constructor(props) {
     super(props);        
       this.roundedPaletteColors = {
-          'custom1': [ '#fcb900', '#7bdcb5', '#00d084',
-              '#8ed1fc', '#0693e3', '#abb8c3', '#eb144c',
-              '#f78da7', '#9900ef']
+          'custom1': ['#750c20', '#0e2b21', '#a4864a', '#30197e',
+              '#914150', '#435850', '#b69e70', '5c4b98',
+              '#ab1279', '#ced038', '#d4bb8a', '13439b',
+              '#bc4594', '#d8da62', '#ddc9a2', '466ab0',
+              '#e6879e', '#68747c', '#d6b43c', '40b6b5',
+              '#eb9fb3', '879096', '#dec365', '68c5c3']
       }; 
-      this.roundedPaletteColors.custom1.push(this.props.color); 
+     // this.roundedPaletteColors.custom1.push(this.props.color); 
     }    
    
   beforeRoundedTileRender(args) {
@@ -50,7 +53,7 @@ export class CalendarMenu extends PureComponent {
                     <span >{i18n.t("calendar-sidebar.remove")}</span>
                  </MenuItem>
                  <div className='e-rounded-wrap'>
-                    <ColorPickerComponent value={this.props.color} id='rounded-palette' mode='Palette' ref={(scope) => { this.colorObj = scope; }} modeSwitcher={false} inline={true} showButtons={false} columns={5} presetColors={this.roundedPaletteColors} beforeTileRender={this.beforeRoundedTileRender.bind(this)} change={this.roundedPaletteChange.bind(this)}></ColorPickerComponent>
+                    <ColorPickerComponent value={this.props.color} id='rounded-palette' mode='Palette' ref={(scope) => { this.colorObj = scope; }} modeSwitcher={false} inline={true} showButtons={false} columns={4} presetColors={this.roundedPaletteColors} beforeTileRender={this.beforeRoundedTileRender.bind(this)} change={this.roundedPaletteChange.bind(this)}></ColorPickerComponent>
                  </div>                    
               </MenuList>
            </Menu>
