@@ -22,6 +22,23 @@ export class MessageToolbar extends PureComponent {
     };
   }
 
+  parseCC(header) {
+    const emails = header.value.split(',');
+    const aux = [];
+    console.log(header);
+    console.log(emails);
+    for(let i = 0; i < emails.length; i++) {
+      const matches = emails[i].match(/<(.*?)>/);
+      if (matches) {
+        aux.push(matches[1]);
+      }
+
+    }
+
+    header.value = aux.join(',');
+    return header;
+  }
+
   render() {
     const { t } = this.props;
 
@@ -36,20 +53,20 @@ export class MessageToolbar extends PureComponent {
 
     for (let i = 0; i < messageHeaders.length; i++) {
       const header = messageHeaders[i];
-      switch (header.name) {
-        case 'Subject':
+      switch (header.name.toLowerCase()) {
+        case 'subject':
           subject = header;
           break;
-        case 'From':
+        case 'from':
           if (!replyTo) {
             replyTo = header;
           }
           break;
-        case 'Reply-To':
+        case 'reply-to':
           replyTo = header;
           break;
-        case 'Cc':
-          cc = header;
+        case 'cc':
+          cc = this.parseCC(header);
           break;
         default:
           break;
@@ -93,6 +110,7 @@ export class MessageToolbar extends PureComponent {
       subject: `Fwd: ${subject.value}`,
       to: '',
       isForward: true,
+      cc: undefined,
     };
 
     const collapsed = this.props.sideBarCollapsed;
@@ -118,7 +136,7 @@ export class MessageToolbar extends PureComponent {
                 className='btn'
                 onClick={this.trashHandler}
                 style={{ backgroundColor: 'transparent' }}>
-                <FontAwesomeIcon icon={faTrash} size='lg' />
+                <i className="lf-icon lf-icon-trash" style={{fontSize: 18, fontWeight: 'bold', color: '#001978'}}></i>
               </button>
             </div>
             <div className='action-btn mr-2' title={t('message-toolbar.reply')}>
@@ -128,9 +146,21 @@ export class MessageToolbar extends PureComponent {
                   search: '',
                   sideBarCollapsed: this.props.sideBarCollapsed,
                   sideBarToggle: this.props.sideBarToggle,
-                  state: { composeProps },
+                  state: { composeProps: {...composeProps, cc: undefined } },
                 }}>
-                <FontAwesomeIcon icon={faReply} size='lg' />
+                <i className="lf-icon lf-icon-reply" style={{fontSize: 18, fontWeight: 'bold'}}></i>
+              </Link>
+            </div>
+            <div className='action-btn mr-2' title={t('message-toolbar.reply-all')}>
+              <Link
+                  to={{
+                    pathname: '/compose',
+                    search: '',
+                    sideBarCollapsed: this.props.sideBarCollapsed,
+                    sideBarToggle: this.props.sideBarToggle,
+                    state: { composeProps },
+                  }}>
+                <i className="lf-icon lf-icon-reply-all" style={{fontSize: 18, fontWeight: 'bold'}}></i>
               </Link>
             </div>
             <div
@@ -144,14 +174,14 @@ export class MessageToolbar extends PureComponent {
                   sideBarToggle: this.props.sideBarToggle,
                   state: { composeProps: composePropsFwd },
                 }}>
-                <FontAwesomeIcon icon={faShare} size='lg' />
+                <i className="lf-icon lf-icon-send" style={{fontSize: 18, fontWeight: 'bold'}}></i>
               </Link>
             </div>
             <div
               onClick={this.markAsUnread}
               className='action-btn mr-2'
               title={t('message-toolbar.unread')}>
-              <i style={{}} className='lf-icon lf-icon-mail'></i>
+              <i style={{fontSize: 18}} className='lf-icon lf-icon-mail'></i>
             </div>
           </div>
         </div>

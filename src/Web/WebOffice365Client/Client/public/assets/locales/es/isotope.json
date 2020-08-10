@@ -46,7 +46,8 @@
     "reply": "Responder",
     "resend": "Reenviar",
     "unread": "Marcar como no leído",
-    "read": "Marcar como leído"
+    "read": "Marcar como leído",
+    "reply-all": "Responder a todos"
   },
   "message-footer": {
     "messages": "Mensajes"
