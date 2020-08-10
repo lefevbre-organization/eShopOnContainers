@@ -135,5 +135,11 @@
     "modify": "Modify",
     "cancel": "Cancel",
     "newevent": "Add typology"
+  },
+  "tooltips": {
+    "lexon": "Lexon",
+    "calendar": "Calendar",
+    "centinela": "Centinela",
+    "database": "Database"
   }
 }
