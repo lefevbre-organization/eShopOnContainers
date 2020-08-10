@@ -115,5 +115,11 @@
     "reader": "reader",
     "writer": "writer",
     "owner": "owner"
+  },
+  "tooltips": {
+    "lexon": "Lexon",
+    "calendar": "Calendar",
+    "centinela": "Centinela",
+    "database": "Database"
   }
 }
