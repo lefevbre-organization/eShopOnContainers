@@ -18,20 +18,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import {updateLabelName} from "../../api";
 
-const nodeTemplate = (data) => {
-    return (
-        <div>
-            <div className="treeviewdiv">
-                <div className="textcontent">
-                    <FontAwesomeIcon icon={data.icon} className="label-icon" />
-                    <span className="treeName">{data.text || data.name}</span>
-                    { data.name !== "SENT" && data.messagesUnread > 0 && <span className="msg-count">{data.messagesUnread}</span> }
-                </div>
-
-            </div>
-        </div>
-    )
-};
+const moreId = uuid();
 
 class FolderContainer extends Component {
 
@@ -39,35 +26,99 @@ class FolderContainer extends Component {
         super(props);
 
         this.tree = this.prepareTree();
-        this.state = {
-            showTree: true,
-            fields: { dataSource: this.tree, id: 'id', parentID: 'pid', hasChildren: 'hasChild' }
-        };
+        this.fields = { dataSource: this.tree, id: 'id', parentID: 'pid', hasChildren: 'hasChild'  };
         this.treeViewRef = createRef();
         this.navigateToList = this.navigateToList.bind(this);
         this.onDropNode = this.onDropNode.bind(this);
+        this.onNodeExpanded = this.onNodeExpanded.bind(this);
+        this.onNodeCollapsed = this.onNodeCollapsed.bind(this);
+        this.onNodeClicked = this.onNodeClicked.bind(this);
+        this.nodeTemplate = this.nodeTemplate.bind(this);
     }
 
     navigateToList(evt) {
         const label = evt.nodeData;
-        this.props.onLabelClick(label || { id: "" });
-    }
-
-    componentDidMount() {
+        setTimeout(()=>{
+            this.props.onLabelClick(label || { id: "" });
+        }, 200)
     }
 
     componentDidUpdate(prevProps) {
-        if( JSON.stringify(this.props.folderTree) !== JSON.stringify(prevProps.folderTree)) {
-            this.tree = this.prepareTree();
-            this.setState({showTree: false, fields: {dataSource: this.tree, id: 'id', parentID: 'pid', hasChildren: 'hasChild'}}, ()=>{
-                this.setState({showTree: true});
-            });
+        const path = window.location.pathname.replace('/', '');
+
+        if(this.props.folderTree) {
+            const newSource = this.prepareTree();
+
+            if(!_.isEqual(this.treeViewRef.current.fields.dataSource, newSource) ) {
+
+                for(let i = 0; i < this.treeViewRef.current.fields.dataSource.length; i++) {
+                    const ds = this.treeViewRef.current.fields.dataSource[i];
+                    const ns = newSource.find( (it)=> it.id === ds.id );
+
+                    if(ds.id.toLowerCase() === path.toLowerCase()) {
+                        ds.selected = true
+                    } else {
+                        ds.selected = false;
+                    }
+                    this.treeViewRef.current.fields.dataSource[i] = Object.assign({}, ds, ns, { expanded: ds.expanded, selected: ds.selected});
+                }
+
+                setTimeout(()=>{
+                    this.treeViewRef.current.refresh();
+                });
+            }
         }
     }
 
+    onNodeExpanded(node) {
+        if(this.toClick) {
+            clearTimeout(this.toClick);
+            this.toClick = null;
+        }
+
+        const ds = this.treeViewRef.current.fields.dataSource.find((it)=> it.id === node.nodeData.id)
+        ds.expanded = true;
+    }
+
+    onNodeCollapsed(node) {
+        if(this.toClick) {
+            clearTimeout(this.toClick);
+            this.toClick = null;
+        }
+
+        const ds = this.treeViewRef.current.fields.dataSource.find((it)=> it.id === node.nodeData.id)
+        ds.expanded = false;
+    }
+
+    toClick = null;
+    onNodeClicked(args) {
+        const nodeData = this.treeViewRef.current.getNode(args.node);
+
+        if(nodeData.selected === true) {
+            this.toClick = setTimeout(()=>{
+                this.navigateToList({nodeData});
+            }, 200);
+
+        }
+    }
+
+    nodeTemplate(data) {
+        return (
+            <div>
+                <div className="treeviewdiv">
+                    <div className="textcontent">
+                        <FontAwesomeIcon icon={data.icon} className="label-icon" />
+                        <span className="treeName">{data.text || data.name}</span>
+                        { data.name !== "SENT" && data.messagesUnread > 0 && <span className="msg-count">{data.messagesUnread}</span> }
+                    </div>
+                </div>
+            </div>
+        )
+    };
+
+
     render() {
         const { t } = this.props;
-        const { showTree} = this.state;
 
         return (
             <div className='tree-wrapper'>
@@ -82,27 +133,29 @@ class FolderContainer extends Component {
                     ></img>
                     {t("sidebar.folders")}
                 </div>
-                    {showTree &&
                     <TreeViewComponent id='foldertree'
                                        ref={this.treeViewRef}
                                         allowDragAndDrop={true}
-                                       fields={this.state.fields}
+                                       delayUpdate={true}
+                                       fields={this.fields}
                                        loadOnDemand={false}
-                                       enablePersistence={true}
-                                       nodeSelected={this.navigateToList}
+                                       enablePersistence={false}
                                        animation={{
                                            expand: {
-                                               duration: 100
+                                               duration: 0
                                            },
                                            collapse: {
-                                               duration: 100
+                                               duration: 0
                                            }
                                        }}
-                                       nodeTemplate={nodeTemplate}
                                        nodeDropped={this.onDropNode}
+                                       nodeExpanded={this.onNodeExpanded}
+                                       nodeCollapsed={this.onNodeCollapsed}
+                                       nodeTemplate={this.nodeTemplate}
+                                       nodeClicked={this.onNodeClicked}
+
                     >
                     </TreeViewComponent>
-                    }
                 </PerfectScrollbar>
                 <style jsx>{`
 
@@ -188,7 +241,16 @@ class FolderContainer extends Component {
     }
 
     async onDropNode(event) {
-        const { droppedNodeData, draggedNodeData } = event;
+        const { droppedNodeData, draggedNodeData, dropLevel } = event;
+        debugger
+        if(dropLevel <= 1) {
+            // Moving folder to parent;
+            const newName = `${draggedNodeData.text}`
+
+            await updateLabelName(draggedNodeData.id, newName);
+            return;
+        }
+
         for(let i = 0; i < this.props.folderTree.length; i++) {
             if(this.props.folderTree[i].id === droppedNodeData.id) {
                 const newName = `${this.props.folderTree[i].name}/${draggedNodeData.text}`
@@ -198,10 +260,8 @@ class FolderContainer extends Component {
     }
 
     prepareTree() {
-        console.log("Tree: prepareTree")
         const { t }  = this.props;
         const tree = [...this.props.folderTree];
-        const moreId = uuid();
 
         tree.push({
             id: moreId,
@@ -229,7 +289,7 @@ class FolderContainer extends Component {
         }
 
 
-        return  _.sortBy(tree.map( it => ({ ...it, text: this.getNodeName(it.name)})), ['text']);
+        return  _.sortBy(tree.map( it => ({ ...it, text: this.getNodeName(it.name, it.pid)})), ['text']);
     }
 
     showLabel(node) {
@@ -294,7 +354,7 @@ class FolderContainer extends Component {
         }
     }
 
-    getNodeName(folderName) {
+    getNodeName(folderName, parent) {
         const { t } =this.props;
         const parts = folderName.split("/");
         const name = parts.pop();
@@ -329,7 +389,7 @@ class FolderContainer extends Component {
             case "CATEGORY_UPDATES":
                 return t('sidebar.updates');
             default:
-                return name;
+                return parent?name:folderName;
         }
     }
 }
