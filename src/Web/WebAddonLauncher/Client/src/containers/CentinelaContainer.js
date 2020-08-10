@@ -54,7 +54,6 @@ class CentinelaContainer extends Component {
     
     async sendMessageCentinelaPutUser(user, addonData) {
       const msgRaw = await getRawAddon(addonData);
-    
         window.dispatchEvent(
           new CustomEvent('PutUserFromCentinelaConnector', {
             detail: {

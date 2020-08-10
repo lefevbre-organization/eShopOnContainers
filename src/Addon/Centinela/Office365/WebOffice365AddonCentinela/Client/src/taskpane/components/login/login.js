@@ -25,7 +25,7 @@ class Login extends Component {
       provider: 'auth-centinela',
       clientId: 'a8c9f1a1-3472-4a83-8725-4dfa74bac24d',
       baseUrl: `${window.URL_ADDON_CENTINELA}`,
-      tokenUrl: `${window.API_GATEWAY}/utils/UserUtils/token`,
+      tokenUrl: `${window.URL_GET_TOKEN}/utils/UserUtils/token`,
       redirectUrl: `${window.URL_ADDON_CENTINELA_BASE}/taskpane.html`,
       authorizeUrl: '/oauth_centinela',
       scope: 'openid profile onelist offline_access',

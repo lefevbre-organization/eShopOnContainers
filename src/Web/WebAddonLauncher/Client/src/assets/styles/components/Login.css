@@ -131,6 +131,13 @@ body.waiting * {
   border-radius: inherit !important;
 }
 
+.btn-loading {
+  width: 340px !important;
+  height: 42px;
+  background-color: #7b7b7d !important;
+  border-radius: inherit !important;
+}
+
 .btn-label {
   border: none;
   /* text-transform: uppercase; */

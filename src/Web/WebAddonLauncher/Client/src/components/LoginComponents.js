@@ -59,8 +59,16 @@ import React from 'react';
                  { verificationPassword }
                </div>
                <div className="ml-n4 pt-4">
-                 <button onClick={children.handleEventAddon} className="btn btn-label btn-login"> INICIAR SESIÓN
-                </button>
+              {children.isloading ?
+                <button 
+                 onClick={children.handleEventAddon} 
+                 className="btn btn-label btn-loading"> 
+                 Loading...
+                </button> : <button 
+                   onClick={children.handleEventAddon} 
+                   className="btn btn-label btn-login"> 
+                   INICIAR SESIÓN
+                  </button> }
                 { verificationAuth }
                </div>
                 {/* <p className="mt-3 front-login__info-block">{children.notClient} <a className="front-login__info-block-link" 
