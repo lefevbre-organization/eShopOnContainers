@@ -20,6 +20,7 @@ import MessageHeader from './messageHeader';
 import { setMessageAsRead, getMessage, getLabelList } from '../../../../api';
 import MessageNotFound from '../../../message-not-found/MessageNotFound';
 import i18n from 'i18next';
+import {getLabels} from "../../../sidebar/sidebar.actions";
 
 //BEGIN functions for attachment functionality
 
@@ -400,7 +401,7 @@ export class MessageContent extends Component {
     const found = message.labelIds.find((elem) => elem === 'UNREAD');
     if (found) {
       await setMessageAsRead(message.id);
-      this.props.getLabelList();
+      this.props.getLabels();
       this.refresh = true;
     }
   }
@@ -500,7 +501,7 @@ const mapDispatchToProps = (dispatch) =>
       setOpenMessage,
       addOpenMessageAttachment,
       clearOpenMessageAttachment,
-      getLabelList
+      getLabels
     },
     dispatch
   );

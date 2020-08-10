@@ -46,7 +46,8 @@
     "reply": "Responder",
     "resend": "Reenviar",
     "unread": "Marcar como no leído",
-    "read": "Marcar como leído"
+    "read": "Marcar como leído",
+    "reply-all": "Responder a todos"
   },
   "message-footer": {
     "messages": "Mensajes"
@@ -115,5 +116,11 @@
     "reader": "Ver todos los detalles de los eventos",
     "writer": "Hacer cambios en eventos",
     "owner": "Hacer cambios y gestionar el uso"
+  },
+  "tooltips": {
+    "lexon": "Lexon",
+    "calendar": "Calendario",
+    "centinela": "Centinela",
+    "database": "Base de datos"
   }
 }

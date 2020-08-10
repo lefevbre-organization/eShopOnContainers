@@ -4,5 +4,9 @@
   },
   "archive-message": {
     "button-title": "Nueva localización de archivo"
+  },
+  "document-attached": {
+    "description": "Busca en los expedientes y contactos de Centinela y adjunta a tus correos los archivos que necesites.",
+    "select-file": "Selecciona los archivos en Centinela"
   }
 }

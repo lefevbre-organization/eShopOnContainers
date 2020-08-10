@@ -55,7 +55,8 @@
     "reply": "Responder",
     "resend": "Reenviar",
     "unread": "Marcar como no leído",
-    "read": "Marcar como leído"
+    "read": "Marcar como leído",
+    "reply-all": "Responder a todos"
   },
   "message-footer": {
     "messages": "Mensajes"
@@ -126,7 +127,7 @@
     "owner": "Hacer cambios y gestionar el uso"
   },
   "eventtype": {
-    "title": "Tipo de Eventos",
+    "title": "Tipos de Eventos",
     "name": "Nombre",
     "color": "Color",
     "required-name": "El nombre es obligatorio",
@@ -135,5 +136,11 @@
     "modify": "Modificar",
     "cancel": "Cancelar",
     "newevent": "Añadir tipología"
+  },
+  "tooltips": {
+    "lexon": "Lexon",
+    "calendar": "Calendario",
+    "centinela": "Centinela",
+    "database": "Base de datos"
   }
 }

@@ -1,6 +1,6 @@
-﻿namespace Account.API.Infrastructure.ActionResults
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.ActionResults
 {
-    #region
+    #region using
 
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;

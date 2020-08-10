@@ -21,60 +21,78 @@ export const getUser = async (userId) => {
 };
 
 export const getEventTypes = async (account) => {
-   // const url = `${window.URL_GET_ACCOUNTS}/${userId}/account/addorupdate`;
+    const url = `${window.URL_GET_EVENTSTYPE}/ev/get`;
+   // const url = "https://lexbox-test-apigwacc.lefebvre.es/api/v2/ev/get";
+
+    let value = {
+        "email": account
+    };
+   
     try {
-        //const res = await fetch(url, {
-        //    method: 'POST',
-        //    headers: {
-        //        'Content-Type': 'application/json',
-        //    },
-        //    body: JSON.stringify(account),
-        //});
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(value),
+        });
 
-        //const user = await res.json();
-        //return user;
-
-        return true
+        const user = await res.json();
+        return user;      
     } catch (err) {
         throw err;
     }
 };
 
-export const addOrUpdateEventType = async (account, eventTypeName) => {
-  //  const url = `${window.URL_GET_ACCOUNTS}/${userId}/account/addorupdate`;
+export const addorUpdateEventType = async (eventType) => { 
+    const url = `${window.URL_GET_EVENTSTYPE}/ev/eventtype/add`;
+    //const url = 'https://lexbox-test-apigwacc.lefebvre.es/api/v2/ev/eventtype/add'
     try {
-        //const res = await fetch(url, {
-        //    method: 'POST',
-        //    headers: {
-        //        'Content-Type': 'application/json',
-        //    },
-        //    body: JSON.stringify(account),
-        //});
-
-        //const user = await res.json();
-        //return user;
-
-        return true
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(eventType),
+        });
+        const eventtype = await res.json();
+        return eventtype;
     } catch (err) {
         throw err;
     }
 };
 
-export const deleteEventType = async (account, eventTypeName) => {
- //   const url = `${window.URL_GET_ACCOUNTS}/${userId}/account/addorupdate`;
+//export const updateEventType = async (eventTypeId) => {
+//    const url = `${window.URL_GET_EVENTSTYPE}/ev/eventtype/add`;
+//    //const url = 'https://lexbox-test-apigwacc.lefebvre.es/api/v2/ev/eventtype/add'
+//    try {
+//        const res = await fetch(url, {
+//            method: 'POST',
+//            headers: {
+//                'Content-Type': 'application/json',
+//            },
+//            body: JSON.stringify(eventTypeId),
+//        });
+//        const eventtype = await res.json();
+//        return eventtype;
+//    } catch (err) {
+//        throw err;
+//    }
+//};
+
+export const deleteEventType = async (eventType) => {
+    //const url = `https://lexbox-test-apigwacc.lefebvre.es/api/v2/ev/eventtype/delete`;
+    const url = `${window.URL_GET_EVENTSTYPE}/ev/eventtype/delete`;
     try {
-        //const res = await fetch(url, {
-        //    method: 'POST',
-        //    headers: {
-        //        'Content-Type': 'application/json',
-        //    },
-        //    body: JSON.stringify(account),
-        //});
-
-        //const user = await res.json();
-        //return user;
-
-        return true
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(eventType),
+        });
+        const eventtype = await res.json();
+        return eventtype;
     } catch (err) {
         throw err;
     }

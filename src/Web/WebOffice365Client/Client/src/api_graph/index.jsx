@@ -6,6 +6,7 @@ import {encode, decode}  from 'base64-arraybuffer';
 
 const graph = require('@microsoft/microsoft-graph-client');
 let userAgentApplication = null;
+let rootFolder = '';
 
 export const getUserApplication = () => {
   if (userAgentApplication === null) {
@@ -93,7 +94,10 @@ export const getLabelList = async () => {
     let allFolders = [];
     let nodes = [];
     if(folders && folders.value && folders.value.length > 0) {
+      rootFolder = folders.value[0].parentFolderId;
       nodes = [...folders.value.map( f => ({...f, parentFolderId: undefined}) )];
+    } else {
+      rootFolder = '';
     }
 
     const loadSubchilds = async (res) => {
@@ -116,7 +120,7 @@ export const getLabelList = async () => {
     const childs = await loadSubchilds(folders.value);
     allFolders = [...nodes];
 
-    return allFolders;
+    return allFolders.map( it => ({...it, _parentFolderId: it.inRoot?undefined:it.parentFolderId }));
   } catch (err) {
     console.log(err);
   }
@@ -143,7 +147,7 @@ export const updateLabelName = async (labelId, destinationId) => {
 
   try {
     const mailFolder = await client.api(`/me/mailFolders/${labelId}/move`).post({
-      destinationId: destinationId
+      destinationId: destinationId || rootFolder
     });
     return mailFolder;
   } catch (err) {

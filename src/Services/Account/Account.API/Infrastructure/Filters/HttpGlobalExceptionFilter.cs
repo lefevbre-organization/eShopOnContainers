@@ -1,4 +1,4 @@
-﻿namespace Account.API.Infrastructure.Filters
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Filters
 {
     #region Using
 

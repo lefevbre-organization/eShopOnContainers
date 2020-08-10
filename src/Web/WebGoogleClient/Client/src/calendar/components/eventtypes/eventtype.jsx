@@ -5,7 +5,7 @@ import { ToastComponent } from '@syncfusion/ej2-react-notifications';
 import i18n from 'i18next';
 import { ListViewComponent } from '@syncfusion/ej2-react-lists';
 import { ComboBoxComponent } from '@syncfusion/ej2-react-dropdowns';
-import { getEventTypes, addOrUpdateEventType, deleteEventType } from "../../../api/accounts";
+import { getEventTypes, addorUpdateEventType, deleteEventType} from "../../../api/accounts";
 import { ColorPickerComponent } from '@syncfusion/ej2-react-inputs';
 import './eventtype.scss';
 
@@ -18,8 +18,9 @@ export class Eventtype extends React.Component {
             errorColor: "",
             color: undefined,
             name: undefined,
-            editmode: false,
+            updatemode: false,
             newmode: false,
+            idEvent:undefined,
         }; 
 
         this.position = { X: 'Center', Y: 'Bottom' };
@@ -30,12 +31,8 @@ export class Eventtype extends React.Component {
                 '#eb9fb3', '#879096', '#dec365', '#68c5c3',]
         };  
 
-        //to delete
-        this.eventTypeData = [
-            { "Id": "1", "Text": "personal", "Color": "#dec365"},
-            { "Id": "2", "Text": "meeting", "Color": "#ddc9a2"},
-            { "Id": "3", "Text": "gym", "Color": "#bc4594" }          
-        ];
+      
+        this.eventTypeData = [];
 
         this.toasts = [
             { content: i18n.t("schedule.toast-processing"), cssClass: 'e-toast-black', icon: '' },
@@ -54,53 +51,89 @@ export class Eventtype extends React.Component {
     }
 
     roundedPaletteChange(args) {      
-        this.setState({ color: args.currentValue.hex })
+        this.setState({ color: args.currentValue.hex })       
     }
 
     listTemplate(data) {
         return (<div className="text-content"> 
             <span Style={`background-color: ${data.Color}; margin-right: 20px`} className='dot'></span>
             {data.Text} 
-            <span className="delete-icon" onClick={this.deleteEventTypem.bind(this)} />
+            <span className="delete-icon" onClick={this.deleteEventType.bind(this)} />
             <span className="delete-icon" onClick={this.onModifyEventTypeState.bind(this)} />
             <span className='id hidden'>{data.Id}</span>
         </div>);
     }  
 
     onModifyEventTypeState(args) {
-        this.setState({ editmode: true })
-
-        let idEventType = args.target.parentElement.lastChild.innerText
-
-       
+        this.setState({ updatemode: true })
+        let idEventType = args.target.parentElement.lastChild.innerText       
         var itemE = this.eventTypeData.find(function (e) {
             return e.Id == idEventType
         })
         this.setState({ name: itemE.Text });
         this.setState({ color: itemE.Color });
-        //var item = this.listEventType.dataSource.find(function (e) {
-        //    return e.Text == args.target.parentElement.innerText
-        //})
-        //item.Text = "probando"
-        //this.listEventType.refresh();
-       // alert(item)   
-      
+        this.setState({ idEvent: itemE.Id });       
         
     }
 
-    onAddNewEvent() {
-        this.setState({ newmode: true });
-        this.setState({ name: undefined });
-        this.setState({ color: undefined });
+    newState() {
+        this.setState({ idEvent: undefined});
+       this.setState({ newmode: true });
+       this.setState({ name: undefined });
+       this.setState({ color: undefined });
     }
 
-    onCancelEventType() {
-        this.setState({ editmode: false })
-        this.setState({ newmode: false })
+    cancelState() {
+       this.setState({ updatemode: false })
+       this.setState({ newmode: false })
     }
 
+    updateState() {
+       this.setState({ updatemode: false })
+       this.setState({ newmode: false })
+    }
 
-    onAddEventType(args) {
+    deleteEventType(args) {
+        args.stopPropagation();
+        let liItem = args.target.parentElement.parentElement;
+        this.listEventType.removeElement(liItem);
+        function remove(array, element) {
+            return array.filter(el => el.Text !== element);
+        }
+        let vowels = remove(this.eventTypeData, args.target.parentElement.innerText);
+        this.eventTypeData = [];
+        this.eventTypeData = vowels;
+
+        let dataEventTypeAPI = {            
+            "idEvent": args.target.parentElement.lastChild.innerText,
+             "email": "alberto.valverde.escribano@gmail.com"
+        }
+
+       
+
+        //this.toastObj.timeOut = 10000;
+        //this.toastObj.showProgressBar = true
+        //this.toastObj.show(this.toasts[0]);
+
+        deleteEventType(dataEventTypeAPI)
+            .then(result => {               
+                this.props.getlistEventTypes();
+            })
+            .catch(error => {
+                console.log('error ->', error);
+                if (this.toastObj != undefined) {
+                    this.toastObj.showProgressBar = false;
+                    this.toastObj.hide('All');
+                    this.toastObj.timeOut = 1000;
+                    this.toastObj.show(this.toasts[2]);
+                }
+            });
+
+    } 
+
+    AddorUpdateEventType(args) {
+
+        this.state.name = this.TitleTypeEventObj.value;
 
         if (this.TitleTypeEventObj.value == undefined) {
             this.setState({ errorName: 'Dato obligatorio' })
@@ -124,20 +157,65 @@ export class Eventtype extends React.Component {
             "Color": this.state.color 
         }
 
+
+        let dataEventTypeAPI = [];
+        if (this.state.idEvent != undefined) {
+            dataEventTypeAPI = {
+                "email": "alberto.valverde.escribano@gmail.com",
+                "eventType":
+                {
+                    "idEvent": this.state.idEvent,
+                    "name": this.TitleTypeEventObj.value,
+                    "color": this.state.color
+                }
+            } 
+        }
+        else {
+            dataEventTypeAPI = {
+                "email": "alberto.valverde.escribano@gmail.com",
+                "eventType":
+                {                  
+                    "name": this.TitleTypeEventObj.value,
+                    "color": this.state.color
+                }
+            } 
+
+        }       
+
+       
+        
         this.toastObj.timeOut = 10000;
         this.toastObj.showProgressBar = true;
         this.toastObj.show(this.toasts[0]);
-        addOrUpdateEventType("", "", dataEventType)
+        addorUpdateEventType(dataEventTypeAPI)
             .then(result => {
                 this.toastObj.hide('All');
                 this.toastObj.showProgressBar = false;
                 this.toastObj.timeOut = 1000;
                 this.toastObj.show(this.toasts[1]);
 
-                this.eventTypeData.push(dataEventType);
-                this.setState({ editmode: false })
+                if (this.state.idEvent != undefined) {
+                    //modify current event type
+                    let IdEvent = this.state.idEvent;
+                    var item = this.eventTypeData.find(function (e) {
+                        return e.Id == IdEvent
+                    })
+                    item.Text = this.TitleTypeEventObj.value;                   
+                    item.Color = this.state.color
+                   // this.listEventType.refresh();    
+                   // this.eventTypeData.refresh();
+                }
+                else {
+                    //new event type
+                    this.eventTypeData.push(dataEventType);
+                }
+               
+                this.setState({ updatemode: false })
                 this.setState({ newmode: false })
+                this.setState({ idEvent: undefined })
                 //this.listEventType.addItem([dataEventType]);
+
+                this.props.getlistEventTypes();
 
             })
             .catch(error => {
@@ -151,69 +229,86 @@ export class Eventtype extends React.Component {
             });
     }
 
-    deleteEventTypem(args) {
-        args.stopPropagation();
-        let liItem = args.target.parentElement.parentElement;
-        this.listEventType.removeElement(liItem);
-        function remove(array, element) {
-            return array.filter(el => el.Text !== element);
+    onPressActionButton(args) { 
+        switch (args.target.id) {           
+            case 'newevent': 
+                this.newState();
+                return;           
+            case 'cancel':
+                this.cancelState();
+                return;           
+            default:
+                return ;
         }
-        let vowels = remove(this.eventTypeData, args.target.parentElement.innerText);
-        this.eventTypeData = [];
-        this.eventTypeData = vowels;
+    }
 
-        //this.toastObj.timeOut = 10000;
-        //this.toastObj.showProgressBar = true
-        //this.toastObj.show(this.toasts[0]);
-        //deleteEventType(this.state.calendarid, liItem.dataset.uid)
-        //    .then(result => {
-        //        this.toastObj.hide('All');
-        //        this.toastObj.showProgressBar = false
-        //        this.toastObj.timeOut = 1000;
-        //        this.toastObj.show(this.toasts[1]);
-        //        this.listEventType.removeItem(liItem);
-        //    })
-        //    .catch(error => {
-        //        console.log('error ->', error);
-        //        if (this.toastObj != undefined) {
-        //            this.toastObj.showProgressBar = false;
-        //            this.toastObj.hide('All');
-        //            this.toastObj.timeOut = 1000;
-        //            this.toastObj.show(this.toasts[2]);
-        //        }
-        //    });
-
-    }  
-
-    componentDidUpdate() {
-        if (this.state.editmode) {
-            this.colorObj.value = this.state.color;
-            this.TitleTypeEventObj.value = this.state.name;
+    onDataBinding(items) {
+        if (items.length > 0) {
+            for (let i = 0; i < items.length; i++) {
+                let evt = items[i];                 
+                this.eventTypeData.push({                   
+                    Id: evt.idEvent,
+                    Text: evt.name,
+                    Color: evt.color,                   
+                });
+            }
         }
+        this.listEventType.refresh();
+    }
+
+    getlistEventTypes() {
+        getEventTypes("alberto.valverde.escribano@gmail.com")
+            .then(result => {
+                this.onDataBinding(result.data.eventTypes)
+            })
+            .catch(error => {
+                console.log('error ->', error);
+            });
+    }
+
+    componentDidMount() {      
+     this.getlistEventTypes();       
     }    
 
-    render() {   
-
-        var ObjClick;
-        var ObjText;
-        if (this.state.newmode) {
-           // ObjClick = this.onModifyClick
-            ObjText = i18n.t("eventtype.add")
+    componentDidUpdate() {
+        if (this.state.updatemode) {
+            this.colorObj.value = this.state.color;    
+            //if (this.TitleTypeEventObj.value != undefined) {
+                this.TitleTypeEventObj.value = this.state.name;
+            //}           
         }
         else {
-           // ObjClick = this.onAddEventType.bind(this)
-            ObjText = i18n.t("eventtype.modify")
+            if (!this.state.newmode) { this.listEventType.dataSource = this.eventTypeData}           
         }
+    }  
 
-        return (   
+    CheckEnterKey() {
+        this.state.name = this.TitleTypeEventObj.value;
+    }    
 
+    render() {  
+        var ObjId;
+        var ObjText;
+       
+        if (this.state.newmode) {
+            ObjId = "newevent";
+            ObjText = i18n.t("eventtype.add");
+          
+        }
+        else {
+            ObjId = "updateevent";
+            ObjText = i18n.t("eventtype.modify");
+           
+        }
+        return (  
             <div className="row custom-margin custom-padding-5 material2">
                 <div className="col-xs-12 col-sm-12 col-lg-12 col-md-12">                   
-                    {this.state.editmode || this.state.newmode ? (
+                    {this.state.updatemode || this.state.newmode ? (
                             <div>
                                 <div className="form-group">
                                     <div className="e-float-input">
-                                        <TextBoxComponent
+                                    <TextBoxComponent
+                                            change={this.CheckEnterKey.bind(this)}
                                             required='true'                                            
                                             id='name'
                                             placeholder={i18n.t("eventtype.name")}
@@ -233,22 +328,23 @@ export class Eventtype extends React.Component {
                                  </div> 
 
                                 <div className="e-footer-content">
-                                    <ButtonComponent
-                                        id="actionbutton"
-                                        //disabled={this.state.buttonDisabled}
-                                        cssClass='e-control e-btn e-lib e-primary e-event-save e-flat'
-                                        onClick={this.onAddEventType.bind(this)}
-                                        ref={(scope) => { this.addBtn = scope }}
-                                     > {ObjText}</ButtonComponent>
 
                                     <ButtonComponent
-                                        id="cancelbutton"
-                                        //disabled={this.state.buttonDisabled}
-                                        cssClass='e-control e-btn e-lib e-event-cancel e-flat'
-                                        onClick={this.onCancelEventType.bind(this)}
+                                       id="newevent"                                       
+                                        cssClass='e-control e-btn e-lib e-primary e-event-save e-flat'
+                                        onClick={this.AddorUpdateEventType.bind(this)}
                                         ref={(scope) => { this.addBtn = scope }}
-                                    > {i18n.t("eventtype.cancel")}</ButtonComponent>
-                                 </div>
+                                    > {ObjText}</ButtonComponent>
+
+                                   
+                                    <ButtonComponent
+                                        id="cancel"                                        
+                                        cssClass='e-control e-btn e-lib e-event-cancel e-flat'
+                                        onClick={this.onPressActionButton.bind(this)}
+                                        ref={(scope) => { this.cancelBtn = scope }}
+                                     > {i18n.t("eventtype.cancel")}</ButtonComponent>
+                                    
+                                </div>
 
                                 <ToastComponent ref={(toast) => { this.toastObj = toast; }}
                                     id='toast_pos'
@@ -272,10 +368,9 @@ export class Eventtype extends React.Component {
 
                                 <div className="e-footer-content">
                                     <ButtonComponent
-                                        id="neweventbutton"
-                                        //disabled={this.state.buttonDisabled}
+                                        id="newevent"                                       
                                         cssClass='e-control e-btn e-lib e-primary e-event-save e-flat'
-                                        onClick={this.onAddNewEvent.bind(this)}
+                                        onClick={this.onPressActionButton.bind(this)}
                                         ref={(scope) => { this.addBtn = scope }}
                                     > {i18n.t("eventtype.newevent")}</ButtonComponent>                                    
                                 </div>

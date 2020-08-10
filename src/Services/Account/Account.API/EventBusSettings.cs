@@ -1,8 +1,6 @@
-﻿namespace Account.API
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API
 {
-    #region
-    #endregion
-
+   
     public class EventBusSettings
     {
         public string Username { get; set; }

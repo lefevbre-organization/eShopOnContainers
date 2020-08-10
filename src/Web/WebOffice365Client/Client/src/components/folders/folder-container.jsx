@@ -12,74 +12,113 @@ import {
     faTrashAlt
 } from "@fortawesome/free-solid-svg-icons";
 import { withTranslation } from "react-i18next";
+import PerfectScrollbar from 'react-perfect-scrollbar';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {updateLabelName} from "../../api_graph";
-
-function nodeTemplate(data) {
-    return (
-        <div>
-            <div className="treeviewdiv">
-                <div className="textcontent">
-                    <FontAwesomeIcon icon={faFolder} className="label-icon" />
-                    <span className="treeName">{data.displayName}</span>
-                    { data.displayName !== "SENT" && data.unreadItemCount > 0 && <span className="msg-count">{data.unreadItemCount}</span> }
-                </div>
-            </div>
-        </div>
-    )
-};
+import * as _ from 'lodash';
 
 class FolderContainer extends Component {
     constructor(props) {
         super(props);
-
         this.tree = [];
-        this.state = {
-            showTree: false,
-            fields: { dataSource: this.props.folderTree.map( f => ({...f, hasChildren: f.childFolderCount > 0})), id: 'id', parentID: 'parentFolderId', text: 'displayName', },
-        };
+        this.fields = { dataSource: this.props.folderTree.map( f => ({...f, hasChildren: f.childFolderCount > 0})), id: 'id', parentID: 'parentFolderId', text: 'displayName', };
         this.treeViewRef = createRef();
         this.navigateToList = this.navigateToList.bind(this);
         this.onDropNode = this.onDropNode.bind(this);
+        this.onNodeExpanded = this.onNodeExpanded.bind(this);
+        this.onNodeCollapsed = this.onNodeCollapsed.bind(this);
+        this.onNodeClicked = this.onNodeClicked.bind(this);
+        this.nodeTemplate = this.nodeTemplate.bind(this);
+        this.onNodeSelecting = this.onNodeSelecting.bind(this);
     }
 
     navigateToList(evt) {
         const label = evt.nodeData;
-        this.props.onLabelClick(label || { id: "" });
+
+        setTimeout(()=>{
+            this.props.onLabelClick(label || { id: "" });
+        }, 200)
     }
 
     componentDidUpdate(prevProps) {
-        console.log("***** TreeView: COMPONENT DID UPDATE");
-         if( JSON.stringify(this.props.folderTree) !== JSON.stringify(prevProps.folderTree)) {
-             this.setState({
-                 showTree: false,
-                 fields: {
-                     dataSource: this.props.folderTree.map( f => ({...f, hasChildren: f.childFolderCount > 0})),
-                     id: 'id',
-                     parentID: 'parentFolderId',
-                     text: 'displayName',
-                 },
-             }, ()=>{
-                 this.setState({showTree: true});
-             });
+        const path = window.location.pathname.replace('/', '');
+
+        if(this.props.folderTree) {
+            const newSource = this.props.folderTree.map( f => ({...f, hasChildren: f.childFolderCount > 0}));
+
+            if(!_.isEqual(this.treeViewRef.current.fields.dataSource, newSource) ) {
+
+                for(let i = 0; i < this.treeViewRef.current.fields.dataSource.length; i++) {
+                    const ds = this.treeViewRef.current.fields.dataSource[i];
+                    const ns = newSource.find( (it)=> it.id === ds.id );
+
+                    if(ds.id.toLowerCase() === path.toLowerCase()) {
+                        ds.selected = true
+                    } else {
+                        ds.selected = false;
+                    }
+                    this.treeViewRef.current.fields.dataSource[i] = Object.assign({}, ds, ns, { expanded: ds.expanded, selected: ds.selected});
+                }
+            }
+        }
+    }
+
+
+    onNodeExpanded(node) {
+        if(this.toClick) {
+            clearTimeout(this.toClick);
+            this.toClick = null;
+        }
+
+        const ds = this.treeViewRef.current.fields.dataSource.find((it)=> it.id === node.nodeData.id)
+        ds.expanded = true;
+    }
+
+    onNodeCollapsed(node) {
+        if(this.toClick) {
+            clearTimeout(this.toClick);
+            this.toClick = null;
+        }
+
+        const ds = this.treeViewRef.current.fields.dataSource.find((it)=> it.id === node.nodeData.id)
+        ds.expanded = false;
+    }
+
+    onNodeSelecting(node) {
+    }
+
+    toClick = null;
+    onNodeClicked(args) {
+         const nodeData = this.treeViewRef.current.getNode(args.node);
+
+         if(nodeData.selected === true) {
+             this.toClick = setTimeout(()=>{
+                 this.navigateToList({nodeData});
+             }, 200);
+
          }
     }
 
-    componentDidCatch(error, info) {
-        // Log the error to an error reporting service
-        // logErrorToMyService(error, info);
-        console.log(error);
-        console.log(info);
-    }
+    nodeTemplate(data) {
+        return (
+            <div onClick={()=> { alert(); } }>
+                <div className="treeviewdiv">
+                    <div className="textcontent">
+                        <FontAwesomeIcon icon={faFolder} className="label-icon" />
+                        <span className="treeName">{data.displayName}</span>
+                        { data.displayName !== "SENT" && data.unreadItemCount > 0 && <span className="msg-count">{data.unreadItemCount}</span> }
+                    </div>
+                </div>
+            </div>
+        )
+    };
 
     render() {
         const { t } = this.props;
-        const { showTree } = this.state;
 
         return (
             <div className='tree-wrapper'>
-                {/*<PerfectScrollbar className="tree-scrollbar">*/}
-
+                <PerfectScrollbar className="tree-scrollbar">
                 <div className="pl-2 nav-title">
                     <img
                         className="logo-ext"
@@ -89,30 +128,32 @@ class FolderContainer extends Component {
                     ></img>
                     {t("sidebar.folders")}
                 </div>
-                {showTree &&
                     <TreeViewComponent id='foldertree'
                                        ref={this.treeViewRef}
-                                        allowDragAndDrop={true}
-                                       fields={this.state.fields}
-                                       enablePersistence={true}
+                                       allowDragAndDrop={true}
+                                       fields={this.fields}
+                                       enablePersistence={false}
+                                       delayUpdate={true}
                                        loadOnDemand={false}
-                                       nodeSelected={this.navigateToList}
-                                       nodeTemplate={nodeTemplate}
+                                       nodeExpanded={this.onNodeExpanded}
+                                       nodeCollapsed={this.onNodeCollapsed}
+                                       nodeTemplate={this.nodeTemplate}
+                                       nodeClicked={this.onNodeClicked}
                                        nodeDropped={this.onDropNode}
                                        animation={{
                                            expand: {
-                                               duration: 100
+                                               duration: 0
                                            },
                                            collapse: {
-                                               duration: 100
+                                               duration: 0
                                            }
                                        }}
                     >
                     </TreeViewComponent>
-                }
+                </PerfectScrollbar>
                 <style jsx global>{`
                     .tree-scrollbar {
-                        height: calc(100% - 128px);
+                        height: calc(100%);
                         width: 100%;
                         bottom: 0;     
                     }
@@ -193,11 +234,14 @@ class FolderContainer extends Component {
     }
 
     async onDropNode(event) {
-        const { droppedNodeData, draggedNodeData } = event;
+        const { droppedNodeData, draggedNodeData,dropLevel } = event;
+        if(dropLevel <= 1) {
+            // Moving folder to parent;
+            await updateLabelName(draggedNodeData.id, null);
+            return;
+        }
         for(let i = 0; i < this.props.folderTree.length; i++) {
             if(this.props.folderTree[i].id === droppedNodeData.id) {
-                console.log(draggedNodeData)
-                console.log(this.props.folderTree[i])
                 await updateLabelName(draggedNodeData.id, this.props.folderTree[i].id);
             }
         }

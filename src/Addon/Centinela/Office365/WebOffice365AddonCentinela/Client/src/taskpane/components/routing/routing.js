@@ -1,24 +1,36 @@
 import React, { Component } from 'react';
 import {
     PAGE_LOGIN,
-    PAGE_ARCHIVE_MESSAGE
+    PAGE_ARCHIVE_MESSAGE,
+    PAGE_ARCHIVE_ATTACHMENT
 } from '../../constants';
 import Login from '../login/login';
 import ArchiveMessage from '../archive-message/archive-message';
+import ArchiveAttachment from '../archive-attachment/archive-attachment';
 
 
 export default class Routing extends Component {
     constructor(props) {
       super(props);
 
-      let token = JSON.parse(localStorage.getItem('auth-centinela'));
-
-      let actualPage = token ? PAGE_ARCHIVE_MESSAGE : PAGE_LOGIN;
+      let actualPage = PAGE_LOGIN;
 
       this.state = {
         actualPage: actualPage
       };
       this.changePage = this.changePage.bind(this);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+      if(prevProps.isOfficeInitialized !== this.props.isOfficeInitialized) {
+        const conversationId = Office.context.mailbox.initialData.conversationId;
+        let token = JSON.parse(localStorage.getItem('auth-centinela'));
+        if(token && conversationId) {
+          this.changePage(PAGE_ARCHIVE_MESSAGE);
+        } else if (token && !conversationId) {
+          this.changePage(PAGE_ARCHIVE_ATTACHMENT);
+        }
+      }
     }
 
     changePage(page) {
@@ -43,11 +55,19 @@ export default class Routing extends Component {
         case PAGE_ARCHIVE_MESSAGE:
           return (
             <ArchiveMessage 
-            title={title}
-            isOfficeInitialized={isOfficeInitialized}
-            changePage={this.changePage}
+             title={title}
+             isOfficeInitialized={isOfficeInitialized}
+             changePage={this.changePage}
            />
-          )
+          );
+
+        case PAGE_ARCHIVE_ATTACHMENT: 
+         return (
+          <ArchiveAttachment 
+           isOfficeInitialized={isOfficeInitialized}
+           changePage={this.changePage}
+          />
+        ); 
 
         default:
           return <Login changePage={this.changePage} />;

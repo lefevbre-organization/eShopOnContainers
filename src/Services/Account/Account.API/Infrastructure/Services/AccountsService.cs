@@ -1,9 +1,9 @@
-﻿namespace Account.API.Infrastructure.Services
+﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Services
 {
-    using Account.API.Model;
 
     #region Using
 
+    using Account.API.Model;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
     using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
     using Repositories;
@@ -61,5 +61,17 @@
         public async Task<Result<RawMessageProvider>> CreateRaw(RawMessageProvider rawMessage) => await _accountsRepository.CreateRaw(rawMessage);
 
         public async Task<Result<bool>> DeleteRaw(RawMessageProvider rawMessage) => await _accountsRepository.DeleteRaw(rawMessage);
+
+        public async Task<Result<AccountEvents>> GetEventsByAccount(string account) 
+            => await _accountsRepository.GetEventsByAccount(account);
+
+        public async Task<Result<AccountEvents>> UpsertAccountEvents(AccountEvents accountIn) 
+            => await _accountsRepository.UpsertAccountEvents(accountIn);
+
+        public async Task<Result<bool>> RemoveEvent(string email, string idEvent) 
+            => await _accountsRepository.RemoveEvent(email, idEvent);
+
+        public async Task<Result<EventType>> AddEvent(string email, EventType eventType)
+         => await _accountsRepository.AddEvent(email, eventType);
     }
 }
