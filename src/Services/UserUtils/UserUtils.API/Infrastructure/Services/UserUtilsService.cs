@@ -28,6 +28,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
         private readonly HttpClient _clientOnline;
         private readonly HttpClient _clientLogin;
         private readonly HttpClient _clientLexonApi;
+        private readonly HttpClient _clientClaves;
         private readonly IOptions<UserUtilsSettings> _settings;
         internal readonly ILogger<UserUtilsService> _logger;
 
@@ -76,6 +77,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             _clientLexonApi = _clientFactory.CreateClient();
             _clientLexonApi.BaseAddress = new Uri(_settings.Value.LexonApiUrl);
             _clientLexonApi.DefaultRequestHeaders.Add("Accept", "text/plain");
+
+            _clientClaves = _clientFactory.CreateClient();
+            _clientClaves.BaseAddress = new Uri(_settings.Value.ClavesUrl);
         }
 
         #region Generic
@@ -800,6 +804,68 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 TraceMessage(resultContact.errors, ex);
             }
             return resultContact;
+        }
+
+        public async Task<Result<bool>> FirmCheckAsync(string idClient, string numDocs)
+        {
+            var result = new Result<bool>(false);
+
+        
+            // https://led-pre-serviceclaves.lefebvre.es/FirmaDigital/ComprobarPuedeCrearFirmaDigital?IdClientNav={idClientNav}&NumDocuments={NumDocuments}&idUic=1
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.ClavesUrl}/FirmaDigital/ComprobarPuedeCrearFirmaDigital?IdClientNav={idClient}&NumDocuments={numDocs}&idUic=1");
+            TraceLog(parameters: new string[] { $"request:{request}" });
+
+            try
+            {
+                using (var response = await _clientClaves.SendAsync(request))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var resultString = await response.Content.ReadAsAsync<Result<string>>();
+                        result.data = true;
+                    }
+                    else                         
+                    {
+                        TraceOutputMessage(result.errors, "Response not ok when check firm", null, 2003);
+                    }                                                     
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
+
+        public async Task<Result<bool>> FirmUseAsync(string idClient, string idUser, string numDocs)
+        {
+            var result = new Result<bool>(false);
+
+            // https://led-pre-serviceclaves.lefebvre.es/FirmaDigital/CrearFirmaDigital?IdClientNav={idClientNav}&idUsuarioPro={idUsuarioPro}&NumDocuments={NumDocuments}&idUic=1
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonApiUrl}/FirmaDigital/CrearFirmaDigital?IdClientNav={idClient}&idUsuarioPro={idUser}&NumDocuments={numDocs}&idUic=1");
+            TraceLog(parameters: new string[] { $"request:{request}" });
+
+            try
+            {
+                using (var response = await _clientClaves.SendAsync(request))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var resultString = await response.Content.ReadAsAsync<Result<string>>();
+                        result.data = true;
+                    }
+                    else
+                    {
+                        TraceOutputMessage(result.errors, "Response not ok when use firm", null, 2003);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
         }
     }
 }
