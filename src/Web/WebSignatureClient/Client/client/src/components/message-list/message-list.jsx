@@ -181,7 +181,7 @@ class MessageList extends Component {
                         count++;
                     } else if (this.props.signatures[i].status === 'completed' && this.signatureFilter === 'Completadas'){
                         count++;
-                    } else if ((this.props.signatures[i].status === 'canceled' || this.props.signatures[i].status === 'declined' || this.props.signatures[i].status === 'expired') && this.props.signatureFilter === 'Canceladas'){
+                    } else if ((this.props.signatures[i].status === 'canceled' || this.props.signatures[i].status === 'declined' || this.props.signatures[i].status === 'expired' || this.props.signatures[i].status === 'error') && this.props.signatureFilter === 'Canceladas'){
                         count++;
                     }
                 }
@@ -238,11 +238,11 @@ class MessageList extends Component {
     getSignatures(signatures){
         let filteredSignatures = [];
         signatures.map( sig => {
-            if ((sig.status === 'En progreso' || sig.status === 'ready') && (this.props.signatureFilter === "En progreso")){
+            if ((sig.status === 'En progreso' || sig.status === 'ready' || sig.status === 'pending') && (this.props.signatureFilter === "En progreso")){
                 filteredSignatures.push(sig);
             } else if ((sig.status === 'Completadas' || sig.status === 'completed') && (this.props.signatureFilter === "Completadas")){
                 filteredSignatures.push(sig);
-            } else if ((sig.status === 'Canceladas' || sig.status === 'canceled' || sig.status === 'expired' || sig.status ==='declined') && (this.props.signatureFilter === 'Canceladas')) {
+            } else if ((sig.status === 'Canceladas' || sig.status === 'canceled' || sig.status === 'expired' || sig.status ==='declined' || sig.status === 'error') && (this.props.signatureFilter === 'Canceladas')) {
                 filteredSignatures.push(sig);    
             } else if (this.props.signatureFilter === "Mostrar todas") {
                 filteredSignatures.push(sig);
@@ -352,10 +352,12 @@ class MessageList extends Component {
             case 'canceled':
             case 'declined':
             case 'expired':
+            case 'error':
                 recipientsClass = 'cancelada';
                 break;           
             case 'En progreso':
             case 'ready':
+            case 'in_queue':
                 recipientsClass = 'en-progreso';
                 break;
             case 'Completadas':
@@ -453,6 +455,14 @@ class MessageList extends Component {
         case 'ready':
             status = i18n.t('signaturesGrid.statusInProgress');
             status_style = 'en-progreso'
+            break;
+        case 'error':
+            status = i18n.t('signaturesGrid.statusError');
+            status_style = 'cancelada';
+            break;
+        case 'in_queue':
+            status = i18n.t('signaturesGrid.statusPending');
+            status_style = 'en-progreso';
             break;
         default:
             break;
@@ -898,11 +908,11 @@ class MessageList extends Component {
         let coloredStatus;
         let filteredSignatures = [];
         var signatures = this.props.signatures.map( sig => {
-            if ((sig.status === 'En progreso' || sig.status === 'ready') && (this.props.signatureFilter === "En progreso")){
+            if ((sig.status === 'En progreso' || sig.status === 'ready' || sig.status === 'pending') && (this.props.signatureFilter === "En progreso")){
                 filteredSignatures.push(sig);
             } else if ((sig.status === 'Completadas' || sig.status === 'completed') && (this.props.signatureFilter === "Completadas")){
                 filteredSignatures.push(sig);
-            } else if ((sig.status === 'Canceladas' || sig.status === 'canceled' || sig.status === 'expired' || sig.status ==='declined') && (this.props.signatureFilter === 'Canceladas')) {
+            } else if ((sig.status === 'Canceladas' || sig.status === 'canceled' || sig.status === 'expired' || sig.status ==='declined' || sig.status === 'error') && (this.props.signatureFilter === 'Canceladas')) {
                 filteredSignatures.push(sig);    
             } else if (this.props.signatureFilter === "Mostrar todas") {
                 filteredSignatures.push(sig);
