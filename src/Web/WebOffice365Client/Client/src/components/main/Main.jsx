@@ -28,6 +28,8 @@ import { selectLabel } from '../sidebar/sidebar.actions';
 import { signOut } from '../../api_graph/authentication';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import i18n from 'i18next';
+
 import e from '../../event-bus';
 import SidebarCnn from 'react-sidebar';
 import LexonComponent from '../../apps/lexon_content';
@@ -45,6 +47,7 @@ import { PROVIDER } from '../../constants';
 import MessageNotFound from '../message-not-found/MessageNotFound';
 import CalendarComponent from '../../apps/calendar_content';
 import { addContact, getContacts } from '../../api_graph';
+import { TooltipComponent } from "@syncfusion/ej2-react-popups";
 
 export class Main extends Component {
   constructor(props) {
@@ -775,24 +778,28 @@ export class Main extends Component {
             <div className='productpanel'>
               {window.SHOW_EXPERIMENTAL === '1' && (
                 <span className='productsbutton'>
-                  <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
-                    <img
-                      className='imgproduct'
-                      border='0'
-                      alt='Calendar'
-                      src='/assets/img/icon-cal.svg'></img>
-                  </div>
+                  <TooltipComponent content={i18n.t('tooltips.calendar')}>
+                    <div onClick={() => this.onSetSidebarOpenCalendar(true)}>
+                      <img
+                        className='imgproduct'
+                        border='0'
+                        alt='Calendar'
+                        src='/assets/img/icon-cal.svg'></img>
+                    </div>
+                  </TooltipComponent>
                 </span>
               )}
               <span className='productsbutton'>
                 {lexon.user && this.hasProduct('lexonconnector') ? (
-                  <div onClick={() => this.onSetSidebarOpenLexon(true)}>
+                  <TooltipComponent content={i18n.t('tooltips.lexon')}>
+                    <div onClick={() => this.onSetSidebarOpenLexon(true)}>
                     <img
                       className='imgproduct'
                       border='0'
                       alt='Lex-On'
                       src='/assets/img/icon-lx.svg'></img>
-                  </div>
+                    </div>
+                  </TooltipComponent>
                 ) : (
                   <div>
                     <img
@@ -805,25 +812,29 @@ export class Main extends Component {
               </span>
               {this.hasProduct('centinelaconnector') && (
                   <span className='productsbutton'>
-                    <div onClick={() => this.onSetSidebarOpenCentinela(true)}>
-                      <img
-                        className='imgproduct'
-                        border='0'
-                        alt='Centinela'
-                        src='/assets/img/icon-cn.svg'></img>
-                    </div>
+                    <TooltipComponent content={i18n.t('tooltips.centinela')}>
+                      <div onClick={() => this.onSetSidebarOpenCentinela(true)}>
+                        <img
+                          className='imgproduct'
+                          border='0'
+                          alt='Centinela'
+                          src='/assets/img/icon-cn.svg'></img>
+                      </div>
+                    </TooltipComponent>
                   </span>
                 )}
               {this.hasProduct('databaseconnector') &&
                 window.SHOW_EXPERIMENTAL === '1' && (
                   <span className='productsbutton'>
-                    <div onClick={() => this.onSetSidebarOpenDatabase(true)}>
-                      <img
-                        className='imgproduct'
-                        border='0'
-                        alt='Base de datos'
-                        src='/assets/img/icon-ne.svg'></img>
-                    </div>
+                    <TooltipComponent content={i18n.t('tooltips.database')}>
+                      <div onClick={() => this.onSetSidebarOpenDatabase(true)}>
+                        <img
+                          className='imgproduct'
+                          border='0'
+                          alt='Base de datos'
+                          src='/assets/img/icon-ne.svg'></img>
+                      </div>
+                    </TooltipComponent>
                   </span>
                 )}
             </div>

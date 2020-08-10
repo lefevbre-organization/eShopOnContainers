@@ -41,6 +41,7 @@ export class MessageToolbar extends PureComponent {
     }
   }
 
+
   render() {
     const { t } = this.props;
 
@@ -63,8 +64,15 @@ export class MessageToolbar extends PureComponent {
       ? messageHeaders.from.emailAddress.address
       : '';
 
+    const aux = []
     for (let i = 0; i < messageHeaders.ccRecipients.length; i++) {
-      cc = messageHeaders.ccRecipients[i].emailAddress.address;
+      aux.push(messageHeaders.ccRecipients[i].emailAddress.address);
+    }
+
+    if(aux.length > 0) {
+      cc = aux.join(',');
+    } else {
+      cc = undefined;
     }
 
     const nameEmail = getNameEmail(replyTo);
@@ -90,7 +98,7 @@ export class MessageToolbar extends PureComponent {
           <p>&nbsp;</p>
           ${replyHeader}
           <blockquote>${this.props.messageResult.body.content}</blockquote>`,
-      ...(cc && { cc: cc.value }),
+      cc: cc,
     };
 
     const composePropsFwd = {
@@ -98,6 +106,7 @@ export class MessageToolbar extends PureComponent {
       subject: `Fwd: ${subject}`,
       to: '',
       isForward: true,
+      cc: undefined,
     };
 
     const collapsed = this.props.sideBarCollapsed;
@@ -123,13 +132,21 @@ export class MessageToolbar extends PureComponent {
                   search: '',
                   sideBarCollapsed: this.props.sideBarCollapsed,
                   sideBarToggle: this.props.sideBarToggle,
-                  state: { composeProps },
+                  state: { composeProps: {...composeProps, cc: undefined } },
                 }}>
-                <FontAwesomeIcon
-                  // title={t('message-toolbar.reply')}
-                  icon={faReply}
-                  size='lg'
-                />
+                <i className="lf-icon lf-icon-reply" style={{fontSize: 18, fontWeight: 'bold'}}></i>
+              </Link>
+            </div>
+            <div className='action-btn mr-2' title={t('message-toolbar.reply-all')}>
+              <Link
+                  to={{
+                    pathname: '/compose',
+                    search: '',
+                    sideBarCollapsed: this.props.sideBarCollapsed,
+                    sideBarToggle: this.props.sideBarToggle,
+                    state: { composeProps },
+                  }}>
+                <i className="lf-icon lf-icon-reply-all" style={{fontSize: 18, fontWeight: 'bold'}}></i>
               </Link>
             </div>
             <div
@@ -143,11 +160,7 @@ export class MessageToolbar extends PureComponent {
                   sideBarToggle: this.props.sideBarToggle,
                   state: { composeProps: composePropsFwd },
                 }}>
-                <FontAwesomeIcon
-                  // title={t('message-toolbar.resend')}
-                  icon={faShare}
-                  size='lg'
-                />
+                <i className="lf-icon lf-icon-send" style={{fontSize: 18, fontWeight: 'bold'}}></i>
               </Link>
             </div>
             {message.importance === 'high' && (

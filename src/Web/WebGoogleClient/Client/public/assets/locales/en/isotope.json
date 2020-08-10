@@ -55,7 +55,8 @@
     "reply": "Reply",
     "resend": "Resend",
     "read": "Mark as read",
-    "unread": "Mark as unread"
+    "unread": "Mark as unread",
+    "reply-all": "Reply to all"
   },
   "message-footer": {
     "messages": "Messages"
@@ -135,5 +136,11 @@
     "modify": "Modify",
     "cancel": "Cancel",
     "newevent": "Add typology"
+  },
+  "tooltips": {
+    "lexon": "Lexon",
+    "calendar": "Calendar",
+    "centinela": "Centinela",
+    "database": "Database"
   }
 }
