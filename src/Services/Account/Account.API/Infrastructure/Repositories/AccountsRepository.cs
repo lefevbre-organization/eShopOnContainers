@@ -12,6 +12,7 @@
     using MongoDB.Driver;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
     #endregion using
@@ -577,8 +578,8 @@
         {
             if (string.IsNullOrEmpty(eve.idEvent))
                 eve.idEvent = Guid.NewGuid().ToString(); 
-            eve.name = eve.name.ToUpperInvariant();
-            eve.color = eve.color.ToLowerInvariant();
+            //eve.name = eve.name.ToUpperInvariant();
+            //eve.color = eve.color.ToLowerInvariant();
         }
 
         private static Predicate<Account> GetFilterProviderMail(string provider, string mail)
@@ -759,7 +760,7 @@
                 result.data = await _context.AccountEvents.Find(GetFilterAccountEvents(account)).FirstOrDefaultAsync();
 
                 if (result.data == null)
-                    TraceMessage(result.errors, new Exception($"No se encuentra ningún evento para esa cuenta {account}"), "1003");
+                    TraceInfo(result.infos,$"No se encuentra ningún evento para esa cuenta {account}", "Mail Not Found");
                 else
                 {
                     var orderEvents = result.data?.eventTypes.OrderByDescending(x => x.name).ToList();
@@ -860,10 +861,11 @@
                 //    resultBoolean, resultUpdate);
 
                 var account = await _context.AccountEvents.FindAsync(c => c.email.Contains(email.ToUpperInvariant())).Result.FirstOrDefaultAsync();
-                var ev = account.eventTypes.FirstOrDefault(s => s.name == eventType.name.ToUpperInvariant());
+                var ev = account.eventTypes.FirstOrDefault(s => s.idEvent == eventType.idEvent);
                 if (ev?.color != null)
                 {
                     TraceInfo(result.infos, $"modify event {ev.idEvent}-{ev.name}");
+                    ev.name = eventType.name;
                     ev.color = eventType.color;
                 }
                 else

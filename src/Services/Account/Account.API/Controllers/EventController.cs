@@ -63,6 +63,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Controllers
 
             Result<AccountEvents> result = await _service.GetEventsByAccount(accountIn.Email);
 
+            if (result.errors.Count == 0 && result.data == null)
+                return NotFound(result);
+
             return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
