@@ -104,9 +104,10 @@ export class Eventtype extends React.Component {
         this.eventTypeData = [];
         this.eventTypeData = vowels;
 
+        let email = this.props.googleUser.getBasicProfile().getEmail();
         let dataEventTypeAPI = {            
             "idEvent": args.target.parentElement.lastChild.innerText,
-             "email": "alberto.valverde.escribano@gmail.com"
+             "email": email
         }
 
         deleteEventType(dataEventTypeAPI)
@@ -156,9 +157,11 @@ export class Eventtype extends React.Component {
 
 
         let dataEventTypeAPI = [];
+        //let email = this.props.googleUser.getBasicProfile().getEmail();
+        let email = "alberto.valverde.escribano@gmail.com"
         if (this.state.idEvent != undefined) {
             dataEventTypeAPI = {
-                "email": "alberto.valverde.escribano@gmail.com",
+                "email": email,
                 "eventType":
                 {
                     "idEvent": this.state.idEvent,
@@ -168,8 +171,9 @@ export class Eventtype extends React.Component {
             } 
         }
         else {
+           
             dataEventTypeAPI = {
-                "email": "alberto.valverde.escribano@gmail.com",
+                "email": email,
                 "eventType":
                 {                  
                     "name": this.TitleTypeEventObj.value,
@@ -245,6 +249,7 @@ export class Eventtype extends React.Component {
     }
 
     getlistEventTypes() {
+       
         getEventTypes("alberto.valverde.escribano@gmail.com")
             .then(result => {
                 this.onDataBinding(result.data.eventTypes)

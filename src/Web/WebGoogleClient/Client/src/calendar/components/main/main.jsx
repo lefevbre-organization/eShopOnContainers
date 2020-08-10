@@ -580,8 +580,11 @@ export class Main extends Component {
     }
 
     getlistEventTypes() {
+
+       
+        let email = this.props.googleUser.getBasicProfile().getEmail();
         
-        getEventTypes("alberto.valverde.escribano@gmail.com")
+        getEventTypes(email)
             .then(result => {
                 this.onDataBindingEventTypeList(result.data.eventTypes)
             })
