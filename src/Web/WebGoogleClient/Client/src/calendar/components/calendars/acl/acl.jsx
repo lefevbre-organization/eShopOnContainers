@@ -160,7 +160,7 @@ export class Acl extends React.Component {
         return (<div className="text-content">
             {data.text} ({data.role})
              {!owner ? (
-                <span className="delete-icon" onClick={this.deleteItem.bind(this)} />
+                <span className="listicons lf-icon-close-round" onClick={this.deleteItem.bind(this)} />
             ) : (
                     ''
                 )}

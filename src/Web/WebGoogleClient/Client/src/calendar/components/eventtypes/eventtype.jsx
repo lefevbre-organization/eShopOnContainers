@@ -58,8 +58,8 @@ export class Eventtype extends React.Component {
         return (<div className="text-content"> 
             <span Style={`background-color: ${data.Color}; margin-right: 20px`} className='dot'></span>
             {data.Text} 
-            <span className="delete-icon" onClick={this.deleteEventType.bind(this)} />
-            <span className="delete-icon" onClick={this.onModifyEventTypeState.bind(this)} />
+            <span className="listicons lf-icon-close-round" onClick={this.deleteEventType.bind(this)} />
+            <span className="listicons lf-icon-edit" onClick={this.onModifyEventTypeState.bind(this)} />
             <span className='id hidden'>{data.Id}</span>
         </div>);
     }  
@@ -98,7 +98,7 @@ export class Eventtype extends React.Component {
         let liItem = args.target.parentElement.parentElement;
         this.listEventType.removeElement(liItem);
         function remove(array, element) {
-            return array.filter(el => el.Text !== element);
+            return array.filter(el => el.Text + el.Id !== element);
         }
         let vowels = remove(this.eventTypeData, args.target.parentElement.innerText);
         this.eventTypeData = [];
@@ -109,14 +109,11 @@ export class Eventtype extends React.Component {
              "email": "alberto.valverde.escribano@gmail.com"
         }
 
-       
-
-        //this.toastObj.timeOut = 10000;
-        //this.toastObj.showProgressBar = true
-        //this.toastObj.show(this.toasts[0]);
-
         deleteEventType(dataEventTypeAPI)
-            .then(result => {               
+            .then(result => { 
+                this.toastObj.hide('All');
+                this.toastObj.timeOut = 1000;
+                this.toastObj.show(this.toasts[1]);
                 this.props.getlistEventTypes();
             })
             .catch(error => {
@@ -180,17 +177,11 @@ export class Eventtype extends React.Component {
                 }
             } 
 
-        }       
-
-       
+        }  
         
-        this.toastObj.timeOut = 10000;
-        this.toastObj.showProgressBar = true;
-        this.toastObj.show(this.toasts[0]);
+      
         addorUpdateEventType(dataEventTypeAPI)
-            .then(result => {
-                this.toastObj.hide('All');
-                this.toastObj.showProgressBar = false;
+            .then(result => {                
                 this.toastObj.timeOut = 1000;
                 this.toastObj.show(this.toasts[1]);
 
@@ -201,9 +192,7 @@ export class Eventtype extends React.Component {
                         return e.Id == IdEvent
                     })
                     item.Text = this.TitleTypeEventObj.value;                   
-                    item.Color = this.state.color
-                   // this.listEventType.refresh();    
-                   // this.eventTypeData.refresh();
+                    item.Color = this.state.color                
                 }
                 else {
                     //new event type
@@ -212,8 +201,7 @@ export class Eventtype extends React.Component {
                
                 this.setState({ updatemode: false })
                 this.setState({ newmode: false })
-                this.setState({ idEvent: undefined })
-                //this.listEventType.addItem([dataEventType]);
+                this.setState({ idEvent: undefined })             
 
                 this.props.getlistEventTypes();
 
@@ -344,17 +332,7 @@ export class Eventtype extends React.Component {
                                         ref={(scope) => { this.cancelBtn = scope }}
                                      > {i18n.t("eventtype.cancel")}</ButtonComponent>
                                     
-                                </div>
-
-                                <ToastComponent ref={(toast) => { this.toastObj = toast; }}
-                                    id='toast_pos'
-                                    content='Action successfully completed.'
-                                    position={this.position}
-                                    target={this.target}
-                                    animation={this.toastCusAnimation}
-                                    timeOut={1000}
-                                >
-                                </ToastComponent>
+                                </div>                              
 
                             </div>
                         ) : (
@@ -375,7 +353,17 @@ export class Eventtype extends React.Component {
                                     > {i18n.t("eventtype.newevent")}</ButtonComponent>                                    
                                 </div>
                             </div>
-                            )}
+                        )}
+                    <ToastComponent ref={(toast) => { this.toastObj = toast; }}
+                        id='toast_pos'
+                        content='Action successfully completed.'
+                        position={this.position}
+                        target={this.target}
+                        animation={this.toastCusAnimation}
+                        timeOut={1000}
+                    >
+                    </ToastComponent>
+
                 </div>
             </div>
         )
