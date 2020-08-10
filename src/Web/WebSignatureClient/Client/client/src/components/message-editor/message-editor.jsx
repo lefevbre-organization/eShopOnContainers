@@ -48,9 +48,9 @@ class MessageEditor extends Component {
       // Stores state of current selection in the dialog (is title, underlined... H1, H2, ..., italic, underline)
       // Used in editor buttons to activate/deactivate them
       editorState: {},
-      selectedReminderOption: 'option2',
+      selectedReminderOption: '',
       reminderDays: 0,
-      selectedExpirationOption: 'exp_option1',
+      selectedExpirationOption: '',
       expirationDays: 7,
       hideAlertDialog: false,
       bigAttachments: false,
@@ -363,10 +363,20 @@ class MessageEditor extends Component {
   
         let reminders = [];
         switch (this.state.selectedReminderOption) {
-          case 'option1':
-            reminders.push(this.state.reminderDays);
+          case 'option1': // every x days
+            if (this.state.selectedExpirationOption === 'exp_option1') {
+              for (let index = 0; index < this.state.expirationDays; index++) {
+                if (this.state.reminderDays * (index + 1) < this.state.expirationDays) {
+                  reminders[index] = this.state.reminderDays * (index + 1);
+                }
+              }
+            } else {
+              for (let index = 0; index < 30; index++) {
+                reminders[index] = this.state.reminderDays * (index + 1);
+              }
+            }
             break;
-          case 'option2':
+          case 'option2': //daily
             if (this.state.selectedExpirationOption === 'exp_option1') {
               for (let index = 0; index < this.state.expirationDays; index++) {
                 reminders[index] = index + 1;
@@ -378,7 +388,7 @@ class MessageEditor extends Component {
               }
             }
             break;
-          case 'option3':
+          case 'option3': //weekly
             if (this.state.selectedExpirationOption === 'exp_option1') {
               for (let index = 0; index < this.state.expirationDays; index++) {
                 if (7 * (index + 1) < this.state.expirationDays) {
@@ -391,23 +401,21 @@ class MessageEditor extends Component {
               }
             }
             break;
-          case 'option4':
-            reminders = 0;
-            break;
           default:
-            reminders = 0;
+            reminders[0] = -1;
             break;
         }
   
         let expiration;
         switch (this.state.selectedExpirationOption) {
-          case 'exp_option1':
+          case 'exp_option1': // expires
             expiration = this.state.expirationDays;
             break;
-          case 'exp_option2':
+          case 'exp_option2': // never expires
             expiration = 0;
             break;
           default:
+            expiration = -1;
             break;
         }
   

@@ -276,7 +276,8 @@
         "title": "Rappels programmés",
         "notConfigured": "Il n'y a pas de rappels programmés.",
         "daily": "Rappels par jour",
-        "weekly": "Rappels par semaine"
+        "weekly": "Rappels par semaine",
+        "everyXdays": "Rappels dans ___ jours"
       }
     },
     "title": "DÉTAILS DE LA SIGNATURE"

@@ -277,7 +277,8 @@
         "title": "RECORDATORIOS PROGRAMADOS",
         "notConfigured": "No hay recordatorios programados.",
         "daily": "Recordatorios diarios",
-        "weekly": "Recordatorios semanales"
+        "weekly": "Recordatorios semanales",
+        "everyXdays": "Recordatorios cada ___ días."
       }
     },
     "title": "DETALLES DE LA FIRMA"

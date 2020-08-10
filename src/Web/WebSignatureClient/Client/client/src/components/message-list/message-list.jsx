@@ -192,6 +192,17 @@ class MessageList extends Component {
         }
     }
 
+    getSignersInfo(signature){
+        var result = []
+
+        signature.documents.map(d => {
+            if (result.filter(e => e.name === d.name && e.email === d.email).length === 0){
+                result.push({name: d.name, email: d.email})
+            }
+        });
+        return result;
+    }
+
     getSigners(signature){
         var lookup = {};
         var items = signature.documents;
@@ -359,27 +370,29 @@ class MessageList extends Component {
         let signature = this.props.signatures.find(s => s.id === props.Id)
 
         if (signature ){
-            var names = this.getSignersNames(signature);
-            var emails = this.getSigners(signature);
-            names.forEach((name, i) => {
-                if (i === names.length -1 ){
+            var signersInfo = this.getSignersInfo(signature);
+            //var emails = this.getSigners(signature);
+            //var names = this.getSignersNames(signature, emails);
+            signersInfo.forEach((signer, i) => {
+                console.log(signer);
+                if (i === signersInfo.length -1 ){
                     recipientsList.push(
                         {
-                            text: name,
+                            text: signer.name,
                             cssClass: 'test'
                         },
                         {
-                            text: emails[i]
+                            text: signer.email
                         }
                     )  
                 } else {
                     recipientsList.push(
                         {
-                            text: name,
+                            text: signer.name,
                             cssClass: 'test'
                         },
                         {
-                            text: emails[i]
+                            text: signer.email
                         },
                         {   
                             separator: true
