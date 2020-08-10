@@ -242,8 +242,8 @@ export class MessageViewer extends Component {
     if (reminderConfig === undefined || reminderConfig === null){
       reminderText = i18n.t('signatureViewer.widgets.reminders.notConfigured');;
     } else {
-      switch (signature.data.find(x => x.key === "reminders").value) {
-        case 'NoReminders':
+      switch (reminderConfig.value) {
+        case 'notConfigured':
           reminderText = i18n.t('signatureViewer.widgets.reminders.notConfigured');
           break;
         case 'Daily':
@@ -253,16 +253,20 @@ export class MessageViewer extends Component {
           reminderText = i18n.t('signatureViewer.widgets.reminders.weekly');
           break;
         default:
-          reminderText = i18n.t('signatureViewer.widgets.reminders.notConfigured');
+          if (reminderConfig.value.startsWith('Custom')){
+            reminderText = i18n.t('signatureViewer.widgets.reminders.everyXdays').replace('___', reminderConfig.value.split(':')[1]);
+          } else {
+            reminderText = i18n.t('signatureViewer.widgets.reminders.notConfigured');
+          }
           break;
       }
     }
     
-    if ((expirationDays && expirationDays.value === 0) || expirationDays === undefined){
+    if ((expirationDays && expirationDays.value === 0) || expirationDays === undefined || expirationDays.value === "notConfigured"){
       expirationText = i18n.t('signatureViewer.widgets.expiration.notConfigured');
     }
     else {
-      expirationText = i18n.t('signatureViewer.widgets.expiration.expires').replace('___', expirationDays.value - passedTime);
+      expirationText = i18n.t('signatureViewer.widgets.expiration.expires').replace('___', (expirationDays.value - passedTime) < 0 ? 0 : expirationDays.value - passedTime );
     }
 
 

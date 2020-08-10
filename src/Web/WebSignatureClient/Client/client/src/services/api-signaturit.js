@@ -574,10 +574,11 @@ export function preloadSignatures2(dispatch, filters, auth) {
     var filesData = [];
     var customFieldsData = [];
     var remindConfig = '';
+    var expirationConfig = '';
 
     switch (reminders[0]) {
-      case 0:
-        remindConfig = 'NoReminders';
+      case -1:
+        remindConfig = 'notConfigured';
         break;
       case 1:
         remindConfig = 'Daily';
@@ -587,6 +588,18 @@ export function preloadSignatures2(dispatch, filters, auth) {
         break;
       default:
         remindConfig = `Custom:${reminders[0]}`;
+        break;
+    }
+
+    switch (expiration){
+      case -1: 
+        expirationConfig = 'notConfigured';
+        break;
+      case 0:
+        expirationConfig = 'never';
+        break;
+      default:
+        expirationConfig = expiration;
         break;
     }
 
@@ -615,15 +628,15 @@ export function preloadSignatures2(dispatch, filters, auth) {
     customFieldsData.push({name: "subject", value: subject});
     customFieldsData.push({name: "body", value: body});
     customFieldsData.push({name: "reminders", value: remindConfig});
-    customFieldsData.push({name: "expiration", value: expiration});
+    customFieldsData.push({name: "expiration", value: expirationConfig});
     // customFieldsData.push({name: "expiration", value: expiration});
     // customFieldsData.push({name: "reminders", value: reminders});
     jsonObject.customFields = customFieldsData;
 
     jsonObject.subject = subject;
     jsonObject.body = body;
-    jsonObject.reminders = reminders;
-    jsonObject.expiration = expiration;
+    (reminders[0] !== -1) ? jsonObject.reminders = reminders : null;
+    (expiration !== -1) ? jsonObject.expiration = expiration : null;
     jsonObject.brandingId = brandingId;
 
     var raw = JSON.stringify(jsonObject);

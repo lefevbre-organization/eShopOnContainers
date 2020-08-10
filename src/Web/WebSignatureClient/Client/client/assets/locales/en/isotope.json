@@ -258,7 +258,8 @@
         "title": "REMINDERS CONFIGURATION",
         "notConfigured": "There aren't any reminders configured.",
         "daily": "Daily reminders",
-        "weekly": "Weekly reminders"
+        "weekly": "Weekly reminders",
+        "everyXdays": "Reminder every ___ days"
       }
     },
     "title": "SIGNATURE DETAILS"
