@@ -5,7 +5,7 @@ import { ToastComponent } from '@syncfusion/ej2-react-notifications';
 import i18n from 'i18next';
 import { ListViewComponent } from '@syncfusion/ej2-react-lists';
 import { ComboBoxComponent } from '@syncfusion/ej2-react-dropdowns';
-import { getEventTypes, addOrUpdateEventType, deleteEventType } from "../../../api/accounts";
+import { getEventTypes, addorUpdateEventType, deleteEventType} from "../../../api/accounts";
 import { ColorPickerComponent } from '@syncfusion/ej2-react-inputs';
 import './eventtype.scss';
 
@@ -20,6 +20,7 @@ export class Eventtype extends React.Component {
             name: undefined,
             updatemode: false,
             newmode: false,
+            idEvent:undefined,
         }; 
 
         this.position = { X: 'Center', Y: 'Bottom' };
@@ -50,7 +51,7 @@ export class Eventtype extends React.Component {
     }
 
     roundedPaletteChange(args) {      
-        this.setState({ color: args.currentValue.hex })
+        this.setState({ color: args.currentValue.hex })       
     }
 
     listTemplate(data) {
@@ -71,17 +72,12 @@ export class Eventtype extends React.Component {
         })
         this.setState({ name: itemE.Text });
         this.setState({ color: itemE.Color });
-        //var item = this.listEventType.dataSource.find(function (e) {
-        //    return e.Text == args.target.parentElement.innerText
-        //})
-        //item.Text = "probando"
-        //this.listEventType.refresh();
-       // alert(item)   
-      
+        this.setState({ idEvent: itemE.Id });       
         
     }
 
     newState() {
+        this.setState({ idEvent: undefined});
        this.setState({ newmode: true });
        this.setState({ name: undefined });
        this.setState({ color: undefined });
@@ -108,8 +104,7 @@ export class Eventtype extends React.Component {
         this.eventTypeData = [];
         this.eventTypeData = vowels;
 
-        let dataEventTypeAPI = {
-            
+        let dataEventTypeAPI = {            
             "idEvent": args.target.parentElement.lastChild.innerText,
              "email": "alberto.valverde.escribano@gmail.com"
         }
@@ -121,12 +116,7 @@ export class Eventtype extends React.Component {
         //this.toastObj.show(this.toasts[0]);
 
         deleteEventType(dataEventTypeAPI)
-            .then(result => {
-                //this.toastObj.hide('All');
-                //this.toastObj.showProgressBar = false
-                //this.toastObj.timeOut = 1000;
-                //this.toastObj.show(this.toasts[1]);
-                //this.listEventType.removeItem(liItem);
+            .then(result => {               
                 this.props.getlistEventTypes();
             })
             .catch(error => {
@@ -141,7 +131,9 @@ export class Eventtype extends React.Component {
 
     } 
 
-    AddEventType(args) {
+    AddorUpdateEventType(args) {
+
+        this.state.name = this.TitleTypeEventObj.value;
 
         if (this.TitleTypeEventObj.value == undefined) {
             this.setState({ errorName: 'Dato obligatorio' })
@@ -166,29 +158,61 @@ export class Eventtype extends React.Component {
         }
 
 
-        let dataEventTypeAPI = {
-            "email": "alberto.valverde.escribano@gmail.com",
-            "eventType": 
+        let dataEventTypeAPI = [];
+        if (this.state.idEvent != undefined) {
+            dataEventTypeAPI = {
+                "email": "alberto.valverde.escribano@gmail.com",
+                "eventType":
                 {
+                    "idEvent": this.state.idEvent,
                     "name": this.TitleTypeEventObj.value,
-                    "color": this.state.color 
+                    "color": this.state.color
                 }
-           
-        } 
+            } 
+        }
+        else {
+            dataEventTypeAPI = {
+                "email": "alberto.valverde.escribano@gmail.com",
+                "eventType":
+                {                  
+                    "name": this.TitleTypeEventObj.value,
+                    "color": this.state.color
+                }
+            } 
 
+        }       
+
+       
+        
         this.toastObj.timeOut = 10000;
         this.toastObj.showProgressBar = true;
         this.toastObj.show(this.toasts[0]);
-        addOrUpdateEventType(dataEventTypeAPI)
+        addorUpdateEventType(dataEventTypeAPI)
             .then(result => {
                 this.toastObj.hide('All');
                 this.toastObj.showProgressBar = false;
                 this.toastObj.timeOut = 1000;
                 this.toastObj.show(this.toasts[1]);
 
-                this.eventTypeData.push(dataEventType);
+                if (this.state.idEvent != undefined) {
+                    //modify current event type
+                    let IdEvent = this.state.idEvent;
+                    var item = this.eventTypeData.find(function (e) {
+                        return e.Id == IdEvent
+                    })
+                    item.Text = this.TitleTypeEventObj.value;                   
+                    item.Color = this.state.color
+                   // this.listEventType.refresh();    
+                   // this.eventTypeData.refresh();
+                }
+                else {
+                    //new event type
+                    this.eventTypeData.push(dataEventType);
+                }
+               
                 this.setState({ updatemode: false })
                 this.setState({ newmode: false })
+                this.setState({ idEvent: undefined })
                 //this.listEventType.addItem([dataEventType]);
 
                 this.props.getlistEventTypes();
@@ -209,10 +233,7 @@ export class Eventtype extends React.Component {
         switch (args.target.id) {           
             case 'newevent': 
                 this.newState();
-                return;
-            case 'updateevent':
-                this.updateState();
-                return;
+                return;           
             case 'cancel':
                 this.cancelState();
                 return;           
@@ -251,21 +272,33 @@ export class Eventtype extends React.Component {
 
     componentDidUpdate() {
         if (this.state.updatemode) {
-            this.colorObj.value = this.state.color;
-            this.TitleTypeEventObj.value = this.state.name;
+            this.colorObj.value = this.state.color;    
+            //if (this.TitleTypeEventObj.value != undefined) {
+                this.TitleTypeEventObj.value = this.state.name;
+            //}           
         }
+        else {
+            if (!this.state.newmode) { this.listEventType.dataSource = this.eventTypeData}           
+        }
+    }  
+
+    CheckEnterKey() {
+        this.state.name = this.TitleTypeEventObj.value;
     }    
 
     render() {  
         var ObjId;
         var ObjText;
+       
         if (this.state.newmode) {
-            ObjId = "newevent"
-            ObjText = i18n.t("eventtype.add")
+            ObjId = "newevent";
+            ObjText = i18n.t("eventtype.add");
+          
         }
         else {
-            ObjId = "updateevent"
-            ObjText = i18n.t("eventtype.modify")
+            ObjId = "updateevent";
+            ObjText = i18n.t("eventtype.modify");
+           
         }
         return (  
             <div className="row custom-margin custom-padding-5 material2">
@@ -274,7 +307,8 @@ export class Eventtype extends React.Component {
                             <div>
                                 <div className="form-group">
                                     <div className="e-float-input">
-                                        <TextBoxComponent
+                                    <TextBoxComponent
+                                            change={this.CheckEnterKey.bind(this)}
                                             required='true'                                            
                                             id='name'
                                             placeholder={i18n.t("eventtype.name")}
@@ -294,20 +328,24 @@ export class Eventtype extends React.Component {
                                  </div> 
 
                                 <div className="e-footer-content">
-                                    <ButtonComponent
-                                        id={ObjId}                                       
-                                        cssClass='e-control e-btn e-lib e-primary e-event-save e-flat'
-                                        onClick={this.AddEventType.bind(this)}
-                                        ref={(scope) => { this.addBtn = scope }}
-                                     > {ObjText}</ButtonComponent>
 
+                                    <ButtonComponent
+                                       id="newevent"                                       
+                                        cssClass='e-control e-btn e-lib e-primary e-event-save e-flat'
+                                        onClick={this.AddorUpdateEventType.bind(this)}
+                                        ref={(scope) => { this.addBtn = scope }}
+                                    > {ObjText}</ButtonComponent>
+
+                                   
                                     <ButtonComponent
                                         id="cancel"                                        
                                         cssClass='e-control e-btn e-lib e-event-cancel e-flat'
-                                    onClick={this.onPressActionButton.bind(this)}
-                                        ref={(scope) => { this.addBtn = scope }}
-                                    > {i18n.t("eventtype.cancel")}</ButtonComponent>
-                                 </div>
+                                        onClick={this.onPressActionButton.bind(this)}
+                                        ref={(scope) => { this.cancelBtn = scope }}
+                                     > {i18n.t("eventtype.cancel")}</ButtonComponent>
+                                    
+                                </div>
+
                                 <ToastComponent ref={(toast) => { this.toastObj = toast; }}
                                     id='toast_pos'
                                     content='Action successfully completed.'
