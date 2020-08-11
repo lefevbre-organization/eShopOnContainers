@@ -253,5 +253,43 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
 
             return Redirect(resultUserUtils.data);
         }
+
+        #region Firma
+
+        /// <summary>
+        /// Chequeamos si el suuario puede solicitar firmas digitales
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("firm/client/{idClient}/numdocs/{numDocs}/check")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> FirmCheckAsync(
+              [FromRoute] string numDocs = "1",
+              [FromRoute] string idClient = "51"
+            )
+        {
+            Result<bool> result = await _service.FirmCheckAsync(idClient, numDocs);
+
+            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        /// <summary>
+        /// Hacemos usuo de la firma para una serie de documentos
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("firm/client/{idClient}/user/{idUser}/numdocs/{numDocs}/add")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> FirmChackAsync(
+              [FromRoute] string numDocs = "1",
+              [FromRoute] string idClient = "51",
+              [FromRoute] string idUser = "E1621396"
+            )
+        {
+            Result<bool> result = await _service.FirmUseAsync(idClient, idUser, numDocs);
+
+            return result.errors?.Count > 0 ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+        #endregion
     }
 }

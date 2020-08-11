@@ -325,6 +325,7 @@
         }
 
         [HttpPost("{user}/raw")]
+        [RequestSizeLimit(104857600)]
         [ProducesResponseType(typeof(Result<RawMessageProvider>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<RawMessageProvider>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> PostRawUser(

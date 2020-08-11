@@ -1,6 +1,7 @@
 ﻿namespace Lefebvre.eLefebvreOnContainers.Services.Account.API.Infrastructure.Repositories
 {
     #region using
+
     using Account.API.Model;
     using IntegrationEvents.Events;
     using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
@@ -12,9 +13,9 @@
     using MongoDB.Driver;
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
     using System.Threading.Tasks;
+
     #endregion using
 
     public class AccountsRepository : BaseClass<AccountsRepository>, IAccountsRepository
@@ -436,7 +437,6 @@
                 ManageUpdate($"Don´t insert or modify the relation in user {user}",
                     $"Se añade relación en el usuario {user} y cuenta {provider}-{mail}, para el mail: {relation.uid} app: {relation.app} id:{relation.idEntity}",
                     result, resultUpdate);
-
             }
             catch (Exception ex)
             {
@@ -571,13 +571,12 @@
             rawMessage.Provider = rawMessage.Provider.ToUpperInvariant();
             rawMessage.Account = rawMessage.Account.ToUpperInvariant();
             rawMessage.MessageId = rawMessage.MessageId.ToUpperInvariant();
-            
         }
 
         private static void ReviewEvents(EventType eve)
         {
             if (string.IsNullOrEmpty(eve.idEvent))
-                eve.idEvent = Guid.NewGuid().ToString(); 
+                eve.idEvent = Guid.NewGuid().ToString();
             //eve.name = eve.name.ToUpperInvariant();
             //eve.color = eve.color.ToLowerInvariant();
         }
@@ -645,13 +644,11 @@
 
         private static FilterDefinition<AccountEvents> GetFilterAccountEvents(string mail)
         {
-            
             return Builders<AccountEvents>.Filter.Eq(u => u.email, mail.ToUpperInvariant());
         }
 
         private static FilterDefinition<RawMessageProvider> GetFilterRawMessage(string idUser, string provider, string account, string messageId)
         {
-            
             return Builders<RawMessageProvider>.Filter.And(
                 Builders<RawMessageProvider>.Filter.Eq(u => u.User, idUser.ToUpperInvariant()),
                 Builders<RawMessageProvider>.Filter.Eq(u => u.Provider, provider.ToUpperInvariant()),
@@ -681,6 +678,7 @@
         #endregion Common
 
         #region RawMessage
+
         public async Task<Result<RawMessageProvider>> GetRawUser(string user, string provider, string account, string messageId)
         {
             var result = new Result<RawMessageProvider>();
@@ -760,7 +758,7 @@
                 result.data = await _context.AccountEvents.Find(GetFilterAccountEvents(account)).FirstOrDefaultAsync();
 
                 if (result.data == null)
-                    TraceInfo(result.infos,$"No se encuentra ningún evento para esa cuenta {account}", "Mail Not Found");
+                    TraceInfo(result.infos, $"No se encuentra ningún evento para esa cuenta {account}", "Mail Not Found");
                 else
                 {
                     var orderEvents = result.data?.eventTypes.OrderByDescending(x => x.name).ToList();
@@ -803,7 +801,6 @@
 
         public async Task<Result<bool>> RemoveEvent(string email, string idEvent)
         {
-
             var result = new Result<bool>();
             var resultAccount = new Result<AccountEvents>();
             var options = new FindOneAndUpdateOptions<AccountEvents> { ReturnDocument = ReturnDocument.After };
@@ -817,7 +814,6 @@
                 var userUpdate = await _context.AccountEvents.FindOneAndUpdateAsync<AccountEvents>(
                     GetFilterAccountEvents(email),
                     update, options);
-
 
                 if (userUpdate != null)
                 {
@@ -838,7 +834,6 @@
             }
 
             return result;
-
         }
 
         public async Task<Result<EventType>> AddEvent(string email, EventType eventType)
@@ -861,10 +856,11 @@
                 //    resultBoolean, resultUpdate);
 
                 var account = await _context.AccountEvents.FindAsync(c => c.email.Contains(email.ToUpperInvariant())).Result.FirstOrDefaultAsync();
-                var ev = account.eventTypes.FirstOrDefault(s => s.idEvent == eventType.idEvent);
-                if (ev?.color != null)
+                var ev = account.eventTypes.FirstOrDefault(s => s.idEvent == eventType.idEvent || s.name.ToUpperInvariant() == eventType.name.ToUpperInvariant());
+                if (ev?.name != null)
                 {
-                    TraceInfo(result.infos, $"modify event {ev.idEvent}-{ev.name}");
+                    TraceInfo(result.infos, $"modify event {ev.idEvent} -> {ev.name}");
+
                     ev.name = eventType.name;
                     ev.color = eventType.color;
                 }
@@ -875,7 +871,6 @@
                     listEvents.Add(eventType);
                     account.eventTypes = listEvents.ToArray();
                     TraceInfo(result.infos, $"add event {eventType.idEvent}-{eventType.name}");
-
                 }
                 // Save the entire document back to the database
                 await _context.AccountEvents.ReplaceOneAsync(c => c.Id == account.Id, account);
@@ -887,9 +882,7 @@
                 TraceMessage(result.errors, ex);
             }
 
-
             return result;
         }
-
     }
 }

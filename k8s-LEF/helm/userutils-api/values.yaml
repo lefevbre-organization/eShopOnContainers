@@ -59,6 +59,8 @@ env:
       value: 'http://centinela-api/api/v1/Centinela'
     - name: LexonApiUrl
       value: 'http://lexonmysql-api/api/v1/LexonMySql'
+    - name: ClavesUrl
+      value: 'https://led-pre-serviceclaves.lefebvre.es'
     - name: SignaturitApiUrl
       value: 'http://signature-api/api/v1/Signaturit'
     - name: ByPassUrls__0__NameService
@@ -72,7 +74,7 @@ env:
     - name: OnlinePasssword
       value: '22lcqsp11lsw'
     - name: TokenCaducity
-      value: 150
+      value: 1500
     - name: TokenKey
       value: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9'
 
