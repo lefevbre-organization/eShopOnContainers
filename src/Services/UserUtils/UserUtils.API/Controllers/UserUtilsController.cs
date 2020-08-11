@@ -265,7 +265,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> FirmCheckAsync(
               [FromRoute] string numDocs = "1",
-              [FromRoute] string idClient = "1413"
+              [FromRoute] string idClient = "51"
             )
         {
             Result<bool> result = await _service.FirmCheckAsync(idClient, numDocs);
