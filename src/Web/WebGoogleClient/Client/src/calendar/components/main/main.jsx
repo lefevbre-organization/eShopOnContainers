@@ -842,22 +842,7 @@ export class Main extends Component {
             if (formElement != null) {
                 var validator = (formElement).ej2_instances[0];
                 validator.addRules('Subject', { required: [true, i18n.t("schedule.validator-required")] });
-            }  
-
-           
-
-            //// default values for eventType coming from event args
-            //let eventType;
-            //if (args.data.EventType == undefined) {
-            //    this.setState({
-            //        eventType: 'profesional-event'
-            //    });
-            //}
-            //else {
-            //    this.setState({
-            //        eventType: args.data.EventType
-            //    });
-            //}
+            }           
 
 
 
@@ -1553,7 +1538,7 @@ export class Main extends Component {
                                     close={this.dialogEventTypeClose.bind(this)}>
                                     <div>{(this.state.hidePromptEventTypeDialog) ? <Eventtype
                                         getlistEventTypes={this.getlistEventTypes.bind(this)}
-                                        //calendarId={this.state.calendarToEdit}
+                                        googleUser={this.props.googleUser}
                                         close={this.dialogClose.bind(this)}
                                     /> : ''}</div>
                                 </DialogComponent>
