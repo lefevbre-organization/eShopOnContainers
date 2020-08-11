@@ -274,7 +274,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         }
 
         /// <summary>
-        /// Hacemos usuo de la foirma para una serie de documentos
+        /// Hacemos usuo de la firma para una serie de documentos
         /// </summary>
         /// <returns></returns>
         [HttpPost("firm/client/{idClient}/user/{idUser}/numdocs/{numDocs}/add")]
@@ -282,7 +282,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> FirmChackAsync(
               [FromRoute] string numDocs = "1",
-              [FromRoute] string idClient = "1413",
+              [FromRoute] string idClient = "51",
               [FromRoute] string idUser = "E1621396"
             )
         {

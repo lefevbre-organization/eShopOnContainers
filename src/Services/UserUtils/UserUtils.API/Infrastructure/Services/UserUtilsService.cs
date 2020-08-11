@@ -821,8 +821,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        var resultString = await response.Content.ReadAsAsync<Result<string>>();
-                        result.data = true;
+                        var resultString = await response.Content.ReadAsAsync<string>();
+                        result.data = resultString.Equals("true") ? true: false;
                     }
                     else                         
                     {
@@ -843,17 +843,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
             // https://led-pre-serviceclaves.lefebvre.es/FirmaDigital/CrearFirmaDigital?IdClientNav={idClientNav}&idUsuarioPro={idUsuarioPro}&NumDocuments={NumDocuments}&idUic=1
 
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{_settings.Value.LexonApiUrl}/FirmaDigital/CrearFirmaDigital?IdClientNav={idClient}&idUsuarioPro={idUser}&NumDocuments={numDocs}&idUic=1");
-            TraceLog(parameters: new string[] { $"request:{request}" });
-
+            var url = $"{_settings.Value.ClavesUrl}/FirmaDigital/CrearFirmaDigital?IdClientNav={idClient}&idUsuarioPro={idUser}&NumDocuments={numDocs}&idUic=1";
+            TraceLog(parameters: new string[] { $"request:{url}" });
             try
             {
-                using (var response = await _clientClaves.SendAsync(request))
+                using (var response = await _clientClaves.PostAsync(url, null))
                 {
                     if (response.IsSuccessStatusCode)
                     {
-                        var resultString = await response.Content.ReadAsAsync<Result<string>>();
-                        result.data = true;
+                        var resultString = await response.Content.ReadAsAsync<string>();
+                        int.TryParse(resultString, out int resultInt);
+                        result.data = (resultInt > 0);
                     }
                     else
                     {

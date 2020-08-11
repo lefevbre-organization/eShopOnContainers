@@ -59,6 +59,8 @@ env:
       value: 'http://centinela-api/api/v1/Centinela'
     - name: LexonApiUrl
       value: 'http://lexonmysql-api/api/v1/LexonMySql'
+    - name: ClavesUrl
+      value: 'https://led-serviceclaves.lefebvre.es'
     - name: SignaturitApiUrl
       value: 'http://signature-api/api/v1/Signaturit'
     - name: ByPassUrls__0__NameService
