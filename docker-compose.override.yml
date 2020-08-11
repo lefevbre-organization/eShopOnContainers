@@ -313,7 +313,7 @@ services:
       - OnlineLogin=ws
       - OnlinePassword=22lcqsp11lsw
       - IdAppNavision=3
-      - TokenCaducity=150
+      - TokenCaducity=1500
       - TokenKey=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9
       - ByPassUrls__0__NameService=Lex-On
       - ByPassUrls__0__UrlByPass=https://weblexonapigw/api/v1/utils/UserUtils/user/apps/redirect?NameService={serviceName}&idUser={idUserNavision}
