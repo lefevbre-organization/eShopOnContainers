@@ -1,17 +1,18 @@
-import React, { Component } from 'react';
+import React, {Component, createRef} from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { withTranslation } from 'react-i18next';
 import { bindActionCreators, compose } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import MessageRow from './message-row/MessageRow';
-import { addMessage, deleteMessage } from './actions/message-list.actions';
+import {addMessage, deleteMessage, modifyMessages, removeMessageFromList} from './actions/message-list.actions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import ListToolbar from './list-toolbar/ListToolbar';
 import ListFooter from './list-footer/ListFooter';
 import './messageList.scss';
 import { getMessage } from '../../../api';
+import {TreeViewComponent} from "@syncfusion/ej2-react-navigations";
 
 const ViewMode = {
   LIST: 1,
@@ -42,13 +43,17 @@ export class MessageList extends Component {
       viewMode: ViewMode.LIST,
       contentMessageId: undefined,
       currentLabel: '',
+      showCheckbox: true
     };
 
+    this.treeViewRef = createRef();
     this.onSelectionChange = this.onSelectionChange.bind(this);
     this.renderView = this.renderView.bind(this);
     this.renderMessages = this.renderMessages.bind(this);
+    this.renderMessage = this.renderMessage.bind(this);
     this.getContentByHeader = this.getContentByHeader.bind(this);
     this.onDeletedMessages = this.onDeletedMessages.bind(this);
+    this.showMessage = this.showMessage.bind(this);
     this.isSentFolder = false;
   }
 
@@ -73,9 +78,11 @@ export class MessageList extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (
-      prevProps.messagesResult.messages.length > 0 &&
+      (prevProps.messagesResult.messages.length > 0 &&
       prevProps.messagesResult.messages.length !==
-        this.props.messagesResult.messages.length
+        this.props.messagesResult.messages.length) || (prevProps.selectedMessages.length > 0 &&
+        prevProps.selectedMessages.length !==
+        this.props.selectedMessages.length)
     ) {
       this.props.refresh();
     }
@@ -95,8 +102,16 @@ export class MessageList extends Component {
     }
   }
 
-  async onSelectionChange(selected, msg) {
-    this.props.toggleSelected([msg.id], selected);
+  async onSelectionChange(data) {
+    const selected = data.action === 'check';
+    let msg;
+    if(data && data.data && data.data.length >= 1) {
+      const { id } = data.data[0];
+      console.log(this.props.messagesResult.messages);
+      msg = this.props.messagesResult.messages.find( m => m.id === id);
+    }
+
+    if(!msg) return;
     const extMessageId = this.getContentByHeader(msg, 'Message-Id');
     console.log('MessageId:' + extMessageId);
     const message = {
@@ -119,7 +134,7 @@ export class MessageList extends Component {
       window.dispatchEvent(new CustomEvent('LoadingMessage'));
       const msgRaw = await getMessage(msg.id, 'raw');
       message.raw = msgRaw.result;
-      this.props.addMessage(message);
+      //this.props.addMessage(message);
     }
 
     window.dispatchEvent(
@@ -149,9 +164,71 @@ export class MessageList extends Component {
     );
   }
 
-  renderMessages() {
+  renderMessage(msg) {
+    if (this.props.selectedMessages.find((x) => x.id === msg.id)) {
+          msg.selected = true;
+        } else {
+          msg.selected = false;
+        }
+    return (
+        <MessageRow
+          data={msg}
+          isSent={this.isSentFolder}
+          key={msg.id}
+          onSelectionChange={this.onSelectionChange}
+          onClick={this.getMessage}
+        />
+      );
+  }
+
+  showMessage(evt) {
+    const { nodeData } = evt;
+    this.props.history.push(`/${nodeData.id}`);
+  }
+
+  nodeDragging(evt) {
+    if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
+      evt.dropIndicator = 'e-no-drop';
+    }
+    evt.draggedNodeData.isMessage = true;
+    if(this.state.showCheckbox) {
+      this.setState({showCheckbox: false});
+    }
+  }
+
+  nodeDragStop(evt) {
+    if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
+      evt.cancel = true;
+    }
+
+    if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('tree-folder-item') && evt.droppedNode.getElementsByClassName('tree-folder-item').length > 0) {
+      setTimeout(()=>{
+        const msg = this.props.messagesResult.messages.find( msg => msg.id === evt.draggedNodeData.id);
+        if(msg) {
+          this.moveMessage(msg.id, evt.droppedNodeData.id, this.props.selectedFolder)
+        }
+      })
+      evt.cancel = true;
+    }
+
+    this.setState({showCheckbox: true});
+  }
+
+  modifyMessage(id, addLabelIds, removeLabelIds) {
+    this.props.modifyMessages({ ids: [id], addLabelIds: [addLabelIds], removeLabelIds: [removeLabelIds] });
+  }
+
+   renderMessages() {
     const { t } = this.props;
     const _this = this;
+    const aux = [...this.props.messagesResult.messages.map( m => ({...m, selected: false }))]
+    for(let i = 0; i < this.props.selectedMessages.length;i++) {
+      const m = aux.find( m => m.id === this.props.selectedMessages[i].id);
+      if(m) {
+        m.selected = true;
+      }
+    }
+    const fields = { dataSource: aux,  isChecked: 'selected', selected: 'selected'};
 
     if (this.props.messagesResult.loading) {
       return this.renderSpinner();
@@ -161,23 +238,24 @@ export class MessageList extends Component {
       );
     }
 
-    return this.props.messagesResult.messages.map((el) => {
-      if (_this.props.selectedMessages.find((x) => x.id === el.id)) {
-        el.selected = true;
-      } else {
-        el.selected = false;
-      }
-
-      return (
-        <MessageRow
-          data={el}
-          isSent={this.isSentFolder}
-          key={el.id}
-          onSelectionChange={this.onSelectionChange}
-          onClick={this.getMessage}
-        />
-      );
-    });
+    return (<div className='message-list-tree'>
+            <TreeViewComponent
+                ref={this.treeViewRef}
+                fields={fields}
+                delayUpdate={true}
+                showCheckBox={this.state.showCheckbox}
+                allowMultiSelection={true}
+                fullRowSelected={true}
+                nodeDragging={this.nodeDragging.bind(this)}
+                nodeChecked={this.onSelectionChange}
+                nodeSelected={this.showMessage}
+                nodeTemplate={this.renderMessage}
+                nodeDragStop={this.nodeDragStop.bind(this)}
+                allowDragAndDrop={true}
+                cssClass={'message-list'}
+            >
+            </TreeViewComponent>
+          </div>);
   }
 
   renderView() {
@@ -257,6 +335,12 @@ export class MessageList extends Component {
       </React.Fragment>
     );
   }
+
+  moveMessage(id, destination, source) {
+    this.modifyMessage(id, destination, source);
+    this.props.removeMessageFromList(id);
+    //this.treeViewRef.current.refresh();
+  }
 }
 
 const mapStateToProps = (state) => {
@@ -274,6 +358,8 @@ const mapDispatchToProps = (dispatch) =>
     {
       addMessage,
       deleteMessage,
+      modifyMessages,
+      removeMessageFromList
     },
     dispatch
   );
