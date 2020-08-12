@@ -1,7 +1,6 @@
 version: '3.4'
 
 services:
-
   seq:
     image: datalust/seq:latest
 
@@ -19,12 +18,12 @@ services:
     build:
       context: .
       dockerfile: src/Web/WebStatusLef/Dockerfile
-      
+
   webportalclient:
     image: ${REGISTRY:-elefebvreoncontainers}/webportalclient:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
-      dockerfile: src/Web/WebPortalClient/Dockerfile    
+      dockerfile: src/Web/WebPortalClient/Dockerfile
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:12}
     depends_on:
@@ -34,7 +33,7 @@ services:
     image: ${REGISTRY:-elefebvreoncontainers}/webgoogleclient:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
-      dockerfile: src/Web/WebGoogleClient/Dockerfile    
+      dockerfile: src/Web/WebGoogleClient/Dockerfile
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:12}
     depends_on:
@@ -44,17 +43,17 @@ services:
     image: ${REGISTRY:-elefebvreoncontainers}/webofficeclient:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
-      dockerfile: src/Web/WebOffice365Client/Dockerfile    
+      dockerfile: src/Web/WebOffice365Client/Dockerfile
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:12}
     depends_on:
       - rabbitmq
-     
+
   weblexonclient:
     image: ${REGISTRY:-elefebvreoncontainers}/weblexonclient:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
-      dockerfile: src/Web/WebLexonClient/Dockerfile    
+      dockerfile: src/Web/WebLexonClient/Dockerfile
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:12}
     depends_on:
@@ -64,7 +63,7 @@ services:
     image: ${REGISTRY:-elefebvreoncontainers}/webaddonlauncher:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
-      dockerfile: src/Web/WebAddonLauncher/Dockerfile    
+      dockerfile: src/Web/WebAddonLauncher/Dockerfile
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:12}
     depends_on:
@@ -74,7 +73,7 @@ services:
     image: ${REGISTRY:-elefebvreoncontainers}/weboffice365addonlexon:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
-      dockerfile: src/Addon/Lexon/Office365/WebOffice365AddonLexon/Dockerfile    
+      dockerfile: src/Addon/Lexon/Office365/WebOffice365AddonLexon/Dockerfile
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:12}
     depends_on:
@@ -84,17 +83,17 @@ services:
     image: ${REGISTRY:-elefebvreoncontainers}/weboffice365addoncentinela:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
-      dockerfile: src/Addon/Centinela/Office365/WebOffice365AddonCentinela/Dockerfile    
+      dockerfile: src/Addon/Centinela/Office365/WebOffice365AddonCentinela/Dockerfile
       args:
-       NODE_IMAGE: ${NODE_IMAGE:-node:12}
+        NODE_IMAGE: ${NODE_IMAGE:-node:12}
     depends_on:
       - rabbitmq
-  
+
   account.api:
     image: ${REGISTRY:-elefebvreoncontainers}/account.api:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
-      dockerfile: src/Services/Account/Account.API/Dockerfile    
+      dockerfile: src/Services/Account/Account.API/Dockerfile
     depends_on:
       - nosql.data
       - rabbitmq
@@ -118,7 +117,7 @@ services:
     image: ${REGISTRY:-elefebvreoncontainers}/lexon.api:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
-      dockerfile: src/Services/Lexon/Lexon.API/Dockerfile    
+      dockerfile: src/Services/Lexon/Lexon.API/Dockerfile
     depends_on:
       - nosql.data
       - rabbitmq
@@ -127,7 +126,7 @@ services:
     image: ${REGISTRY:-elefebvreoncontainers}/lexon.mysql.api:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
-      dockerfile: src/Services/Lexon/Lexon.MySql/Dockerfile    
+      dockerfile: src/Services/Lexon/Lexon.MySql/Dockerfile
     depends_on:
       - nosql.data
       - rabbitmq
@@ -146,22 +145,22 @@ services:
       - lexon.mysql.api
       - userutils.api
       - centinela.api
-      
+
   webimapclient:
     image: ${REGISTRY:-elefebvreoncontainers}/webimapclient:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
-      dockerfile: src/Web/WebImapClient/Dockerfile    
+      dockerfile: src/Web/WebImapClient/Dockerfile
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:12}
     depends_on:
-      - rabbitmq   
-      
+      - rabbitmq
+
   userutils.api:
     image: ${REGISTRY:-elefebvreoncontainers}/userutils.api:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
-      dockerfile: src/Services/UserUtils/UserUtils.API/Dockerfile    
+      dockerfile: src/Services/UserUtils/UserUtils.API/Dockerfile
     depends_on:
       - nosql.data
       - rabbitmq
@@ -170,7 +169,7 @@ services:
     image: ${REGISTRY:-elefebvreoncontainers}/centinela.api:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
-      dockerfile: src/Services/Centinela/Centinela.API/Dockerfile    
+      dockerfile: src/Services/Centinela/Centinela.API/Dockerfile
     depends_on:
       - nosql.data
       - rabbitmq
@@ -190,27 +189,27 @@ services:
     image: ${REGISTRY:-elefebvreoncontainers}/websignatureclient:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
-      dockerfile: src/Web/WebSignatureClient/Dockerfile    
+      dockerfile: src/Web/WebSignatureClient/Dockerfile
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:12}
     depends_on:
-      - rabbitmq   
+      - rabbitmq
 
   webcentinelaclient:
     image: ${REGISTRY:-elefebvreoncontainers}/webcentinelaclient:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
-      dockerfile: src/Web/WebCentinelaClient/Dockerfile    
+      dockerfile: src/Web/WebCentinelaClient/Dockerfile
       args:
         NODE_IMAGE: ${NODE_IMAGE:-node:12}
     depends_on:
-      - rabbitmq  
+      - rabbitmq
 
   signature.api:
     image: ${REGISTRY:-elefebvreoncontainers}/signature.api:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
-      dockerfile: src/Services/Signature/Signature.API/Dockerfile    
+      dockerfile: src/Services/Signature/Signature.API/Dockerfile
     depends_on:
       - nosql.data
       - rabbitmq
@@ -229,7 +228,7 @@ services:
     image: ${REGISTRY:-elefebvreoncontainers}/database.api:${PLATFORM:-linux}-${TAG:-dev}
     build:
       context: .
-      dockerfile: src/Services/Database/Database.API/Dockerfile    
+      dockerfile: src/Services/Database/Database.API/Dockerfile
     depends_on:
       - nosql.data
       - rabbitmq
@@ -244,12 +243,12 @@ services:
       - rabbitmq
       - database.api
 
-      webdatabaseclient:
-        image: ${REGISTRY:-elefebvreoncontainers}/webdatabaseclient:${PLATFORM:-linux}-${TAG:-dev}
-        build:
-          context: .
-          dockerfile: src/Web/WebDatabaseClient/Dockerfile    
-          args:
-            NODE_IMAGE: ${NODE_IMAGE:-node:12}
-        depends_on:
-          - rabbitmq   
+  webdatabaseclient:
+    image: ${REGISTRY:-elefebvreoncontainers}/webdatabaseclient:${PLATFORM:-linux}-${TAG:-dev}
+    build:
+      context: .
+      dockerfile: src/Web/WebDatabaseClient/Dockerfile
+      args:
+        NODE_IMAGE: ${NODE_IMAGE:-node:12}
+    depends_on:
+      - rabbitmq
