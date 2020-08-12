@@ -208,7 +208,7 @@ class Main extends Component<Props, State> {
     this.setState({ isAddon: true });
   }
 
-  closeLexonConnector(message?: string) {
+  closeCentinelaConnector(message?: string) {
     if (!message && this.state.isAddon) {
       const values = queryString.parse(window.location.search);
       let redirect_uri = values.redirect_uri
@@ -221,7 +221,7 @@ class Main extends Component<Props, State> {
   }
 
   toggleNotification(message?: string, error?: boolean) {
-    this.closeLexonConnector(message);
+    this.closeCentinelaConnector(message);
     this.setState((state) => ({
       showNotification: !state.showNotification,
       messageNotification: message || '',
