@@ -679,8 +679,10 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             if (tokenRequest is TokenRequestNewMail || tokenRequest is TokenRequestOpenMail)
                 tokenRequest = await GetContactDataFromLexon((TokenRequestNewMail)tokenRequest);
 
-            if (tokenRequest is TokenRequestCentinelaNewFirm)
-                ((TokenRequestCentinelaNewFirm)tokenRequest).guid = Guid.NewGuid().ToString();
+            if (tokenRequest is TokenRequestCentinelaNewFirm firm)
+            {
+                firm.guid = firm.guid ?? Guid.NewGuid().ToString();
+            }
 
             var tokenString = await Task.Run(() =>
             {
