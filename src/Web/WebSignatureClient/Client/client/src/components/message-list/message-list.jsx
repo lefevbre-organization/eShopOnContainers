@@ -379,14 +379,23 @@ class MessageList extends Component {
         
         console.log(props);
         return (
-            <div>
-                <span className='email'>
-                    {firstEmail.length > 22 ? firstEmail.substring(0,20) : firstEmail}
-                </span>
-                
-                <span className={`bola-firmantes ${recipientsClass}`}>
+            // <div>
+            //     <span className='email'>
+            //         {firstEmail.length > 22 ? firstEmail.substring(0,20) : firstEmail}
+            //     </span>                
+            //     <span className={`bola-firmantes ${recipientsClass}`}>
+            //         <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass='e-caret-hide test' items={recipientsList}>{signersInfo.length}</DropDownButtonComponent>
+            //     </span>
+            // </div>
+            <div id='container' style={{width: '100%', textAlign: 'center'}}>
+                <div id='left' className='email' style={{textAlign: 'left', float: 'left', width: '75%', height: '20px', padding: '0px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
+                    {/* {firstEmail.length > 22 ? firstEmail.substring(0,20) : firstEmail} */}
+                    {firstEmail}
+                </div>     
+                {/* <div id='center' style={{display: 'block', margin: '0 auto', width: '50px', height: '20px', background: '#00ff00'}}></div>            */}
+                <div id='right' className={`bola-firmantes ${recipientsClass}`} style={{float: 'right', width: '25%', height: '20px'}}>
                     <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass='e-caret-hide test' items={recipientsList}>{signersInfo.length}</DropDownButtonComponent>
-                </span>
+                </div>
             </div>
         )
     }

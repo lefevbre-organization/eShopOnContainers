@@ -294,9 +294,11 @@ export class MessageViewer extends Component {
       case 'error':
         status = i18n.t('signaturesGrid.statusError');
         status_style = 'cancelada';
+        break;
       case 'pending':
         status = i18n.t('signaturesGrid.statusPending');
         status_style = 'en-progreso';
+        break;
       default:
         break;
     }
