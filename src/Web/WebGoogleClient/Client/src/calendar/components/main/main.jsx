@@ -849,8 +849,14 @@ export class Main extends Component {
             // Create required custom elements in initial time
             if (!args.element.querySelector('.custom-field-row')) {
                 let row = createElement('div', { className: 'custom-field-row' });
+                let rowAttendes = createElement('div', { className: 'custom-field-row' });
+                let rowReminders = createElement('div', { className: 'custom-field-row' });
                 let formElement = args.element.querySelector('.e-schedule-form');
+                
+                formElement.firstChild.insertBefore(rowAttendes, formElement.firstChild.firstChild);
                 formElement.firstChild.insertBefore(row, formElement.lastChild.lastChild);
+                formElement.firstChild.insertBefore(rowReminders, formElement.lastChild.lastChild);
+                
 
                 // Adding event type element
                 let containerEventType = createElement('div', { className: 'custom-field-container' });
@@ -873,13 +879,15 @@ export class Main extends Component {
 
                 // Adding attendees tag element
                 let containerTab = createElement('div', { className: 'custom-field-container' });
-                row.appendChild(containerTab);
+                rowAttendes.appendChild(containerTab);
                 var nodeA = ReactDOM.findDOMNode(this.tagObj);
                 containerTab.appendChild(nodeA);
 
                 // Adding reminder element  
+                let containerRem = createElement('div', { className: 'custom-field-container' });
+                rowReminders.appendChild(containerRem);
                 var nodeR = ReactDOM.findDOMNode(this.remObj);
-                containerTab.appendChild(nodeR);
+                containerRem.appendChild(nodeR);
 
             }
 
