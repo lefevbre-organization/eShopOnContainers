@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import queryString from 'query-string';
-import { getRawAddon } from '../services/services-lexon';
+import { getRawAddon } from '../services/services';
 
 class CentinelaContainer extends Component {
     constructor(props) {

@@ -4,6 +4,7 @@ import lexonLogin from '../containers/Login';
 import centinelaLogin from '../containers/CentinelaLogin';
 import centinelaContainer from '../containers/CentinelaContainer';
 import lexonContainer from '../containers/LexonContainer';
+import signatureLogin from '../containers/SignatureLogin';
 import "bootstrap/dist/css/bootstrap.min.css";
 import '../App.css';
 
@@ -21,6 +22,7 @@ class App extends Component {
                        <Switch>
                         <Route exact path="/oauth_lexon" component={lexonLogin}></Route>
                         <Route exact path="/oauth_centinela" component={centinelaLogin}></Route>
+                        <Route exact path="/oauth_signature" component={signatureLogin}></Route>
                         <Route exact path="/centinela" component={centinelaContainer}></Route>
                         <Route exact path="/lexon" component={lexonContainer}></Route>
                        </Switch>

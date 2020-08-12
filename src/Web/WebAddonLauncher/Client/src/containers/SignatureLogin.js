@@ -18,7 +18,7 @@ import iconYoutube from '../assets/img/icon-youtube-round.png'
 import iconUser from '../assets/img/icon-user.png'
 import iconLock from '../assets/img/icon-lock.png'
 
-class Login extends Component {
+class SignatureLogin extends Component {
 
   constructor(props) {
     super(props);
@@ -97,7 +97,8 @@ class Login extends Component {
 
   validateUser = (userBase64Decode) => {
     let role = userBase64Decode.roles.some(role => {
-      return (role === "Lex-On");    
+      return (role === "Lex-On" 
+      ||role === "Centinela" );    
      });
      if(role) {
        this.setState({
@@ -111,7 +112,7 @@ class Login extends Component {
       window.$('body').removeClass('waiting');
        this.setState({
          errorsMessage: {
-          auth: 'El usuario no tiene acceso a Lex-On.'
+          auth: 'El usuario no tiene acceso a Signature.'
          }
        });
      }
@@ -218,4 +219,4 @@ class Login extends Component {
   }
 }
 
-export default Login
+export default SignatureLogin
