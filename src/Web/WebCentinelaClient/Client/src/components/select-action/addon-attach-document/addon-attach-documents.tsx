@@ -1,29 +1,28 @@
 import React, { Component, Fragment, createRef } from 'react';
 import i18n from 'i18next';
-import { Base64 } from 'js-base64';
 import { Button, Container } from 'react-bootstrap';
 import { connect, ConnectedProps } from 'react-redux';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import { AppState } from '../../../store/store';
 import { bindActionCreators } from 'redux';
-import { ApplicationActions } from '../../../store/application/actions';
 import queryString from 'query-string';
-import Spinner from '../../spinner/spinner';
-import { Step1 } from '../modal-archive-document/step1';
-import { Step2 } from '../modal-archive-document/step2';
-import { Step3 } from '../modal-archive-document/step3';
+import { ApplicationActions } from '../../../store/application/actions';
+import { Step1 } from '../modal-attach-document/step1';
+import { Step2 } from '../modal-attach-document/step2';
+import { Step3 } from '../modal-attach-document/step3';
+import { Step4 } from '../modal-attach-document/step4';
+import { Step5 } from '../modal-attach-document/step5';
 import {
   Evaluation,
   CentInstance,
-  uploadFile
+  Document
 } from '../../../services/services-centinela';
-import { identity } from 'lodash';
 const parse = require('emailjs-mime-parser').default;
 const base64js = require('base64-js');
 
 const mapStateToProps = (state: AppState) => {
   return {
-    showAttachDocuments: state.application.showArchiveModal,
+    showAttachDocuments: state.application.showAttachModal,
     selected: state.messages.selected,
     user: state.application.user
   };
@@ -33,7 +32,7 @@ const mapDispatchToProps = (dispatch: any) => {
   return {
     ...bindActionCreators(
       {
-        toggleArchiveModal: ApplicationActions.toggleArchiveModal
+        toggleAttachModal: ApplicationActions.toggleAttachModal
       },
       dispatch
     )
@@ -56,15 +55,17 @@ interface State {
   entity: number;
   messages: any;
   files: any;
-  attachments: any;
+  downloading: boolean;
   copyEmail: boolean;
   copyAttachments: boolean;
   instance?: CentInstance;
-  isLoading: boolean;
 }
 
-class AddonArchiveDocuments extends Component<Props, State> {
+class AddonAttachDocuments extends Component<Props, State> {
+  private lastStep:any = [];
+  private step5Ref: any = null;
   private step3Ref: any;
+
   constructor(props: Props) {
     super(props);
     this.step3Ref = createRef();
@@ -72,103 +73,81 @@ class AddonArchiveDocuments extends Component<Props, State> {
     this.state = {
       complete: false,
       implantation: null,
+      downloading: false,
       search: '',
       step: 1,
       entity: 0,
       messages: [],
       files: [],
-      attachments: [],
       copyEmail: true,
       copyAttachments: true,
-      instance: undefined,
-      isLoading: false
+      instance: undefined
     };
 
-    this.onCopyAttachments = this.onCopyAttachments.bind(this);
-    this.onCopyEmail = this.onCopyEmail.bind(this);
-    this.onImplantation = this.onImplantation.bind(this);
     this.onInstanceSelected = this.onInstanceSelected.bind(this);
-    this.onChangeSelected = this.onChangeSelected.bind(this);
+    this.onImplantation = this.onImplantation.bind(this);
+    this.onDocumentSelected = this.onDocumentSelected.bind(this);
+    this.downloadComplete = this.downloadComplete.bind(this);
+
+    this.step5Ref = React.createRef();
   }
 
   componentDidMount() {
+    console.log("ModalAttachDocuments: componentDidMount");
+
     this.initMessages();
   }
 
   componentDidUpdate(prevProps: Props) {
+    console.log("ModalAttachDocuments: componentDidUpdate");
 
+    if (prevProps.selected !== this.props.selected) {
+      this.initMessages();
+    }
+  }
+
+  downloadComplete() {
+    this.setState({ downloading: false, complete: true });
   }
 
   initMessages() {
-    const { selected, addonData } = this.props;
+    const { selected } = this.props;
     const messages = [];
-    let attachments: any = [];
+
     // Parsing messages
-    for (let i = 0; i < addonData.selectedMessages.length; i++) {
-      const selected = addonData.selectedMessages[i];
-      const attchs: any = this.parseMessage(selected);
-      attachments = [...attachments, ...attchs];
-      const nm = Object.assign({}, selected, { attachments: attchs });
+    for (let i = 0; i < selected.length; i++) {
+      const attchs = this.parseMessage(selected[i]);
+      const nm = Object.assign({}, selected[i], { attachments: attchs });
       messages.push(nm);
     }
 
-    this.setState({messages, attachments});
-  }
-
-  isAttachment(node: any): boolean {
-    let bRes = false;
-    if (node['x-attachment-id']) {
-      bRes = true;
-    } else if (
-      node['content-disposition'] &&
-      (node['content-disposition'][0].initial.indexOf('attachment') > -1 ||
-        node['content-disposition'][0].initial.indexOf('inline') > -1) &&
-      node['content-disposition'][0].params.filename &&
-      this.isFileAllowed(node['content-disposition'][0].params.filename)
-    ) {
-      bRes = true;
-    }
-
-    return bRes;
-  }
-
-  isFileAllowed(name: string): boolean {
-    const fe = name.split('.').pop();
-    return extensionsAllowed.indexOf(fe ? fe.toUpperCase() : '') > -1;
-  }
-
-  findAttachments(email: any): any {
-    let attachs: any = [];
-    if (email.childNodes) {
-      for (let i = 0; i < email.childNodes.length; i++) {
-        if (
-          email.childNodes[i]._isMultipart === false &&
-          this.isAttachment(email.childNodes[i].headers)
-        ) {
-          attachs.push({
-            ...email.childNodes[i],
-            checked: true
-          });
-        } else {
-          attachs = [...attachs, ...this.findAttachments(email.childNodes[i])];
-        }
-      }
-    }
-    return attachs;
+    this.setState({ messages });
   }
 
   parseMessage(message: any) {
-    let attachments = [];
+    const attachments = [];
     if (message.raw) {
       let mime = null;
       try {
+        //console.log(message.raw)
         mime = parse(message.raw);
       } catch (err) {
         console.log(err);
       }
 
       if (mime) {
-        attachments = this.findAttachments(mime);
+        for (let j = 0; j < mime.childNodes.length; j++) {
+          if (
+            mime.childNodes[j].raw.indexOf('Content-Disposition: attachment;') >
+            -1
+          ) {
+            const rawAttach = base64js.fromByteArray(
+              mime.childNodes[j].content
+            );
+            const name = mime.childNodes[j].contentType.params.name;
+            attachments.push({ name, checked: true });
+          }
+        }
       }
     }
 
@@ -176,97 +155,73 @@ class AddonArchiveDocuments extends Component<Props, State> {
   }
 
   goBackAddon() {
-    const values = queryString.parse(window.location.search);
-    let redirect_uri = values.redirect_uri
-      ? values.redirect_uri
-      : (window as any).GOOGLE_SCRIPT_CENTINELA;
-    window.location.replace(
-      `${redirect_uri}` + '?success=1' + '&state=' + values.state
+    const values = queryString.parse((window as any).location.search);
+    let redirect_uri = values.redirect_uri;
+    (window as any).location.replace(
+      `${redirect_uri}` + '?success=1' 
+      + '&state=' 
+      + values.state
+    );
+  }
+
+  closeCentinelaConnector() {
+    const values = queryString.parse((window as any).location.search);
+    let redirect_uri = values.redirect_uri;
+    const files: any = [];
+    this.state.files.forEach((file: any) => {
+      files.push({
+        documentId: file.documentObjectId, 
+        name: file.name
+      });
+    });
+ 
+    (window as any).location.replace(
+      `${redirect_uri}` + '?response_type=' 
+      + values.response_type 
+      + '&state=' + values.state 
+      + '&files=' + JSON.stringify(files)
     );
   }
 
   nextStep() {
     const { step } = this.state;
+    this.lastStep.push(step);
     if (step === 1) {
-      const selected = this.state.attachments.filter((m: any) => m.checked);
-      this.setState({ step: 2, copyAttachments: selected.length > 0 });
+      this.setState({ step: 2 });
     } else if (step === 2) {
       this.setState({ step: 3 });
     } else if (step === 3) {
-      this.setState({isLoading: true});
-      this.saveDocuments();
-    } // else {
-    //   this.setState({ step: step + 1 });
-    // }
+      this.setState({ step: 4 });
+    } else if (step === 4) {
+      this.setState({ step: 5 });
+    }
   }
 
   prevStep() {
     const { step } = this.state;
+    const ls = this.lastStep.pop();
+
     if (step === 2) {
       this.setState({ step: 1, instance: undefined });
     } else if (step === 3) {
       if (this.step3Ref.current.back() === true) {
-        this.setState({ step: 2, instance: undefined });
+        this.setState({ step: ls, instance: undefined });
       } else {
+        if(this.lastStep[this.lastStep.lenngth -1] !== ls) {
+          this.lastStep.push(ls);
+        }
         this.setState({ instance: undefined });
       }
+    } else if (step === 4) {
+      this.setState({ step: ls, files: [], instance: undefined });
+    } else if (step === 5) {
+      this.setState({ step: ls, instance: undefined });
     }
   }
 
-  async saveDocuments() {
+  saveDocuments() {
     const { toggleNotification } = this.props;
-    const { messages, instance } = this.state;
-    let result = true;
-
-    for (let m = 0; m < messages.length; m++) {
-      if (messages[m] && messages[m].raw) {
-        const mime = parse(messages[m].raw);
-        if (this.state.copyEmail) {
-          // Upload eml file
-          const raw = Base64.encode(messages[m].raw, false);
-          const r1 = await uploadFile(
-            this.props.user,
-            instance?.conceptObjectId || 0,
-            {
-              name: messages[m].subject + '.eml',
-              content: raw
-            }
-          );
-
-          if (r1 !== 200 && r1 !== 201) {
-            result = false;
-          }
-        }
-
-        if (this.state.copyAttachments) {
-          for (let j = 0; j < this.state.attachments.length; j++) {
-            const node = this.state.attachments[j];
-
-            if (node.checked === true) {
-              let rawAttach = base64js.fromByteArray(node.content);
-              const r2 = await uploadFile(
-                this.props.user,
-                instance?.conceptObjectId || 0,
-                {
-                  name: node.contentType.params.name,
-                  content: rawAttach
-                }
-              );
-
-              if (r2 !== 200 && r2 !== 201) {
-                result = false;
-              }
-            }
-          }
-        }
-      }
-    }
-    this.setState({isLoading: false});
-    if (result) {
-      toggleNotification(i18n.t('modal-archive.modal-save-ok'));
-    } else {
-      toggleNotification(i18n.t('modal-archive.modal-save-ko'), true);
-    }
+    toggleNotification(i18n.t('modal-attach.modal-save-ok'));
   }
 
   saveDisabled() {
@@ -278,11 +233,6 @@ class AddonArchiveDocuments extends Component<Props, State> {
       instance
     } = this.state;
     if (step === 1 && (copyAttachments === true || copyEmail === true)) {
-      if (copyAttachments === true && copyEmail === false) {
-        const selected = this.state.attachments.filter((m: any) => m.checked);
-        return selected.length == 0;
-      }
-
       return false;
     }
     if (step === 2 && implantation && implantation.evaluationId > 0) {
@@ -301,27 +251,7 @@ class AddonArchiveDocuments extends Component<Props, State> {
 
     switch (step) {
       case 1:
-        return (
-          <Fragment>
-            <Button
-              bsPrefix="btn btn-outline-primary"
-              onClick={() => {
-                this.goBackAddon();
-              }}
-            >
-              {i18n.t('modal-archive.cancel')}
-            </Button>
-            <Button
-              disabled={this.saveDisabled()}
-              bsPrefix="btn btn-primary"
-              onClick={() => {
-                this.nextStep();
-              }}
-            >
-              {i18n.t('modal-archive.continue')}
-            </Button>
-          </Fragment>
-        );
+        return null;
       case 2:
         return (
           <Fragment>
@@ -331,7 +261,7 @@ class AddonArchiveDocuments extends Component<Props, State> {
                 this.goBackAddon();
               }}
             >
-              {i18n.t('modal-archive.cancel')}
+              {i18n.t('modal-attach.cancel')}
             </Button>
             <Button
               bsPrefix="btn btn-outline-primary"
@@ -339,7 +269,7 @@ class AddonArchiveDocuments extends Component<Props, State> {
                 this.prevStep();
               }}
             >
-              {i18n.t('modal-archive.back')}
+              {i18n.t('modal-attach.back')}
             </Button>
             <Button
               disabled={this.saveDisabled()}
@@ -348,7 +278,7 @@ class AddonArchiveDocuments extends Component<Props, State> {
                 this.nextStep();
               }}
             >
-              {i18n.t('modal-archive.continue')}
+              {i18n.t('modal-attach.continue')}
             </Button>
           </Fragment>
         );
@@ -361,7 +291,7 @@ class AddonArchiveDocuments extends Component<Props, State> {
                 this.goBackAddon();
               }}
             >
-              {i18n.t('modal-archive.cancel')}
+              {i18n.t('modal-attach.cancel')}
             </Button>
             <Button
               bsPrefix="btn btn-outline-primary"
@@ -369,7 +299,7 @@ class AddonArchiveDocuments extends Component<Props, State> {
                 this.prevStep();
               }}
             >
-              {i18n.t('modal-archive.back')}
+              {i18n.t('modal-attach.back')}
             </Button>
             <Button
               disabled={this.saveDisabled()}
@@ -378,7 +308,7 @@ class AddonArchiveDocuments extends Component<Props, State> {
                 this.nextStep();
               }}
             >
-              {i18n.t('modal-archive.save')}
+              {i18n.t('modal-attach.continue')}
             </Button>
           </Fragment>
         );
@@ -391,7 +321,7 @@ class AddonArchiveDocuments extends Component<Props, State> {
                 this.goBackAddon();
               }}
             >
-              {i18n.t('modal-archive.cancel')}
+              {i18n.t('modal-attach.cancel')}
             </Button>
             <Button
               bsPrefix="btn btn-outline-primary"
@@ -399,7 +329,7 @@ class AddonArchiveDocuments extends Component<Props, State> {
                 this.prevStep();
               }}
             >
-              {i18n.t('modal-archive.back')}
+              {i18n.t('modal-attach.back')}
             </Button>
             <Button
               disabled={files.length === 0}
@@ -408,28 +338,66 @@ class AddonArchiveDocuments extends Component<Props, State> {
                 this.nextStep();
               }}
             >
-              {i18n.t('modal-archive.continue')}
+              {i18n.t('modal-attach.continue')}
             </Button>
           </Fragment>
         );
-
+      case 5:
+        return (
+          <Fragment>
+            {complete === true && (
+              <Button
+                disabled={this.state.downloading === true}
+                bsPrefix="btn btn-primary"
+                onClick={() => {
+                  this.closeCentinelaConnector();
+                }}
+              >
+                {i18n.t('modal-attach.close')}
+              </Button>
+            )}
+            {complete === false && (
+              <>
+                <Button
+                  bsPrefix="btn btn-outline-primary"
+                  disabled={this.state.downloading === true}
+                  onClick={() => {
+                    this.goBackAddon();
+                  }}
+                >
+                  {i18n.t('modal-attach.cancel')}
+                </Button>
+                <Button
+                  disabled={this.state.downloading === true}
+                  bsPrefix="btn btn-outline-primary"
+                  onClick={() => {
+                    this.prevStep();
+                  }}
+                >
+                  {i18n.t('modal-attach.back')}
+                </Button>
+                <Button
+                  disabled={files.length === 0}
+                  bsPrefix="btn btn-primary"
+                  onClick={() => {
+                    this.setState({ downloading: true }, () => {
+                      this.step5Ref.current.StartDownload();
+                    });
+                  }}
+                >
+                  {i18n.t('modal-attach.attach')}
+                </Button>
+              </>
+            )}
+          </Fragment>
+        );
       default:
         return null;
     }
   }
 
-  onCopyEmail(check: boolean) {
-    const { copyEmail } = this.state;
-    if (copyEmail !== check) {
-      this.setState({ copyEmail: check });
-    }
-  }
-
-  onCopyAttachments(check: boolean) {
-    const { copyAttachments } = this.state;
-    if (copyAttachments !== check) {
-      this.setState({ copyAttachments: check });
-    }
+  onInstanceSelected(inst: CentInstance) {
+    this.setState({ instance: inst });
   }
 
   onImplantation(imp: Evaluation) {
@@ -439,82 +407,73 @@ class AddonArchiveDocuments extends Component<Props, State> {
     }
   }
 
-  onInstanceSelected(inst?: CentInstance) {
-    this.setState({ instance: inst });
-  }
+  onDocumentSelected({ data, checked }: any) {
+    const { files } = this.state;
 
-  onChangeSelected(event: any, data: any) {
-    const aux = [...this.state.attachments];
-    for (let i = 0; i < aux.length; i++) {
-      if (aux[i] === data) {
-        aux[i].checked = event.checked;
-      }
+    if (checked === true) {
+      this.setState({ files: [...files, data] });
+    } else {
+      const nf = files.filter(
+        (f: Document) => f.documentObjectId !== data.documentObjectId
+      );
+
+      this.setState({ files: nf });
     }
-
-    this.setState({ attachments: [...aux] });
   }
 
   render() {
     const { user, showAttachDocuments } = this.props;
-    const { 
-      messages, 
-      step, 
-      implantation, 
-      copyAttachments, 
-      isLoading 
-    } = this.state;
-    let attachments = false;
-    for (let i = 0; i < messages.length; i++) {
-      const msg = messages[i];
-      if (msg.attachments && msg.attachments.length > 0) {
-        attachments = true;
-        break;
-      }
-    }
+    const { step, implantation, search, files, instance } = this.state;
+    console.log(this.props.addonData);
     return (
-      <div className="">
-          <header className="addon-header">
-            <h5
-              className="title d-flex align-items-center"
-              id="documentarGuardardocumentacionLabel"
-            >
-              <img
-                className='imgproduct'
-                alt='Centinela'
-                src={`${(window as any).URL_MF_CENTINELA_BASE}/assets/img/icon-centinela.svg`}></img>
-
-              <span className="title-space">{i18n.t('modal-archive.title')}</span>
-            </h5>
-          </header>
-          {isLoading && (
-           <div className='spinner-wrapper'>
-            <Spinner />
-           </div>
-           )}
+      <div className="modal-connection-emails">
+       
+        <header className="addon-header">
+          <h5
+            className="title d-flex align-items-center"
+            id="documentarGuardardocumentacionLabel"
+          >
+            <img
+              className='imgproduct'
+              alt='Centinela'
+              style={{width:24, height:24}}
+              src={`${(window as any).URL_MF_CENTINELA_BASE}/assets/img/icon-centinela.svg`}></img>
+            <span className="title-space">
+              {i18n.t('modal-attach.title')}
+            </span>
+          </h5>
+        </header>
             <Container>
               <Fragment>
                 <div
                   style={{
-                    display: this.state.step === 1 ? 'block' : 'none'
+                    display: step === 1 ? 'block' : 'none'
                   }}
                 >
                   <Step1
-                    selected={messages}
-                    attachments={attachments}
-                    onCopyEmail={this.onCopyEmail}
-                    onCopyAttachments={this.onCopyAttachments}
-                    onChange={this.onChangeSelected}
+                    onClickSearch={(search: string) => {
+                      this.lastStep = [1];
+                      this.setState({ step: 4, search, instance: undefined });
+                    }}
+                    onClickExploreImplantations={() => {
+                      this.lastStep = [1];
+                      this.setState({
+                        entity: 1,
+                        step: 2,
+                        search: '',
+                        instance: undefined
+                      });
+                    }}
                   />
                 </div>
                 <div
                   style={{
-                    display: this.state.step === 2 ? 'block' : 'none'
+                    display: step === 2 ? 'block' : 'none'
                   }}
                 >
                   <Step2
                     user={user}
                     show={step === 2}
-                    step={attachments && copyAttachments ? 3 : 2}
                     implantation={''}
                     onImplantation={this.onImplantation}
                   />
@@ -527,6 +486,7 @@ class AddonArchiveDocuments extends Component<Props, State> {
                   <Step3
                     ref={this.step3Ref}
                     user={user}
+                    step={step}
                     show={step === 3}
                     implantation={implantation}
                     onInstanceSelected={this.onInstanceSelected}
@@ -537,7 +497,29 @@ class AddonArchiveDocuments extends Component<Props, State> {
                     display: this.state.step === 4 ? 'block' : 'none'
                   }}
                 >
-                  <div>Step 4</div>
+                  <Step4
+                    files={files}
+                    user={user}
+                    show={step === 4}
+                    step={step}
+                    instance={instance}
+                    search={search}
+                    onSearchChange={() => {}}
+                    onChange={this.onDocumentSelected}
+                  />
+                </div>
+                <div
+                  style={{
+                    display: this.state.step === 5 ? 'block' : 'none'
+                  }}
+                >
+                  <Step5
+                    ref={this.step5Ref}
+                    files={files}
+                    user={user}
+                    show={step === 5}
+                    downloadComplete={this.downloadComplete}
+                  />
                 </div>
               </Fragment>
             </Container>
@@ -569,70 +551,32 @@ class AddonArchiveDocuments extends Component<Props, State> {
             margin-left: 20px;
           }
 
-          .list-checks {
-            list-style: none;
+          .e-headercelldiv,
+          .e-grid .e-gridheader .e-sortfilter .e-headercelldiv {
+            text-overflow: unset !important;
           }
-
-          .step2-container {
-            margin: 25px;
-            padding-top: 1px;
-          }
-
-          .step3-container {
-            margin: 35px;
-            padding-top: 10px;
-          }
-
-          .fpdropdown-body ul { 
-            list-style: none;
-            text-align: left;
-          }
-
-          .breadcrumbs {
-            text-align: left;
-          }
-
-          .e-content {
-            height: 317px !important;
-          }
-
-          .step3-container .substep0 .e-content {
-            height: 411px !important;
-          }
-
-          #centinela-app .e-checkbox-wrapper .e-frame.e-check,
+          .e-checkbox-wrapper .e-frame.e-check,
           .e-checkbox-wrapper .e-checkbox:focus + .e-frame.e-check,
           .e-checkbox-wrapper:hover .e-frame.e-check {
             background-color: #001978;
           }
 
-          #centinela-app .btn-primary {
-            margin-left: 10px;
-            background-color: #001978 !important;
-            border-color: #001978 !important;
-          }
-
-          #centinela-app .btn-primary:hover {
+          .btn-primary:hover {
             color: white;
           }
 
-          #centinela-app h5 span {
-            font-size: 22px !important;
-            margin-left: 15px;
-          }
-
-          #centinela-app .e-checkbox-wrapper .e-check,
+          .e-checkbox-wrapper .e-check,
           .e-css.e-checkbox-wrapper .e-check {
             font-size: 16px;
           }
 
-          #centinela-app .e-checkbox-wrapper .e-frame {
+          .e-checkbox-wrapper .e-frame {
             width: 25px;
             height: 25px;
             line-height: 16px;
           }
 
-          #centinela-app .e-checkbox-wrapper .e-frame + .e-label {
+          .e-checkbox-wrapper .e-frame + .e-label {
             height: 13px;
             color: #001978;
             font-family: MTTMilano-Medium;
@@ -641,24 +585,24 @@ class AddonArchiveDocuments extends Component<Props, State> {
             line-height: 16px;
           }
 
-          #centinela-app .e-checkbox-wrapper .e-frame,
+          .e-checkbox-wrapper .e-frame,
           .e-css.e-checkbox-wrapper:hover .e-frame,
           .e-checkbox-wrapper:hover .e-frame,
           .e-css.e-checkbox-wrapper:hover .e-frame {
             border-color: #001978;
           }
 
-          #centinela-app .e-radio:checked + .e-success::after {
+          .e-radio:checked + .e-success::after {
             /* csslint allow: adjoining-classes */
             background-color: #001978;
             border-color: #001978;
           }
 
-          #centinela-app ol > li:before {
+          ol > li:before {
             padding-top: 4px;
           }
 
-          #centinela-app .e-radio:checked + label::before,
+          .e-radio:checked + label::before,
           .e-radio:checked:focus + label::before,
           .e-radio:checked + .e-success::before,
           .e-radio:checked:focus + .e-success::before,
@@ -668,23 +612,23 @@ class AddonArchiveDocuments extends Component<Props, State> {
             border-color: #001978;
           }
 
-          #centinela-app .e-radio:checked + label::after {
+          .e-radio:checked + label::after {
             color: #001978;
           }
 
-          #centinela-app .e-radio:checked:focus + label::after,
+          .e-radio:checked:focus + label::after,
           .e-radio:checked + label:hover::after,
           .e-radio:checked + label:hover::before {
             background-color: #001978 !important;
           }
 
-          #centinela-app .e-radio:checked:focus + .e-success::after,
+          .e-radio:checked:focus + .e-success::after,
           .e-radio:checked + .e-success:hover::after {
             background-color: #001978;
             border-color: #001978;
           }
 
-          #centinela-app .e-radio + label .e-label {
+          .e-radio + label .e-label {
             height: 15px;
             color: #001978;
             font-family: MTTMilano-Medium, Lato, Arial, sans-serif;
@@ -692,36 +636,37 @@ class AddonArchiveDocuments extends Component<Props, State> {
             font-weight: 500;
           }
 
-          #centinela-app input[type='radio'] + label:before {
+          input[type='radio'] + label:before {
             width: 24px;
             height: 24px;
           }
 
-          #centinela-app input[type='radio']:checked + label:after {
+          input[type='radio']:checked + label:after {
             width: 18px;
             height: 18px;
           }
 
-          #centinela-app .e-radio + label .e-label {
+          .e-radio + label .e-label {
             margin-left: 10px;
             padding: 0;
           }
 
-          #centinela-app .e-radio-wrapper {
+          .e-radio-wrapper {
             display: inline-block;
             line-height: 2;
           }
 
-          #centinela-app .container {
-            max-width: none !important;
-            padding-top: 18px;
-          }
-
-          #centinela-app .container p {
+          .container p {
             color: #001978;
           }
 
-          #centinela-app .btn-secundary {
+          .container {
+            max-width: none !important;
+            text-align: left;
+            padding-top: 21px;
+          }
+
+          .btn-secundary {
             min-width: 165px;
             border-radius: 0;
             border: 2px solid #001978;
@@ -734,37 +679,34 @@ class AddonArchiveDocuments extends Component<Props, State> {
             padding: 10px;
           }
 
-          #centinela-app .btn-secundary:focus {
+          .btn-secundary:focus {
             background-color: #001978 !important;
             border: 2px solid #001978 !important;
             color: #ffff !important;
           }
 
-          #centinela-app .btn-outline-primary:focus {
-            border-color: #001978 !important;
-          }
-
-          #centinela-app strong {
+          strong {
             font-weight: 500;
             font-family: MTTMilano-Medium, Lato, Arial, sans-serif;
           }
 
-          #centinela-app table {
+          table {
             color: #7c868c;
           }
 
-          #centinela-app  h5 span {
-            font-size: 28px;
-            margin-right: 15px;
+          .btn-primary {
+            margin-left: 10px;
+            background-color: #001978 !important;
+            border-color: #001978 !important;
           }
-          
-          #centinela-app .form-group .requerido {
+
+          .form-group .requerido {
             color: #d81f2a;
             font-size: 20px;
             text-align: start;
           }
 
-          #centinela-app .lexon-select-like-custom-trigger {
+          .lexon-select-like-custom-trigger {
             height: 45px;
             width: 350px;
             border: 1px solid #d2d2d2;
@@ -776,10 +718,10 @@ class AddonArchiveDocuments extends Component<Props, State> {
             position: relative;
             padding-left: 10px;
           }
-          #centinela-app .lexon-select-like-custom-trigger:focus {
+          .lexon-select-like-custom-trigger:focus {
             outline: none;
           }
-          #centinela-app .lexon-select-like-custom-trigger span {
+          .lexon-select-like-custom-trigger span {
             font-size: 20px;
             position: absolute;
             top: 10px;
@@ -787,14 +729,14 @@ class AddonArchiveDocuments extends Component<Props, State> {
             color: #001978;
             transition: all 0.5s ease;
           }
-          #centinela-app .lexon-select-like-custom-trigger.opened span {
+          .lexon-select-like-custom-trigger.opened span {
             -moz-transform: rotate(180deg);
             -webkit-transform: rotate(180deg);
             -o-transform: rotate(180deg);
             -ms-transform: rotate(180deg);
             transform: rotate(180deg);
           }
-          #centinela-app .lexon-select-like-custom-list-container {
+          .lexon-select-like-custom-list-container {
             transition: all 0.5s ease;
             height: 0;
             width: 350px;
@@ -802,11 +744,11 @@ class AddonArchiveDocuments extends Component<Props, State> {
             z-index: 2;
             overflow: hidden;
           }
-          #centinela-app .lexon-select-like-custom-list-container.opened {
+          .lexon-select-like-custom-list-container.opened {
             height: 230px;
             overflow: visible;
           }
-          #centinela-app .lexon-select-like-custom-list {
+          .lexon-select-like-custom-list {
             height: 230px;
             width: 350px;
             border: 1px solid #d2d2d2;
@@ -817,7 +759,7 @@ class AddonArchiveDocuments extends Component<Props, State> {
             padding: 5px;
             overflow: scroll;
           }
-          #centinela-app .lexon-select-like-custom-list li {
+          .lexon-select-like-custom-list li {
             border-bottom: solid 1px #001978;
             height: 43px;
             color: #7c868c;
@@ -826,55 +768,55 @@ class AddonArchiveDocuments extends Component<Props, State> {
             padding: 0 10px;
             margin: 0 2px;
           }
-          #centinela-app .lexon-select-like-custom-list li:last-child {
+          .lexon-select-like-custom-list li:last-child {
             border-bottom: none;
           }
-          #centinela-app .lexon-select-like-custom-list li span {
+          .lexon-select-like-custom-list li span {
             color: #7c868c;
           }
-          #centinela-app .lexon-select-like-custom-list li.selected,
+          .lexon-select-like-custom-list li.selected,
           .lexon-select-like-custom-list li:hover {
             background-color: #e5e8f1;
             color: #001978;
             cursor: pointer;
           }
-          #centinela-app .lexon-select-like-custom-list li.selected span,
+          .lexon-select-like-custom-list li.selected span,
           .lexon-select-like-custom-list li:hover span {
             color: #001978;
           }
 
-          #centinela-app .lexon-clasification-list-container {
+          .lexon-clasification-list-container {
             border: 1px solid #d2d2d2;
             position: relative;
             z-index: 1;
           }
-          #centinela-app .lexon-clasification-list-container label {
+          .lexon-clasification-list-container label {
             line-height: 45px;
           }
-          #centinela-app .lexon-clasification-list-search {
+          .lexon-clasification-list-search {
             position: absolute;
             top: 0;
             right: -1px;
             display: inline-block;
           }
-          #centinela-app .lexon-clasification-list-search .lexon-clasification-list-results {
+          .lexon-clasification-list-search .lexon-clasification-list-results {
             position: relative;
             height: 45px;
             width: 190px;
             float: left;
             padding-top: 5px;
           }
-          #centinela-app .lexon-clasification-list-search p {
+          .lexon-clasification-list-search p {
             color: #001978;
             font-size: 10px;
             display: inline-block;
             padding: 5px 10px;
             margin-bottom: 0;
           }
-          #centinela-app .lexon-clasification-list-search p strong {
+          .lexon-clasification-list-search p strong {
             font-size: 13px;
           }
-          #centinela-app .lexon-clasification-list-search a.search-trigger-show {
+          .lexon-clasification-list-search a.search-trigger-show {
             font-size: 20px;
             color: #001978;
             font-weight: bold !important;
@@ -885,11 +827,11 @@ class AddonArchiveDocuments extends Component<Props, State> {
             transition: background-color 0.5ms;
             border-radius: 50%;
           }
-          #centinela-app .lexon-clasification-list-search a.search-trigger:hover {
+          .lexon-clasification-list-search a.search-trigger:hover {
             background-color: #001978;
             color: #e5e8f1;
           }
-          #centinela-app .lexon-clasification-list-searcher {
+          .lexon-clasification-list-searcher {
             width: 0;
             transition: all 0.5s ease;
             display: inline-block;
@@ -901,16 +843,16 @@ class AddonArchiveDocuments extends Component<Props, State> {
             float: right;
             overflow: hidden;
           }
-          #centinela-app .lexon-clasification-list-searcher.opened {
+          .lexon-clasification-list-searcher.opened {
             width: 317px;
           }
-          #centinela-app .lexon-clasification-list-searcher label {
+          .lexon-clasification-list-searcher label {
             float: left;
             font-size: 20px;
             margin: 8px 10px 0 10px;
             line-height: inherit;
           }
-          #centinela-app .lexon-clasification-list-searcher input {
+          .lexon-clasification-list-searcher input {
             float: left;
             width: 235px;
             background-color: transparent;
@@ -919,7 +861,7 @@ class AddonArchiveDocuments extends Component<Props, State> {
             font-weight: bold;
             margin-top: 5px;
           }
-          #centinela-app .lexon-clasification-list-searcher a {
+          .lexon-clasification-list-searcher a {
             float: right;
             font-size: 12px;
             color: #001978;
@@ -933,52 +875,52 @@ class AddonArchiveDocuments extends Component<Props, State> {
             line-height: 18px;
             margin: 9px 5px;
           }
-          #centinela-app .lexon-clasification-list-searcher a:hover {
+          .lexon-clasification-list-searcher a:hover {
             background-color: #001978;
             color: #e5e8f1;
           }
-          #centinela-app .lexon-clasification-list-container table {
+          .lexon-clasification-list-container table {
             width: 99%;
             margin: 5px;
           }
-          #centinela-app .lexon-clasification-list-container table thead {
+          .lexon-clasification-list-container table thead {
             border-bottom: 1px solid #001978;
             color: #001978;
             font-size: 13px;
             font-weight: bold;
           }
-          #centinela-app .lexon-clasification-list-container table tbody {
+          .lexon-clasification-list-container table tbody {
             height: 340px;
             display: block;
             width: 99%;
             margin: 5px;
           }
-          #centinela-app .lexon-clasification-list-container table tbody tr {
+          .lexon-clasification-list-container table tbody tr {
             border-bottom: 1px solid #d2d2d2;
           }
 
-          #centinela-app .lexon-clasification-list-container tr {
+          .lexon-clasification-list-container tr {
             display: table;
             width: 100%;
             box-sizing: border-box;
           }
-          #centinela-app .lexon-clasification-list-container table th,
+          .lexon-clasification-list-container table th,
           .lexon-clasification-list-container table td {
             padding: 12px;
           }
-          #centinela-app .lexon-clasification-list-container table tr th:nth-child(1),
+          .lexon-clasification-list-container table tr th:nth-child(1),
           .lexon-clasification-list-container table tr td:nth-child(1) {
             width: 25%;
           }
-          #centinela-app .lexon-clasification-list-container table tr th:nth-child(2),
+          .lexon-clasification-list-container table tr th:nth-child(2),
           .lexon-clasification-list-container table tr td:nth-child(2) {
             width: 25%;
           }
-          #centinela-app .lexon-clasification-list-container table tr th:nth-child(3),
+          .lexon-clasification-list-container table tr th:nth-child(3),
           .lexon-clasification-list-container table tr td:nth-child(3) {
             width: 50%;
           }
-          #centinela-app .lexon-clasification-list-container table td span {
+          .lexon-clasification-list-container table td span {
             display: inline-block;
             width: 25px;
             height: 25px;
@@ -987,110 +929,52 @@ class AddonArchiveDocuments extends Component<Props, State> {
             border-radius: 50%;
             margin-right: 5px;
           }
-          #centinela-app .lexon-clasification-list-container table tr.selected td span {
+          .lexon-clasification-list-container table tr.selected td span {
             color: #001978;
           }
-          #centinela-app .lexon-clasification-list-container table tr.selected td span {
+          .lexon-clasification-list-container table tr.selected td span {
             background-color: #001978;
             color: #e5e8f1;
           }
-          #centinela-app .lexon-clasification-list-container table tbody tr.selected,
+          .lexon-clasification-list-container table tbody tr.selected,
           .lexon-clasification-list-container table tbody tr:hover {
             background-color: #e5e8f1;
             cursor: pointer;
             color: #001978;
           }
-          .e-grid .e-rowcell {
-            text-align: left;
+          .btn-primary:disabled {
+            background-color: #001978 !important;
+            border-color: #001978 !important;
+            color: white !important;
           }
-          .attachments {
+          ol > li.index-3::before {
+            display: none;
+          }
+          .step2-container {
+            margin: 25px;
+            padding-top: 1px;
+          }
+          .fpdropdown-body ul {
             list-style: none;
           }
-          
+          .e-content {
+            height: 317px !important;
+          }
+
+          .step3-container .substep0 .e-content {
+            height: 411px !important;
+          }
+          ol > li.index-4::before {
+            display: none;
+          }
+          .step3-container {
+            margin: 22px;
+            padding-top: 1px;
+          }
         `}</style>
       </div>
     );
   }
 }
 
-export default connector(AddonArchiveDocuments);
-
-const extensionsAllowed = [
-  'JPG',
-  'PNG',
-  'GIF',
-  'BMP',
-  'DIB',
-  'JPEG',
-  'TGA',
-  'TIF',
-  'TIFF',
-  'PCX',
-  'PIC',
-  'EMF',
-  'ICO',
-  'TXT',
-  'MDB',
-  'WRI',
-  'LOG',
-  'XPS',
-  'HTM',
-  'HTML',
-  'CSS',
-  'URL',
-  'XML',
-  'AVI',
-  'FLV',
-  'MP4',
-  'MKV',
-  'MOV',
-  'MPEG',
-  'MPG',
-  'DIVX',
-  'WMV',
-  'RAR',
-  'ZIP',
-  '7Z',
-  'PDF',
-  'DOC',
-  'XLS',
-  'PPT',
-  'DOC',
-  'XLS',
-  'PPT',
-  'EML',
-  'WAV',
-  'MP3',
-  'DOCX',
-  'DOCM',
-  'DOT',
-  'DOTX',
-  'DOTM',
-  'ODT',
-  'RTF',
-  'XLSX',
-  'XLM',
-  'XLSM',
-  'XLT',
-  'XLTX',
-  'XLTM',
-  'XLSB',
-  'XLAM',
-  'XLV',
-  'CSV',
-  'ODS',
-  'PPTX',
-  'PPTM',
-  'POT',
-  'POTX',
-  'POTM',
-  'PPA',
-  'PPAM',
-  'PPS',
-  'PPSX',
-  'PPSM',
-  'SLDX',
-  'SLDM',
-  'THMX',
-  'ODP'
-];
+export default connector(AddonAttachDocuments);
