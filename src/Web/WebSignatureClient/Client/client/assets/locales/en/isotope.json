@@ -161,7 +161,11 @@
     "statusDeclined": "Declined",
     "statusInProgress": "In progress",
     "statusError": "Error",
-    "statusPending": "Pending"
+    "statusPending": "Pending",
+    "filters": {
+      "contains": "Contains",
+      "startsWith": "Starts with"
+    }
   },
   "confirmationModal": {
     "yes": "Yes",

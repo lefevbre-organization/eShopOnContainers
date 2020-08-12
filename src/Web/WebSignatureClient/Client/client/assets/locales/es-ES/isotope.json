@@ -179,7 +179,11 @@
     "statusDeclined": "Declinado",
     "statusInProgress": "En progreso",
     "statusError": "Error",
-    "statusPending": "Pendiente"
+    "statusPending": "Pendiente",
+    "filters": {
+      "contains": "Contiene",
+      "startsWith": "Empieza por"
+    }
   },
   "confirmationModal": {
     "yes": "Si",
