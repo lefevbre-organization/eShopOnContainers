@@ -1,0 +1,35 @@
+{
+  "oauthScopes": [
+    "https://mail.google.com/",
+    "https://www.googleapis.com/auth/gmail.addons.current.action.compose",
+    "https://www.googleapis.com/auth/gmail.addons.execute",
+    "https://www.googleapis.com/auth/gmail.addons.current.message.metadata",
+    "https://www.googleapis.com/auth/script.external_request",
+    "https://www.googleapis.com/auth/userinfo.email",
+    "https://www.googleapis.com/auth/drive",
+    "https://www.googleapis.com/auth/script.send_mail"
+  ],
+  "urlFetchWhitelist": [
+  ],
+ "addOns": {
+  "common": {
+    "name": "Signature",
+    "logoUrl": "https://assets.lefebvre.es/media/logos/web/comunes/favicon.ico"  
+  },
+   "gmail": {
+     "openLinkUrlPrefixes": [
+       "https://localhost:3000/",
+       "https://mail.google.com/"
+     ], 
+     "contextualTriggers": [{
+       "unconditional": {
+       },
+       "onTriggerFunction": "buildAddOn"
+     }],
+  
+     "primaryColor": "#001978",
+     "secondaryColor": "#001978"
+   }
+ }
+ 
+}
