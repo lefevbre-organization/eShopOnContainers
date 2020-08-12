@@ -101,7 +101,7 @@ class FolderContainer extends Component {
 
     nodeTemplate(data) {
         return (
-            <div onClick={()=> { alert(); } }>
+            <div className="tree-folder-item">
                 <div className="treeviewdiv">
                     <div className="textcontent">
                         <FontAwesomeIcon icon={faFolder} className="label-icon" />
@@ -133,6 +133,7 @@ class FolderContainer extends Component {
                                        allowDragAndDrop={true}
                                        fields={this.fields}
                                        enablePersistence={false}
+                                       cssClass={'folder-tree'}
                                        delayUpdate={true}
                                        loadOnDemand={false}
                                        nodeExpanded={this.onNodeExpanded}
@@ -235,14 +236,20 @@ class FolderContainer extends Component {
 
     async onDropNode(event) {
         const { droppedNodeData, draggedNodeData,dropLevel } = event;
-        if(dropLevel <= 1) {
-            // Moving folder to parent;
-            await updateLabelName(draggedNodeData.id, null);
+
+        if(event.draggedNodeData.isMessage) {
+            event.cancel = true;
             return;
-        }
-        for(let i = 0; i < this.props.folderTree.length; i++) {
-            if(this.props.folderTree[i].id === droppedNodeData.id) {
-                await updateLabelName(draggedNodeData.id, this.props.folderTree[i].id);
+        } else {
+            if (dropLevel <= 1) {
+                // Moving folder to parent;
+                await updateLabelName(draggedNodeData.id, null);
+                return;
+            }
+            for (let i = 0; i < this.props.folderTree.length; i++) {
+                if (this.props.folderTree[i].id === droppedNodeData.id) {
+                    await updateLabelName(draggedNodeData.id, this.props.folderTree[i].id);
+                }
             }
         }
     }

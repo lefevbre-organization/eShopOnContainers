@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import { withRouter } from 'react-router-dom';
 import moment from 'moment';
 import MesssageCheckbox from './MessageCheckbox';
 
@@ -101,11 +100,11 @@ export class MessageItem extends PureComponent {
     }
 
     return (
-      <div className={`d-flex table-row-wrapper${selected}`}>
-        <MesssageCheckbox
-          selected={this.props.data.selected}
-          onChange={this.onSelectionChange}
-        />
+      <div className={`message-row-item d-flex table-row-wrapper${selected}`}>
+        {/*<MesssageCheckbox*/}
+        {/*  selected={this.props.data.selected}*/}
+        {/*  onChange={this.onSelectionChange}*/}
+        {/*/>*/}
         <div
           onClick={this.getMessage}
           className={`table-row px-2 py-3${unread}`}>
@@ -126,4 +125,4 @@ export class MessageItem extends PureComponent {
   }
 }
 
-export default withRouter(MessageItem);
+export default MessageItem;
