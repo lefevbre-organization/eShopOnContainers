@@ -243,3 +243,13 @@ services:
       - nosql.data
       - rabbitmq
       - database.api
+
+      webdatabaseclient:
+        image: ${REGISTRY:-elefebvreoncontainers}/webdatabaseclient:${PLATFORM:-linux}-${TAG:-dev}
+        build:
+          context: .
+          dockerfile: src/Web/WebDatabaseClient/Dockerfile    
+          args:
+            NODE_IMAGE: ${NODE_IMAGE:-node:12}
+        depends_on:
+          - rabbitmq   
