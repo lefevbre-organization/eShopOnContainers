@@ -139,6 +139,45 @@ $num-width: 80px;
   }
 }
 
+.ps--active-x > .ps__rail-x, .ps--active-y > .ps__rail-y {
+  z-index: 1000;
+}
+
+.message-list-tree {
+  .e-treeview .e-list-item > .e-text-content .e-list-text {
+    width: 100%;
+  }
+
+  .e-treeview .e-text-content, .e-treeview .e-fullrow {
+    height: 56px !important;
+  }
+
+  .e-treeview.e-fullrow-wrap .e-text-content {
+    padding: 0;
+    margin-top: -4px;
+  }
+
+  .e-treeview .e-list-item > .e-text-content .e-list-text {
+    margin-top: 0;
+  }
+
+  .table-row-wrapper.selected {
+    background-color: transparent;
+  }
+}
+
+.e-checkbox-wrapper .e-frame.e-check, .e-css.e-checkbox-wrapper .e-frame.e-check {
+  background-color: #001978 !important;
+  border-color: transparent;
+  color: #fff;
+}
+
+.e-drag-item.e-treeview {
+  .e-checkbox-wrapper {
+    display: none;
+  }
+}
+
 // Second break: when two rows is not enough, make it four
 //  @media all and (max-width: ($margin*2 + $text-width*1 + $num-width*1)) {
 //    // Outer wrappers also vertical
@@ -198,3 +237,4 @@ $num-width: 80px;
     /*height: 45px;*/
   }
 }
+

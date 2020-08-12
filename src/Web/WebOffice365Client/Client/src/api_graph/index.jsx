@@ -623,6 +623,26 @@ export const batchModify = async ({
   return ids;
 };
 
+export const moveMessage = async ({
+                                    ids,
+                                    destination,
+
+                                  }) => {
+  const accessToken = await getAccessTokenSilent();
+  const client = getAuthenticatedClient(accessToken);
+  let prs = [];
+
+  if (ids && ids.length) {
+    for (let i = 0; i < ids.length; i++) {
+      prs.push(client.api(`me/messages/${ids[i]}/move`).post( { destinationId: destination }));
+    }
+  }
+
+  await Promise.all(prs);
+  return ids;
+};
+
+
 export const uploadFiles = async (emailId, attachments) => {
   for (var i = 0; i < attachments.length; i++) {
 

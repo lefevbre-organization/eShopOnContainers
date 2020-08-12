@@ -58,7 +58,7 @@ export class MessageToolbar extends PureComponent {
       selectedMessageIds: messages.map((msg) => msg.id),
     });
 
-    this.props.toggleSelected(messages, checked);
+    this.props.toggleSelected(messages.map( m => m.id), checked);
     checked
       ? this.props.addListMessages(messages)
       : this.props.deleteListMessages(messages.map((msg) => msg.extMessageId));

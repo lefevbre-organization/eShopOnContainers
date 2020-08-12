@@ -1,7 +1,7 @@
 import React, { Component, Fragment, createRef } from 'react';
 import i18n from 'i18next';
 import { Base64 } from 'js-base64';
-import { Button, Modal, Container } from 'react-bootstrap';
+import { Button, Container } from 'react-bootstrap';
 import { connect, ConnectedProps } from 'react-redux';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import { AppState } from '../../../store/store';

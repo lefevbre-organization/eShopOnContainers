@@ -200,6 +200,7 @@ class Login extends Component {
          needHelp={this.state.needHelp}
          phoneNumber={this.state.phoneNumber}
          client={this.state.client}
+         isloading={this.state.isloading}
         />
     
         <LoginFooter 

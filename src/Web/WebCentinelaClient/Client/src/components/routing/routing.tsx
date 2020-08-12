@@ -4,11 +4,13 @@ import {
   PAGE_SELECT_ACTION,
   PAGE_CONFIGURATION,
   PAGE_ARCHIVEFILE,
-  PAGE_ARCHIVE_DOCUMENT_ADDON
+  PAGE_ARCHIVE_DOCUMENT_ADDON,
+  PAGE_ATTACH_DOCUMENT_ADDON
 } from '../../constants';
 import { connect } from 'react-redux';
 import SelectAction from '../select-action/select-action';
 import AddonArchiveDocument from '../select-action/addon-archive-document/addon-archive-document';
+import AddonAttachDocuments from '../select-action/addon-attach-document/addon-attach-documents';
 import { AppState } from '../../store/store';
 
 interface State {
@@ -36,7 +38,10 @@ class Routing extends Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     if(prevProps.addonType !== this.props.addonType) {
-      this.changePage(PAGE_ARCHIVE_DOCUMENT_ADDON);
+     let page = this.props.addonType == 'MessageCompose' 
+     ? PAGE_ATTACH_DOCUMENT_ADDON : 
+     PAGE_ARCHIVE_DOCUMENT_ADDON;
+      this.changePage(page);
     }
   }
 
@@ -77,7 +82,15 @@ class Routing extends Component<Props, State> {
           toggleNotification={toggleNotification}
           addonData={addonData}
         />
-      )
+      );
+
+      case PAGE_ATTACH_DOCUMENT_ADDON: 
+      return (
+        <AddonAttachDocuments 
+          toggleNotification={toggleNotification}
+          addonData={addonData}
+        />
+      );
 
       default:
         return <div>default</div>;

@@ -23,6 +23,7 @@ import {
   SET_OPEN_MESSAGE,
   ADD_OPEN_MESSAGE_ATTACHMENT,
   CLEAR_OPEN_MESSAGE_ATTACHMENT,
+  REMOVE_MESSAGE_FROM_LIST,
 } from '../actions/message-list.actions';
 
 const defaultMessagesState = {
@@ -144,6 +145,13 @@ export const messagesResult = (state = defaultMessagesState, action) => {
         ...state,
         openMessageAttachments: [],
       };
+    case REMOVE_MESSAGE_FROM_LIST:
+      const aux = state.messages.filter( msg => msg.id !== action.payload);
+      return {
+        ...state,
+        messages: [...aux]
+      }
+      break;
     default:
       return state;
   }
