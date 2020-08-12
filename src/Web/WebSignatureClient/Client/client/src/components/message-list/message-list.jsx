@@ -203,7 +203,7 @@ class MessageList extends Component {
         return result;
     }
 
-    getSigners(signature){
+    getSignersEmails(signature){
         var lookup = {};
         var items = signature.documents;
         var result = [];
@@ -261,8 +261,7 @@ class MessageList extends Component {
 
             documentName = signature.documents[0].file.name
             subject = (signature.data.find(x => x.key === "subject")) ? signature.data.find(x => x.key === "subject").value : 'Sin asunto';
-            recipients = `${signature.documents[0].email} ${this.getSigners(signature).length}`;
-            //date = signature.created_at//.split('T')[0];//prettyDate(signature.created_at);
+            signature.documents.map(d => recipients = `${recipients}${d.email}; `);
             date = new Date(signature.created_at).toLocaleString(navigator.language, {
                 year: 'numeric', month: '2-digit', day: '2-digit',
                 hour: '2-digit', minute: '2-digit', second: '2-digit'
@@ -278,7 +277,7 @@ class MessageList extends Component {
         // //var src = 'src/grid/images/' + props.EmployeeID + '.png';
         return (
             <tr className={`templateRow`}>
-                <td className="optionMenu">
+                <td className="optionMenu" style={`width: 50%;`}>
                     <i className="material-icons">more_vert</i>
                 </td>
                 <td className={`${styles['resumen-firma']} documentName`}>
@@ -346,6 +345,7 @@ class MessageList extends Component {
 
 
     recipientsGridTemplate(props){
+        let firstEmail = props.Destinatarios.split(';')[0];
         var chunks = props.Destinatarios.split(' ');
         let recipientsClass;
         switch (props.Estado) {
@@ -373,8 +373,6 @@ class MessageList extends Component {
 
         if (signature ){
             var signersInfo = this.getSignersInfo(signature);
-            //var emails = this.getSigners(signature);
-            //var names = this.getSignersNames(signature, emails);
             signersInfo.forEach((signer, i) => {
                 console.log(signer);
                 if (i === signersInfo.length -1 ){
@@ -408,11 +406,11 @@ class MessageList extends Component {
         return (
             <div>
                 <span className='email'>
-                    {chunks[0].length > 22 ? chunks[0].substring(0,20)+' . . .' : chunks[0]}
+                    {firstEmail.length > 22 ? firstEmail.substring(0,20) : firstEmail}
                 </span>
                 
                 <span className={`bola-firmantes ${recipientsClass}`}>
-                    <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass='e-caret-hide test' items={recipientsList}>{chunks[1]}</DropDownButtonComponent>
+                    <DropDownButtonComponent beforeItemRender={this.recipientRender.bind(this)} cssClass='e-caret-hide test' items={recipientsList}>{signersInfo.length}</DropDownButtonComponent>
                 </span>
             </div>
         )
