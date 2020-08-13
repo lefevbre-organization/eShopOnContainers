@@ -7,6 +7,7 @@ import './main.css';
 import Routing from './components/routing/routing';
 import Spinner from './components/spinner/spinner';
 import Notification from './components/notification/notification';
+import Progress from './components/progress/progress';
 import { MessagesActions } from './store/messages/actions';
 import { ApplicationActions } from './store/application/actions';
 import { Message } from './store/messages/types';
@@ -16,6 +17,8 @@ interface State {
   showNotification: boolean;
   messageNotification: string;
   errorNotification: boolean;
+  showProgress:boolean;
+  messageProgress:string;
   addonType: any;
   addonData: any;
   isAddon: boolean;
@@ -63,11 +66,14 @@ class Main extends Component<Props, State> {
       showNotification: false,
       messageNotification: '',
       errorNotification: false,
+      showProgress: false,
+      messageProgress: '',
       addonType: null,
       addonData: null,
       isAddon: false
     };
 
+    this.toggleProgress = this.toggleProgress.bind(this);
     this.toggleNotification = this.toggleNotification.bind(this);
     this.handleShowLoader = this.handleShowLoader.bind(this);
     this.handleHideLoader = this.handleHideLoader.bind(this);
@@ -229,6 +235,14 @@ class Main extends Component<Props, State> {
     }));
   }
 
+  toggleProgress(message?: string) {
+    this.closeCentinelaConnector(message);
+    this.setState((state) => ({
+      showProgress: !state.showProgress,
+      messageProgress: message || '',
+    }));
+  }
+
   renderErrors() {
     const { errors } = this.props;
     let bbddError = false;
@@ -256,6 +270,8 @@ class Main extends Component<Props, State> {
       showNotification,
       messageNotification,
       errorNotification,
+      showProgress,
+      messageProgress,
       addonType,
       addonData
     } = this.state;
@@ -270,14 +286,20 @@ class Main extends Component<Props, State> {
           message={messageNotification}
           error={errorNotification}
         />
+        <Progress
+          initialModalState={showProgress}
+          toggleProgress={this.toggleProgress}
+          message={messageProgress}
+        />
         {isLoading && (
           <div className='spinner-wrapper'>
             <Spinner />
           </div>
         )}
         {errors && errors.length === 0 && (
-          <Routing 
-          toggleNotification={this.toggleNotification} 
+          <Routing
+          toggleNotification={this.toggleNotification}
+          toggleProgress={this.toggleProgress}
           addonType={addonType}
           addonData={addonData}
           />

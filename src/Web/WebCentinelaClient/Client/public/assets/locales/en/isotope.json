@@ -34,7 +34,8 @@
     "table-title": "Title",
     "author": "Author",
     "creation": "Created",
-    "modification": "Modified"
+    "modification": "Modified",
+    "modal-progress": "Sending documents to Centinela. Please, wait..."
   },
   "implantation-list-search": {
     "results-total": "TOTAL RESULTS: ",

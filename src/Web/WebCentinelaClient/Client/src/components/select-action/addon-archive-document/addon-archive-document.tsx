@@ -456,12 +456,12 @@ class AddonArchiveDocuments extends Component<Props, State> {
 
   render() {
     const { user, showAttachDocuments } = this.props;
-    const { 
-      messages, 
-      step, 
-      implantation, 
-      copyAttachments, 
-      isLoading 
+    const {
+      messages,
+      step,
+      implantation,
+      copyAttachments,
+      isLoading
     } = this.state;
     let attachments = false;
     for (let i = 0; i < messages.length; i++) {
@@ -583,7 +583,7 @@ class AddonArchiveDocuments extends Component<Props, State> {
             padding-top: 10px;
           }
 
-          .fpdropdown-body ul { 
+          .fpdropdown-body ul {
             list-style: none;
             text-align: left;
           }
@@ -757,7 +757,7 @@ class AddonArchiveDocuments extends Component<Props, State> {
             font-size: 28px;
             margin-right: 15px;
           }
-          
+
           #centinela-app .form-group .requerido {
             color: #d81f2a;
             font-size: 20px;
@@ -1006,7 +1006,7 @@ class AddonArchiveDocuments extends Component<Props, State> {
           .attachments {
             list-style: none;
           }
-          
+
         `}</style>
       </div>
     );

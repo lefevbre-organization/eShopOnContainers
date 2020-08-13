@@ -18,6 +18,7 @@ type ReduxProps = ConnectedProps<typeof connector>;
 
 interface Props extends ReduxProps {
   toggleNotification: any;
+  toggleProgress: any;
 }
 
 interface State {
@@ -64,11 +65,11 @@ class TabArchiveMessage extends Component<Props, State> {
   }
 
   render() {
-    const { toggleNotification } = this.props;
+    const { toggleNotification, toggleProgress } = this.props;
 
     return (
       <Fragment>
-        {this.props.showArchiveModal && <ModalArchiveDocuments toggleNotification={toggleNotification} /> }
+        {this.props.showArchiveModal && <ModalArchiveDocuments toggleNotification={toggleNotification} toggleProgress={toggleProgress}/> }
         {/*
         <ConfirmRemoveClassification
           user={user}

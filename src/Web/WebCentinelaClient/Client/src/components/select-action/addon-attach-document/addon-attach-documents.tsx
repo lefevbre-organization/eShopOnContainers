@@ -158,8 +158,8 @@ class AddonAttachDocuments extends Component<Props, State> {
     const values = queryString.parse((window as any).location.search);
     let redirect_uri = values.redirect_uri;
     (window as any).location.replace(
-      `${redirect_uri}` + '?success=1' 
-      + '&state=' 
+      `${redirect_uri}` + '?success=1'
+      + '&state='
       + values.state
     );
   }
@@ -170,15 +170,15 @@ class AddonAttachDocuments extends Component<Props, State> {
     const files: any = [];
     this.state.files.forEach((file: any) => {
       files.push({
-        documentId: file.documentObjectId, 
+        documentId: file.documentObjectId,
         name: file.name
       });
     });
- 
+
     (window as any).location.replace(
-      `${redirect_uri}` + '?response_type=' 
-      + values.response_type 
-      + '&state=' + values.state 
+      `${redirect_uri}` + '?response_type='
+      + values.response_type
+      + '&state=' + values.state
       + '&files=' + JSON.stringify(files)
     );
   }
@@ -427,7 +427,7 @@ class AddonAttachDocuments extends Component<Props, State> {
     console.log(this.props.addonData);
     return (
       <div className="modal-connection-emails">
-       
+
         <header className="addon-header">
           <h5
             className="title d-flex align-items-center"

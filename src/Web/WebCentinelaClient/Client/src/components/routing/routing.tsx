@@ -12,6 +12,7 @@ import SelectAction from '../select-action/select-action';
 import AddonArchiveDocument from '../select-action/addon-archive-document/addon-archive-document';
 import AddonAttachDocuments from '../select-action/addon-attach-document/addon-attach-documents';
 import { AppState } from '../../store/store';
+import Progress from "../progress/progress";
 
 interface State {
   actualPage: string;
@@ -20,6 +21,7 @@ interface State {
 interface Props {
   composerOpen: boolean;
   toggleNotification: () => void;
+  toggleProgress: () => void;
   addonType?: string;
   addonData?: any;
 }
@@ -27,7 +29,7 @@ interface Props {
 class Routing extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    
+
     let actualPage = PAGE_SELECT_ACTION;
 
     this.state = {
@@ -38,8 +40,8 @@ class Routing extends Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     if(prevProps.addonType !== this.props.addonType) {
-     let page = this.props.addonType == 'MessageCompose' 
-     ? PAGE_ATTACH_DOCUMENT_ADDON : 
+     let page = this.props.addonType == 'MessageCompose'
+     ? PAGE_ATTACH_DOCUMENT_ADDON :
      PAGE_ARCHIVE_DOCUMENT_ADDON;
       this.changePage(page);
     }
@@ -51,10 +53,11 @@ class Routing extends Component<Props, State> {
 
   renderPage() {
     const { actualPage } = this.state;
-    const { 
-      toggleNotification, 
-      composerOpen, 
-      addonData 
+    const {
+      toggleNotification,
+      toggleProgress,
+      composerOpen,
+      addonData
     } = this.props;
 
     switch (actualPage) {
@@ -69,6 +72,7 @@ class Routing extends Component<Props, State> {
           <SelectAction
             changePage={this.changePage}
             toggleNotification={toggleNotification}
+            toggleProgress={toggleProgress}
             composerOpen={composerOpen}
           />
         );
@@ -76,17 +80,17 @@ class Routing extends Component<Props, State> {
       case PAGE_CONFIGURATION:
         return <div>PAGE_CONFIGURATION</div>;
 
-      case PAGE_ARCHIVE_DOCUMENT_ADDON: 
+      case PAGE_ARCHIVE_DOCUMENT_ADDON:
       return (
-        <AddonArchiveDocument 
+        <AddonArchiveDocument
           toggleNotification={toggleNotification}
           addonData={addonData}
         />
       );
 
-      case PAGE_ATTACH_DOCUMENT_ADDON: 
+      case PAGE_ATTACH_DOCUMENT_ADDON:
       return (
-        <AddonAttachDocuments 
+        <AddonAttachDocuments
           toggleNotification={toggleNotification}
           addonData={addonData}
         />
@@ -100,19 +104,6 @@ class Routing extends Component<Props, State> {
   render() {
     return (
       <React.Fragment>
-        {/* {this.state.actualPage === PAGE_SELECT_ACTION && (
-          <div
-            className='lex-on-configuration'
-            onClick={() => {
-              this.changePage(PAGE_CONFIGURATION);
-            }}>
-            <a href='#/' className='lex-on-configuration-trigger'>
-              <strong className='sr-only sr-only-focusable'>
-                Opciones de configuración
-              </strong>
-              <span className='lf-icon-configuration'></span>
-            </a>
-        )} */}
         {this.renderPage()}
       </React.Fragment>
     );

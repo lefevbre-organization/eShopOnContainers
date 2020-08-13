@@ -7,12 +7,13 @@ import TabAttachMessage from '../tab-attach-message/tab-attach-message';
 interface Props {
   user?: string;
   toggleNotification: () => void;
+  toggleProgress: () => void;
   composerOpen?: boolean;
 }
 
 class SelectActionTab extends Component<Props> {
   render() {
-    const { user, toggleNotification, composerOpen = false } = this.props;
+    const { user, toggleNotification, toggleProgress, composerOpen = false } = this.props;
 
     return (
       <>
@@ -22,7 +23,9 @@ class SelectActionTab extends Component<Props> {
               eventKey='connect'
               title={i18n.t('select-action.archive-messages')}>
               <TabArchiveMessage
-                toggleNotification={toggleNotification}></TabArchiveMessage>
+                toggleNotification={toggleNotification}
+                toggleProgress={toggleProgress}
+              ></TabArchiveMessage>
             </Tab>
           )}
           {composerOpen === true && (
@@ -30,7 +33,9 @@ class SelectActionTab extends Component<Props> {
               eventKey='attach'
               title={i18n.t('select-action.attach-documents')}>
               <TabAttachMessage
-                toggleNotification={toggleNotification}></TabAttachMessage>
+                toggleNotification={toggleNotification}
+                toggleProgress={toggleProgress}
+              ></TabAttachMessage>
             </Tab>
           )}
         </Tabs>

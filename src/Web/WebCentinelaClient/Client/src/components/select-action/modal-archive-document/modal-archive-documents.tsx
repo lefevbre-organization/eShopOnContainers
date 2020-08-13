@@ -50,6 +50,7 @@ type ReduxProps = ConnectedProps<typeof connector>;
 
 interface Props extends ReduxProps {
   toggleNotification: any;
+  toggleProgress: any;
 }
 
 interface State {
@@ -219,9 +220,11 @@ class ModalArchiveDocuments extends Component<Props, State> {
   }
 
   async saveDocuments() {
-    const { toggleNotification } = this.props;
+    const { toggleNotification, toggleProgress } = this.props;
     const { messages, instance } = this.state;
     let result = true;
+
+    toggleProgress(i18n.t('modal-archive.modal-progress'));
 
     for (let m = 0; m < messages.length; m++) {
       if (messages[m] && messages[m].raw) {
@@ -268,6 +271,7 @@ class ModalArchiveDocuments extends Component<Props, State> {
       }
     }
 
+    toggleProgress();
     if (result) {
       toggleNotification(i18n.t('modal-archive.modal-save-ok'));
     } else {
