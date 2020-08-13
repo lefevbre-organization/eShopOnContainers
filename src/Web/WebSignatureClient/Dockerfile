@@ -8,8 +8,6 @@ WORKDIR /web
 COPY src/Web/WebSignatureClient/Client/client .
 RUN npm install
 RUN npm run build
-#RUN echo $(ls -1 /app)
-#RUN echo $(ls -1 /web)
 #RUN echo $(ls -1 /web/build)
  #RUN ls -lha /web
  #RUN ls -lha /web/build
@@ -47,6 +45,7 @@ COPY src/Web/WebImapClient/WebImapClient.csproj src/Web/WebImapClient/
 COPY src/Web/WebStatusLef/WebStatusLef.csproj src/Web/WebStatusLef/
 COPY src/Web/WebSignatureClient/WebSignatureClient.csproj src/Web/WebSignatureClient/
 COPY src/Web/WebCentinelaClient/WebCentinelaClient.csproj src/Web/WebCentinelaClient/
+COPY src/Web/WebDatabaseClient/WebDatabaseClient.csproj src/Web/WebDatabaseClient/
 COPY src/Addon/Lexon/Office365/WebOffice365AddonLexon/WebOffice365AddonLexon.csproj src/Addon/Lexon/Office365/WebOffice365AddonLexon/
 COPY src/Addon/Centinela/Office365/WebOffice365AddonCentinela/WebOffice365AddonCentinela.csproj src/Addon/Centinela/Office365/WebOffice365AddonCentinela/
 
