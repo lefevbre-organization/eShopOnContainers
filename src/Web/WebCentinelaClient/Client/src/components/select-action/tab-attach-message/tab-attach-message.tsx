@@ -17,6 +17,7 @@ type ReduxProps = ConnectedProps<typeof connector>;
 
 interface Props extends ReduxProps {
   toggleNotification: any;
+  toggleProgress: any;
 }
 
 interface State {
@@ -62,7 +63,7 @@ class TabAttachMessage extends Component<Props, State> {
     return (
       <Fragment>
         <ModalAttachDocuments toggleNotification={toggleNotification} />
-        {/* 
+        {/*
         <ConfirmRemoveClassification
           user={user}
           initialModalState={showConfirmRemoveClassification}

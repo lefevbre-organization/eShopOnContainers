@@ -865,7 +865,7 @@ const calculateStatus = (signatures) => {
     console.log('NumSigners: '+ numSigners);
     if (numSigners === numCompleted){
       signature.status = 'completed';
-    } else if (numSigners > 0 && numCompleted < numSigners && numCancelled === 0 && numRejected === 0 && numExpired === 0 && numInQueue === 0){
+    } else if (numSigners > 0 && numCompleted < numSigners && numCancelled === 0 && numRejected === 0 && numExpired === 0 && numInQueue === 0 && numError === 0){
       signature.status = 'ready';
     } else if (numSigners > 0 && numCancelled > 0){
       signature.status = 'canceled';

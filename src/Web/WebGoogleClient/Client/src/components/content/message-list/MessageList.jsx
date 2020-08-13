@@ -112,6 +112,9 @@ export class MessageList extends Component {
     }
 
     if(!msg) return;
+    if(msg.selected !== selected) {
+      this.props.toggleSelected([msg.id], selected);
+    }
     const extMessageId = this.getContentByHeader(msg, 'Message-Id');
     console.log('MessageId:' + extMessageId);
     const message = {

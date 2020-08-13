@@ -102,6 +102,9 @@ export class MessageList extends Component {
     }
 
     if(!msg) return;
+    if(msg.selected !== selected) {
+      this.props.toggleSelected([msg.id], selected);
+    }
     const extMessageId = msg.internetMessageId;
     const message = {
       id: msg.id,

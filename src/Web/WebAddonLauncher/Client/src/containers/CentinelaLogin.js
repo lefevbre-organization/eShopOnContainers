@@ -4,7 +4,7 @@ import validator from 'email-validator';
 import LoginHeader from '../components/LoginHeader';
 import LoginFooter from '../components/LoginFooter';
 import CentinelaLoginComponents from '../components/CentinelaLogin';
-import { getCentinelaUser, base64Decode } from "../services/services-lexon";
+import { getCentinelaUser, base64Decode } from "../services/services";
 
 import '../assets/styles/components/Login.css';
 import '../assets/styles/components/CentinelaLogin.css';

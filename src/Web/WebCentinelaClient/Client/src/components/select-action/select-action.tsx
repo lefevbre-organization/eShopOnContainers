@@ -8,6 +8,7 @@ interface Props {
   composerOpen: boolean;
   changePage: (page: string) => void;
   toggleNotification: (message?: string, error?: boolean) => void;
+  toggleProgress: (message?: string) => void;
 }
 
 interface State {
@@ -34,7 +35,7 @@ class SelectAction extends Component<Props, State> {
   }
 
   render() {
-    const { toggleNotification, composerOpen } = this.props;
+    const { toggleNotification, composerOpen, toggleProgress } = this.props;
     const { showDocuments } = this.state;
     return (
       <div className='container-fluid'>
@@ -45,6 +46,7 @@ class SelectAction extends Component<Props, State> {
         {showDocuments === true && (
           <SelectActionTab
             toggleNotification={toggleNotification}
+            toggleProgress={toggleProgress}
             composerOpen={composerOpen}
           />
         )}

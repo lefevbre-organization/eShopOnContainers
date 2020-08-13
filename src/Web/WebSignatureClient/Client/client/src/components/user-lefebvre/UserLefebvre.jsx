@@ -132,7 +132,7 @@ class UserLefebvre extends Component {
         if (Date.now() >= payload.exp * 1000) {
             this.setState({type: 'expired'});
         } else {
-            const roleOk = payload.roles.some( e => e === 'Signaturit')
+            const roleOk = payload.roles.some( e => e === 'Signaturit' || e === 'Firma Digital');
             if (roleOk){
                 const validToken = this.verifyTokenSignature(this.props.match.params.token);
                 // Hay que meter aquí la validación con validToken cuando Paco la tenga lista.
