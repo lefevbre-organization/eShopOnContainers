@@ -52,6 +52,7 @@ class Progress extends Component<Props> {
               >
               </ProgressBarComponent>
               <h5
+                style={{color: 'white', fontSize: 22 }}
                 className='modal-title d-flex align-items-center'
                 id='clasificarNuevaclasificacionLabel'>
                 {message}
