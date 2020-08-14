@@ -34,7 +34,8 @@
     "table-title": "Título",
     "author": "Autor",
     "creation": "Creación",
-    "modification": "Modificación"
+    "modification": "Modificación",
+    "modal-progress": "Enviando documentos a Centinela. Por favor, espere..."
   },
   "implantation-list-search": {
     "results-total": "TOTAL RESULTADOS: ",
