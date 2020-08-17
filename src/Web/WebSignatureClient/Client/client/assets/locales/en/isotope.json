@@ -196,7 +196,10 @@
   "attachmentsWidget": {
     "title": "ATTACHED FILES",
     "attachButton": "ATTACH FILE",
-    "pagesConfiguration": "Single page signature"
+    "pagesConfiguration": {
+      "single": "Single page signature",
+      "all": "Sign all pages" 
+    }
   },
   "expirationWidget":{
     "title": "EXPIRATION CONFIGURATION",

@@ -1,17 +1,16 @@
 {
-  "name": "Lefebvre-mail-client",
+  "name": "Lefebvre-signature-client",
   "version": "1.0.0",
-  "description": "lefebvre mail client",
+  "description": "lefebvre signature client",
   "main": "index.js",
   "scripts": {
     "build": "./node_modules/.bin/webpack -p --mode production",
     "start": "./node_modules/.bin/webpack-dev-server --config ./webpack.config.js --mode development",
-    "start:server": "java -jar ../server/build/libs/api-0.0.1-SNAPSHOT.jar",
     "test": "jest --coverage"
   },
   "keywords": [],
   "author": {
-    "name": "Alberto Valverde Escribano",
+    "name": "Lefebvre dev team",
     "url": ""
   },
   "license": "Apache-2.0",
@@ -48,6 +47,7 @@
     "material-ui-search-bar": "^1.0.0-beta.14",
     "net": "^1.0.2",
     "njwt": "^1.0.0",
+    "pdfjs-dist": "2.4.456",
     "prop-types": "^15.6.2",
     "react": "^16.8.6",
     "react-autosuggest": "^9.4.3",

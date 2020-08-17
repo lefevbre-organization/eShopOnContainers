@@ -1,6 +1,104 @@
 import { backendRequest, backendRequestCompleted, preDownloadSignatures } from '../actions/application';
 import { resolve } from 'path';
 
+// tenia 94 left y 5 width
+// const coordinates = [
+//   {
+//     left: 94,
+//     top: 35,
+//     height: [30],
+//     width: 5
+//   },
+//   {
+//     left: 94,
+//     top: 10,
+//     height: [30, 60],
+//     width: 5
+//   },
+//   {
+//     left: 94,
+//     top: 6,
+//     height: [25, 37, 68],
+//     width: 5
+//   },
+//   {
+//     left: 94,
+//     top: 2,
+//     height: [22, 26, 52, 76],
+//     width: 5
+//   },
+//   {
+//     left: 94,
+//     top: 1,
+//     height: [1, 20, 39, 58, 77],
+//     width: 5
+//   }
+// ];
+
+
+const coordinates = [
+  {
+    left: 94,
+    top: [35],
+    height: 30,
+    width: 5
+  },
+  {
+    left: 94,
+    top: [10, 60],
+    height: 30,
+    width: 5
+  },
+  {
+    left: 94,
+    top: [6, 37, 68],
+    height: 25,
+    width: 5
+  },
+  {
+    left: 94,
+    top: [2, 26, 52, 76],
+    height: 22,
+    width: 5
+  },
+  {
+    left: 94,
+    top: [1, 20, 39, 58, 77],
+    height: 18,
+    width: 5
+  },
+  {
+    left: 94,
+    top: [1, 17, 33, 49, 65, 81],
+    height: 15,
+    width: 5
+  },
+  {
+    left: 94,
+    top: [1, 15, 29, 43, 57, 71, 85],
+    height: 13,
+    width: 5
+  },
+  {
+    left: 94,
+    top: [1, 13, 25, 37, 49, 61, 73, 85],
+    height: 11,
+    width: 5
+  },
+  {
+    left: 94,
+    top: [1, 12, 23, 34, 45, 56, 67, 78, 89],
+    height: 10,
+    width: 5
+  },
+  {
+    left: 94,
+    top: [1, 10, 19, 28, 37, 46, 55, 64, 73, 82],
+    height: 8,
+    width: 5
+  }
+];
+
 
 /* 
   SIGNATURIT API CALLS 
@@ -560,7 +658,7 @@ export function preloadSignatures2(dispatch, filters, auth) {
 
 // Creates a new signature calling internal proxy api
 //export const createSignature2 = async (recipients, subject, body, files, filesData, reminders, expiration, lefebvreId, guid, brandingId, auth) => {
-  export const createSignature2 = async (recipients, cc, subject, body, files, reminders, expiration, lefebvreId, guid, brandingId, auth) => {
+  export const createSignature2 = async (recipients, cc, subject, body, files, pagesConfig, reminders, expiration, lefebvreId, guid, brandingId, auth) => {
   return new Promise((resolve, reject) => {
     var myHeaders = new Headers();
     myHeaders.append("Accept", "text/plain");
@@ -575,6 +673,7 @@ export function preloadSignatures2(dispatch, filters, auth) {
     var customFieldsData = [];
     var remindConfig = '';
     var expirationConfig = '';
+    var signAllPagesCoords = [];
 
     switch (reminders[0]) {
       case -1:
@@ -619,9 +718,35 @@ export function preloadSignatures2(dispatch, filters, auth) {
     // });
     files.forEach(file => {
       filesData.push({file: file.content, fileName: file.fileName})
+      if (pagesConfig === 2){ // firma en todas las hojas
+        let numRecipients = recipients.length;
+        let numPages = file.pages;
+        let element = '';
+        for (let i = 0; i < numRecipients; i++) {
+          for (let x = 0; x < numPages; x++) {
+            element = `recipients[${i}][widgets][${x}][page]`;
+            signAllPagesCoords.push({param: element, value: x + 1});
+            element = `recipients[${i}][widgets][${x}][left]`;
+            signAllPagesCoords.push({param: element, value: coordinates[numRecipients-1].left});
+            element = `recipients[${i}][widgets][${x}][top]`;
+            signAllPagesCoords.push({param: element, value: coordinates[numRecipients-1].top[i]});
+            element = `recipients[${i}][widgets][${x}][type]`;
+            signAllPagesCoords.push({param: element, value: 'signature'});
+            element = `recipients[${i}][widgets][${x}][height]`;
+            signAllPagesCoords.push({param: element, value: coordinates[numRecipients-1].height});
+            element = `recipients[${i}][widgets][${x}][width]`;
+            signAllPagesCoords.push({param: element, value: coordinates[numRecipients-1].width});
+
+          }
+        }
+      }
+      console.log(file);
     })
     //jsonObject.files = [{file: filesData, fileName: files.name}];
     jsonObject.files = filesData;
+    jsonObject.coordinates = signAllPagesCoords;
+    jsonObject.deliveryType = (signAllPagesCoords.length > 0 ? 'email' : '');
+
 
     customFieldsData.push({name: "lefebvre_id", value: lefebvreId});
     customFieldsData.push({name: "lefebvre_guid", value: guid});
@@ -639,6 +764,7 @@ export function preloadSignatures2(dispatch, filters, auth) {
     (expiration !== -1) ? jsonObject.expiration = expiration : null;
     jsonObject.brandingId = brandingId;
 
+    
     var raw = JSON.stringify(jsonObject);
     console.log('Raw::');
     console.log(raw);

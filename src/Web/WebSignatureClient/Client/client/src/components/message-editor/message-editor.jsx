@@ -54,7 +54,8 @@ class MessageEditor extends Component {
       expirationDays: 7,
       hideAlertDialog: false,
       bigAttachments: false,
-      centinelaDownloadError: (props.attachmentsDownloadError !== undefined) ? props.attachmentsDownloadError : false
+      centinelaDownloadError: (props.attachmentsDownloadError !== undefined) ? props.attachmentsDownloadError : false,
+      numPagesOption: 1
     };
 
     this.fileInput = null;
@@ -91,7 +92,13 @@ class MessageEditor extends Component {
     this.dialogClose = this.dialogClose;
     this.dialogOpen = this.dialogOpen;
     this.animationSettings = { effect: 'None' };
+    this.handleNumPagesOption = this.handleNumPagesOption.bind(this);
+  }
 
+
+  handleNumPagesOption(option){
+    console.log('Se cambia el numpages, option:' + option);
+    this.setState({numPagesOption: option});
   }
 
 
@@ -253,6 +260,7 @@ class MessageEditor extends Component {
               // onAttachButton={this.onAttachButton()} 
               // onAttachSelected={this.onAttachSelected()}
               // removeAttachment={this.removeAttachment()}
+              onSelectNumPages={this.handleNumPagesOption}
             ></AttachmentsWidget>
             <ExpirationWidget onChange={this.onChangeExpiration}></ExpirationWidget>
             <RemindersWidget onChange={this.onChangeReminder}></RemindersWidget>
@@ -273,7 +281,7 @@ class MessageEditor extends Component {
           </div>
         </div>
 
-        <InsertLinkDialog
+        {/* <InsertLinkDialog
           visible={this.state.linkDialogVisible}
           closeDialog={() =>
             this.setState({
@@ -284,7 +292,7 @@ class MessageEditor extends Component {
           onChange={(e) => this.setState({ linkDialogUrl: e.target.value })}
           url={this.state.linkDialogUrl}
           insertLink={this.handleEditorInsertLink}
-        />
+        /> */}
         <DialogComponent 
           id="info2Dialog" 
           //header=' ' 
@@ -448,7 +456,7 @@ class MessageEditor extends Component {
               type: getFileType(attachment.fileName),
               lastModified: new Date(),
             });
-            attachmentsList.push(file);
+            attachmentsList.push({file: file, pages: attachment.pages});
             debugger;
           });
           //this.callApis(to, subject, content.innerHTML, file, this.props.attachments[0].content, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
@@ -591,6 +599,7 @@ class MessageEditor extends Component {
       subject,
       content,
       files,
+      this.state.numPagesOption,
       reminders,
       expiration,
       userId,
