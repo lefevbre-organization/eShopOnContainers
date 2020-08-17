@@ -10,8 +10,6 @@ export class Header extends PureComponent {
 
     return (
       <div>
-
-      
       <header className='login-header'>
         <div className='front-login__header-login row'>
           <a
@@ -46,7 +44,8 @@ export class Header extends PureComponent {
         </div>
       </header>
       <style jsx global>
-        {`
+        {` 
+        
         .login-header {
           height: 60px;
           width: 100%;
@@ -54,7 +53,7 @@ export class Header extends PureComponent {
           overflow: hidden;
           background-color: #001978;
         }
-        
+
         .front-login__header {
           position: relative;
           display: block;

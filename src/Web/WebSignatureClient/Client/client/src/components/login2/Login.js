@@ -10,7 +10,8 @@ import { getUser } from '../../services/services-lexon';
 import { Header } from '../../components/header/Header';
 import Footer from '../../components/footer/Footer';
 
-import loginStyle from '../../styles/Login.css';
+import '../../styles/Login.css';
+
 // import logoLexon from '../../../assets/images/LogoLexOn.jpg';
 // import iconUser from '../../../assets/images/icon-user.png';
 // import iconLock from '../../../assets/images/icon-lock.png';
@@ -176,7 +177,7 @@ class Login extends Component {
     
 
     return (
-      <div className={loginStyle['wrapper']}>
+      <div className='wrapper'>
         <Header showUser={false}></Header>
         <LoginComponents
           // iconUser={iconUser}
