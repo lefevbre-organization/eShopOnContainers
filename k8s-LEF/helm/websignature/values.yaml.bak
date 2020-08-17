@@ -1,9 +1,9 @@
 replicaCount: 1
 clusterName: eshop-aks
-pathBase: /webportal
+pathBase: /websignature
 
 image:
-  repository: elefebvreoncontainers/webportalclient
+  repository: elefebvreoncontainers/websignatureclient
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -33,11 +33,9 @@ env:
       key: all__InstrumentationKey
     - name: UseLoadTest
       key: all_EnableLoadTest
-    - name: LexonApiUrlHC
-      key: internalurls__lexonapi__hc
-    - name: AccountApiUrlHC
-      key: internalurls__accountapi__hc
-  # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
+    - name: SignatureApiUrlHC
+      key: internalurls__signatureapi__hc
+      # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
@@ -45,15 +43,14 @@ env:
       value: 'K8S'
     - name: IsClusterEnv
       value: 'True'
-
 configValues: |
-  window.REACT_APP_ENVIRONMENT='PRE'
-  window.API_ACCOUNTS='https://lexbox-test-apigwacc.lefebvre.es'
-  window.URL_INBOX_GOOGLE= 'https://lexbox-test-webgoogle.lefebvre.es'
-  window.URL_INBOX_OUTLOOK= 'https://lexbox-test-webgraph.lefebvre.es'
-  window.URL_INBOX_IMAP= 'https://lexbox-test-webimap.lefebvre.es'
-  window.URL_GET_USER =  'https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login'
+  window.REACT_APP_ENVIRONMENT = 'PRODUCTION'
+  window.API_SIGN_GATEWAY = 'https://lexbox-test-apigwsig.lefebvre.es/api/v1/signservice'
+  window.API_CHECK_CREDITS = 'https://led-pre-serviceclaves.lefebvre.es/FirmaDigital'
+  window.TERMS_AND_CONDITIONS_URL = 'https://lefebvre.es/aviso-legal'
   window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies'
   window.PRIVACY_POLICY_URL = 'https://lefebvre.es/politica-privacidad'
   window.LEGAL_WARNING_URL = 'https://lefebvre.es/aviso-legal'
-  window.RELEASE = all__version
+  window.URL_GET_ACCOUNTS = 'https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail'
+  window.URL_GET_USER = 'https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login'
+  window.RELEASE = 'RC 0.29'
