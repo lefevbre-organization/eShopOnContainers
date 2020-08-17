@@ -37,24 +37,25 @@ namespace Lexon.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("test")]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
         public IActionResult Test()
         {
-            return Ok(new Result<bool>(true));
+            var data = $"Lexon.Api v.{ _settings.Version}";
+            return Ok(new Result<string>(data));
         }
 
         [HttpGet]
         [Route("user")]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UsersAsync(string idUserNavision = "E1621396")
+        public async Task<IActionResult> UsersAsync(string idUserNavision = "E1621396", string env = "DEV")
 
         {
             if (string.IsNullOrEmpty(idUserNavision))
                 return BadRequest("idUser need a correct value");
 
-            var result = await _usersService.GetUserAsync(idUserNavision);
+            var result = await _usersService.GetUserAsync(idUserNavision, env);
 
             if (result.errors.Count() > 0 && result.data?.idUser == null)
             {
@@ -73,12 +74,12 @@ namespace Lexon.API.Controllers
         [HttpGet("user/getid")]
         [ProducesResponseType(typeof(Result<LexUserSimple>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexUserSimple>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UserIdAsync(string idNavisionUser = "E1621396")
+        public async Task<IActionResult> UserIdAsync(string idNavisionUser = "E1621396", string env = "DEV")
         {
             if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
 
-            Result<LexUserSimple> resultUser = await _usersService.GetUserIdAsync(idNavisionUser);
+            Result<LexUserSimple> resultUser = await _usersService.GetUserIdAsync(idNavisionUser, env);
             return Ok(resultUser);
         }
 
@@ -86,13 +87,13 @@ namespace Lexon.API.Controllers
         [Route("companies")]
         [ProducesResponseType(typeof(Result<IEnumerable<LexCompany>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexCompany>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CompaniesAsync(string idUser = "449")
+        public async Task<IActionResult> CompaniesAsync(string idUser = "449", string env = "DEV")
 
         {
             if (string.IsNullOrEmpty(idUser))
                 return (IActionResult)BadRequest("idUser need a correct value");
 
-            var result = await _usersService.GetCompaniesFromUserAsync(idUser);
+            var result = await _usersService.GetCompaniesFromUserAsync(idUser, env);
 
             if (result.errors.Count() > 0 && result.data?.Count() == 0)
             {
@@ -209,13 +210,14 @@ namespace Lexon.API.Controllers
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CheckRelationsMailAsync(
             [FromBody] MailInfo mail,
-            [FromRoute] string idUser = "449"
+            [FromRoute] string idUser = "449",
+            [FromQuery] string env = "DEV"
             )
         {
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(mail.Uid) || string.IsNullOrEmpty(mail.MailAccount))
                 return BadRequest("values invalid. Must be a valid idUser, idMail and account to search the relations of mail");
 
-            Result<LexUserSimpleCheck> result = await _usersService.CheckRelationsMailAsync(idUser, mail);
+            Result<LexUserSimpleCheck> result = await _usersService.CheckRelationsMailAsync(idUser, env, mail);
             return Ok(result);
         }
 
@@ -241,9 +243,9 @@ namespace Lexon.API.Controllers
         [HttpGet("entities/types")]
         [ProducesResponseType(typeof(MySqlList<JosEntityTypeList, JosEntityType>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(MySqlList<JosEntityTypeList, JosEntityType>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetEntitiesTypesAsync()
+        public async Task<IActionResult> GetEntitiesTypesAsync(string env = "DEV")
         {
-            var result = await _usersService.GetMasterEntitiesAsync();
+            var result = await _usersService.GetMasterEntitiesAsync(env);
             return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
@@ -311,6 +313,9 @@ namespace Lexon.API.Controllers
             if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd) || entitySearch.idType <= 0)
                 return BadRequest("values invalid. Must be a valid user, idCompany and type for search de entities");
 
+            if (entitySearch.pageIndex == 0) entitySearch.pageIndex = 1;
+            if (entitySearch.pageSize == 0) entitySearch.pageSize = 10;
+            
             var entities = await _usersService.GetEntitiesAsync(entitySearch);
 
             return ResponseEntities(entities);
@@ -326,6 +331,9 @@ namespace Lexon.API.Controllers
 
             if (string.IsNullOrEmpty(entitySearch.idUser) || string.IsNullOrEmpty(entitySearch.bbdd))
                 return BadRequest("values invalid. Must be a valid user, bbdd ands idType to serach folders");
+            
+            if (entitySearch.pageIndex == 0) entitySearch.pageIndex = 1;
+            if (entitySearch.pageSize == 0) entitySearch.pageSize = 10;
 
             var entities = await _usersService.GetEntitiesFoldersAsync(entitySearch);
 
