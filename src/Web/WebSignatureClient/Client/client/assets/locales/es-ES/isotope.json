@@ -214,7 +214,10 @@
   "attachmentsWidget": {
     "title": "ARCHIVOS ADJUNTOS",
     "attachButton": "ADJUNTAR DOCUMENTO",
-    "pagesConfiguration": "Firmar documento en una sola hoja"
+    "pagesConfiguration": {
+      "single": "Firmar documento en una sola hoja",
+      "all": "Firmar documento en todas las hojas" 
+    }
   },
   "expirationWidget":{
     "title": "PLAZOS DE EXPIRACIÓN DE FIRMA",
