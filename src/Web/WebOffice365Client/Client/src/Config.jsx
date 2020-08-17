@@ -3,6 +3,7 @@ module.exports = {
     scopes: [
         'user.read',
         'calendars.read',
+        'calendars.readwrite',
         'mail.read',
         'mail.readwrite',
         'mail.send',

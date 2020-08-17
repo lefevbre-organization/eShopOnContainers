@@ -13,7 +13,7 @@ export const getUserApplication = () => {
             auth: {
                 clientId: config.appId,
                 redirectUri: redirectUri,
-                postLogoutRedirectUri: 'https://lexbox-test-webgraph.lefebvre.es',
+                postLogoutRedirectUri: 'https://lexbox-webgraph.lefebvre.es',
             },
             cache: {
                 cacheLocation: 'localStorage',
@@ -46,11 +46,26 @@ export const getAccessTokenSilent = async () => {
 };
 
 
-//export const listCalendarList = () =>
+export const listCalendarList = () => {
+    return new Promise(async (resolve, reject) => {
+        const accessToken = await getAccessTokenSilent();
+        const client = getAuthenticatedClient(accessToken);
+        client
+            .api(`me/calendars`)
+            .get()
+            .then((response) =>
+                resolve(listCalendarParser(response.value)))
+            .catch((err) => {
+                reject(err);
+            });
+    });
+};
+
+//export const getCalendarList = (calendar) => {
 //    new Promise((resolve, reject) => {
 //        window.gapi.client.calendar.calendarList
-//            .list({
-
+//            .get({
+//                calendarId: calendar,
 //            })
 
 //            .then(response => {
@@ -61,37 +76,7 @@ export const getAccessTokenSilent = async () => {
 //            });
 
 //    });
-
-export const listCalendarList = () => {
-    return new Promise(async (resolve, reject) => {
-        const accessToken = await getAccessTokenSilent();
-        const client = getAuthenticatedClient(accessToken);
-        client
-            .api(`me/calendars`)
-            .get()
-            .then((response) =>
-                resolve(response))
-            .catch((err) => {
-                reject(err);
-            });
-    });
-};
-
-export const getCalendarList = (calendar) =>
-    new Promise((resolve, reject) => {
-        window.gapi.client.calendar.calendarList
-            .get({
-                calendarId: calendar,
-            })
-
-            .then(response => {
-                resolve(response.result);
-            })
-            .catch(err => {
-                reject(err);
-            });
-
-    });
+//};
 
 export const updateCalendarList = (calendarId, calendar) =>
 
@@ -132,79 +117,78 @@ export const updateCalendar = (calendarId, calendar) =>
 
     });
 
-export const getCalendar = (calendar) =>
-    new Promise((resolve, reject) => {
-        window.gapi.client.calendar.calendars
-            .get({
-                calendarId: calendar,
-            })
-
-            .then(response => {
-                resolve(response.result);
-            })
-            .catch(err => {
+export const getCalendar = (calendarId) => {   
+    return new Promise(async (resolve, reject) => {
+        const accessToken = await getAccessTokenSilent();
+        const client = getAuthenticatedClient(accessToken);
+        client
+            .api(`me/calendars/${calendarId}`)
+            .get()
+            .then((response) =>
+                resolve(getCalendarParser(response)))
+            .catch((err) => {
                 reject(err);
             });
+    });   
+};
 
-    });
 
-export const addCalendar = (calendar) =>
-    new Promise((resolve, reject) => {
-        window.gapi.client.calendar.calendars
-            .insert({               
-                resource: calendar
-            })
-
-            .then(response => {
-                resolve(response.result);
-            })
-            .catch(err => {
+export const addCalendar = (calendar) => { 
+    return new Promise(async (resolve, reject) => {
+        const accessToken = await getAccessTokenSilent();
+        const client = getAuthenticatedClient(accessToken);
+        client
+            .api(`me/calendars`)
+            .post(addCalendarParser(calendar))
+            .then((response) =>
+                resolve(response))
+            .catch((err) => {
                 reject(err);
             });
-
     });
+};
 
-export const deleteCalendar = (calendar) =>
-    new Promise((resolve, reject) => {
-        window.gapi.client.calendar.calendars
-            .delete({
-                calendarId: calendar,
-            })
 
-            .then(response => {
-                resolve(response.result);
-            })
-            .catch(err => {
+export const deleteCalendar = (idCalendar) => {   
+    return new Promise(async (resolve, reject) => {
+        const accessToken = await getAccessTokenSilent();
+        const client = getAuthenticatedClient(accessToken);
+        client
+            .api(`me/calendars/${idCalendar}`)
+            .delete()
+            .then((response) =>
+                resolve(response))
+            .catch((err) => {
                 reject(err);
             });
-
     });
+};
+   
 
 
 
 
 // Events Api
+//GET /me/calendars/{id}/events
 
-export const getEventList = (idCalendar, selectedDate) =>
-    new Promise((resolve, reject) => {
-        window.gapi.client.calendar.events
-            .list({
-                calendarId: idCalendar,
-                // timeMin: (new Date()).toISOString()
-                // timeMin: (new Date(selectedDate.getFullYear(), selectedDate.getMonth(), -1)).toISOString(),
-                // timeMax: (new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 2)).toISOString(),
-                //showDeleted: false,
-                //singleEvents: true,
-                //maxResults: 10,
-                //orderBy: 'startTime',
-            })
-            .then(response => {
-                resolve(response)
-            })
-            .catch(error => {
-                reject(error);
+export const getEventList = (idCalendar, selectedDate) => {
+    //to delete
+   // idCalendar = "AAMkADYwN2U5OWZlLWUwZDktNDQ3Yi05MTQ2LTMxYmUyMGExMjcwNgBGAAAAAAABGTrist65R5XlVfmY3KAqBwAcnBiKLwlKQrviB8XkwxacAAAAAAEGAAAcnBiKLwlKQrviB8XkwxacAAAAAB05AAA=";
+    return new Promise(async (resolve, reject) => {
+        const accessToken = await getAccessTokenSilent();
+        const client = getAuthenticatedClient(accessToken);
+        client
+            .api(`me/calendars/${idCalendar}/events`)
+            .get()
+            .then((response) =>
+                resolve(response))
+            .catch((err) => {
+                reject(err);
             });
     });
+};
+
+
 
 export const addCalendarEvent = (calendar, event) =>
     new Promise((resolve, reject) => {
@@ -328,3 +312,61 @@ export const deleteAcl = (calendar, ruleId) =>
             });
 
     });
+
+
+function listCalendarParser(list) {
+    let listParse = [];
+    if (list.length > 0) {
+        for (let i = 0; i < list.length; i++) {
+
+            let roll;
+            if (list[i].canShare) {
+                roll = "owner";
+            }
+
+            let primary = false;
+            if (list[i].canShare && !list[i].isRemovable) {
+                primary = true
+            }
+            else {
+                primary = undefined
+            }
+
+            let color = "#0693e3";
+            if (list[i].color != "auto") {
+                color = list[i].color
+            }
+
+
+            listParse.push({
+                accessRole: roll,
+                backgroundColor: color,
+                //colorId: "16",          
+                colorId: list[i].color,
+                defaultReminders: [],
+                id: list[i].id,
+                primary: primary,
+                selected: primary,
+                summary: list[i].name,
+                timeZone: "Europe/Madrid",
+            });
+        }
+    }
+    return listParse;
+}
+
+function getCalendarParser(list) {
+    let listParse = {
+                summary: list.name                             
+            };        
+    return listParse;
+}
+
+function addCalendarParser(list) {
+    let listParse  = {
+        name: list.summary
+    };
+    return listParse;
+}
+
+
