@@ -111,6 +111,17 @@ namespace Signature.API.Infrastructure.Services
             request.AddParameter("expire_time", signatureInfo.expiration);
             request.AddParameter("callback_url", _settings.Value.CallBackUrl.ToString());
 
+
+            foreach (Coordinate coordinate in signatureInfo.coordinates)
+            {
+                request.AddParameter(coordinate.param, coordinate.value);
+            }
+
+            if (signatureInfo.coordinates.Count > 0 && signatureInfo.deliveryType != "")
+            {
+                request.AddParameter("delivery_type", signatureInfo.deliveryType);
+            }
+
             IRestResponse response = await client.ExecuteAsync(request);
             Console.WriteLine(response.Content);
 

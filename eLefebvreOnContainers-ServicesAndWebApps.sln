@@ -147,9 +147,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web.Bff.Database", "Web.Bff
 		src\ApiGateways\Web.Bff.Database\apigw\configuration.json = src\ApiGateways\Web.Bff.Database\apigw\configuration.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebOffice365AddonLexon", "src\Addon\Lexon\Office365\WebOffice365AddonLexon\WebOffice365AddonLexon.csproj", "{61E2F781-AB09-4033-85BA-68EC318EB57E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebOffice365AddonLexon", "src\Addon\Lexon\Office365\WebOffice365AddonLexon\WebOffice365AddonLexon.csproj", "{61E2F781-AB09-4033-85BA-68EC318EB57E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAddonLauncher", "src\Web\WebAddonLauncher\WebAddonLauncher.csproj", "{01DCC608-B4A1-449A-A066-02273C353367}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAddonLauncher", "src\Web\WebAddonLauncher\WebAddonLauncher.csproj", "{01DCC608-B4A1-449A-A066-02273C353367}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Centinela", "Centinela", "{713ACFB9-2243-441A-B427-33C46C42349B}"
 EndProject
@@ -180,7 +180,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "service", "service", "{361F
 		src\Addon\Centinela\Gmail\src\service\Service.js = src\Addon\Centinela\Gmail\src\service\Service.js
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebOffice365AddonCentinela", "src\Addon\Centinela\Office365\WebOffice365AddonCentinela\WebOffice365AddonCentinela.csproj", "{5C62493D-B34D-4F40-988F-2D0E4EEB9E9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebOffice365AddonCentinela", "src\Addon\Centinela\Office365\WebOffice365AddonCentinela\WebOffice365AddonCentinela.csproj", "{5C62493D-B34D-4F40-988F-2D0E4EEB9E9E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebDatabaseClient", "src\Web\WebDatabaseClient\WebDatabaseClient.csproj", "{367C9402-9854-43A9-A861-B183B3CF315F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1554,6 +1556,54 @@ Global
 		{5C62493D-B34D-4F40-988F-2D0E4EEB9E9E}.Release|x64.Build.0 = Release|Any CPU
 		{5C62493D-B34D-4F40-988F-2D0E4EEB9E9E}.Release|x86.ActiveCfg = Release|Any CPU
 		{5C62493D-B34D-4F40-988F-2D0E4EEB9E9E}.Release|x86.Build.0 = Release|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Ad-Hoc|Any CPU.ActiveCfg = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Ad-Hoc|Any CPU.Build.0 = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Ad-Hoc|ARM.ActiveCfg = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Ad-Hoc|ARM.Build.0 = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Ad-Hoc|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Ad-Hoc|x64.ActiveCfg = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Ad-Hoc|x64.Build.0 = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Ad-Hoc|x86.ActiveCfg = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Ad-Hoc|x86.Build.0 = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.AppStore|Any CPU.ActiveCfg = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.AppStore|Any CPU.Build.0 = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.AppStore|ARM.ActiveCfg = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.AppStore|ARM.Build.0 = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.AppStore|iPhone.ActiveCfg = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.AppStore|iPhone.Build.0 = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.AppStore|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.AppStore|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.AppStore|x64.ActiveCfg = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.AppStore|x64.Build.0 = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.AppStore|x86.ActiveCfg = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.AppStore|x86.Build.0 = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Debug|ARM.Build.0 = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Debug|x64.Build.0 = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Debug|x86.Build.0 = Debug|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Release|ARM.ActiveCfg = Release|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Release|ARM.Build.0 = Release|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Release|iPhone.Build.0 = Release|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Release|x64.ActiveCfg = Release|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Release|x64.Build.0 = Release|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Release|x86.ActiveCfg = Release|Any CPU
+		{367C9402-9854-43A9-A861-B183B3CF315F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1621,6 +1671,7 @@ Global
 		{BBB32329-4475-4033-811F-F97A6FA490C8} = {28AB0A0C-6E3D-45BB-A6F8-C26467EA3B06}
 		{361FE5AC-32B7-41B4-8D61-A674511F5478} = {28AB0A0C-6E3D-45BB-A6F8-C26467EA3B06}
 		{5C62493D-B34D-4F40-988F-2D0E4EEB9E9E} = {4C79F390-062F-4D70-A53A-6917A6529E58}
+		{367C9402-9854-43A9-A861-B183B3CF315F} = {E279BF0F-7F66-4F3A-A3AB-2CDA66C1CD04}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {25728519-5F0F-4973-8A64-0A81EB4EA8D9}

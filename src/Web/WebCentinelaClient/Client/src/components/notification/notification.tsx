@@ -32,11 +32,12 @@ class Notification extends Component<Props> {
           <Modal.Title>
             <div className='modal-title h4'>
               <h5
+                style={{color: 'white', fontSize: 22 }}
                 className='modal-title d-flex align-items-center'
                 id='clasificarNuevaclasificacionLabel'>
-                {error === false && <span className='lf-icon-bookmarks'></span>}
+                {error === false && <span style={{fontSize: 28, marginRight: 15}} className='lf-icon-bookmarks'></span>}
                 {error === true && (
-                  <span style={{ fontSize: 48 }} className='lf-icon-warning'></span>
+                  <span style={{ fontSize: 28, marginRight: 15 }} className='lf-icon-warning'></span>
                 )}
                 {message}
               </h5>

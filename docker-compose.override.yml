@@ -409,3 +409,14 @@ services:
       - "8093:80"   
     volumes:
       - ./src/ApiGateways/Web.Bff.Database/apigw:${ESHOP_OCELOT_VOLUME_SPEC:-/app/configuration}
+
+  webdatabaseclient:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - UseCustomizationData=True
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+
+    ports:
+      - "3015:80"

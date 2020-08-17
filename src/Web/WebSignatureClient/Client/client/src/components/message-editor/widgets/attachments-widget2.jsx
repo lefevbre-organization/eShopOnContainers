@@ -9,6 +9,7 @@ class AttachmentsWidget extends Component{
     constructor(props){
         super(props);
         this.state = {
+            optionSelected: 1
         };
         this.fileInput = null;
         this.onAttachButton = this.onAttachButton.bind(this);
@@ -28,9 +29,9 @@ class AttachmentsWidget extends Component{
                 <div className={styles['p10']}>
                     <span className={"lf-icon-add " + styles['title-icon']}></span><span className={styles["generic-title"]}>{i18n.t('attachmentsWidget.title')}</span>
                     {this.props.attachments.map((a, i) => (
-                        <p id={`p_${i}`} className={styles["subtitle"]}>{a.fileName} - ({(a.size / 1000000).toFixed(2)} MB)
-                            <a id={`a_${i}`} href="#" onClick={() => this.removeAttachment(a)}>
-                                <span id={`s_${i}`} className={`lf-icon-trash right ${styles["icon-trash"]} ${styles['right']}`}></span> 
+                        <p id={`p_${i}`} key={`p_${i}`} className={styles["subtitle"]}>{a.fileName} - ({(a.size / 1000000).toFixed(2)} MB)
+                            <a id={`a_${i}`} key={`a_${i}`} href="#" onClick={() => this.removeAttachment(a)}>
+                                <span id={`s_${i}`} key={`s_${i}`}  className={`lf-icon-trash right ${styles["icon-trash"]} ${styles['right']}`}></span> 
                             </a>
                         </p>
                     ))}
@@ -52,8 +53,31 @@ class AttachmentsWidget extends Component{
                     <div className="clearfix"></div>
                 </div>
                 <div className={styles["sign"]}>
-                    <span className="lf-icon-check"></span>
-                    <a href="#"> {i18n.t('attachmentsWidget.pagesConfiguration')}</a>
+                
+                    {/* <span className={(this.state.optionSelected === 1 ? 'lf-icon-box-active' : 'lf-icon-box-inactive')}></span>
+                    <a href="#" onClick={()=> this.setState({optionSelected: 1})}> {i18n.t('attachmentsWidget.pagesConfiguration.single')}</a>
+                    <br></br>
+                    <span className={(this.state.optionSelected === 2 ? 'lf-icon-box-active' : 'lf-icon-box-inactive')}></span>
+                    <a href="#" onClick={()=> this.setState({optionSelected: 2})}> {i18n.t('attachmentsWidget.pagesConfiguration.all')}</a> */}
+
+                    {/* <span className={(this.state.optionSelected === 1 ? 'lf-icon-step-final' : 'lf-icon-step-first')} style={{color: '#001970'}}></span>
+                    <a href="#" onClick={()=> this.setState({optionSelected: 1})}> {i18n.t('attachmentsWidget.pagesConfiguration.single')}</a>
+                    <br></br>
+                    <span className={(this.state.optionSelected === 2 ? 'lf-icon-step-final' : 'lf-icon-step-first')}  style={{color: '#001970'}}></span>
+                    <a href="#" onClick={()=> this.setState({optionSelected: 2})}> {i18n.t('attachmentsWidget.pagesConfiguration.all')}</a> */}
+
+                    {/* <span className={(this.state.optionSelected === 1 ? 'lf-icon-radio-button-active' : 'lf-icon-step-first')} style={{color: '#001970'}}></span>
+                    <a href="#" onClick={()=> this.setState({optionSelected: 1})}> {i18n.t('attachmentsWidget.pagesConfiguration.single')}</a>
+                    <br></br>
+                    <span className={(this.state.optionSelected === 2 ? 'lf-icon-radio-button-active' : 'lf-icon-step-first')}  style={{color: '#001970'}}></span>
+                    <a href="#" onClick={()=> this.setState({optionSelected: 2})}> {i18n.t('attachmentsWidget.pagesConfiguration.all')}</a> */}
+
+                    <span className={(this.state.optionSelected === 1 ? 'lf-icon-check-round-full' : 'lf-icon-step-first')} style={{color: '#001970'}}></span>
+                    <a href="#" onClick={()=> {this.setState({optionSelected: 1}); this.props.onSelectNumPages(1)}}> {i18n.t('attachmentsWidget.pagesConfiguration.single')}</a>
+                    <br></br>
+                    <span className={(this.state.optionSelected === 2 ? 'lf-icon-check-round-full' : 'lf-icon-step-first')}  style={{color: '#001970'}}></span>
+                    <a href="#" onClick={()=> {this.setState({optionSelected: 2}); this.props.onSelectNumPages(2)}}> {i18n.t('attachmentsWidget.pagesConfiguration.all')}</a>
+
                 </div>
                 <div className="clearfix"></div>
             </div>)
@@ -66,21 +90,36 @@ class AttachmentsWidget extends Component{
     onAttachSelected(event) {
         event.preventDefault();
         event.stopPropagation();
+
+    
         const addAttachment = (file, dataUrl) => {
-          const newAttachment = {
+            const pdfjsLib = require('pdfjs-dist');
+            pdfjsLib.GlobalWorkerOptions.workerSrc = '../../../../assets/scripts/pdf.worker.js'
+
+            const newAttachment = {
             fileName: file.name,
             size: file.size,
             contentType: file.type,
             content: dataUrl.currentTarget.result.replace(
-              /^data:[^;]*;base64,/,
-              ''
+                /^data:[^;]*;base64,/,
+                ''
             ),
-          };
-          const updatedMessage = { ...this.props.editedMessage };
-          updatedMessage.attachments = updatedMessage.attachments
-            ? [...updatedMessage.attachments, newAttachment]
-            : [newAttachment];
-          this.props.editMessage(updatedMessage);
+            };
+
+            pdfjsLib.getDocument({data: atob(newAttachment.content)})
+            .promise.then(doc => {
+                var numPages = doc.numPages;
+                newAttachment.pages = numPages;
+                console.log('# Document Loaded');
+                console.log('Number of Pages: ' + numPages);
+
+                const updatedMessage = { ...this.props.editedMessage };
+                updatedMessage.attachments = updatedMessage.attachments
+                    ? [...updatedMessage.attachments, newAttachment]
+                    : [newAttachment];
+                this.props.editMessage(updatedMessage);
+            });
+            
         };
         Array.from(event.target.files).forEach((file) => {
           const fileReader = new FileReader();
@@ -118,4 +157,3 @@ const mapStateToProps = (state) => ({
     mapStateToProps,
     mapDispatchToProps
   )((AttachmentsWidget));
-  

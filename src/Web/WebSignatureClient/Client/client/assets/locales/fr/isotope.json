@@ -214,7 +214,11 @@
   "attachmentsWidget": {
     "title": "pièces jointes",
     "attachButton": "Ajouter document",
-    "pagesConfiguration": "Signer le document sur une seule feuille"
+    "pagesConfiguration": {
+      "single": "Signer le document sur une seule feuille",
+      "all": "Signer le document sur toutes les feuilles" 
+    }
+
   },
   "expirationWidget":{
     "title": "Délais d expiration de signature",

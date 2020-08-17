@@ -59,6 +59,11 @@ class FolderContainer extends Component {
                     }
                     this.treeViewRef.current.fields.dataSource[i] = Object.assign({}, ds, ns, { expanded: ds.expanded, selected: ds.selected});
                 }
+
+                setTimeout(()=>{
+                    this.treeViewRef.current.refresh();
+                });
+
             }
         }
     }
