@@ -544,29 +544,31 @@ class MessageList extends Component {
     render() {
         const contenido = `
             <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
-            <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+            <div style='text-align: justify; text-justify: inter-word; align-self: center;
+            font-size: 17.5px !important; padding-left: 20px;'>
             ${i18n.t('cancelledSignatureModal.text')}
             </div>`;
 
         const contenido2 = `
             <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
-            <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+            <div style='text-align: justify; text-justify: inter-word; align-self: center; 
+            font-size: 17.5px !important; padding-left: 20px;'>
             ${i18n.t('cancelConfirmationModal.text')}
             </div>`;
 
         const confirmButtons = [
             {
                 click: () => {
+                this.setState({ hideConfirmDialog: false });
+                },
+                buttonModel: {  content: i18n.t('confirmationModal.no'), cssClass: 'btn-modal-close' }
+            },
+            {
+                click: () => {
                     this.setState({ hideConfirmDialog: false });
                     this.onCancelSignatureOk();
                 },
                 buttonModel: { content: i18n.t('confirmationModal.yes'), isPrimary: true }
-            },
-            {
-                click: () => {
-                this.setState({ hideConfirmDialog: false });
-                },
-                buttonModel: { content: i18n.t('confirmationModal.no'), isPrimary: true }
             }
         ];
 
@@ -641,9 +643,9 @@ class MessageList extends Component {
                     id="confirmDialog" 
                     header=' ' 
                     visible={this.state.hideConfirmDialog} 
-                    //showCloseIcon={true} 
+                    showCloseIcon={true} 
                     animationSettings={this.animationSettings} 
-                    width='400px' 
+                    width='60%' 
                     content={contenido2} 
                     ref={dialog => this.confirmDialogInstance = dialog} 
                     //target='#target' 
@@ -700,7 +702,8 @@ class MessageList extends Component {
                     .e-dropdownbase .e-list-item.e-active.e-hover {
                         color: #001970;
                     }
-                    .e-dropdownbase .e-list-item.e-active, .e-dropdownbase .e-list-item.e-active.e-hover {
+                    .e-dropdownbase .e-list-item.e-active, .e-dropdownbase 
+                    .e-list-item.e-active.e-hover {
                         background-color: #eee;
                         border-color: #fff;
                         color: #001970;
@@ -708,7 +711,8 @@ class MessageList extends Component {
                     .e-dropdownbase .e-list-item.e-active.e-hover {
                         color: #001970;
                     }
-                    .e-toolbar .e-toolbar-items .e-toolbar-item .e-tbar-btn.e-btn.e-tbtn-txt .e-icons.e-btn-icon {
+                    .e-toolbar .e-toolbar-items .e-toolbar-item 
+                    .e-tbar-btn.e-btn.e-tbtn-txt .e-icons.e-btn-icon {
                         padding: 0;
                         color: #001970;
                     }
@@ -734,19 +738,48 @@ class MessageList extends Component {
                         color: #001970;
                     }
                     
-                    .e-input-group:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left), .e-input-group.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) .e-input-in-wrap, .e-input-group.e-control-wrapper:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left), .e-input-group.e-control-wrapper.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) .e-input-in-wrap, .e-float-input.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) .e-input-in-wrap, .e-float-input.e-control-wrapper.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) .e-input-in-wrap {
-                        border-color: #001970;
+                    .e-input-group:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left), 
+                    .e-input-group.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) 
+                    .e-input-in-wrap, .e-input-group.e-control-wrapper:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left), 
+                    .e-input-group.e-control-wrapper.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) .e-input-in-wrap, 
+                    .e-float-input.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) .e-input-in-wrap, 
+                    .e-float-input.e-control-wrapper.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) 
+                    .e-input-in-wrap {
+                      border: 1px solid #001970;
+                      width: 100%;
                     }
-                    .e-input-group:not(.e-float-icon-left):not(.e-float-input)::before, .e-input-group:not(.e-float-icon-left):not(.e-float-input)::after, .e-input-group.e-float-icon-left:not(.e-float-input) .e-input-in-wrap::before, .e-input-group.e-float-icon-left:not(.e-float-input) .e-input-in-wrap::after, .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::before, .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::after, .e-input-group.e-control-wrapper.e-float-icon-left:not(.e-float-input) .e-input-in-wrap::before, .e-input-group.e-control-wrapper.e-float-icon-left:not(.e-float-input) .e-input-in-wrap::after {
+                    .e-input-group:not(.e-float-icon-left):not(.e-float-input)::before, 
+                    .e-input-group:not(.e-float-icon-left):not(.e-float-input)::after, 
+                    .e-input-group.e-float-icon-left:not(.e-float-input) 
+                    .e-input-in-wrap::before, 
+                    .e-input-group.e-float-icon-left:not(.e-float-input) 
+                    .e-input-in-wrap::after, 
+                    .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::before, 
+                    .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::after, 
+                    .e-input-group.e-control-wrapper.e-float-icon-left:not(.e-float-input) 
+                    .e-input-in-wrap::before, 
+                    .e-input-group.e-control-wrapper.e-float-icon-left:not(.e-float-input) 
+                    .e-input-in-wrap::after {
                         background: #001970;
                     }
+   
                     .test{
                         color: #fff;
                     }
-                    input:not([type]), input[type=text]:not(.browser-default___2ZECf), input[type=password]:not(.browser-default___2ZECf), input[type=email]:not(.browser-default___2ZECf), input[type=url]:not(.browser-default___2ZECf), input[type=time]:not(.browser-default___2ZECf), input[type=date]:not(.browser-default___2ZECf), input[type=datetime]:not(.browser-default___2ZECf), input[type=datetime-local]:not(.browser-default___2ZECf), input[type=tel]:not(.browser-default___2ZECf), input[type=number]:not(.browser-default___2ZECf), input[type=search]:not(.browser-default___2ZECf), textarea.materialize-textarea___2dl8r {
+                    input:not([type]), input[type=text]:not(.browser-default___2ZECf), 
+                    input[type=password]:not(.browser-default___2ZECf), 
+                    input[type=email]:not(.browser-default___2ZECf),
+                    input[type=url]:not(.browser-default___2ZECf), 
+                    input[type=time]:not(.browser-default___2ZECf), 
+                    input[type=date]:not(.browser-default___2ZECf), 
+                    input[type=datetime]:not(.browser-default___2ZECf), 
+                    input[type=datetime-local]:not(.browser-default___2ZECf), 
+                    input[type=tel]:not(.browser-default___2ZECf), 
+                    input[type=number]:not(.browser-default___2ZECf), 
+                    input[type=search]:not(.browser-default___2ZECf), 
+                    textarea.materialize-textarea___2dl8r {
                         background-color: transparent;
                         border: none;
-                        
                         border-radius: 0;
                         outline: none;
                         height: 0rem;
@@ -757,7 +790,14 @@ class MessageList extends Component {
                         box-shadow: none;
                         box-sizing: content-box;
                         transition: box-shadow .3s, border .3s;
+                        padding-top: 3px;
                     }
+                    
+                    .e-input-group:not(.e-success):not(.e-warning):not(.e-error) input.e-input:focus {
+                      border-bottom: none;
+                      box-shadow: none;
+                    }
+
                     .e-toolbar .e-toolbar-items {
                         border-radius: 0 0 0 0;
                         display: inline-block;
@@ -765,10 +805,11 @@ class MessageList extends Component {
                         min-height: 53px;
                         vertical-align: middle;
                     }
-
-
-                    
-                    #infoDialog, #confirmDialog{
+                    #confirmDialog { 
+                      top: -10px !important;
+                    }
+    
+                    #infoDialog, #confirmDialog {
                         max-height: 927px;
                         width: 300px;
                         left: 770px;
@@ -776,17 +817,24 @@ class MessageList extends Component {
                         z-index: 1001;
                         transform: translateY(+150%);
                     }
-                    #confirmDialog_dialog-header, #confirmDialog_title, #onfirmDialog_dialog-content, .e-footer-content{
+                    #confirmDialog_dialog-header, 
+                    #confirmDialog_title, 
+                    #confirmDialog_dialog-content, 
+                    .e-footer-content{
+                        background: #001970;
+                        color: #fff;
+                        display:flex;
+                        width: auto;
+                    }
+
+                    #infoDialog_dialog-header, #infoDialog_title, 
+                    #infoDialog_dialog-content, .e-footer-content{
                         background: #001970;
                         color: #fff;
                         display:flex;
                     }
-                    #infoDialog_dialog-header, #infoDialog_title, #infoDialog_dialog-content, .e-footer-content{
-                        background: #001970;
-                        color: #fff;
-                        display:flex;
-                    }
-                    #confirmDialog_dialog-header, #confirmDialog_title, #confirmDialog_dialog-content, .e-footer-content{
+                    #confirmDialog_dialog-header, #confirmDialog_title, 
+                    #confirmDialog_dialog-content, .e-footer-content{
                         background: #001970;
                         color: #fff;
                         display:flex;
@@ -797,12 +845,125 @@ class MessageList extends Component {
                     .e-btn-icon .e-icon-dlg-close .e-icons{
                         color: #fff;
                     }
-                    .e-dialog .e-dlg-header-content .e-btn.e-dlg-closeicon-btn{
+                    .e-dialog .e-dlg-header-content 
+                    .e-btn.e-dlg-closeicon-btn {
                         margin-right: 0;
                         margin-left: auto;
-                        color: #fff
+                        color: #fff;
+                        height: 15px;
+                        background-color: transparent;
                     }
-                    
+                    #confirmDialog_dialog-header, .e-dialog 
+                    .e-icon-dlg-close::before {
+                        content: '\e7fc';
+                        position: relative;
+                        color: white;
+                        font-size: 15px;
+                    }
+
+                    #confirmDialog .e-btn.e-flat.e-primary {
+                        text-transform: uppercase;
+                        font-size: 13px;
+                        font-family: MTTMilano-Bold,Lato,Arial,sans-serif;
+                        letter-spacing: .7px;
+                        color: #001978 !important;
+                        padding: 10px;
+                        background-color: #fff;
+                        border-radius: 0 !important;
+                        border: 2px solid #fff !important;
+                        min-width: 80px;
+                    }
+                      
+                    #confirmDialog .e-btn.e-flat.e-primary:hover {
+                        background-color: #e5e8f1 !important;
+                        background: #e5e8f1 !important;
+                        color: #001978 !important;
+                    }
+                      
+                    #confirmDialog .e-btn.e-flat.e-primary:active {
+                        background-color: #e5e8f1 !important;
+                        background: #e5e8f1 !important;
+                        color: #001978 !important;
+                    }
+
+                    .btn-modal-close {
+                        text-transform: uppercase;
+                        font-size: 13px;
+                        font-family: MTTMilano-Bold,Lato,Arial,sans-serif;
+                        letter-spacing: .7px;
+                        color: #fff !important;
+                        padding: 10px;
+                        background-color: #001978 !important;
+                        min-width: 80px;
+                        border-radius: 0 !important;
+                        border: 2px solid #fff !important;
+                    }
+                      
+                    .btn-modal-close:hover {
+                     background-color: #e5e8f1 !important;
+                     background: #e5e8f1 !important;
+                     color: #001978 !important;
+                    }
+                   
+                    .btn-modal-close:active {
+                     background-color: #e5e8f1 !important;
+                     background: #e5e8f1 !important;
+                     color: #001978 !important;
+                    }
+                    .e-toolbar-right {
+                      right: 13% !important;
+                    }
+                    .e-toolbar .e-toolbar-items.e-tbar-pos .e-toolbar-left {
+                     left: auto;
+                    }
+                    .e-toolbar-left {
+                     right: 0 !important;
+                     background-color: #80808052;
+                     height: 95% !important;
+                     top: 2px !important;
+                     border-top-left-radius: 23px;
+                     border-bottom-left-radius: 23px;
+                    }
+                    .e-tbar-btn-text {
+                      display: none !important;
+                    } 
+                    .e-toolbar .e-toolbar-items .e-toolbar-left 
+                    .e-toolbar-item:first-child {
+                      margin-left: 15px;
+                    }
+                    .e-toolbar .e-toolbar-items .e-toolbar-left 
+                    .e-toolbar-item:nth-child(3) {
+                      margin-right: 15px;
+                    }
+                    .e-toolbar .e-toolbar-items .e-toolbar-left 
+                    .e-toolbar-item:third-child {
+                      margin-left: 20px;
+                    }
+                    .e-toolbar .e-tbar-btn {
+                      background: #001978;
+                      border-radius: 15px;
+                    }
+                    .e-toolbar .e-toolbar-items .e-toolbar-item 
+                    .e-tbar-btn.e-btn.e-tbtn-txt 
+                    .e-icons.e-btn-icon {
+                     color: #fbfbfb;
+                    }
+                    .e-toolbar .e-toolbar-items .e-toolbar-item .e-tbar-btn.e-btn {
+                     height: calc(100% - 15px);
+                     padding: 0 3.5px;
+                    }
+
+                    .e-grid .e-toolbar-items .e-toolbar-item.e-search-wrapper 
+                    .e-search .e-search-icon {
+                     min-width: 29px !important;
+                     border-left: 1px solid #001978 !important;
+                     font-size: 16px !important;
+                    }
+          
+                    .e-input-focus  {
+                      border: 1px solid #001970 !important;
+                      height: calc(100% - 15px);
+                    }
                 `}
                 </style>
             </div>
