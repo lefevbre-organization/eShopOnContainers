@@ -56,8 +56,8 @@ data:
   internalurls__databaseapi__hc: http://{{ .Values.app.svc.databaseapi }}/hc
   name__databaseapigw__hc: Database GW HTTP Check
   internalurls__databaseapigw__hc: http://{{ .Values.app.svc.databaseapigw }}/hc
-  name__webaddonlexon__hc: Addon Lexon HTTP Check
-  internalurls__webaddonlexon__hc: http://{{ .Values.app.svc.addonlexon }}/hc
+  name__webaddonlauncher__hc: Addon Lexon HTTP Check
+  internalurls__webaddonlauncher__hc: http://{{ .Values.app.svc.addonlexon }}/hc
   name__weboffice365addonlexon__hc: Addon Office365 HTTP Check
   internalurls__weboffice365addonlexon__hc: http://{{ .Values.app.svc.office365addonlexon }}/hc
   internalurls__identity__hc: http://{{ .Values.app.svc.identity }}/hc
