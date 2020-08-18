@@ -244,7 +244,7 @@ export const listAcl = (calendar) =>
                 calendarId: calendar               
             })
             .then(response => {
-                resolve(response.result);
+                resolve(response.result.items);
             })
             .catch(err => {
                 reject(err);

@@ -144,7 +144,7 @@ export class Acl extends React.Component {
     getlistAcl() {
         listAcl(this.state.calendarid)
             .then(result => {
-                this.onDataBinding(result.items)
+                this.onDataBinding(result)
             })
             .catch(error => {
                 console.log('error ->', error);

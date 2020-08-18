@@ -1,4 +1,4 @@
-﻿//Calendarlist Api
+﻿
 import config from '../Config';
 import { UserAgentApplication } from 'msal';
 
@@ -36,7 +36,6 @@ export const getAuthenticatedClient = (accessToken) => {
             done(null, accessToken.accessToken);
         },
     });
-
     return client;
 };
 
@@ -45,6 +44,7 @@ export const getAccessTokenSilent = async () => {
     return await window.msal.acquireTokenSilent({ scopes: config.scopes });
 };
 
+//Calendarlist Api
 
 export const listCalendarList = () => {
     return new Promise(async (resolve, reject) => {
@@ -278,20 +278,40 @@ export const addAcl = (calendar, acl) =>
 
     });
 
-export const listAcl = (calendar) =>
-    new Promise((resolve, reject) => {
-        window.gapi.client.calendar.acl
-            .list({
-                calendarId: calendar               
-            })
-            .then(response => {
-                resolve(response.result);
-            })
-            .catch(err => {
+////https://graph.microsoft.com/v1.0/me/calendars/AAMkADYwN2U5OWZlLWUwZDktNDQ3Yi05MTQ2LTMxYmUyMGExMjcwNgBGAAAAAAABGTrist65R5XlVfmY3KAqBwAcnBiKLwlKQrviB8XkwxacAAAAAAEGAAAcnBiKLwlKQrviB8XkwxacAAAAAB05AAA=/calendarpermissions
+//export const listAcl = (calendar) =>
+
+//    new Promise((resolve, reject) => {
+
+
+//        window.gapi.client.calendar.acl
+//            .list({
+//                calendarId: calendar               
+//            })
+//            .then(response => {
+//                resolve(response.result);
+//            })
+//            .catch(err => {
+//                reject(err);
+//            });
+
+//    });
+
+export const listAcl = (calendarId) => {
+    return new Promise(async (resolve, reject) => {
+        const accessToken = await getAccessTokenSilent();
+        const client = getAuthenticatedClient(accessToken);
+        client
+            .api(`me/calendars/${calendarId}/calendarpermissions`)
+            .get()
+            .then((response) =>
+                resolve(listACLParser(response.value)))
+            .catch((err) => {
                 reject(err);
             });
-
     });
+};
+
 
 export const deleteAcl = (calendar, ruleId) =>
     new Promise((resolve, reject) => {
@@ -364,5 +384,35 @@ function addCalendarParser(list) {
     };
     return listParse;
 }
+
+function listACLParser(list) {
+    let listParse = [];
+    if (list.length > 0) {
+        for (let i = 0; i < list.length; i++) {   
+            if (list[i].isRemovable)
+            {
+                listParse.push({
+                    id: "user:" + list[i].isRemovable,
+                    role: "owner" + list[i].emailAddress.address,
+                    scope: {
+                        type: "user",
+                        value: list[i].emailAddress.address,
+                    }
+                });
+            }            
+        }
+    }
+    return listParse;
+}
+
+
+//{
+//        "allowedRoles": ["string"],
+//        "emailAddress": { "@odata.type": "microsoft.graph.emailAddress" },
+//        "id": "String (identifier)",
+//        "isInsideOrganization": "boolean",
+//        "isRemovable": "boolean",
+//        "role": "string"
+//}
 
 
