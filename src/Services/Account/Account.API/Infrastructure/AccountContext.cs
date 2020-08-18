@@ -66,7 +66,7 @@
             return session.Client.GetDatabase(_settings.Value.Database).GetCollection<UserMail>(_settings.Value.Collection);
         }
 
-        public IMongoCollection<AccountEvents> AccountEventssTransaction(IClientSessionHandle session)
+        public IMongoCollection<AccountEvents> AccountEventsTransaction(IClientSessionHandle session)
         {
             return session.Client.GetDatabase(_settings.Value.Database).GetCollection<AccountEvents>(_settings.Value.CollectionCalendar);
         }
@@ -78,12 +78,12 @@
 
         public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogs
         {
-            get { return Database.GetCollection<IntegrationEventLogEntry>(_settings.Value.CollectionCalendar); }
+            get { return Database.GetCollection<IntegrationEventLogEntry>(_settings.Value.CollectionEvents); }
         }
 
         public IMongoCollection<IntegrationEventLogEntry> IntegrationEventLogsTransaction(IClientSessionHandle session)
         {
-            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<IntegrationEventLogEntry>(_settings.Value.CollectionCalendar);
+            return session.Client.GetDatabase(_settings.Value.Database).GetCollection<IntegrationEventLogEntry>(_settings.Value.CollectionEvents);
         }
 
         public async Task PublishThroughEventBusAsync(IntegrationEvent evt, IClientSessionHandle session)
