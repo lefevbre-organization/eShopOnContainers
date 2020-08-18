@@ -100,22 +100,20 @@ export const updateCalendarList = (calendarId, calendar) =>
 
 //Calendars Api
 
-export const updateCalendar = (calendarId, calendar) =>
-    new Promise((resolve, reject) => {
-        window.gapi.client.calendar.calendars
-            .update({
-                calendarId: calendarId,
-                resource: calendar
-            })
-
-            .then(response => {
-                resolve(response.result);
-            })
-            .catch(err => {
+export const updateCalendar = (calendarId, calendar) => {
+    return new Promise(async (resolve, reject) => {
+        const accessToken = await getAccessTokenSilent();
+        const client = getAuthenticatedClient(accessToken);
+        client
+            .api(`me/calendars/${calendarId}`)
+            .update(addCalendarParser(calendar))
+            .then((response) =>
+                resolve(response))
+            .catch((err) => {
                 reject(err);
             });
-
     });
+};
 
 export const getCalendar = (calendarId) => {   
     return new Promise(async (resolve, reject) => {
@@ -132,7 +130,6 @@ export const getCalendar = (calendarId) => {
     });   
 };
 
-
 export const addCalendar = (calendar) => { 
     return new Promise(async (resolve, reject) => {
         const accessToken = await getAccessTokenSilent();
@@ -147,7 +144,6 @@ export const addCalendar = (calendar) => {
             });
     });
 };
-
 
 export const deleteCalendar = (idCalendar) => {   
     return new Promise(async (resolve, reject) => {
