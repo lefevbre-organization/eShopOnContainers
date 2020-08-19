@@ -184,7 +184,12 @@ export class Eventtype extends React.Component {
         
       
         addorUpdateEventType(dataEventTypeAPI)
-            .then(result => {                
+            .then(result => {   
+
+                if (result.errors.length > 0) {
+                    throw true
+                }
+                    
                 this.toastObj.timeOut = 1000;
                 this.toastObj.show(this.toasts[1]);
 
