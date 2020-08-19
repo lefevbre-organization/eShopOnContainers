@@ -1218,7 +1218,7 @@ export class Main extends Component {
                 let calendars = groupBy(this.resourceCalendarData, "checked");
 
                 // Set the calendar field as default when only one calendar is checked
-                // this.setDefaultCalendarField(calendars.true, calendar)
+                this.setDefaultCalendarField(calendars.true, calendar)
 
                 // Load selected calendar to pass to the query
                 this.predicateQueryEvents(calendars.true, predicate)
@@ -1230,18 +1230,35 @@ export class Main extends Component {
 
     }
 
-    //setDefaultCalendarField(calendarList, calendar) {
-    //    if (calendarList != undefined) {
-    //        if (calendarList.length === 1) {
-    //            this.resourceCalendarData.sort(function (a, b) {
-    //                if (a.id === calendar) { return -1; }
-    //                //if (a.firstname > b.firstname) { return 1; }
-    //                return 0;
-    //            })
-    //        }
-    //    }      
-    //}
+    setDefaultCalendarField(calendarList, calendar) {
+        if (calendarList != undefined) {
+            if (calendarList.length > 0) {
+                calendarList.every(function (key) {
+                    if (key.checked && key.primary) {
+                        calendar = key.id;
+                        return false;
+                    }
+                    else if (key.checked && key.primary === undefined) {
+                        calendar = key.id;
+                        return true
+                    }
+                });
+            }
+        }
+        else {
+            this.resourceCalendarData.forEach(function (key) {
+                if (key.checked && key.primary) {
+                    calendar = key.id;
+                }
+            })           
+        }
 
+        this.resourceCalendarData.sort(function (a, b) {
+            if (a.id === calendar) { return -1; }
+            //if (a.firstname > {b.firstname) { return 1; }
+            return 0;
+        })
+    }
     predicateQueryEvents(calendarList, predicate) {
         if (calendarList != undefined) {
             calendarList.forEach(function (valor, indice) {
@@ -1395,6 +1412,7 @@ export class Main extends Component {
                                     setSearchQuery={this.props.setSearchQuery}
                                     getLabelMessages={this.getLabelMessages}
                                     searchQuery={this.props.searchQuery}
+                                    hiddeSearch={true}
                                 />
                             </div>
                         ) : (
@@ -1496,7 +1514,7 @@ export class Main extends Component {
                                                 </ViewsDirective>
                                                 <ResourcesDirective> 
                                                     {/*<ResourceDirective field='eventType' title={i18n.t("schedule.eventtype")} name='eventType' allowMultiple={false} dataSource={this.eventTypeDataSource} textField='text' idField='id' colorField='backgroundColor' />  */}                                
-                                                    <ResourceDirective field='CalendarId' title={i18n.t("calendar-sidebar.mycalendars")} name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor' />            
+                                                    <ResourceDirective ref={cal => this.calendarObj = cal} field='CalendarId' title={i18n.t("calendar-sidebar.mycalendars")} name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor' />            
                                                 </ResourcesDirective>                                                   
                                                 <Inject services={[Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop]} />
                                             </ScheduleComponent>
