@@ -78,7 +78,6 @@ class SideBar extends Component {
         Lo sentimos has agotado el número máximo de firmas contratadas. 
         Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 912108000 o pinchando <a href='https://www.efl.es/atencion-al-cliente' style='color: white'><u>aquí</u></a>
       </div>`;
-    
     // const contenido = `
     //   <div id='demo-modal' className='modal modal-warning'>
     //       <div className='modal-content'>
@@ -105,6 +104,7 @@ class SideBar extends Component {
     // </div>
     // `
     return (
+   
       <aside
         onDragOver={this.handleOnDragOver}
         onDragLeave={this.handleOnDragLeave}
@@ -115,7 +115,10 @@ class SideBar extends Component {
           ${SideBar.getCollapsedClassName(collapsed)}
           ${dragOver ? styles.dropZone : ''}`}>
         <div
-          className={`${mainCss['mdc-drawer__header']} ${styles['top-container']} ${styles['divheader']}`}>
+          className={`${mainCss['mdc-drawer__header']} 
+          ${styles['top-container']} 
+          ${!collapsed ? styles['divheader'] : 
+          styles['divheader-without-side-bar']}`}>
           {/*{(location.protocol !== 'https:' &&
             <span className='material-icons' isotip={t('sideBar.errors.noSSL')}
               isotip-position='bottom-start' isotip-size='small'>
@@ -131,32 +134,47 @@ class SideBar extends Component {
             </span>
           )}
           {/* <img className={styles.logo} border="0" alt="Lefebvre" src="assets/images/logo-elderecho.png"></img>*/}
-          <button
-            style={{ height: 48 }}
-            className={`${mainCss['mdc-button']}
-                    ${mainCss['mdc-button']} ${styles['nueva-firma']}`}
-            onClick={this.handleOnNewMessage}>
-            {/* <i className='material-icons mdc-button__icon' style={{ fontSize: 48 }}>add_circle_outline</i>*/}
-            <img
-              className={styles.plusbuttton}
-              border='0'
-              src='assets/images/plus.png'></img>
-            <span className='mdc-button__label' style={{ fontSize: 10.6 }}>
-              {t('sideBar.newRequest')}
-            </span>
-          </button>
-          {/* <span
-            className={styles.toggle}
-            isotip={t('sideBar.hide')}
-            isotip-position='bottom-end'
-            isotip-size='small'>
-            <IconButton onClick={this.props.sideBarToggle}>
-              keyboard_arrow_left
-            </IconButton>
-          </span> */}
+          <div className={`${!collapsed ? styles['add-signature-toggle'] : ''}`}>
+
+            { collapsed ?  
+              <span
+               className={styles['toggle-without-side-bar']}
+               isotip-position='bottom-end'
+               isotip-size='larger'>
+                <IconButton onClick={this.props.sideBarToggle}>
+                 keyboard_arrow_right
+                </IconButton>   
+              </span> :  
+              <span
+               className={styles.toggle, styles['button-toggle']}
+               isotip={t('sideBar.hide')}
+               isotip-position='bottom-end'
+               isotip-size='larger'>
+                <IconButton onClick={this.props.sideBarToggle}>
+                 keyboard_arrow_left
+                </IconButton> 
+               </span> 
+            } 
+            <button
+              style={{ height: 48 }}
+              className={`${mainCss['mdc-button']}
+                      ${mainCss['mdc-button']} ${styles['nueva-firma']}`}
+              onClick={this.handleOnNewMessage}>
+              {/* <i className='material-icons mdc-button__icon' style={{ fontSize: 48 }}>add_circle_outline</i>*/}
+              <img
+                className={styles.plusbuttton}
+                border='0'
+                src='assets/images/plus.png'></img>
+              { !collapsed ?<span className='mdc-button__label' style={{ fontSize: 10.6 }}>
+                {t('sideBar.newRequest')}
+              </span> : "" }
+            </button>
+         
+          </div>
+         
         </div>
         <PerfectScrollbar>
-          <MenuContainer />
+          <MenuContainer collapsed={collapsed} />
         </PerfectScrollbar>
         <DialogComponent 
           id="noSignaturesDialog" 

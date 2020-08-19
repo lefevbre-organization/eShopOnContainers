@@ -105,7 +105,12 @@ body {
         width: 100%;
         transition: margin $drawerAnimationSpeed;
 
-
+        &.without-side-bar {
+          margin-left: 104px;
+          width: calc(100% - #{$drawerWidthtopbar});
+          height: calc(100% - 133px);
+        }
+        
         &.with-side-bar {
             margin-left: $drawerWidth;
             width: calc(100% - #{$drawerWidthtopbar});

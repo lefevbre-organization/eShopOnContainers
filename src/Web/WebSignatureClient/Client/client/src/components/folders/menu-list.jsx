@@ -21,6 +21,7 @@ export const DroppablePayloadTypes = {
 
 export class MenuListClass extends Component {
   render() {
+    const { collapsed } = this.props;
     const selectedFilter = this.props.application.signaturesFilterKey;
     const option1 = 'En progreso';
     const option2 = 'Completadas';
@@ -30,19 +31,57 @@ export class MenuListClass extends Component {
     return (
         // <div key={'firmas'} className={`${styles.itemContainer}`}>
         <div>
-          <div className={`${styles['title-nav-firmas']}`}><span className="lf-icon-signature"></span>{i18n.t('sideBar.filterMenu')}</div>
+        { 
+         collapsed ?  
+         <div className={`${styles['title-nav-firmas']}`}>
+            <span className="lf-icon-signature">
+            </span>
+          </div> :  
+          <div className={`${styles['title-nav-firmas']}`}>
+            <span className="lf-icon-signature">
+            </span>{i18n.t('sideBar.filterMenu')}
+          </div>
+          }
           <ul className={`${styles['nav-firmas']}`}>
                 <li className={`${styles.todas}`}>
-                    <a href="#" id={option3} onClick={event => this.onClick(event, option3)}><span className="lf-icon-folder"></span>{i18n.t('sideBar.filterAll')}</a>
+                    <a href="#" id={option3} onClick={event => this.onClick(event, option3)}>
+                      <span className="lf-icon-folder"> 
+                      </span> 
+                      { 
+                       collapsed ?  ''  : 
+                       <span>{i18n.t('sideBar.filterAll')}</span>
+                       } 
+                    </a>
                 </li>
                 <li className={`${styles['en-progreso']}`}>
-                    <a href="#" id={option1} onClick={event => this.onClick(event, option1)}><span className="lf-icon-folder"></span>{i18n.t('sideBar.filterInProgress')}</a>
+                    <a href="#" id={option1} onClick={event => this.onClick(event, option1)}>
+                      <span className="lf-icon-folder">
+                      </span>
+                      { 
+                       collapsed ?  ''  : 
+                       <span>{i18n.t('sideBar.filterInProgress')}</span>
+                      } 
+                    </a>
                 </li>
                 <li className={`${styles.completadas}`}>
-                    <a href="#" id={option2} onClick={event => this.onClick(event, option2)}><span className="lf-icon-folder"></span>{i18n.t('sideBar.filterCompleted')}</a>
+                    <a href="#" id={option2} onClick={event => this.onClick(event, option2)}>
+                      <span className="lf-icon-folder">
+                      </span>
+                      { 
+                       collapsed ?  ''  : 
+                       <span>{i18n.t('sideBar.filterCompleted')}</span>
+                      } 
+                    </a>
                 </li>
                 <li className={`${styles.canceladas}`}>
-                    <a href="#" id={option4} onClick={event => this.onClick(event, option4)}><span className="lf-icon-folder"></span>{i18n.t('sideBar.filterCancelled')}</a>
+                    <a href="#" id={option4} onClick={event => this.onClick(event, option4)}>
+                      <span className="lf-icon-folder">
+                      </span>
+                      { 
+                       collapsed ?  ''  : 
+                       <span>{i18n.t('sideBar.filterCancelled')}</span>
+                      } 
+                    </a>
                 </li>
             </ul>
           {/* <MenuItem
