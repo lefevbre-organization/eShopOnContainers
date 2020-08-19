@@ -601,14 +601,14 @@ class MessageList extends Component {
                     allowPdfExport={true}
                     allowExcelExport={true}
                     allowTextWrap={false}
-                    height='400'
+                    height='450'
                     pageSettings={{pageCount: 5, pageSize: 10, pageSizes: true, pagesSizeList: []}}//pageSizeList: [8,12,9,5]}} 
                     // rowSelected={event => {
                     //     this.onRowSelected(event);
                     // }}
                     filterSettings={filterSettings}
                     toolbar={this.toolbarOptions} 
-                    locale ={navigator.language}
+                    locale={navigator.language}
                     toolbarClick={this.toolbarClick}
                     ref={g => this.grid = g}
                     hierarchyPrintMode={'All'}
@@ -681,11 +681,7 @@ class MessageList extends Component {
                         cursor: pointer;
                         background: #c90223;
                     }
-                    .e-pager .e-currentitem, .e-pager .e-currentitem:hover {
-                        background: #001970;
-                        color: #fff;
-                        opacity: 1;
-                    }
+                   
                     .e-grid .e-gridheader .e-icons:not(.e-icon-hide):not(.e-check):not(.e-stop) {
                         color: #fff;
                     
@@ -943,7 +939,10 @@ class MessageList extends Component {
                      height: calc(100% - 15px);
                      padding: 0 3.5px;
                     }
-
+                    .e-grid {
+                      border: 1px solid #001970;
+                      border-top: 6px solid #001970;
+                    }
                     .e-grid .e-toolbar-items .e-toolbar-item.e-search-wrapper 
                     .e-search .e-search-icon {
                      min-width: 29px !important;
@@ -990,6 +989,39 @@ class MessageList extends Component {
                     .e-rowcell:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell) 
                     .e-btn-icon {
                         color: #001978 !important;
+                    }
+
+                    .e-pager .e-currentitem, .e-pager .e-currentitem:hover {
+                        background: transparent;
+                        color: #001970;
+                        opacity: 1;
+                        border-bottom: 3px solid #001970;
+                        border-radius: 1px;
+                    }
+                    .e-pager .e-numericitem {
+                      line-height: 0.5;
+                       min-width: 16px;
+                       font-size: 14px;
+                    }
+                    .e-pager div.e-icons {
+                        color: #001970;
+                    }
+
+                    .e-input-group.e-control-wrapper:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left) {
+                        color: #001970;
+                        border-color: azure;
+                        width: 50% !important;
+                    }
+                    .e-input-group .e-input-group-icon:last-child {
+                        color: #001970;
+                    }
+                    .e-pager .e-pagerconstant {
+                        color: #001970; 
+                        margin: 0 0 8px -10px;
+                    }
+
+                    .e-pager div.e-parentmsgbar {
+                        color: #001970;
                     }
                  
                 `}

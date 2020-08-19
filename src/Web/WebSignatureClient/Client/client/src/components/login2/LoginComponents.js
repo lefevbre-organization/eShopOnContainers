@@ -38,7 +38,7 @@ const LoginComponents = (children) => {
             <div className='input-group login-input-group'>
               <div className='input-group-prepend'>
                 <span className='input-group-text' id='inputGroupPrepend'>
-                  <img src={"/assets/images/icon-user.png"} />
+                  <img src={"/assets/images/icon-user-login.png"} />
                 </span>
               </div>
               <Input
