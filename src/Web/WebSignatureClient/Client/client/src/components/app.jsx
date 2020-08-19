@@ -282,7 +282,7 @@ class App extends Component {
               className={`${styles['content-wrapper']}
                                 ${
                                   sideBar.collapsed
-                                    ? ''
+                                    ? styles['without-side-bar']
                                     : styles['with-side-bar']
                                 } ${styles['custom-padding-top']}`}>
               {this.renderContent()}
