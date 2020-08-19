@@ -19,17 +19,16 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebCentinela
 {
     public class Startup
     {
+        private readonly IConfiguration _cfg;
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _cfg = configuration;
         }
-
-        public IConfiguration Configuration { get; }
 
         public Startup()
         {
-            var localPath = new Uri(Configuration["ASPNETCORE_URLS"])?.LocalPath ?? "/";
-            Configuration["BaseUrl"] = localPath;
+            var localPath = new Uri(_cfg["ASPNETCORE_URLS"])?.LocalPath ?? "/";
+            _cfg["BaseUrl"] = localPath;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -40,9 +39,10 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebCentinela
 
             services.AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
+                .AddUrlGroup(new Uri(_cfg["CentinelaApiUrlHC"]), name: "centinelaapi-check", tags: new string[] { "centinelaapi" })
                 ;
 
-            services.Configure<AppSettings>(Configuration);
+            services.Configure<AppSettings>(_cfg);
 
             //if (Configuration.GetValue<string>("IsClusterEnv") == bool.TrueString)
             //{
@@ -92,7 +92,7 @@ namespace Lefebvre.eLefebvreOnContainers.Clients.WebCentinela
             //Seed Data
             WebContextSeed.Seed(app, env, loggerFactory);
 
-            var pathBase = Configuration["PATH_BASE"];
+            var pathBase = _cfg["PATH_BASE"];
             if (!string.IsNullOrEmpty(pathBase))
             {
                 loggerFactory.CreateLogger<Startup>().LogDebug("Using PATH BASE '{pathBase}'", pathBase);

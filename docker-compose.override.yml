@@ -11,7 +11,7 @@ version: '3.4'
 services:
   seq:
     environment:
-      - ACCEPT_EULA=Y
+      - "ACCEPT_EULA=Y"
     ports:
       - "5340:80"
 
@@ -28,6 +28,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://0.0.0.0:80
+      - EvaluationTimeOnSeconds=90
+      - MinimumSecondsBetweenFailureNotifications=90
       - HealthChecksUI__HealthChecks__0__Name=WebPortalClient HTTP Check
       - HealthChecksUI__HealthChecks__0__Uri=http://webportalclient/hc
       - HealthChecksUI__HealthChecks__1__Name=WebGoogleClient HTTP Check
@@ -42,33 +44,33 @@ services:
       - HealthChecksUI__HealthChecks__5__Uri=http://account.api/hc
       - HealthChecksUI__HealthChecks__6__Name=Account API GW HTTP Check
       - HealthChecksUI__HealthChecks__6__Uri=http://webaccountapigw/hc
-      - HealthChecksUI__HealthChecks__7__Name=Lexon API GW HTTP Check
-      - HealthChecksUI__HealthChecks__7__Uri=http://weblexonapigw/hc
-      - HealthChecksUI__HealthChecks__8__Name=Lexon API HTTP Check
-      - HealthChecksUI__HealthChecks__8__Uri=http://lexon.api/hc
-      - HealthChecksUI__HealthChecks__9__Name=Lexon MySql API HTTP Check
-      - HealthChecksUI__HealthChecks__9__Uri=http://lexon.mysql.api/hc
+      - HealthChecksUI__HealthChecks__7__Name=Lexon API HTTP Check
+      - HealthChecksUI__HealthChecks__7__Uri=http://lexon.api/hc
+      - HealthChecksUI__HealthChecks__8__Name=Lexon MySql API HTTP Check
+      - HealthChecksUI__HealthChecks__8__Uri=http://lexon.mysql.api/hc
+      - HealthChecksUI__HealthChecks__9__Name=Lexon API GW HTTP Check
+      - HealthChecksUI__HealthChecks__9__Uri=http://weblexonapigw/hc
       - HealthChecksUI__HealthChecks__10__Name=Centinela API HTTP Check
       - HealthChecksUI__HealthChecks__10__Uri=http://centinela.api/hc
-      - HealthChecksUI__HealthChecks__11__Name=UserUtils API HTTP Check
-      - HealthChecksUI__HealthChecks__11__Uri=http://userutils.api/hc
-      - HealthChecksUI__HealthChecks__12__Name=Centinela GW HTTP Check
-      - HealthChecksUI__HealthChecks__12__Uri=http://webcentinelaapigw/hc
+      - HealthChecksUI__HealthChecks__11__Name=Centinela GW HTTP Check
+      - HealthChecksUI__HealthChecks__11__Uri=http://webcentinelaapigw/hc
+      - HealthChecksUI__HealthChecks__12__Name=UserUtils API HTTP Check
+      - HealthChecksUI__HealthChecks__12__Uri=http://userutils.api/hc
       - HealthChecksUI__HealthChecks__13__Name=Signature API HTTP Check
       - HealthChecksUI__HealthChecks__13__Uri=http://signature.api/hc
       - HealthChecksUI__HealthChecks__14__Name=Signature API GW HTTP Check
       - HealthChecksUI__HealthChecks__14__Uri=http://websignatureapigw/hc
-      - HealthChecksUI__HealthChecks__15__Name=WebSignatureClient HTTP Check
-      - HealthChecksUI__HealthChecks__15__Uri=http://websignatureclient/hc
-      - HealthChecksUI__HealthChecks__16__Name=WebCentinelaClient HTTP Check
-      - HealthChecksUI__HealthChecks__16__Uri=http://webcentinelaclient/hc
-      - HealthChecksUI__HealthChecks__17__Name=Database API HTTP Check
-      - HealthChecksUI__HealthChecks__17__Uri=http://database.api/hc
-      - HealthChecksUI__HealthChecks__18__Name=Database API GW HTTP Check
-      - HealthChecksUI__HealthChecks__18__Uri=http://webdatabaseapigw/hc
-      - HealthChecksUI__HealthChecks__19__Name=Addon Lexon Client HTTP Check
+      - HealthChecksUI__HealthChecks__15__Name=Database API HTTP Check
+      - HealthChecksUI__HealthChecks__15__Uri=http://database.api/hc
+      - HealthChecksUI__HealthChecks__16__Name=Database API GW HTTP Check
+      - HealthChecksUI__HealthChecks__16__Uri=http://webdatabaseapigw/hc
+      - HealthChecksUI__HealthChecks__17__Name=WebSignatureClient HTTP Check
+      - HealthChecksUI__HealthChecks__17__Uri=http://websignatureclient/hc
+      - HealthChecksUI__HealthChecks__18__Name=WebCentinelaClient HTTP Check
+      - HealthChecksUI__HealthChecks__18__Uri=http://webcentinelaclient/hc
+      - HealthChecksUI__HealthChecks__19__Name=Addon Launcher Check
       - HealthChecksUI__HealthChecks__19__Uri=http://webaddonlauncher/hc
-      - HealthChecksUI__HealthChecks__20__Name=Addon Offi365 Client HTTP Check
+      - HealthChecksUI__HealthChecks__20__Name=Addon Office365 Check
       - HealthChecksUI__HealthChecks__20__Uri=http://weboffice365addonlexon/hc
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
@@ -82,10 +84,9 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
-      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+      - LexonApiUrlHC=http://lexon.api/hc
+      - AccountApiUrlHC=http://account.api/hc
       - PortalUrlHC=http://webportalclient/user
-
     ports:
       - "3003:80"
 
@@ -96,7 +97,7 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+      - AccountApiUrlHC=http://account.api/hc
 
     ports:
       - "3000:80"
@@ -108,7 +109,7 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+      - AccountApiUrlHC=http://account.api/hc
 
     ports:
       - "3001:80"
@@ -120,8 +121,7 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - LexonApiUrlHC=http://lexon.api/hc
-#      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
+      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
 
     ports:
       - "3005:80"
@@ -133,8 +133,8 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
-      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+      - LexonApiUrlHC=http://lexon.api/hc
+      - AccountApiUrlHC=http://account.api/hc
     ports:
       - "3006:80"
 
@@ -145,8 +145,8 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - LexonApiGatewayUrlHC=http://weblexonapigw/hc
-      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+      - LexonApiUrlHC=http://lexon.api/hc
+      - AccountApiUrlHC=http://account.api/hc
     ports:
       - "3007:80"
 
@@ -170,7 +170,7 @@ services:
       - UseCustomizationData=True
       - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
       - OrchestratorType=${ORCHESTRATOR_TYPE}
-      - AccountApiGatewayUrlHC=http://webaccountapigw/hc
+      - AccountApiUrlHC=http://account.api/hc
 
     ports:
       - "9000:80"
@@ -235,8 +235,23 @@ services:
       - Database=${ELEF_MONGO_LEXON_DB:-LexonApiDB}
       - LexonMySqlUrl=http://lexon.mysql.api/api/v1/LexonMySql
       - LexonFilesUrl=https://www-led-pre.lex-on.es/index.php
-#      - LexonFilesUrl=https:/led-dev-lexon/index.php
-#      - LexonFilesUrl=https://10.38.6.18/index.php
+      - UseMongo=false,
+      - DefaultEnvironment=DEV
+      - LexonUrls__0__env=DEVS
+      - LexonUrls__0__conn=database=lexondevconecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90
+      - LexonUrls__0__url=https://led-dev-lexon.eu.els.local
+      - LexonUrls__1__env=DEV
+      - LexonUrls__1__conn=database=lexon_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90
+      - LexonUrls__1__url=https://led-dev-lexon.eu.els.local
+      - LexonUrls__2__env=QA
+      - LexonUrls__2__conn=database=lexon_qa_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90
+      - LexonUrls__2__url=https://www-led-pre.lex-on.es/index.php
+      - LexonUrls__3__env=PRE
+      - LexonUrls__3__conn=database=lexon_pre_conecta;server=10.38.6.22;port=3315;user id=led-app-conecta-aws;password=FDSk2q3+asd5;Connect Timeout=90
+      - LexonUrls__3__url=https://www-led-qa-lexon.lefebvre.es
+      - LexonUrls__4__env=PRO
+      - LexonUrls__4__conn=lexon_conecta;server=192.168.71.11;port=3308;user id=led-app-conecta-aws;password=Fgo23+gap4FB;Connection Timeout=100
+      - LexonUrls__4__url=https://www.lex-on.es/index.php
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
       - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}        
@@ -303,12 +318,13 @@ services:
       - ASPNETCORE_URLS=http://0.0.0.0:80
       - ConnectionString=${ELEF_MONGO_CONN:-mongodb://nosql.data}
       - Database=UserUtilsApiDB
+      - DefaultEnvironment=DEV
       - MinihubUrl=http://led-pre-servicehub/Herramientas/Get
       - OnlineUrl=https://herculesppd.lefebvre.es/webclient46/ws
       - LoginUrl=http://led-pre-servicecomtools
       - ClavesUrl=https://led-pre-serviceclaves.lefebvre.es
       - CentinelaApiUrl=http://centinela.api/api/v1/Centinela
-      - LexonApiUrl=http://lexon.mysql.api/api/v1/LexonMySql
+      - LexonApiUrl=http://lexon.api/api/v1/Lexon
       - SignaturitApiUrl=http://signature.api/api/v1/Signaturit
       - OnlineLogin=ws
       - OnlinePassword=22lcqsp11lsw
@@ -420,3 +436,19 @@ services:
 
     ports:
       - "3015:80"
+
+  conference.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+      - ConnectionString=${ELEF_MONGO_CONN:-mongodb://nosql.data}
+      - Database=ConferenceApiDB
+      - IdAppNavision=6
+      - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
+      - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}
+      - EventBusPassword=${ESHOP_SERVICE_BUS_PASSWORD:-guest}        
+      - ApplicationInsights__InstrumentationKey=${INSTRUMENTATION_KEY}
+      - OrchestratorType=${ORCHESTRATOR_TYPE}
+      - UseLoadTest=${USE_LOADTEST:-False}
+    ports:
+      - "8094:80" 

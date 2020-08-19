@@ -26,6 +26,6 @@ namespace Lexon.API.Infrastructure.Repositories
         Task<Result<bool>> UpsertEntitiesAsync(IEntitySearchView search, MySqlCompany resultMySql);
         Task<Result<bool>> UpsertRelationsAsync(ClassificationSearchView classificationSearch, MySqlCompany resultMySql);
         Task<Result<bool>> UpsertUserAsync(Result<LexUser> result);
-        Task<Result<bool>> UpsertCompaniesAsync(Result<LexUser> lexUser);
+        Task<Result<bool>> UpsertCompaniesAsync(Result<List<LexCompany>> lexUser, string idUser);
     }
 }
