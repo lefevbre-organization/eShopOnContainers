@@ -856,6 +856,16 @@
                 //    resultBoolean, resultUpdate);
 
                 var account = await _context.AccountEvents.FindAsync(c => c.email.Contains(email.ToUpperInvariant())).Result.FirstOrDefaultAsync();
+                if (account == null)
+                {
+                    var arrayEvents = new List<EventType>
+                    {
+                        eventType
+                    };
+
+                    var resultInsertAccountEvent = await UpsertAccountEvents(new AccountEvents() { email = email, eventTypes = arrayEvents.ToArray() });
+                    account = resultInsertAccountEvent.data;
+                }
                 var ev = account.eventTypes.FirstOrDefault(s => s.idEvent == eventType.idEvent || s.name.ToUpperInvariant() == eventType.name.ToUpperInvariant());
                 if (ev?.name != null)
                 {
