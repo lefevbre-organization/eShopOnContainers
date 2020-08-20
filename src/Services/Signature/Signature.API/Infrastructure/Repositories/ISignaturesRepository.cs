@@ -30,6 +30,10 @@
 
         Task<Result<UserSignatures>> GetSignature(string signatureId);
 
-        Task<Result<bool>> SaveEvent(EventInfo eventInfo);
+        #region Events
+        Task<Result<bool>> SaveEvent(SignEventInfo eventInfo);
+        Task<Result<List<SignEventInfo>>> GetEvents(string signatureId);
+        #endregion
+
     }
 }

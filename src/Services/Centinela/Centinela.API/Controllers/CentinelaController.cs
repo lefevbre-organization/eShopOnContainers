@@ -183,5 +183,42 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
 
         }
 
+        [HttpPost("signatures/files/post/")]
+        [HttpPost("signatures/audit/post/")]
+        [ProducesResponseType(typeof(Result<ConceptFile>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> SignatureFilePost(
+        [FromBody] ConceptFile file
+        )
+        {
+
+            Result<ConceptFile> resultFile = new Result<ConceptFile>(file);
+            var result = await _service.FilePostAsync(file, Request.Path.Value);
+
+            if (result.errors.Count == 0)
+            {
+                resultFile.errors = result.errors;
+                resultFile.infos = result.infos;
+                return StatusCode(201, resultFile);
+            }
+
+            return BadRequest(result);
+        }
+
+
+        [HttpPost("signatures/cancelation")]
+        [ProducesResponseType(typeof(Result<ConceptFile>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> CancelSignature([FromRoute] string guid)
+        {
+            var result = await _service.CancelSignatureAsync(guid);
+
+            if (result.errors.Count == 0)
+            {
+                return StatusCode(201, result);
+            }
+
+            return BadRequest(result);
+        }
     }
 }
