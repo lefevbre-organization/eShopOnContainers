@@ -124,7 +124,7 @@ const LoginComponents = (children) => {
         .main-box {
           overflow: hidden;
           display: flex;
-          min-height: calc(100% - 265px);
+          height: 85vh;
           background-color: #fff;
           justify-content: center;
           align-items: center;

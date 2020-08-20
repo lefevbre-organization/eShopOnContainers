@@ -899,9 +899,11 @@ class MessageList extends Component {
                     }
                     .e-toolbar-right {
                       right: 13% !important;
+                      display: table-column !important;
                     }
                     .e-toolbar .e-toolbar-items.e-tbar-pos .e-toolbar-left {
                      left: auto;
+                     line-height: 47px !important;
                     }
                     .e-toolbar-left {
                      right: 0 !important;
@@ -921,10 +923,6 @@ class MessageList extends Component {
                     .e-toolbar .e-toolbar-items .e-toolbar-left 
                     .e-toolbar-item:nth-child(3) {
                       margin-right: 15px;
-                    }
-                    .e-toolbar .e-toolbar-items .e-toolbar-left 
-                    .e-toolbar-item:third-child {
-                      margin-left: 20px;
                     }
                     .e-toolbar .e-tbar-btn {
                       background: #001978;
@@ -951,7 +949,7 @@ class MessageList extends Component {
                     }
                     .e-search   {
                       border: 1px solid #001970 !important;
-                      height: calc(100% - 15px);
+                      height: 32px;
                       padding: 1px;
                       padding-left: 4px;
                     }
@@ -1007,23 +1005,35 @@ class MessageList extends Component {
                         color: #001970;
                     }
 
-                    .e-input-group.e-control-wrapper:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left) {
+                    .e-input-group.e-control-wrapper.e-alldrop.e-ddl.e-lib.e-keyboard.e-valid-input {
                         color: #001970;
-                        border-color: azure;
-                        width: 50% !important;
+                        border-color: azure !important;
+                        width: 70% !important;
                     }
+                    
                     .e-input-group .e-input-group-icon:last-child {
                         color: #001970;
                     }
                     .e-pager .e-pagerconstant {
                         color: #001970; 
-                        margin: 0 0 8px -10px;
+                        margin: 0 0 8px 10px;
                     }
 
                     .e-pager div.e-parentmsgbar {
                         color: #001970;
                     }
-                 
+                    .e-grid .e-icon-filter::before, 
+                    .e-grid-menu .e-icon-filter::before {
+                        font-family: 'lf-font' !important;
+                        content: '\e95e';
+                        color: #fff;
+                        font-size: 12px;
+                    }
+                    .e-pager .e-pagerdropdown {
+                     margin-top: 0 !important; 
+                     vertical-align: sub !important;
+                     height: 35px !important;
+                    }
                 `}
                 </style>
             </div>
