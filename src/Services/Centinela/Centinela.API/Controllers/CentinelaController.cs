@@ -206,7 +206,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
         }
 
 
-        [HttpPost("signatures/cancelation")]
+        [HttpPost("signatures/cancelation/{guid}")]
         [ProducesResponseType(typeof(Result<ConceptFile>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CancelSignature([FromRoute] string guid)
