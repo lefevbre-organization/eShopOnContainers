@@ -58,3 +58,5 @@ env:
       value: 'https://led-dev-lexon.eu.els.local/index.php'
     - name: LexonApiGwUrl
       value: 'https://lexbox-test-apigwlex.lefebvre.es/api/v1'
+    - name: CentinelaApiGwUrl
+      value: 'https://lexbox-test-apigwcen.lefebvre.es/api/v1'
