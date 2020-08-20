@@ -44,6 +44,25 @@
   }
 }
 
+.firma-without-side-bar {
+  color:#001978;
+  font-size:22px;
+  text-transform: uppercase;
+  margin:15px;
+  padding-left: 93px;
+  .producto-procedente{
+    color:#001278;
+    opacity:0.7;
+    margin-right:15px;
+  }
+  .miga{
+    font-size:16px;
+    margin-left:20px;
+    padding-left:25px;
+    border-left:1px solid #001978;
+  }
+}
+
 .divheader {
   background-color: #f4f4f4;
   /*background-color: #fff;*/

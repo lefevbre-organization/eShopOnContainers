@@ -106,17 +106,17 @@ export class Header extends PureComponent {
           {/*<Link to="/inbox"><img border="0" alt="gmail" src="/assets/img/logo-elderecho.png"></img></Link>
                     <Link to="/inbox"><img className="logo-ext" border="0" alt="otulook" src="/assets/img/gmail.png"></img></Link> */}
         </div>
-        <div className='header-search'>
-          <div className='input-group w-75 ml-1 mr-auto'>
+            <div className="header-search">
+                <div className="input-group w-75 ml-1 mr-auto">
             <input
               type='search'
-              className='form-control search'
+              className={`form-control search  ${this.props.hiddeSearch ? "hidden" : ""}`}
               placeholder={i18n.t('header.search')}
               value={this.props.searchQuery}
               onChange={this.handleInputChange}
             />
             <div
-              className='input-group-append'
+              className={`input-group-append  ${this.props.hiddeSearch ? "hidden" : ""}`}
               onClick={this.handleSearchClick}>
               <button
                 className='btn btn-light  bg-white text-dark btn-search'

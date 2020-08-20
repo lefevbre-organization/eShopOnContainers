@@ -54,7 +54,7 @@ env:
     - name: CentinelaPassword
       value: 'led.2018'
     - name: CentinelaLogin
-      value: 'centinelaAPI'
+      value: 'centinelaApi'
     - name: OrchestratorType
       value: 'K8S'
 

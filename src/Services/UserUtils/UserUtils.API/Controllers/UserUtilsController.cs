@@ -1,5 +1,6 @@
 ﻿using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.Services;
 using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Models;
+using Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Options;
@@ -35,7 +36,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         [ProducesResponseType(typeof(Result<string>), (int)HttpStatusCode.BadRequest)]
         public IActionResult Test()
         {
-            var data = $"UserUtils.Utils v.{ _settings.Value.Version}";
+            var data = $"UserUtils.Utils v.{ _settings.Value.Version} - DefaultEnv:{_settings.Value.DefaultEnvironment}";
             return Ok(new Result<string>(data));
         }
 
@@ -50,9 +51,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> TokenPostAsync(
-              [FromForm] string login
-             , [FromForm] string password
-             , [FromForm] short idApp
+              [FromForm] string login = "i.molina-ext@lefebvreelderecho.com"
+             , [FromForm] string password = "imolina2"
+             , [FromForm] short idApp = 2
              , [FromForm] bool addTerminatorToToken = true
             )
         {
@@ -95,8 +96,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         #region User
 
         [HttpGet("user/apps")]
-        [ProducesResponseType(typeof(Result<List<LexApp>>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(Result<List<LexApp>>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<List<LefebvreApp>>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<List<LefebvreApp>>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UserAppsAsync(string idNavisionUser = "E1621396", bool onlyActives = true)
         {
             if (string.IsNullOrEmpty(idNavisionUser))
@@ -205,7 +206,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         [ProducesResponseType(typeof(Result<UserUtilsModel>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<UserUtilsModel>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> UserGetAsync(
-              [FromQuery] string IdNavision
+              [FromQuery] string IdNavision = "E1621396"
             )
         {
             if (string.IsNullOrEmpty(IdNavision))

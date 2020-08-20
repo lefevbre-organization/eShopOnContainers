@@ -601,14 +601,14 @@ class MessageList extends Component {
                     allowPdfExport={true}
                     allowExcelExport={true}
                     allowTextWrap={false}
-                    height='400'
+                    height='450'
                     pageSettings={{pageCount: 5, pageSize: 10, pageSizes: true, pagesSizeList: []}}//pageSizeList: [8,12,9,5]}} 
                     // rowSelected={event => {
                     //     this.onRowSelected(event);
                     // }}
                     filterSettings={filterSettings}
                     toolbar={this.toolbarOptions} 
-                    locale ={navigator.language}
+                    locale={navigator.language}
                     toolbarClick={this.toolbarClick}
                     ref={g => this.grid = g}
                     hierarchyPrintMode={'All'}
@@ -681,11 +681,7 @@ class MessageList extends Component {
                         cursor: pointer;
                         background: #c90223;
                     }
-                    .e-pager .e-currentitem, .e-pager .e-currentitem:hover {
-                        background: #001970;
-                        color: #fff;
-                        opacity: 1;
-                    }
+                   
                     .e-grid .e-gridheader .e-icons:not(.e-icon-hide):not(.e-check):not(.e-stop) {
                         color: #fff;
                     
@@ -738,16 +734,7 @@ class MessageList extends Component {
                         color: #001970;
                     }
                     
-                    .e-input-group:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left), 
-                    .e-input-group.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) 
-                    .e-input-in-wrap, .e-input-group.e-control-wrapper:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left), 
-                    .e-input-group.e-control-wrapper.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) .e-input-in-wrap, 
-                    .e-float-input.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) .e-input-in-wrap, 
-                    .e-float-input.e-control-wrapper.e-float-icon-left:not(.e-success):not(.e-warning):not(.e-error) 
-                    .e-input-in-wrap {
-                      border: 1px solid #001970;
-                      width: 100%;
-                    }
+                    
                     .e-input-group:not(.e-float-icon-left):not(.e-float-input)::before, 
                     .e-input-group:not(.e-float-icon-left):not(.e-float-input)::after, 
                     .e-input-group.e-float-icon-left:not(.e-float-input) 
@@ -918,7 +905,7 @@ class MessageList extends Component {
                     }
                     .e-toolbar-left {
                      right: 0 !important;
-                     background-color: #80808052;
+                     background-color: #DDE0DF;
                      height: 95% !important;
                      top: 2px !important;
                      border-top-left-radius: 23px;
@@ -952,18 +939,91 @@ class MessageList extends Component {
                      height: calc(100% - 15px);
                      padding: 0 3.5px;
                     }
-
+                    .e-grid {
+                      border: 1px solid #001970;
+                      border-top: 6px solid #001970;
+                    }
                     .e-grid .e-toolbar-items .e-toolbar-item.e-search-wrapper 
                     .e-search .e-search-icon {
                      min-width: 29px !important;
                      border-left: 1px solid #001978 !important;
                      font-size: 16px !important;
                     }
-          
-                    .e-input-focus  {
+                    .e-search   {
                       border: 1px solid #001970 !important;
                       height: calc(100% - 15px);
+                      padding: 1px;
+                      padding-left: 4px;
                     }
+                    .e-toolbar .e-tbar-btn:hover {
+                      border-radius: 14px;
+                    }
+                    .e-toolbar .e-tbar-btn:focus {
+                      border-radius: 14px;
+                    }
+                    .e-toolbar .e-tbar-btn:active {
+                      border-radius: 14px;
+                    }
+                    .e-grid.e-default tr td:first-child {
+                      background-color: #6C77AF;
+                    }
+                    .e-btn.e-icon-btn {
+                      background-color: transparent !important;
+                    }
+                    .e-dropdown-btn .e-btn-icon, .e-dropdown-btn.e-btn .e-btn-icon {
+                      color: white;
+                    }
+                    .e-btn:active .e-btn-icon {
+                      color: #001978 !important;
+                    }
+                    .e-btn:focus .e-btn-icon {
+                      color: #001978 !important;
+                    }
+                    .e-btn:hover .e-btn-icon {
+                     color: #001978 !important;
+                    }
+                    .e-grid .e-gridheader tr th:first-child {
+                        padding: 0;
+                    }
+                    .e-grid.e-gridhover tr[role='row']:not(.e-editedrow):hover 
+                    .e-rowcell:not(.e-cellselectionbackground):not(.e-active):not(.e-updatedtd):not(.e-indentcell) 
+                    .e-btn-icon {
+                        color: #001978 !important;
+                    }
+
+                    .e-pager .e-currentitem, .e-pager .e-currentitem:hover {
+                        background: transparent;
+                        color: #001970;
+                        opacity: 1;
+                        border-bottom: 3px solid #001970;
+                        border-radius: 1px;
+                    }
+                    .e-pager .e-numericitem {
+                      line-height: 0.5;
+                       min-width: 16px;
+                       font-size: 14px;
+                    }
+                    .e-pager div.e-icons {
+                        color: #001970;
+                    }
+
+                    .e-input-group.e-control-wrapper:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left) {
+                        color: #001970;
+                        border-color: azure;
+                        width: 50% !important;
+                    }
+                    .e-input-group .e-input-group-icon:last-child {
+                        color: #001970;
+                    }
+                    .e-pager .e-pagerconstant {
+                        color: #001970; 
+                        margin: 0 0 8px -10px;
+                    }
+
+                    .e-pager div.e-parentmsgbar {
+                        color: #001970;
+                    }
+                 
                 `}
                 </style>
             </div>

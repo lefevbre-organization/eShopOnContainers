@@ -15,7 +15,7 @@
     {
       "DangerousAcceptAnyServerCertificateValidator": true,
       "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [ "POST", "PUT", "GET" ],
+      "UpstreamHttpMethod": [  "POST", "PUT", "GET" ],
       "DownstreamHostAndPorts": [
         {
           "Host": "userutils-api",
