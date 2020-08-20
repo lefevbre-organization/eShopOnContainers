@@ -179,7 +179,7 @@
     "text2": "Please confirm you want to cancel this signature request."
   },
   "reminderSentModal": {
-    "text": "A reminder has been sent"
+    "text": "A reminder has been sent signer"
   },
   "noSignersModal": {
     "text": "At least one signer must be specified in order to send the request."

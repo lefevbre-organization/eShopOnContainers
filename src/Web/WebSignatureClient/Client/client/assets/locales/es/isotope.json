@@ -198,7 +198,7 @@
     "text2": "¿Está seguro de que quiere cancelar el proceso de firma actual?"
   },
   "reminderSentModal": {
-    "text": "Se acaba de enviar un recordatorio"
+    "text": "Se acaba de enviar un recordatorio al Firmante"
   },
   "noSignersModal": {
     "text": "Debe especificar al menos un firmante para poder enviar la solicitud."

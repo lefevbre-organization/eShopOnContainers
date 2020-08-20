@@ -49,7 +49,8 @@ export class MessageViewer extends Component {
       hideAlertDialog2: false,
       hideConfirmDialog: false,
       signatureId: '',
-      auth: ''
+      auth: '',
+      signer: 0,
     };
     this.dialogClose = this.dialogClose;
     this.dialogOpen = this.dialogOpen;
@@ -162,9 +163,22 @@ export class MessageViewer extends Component {
     return result;
   }
 
-  onSendReminder(signatureId, auth){
-    this.setState({ hideAlertDialog: true });
+  onSendReminder(signatureId, documents, auth){
     sendReminder2(signatureId, auth);
+    documents.forEach((document, index) => {
+      var signers = document.events
+      if(signers.length > 0) {
+        signers.forEach((signer) => {
+            if(signer.type != 'document_signed'){
+                this.setState({ 
+                  hideAlertDialog: true, 
+                  signer: (index + 1) 
+                });
+                return;
+            }
+        });
+      }
+    });
   }
 
   onCancelSignature(signatureId, auth){
@@ -218,7 +232,8 @@ export class MessageViewer extends Component {
     <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
     <div style='text-align: justify; text-justify: inter-word; align-self: center;
     padding-left: 20px;'>
-      ${i18n.t('reminderSentModal.text')}
+      ${i18n.t('reminderSentModal.text') + ' ' 
+      + this.state.signer + '.'}
     </div>`;
 
     const contenido2 = `
@@ -348,7 +363,7 @@ export class MessageViewer extends Component {
         <button 
           className={`${styles['btn-gen']} modal-trigger right`} 
           href="#demo-modal1"
-          onClick={() => this.onSendReminder(signature.id, this.props.auth)} 
+          onClick={() => this.onSendReminder(signature.id, signature.documents, this.props.auth)} 
           disabled={signature.status==='canceled' || signature.status ==='completed'}>
            {i18n.t('signatureViewer.buttons.reminder')}
         </button>
