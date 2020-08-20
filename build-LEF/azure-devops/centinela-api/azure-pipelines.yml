@@ -1,0 +1,20 @@
+variables:
+    registryEndpoint: lefebvre-docker
+trigger:
+  branches:
+    include:
+    - master
+    - dev
+  paths:
+    include:
+    - src/BuildingBlocks/*
+    - src/Services/Centinela/*
+    - k8s/helm/centinela-api/*
+jobs:
+- template: ../buildimages.yaml
+  parameters:
+    services: centinela.api
+    registryEndpoint: $(registryEndpoint)
+    helmfrom: $(Build.SourcesDirectory)/k8s-LEF/helm
+    helmto: $(Build.ArtifactStagingDirectory)/k8s-LEF/helm    
+
