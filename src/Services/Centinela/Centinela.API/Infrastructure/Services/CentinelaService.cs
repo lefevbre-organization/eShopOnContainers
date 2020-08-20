@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.Services
@@ -47,7 +48,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             try
             {
                 // "/api/secure/conectamail/documentobject/DOCUMENTOBJECT_ID/download?idEntrada=ID_ENTRADA";
-                var url = $"{_settings.Value.CentinelaUrl}/documentobject/{idFile}/download?idEntrada={idNavisionUser}";
+                var url = $"{_settings.Value.CentinelaUrl}/conectamail/documentobject/{idFile}/download?idEntrada={idNavisionUser}";
                 WriteError($"Se hace llamada a {url} a las {DateTime.Now}");
                 using var response = await _client.GetAsync(url);
                 if (response.IsSuccessStatusCode)
@@ -73,14 +74,14 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             return result;
         }
 
-        public async Task<Result<bool>> FilePostAsync(ConceptFile fileMail)
+        public async Task<Result<bool>> FilePostAsync(ConceptFile fileMail, string route)
         {
             var result = new Result<bool>(false);
             try
             {
                 CleanNameFile(fileMail, out string name);
 
-                SerializeToMultiPart(fileMail, name, out string url, out MultipartFormDataContent multipartContent);
+                SerializeToMultiPart(fileMail, name, route, out string url, out MultipartFormDataContent multipartContent);
 
                 //WriteError($"Se hace llamada a {url} a las {DateTime.Now}");
                 using var response = await _client.PostAsync(url, multipartContent);
@@ -90,21 +91,22 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
                 if (response.IsSuccessStatusCode)
                 {
                     result.data = true;
-                    TraceInfo(result.infos, $"Se guarda el fichero {fileMail.Name} - {responseText}");
+                    TraceInfo(result.infos, $"Se guarda el fichero {fileMail.Name} - {responseText} - {response.ReasonPhrase}");
                 }
                 else
                 {
-                    TraceOutputMessage(result.errors, $"Response not ok : {responseText} when FilePost with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", "Centinela_Error_StatusCode");
+                    TraceOutputMessage(result.errors, $"Response not ok : {responseText} when FilePost with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", responseText, "Centinela_Error_StatusCode");
                 }
             }
             catch (Exception ex)
             {
-                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message} : {ex.InnerException}", "Centinela_Error_FilePost");
+                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message} : {ex.InnerException}", ex.InnerException?.Message, "Centinela_Error_FilePost");
             }
 
             return result;
         }
 
+       
         private void CleanNameFile(ConceptFile fileMail, out string cleanName)
         {
             fileMail.Name = RemoveProblematicChars(fileMail.Name);
@@ -118,11 +120,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             cleanName = name;
         }
 
-        private void SerializeToMultiPart(ConceptFile fileMail, string name, out string url, out MultipartFormDataContent multipartContent)
+        private void SerializeToMultiPart(ConceptFile fileMail, string name, string route,  out string url, out MultipartFormDataContent multipartContent)
         {
             // https://stackoverflow.com/questions/42212406/how-to-send-a-file-and-form-data-with-httpclient-in-c-sharp/42212590
-            var path = $"/document/conceptobject/{fileMail.ConceptId}?idEntrada={fileMail.idNavision}";
-            url = $"{_settings.Value.CentinelaUrl}{path}";
+            url = getUrlCentinela(fileMail, route);
+            
             TraceLog(parameters: new string[] { $"url={url}" });
 
             byte[] newBytes = Convert.FromBase64String(fileMail.ContentFile);
@@ -137,6 +139,25 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             multipartContent = new MultipartFormDataContent() { { byteArrayContent } };
         }
 
+        private string getUrlCentinela(ConceptFile fileMail, string route)
+        {
+            var url = "";
+            switch (route)
+            {
+                case "/api/v1/Centinela/signatures/files/post":
+                    url = $"{_settings.Value.CentinelaUrl}/sign/uploadsigneddocument/{fileMail.ConceptId}";
+                    break;
+                case "/api/v1/Centinela/signatures/audit/post":
+                    url = $"{_settings.Value.CentinelaUrl}/sign/uploadsignaudit/{fileMail.ConceptId}";
+                    break;
+                default:
+                    url = $"{_settings.Value.CentinelaUrl}/conectamail/document/conceptobject/{fileMail.ConceptId}?idEntrada={fileMail.idNavision}";
+                    break;
+            }
+            return url;
+        }
+
+  
         public async Task<Result<CenUser>> GetUserAsync(string idNavisionUser)
         {
             var result = new Result<CenUser>(new CenUser());
@@ -171,7 +192,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             try
             {
                 //https://compliance-api.affin.es/api/secure/conectamail/evaluations/user/E1621396
-                var url = $"{_settings.Value.CentinelaUrl}/evaluations/user/{idNavisionUser}";
+                var url = $"{_settings.Value.CentinelaUrl}/conectamail/evaluations/user/{idNavisionUser}";
 
                 using var response = await _client.GetAsync(url);
                 var responseText = await response.Content.ReadAsStringAsync();
@@ -202,7 +223,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             try
             {
                 // https://compliance-api.affin.es/api/secure/conectamail/user/contacts/E1654176
-                var url = $"{_settings.Value.CentinelaUrl}/user/contacts/{idNavisionUser}";
+                var url = $"{_settings.Value.CentinelaUrl}/conectamail/user/contacts/{idNavisionUser}";
 
                 using var response = await _client.GetAsync(url);
                 var responseText = await response.Content.ReadAsStringAsync();
@@ -233,7 +254,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             try
             {
                 // /api/secure/conectamail/search/documents?text=TEXTO&IdEntrada=ID_ENTRADA
-                var url = $"{_settings.Value.CentinelaUrl}/search/documents?text={search}&IdEntrada={idNavisionUser}";
+                var url = $"{_settings.Value.CentinelaUrl}/conectamail/search/documents?text={search}&IdEntrada={idNavisionUser}";
 
                 using var response = await _client.GetAsync(url);
                 var responseText = await response.Content.ReadAsStringAsync();
@@ -264,7 +285,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             try
             {
                 // /api/secure/conectamail/tree/evaluation/EVALUATION_ID?IdEntrada=ID_ENTRADA
-                var url = $"{_settings.Value.CentinelaUrl}/tree/evaluation/{idEvaluation}?IdEntrada={idNavisionUser}";
+                var url = $"{_settings.Value.CentinelaUrl}/conectamail/tree/evaluation/{idEvaluation}?IdEntrada={idNavisionUser}";
 
                 using var response = await _client.GetAsync(url);
                 var responseText = await response.Content.ReadAsStringAsync();
@@ -294,7 +315,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             var result = new Result<List<CenConceptInstance>>(new List<CenConceptInstance>());
             try
             {
-                var url = $"{_settings.Value.CentinelaUrl}/conceptobjects/concept/{idConcept}?IdEntrada={idNavisionUser}";
+                var url = $"{_settings.Value.CentinelaUrl}/conectamail/conceptobjects/concept/{idConcept}?IdEntrada={idNavisionUser}";
 
                 using var response = await _client.GetAsync(url);
                 var responseText = await response.Content.ReadAsStringAsync();
@@ -324,7 +345,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             var result = new Result<List<CenDocumentObject>>(new List<CenDocumentObject>());
             try
             {
-                var url = $"{_settings.Value.CentinelaUrl}/documentobjects/conceptobject/{conceptObjectId}?IdEntrada={idNavisionUser}";
+                var url = $"{_settings.Value.CentinelaUrl}/conectamail/documentobjects/conceptobject/{conceptObjectId}?IdEntrada={idNavisionUser}";
 
                 using var response = await _client.GetAsync(url);
                 var responseText = await response.Content.ReadAsStringAsync();
@@ -348,5 +369,36 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
 
             return result;
         }
+
+        public async Task<Result<bool>> CancelSignatureAsync(string guid)
+        {
+            var result = new Result<bool>(false);
+            try
+            {
+                var url = $"{_settings.Value.CentinelaUrl}/sign/signcancelled/{guid}";
+                
+                HttpContent httpContent = new StringContent("", Encoding.UTF8, "application/json-patch+json");
+
+                using var response = await _client.PatchAsync(url, httpContent);
+
+                var responseText = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    result.data = true;
+                    TraceInfo(result.infos, $"Se cancela la firma {guid} - {responseText}");
+                }
+                else
+                {
+                    TraceOutputMessage(result.errors, $"Response not ok : {responseText} when CancelSignature with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", responseText, "Centinela_Error_StatusCode");
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceOutputMessage(result.errors, $"Error al cancelar la firma {guid}, -> {ex.Message} : {ex.InnerException}", ex.InnerException?.Message, "Centinela_Error_FilePost");
+            }
+
+            return result;
+        }
+
     }
 }

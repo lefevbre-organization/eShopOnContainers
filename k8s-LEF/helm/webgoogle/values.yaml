@@ -63,4 +63,4 @@ configValues: |
   window.URL_MF_DATABASE='http://localhost:3006/static/js/main.js'
   window.URL_MF_DATABASE_BASE='http://localhost:3006'
   window.SHOW_EXPERIMENTAL='1'  
-  window.RELEASE = all__version
+  window.RELEASE = {{ .Values.inf.version.complete }}

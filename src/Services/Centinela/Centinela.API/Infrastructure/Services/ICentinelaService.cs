@@ -16,7 +16,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
         Task<Result<List<CenDocument>>> GetDocumentsAsync(string idNavisionUser, string search);
         Task<Result<List<CenDocumentObject>>> GetDocumentsByInstanceAsync(string idNavisionUser, string conceptObjectId);
 
-        Task<Result<bool>> FilePostAsync(ConceptFile file);
+        Task<Result<bool>> FilePostAsync(ConceptFile file, string route = "");
 
         Task<Result<string>> FileGetAsync(string idNavisionUser, string idFile);
 
@@ -24,5 +24,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
 
         Task<Result<List<CenConceptInstance>>> GetConceptsByTypeAsync(string idNavisionUser, int idConcept);
         Task<Result<List<CenContact>>> GetContactsAsync(string idNavisionUser);
+
+        Task<Result<bool>> CancelSignatureAsync(string guid);
+
     }
 }

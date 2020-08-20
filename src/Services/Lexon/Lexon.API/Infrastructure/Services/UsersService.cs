@@ -4,15 +4,18 @@ using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -70,6 +73,7 @@ namespace Lexon.Infrastructure.Services
                 {
                     var filtro = $"{{\"NavisionId\":\"{idNavisionUser}\"}}";
                     await GetUserCommon(result, conn, filtro);
+                    await AddTokenProvisional(result, idNavisionUser);
                 }
                 catch (Exception ex)
                 {
@@ -160,10 +164,111 @@ namespace Lexon.Infrastructure.Services
                         {
                             var rawJson = reader.GetValue(0).ToString();
                             result.data = JsonConvert.DeserializeObject<LexUser>(rawJson);
+                            
                         }
                 }
             }
         }
+
+        private async Task AddTokenProvisional(Result<LexUser> resultado, string idUser)
+        {
+            resultado.data.token = BuildTokenWithPayloadAsync(new TokenModel
+            {
+                idClienteNavision = idUser,
+                name = resultado?.data?.name,
+                idUserApp = GetLongIdUser(resultado?.data?.idUser),
+                //bbdd = bbdd,
+                //provider = provider,
+                //mailAccount = mailAccount,
+                //folder = folder,
+                //idMail = uidMail,
+                //idEntityType = idEntityType,
+                //idEntity = idEntity,
+                //mailContacts = mailContacts,
+                roles = await GetRolesOfUserAsync(idUser, null, null)
+            }).Result;
+        }
+
+        private long? GetLongIdUser(string idUser)
+        {
+            long.TryParse(idUser, out long idUserLong);
+            return idUserLong;
+        }
+        /// <summary>
+        ///   Se crea el claim a pelo como en el ejemplo https://stackoverflow.com/questions/29715178/complex-json-web-token-array-in-webapi-with-owin
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task<string> BuildTokenWithPayloadAsync(TokenModel token)
+        {
+            var accion = await Task.Run(() =>
+            {
+                //_logger.LogInformation("START --> {0} con tiempo {1} y caducidad token {2}", nameof(BuildTokenWithPayloadAsync), DateTime.Now, DateTime.Now.AddSeconds(_settings.Value.TokenCaducity));
+
+                var exp = DateTime.UtcNow.AddSeconds(1500);
+                var payload = new JwtPayload(null, "", new List<Claim>(), null, exp);
+
+                AddValuesToPayload(payload, token);
+
+                var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9"));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+                var jwtToken = new JwtSecurityToken(new JwtHeader(creds), payload);
+                return new JwtSecurityTokenHandler().WriteToken(jwtToken);
+            });
+
+            //_logger.LogInformation("END --> {0} con token: {1}", nameof(BuildTokenWithPayloadAsync), accion);
+
+            return accion;
+        }
+
+        private void AddValuesToPayload(JwtPayload payload, TokenModel modelo)
+        {
+            if (modelo is TokenModel clienteModel)
+            {
+                //var roleOptions = GetRolesOfUser(clienteModel.idClienteNavision);
+                AddClaimToPayload(payload, clienteModel.idClienteNavision, nameof(clienteModel.idClienteNavision));
+                AddClaimToPayload(payload, clienteModel.idUserApp, nameof(clienteModel.idUserApp));
+                AddClaimToPayload(payload, clienteModel.name, nameof(clienteModel.name));
+                AddClaimToPayload(payload, clienteModel.bbdd, nameof(clienteModel.bbdd));
+                AddClaimToPayload(payload, clienteModel.provider, nameof(clienteModel.provider));
+                AddClaimToPayload(payload, clienteModel.mailAccount, nameof(clienteModel.mailAccount));
+                AddClaimToPayload(payload, clienteModel.folder, nameof(clienteModel.folder));
+                AddClaimToPayload(payload, clienteModel.idMail, nameof(clienteModel.idMail));
+                AddClaimToPayload(payload, clienteModel.idEntityType, nameof(clienteModel.idEntityType));
+                AddClaimToPayload(payload, clienteModel.idEntity, nameof(clienteModel.idEntity));
+                AddClaimToPayload(payload, clienteModel.roles, nameof(clienteModel.roles));
+                AddClaimToPayload(payload, clienteModel.mailContacts, nameof(clienteModel.mailContacts));
+            }
+        }
+
+        private void AddClaimToPayload(JwtPayload payload, object valorClaim, string nombreClaim)
+        {
+            if (valorClaim == null) return;
+
+            //_logger.LogInformation("Claim {0} --> {1}", nombreClaim, valorClaim);
+            payload.Add(nombreClaim, valorClaim);
+        }
+
+        private async Task<List<string>> GetRolesOfUserAsync(string idClienteNavision, string login, string password)
+        {
+            //var apps = await GetUserMiniHubAsync(idClienteNavision);
+            var appsWithAccess = new List<string>() { "lexonconnector", "centinelaconnector" };
+            //foreach (var app in apps.data)
+            //{
+            //    appsWithAccess.Add(app.descHerramienta);
+            //}
+
+            var usuarioValido = !string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password);
+            if (!string.IsNullOrEmpty(idClienteNavision) && usuarioValido)
+            {
+                appsWithAccess.Add("gmailpanel");
+                appsWithAccess.Add("outlookpanel");
+            }
+
+            return appsWithAccess;
+        }
+
 
         public async Task<Result<LexUserSimple>> GetUserIdAsync(string idNavisionUser, string env)
         {

@@ -26,12 +26,17 @@
 
         Task<Result<bool>> UpSertBranding(string user, UserBranding brandingIn);
 
-        Task<Result<bool>> GetSignature(string signatureId, string documentId);
+        Task<Result<bool>> GetSignature(string signatureId, string documentId, string eventType);
 
         //Task<Result<int>> DecAvailableSignatures(string user);
 
-        Task<Result<bool>> SaveEvent(EventInfo info);
-
         Task<RestSharp.IRestResponse> checkAvailableSignatures(string user, int nDocuments);
+
+        #region Events
+        Task<Result<bool>> SaveEvent(SignEventInfo info);
+
+        Task<Result<List<SignEventInfo>>> GetEvents(string signatureId);
+        #endregion
+
     }
 }

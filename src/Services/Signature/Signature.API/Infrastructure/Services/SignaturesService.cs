@@ -112,34 +112,33 @@
         #endregion Signatures
 
         #region Events
-        public async Task<Result<bool>> SaveEvent(EventInfo eventInfo)
+        public async Task<Result<bool>> SaveEvent(SignEventInfo eventInfo)
         {
             var response = new Result<bool>();
             var result = await _signaturesRepository.SaveEvent(eventInfo);
             return response;
         }
 
-        public async Task<Result<bool>> GetSignature(string signatureId, string documentId)
+        public async Task<Result<bool>> GetSignature(string signatureId, string documentId, string eventType)
         {
-            //var result = new Result<BsonDocument>();
+            ////var result = new Result<BsonDocument>();
             var response = new Result<bool>();
 
             var result = await _signaturesRepository.GetSignature(signatureId);
 
             if (result.data != null && result.data.Signatures.Count > 0)
             {
-                //var user = result.data["user"].AsString;
-                //var guid = result.data["signatures"][0]["guid"].AsString;
-                //var app = result.data["signatures"][0]["app"].AsString;
+                ////var user = result.data["user"].AsString;
+                ////var guid = result.data["signatures"][0]["guid"].AsString;
+                ////var app = result.data["signatures"][0]["app"].AsString;
 
                 var user = result.data.User;
                 var guid = result.data.Signatures[0].Guid;
                 var app = result.data.Signatures[0].App;
 
 
-
                 // Downloadfile
-                var file = GetSignedFile(signatureId, documentId);
+                var file = GetFile(signatureId, documentId, eventType);
 
                 if (app == "lexon")
                 {
@@ -151,24 +150,39 @@
                 {
                     // Call centinela api to store document
                     var cenDocId = result.data.Signatures[0].Documents.Find(e => e.ExternalId == documentId).InternalInfo.DocId;
-                    response = await SaveFileCentinela(file, guid, cenDocId);
-                    
+                    response = await SaveFileCentinela(file, guid, cenDocId, user, eventType);
                 }
             }
 
             return response;
         }
+
+        public async Task<Result<List<SignEventInfo>>> GetEvents(string signatureId)
+        {
+            return await  _signaturesRepository.GetEvents(signatureId);
+        }
         #endregion
 
         #region HelperFunctions
-        public BsonDocument GetSignedFile(string signatureId, string documentId)
+        public BsonDocument GetFile(string signatureId, string documentId, string eventType)
         {
+            var url = "";
+            if (eventType == "document_completed")
+            {
+                url = $"{_settings.Value.SignaturitApiUrl}/signatures/{signatureId}/documents/{documentId}/download/signed";
+            } else if (eventType == "audit_trail_completed")
+            {
+                url = $"{_settings.Value.SignaturitApiUrl}/signatures/{signatureId}/documents/{documentId}/download/audit_trail";
+            }
 
-            var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/signatures/{signatureId}/documents/{documentId}/download/signed");
-            client.Timeout = 5000;
+            var client = new RestClient(url);
             var request = new RestRequest(Method.GET);
+
+            client.Timeout = 5000;
+
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
             request.AlwaysMultipartFormData = true;
+
             IRestResponse response = client.Execute(request);
             Console.WriteLine(response.Content);
 
@@ -178,6 +192,7 @@
             return new BsonDocument { { "fileContent", Convert.ToBase64String(response.RawBytes) }, { "contentType", response.ContentType }, { "fileName", fileName } };
         }
 
+       
         public async Task<Result<bool>> SaveFileLexon(BsonDocument file)
         {
             var result = new Result<bool>();
@@ -215,15 +230,28 @@
             return result;
         }
 
-        public async Task<Result<bool>> SaveFileCentinela(BsonDocument file, string guid, string cenDocId)
+        public async Task<Result<bool>> SaveFileCentinela(BsonDocument file, string guid, string cenDocId, string user, string eventType)
         {
-            var result = new Result<bool>();
-            var client = new RestClient($"{_settings.Value.CentinelaApiGwUrl}/lex/Lexon/entities/files/post");
-            client.Timeout = -1;
+            Result<bool> result;
+
+            var url = "";
+            if (eventType == "document_completed")
+            {
+                url = $"{_settings.Value.CentinelaApiGwUrl}/signatures/files/post";
+            }
+            else if (eventType == "audit_trail_completed")
+            {
+                url = $"{_settings.Value.CentinelaApiGwUrl}/signatures/audit/post";
+            }
+
+            var client = new RestClient(url);
             var request = new RestRequest(Method.POST);
-            Dictionary<string, string> values = new Dictionary<string, string>();
-            values.Add("idNavision", "45");
-            values.Add("conceptId", "lexon_admin_02");
+            var values = new Dictionary<string, string>();
+
+            client.Timeout = -1;
+            
+            values.Add("idNavision", user);
+            values.Add("conceptId", cenDocId);
             values.Add("name", file["fileName"].AsString);
             values.Add("contentFile", file["fileContent"].AsString);
 
