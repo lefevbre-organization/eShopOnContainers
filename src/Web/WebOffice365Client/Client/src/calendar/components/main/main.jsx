@@ -472,7 +472,7 @@ export class Main extends Component {
         this.resourceCalendarData = []
         listCalendarList()
             .then(result => {
-                this.resourceCalendarData = orderBy(result.items, "primary");
+                this.resourceCalendarData = orderBy(result, "primary");
                 this.resourceCalendarData.find(x => x.id == this.resourceCalendarData[0].id).checked = true;
                 if (!DisableloadSchedule) {
                     this.loadCalendarEvents(this.resourceCalendarData[0].id, true);
