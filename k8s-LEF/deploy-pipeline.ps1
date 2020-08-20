@@ -6,10 +6,21 @@ Param(
     [parameter(Mandatory=$false)][bool]$cleanDocker=$false,
     [parameter(Mandatory=$false)][bool]$buildImages=$true,
     [parameter(Mandatory=$false)][bool]$buildAll=$false,
-    [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webdatabaseclient", "conference.api", "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api", "webdatabaseapigw", "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw", "webstatus"),
-    # [parameter(Mandatory=$false)][string[]]$servicesToBuild=("webgoogleclient"),
+    [parameter(Mandatory=$false)][string[]]$servicesToBuild=(
+        "conference.api", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api", 
+        "webdatabaseclient", "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", 
+        "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
+        "webdatabaseapigw", "webcentinelaapigw", "webaccountapigw", "weblexonapigw", "websignatureapigw", 
+        "webstatus"
+        ),
     [parameter(Mandatory=$false)][bool]$pushImages=$true,
-    [parameter(Mandatory=$false)][string[]]$servicesToPush=("webdatabaseclient", "conference.api", "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api", "ocelotapigw", "webstatuslef"),
+    [parameter(Mandatory=$false)][string[]]$servicesToPush=(
+        "conference.api", "account.api", "lexon.api", "lexon.mysql.api", "centinela.api", "userutils.api", "signature.api", "database.api",
+        "webdatabaseclient", "webportalclient", "webgoogleclient", "webofficeclient", "weblexonclient", "webimapclient", "websignatureclient", "webcentinelaclient", 
+        "webaddonlauncher", "weboffice365addonlexon", "weboffice365addoncentinela", 
+        "ocelotapigw", 
+        "webstatuslef"
+        ),
     [parameter(Mandatory=$false)][string]$tagToPush="linux-dev-29",
     [parameter(Mandatory=$false)][string]$initialTag="linux-dev",
     [parameter(Mandatory=$false)][bool]$deployKubernetes=$false,
