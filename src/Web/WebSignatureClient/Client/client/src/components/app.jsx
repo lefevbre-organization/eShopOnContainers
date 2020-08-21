@@ -65,7 +65,7 @@ import CalendarComponent from '../apps/calendar_content';
 import DataBaseComponent from '../apps/database_content';
 import { PROVIDER } from '../constants';
 
-import { preloadSignatures, preloadSignatures2, getSignatures, getAttachmentLex, getAttachmentCen } from "../services/api-signaturit";
+import { preloadSignatures, preloadSignatures2, getSignatures, getAttachmentLex, getAttachmentCen, cancelSignatureCen } from "../services/api-signaturit";
 import { getFileType } from '../services/mimeType';
 import { backendRequest, backendRequestCompleted, preDownloadSignatures } from '../actions/messages';
 
@@ -532,6 +532,13 @@ class App extends Component {
               this.props.getAttachmentCen(lefebvre.userId, document.docId)
               .then((attachment) => {
                 if (attachment.data === null) { //El fichero no existe o no se ha podido recuperar
+                  cancelSignatureCen(document.docId)
+                  .then(res => {
+                    console.log(res);
+                  })
+                  .catch(err => {
+                    console.log(err);
+                  })
                   this.setState({attachmentsDownloadError: true})
                   this.props.newMessage(mailContacts, adminContacts);
                 }

@@ -178,6 +178,9 @@
     "text": "The selected signature request will be cancelled. Are you sure?",
     "text2": "Please confirm you want to cancel this signature request."
   },
+  "cancelCentinelaConfirmation":{
+    "text": "Please confirm you want to cancel this Centinela Documents signature request"
+  },
   "reminderSentModal": {
     "text": "A reminder has been sent signer"
   },

@@ -196,6 +196,9 @@
     "text": "Voulez-vous vraiment annuler la signature sélectionnée?",
     "text2": "Voulez-vous vraiment annuler le processus de signature en cours?"
   },
+  "cancelCentinelaConfirmation":{
+    "text": "Voulez-vous vraiment annuler le processus de signature?"
+  },
   "reminderSentModal": {
     "text": "Rappel envoyé"
   },
