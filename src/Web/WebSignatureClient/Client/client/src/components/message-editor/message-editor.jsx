@@ -118,10 +118,16 @@ class MessageEditor extends Component {
   }
 
   onDiscardSignatureOk(){
-    const {lefebvre, guid} = this.props
-    cancelSignatureCen(guid)
-    .then(() => {
-      this.setState({ hideConfirmDialog: false });
+    const {close, lefebvre, application} = this.props
+    cancelSignatureCen(lefebvre.guid)
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => {
+      console.log(err);
+    })
+
+    this.setState({ hideConfirmDialog: false });
       if (lefebvre.mailContacts) {
         this.props.setMailContacts(null);
       }
@@ -129,11 +135,7 @@ class MessageEditor extends Component {
       this.props.setGuid(null);
       //this.props.setTitle(this.props.application.signaturesFilterKey);
       this.props.setTitle('');
-      close(aplication);
-    })
-    .catch(() => {
-      this.setState({ hideAlertDialog: true });
-    });
+      close(application);
 }
 
   componentDidMount() {

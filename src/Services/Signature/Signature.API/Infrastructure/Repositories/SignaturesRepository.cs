@@ -67,7 +67,7 @@
         
         private static FilterDefinition<SignEventInfo> GetFilterEvents(string signatureId)
         {
-            return Builders<SignEventInfo>.Filter.Eq(u => u.Signature.Id, signatureId);
+            return Builders<SignEventInfo>.Filter.Eq(u => u.Document.Signature.Id, signatureId);
 
             //return Builders<SignEventInfo>.Filter.ElemMatch(u => u.Signature.Id, signatureId);
 
