@@ -31,7 +31,8 @@ import {
   // setCaseFile,
   setGUID,
   setSign,
-  setIdDocuments
+  setIdDocuments,
+  setUserApp
 } from '../actions/lefebvre';
 
 import { getSelectedFolder } from '../selectors/folders';
@@ -540,6 +541,7 @@ class App extends Component {
                     console.log(err);
                   })
                   this.setState({attachmentsDownloadError: true})
+                  this.props.setUserApp('lefebvre');
                   this.props.newMessage(mailContacts, adminContacts);
                 }
                 else {
@@ -1021,8 +1023,8 @@ const mapDispatchToProps = dispatch => ({
   getAttachmentCen: (userId, documentId) => getAttachmentCen(userId, documentId),
   setIdDocuments: ids => dispatch(setIdDocuments(ids)),
   backendRequest: () => dispatch(backendRequest()),
-  backendRequestCompleted: () => dispatch(backendRequestCompleted())
-
+  backendRequestCompleted: () => dispatch(backendRequestCompleted()),
+  setUserApp: app => dispatch(setUserApp(app))
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
@@ -1052,7 +1054,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
     getAttachmentCen: (userId, documentId) => dispatchProps.getAttachmentCen(userId, documentId),
     setIdDocuments: ids => dispatchProps.setIdDocuments(ids),
     backendRequest: () => dispatchProps.backendRequest(),
-    backendRequestCompleted: () => dispatchProps.backendRequestCompleted()
+    backendRequestCompleted: () => dispatchProps.backendRequestCompleted(),
   });
 
 

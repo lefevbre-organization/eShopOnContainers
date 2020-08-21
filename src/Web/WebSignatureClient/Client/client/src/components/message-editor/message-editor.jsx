@@ -121,7 +121,7 @@ class MessageEditor extends Component {
     const {lefebvre, guid} = this.props
     cancelSignatureCen(guid)
     .then(() => {
-      this.setState({ hideAlertDialog: true });
+      this.setState({ hideConfirmDialog: false });
       if (lefebvre.mailContacts) {
         this.props.setMailContacts(null);
       }
