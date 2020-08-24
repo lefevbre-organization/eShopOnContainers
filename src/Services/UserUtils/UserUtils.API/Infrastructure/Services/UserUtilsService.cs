@@ -632,7 +632,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
                 else
                 {
                     result.data.valid = false;
-                    TraceOutputMessage(result.errors, $"Error validation user > User login or user idEntry don´t exist", "Error Validation User");
+                    TraceOutputMessage(result.errors, $"Error validation user > User login or user idEntry don´t exist", null, "Error Validation User");
                     return result;
                 }
 
@@ -650,7 +650,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             }
             catch (Exception ex)
             {
-                TraceOutputMessage(result.errors, $"Error validation user => {ex.Message}", "Error Validation");
+                TraceOutputMessage(result.errors, $"Error validation user => {ex.Message}", null, "Error Validation");
             }
             return result;
         }
@@ -670,7 +670,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
             {
                 var lexUserResult = await GetLexonUserIdAsync(tokenRequest.idClienteNavision);
                 if (string.IsNullOrEmpty(lexUserResult?.data?.idUser))
-                    TraceOutputMessage(result.errors, $"Error get user from lexon", "Error Get Lexon Token");
+                    TraceOutputMessage(result.errors, $"Error get user from lexon", null, "Error Get Lexon Token");
                 tokenRequest.idUserApp = lexUserResult?.data?.idUser;
             }
             if (tokenRequest is TokenRequestNewMail || tokenRequest is TokenRequestOpenMail)

@@ -155,7 +155,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                                 else
                                 {
                                     if (resultMySql.Infos.Count > 1)
-                                        TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
+                                        TraceOutputMessage(resultMySql.Errors,  "MySql get and empty string with this search", null, "2004");
                                     else
                                         resultMySql.Infos.Add(new Info() { code = "515", message = "MySql get and empty string with this search" });
                                 }
@@ -202,7 +202,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                                 else
                                 {
                                     if (resultMySql.Infos.Count > 1)
-                                        TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
+                                        TraceOutputMessage(resultMySql.Errors, "MySql get and empty string with this search", null, "2004");
                                     else
                                         resultMySql.Infos.Add(new Info() { code = "515", message = "MySql get and empty string with this search" });
                                 }
@@ -248,7 +248,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                                     else
                                     {
                                         if (resultMySql.Infos.Count > 1)
-                                            TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
+                                            TraceOutputMessage(resultMySql.Errors, "MySql get and empty string with this search", null, "2004");
                                         else
                                             resultMySql.Infos.Add(new Info() { code = "515", message = "MySql get and empty string with this search" });
                                     }
@@ -295,7 +295,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                                     }
                                     else
                                     {
-                                        TraceOutputMessage(result.errors, "2004", "MySql get and empty string with this search");
+                                        TraceOutputMessage(result.errors, "MySql get and empty string with this search", null, "2004");
                                     }
                                 }
                         }
@@ -475,7 +475,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                                 else
                                 {
                                     if (resultMySql.Infos.Count > 1)
-                                        TraceOutputMessage(resultMySql.Errors, "2004", "MySql get and empty string with this search");
+                                        TraceOutputMessage(resultMySql.Errors, "MySql get and empty string with this search", null, "2004");
                                     else
                                         resultMySql.Infos.Add(new Info() { code = "515", message = "MySql get and empty string with this search" });
                                 }
@@ -520,7 +520,7 @@ namespace Lexon.MySql.Infrastructure.Repositories
                                     }
                                     else
                                     {
-                                        TraceOutputMessage(result.errors, "2004", "MySql get and empty string with this search");
+                                        TraceOutputMessage(result.errors, "MySql get and empty string with this search", null, "2004");
                                     }
                                 }
                         }

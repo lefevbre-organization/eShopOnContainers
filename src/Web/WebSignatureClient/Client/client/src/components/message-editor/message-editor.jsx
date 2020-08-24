@@ -376,14 +376,26 @@ class MessageEditor extends Component {
         />
         <style jsx global>
           {` 
+           .message-editor___1BSzC 
+           .header___2SVSM 
+           .address___2e6fn 
+           .chip___3gDJb {
+             border-color: #001970 !important;
+            }
+            .message-editor___1BSzC 
+            .header___2SVSM 
+            .address___2e6fn 
+            .chip___3gDJb i {
+              color: #001970;
+            }
             #info2Dialog,
             #confirmDialog {
               max-height: 927px;
               width: 300px;
               left: 770px;
-              top: 392.5px;
+              //top: 392.5px;
               z-index: 1001;
-              transform: translateY(+150%);
+              //transform: translateY(+150%);
             }
             #info2Dialog_dialog-header, #info2Dialog_title, #info2Dialog_dialog-content, #info2Dialog.e-footer-content,
             #confirmDialog_dialog-header, #confirmDialog_title, #confirmDialog_dialog-content, .e-footer-content {

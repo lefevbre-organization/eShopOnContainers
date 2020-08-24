@@ -221,7 +221,8 @@
     "pagesConfiguration": {
       "single": "Firmar documento en una sola hoja",
       "all": "Firmar documento en todas las hojas" 
-    }
+    },
+    "messageAlert": "Tipo de archivo Seleccionado no valido."
   },
   "expirationWidget":{
     "title": "PLAZOS DE EXPIRACIÓN DE FIRMA",
