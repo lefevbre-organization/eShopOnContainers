@@ -159,7 +159,10 @@ $flag-size: 18px;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     gap: 1px 1px;
-    grid-template-areas: 'editor-container editor-container side-container' 'editor-container editor-container side-container' 'editor-container editor-container side-container' 'editor-container editor-container side-container' 'editor-container editor-container side-container' 'editor-container editor-container side-container' 'action-buttons action-buttons side-container';
+    grid-template-areas: 
+    'editor-container editor-container side-container' 
+    'action-buttons action-buttons side-container'
+    ;
   }
 
   .editor-container {
@@ -310,6 +313,7 @@ $flag-size: 18px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    padding-top: 11px;
 
     .action-button {
       border-radius: 0;
