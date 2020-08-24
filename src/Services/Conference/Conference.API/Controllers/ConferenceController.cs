@@ -46,6 +46,21 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Conference.API.Controllers
             return Ok(new Result<string>(data));
         }
 
+        /// <summary>
+        /// Permite comporbar la salud ded server
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("health")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        public IActionResult GetHealth()
+        {
+            var data = $"Conference v.{ _settings.Value.Version}";
+            System.Diagnostics.Trace.WriteLine(data);
+            _log.LogDebug(data);
+            return Ok(new Result<string>(data));
+        }
+
         [HttpGet("{idNavision}/user")]
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<UserConference>), (int)HttpStatusCode.BadRequest)]
