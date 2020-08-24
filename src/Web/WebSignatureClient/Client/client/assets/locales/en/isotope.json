@@ -202,7 +202,8 @@
     "pagesConfiguration": {
       "single": "Single page signature",
       "all": "Sign all pages" 
-    }
+    },
+    "messageAlert": "Invalid selected file type."
   },
   "expirationWidget":{
     "title": "EXPIRATION CONFIGURATION",

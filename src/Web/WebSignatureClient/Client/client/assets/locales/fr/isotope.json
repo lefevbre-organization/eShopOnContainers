@@ -200,7 +200,7 @@
     "text": "Voulez-vous vraiment annuler le processus de signature?"
   },
   "reminderSentModal": {
-    "text": "Rappel envoyé"
+    "text": "Rappel envoyé au signataire"
   },
   "noSignersModal": {
     "text": "Vous devez spécifier au moins un signataire pour envoyer la demande."
@@ -220,8 +220,8 @@
     "pagesConfiguration": {
       "single": "Signer le document sur une seule feuille",
       "all": "Signer le document sur toutes les feuilles" 
-    }
-
+    },
+    "messageAlert": "Type de fichier sélectionné non valide."
   },
   "expirationWidget":{
     "title": "Délais d expiration de signature",
