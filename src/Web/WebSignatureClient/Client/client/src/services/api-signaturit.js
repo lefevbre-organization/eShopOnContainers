@@ -1091,6 +1091,32 @@ export const getAttachmentCen = async (userId, attachmentId) => {
   })
 }
 
+export const cancelSignatureCen = async (guid) => {
+  return new Promise((resolve, reject) => {
+    var myHeaders = new Headers();
+    myHeaders.append("Accept", "text/plain");
+    myHeaders.append("Content-Type", "application/json-patch+json");
+        
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+    
+    //fetch(`https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/signatures/cancelation/${guid}}`, requestOptions)
+    fetch(`https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen/signatures/cancelation/${guid}`, requestOptions)
+    .then(response => response.json())
+    .then(result => {
+      console.log(result);
+      resolve(result);
+    })
+    .catch(error => {
+      console.log('error', error);
+      reject(error);
+    });
+  })
+}
+
 export const getAvailableSignatures = async (companyId, numDocuments) => {
   // return new Promise((resolve, reject) => {
   //   var myHeaders = new Headers();

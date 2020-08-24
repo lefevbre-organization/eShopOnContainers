@@ -367,6 +367,7 @@ services:
       - CallBackUrl=https://lexbox-test-websignature.lefebvre.es/completed
       - LexonFilesUrl=https://10.38.6.18/index.php
       - LexonApiGwUrl=https://lexbox-test-apigwlex.lefebvre.es/api/v1
+      - CentinelaApiGwUrl=https://lexbox-test-apigwcen.lefebvre.es/api/v1
       - ModulosComunes=https://led-pre-serviceclaves.lefebvre.es
       - EventBusConnection=${ESHOP_AZURE_SERVICE_BUS:-rabbitmq}
       - EventBusUserName=${ESHOP_SERVICE_BUS_USERNAME:-guest}

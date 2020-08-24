@@ -196,8 +196,11 @@
     "text": "¿Está seguro de que quiere cancelar la firma seleccionada?",
     "text2": "¿Está seguro de que quiere cancelar el proceso de firma actual?"
   },
+  "cancelCentinelaConfirmation":{
+    "text": "¿Está seguro de que quiere cancelar el proceso de firma de documentos de Centinela?"
+  },
   "reminderSentModal": {
-    "text": "Se acaba de enviar un recordatorio"
+    "text": "Se acaba de enviar un recordatorio al Firmante"
   },
   "noSignersModal": {
     "text": "Debe especificar al menos un firmante para poder enviar la solicitud."

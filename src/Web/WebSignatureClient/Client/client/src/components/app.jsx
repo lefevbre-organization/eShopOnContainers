@@ -31,7 +31,8 @@ import {
   // setCaseFile,
   setGUID,
   setSign,
-  setIdDocuments
+  setIdDocuments,
+  setUserApp
 } from '../actions/lefebvre';
 
 import { getSelectedFolder } from '../selectors/folders';
@@ -65,7 +66,7 @@ import CalendarComponent from '../apps/calendar_content';
 import DataBaseComponent from '../apps/database_content';
 import { PROVIDER } from '../constants';
 
-import { preloadSignatures, preloadSignatures2, getSignatures, getAttachmentLex, getAttachmentCen } from "../services/api-signaturit";
+import { preloadSignatures, preloadSignatures2, getSignatures, getAttachmentLex, getAttachmentCen, cancelSignatureCen } from "../services/api-signaturit";
 import { getFileType } from '../services/mimeType';
 import { backendRequest, backendRequestCompleted, preDownloadSignatures } from '../actions/messages';
 
@@ -532,7 +533,15 @@ class App extends Component {
               this.props.getAttachmentCen(lefebvre.userId, document.docId)
               .then((attachment) => {
                 if (attachment.data === null) { //El fichero no existe o no se ha podido recuperar
+                  cancelSignatureCen(document.docId)
+                  .then(res => {
+                    console.log(res);
+                  })
+                  .catch(err => {
+                    console.log(err);
+                  })
                   this.setState({attachmentsDownloadError: true})
+                  this.props.setUserApp('lefebvre');
                   this.props.newMessage(mailContacts, adminContacts);
                 }
                 else {
@@ -1014,8 +1023,8 @@ const mapDispatchToProps = dispatch => ({
   getAttachmentCen: (userId, documentId) => getAttachmentCen(userId, documentId),
   setIdDocuments: ids => dispatch(setIdDocuments(ids)),
   backendRequest: () => dispatch(backendRequest()),
-  backendRequestCompleted: () => dispatch(backendRequestCompleted())
-
+  backendRequestCompleted: () => dispatch(backendRequestCompleted()),
+  setUserApp: app => dispatch(setUserApp(app))
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) =>
@@ -1045,7 +1054,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) =>
     getAttachmentCen: (userId, documentId) => dispatchProps.getAttachmentCen(userId, documentId),
     setIdDocuments: ids => dispatchProps.setIdDocuments(ids),
     backendRequest: () => dispatchProps.backendRequest(),
-    backendRequestCompleted: () => dispatchProps.backendRequestCompleted()
+    backendRequestCompleted: () => dispatchProps.backendRequestCompleted(),
   });
 
 

@@ -26,6 +26,7 @@ import {
   createUser,
   decAvailableSignatures,
   notifySignature,
+  cancelSignatureCen
 } from '../../services/api-signaturit';
 import { getUser } from '../../services/accounts';
 //import { createUser, addOrUpdateSignature, getUserSignatures } from '../../services/api-signature';
@@ -53,6 +54,7 @@ class MessageEditor extends Component {
       selectedExpirationOption: '',
       expirationDays: 7,
       hideAlertDialog: false,
+      hideConfirmDialog: false,
       bigAttachments: false,
       centinelaDownloadError: (props.attachmentsDownloadError !== undefined) ? props.attachmentsDownloadError : false,
       numPagesOption: 1
@@ -107,13 +109,34 @@ class MessageEditor extends Component {
       this.props.onShowError();
     }
     this.setState({
-        hideAlertDialog: false, bigAttachments: false, centinelaDownloadError: false
+        hideAlertDialog: false, bigAttachments: false, centinelaDownloadError: false, hideConfirmDialog: false
     });
   }
 
   dialogOpen(){
       this.alertDialogInstance.cssClass = 'e-fixed';
   }
+
+  onDiscardSignatureOk(){
+    const {close, lefebvre, application} = this.props
+    cancelSignatureCen(lefebvre.guid)
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => {
+      console.log(err);
+    })
+
+    this.setState({ hideConfirmDialog: false });
+      if (lefebvre.mailContacts) {
+        this.props.setMailContacts(null);
+      }
+      this.props.setUserApp('lefebvre');
+      this.props.setGuid(null);
+      //this.props.setTitle(this.props.application.signaturesFilterKey);
+      this.props.setTitle('');
+      close(application);
+}
 
   componentDidMount() {
     if (this.fileInput) {
@@ -125,15 +148,18 @@ class MessageEditor extends Component {
   removeMessageEditor(aplication) {
     const { close, lefebvre } = this.props;
 
-    if (lefebvre.mailContacts) {
-      this.props.setMailContacts(null);
+    if (lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2"){
+      this.setState({hideConfirmDialog: true});
+    } else {
+      if (lefebvre.mailContacts) {
+        this.props.setMailContacts(null);
+      }
+      this.props.setUserApp('lefebvre');
+      this.props.setGuid(null);
+      //this.props.setTitle(this.props.application.signaturesFilterKey);
+      this.props.setTitle('');
+      close(aplication);
     }
-
-    this.props.setGuid(null);
-    //this.props.setTitle(this.props.application.signaturesFilterKey);
-    this.props.setTitle('');
-
-    close(aplication);
   }
 
 
@@ -177,6 +203,31 @@ class MessageEditor extends Component {
         ${i18n.t('attachNotFoundCentinela.text')}
       </div>
     `;
+
+    const confirmDiscard = `
+      <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
+      font-size: 17.5px !important; padding-left: 20px;'>
+      ${i18n.t('cancelCentinelaConfirmation.text')}
+      </div>
+    `;
+
+    const confirmButtons = [
+      {
+          click: () => {
+          this.setState({ hideConfirmDialog: false });
+          },
+          buttonModel: {  content: i18n.t('confirmationModal.no'), cssClass: 'btn-modal-close' }
+      },
+      {
+          click: () => {
+              this.setState({ hideConfirmDialog: false });
+              this.onDiscardSignatureOk();
+          },
+          buttonModel: { content: i18n.t('confirmationModal.yes'), isPrimary: true }
+      }
+  ];
+
 
     const {
       t,
@@ -309,9 +360,24 @@ class MessageEditor extends Component {
           showCloseIcon={true}
           //position={ this.position }
         />
+        <DialogComponent 
+          id="confirmDialog" 
+          header=' ' 
+          visible={this.state.hideConfirmDialog} 
+          showCloseIcon={true} 
+          animationSettings={this.animationSettings} 
+          width='60%' 
+          content={confirmDiscard} 
+          ref={dialog => this.confirmDialogInstance = dialog} 
+          //target='#target' 
+          buttons={confirmButtons} 
+          open={() => this.dialogOpen} 
+          close={() => this.dialogClose}
+        />
         <style jsx global>
           {` 
-            #info2Dialog {
+            #info2Dialog,
+            #confirmDialog {
               max-height: 927px;
               width: 300px;
               left: 770px;
@@ -319,7 +385,8 @@ class MessageEditor extends Component {
               z-index: 1001;
               transform: translateY(+150%);
             }
-            #info2Dialog_dialog-header, #info2Dialog_title, #info2Dialog_dialog-content, #info2Dialog.e-footer-content{
+            #info2Dialog_dialog-header, #info2Dialog_title, #info2Dialog_dialog-content, #info2Dialog.e-footer-content,
+            #confirmDialog_dialog-header, #confirmDialog_title, #confirmDialog_dialog-content, .e-footer-content {
               background: #001970;
               color: #fff;
               display:flex;
@@ -329,8 +396,82 @@ class MessageEditor extends Component {
               margin-left: auto;
               color: #fff
             }
+            #confirmDialog .e-dlg-header{
+              width: 1%;
+            }
             .e-dialog .e-btn .e-btn-icon.e-icon-dlg-close{
               color: white;
+            }
+            .e-btn.e-flat.e-primary {
+              color: #fff !important;
+            }
+            .e-btn-icon .e-icon-dlg-close .e-icons{
+                color: #fff;
+            }
+            .e-dialog .e-dlg-header-content 
+            .e-btn.e-dlg-closeicon-btn {
+              margin-right: 0;
+              margin-left: auto;
+              color: #fff;
+              height: 15px;
+              background-color: transparent;
+            }
+            #confirmDialog_dialog-header, .e-dialog 
+            .e-icon-dlg-close::before {
+              content: '\e7fc';
+              position: relative;
+              color: white;
+              font-size: 15px;
+            }
+
+            #confirmDialog .e-btn.e-flat.e-primary {
+              text-transform: uppercase;
+              font-size: 13px;
+              font-family: MTTMilano-Bold,Lato,Arial,sans-serif;
+              letter-spacing: .7px;
+              color: #001978 !important;
+              padding: 10px;
+              background-color: #fff;
+              border-radius: 0 !important;
+              border: 2px solid #fff !important;
+              min-width: 80px;
+            }
+            
+            #confirmDialog .e-btn.e-flat.e-primary:hover {
+              background-color: #e5e8f1 !important;
+              background: #e5e8f1 !important;
+              color: #001978 !important;
+            }
+            
+            #confirmDialog .e-btn.e-flat.e-primary:active {
+              background-color: #e5e8f1 !important;
+              background: #e5e8f1 !important;
+              color: #001978 !important;
+            }
+
+            .btn-modal-close {
+              text-transform: uppercase;
+              font-size: 13px;
+              font-family: MTTMilano-Bold,Lato,Arial,sans-serif;
+              letter-spacing: .7px;
+              color: #fff !important;
+              padding: 10px;
+              background-color: #001978 !important;
+              min-width: 80px;
+              border-radius: 0 !important;
+              border: 2px solid #fff !important;
+            }
+            
+            .btn-modal-close:hover {
+              background-color: #e5e8f1 !important;
+              background: #e5e8f1 !important;
+              color: #001978 !important;
+            }
+          
+            .btn-modal-close:active {
+              background-color: #e5e8f1 !important;
+              background: #e5e8f1 !important;
+              color: #001978 !important;
             }
           `}
         </style>
@@ -874,7 +1015,8 @@ const mapDispatchToProps = (dispatch) => ({
   setGuid: (guid) => dispatch(ACTIONS.setGUID(guid)),
   setAvailableSignatures: (num) =>
     dispatch(ACTIONS.setAvailableSignatures(num)),
-  setTitle: title => dispatch(setTitle(title))
+  setTitle: title => dispatch(setTitle(title)),
+  setUserApp: app => dispatch(ACTIONS.setUserApp(app))
 });
 
 export default connect(

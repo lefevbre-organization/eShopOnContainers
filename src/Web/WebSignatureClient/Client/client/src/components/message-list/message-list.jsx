@@ -233,6 +233,7 @@ class MessageList extends Component {
             let recipients = '';
             let date = '';
             let status = '';
+            let newStatus = '';
 
             documentName = signature.documents[0].file.name
             subject = (signature.data.find(x => x.key === "subject")) ? signature.data.find(x => x.key === "subject").value : 'Sin asunto';
@@ -242,9 +243,30 @@ class MessageList extends Component {
                 hour: '2-digit', minute: '2-digit', second: '2-digit'
             })
             status = signature.documents[signature.documents.length-1].status;
-            res.push({Id: signature.id, Documento: documentName, Asunto: subject, Destinatarios: recipients, Fecha: date, Estado: status});
+           
+            newStatus = this.getNewStatus(status);
+         
+            res.push({Id: signature.id, Documento: documentName, Asunto: subject, Destinatarios: recipients, Fecha: date, Estado: newStatus});
         });
         return (res.length === 0 ? [{}] : res);
+    }
+
+    getNewStatus = (status) => {
+        if(status == "canceled") {
+           return i18n.t('signaturesGrid.statusCancelled');
+        } else if(status == "declined") {
+            return i18n.t('signaturesGrid.statusDeclined');
+        } else if(status == "expired") {
+            return i18n.t('signaturesGrid.statusExpired');
+        } else if(status == "completed") {
+            return i18n.t('signaturesGrid.statusCompleted');
+        } else if(status == "ready") {
+            return i18n.t('signaturesGrid.statusInProgress');
+        } else if(status == "error") {
+            return i18n.t('signaturesGrid.statusError');
+        } else if(status == "in_queue") {
+            return i18n.t('signaturesGrid.statusPending');
+        }
     }
 
     gridTemplate(props) {
@@ -323,20 +345,21 @@ class MessageList extends Component {
         let firstEmail = props.Destinatarios.split(';')[0];
         var chunks = props.Destinatarios.split(' ');
         let recipientsClass;
+
         switch (props.Estado) {
-            case 'canceled':
-            case 'declined':
-            case 'expired':
-            case 'error':
+            case i18n.t('signaturesGrid.statusCancelled'):
+            case i18n.t('signaturesGrid.statusDeclined'):
+            case i18n.t('signaturesGrid.statusExpired'):
+            case i18n.t('signaturesGrid.statusError'):
                 recipientsClass = 'cancelada';
                 break;           
             case 'En progreso':
-            case 'ready':
-            case 'in_queue':
+            case i18n.t('signaturesGrid.statusInProgress'):
+            case i18n.t('signaturesGrid.statusPending'):
                 recipientsClass = 'en-progreso';
                 break;
             case 'Completadas':
-            case 'completed':
+            case i18n.t('signaturesGrid.statusCompleted'):
                 recipientsClass = 'completada';
                 break;
             default:
@@ -416,33 +439,32 @@ class MessageList extends Component {
         let status;
         let status_style;
 
-
         switch (props.Estado) {
-        case 'canceled':
+        case i18n.t('signaturesGrid.statusCancelled'):
             status = i18n.t('signaturesGrid.statusCancelled');
             status_style = 'cancelada';
             break;
-        case 'declined':
+        case i18n.t('signaturesGrid.statusDeclined'):
             status = i18n.t('signaturesGrid.statusDeclined');
             status_style = 'cancelada';
             break;
-        case 'expired':
+        case i18n.t('signaturesGrid.statusExpired'):
             status = i18n.t('signaturesGrid.statusExpired');
             status_style = 'cancelada';
             break;      
-        case 'completed':
+        case i18n.t('signaturesGrid.statusCompleted'):
             status = i18n.t('signaturesGrid.statusCompleted');
             status_style = 'completada'
             break;
-        case 'ready':
+        case i18n.t('signaturesGrid.statusInProgress'):
             status = i18n.t('signaturesGrid.statusInProgress');
             status_style = 'en-progreso'
             break;
-        case 'error':
+        case i18n.t('signaturesGrid.statusError'):
             status = i18n.t('signaturesGrid.statusError');
             status_style = 'cancelada';
             break;
-        case 'in_queue':
+        case i18n.t('signaturesGrid.statusPending'):
             status = i18n.t('signaturesGrid.statusPending');
             status_style = 'en-progreso';
             break;
@@ -587,7 +609,6 @@ class MessageList extends Component {
         //var firmas = this.props.signatures;
         var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [{}];
         var customAttributes = {class: 'customcss'};
-
         return( (firmas && firmas.length > 0) ?
             <div>
             <div>
@@ -897,11 +918,19 @@ class MessageList extends Component {
                      background: #e5e8f1 !important;
                      color: #001978 !important;
                     }
+
+                    .e-control.e-toolbar.e-lib.e-keyboard {
+                        width: 80vw !important;
+                        max-width: 100% !important;
+                    }
+                    
                     .e-toolbar-right {
                       right: 13% !important;
+                      display: table-column !important;
                     }
                     .e-toolbar .e-toolbar-items.e-tbar-pos .e-toolbar-left {
                      left: auto;
+                     line-height: 47px !important;
                     }
                     .e-toolbar-left {
                      right: 0 !important;
@@ -921,10 +950,6 @@ class MessageList extends Component {
                     .e-toolbar .e-toolbar-items .e-toolbar-left 
                     .e-toolbar-item:nth-child(3) {
                       margin-right: 15px;
-                    }
-                    .e-toolbar .e-toolbar-items .e-toolbar-left 
-                    .e-toolbar-item:third-child {
-                      margin-left: 20px;
                     }
                     .e-toolbar .e-tbar-btn {
                       background: #001978;
@@ -951,7 +976,7 @@ class MessageList extends Component {
                     }
                     .e-search   {
                       border: 1px solid #001970 !important;
-                      height: calc(100% - 15px);
+                      height: 32px;
                       padding: 1px;
                       padding-left: 4px;
                     }
@@ -1007,23 +1032,35 @@ class MessageList extends Component {
                         color: #001970;
                     }
 
-                    .e-input-group.e-control-wrapper:not(.e-success):not(.e-warning):not(.e-error):not(.e-float-icon-left) {
+                    .e-input-group.e-control-wrapper.e-alldrop.e-ddl.e-lib.e-keyboard.e-valid-input {
                         color: #001970;
-                        border-color: azure;
-                        width: 50% !important;
+                        border-color: azure !important;
+                        width: 70% !important;
                     }
+                    
                     .e-input-group .e-input-group-icon:last-child {
                         color: #001970;
                     }
                     .e-pager .e-pagerconstant {
                         color: #001970; 
-                        margin: 0 0 8px -10px;
+                        margin: 0 0 8px 10px;
                     }
 
                     .e-pager div.e-parentmsgbar {
                         color: #001970;
                     }
-                 
+                    .e-grid .e-icon-filter::before, 
+                    .e-grid-menu .e-icon-filter::before {
+                        font-family: 'lf-font' !important;
+                        content: '\e95e';
+                        color: #fff;
+                        font-size: 12px;
+                    }
+                    .e-pager .e-pagerdropdown {
+                     margin-top: 0 !important; 
+                     vertical-align: sub !important;
+                     height: 35px !important;
+                    }
                 `}
                 </style>
             </div>

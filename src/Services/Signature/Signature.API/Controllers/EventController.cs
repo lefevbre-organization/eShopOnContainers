@@ -28,15 +28,18 @@
     {
         private readonly ISignaturesService _signaturesService;
         private readonly SignatureSettings _settings;
+        private readonly IConfiguration _configuration;
         //private readonly IEventBus _eventBus;
 
         public EventController(
             ISignaturesService signaturesService
             , IOptionsSnapshot<SignatureSettings> signatureSettings
+            , IConfiguration configuration
             )//, IEventBus eventBus)
         {
             _signaturesService = signaturesService ?? throw new ArgumentNullException(nameof(signaturesService));
             _settings = signatureSettings.Value;
+            _configuration = configuration;
             //_eventBus = eventBus;
         }
 
@@ -44,19 +47,17 @@
         [Route("post.json")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> signatureEvent([FromBody] EventInfo eventinfo)
+        public async Task<IActionResult> signatureEvent([FromBody] SignEventInfo eventinfo)
         {
             try
             {
-                if (eventinfo.Status == "document_completed")
+              
+                if (eventinfo.Document.Status == "document_completed" || eventinfo.Document.Status == "audit_trail_completed")
                 {
-                    var signatureId = eventinfo.Signature.Id;
-
-                    var documentId = eventinfo.DocumentId;
-
+                    var signatureId = eventinfo.Document.Signature.Id;
+                    var documentId = eventinfo.Document.DocumentId;
                     var logResult = await _signaturesService.SaveEvent(eventinfo);
-
-                    var result = await _signaturesService.GetSignature(signatureId, documentId);
+                    var result = await _signaturesService.GetSignature(signatureId, documentId, eventinfo.Document.Status);
 
                     return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
                 }
@@ -69,6 +70,37 @@
             
 
             return Ok();
+        }
+
+
+        [HttpGet]
+        [Route("events/get/{id}")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> getEvents([FromHeader] string password, string id = "all")
+        {
+            var result = new Result<List<SignEventInfo>>();
+
+            try
+            {
+                
+                if (password != _configuration.GetValue<string>("EventControllerPass"))
+                {
+                    return Unauthorized();
+                }
+
+                result = await _signaturesService.GetEvents(id);
+
+                
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+            return Ok(result);
         }
 
     }

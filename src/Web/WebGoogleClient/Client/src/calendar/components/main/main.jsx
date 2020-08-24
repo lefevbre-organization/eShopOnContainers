@@ -576,7 +576,10 @@ export class Main extends Component {
                 });
             }
         }
-        this.drowDownListEventType.dataSource = this.eventTypeDataSource;      
+        if (this.drowDownListEventType != undefined) {
+            this.drowDownListEventType.dataSource = this.eventTypeDataSource;    
+        } 
+         
     }
 
     getlistEventTypes() {

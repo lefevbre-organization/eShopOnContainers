@@ -64,6 +64,17 @@
         {
             return Builders<UserSignatures>.Filter.Eq(u => u.User, user.ToUpperInvariant());
         }
+        
+        private static FilterDefinition<SignEventInfo> GetFilterEvents(string signatureId)
+        {
+            return Builders<SignEventInfo>.Filter.Eq(u => u.Document.Signature.Id, signatureId);
+
+            //return Builders<SignEventInfo>.Filter.ElemMatch(u => u.Signature.Id, signatureId);
+
+            //return Builders<SignEventInfo>.Filter.ElemMatch(u => u.Signature, ev => ev._id == signatureId);
+
+        }
+
 
         private static Predicate<Signature> GetFilterUserSignature(string externalId, string guid)
         {
@@ -80,6 +91,7 @@
         {
             return x => x.app.Equals(app.ToLowerInvariant()); 
         }
+
 
         #endregion
 
@@ -378,7 +390,7 @@
             return result; 
         }
 
-        public async Task<Result<bool>> SaveEvent(EventInfo eventInfo)
+        public async Task<Result<bool>> SaveEvent(SignEventInfo eventInfo)
         {
             var result = new Result<bool>();
 
@@ -393,6 +405,53 @@
             }
             return result;
         }
+
+        public async Task<Result<List<SignEventInfo>>> GetEvents(string signatureId)
+        {
+            var result = new Result<List<SignEventInfo>>();
+            var result2 = new Result<SignEventInfo>();
+            var filter = GetFilterEvents(signatureId);
+            try
+            {
+                if (signatureId == "all")
+                {
+                    
+                    //result.data = BsonSerializer.Deserialize<SignEventInfo>(await _context.SignatureEvents.Find(filter).FirstOrDefaultAsync());
+                    result.data = await _context.SignatureEvents.Find(f=> true).ToListAsync();
+                }
+                else
+                {
+                    //filter = new BsonDocument();
+                    //result2.data = await _context.SignatureEvents.Find(filter).FirstOrDefaultAsync();
+                    //result.data = new List<SignEventInfo>();
+                    //result.data.Add(result2.data);
+
+                    //result.data = new List<SignEventInfo>();
+                    result.data = await _context.SignatureEvents.Find(filter).ToListAsync();
+                    
+
+
+                }
+                
+
+                if (result.data == null || result.data.Count == 0)
+                {
+                    TraceMessage(result.errors, new Exception($"No se encuentra ningún evento para la firma {signatureId}"), "1003");
+                }
+                else
+                {
+                    var events = result.data?.ToList();
+
+                    result.data = events;
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceInfo(result.infos, $"Error al obtener datos de {signatureId}: {ex.Message}");
+            }
+            return result;
+        }
+
 
         #endregion
 
