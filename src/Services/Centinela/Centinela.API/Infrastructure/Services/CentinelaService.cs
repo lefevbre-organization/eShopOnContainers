@@ -94,12 +94,12 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
                 }
                 else
                 {
-                    TraceOutputMessage(result.errors, $"Response not ok : {responseText} when FilePost with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", "Centinela_Error_StatusCode");
+                    TraceOutputMessage(result.errors, $"Response not ok when FilePost with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", responseText , "Centinela_Error_StatusCode");
                 }
             }
             catch (Exception ex)
             {
-                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message} : {ex.InnerException}", "Centinela_Error_FilePost");
+                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message}", ex.InnerException?.Message, "Centinela_Error_FilePost");
             }
 
             return result;

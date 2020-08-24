@@ -754,7 +754,7 @@ namespace Lexon.Infrastructure.Services
                                     }
                                     else
                                     {
-                                        TraceOutputMessage(result.errors, "2004", "MySql get and empty string with this search");
+                                        TraceOutputMessage(result.errors, "MySql get and empty string with this search", null, "2004");
                                     }
                                 }
                         }
@@ -815,7 +815,7 @@ namespace Lexon.Infrastructure.Services
                                     }
                                     else
                                     {
-                                        TraceOutputMessage(result.errors, "2004", "MySql get and empty string with this search");
+                                        TraceOutputMessage(result.errors,  "MySql get and empty string with this search", null, "2004");
                                     }
                                 }
                         }
@@ -1229,7 +1229,7 @@ namespace Lexon.Infrastructure.Services
             }
             catch (Exception ex)
             {
-                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.idEntity}, -> {ex.Message} - {ex.InnerException?.Message}", "599");
+                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.idEntity}, -> {ex.Message}", ex.InnerException?.Message, "599");
             }
 
             WriteError($"Salimos de FileGetAsync a las {DateTime.Now}");
@@ -1270,13 +1270,13 @@ namespace Lexon.Infrastructure.Services
                     }
                     else
                     {
-                        TraceOutputMessage(result.errors, $"Response not ok : {responseText} with lexon-dev with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", null, 2003);
+                        TraceOutputMessage(result.errors, $"Response not ok with lexon-dev with code-> {(int)response.StatusCode} - {response.ReasonPhrase}", responseText, 2003);
                     }
                 }
             }
             catch (Exception ex)
             {
-                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message} - {ex.InnerException?.Message}", "598");
+                TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message}", ex.InnerException?.Message, "598");
             }
             WriteError($"Salimos de FilePostAsync a las {DateTime.Now}");
 
