@@ -196,9 +196,9 @@ class SideBar extends Component {
               max-height: 927px;
               width: 300px;
               left: 770px;
-              top: 392.5px;
+              //top: 392.5px;
               z-index: 1001;
-              transform: translateY(+200%);
+              //transform: translateY(+200%);
             }
             #noSignaturesDialog_dialog-header, #noSignaturesDialog_title, #noSignaturesDialog_dialog-content, .e-footer-content{
               background: #c5343f;
