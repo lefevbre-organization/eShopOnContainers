@@ -69,6 +69,7 @@ import { PROVIDER } from '../constants';
 import { preloadSignatures, preloadSignatures2, getSignatures, getAttachmentLex, getAttachmentCen, cancelSignatureCen } from "../services/api-signaturit";
 import { getFileType } from '../services/mimeType';
 import { backendRequest, backendRequestCompleted, preDownloadSignatures } from '../actions/messages';
+import { DialogComponent } from '@syncfusion/ej2-react-popups';
 
 const MESSAGENOTFOUND_SNACKBAR_DURATION = 4000;
 
@@ -101,7 +102,8 @@ class App extends Component {
       ),
       actualSidebarComponent: 0,
       isUpdatedDefaultAccount: (this.props.application.user) ? true: false,
-      attachmentsDownloadError: false
+      attachmentsDownloadError: false,
+      hideAlertDialog: false,
     };
 
     this.toggleSideBar = this.toggleSideBar.bind(this);
@@ -414,18 +416,52 @@ class App extends Component {
 
   renderContent() {
     const { application } = this.props;
+    // const content = `
+    //   <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
+    //   <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+    //     Descargando documentos de centinela
+    //   </div>
+    //   <div class="progress-line"></div>
+    // `;
+
+    const content = `  
+      <div style='width: 100%;'>  
+        <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+          Descargando documentos de centinela
+        </div>
+        <div class='${styles['progress-line']}'/>
+      </div>
+  `;
+    
+
     if (
       application.newMessage &&
       Object.keys(application.newMessage).length > 0
     ) {
       return <MessageEditor className={styles['message-viewer']} attachmentsDownloadError={this.state.attachmentsDownloadError} onShowError={this.resetDownloadError} />;
-    } //else if (application.selectedMessage && Object.keys(application.selectedMessage).length > 0) {
-      else if (application.selectedSignature && Object.keys(application.selectedSignature).length > 0) {
+    }else if (application.selectedSignature && Object.keys(application.selectedSignature).length > 0) {
       return <MessageViewer className={styles['message-viewer']} />;
     }
     return (
       <Fragment>
         <MessageList className={styles['message-grid']} />
+        <DialogComponent 
+          id="info2Dialog" 
+          //header=' ' 
+          visible={this.state.hideAlertDialog} 
+          //visible={true} 
+          animationSettings={this.animationSettings} 
+          width='500px' 
+          content={content}
+          //content={(this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : noSignersModal))}
+          ref={alertdialog => this.alertDialogInstance = alertdialog} 
+          //target='#target' 
+          //buttons={this.alertButtons} 
+          // open={this.dialogOpen.bind(this)} 
+          // close={this.dialogClose.bind(this)}
+          // showCloseIcon={true}
+          //position={ this.position }
+        />
         {/*<div className={styles["fab-container"]}>
           {outbox === null ? (
             <button
@@ -437,6 +473,107 @@ class App extends Component {
             </button>
           ) : null}
         </div>*/}
+        <style jsx global>
+          {`
+            #info2Dialog,
+            {
+              max-height: 927px;
+              width: 300px;
+              left: 770px;
+              top: 392.5px;
+              z-index: 1001;
+              transform: translateY(+150%);
+            }
+            #info2Dialog_dialog-header, #info2Dialog_title, #info2Dialog_dialog-content, #info2Dialog.e-footer-content,
+            .e-footer-content {
+              background: #001970;
+              color: #fff;
+              display:flex;
+            }
+            .e-dialog .e-dlg-header-content .e-btn.e-dlg-closeicon-btn{
+              margin-right: 0;
+              margin-left: auto;
+              color: #fff
+            }
+            #confirmDialog .e-dlg-header{
+              width: 1%;
+            }
+            .e-dialog .e-btn .e-btn-icon.e-icon-dlg-close{
+              color: white;
+            }
+            .e-btn.e-flat.e-primary {
+              color: #fff !important;
+            }
+            .e-btn-icon .e-icon-dlg-close .e-icons{
+                color: #fff;
+            }
+            .e-dialog .e-dlg-header-content 
+            .e-btn.e-dlg-closeicon-btn {
+              margin-right: 0;
+              margin-left: auto;
+              color: #fff;
+              height: 15px;
+              background-color: transparent;
+            }
+            #confirmDialog_dialog-header, .e-dialog 
+            .e-icon-dlg-close::before {
+              content: '\e7fc';
+              position: relative;
+              color: white;
+              font-size: 15px;
+            }
+
+            #confirmDialog .e-btn.e-flat.e-primary {
+              text-transform: uppercase;
+              font-size: 13px;
+              font-family: MTTMilano-Bold,Lato,Arial,sans-serif;
+              letter-spacing: .7px;
+              color: #001978 !important;
+              padding: 10px;
+              background-color: #fff;
+              border-radius: 0 !important;
+              border: 2px solid #fff !important;
+              min-width: 80px;
+            }
+            
+            #confirmDialog .e-btn.e-flat.e-primary:hover {
+              background-color: #e5e8f1 !important;
+              background: #e5e8f1 !important;
+              color: #001978 !important;
+            }
+            
+            #confirmDialog .e-btn.e-flat.e-primary:active {
+              background-color: #e5e8f1 !important;
+              background: #e5e8f1 !important;
+              color: #001978 !important;
+            }
+
+            .btn-modal-close {
+              text-transform: uppercase;
+              font-size: 13px;
+              font-family: MTTMilano-Bold,Lato,Arial,sans-serif;
+              letter-spacing: .7px;
+              color: #fff !important;
+              padding: 10px;
+              background-color: #001978 !important;
+              min-width: 80px;
+              border-radius: 0 !important;
+              border: 2px solid #fff !important;
+            }
+            
+            .btn-modal-close:hover {
+              background-color: #e5e8f1 !important;
+              background: #e5e8f1 !important;
+              color: #001978 !important;
+            }
+          
+            .btn-modal-close:active {
+              background-color: #e5e8f1 !important;
+              background: #e5e8f1 !important;
+              color: #001978 !important;
+            }
+          `}
+        </style>
       </Fragment>
     );
   }
@@ -527,6 +664,7 @@ class App extends Component {
 
             if (lefebvre.idDocuments.length > 0){
               this.props.backendRequest();
+              this.setState({hideAlertDialog: true});
             }
 
             lefebvre.idDocuments.forEach(document => {
@@ -540,7 +678,7 @@ class App extends Component {
                   .catch(err => {
                     console.log(err);
                   })
-                  this.setState({attachmentsDownloadError: true})
+                  this.setState({hideAlertDialog: false, attachmentsDownloadError: true})
                   this.props.setUserApp('lefebvre');
                   this.props.newMessage(mailContacts, adminContacts);
                 }
@@ -560,14 +698,19 @@ class App extends Component {
                 i += 1;
 
                 if (i > 0 && i === attachmentsList.length){
+                  this.setState({hideAlertDialog: false});
                   this.props.backendRequestCompleted();
                   this.props.setIdDocuments(documentsInfo);
                   this.props.newMessage(mailContacts, adminContacts, null, attachmentsList);
+                  // Aquí hay que cerrar el modal de descarga
+                  
                 }
               })
               .catch(() => {
+                this.setState({hideAlertDialog: false});
                 this.props.backendRequestCompleted();
                 this.props.newMessage(mailContacts, adminContacts);
+                // Aquí hay que cerrar el modal de descarga
               });        
             });
           }
