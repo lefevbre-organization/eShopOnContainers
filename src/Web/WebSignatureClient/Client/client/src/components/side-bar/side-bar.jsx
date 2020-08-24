@@ -181,11 +181,12 @@ class SideBar extends Component {
           header=' ' 
           visible={this.state.hideAlertDialog} 
           animationSettings={this.animationSettings} 
-          width='500px' 
+          width='50%' 
+          showCloseIcon={true} 
           content={contenido}//'Lo sentimos has agotado el número máximo de firmas contratadas. Si lo deseas, puedes contactar con nuestro departamento de atención a cliente en el teléfono 911231231 o pinchando aquí' 
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
           //target='#target' 
-          buttons={this.alertButtons} 
+          // buttons={this.alertButtons} 
           open={this.dialogOpen.bind(this)} 
           close={this.dialogClose.bind(this)}
           //position={ this.position }
@@ -204,6 +205,9 @@ class SideBar extends Component {
               background: #c5343f;
               color: #fff;
               display:flex;
+            }
+            .e-dlg-header {
+              width: 1% !important;
             }
             .e-btn.e-flat.e-primary {
               color: #fff !important;
