@@ -29,7 +29,7 @@ import i18n from '../../services/i18n';
 
 
 L10n.load({
-    'es-ES': {
+    'es': {
       'grid': {
         'EmptyRecord': 'No hay datos que mostrar',
         'StartsWith': 'Empieza por',
@@ -38,8 +38,8 @@ L10n.load({
         'Equal': 'Es igual a',
         'NotEqual': 'No es igual a',
         'Search': 'Buscar',
-        'Pdfexport': 'PDF',
-        'Excelexport': 'EXCEL',
+        'Pdfexport': 'Exportar a PDF',
+        'Excelexport': 'Exportar a EXCEL',
         'Print': 'Imprimir'
       },
       'pager': {
@@ -50,7 +50,7 @@ L10n.load({
         'All': 'Todo'
       }
     },
-    'en-GB': {
+    'en': {
         'grid': {
           'EmptyRecord': 'No records to show',
           'StartsWith': 'Starts with',
@@ -226,7 +226,7 @@ class MessageList extends Component {
         
 
         let res = [];
-        console.log(signatures);
+
         filteredSignatures.map(signature => {
             let documentName = '';
             let subject = '';
@@ -300,7 +300,7 @@ class MessageList extends Component {
     menuGridTemplate(props){
         let items = [];
 
-        if (props.Estado === "ready"){
+        if (props.Estado === i18n.t('signaturesGrid.statusInProgress')){
             items = [
                 {
                     text: i18n.t('signaturesGrid.menuEdit'),
@@ -564,6 +564,7 @@ class MessageList extends Component {
     }
 
     render() {
+         console.log('navigator.language', navigator.language);
         const contenido = `
             <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
             <div style='text-align: justify; text-justify: inter-word; align-self: center;
@@ -610,7 +611,7 @@ class MessageList extends Component {
         var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [{}];
         var customAttributes = {class: 'customcss'};
         return( (firmas && firmas.length > 0) ?
-            <div>
+            <div className={styles['main-grid']}>
             <div>
                 <GridComponent 
                     dataSource={firmas}
@@ -622,13 +623,14 @@ class MessageList extends Component {
                     allowPdfExport={true}
                     allowExcelExport={true}
                     allowTextWrap={false}
-                    height='450'
+                    height='480'
                     pageSettings={{pageCount: 5, pageSize: 10, pageSizes: true, pagesSizeList: []}}//pageSizeList: [8,12,9,5]}} 
                     // rowSelected={event => {
                     //     this.onRowSelected(event);
                     // }}
                     filterSettings={filterSettings}
                     toolbar={this.toolbarOptions} 
+                    // locale={navigator.language}
                     locale={navigator.language}
                     toolbarClick={this.toolbarClick}
                     ref={g => this.grid = g}
@@ -650,7 +652,7 @@ class MessageList extends Component {
                     //header=' ' 
                     visible={this.state.hideAlertDialog} 
                     animationSettings={this.animationSettings} 
-                    width='500px' 
+                    width='60%' 
                     content={contenido}
                     ref={alertdialog => this.alertDialogInstance = alertdialog} 
                     //target='#target' 
@@ -918,12 +920,7 @@ class MessageList extends Component {
                      background: #e5e8f1 !important;
                      color: #001978 !important;
                     }
-
-                    .e-control.e-toolbar.e-lib.e-keyboard {
-                        width: 80vw !important;
-                        max-width: 100% !important;
-                    }
-                    
+            
                     .e-toolbar-right {
                       right: 13% !important;
                       display: table-column !important;
