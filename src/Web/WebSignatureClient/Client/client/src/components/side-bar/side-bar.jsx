@@ -209,7 +209,7 @@ class SideBar extends Component {
             .e-dlg-header {
               width: 1% !important;
             }
-            .e-btn.e-flat.e-primary {
+            noSignaturesDialog .e-btn.e-flat.e-primary {
               color: #fff !important;
             }
           `}

@@ -501,9 +501,9 @@ class App extends Component {
             .e-dialog .e-btn .e-btn-icon.e-icon-dlg-close{
               color: white;
             }
-            .e-btn.e-flat.e-primary {
-              color: #fff !important;
-            }
+            // .e-btn.e-flat.e-primary {
+            //   color: #fff !important;
+            // }
             .e-btn-icon .e-icon-dlg-close .e-icons{
                 color: #fff;
             }
@@ -572,6 +572,10 @@ class App extends Component {
               background: #e5e8f1 !important;
               color: #001978 !important;
             }
+            .e-control .e-btn .e-lib .e-flmenu-okbtn .e-primary .e-flat{
+              color: #001970 !important;
+            }
+            
           `}
         </style>
       </Fragment>

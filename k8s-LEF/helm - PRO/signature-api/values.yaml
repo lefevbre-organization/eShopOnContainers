@@ -53,4 +53,4 @@ env:
     - name: OrchestratorType
       value: 'K8S'
     - name: SignaturitApiUrl
-      value: https://api.signaturit.com/
+      value: https://api.signaturit.com/v3
