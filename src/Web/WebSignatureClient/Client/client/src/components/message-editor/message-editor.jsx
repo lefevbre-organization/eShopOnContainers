@@ -180,26 +180,30 @@ class MessageEditor extends Component {
   render() {
     const noSignersModal = `
       <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center;
+        padding-left: 20px; font-size: 17.5px !important'>
         ${i18n.t('noSignersModal.text')}
       </div>`;
 
     const noAttachModal = `
       <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center;
+        padding-left: 20px; font-size: 17.5px !important'>
         ${i18n.t('noAttachmentsModal.text')}
       </div>`;
 
     const bigFileModal = `
       <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center;
+        padding-left: 20px; font-size: 17.5px !important'>
         ${i18n.t('bigFileModal.text')}
       </div>
     `;
 
     const attachNotFound = `
       <span class="lf-icon-information" style="font-size:100px; padding: 15px;"></span>
-      <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center;
+        padding-left: 20px; font-size: 17.5px !important'>
         ${i18n.t('attachNotFoundCentinela.text')}
       </div>
     `;
@@ -207,8 +211,8 @@ class MessageEditor extends Component {
     const confirmDiscard = `
       <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
       <div style='text-align: justify; text-justify: inter-word; align-self: center; 
-      font-size: 17.5px !important; padding-left: 20px;'>
-      ${i18n.t('cancelCentinelaConfirmation.text')}
+        font-size: 17.5px !important; padding-left: 20px;'>
+        ${i18n.t('cancelCentinelaConfirmation.text')}
       </div>
     `;
 
@@ -349,7 +353,7 @@ class MessageEditor extends Component {
           //header=' ' 
           visible={this.state.hideAlertDialog || this.state.centinelaDownloadError} 
           animationSettings={this.animationSettings} 
-          width='500px' 
+          width='60%' 
           content={(this.state.centinelaDownloadError === true ? attachNotFound : (this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : noSignersModal)))}
           //content={(this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : noSignersModal))}
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
@@ -391,11 +395,9 @@ class MessageEditor extends Component {
             #info2Dialog,
             #confirmDialog {
               max-height: 927px;
-              width: 300px;
-              left: 770px;
-              //top: 392.5px;
+              width: 60%;
+              left: 20% !important;
               z-index: 1001;
-              //transform: translateY(+150%);
             }
             #info2Dialog_dialog-header, #info2Dialog_title, #info2Dialog_dialog-content, #info2Dialog.e-footer-content,
             #confirmDialog_dialog-header, #confirmDialog_title, #confirmDialog_dialog-content, .e-footer-content {
