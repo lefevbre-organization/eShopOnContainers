@@ -1,4 +1,5 @@
-﻿using Lexon.Infrastructure.Services;
+﻿using Lexon.API.Model;
+using Lexon.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
@@ -49,7 +50,7 @@ namespace Lexon.API.Controllers
         [Route("user")]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexUser>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UsersAsync(string idUserNavision = "E1621396", string env = "DEV")
+        public async Task<IActionResult> UsersAsync(string idUserNavision = "E1621396", string env = "QA")
 
         {
             if (string.IsNullOrEmpty(idUserNavision))
@@ -74,7 +75,7 @@ namespace Lexon.API.Controllers
         [HttpGet("user/getid")]
         [ProducesResponseType(typeof(Result<LexUserSimple>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<LexUserSimple>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UserIdAsync(string idNavisionUser = "E1621396", string env = "DEV")
+        public async Task<IActionResult> UserIdAsync(string idNavisionUser = "E1621396", string env = "QA")
         {
             if (string.IsNullOrEmpty(idNavisionUser))
                 return (IActionResult)BadRequest("id value invalid. Must be a valid user code in the enviroment");
@@ -87,7 +88,7 @@ namespace Lexon.API.Controllers
         [Route("companies")]
         [ProducesResponseType(typeof(Result<IEnumerable<LexCompany>>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<IEnumerable<LexCompany>>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> CompaniesAsync(string idUser = "449", string env = "DEV")
+        public async Task<IActionResult> CompaniesAsync(string idUser = "449", string env = "QA")
 
         {
             if (string.IsNullOrEmpty(idUser))
@@ -211,7 +212,7 @@ namespace Lexon.API.Controllers
         public async Task<IActionResult> CheckRelationsMailAsync(
             [FromBody] MailInfo mail,
             [FromRoute] string idUser = "449",
-            [FromQuery] string env = "DEV"
+            [FromQuery] string env = "QA"
             )
         {
             if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(mail.Uid) || string.IsNullOrEmpty(mail.MailAccount))
@@ -243,7 +244,7 @@ namespace Lexon.API.Controllers
         [HttpGet("entities/types")]
         [ProducesResponseType(typeof(MySqlList<JosEntityTypeList, JosEntityType>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(MySqlList<JosEntityTypeList, JosEntityType>), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> GetEntitiesTypesAsync(string env = "DEV")
+        public async Task<IActionResult> GetEntitiesTypesAsync(string env = "QA")
         {
             var result = await _usersService.GetMasterEntitiesAsync(env);
             return (result.Errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
@@ -396,6 +397,60 @@ namespace Lexon.API.Controllers
             }
 
             return Ok(result);
+        }
+
+        [HttpPost("entities/{idUser}/appointments")]
+        [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddAppointmentAsync(
+            [FromBody] LexAppointment appointment,
+            [FromRoute] string idUser = "449",
+            [FromQuery] string env = "QA"
+        )
+        {
+
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(appointment.Bbdd) || string.IsNullOrEmpty(appointment.Subject) || string.IsNullOrEmpty(appointment.StartDate))
+                return BadRequest("values invalid. Must be a valid isuser, bbdd, subject and startdate to insert or update ");
+
+ 
+            var result = await _usersService.AddAppointmentAsync(appointment, env, idUser);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpDelete("entities/{idUser}/appointments")]
+        [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> RemoveAppointmentAsync(
+            [FromBody] LexAppointmentSimple appointment,
+            [FromRoute] string idUser = "449",
+            [FromQuery] string env = "QA"
+        )
+        {
+
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(appointment.Bbdd) || appointment.Id <= 0)
+                return BadRequest("values invalid. Must be a valid iduser, bbdd and id");
+
+
+            var result = await _usersService.RemoveAppointmentAsync(appointment, env, idUser);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+        }
+
+        [HttpPost("entities/{idUser}/appointments/actuation")]
+        [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<int>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> AddAppointmentActionAsync(
+            [FromBody] LexAppointmentActuation appointment,
+            [FromRoute] string idUser = "449",
+            [FromQuery] string env = "QA"
+)
+        {
+
+            if (string.IsNullOrEmpty(idUser) || string.IsNullOrEmpty(appointment.Bbdd) || appointment.IdAppointment <= 0 || appointment.Id <=0)
+                return BadRequest("values invalid. Must be a valid isuser, bbdd, id and idActuation to vinculate action to appointment ");
+
+
+            Result<int> result = await _usersService.AddAppointmentActionAsync(appointment, env, idUser);
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
         #endregion Entities
