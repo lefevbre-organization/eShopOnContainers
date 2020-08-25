@@ -56,7 +56,7 @@ env:
     - name: OrchestratorType
       value: 'K8S'
     - name: DefaultEnvironment
-      value: DEV
+      value: QA
     - name: UseMongo
       value: false
     - name: LexonUrls__0__env
