@@ -57,7 +57,8 @@ class MessageEditor extends Component {
       hideConfirmDialog: false,
       bigAttachments: false,
       centinelaDownloadError: (props.attachmentsDownloadError !== undefined) ? props.attachmentsDownloadError : false,
-      numPagesOption: 1
+      numPagesOption: 1,
+      MaximumSigners: 40
     };
 
     this.fileInput = null;
@@ -815,8 +816,17 @@ class MessageEditor extends Component {
   addAddress(id, address) {
     if (address.length > 0) {
       const updatedMessage = { ...this.props.editedMessage };
-      updatedMessage[id] = [...updatedMessage[id], address];
-      this.props.editMessage(updatedMessage);
+      if(updatedMessage.to.length == this.state.MaximumSigners
+         && id != 'cc') {
+           console.log('Maximum Signers');
+      }else if(updatedMessage.to.length == this.state.MaximumSigners 
+        && id == 'cc') {
+        updatedMessage[id] = [...updatedMessage[id], address];
+        this.props.editMessage(updatedMessage);
+      }else {
+        updatedMessage[id] = [...updatedMessage[id], address];
+        this.props.editMessage(updatedMessage);
+      }
     }
   }
 
