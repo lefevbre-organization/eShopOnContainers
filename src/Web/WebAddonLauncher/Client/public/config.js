@@ -8,3 +8,6 @@ window.URL_MF_CENTINELA_BASE = "http://localhost:3005/";
 window.API_GATEWAY='https://lexbox-test-apigwlex.lefebvre.es';
 window.URL_GET_ACCOUNTS = "https://lexbox-test-apigwlex.lefebvre.es/api/v2/accounts/usermail";
 window.URL_GET_USER = "https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils";
+window.TERMS_AND_CONDITIONS_URL = 'https://lefebvre.es/aviso-legal';
+window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies';
+window.PRIVACY_POLICY_URL = 'https://lefebvre.es/politica-privacidad';

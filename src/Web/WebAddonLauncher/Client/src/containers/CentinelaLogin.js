@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import queryString from 'query-string';
+import i18n from 'i18next';
 import validator from 'email-validator';
 import LoginHeader from '../components/LoginHeader';
 import LoginFooter from '../components/LoginFooter';
@@ -37,13 +38,13 @@ class CentinelaLogin extends Component {
       },
       isloading: false,
       keyCodeEnter: 13,
-      shopTitle: 'TIENDA',
-      notClient: 'No soy cliente.',
-      requestInfo: 'Solicitar información',
-      needHelp: '¿Necesitas ayuda?',
-      phoneNumber: '91 210 80 00 - 902 44 33 55 |',
-      client: 'clientes@lefebvre.es',
-      required: 'Este campo es obligatorio.'
+      shopTitle: i18n.t('login.shop'),
+      notClient: i18n.t('login.notClient'),
+      requestInfo: i18n.t('login.requestInfo'),
+      needHelp: i18n.t('login.needHelp'),
+      phoneNumber: i18n.t('login.phoneNumber'),
+      client: i18n.t('login.client'),
+      required: i18n.t('login.required'),
     } 
   }
 
@@ -78,7 +79,7 @@ class CentinelaLogin extends Component {
     if(!validator.validate(this.state.form.login)) {
       this.setState({
         errorsMessage: {
-          email: 'El campo debe tener formato de email.'
+          email: i18n.t('login.email-error')
         }
       });
       return false;
@@ -112,7 +113,7 @@ class CentinelaLogin extends Component {
       window.$('body').removeClass('waiting');
        this.setState({
          errorsMessage: {
-          auth: 'El usuario no tiene acceso a Centinela.'
+          auth: i18n.t('login.user-access-centinela')
          }
        });
      }
@@ -136,7 +137,7 @@ class CentinelaLogin extends Component {
       window.$('body').removeClass('waiting');
       this.setState({
         errorsMessage: {
-          auth: 'Usuario o Contraseña inválidos.'
+          auth: i18n.t('login.user-error')
         }
       });
     }

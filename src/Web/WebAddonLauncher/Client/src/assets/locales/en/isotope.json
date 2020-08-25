@@ -1,0 +1,295 @@
+{
+  "login": {
+    "shop": "SHOP",
+    "notClient": "I am not a customer",
+    "requestInfo": "Request information",
+    "needHelp": "Need help?",
+    "phoneNumber": "91 210 80 00 - 902 44 33 55 |",
+    "client": "clientes@lefebvre.es",
+    "required": "This field is required.",
+    "email-error": "The field must be a valid email.",
+    "user-error": "User or password not valid.",
+    "user": "User",
+    "password": "Password",
+    "login": "LOG IN"
+  },
+  "sideBar": {
+    "newRequest": "New signature",
+    "hide": "Hide sidebar",
+    "errors": {
+      "noSSL": "Connection to server is not secure",
+      "diskQuotaExceeded": "Disk quota exceeded (IndexedDB)"
+    },
+    "filterMenu": "SIGNATURES",
+    "filterAll": "Show all",
+    "filterInProgress": "In progress",
+    "filterCompleted": "Completed",
+    "filterCancelled": "Cancelled"
+  },
+  "topBar": {
+    "showSideBar": "Show sidebar",
+    "backToList": "Back to list",
+    "quickFilter": "Quick filter",
+    "replyAll": "Reply all",
+    "forward": "Forward",
+    "delete": "Delete",
+    "markUnread": "Mark unread",
+    "markRead": "Mark read",
+    "search": "Search",
+    "returnlexon": "Return Lex-on",
+    "deleteFromTrashDialog": {
+      "title": "Confirm deletion",
+      "message": "This will permanently delete messages from Trash. Are you sure you want to continue?",
+      "delete": "Delete",
+      "cancel": "Cancel"
+    },
+    "app": "SIGNATURE"
+  },
+  "mainBar": {
+    "quickModules": "Lefebvre apps",
+    "quickUser": "User account:"
+  },
+  "productBar": {
+    "lexon": "LEX-ON",
+    "database": "Data Base",
+    "compliance": "Compliance",
+    "calendar": "Calendar"
+  },
+  "messageList": {
+    "emptyFolder": "Empty folder",
+    "clearFolderDialog": {
+      "title": "Empty folder",
+      "message": "Are you sure you want to permanently delete all the items in the trash folder?",
+      "deleteAll": "Delete all",
+      "cancel": "Cancel"
+    },
+    "moveEmails": "Moving {{emailCount}} e-mails",
+    "filters": {
+      "All": "All",
+      "Read": "Read",
+      "Unread": "Unread",
+      "Flagged": "Flagged"
+    }
+  },
+  "messageViewer": {
+    "to": "to",
+    "cc": "cc",
+    "bcc": "bcc"
+  },
+  "messageEditor": {
+    "to": "Recipients",
+    "cc": "Cc",
+    "bcc": "bcc",
+    "subject": "Subject",
+    "send": "Send",
+    "discard": "Discard",
+    "dropZoneMessage": "Drop files here",
+    "attach": "ATTACH",
+    "insertLinkDialog": {
+      "title": "Insert Link",
+      "cancel": "Cancel",
+      "ok": "Ok"
+    },
+    "title": "CREATE NEW SIGNATURE"
+  },
+  "forwardAction": {
+    "From": "From",
+    "To": "To",
+    "Cc": "Cc",
+    "Date": "Date",
+    "Subject": "Subject"
+  },
+  "replyAction": {
+    "From": "From",
+    "Date": "Date",
+    "Subject": "Subject"
+  },
+  "messageSnackbar": {
+    "sendingMessage": "Sending message ({{progress}}%)",
+    "messageSent": "Message sent",
+    "messageError": "Error sending message",
+    "retry": "Retry"
+  },
+  "createFolderDialog": {
+    "title": "Create folder",
+    "message": "Please insert the name for the new folder",
+    "folderNameLabel": "New folder name",
+    "cancel": "Cancel",
+    "create": "Create"
+  },
+  "renameFolderDialog": {
+    "title": "Rename folder",
+    "message": "Please insert the new name for folder {{folderName}}",
+    "folderNameLabel": "New folder name",
+    "cancel": "Cancel",
+    "rename": "Rename"
+  },
+  "notifications": {
+    "newMail": "New messages received"
+  },
+  "menu-user": {
+    "user": "User",
+    "edit-basic-data": "EDIT BASIC DATA",
+    "reset-pwd": "RESET PASSWORD",
+    "add-other-account": "ADD OTHER ACCOUNT",
+    "close-session": "CLOSE SESSION",
+    "version": "Version"
+  },
+  "msgNotFoundSnackbar": {
+    "error": "Message not found in server"
+  },
+  "footer": {
+    "all-reserved-right": "©2020 Lefebvre. All rights reserved. ",
+    "legal-warning": "Legal warning",
+    "privacy-policy": "Privacy policy",
+    "cookies-policy": "Cookies policy",
+    "version": "Version",
+    "terms-and-conditions": "Terms and conditions"
+  },
+  "signaturesGrid": {
+    "menuEdit": "Edit",
+    "menuCancel": "Cancel",
+    "columnAction": "Actions",
+    "columnDocument": "Document",
+    "columnSubject": "Subject",
+    "columnSigners": "Recipients",
+    "columnDate": "Date",
+    "columnStatus": "Status",
+    "statusCancelled": "Cancelled",
+    "statusCompleted": "Completed",
+    "statusExpired": "Expired",
+    "statusDeclined": "Declined",
+    "statusInProgress": "In progress",
+    "statusError": "Error",
+    "statusPending": "Pending",
+    "filters": {
+      "contains": "Contains",
+      "startsWith": "Starts with"
+    }
+  },
+  "confirmationModal": {
+    "yes": "Yes",
+    "no": "No"
+  },
+  "cancelledSignatureModal": {
+    "text": "Signature request succesfully cancelled"
+  },
+  "cancelConfirmationModal": {
+    "text": "The selected signature request will be cancelled. Are you sure?",
+    "text2": "Please confirm you want to cancel this signature request."
+  },
+  "cancelCentinelaConfirmation":{
+    "text": "Please confirm you want to cancel this Centinela Documents signature request"
+  },
+  "reminderSentModal": {
+    "text": "A reminder has been sent signer"
+  },
+  "noSignersModal": {
+    "text": "At least one signer must be specified in order to send the request."
+  },
+  "noAttachmentsModal": {
+    "text": "A document must be attached in order to send the request."
+  },
+  "bigFileModal": {
+    "text": "Max size of attached files must be lower than 15MB."
+  },
+  "attachNotFoundCentinela":{
+    "text": "Document's couldn't be retrieved from Centinela."
+  },
+  "attachmentsWidget": {
+    "title": "ATTACHED FILES",
+    "attachButton": "ATTACH FILE",
+    "pagesConfiguration": {
+      "single": "Single page signature",
+      "all": "Sign all pages" 
+    },
+    "messageAlert": "Invalid selected file type."
+  },
+  "expirationWidget":{
+    "title": "EXPIRATION CONFIGURATION",
+    "subtitle": "There's no expiration term activated",
+    "addButton": "ADD",
+    "acceptButton": "ACCEPT",
+    "cancelButton": "CANCEL",
+    "deleteButton": "DELETE",
+    "modifyButton": "MODIFY",
+    "option1": "Expire in ___ days",
+    "option2": "Never expire"
+  },
+  "reminderWidget":{
+    "title": "REMINDERS CONFIGURATION",
+    "subtitle": "There aren't any reminders configured.",
+    "addButton": "ADD",
+    "acceptButton": "ACCEPT",
+    "cancelButton": "CANCEL",
+    "deleteButton": "DELETE",
+    "modifyButton": "MODIFY",
+    "option1": "Reminder every ___ days",
+    "option2": "Daily reminders",
+    "option3": "Weekly reminders"
+  },
+  "signatureViewer":{
+    "grid": {
+      "document": "Document",
+      "subject": "Subject",
+      "signers": "Signers",
+      "date": "Date",
+      "status": "Status"
+    },
+    "buttons": {
+      "cancel": "CANCEL SIGNATURE",
+      "reminder": "SEND REMINDER NOW",
+      "download": "DOWNLOAD DOCUMENT",
+      "downloadTrail": "DOWNLOAD AUDIT"
+    },
+    "signerCard": {
+      "title": {
+        "signers": "SIGNERS",
+        "signer": "Signer"
+      },
+      "body": {
+        "title": "SIGNATURE PROGRESS",
+        "emailSent": "Email sent",
+        "emailDelivered": "Email delivered",
+        "emailOpened": "Email opened",
+        "docOpened": "Document opened",
+        "docSigned": "Document signed"
+      },
+      "footer": {
+        "title": "SENT REMINDERS",
+        "subtitle": "No reminders have been sent to this signer."
+      }
+    },
+    "widgets": {
+      "expiration": {
+        "title": "EXPIRATION CONFIGURATION",
+        "notConfigured": "There's no expiration term activated",
+        "doesntExpires": "Never expires",
+        "expires": "Expires in ___ days"
+      },
+      "reminders": {
+        "title": "REMINDERS CONFIGURATION",
+        "notConfigured": "There aren't any reminders configured.",
+        "daily": "Daily reminders",
+        "weekly": "Weekly reminders",
+        "everyXdays": "Reminder every ___ days"
+      }
+    },
+    "title": "SIGNATURE DETAILS"
+  },
+  "completedPage":{
+    "title": "Document has been signed successfully.",
+    "subtitle": "A copy has been sent to your email account.",
+    "footer": "Need help?"
+  },
+  "expiredPage":{
+    "title": "Your session has expired.",
+    "subtitle": "Please log in again.",
+    "footer": "Need help?"
+  },
+  "unauthorizedPage":{
+    "title": "Access error.",
+    "subtitle": "You don't have permission to use this application.",
+    "footer": "Need help?"
+  }  
+}

@@ -1,7 +1,7 @@
 import React from 'react';
 import i18n from 'i18next';
 
- const LoginComponents = (children) =>  {
+ const SignatureLogin = (children) =>  {
    const verificationLogin = children.errorsMessage.login ? (
      <div className="errorsMessage">{children.errorsMessage.login}</div>
       ) : null;
@@ -23,8 +23,8 @@ import i18n from 'i18next';
     <div className="row">
      <div className="offset-md-3 col-md-6">
        <div className="login-box">
-         <div className="text-center login-title-space">
-         <img className="logo-lexon" src={children.logo} alt="logo" />
+         <div className="text-center login-centinela-title-space">
+         <p className='lefebvre-mail-service'>FIRMA</p>
          </div>
            <div className="row">
              <div className="col-md-8 offset-md-2 mb-5">
@@ -60,23 +60,23 @@ import i18n from 'i18next';
                  { verificationPassword }
                </div>
                <div className="ml-n4 pt-4">
-              {children.isloading ?
-                <button 
+             {children.isloading ?
+              <button 
+               onClick={children.handleEventAddon} 
+               className="btn btn-label btn-loading"> 
+               {i18n.t('login.load')}
+              </button> : <button 
                  onClick={children.handleEventAddon} 
-                 className="btn btn-label btn-loading"> 
-                 {i18n.t('login.load')}
-                </button> : <button 
-                   onClick={children.handleEventAddon} 
-                   className="btn btn-label btn-login"> 
-                   {i18n.t('login.login')}
-                  </button> }
+                 className="btn btn-label btn-login"> 
+                 {i18n.t('login.login')}
+                </button> }
                 { verificationAuth }
                </div>
                 {/* <p className="mt-3 front-login__info-block">{children.notClient} <a className="front-login__info-block-link" 
                 href="https://espaciolefebvre.lefebvre.es/solicitar-informacion"> {children.requestInfo} </a></p> */}
              </div>
              </div>
-            <div className="login-help">
+            <div className="login-help-signature">
              <p className="pt-3 need-help mb-4">
               {children.needHelp}
              </p>
@@ -91,4 +91,4 @@ import i18n from 'i18next';
 
   )}
 
-export default LoginComponents
+export default SignatureLogin
