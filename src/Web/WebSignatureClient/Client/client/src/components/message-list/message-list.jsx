@@ -29,7 +29,7 @@ import i18n from '../../services/i18n';
 
 
 L10n.load({
-    'es': {
+    'es-ES': {
       'grid': {
         'EmptyRecord': 'No hay datos que mostrar',
         'StartsWith': 'Empieza por',
@@ -40,7 +40,10 @@ L10n.load({
         'Search': 'Buscar',
         'Pdfexport': 'Exportar a PDF',
         'Excelexport': 'Exportar a EXCEL',
-        'Print': 'Imprimir'
+        'Print': 'Imprimir',
+        'FilterButton': 'Filtrar',
+        'ClearButton': 'Borrar',
+        'EnterValue': 'Introduzca el valor'
       },
       'pager': {
         'pagerDropDown': 'Registros por página',
@@ -50,6 +53,30 @@ L10n.load({
         'All': 'Todo'
       }
     },
+    'es': {
+        'grid': {
+          'EmptyRecord': 'No hay datos que mostrar',
+          'StartsWith': 'Empieza por',
+          'EndsWith': 'Termina por',
+          'Contains': 'Contiene',
+          'Equal': 'Es igual a',
+          'NotEqual': 'No es igual a',
+          'Search': 'Buscar',
+          'Pdfexport': 'Exportar a PDF',
+          'Excelexport': 'Exportar a EXCEL',
+          'Print': 'Imprimir',
+          'FilterButton': 'Filtrar',
+          'ClearButton': 'Borrar',
+          'EnterValue': 'Introduzca el valor'
+        },
+        'pager': {
+          'pagerDropDown': 'Registros por página',
+          'pagerAllDropDown': 'Registros',
+          'totalItemsInfo': '({0} ítems)',
+          'currentPageInfo': 'Página {0} de {1}',
+          'All': 'Todo'
+        }
+      },
     'en': {
         'grid': {
           'EmptyRecord': 'No records to show',
@@ -61,7 +88,10 @@ L10n.load({
           'Search': 'Search',
           'Pdfexport': 'PDF',
           'Excelexport': 'EXCEL',
-          'Print': 'Print'
+          'Print': 'Print',
+          'EnterValue': 'Enter the value',
+          'FilterButton': 'Filter',
+          'ClearButton': 'Clear'
         },
         'pager': {
           'pagerDropDown': 'Items per page',
@@ -82,7 +112,10 @@ L10n.load({
             'Search': 'Chercher',
             'Pdfexport': 'PDF',
             'Excelexport': 'EXCEL',
-            'Print': 'Printer'
+            'Print': 'Printer',
+            'EnterValue': 'Entrez la valeur',
+            'FilterButton': 'Filtre',
+            'ClearButton': 'Emprunter'
           },
           'pager': {
             'pagerDropDown': 'Registres par page',
@@ -816,16 +849,16 @@ class MessageList extends Component {
                         vertical-align: middle;
                     }
                     #confirmDialog { 
-                      top: -10px !important;
+                      //top: -10px !important;
                     }
     
                     #infoDialog, #confirmDialog {
                         max-height: 927px;
                         width: 300px;
                         left: 770px;
-                        top: 392.5px;
+                        //top: 392.5px;
                         z-index: 1001;
-                        transform: translateY(+150%);
+                        //transform: translateY(+150%);
                     }
                     #confirmDialog_dialog-header, 
                     #confirmDialog_title, 
@@ -849,9 +882,9 @@ class MessageList extends Component {
                         color: #fff;
                         display:flex;
                     }
-                    .e-btn.e-flat.e-primary {
-                        color: #fff !important;
-                    }
+                    // .e-btn.e-flat.e-primary {
+                    //     color: #fff !important;
+                    // }
                     .e-btn-icon .e-icon-dlg-close .e-icons{
                         color: #fff;
                     }
