@@ -434,9 +434,9 @@ export class MessageViewer extends Component {
             max-height: 927px;
             width: 300px;
             left: 770px;
-            top: 392.5px;
+            //top: 392.5px;
             z-index: 1001;
-            transform: translateY(+150%);
+            //transform: translateY(+150%);
             }
             #confirmDialog_dialog-header, 
             #confirmDialog_title, 
