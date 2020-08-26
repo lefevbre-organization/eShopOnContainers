@@ -53,4 +53,10 @@ env:
     - name: OrchestratorType
       value: 'K8S'
     - name: SignaturitApiUrl
-      value: https://api.signaturit.com/v3
+      value: 'https://api.signaturit.com/v3'
+    - name: LexonFilesUrl
+      value: 'https://led-dev-lexon.eu.els.local/index.php'
+    - name: LexonApiGwUrl
+      value: 'https://lexbox-apigwlex.lefebvre.es/api/v1'
+    - name: CentinelaApiGwUrl
+      value: 'https://lexbox-apigwcen.lefebvre.es/api/v1/cen'
