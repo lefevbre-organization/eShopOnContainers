@@ -50,7 +50,12 @@ L10n.load({
         'pagerAllDropDown': 'Registros',
         'totalItemsInfo': '({0} ítems)',
         'currentPageInfo': 'Página {0} de {1}',
-        'All': 'Todo'
+        'All': 'Todo',
+        'firstPageTooltip': 'Ir a la primera página',
+        'lastPageTooltip': 'Ir a la última página',
+        'nextPageTooltip': 'Ir a siguiente página',
+        'previousPageTooltip': 'Ir a página previa'
+
       }
     },
     'es': {
@@ -74,8 +79,12 @@ L10n.load({
           'pagerAllDropDown': 'Registros',
           'totalItemsInfo': '({0} ítems)',
           'currentPageInfo': 'Página {0} de {1}',
-          'All': 'Todo'
-        }
+          'All': 'Todo',
+          'firstPageTooltip': 'Ir a la primera página',
+          'lastPageTooltip': 'Ir a la última página',
+          'nextPageTooltip': 'Ir a siguiente página',
+          'previousPageTooltip': 'Ir a página previa'
+          }
       },
     'en': {
         'grid': {
@@ -98,8 +107,12 @@ L10n.load({
           'pagerAllDropDown': 'Items',
           'totalItemsInfo': '({0} total items)',
           'currentPageInfo': 'Page {0} out of {1}',
-          'All': 'All'
-        }
+          'All': 'All',
+          'firstPageTooltip': 'Go to first page',
+          'lastPageTooltip': 'Go to last page',
+          'nextPageTooltip': 'Go to next page',
+          'previousPageTooltip': 'Go to previous page'
+          }
     },
     'fr': {
         'grid': {
@@ -122,7 +135,11 @@ L10n.load({
             'pagerAllDropDown': 'Items',
             'totalItemsInfo': '({0} total items)',
             'currentPageInfo': 'Page {0} out of {1}',
-            'All': 'Tout'
+            'All': 'Tout',
+            'firstPageTooltip': 'Aller à la première page',
+            'lastPageTooltip': 'Aller à la dernière page',
+            'nextPageTooltip': 'Aller à la page suivante',
+            'previousPageTooltip': 'Aller à la page précédente'
           }        
     }
   });
