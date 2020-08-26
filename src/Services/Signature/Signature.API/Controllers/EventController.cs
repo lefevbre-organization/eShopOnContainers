@@ -52,12 +52,12 @@
             try
             {
               
-                if (eventinfo.Document.Status == "document_completed" || eventinfo.Document.Status == "audit_trail_completed")
+                if (eventinfo.Type == "document_completed" || eventinfo.Type == "audit_trail_completed")
                 {
                     var signatureId = eventinfo.Document.Signature.Id;
                     var documentId = eventinfo.Document.DocumentId;
                     var logResult = await _signaturesService.SaveEvent(eventinfo);
-                    var result = await _signaturesService.GetSignature(signatureId, documentId, eventinfo.Document.Status);
+                    var result = await _signaturesService.GetSignature(signatureId, documentId, eventinfo.Type);
 
                     return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
                 }
