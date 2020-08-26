@@ -27,5 +27,7 @@ namespace Signature.API.Model
         [JsonProperty("type")]
         [BsonElement("Type")]
         public string Type { get; set; }
+
+       
     }
 }

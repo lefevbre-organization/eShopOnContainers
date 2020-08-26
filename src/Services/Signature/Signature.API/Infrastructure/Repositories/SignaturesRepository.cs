@@ -397,11 +397,15 @@
             try
             {
                 await _context.SignatureEvents.InsertOneAsync(eventInfo);
+                if (eventInfo.mongoId != null)
+                {
+                    result.data = true;
+                    TraceInfo(result.infos, $"Evento recibido - {eventInfo.mongoId}");
+                }
             }
             catch (Exception ex)
             {
                 TraceInfo(result.infos, $"Error al guardar el evento: {ex.Message}");
-                throw;
             }
             return result;
         }
