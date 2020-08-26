@@ -40,6 +40,15 @@ body.waiting * {
   top: -5px;
   padding-right: 11px;
 }
+
+.lefebvre-mail-service {
+  color: #001978;
+  font-size: 52px;
+  font-family: 'MTTMilano';
+  font-weight: bold;
+  line-height: 19px;
+  margin-top: 44px;
+}
  
 .botton-img-space{
   margin-bottom: 32px !important;
@@ -194,6 +203,14 @@ body.waiting * {
   border: 0 solid #000000;
   background-color: #E5E8F1;
   margin-top: 28px;
+}
+
+.login-help-signature {
+  height: 95px;
+  width: 448px;
+  border: 0 solid #000000;
+  background-color: #E5E8F1;
+  margin-top: 43px;
 }
 
 .need-help {

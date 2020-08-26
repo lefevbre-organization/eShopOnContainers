@@ -59,4 +59,4 @@ env:
     - name: LexonApiGwUrl
       value: 'https://lexbox-test-apigwlex.lefebvre.es/api/v1'
     - name: CentinelaApiGwUrl
-      value: 'https://lexbox-test-apigwcen.lefebvre.es/api/v1'
+      value: 'https://lexbox-test-apigwcen.lefebvre.es/api/v1/cen'

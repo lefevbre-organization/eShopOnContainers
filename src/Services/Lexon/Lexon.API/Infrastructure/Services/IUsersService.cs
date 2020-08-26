@@ -1,4 +1,5 @@
-﻿using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
+﻿using Lexon.API.Model;
+using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -41,5 +42,8 @@ namespace Lexon.Infrastructure.Services
         Task<Result<List<LexContact>>> GetAllContactsAsync(BaseView search);
 
         Task<Result<LexUserSimpleCheck>> CheckRelationsMailAsync(string idUser, string env, MailInfo mail);
+        Task<Result<int>> AddAppointmentAsync(LexAppointment appointment, string env, string idUser);
+        Task<Result<int>> RemoveAppointmentAsync(LexAppointmentSimple appointment, string env, string idUser);
+        Task<Result<int>> AddAppointmentActionAsync(LexAppointmentActuation appointment, string env, string idUser);
     }
 }

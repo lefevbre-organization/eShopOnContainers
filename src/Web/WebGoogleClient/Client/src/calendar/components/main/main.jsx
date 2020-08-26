@@ -196,6 +196,7 @@ export class Main extends Component {
 
     async setGlobalization() {
         if (window.navigator.language.includes("es-")
+            || (window.navigator.language == "es")
             || (window.navigator.language == "ca")
             || (window.navigator.language == "ga")
             || (window.navigator.language == "eu")) {
@@ -647,7 +648,7 @@ export class Main extends Component {
         }
 
         //event Type    
-        if (values.EventType != undefined && values.EventType != null) {
+        if (values.EventType != undefined && values.EventType != null && values.EventType.length > 0 ) {
             let item;
             if (values.EventType.name != undefined) {
                 item = this.eventTypeDataSource.find(x => x.text == values.EventType.name)
@@ -1040,23 +1041,23 @@ export class Main extends Component {
 
                 let itemToModify = args.data.Id
                 let calendarToModify = args.data.CalendarId
-                if (args.data.occurrence != undefined) {
+                if (args.data[0].RecurrenceID != undefined) {
 
                     //call function to remvove event from serie
                     let eventItemToModify
                     var singleEventToRemove = args.changedRecords[0].RecurrenceException.split(",");
                     if (singleEventToRemove.length > 0) {
-                        eventItemToModify = args.data.parent.Id + '_' + singleEventToRemove[singleEventToRemove.length - 1];
+                        eventItemToModify = args.data[0].RecurrenceID + '_' + singleEventToRemove[singleEventToRemove.length - 1];
                     }
                     else {
-                        eventItemToModify = args.data.parent.Id + '_' + singleEventToRemove[0];
+                        eventItemToModify = args.data[0].RecurrenceID + '_' + singleEventToRemove[0];
                     }
-                    this.deleteCalendarEventCRUD(args.data.parent.CalendarId, eventItemToModify, true);
+                    this.deleteCalendarEventCRUD(args.data[0].CalendarId, eventItemToModify, true);
 
                     //call function to add new single event out of the serie
                     args.addedRecords[0].RecurrenceRule = undefined
                     let eventOcurrence = this.buildEventoGoogle(args.addedRecords[0]);
-                    this.addCalendarEventCRUD(args.data.parent.CalendarId, eventOcurrence);
+                    this.addCalendarEventCRUD(args.data[0].CalendarId, eventOcurrence);
                     break
 
                 }
@@ -1130,16 +1131,28 @@ export class Main extends Component {
 
             case 'eventRemoved':
                 //call function to delete event
-                let item = args.data[0].Id
-                let calendarFromRemove = args.data[0].CalendarId
-                if (args.data[0].occurrence != undefined) {
-                    var d = new Date(args.data[0].occurrence.StartTime);
-                    var dateString = moment(d).seconds(0).toISOString().split('.')[0] + "Z";
-                    var ExcRecurenceDate = dateString.replace(/[:.-]/g, "");
-                    item = args.data[0].parent.Id + '_' + ExcRecurenceDate;
-                    calendarFromRemove = args.changedRecords[0].CalendarId
-                    // item = args.data[0].parent.Id + '_' + args.data[0].parent.RecurrenceException; 
+                let item;
+                let calendarFromRemove;
+                if (args.deletedRecords.length > 0) {
+                    item = args.deletedRecords[0].Id
+                    calendarFromRemove = args.deletedRecords[0].CalendarId
+                   
                 }
+                else {
+                    item = args.data[0].Id
+                    calendarFromRemove = args.data[0].CalendarId
+                    if (args.data[0].RecurrenceID != undefined) {
+                        var d = new Date(args.data[0].StartTime);
+                        var dateString = moment(d).seconds(0).toISOString().split('.')[0] + "Z";
+                        var ExcRecurenceDate = dateString.replace(/[:.-]/g, "");
+                        item = args.data[0].Id + '_' + ExcRecurenceDate;
+                        calendarFromRemove = args.changedRecords[0].CalendarId
+                        // item = args.data[0].parent.Id + '_' + args.data[0].parent.RecurrenceException; 
+                    }
+
+                }                
+               
+               
 
                 //call function to remvove event
                 this.deleteCalendarEventCRUD(calendarFromRemove, item);
@@ -1200,7 +1213,10 @@ export class Main extends Component {
         getEventList(calendar, this.scheduleObj.selectedDate)
             .then(result => {
                 this.defaultCalendar = calendar;
-                this.props.selectCalendar(calendar);
+                //this.props.selectCalendar(calendar);
+
+                //let obj = this.props.selectCalendar;
+                //setTimeout(function () { obj(calendar);}, 10);
 
                 //Set checkedCalendarResourceData calendar items as cheked
                 this.resourceCalendarData.find(x => x.id == calendar).checked = checked
@@ -1225,6 +1241,8 @@ export class Main extends Component {
 
                 // Load selected calendar to pass to the query
                 this.predicateQueryEvents(calendars.true, predicate)
+
+                this.props.selectCalendar(calendar);
 
             })
             .catch(error => {

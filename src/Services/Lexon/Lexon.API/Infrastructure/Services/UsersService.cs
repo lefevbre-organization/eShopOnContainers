@@ -1,5 +1,6 @@
 ﻿using Lexon.API;
 using Lexon.API.Infrastructure.Repositories;
+using Lexon.API.Model;
 using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Abstractions;
 using Microsoft.eShopOnContainers.BuildingBlocks.Lefebvre.Models;
 using Microsoft.Extensions.Logging;
@@ -1070,6 +1071,52 @@ namespace Lexon.Infrastructure.Services
                 $" }}";
         }
 
+        private string GiveMeAppointmentFilter(string idUser, LexAppointment appointment)
+        {
+            return $"{{ " +
+                GetUserFilter(appointment.Bbdd, idUser) +
+                GetAppointmentFilter(appointment) +
+                $" }}";
+        }
+
+        private string GiveMeAppointmentRemoveFilter(string idUser, LexAppointmentSimple appointment)
+        {
+            return $"{{ " +
+                GetUserFilter(appointment.Bbdd, idUser) +
+                GetAppointmentFilter(appointment) +
+                $" }}";
+        }
+
+        private string GiveMeAppointmentActionFilter(string idUser, LexAppointmentActuation appointment)
+        {
+            return $"{{ " +
+                GetUserFilter(appointment.Bbdd, idUser) +
+                GetAppointmentActionFilter(appointment) +
+                $" }}";
+        }
+
+        private string GetAppointmentFilter(LexAppointment appointment)
+        {
+            //'{"BBDD":"lexon_admin_02","IdUser":1344, "Subject":"test cita", "Location":"Madrid", "EndDate":"2020-03-30 20:31:30", "StartDate":"2020-03-28 20:31:30"}';
+            return $"{GetTextFilter("Subject", appointment.Subject)}" +
+                $"{GetTextFilter("Location", appointment.Location)}" +
+                $"{GetTextFilter("StartDate", appointment.StartDate)}" +
+                $"{GetTextFilter("EndDate", appointment.EndDate)}";
+        }
+
+        private string GetAppointmentFilter(LexAppointmentSimple appointment)
+        {
+            //'{"BBDD":"lexon_admin_02","Id":401, "IdUser":"1344"}';
+            return $"{GetLongFilter("Id", appointment.Id)}";
+        }
+
+        private string GetAppointmentActionFilter(LexAppointmentActuation appointment)
+        {
+            //'{"BBDD":"lexon_admin_02","IdUser":1344, "idAppointment":402, "id":917}
+            return $"{GetLongFilter("Id", appointment.Id)}" +
+                $"{GetLongFilter("idAppointment", appointment.IdAppointment)}" ;
+        }
+
         private static string GetUserFilter(string bbdd, string idUser, bool withComma = false)
         {
             var comma = withComma ? ", " : "";
@@ -1188,7 +1235,6 @@ namespace Lexon.Infrastructure.Services
 
 
         #region Files
-
 
         public async Task<Result<string>> FileGetAsync(EntitySearchById fileMail)
         {
@@ -1325,5 +1371,117 @@ namespace Lexon.Infrastructure.Services
 
 
         #endregion Files
+
+        #region Appointments
+
+        public async Task<Result<int>> AddAppointmentAsync(LexAppointment appointment, string env, string idUser)
+        {
+            var result = new Result<int>(0);
+            GetUrlsByEnvironment(env);
+
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(_conn))
+                {
+                    var filtro = GiveMeAppointmentFilter(idUser, appointment);
+                    conn.Open();
+
+                        using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddAppointment, conn))
+                        {
+                            AddCommonParameters(idUser, command, "P_JSON", filtro, true);
+                            await command.ExecuteNonQueryAsync();
+                            TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
+                            TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
+                            result.data =(GetIntOutputParameter(command.Parameters["P_ID"].Value));
+                        }
+                 }
+
+                if (_settings.Value.UseMongo)
+                {
+                    //if (result.data > 0)
+                    //    await AddClassificationToListMongoAsync(classificationAdd, result);
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+
+            return result;
+        }
+
+        public async Task<Result<int>> RemoveAppointmentAsync(LexAppointmentSimple appointment, string env, string idUser)
+        {
+            var result = new Result<int>(0);
+            GetUrlsByEnvironment(env);
+
+            using (MySqlConnection conn = new MySqlConnection(_conn))
+            {
+                try
+                {
+                    var filtro = GiveMeAppointmentRemoveFilter(idUser, appointment);
+                    conn.Open();
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.RemoveAppointment, conn))
+                    {
+                        AddCommonParameters(idUser, command, "P_JSON", filtro);
+                        await command.ExecuteNonQueryAsync();
+                        result.data = !string.IsNullOrEmpty(command.Parameters["P_IDERROR"].Value.ToString()) ? -1 : 1;
+                        TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
+                        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TraceMessage(result.errors, ex);
+                }
+            }
+
+            if (_settings.Value.UseMongo)
+            {
+                if (result.data == 0)
+                    TraceOutputMessage(result.errors, "Mysql don´t remove the classification", null, "MySql Remove Data");
+                //else
+                //    await RemoveClassificationFromListMongoAsync(classificationRemove, result);
+            }
+            return result;
+        }
+
+        public async Task<Result<int>> AddAppointmentActionAsync(LexAppointmentActuation appointment, string env, string idUser)
+        {
+            var result = new Result<int>(0);
+            GetUrlsByEnvironment(env);
+
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(_conn))
+                {
+                    var filtro = GiveMeAppointmentActionFilter(idUser, appointment);
+                    conn.Open();
+
+                    using (MySqlCommand command = new MySqlCommand(_settings.Value.SP.AddAppointmentAction, conn))
+                    {
+                        AddCommonParameters(idUser, command, "P_JSON", filtro, true);
+                        await command.ExecuteNonQueryAsync();
+                        TraceLog(parameters: new string[] { $"RESULT_P_ID:{command.Parameters["P_IDERROR"].Value}" });
+                        TraceOutputMessage(result.errors, command.Parameters["P_ERROR"].Value, null, command.Parameters["P_IDERROR"].Value);
+                        result.data = (GetIntOutputParameter(command.Parameters["P_ID"].Value));
+                    }
+                }
+
+                if (_settings.Value.UseMongo)
+                {
+                    //if (result.data > 0)
+                    //    await AddClassificationToListMongoAsync(classificationAdd, result);
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+
+            return result;
+        }
+
+        #endregion
     }
 }

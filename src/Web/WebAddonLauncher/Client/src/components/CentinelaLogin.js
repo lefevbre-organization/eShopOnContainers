@@ -1,4 +1,5 @@
 import React from 'react';
+import i18n from 'i18next';
 
  const CentinelaLogin = (children) =>  {
    const verificationLogin = children.errorsMessage.login ? (
@@ -63,11 +64,11 @@ import React from 'react';
               <button 
                onClick={children.handleEventAddon} 
                className="btn btn-label btn-loading"> 
-               Loading...
+               {i18n.t('login.load')}
               </button> : <button 
                  onClick={children.handleEventAddon} 
                  className="btn btn-label btn-login"> 
-                 INICIAR SESIÓN
+                 {i18n.t('login.login')}
                 </button> }
                 { verificationAuth }
                </div>

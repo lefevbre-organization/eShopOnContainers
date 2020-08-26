@@ -44,6 +44,13 @@ env:
     - name: IsClusterEnv
       value: 'True'
 configValues: |
-  window.REACT_APP_ENVIRONMENT='PRODUCTION'
-  window.API_SIGN_GATEWAY = "https://lexbox-apigwsig/api/v1/signservice";
+  window.REACT_APP_ENVIRONMENT = 'PRODUCTION'
+  window.API_SIGN_GATEWAY = 'https://lexbox-apigwsig.lefebvre.es/api/v1/signservice'
+  window.API_CHECK_CREDITS = 'https://led-serviceclaves.lefebvre.es/FirmaDigital'
+  window.TERMS_AND_CONDITIONS_URL = 'https://lefebvre.es/aviso-legal'
+  window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies'
+  window.PRIVACY_POLICY_URL = 'https://lefebvre.es/politica-privacidad'
+  window.LEGAL_WARNING_URL = 'https://lefebvre.es/aviso-legal'
+  window.URL_GET_ACCOUNTS = 'https://lexbox-apigwacc.lefebvre.es/api/v2/accounts/usermail'
+  window.URL_GET_USER = 'https://lexbox-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login'
   window.RELEASE = 'RC 0.29'

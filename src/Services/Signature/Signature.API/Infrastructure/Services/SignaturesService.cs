@@ -113,13 +113,49 @@
 
         #region Events
         public async Task<Result<bool>> SaveEvent(SignEventInfo eventInfo)
-        {
-            var response = new Result<bool>();
-            var result = await _signaturesRepository.SaveEvent(eventInfo);
-            return response;
+        {       
+            return await _signaturesRepository.SaveEvent(eventInfo);
         }
 
-        public async Task<Result<bool>> GetSignature(string signatureId, string documentId, string eventType)
+        //public async Task<Result<bool>> GetSignature(string signatureId, string documentId, string eventType)
+        //{
+        //    ////var result = new Result<BsonDocument>();
+        //    var response = new Result<bool>();
+
+        //    var result = await _signaturesRepository.GetSignature(signatureId);
+
+        //    if (result.data != null && result.data.Signatures.Count > 0)
+        //    {
+        //        ////var user = result.data["user"].AsString;
+        //        ////var guid = result.data["signatures"][0]["guid"].AsString;
+        //        ////var app = result.data["signatures"][0]["app"].AsString;
+
+        //        var user = result.data.User;
+        //        var guid = result.data.Signatures[0].Guid;
+        //        var app = result.data.Signatures[0].App;
+
+
+        //        // Downloadfile
+        //        var file = GetFile(signatureId, documentId, eventType);
+
+        //        if (app == "lexon")
+        //        {
+        //            // Call lexon api to store document
+        //            response = await SaveFileLexon(file);
+
+        //        }
+        //        else if (app == "centinela")
+        //        {
+        //            // Call centinela api to store document
+        //            var cenDocId = result.data.Signatures[0].Documents.Find(e => e.ExternalId == documentId).InternalInfo.DocId;
+        //            response = await SaveFileCentinela(file, guid, cenDocId, user, eventType);
+        //        }
+        //    }
+
+        //    return response;
+        //}
+
+        public async Task<Result<bool>> ProcessEvent(string signatureId, string documentId, string eventType)
         {
             ////var result = new Result<BsonDocument>();
             var response = new Result<bool>();

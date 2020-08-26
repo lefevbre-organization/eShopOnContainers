@@ -153,6 +153,7 @@ export class Main extends Component {
 
     async setGlobalization() {
         if (window.navigator.language.includes("es-")
+            || (window.navigator.language == "es")
             || (window.navigator.language == "ca")
             || (window.navigator.language == "ga")
             || (window.navigator.language == "eu")) {

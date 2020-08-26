@@ -49,6 +49,11 @@
 
         public string GetAllContacts { get; set; }
         public string CheckRelations { get; set; }
+        public string AddAppointment { get; set; }
+        public string RemoveAppointment { get; set; }
+        public string AddAppointmentAction { get; set; }
+
+ 
     }
 
     public class EnvironmentModel

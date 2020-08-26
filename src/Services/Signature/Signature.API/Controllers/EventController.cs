@@ -51,20 +51,39 @@
         {
             try
             {
+                var finalResult = new Result<bool>();
               
-                if (eventinfo.Document.Status == "document_completed" || eventinfo.Document.Status == "audit_trail_completed")
+                if (eventinfo.Type == "document_completed" || eventinfo.Type == "audit_trail_completed")
                 {
                     var signatureId = eventinfo.Document.Signature.Id;
                     var documentId = eventinfo.Document.DocumentId;
                     var logResult = await _signaturesService.SaveEvent(eventinfo);
-                    var result = await _signaturesService.GetSignature(signatureId, documentId, eventinfo.Document.Status);
+                    var processResult = await _signaturesService.ProcessEvent(signatureId, documentId, eventinfo.Type);
+                    //var logResult = await _signaturesService.UpdateEvent(eventinfo);
 
-                    return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
+                    finalResult.data = logResult.data && finalResult.data;
+                    if (logResult.infos.Count > 0)
+                    {
+                        finalResult.infos.Add(logResult.infos[0]);
+                    }
+                    if (logResult.errors.Count > 0)
+                    {
+                        finalResult.errors.Add(logResult.errors[0]);
+                    }
+                    if (processResult.infos.Count > 0)
+                    {
+                        finalResult.infos.Add(processResult.infos[0]);
+                    }
+                    if (processResult.errors.Count > 0)
+                    {
+                        finalResult.errors.Add(processResult.errors[0]);
+                    }
+
+                    return (finalResult.errors.Count > 0) ? (IActionResult)BadRequest(finalResult) : Ok(finalResult);
                 }
             }
             catch (Exception)
             {
-
                 throw;
             }
             

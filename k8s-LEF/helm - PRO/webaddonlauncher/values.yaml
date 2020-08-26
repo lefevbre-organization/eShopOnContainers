@@ -56,4 +56,7 @@ configValues: |
  window.URL_GET_USER='https://lexbox-apigwlex.lefebvre.es/api/v1/utils/UserUtils'
  window.URL_MF_CENTINELA = "https://lexbox-webcentinela.lefebvre.es/static/js/main.js"
  window.URL_MF_CENTINELA_BASE = "https://lexbox-webcentinela.lefebvre.es"
+ window.TERMS_AND_CONDITIONS_URL = 'https://lefebvre.es/aviso-legal';
+ window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies';
+ window.PRIVACY_POLICY_URL = 'https://lefebvre.es/politica-privacidad';
  window.RELEASE = 'RC 0.29'
