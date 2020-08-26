@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import i18n from 'i18next';
 
 const LoginFooter = (children) => (
  <div className="login-footer">
@@ -26,15 +27,23 @@ const LoginFooter = (children) => (
     </div>
     <div className="row"> 
       <div className="col-md-12 text-justify">
-        <p className="rights-reserved-login my-lg-4">©2020 Lefebvre. Todos los derechos reservados. 
-         <a href="https://lefebvre.es/aviso-legal" 
-         className="compliance-footer__disclaimer-text--link" target="_blank">Aviso legal</a> 
-         <span className="compliance-footer__delimiter">|</span> 
-         <a href="https://lefebvre.es/politica-privacidad" 
-         className="compliance-footer__disclaimer-text--link" target="_blank">Política de privacidad</a> 
-         <span className="compliance-footer__delimiter">|</span> 
-         <a href="https://lefebvre.es/politica-cookies" 
-         className="compliance-footer__disclaimer-text--link" target="_blank">Política de Cookies</a></p>
+      <p className="rights-reserved-login my-lg-4"> 
+         {i18n.t('footer.all-reserved-right')}
+          <a href={window.TERMS_AND_CONDITIONS_URL} 
+          className="compliance-footer__disclaimer-text--link" target="_blank">
+            {i18n.t('footer.legal-warning')}
+            </a> 
+          <span className="compliance-footer__delimiter">|</span> 
+          <a href={window.PRIVACY_POLICY_URL}
+          className="compliance-footer__disclaimer-text--link" target="_blank">
+            {i18n.t('footer.privacy-policy')}
+            </a> 
+          <span className="compliance-footer__delimiter">|</span> 
+          <a href={window.COOKIES_POLICY_URL} 
+          className="compliance-footer__disclaimer-text--link" target="_blank">
+            {i18n.t('footer.cookies-policy')}
+          </a>
+        </p>
        </div>
     </div>
  </div>

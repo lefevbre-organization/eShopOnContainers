@@ -1,0 +1,47 @@
+{
+  "login": {
+    "Login": "Configuración de correo",
+    "Host": "Servidor",
+    "Port": "Puerto",
+    "User": "Usuario",
+    "Password": "Contraseña",
+    "Advanced": "Avanzado",
+    "ImapSSL": "IMAP SSL",
+    "SMTP": "SMTP",
+    "SmtpSSL": "SMTP SSL",
+    "SmtpUnsecured": "SMTP SIN SEGURIDAD",
+    "actions": {
+      "Login": "Acceder",
+      "Cancel": "Cancelar"
+    },
+    "errors": {
+      "BLACKLISTED": "Servidor no autorizado",
+      "IMAP": "Credenciales IMAP inválidas",
+      "SMTP": "Credenciales SMTP inválidas"
+    },
+    "shop": "TIENDA",
+    "notClient": "No soy cliente",
+    "requestInfo": "Solicitar información",
+    "needHelp": "¿Necesitas ayuda?",
+    "phoneNumber": "91 210 80 00 - 902 44 33 55 |",
+    "client": "clientes@lefebvre.es",
+    "required": "Este campo es obligatorio.",
+    "email-error": "El campo debe tener formato de email.",
+    "user-error": "Usuario o Contraseña inválidos.",
+    "user-access-signature": "El usuario no tiene acceso a Signature.",
+    "user-access-centinela": "El usuario no tiene acceso a Centinela.",
+    "user-access-lexon": "El usuario no tiene acceso a Lex-On.",
+    "user": "Usuario",
+    "password": "Contraseña",
+    "login": "INICIAR SESIÓN",
+    "load": "Loading..."
+  },
+  "footer": {
+    "all-reserved-right": "©2020 Lefebvre. Todos los derechos reservados. ",
+    "legal-warning": "Aviso legal",
+    "privacy-policy": "Política de privacidad",
+    "cookies-policy": "Política de cookies",
+    "version": "Versión",
+    "terms-and-conditions": "Términos y condiciones"
+  }
+}
