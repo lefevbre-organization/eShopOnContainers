@@ -577,8 +577,8 @@
         {
             if (string.IsNullOrEmpty(eve.idEvent))
                 eve.idEvent = Guid.NewGuid().ToString();
-            //eve.name = eve.name.ToUpperInvariant();
-            //eve.color = eve.color.ToLowerInvariant();
+            eve.name = eve.name.Trim();
+            eve.color = eve.color.Trim();
         }
 
         private static Predicate<Account> GetFilterProviderMail(string provider, string mail)
@@ -866,7 +866,7 @@
                     var resultInsertAccountEvent = await UpsertAccountEvents(new AccountEvents() { email = email, eventTypes = arrayEvents.ToArray() });
                     account = resultInsertAccountEvent.data;
                 }
-                var ev = account.eventTypes.FirstOrDefault(s => s.idEvent == eventType.idEvent || s.name.ToUpperInvariant() == eventType.name.ToUpperInvariant());
+                var ev = account.eventTypes.FirstOrDefault(s => s.idEvent == eventType.idEvent || s.name.ToUpperInvariant() == eventType.name?.ToUpperInvariant());
                 if (ev?.name != null)
                 {
                     TraceInfo(result.infos, $"modify event {ev.idEvent} -> {ev.name}");
