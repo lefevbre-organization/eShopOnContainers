@@ -173,20 +173,36 @@
                 var app = result.data.Signatures[0].App;
 
 
-                // Downloadfile
-                var file = GetFile(signatureId, documentId, eventType);
-
                 if (app == "lexon")
                 {
                     // Call lexon api to store document
+                    // Downloadfile
+                    var file = GetFile(signatureId, documentId, eventType);
                     response = await SaveFileLexon(file);
 
                 }
                 else if (app == "centinela")
                 {
-                    // Call centinela api to store document
                     var cenDocId = result.data.Signatures[0].Documents.Find(e => e.ExternalId == documentId).InternalInfo.DocId;
-                    response = await SaveFileCentinela(file, guid, cenDocId, user, eventType);
+
+                    switch (eventType)
+                    {
+                        case "document_canceled":
+                        case "document_expired":
+                        case "document_declined":
+                            response = await CancelFileCentinela(cenDocId);
+                            break;
+                        case "document_completed":
+                        case "audit_trail_completed":
+                            // Downloadfile
+                            var file = GetFile(signatureId, documentId, eventType);
+                            response = await SaveFileCentinela(file, guid, cenDocId, user, eventType);
+                            break;
+                        default:
+                            break;
+                    }
+                    // Call centinela api to store document
+
                 }
             }
 
@@ -296,6 +312,33 @@
             request.AddHeader("Content-Type", "application/json-patch+json");
 
             request.AddParameter("application/json-patch+json", outputJson, ParameterType.RequestBody);
+            IRestResponse response = await client.ExecuteAsync(request);
+
+            JObject responseJson = JObject.Parse(response.Content);
+            List<Info> infos = (List<Info>)responseJson["infos"].ToObject(typeof(List<Info>));
+            List<ErrorInfo> errors = (List<ErrorInfo>)responseJson["errors"].ToObject(typeof(List<ErrorInfo>));
+
+            if (response.Content != null && errors.Count == 0)
+            {
+                result = new Result<bool>() { errors = new List<ErrorInfo>(), infos = infos, data = true };
+            }
+            else
+            {
+                result = new Result<bool>() { errors = errors, infos = infos, data = false };
+            }
+            Console.WriteLine(response.Content);
+
+            return result;
+        }
+
+        public async Task<Result<bool>> CancelFileCentinela(string cenDocId)
+        {
+            Result<bool> result;
+
+            var url = $"{_settings.Value.CentinelaApiGwUrl}/signatures/cancelation/{cenDocId}";
+            var client = new RestClient(url);
+            var request = new RestRequest(Method.POST);
+
             IRestResponse response = await client.ExecuteAsync(request);
 
             JObject responseJson = JObject.Parse(response.Content);
