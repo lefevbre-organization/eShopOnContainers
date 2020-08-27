@@ -8,7 +8,18 @@ import mainCss from '../../styles/main.scss';
 import styles from './message-viewer.scss';
 import ACTIONS from "../../actions/lefebvre";
 import materialize from '../../styles/signature/materialize.scss';
-import { downloadSignedDocument,  downloadSignedDocument2, downloadTrailDocument, downloadTrailDocument2, sendReminder, sendReminder2, cancelSignature, cancelSignature2 } from "../../services/api-signaturit";
+import { 
+  downloadSignedDocument,  
+  downloadSignedDocument2, 
+  downloadTrailDocument, 
+  downloadTrailDocument2, 
+  sendReminder, 
+  sendReminder2, 
+  cancelSignature,
+   cancelSignature2 
+} from "../../services/api-signaturit";
+import SignatureList from './signature-list/signature-list';
+import SignatureDetails from './signature-details/signature-details';
 import { NOT_BOOTSTRAPPED } from 'single-spa';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 import i18n from 'i18next';
@@ -128,7 +139,6 @@ export class MessageViewer extends Component {
       })
     }
     return res;
-
   }
 
   getDocuments(signature){
@@ -255,7 +265,6 @@ export class MessageViewer extends Component {
     let expirationText = i18n.t('signatureViewer.widgets.expiration.doesntExpires');
     let passedTime =  this.getDaysBetweenDates(new Date(signature.created_at), new Date());
     let reminderConfig = signature.data.find(x => x.key === "reminders");
-    let remindersSent = false;
     
     if (reminderConfig === undefined || reminderConfig === null){
       reminderText = i18n.t('signatureViewer.widgets.reminders.notConfigured');;
@@ -284,7 +293,8 @@ export class MessageViewer extends Component {
       expirationText = i18n.t('signatureViewer.widgets.expiration.notConfigured');
     }
     else {
-      expirationText = i18n.t('signatureViewer.widgets.expiration.expires').replace('___', (expirationDays.value - passedTime) < 0 ? 0 : expirationDays.value - passedTime );
+      expirationText = i18n.t('signatureViewer.widgets.expiration.expires')
+      .replace('___', (expirationDays.value - passedTime) < 0 ? 0 : expirationDays.value - passedTime );
     }
 
 
@@ -324,35 +334,13 @@ export class MessageViewer extends Component {
     return (
       <div className={`col l9 ${styles['contenido-central']}`}>
       <div className={styles['cont-progreso-peticion-firma']}>
-        <table className={styles['resumen-firma']}>
-          <tbody>
-            <tr>
-              <th>{i18n.t('signatureViewer.grid.document')}</th>
-              <th>{i18n.t('signatureViewer.grid.subject')}</th>
-              <th>{i18n.t('signatureViewer.grid.signers')}</th>
-              <th>{i18n.t('signatureViewer.grid.date')}</th>
-              <th>{i18n.t('signatureViewer.grid.status')}</th>
-            </tr>            
-            <tr>
-                <td className={styles.documento}>{signature.documents[0].file.name}</td>
-                <td>{(signature.data.find(x => x.key === "subject")) ? signature.data.find(x => x.key === "subject").value : "Sin asunto"} </td>
-                <td>
-                    {/* <ul className={styles['tooltip-firmantes']}>
-                        <li>Maria cruces <span className={styles.email}>margia-cruces@gmail.com</span></li>
-                        <li>Maria cruces <span className={styles.email}>m.lopez@gsel.com</span></li>
-                    </ul> */}
-                    <span className={`${styles['bola-firmantes']} ${styles[status_style]}`}>{this.getSigners(signature).length}</span>
-                </td>
-                  <td>
-                    {new Date(signature.created_at).toLocaleString(navigator.language, {
-                    year: 'numeric', month: '2-digit', day: '2-digit',
-                    hour: '2-digit', minute: '2-digit', second: '2-digit'
-                    })}
-                  </td>
-                <td className={styles[status_style]}>{status}</td>
-            </tr>
-          </tbody>
-        </table>
+        <SignatureDetails 
+         styles={styles}
+         status_style={status_style}
+         status={status}
+         signature={signature}
+         getSigners={this.getSigners}
+        />
         <button 
           className={`${styles['btn-gen-border']} left modal-trigger`} 
           href="#demo-modal2" 
@@ -394,121 +382,22 @@ export class MessageViewer extends Component {
                 </button>
             </div>            
             <div className={`${materialize.col} ${materialize['l8']} left`}>
-              {signature.documents.map((signer, i) => {
-                i+=1;
-                return(
-              
-                <div className={styles['cont-info-firmantes']}>
-                  <div className={`${styles.p15} ${styles.separador}`}>
-                      <div className={`${styles['tit-firmante']} left`}>{i18n.t('signatureViewer.signerCard.title.signers')}</div>
-                        <span className={`${styles['name_firmante']} left`}>{signer.name}:</span>
-                        <span className={styles.email}>{signer.email}</span>
-                        <span className={`${styles['numero_firmante']} right`}>{i18n.t('signatureViewer.signerCard.title.signer')} {i}</span>
-                      </div>
-                      <div className={`${styles.p15} ${styles.separador}`}>
-                        <div className={styles['tit-firmante']}>{i18n.t('signatureViewer.signerCard.body.title')}</div>
-                        <div className={`${styles['seguimiento-firmante-individual']} ${((this.getEventStatus(signer, 'email_processed') === false) ? styles['no-completado']: ``)}`}>
-                          <span className="lf-icon-send"></span>
-                          <div className={styles['cont-check-seguimiento']}>
-                              <span className={`${((this.getEventStatus(signer, 'email_processed')) ? `lf-icon-check-round-full `: ``)} ${styles['check-seguimiento']}`}></span>
-                              <div className={`${styles.linea} ${styles['primer-estado']}`}></div>
-                              <div className={styles.info}>
-                                <div className={styles.estado}> {i18n.t('signatureViewer.signerCard.body.emailSent')}</div>
-                                {this.getEventDate(signer, 'email_processed').split(' ')[0]}<br/>
-                                {this.getEventDate(signer, 'email_processed').split(' ')[1]}
-                              </div>
-                              <div className={styles.clearfix}></div>
-                          </div>
-                          <div className={styles.clearfix}></div>
-                        </div>
-                        <div className={`${styles['seguimiento-firmante-individual']} ${((this.getEventStatus(signer, 'email_delivered') === false) ? styles['no-completado']: ``)}`}>
-                          <span className={`lf-icon-mail`}></span>
-                          <div className={styles['cont-check-seguimiento']}>
-                              <span className={`${((this.getEventStatus(signer, 'email_delivered')) ? `lf-icon-check-round-full `: ``)} ${styles['check-seguimiento']}`}></span>
-                              <div className={styles.linea}></div>
-                              <div className={styles.info}>
-                                  <div className={styles.estado}> {i18n.t('signatureViewer.signerCard.body.emailDelivered')}</div>
-                                    {this.getEventDate(signer, 'email_delivered').split(' ')[0]}<br/>
-                                    {this.getEventDate(signer, 'email_delivered').split(' ')[1]}
-                              </div>
-                              <div className={styles.clearfix}></div>
-                          </div>
-                          <div className={styles.clearfix}></div>
-                        </div>
-                        <div className={`${styles['seguimiento-firmante-individual']} ${((this.getEventStatus(signer, 'email_opened') === false) ? styles['no-completado']: ``)}`}>
-                          <span className="lf-icon-mail-open"></span>
-                          <div className={styles['cont-check-seguimiento']}>
-                              <span className={`${((this.getEventStatus(signer, 'email_opened')) ? `lf-icon-check-round-full `: ``)} ${styles['check-seguimiento']}`}></span>
-                              <div className={styles.linea}></div>
-                              <div className={styles.info}>
-                                  <div className={styles.estado}>
-                                    {i18n.t('signatureViewer.signerCard.body.emailOpened')}
-                                  </div>
-                                    {this.getEventDate(signer, 'email_opened').split(' ')[0]}<br/>
-                                    {this.getEventDate(signer, 'email_opened').split(' ')[1]}
-                              </div>
-                              <div className={styles.clearfix}></div>
-                          </div>
-                          <div className={styles.clearfix}></div>
-                        </div>
-                        <div className={`${styles['seguimiento-firmante-individual']} ${((this.getEventStatus(signer, 'document_opened') === false) ? styles['no-completado']: ``)}`}>
-                          <span className="lf-icon-document"></span>
-                          <div className={styles['cont-check-seguimiento']}>
-                              <span className={`${((this.getEventStatus(signer, 'document_opened')) ? `lf-icon-check-round-full `: ``)} ${styles['check-seguimiento']}`}></span>
-                              <div className={styles.linea}></div>
-                                <div className={styles.info}>
-                                      <div className={styles.estado}>{i18n.t('signatureViewer.signerCard.body.docOpened')}</div>
-                                        {this.getEventDate(signer, 'document_opened').split(' ')[0]}<br/>
-                                        {this.getEventDate(signer, 'document_opened').split(' ')[1]}
-                                </div>
-                              <div className={styles.clearfix}></div>
-                          </div>
-                        </div>
-                        {/* <div className={`${styles['seguimiento-firmante-individual']} ${styles['no-completado']}`}> */}
-                        <div className={`${styles['seguimiento-firmante-individual']} ${((this.getEventStatus(signer, 'document_signed') === false) ? styles['no-completado']: ``)}`}>
-                          <span className='lf-icon-document-validate'></span>
-                          <div className={styles['cont-check-seguimiento']}>
-                              <span className={`${((this.getEventStatus(signer, 'document_signed')) ? `lf-icon-check-round-full `: ``)} ${styles['check-seguimiento']}`}></span>
-                              <div className={styles.linea}></div>
-                              <div className={styles.info}>
-                                  <div className={styles.estado}>{i18n.t('signatureViewer.signerCard.body.docSigned')}</div>
-                                    {this.getEventDate(signer, 'document_signed').split(' ')[0]}<br/>
-                                    {this.getEventDate(signer, 'document_signed').split(' ')[1]}
-
-                              </div>
-                          </div>
-                          <div className={styles.clearfix}></div>
-                        </div>
-                        <div className={styles.clearfix}></div>
-                      </div>
-                      <div className={styles.p15}>
-                        <div className={styles['tit-firmante']}>{i18n.t('signatureViewer.signerCard.footer.title')}</div>
-                        <p>
-                          {
-                            signer.events.map(event => 
-                              { 
-                                if (event.type === 'reminder_email_processed'){
-                                  remindersSent = true;
-                                  return (
-                                    <span className={styles.fecha}>
-                                      {`${this.getSingleEventDate(event, 'reminder_email_processed')}`}<br/>
-                                    </span>
-                                  )
-                                }
-                              }
-                            )
-                          }
-                          {(remindersSent ? null : i18n.t('signatureViewer.signerCard.footer.subtitle'))}
-                        </p>
-                      </div>
-                  </div>
+              {signature.documents.map((signer, index) => {
+              return (
+                <SignatureList 
+                 signer={signer}
+                 index={index}
+                 key={signer.id}
+                 styles={styles}
+                 getEventDate={this.getEventDate}
+                 getEventStatus={this.getEventStatus}
+                 getSingleEventDate={this.getSingleEventDate}
+                ></SignatureList>            
                 )
               })}
             </div>
-            
             <div className={styles.clearfix}></div>
         </div>
-
       </div>
       <DialogComponent 
           id="infoDialog" 
@@ -545,9 +434,9 @@ export class MessageViewer extends Component {
             max-height: 927px;
             width: 300px;
             left: 770px;
-            top: 392.5px;
+            //top: 392.5px;
             z-index: 1001;
-            transform: translateY(+150%);
+            //transform: translateY(+150%);
             }
             #confirmDialog_dialog-header, 
             #confirmDialog_title, 
