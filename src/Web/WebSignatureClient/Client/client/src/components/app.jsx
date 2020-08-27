@@ -1,6 +1,8 @@
 /* eslint-disable indent */
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import i18n from 'i18next';
+
 import PropTypes from 'prop-types';
 import * as uuid from 'uuid/v4';
 import Cookies from 'js-cookie';
@@ -427,7 +429,7 @@ class App extends Component {
     const content = `  
       <div style='width: 100%;'>  
         <div style='text-align: justify; text-justify: inter-word; align-self: center;'>
-          Descargando documentos de centinela
+          ${i18n.t('downloadindCentinelaModal.text')}
         </div>
         <div class='${styles['progress-line']}'/>
       </div>
@@ -449,12 +451,13 @@ class App extends Component {
           id="info2Dialog" 
           //header=' ' 
           visible={this.state.hideAlertDialog} 
-          //visible={true} 
+          // visible={true} 
           animationSettings={this.animationSettings} 
           width='500px' 
           content={content}
           //content={(this.props.attachments.length === 0 ? noAttachModal : (this.state.bigAttachments ? bigFileModal : noSignersModal))}
           ref={alertdialog => this.alertDialogInstance = alertdialog} 
+          isModal={true}
           //target='#target' 
           //buttons={this.alertButtons} 
           // open={this.dialogOpen.bind(this)} 
@@ -475,14 +478,16 @@ class App extends Component {
         </div>*/}
         <style jsx global>
           {`
-            #info2Dialog,
+            #info2Dialog
             {
               max-height: 927px;
               width: 300px;
-              left: 770px;
-              top: 392.5px;
+              //left: 770px;
+              //top: 392.5px;
               z-index: 1001;
-              transform: translateY(+150%);
+              //transform: translateY(+150%);
+              left: 35% !important;
+              position: absolute !important;
             }
             #info2Dialog_dialog-header, #info2Dialog_title, #info2Dialog_dialog-content, #info2Dialog.e-footer-content,
             .e-footer-content {
