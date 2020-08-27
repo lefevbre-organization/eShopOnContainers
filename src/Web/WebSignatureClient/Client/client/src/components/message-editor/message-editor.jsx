@@ -18,6 +18,7 @@ import i18n from 'i18next';
 import ACTIONS from '../../actions/lefebvre';
 import ComposeMessageEditor from './composeMessageEditor.jsx';
 
+import Spinner from "../spinner/spinner";
 import {
   createSignature,
   createSignature2,
@@ -58,7 +59,8 @@ class MessageEditor extends Component {
       bigAttachments: false,
       centinelaDownloadError: (props.attachmentsDownloadError !== undefined) ? props.attachmentsDownloadError : false,
       numPagesOption: 1,
-      MaximumSigners: 40
+      MaximumSigners: 40,
+      isCallApis: false
     };
 
     this.fileInput = null;
@@ -264,6 +266,12 @@ class MessageEditor extends Component {
         onDrop={this.handleOnDrop}
         onDragOver={this.handleOnDragOver}
         onDragLeave={this.handleOnDragLeave}>
+         {this.state.isCallApis ? 
+          <div className={styles['spinner-container']}> 
+           <div className={styles['spinner']}>
+            <Spinner /> 
+           </div>
+          </div> : ''}
         {this.state.dropZoneActive ? (
           <div className={styles.dropZone}>
             <div className={styles.dropZoneMessage}>
@@ -757,7 +765,7 @@ class MessageEditor extends Component {
     userBrandingId
   ) {
     const { lefebvre } = this.props;
-
+    this.setState({isCallApis: true});
     //createSignature2(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId, this.props.credentials.encrypted)
     createSignature2(
       to,
@@ -813,8 +821,9 @@ class MessageEditor extends Component {
           );
         });
       }
+      this.setState({isCallApis: false});
+      this.props.close(this.props.application);
     });
-    this.props.close(this.props.application);
   }
 
   /**
