@@ -132,10 +132,14 @@ class MessageEditor extends Component {
       if (lefebvre.mailContacts) {
         this.props.setMailContacts(null);
       }
+      if (lefebvre.adminContacts){
+        this.props.setAdminContacts(null);
+      }
       this.props.setUserApp('lefebvre');
       this.props.setGuid(null);
       //this.props.setTitle(this.props.application.signaturesFilterKey);
       this.props.setTitle('');
+      this.props.setIdDocuments(null);
       close(application);
 }
 
@@ -1040,7 +1044,9 @@ const mapDispatchToProps = (dispatch) => ({
   setAvailableSignatures: (num) =>
     dispatch(ACTIONS.setAvailableSignatures(num)),
   setTitle: title => dispatch(setTitle(title)),
-  setUserApp: app => dispatch(ACTIONS.setUserApp(app))
+  setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
+  setAdminContacts: contacts => dispatch(ACTIONS.setAdminContacts(contacts)),
+  setIdDocuments: id => dispatch(ACTIONS.setIdDocuments(id))
 });
 
 export default connect(

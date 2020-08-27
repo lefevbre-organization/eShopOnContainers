@@ -13,6 +13,8 @@ import {getSelectedFolder} from '../../selectors/folders';
 import styles from './menu-list.scss';
 import mainCss from '../../styles/main.scss';
 import { persistApplicationNewMessageContent } from '../../services/indexed-db';
+import { DialogComponent } from '@syncfusion/ej2-react-popups';
+import { setUserApp, setGUID, setMailContacts, setAdminContacts, setIdDocuments } from '../../actions/lefebvre';
 
 export const DroppablePayloadTypes = {
   FOLDER: 'FOLDER',
@@ -20,6 +22,13 @@ export const DroppablePayloadTypes = {
 };
 
 export class MenuListClass extends Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      hideConfirmDialog: false
+    }
+  }
+
   render() {
     const { collapsed } = this.props;
     const selectedFilter = this.props.application.signaturesFilterKey;
@@ -27,6 +36,29 @@ export class MenuListClass extends Component {
     const option2 = 'Completadas';
     const option3 = 'Mostrar todas';
     const option4 = 'Canceladas';
+    const confirmDiscard = `
+      <span class="lf-icon-question" style="font-size:100px; padding: 15px;"></span>
+      <div style='text-align: justify; text-justify: inter-word; align-self: center; 
+        font-size: 17.5px !important; padding-left: 20px;'>
+        ${i18n.t('cancelCentinelaConfirmation.text')}
+      </div>
+    `;
+    const confirmButtons = [
+      {
+          click: () => {
+          this.setState({ hideConfirmDialog: false });
+          },
+          buttonModel: {  content: i18n.t('confirmationModal.no'), cssClass: 'btn-modal-close' }
+      },
+      {
+          click: () => {
+              this.setState({ hideConfirmDialog: false });
+              this.onDiscardSignatureOk();
+          },
+          buttonModel: { content: i18n.t('confirmationModal.yes'), isPrimary: true }
+      }
+    ];
+
 
     return (
         // <div key={'firmas'} className={`${styles.itemContainer}`}>
@@ -84,6 +116,20 @@ export class MenuListClass extends Component {
                     </a>
                 </li>
             </ul>
+            <DialogComponent 
+              id="confirmDialog" 
+              header=' ' 
+              visible={this.state.hideConfirmDialog} 
+              showCloseIcon={true} 
+              animationSettings={this.animationSettings} 
+              width='60%' 
+              content={confirmDiscard} 
+              ref={dialog => this.confirmDialogInstance = dialog} 
+              //target='#target' 
+              buttons={confirmButtons} 
+              open={() => this.dialogOpen} 
+              close={() => this.dialogClose}
+            />
           {/* <MenuItem
             label={'Firmas'} 
             graphic={'input'}
@@ -100,12 +146,49 @@ export class MenuListClass extends Component {
   }
 
   onClick(event, key) {
-    event.stopPropagation();
-    this.props.signatureClicked(null);
-    this.props.close(this.props.application);
-    this.props.setSignaturesFilterKey(key);
-    this.props.setTitle(event.currentTarget.childNodes[1].textContent);
+    const { close, lefebvre } = this.props;
+    if (lefebvre.userApp === "cen" || lefebvre.userApp === "centinela" || lefebvre.userApp === "2"){
+      this.setState({hideConfirmDialog: true});
+    } else {
+      event.stopPropagation();
+      this.props.signatureClicked(null);
+      this.props.close(this.props.application);
+      this.props.setSignaturesFilterKey(key);
+      this.props.setTitle(event.currentTarget.childNodes[1].textContent);
+    }
   }
+
+  dialogClose(){
+    this.setState({
+        hideAlertDialog: false, bigAttachments: false, centinelaDownloadError: false, hideConfirmDialog: false
+    });
+  }
+
+  onDiscardSignatureOk(){
+    const {close, lefebvre, application} = this.props
+    // cancelSignatureCen(lefebvre.guid)
+    // .then(res => {
+    //   console.log(res);
+    // })
+    // .catch(err => {
+    //   console.log(err);
+    // })
+
+    this.setState({ hideConfirmDialog: false });
+      if (lefebvre.mailContacts) {
+        this.props.setMailContacts(null);
+      }
+      if (lefebvre.adminContacts){
+        this.props.setAdminContacts(null);
+      }
+      this.props.setUserApp('lefebvre');
+      this.props.setGuid(null);
+      //this.props.setTitle(this.props.application.signaturesFilterKey);
+      this.props.setTitle('');
+      this.props.setIdDocuments(null);
+      this.props.close(this.props.application);
+  }
+
 }
 
 
@@ -113,7 +196,8 @@ const mapStateToProps = state => ({
   application: state.application,
   selectedFolder: getSelectedFolder(state) || {},
   foldersState: state.folders,
-  messages: state.messages
+  messages: state.messages,
+  lefebvre: state.lefebvre,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -131,7 +215,12 @@ const mapDispatchToProps = dispatch => ({
     // Clear content (editorBlur may be half way through -> force a message in the service worker to clear content after)
     // noinspection JSIgnoredPromiseFromCall
     persistApplicationNewMessageContent(application, '');
-  }
+  },
+  setMailContacts: contacts => dispatch(setMailContacts(contacts)),
+  setAdminContacts: contacts => dispatch(setAdminContacts(contacts)),
+  setGuid: guid => dispatch(setGUID(guid)),
+  setUserApp: app => dispatch(setUserApp(app)),
+  setIdDocuments: id => dispatch(setIdDocuments(id))
 });
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => (Object.assign({}, stateProps, dispatchProps, ownProps, {
@@ -139,7 +228,12 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => (Object.assign({}, s
     dispatchProps.selectFolder(folder, stateProps.application.user),
   setSignaturesFilterKey: key => dispatchProps.setSignaturesFilterKey(key),
   signatureClicked: signature => dispatchProps.signatureClicked(signature),
-  setTitle: title => dispatchProps.setTitle(title)
+  setTitle: title => dispatchProps.setTitle(title),
+  setMailContacts: contacts => dispatchProps.setMailContacts(contacts),
+  setAdminContacts: contacts => dispatchProps.setAdminContacts(contacts),
+  setGuid: guid => dispatchProps.setGuid(guid),
+  setUserApp: app => dispatchProps.setUserApp(app),
+  setIdDocuments: id => dispatchProps.setIdDocuments(id)
 }));
 
 const MenuList = connect(mapStateToProps, mapDispatchToProps, mergeProps)(MenuListClass);
