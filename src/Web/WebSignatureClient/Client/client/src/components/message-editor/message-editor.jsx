@@ -96,6 +96,11 @@ class MessageEditor extends Component {
     this.dialogOpen = this.dialogOpen;
     this.animationSettings = { effect: 'None' };
     this.handleNumPagesOption = this.handleNumPagesOption.bind(this);
+    this.showCancelCenModal = this.showCancelCenModal.bind(this);
+  }
+
+  showCancelCenModal(){
+    this.setState({ hideConfirmDialog: true});
   }
 
 
@@ -321,6 +326,7 @@ class MessageEditor extends Component {
               // onAttachSelected={this.onAttachSelected()}
               // removeAttachment={this.removeAttachment()}
               onSelectNumPages={this.handleNumPagesOption}
+              onConfirmAttachRemoval={this.showCancelCenModal}
             ></AttachmentsWidget>
             <ExpirationWidget onChange={this.onChangeExpiration}></ExpirationWidget>
             <RemindersWidget onChange={this.onChangeReminder}></RemindersWidget>

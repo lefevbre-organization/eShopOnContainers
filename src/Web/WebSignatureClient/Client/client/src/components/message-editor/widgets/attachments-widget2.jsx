@@ -142,13 +142,18 @@ class AttachmentsWidget extends Component{
     }
 
     removeAttachment(attachment) {
-        this.setState({isFileType: false});
-        const updatedMessage = { ...this.props.editedMessage };
-        if (updatedMessage.attachments && updatedMessage.attachments.length) {
-            updatedMessage.attachments = updatedMessage.attachments.filter(
-            (a) => a !== attachment
-            );
-            this.props.editMessage(updatedMessage);
+        const userApp = this.props.userApp;
+        if (userApp === 'centinela' || userApp === 'cen' || userApp == 2){
+            this.props.onConfirmAttachRemoval();
+        } else {
+            this.setState({isFileType: false});
+            const updatedMessage = { ...this.props.editedMessage };
+            if (updatedMessage.attachments && updatedMessage.attachments.length) {
+                updatedMessage.attachments = updatedMessage.attachments.filter(
+                (a) => a !== attachment
+                );
+                this.props.editMessage(updatedMessage);
+            }
         }
     }
     
@@ -156,7 +161,8 @@ class AttachmentsWidget extends Component{
 
 const mapStateToProps = (state) => ({
     attachments: state.application.newMessage.attachments,
-    editedMessage: state.application.newMessage
+    editedMessage: state.application.newMessage,
+    userApp: state.lefebvre.userApp
   });
   
   const mapDispatchToProps = (dispatch) => ({
