@@ -214,6 +214,9 @@
   "attachNotFoundCentinela":{
     "text": "Impossible de télécharger les documents."
   },
+  "downloadindCentinelaModal":{
+    "text": "Téléchargement de documents depuis Centinela."
+  },  
   "attachmentsWidget": {
     "title": "pièces jointes",
     "attachButton": "Ajouter document",

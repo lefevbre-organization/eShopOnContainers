@@ -673,7 +673,7 @@ class MessageList extends Component {
                     allowPdfExport={true}
                     allowExcelExport={true}
                     allowTextWrap={false}
-                    height='480'
+                    height='450'
                     pageSettings={{pageCount: 5, pageSize: 10, pageSizes: true, pagesSizeList: []}}//pageSizeList: [8,12,9,5]}} 
                     // rowSelected={event => {
                     //     this.onRowSelected(event);

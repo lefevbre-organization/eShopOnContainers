@@ -196,6 +196,9 @@
   "attachNotFoundCentinela":{
     "text": "Document's couldn't be retrieved from Centinela."
   },
+  "downloadindCentinelaModal":{
+    "text": "Downloading documents from Centinela."
+  },
   "attachmentsWidget": {
     "title": "ATTACHED FILES",
     "attachButton": "ATTACH FILE",

@@ -214,6 +214,9 @@
   "attachNotFoundCentinela":{
     "text": "No se han podido descargar los documentos desde Centinela."
   },
+  "downloadindCentinelaModal":{
+    "text": "Descargando documentos de centinela"
+  },
   "attachmentsWidget": {
     "title": "ARCHIVOS ADJUNTOS",
     "attachButton": "ADJUNTAR DOCUMENTO",
