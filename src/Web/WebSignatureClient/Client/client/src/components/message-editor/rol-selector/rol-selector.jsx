@@ -71,7 +71,7 @@ export class RolSelector extends React.Component {
                             <DropDownListComponent id="doubleAuth" dataSource={this.doubleAuth} ref={(dropdownlist) => { this.listObject = dropdownlist }} fields={this.dobleAuthFields} change={this.onChange.bind(this)} placeholder="Select a double authentication method" value={this.dobleAuthValue} popupHeight="220px" />
                           </div>
                       </td>
-                      { (document.getElementById('doubleAuth').value === "Photo") ? 
+                      { (document.getElementById('doubleAuth') && document.getElementById('doubleAuth').value === "Photo") ? 
                         <>
                         <td>
                             <a className="tooltipped" data-position="bottom" data-delay="50" data-tooltip="Número de fotos adjuntas" data-tooltip-id="tooltip1">  Número de fotos <span className="lf-icon-information"></span></a>
@@ -114,8 +114,8 @@ export class RolSelector extends React.Component {
     let value = document.getElementById('rol').ej2_instances[0]
     //let text = document.getElementById('text');
     // update the text and value property values in property panel based on selected item in DropDownList
-    value.innerHTML = this.listObject.value === null ? 'null' : this.listObject.value.toString();
-    text.innerHTML = this.listObject.text === null ? 'null' : this.listObject.text;
+    // value.innerHTML = this.listObject.value === null ? 'null' : this.listObject.value.toString();
+    // text.innerHTML = this.listObject.text === null ? 'null' : this.listObject.text;
   };
 }
 
