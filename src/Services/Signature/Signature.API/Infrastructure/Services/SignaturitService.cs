@@ -55,7 +55,7 @@ namespace Signature.API.Infrastructure.Services
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
 
             IRestResponse response = await client.ExecuteAsync(request);
-            Console.WriteLine(response.Content);
+            //Console.WriteLine(response.Content);
 
             return response;
         }
@@ -69,7 +69,7 @@ namespace Signature.API.Infrastructure.Services
             request.AlwaysMultipartFormData = true;
 
             IRestResponse response = await client.ExecuteAsync(request);
-            Console.WriteLine(response.Content);
+            //Console.WriteLine(response.Content);
 
             return response;
         }
@@ -123,7 +123,7 @@ namespace Signature.API.Infrastructure.Services
             }
 
             IRestResponse response = await client.ExecuteAsync(request);
-            Console.WriteLine(response.Content);
+            //Console.WriteLine(response.Content);
 
             return response;
         }
@@ -136,7 +136,7 @@ namespace Signature.API.Infrastructure.Services
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
             request.AlwaysMultipartFormData = true;
             IRestResponse response = await client.ExecuteAsync(request);
-            Console.WriteLine(response.Content);
+            //Console.WriteLine(response.Content);
 
             return response;
         }
@@ -149,7 +149,7 @@ namespace Signature.API.Infrastructure.Services
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
             request.AlwaysMultipartFormData = true;
             IRestResponse response = await client.ExecuteAsync(request);
-            Console.WriteLine(response.Content);
+            //Console.WriteLine(response.Content);
 
             return response;
         }
@@ -161,7 +161,7 @@ namespace Signature.API.Infrastructure.Services
             var request = new RestRequest(Method.POST);
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
             IRestResponse response = await client.ExecuteAsync(request);
-            Console.WriteLine(response.Content);
+            //Console.WriteLine(response.Content);
 
             return response;
         }
@@ -193,7 +193,7 @@ namespace Signature.API.Infrastructure.Services
             request.AddParameter("show_welcome_page", brandingInfo.show_welcome_page);
 
             IRestResponse response = await client.ExecuteAsync(request);
-            Console.WriteLine(response.Content);
+            //Console.WriteLine(response.Content);
 
             return response;
         }

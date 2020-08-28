@@ -191,6 +191,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
         [FromBody] ConceptFile file
         )
         {
+            Console.WriteLine($"START {Request.Path.Value}");
 
             Result<ConceptFile> resultFile = new Result<ConceptFile>(file);
             var result = await _service.FilePostAsync(file, Request.Path.Value);
@@ -201,6 +202,9 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
                 resultFile.infos = result.infos;
                 return StatusCode(201, resultFile);
             }
+
+
+            Console.WriteLine($"END {Request.Path.Value}");
 
             return BadRequest(result);
         }

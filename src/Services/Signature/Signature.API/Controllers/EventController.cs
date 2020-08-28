@@ -51,6 +51,8 @@
         {
             try
             {
+                Console.WriteLine($"START signatureEvent");
+
                 var finalResult = new Result<bool>();
               
                 if (eventinfo.Type == "document_completed" || eventinfo.Type == "audit_trail_completed" ||
@@ -80,6 +82,7 @@
                         finalResult.errors.Add(processResult.errors[0]);
                     }
 
+                    Console.WriteLine($"END signatureEvent");
                     return (finalResult.errors.Count > 0) ? (IActionResult)BadRequest(finalResult) : Ok(finalResult);
                 }
             }
