@@ -117,44 +117,6 @@
             return await _signaturesRepository.SaveEvent(eventInfo);
         }
 
-        //public async Task<Result<bool>> GetSignature(string signatureId, string documentId, string eventType)
-        //{
-        //    ////var result = new Result<BsonDocument>();
-        //    var response = new Result<bool>();
-
-        //    var result = await _signaturesRepository.GetSignature(signatureId);
-
-        //    if (result.data != null && result.data.Signatures.Count > 0)
-        //    {
-        //        ////var user = result.data["user"].AsString;
-        //        ////var guid = result.data["signatures"][0]["guid"].AsString;
-        //        ////var app = result.data["signatures"][0]["app"].AsString;
-
-        //        var user = result.data.User;
-        //        var guid = result.data.Signatures[0].Guid;
-        //        var app = result.data.Signatures[0].App;
-
-
-        //        // Downloadfile
-        //        var file = GetFile(signatureId, documentId, eventType);
-
-        //        if (app == "lexon")
-        //        {
-        //            // Call lexon api to store document
-        //            response = await SaveFileLexon(file);
-
-        //        }
-        //        else if (app == "centinela")
-        //        {
-        //            // Call centinela api to store document
-        //            var cenDocId = result.data.Signatures[0].Documents.Find(e => e.ExternalId == documentId).InternalInfo.DocId;
-        //            response = await SaveFileCentinela(file, guid, cenDocId, user, eventType);
-        //        }
-        //    }
-
-        //    return response;
-        //}
-
         public async Task<Result<bool>> ProcessEvent(string signatureId, string documentId, string eventType)
         {
             ////var result = new Result<BsonDocument>();
@@ -173,20 +135,36 @@
                 var app = result.data.Signatures[0].App;
 
 
-                // Downloadfile
-                var file = GetFile(signatureId, documentId, eventType);
-
                 if (app == "lexon")
                 {
                     // Call lexon api to store document
+                    // Downloadfile
+                    var file = GetFile(signatureId, documentId, eventType);
                     response = await SaveFileLexon(file);
 
                 }
                 else if (app == "centinela")
                 {
-                    // Call centinela api to store document
                     var cenDocId = result.data.Signatures[0].Documents.Find(e => e.ExternalId == documentId).InternalInfo.DocId;
-                    response = await SaveFileCentinela(file, guid, cenDocId, user, eventType);
+
+                    switch (eventType)
+                    {
+                        case "document_canceled":
+                        case "document_expired":
+                        case "document_declined":
+                            response = await CancelFileCentinela(cenDocId);
+                            break;
+                        case "document_completed":
+                        case "audit_trail_completed":
+                            // Downloadfile
+                            var file = GetFile(signatureId, documentId, eventType);
+                            response = await SaveFileCentinela(file, guid, cenDocId, user, eventType);
+                            break;
+                        default:
+                            break;
+                    }
+                    // Call centinela api to store document
+
                 }
             }
 
@@ -220,7 +198,7 @@
             request.AlwaysMultipartFormData = true;
 
             IRestResponse response = client.Execute(request);
-            Console.WriteLine(response.Content);
+            //Console.WriteLine(response.Content);
 
             var fileContentDisposition = response.Headers.FirstOrDefault(f => f.Name == "Content-Disposition");
             string fileName = ((String)fileContentDisposition.Value).Split("filename=")[1].Replace("\"", "");
@@ -261,13 +239,15 @@
             {
                 result = new Result<bool>() { errors = errors, infos = infos, data = false };
             }
-            Console.WriteLine(response.Content);
+            //Console.WriteLine(response.Content);
 
             return result;
         }
 
         public async Task<Result<bool>> SaveFileCentinela(BsonDocument file, string guid, string cenDocId, string user, string eventType)
         {
+            Console.WriteLine($"START SaveFileCentinela");
+
             Result<bool> result;
 
             var url = "";
@@ -296,7 +276,12 @@
             request.AddHeader("Content-Type", "application/json-patch+json");
 
             request.AddParameter("application/json-patch+json", outputJson, ParameterType.RequestBody);
+
+            Console.WriteLine($"Call to: {url}");
+
             IRestResponse response = await client.ExecuteAsync(request);
+
+            Console.WriteLine($"Response: {response.ToString()}");
 
             JObject responseJson = JObject.Parse(response.Content);
             List<Info> infos = (List<Info>)responseJson["infos"].ToObject(typeof(List<Info>));
@@ -310,7 +295,45 @@
             {
                 result = new Result<bool>() { errors = errors, infos = infos, data = false };
             }
-            Console.WriteLine(response.Content);
+
+            //Console.WriteLine(response.Content);
+            Console.WriteLine($"END SaveFileCentinela");
+
+            return result;
+        }
+
+        public async Task<Result<bool>> CancelFileCentinela(string cenDocId)
+        {
+
+            Console.WriteLine($"START CancelFileCentinela");
+
+            Result<bool> result;
+
+            var url = $"{_settings.Value.CentinelaApiGwUrl}/signatures/cancelation/{cenDocId}";
+            var client = new RestClient(url);
+            var request = new RestRequest(Method.POST);
+
+            Console.WriteLine($"Call to {url}");
+
+            IRestResponse response = await client.ExecuteAsync(request);
+
+            Console.WriteLine($"Response: {response.ToString()}");
+
+            JObject responseJson = JObject.Parse(response.Content);
+            List<Info> infos = (List<Info>)responseJson["infos"].ToObject(typeof(List<Info>));
+            List<ErrorInfo> errors = (List<ErrorInfo>)responseJson["errors"].ToObject(typeof(List<ErrorInfo>));
+
+            if (response.Content != null && errors.Count == 0)
+            {
+                result = new Result<bool>() { errors = new List<ErrorInfo>(), infos = infos, data = true };
+            }
+            else
+            {
+                result = new Result<bool>() { errors = errors, infos = infos, data = false };
+            }
+
+            //Console.WriteLine(response.Content);
+            Console.WriteLine($"END CancelFileCentinela");
 
             return result;
         }
@@ -323,7 +346,7 @@
             client.Timeout = _timeout;
             var request = new RestRequest(Method.GET);
             IRestResponse response = await client.ExecuteAsync(request);
-            Console.WriteLine(response.Content);
+            //Console.WriteLine(response.Content);
 
             return response;
         }

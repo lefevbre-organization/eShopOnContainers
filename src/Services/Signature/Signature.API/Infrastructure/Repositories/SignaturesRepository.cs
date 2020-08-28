@@ -401,11 +401,15 @@
                 {
                     result.data = true;
                     TraceInfo(result.infos, $"Evento recibido - {eventInfo.mongoId}");
+                } else
+                {
+                    result.data = false;
+                    TraceInfo(result.infos, $"Evento no se ha podido almacenar - {eventInfo.mongoId}");
                 }
             }
             catch (Exception ex)
             {
-                TraceInfo(result.infos, $"Error al guardar el evento: {ex.Message}");
+                TraceMessage(result.errors, new Exception($"No se ha podido guardar el evento - {eventInfo.mongoId} - {ex.Message}"), "2000");
             }
             return result;
         }

@@ -18,6 +18,7 @@ import i18n from 'i18next';
 import ACTIONS from '../../actions/lefebvre';
 import ComposeMessageEditor from './composeMessageEditor.jsx';
 
+import Spinner from "../spinner/spinner";
 import {
   createSignature,
   createSignature2,
@@ -58,7 +59,8 @@ class MessageEditor extends Component {
       bigAttachments: false,
       centinelaDownloadError: (props.attachmentsDownloadError !== undefined) ? props.attachmentsDownloadError : false,
       numPagesOption: 1,
-      MaximumSigners: 40
+      MaximumSigners: 40,
+      isCallApis: false
     };
 
     this.fileInput = null;
@@ -96,6 +98,11 @@ class MessageEditor extends Component {
     this.dialogOpen = this.dialogOpen;
     this.animationSettings = { effect: 'None' };
     this.handleNumPagesOption = this.handleNumPagesOption.bind(this);
+    this.showCancelCenModal = this.showCancelCenModal.bind(this);
+  }
+
+  showCancelCenModal(){
+    this.setState({ hideConfirmDialog: true});
   }
 
 
@@ -132,10 +139,14 @@ class MessageEditor extends Component {
       if (lefebvre.mailContacts) {
         this.props.setMailContacts(null);
       }
+      if (lefebvre.adminContacts){
+        this.props.setAdminContacts(null);
+      }
       this.props.setUserApp('lefebvre');
       this.props.setGuid(null);
       //this.props.setTitle(this.props.application.signaturesFilterKey);
       this.props.setTitle('');
+      this.props.setIdDocuments(null);
       close(application);
 }
 
@@ -255,6 +266,12 @@ class MessageEditor extends Component {
         onDrop={this.handleOnDrop}
         onDragOver={this.handleOnDragOver}
         onDragLeave={this.handleOnDragLeave}>
+         {this.state.isCallApis ? 
+          <div className={styles['spinner-container']}> 
+           <div className={styles['spinner']}>
+            <Spinner /> 
+           </div>
+          </div> : ''}
         {this.state.dropZoneActive ? (
           <div className={styles.dropZone}>
             <div className={styles.dropZoneMessage}>
@@ -317,6 +334,7 @@ class MessageEditor extends Component {
               // onAttachSelected={this.onAttachSelected()}
               // removeAttachment={this.removeAttachment()}
               onSelectNumPages={this.handleNumPagesOption}
+              onConfirmAttachRemoval={this.showCancelCenModal}
             ></AttachmentsWidget>
             <ExpirationWidget onChange={this.onChangeExpiration}></ExpirationWidget>
             <RemindersWidget onChange={this.onChangeReminder}></RemindersWidget>
@@ -747,7 +765,7 @@ class MessageEditor extends Component {
     userBrandingId
   ) {
     const { lefebvre } = this.props;
-
+    this.setState({isCallApis: true});
     //createSignature2(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId, this.props.credentials.encrypted)
     createSignature2(
       to,
@@ -803,8 +821,9 @@ class MessageEditor extends Component {
           );
         });
       }
+      this.setState({isCallApis: false});
+      this.props.close(this.props.application);
     });
-    this.props.close(this.props.application);
   }
 
   /**
@@ -1040,7 +1059,9 @@ const mapDispatchToProps = (dispatch) => ({
   setAvailableSignatures: (num) =>
     dispatch(ACTIONS.setAvailableSignatures(num)),
   setTitle: title => dispatch(setTitle(title)),
-  setUserApp: app => dispatch(ACTIONS.setUserApp(app))
+  setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
+  setAdminContacts: contacts => dispatch(ACTIONS.setAdminContacts(contacts)),
+  setIdDocuments: id => dispatch(ACTIONS.setIdDocuments(id))
 });
 
 export default connect(

@@ -79,12 +79,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             var result = new Result<bool>(false);
             try
             {
+                Console.WriteLine("START FilePostAsync");
+
                 CleanNameFile(fileMail, out string name);
 
                 SerializeToMultiPart(fileMail, name, route, out string url, out MultipartFormDataContent multipartContent);
 
                 //WriteError($"Se hace llamada a {url} a las {DateTime.Now}");
+                Console.WriteLine($"Call to: {url}");
                 using var response = await _client.PostAsync(url, multipartContent);
+                Console.WriteLine($"Response: {response.ToString()}");
                 //WriteError($"Se recibe contestación {DateTime.Now}");
 
                 var responseText = await response.Content.ReadAsStringAsync();
@@ -102,6 +106,8 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             {
                 TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message} : {ex.InnerException}", ex.InnerException?.Message, "Centinela_Error_FilePost");
             }
+
+            Console.WriteLine("END FilePostAsync");
 
             return result;
         }

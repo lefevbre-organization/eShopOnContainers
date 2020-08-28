@@ -23,6 +23,19 @@ $row-height: 43px;
 $font-size: 1.8rem;
 $flag-size: 18px;
 
+.spinner-container {
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  position: absolute;
+  background-color: #9490906b;
+  left: 1px;
+}
+.spinner {
+  position: relative;
+  top: 250px;
+}
+
 .message-editor {
   position: relative;
   display: flex;
@@ -168,6 +181,7 @@ $flag-size: 18px;
   .editor-container {
     height: 100%;
     grid-area: editor-container;
+    padding-top: 10px;
   }
 
   .side-container {
@@ -313,7 +327,7 @@ $flag-size: 18px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding-top: 11px;
+    margin-left: -4px;
 
     .action-button {
       border-radius: 0;
