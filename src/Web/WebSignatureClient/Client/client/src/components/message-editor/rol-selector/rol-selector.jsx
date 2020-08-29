@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 import PropTypes from "prop-types";
 import i18n from 'i18next';
 import materialize from '../../../styles/signature/materialize.scss';
@@ -8,9 +9,15 @@ import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns';
 export class RolSelector extends React.Component {
   constructor(props){
     super(props);
+    this.state = {
+      rol: '',
+      signatureTypes: '',
+      doubleAuth: '',
+      photo: 1,
+    }
     this.roles = [
-      { 'Id': 'signer', 'Rol': i18n.t('messageViewer.grid.signer') }, 
-      { 'Id': 'validator', 'Rol': i18n.t('messageViewer.grid.validator') }
+      { 'Id': 'signer', 'Rol': i18n.t('messageEditor.grid.signer') }, 
+      { 'Id': 'validator', 'Rol': i18n.t('messageEditor.grid.validator') }
     ];
     this.roleFields = { text: 'Rol', value: 'Id' };
     this.roleValue = 'signer';
@@ -18,17 +25,17 @@ export class RolSelector extends React.Component {
 
     this.signatureTypes = [
       {
-        'Id': 'advanced', 'Type': i18n.t('messageViewer.grid.advancedSignature') },
-      { 'Id': 'certificate', 'Type': i18n.t('messageViewer.grid.userCertificate') }
+        'Id': 'advanced', 'Type': i18n.t('messageEditor.grid.advancedSignature') },
+      { 'Id': 'certificate', 'Type': i18n.t('messageEditor.grid.userCertificate') }
     ];
     this.signTypesFields = {text: 'Type', value: 'Id'};
     this.signTypeValue = 'advanced';
     this.listObjectSignTypes = {};
 
     this.doubleAuth = [
-      { 'Id': 'none', 'Value': i18n.t('messageViewer.grid.none') },
-      { 'Id': 'sms', 'Value': i18n.t('messageViewer.grid.sms') },
-      { 'Id': 'photo', 'Value': i18n.t('messageViewer.grid.photo') }
+      { 'Id': 'none', 'Value': i18n.t('messageEditor.grid.none') },
+      { 'Id': 'sms', 'Value': i18n.t('messageEditor.grid.sms') },
+      { 'Id': 'photo', 'Value': i18n.t('messageEditor.grid.photo') }
     ];
     this.dobleAuthFields = { text: 'Value', value: 'Id'};
     this.dobleAuthValue = 'none';
@@ -36,25 +43,39 @@ export class RolSelector extends React.Component {
   
   }
 
+  onChange(eve) {
+    console.log('onChange', eve)
+    this.setState({doubleAuth: eve.value})
+
+    //let value = document.getElementById('value');
+    // let value = document.getElementById('rol').ej2_instances[0]
+    //let text = document.getElementById('text');
+    // update the text and value property values in property panel based on selected item in DropDownList
+    // value.innerHTML = this.listObject.value === null ? 'null' : this.listObject.value.toString();
+    // text.innerHTML = this.listObject.text === null ? 'null' : this.listObject.text;
+  };
+
   render(){
+    console.log('render', this.state.doubleAuth);
+    const { doubleAuth, photo } = this.state;
     return (
       <div className="container">
           <div className="contenido-central">
               {/* <p className="title-modal">ROL DE LOS DESTINATARIOS</p> */}
               <table className={style['detail-rol']}>
                   <tr>
-                      <th>{i18n.t('messageViewer.grid.name')}</th>
-                      <th>{i18n.t('messageViewer.grid.email')}</th>
-                      <th>{i18n.t('messageViewer.grid.role')}</th>
-                      <th>{i18n.t('messageViewer.grid.signatureType')}</th>
-                      <th colspan="3">{i18n.t('messageViewer.grid.doubleAuthentication')}</th>
+                      <th>{i18n.t('messageEditor.grid.name')}</th>
+                      <th>{i18n.t('messageEditor.grid.email')}</th>
+                      <th>{i18n.t('messageEditor.grid.role')}</th>
+                      <th>{i18n.t('messageEditor.grid.signatureType')}</th>
+                      <th colspan="3">{i18n.t('messageEditor.grid.doubleAuthentication')}</th>
                   </tr>
                   {this.props.recipients.map( user => {
                     return(
                     <tr>
                       <td className="name">
                         <input className={style['border-input']} 
-                        placeholder={i18n.t('messageViewer.grid.name')} 
+                        placeholder={i18n.t('messageEditor.grid.name')} 
                         id="first_name" 
                         type="text" />
                       </td>
@@ -106,59 +127,52 @@ export class RolSelector extends React.Component {
                             value={this.dobleAuthValue} popupHeight="220px" />
                           </div>
                       </td>
-                      { (document.getElementById('doubleAuth') 
-                      && document.getElementById('doubleAuth').id === "photo") ? 
+                      { (doubleAuth === "photo") ? 
                         <>
                         <td>
                             <a className="tooltipped" 
                              data-position="bottom" 
                              data-delay="50" 
                              data-tooltip="Número de fotos adjuntas" 
-                             data-tooltip-id="tooltip1"> {i18n.t('messageViewer.grid.photoNumber')}
+                             data-tooltip-id="tooltip1"> {i18n.t('messageEditor.grid.photoNumber')}
                              <span className="lf-icon-information"></span>
                             </a>
                         </td>
 
                         <td>
                           <div className="select-wrapper left s3">
-                            <span className="caret">▼</span>
-                              <input 
-                              type="text" 
-                              className="select-dropdown" 
-                              readonly="true" 
-                              data-activates="select-options-1e289437-8b3a-0816-307d-d85fb91e66ac" 
-                              value="Num. de fotos"
-                              />
-                              <ul 
-                               id="select-options-1e289437-8b3a-0816-307d-d85fb91e66ac" 
-                               className="dropdown-content select-dropdown multiple-select-dropdown">
-                                  <li className="disabled">
-                                    <span>
-                                      <input type="checkbox" disabled=""/>
-                                      <label></label>1
-                                    </span>
-                                  </li>
-                                  <li className="">
-                                    <span>
-                                      <input type="checkbox"/>
-                                      <label></label>2
-                                    </span>
-                                  </li>
-                                  <li className="">
-                                    <span>
-                                      <input type="checkbox"/>
-                                      <label></label>3
-                                    </span>
-                                  </li>
-                              </ul>
-                              <select 
-                               multiple="" 
-                               data-select-id="1e289437-8b3a-0816-307d-d85fb91e66ac" 
-                               className="initialized">
-                                  <option value="" disabled="" selected="">1</option>
-                                  <option value="1">2</option>
-                                  <option value="1">3</option>
-                              </select>
+                          <input 
+                           className={`${style['border-input']} ${style['photo-input']}`} 
+                           type="number" 
+                           min="1" 
+                          //  disabled={option !== 1} 
+                           value={photo} 
+                          //  onChange={event => {setPhotos(event.currentTarget.valueAsNumber)}}
+                          />
+                          </div>
+                        </td>
+                        </>
+                      : null
+                      }
+
+                       { (doubleAuth === "sms") ? 
+                        <>
+                        <td>
+                            <a className="tooltipped" 
+                             data-position="bottom" 
+                             data-delay="50" 
+                             data-tooltip="phone" 
+                             data-tooltip-id="tooltip1"> {i18n.t('messageEditor.grid.phone')}
+                             <span className="lf-icon-information"></span>
+                            </a>
+                        </td>
+
+                        <td>
+                          <div className="select-wrapper left s3">
+                          <input 
+                           className={`${style['border-input']}`} 
+                           type="text" 
+                          />
                           </div>
                         </td>
                         </>
@@ -172,7 +186,7 @@ export class RolSelector extends React.Component {
               <div className="center-align">
                 <button 
                 className={style['btn-gen']} 
-                href="#demo-modal">{i18n.t('messageViewer.grid.finish')}
+                href="#demo-modal">{i18n.t('messageEditor.grid.finish')}
                 </button>
               </div>
           </div>
@@ -204,15 +218,6 @@ export class RolSelector extends React.Component {
   }
 
 
-  onChange(props) {
-    //let value = document.getElementById('value');
-    debugger;
-    let value = document.getElementById('rol').ej2_instances[0]
-    //let text = document.getElementById('text');
-    // update the text and value property values in property panel based on selected item in DropDownList
-    // value.innerHTML = this.listObject.value === null ? 'null' : this.listObject.value.toString();
-    // text.innerHTML = this.listObject.text === null ? 'null' : this.listObject.text;
-  };
 }
 
 export default RolSelector;

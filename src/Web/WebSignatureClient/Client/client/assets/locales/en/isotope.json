@@ -74,7 +74,22 @@
   "messageViewer": {
     "to": "to",
     "cc": "cc",
+    "bcc": "bcc"
+  },
+  "messageEditor": {
+    "to": "Recipients",
+    "cc": "Cc",
     "bcc": "bcc",
+    "subject": "Subject",
+    "send": "Send",
+    "discard": "Discard",
+    "dropZoneMessage": "Drop files here",
+    "attach": "ATTACH",
+    "insertLinkDialog": {
+      "title": "Insert Link",
+      "cancel": "Cancel",
+      "ok": "Ok"
+    },
     "grid": {
       "name": "Name",
       "email": "Email",
@@ -90,22 +105,8 @@
       "sms": "SMS",
       "photo": "Photo",
       "finish": "FINALIZE",
-      "photoNumber": "Number of photos"
-    }
-  },
-  "messageEditor": {
-    "to": "Recipients",
-    "cc": "Cc",
-    "bcc": "bcc",
-    "subject": "Subject",
-    "send": "Send",
-    "discard": "Discard",
-    "dropZoneMessage": "Drop files here",
-    "attach": "ATTACH",
-    "insertLinkDialog": {
-      "title": "Insert Link",
-      "cancel": "Cancel",
-      "ok": "Ok"
+      "photoNumber": "Number of photos",
+      "phone": "Number of phone"
     },
     "title": "CREATE NEW SIGNATURE"
   },

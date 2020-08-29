@@ -401,7 +401,7 @@ class MessageEditor extends Component {
         />
         <DialogComponent 
           id="rolDialog" 
-          header={i18n.t("messageViewer.grid.recipientsRole")} 
+          header={i18n.t("messageEditor.grid.recipientsRole")} 
           visible={this.state.hideRolDialog} 
           showCloseIcon={true} 
           animationSettings={this.animationSettings} 

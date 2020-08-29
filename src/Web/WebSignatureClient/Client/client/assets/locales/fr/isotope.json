@@ -92,7 +92,22 @@
   "messageViewer": {
     "to": "para",
     "cc": "cc",
+    "bcc": "bcc"
+  },
+  "messageEditor": {
+    "to": "Destinataires",
+    "cc": "CC",
     "bcc": "bcc",
+    "subject": "Sujet",
+    "send": "Envoyé",
+    "discard": "Éliminer",
+    "dropZoneMessage": "Deposita aquí ficheros",
+    "attach": "ADJUNTAR",
+    "insertLinkDialog": {
+      "title": "Insertar Enlace",
+      "cancel": "Cancelar",
+      "ok": "Ok"
+    },
     "grid": {
       "name": "Nom",
       "email": "Email",
@@ -108,22 +123,8 @@
       "sms": "SMS",
       "photo": "Photo",
       "finish": "FINALISER",
-      "photoNumber": "Number of photos"
-    }
-  },
-  "messageEditor": {
-    "to": "Destinataires",
-    "cc": "CC",
-    "bcc": "bcc",
-    "subject": "Sujet",
-    "send": "Envoyé",
-    "discard": "Éliminer",
-    "dropZoneMessage": "Deposita aquí ficheros",
-    "attach": "ADJUNTAR",
-    "insertLinkDialog": {
-      "title": "Insertar Enlace",
-      "cancel": "Cancelar",
-      "ok": "Ok"
+      "photoNumber": "Number of photos",
+      "phone": "Number of téléphone"
     },
     "title": "CRÉER UNE SIGNATURE"
   },

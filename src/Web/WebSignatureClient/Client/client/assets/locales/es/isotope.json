@@ -93,7 +93,22 @@
   "messageViewer": {
     "to": "para",
     "cc": "cc",
+    "bcc": "bcc"
+  },
+  "messageEditor": {
+    "to": "Destinatarios",
+    "cc": "Cc",
     "bcc": "bcc",
+    "subject": "Asunto",
+    "send": "Enviar",
+    "discard": "Descartar",
+    "dropZoneMessage": "Deposita aquí ficheros",
+    "attach": "ADJUNTAR",
+    "insertLinkDialog": {
+      "title": "Insertar Enlace",
+      "cancel": "Cancelar",
+      "ok": "Ok"
+    },
     "grid": {
       "name": "Nombre",
       "email": "Email",
@@ -109,22 +124,8 @@
       "sms": "SMS",
       "photo": "Foto",
       "finish": "FINALIZAR",
-      "photoNumber": "Número de fotos"
-    }
-  },
-  "messageEditor": {
-    "to": "Destinatarios",
-    "cc": "Cc",
-    "bcc": "bcc",
-    "subject": "Asunto",
-    "send": "Enviar",
-    "discard": "Descartar",
-    "dropZoneMessage": "Deposita aquí ficheros",
-    "attach": "ADJUNTAR",
-    "insertLinkDialog": {
-      "title": "Insertar Enlace",
-      "cancel": "Cancelar",
-      "ok": "Ok"
+      "photoNumber": "Número de fotos",
+      "phone": "Número de teléfono"
     },
     "title": "SOLICITUD DE FIRMA"
   },

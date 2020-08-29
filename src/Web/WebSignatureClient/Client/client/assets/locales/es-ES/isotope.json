@@ -92,24 +92,7 @@
   "messageViewer": {
     "to": "para",
     "cc": "cc",
-    "bcc": "bcc",
-    "grid": {
-      "name": "Nombre",
-      "email": "Email",
-      "role": "Rol",
-      "signatureType": "Tipo de firma",
-      "doubleAuthentication": "Doble autenticación",
-      "recipientsRole": "ROL DE LOS DESTINATARIOS",
-      "signer": "Firmante",
-      "validator": "Validador",
-      "advancedSignature": "Firma avanzada",
-      "userCertificate": "Certificado de usuario",
-      "none": "No",
-      "sms": "SMS",
-      "photo": "Foto",
-      "finish": "FINALIZAR",
-      "photoNumber": "Número de fotos"
-    }
+    "bcc": "bcc"
   },
   "messageEditor": {
     "to": "Destinatarios",
@@ -124,6 +107,24 @@
       "title": "Insertar Enlace",
       "cancel": "Cancelar",
       "ok": "Ok"
+    },
+    "grid": {
+      "name": "Nombre",
+      "email": "Email",
+      "role": "Rol",
+      "signatureType": "Tipo de firma",
+      "doubleAuthentication": "Doble autenticación",
+      "recipientsRole": "ROL DE LOS DESTINATARIOS",
+      "signer": "Firmante",
+      "validator": "Validador",
+      "advancedSignature": "Firma avanzada",
+      "userCertificate": "Certificado de usuario", 
+      "none": "No",
+      "sms": "SMS",
+      "photo": "Foto",
+      "finish": "FINALIZAR",
+      "photoNumber": "Número de fotos",
+      "phone": "Número de teléfono"
     },
     "title": "CREAR NUEVA FIRMA"
   },
