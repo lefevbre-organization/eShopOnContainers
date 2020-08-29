@@ -92,7 +92,24 @@
   "messageViewer": {
     "to": "para",
     "cc": "cc",
-    "bcc": "bcc"
+    "bcc": "bcc",
+    "grid": {
+      "name": "Nombre",
+      "email": "Email",
+      "role": "Rol",
+      "signatureType": "Tipo de firma",
+      "doubleAuthentication": "Doble autenticación",
+      "recipientsRole": "ROL DE LOS DESTINATARIOS",
+      "signer": "Firmante",
+      "validator": "Validador",
+      "advancedSignature": "Firma avanzada",
+      "userCertificate": "Certificado de usuario",
+      "none": "No",
+      "sms": "SMS",
+      "photo": "Foto",
+      "finish": "FINALIZAR",
+      "photoNumber": "Número de fotos"
+    }
   },
   "messageEditor": {
     "to": "Destinatarios",

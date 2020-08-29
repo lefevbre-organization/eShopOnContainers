@@ -401,15 +401,15 @@ class MessageEditor extends Component {
         />
         <DialogComponent 
           id="rolDialog" 
-          //header='ROL DE LOS DESTINATARIOS' 
+          header={i18n.t("messageViewer.grid.recipientsRole")} 
           visible={this.state.hideRolDialog} 
           showCloseIcon={true} 
           animationSettings={this.animationSettings} 
-          width='80%' 
+          width='75%'
+          height='50%'
           //content={RolSelector} 
           ref={dialog => this.rolDialog = dialog} 
           //target='#target' 
-          buttons={confirmButtons} 
           open={() => this.dialogOpen} 
           close={() => this.dialogClose}
         >
@@ -436,6 +436,9 @@ class MessageEditor extends Component {
               left: 20% !important;
               z-index: 1001;
             }
+            #rolDialog {
+              top: 24% !important;
+            }
             #info2Dialog_dialog-header, #info2Dialog_title, #info2Dialog_dialog-content, #info2Dialog.e-footer-content,
             #confirmDialog_dialog-header, #confirmDialog_title, #confirmDialog_dialog-content, .e-footer-content {
               background: #001970;
@@ -450,8 +453,12 @@ class MessageEditor extends Component {
             #confirmDialog .e-dlg-header{
               width: 1%;
             }
-            .e-dialog .e-btn .e-btn-icon.e-icon-dlg-close{
-              color: white;
+            #rolDialog_title {
+              width: 40% !important;
+              color: #001970;
+              font-weight: bold;
+              font-size: 15px;
+              padding-left: 17px;
             }
             .e-btn.e-flat.e-primary {
               color: #fff !important;
@@ -467,14 +474,26 @@ class MessageEditor extends Component {
               height: 15px;
               background-color: transparent;
             }
-            #confirmDialog_dialog-header, .e-dialog 
-            .e-icon-dlg-close::before {
+            .e-dialog .e-icon-dlg-close::before {
               content: '\e7fc';
               position: relative;
-              color: white;
               font-size: 15px;
             }
-
+            #rolDialog_dialog-header > button {
+              margin-right: 30px;
+            }
+            #rolDialog_dialog-header > button > span {
+              color: #001978;
+            }
+            #confirmDialog_dialog-header > button > span {
+              color: white;
+            }
+            #info2Dialog_dialog-header > button > span {
+              color: white;
+            }
+            #noSignaturesDialog_dialog-header > button > span {
+              color: white;
+            }
             #confirmDialog .e-btn.e-flat.e-primary {
               text-transform: uppercase;
               font-size: 13px;
