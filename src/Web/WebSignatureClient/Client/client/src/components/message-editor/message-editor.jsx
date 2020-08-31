@@ -405,7 +405,7 @@ class MessageEditor extends Component {
           visible={this.state.hideRolDialog} 
           showCloseIcon={true} 
           animationSettings={this.animationSettings} 
-          width='75%'
+          width='80%'
           height='50%'
           //content={RolSelector} 
           ref={dialog => this.rolDialog = dialog} 

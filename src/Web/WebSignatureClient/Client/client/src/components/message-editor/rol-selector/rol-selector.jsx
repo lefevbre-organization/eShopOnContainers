@@ -10,9 +10,7 @@ export class RolSelector extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      rol: '',
-      signatureTypes: '',
-      doubleAuth: '',
+      newRecipients: [],
       photo: 1,
     }
     this.roles = [
@@ -43,9 +41,30 @@ export class RolSelector extends React.Component {
   
   }
 
-  onChange(eve) {
-    console.log('onChange', eve)
-    this.setState({doubleAuth: eve.value})
+  onChange(index, event) {
+    console.log('componentDidMount', this.props.recipients);
+    console.log('onChange', event, index)
+   
+    if(event.value == 'none' 
+    || event.value == 'sms' 
+    || event.value == 'photo'){
+    if(this.state.newRecipients.length == 0) {
+      let newRecipients = [];
+      this.props.recipients.forEach((user, i) => {
+        let value = i == index ? event.value : 'none';
+        newRecipients.push({user: user, doubleAuth: value });
+      });
+      this.setState({newRecipients: newRecipients});
+    } else {
+      let newRecipients = this.state.newRecipients;
+      newRecipients[index].doubleAuth = event.value
+      this.setState({
+        newRecipients: newRecipients
+    });
+    
+     }
+      
+    }
 
     //let value = document.getElementById('value');
     // let value = document.getElementById('rol').ej2_instances[0]
@@ -53,11 +72,19 @@ export class RolSelector extends React.Component {
     // update the text and value property values in property panel based on selected item in DropDownList
     // value.innerHTML = this.listObject.value === null ? 'null' : this.listObject.value.toString();
     // text.innerHTML = this.listObject.text === null ? 'null' : this.listObject.text;
-  };
+  }
+  
+  setPhotos(event) {
+    console.log('setPhotos', event.currentTarget.valueAsNumber)
+    this.setState({photo: event.currentTarget.valueAsNumber});
+  }
 
   render(){
-    console.log('render', this.state.doubleAuth);
-    const { doubleAuth, photo } = this.state;
+    const {photo, newRecipients} = this.state;
+   let recipients = newRecipients.length > 0 
+   ? newRecipients 
+   : this.props.recipients;
+    console.log('render', newRecipients);
     return (
       <div className="container">
           <div className="contenido-central">
@@ -68,9 +95,10 @@ export class RolSelector extends React.Component {
                       <th>{i18n.t('messageEditor.grid.email')}</th>
                       <th>{i18n.t('messageEditor.grid.role')}</th>
                       <th>{i18n.t('messageEditor.grid.signatureType')}</th>
-                      <th colspan="3">{i18n.t('messageEditor.grid.doubleAuthentication')}</th>
+                      <th colSpan="3">{i18n.t('messageEditor.grid.doubleAuthentication')}</th>
                   </tr>
-                  {this.props.recipients.map( user => {
+                  {recipients.map((user, i) => {
+                    console.log('recipients ->', i);
                     return(
                     <tr>
                       <td className="name">
@@ -81,8 +109,10 @@ export class RolSelector extends React.Component {
                       </td>
                       <td>
                         <input 
-                         placeholder={`${user}`} 
+                         placeholder={`${newRecipients.length > 0 
+                          ? user.user : user}`} 
                          id="email" 
+                         className={style['border-input']}
                          type="text" 
                          disabled />
                       </td>
@@ -91,11 +121,11 @@ export class RolSelector extends React.Component {
                               <div className="select-wrapper">
                                 <DropDownListComponent 
                                 id="rol" 
-                                className={style['border-input']} 
+                                className={style['selector-rol']} 
                                 dataSource={this.roles} 
                                 ref={(dropdownlist) => { this.listObject = dropdownlist }} 
                                 fields={this.roleFields} 
-                                change={this.onChange.bind(this)} 
+                                change={this.onChange.bind(this, i)} 
                                 placeholder="Select a role" 
                                 value={this.roleValue} 
                                 popupHeight="220px" />
@@ -109,7 +139,7 @@ export class RolSelector extends React.Component {
                             dataSource={this.signatureTypes} 
                             ref={(dropdownlist) => { this.listObject= dropdownlist }} 
                             fields={this.signTypesFields} 
-                            change={this.onChange.bind(this)} 
+                            change={this.onChange.bind(this, i)} 
                             placeholder="Select a type of signature" 
                             value={this.signTypeValue} 
                             popupHeight="220px" />
@@ -122,12 +152,12 @@ export class RolSelector extends React.Component {
                             dataSource={this.doubleAuth} 
                             ref={(dropdownlist) => { this.listObject = dropdownlist }} 
                             fields={this.dobleAuthFields} 
-                            change={this.onChange.bind(this)} 
+                            change={this.onChange.bind(this, i)} 
                             placeholder="Select a double authentication method"
                             value={this.dobleAuthValue} popupHeight="220px" />
                           </div>
                       </td>
-                      { (doubleAuth === "photo") ? 
+                      { (user.doubleAuth === "photo") ? 
                         <>
                         <td>
                             <a className="tooltipped" 
@@ -147,7 +177,7 @@ export class RolSelector extends React.Component {
                            min="1" 
                           //  disabled={option !== 1} 
                            value={photo} 
-                          //  onChange={event => {setPhotos(event.currentTarget.valueAsNumber)}}
+                           onChange={this.setPhotos.bind(this)}
                           />
                           </div>
                         </td>
@@ -155,7 +185,7 @@ export class RolSelector extends React.Component {
                       : null
                       }
 
-                       { (doubleAuth === "sms") ? 
+                       { (user.doubleAuth === "sms" ) ? 
                         <>
                         <td>
                             <a className="tooltipped" 
@@ -175,6 +205,14 @@ export class RolSelector extends React.Component {
                           />
                           </div>
                         </td>
+                        </>
+                      : null
+                      }
+
+                    { (user.doubleAuth === "none" ) ? 
+                        <>
+                        <td></td>
+                        <td></td>
                         </>
                       : null
                       }
@@ -198,6 +236,21 @@ export class RolSelector extends React.Component {
             .e-input-group.e-control-wrapper:not(.e-float-icon-left):not(.e-float-input)::after
             {
               background: #001970;
+            }
+            .e-input-group.e-control-wrapper.e-ddl.e-lib.e-keyboard.e-valid-input {
+              width: 80% !important;
+              background: #ebedf4;
+              border: none;
+              height: 2.5rem;
+              padding: 5px;
+
+            }
+            #rolDialog_dialog-content > div > div > table > tr > td:nth-child(4) > div > span {
+              width: 100% !important;
+              background: #ebedf4;
+              border: none;
+              height: 2.5rem;
+              padding: 5px;
             }
             .e-control.e-dropdownlist.e-lib.e-input {
               color: #001978 !important;
