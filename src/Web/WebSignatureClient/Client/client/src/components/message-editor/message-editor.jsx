@@ -506,6 +506,9 @@ class MessageEditor extends Component {
               background: #e5e8f1 !important;
               color: #001978 !important;
             }
+            #toolsRTE_2 {
+              height: calc(100% - 20px) !important;
+            }
           `}
         </style>
         {/* <style jsx global>
