@@ -76,13 +76,16 @@ const SignatureList = (props) => {
                   </div>
                 </div>
                 {/* <div className={`${props.styles['seguimiento-firmante-individual']} ${props.styles['no-completado']}`}> */}
-                <div className={`${props.styles['seguimiento-firmante-individual']} ${((props.getEventStatus(props.signer, 'document_signed') === false) ? props.styles['no-completado']: ``)}`}>
+                <div className={`${props.styles['seguimiento-firmante-individual']} ${((props.getEventStatus(props.signer, 'document_signed') === false) && (props.getEventStatus(props.signer, 'validated') === false) ? props.styles['no-completado']: ``)}`}>
                   <span className='lf-icon-document-validate'></span>
                   <div className={props.styles['cont-check-seguimiento']}>
-                      <span className={`${((props.getEventStatus(props.signer, 'document_signed')) ? `lf-icon-check-round-full `: ``)} ${props.styles['check-seguimiento']}`}></span>
+                      <span className={`${((props.getEventStatus(props.signer, 'document_signed') === true || props.getEventStatus(props.signer, 'validated') === true) ? `lf-icon-check-round-full `: ``)} ${props.styles['check-seguimiento']}`}></span>
                       <div className={props.styles.linea}></div>
                       <div className={props.styles.info}>
-                          <div className={props.styles.estado}>{i18n.t('signatureViewer.signerCard.body.docSigned')}</div>
+                          <div className={props.styles.estado}>
+                            {props.getEventStatus(props.signer, 'validated') ? `Documento validado` : i18n.t('signatureViewer.signerCard.body.docSigned')}
+                          </div>
+                            {/* {i18n.t('signatureViewer.signerCard.body.docSigned')}</div> */}
                             {props.getEventDate(props.signer, 'document_signed').split(' ')[0]}<br/>
                             {props.getEventDate(props.signer, 'document_signed').split(' ')[1]}
 

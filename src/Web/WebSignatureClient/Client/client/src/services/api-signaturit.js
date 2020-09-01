@@ -658,7 +658,7 @@ export function preloadSignatures2(dispatch, filters, auth) {
 
 // Creates a new signature calling internal proxy api
 //export const createSignature2 = async (recipients, subject, body, files, filesData, reminders, expiration, lefebvreId, guid, brandingId, auth) => {
-  export const createSignature2 = async (recipients, cc, subject, body, files, pagesConfig, reminders, expiration, lefebvreId, guid, brandingId, auth) => {
+  export const createSignature2 = async (recipients, cc, subject, body, files, pagesConfig, reminders, expiration, lefebvreId, guid, brandingId, auth, roles) => {
   return new Promise((resolve, reject) => {
     var myHeaders = new Headers();
     myHeaders.append("Accept", "text/plain");
@@ -703,10 +703,8 @@ export function preloadSignatures2(dispatch, filters, auth) {
     }
 
     //var fileData = '';
-    recipients.forEach(recipient => {
-      recipientsData.push({name: recipient.split('@')[0], email: recipient})
-    });
-    jsonObject.recipients = recipientsData;
+    
+    jsonObject.recipients = recipients;
 
     cc.forEach(recipient => {
       ccData.push({name: recipient.split('@')[0], email: recipient})

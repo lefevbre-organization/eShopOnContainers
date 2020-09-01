@@ -79,6 +79,38 @@ export class RolSelector extends React.Component {
     this.setState({photo: event.currentTarget.valueAsNumber});
   }
 
+  gatherInfo(){
+    var info = [];  
+    var i = 0;
+
+    this.props.recipients.forEach(recipient => {
+      var signerInfo = {};
+      signerInfo.name = document.getElementById(`first_name_${i}`) ? document.getElementById(`first_name_${i}`).value : null;
+      signerInfo.email =  recipient;
+      signerInfo.role = document.getElementById(`rol_${i}`) ? document.getElementById(`rol_${i}`).ej2_instances[0].itemData.Id : null;
+      signerInfo.signatureType = document.getElementById(`signatureType_${i}`) ? document.getElementById(`signatureType_${i}`).ej2_instances[0].itemData.Id : null;
+      signerInfo.doubleAuthType = document.getElementById(`doubleAuth_${i}`) ? document.getElementById(`doubleAuth_${i}`).ej2_instances[0].itemData.Id : null;
+
+      switch (signerInfo.doubleAuthType ) {
+        case 'none':
+          signerInfo.doubleAuthInfo = null
+          break;
+        case 'photo':
+          signerInfo.doubleAuthInfo = document.getElementById(`n_photo_${i}`) ? document.getElementById(`n_photo_${i}`).value : null;
+          break;
+        case 'sms':
+          signerInfo.doubleAuthInfo = document.getElementById(`n_phone_${i}`) ? document.getElementById(`n_phone_${i}`).value : null;
+          break;
+        default:
+          break;
+      }
+      info.push(signerInfo);
+      i+= 1;
+    });
+
+    this.props.onFinishRoles(info);
+  }
+
   render(){
     const {photo, newRecipients} = this.state;
    let recipients = newRecipients.length > 0 
@@ -104,14 +136,14 @@ export class RolSelector extends React.Component {
                       <td className="name">
                         <input className={style['border-input']} 
                         placeholder={i18n.t('messageEditor.grid.name')} 
-                        id="first_name" 
+                        id={`first_name_${i}`} 
                         type="text" />
                       </td>
                       <td>
                         <input 
                          placeholder={`${newRecipients.length > 0 
                           ? user.user : user}`} 
-                         id="email" 
+                         id={`email_${i}`}
                          className={style['border-input']}
                          type="text" 
                          disabled />
@@ -120,7 +152,7 @@ export class RolSelector extends React.Component {
                           <div className="input-field col s5">
                               <div className="select-wrapper">
                                 <DropDownListComponent 
-                                id="rol" 
+                                id={`rol_${i}`}
                                 className={style['selector-rol']} 
                                 dataSource={this.roles} 
                                 ref={(dropdownlist) => { this.listObject = dropdownlist }} 
@@ -135,7 +167,7 @@ export class RolSelector extends React.Component {
                       <td>
                           <div className="select-wrapper">
                             <DropDownListComponent 
-                            id="signatureType" 
+                            id={`signatureType_${i}`}
                             dataSource={this.signatureTypes} 
                             ref={(dropdownlist) => { this.listObject= dropdownlist }} 
                             fields={this.signTypesFields} 
@@ -148,7 +180,7 @@ export class RolSelector extends React.Component {
                       <td>
                           <div className="select-wrapper left s3">
                             <DropDownListComponent 
-                            id="doubleAuth" 
+                            id={`doubleAuth_${i}`}
                             dataSource={this.doubleAuth} 
                             ref={(dropdownlist) => { this.listObject = dropdownlist }} 
                             fields={this.dobleAuthFields} 
@@ -172,6 +204,7 @@ export class RolSelector extends React.Component {
                         <td>
                           <div className="select-wrapper left s3">
                           <input 
+                           id={`n_photo_${i}`}
                            className={`${style['border-input']} ${style['photo-input']}`} 
                            type="number" 
                            min="1" 
@@ -200,6 +233,7 @@ export class RolSelector extends React.Component {
                         <td>
                           <div className="select-wrapper left s3">
                           <input 
+                           id={`n_phone_${i}`}
                            className={`${style['border-input']}`} 
                            type="text" 
                           />
@@ -224,7 +258,8 @@ export class RolSelector extends React.Component {
               <div className="center-align">
                 <button 
                 className={style['btn-gen']} 
-                href="#demo-modal">{i18n.t('messageEditor.grid.finish')}
+                //href="#demo-modal"
+                onClick={this.gatherInfo.bind(this)}>{i18n.t('messageEditor.grid.finish')}
                 </button>
               </div>
           </div>

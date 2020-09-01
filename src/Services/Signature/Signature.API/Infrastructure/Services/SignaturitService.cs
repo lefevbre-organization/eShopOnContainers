@@ -85,6 +85,19 @@ namespace Signature.API.Infrastructure.Services
             {
                 request.AddParameter($"recipients[{i}][name]", recipient.name);
                 request.AddParameter($"recipients[{i}][email]", recipient.email);
+                request.AddParameter($"recipients[{i}][type]", recipient.role);
+                if (recipient.signatureType == "certificate")
+                {
+                    request.AddParameter($"recipients[{i}][sign_with_digital_certificate_file]", 1);
+                }
+                if (recipient.doubleAuthType == "photo")
+                {
+                    request.AddParameter($"recipients[{i}][require_photo]", Convert.ToInt32(recipient.doubleAuthInfo));
+                } else if (recipient.doubleAuthType == "sms") 
+                {
+                    request.AddParameter($"recipients[{i}][phone]", recipient.doubleAuthInfo);
+                    request.AddParameter($"recipients[{i}][require_sms_validation]", 1);
+                }
                 i += 1;
             }
             i = 0;
