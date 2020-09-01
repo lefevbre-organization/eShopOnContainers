@@ -426,6 +426,15 @@ export class Main extends Component {
                     end = event.end.date;
                 }
 
+                //managing all day from googe calendar issues
+                //if (!event.end.date) {
+                //    var difference = event.start.dateTime - event.end.dateTime;
+                //    if (difference == 1) {
+                //        event.end = event.end -1
+                //    }
+                //}
+               
+
                 // Recurrence
                 let recurrenceRule
                 if (event.recurrence != undefined) {
