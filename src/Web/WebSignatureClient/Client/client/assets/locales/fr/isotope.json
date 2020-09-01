@@ -283,7 +283,7 @@
     },
     "signerCard": {
       "title": {
-        "signers": "SIGNANTS",
+        "signers": "SIGNATAIRE",
         "signer": "SIGNATAIRE"
       },
       "body": {

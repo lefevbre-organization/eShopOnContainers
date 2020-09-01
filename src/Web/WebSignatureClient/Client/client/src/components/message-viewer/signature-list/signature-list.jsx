@@ -7,12 +7,16 @@ const SignatureList = (props) => {
     return( 
         <div className={props.styles['cont-info-firmantes']}>
           <div className={`${props.styles.p15} ${props.styles.separador}`}>
-              <div className={`${props.styles['tit-firmante']} left`}>{i18n.t('signatureViewer.signerCard.title.signers')}</div>
+              <div className={`${props.styles['tit-firmante']} left`}>{i18n.t('signatureViewer.signerCard.title.signers')} {(props.index + 1)}</div>
                 <span className={`${props.styles['name_firmante']} left`}>{props.signer.name}:</span>
                 <span className={props.styles.email}>{props.signer.email}</span>
-                <span className={`${props.styles['numero_firmante']} right`}>
-                {i18n.t('signatureViewer.signerCard.title.signer')} {(props.index + 1)}
-                </span>
+                <div className={`${props.styles['numero_firmante']} `}>
+                <ul>
+                 <li> {i18n.t('messageEditor.grid.role')}: Firmante</li>
+                 <li> {i18n.t('messageEditor.grid.signatureType')}: Certificado electrónico</li>
+                 <li> {i18n.t('messageEditor.grid.doubleAuthentication')}: Foto (3 fotos adjuntas)</li>
+                </ul>
+                </div>
               </div>
               <div className={`${props.styles.p15} ${props.styles.separador}`}>
                 <div className={props.styles['tit-firmante']}>{i18n.t('signatureViewer.signerCard.body.title')}</div>

@@ -236,13 +236,17 @@ class MessageEditor extends Component {
       }
   }
 
-
   dialogClose(){
+    console.log('hideRolDialog', this.state);
     if (this.state.centinelaDownloadError === true){
       this.props.onShowError();
     }
     this.setState({
-        hideAlertDialog: false, bigAttachments: false, centinelaDownloadError: false, hideConfirmDialog: false, hideRolDialog: false
+        hideAlertDialog: false, 
+        bigAttachments: false, 
+        centinelaDownloadError: false,
+        hideConfirmDialog: false, 
+        hideRolDialog: false
     });
   }
 
@@ -534,7 +538,7 @@ class MessageEditor extends Component {
           ref={dialog => this.rolDialog = dialog} 
           //target='#target' 
           open={() => this.dialogOpen} 
-          close={() => this.dialogClose}
+          close={this.dialogClose.bind(this)}
         >
           <RolSelector 
           recipients={to}

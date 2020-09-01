@@ -265,7 +265,7 @@
     },
     "signerCard": {
       "title": {
-        "signers": "SIGNERS",
+        "signers": "SIGNER",
         "signer": "Signer"
       },
       "body": {
