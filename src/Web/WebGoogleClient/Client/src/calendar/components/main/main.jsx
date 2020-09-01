@@ -1279,8 +1279,9 @@ export class Main extends Component {
         this.resourceCalendarData.sort(function (a, b) {
             if (a.id === calendar) { return -1; }
             //if (a.firstname > {b.firstname) { return 1; }
-            return 0;
+            return 1;
         })
+
     }
     predicateQueryEvents(calendarList, predicate) {
         if (calendarList != undefined) {
