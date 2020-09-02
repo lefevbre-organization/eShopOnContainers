@@ -152,7 +152,7 @@
                         case "document_canceled":
                         case "document_expired":
                         case "document_declined":
-                            response = await CancelFileCentinela(cenDocId);
+                            response = await CancelFileCentinela(guid);
                             break;
                         case "document_completed":
                         case "audit_trail_completed":

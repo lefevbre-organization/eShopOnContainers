@@ -79,16 +79,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             var result = new Result<bool>(false);
             try
             {
-                Console.WriteLine("START FilePostAsync");
+                Console.WriteLine($"[{DateTime.Now}] START FilePostAsync");
 
                 CleanNameFile(fileMail, out string name);
 
                 SerializeToMultiPart(fileMail, name, route, out string url, out MultipartFormDataContent multipartContent);
 
                 //WriteError($"Se hace llamada a {url} a las {DateTime.Now}");
-                Console.WriteLine($"Call to: {url}");
+                Console.WriteLine($"[{DateTime.Now}] Call to: {url}");
                 using var response = await _client.PostAsync(url, multipartContent);
-                Console.WriteLine($"Response: {response.ToString()}");
+                Console.WriteLine($"[{DateTime.Now}] Response: {response.ToString()}");
                 //WriteError($"Se recibe contestación {DateTime.Now}");
 
                 var responseText = await response.Content.ReadAsStringAsync();
@@ -104,10 +104,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"[{DateTime.Now}] Error: {ex.ToString()}");
                 TraceOutputMessage(result.errors, $"Error al guardar el archivo {fileMail.Name}, -> {ex.Message} : {ex.InnerException}", ex.InnerException?.Message, "Centinela_Error_FilePost");
             }
 
-            Console.WriteLine("END FilePostAsync");
+            Console.WriteLine($"[{DateTime.Now}] END FilePostAsync");
 
             return result;
         }
@@ -381,11 +382,17 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             var result = new Result<bool>(false);
             try
             {
+                Console.WriteLine($"[{DateTime.Now}] START CancelSignatureAsync");
+
                 var url = $"{_settings.Value.CentinelaUrl}/sign/signcancelled/{guid}";
+
+                Console.WriteLine($"[{DateTime.Now}] Call to: {url}");
                 
                 HttpContent httpContent = new StringContent("", Encoding.UTF8, "application/json-patch+json");
 
                 using var response = await _client.PatchAsync(url, httpContent);
+
+                Console.WriteLine($"[{DateTime.Now}] Response: {response.ToString()}");
 
                 var responseText = await response.Content.ReadAsStringAsync();
                 if (response.IsSuccessStatusCode)
@@ -400,8 +407,11 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Infrastructure.S
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"[{DateTime.Now}] Error: {ex.ToString()}");
                 TraceOutputMessage(result.errors, $"Error al cancelar la firma {guid}, -> {ex.Message} : {ex.InnerException}", ex.InnerException?.Message, "Centinela_Error_FilePost");
             }
+
+            Console.WriteLine($"[{DateTime.Now}]  END CancelSignatureAsync");
 
             return result;
         }

@@ -215,12 +215,16 @@ namespace Lefebvre.eLefebvreOnContainers.Services.Centinela.API.Controllers
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> CancelSignature([FromRoute] string guid)
         {
+            Console.WriteLine($"START {Request.Path.Value}");
+
             var result = await _service.CancelSignatureAsync(guid);
 
             if (result.errors.Count == 0)
             {
                 return StatusCode(201, result);
             }
+
+            Console.WriteLine($"END {Request.Path.Value}");
 
             return BadRequest(result);
         }
