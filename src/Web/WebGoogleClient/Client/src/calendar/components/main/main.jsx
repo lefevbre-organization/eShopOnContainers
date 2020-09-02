@@ -788,10 +788,7 @@ export class Main extends Component {
         );
     }
 
-    onPopupOpen(args) {
-
-
-        //not allow to change calendar property on update events
+    ToogleCalendarResourceDirective(args) {        
         if (args.data.Id != undefined) {
             console.log(this.scheduleObj.resourceCollection[0].cssClassField)
             ////  this.scheduleObj.resourceCollection[0].cssClassField = "hidden"
@@ -802,8 +799,26 @@ export class Main extends Component {
         else {
             var cal = document.getElementsByClassName("e-CalendarId-container");
             cal[0].classList.remove('disabledbutton');
+        }    
+    }
+
+    onPopupOpen(args) {
+
+        //Not allow to change calendar property on update events
+        this.ToogleCalendarResourceDirective(args);
+
+        //Not allow to change calendar property on update events
+        if (args.data.Id != undefined) {
+            console.log(this.scheduleObj.resourceCollection[0].cssClassField)
+            ////  this.scheduleObj.resourceCollection[0].cssClassField = "hidden"
+            var cal = document.getElementsByClassName("e-CalendarId-container");
+            cal[0].classList.add('disabledbutton');
+
         }
-          
+        else {
+            var cal = document.getElementsByClassName("e-CalendarId-container");
+            cal[0].classList.remove('disabledbutton');
+        }         
 
 
         // default values for EventType coming from event args
@@ -1016,17 +1031,12 @@ export class Main extends Component {
                     idEvent = args.data.Id
                 }
 
-
                 var desc = this.scheduleObj.dataModule.dataManager.dataSource.json.find(function (e) {
                     return e.Id == idEvent
                 })
 
                 if (desc) {
-                   // console.log(desc.description)
-
-                    //update calendarid - not available
-                    //desc.CalendarId = args.data.CalendarId
-
+                   
                     //reset reminders
                     desc.Reminders = [];
 
@@ -1149,24 +1159,25 @@ export class Main extends Component {
                                 args.data[0].EventType = eventType;
                             }
                         }
-
-
-                        // this.scheduleObj.refreshEvents();
+                      
                         this.toastObj.show(this.toasts[1]);
                     })
                     .catch(error => {
-                        this.toastObj.show(this.toasts[2]);
-                        console.log('error ->', error);
+                        if (error.result.error.errors[0] != undefined) {
+                            if (error.result.error.errors[0].reason == "requiredAccessLevel") {  
+                                this.toastObj.show({ content: error.result.error.errors[0].message, cssClass: 'e-toast-danger', icon: '' },);
+                                console.log('error ->', error); 
+                                delete this.scheduleObj.dataModule.dataManager.dataSource.json.splice(-1, 1);
+                                this.scheduleObj.refreshEvents();
+                                return;
+                            }
+                        }
+                        else {
+                            this.toastObj.show(this.toasts[2]);
+                            console.log('error ->', error);
+                        }                       
                     })
-                //    }
-                //    else {
-                //        //this.scheduleObj.saveEvent(args.data[0]);
-                //        args.cancel = true;
-                //    }
-                //}
-
-
-
+              
                 break;
 
             case 'eventRemoved':
