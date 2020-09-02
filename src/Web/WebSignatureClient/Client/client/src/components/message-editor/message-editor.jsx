@@ -744,8 +744,13 @@ class MessageEditor extends Component {
         externalId: e.id,
         signer: { name: e.name, email: e.email },
         internalInfo: this.props.lefebvre.idDocuments.find((d) => {
-          if (d.docName.replace(/ /g, '_') === e.file.name) {
+          // if (d.docName.replace(/[\])}[{( ]/g, '') === e.file.name) { //replaces () {} [] ' ' with _
+          // Example of how signaturit changes names: blank spaces and parenthesis with under scores
+          // Original Name: Small Business_unlocked_1 2(3)4[5]6{7}8-9,10'11¡12¿13¨14´15ç16+17^18;19.20$21%22&23º24ª.pdf
+          // Signatur Name: Small_Business_unlocked_1_2_3_4[5]6{7}8-9,10'11¡12¿13¨14´15ç16+17^18;19.20$21%22&23º24ª.pdf
+          if (d.docName.replace(/[)( ]/g, '_') === e.file.name) {
             return d.docId;
+            
           }
         }),
       };
