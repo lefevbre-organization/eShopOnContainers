@@ -108,7 +108,8 @@
     "toast-processing": "Processing",
     "toast-process-complete": "Process complete",
     "toast-process-error": "Error",
-    "validator-required": "Field is required"
+    "validator-required": "Field is required",
+    "notitle": "(no title)"
   },
   "calendar": {
     "title": "Calendar Configuration",
