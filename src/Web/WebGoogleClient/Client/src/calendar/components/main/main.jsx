@@ -393,12 +393,20 @@ export class Main extends Component {
         if (props.EventType != undefined) {
             colorExist = true
         }
+        let subjectStr = props.Subject;
+        if (props.Subject != undefined) {
+            props.Subject = this.text_truncate(props.Subject, 20)
+        }
+        else {
+            subjectStr = i18n.t("schedule.notitle")
+        }
+
         return (
             <div Style="width: 98%;">
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
                     <span className='eventicon truncate'>
-                        <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {this.text_truncate(props.Subject,20)}
+                        <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {subjectStr}
                         {colorExist ? (
                             <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot floatleft'></span>
                         ) : (
