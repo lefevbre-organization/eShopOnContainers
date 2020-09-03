@@ -38,6 +38,7 @@ const calendarContent = props => {
       title="CALENDARIO"
       style={style}
       sidebarDocked={sidebarDocked}
+      showExpandIcon={true}
     >
       <div style={styles.content}>      
         <CalendarCard />                   
