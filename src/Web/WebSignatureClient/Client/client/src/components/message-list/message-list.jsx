@@ -734,6 +734,11 @@ class MessageList extends Component {
                         background-color: #001978 !important;
                         color: white;  
                     }
+                    div.e-gridheader.e-lib.e-droppable > div > table > 
+                    thead > tr > th.e-headercell.e-defaultcursor {
+                        position: static;
+                        border-right: 1px solid;
+                    }
                     .bola-firmantes.en-progreso .e-dropdown-btn.e-dropdown-btn.e-btn{
                         border-radius: 20px;
                         color: #FFF;
