@@ -1123,7 +1123,7 @@ class MessageList extends Component {
                         font-family: 'lf-font' !important;
                     }
                     .e-grid .e-excelexport::before {
-                        content: '\e93d';
+                        content: '\e955';
                         font-family: 'lf-font' !important;
                     }
                 `}
