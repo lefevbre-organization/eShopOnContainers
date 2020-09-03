@@ -294,7 +294,7 @@ class App extends Component {
             </div>
 
             <div className={styles.productpanel}>
-              <span
+              {/* <span
                 className={styles.productsbutton}
                 isotip={t('productBar.lefebvre')}
                 isotip-position='bottom-end'
@@ -316,7 +316,7 @@ class App extends Component {
                   </IconButton>
                 )}
                 <div className={styles.btnselect}></div>
-              </span>
+              </span> */}
               {/* <span
                 className={styles.productsbutton}
                 isotip={t("productBar.database")}

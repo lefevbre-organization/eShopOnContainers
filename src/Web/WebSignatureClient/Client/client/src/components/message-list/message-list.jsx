@@ -48,7 +48,7 @@ L10n.load({
       'pager': {
         'pagerDropDown': 'Registros por página',
         'pagerAllDropDown': 'Registros',
-        'totalItemsInfo': '({0} ítems)',
+        'totalItemsInfo': '({0} registros)',
         'currentPageInfo': 'Página {0} de {1}',
         'All': 'Todo',
         'firstPageTooltip': 'Ir a la primera página',
@@ -660,6 +660,7 @@ class MessageList extends Component {
         //var firmas = this.props.signatures;
         var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [{}];
         var customAttributes = {class: 'customcss'};
+        document.body.style.background = "white";
         return( (firmas && firmas.length > 0) ?
             <div className={styles['main-grid']}>
             <div>
@@ -674,7 +675,7 @@ class MessageList extends Component {
                     allowExcelExport={true}
                     allowTextWrap={false}
                     height='100%'
-                    pageSettings={{pageCount: 5, pageSize: 10, pageSizes: true, pagesSizeList: []}}//pageSizeList: [8,12,9,5]}} 
+                    pageSettings={{pageCount: 5, pageSize: 10, pageSizes: [5, 10, 20, 50, 75, 100] }}//pageSizeList: [8,12,9,5]}} 
                     // rowSelected={event => {
                     //     this.onRowSelected(event);
                     // }}
