@@ -142,7 +142,7 @@ class SideBar extends Component {
                isotip-position='bottom-end'
                isotip-size='larger'>
                 <IconButton onClick={this.props.sideBarToggle}>
-                 keyboard_arrow_right
+                <span className='lf-icon-angle-right'></span>
                 </IconButton>   
               </span> :  
               <span
@@ -151,7 +151,7 @@ class SideBar extends Component {
                isotip-position='bottom-end'
                isotip-size='larger'>
                 <IconButton onClick={this.props.sideBarToggle}>
-                 keyboard_arrow_left
+                <span className='lf-icon-angle-left'></span>
                 </IconButton> 
                </span> 
             } 
@@ -211,6 +211,10 @@ class SideBar extends Component {
             }
             noSignaturesDialog .e-btn.e-flat.e-primary {
               color: #fff !important;
+            }
+            .material-icons {
+              font-size: 18px !important;
+              color: #001978 !important;
             }
           `}
         </style>

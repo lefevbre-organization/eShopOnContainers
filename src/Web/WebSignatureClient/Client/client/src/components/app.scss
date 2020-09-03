@@ -106,15 +106,17 @@ body {
         transition: margin $drawerAnimationSpeed;
 
         &.without-side-bar {
-          margin-left: 104px;
+          margin-left: 85px;
           width: calc(100% - #{$drawerWidthtopbar});
           height: calc(100% - 133px);
+          overflow-x: hidden;
         }
         
         &.with-side-bar {
             margin-left: $drawerWidth;
             width: calc(100% - #{$drawerWidthtopbar});
             height: calc(100% - 133px);
+            overflow-x: hidden;
         }
 
         .message-grid {
