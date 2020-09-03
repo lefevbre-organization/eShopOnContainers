@@ -438,7 +438,20 @@ export class Main extends Component {
                     }
                     this.scheduleData.find(x => x.Id == event.recurringEventId).RecurrenceException = ParentscheduleException + coma + ExcRecurenceDate
                     continue;
+                }               
+
+                //managing all day from googe calendar issues
+                if (event.end.date) {
+                    let date1 = new Date(event.start.date);
+                    let date2 = new Date(event.end.date);
+                    const diffTime = Math.abs(date1 - date2);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                    if (diffDays == 1) {                       
+                        date2.setDate(date2.getDate() - 1)                    
+                        event.end.date = date2.toISOString();
+                    }
                 }
+
                 let when = event.start.dateTime;
                 let start = event.start.dateTime;
                 let end = event.end.dateTime;
@@ -447,14 +460,6 @@ export class Main extends Component {
                     start = event.start.date;
                     end = event.end.date;
                 }
-
-                //managing all day from googe calendar issues
-                //if (!event.end.date) {
-                //    var difference = event.start.dateTime - event.end.dateTime;
-                //    if (difference == 1) {
-                //        event.end = event.end -1
-                //    }
-                //}
                
 
                 // Recurrence
