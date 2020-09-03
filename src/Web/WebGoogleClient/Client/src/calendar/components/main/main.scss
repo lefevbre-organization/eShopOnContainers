@@ -6,6 +6,14 @@
     pointer-events: none;
     opacity: 0.4;
 }
+
+.truncate {
+    width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .custom-field-container {
     padding-bottom : 20px !important
 }

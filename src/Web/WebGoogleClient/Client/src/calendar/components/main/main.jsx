@@ -374,6 +374,20 @@ export class Main extends Component {
         return this.instance.formatDate(value, { skeleton: 'hm' });
     }
 
+    text_truncate (str, length, ending) {
+        if (length == null) {
+            length = 100;
+        }
+        if (ending == null) {
+            ending = '...';
+        }
+        if (str.length > length) {
+            return str.substring(0, length - ending.length) + ending;
+        } else {
+            return str;
+        }
+    };
+
     eventTemplate(props) {
         let colorExist = false;
         if (props.EventType != undefined) {
@@ -383,8 +397,8 @@ export class Main extends Component {
             <div Style="width: 98%;">
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
-                    <span className='eventicon'>
-                        <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}
+                    <span className='eventicon truncate'>
+                        <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {this.text_truncate(props.Subject,20)}
                         {colorExist ? (
                             <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot floatleft'></span>
                         ) : (
