@@ -1,6 +1,11 @@
 .hidden {
     display: none !important;
 }
+
+.disabledbutton {
+    pointer-events: none;
+    opacity: 0.4;
+}
 .custom-field-container {
     padding-bottom : 20px !important
 }

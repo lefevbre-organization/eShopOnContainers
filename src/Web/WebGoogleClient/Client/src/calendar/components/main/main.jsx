@@ -788,7 +788,37 @@ export class Main extends Component {
         );
     }
 
+    ToogleCalendarResourceDirective(args) {        
+        if (args.data.Id != undefined) {
+            console.log(this.scheduleObj.resourceCollection[0].cssClassField)
+            ////  this.scheduleObj.resourceCollection[0].cssClassField = "hidden"
+            var cal = document.getElementsByClassName("e-CalendarId-container");
+            cal[0].classList.add('disabledbutton');
+
+        }
+        else {
+            var cal = document.getElementsByClassName("e-CalendarId-container");
+            cal[0].classList.remove('disabledbutton');
+        }    
+    }
+
     onPopupOpen(args) {
+
+        //Not allow to change calendar property on update events
+        this.ToogleCalendarResourceDirective(args);
+
+        //Not allow to change calendar property on update events
+        if (args.data.Id != undefined) {
+            console.log(this.scheduleObj.resourceCollection[0].cssClassField)
+            ////  this.scheduleObj.resourceCollection[0].cssClassField = "hidden"
+            var cal = document.getElementsByClassName("e-CalendarId-container");
+            cal[0].classList.add('disabledbutton');
+
+        }
+        else {
+            var cal = document.getElementsByClassName("e-CalendarId-container");
+            cal[0].classList.remove('disabledbutton');
+        }         
 
 
         // default values for EventType coming from event args
@@ -1001,13 +1031,12 @@ export class Main extends Component {
                     idEvent = args.data.Id
                 }
 
-
                 var desc = this.scheduleObj.dataModule.dataManager.dataSource.json.find(function (e) {
                     return e.Id == idEvent
                 })
 
                 if (desc) {
-                    console.log(desc.description)
+                   
                     //reset reminders
                     desc.Reminders = [];
 
@@ -1049,6 +1078,8 @@ export class Main extends Component {
                         }
                     }
 
+                   
+
                 }
 
                 //Update the schedule datasource
@@ -1058,6 +1089,7 @@ export class Main extends Component {
                 event = this.buildEventoGoogle(args.data);
 
                 let itemToModify = args.data.Id
+                //let itemToModify = desc.CalendarId
                 let calendarToModify = args.data.CalendarId
                 if (args.data.occurrence != undefined) {
 
@@ -1127,24 +1159,25 @@ export class Main extends Component {
                                 args.data[0].EventType = eventType;
                             }
                         }
-
-
-                        // this.scheduleObj.refreshEvents();
+                      
                         this.toastObj.show(this.toasts[1]);
                     })
                     .catch(error => {
-                        this.toastObj.show(this.toasts[2]);
-                        console.log('error ->', error);
+                        if (error.result.error.errors[0] != undefined) {
+                            if (error.result.error.errors[0].reason == "requiredAccessLevel") {  
+                                this.toastObj.show({ content: error.result.error.errors[0].message, cssClass: 'e-toast-danger', icon: '' },);
+                                console.log('error ->', error); 
+                                delete this.scheduleObj.dataModule.dataManager.dataSource.json.splice(-1, 1);
+                                this.scheduleObj.refreshEvents();
+                                return;
+                            }
+                        }
+                        else {
+                            this.toastObj.show(this.toasts[2]);
+                            console.log('error ->', error);
+                        }                       
                     })
-                //    }
-                //    else {
-                //        //this.scheduleObj.saveEvent(args.data[0]);
-                //        args.cancel = true;
-                //    }
-                //}
-
-
-
+              
                 break;
 
             case 'eventRemoved':
@@ -1276,11 +1309,28 @@ export class Main extends Component {
             })
         }
 
+        // remove non calendar permissions
+        //var result = [];
+        //for (var i = 0; i < this.resourceCalendarData.length; i++) {
+        //    if (this.resourceCalendarData[i].role === 'owner' ) {
+        //        result.push(this.resourceCalendarData[i]);
+        //    }
+        //}
+        //this.resourceCalendarData = result;
+
+
         this.resourceCalendarData.sort(function (a, b) {
             if (a.id === calendar) { return -1; }
             //if (a.firstname > {b.firstname) { return 1; }
             return 1;
         })
+
+
+       
+
+       
+
+
 
     }
     predicateQueryEvents(calendarList, predicate) {
@@ -1586,7 +1636,7 @@ export class Main extends Component {
                                                 </ViewsDirective>
                                                 <ResourcesDirective>
                                                     {/*<ResourceDirective field='eventType' title={i18n.t("schedule.eventtype")} name='eventType' allowMultiple={false} dataSource={this.eventTypeDataSource} textField='text' idField='id' colorField='backgroundColor' />  */}
-                                                    <ResourceDirective ref={cal => this.calendarObj = cal} field='CalendarId' title={i18n.t("calendar-sidebar.mycalendars")} name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor' />
+                                                    <ResourceDirective ref={this.calendarObj} field='CalendarId' title={i18n.t("calendar-sidebar.mycalendars")} name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor' />
                                                 </ResourcesDirective>
                                                 <Inject services={[Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop]} />
                                             </ScheduleComponent>

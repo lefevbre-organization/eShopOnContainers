@@ -169,7 +169,7 @@ class MessageList extends Component {
         ];
         
         this.fields = { text: 'texto', value: 'valor' };
-        this.toolbarOptions = ['Search', 'PdfExport', 'ExcelExport', 'Print'];
+        this.toolbarOptions = ['Search', 'Print', 'PdfExport', 'ExcelExport' ];
         this.grid = null;
         this.dialogClose = this.dialogClose;
         this.dialogOpen = this.dialogOpen;
@@ -673,7 +673,7 @@ class MessageList extends Component {
                     allowPdfExport={true}
                     allowExcelExport={true}
                     allowTextWrap={false}
-                    height='450'
+                    height='100%'
                     pageSettings={{pageCount: 5, pageSize: 10, pageSizes: true, pagesSizeList: []}}//pageSizeList: [8,12,9,5]}} 
                     // rowSelected={event => {
                     //     this.onRowSelected(event);
@@ -1107,6 +1107,18 @@ class MessageList extends Component {
                      margin-top: 0 !important; 
                      vertical-align: sub !important;
                      height: 35px !important;
+                    }
+                    .e-grid .e-print::before {
+                        content: '\e9b9';
+                        font-family: 'lf-font' !important;
+                    }
+                    .e-grid .e-pdfexport::before {
+                        content: '\e94f';
+                        font-family: 'lf-font' !important;
+                    }
+                    .e-grid .e-excelexport::before {
+                        content: '\e93d';
+                        font-family: 'lf-font' !important;
                     }
                 `}
                 </style>

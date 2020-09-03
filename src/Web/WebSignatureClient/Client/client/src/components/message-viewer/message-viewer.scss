@@ -481,12 +481,18 @@
 .upper{
   text-transform:uppercase;
 }
+
 button:focus {
   outline: none;
-  background-color: #9a9a9a;
-  border:2px solid #9a9a9a;
-  color:#FFF;
+  background-color: transparent;
+  border: 2px solid transparent;
+  color: #001978;
 }
+
+button::before {
+  background-color: transparent !important;
+}
+
 .btn {
   background: #001978;
   text-decoration: none;
