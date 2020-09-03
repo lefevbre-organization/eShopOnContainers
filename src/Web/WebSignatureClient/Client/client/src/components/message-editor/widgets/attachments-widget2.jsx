@@ -15,7 +15,6 @@ class AttachmentsWidget extends Component{
         this.fileInput = null;
         this.onAttachButton = this.onAttachButton.bind(this);
         this.onAttachSelected = this.onAttachSelected.bind(this);
-    
     }
 
     componentDidMount() {
@@ -48,7 +47,7 @@ class AttachmentsWidget extends Component{
                             type='file'
                             name='name'
                             style={{ display: 'none' }}
-                            multiple={true}
+                            multiple={false}    
                         />
                     </button>
                     <div className="clearfix"></div>
@@ -140,6 +139,7 @@ class AttachmentsWidget extends Component{
         });
         return true;
     }
+
 
     removeAttachment(attachment) {
         const userApp = this.props.userApp;
