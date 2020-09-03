@@ -906,22 +906,42 @@ class MessageEditor extends Component {
   onDrop(event) {
     event.preventDefault();
     event.stopPropagation();
-    this.setState({ dropZoneActive: false });
+    this.setState({ dropZoneActive: false })
     const addAttachment = (file, dataUrl) => {
-      const newAttachment = {
-        fileName: file.name,
-        size: file.size,
-        contentType: file.type,
-        content: dataUrl.currentTarget.result.replace(
-          /^data:[^;]*;base64,/,
-          ''
-        ),
-      };
-      const updatedMessage = { ...this.props.editedMessage };
-      updatedMessage.attachments = updatedMessage.attachments
-        ? [...updatedMessage.attachments, newAttachment]
-        : [newAttachment];
-      this.props.editMessage(updatedMessage);
+       const fileType = file.name.split('.');
+        if(fileType[1] == 'pdf' || fileType[1] == 'docx' 
+        || fileType[1] == 'doc') {
+          const pdfjsLib = require('pdfjs-dist');
+          pdfjsLib.GlobalWorkerOptions.workerSrc = '../../../../assets/scripts/pdf.worker.js'
+
+          const newAttachment = {
+          fileName: file.name,
+          size: file.size,
+          contentType: file.type,
+          content: dataUrl.currentTarget.result.replace(
+              /^data:[^;]*;base64,/,
+              ''
+          ),
+          };
+
+          pdfjsLib.getDocument({data: atob(newAttachment.content)})
+          .promise.then(doc => {
+              var numPages = doc.numPages;
+              newAttachment.pages = numPages;
+              console.log('# Document Loaded');
+              console.log('Number of Pages: ' + numPages);
+
+              const updatedMessage = { ...this.props.editedMessage };
+              updatedMessage.attachments = updatedMessage.attachments
+                  ? [...updatedMessage.attachments, newAttachment]
+                  : [newAttachment];
+              this.props.editMessage(updatedMessage);
+          });
+        } else {
+            this.setState({isFileType: true});
+            console.log('tipo de archivo invalido!');
+        }
+       
     };
     Array.from(event.dataTransfer.files).forEach((file) => {
       const fileReader = new FileReader();
