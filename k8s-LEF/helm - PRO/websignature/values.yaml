@@ -46,7 +46,7 @@ env:
 configValues: |
   window.REACT_APP_ENVIRONMENT = 'PRODUCTION'
   window.API_SIGN_GATEWAY = 'https://lexbox-apigwsig.lefebvre.es/api/v1/signservice'
-  window.API_CHECK_CREDITS = 'https://led-serviceclaves.lefebvre.es/FirmaDigital'
+  window.API_UTILS_GATEWAY = 'https://lexbox-apigwsig.lefebvre.es/api/v1/utils'
   window.TERMS_AND_CONDITIONS_URL = 'https://lefebvre.es/aviso-legal'
   window.COOKIES_POLICY_URL = 'https://lefebvre.es/politica-cookies'
   window.PRIVACY_POLICY_URL = 'https://lefebvre.es/politica-privacidad'

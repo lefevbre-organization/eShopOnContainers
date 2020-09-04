@@ -616,7 +616,8 @@ class App extends Component {
     var self = this;
     //Starting poll to update the inbox automatically
     //this.startPoll();
-    setInterval(this.startPoll.bind(this),20000);
+    setInterval(this.startPoll.bind(this), 15000);
+    //this.startPoll.bind(this);
     //adding connector App to right slide panel
     //setTimeout(function () { this.registerConnectorApp(); }, 2200);
     this.registerConnectorApp();
@@ -1015,7 +1016,7 @@ class App extends Component {
         //this.props.backendRequestCompleted();
       }
   
-    }, 1000);
+    }, 45000);
   }
 
   /**

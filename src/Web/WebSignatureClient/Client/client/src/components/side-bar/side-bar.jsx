@@ -227,16 +227,16 @@ class SideBar extends Component {
 
     getAvailableSignatures(lefebvre.idUserApp, 1)
     .then(response => {
-      setAvailableSignatures(response);
-      if (response === false || response === "false"){
+      setAvailableSignatures(response.data);
+      if (response.data === false || response.data === "false"){
         //alert('Ha agotado todas sus solicitudes de firma. Debe comprar más');
         this.setState({ hideAlertDialog: true });
         // Lo pongo para poder probar siempre aunque devuelva false, luego hay que quitar las tres líneas que siguen este comentario.
-        this.props.setAvailableSignatures(response);
+        this.props.setAvailableSignatures(response.data);
         this.props.setTitle(t('messageEditor.title'));
         this.props.newMessage(lefebvre.sign);
       } else {
-        this.props.setAvailableSignatures(response);
+        this.props.setAvailableSignatures(response.data);
         this.props.setTitle(t('messageEditor.title'));
         this.props.newMessage(lefebvre.sign);
       }
