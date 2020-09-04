@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "lefebvre-ivivrs",
+  "private_key_id": "c18aa8f99956bc27c98eaeca69b455562879af69",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDOdHlyGGW6WRAD\ny8+hIjmOA3pr4Lc+4a2SWFJ1ui2GPU5IEk0xHb74DAfJ0hy9dUZDeq8XrHdacHrO\nAP3KJxy/b/57u8ndKZfeWGQBG62gU5YWIbZiJV/YvgZ8i576ynZ/eujXxbfGoLMI\nuDhfVzuRCJ65SatK5g2fDV/TuctxCHZ9GDhJ8R3TFMdNh0h+2h6/KFQvP/stGsmi\nJF+hWHHFj7koN2Z3jmI1Btx3okLYEgqkv+1lhdtk5fRYv2E5LzuKJoYa/dpKF2Y9\nY1AAhQCmL0fsNjLzO8dNRTTZyl2I7rNc5/XrGMM16+mCSb7bfF81qzy+BmyogBTm\nTE5cq/LPAgMBAAECggEANkX3US+puoHETIMtO4pgP/2ZFrf15EF2nDS8xLcjVZlT\nNW4ePc24kMO03nDuXj3wsTeUxO/xVmSgW/x1u0lp7MeXylZVHF9dTbXF4Gayz6V5\nnKrTI9z4Y+WclewsaHiGC0A36tVO2RgQyLeJFkM75QYzl7kOnzt4FDpzWRkMKtPa\nFsd/UY5027mu5Gckc4nSJ1ZYOY5KnU79mef8hXvof0EeV5QS+ox82imAZnGpprbs\nIui1WwaZutMBn+gTY0OOFIQwFSkPGnc50epvSU2Z7foBWcObbDL37JDTwquX1YF4\nzEQRSkhCRucMzPY6+65I6m5krvSi2mQCKMIimWbdZQKBgQD1KVczTCTI8oNe21iv\nS5joi342GKb3jp+j2m7JWPSRSgWW0trzY7qjFTM4KqksPx9YO7TS8ZCiuzlCFzl4\nE2IQHBf07z23AdOROi9yWG+X+6xjE6qc74QsKPpIL8OaUzG27jIFzXkQTNii7V4C\n4Zc06mnO8T1XSzUhzECG82uOhQKBgQDXlRDdCNOz81HPLjkx9N1gxVIkr+vMkIqp\nbQP4SVHj5dMzyjqsh0DMijSHlhYVmo09vyHCcGRyAVMtrUsMqc2Yb2mbeHN7tVsH\nwvw3K/PPGJp0oiWPhiMcGneSO1IkhzLdwJgA4u39lwLUwsaK8yreKQAyHPms8RN1\nIx7cMs7uQwKBgBhi51ij71jJvsWVvgmZ1Hj1PzW0WA9x8XFEDhcbMSCuo0WwbbUe\nK3eDaVfh7ngHQ1/seH0vKDr3sqdfVgkarHt7v+pOTe5BUUE173hJUbhlgW1NjIAV\n1yjpXpQFpEhalCxlHzayjKNRcY8rW1mgBQFve9zo5DgltABLp/OEjSNdAoGAU6Q3\nNbreAFxwKjTh5fr+BTSpiShkESsnUVLFjohL6GLbzaUxnIyhXHpmpRBbIyiikglc\n/MaEgiL3dapdit06smDPlY1nKOEVH27MUk+QOZJvIr9iWUwOxTGToL25QgjeeGDn\n2Lgy5Ae6BnhHddOgly9LLyZEzI+AIBtvNrnTxWcCgYEAge+s47chqZ6h1kbipO4O\nt1n/W7oX3sjfCTIsGfOrPya+tBkU3VPEynruSClR2ukk13M0gDkt92FcgvJo2YHB\n7rsHKYi1hPh4fhrdUZlbFX/H6FKfrMSzJ/BYj662fPTt6kxFO6VQvme2YyEKq4cb\nGuDLU6cwTNNrz/zP6kZlj8w=\n-----END PRIVATE KEY-----\n",
+  "client_email": "lefebvre-ivivrs@appspot.gserviceaccount.com",
+  "client_id": "115760287604807540329",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/lefebvre-ivivrs%40appspot.gserviceaccount.com"
+}
