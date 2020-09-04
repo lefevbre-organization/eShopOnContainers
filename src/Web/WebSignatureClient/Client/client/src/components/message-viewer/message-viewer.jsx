@@ -293,10 +293,11 @@ export class MessageViewer extends Component {
       expirationText = i18n.t('signatureViewer.widgets.expiration.notConfigured');
     }
     else {
-      expirationText = i18n.t('signatureViewer.widgets.expiration.expires')
-      .replace('___', (expirationDays.value - passedTime) < 0 ? 0 : expirationDays.value - passedTime );
+      if (expirationDays.value !== "never"){
+        expirationText = i18n.t('signatureViewer.widgets.expiration.expires')
+        .replace('___', (expirationDays.value - passedTime) < 0 ? 0 : expirationDays.value - passedTime );
+      }
     }
-
 
     switch (signature.status) {
       case 'canceled':
