@@ -157,7 +157,7 @@ class MessageList extends Component {
             auth: ''
         }
         this.template = this.gridTemplate;
-        this.menuTemplate = this.menuGridTemplate;
+        this.menuTemplate = this.menuGridTemplate.bind(this);
         this.statusTemplate = this.statusGridTemplate;
         this.recipientsTable = this.recipientsGridTemplate;
         this.menuOptionSelected = this.dropDownOptionSelected;
@@ -171,9 +171,9 @@ class MessageList extends Component {
         this.fields = { text: 'texto', value: 'valor' };
         this.toolbarOptions = ['Search', 'Print', 'PdfExport', 'ExcelExport' ];
         this.grid = null;
-        this.dialogClose = this.dialogClose;
-        this.dialogOpen = this.dialogOpen;
-
+        this.dialogClose = this.dialogClose.bind(this);
+        this.dialogOpen = this.dialogOpen.bind(this);
+        this.toolbarClick = this.toolbarClick.bind(this);
         //Sin firmas 
         this.animationSettings = { effect: 'None' };
         // this.alertButtonRef = element => {
@@ -656,7 +656,6 @@ class MessageList extends Component {
              } 
         };
 
-        this.toolbarClick = this.toolbarClick.bind(this);
         //var firmas = this.props.signatures;
         var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [{}];
         var customAttributes = {class: 'customcss'};
@@ -688,7 +687,7 @@ class MessageList extends Component {
                     hierarchyPrintMode={'All'}
                 >
                     <ColumnsDirective>
-                        <ColumnDirective textAlign='center' headerText={i18n.t('signaturesGrid.columnAction')} template={this.menuTemplate.bind(this)}  width='55' />
+                        <ColumnDirective textAlign='center' headerText={i18n.t('signaturesGrid.columnAction')} template={this.menuTemplate}  width='55' />
                         <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')}/>
                         <ColumnDirective field='Asunto' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSubject')} />
                         <ColumnDirective field='Destinatarios' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSigners')} width= '151' template={this.recipientsTable.bind(this)}/>
@@ -708,8 +707,8 @@ class MessageList extends Component {
                     ref={alertdialog => this.alertDialogInstance = alertdialog} 
                     //target='#target' 
                     //buttons={this.alertButtons} 
-                    open={this.dialogOpen.bind(this)} 
-                    close={this.dialogClose.bind(this)}
+                    open={this.dialogOpen} 
+                    close={this.dialogClose}
                     showCloseIcon={true}
                     //position={ this.position }
                 />
@@ -724,8 +723,8 @@ class MessageList extends Component {
                     ref={dialog => this.confirmDialogInstance = dialog} 
                     //target='#target' 
                     buttons={confirmButtons} 
-                    open={() => this.dialogOpen} 
-                    close={this.dialogClose.bind(this)}
+                    open={this.dialogOpen} 
+                    close={this.dialogClose}
                 />
             </div>
             <style jsx global>
@@ -1102,17 +1101,22 @@ class MessageList extends Component {
                     .e-pager div.e-parentmsgbar {
                         color: #001970;
                     }
-                    .e-grid .e-icon-filter::before, 
-                    .e-grid-menu .e-icon-filter::before {
+                    .e-grid .e-icon-filter::before {
                         font-family: 'lf-font' !important;
                         content: '\e95e';
                         color: #fff;
                         font-size: 12px;
                     }
+                    .e-grid .e-filtered::before {
+                        content: '\eaa3';
+                    }
                     .e-pager .e-pagerdropdown {
                      margin-top: 0 !important; 
                      vertical-align: sub !important;
                      height: 35px !important;
+                    }
+                    .e-dropdown-btn:focus, .e-dropdown-btn.e-btn:focus{
+                        padding: 4px;
                     }
                     .e-grid .e-print::before {
                         content: '\e9b9';
