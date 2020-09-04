@@ -514,7 +514,7 @@ class MessageEditor extends Component {
               background: #e5e8f1 !important;
               color: #001978 !important;
             }
-            #toolsRTE_2 {
+            #toolsRTE_2, .e-control .e-focused .e-lib .e-richtexteditor {
               height: calc(100% - 20px) !important;
             }
           `}
@@ -1042,7 +1042,7 @@ class MessageEditor extends Component {
   }
 
   editorWrapperClick() {
-    this.getEditor().focusIn();
+    this.getEditor();
   }
 
   /**
