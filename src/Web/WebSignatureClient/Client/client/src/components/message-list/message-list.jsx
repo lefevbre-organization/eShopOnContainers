@@ -725,7 +725,7 @@ class MessageList extends Component {
                     //target='#target' 
                     buttons={confirmButtons} 
                     open={() => this.dialogOpen} 
-                    close={() => this.dialogClose}
+                    close={this.dialogClose.bind(this)}
                 />
             </div>
             <style jsx global>
