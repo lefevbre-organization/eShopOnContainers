@@ -60,7 +60,8 @@ class MessageEditor extends Component {
       centinelaDownloadError: (props.attachmentsDownloadError !== undefined) ? props.attachmentsDownloadError : false,
       numPagesOption: 1,
       MaximumSigners: 40,
-      isCallApis: false
+      isCallApis: false,
+      isFileType: false
     };
 
     this.fileInput = null;
@@ -99,18 +100,22 @@ class MessageEditor extends Component {
     this.animationSettings = { effect: 'None' };
     this.handleNumPagesOption = this.handleNumPagesOption.bind(this);
     this.showCancelCenModal = this.showCancelCenModal.bind(this);
+    this.resetIsFileDrop = this.resetIsFileDrop.bind(this);
   }
 
   showCancelCenModal(){
     this.setState({ hideConfirmDialog: true});
   }
 
-
   handleNumPagesOption(option){
     console.log('Se cambia el numpages, option:' + option);
     this.setState({numPagesOption: option});
   }
 
+  resetIsFileDrop(){
+    console.log('Reset isFileDrop');
+    this.setState({isFileType: false});
+  }
 
   dialogClose(){
     if (this.state.centinelaDownloadError === true){
@@ -335,6 +340,8 @@ class MessageEditor extends Component {
               // removeAttachment={this.removeAttachment()}
               onSelectNumPages={this.handleNumPagesOption}
               onConfirmAttachRemoval={this.showCancelCenModal}
+              isFileTypeDrop={this.state.isFileType}
+              resetIsFileDrop={this.resetIsFileDrop}
             ></AttachmentsWidget>
             <ExpirationWidget onChange={this.onChangeExpiration}></ExpirationWidget>
             <RemindersWidget onChange={this.onChangeReminder}></RemindersWidget>
@@ -906,26 +913,30 @@ class MessageEditor extends Component {
   onDrop(event) {
     event.preventDefault();
     event.stopPropagation();
+
     this.setState({ dropZoneActive: false })
+    
     const addAttachment = (file, dataUrl) => {
        const fileType = file.name.split('.');
         if(fileType[1] == 'pdf' || fileType[1] == 'docx' 
         || fileType[1] == 'doc') {
-          const pdfjsLib = require('pdfjs-dist');
-          pdfjsLib.GlobalWorkerOptions.workerSrc = '../../../../assets/scripts/pdf.worker.js'
 
           const newAttachment = {
-          fileName: file.name,
-          size: file.size,
-          contentType: file.type,
-          content: dataUrl.currentTarget.result.replace(
-              /^data:[^;]*;base64,/,
-              ''
-          ),
-          };
+            fileName: file.name,
+            size: file.size,
+            contentType: file.type,
+            content: dataUrl.currentTarget.result.replace(
+                /^data:[^;]*;base64,/,
+                ''
+            ),
+            };
 
-          pdfjsLib.getDocument({data: atob(newAttachment.content)})
-          .promise.then(doc => {
+          if (fileType[1] === 'pdf'){
+            const pdfjsLib = require('pdfjs-dist');
+            pdfjsLib.GlobalWorkerOptions.workerSrc = '../../../../assets/scripts/pdf.worker.js'
+
+            pdfjsLib.getDocument({data: atob(newAttachment.content)})
+            .promise.then(doc => {
               var numPages = doc.numPages;
               newAttachment.pages = numPages;
               console.log('# Document Loaded');
@@ -936,18 +947,31 @@ class MessageEditor extends Component {
                   ? [...updatedMessage.attachments, newAttachment]
                   : [newAttachment];
               this.props.editMessage(updatedMessage);
-          });
+            });
+          } else {
+            const updatedMessage = { ...this.props.editedMessage };
+
+            updatedMessage.attachments = updatedMessage.attachments
+                ? [...updatedMessage.attachments, newAttachment]
+                : [newAttachment];
+            this.props.editMessage(updatedMessage);
+          }
         } else {
             this.setState({isFileType: true});
             console.log('tipo de archivo invalido!');
         }
        
     };
-    Array.from(event.dataTransfer.files).forEach((file) => {
-      const fileReader = new FileReader();
-      fileReader.onload = addAttachment.bind(this, file);
-      fileReader.readAsDataURL(file);
-    });
+    if (this.props.editedMessage.attachments.length === 0){
+      let file = event.dataTransfer.files[event.dataTransfer.files.length-1];
+      //Array.from(event.dataTransfer.files).forEach((file) => {
+        const fileReader = new FileReader();
+        fileReader.onload = addAttachment.bind(this, file);
+        fileReader.readAsDataURL(file);
+        this.setState({isFileType: false});
+      //});
+    }
+    
     return true;
   }
 
