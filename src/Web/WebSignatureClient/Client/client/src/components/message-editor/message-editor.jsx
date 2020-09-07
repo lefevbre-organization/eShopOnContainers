@@ -27,7 +27,8 @@ import {
   createUser,
   decAvailableSignatures,
   notifySignature,
-  cancelSignatureCen
+  cancelSignatureCen,
+  preloadSignatures2
 } from '../../services/api-signaturit';
 import { getUser } from '../../services/accounts';
 //import { createUser, addOrUpdateSignature, getUserSignatures } from '../../services/api-signature';
@@ -513,7 +514,7 @@ class MessageEditor extends Component {
               background: #e5e8f1 !important;
               color: #001978 !important;
             }
-            #toolsRTE_2 {
+            #toolsRTE_2, .e-control .e-focused .e-lib .e-richtexteditor {
               height: calc(100% - 20px) !important;
             }
           `}
@@ -834,6 +835,7 @@ class MessageEditor extends Component {
             lefebvre.idUserApp,
             documentsInfo.length
           );
+          this.props.preloadSignatures(lefebvre.userId)
         });
       }
       this.setState({isCallApis: false});
@@ -1040,7 +1042,7 @@ class MessageEditor extends Component {
   }
 
   editorWrapperClick() {
-    this.getEditor().focusIn();
+    this.getEditor();
   }
 
   /**
@@ -1113,7 +1115,8 @@ const mapDispatchToProps = (dispatch) => ({
   setTitle: title => dispatch(setTitle(title)),
   setUserApp: app => dispatch(ACTIONS.setUserApp(app)),
   setAdminContacts: contacts => dispatch(ACTIONS.setAdminContacts(contacts)),
-  setIdDocuments: id => dispatch(ACTIONS.setIdDocuments(id))
+  setIdDocuments: id => dispatch(ACTIONS.setIdDocuments(id)),
+  preloadSignatures: (userId, auth) => preloadSignatures2(dispatch, userId, auth)
 });
 
 export default connect(

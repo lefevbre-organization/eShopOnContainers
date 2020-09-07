@@ -1140,28 +1140,6 @@ export const cancelSignatureCen = async (guid) => {
 }
 
 export const getAvailableSignatures = async (companyId, numDocuments) => {
-  // return new Promise((resolve, reject) => {
-  //   var myHeaders = new Headers();
-  //   //myHeaders.append("Access-Control-Allow-Origin", "*");
-
-  //   var requestOptions = {
-  //     method: 'GET',
-  //     //headers: myHeaders,
-  //     redirect: 'follow'
-  //   };
-    
-  //   fetch(`${window.API_CHECK_CREDITS}/ComprobarPuedeCrearFirmaDigital?IdClientNav=${companyId}&NumDocuments=${numDocuments}&idUic=1`, requestOptions)
-  //     .then(response => response.text())
-  //     .then(result => {
-  //       //resolve(result);
-  //       resolve(true);
-  //       console.log(result);
-  //     })
-  //     .catch(error => {
-  //       console.log('error', error);
-  //       reject(error);
-  //     });
-  // })
   return new Promise((resolve, reject) => {
     var myHeaders = new Headers();
     myHeaders.append("Accept", "text/plain");
@@ -1171,9 +1149,9 @@ export const getAvailableSignatures = async (companyId, numDocuments) => {
       headers: myHeaders,
       redirect: 'follow'
     };
-    
-    fetch(`${window.API_SIGN_GATEWAY}/Signatures/${companyId}/checkAvailableSignatures/${numDocuments}`, requestOptions)
-      .then(response => response.text())
+
+    fetch(`${window.API_UTILS_GATEWAY}/firm/client/${companyId}/numdocs/${numDocuments}/check`, requestOptions)
+      .then(response => response.json())
       .then(result => resolve(result))
       //.then(result =>  resolve(true)) // Se pone para pruebas
       .catch(error => {
@@ -1187,11 +1165,11 @@ export const notifySignature = async (userId, companyId, numDocuments) => {
   return new Promise((resolve, reject) => {
 
     var requestOptions = {
-      method: 'GET',
+      method: 'POST',
       redirect: 'follow'
     };
-    
-    fetch(`${window.API_CHECK_CREDITS}/CrearFirmaDigital?IdClientNav=${companyId}&idUsuarioPro=${userId}&NumDocuments=${numDocuments}&idUic=1`, requestOptions)
+
+    fetch(`${window.API_UTILS_GATEWAY}/firm/client/${companyId}/user/${userId}/numdocs/${numDocuments}/add`, requestOptions)
       .then(response => response.text())
       .then(result => {
         console.log(result);
