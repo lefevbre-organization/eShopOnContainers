@@ -108,6 +108,7 @@
     "toast-processing": "Processing",
     "toast-process-complete": "Process complete",
     "toast-process-error": "Error",
+    "toast-process-error-exist": "The event name exist",
     "validator-required": "Field is required",
     "notitle": "(no title)"
   },

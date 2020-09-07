@@ -37,7 +37,8 @@ export class Eventtype extends React.Component {
         this.toasts = [
             { content: i18n.t("schedule.toast-processing"), cssClass: 'e-toast-black', icon: '' },
             { content: i18n.t("schedule.toast-process-complete"), cssClass: 'e-toast-black', icon: '' },
-            { content: i18n.t("schedule.toast-process-error"), cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
+            { content: i18n.t("schedule.toast-process-error"), cssClass: 'e-toast-danger', icon: 'e-error toast-icons' },
+            { content: i18n.t("schedule.toast-process-error-exist"), cssClass: 'e-toast-danger', icon: 'e-error toast-icons' }
         ] 
     }
 
@@ -186,10 +187,16 @@ export class Eventtype extends React.Component {
         
       
         addorUpdateEventType(dataEventTypeAPI)
-            .then(result => {   
+            .then(result => {  
 
                 if (result.errors.length > 0) {
-                    throw true
+                    if (result.errors[0].errorcode = 'EventExist') {
+                        this.toastObj.show(this.toasts[3]);
+                        return;
+                    }
+                    else {
+                        throw true
+                    }                   
                 }
                     
                 this.toastObj.timeOut = 1000;
@@ -371,7 +378,7 @@ export class Eventtype extends React.Component {
                         position={this.position}
                         target={this.target}
                         animation={this.toastCusAnimation}
-                        timeOut={1000}
+                        timeOut={2000}
                     >
                     </ToastComponent>
 
