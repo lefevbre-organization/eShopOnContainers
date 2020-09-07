@@ -1108,6 +1108,10 @@ class MessageList extends Component {
                      vertical-align: sub !important;
                      height: 35px !important;
                     }
+                    input.e-input::selection, textarea.e-input::selection, .e-input-group input.e-input::selection, .e-input-group.e-control-wrapper input.e-input::selection, .e-float-input input::selection, .e-float-input.e-control-wrapper input::selection, .e-input-group textarea.e-input::selection, .e-input-group.e-control-wrapper textarea.e-input::selection, .e-float-input textarea::selection, .e-float-input.e-control-wrapper textarea::selection{
+                        background: #6C77AF;
+                        color: #fff;
+                    }
                 `}
                 </style>
             </div>
