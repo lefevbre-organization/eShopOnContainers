@@ -49,7 +49,10 @@ export class CalendarMenu extends PureComponent {
                  <MenuItem id={this.props.id} className="e-controle-CalendarId e-field e-control e-dropdownlist"  onClick={this.props.onCalendarOpenCalnendarView}>
                     <span >{i18n.t("calendar-sidebar.configandshare")}</span>                          
                  </MenuItem>
-                 <MenuItem id={this.props.id} className="e-controle-CalendarId e-field e-control e-dropdownlist" onClick={this.props.onCalendarDelete}>                          
+                      <MenuItem id={this.props.id}
+                          className={`e-controle-CalendarId e-field e-control e-dropdownlist   ${this.props.isPrimary ? "hidden" : ""}`}
+                          onClick={this.props.selected}> 
+
                     <span >{i18n.t("calendar-sidebar.remove")}</span>
                  </MenuItem>
                  <div className='e-rounded-wrap'>

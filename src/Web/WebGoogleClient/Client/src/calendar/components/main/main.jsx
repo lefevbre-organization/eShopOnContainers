@@ -249,14 +249,12 @@ export class Main extends Component {
     }
 
     deleteCalendar(args) {
-
+       
         this.toastObj.show(this.toasts[0]);
         const calendarid = args.currentTarget.id 
 
-        deleteCalendar(args.currentTarget.id)
-        
-            .then(result => {
-                
+        deleteCalendar(args.currentTarget.id)        
+            .then(result => {                
                 this.LoadCalendarList(true)
                 this.sidebarCalendarList();
 
