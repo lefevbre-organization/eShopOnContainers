@@ -380,7 +380,7 @@ class MessageList extends Component {
                         <div id='dropdownbutton-control'>
                             <div className='row'>
                                 <div className="col-xs-12">
-                                    <DropDownButtonComponent cssClass='e-caret-hide' items={items} iconCss={`lf-icon-kebab-menu`} select={this.menuOptionSelected.bind(this)}></DropDownButtonComponent>
+                                    <DropDownButtonComponent cssClass='e-caret-hide signature-poppup' items={items} iconCss={`lf-icon-kebab-menu`} select={this.menuOptionSelected.bind(this)}></DropDownButtonComponent>
                                 </div>
                             </div>
                         </div>
@@ -807,12 +807,20 @@ class MessageList extends Component {
                         font-weight: bold;
                         color: #001970;
                     }
+                    .signature-poppup ul {
+                        min-width: 180px;
+                        border: 1px solid #001970 !important;
+                        padding: 1px 0;
+                    }
+                    .signature-poppup ul .e-item.e-separator{
+                        border-bottom: 1px solid #001970;
+                        margin: 6px 4px;
+                       
+                    }
                     .e-dropdown-popup ul .e-item {
                         font-weight: bold;
                         color: #001970;
                     }
-                    
-                    
                     .e-input-group:not(.e-float-icon-left):not(.e-float-input)::before, 
                     .e-input-group:not(.e-float-icon-left):not(.e-float-input)::after, 
                     .e-input-group.e-float-icon-left:not(.e-float-input) 
@@ -1031,6 +1039,9 @@ class MessageList extends Component {
                       height: 32px;
                       padding: 1px;
                       padding-left: 4px;
+                    }
+                    .e-grid .e-content {
+                      overflow-y: hidden !important;
                     }
                     .e-toolbar .e-tbar-btn:hover {
                       border-radius: 14px;
