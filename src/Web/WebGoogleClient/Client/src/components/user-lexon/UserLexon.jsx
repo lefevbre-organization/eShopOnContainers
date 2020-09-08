@@ -47,6 +47,8 @@ class UserLexon extends Component {
     if (payload) {
       const aux = { ...payload };
       delete aux.exp;
+
+      window.currentUser = aux;
       this.props.setCurrentUser(aux);
     }
 
@@ -81,7 +83,6 @@ class UserLexon extends Component {
         user = `${parametros.get('prov')}${user}`;
       }
     }
-
     this.props.setUser(user);
 
     this.props.setCaseFile({
