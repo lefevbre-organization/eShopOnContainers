@@ -161,12 +161,14 @@ class Main extends Component<Props, State> {
 
   // TODO: Check this any type
   async handlePutUserFromCentinelaConnector(event: any) {
+    debugger
     console.log(
       'HandleEvent Client -> Centinela - PutUserFromCentinelaConnector'
     );
     console.log(event.detail);
 
-    const { user, selectedMessages, addonType } = event.detail;
+    const { user, selectedMessages, addonType, env } = event.detail;
+    (window as any).currentEnv = env;
     if (addonType != null && addonType !== undefined) {
       this.setState({ addonType, addonData: event.detail });
     }
@@ -211,6 +213,7 @@ class Main extends Component<Props, State> {
   }
 
   async handlePutAddonFromCentinelaConnector(event: any) {
+    debugger
     this.setState({ isAddon: true });
   }
 

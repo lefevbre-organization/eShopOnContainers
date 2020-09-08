@@ -4,8 +4,10 @@ import * as moment from 'moment';
 
 export const getProducts = async userId => {
 
-  const url = `${window.API_GATEWAY}/api/v1/mysql/LexonMySql/user/apps?idNavisionUser=${userId}`;
-
+  let url = `${window.API_GATEWAY}/api/v1/utils/userutils/user/apps?idNavisionUser=${userId}`;
+  if(window.currentUser && window.currentUser.env) {
+    url += `&env=${window.currentUser.env}`;
+  }
   try {
     const res = await fetch(url, { method: 'GET' });
       const products = await res.json();

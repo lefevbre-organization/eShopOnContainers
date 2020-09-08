@@ -241,6 +241,7 @@ class Main extends Component {
       idCompany,
       provider = 'DEFAULT',
       account = 'default@default.def',
+      env = 'DEV'
     } = event.detail;
     if (idCaseFile != null && idCaseFile !== undefined) {
       this.setState({
@@ -249,8 +250,11 @@ class Main extends Component {
         idCompany,
         provider,
         account,
+        env
       });
     }
+
+    window.currentEnv = env;
 
     if(provider && provider !== '') {
       this.props.setProvider(provider);

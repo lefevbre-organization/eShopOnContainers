@@ -1,7 +1,10 @@
 //Api that return Lefebvre products by user navision
 export const getProducts = async userId => {
   
-  const url = `${window.API_GATEWAY}/api/v1/mysql/LexonMySql/user/apps?idNavisionUser=${userId}`;
+  let url = `${window.API_GATEWAY}/api/v1/utils/userutils/user/apps?idNavisionUser=${userId}`;
+  if(window.currentUser && window.currentUser.env) {
+    url += `&env=${window.currentUser}`
+  }
 
   try {
     const res = await fetch(url, { method: 'GET' });
