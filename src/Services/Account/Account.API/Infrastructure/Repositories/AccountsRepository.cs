@@ -872,8 +872,8 @@
                     //TraceInfo(result.infos, $"modify event {ev.idEvent} -> {ev.name}");
 
                     //ev.name = eventType.name;
-                    //ev.color = eventType.color;
-                    TraceOutputMessage(result.errors, $"Error, Event with same id {eventType.idEvent}  or same name {ev.name} exist", null, "EventExist");
+                    ev.color = eventType.color;
+                    TraceOutputMessage(result.errors, $"Error, Event with same id {eventType.idEvent}  or same name {ev.name} exist, update the color", null, "EventExist");
                 }
                 else
                 {

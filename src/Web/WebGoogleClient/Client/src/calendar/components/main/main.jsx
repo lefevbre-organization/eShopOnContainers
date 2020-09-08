@@ -585,7 +585,8 @@ export class Main extends Component {
                     bbdd: this.props.lexon.bbdd,
                     idCompany: this.props.lexon.idCompany,
                     provider: this.props.lexon.provider,
-                    account: googleUser.getBasicProfile().getEmail()
+                    account: googleUser.getBasicProfile().getEmail(),
+                    env: window.currentUser?window.currentUser.env || 'DEV' : 'DEV'
                 }
             })
         );

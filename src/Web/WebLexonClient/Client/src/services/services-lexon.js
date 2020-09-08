@@ -15,7 +15,7 @@ if (!global.TextDecoder) {
 }
 export const getCompanies = (user) => {
   return new Promise((resolve, reject) => {
-    const url = `${window.API_GATEWAY}/${COMPANIES}?idUser=${user.idUser}`;
+    const url = `${window.API_GATEWAY}/${COMPANIES}?idUser=${user.idUser}&env=${window.currentEnv}`;
 
     fetch(url, {
       method: 'GET',
@@ -41,7 +41,7 @@ export const getClassifications = async (
   pageSize = 0,
   pageIndex = 1
 ) => {
-  const url = `${window.API_GATEWAY}/${CLASSIFICATIONS}`;
+  const url = `${window.API_GATEWAY}/${CLASSIFICATIONS}?env=${window.currentEnv}`;
   const body = {
     idMail: mailId,
     pageSize,
@@ -74,7 +74,7 @@ export const addClassification = async (
   relatedId,
   typeId
 ) => {
-  const url = `${window.API_GATEWAY}/${CLASSIFICATIONS_ADD}`;
+  const url = `${window.API_GATEWAY}/${CLASSIFICATIONS_ADD}?env=${window.currentEnv}`;
   console.log(listMails);
   const body = {
     listaMails: listMails.map((mail) => {
@@ -130,7 +130,7 @@ export const removeClassification = async (
   idRelated,
   idCompany
 ) => {
-  const url = `${window.API_GATEWAY}/${CLASSIFICATIONS_REMOVE}`;
+  const url = `${window.API_GATEWAY}/${CLASSIFICATIONS_REMOVE}?env=${window.currentEnv}`;
   const body = {
     idMail: idMail,
     idType: idType,
@@ -185,7 +185,7 @@ export const getTypes = () => {
   // 12: {idEntity: 13, name: "Carpetas", extraElements: null}
   // 13: {idEntity: 14, name: "Documentos", extraElements: null}
   return new Promise((resolve, reject) => {
-    const url = `${window.API_GATEWAY}/${TYPES}`;
+    const url = `${window.API_GATEWAY}/${TYPES}?env=${window.currentEnv}`;
     fetch(url, {
       method: 'GET',
     })
@@ -213,7 +213,7 @@ export const getResults = async (
 ) => {
   const ps = pageSize || 100;
   const cp = page || 1;
-  const url = `${window.API_GATEWAY}/${RESULTS}?pageSize=${ps}&pageIndex=${cp}&search=${search}&idUser=${user.idUser}&idCompany=${company.idCompany}&bbdd=${company.bbdd}&idType=${typeId}`;
+  const url = `${window.API_GATEWAY}/${RESULTS}?pageSize=${ps}&pageIndex=${cp}&search=${search}&idUser=${user.idUser}&idCompany=${company.idCompany}&bbdd=${company.bbdd}&idType=${typeId}&env=${window.currentEnv}`;
   const body = {
     pageSize: ps,
     pageIndex: cp,
@@ -254,7 +254,7 @@ export const getResults = async (
 };
 
 export const getCasefile = async (user, bbdd, company, typeId, search) => {
-  const url = `${window.API_GATEWAY}/${RESULTS}`;
+  const url = `${window.API_GATEWAY}/${RESULTS}?env=${window.currentEnv}`;
   const body = {
     search,
     idUser: user,
@@ -280,7 +280,7 @@ export const getCasefile = async (user, bbdd, company, typeId, search) => {
 };
 
 export const getUser = async (userNavision) => {
-  const url = `${window.API_GATEWAY}/${USER}/?idUserNavision=${userNavision}`;
+  const url = `${window.API_GATEWAY}/${USER}/?idUserNavision=${userNavision}&env=${window.currentEnv}`;
 
   try {
     const response = await fetch(url, { method: 'GET' });
@@ -299,7 +299,7 @@ export const getUser = async (userNavision) => {
 
 export const saveUserConfig = (config, userId) => {
   return new Promise((resolve, reject) => {
-    const url = `${window.URL_GET_ACCOUNTS}/${userId}/config/addorupdate`;
+    const url = `${window.URL_GET_ACCOUNTS}/${userId}/config/addorupdate?env=${window.currentEnv}`;
     fetch(url, {
       method: 'POST',
       headers: {
@@ -325,7 +325,7 @@ export const getFolderTree = async (
   idUser,
   includeFiles = false
 ) => {
-  const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/entities/folders/nested`;
+  const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/entities/folders/nested?env=${window.currentEnv}`;
   const body = {
     idFolder,
     nestedLimit: 0,
@@ -359,7 +359,7 @@ export const createFolder = async (
   bbdd,
   idUser
 ) => {
-  const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/entities/folders/add`;
+  const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/entities/folders/add?env=${window.currentEnv}`;
   const body = {
     idParent,
     name,
@@ -405,7 +405,7 @@ export const uploadFile = async (
     nameFile = final;
   }
 
-  const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/entities/files/post`;
+  const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/entities/files/post?env=${window.currentEnv}`;
   const body = {
     idParent: idFolder,
     idEntity,
@@ -439,7 +439,7 @@ export const downloadFile = async (
   idUser,
   progressCallback
 ) => {
-  const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/entities/files/get`;
+  const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/entities/files/get?env=${window.currentEnv}`;
   const body = {
     idEntity,
     bbdd,
@@ -509,7 +509,8 @@ export const getRawAddon = async (addonData) => {
     '&account=' +
     addonData.account +
     '&messageId=' +
-    addonData.messageById;
+    addonData.messageById +
+    `&env=${window.currentEnv}`
 
   try {
     const response = await fetch(url, {
@@ -528,7 +529,7 @@ export const getRawAddon = async (addonData) => {
 };
 
 export const getUserContacts = async (bbdd, idUser) => {
-  const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/classifications/contact/all`;
+  const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/classifications/contact/all?env=${window.currentEnv}`;
   const body = {
     bbdd,
     idUser,
