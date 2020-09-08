@@ -110,16 +110,22 @@
 
 .e-radio:checked + label:hover::before,
 .e-radio:checked + label::before {
-  border-color: #001978;
+  border-color: #001978 !important;
+}
+
+.e-radio:checked + label:hover::after,
+.e-radio:checked + label:hover:after {
+  border-color: #001978 !important;
+  background-color: #001978 !important;
 }
 
 .e-radio:checked + label:hover::after {
-  background-color: #001978;
+  background-color: #001978 !important;
 }
 
 .e-radio:checked + label::after {
-  background-color: #001978;
-  color: #001978;
+  background-color: #001978 !important;
+  color: #001978 !important;
 }
 .e-radio + label .e-label {
   color: #001978;
