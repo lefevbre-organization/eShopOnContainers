@@ -249,12 +249,19 @@ export class Main extends Component {
     }
 
     deleteCalendar(args) {
+       
         this.toastObj.show(this.toasts[0]);
-        deleteCalendar(args.currentTarget.id)
-            .then(result => {
+        const calendarid = args.currentTarget.id 
 
+        deleteCalendar(args.currentTarget.id)        
+            .then(result => {                
                 this.LoadCalendarList(true)
                 this.sidebarCalendarList();
+
+                this.scheduleData = this.scheduleData.filter(function (obj) {
+                    return obj.CalendarId !== calendarid;
+                });
+                this.scheduleObj.refreshEvents();
 
                 this.toastObj.hide('All');
                 this.toastObj.show(this.toasts[1]);
@@ -374,17 +381,39 @@ export class Main extends Component {
         return this.instance.formatDate(value, { skeleton: 'hm' });
     }
 
+    text_truncate (str, length, ending) {
+        if (length == null) {
+            length = 100;
+        }
+        if (ending == null) {
+            ending = '...';
+        }
+        if (str.length > length) {
+            return str.substring(0, length - ending.length) + ending;
+        } else {
+            return str;
+        }
+    };
+
     eventTemplate(props) {
         let colorExist = false;
         if (props.EventType != undefined) {
             colorExist = true
         }
+        let subjectStr = props.Subject;
+        if (props.Subject != undefined) {
+            props.Subject = this.text_truncate(props.Subject, 20)
+        }
+        else {
+            subjectStr = i18n.t("schedule.notitle")
+        }
+
         return (
             <div Style="width: 98%;">
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
-                    <span className='eventicon'>
-                        <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}
+                    <span className='eventicon truncate'>
+                        <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {subjectStr}
                         {colorExist ? (
                             <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot floatleft'></span>
                         ) : (
@@ -416,7 +445,20 @@ export class Main extends Component {
                     }
                     this.scheduleData.find(x => x.Id == event.recurringEventId).RecurrenceException = ParentscheduleException + coma + ExcRecurenceDate
                     continue;
+                }               
+
+                //managing all day from googe calendar issues
+                if (event.end.date) {
+                    let date1 = new Date(event.start.date);
+                    let date2 = new Date(event.end.date);
+                    const diffTime = Math.abs(date1 - date2);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                    if (diffDays == 1) {                       
+                        date2.setDate(date2.getDate() - 1)                    
+                        event.end.date = date2.toISOString();
+                    }
                 }
+
                 let when = event.start.dateTime;
                 let start = event.start.dateTime;
                 let end = event.end.dateTime;
@@ -425,14 +467,6 @@ export class Main extends Component {
                     start = event.start.date;
                     end = event.end.date;
                 }
-
-                //managing all day from googe calendar issues
-                //if (!event.end.date) {
-                //    var difference = event.start.dateTime - event.end.dateTime;
-                //    if (difference == 1) {
-                //        event.end = event.end -1
-                //    }
-                //}
                
 
                 // Recurrence

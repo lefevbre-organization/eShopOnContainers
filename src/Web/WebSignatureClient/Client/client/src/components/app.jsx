@@ -294,7 +294,7 @@ class App extends Component {
             </div>
 
             <div className={styles.productpanel}>
-              <span
+              {/* <span
                 className={styles.productsbutton}
                 isotip={t('productBar.lefebvre')}
                 isotip-position='bottom-end'
@@ -316,7 +316,7 @@ class App extends Component {
                   </IconButton>
                 )}
                 <div className={styles.btnselect}></div>
-              </span>
+              </span> */}
               {/* <span
                 className={styles.productsbutton}
                 isotip={t("productBar.database")}
@@ -616,7 +616,8 @@ class App extends Component {
     var self = this;
     //Starting poll to update the inbox automatically
     //this.startPoll();
-    setInterval(this.startPoll.bind(this),20000);
+    setInterval(this.startPoll.bind(this), 15000);
+    //this.startPoll.bind(this);
     //adding connector App to right slide panel
     //setTimeout(function () { this.registerConnectorApp(); }, 2200);
     this.registerConnectorApp();
@@ -1015,7 +1016,7 @@ class App extends Component {
         //this.props.backendRequestCompleted();
       }
   
-    }, 1000);
+    }, 45000);
   }
 
   /**

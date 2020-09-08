@@ -48,7 +48,7 @@ L10n.load({
       'pager': {
         'pagerDropDown': 'Registros por página',
         'pagerAllDropDown': 'Registros',
-        'totalItemsInfo': '({0} ítems)',
+        'totalItemsInfo': '({0} registros)',
         'currentPageInfo': 'Página {0} de {1}',
         'All': 'Todo',
         'firstPageTooltip': 'Ir a la primera página',
@@ -157,7 +157,7 @@ class MessageList extends Component {
             auth: ''
         }
         this.template = this.gridTemplate;
-        this.menuTemplate = this.menuGridTemplate;
+        this.menuTemplate = this.menuGridTemplate.bind(this);
         this.statusTemplate = this.statusGridTemplate;
         this.recipientsTable = this.recipientsGridTemplate;
         this.menuOptionSelected = this.dropDownOptionSelected;
@@ -171,9 +171,9 @@ class MessageList extends Component {
         this.fields = { text: 'texto', value: 'valor' };
         this.toolbarOptions = ['Search', 'Print', 'PdfExport', 'ExcelExport' ];
         this.grid = null;
-        this.dialogClose = this.dialogClose;
-        this.dialogOpen = this.dialogOpen;
-
+        this.dialogClose = this.dialogClose.bind(this);
+        this.dialogOpen = this.dialogOpen.bind(this);
+        this.toolbarClick = this.toolbarClick.bind(this);
         //Sin firmas 
         this.animationSettings = { effect: 'None' };
         // this.alertButtonRef = element => {
@@ -380,7 +380,7 @@ class MessageList extends Component {
                         <div id='dropdownbutton-control'>
                             <div className='row'>
                                 <div className="col-xs-12">
-                                    <DropDownButtonComponent cssClass='e-caret-hide' items={items} iconCss={`lf-icon-kebab-menu`} select={this.menuOptionSelected.bind(this)}></DropDownButtonComponent>
+                                    <DropDownButtonComponent cssClass='e-caret-hide signature-poppup' items={items} iconCss={`lf-icon-kebab-menu`} select={this.menuOptionSelected.bind(this)}></DropDownButtonComponent>
                                 </div>
                             </div>
                         </div>
@@ -656,10 +656,10 @@ class MessageList extends Component {
              } 
         };
 
-        this.toolbarClick = this.toolbarClick.bind(this);
         //var firmas = this.props.signatures;
         var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [{}];
         var customAttributes = {class: 'customcss'};
+        document.body.style.background = "white";
         return( (firmas && firmas.length > 0) ?
             <div className={styles['main-grid']}>
             <div>
@@ -674,7 +674,7 @@ class MessageList extends Component {
                     allowExcelExport={true}
                     allowTextWrap={false}
                     height='100%'
-                    pageSettings={{pageCount: 5, pageSize: 10, pageSizes: true, pagesSizeList: []}}//pageSizeList: [8,12,9,5]}} 
+                    pageSettings={{pageCount: 5, pageSize: 10, pageSizes: [5, 10, 20, 50, 75, 100] }}//pageSizeList: [8,12,9,5]}} 
                     // rowSelected={event => {
                     //     this.onRowSelected(event);
                     // }}
@@ -687,12 +687,12 @@ class MessageList extends Component {
                     hierarchyPrintMode={'All'}
                 >
                     <ColumnsDirective>
-                        <ColumnDirective textAlign='center' headerText={i18n.t('signaturesGrid.columnAction')} template={this.menuTemplate.bind(this)}  width='55' />
+                        <ColumnDirective textAlign='center' headerText={i18n.t('signaturesGrid.columnAction')} template={this.menuTemplate}  width='55' />
                         <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')}/>
                         <ColumnDirective field='Asunto' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSubject')} />
                         <ColumnDirective field='Destinatarios' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSigners')} width= '151' template={this.recipientsTable.bind(this)}/>
                         <ColumnDirective field='Fecha' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDate')} width='115'/>
-                        <ColumnDirective field='Estado' textAlign='Left' headerText={i18n.t('signaturesGrid.columnStatus')} width='110' allowFiltering={false} template={this.statusTemplate.bind(this)} />
+                        <ColumnDirective field='Estado' textAlign='Left' headerText={i18n.t('signaturesGrid.columnStatus')} width='110' template={this.statusTemplate.bind(this)} />
                     </ColumnsDirective>
                     <Inject services={[Filter, Page, Resize, Sort, Toolbar, PdfExport, ExcelExport]}/>
                     {/* <Inject services={[Resize]}/> */}
@@ -707,8 +707,8 @@ class MessageList extends Component {
                     ref={alertdialog => this.alertDialogInstance = alertdialog} 
                     //target='#target' 
                     //buttons={this.alertButtons} 
-                    open={this.dialogOpen.bind(this)} 
-                    close={this.dialogClose.bind(this)}
+                    open={this.dialogOpen} 
+                    close={this.dialogClose}
                     showCloseIcon={true}
                     //position={ this.position }
                 />
@@ -723,8 +723,8 @@ class MessageList extends Component {
                     ref={dialog => this.confirmDialogInstance = dialog} 
                     //target='#target' 
                     buttons={confirmButtons} 
-                    open={() => this.dialogOpen} 
-                    close={() => this.dialogClose}
+                    open={this.dialogOpen} 
+                    close={this.dialogClose}
                 />
             </div>
             <style jsx global>
@@ -732,6 +732,11 @@ class MessageList extends Component {
                     .e-headercell{
                         background-color: #001978 !important;
                         color: white;  
+                    }
+                    div.e-gridheader.e-lib.e-droppable > div > table > 
+                    thead > tr > th.e-headercell.e-defaultcursor {
+                        position: static;
+                        border-right: 1px solid;
                     }
                     .bola-firmantes.en-progreso .e-dropdown-btn.e-dropdown-btn.e-btn{
                         border-radius: 20px;
@@ -802,12 +807,20 @@ class MessageList extends Component {
                         font-weight: bold;
                         color: #001970;
                     }
+                    .signature-poppup ul {
+                        min-width: 180px;
+                        border: 1px solid #001970 !important;
+                        padding: 1px 0;
+                    }
+                    .signature-poppup ul .e-item.e-separator{
+                        border-bottom: 1px solid #001970;
+                        margin: 6px 4px;
+                       
+                    }
                     .e-dropdown-popup ul .e-item {
                         font-weight: bold;
                         color: #001970;
                     }
-                    
-                    
                     .e-input-group:not(.e-float-icon-left):not(.e-float-input)::before, 
                     .e-input-group:not(.e-float-icon-left):not(.e-float-input)::after, 
                     .e-input-group.e-float-icon-left:not(.e-float-input) 
@@ -1027,6 +1040,9 @@ class MessageList extends Component {
                       padding: 1px;
                       padding-left: 4px;
                     }
+                    .e-grid .e-content {
+                      overflow-y: hidden !important;
+                    }
                     .e-toolbar .e-tbar-btn:hover {
                       border-radius: 14px;
                     }
@@ -1096,17 +1112,22 @@ class MessageList extends Component {
                     .e-pager div.e-parentmsgbar {
                         color: #001970;
                     }
-                    .e-grid .e-icon-filter::before, 
-                    .e-grid-menu .e-icon-filter::before {
+                    .e-grid .e-icon-filter::before {
                         font-family: 'lf-font' !important;
                         content: '\e95e';
                         color: #fff;
                         font-size: 12px;
                     }
+                    .e-grid .e-filtered::before {
+                        content: '\eaa3';
+                    }
                     .e-pager .e-pagerdropdown {
                      margin-top: 0 !important; 
                      vertical-align: sub !important;
                      height: 35px !important;
+                    }
+                    .e-dropdown-btn:focus, .e-dropdown-btn.e-btn:focus{
+                        padding: 4px;
                     }
                     .e-grid .e-print::before {
                         content: '\e9b9';
@@ -1117,7 +1138,7 @@ class MessageList extends Component {
                         font-family: 'lf-font' !important;
                     }
                     .e-grid .e-excelexport::before {
-                        content: '\e93d';
+                        content: '\e955';
                         font-family: 'lf-font' !important;
                     }
                 `}

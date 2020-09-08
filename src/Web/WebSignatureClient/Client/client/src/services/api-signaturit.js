@@ -105,7 +105,7 @@ const coordinates = [
 */
 
 // Gets all the signatures associated with an account
-export const getSignatures = async () => {
+export const getSignaturesSignaturit = async () => {
   var request = require('request');
   var options = {
       'method': 'GET',
@@ -628,6 +628,24 @@ export const createTemplate = async (templateInfo) => {
 export function preloadSignatures2(dispatch, filters, auth) {
   return new Promise((resolve, reject) => {
 
+    let offset = 0;
+
+    getSignatures(filters, auth, offset)
+    .then(signatures => {
+      signatures = calculateStatus(signatures);
+      console.log({signatures});
+      dispatch(preDownloadSignatures(signatures));
+      resolve(signatures);
+    })
+    .catch(error => {
+      console.log('error', error);
+      reject(error);
+    });  
+  })
+}
+
+export const getSignatures = async (filters, auth, offset, signatures = []) => {
+  return new Promise((resolve, reject) => {
     var myHeaders = new Headers();
     myHeaders.append("Authorization", `${auth}`);
     
@@ -637,17 +655,21 @@ export function preloadSignatures2(dispatch, filters, auth) {
       redirect: 'follow'
     };
     
-    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/getSignatures/${filters}`, requestOptions)
+    fetch(`${window.API_SIGN_GATEWAY}/Signaturit/getSignatures/${filters}&offset=${offset}`, requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result);
-        let signatures = result;
-        console.log('Datos recibidos de signaturit - GetSignatures:');
-        console.log({signatures});
-        signatures = calculateStatus(signatures);
-        console.log({signatures});
-        dispatch(preDownloadSignatures(signatures));
-        resolve(signatures);
+        signatures = signatures.concat(result);
+        if (result.length === 100){
+          resolve(getSignatures(filters, auth, offset + result.length, signatures));
+        } else {
+          // console.log('Datos recibidos de signaturit - GetSignatures:');
+          // console.log({signatures});
+          // signatures = calculateStatus(signatures);
+          // console.log({signatures});
+          // dispatch(preDownloadSignatures(signatures));
+          resolve(signatures);
+        }
       })
       .catch(error => {
         console.log('error', error);
@@ -778,8 +800,8 @@ export function preloadSignatures2(dispatch, filters, auth) {
     fetch(`${window.API_SIGN_GATEWAY}/Signaturit/newSignature`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        resolve(result)
         console.log(result)
+        resolve(result)
       })
       .catch(error => {
         reject(error);
@@ -1118,28 +1140,6 @@ export const cancelSignatureCen = async (guid) => {
 }
 
 export const getAvailableSignatures = async (companyId, numDocuments) => {
-  // return new Promise((resolve, reject) => {
-  //   var myHeaders = new Headers();
-  //   //myHeaders.append("Access-Control-Allow-Origin", "*");
-
-  //   var requestOptions = {
-  //     method: 'GET',
-  //     //headers: myHeaders,
-  //     redirect: 'follow'
-  //   };
-    
-  //   fetch(`${window.API_CHECK_CREDITS}/ComprobarPuedeCrearFirmaDigital?IdClientNav=${companyId}&NumDocuments=${numDocuments}&idUic=1`, requestOptions)
-  //     .then(response => response.text())
-  //     .then(result => {
-  //       //resolve(result);
-  //       resolve(true);
-  //       console.log(result);
-  //     })
-  //     .catch(error => {
-  //       console.log('error', error);
-  //       reject(error);
-  //     });
-  // })
   return new Promise((resolve, reject) => {
     var myHeaders = new Headers();
     myHeaders.append("Accept", "text/plain");
@@ -1149,9 +1149,9 @@ export const getAvailableSignatures = async (companyId, numDocuments) => {
       headers: myHeaders,
       redirect: 'follow'
     };
-    
-    fetch(`${window.API_SIGN_GATEWAY}/Signatures/${companyId}/checkAvailableSignatures/${numDocuments}`, requestOptions)
-      .then(response => response.text())
+
+    fetch(`${window.API_UTILS_GATEWAY}/firm/client/${companyId}/numdocs/${numDocuments}/check`, requestOptions)
+      .then(response => response.json())
       .then(result => resolve(result))
       //.then(result =>  resolve(true)) // Se pone para pruebas
       .catch(error => {
@@ -1165,11 +1165,11 @@ export const notifySignature = async (userId, companyId, numDocuments) => {
   return new Promise((resolve, reject) => {
 
     var requestOptions = {
-      method: 'GET',
+      method: 'POST',
       redirect: 'follow'
     };
-    
-    fetch(`${window.API_CHECK_CREDITS}/CrearFirmaDigital?IdClientNav=${companyId}&idUsuarioPro=${userId}&NumDocuments=${numDocuments}&idUic=1`, requestOptions)
+
+    fetch(`${window.API_UTILS_GATEWAY}/firm/client/${companyId}/user/${userId}/numdocs/${numDocuments}/add`, requestOptions)
       .then(response => response.text())
       .then(result => {
         console.log(result);

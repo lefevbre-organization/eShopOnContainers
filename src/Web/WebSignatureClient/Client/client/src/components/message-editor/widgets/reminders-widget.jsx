@@ -102,7 +102,7 @@ export const RemindersWidget = ({ onChange }) => {
               className={`${mainCss['mdc-button']} ${mainCss['mdc-button--unelevated']}  ${styles['action-button']} `}
               onClick={() => {
                 setEnabled(false);
-                setOptionSelected(option);
+                (isNaN(days)) ? setOptionSelected(0) : setOptionSelected(option);
                 setOption(0);
 
                 onChange && onChange({ option: option, data: days });

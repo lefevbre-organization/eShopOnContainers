@@ -193,7 +193,7 @@ class UserLefebvre extends Component {
                         }
 
                         getAvailableSignatures(idUserApp, idDocuments.length)
-                        .then(response => this.props.setAvailableSignatures(response))
+                        .then(response => this.props.setAvailableSignatures(response.data))
                         .catch(err => {
                             console.log(err);
                             this.props.setAvailableSignatures(true); // Esto se pone mientras el equipo encargado del api lo arregla

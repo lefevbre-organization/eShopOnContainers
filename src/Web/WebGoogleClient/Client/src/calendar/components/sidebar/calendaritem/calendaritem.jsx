@@ -63,7 +63,8 @@ export class CalendarItem extends PureComponent {
                           color={this.props.color}
                           onCalendarOpenCalnendarView={this.props.onCalendarOpenCalnendarView}
                           onCalendarDelete={this.props.onCalendarDelete}
-                          onCalendarColorModify={this.props.onCalendarColorModify}
+                          onCalendarColorModify={this.props.onCalendarColorModify}     
+                          isPrimary={this.props.primary}  
                       />   
               }
                              

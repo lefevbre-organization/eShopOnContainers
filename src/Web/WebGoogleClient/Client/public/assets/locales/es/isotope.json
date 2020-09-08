@@ -108,7 +108,9 @@
     "toast-processing": "Procesando",
     "toast-process-complete": "Proceso completado",
     "toast-process-error": "Error",
-    "validator-required": "Campo obligatorio"
+    "toast-process-error-exist": "Ya existe un tipo de evento con el mismo nombre",
+    "validator-required": "Campo obligatorio",
+    "notitle": "(Sin título)"
   },
   "calendar": {
     "title": "Configuración",
