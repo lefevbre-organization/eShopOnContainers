@@ -656,9 +656,23 @@ export class Main extends Component {
             );
         });
 
+       
+
         this.sidebarCalendarList();
-        this.LoadCalendarList();
-        this.getlistEventTypes();
+
+        let value = 100;
+        if (navigator.userAgent.toLowerCase().indexOf('firefox') > 0) {
+            value = 250;
+        }        
+
+        let obj = this;
+        setTimeout(function () {
+            obj.LoadCalendarList();
+            obj.getlistEventTypes()
+        }, value);
+       
+       
+       
     }
 
     onDataBindingEventTypeList(items) {
