@@ -27,7 +27,9 @@ import com.sun.mail.imap.IMAPMessage;
 import javax.mail.*;
 import javax.mail.Message.RecipientType;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.validation.constraints.NotEmpty;
+import java.io.IOException;
 import java.io.Serializable;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -61,6 +63,7 @@ public class Message extends IsotopeResource implements Serializable {
     private Boolean seen;
     private Boolean recent;
     private Boolean deleted;
+    private Boolean hasAttachments;
     private String content;
     private List<Attachment> attachments;
     private List<String> references;
@@ -178,6 +181,14 @@ public class Message extends IsotopeResource implements Serializable {
         this.content = content;
     }
 
+    public Boolean getHasAttachments() {
+        return hasAttachments;
+    }
+
+    public void setHasAttachments(Boolean hasAttachments) {
+        this.hasAttachments = hasAttachments;
+    }
+
     public List<Attachment> getAttachments() {
         return attachments;
     }
@@ -275,7 +286,21 @@ public class Message extends IsotopeResource implements Serializable {
                 ret.setSeen(flags.contains(Flags.Flag.SEEN));
                 ret.setRecent(flags.contains(Flags.Flag.RECENT));
                 ret.setDeleted(flags.contains(Flags.Flag.DELETED));
-            } catch (ReflectiveOperationException | MessagingException e) {
+
+                String contentType = imapMessage.getContentType();
+                if (contentType.contains("multipart")) {
+                    // this message may contain attachment
+                    Multipart multiPart = (Multipart) imapMessage.getContent();
+                    for (int i = 0; i < multiPart.getCount(); i++) {
+                        MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(i);
+                        if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
+                            ret.setHasAttachments(true);
+                            break;
+                        }
+                    }
+                }
+
+            } catch (ReflectiveOperationException | MessagingException | IOException e) {
                 throw new IsotopeException("Error parsing IMAP Message", e);
             }
         } else {

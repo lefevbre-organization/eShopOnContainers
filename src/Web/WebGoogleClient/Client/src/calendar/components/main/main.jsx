@@ -49,6 +49,9 @@ import { Popup } from '@syncfusion/ej2-popups';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 import { Eventtype } from '../eventtypes/eventtype';
 import { getEventTypes } from "../../../api/accounts";
+//import HeaderAddress from '../../../components/compose-message/header-address';
+import AttendeeAddress from './attendee/attendee-address';
+
 
 
 export class Main extends Component {
@@ -71,6 +74,8 @@ export class Main extends Component {
         this.calendarColorModify = this.calendarColorModify.bind(this);
         this.onEventRendered = this.onEventRendered.bind(this);
         this.buildEventoGoogle = this.buildEventoGoogle.bind(this);
+        this.handleAddAddress = this.addAddress.bind(this);
+        this.handleRemoveAddress = this.removeAddress.bind(this);
         //this.onBefoireClose = this.onBefoireClose.bind(this);
 
         this.cancel = false;
@@ -99,9 +104,10 @@ export class Main extends Component {
             hidePromptDialog: false,
             hidePromptEventTypeDialog: false,
             calendarToEdit: undefined,
-            tagAttendess: [],
+            //tagAttendess: [],
             reminders: [],
-            eventType: undefined
+            eventType: undefined,
+            to2:[]
             //externalcomponent: "<LexonComponent sidebarDocked={this.onSetSidebarDocked} />"
         };
         this.handleGetUserFromLexonConnector = this.handleGetUserFromLexonConnector.bind(
@@ -192,6 +198,7 @@ export class Main extends Component {
             }
         ];
 
+       
     }
 
     async setGlobalization() {
@@ -242,12 +249,19 @@ export class Main extends Component {
     }
 
     deleteCalendar(args) {
+       
         this.toastObj.show(this.toasts[0]);
-        deleteCalendar(args.currentTarget.id)
-            .then(result => {
+        const calendarid = args.currentTarget.id 
 
+        deleteCalendar(args.currentTarget.id)        
+            .then(result => {                
                 this.LoadCalendarList(true)
                 this.sidebarCalendarList();
+
+                this.scheduleData = this.scheduleData.filter(function (obj) {
+                    return obj.CalendarId !== calendarid;
+                });
+                this.scheduleObj.refreshEvents();
 
                 this.toastObj.hide('All');
                 this.toastObj.show(this.toasts[1]);
@@ -367,17 +381,39 @@ export class Main extends Component {
         return this.instance.formatDate(value, { skeleton: 'hm' });
     }
 
+    text_truncate (str, length, ending) {
+        if (length == null) {
+            length = 100;
+        }
+        if (ending == null) {
+            ending = '...';
+        }
+        if (str.length > length) {
+            return str.substring(0, length - ending.length) + ending;
+        } else {
+            return str;
+        }
+    };
+
     eventTemplate(props) {
         let colorExist = false;
         if (props.EventType != undefined) {
             colorExist = true
         }
+        let subjectStr = props.Subject;
+        if (props.Subject != undefined) {
+            props.Subject = this.text_truncate(props.Subject, 20)
+        }
+        else {
+            subjectStr = i18n.t("schedule.notitle")
+        }
+
         return (
             <div Style="width: 98%;">
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
-                    <span className='eventicon'>
-                        <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}
+                    <span className='eventicon truncate'>
+                        <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {subjectStr}
                         {colorExist ? (
                             <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot floatleft'></span>
                         ) : (
@@ -409,7 +445,20 @@ export class Main extends Component {
                     }
                     this.scheduleData.find(x => x.Id == event.recurringEventId).RecurrenceException = ParentscheduleException + coma + ExcRecurenceDate
                     continue;
+                }               
+
+                //managing all day from googe calendar issues
+                if (event.end.date) {
+                    let date1 = new Date(event.start.date);
+                    let date2 = new Date(event.end.date);
+                    const diffTime = Math.abs(date1 - date2);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                    if (diffDays == 1) {                       
+                        date2.setDate(date2.getDate() - 1)                    
+                        event.end.date = date2.toISOString();
+                    }
                 }
+
                 let when = event.start.dateTime;
                 let start = event.start.dateTime;
                 let end = event.end.dateTime;
@@ -418,6 +467,7 @@ export class Main extends Component {
                     start = event.start.date;
                     end = event.end.date;
                 }
+               
 
                 // Recurrence
                 let recurrenceRule
@@ -675,7 +725,7 @@ export class Main extends Component {
         if (values.RecurrenceRule != undefined) { event.recurrence = ['RRULE:' + values.RecurrenceRule] };
 
         //Atendees
-        let arr = this.state.tagAttendess
+        let arr = this.state.to2
         let ateendeeObj = [];
         if (arr.length > 0) {
             Object.keys(arr).forEach(function (key) {
@@ -772,7 +822,37 @@ export class Main extends Component {
         );
     }
 
+    ToogleCalendarResourceDirective(args) {        
+        if (args.data.Id != undefined) {
+            console.log(this.scheduleObj.resourceCollection[0].cssClassField)
+            ////  this.scheduleObj.resourceCollection[0].cssClassField = "hidden"
+            var cal = document.getElementsByClassName("e-CalendarId-container");
+            cal[0].classList.add('disabledbutton');
+
+        }
+        else {
+            var cal = document.getElementsByClassName("e-CalendarId-container");
+            cal[0].classList.remove('disabledbutton');
+        }    
+    }
+
     onPopupOpen(args) {
+
+        //Not allow to change calendar property on update events
+        this.ToogleCalendarResourceDirective(args);
+
+        //Not allow to change calendar property on update events
+        if (args.data.Id != undefined) {
+            console.log(this.scheduleObj.resourceCollection[0].cssClassField)
+            ////  this.scheduleObj.resourceCollection[0].cssClassField = "hidden"
+            var cal = document.getElementsByClassName("e-CalendarId-container");
+            cal[0].classList.add('disabledbutton');
+
+        }
+        else {
+            var cal = document.getElementsByClassName("e-CalendarId-container");
+            cal[0].classList.remove('disabledbutton');
+        }         
 
 
         // default values for EventType coming from event args
@@ -795,10 +875,10 @@ export class Main extends Component {
             Object.keys(args.data.Attendees).forEach(function (key) {
                 arr.push(args.data.Attendees[key].email);
             });
-            this.setState({ tagAttendess: arr })
+            this.setState({ to2: arr })
         }
         else {
-            this.setState({ tagAttendess: [] })
+            this.setState({ to2: [] })
         }
 
         // default values for Reminders coming from event args
@@ -877,13 +957,17 @@ export class Main extends Component {
                 this.drowDownListEventType.appendTo(inputEle);
                 inputEle.setAttribute('name', 'EventType');
 
+                // Adding attendees2 tag element
+                let containerTab2 = createElement('div', { className: 'custom-field-container' });
+                rowAttendes.appendChild(containerTab2);
+                var nodeA = ReactDOM.findDOMNode(this.tagObjHead);
+                containerTab2.appendChild(nodeA);
 
-
-                // Adding attendees tag element
-                let containerTab = createElement('div', { className: 'custom-field-container' });
-                rowAttendes.appendChild(containerTab);
-                var nodeA = ReactDOM.findDOMNode(this.tagObj);
-                containerTab.appendChild(nodeA);
+                //// Adding attendees tag element
+                //let containerTab = createElement('div', { className: 'custom-field-container' });
+                //rowAttendes.appendChild(containerTab);
+                //var nodeA = ReactDOM.findDOMNode(this.tagObj);
+                //containerTab.appendChild(nodeA);
 
                 // Adding reminder element  
                 let containerRem = createElement('div', { className: 'custom-field-container' });
@@ -981,13 +1065,12 @@ export class Main extends Component {
                     idEvent = args.data.Id
                 }
 
-
                 var desc = this.scheduleObj.dataModule.dataManager.dataSource.json.find(function (e) {
                     return e.Id == idEvent
                 })
 
                 if (desc) {
-                    console.log(desc.description)
+                   
                     //reset reminders
                     desc.Reminders = [];
 
@@ -1007,7 +1090,7 @@ export class Main extends Component {
                     desc.Attendees = [];
 
                     //Update Attendess    
-                    let att = this.state.tagAttendess;
+                    let att = this.state.to2;
                     if (att != undefined) {
                         Object.keys(att).forEach(function (key) {
                             desc.Attendees.push({ 'email': att[key] });
@@ -1029,6 +1112,8 @@ export class Main extends Component {
                         }
                     }
 
+                   
+
                 }
 
                 //Update the schedule datasource
@@ -1038,6 +1123,7 @@ export class Main extends Component {
                 event = this.buildEventoGoogle(args.data);
 
                 let itemToModify = args.data.Id
+                //let itemToModify = desc.CalendarId
                 let calendarToModify = args.data.CalendarId
                 if (args.data.occurrence != undefined) {
 
@@ -1090,7 +1176,7 @@ export class Main extends Component {
                         args.data[0].ImageName = "icon-lefebvre-bl";
                         args.data[0].Attendees = result.attendees;
                         //args.data[0].ImageName = "lefebvre";
-                        this.setState({ tagAttendess: [] })
+                        this.setState({ to2: [] })
 
                         args.data[0].Reminders = result.reminders.overrides;
 
@@ -1107,24 +1193,25 @@ export class Main extends Component {
                                 args.data[0].EventType = eventType;
                             }
                         }
-
-
-                        // this.scheduleObj.refreshEvents();
+                      
                         this.toastObj.show(this.toasts[1]);
                     })
                     .catch(error => {
-                        this.toastObj.show(this.toasts[2]);
-                        console.log('error ->', error);
+                        if (error.result.error.errors[0] != undefined) {
+                            if (error.result.error.errors[0].reason == "requiredAccessLevel") {  
+                                this.toastObj.show({ content: error.result.error.errors[0].message, cssClass: 'e-toast-danger', icon: '' },);
+                                console.log('error ->', error); 
+                                delete this.scheduleObj.dataModule.dataManager.dataSource.json.splice(-1, 1);
+                                this.scheduleObj.refreshEvents();
+                                return;
+                            }
+                        }
+                        else {
+                            this.toastObj.show(this.toasts[2]);
+                            console.log('error ->', error);
+                        }                       
                     })
-                //    }
-                //    else {
-                //        //this.scheduleObj.saveEvent(args.data[0]);
-                //        args.cancel = true;
-                //    }
-                //}
-
-
-
+              
                 break;
 
             case 'eventRemoved':
@@ -1256,11 +1343,29 @@ export class Main extends Component {
             })
         }
 
+        // remove non calendar permissions
+        //var result = [];
+        //for (var i = 0; i < this.resourceCalendarData.length; i++) {
+        //    if (this.resourceCalendarData[i].role === 'owner' ) {
+        //        result.push(this.resourceCalendarData[i]);
+        //    }
+        //}
+        //this.resourceCalendarData = result;
+
+
         this.resourceCalendarData.sort(function (a, b) {
             if (a.id === calendar) { return -1; }
             //if (a.firstname > {b.firstname) { return 1; }
-            return 0;
+            return 1;
         })
+
+
+       
+
+       
+
+
+
     }
     predicateQueryEvents(calendarList, predicate) {
         if (calendarList != undefined) {
@@ -1331,7 +1436,7 @@ export class Main extends Component {
     }
 
     setEmailTags(tag) {
-        this.setState({ tagAttendess: [...tag] })
+        this.setState({ to2: [...tag] })
     }
 
     onActionBegin(args) {
@@ -1349,6 +1454,42 @@ export class Main extends Component {
         this.profilePopup.hide();
         this.openEventTypeView();
     }
+
+    /**
+   * Adds an address to the list matching the id.
+   *
+   * @param id
+   * @param address
+   */
+    addAddress(id, address) {
+        if (address.length > 0) {
+            if (id === 'to') {
+                const to2 = [...this.state.to2];
+                to2.push(address);
+                const to = to2.join(',');
+                this.setState({ to2, to });
+               // this.props.setMailContacts(to);
+           
+            }
+        }
+    }
+
+    /**
+   * Removes the address from the under the field matching the id.
+   *
+   * @param id
+   * @param address
+   */
+    removeAddress(id, address) {
+        if (id === 'to') {
+            const to2 = [...this.state.to2];
+            to2.splice(to2.indexOf(address), 1);
+            const to = to2.join(',');
+            this.setState({ to2, to });
+           // this.props.setMailContacts(to);
+        }
+    }
+
 
     render() {
         const { t } = this.props;
@@ -1442,6 +1583,18 @@ export class Main extends Component {
                             />
                             <article className='d-flex flex-column position-relative'>
                                 <div className="hidden">
+                                    <AttendeeAddress
+                                        id='to'
+                                        addresses={this.state.to2}
+                                        onAddressAdd={this.handleAddAddress}
+                                        onAddressRemove={this.handleRemoveAddress}
+                                        onAddressMove={this.handleMoveAddress}
+                                        getAddresses={this.props.getAddresses}
+                                        label={i18n.t('compose-message.to')}                                       
+                                        ref={tag => this.tagObjHead = tag}
+                                    />
+                                </div>
+                                {/*  <div className="hidden">
                                     <ReactTagInput
                                         onkeypress="alert('')"
                                         tags={this.state.tagAttendess}
@@ -1462,7 +1615,7 @@ export class Main extends Component {
                                             return isEmail;
                                         }}
                                     />
-                                </div>
+                                </div>*/}
 
                                 <div className="hidden">
                                     <Reminder
@@ -1517,7 +1670,7 @@ export class Main extends Component {
                                                 </ViewsDirective>
                                                 <ResourcesDirective>
                                                     {/*<ResourceDirective field='eventType' title={i18n.t("schedule.eventtype")} name='eventType' allowMultiple={false} dataSource={this.eventTypeDataSource} textField='text' idField='id' colorField='backgroundColor' />  */}
-                                                    <ResourceDirective ref={cal => this.calendarObj = cal} field='CalendarId' title={i18n.t("calendar-sidebar.mycalendars")} name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor' />
+                                                    <ResourceDirective ref={this.calendarObj} field='CalendarId' title={i18n.t("calendar-sidebar.mycalendars")} name='Calendars' allowMultiple={false} dataSource={this.resourceCalendarData} textField='summary' idField='id' colorField='backgroundColor' />
                                                 </ResourcesDirective>
                                                 <Inject services={[Day, Week, WorkWeek, Month, Agenda, Resize, DragAndDrop]} />
                                             </ScheduleComponent>

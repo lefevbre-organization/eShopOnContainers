@@ -104,15 +104,17 @@
     "eventtype": "Tipo de evento",
     "profesional-event": "Evento profesional",
     "personal-event": "Evento personal",
-    "attendees": "Invite a los asistentes y presione enter",
+    "attendees": "Invite a los asistentes",
     "toast-processing": "Procesando",
     "toast-process-complete": "Proceso completado",
     "toast-process-error": "Error",
-    "validator-required": "Campo obligatorio"
+    "toast-process-error-exist": "Ya existe un tipo de evento con el mismo nombre",
+    "validator-required": "Campo obligatorio",
+    "notitle": "(Sin título)"
   },
   "calendar": {
     "title": "Configuración",
-    "modify": "Modidicar",
+    "modify": "Modificar",
     "add": "Añadir calendario",
     "name": "Nombre",
     "description": "Descripción",

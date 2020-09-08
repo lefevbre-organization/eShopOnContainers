@@ -113,7 +113,7 @@ class MessageList extends Component {
     const selected =
       this.props.selectedMessages.indexOf(message.messageId) > -1;
 
-    let attachments = false;
+    let attachments = message.hasAttachments;
     if (
       this.props.downloadedMessages[message.messageId] &&
       this.props.downloadedMessages[message.messageId].attachments

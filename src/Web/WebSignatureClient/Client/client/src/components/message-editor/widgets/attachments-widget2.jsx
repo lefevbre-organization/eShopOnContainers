@@ -10,12 +10,12 @@ class AttachmentsWidget extends Component{
         super(props);
         this.state = {
             optionSelected: 1,
-            isFileType: false
+            isFileType: false,
+            isFileTypeDrop: false
         };
         this.fileInput = null;
         this.onAttachButton = this.onAttachButton.bind(this);
         this.onAttachSelected = this.onAttachSelected.bind(this);
-    
     }
 
     componentDidMount() {
@@ -23,6 +23,10 @@ class AttachmentsWidget extends Component{
           this.fileInput.onchange = this.onAttachSelected;
         }
     }
+
+    componentWillReceiveProps(props) {
+        this.setState({ isFileTypeDrop: props.isFileTypeDrop })
+      }
 
     render(){
         return (
@@ -48,12 +52,12 @@ class AttachmentsWidget extends Component{
                             type='file'
                             name='name'
                             style={{ display: 'none' }}
-                            multiple={true}
+                            multiple={false}    
                         />
                     </button>
                     <div className="clearfix"></div>
                 </div>
-                {this.state.isFileType ? <span className={styles['alert-file-type']}>
+                {this.state.isFileType || this.state.isFileTypeDrop ? <span className={styles['alert-file-type']}>
                    {i18n.t('attachmentsWidget.messageAlert')}
                     <i className='lf-icon-close-round-full'></i>
                 </span> : ''}
@@ -89,7 +93,8 @@ class AttachmentsWidget extends Component{
     }
 
     onAttachButton() {
-        this.setState({isFileType: false});
+        this.setState({isFileType: false, isFileTypeDrop:false});
+        this.props.resetIsFileDrop();
         return this.fileInput && this.fileInput.click();
     }
 
@@ -99,39 +104,48 @@ class AttachmentsWidget extends Component{
 
         const addAttachment = (file, dataUrl) => {
            const fileType = file.name.split('.');
-            if(fileType[1] == 'pdf' || fileType[1] == 'docx' 
-            || fileType[1] == 'doc') {
-              const pdfjsLib = require('pdfjs-dist');
-              pdfjsLib.GlobalWorkerOptions.workerSrc = '../../../../assets/scripts/pdf.worker.js'
-  
-              const newAttachment = {
-              fileName: file.name,
-              size: file.size,
-              contentType: file.type,
-              content: dataUrl.currentTarget.result.replace(
-                  /^data:[^;]*;base64,/,
-                  ''
-              ),
-              };
-  
-              pdfjsLib.getDocument({data: atob(newAttachment.content)})
-              .promise.then(doc => {
-                  var numPages = doc.numPages;
-                  newAttachment.pages = numPages;
-                  console.log('# Document Loaded');
-                  console.log('Number of Pages: ' + numPages);
-  
-                  const updatedMessage = { ...this.props.editedMessage };
-                  updatedMessage.attachments = updatedMessage.attachments
-                      ? [...updatedMessage.attachments, newAttachment]
-                      : [newAttachment];
-                  this.props.editMessage(updatedMessage);
-              });
+            if(fileType[fileType.length-1] == 'pdf' || fileType[fileType.length-1] == 'docx' 
+            || fileType[fileType.length-1] == 'doc') {
+
+                const newAttachment = {
+                    fileName: file.name,
+                    size: file.size,
+                    contentType: file.type,
+                    content: dataUrl.currentTarget.result.replace(
+                        /^data:[^;]*;base64,/,
+                        ''
+                    ),
+                };
+
+                if (fileType[1] === 'pdf'){
+                    const pdfjsLib = require('pdfjs-dist');
+                    pdfjsLib.GlobalWorkerOptions.workerSrc = '../../../../assets/scripts/pdf.worker.js'
+        
+                    pdfjsLib.getDocument({data: atob(newAttachment.content)})
+                    .promise.then(doc => {
+                      var numPages = doc.numPages;
+                      newAttachment.pages = numPages;
+                      console.log('# Document Loaded');
+                      console.log('Number of Pages: ' + numPages);
+        
+                      const updatedMessage = { ...this.props.editedMessage };
+                      updatedMessage.attachments = updatedMessage.attachments
+                          ? [...updatedMessage.attachments, newAttachment]
+                          : [newAttachment];
+                      this.props.editMessage(updatedMessage);
+                    });
+                } else {
+                    const updatedMessage = { ...this.props.editedMessage };
+        
+                    updatedMessage.attachments = updatedMessage.attachments
+                        ? [...updatedMessage.attachments, newAttachment]
+                        : [newAttachment];
+                    this.props.editMessage(updatedMessage);
+                }
             } else {
                 this.setState({isFileType: true});
                 console.log('tipo de archivo invalido!');
-            }
-           
+            }  
         };
         Array.from(event.target.files).forEach((file) => {
           const fileReader = new FileReader();
@@ -141,12 +155,14 @@ class AttachmentsWidget extends Component{
         return true;
     }
 
+
     removeAttachment(attachment) {
         const userApp = this.props.userApp;
         if (userApp === 'centinela' || userApp === 'cen' || userApp == 2){
             this.props.onConfirmAttachRemoval();
         } else {
-            this.setState({isFileType: false});
+            this.setState({isFileType: false, isFileTypeDrop: false});
+            this.props.resetIsFileDrop();
             const updatedMessage = { ...this.props.editedMessage };
             if (updatedMessage.attachments && updatedMessage.attachments.length) {
                 updatedMessage.attachments = updatedMessage.attachments.filter(

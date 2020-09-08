@@ -126,7 +126,7 @@
       "photoNumber": "Número de fotos",
       "phone": "Número de teléfono"
     },
-    "title": "CREAR NUEVA FIRMA"
+    "title": "SOLICITUD DE FIRMA"
   },
   "forwardAction": {
     "From": "De",
@@ -242,7 +242,7 @@
       "single": "Firmar documento en una sola hoja",
       "all": "Firmar documento en todas las hojas" 
     },
-    "messageAlert": "Tipo de archivo Seleccionado no valido."
+    "messageAlert": "Tipo de archivo seleccionado no válido."
   },
   "expirationWidget":{
     "title": "PLAZOS DE EXPIRACIÓN DE FIRMA",

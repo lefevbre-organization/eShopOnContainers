@@ -20,6 +20,7 @@ namespace Signature.API.Infrastructure.Services
         private readonly IOptions<SignatureSettings> _settings;
         private readonly IConfiguration _configuration;
         private readonly int _timeout;
+        private readonly int _timeoutCreate;
 
         //public UsersService(
         //        IOptions<SignatureSettings> settings
@@ -41,7 +42,8 @@ namespace Signature.API.Infrastructure.Services
             //_client.BaseAddress = new Uri(_settings.Value.SignatureMySqlUrl);
             //_client.DefaultRequestHeaders.Add("Accept", "text/plain");
             _configuration = configuration;
-            _timeout = 5000;
+            _timeout = 10000;
+            _timeoutCreate = 90000;
 
         }
 
@@ -78,7 +80,7 @@ namespace Signature.API.Infrastructure.Services
         {
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/signatures.json");
             var i = 0;
-            client.Timeout = _timeout;
+            client.Timeout = _timeoutCreate;
             var request = new RestRequest(Method.POST);
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
             foreach (Recipient recipient in signatureInfo.recipients)

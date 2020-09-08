@@ -41,7 +41,7 @@ const MaterialTitlePanel = props => {
           src="/assets/img/close.png"
           onClick={() => _handleOnClick()}
         ></img>
-                <Link to="chart" target="_blank" to="calendar" >
+              {/*    <Link to="chart" target="_blank" to="calendar" >
               <img
                       className="headerButtons"
                       alt={props.title}
@@ -49,8 +49,7 @@ const MaterialTitlePanel = props => {
                       src="/assets/img/expand.png"
 
                   ></img>
-             </Link>
-        
+             </Link>*/}        
       </div>
       {props.children}
     </div>

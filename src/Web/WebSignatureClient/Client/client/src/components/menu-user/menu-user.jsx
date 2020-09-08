@@ -384,8 +384,15 @@ class MenuUser extends Component {
           .e-content.e-lib.e-keyboard {
             text-align: left;
           }
-          .btn-primary, .btn-primary:hover {
+          .btn-primary {
+            background-color: #001970; 
+          }
+          .btn-primary:hover {
+            color: #fff; 
             padding: 0px;
+          }
+          .btn-primary:focus {
+            color: #fff; 
           }
         `}</style>
             </Fragment>
