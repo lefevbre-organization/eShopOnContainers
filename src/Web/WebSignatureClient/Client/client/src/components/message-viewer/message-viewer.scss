@@ -314,10 +314,24 @@
           }
         }
       }
-
     }
-
-
+    li {
+      .tit-firmante{
+        text-transform: uppercase;
+        color:#001978;
+        font-weight:600;
+        margin-right:20px;
+      }
+      .fecha{
+        color:#777;
+        font-size:13px;
+        padding-top:40px;
+      }
+      .name_firmante{
+        color:#001978;
+        font-weight: 400;
+      }      
+    }
   }
   .resumen-firma {
     border: 0;

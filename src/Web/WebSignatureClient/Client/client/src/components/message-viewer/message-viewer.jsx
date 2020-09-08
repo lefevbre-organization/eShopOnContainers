@@ -265,6 +265,8 @@ export class MessageViewer extends Component {
     let expirationText = i18n.t('signatureViewer.widgets.expiration.doesntExpires');
     let passedTime =  this.getDaysBetweenDates(new Date(signature.created_at), new Date());
     let reminderConfig = signature.data.find(x => x.key === "reminders");
+    let signatureConfig = signature.data.find(x => x.key === "roles");
+    debugger;
     
     if (reminderConfig === undefined || reminderConfig === null){
       reminderText = i18n.t('signatureViewer.widgets.reminders.notConfigured');;
@@ -387,6 +389,7 @@ export class MessageViewer extends Component {
               return (
                 <SignatureList 
                  signer={signer}
+                 signatureConfig={signatureConfig ? signatureConfig.value.split('|')[index].split(':') : null}
                  index={index}
                  key={signer.id}
                  styles={styles}

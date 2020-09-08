@@ -2,21 +2,117 @@ import React from 'react';
 import PropTypes from "prop-types";
 import i18n from 'i18next';
 
+function getRole(config){
+  let rol;
+
+  if (config === undefined || config === null){
+    return i18n.t('signatureViewer.signerCard.title.signers');
+  }
+
+  switch (config[2]) {
+    case 'signer':
+      rol = i18n.t('signatureViewer.signerCard.title.signers');
+      break;
+    case 'validator':
+      rol = i18n.t('signatureViewer.signerCard.title.validators');
+      break;
+    default:
+      rol = '';
+      break;
+  }
+  return rol;
+}
+
+function getType(config){
+  let type;
+
+  if (config === undefined || config === null){
+    return  i18n.t('signatureViewer.signerCard.title.type.advanced');
+  }
+
+  switch (config[3]) {
+    case 'advanced':
+      type = i18n.t('signatureViewer.signerCard.title.type.advanced');
+      break;
+    case 'certificate':
+      type = i18n.t('signatureViewer.signerCard.title.type.certificate');
+      break;
+    default:
+      type = '';
+      break;
+  }
+  return type;
+}
+
+function getDoubleAuth(config){
+  let type;
+
+  if (config === undefined || config === null){
+    return i18n.t('signatureViewer.signerCard.title.DoubleAuthentication.none');
+  }
+
+  switch (config[4]) {
+    case 'sms':
+      type = i18n.t('signatureViewer.signerCard.title.DoubleAuthentication.sms');
+      break;
+    case 'photo':
+      type = i18n.t('signatureViewer.signerCard.title.DoubleAuthentication.photo');
+      break;
+    case 'none':
+      type =  i18n.t('signatureViewer.signerCard.title.DoubleAuthentication.none');
+      break;
+    default:
+      type = '';
+      break;
+  }
+  return type;
+}
+
+function getDoubleAuthInfo(config){
+  let info;
+
+  if (config === undefined || config === null){
+    return '';
+  }
+
+  switch (config[4]) {
+    case 'photo':
+      info = `( ${i18n.t('signatureViewer.signerCard.title.DoubleAuthentication.photoNumber').replace('__', config[5])} )`;
+      break;
+    default:
+      info = '';
+      break;
+  }
+  return info;
+}
+
 const SignatureList = (props) => {
   let remindersSent = false;
+  console.log(props.signatureConfig);
     return( 
         <div className={props.styles['cont-info-firmantes']}>
           <div className={`${props.styles.p15} ${props.styles.separador}`}>
-              <div className={`${props.styles['tit-firmante']} left`}>{i18n.t('signatureViewer.signerCard.title.signers')} {(props.index + 1)}</div>
+              <div className={`${props.styles['tit-firmante']} left`}>{getRole(props.signatureConfig)}</div>
                 <span className={`${props.styles['name_firmante']} left`}>{props.signer.name}:</span>
                 <span className={props.styles.email}>{props.signer.email}</span>
-                <div className={`${props.styles['numero_firmante']} `}>
-                <ul>
-                 <li> {i18n.t('messageEditor.grid.role')}: Firmante</li>
-                 <li> {i18n.t('messageEditor.grid.signatureType')}: Certificado electrónico</li>
-                 <li> {i18n.t('messageEditor.grid.doubleAuthentication')}: Foto (3 fotos adjuntas)</li>
-                </ul>
-                </div>
+                <span className={`${props.styles['numero_firmante']} right`}>
+                {i18n.t('signatureViewer.signerCard.title.signer')} {(props.index + 1)}
+                </span>
+                {/* <div className={`${props.styles['numero_firmante']} `}> */}
+                  <ul>
+                  {/* <li> {i18n.t('messageEditor.grid.role')}: {getRole(props.signatureConfig)}</li> */}
+                  <li> 
+                    <div className={`${props.styles['tit-firmante']} left`}>{i18n.t('messageEditor.grid.signatureType')}:</div>
+                    <span className={`${props.styles['name_firmante']} left`}>{getType(props.signatureConfig)} </span><br/>
+                  </li>
+                  <li>
+                    <div className={`${props.styles['tit-firmante']} left`}>
+                      {i18n.t('messageEditor.grid.doubleAuthentication')}:
+                    </div> 
+                    <span className={`${props.styles['name_firmante']} left`}>{`${getDoubleAuth(props.signatureConfig)} ${getDoubleAuthInfo(props.signatureConfig)}`}  </span> 
+                  </li>
+                  </ul>
+                {/* </div> */}
               </div>
               <div className={`${props.styles.p15} ${props.styles.separador}`}>
                 <div className={props.styles['tit-firmante']}>{i18n.t('signatureViewer.signerCard.body.title')}</div>
@@ -87,12 +183,11 @@ const SignatureList = (props) => {
                       <div className={props.styles.linea}></div>
                       <div className={props.styles.info}>
                           <div className={props.styles.estado}>
-                            {props.getEventStatus(props.signer, 'validated') ? `Documento validado` : i18n.t('signatureViewer.signerCard.body.docSigned')}
+                            {props.getEventStatus(props.signer, 'validated') ? i18n.t('signatureViewer.signerCard.body.docValidated') : i18n.t('signatureViewer.signerCard.body.docSigned')}
                           </div>
                             {/* {i18n.t('signatureViewer.signerCard.body.docSigned')}</div> */}
-                            {props.getEventDate(props.signer, 'document_signed').split(' ')[0]}<br/>
-                            {props.getEventDate(props.signer, 'document_signed').split(' ')[1]}
-
+                            {props.getEventStatus(props.signer, 'validated') ? props.getEventDate(props.signer, 'validated').split(' ')[0] : props.getEventDate(props.signer, 'document_signed').split(' ')[0]} <br/>
+                            {props.getEventStatus(props.signer, 'validated') ? props.getEventDate(props.signer, 'validated').split(' ')[1] : props.getEventDate(props.signer, 'document_signed').split(' ')[1]}                            
                       </div>
                   </div>
                   <div className={props.styles.clearfix}></div>

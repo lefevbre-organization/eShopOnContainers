@@ -284,7 +284,21 @@
     "signerCard": {
       "title": {
         "signers": "SIGNATAIRE",
-        "signer": "SIGNATAIRE"
+        "signer": "Destinataire",
+        "validators": "VALIDATEUR",
+        "validator": "Destinataire",
+        "type": {
+          "title": "Type de signature",
+          "advanced": "Signature avancée",
+          "certificate": "Signer avec certificat"
+        },
+        "DoubleAuthentication": {
+          "title": "Double authentification",
+          "sms": "SMS",
+          "photo": "Photo",
+          "none": "No",
+          "photoNumber": "__ photos jointes"
+        }
       },
       "body": {
         "title": "Progrés de demande",
@@ -292,7 +306,8 @@
         "emailDelivered": "Email remis",
         "emailOpened": "Email ouvert",
         "docOpened": "Document ouvert",
-        "docSigned": "Documento signé"
+        "docSigned": "Document signé",
+	"docValidated": "Document validé"
       },
       "footer": {
         "title": "Rappels envoyés",

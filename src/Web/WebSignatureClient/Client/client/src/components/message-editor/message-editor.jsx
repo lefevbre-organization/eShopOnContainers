@@ -379,7 +379,7 @@ class MessageEditor extends Component {
           },
           buttonModel: { content: i18n.t('confirmationModal.yes'), isPrimary: true }
       }
-  ];
+    ];
 
 
     const {

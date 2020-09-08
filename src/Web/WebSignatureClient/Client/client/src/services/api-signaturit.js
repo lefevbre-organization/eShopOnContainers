@@ -696,6 +696,7 @@ export const getSignatures = async (filters, auth, offset, signatures = []) => {
     var remindConfig = '';
     var expirationConfig = '';
     var signAllPagesCoords = [];
+    var rolesConfig = '';
 
     switch (reminders[0]) {
       case -1:
@@ -767,6 +768,11 @@ export const getSignatures = async (filters, auth, offset, signatures = []) => {
     jsonObject.coordinates = signAllPagesCoords;
     jsonObject.deliveryType = (signAllPagesCoords.length > 0 ? 'email' : '');
 
+    //Roles config:
+    recipients.forEach((recipient, i) => {
+      rolesConfig += `${recipient.name}:${i}:${recipient.role}:${recipient.signatureType}:${recipient.doubleAuthType}:${recipient.doubleAuthInfo}|`; 
+    });
+    console.log('Roles Config:' + rolesConfig);
 
     customFieldsData.push({name: "lefebvre_id", value: lefebvreId});
     customFieldsData.push({name: "lefebvre_guid", value: guid});
@@ -774,6 +780,7 @@ export const getSignatures = async (filters, auth, offset, signatures = []) => {
     customFieldsData.push({name: "body", value: body});
     customFieldsData.push({name: "reminders", value: remindConfig});
     customFieldsData.push({name: "expiration", value: expirationConfig});
+    customFieldsData.push({name: "roles", value: rolesConfig})
     // customFieldsData.push({name: "expiration", value: expiration});
     // customFieldsData.push({name: "reminders", value: reminders});
     jsonObject.customFields = customFieldsData;

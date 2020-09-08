@@ -685,6 +685,7 @@ class MessageList extends Component {
                     toolbarClick={this.toolbarClick}
                     ref={g => this.grid = g}
                     hierarchyPrintMode={'All'}
+                    delayUpdate='true'
                 >
                     <ColumnsDirective>
                         <ColumnDirective textAlign='center' headerText={i18n.t('signaturesGrid.columnAction')} template={this.menuTemplate}  width='55' />

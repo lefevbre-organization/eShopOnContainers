@@ -54,6 +54,7 @@
     "delete": "Borrar",
     "markUnread": "Marcar como no leído",
     "markRead": "Marcar como leído",
+    "search": "Buscar",
     "returnlexon": "Volver a Lex-on",
     "deleteFromTrashDialog": {
       "title": "Confirmar borrado",
@@ -284,7 +285,21 @@
     "signerCard": {
       "title": {
         "signers": "FIRMANTE",
-        "signer": "Firmante"
+        "signer": "Destinatario",
+        "validators": "VALIDADOR",
+        "validator": "Destinatario",
+        "type": {
+          "title": "Tipo de firma",
+          "advanced": "Firma avanzada",
+          "certificate": "Firma con certificado"
+        },
+        "DoubleAuthentication": {
+          "title": "Doble autenticación",
+          "sms": "SMS",
+          "photo": "Fotografía",
+          "none": "No",
+          "photoNumber": "__ fotos adjuntas"
+        }
       },
       "body": {
         "title": "PROGRESO PETICIÓN",
@@ -292,7 +307,8 @@
         "emailDelivered": "Email entregado",
         "emailOpened": "Email abierto",
         "docOpened": "Documento abierto",
-        "docSigned": "Documento firmado"
+        "docSigned": "Documento firmado",
+        "docValidated": "Documento validado"
       },
       "footer": {
         "title": "RECORDATORIOS ENVIADOS",

@@ -266,7 +266,21 @@
     "signerCard": {
       "title": {
         "signers": "SIGNER",
-        "signer": "Signer"
+        "signer": "Recipient",
+        "validators": "VALIDATOR",
+        "validator": "Recipient",
+        "type": {
+          "title": "Type of signature",
+          "advanced": "Advanced signature",
+          "certificate": "Sign with certificate"
+        },
+        "DoubleAuthentication": {
+          "title": "Double authentication",
+          "sms": "SMS",
+          "photo": "Photo",
+          "none": "No",
+          "photoNumber": "__ photos attached"
+        }
       },
       "body": {
         "title": "SIGNATURE PROGRESS",
@@ -274,7 +288,8 @@
         "emailDelivered": "Email delivered",
         "emailOpened": "Email opened",
         "docOpened": "Document opened",
-        "docSigned": "Document signed"
+        "docSigned": "Document signed",
+	"docValidated": "Document validated"
       },
       "footer": {
         "title": "SENT REMINDERS",
