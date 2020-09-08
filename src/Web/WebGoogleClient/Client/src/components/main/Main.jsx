@@ -124,17 +124,8 @@ export class Main extends Component {
     });
   }
 
-  //handleShowLeftSidebarClick() {
-  //    this.setState({
-  //        leftSidebarOpen: !this.leftSidebarOpen
-  //    })
-  //}
-
   sendMessagePutUser(user) {
     const { selectedMessages, googleUser } = this.props;
-    console.log('*******************');
-    console.log('Account:' + googleUser.getBasicProfile().getEmail());
-    console.log('*******************');
     window.dispatchEvent(
       new CustomEvent('PutUserFromLexonConnector', {
         detail: {
@@ -149,6 +140,7 @@ export class Main extends Component {
           provider: this.props.lexon.provider,
           //account: googleUser.Qt.zu
           account: googleUser.getBasicProfile().getEmail(),
+          env: window.currentUser?window.currentUser.env || 'DEV' : 'DEV'
         },
       })
     );
@@ -491,6 +483,7 @@ export class Main extends Component {
           })),
           provider: this.props.lexon.provider,
           account: googleUser.getBasicProfile().getEmail(),
+          env: window.currentUser?window.currentUser.env || 'DEV' : 'DEV'
         },
       })
     );

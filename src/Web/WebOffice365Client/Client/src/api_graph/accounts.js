@@ -2,8 +2,12 @@ import * as moment from 'moment';
 import jwt_decode from 'jwt-decode';
 
 export const getUser = async userId => {
-  const url = `${window.URL_GET_ACCOUNTS}/${userId}`;
-  const url2 = `${window.API_GATEWAY}/api/v1/lex/Lexon/user?idUserNavision=${userId}`;
+  let url = `${window.URL_GET_ACCOUNTS}/${userId}`;
+  let url2 = `${window.API_GATEWAY}/api/v1/lex/Lexon/user?idUserNavision=${userId}`;
+  if(window.currentUser && window.currentUser.env) {
+    url += `?env=${window.currentUser.env}`;
+    url2 += `&env=${window.currentUser.env}`
+  }
 
   try {
     const res = await fetch(url, {
@@ -23,7 +27,10 @@ export const getUser = async userId => {
 };
 
 export const addOrUpdateAccount = async (userId, account) => {
-  const url = `${window.URL_GET_ACCOUNTS}/${userId}/account/addorupdate`;
+  let url = `${window.URL_GET_ACCOUNTS}/${userId}/account/addorupdate`;
+  if(window.currentUser && window.currentUser.env) {
+    url += `?env=${window.currentUser.env}`;
+  }
 
   try {
     const res = await fetch(url, {
@@ -42,7 +49,10 @@ export const addOrUpdateAccount = async (userId, account) => {
 };
 
 export const resetDefaultAccount = async userId => {
-  const url = `${window.URL_GET_ACCOUNTS}/${userId}/account/reset`;
+  let url = `${window.URL_GET_ACCOUNTS}/${userId}/account/reset`;
+  if(window.currentUser && window.currentUser.env) {
+    url += `?env=${window.currentUser.env}`;
+  }
 
   try {
     const res = await fetch(url, {
@@ -69,7 +79,11 @@ export const classifyEmail = async (
 ) => {
   const m = moment(date).format('YYYY-MM-DD HH:mm:ss');
 
-  const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/classifications/contacts/add`;
+  let url = `${window.API_GATEWAY}/api/v1/lex/Lexon/classifications/contacts/add`;
+  if(window.currentUser && window.currentUser.env) {
+    url += `?env=${window.currentUser.env}`;
+  }
+
   const classification = {
     contactList: [...to],
     mail: {

@@ -182,7 +182,8 @@
     "statusPending": "Pending",
     "filters": {
       "contains": "Contains",
-      "startsWith": "Starts with"
+      "startsWith": "Starts with",
+      "equal": "Equal"
     }
   },
   "confirmationModal": {

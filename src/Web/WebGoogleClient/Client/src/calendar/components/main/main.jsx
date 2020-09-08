@@ -428,6 +428,52 @@ export class Main extends Component {
             </div>);
     }
 
+    eventTemplateAgendaView(props) {
+        let colorExist = false;
+        if (props.EventType != undefined) {
+            colorExist = true
+        }
+        let subjectStr = props.Subject;
+        if (props.Subject != undefined) {
+            props.Subject = this.text_truncate(props.Subject, 100)
+        }
+        else {
+            subjectStr = i18n.t("schedule.notitle")
+        }
+
+        //var eventstart = new Date('August 19, 1975 23:15:30 GMT+00:00');
+
+        //console.log(event.toLocaleTimeString('en-US'));
+
+        return (
+            <div >
+                {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
+                <div className="image">
+                    <span className='eventicon truncate'>
+                        <img width="16" height="16" src={"assets/img/" + "lefebvre" + ".png"} />  
+                        {colorExist ? (
+                            <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot dotagenda'></span>
+                        ) : (
+                            <span Style={`background-color: ${'#FFFFFF'} ;  margin-top: 3px`} className='dot dotagenda'></span>
+                            )}
+
+                        {props.IsAllDay ? (
+                              <span>todo el día</span>
+                        ) : (
+                               
+                              <span> {props.StartTime.toLocaleTimeString('es-ES')} - {props.EndTime.toLocaleTimeString('es-ES')}</span>
+                            )}
+                    </span>
+                    <span className='space' > {subjectStr} </span>
+
+                </div>
+
+                {/* <div className="subject">{props.Subject}</div>
+               <div className="time">Time: {this.getTimeString(props.StartTime)} - {this.getTimeString(props.EndTime)}</div>*/}
+
+            </div>);
+    }
+
     onDataBinding(e, calendarId) {
         let items = this.dataManager.items;
         if (items.length > 0) {
@@ -539,7 +585,8 @@ export class Main extends Component {
                     bbdd: this.props.lexon.bbdd,
                     idCompany: this.props.lexon.idCompany,
                     provider: this.props.lexon.provider,
-                    account: googleUser.getBasicProfile().getEmail()
+                    account: googleUser.getBasicProfile().getEmail(),
+                    env: window.currentUser?window.currentUser.env || 'DEV' : 'DEV'
                 }
             })
         );
@@ -609,9 +656,23 @@ export class Main extends Component {
             );
         });
 
+       
+
         this.sidebarCalendarList();
-        this.LoadCalendarList();
-        this.getlistEventTypes();
+
+        let value = 100;
+        if (navigator.userAgent.toLowerCase().indexOf('firefox') > 0) {
+            value = 250;
+        }        
+
+        let obj = this;
+        setTimeout(function () {
+            obj.LoadCalendarList();
+            obj.getlistEventTypes()
+        }, value);
+       
+       
+       
     }
 
     onDataBindingEventTypeList(items) {
@@ -1666,7 +1727,7 @@ export class Main extends Component {
                                                     <ViewDirective option='Week' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='WorkWeek' eventTemplate={this.eventTemplate.bind(this)} />
                                                     <ViewDirective option='Month' eventTemplate={this.eventTemplate.bind(this)} />
-                                                    <ViewDirective option='Agenda' eventTemplate={this.eventTemplate.bind(this)} />
+                                                    <ViewDirective option='Agenda' eventTemplate={this.eventTemplateAgendaView.bind(this)} />
                                                 </ViewsDirective>
                                                 <ResourcesDirective>
                                                     {/*<ResourceDirective field='eventType' title={i18n.t("schedule.eventtype")} name='eventType' allowMultiple={false} dataSource={this.eventTypeDataSource} textField='text' idField='id' colorField='backgroundColor' />  */}

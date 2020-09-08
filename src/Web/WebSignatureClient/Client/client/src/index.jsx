@@ -8,6 +8,12 @@ import Routes from './routes/routes';
 import rootReducer from './reducers';
 import {loadState, saveState} from './services/state';
 import debounce from './services/debounce';
+import { loadCldr, setCulture} from '@syncfusion/ej2-base';
+import gregorian from 'cldr-data/main/es/ca-gregorian.json';
+import numbers from 'cldr-data/main/es/numbers.json'
+import timeZoneNames from 'cldr-data/main/es/timeZoneNames.json';
+import numberingSystems from 'cldr-data/supplemental/numberingSystems.json';
+import weekData from 'cldr-data/supplemental/weekData.json';// To load the culture based first day of week
 
 //import { start, registerApplication } from 'single-spa'
 
@@ -48,6 +54,9 @@ async function init () {
 
   store.subscribe(debounce(() => saveState(store.dispatch, store.getState()), SAVE_STATE_DEBOUNCE_PERIOD_IN_MILLIS));
 
+  loadCldr(numberingSystems, gregorian, numbers, timeZoneNames, weekData);
+  setCulture(navigator.language);
+  
   ReactDOM.render(
     <Provider store={store}>
       <I18nextProvider i18n={i18n}>

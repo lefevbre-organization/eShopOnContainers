@@ -17,16 +17,30 @@ import mainCss from "../../styles/main.scss";
 import styles from "./message-list.scss";
 import { preloadSignatures, preloadSignatures2, cancelSignature2 } from "../../services/api-signaturit";
 import { backendRequest, backendRequestCompleted } from '../../actions/application';
-import { GridComponent, ColumnsDirective, ColumnDirective, Page, Inject, Resize, Filter, DetailRow, Sort, Group, Toolbar, PdfExport, ExcelExport } from '@syncfusion/ej2-react-grids';
+import { 
+  GridComponent, 
+  ColumnsDirective, 
+  ColumnDirective, 
+  Page, 
+  Inject, 
+  Resize, 
+  Filter,  
+  DetailRow, 
+  Sort, 
+  Group, 
+  Toolbar, 
+  PdfExport, 
+  ExcelExport 
+} from '@syncfusion/ej2-react-grids';
 import materialize from '../../styles/signature/materialize.scss';
-import { L10n } from '@syncfusion/ej2-base';
+import { CalendarComponent} from '@syncfusion/ej2-react-calendars';
+import { loadCldr, setCulture, L10n } from '@syncfusion/ej2-base';
 import { DataManager } from '@syncfusion/ej2-data';
 import { ClickEventArgs } from '@syncfusion/ej2-navigations';
 import { DropDownButtonComponent } from '@syncfusion/ej2-react-splitbuttons';
 import { detailedDiff } from 'deep-object-diff';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
 import i18n from '../../services/i18n';
-
 
 L10n.load({
     'es-ES': {
@@ -43,7 +57,8 @@ L10n.load({
         'Print': 'Imprimir',
         'FilterButton': 'Filtrar',
         'ClearButton': 'Borrar',
-        'EnterValue': 'Introduzca el valor'
+        'EnterValue': 'Introduzca el valor',
+        'ChooseDate': 'Introduzca la fecha'
       },
       'pager': {
         'pagerDropDown': 'Registros por página',
@@ -55,7 +70,9 @@ L10n.load({
         'lastPageTooltip': 'Ir a la última página',
         'nextPageTooltip': 'Ir a siguiente página',
         'previousPageTooltip': 'Ir a página previa'
-
+      },
+      'datepicker': {
+        'today': "Hoy"
       }
     },
     'es': {
@@ -72,7 +89,8 @@ L10n.load({
           'Print': 'Imprimir',
           'FilterButton': 'Filtrar',
           'ClearButton': 'Borrar',
-          'EnterValue': 'Introduzca el valor'
+          'EnterValue': 'Introduzca el valor',
+          'ChooseDate': 'Introduzca la fecha'
         },
         'pager': {
           'pagerDropDown': 'Registros por página',
@@ -84,7 +102,10 @@ L10n.load({
           'lastPageTooltip': 'Ir a la última página',
           'nextPageTooltip': 'Ir a siguiente página',
           'previousPageTooltip': 'Ir a página previa'
-          }
+        },
+        'datepicker': {
+          'today': "Hoy"
+        }
       },
     'en': {
         'grid': {
@@ -143,7 +164,7 @@ L10n.load({
           }        
     }
   });
-
+  
 class MessageList extends Component {
     constructor(props) {
         super(props);
@@ -288,10 +309,11 @@ class MessageList extends Component {
             documentName = signature.documents[0].file.name
             subject = (signature.data.find(x => x.key === "subject")) ? signature.data.find(x => x.key === "subject").value : 'Sin asunto';
             signature.documents.map(d => recipients = `${recipients}${d.email}; `);
-            date = new Date(signature.created_at).toLocaleString(navigator.language, {
-                year: 'numeric', month: '2-digit', day: '2-digit',
-                hour: '2-digit', minute: '2-digit', second: '2-digit'
-            })
+            // date = new Date(signature.created_at).toLocaleString(navigator.language, {
+            //     year: 'numeric', month: '2-digit', day: '2-digit',
+            //     hour: '2-digit', minute: '2-digit', second: '2-digit'
+            // })
+            date = new Date(signature.created_at);
             status = signature.documents[signature.documents.length-1].status;
            
             newStatus = this.getNewStatus(status);
@@ -652,9 +674,18 @@ class MessageList extends Component {
                 stringOperator: [
                     { value: 'contains', text: i18n.t('signaturesGrid.filters.contains')},
                     { value: 'startsWith', text: i18n.t('signaturesGrid.filters.startsWith')}
-                ]
+                ],
+                dateOperator: [
+                    { value: 'equal', text: i18n.t('signaturesGrid.filters.equal')}
+                ],
+                
              } 
+            
         };
+
+        const filterCheckBox = {
+            type: 'CheckBox'
+        }
 
         //var firmas = this.props.signatures;
         var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [{}];
@@ -692,8 +723,8 @@ class MessageList extends Component {
                         <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')}/>
                         <ColumnDirective field='Asunto' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSubject')} />
                         <ColumnDirective field='Destinatarios' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSigners')} width= '151' template={this.recipientsTable.bind(this)}/>
-                        <ColumnDirective field='Fecha' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDate')} width='115'/>
-                        <ColumnDirective field='Estado' textAlign='Left' headerText={i18n.t('signaturesGrid.columnStatus')} width='110' template={this.statusTemplate.bind(this)} />
+                        <ColumnDirective field='Fecha' textAlign='Left' type="date" format={{ type: 'date', format: 'dd/MM/yyyy' }} headerText={i18n.t('signaturesGrid.columnDate')} width='115'/>
+                        <ColumnDirective field='Estado' filter={filterCheckBox} textAlign='Left' headerText={i18n.t('signaturesGrid.columnStatus')} width='110' template={this.statusTemplate.bind(this)} />
                     </ColumnsDirective>
                     <Inject services={[Filter, Page, Resize, Sort, Toolbar, PdfExport, ExcelExport]}/>
                     {/* <Inject services={[Resize]}/> */}
@@ -783,6 +814,12 @@ class MessageList extends Component {
                         border-color: #fff;
                         color: #001970;
                     }
+                    .e-checkboxfilter.e-popup.e-dialog {
+                        top: 15% !important;
+                    }
+                    .e-checkboxfilter .e-footer-content {
+                        background: #fff;
+                    }
                     .e-dropdownbase .e-list-item.e-active.e-hover {
                         color: #001970;
                     }
@@ -804,6 +841,14 @@ class MessageList extends Component {
                         margin-bottom: 0px;
                         display: inherit;
                     }
+
+                    [type="checkbox"] + span:not(.lever):before {
+                        top: 2px;
+                        left: -1px;
+                        border: none;
+                        margin-top: 2px;
+                    }
+                    
                     .e-dropdown-popup ul .e-item .e-menu-icon {
                         font-weight: bold;
                         color: #001970;
