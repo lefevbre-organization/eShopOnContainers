@@ -1099,6 +1099,7 @@ namespace Lexon.Infrastructure.Services
         {
             //'{"BBDD":"lexon_admin_02","IdUser":1344, "Subject":"test cita", "Location":"Madrid", "EndDate":"2020-03-30 20:31:30", "StartDate":"2020-03-28 20:31:30"}';
             return $"{GetTextFilter("Subject", appointment.Subject)}" +
+                $"{GetTextFilter("Provider", appointment.Provider)}" +
                 $"{GetTextFilter("Location", appointment.Location)}" +
                 $"{GetTextFilter("StartDate", appointment.StartDate)}" +
                 $"{GetTextFilter("EndDate", appointment.EndDate)}";
