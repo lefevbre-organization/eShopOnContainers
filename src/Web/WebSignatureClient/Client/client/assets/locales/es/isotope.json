@@ -183,7 +183,8 @@
     "statusPending": "Pendiente",
     "filters": {
       "contains": "Contiene",
-      "startsWith": "Empieza por"
+      "startsWith": "Empieza por",
+      "equal": "Es igual a"
     }
   },
   "confirmationModal": {
