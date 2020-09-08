@@ -142,6 +142,7 @@ export class Main extends Component {
           idCompany: this.props.lexon.idCompany,
           provider: 'OU',
           account: this.props.User.email,
+          env: window.currentUser?window.currentUser.env || 'DEV' : 'DEV'
         },
       })
     );
@@ -175,6 +176,7 @@ export class Main extends Component {
           })),
           provider: this.props.lexon.provider,
           account: this.props.User.email,
+          env: window.currentUser?window.currentUser.env || 'DEV' : 'DEV'
         },
       })
     );

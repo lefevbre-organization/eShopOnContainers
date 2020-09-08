@@ -137,7 +137,7 @@ export interface DocumentResponse extends CentinelaResponse {
 export const getUser = async (
   navisionUser: string
 ): Promise<CentUserResponse> => {
-  const url = `${API_CENTINELA_GATEWAY}/user?idNavisionUser=${navisionUser}`;
+  const url = `${API_CENTINELA_GATEWAY}/user?idNavisionUser=${navisionUser}&env=${(window as any).currentEnv}`;
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -275,7 +275,7 @@ export const getEvaluationTree = async (
   navisionUser: string,
   evaluation: string
 ): Promise<TreeNodeResponse> => {
-  const url = `${API_CENTINELA_GATEWAY}/evaluations/tree/getbyid?idNavisionUser=${navisionUser}&idEvaluation=${evaluation}`;
+  const url = `${API_CENTINELA_GATEWAY}/evaluations/tree/getbyid?idNavisionUser=${navisionUser}&idEvaluation=${evaluation}&env=${(window as any).currentEnv}`;
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -296,7 +296,7 @@ export const getInstances = async (
   navisionUser: string,
   conceptId: string
 ): Promise<CentInstanceResponse> => {
-  const url = `${API_CENTINELA_GATEWAY}/concepts/instances?idNavisionUser=${navisionUser}&idConcept=${conceptId}`;
+  const url = `${API_CENTINELA_GATEWAY}/concepts/instances?idNavisionUser=${navisionUser}&idConcept=${conceptId}&env=${(window as any).currentEnv}`;
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -317,7 +317,7 @@ export const getResults = async (
   navisionUser: string,
   search: string
 ): Promise<DocumentResponse> => {
-  const url = `${API_CENTINELA_GATEWAY}/documents?idNavisionUser=${navisionUser}&search=${search}`;
+  const url = `${API_CENTINELA_GATEWAY}/documents?idNavisionUser=${navisionUser}&search=${search}&env=${(window as any).currentEnv}`;
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -338,7 +338,7 @@ export const getDocumentsByInstance = async (
   navisionUser: string,
   conceptObjectId: number
 ): Promise<DocumentResponse> => {
-  const url = `${API_CENTINELA_GATEWAY}/documents/instance?idNavisionUser=${navisionUser}&conceptObjectId=${conceptObjectId}`;
+  const url = `${API_CENTINELA_GATEWAY}/documents/instance?idNavisionUser=${navisionUser}&conceptObjectId=${conceptObjectId}&env=${(window as any).currentEnv}`;
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -360,7 +360,7 @@ export const uploadFile = async (
   conceptId: number,
   doc: any
 ) => {
-  const url = `${API_CENTINELA_GATEWAY}/concepts/files/post`;
+  const url = `${API_CENTINELA_GATEWAY}/concepts/files/post?env=${(window as any).currentEnv}`;
   const body = {
     idNavision: navisionUser,
     conceptId,
@@ -391,7 +391,7 @@ export const downloadFile = async (
   navisionUser: string,
   progressCallback: any
 ) => {
-  const url = `${API_CENTINELA_GATEWAY}/concepts/files/get?idNavisionUser=${navisionUser}&idDocument=${documentId}`;
+  const url = `${API_CENTINELA_GATEWAY}/concepts/files/get?idNavisionUser=${navisionUser}&idDocument=${documentId}&env=${(window as any).currentEnv}`;
 
   try {
     let progress = 0;
