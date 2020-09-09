@@ -87,6 +87,7 @@ export class RolSelector extends React.Component {
       } else {
         let newRecipients = this.state.newRecipients;
         newRecipients[index].role = event.value
+        newRecipients[index].signatureType = 'advanced'
         this.setState({
           newRecipients: newRecipients
         });
@@ -224,7 +225,9 @@ export class RolSelector extends React.Component {
                           fields={this.signTypesFields} 
                           change={this.onChange.bind(this, i)} 
                           placeholder="Select a type of signature" 
-                          value={this.signTypeValue} 
+                          value={`${newRecipients.length > 0 
+                            ? user.signatureType 
+                            : this.signTypeValue}`} 
                           popupHeight="220px"
                           enabled={(user.role === 'signer' || user.role === undefined)}
                           />
