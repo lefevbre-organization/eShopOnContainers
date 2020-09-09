@@ -193,7 +193,7 @@ export class RolSelector extends React.Component {
                       </td>
                       <td>
                         <input 
-                         placeholder={`${newRecipients.length > 0 
+                         value={`${newRecipients.length > 0 
                           ? user.user : user}`} 
                          id={`email_${i}`}
                          className={style['border-input']}
