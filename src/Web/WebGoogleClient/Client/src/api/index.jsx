@@ -574,84 +574,96 @@ export const batchModify = ({ ids, addLabelIds = [], removeLabelIds = [] }) =>
       });
   });
 
+export const deleteMessages = ({ ids }) =>
+    new Promise((resolve, reject) => {
+        window.gapi.client.gmail.users.messages
+            .delete({
+                userId: 'me',
+                ids               
+            })
+            .then((response) => {
+                resolve(ids);
+            });
+    });
+
 /**
  * Load Google Calendar Events
  */
-export const getEventList = (idCalendar) =>
-  new Promise((resolve, reject) => {
-    window.gapi.client.calendar.events
-      .list({
-        calendarId: idCalendar,
-        //timeMin: (new Date()).toISOString(),
-        //maxResults: 10,
-        singleEvents: true,
-        orderBy: 'startTime',
-      })
-      .then((response) => {
-        resolve(response);
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
+//export const getEventList = (idCalendar) =>
+//  new Promise((resolve, reject) => {
+//    window.gapi.client.calendar.events
+//      .list({
+//        calendarId: idCalendar,
+//        //timeMin: (new Date()).toISOString(),
+//        //maxResults: 10,
+//        singleEvents: true,
+//        orderBy: 'startTime',
+//      })
+//      .then((response) => {
+//        resolve(response);
+//      })
+//      .catch((error) => {
+//        reject(error);
+//      });
+//  });
 
-/**
- * Load Google Calendar List
- */
+///**
+// * Load Google Calendar List
+// */
+////export const getCalendarList = () =>
+////    new Promise((resolve, reject) => {
+////        window.gapi.client.calendar.calendarList.list()
+////            .then(response => {
+////                resolve(response);
+
+////            })
+////         .catch(error => {
+////             reject(error);
+////         });
+
+////    });
+
 //export const getCalendarList = () =>
-//    new Promise((resolve, reject) => {
-//        window.gapi.client.calendar.calendarList.list()
-//            .then(response => {
-//                resolve(response);
+//  new Promise((resolve, reject) => {
+//    window.gapi.client.calendar.calendarList
+//      .list({})
 
-//            })
-//         .catch(error => {
-//             reject(error);
-//         });
+//      .then((response) => {
+//        resolve(response.result);
+//      })
+//      .catch((err) => {
+//        reject(err);
+//      });
+//  });
 
-//    });
+//export const addCalendarEvent = (calendar, event) =>
+//  new Promise((resolve, reject) => {
+//    window.gapi.client.calendar.events
+//      .insert({
+//        calendarId: 'primary',
+//        resource: event,
+//      })
 
-export const getCalendarList = () =>
-  new Promise((resolve, reject) => {
-    window.gapi.client.calendar.calendarList
-      .list({})
+//      .then((response) => {
+//        resolve(response.result);
+//      })
+//      .catch((err) => {
+//        reject(err);
+//      });
+//  });
 
-      .then((response) => {
-        resolve(response.result);
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
+//export const deleteCalendarEvent = (calendar, eventId) =>
+//  new Promise((resolve, reject) => {
+//    window.gapi.client.calendar.events
+//      .delete({
+//        calendarId: 'primary',
+//        eventId: eventId,
+//      })
 
-export const addCalendarEvent = (calendar, event) =>
-  new Promise((resolve, reject) => {
-    window.gapi.client.calendar.events
-      .insert({
-        calendarId: 'primary',
-        resource: event,
-      })
-
-      .then((response) => {
-        resolve(response.result);
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
-
-export const deleteCalendarEvent = (calendar, eventId) =>
-  new Promise((resolve, reject) => {
-    window.gapi.client.calendar.events
-      .delete({
-        calendarId: 'primary',
-        eventId: eventId,
-      })
-
-      .then((response) => {
-        resolve(response.result);
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
+//      .then((response) => {
+//        resolve(response.result);
+//      })
+//      .catch((err) => {
+//        reject(err);
+//      });
+//  });

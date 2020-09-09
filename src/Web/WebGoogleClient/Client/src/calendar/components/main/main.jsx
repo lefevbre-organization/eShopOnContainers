@@ -658,8 +658,9 @@ export class Main extends Component {
 
        
 
-        this.sidebarCalendarList();
+        this.sidebarCalendarList();        
 
+        //Firefox load is slow and need to take into account wait more time to be ready
         let value = 100;
         if (navigator.userAgent.toLowerCase().indexOf('firefox') > 0) {
             value = 250;
@@ -669,8 +670,7 @@ export class Main extends Component {
         setTimeout(function () {
             obj.LoadCalendarList();
             obj.getlistEventTypes()
-        }, value);
-       
+        }, value);      
        
        
     }
