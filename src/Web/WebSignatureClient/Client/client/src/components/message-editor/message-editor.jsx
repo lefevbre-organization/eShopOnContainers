@@ -245,7 +245,6 @@ class MessageEditor extends Component {
   }
 
   dialogClose(){
-    console.log('hideRolDialog', this.state);
     if (this.state.centinelaDownloadError === true){
       this.props.onShowError();
     }

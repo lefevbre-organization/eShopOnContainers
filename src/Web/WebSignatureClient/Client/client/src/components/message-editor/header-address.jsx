@@ -3,7 +3,10 @@ import { translate } from 'react-i18next';
 import PropTypes from 'prop-types';
 import Autosuggest from 'react-autosuggest';
 import { validateEmail } from '../../services/validation';
+import { DialogComponent } from '@syncfusion/ej2-react-popups';
+import Contacts from './contacts/contacts';
 import mainCss from '../../styles/main.scss';
+import styles from './message-editor.scss';
 
 export class HeaderAddress extends Component {
   constructor(props) {
@@ -18,8 +21,22 @@ export class HeaderAddress extends Component {
 
     this.state = {
       value: '',
-      suggestions: []
+      suggestions: [],
+      hideContactDialog: false
     };
+    this.dialogClose = this.dialogClose.bind(this);
+  }
+
+  openContact = () => {
+    this.setState({hideContactDialog: true});
+  }
+
+  dialogClose(){
+    
+    this.setState({
+      hideContactDialog: false, 
+      
+    });
   }
 
   render() {
@@ -68,6 +85,39 @@ export class HeaderAddress extends Component {
             suggestionHighlighted: mainCss['mdc-list-item--activated']
           }}
         />
+        {id == 'to' ? 
+        <div>
+         <a href="#" className={styles['contact']} onClick={this.openContact}>Contactos <span className="lf-icon-notebook"></span>
+         </a>
+        </div> : null}
+
+        <DialogComponent 
+          id="contactDialog" 
+          visible={this.state.hideContactDialog} 
+          showCloseIcon={true} 
+          animationSettings={this.animationSettings} 
+          width='45%'
+          height='80%'
+          ref={dialog => this.contactDialog = dialog} 
+          close={this.dialogClose}
+        >
+          <Contacts 
+        
+          />
+         
+        </DialogComponent>
+
+        <style jsx global>
+          {` 
+            #contactDialog {
+              top: 17% !important;
+            }
+            #contactDialog_dialog-header > button > span {
+              color: #001978;
+            }
+          `}
+        </style>
+        
       </div>
     );
   }
