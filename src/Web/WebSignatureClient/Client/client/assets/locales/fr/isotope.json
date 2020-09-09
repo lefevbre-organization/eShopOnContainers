@@ -108,6 +108,24 @@
       "cancel": "Cancelar",
       "ok": "Ok"
     },
+    "grid": {
+      "name": "Nom",
+      "email": "Email",
+      "role": "Rôle",
+      "signatureType": "Type de signature",
+      "doubleAuthentication": "Double authentication",
+      "recipientsRole": "RÔLE DES BÉNÉFICIAIRES",
+      "signer": "Signataire",
+      "validator": "Validateur",
+      "advancedSignature": "Signature avancée",
+      "userCertificate": "Certificat d'utilisateur",
+      "none": "No",
+      "sms": "SMS",
+      "photo": "Photo",
+      "finish": "FINALISER",
+      "photoNumber": "Number of photos",
+      "phone": "Number of téléphone"
+    },
     "title": "CRÉER UNE SIGNATURE"
   },
   "forwardAction": {
@@ -182,7 +200,8 @@
     "statusPending": "En attente",
     "filters": {
       "contains": "Contient",
-      "startsWith": "Commence par"
+      "startsWith": "Commence par",
+      "equal": "Égal"
     }
   },
   "confirmationModal": {
@@ -265,8 +284,22 @@
     },
     "signerCard": {
       "title": {
-        "signers": "SIGNANTS",
-        "signer": "SIGNATAIRE"
+        "signers": "SIGNATAIRE",
+        "signer": "Destinataire",
+        "validators": "VALIDATEUR",
+        "validator": "Destinataire",
+        "type": {
+          "title": "Type de signature",
+          "advanced": "Signature avancée",
+          "certificate": "Signer avec certificat"
+        },
+        "DoubleAuthentication": {
+          "title": "Double authentification",
+          "sms": "SMS",
+          "photo": "Photo",
+          "none": "No",
+          "photoNumber": "__ photos jointes"
+        }
       },
       "body": {
         "title": "Progrés de demande",
@@ -274,7 +307,8 @@
         "emailDelivered": "Email remis",
         "emailOpened": "Email ouvert",
         "docOpened": "Document ouvert",
-        "docSigned": "Documento signé"
+        "docSigned": "Document signé",
+	"docValidated": "Document validé"
       },
       "footer": {
         "title": "Rappels envoyés",

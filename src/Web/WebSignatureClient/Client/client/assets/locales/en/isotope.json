@@ -90,6 +90,24 @@
       "cancel": "Cancel",
       "ok": "Ok"
     },
+    "grid": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "signatureType": "Signature type",
+      "doubleAuthentication": "Double authentication",
+      "recipientsRole": "RECIPIENTS ROLE",
+      "signer": "Signer",
+      "validator": "Validator",
+      "advancedSignature": "Advanced signature",
+      "userCertificate": "User certificate",
+      "none": "No",
+      "sms": "SMS",
+      "photo": "Photo",
+      "finish": "FINALIZE",
+      "photoNumber": "Number of photos",
+      "phone": "Number of phone"
+    },
     "title": "CREATE NEW SIGNATURE"
   },
   "forwardAction": {
@@ -164,7 +182,8 @@
     "statusPending": "Pending",
     "filters": {
       "contains": "Contains",
-      "startsWith": "Starts with"
+      "startsWith": "Starts with",
+      "equal": "Equal"
     }
   },
   "confirmationModal": {
@@ -247,8 +266,22 @@
     },
     "signerCard": {
       "title": {
-        "signers": "SIGNERS",
-        "signer": "Signer"
+        "signers": "SIGNER",
+        "signer": "Recipient",
+        "validators": "VALIDATOR",
+        "validator": "Recipient",
+        "type": {
+          "title": "Type of signature",
+          "advanced": "Advanced signature",
+          "certificate": "Sign with certificate"
+        },
+        "DoubleAuthentication": {
+          "title": "Double authentication",
+          "sms": "SMS",
+          "photo": "Photo",
+          "none": "No",
+          "photoNumber": "__ photos attached"
+        }
       },
       "body": {
         "title": "SIGNATURE PROGRESS",
@@ -256,7 +289,8 @@
         "emailDelivered": "Email delivered",
         "emailOpened": "Email opened",
         "docOpened": "Document opened",
-        "docSigned": "Document signed"
+        "docSigned": "Document signed",
+	"docValidated": "Document validated"
       },
       "footer": {
         "title": "SENT REMINDERS",

@@ -54,6 +54,7 @@
     "delete": "Borrar",
     "markUnread": "Marcar como no leído",
     "markRead": "Marcar como leído",
+    "search": "Buscar",
     "returnlexon": "Volver a Lex-on",
     "deleteFromTrashDialog": {
       "title": "Confirmar borrado",
@@ -107,6 +108,24 @@
       "title": "Insertar Enlace",
       "cancel": "Cancelar",
       "ok": "Ok"
+    },
+    "grid": {
+      "name": "Nombre",
+      "email": "Email",
+      "role": "Rol",
+      "signatureType": "Tipo de firma",
+      "doubleAuthentication": "Doble autenticación",
+      "recipientsRole": "ROL DE LOS DESTINATARIOS",
+      "signer": "Firmante",
+      "validator": "Validador",
+      "advancedSignature": "Firma avanzada",
+      "userCertificate": "Certificado de usuario", 
+      "none": "No",
+      "sms": "SMS",
+      "photo": "Foto",
+      "finish": "FINALIZAR",
+      "photoNumber": "Número de fotos",
+      "phone": "Número de teléfono"
     },
     "title": "SOLICITUD DE FIRMA"
   },
@@ -182,7 +201,8 @@
     "statusPending": "Pendiente",
     "filters": {
       "contains": "Contiene",
-      "startsWith": "Empieza por"
+      "startsWith": "Empieza por",
+      "equal": "Es igual a"
     }
   },
   "confirmationModal": {
@@ -265,8 +285,22 @@
     },
     "signerCard": {
       "title": {
-        "signers": "FIRMANTES",
-        "signer": "Firmante"
+        "signers": "FIRMANTE",
+        "signer": "Destinatario",
+        "validators": "VALIDADOR",
+        "validator": "Destinatario",
+        "type": {
+          "title": "Tipo de firma",
+          "advanced": "Firma avanzada",
+          "certificate": "Firma con certificado"
+        },
+        "DoubleAuthentication": {
+          "title": "Doble autenticación",
+          "sms": "SMS",
+          "photo": "Fotografía",
+          "none": "No",
+          "photoNumber": "__ fotos adjuntas"
+        }
       },
       "body": {
         "title": "PROGRESO PETICIÓN",
@@ -274,7 +308,8 @@
         "emailDelivered": "Email entregado",
         "emailOpened": "Email abierto",
         "docOpened": "Documento abierto",
-        "docSigned": "Documento firmado"
+        "docSigned": "Documento firmado",
+        "docValidated": "Documento validado"
       },
       "footer": {
         "title": "RECORDATORIOS ENVIADOS",

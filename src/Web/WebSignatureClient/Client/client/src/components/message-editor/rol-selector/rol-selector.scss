@@ -1,0 +1,60 @@
+.detail-rol {
+    border: 2px solid #001978;
+    margin-bottom: 20px;
+    width: 100%;
+
+    th {
+        background: #001978;
+        color: #FFF;
+        border-right: 1px solid #FFF;
+        font-weight: 500;
+        &:last-child {
+          border: 0
+        }
+      }
+    td:last-child, th:last-child {
+       border-right: 2px solid #001978;
+    }
+}
+
+.btn-gen {
+ background: #001978;
+ text-decoration: none;
+ color: #FFFFFF;
+ letter-spacing: .5px;
+ font-size: 14px;
+ padding: 11px 30px;
+ text-transform: uppercase;
+ border: 2px solid #001978;
+ cursor: pointer;
+ font-weight: 600;
+ display: inline-block;
+}
+
+.btn-gen:hover {
+  background: #9a9a9a;
+  border: 2px solid #9a9a9a;
+  color: #FFF;
+}
+
+.border-input {
+  border-bottom: 1px solid #9e9e9e;
+  color: #001978;
+}
+
+.border-input:focus {
+  border-bottom: 1px solid #001978 !important;
+  box-shadow: 0 1px 0 0 #001978 !important;
+}
+
+.border-input:disabled {
+  border-bottom: 1px solid #9e9e9e !important;
+}
+
+.photo-input {
+  width: 40px !important;
+}
+
+.tooltipped {
+  color: #001978 !important;
+}

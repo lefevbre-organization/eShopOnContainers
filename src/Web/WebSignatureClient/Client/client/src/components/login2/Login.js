@@ -15,7 +15,7 @@ import '../../styles/Login.css';
 // import logoLexon from '../../../assets/images/LogoLexOn.jpg';
 // import iconUser from '../../../assets/images/icon-user.png';
 // import iconLock from '../../../assets/images/icon-lock.png';
-//import i18n from '../../services/i18n';
+import i18n from 'i18next';
 import Cookies from 'js-cookie';
 import { clearUserCredentials, setUserCredentials } from "../../actions/application";
 import { setUser } from "../../actions/lefebvre";
@@ -42,7 +42,7 @@ class Login extends Component {
       needHelp: this.props.t('login.needHelp'),
       phoneNumber: this.props.t('login.phoneNumber'),
       client: this.props.t('login.client'),
-      required: this.props.t('login.required'),
+      required: i18n.t('login.required'),
     };
     // this.handleChange= this.handleChange.bind(this);
     // this.validateForm= this.validateForm.bind(this);

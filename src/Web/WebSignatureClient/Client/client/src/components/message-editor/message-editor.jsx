@@ -39,6 +39,7 @@ import  AttachmentsWidget  from './widgets/attachments-widget2';
 import { ExpirationWidget } from './widgets/expiration-widget';
 import { RemindersWidget } from './widgets/reminders-widget';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
+import RolSelector from './rol-selector/rol-selector';
 
 class MessageEditor extends Component {
   constructor(props) {
@@ -57,6 +58,7 @@ class MessageEditor extends Component {
       expirationDays: 7,
       hideAlertDialog: false,
       hideConfirmDialog: false,
+      hideRolDialog: false,
       bigAttachments: false,
       centinelaDownloadError: (props.attachmentsDownloadError !== undefined) ? props.attachmentsDownloadError : false,
       numPagesOption: 1,
@@ -101,6 +103,7 @@ class MessageEditor extends Component {
     this.animationSettings = { effect: 'None' };
     this.handleNumPagesOption = this.handleNumPagesOption.bind(this);
     this.showCancelCenModal = this.showCancelCenModal.bind(this);
+    this.getRoleInfo = this.getRoleInfo.bind(this);
     this.resetIsFileDrop = this.resetIsFileDrop.bind(this);
   }
 
@@ -118,12 +121,140 @@ class MessageEditor extends Component {
     this.setState({isFileType: false});
   }
 
+  getRoleInfo(recipients){
+    console.log('Roleinfo:');
+    console.log(recipients);
+    
+    if (this.headerFormRef.current.reportValidity()) {
+        // Get content directly from editor, state content may not contain latest changes
+        const content = this.getEditor().getContent();
+        const { cc, subject } = this.props;
+        const { lefebvre } = this.props;
+        // const userBranding = lefebvre.userBrandings.find(
+        //   (b) => b.app === lefebvre.userApp
+        // );
+  
+        let reminders = [];
+        switch (this.state.selectedReminderOption) {
+          case 'option1': // every x days
+            if (this.state.selectedExpirationOption === 'exp_option1') {
+              for (let index = 0; index < this.state.expirationDays; index++) {
+                if (this.state.reminderDays * (index + 1) <= this.state.expirationDays) {
+                  reminders[index] = this.state.reminderDays * (index + 1);
+                }
+              }
+            } else {
+              for (let index = 0; index < 30; index++) {
+                reminders[index] = this.state.reminderDays * (index + 1);
+              }
+            }
+            break;
+          case 'option2': //daily
+            if (this.state.selectedExpirationOption === 'exp_option1') {
+              for (let index = 0; index < this.state.expirationDays; index++) {
+                reminders[index] = index + 1;
+                //reminders.push(index + 1);
+              }
+            } else {
+              for (let index = 0; index < 30; index++) {
+                reminders[index] = index + 1;
+              }
+            }
+            break;
+          case 'option3': //weekly
+            if (this.state.selectedExpirationOption === 'exp_option1') {
+              for (let index = 0; index < this.state.expirationDays; index++) {
+                if (7 * (index + 1) < this.state.expirationDays) {
+                  reminders[index] = 7 * (index + 1);
+                }
+              }
+            } else {
+              for (let index = 0; index < 30; index++) {
+                reminders[index] = 7 * (index + 1);
+              }
+            }
+            break;
+          default:
+            reminders[0] = -1;
+            break;
+        }
+  
+        let expiration;
+        switch (this.state.selectedExpirationOption) {
+          case 'exp_option1': // expires
+            expiration = this.state.expirationDays;
+            break;
+          case 'exp_option2': // never expires
+            expiration = 0;
+            break;
+          default:
+            expiration = -1;
+            break;
+        }
+ 
+        console.log('Recordatorios y exp: ');
+        console.log({ reminders });
+        console.log(expiration);
+  
+        let guid = lefebvre.guid;
+        if (guid === null) {
+          guid = uuid();
+        }
+  
+        // if (document.getElementById('file-input').files[0]){
+        //     var reader = new FileReader();
+        //     reader.readAsDataURL(document.getElementById('file-input').files[0]);
+        //     reader.onloadend = (evt) => {
+        //        console.log(evt.target.result);
+        //        var fileData = evt.target.result.split('base64,')[1];
+        //        this.callApis(to, subject, content.innerHTML, document.getElementById('file-input').files[0], fileData, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
+        //     }
+        //     reader.onerror = function (evt) {
+        //         console.log("error reading file");
+        //     }
+        // } else
+        if (this.props.attachments) {
+          let attachmentsList = [];
+          this.props.attachments.forEach((attachment) => {
+            //var attachment = this.props.attachments[0];
+            var file = new File([attachment.content], attachment.fileName, {
+              type: getFileType(attachment.fileName),
+              lastModified: new Date(),
+            });
+            attachmentsList.push({file: file, pages: attachment.pages});
+            debugger;
+          });
+          //this.callApis(to, subject, content.innerHTML, file, this.props.attachments[0].content, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
+
+
+          this.callApis(
+            recipients,
+            cc,
+            subject,
+            content.innerHTML,
+            this.props.attachments,
+            reminders,
+            expiration,
+            lefebvre.userId,
+            guid,
+            ''
+          );
+        }
+        //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
+      }
+  }
+
   dialogClose(){
+    console.log('hideRolDialog', this.state);
     if (this.state.centinelaDownloadError === true){
       this.props.onShowError();
     }
     this.setState({
-        hideAlertDialog: false, bigAttachments: false, centinelaDownloadError: false, hideConfirmDialog: false
+        hideAlertDialog: false, 
+        bigAttachments: false, 
+        centinelaDownloadError: false,
+        hideConfirmDialog: false, 
+        hideRolDialog: false
     });
   }
 
@@ -248,7 +379,7 @@ class MessageEditor extends Component {
           },
           buttonModel: { content: i18n.t('confirmationModal.yes'), isPrimary: true }
       }
-  ];
+    ];
 
 
     const {
@@ -405,6 +536,25 @@ class MessageEditor extends Component {
           open={() => this.dialogOpen} 
           close={() => this.dialogClose}
         />
+        <DialogComponent 
+          id="rolDialog" 
+          header={i18n.t("messageEditor.grid.recipientsRole")} 
+          visible={this.state.hideRolDialog} 
+          showCloseIcon={true} 
+          animationSettings={this.animationSettings} 
+          width='80%'
+          height='50%'
+          //content={RolSelector} 
+          ref={dialog => this.rolDialog = dialog} 
+          //target='#target' 
+          open={() => this.dialogOpen} 
+          close={this.dialogClose.bind(this)}
+        >
+          <RolSelector 
+          recipients={to}
+          onFinishRoles={this.getRoleInfo}
+          />
+        </DialogComponent>
         <style jsx global>
           {` 
            .message-editor___1BSzC 
@@ -426,6 +576,9 @@ class MessageEditor extends Component {
               left: 20% !important;
               z-index: 1001;
             }
+            #rolDialog {
+              top: 24% !important;
+            }
             #info2Dialog_dialog-header, #info2Dialog_title, #info2Dialog_dialog-content, #info2Dialog.e-footer-content,
             #confirmDialog_dialog-header, #confirmDialog_title, #confirmDialog_dialog-content, .e-footer-content {
               background: #001970;
@@ -440,8 +593,12 @@ class MessageEditor extends Component {
             #confirmDialog .e-dlg-header{
               width: 1%;
             }
-            .e-dialog .e-btn .e-btn-icon.e-icon-dlg-close{
-              color: white;
+            #rolDialog_title {
+              width: 40% !important;
+              color: #001970;
+              font-weight: bold;
+              font-size: 15px;
+              padding-left: 17px;
             }
             .e-btn.e-flat.e-primary {
               color: #fff !important;
@@ -457,14 +614,26 @@ class MessageEditor extends Component {
               height: 15px;
               background-color: transparent;
             }
-            #confirmDialog_dialog-header, .e-dialog 
-            .e-icon-dlg-close::before {
+            .e-dialog .e-icon-dlg-close::before {
               content: '\e7fc';
               position: relative;
-              color: white;
               font-size: 15px;
             }
-
+            #rolDialog_dialog-header > button {
+              margin-right: 30px;
+            }
+            #rolDialog_dialog-header > button > span {
+              color: #001978;
+            }
+            #confirmDialog_dialog-header > button > span {
+              color: white;
+            }
+            #info2Dialog_dialog-header > button > span {
+              color: white;
+            }
+            #noSignaturesDialog_dialog-header > button > span {
+              color: white;
+            }
             #confirmDialog .e-btn.e-flat.e-primary {
               text-transform: uppercase;
               font-size: 13px;
@@ -545,121 +714,122 @@ class MessageEditor extends Component {
       this.setState({ hideAlertDialog: true, bigAttachments: true});
     }
     else {
-      if (this.headerFormRef.current.reportValidity()) {
-        // Get content directly from editor, state content may not contain latest changes
-        const content = this.getEditor().getContent();
-        const { to, cc, subject } = this.props;
-        const { lefebvre } = this.props;
-        // const userBranding = lefebvre.userBrandings.find(
-        //   (b) => b.app === lefebvre.userApp
-        // );
+      this.setState({hideRolDialog:true});
+      // if (this.headerFormRef.current.reportValidity()) {
+      //   // Get content directly from editor, state content may not contain latest changes
+      //   const content = this.getEditor().getContent();
+      //   const { to, cc, subject } = this.props;
+      //   const { lefebvre } = this.props;
+      //   // const userBranding = lefebvre.userBrandings.find(
+      //   //   (b) => b.app === lefebvre.userApp
+      //   // );
   
-        let reminders = [];
-        switch (this.state.selectedReminderOption) {
-          case 'option1': // every x days
-            if (this.state.selectedExpirationOption === 'exp_option1') {
-              for (let index = 0; index < this.state.expirationDays; index++) {
-                if (this.state.reminderDays * (index + 1) <= this.state.expirationDays) {
-                  reminders[index] = this.state.reminderDays * (index + 1);
-                }
-              }
-            } else {
-              for (let index = 0; index < 30; index++) {
-                reminders[index] = this.state.reminderDays * (index + 1);
-              }
-            }
-            break;
-          case 'option2': //daily
-            if (this.state.selectedExpirationOption === 'exp_option1') {
-              for (let index = 0; index < this.state.expirationDays; index++) {
-                reminders[index] = index + 1;
-                //reminders.push(index + 1);
-              }
-            } else {
-              for (let index = 0; index < 30; index++) {
-                reminders[index] = index + 1;
-              }
-            }
-            break;
-          case 'option3': //weekly
-            if (this.state.selectedExpirationOption === 'exp_option1') {
-              for (let index = 0; index < this.state.expirationDays; index++) {
-                if (7 * (index + 1) < this.state.expirationDays) {
-                  reminders[index] = 7 * (index + 1);
-                }
-              }
-            } else {
-              for (let index = 0; index < 30; index++) {
-                reminders[index] = 7 * (index + 1);
-              }
-            }
-            break;
-          default:
-            reminders[0] = -1;
-            break;
-        }
+      //   let reminders = [];
+      //   switch (this.state.selectedReminderOption) {
+      //     case 'option1': // every x days
+      //       if (this.state.selectedExpirationOption === 'exp_option1') {
+      //         for (let index = 0; index < this.state.expirationDays; index++) {
+      //           if (this.state.reminderDays * (index + 1) <= this.state.expirationDays) {
+      //             reminders[index] = this.state.reminderDays * (index + 1);
+      //           }
+      //         }
+      //       } else {
+      //         for (let index = 0; index < 30; index++) {
+      //           reminders[index] = this.state.reminderDays * (index + 1);
+      //         }
+      //       }
+      //       break;
+      //     case 'option2': //daily
+      //       if (this.state.selectedExpirationOption === 'exp_option1') {
+      //         for (let index = 0; index < this.state.expirationDays; index++) {
+      //           reminders[index] = index + 1;
+      //           //reminders.push(index + 1);
+      //         }
+      //       } else {
+      //         for (let index = 0; index < 30; index++) {
+      //           reminders[index] = index + 1;
+      //         }
+      //       }
+      //       break;
+      //     case 'option3': //weekly
+      //       if (this.state.selectedExpirationOption === 'exp_option1') {
+      //         for (let index = 0; index < this.state.expirationDays; index++) {
+      //           if (7 * (index + 1) < this.state.expirationDays) {
+      //             reminders[index] = 7 * (index + 1);
+      //           }
+      //         }
+      //       } else {
+      //         for (let index = 0; index < 30; index++) {
+      //           reminders[index] = 7 * (index + 1);
+      //         }
+      //       }
+      //       break;
+      //     default:
+      //       reminders[0] = -1;
+      //       break;
+      //   }
   
-        let expiration;
-        switch (this.state.selectedExpirationOption) {
-          case 'exp_option1': // expires
-            expiration = this.state.expirationDays;
-            break;
-          case 'exp_option2': // never expires
-            expiration = 0;
-            break;
-          default:
-            expiration = -1;
-            break;
-        }
+      //   let expiration;
+      //   switch (this.state.selectedExpirationOption) {
+      //     case 'exp_option1': // expires
+      //       expiration = this.state.expirationDays;
+      //       break;
+      //     case 'exp_option2': // never expires
+      //       expiration = 0;
+      //       break;
+      //     default:
+      //       expiration = -1;
+      //       break;
+      //   }
   
-        console.log('Recordatorios y exp: ');
-        console.log({ reminders });
-        console.log(expiration);
+      //   console.log('Recordatorios y exp: ');
+      //   console.log({ reminders });
+      //   console.log(expiration);
   
-        let guid = lefebvre.guid;
-        if (guid === null) {
-          guid = uuid();
-        }
+      //   let guid = lefebvre.guid;
+      //   if (guid === null) {
+      //     guid = uuid();
+      //   }
   
-        // if (document.getElementById('file-input').files[0]){
-        //     var reader = new FileReader();
-        //     reader.readAsDataURL(document.getElementById('file-input').files[0]);
-        //     reader.onloadend = (evt) => {
-        //        console.log(evt.target.result);
-        //        var fileData = evt.target.result.split('base64,')[1];
-        //        this.callApis(to, subject, content.innerHTML, document.getElementById('file-input').files[0], fileData, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
-        //     }
-        //     reader.onerror = function (evt) {
-        //         console.log("error reading file");
-        //     }
-        // } else
-        if (this.props.attachments) {
-          let attachmentsList = [];
-          this.props.attachments.forEach((attachment) => {
-            //var attachment = this.props.attachments[0];
-            var file = new File([attachment.content], attachment.fileName, {
-              type: getFileType(attachment.fileName),
-              lastModified: new Date(),
-            });
-            attachmentsList.push({file: file, pages: attachment.pages});
-            debugger;
-          });
-          //this.callApis(to, subject, content.innerHTML, file, this.props.attachments[0].content, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
-          this.callApis(
-            to,
-            cc,
-            subject,
-            content.innerHTML,
-            this.props.attachments,
-            reminders,
-            expiration,
-            lefebvre.userId,
-            guid,
-            ''
-          );
-        }
-        //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
-      }
+      //   // if (document.getElementById('file-input').files[0]){
+      //   //     var reader = new FileReader();
+      //   //     reader.readAsDataURL(document.getElementById('file-input').files[0]);
+      //   //     reader.onloadend = (evt) => {
+      //   //        console.log(evt.target.result);
+      //   //        var fileData = evt.target.result.split('base64,')[1];
+      //   //        this.callApis(to, subject, content.innerHTML, document.getElementById('file-input').files[0], fileData, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
+      //   //     }
+      //   //     reader.onerror = function (evt) {
+      //   //         console.log("error reading file");
+      //   //     }
+      //   // } else
+      //   if (this.props.attachments) {
+      //     let attachmentsList = [];
+      //     this.props.attachments.forEach((attachment) => {
+      //       //var attachment = this.props.attachments[0];
+      //       var file = new File([attachment.content], attachment.fileName, {
+      //         type: getFileType(attachment.fileName),
+      //         lastModified: new Date(),
+      //       });
+      //       attachmentsList.push({file: file, pages: attachment.pages});
+      //       debugger;
+      //     });
+      //     //this.callApis(to, subject, content.innerHTML, file, this.props.attachments[0].content, reminders, expiration, lefebvre.userId, guid, userBranding.externalId);
+      //     this.callApis(
+      //       to,
+      //       cc,
+      //       subject,
+      //       content.innerHTML,
+      //       this.props.attachments,
+      //       reminders,
+      //       expiration,
+      //       lefebvre.userId,
+      //       guid,
+      //       ''
+      //     );
+      //   }
+      //   //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
+      // }
     }
   }
 
@@ -769,7 +939,7 @@ class MessageEditor extends Component {
 
   //callApis(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId){
   callApis(
-    to,
+    recipients,
     cc,
     subject,
     content,
@@ -784,7 +954,7 @@ class MessageEditor extends Component {
     this.setState({isCallApis: true});
     //createSignature2(to, subject, content, file, fileData, reminders, expiration, userId, guid, userBrandingId, this.props.credentials.encrypted)
     createSignature2(
-      to,
+      recipients,
       cc,
       subject,
       content,
@@ -838,7 +1008,7 @@ class MessageEditor extends Component {
           this.props.preloadSignatures(lefebvre.userId)
         });
       }
-      this.setState({isCallApis: false});
+      this.setState({isCallApis: false, hideRolDialog: false});
       this.props.close(this.props.application);
     });
   }

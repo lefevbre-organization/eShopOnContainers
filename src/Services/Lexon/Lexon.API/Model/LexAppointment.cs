@@ -4,6 +4,7 @@
     {
         public string Bbdd { get; set; }
         public string Subject { get; set; }
+        public string Provider { get; set; }
         public string Location { get; set; }
         public string EndDate { get; set; }
         public string StartDate { get; set; }
