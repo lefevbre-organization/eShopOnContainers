@@ -328,5 +328,9 @@
     "title": "Access error.",
     "subtitle": "You don't have permission to use this application.",
     "footer": "Need help?"
-  }  
+  },
+  "contacts": {
+    "lexon": "Contact Lex-ON",
+    "centinela": "Contact Centinela"
+  }
 }

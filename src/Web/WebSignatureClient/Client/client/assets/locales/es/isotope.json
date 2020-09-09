@@ -347,5 +347,9 @@
     "title": "Error de acceso.",
     "subtitle": "No tiene permiso para usar esta aplicación.",
     "footer": "¿Necesitas ayuda?"
+  },
+  "contacts": {
+    "lexon": "Contactos Lex-ON",
+    "centinela": "Contactos Centinela"
   }
 }
