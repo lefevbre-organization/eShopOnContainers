@@ -30,6 +30,10 @@ function getType(config){
     return  i18n.t('signatureViewer.signerCard.title.type.advanced');
   }
 
+  if (config[2] === 'validator'){
+    return 'N/A';
+  }
+
   switch (config[3]) {
     case 'advanced':
       type = i18n.t('signatureViewer.signerCard.title.type.advanced');
@@ -109,7 +113,9 @@ const SignatureList = (props) => {
                     <div className={`${props.styles['tit-firmante']} left`}>
                       {i18n.t('messageEditor.grid.doubleAuthentication')}:
                     </div> 
-                    <span className={`${props.styles['name_firmante']} left`}>{`${getDoubleAuth(props.signatureConfig)} ${getDoubleAuthInfo(props.signatureConfig)}`}  </span> 
+                    <span className={`${props.styles['name_firmante']} left`}>
+                      {`${getDoubleAuth(props.signatureConfig)} ${getDoubleAuthInfo(props.signatureConfig)}`}  
+                    </span> 
                   </li>
                   </ul>
                 {/* </div> */}

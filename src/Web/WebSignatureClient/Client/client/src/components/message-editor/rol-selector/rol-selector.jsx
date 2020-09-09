@@ -48,22 +48,73 @@ export class RolSelector extends React.Component {
     if(event.value == 'none' 
     || event.value == 'sms' 
     || event.value == 'photo'){
-    if(this.state.newRecipients.length == 0) {
-      let newRecipients = [];
-      this.props.recipients.forEach((user, i) => {
-        let value = i == index ? event.value : 'none';
-        newRecipients.push({user: user, doubleAuth: value });
-      });
-      this.setState({newRecipients: newRecipients});
-    } else {
-      let newRecipients = this.state.newRecipients;
-      newRecipients[index].doubleAuth = event.value
-      this.setState({
-        newRecipients: newRecipients
-    });
-    
-     }
-      
+      if(this.state.newRecipients.length == 0) {
+        let newRecipients = [];
+        this.props.recipients.forEach((user, i) => {
+          let value = i == index ? event.value : 'none';
+          newRecipients.push(
+            {
+              user: user, 
+              role: (document.getElementById(`rol_${i}`)) ? document.getElementById(`rol_${i}`).ej2_instances[0].itemData.Id : null, 
+              signatureType: (document.getElementById(`signatureType_${i}`)) ? document.getElementById(`signatureType_${i}`).ej2_instances[0].itemData.Id : null, 
+              doubleAuth: value 
+            }
+          );
+        });
+        this.setState({newRecipients: newRecipients});
+      } else {
+        let newRecipients = this.state.newRecipients;
+        newRecipients[index].doubleAuth = event.value
+        this.setState({
+          newRecipients: newRecipients
+        });
+      }
+    } 
+    else if(event.value == 'signer' || event.value == 'validator'){
+      if(this.state.newRecipients.length == 0) {
+        let newRecipients = [];
+        this.props.recipients.forEach((user, i) => {
+          let value = i == index ? event.value : 'signer';
+          newRecipients.push(
+            {
+              user: user, 
+              role: value,
+              signatureType: (document.getElementById(`signatureType_${i}`)) ? document.getElementById(`signatureType_${i}`).ej2_instances[0].itemData.Id : null,
+              doubleAuth: (document.getElementById(`doubleAuth_${i}`)) ? document.getElementById(`doubleAuth_${i}`).ej2_instances[0].itemData.Id : null 
+            });
+        });
+        this.setState({newRecipients: newRecipients});
+      } else {
+        let newRecipients = this.state.newRecipients;
+        newRecipients[index].role = event.value
+        this.setState({
+          newRecipients: newRecipients
+        });
+      }
+    }
+    else if (event.value == 'advanced' || event.value == 'certificate'){
+      if(this.state.newRecipients.length == 0) {
+        let newRecipients = [];
+        this.props.recipients.forEach((user, i) => {
+          let value = i == index ? event.value : 'advanced';
+          newRecipients.push(
+            {
+              user: user, 
+              role: (document.getElementById(`rol_${i}`)) ? document.getElementById(`rol_${i}`).ej2_instances[0].itemData.Id : null,
+              signatureType: value,
+              doubleAuth: (document.getElementById(`doubleAuth_${i}`)) ? document.getElementById(`doubleAuth_${i}`).ej2_instances[0].itemData.Id : null 
+            });
+        });
+        this.setState({newRecipients: newRecipients});
+      } else {
+        let newRecipients = this.state.newRecipients;
+        console.log(newRecipients);
+        newRecipients[index].signatureType = event.value;
+        newRecipients[index].doubleAuth = 'none';
+        this.setState({
+          newRecipients: newRecipients
+        });
+      }
     }
 
     //let value = document.getElementById('value');
@@ -165,17 +216,19 @@ export class RolSelector extends React.Component {
                           </div>
                       </td>
                       <td>
-                          <div className="select-wrapper">
-                            <DropDownListComponent 
-                            id={`signatureType_${i}`}
-                            dataSource={this.signatureTypes} 
-                            ref={(dropdownlist) => { this.listObject= dropdownlist }} 
-                            fields={this.signTypesFields} 
-                            change={this.onChange.bind(this, i)} 
-                            placeholder="Select a type of signature" 
-                            value={this.signTypeValue} 
-                            popupHeight="220px" />
-                          </div>
+                        <div className="select-wrapper">
+                          <DropDownListComponent 
+                          id={`signatureType_${i}`}
+                          dataSource={this.signatureTypes} 
+                          ref={(dropdownlist) => { this.listObject= dropdownlist }} 
+                          fields={this.signTypesFields} 
+                          change={this.onChange.bind(this, i)} 
+                          placeholder="Select a type of signature" 
+                          value={this.signTypeValue} 
+                          popupHeight="220px"
+                          enabled={(user.role === 'signer' || user.role === undefined)}
+                          />
+                        </div>
                       </td>
                       <td>
                           <div className="select-wrapper left s3">
@@ -186,7 +239,11 @@ export class RolSelector extends React.Component {
                             fields={this.dobleAuthFields} 
                             change={this.onChange.bind(this, i)} 
                             placeholder="Select a double authentication method"
-                            value={this.dobleAuthValue} popupHeight="220px" />
+                            value={`${newRecipients.length > 0 
+                              ? user.doubleAuth 
+                              : this.dobleAuthValue}`} 
+                            popupHeight="220px" 
+                            enabled={(user.signatureType === 'advanced' || user.signatureType === undefined)}/>
                           </div>
                       </td>
                       { (user.doubleAuth === "photo") ? 
