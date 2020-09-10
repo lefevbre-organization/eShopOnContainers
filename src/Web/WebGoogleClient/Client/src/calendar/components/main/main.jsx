@@ -758,7 +758,7 @@ export class Main extends Component {
         }
 
         //event Type    
-        if (values.EventType != undefined && values.EventType != null) {
+        if (values.EventType != undefined && values.EventType != null && values.EventType.length > 0) {
             let item;
             if (values.EventType.name != undefined) {
                 item = this.eventTypeDataSource.find(x => x.text == values.EventType.name)
@@ -1289,7 +1289,7 @@ export class Main extends Component {
                 }
 
                 //call function to remvove event
-                this.deleteCalendarEventCRUD(calendarFromRemove, item);
+                this.deleteCalendarEventCRUD(calendarFromRemove, item, false, args.data[0]);
 
                 break;
         }
@@ -1314,7 +1314,7 @@ export class Main extends Component {
             })
     }
 
-    deleteCalendarEventCRUD(calendarId, item, hiddeMessage) {
+    deleteCalendarEventCRUD(calendarId, item, hiddeMessage, args) {
         deleteCalendarEvent(calendarId, item)
             .then(result => {
                 if (!hiddeMessage) {
@@ -1322,12 +1322,24 @@ export class Main extends Component {
                 }
             })
             .catch(error => {
-                this.toastObj.show(this.toasts[2]);
-                console.log('error ->', error);
+                if (error.result.error.errors[0] != undefined) {
+                    if (error.result.error.errors[0].reason == "virtualCalendarManipulation" ||
+                        error.result.error.errors[0].reason == "forbidden") {
+                        this.scheduleObj.dataModule.dataManager.dataSource.json.push(args);
+                        this.scheduleObj.refreshEvents();                       
+                        this.toastObj.show({ content: error.result.error.errors[0].message, cssClass: 'e-toast-danger', icon: '' });
+                        console.log('error ->', error);                       
+                        return;
+                    }
+                }
+                else {
+                    this.toastObj.show(this.toasts[2]);
+                    console.log('error ->', error);
+                }    
             })
     }
 
-    updateCalendarEventCRUD(calendarId, item, event, hiddeMessage) {
+    updateCalendarEventCRUD(calendarId, item, event, hiddeMessage, args) {
         updateCalendarEvent(calendarId, item, event)
             .then(result => {
                 if (!hiddeMessage) {
