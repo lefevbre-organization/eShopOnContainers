@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from "prop-types";
 import i18n from 'i18next';
+import {downloadAttachments2} from "../../../services/api-signaturit";
 
 function getRole(config){
   let rol;
@@ -81,7 +82,7 @@ function getDoubleAuthInfo(config){
 
   switch (config[4]) {
     case 'photo':
-      info = `( ${i18n.t('signatureViewer.signerCard.title.DoubleAuthentication.photoNumber').replace('__', config[5])} )`;
+      info = `${i18n.t('signatureViewer.signerCard.title.DoubleAuthentication.photoNumber').replace('__', config[5])}`;
       break;
     default:
       info = '';
@@ -92,7 +93,12 @@ function getDoubleAuthInfo(config){
 
 const SignatureList = (props) => {
   let remindersSent = false;
+  console.log('Props:');
+  console.log(props);
+  console.log('SignatureConfig:');
   console.log(props.signatureConfig);
+  console.log('Status:');
+  console.log(props.getEventStatus(props.signer, 'document_signed') === true || props.getEventStatus(props.signer, 'validated') === true);
     return( 
         <div className={props.styles['cont-info-firmantes']}>
           <div className={`${props.styles.p15} ${props.styles.separador}`}>
@@ -114,7 +120,10 @@ const SignatureList = (props) => {
                       {i18n.t('messageEditor.grid.doubleAuthentication')}:
                     </div> 
                     <span className={`${props.styles['name_firmante']} left`}>
-                      {`${getDoubleAuth(props.signatureConfig)} ${getDoubleAuthInfo(props.signatureConfig)}`}  
+                      {`${getDoubleAuth(props.signatureConfig)} ${getDoubleAuthInfo(props.signatureConfig)}`}
+                      {((props.getEventStatus(props.signer, 'document_signed') === true || props.getEventStatus(props.signer, 'validated') === true) && props.signatureConfig && props.signatureConfig.length > 4 && props.signatureConfig[4] === 'photo' )
+                        ? <a href='#' onClick={() => downloadAttachments2(props.signatureId, props.signer.id, props.signer.file.name, props.auth)}> - Descargar</a>
+                        : ''}  
                     </span> 
                   </li>
                   </ul>

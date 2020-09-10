@@ -637,8 +637,11 @@ public class ImapService {
             }
             // Regular files
             else if (bp.getDisposition() != null && (bp.getDisposition().equalsIgnoreCase(Part.ATTACHMENT) || bp.getDisposition().equalsIgnoreCase(Part.INLINE))) {
-                attachments.add(new Attachment(
+                if (bp.getFileName() != null){
+                    attachments.add(new Attachment(
                         null, MimeUtility.decodeText(bp.getFileName()), bp.getContentType(), bp.getSize()));
+                
+                }
             }
         }
         return attachments;

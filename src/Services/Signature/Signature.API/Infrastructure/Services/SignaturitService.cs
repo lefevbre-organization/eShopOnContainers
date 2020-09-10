@@ -169,6 +169,19 @@ namespace Signature.API.Infrastructure.Services
             return response;
         }
 
+        public async Task<IRestResponse> DownloadAttachments(string signatureId, string documentId)
+        {
+            var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/signatures/{signatureId}/documents/{documentId}/download/attachments");
+            client.Timeout = _timeout;
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
+            request.AlwaysMultipartFormData = true;
+            IRestResponse response = await client.ExecuteAsync(request);
+            //Console.WriteLine(response.Content);
+
+            return response;
+        }
+
         public async Task<IRestResponse> sendReminder(string signatureId)
         {
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/signatures/{signatureId}/reminder.json");

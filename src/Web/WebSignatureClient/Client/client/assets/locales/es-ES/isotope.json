@@ -299,7 +299,7 @@
           "sms": "SMS",
           "photo": "Fotografía",
           "none": "No",
-          "photoNumber": "__ fotos adjuntas"
+          "photoNumber": "(__) fotos adjuntas"
         }
       },
       "body": {

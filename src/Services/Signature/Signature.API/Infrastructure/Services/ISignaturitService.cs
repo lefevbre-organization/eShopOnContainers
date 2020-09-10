@@ -20,6 +20,8 @@
 
         Task<RestSharp.IRestResponse> DownloadTrail(string signatureId, string documentId);
 
+        Task<RestSharp.IRestResponse> DownloadAttachments(string signatureId, string documentId);
+
         Task<RestSharp.IRestResponse> sendReminder(string signatureId);
 
         Task<RestSharp.IRestResponse> CreateBranding(BrandingConfiguration brandingInfo);
