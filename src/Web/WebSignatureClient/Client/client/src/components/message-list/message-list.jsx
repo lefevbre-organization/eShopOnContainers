@@ -724,7 +724,7 @@ class MessageList extends Component {
                         <ColumnDirective field='Documento' textAlign='Left' headerText={i18n.t('signaturesGrid.columnDocument')}/>
                         <ColumnDirective field='Asunto' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSubject')} />
                         <ColumnDirective field='Destinatarios' textAlign='Left' headerText={i18n.t('signaturesGrid.columnSigners')} width= '151' template={this.recipientsTable.bind(this)}/>
-                        <ColumnDirective field='Fecha' textAlign='Left' type="date" format={{ type: 'date', format: 'M/d/y' }} headerText={i18n.t('signaturesGrid.columnDate')} width='115'/>
+                        <ColumnDirective field='Fecha' textAlign='Left' type="date" format={{ type: 'date', format: 'dd/MM/yyyy' }} headerText={i18n.t('signaturesGrid.columnDate')} width='115'/>
                         <ColumnDirective field='Estado' filter={filterCheckBox} textAlign='Left' headerText={i18n.t('signaturesGrid.columnStatus')} width='110' template={this.statusTemplate.bind(this)} />
                     </ColumnsDirective>
                     <Inject services={[Filter, Page, Resize, Sort, Toolbar, PdfExport, ExcelExport]}/>
