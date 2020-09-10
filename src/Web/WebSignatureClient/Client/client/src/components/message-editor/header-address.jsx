@@ -101,9 +101,7 @@ export class HeaderAddress extends Component {
           ref={dialog => this.contactDialog = dialog} 
           close={this.dialogClose}
         >
-          <Contacts 
-        
-          />
+          <Contacts />
          
         </DialogComponent>
 

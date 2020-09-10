@@ -347,5 +347,11 @@
     "title": "Error de acceso.",
     "subtitle": "No tiene permiso para usar esta aplicación.",
     "footer": "¿Necesitas ayuda?"
+  },
+   "contacts": {
+    "lexon": "Contact Lex-ON",
+    "centinela": "Contact Centinela",
+    "search": "Buscar un contacto",
+    "selected": "seleccionados"
   }
 }
