@@ -909,7 +909,10 @@ export class Main extends Component {
 
             var buttonElementRemove = args.type === "QuickInfo" ? ".e-event-popup .e-delete" : ".e-schedule-dialog .e-event-delete";
             var removeButton = document.querySelector(buttonElementRemove);
-            removeButton.disabled = true;
+            if (removeButton != undefined) {
+                removeButton.disabled = true;
+            }
+           
         }
 
         //Not allow to change calendar property on update events
@@ -988,6 +991,13 @@ export class Main extends Component {
 
         }
         if (args.type === 'Editor') {
+
+
+            var editButton = document.querySelector('.e-event-delete');
+            editButton.disabled = false;
+
+            var editButtonSave = document.querySelector('.e-event-save');
+            editButtonSave.hidden = false;
 
             if (args.data.Id != undefined) {
                 let calendarRole = this.resourceCalendarData.find(x => x.id == args.data.CalendarId).accessRole
