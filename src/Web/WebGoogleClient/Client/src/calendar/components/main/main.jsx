@@ -899,9 +899,22 @@ export class Main extends Component {
 
     onPopupOpen(args) {
 
+        //Not allow to update events of not owner or writer calendar permissions
+        let calendarRole = this.resourceCalendarData.find(x => x.id == args.data.CalendarId).accessRole
+        if (calendarRole != "owner" && 
+            calendarRole != "writer") {
+            //var buttonElementEdit = args.type === "QuickInfo" ? ".e-event-popup .e-edit" : ".e-schedule-dialog .e-event-edit";
+            //var editButton = document.querySelector(buttonElementEdit);
+            //editButton.disabled = true;
+
+            var buttonElementRemove = args.type === "QuickInfo" ? ".e-event-popup .e-delete" : ".e-schedule-dialog .e-event-delete";
+            var removeButton = document.querySelector(buttonElementRemove);
+            removeButton.disabled = true;
+        }
+
         //Not allow to change calendar property on update events
         this.ToogleCalendarResourceDirective(args);
-
+        
         //Not allow to change calendar property on update events
         if (args.data.Id != undefined) {
             console.log(this.scheduleObj.resourceCollection[0].cssClassField)
@@ -975,6 +988,19 @@ export class Main extends Component {
 
         }
         if (args.type === 'Editor') {
+
+            if (args.data.Id != undefined) {
+                let calendarRole = this.resourceCalendarData.find(x => x.id == args.data.CalendarId).accessRole
+                if (calendarRole != "owner" &&
+                    calendarRole != "writer") {
+                    var editButton = document.querySelector('.e-event-delete');
+                    editButton.disabled = true;
+                    
+                    var editButtonSave = document.querySelector('.e-event-save');
+                    editButtonSave.hidden= true;
+                }
+            }            
+           
 
             var dialogObj = args.element.ej2_instances[0];
             dialogObj.buttons[1].buttonModel.isPrimary = false;
