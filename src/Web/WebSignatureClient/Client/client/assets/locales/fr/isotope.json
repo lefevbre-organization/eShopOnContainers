@@ -350,6 +350,8 @@
   },
   "contacts": {
     "lexon": "Contact Lex-ON",
-    "centinela": "Contact Centinela"
+    "centinela": "Contact Centinela",
+    "search": "Trouver un contact",
+    "selected": "choisi"
   }
 }
