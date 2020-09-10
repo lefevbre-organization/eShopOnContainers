@@ -1218,19 +1218,23 @@ export class Main extends Component {
                 break;
 
             case 'eventCreated':
-
-                //if (this.scheduleObj.eventWindow.eventData != undefined) {
-                //    if (this.scheduleObj.eventWindow.eventData.typeEvent != "lexon") {
+               
                 event = this.buildEventoGoogle(args.data[0]);
 
-                //call function to add event
-                // this.addCalendarEventCRUD(args.data[0].CalendarId, event, args);   
+                // if the calendar is not checked remove from current view
+                if (!this.resourceCalendarData.find(x => x.id == args.data[0].CalendarId).checked) {                   
+                    delete this.scheduleObj.dataModule.dataManager.dataSource.json.splice(-1, 1);
+                }
+              
                 addCalendarEvent(args.data[0].CalendarId, event)
                     .then(result => {
+
                         // refresh event data
                         if (this.scheduleObj.eventWindow.eventData != undefined) {
                             this.scheduleObj.eventWindow.eventData.Id = result.id;
                         }
+
+                       
 
                         // this.scheduleObj.eventWindow.resetForm();
                         args.data[0].Id = result.id;
@@ -1353,7 +1357,9 @@ export class Main extends Component {
     }
 
     loadCalendarEvents(calendar, checked) {
-        this.scheduleObj.showSpinner();
+        this.scheduleObj.showSpinner();   
+        
+        
         let predicate;
 
         getEventList(calendar, this.scheduleObj.selectedDate)
