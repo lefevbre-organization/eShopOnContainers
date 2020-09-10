@@ -636,7 +636,6 @@ class MessageList extends Component {
     }
 
     render() {
-         console.log('navigator.language', navigator.language);
         const contenido = `
             <span class="lf-icon-check-round" style="font-size:100px; padding: 15px;"></span>
             <div style='text-align: justify; text-justify: inter-word; align-self: center;
@@ -691,6 +690,8 @@ class MessageList extends Component {
         var firmas = (this.props.signatures && this.props.signatures.length > 0) ? this.getSignatures(this.props.signatures): [{}];
         var customAttributes = {class: 'customcss'};
         document.body.style.background = "white";
+        const languageSpit = (navigator.language).split('-');
+        const navigatorLanguage = languageSpit[0];
         return( (firmas && firmas.length > 0) ?
             <div className={styles['main-grid']}>
             <div>
@@ -712,7 +713,7 @@ class MessageList extends Component {
                     filterSettings={filterSettings}
                     toolbar={this.toolbarOptions} 
                     // locale={navigator.language}
-                    locale={navigator.language}
+                    locale={navigatorLanguage}
                     toolbarClick={this.toolbarClick}
                     ref={g => this.grid = g}
                     hierarchyPrintMode={'All'}
