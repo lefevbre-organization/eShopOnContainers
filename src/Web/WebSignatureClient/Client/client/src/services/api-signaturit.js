@@ -871,6 +871,35 @@ export const downloadTrailDocument2 = (signId, docId, fileName, auth) => {
     .catch(error => console.log('error', error));
 }
 
+
+// Downloads the attachments information of a signed document calling internal proxy api
+export const downloadAttachments2 = (signId, docId, fileName, auth) => {
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", `${auth}`);
+
+  console.log(`https://api.sandbox.signaturit.com/v3/signatures/${signId}/documents/${docId}/download/attachments`);
+
+  var requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+    redirect: 'follow'
+  };
+
+  fetch(`${window.API_SIGN_GATEWAY}/Signaturit/download/${signId}/attachments/${docId}`, requestOptions)
+    .then(response => response.blob())
+    .then(blob => {
+      console.log(blob);
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'photos-('+fileName+').zip');
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+    })
+    .catch(error => console.log('error', error));
+}
+
 // Sends a reminder to pending signers calling internal proxy api
 export const sendReminder2 = async (signatureId, auth) => {
   var myHeaders = new Headers();

@@ -298,7 +298,8 @@
           "sms": "SMS",
           "photo": "Photo",
           "none": "No",
-          "photoNumber": "__ photos jointes"
+          "photoNumber": "(__) photos jointes",
+          "download": "Télécharger"
         }
       },
       "body": {

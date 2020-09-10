@@ -289,6 +289,46 @@
             }
         }
 
+        [HttpGet]
+        [Route("download/{signatureId}/attachments/{documentId}/")]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.GatewayTimeout)]
+        public async Task<IActionResult> DownloadAttachments([FromRoute] string signatureId, [FromRoute] string documentId, [FromHeader] string Authorization)
+        {
+            HttpRequest httpRequest = HttpContext.Request;
+
+            if (!httpRequest.Headers.ContainsKey("Authorization") || string.IsNullOrEmpty(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token not found");
+
+            if (!checkToken(httpRequest.Headers["Authorization"]))
+                return BadRequest("Access token invalid");
+
+            if (string.IsNullOrEmpty(signatureId) || string.IsNullOrEmpty(documentId))
+                return BadRequest("A signatureId and documentId must be provided.");
+
+            try
+            {
+                var response = await _signaturitService.DownloadAttachments(signatureId, documentId);
+
+                var fileContentDisposition = response.Headers.FirstOrDefault(f => f.Name == "Content-Disposition");
+                string fileName = ((String)fileContentDisposition.Value).Split("filename=")[1].Replace("\"", "");
+
+                return File(response.RawBytes, response.ContentType, fileName);
+            }
+            catch (TimeoutException)
+            {
+                return StatusCode((int)HttpStatusCode.GatewayTimeout, $"Signature service timeout.");
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, $"An error has occurred while executing the request:{ex.Message}");
+
+            }
+        }
+
         [HttpPost]
         [Route("reminder/{signatureId}")]
         [ProducesResponseType(typeof(Result<bool>), (int)HttpStatusCode.BadRequest)]
