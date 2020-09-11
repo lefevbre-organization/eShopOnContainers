@@ -201,7 +201,11 @@
     "filters": {
       "contains": "Contient",
       "startsWith": "Commence par",
-      "equal": "Égal"
+      "equal": "Égal",
+      "greaterthan": "Plus grand que",
+      "greaterthanorequal": "Meilleur que ou égal",
+      "lessthan": "Moins que",
+      "lessthanorequal": "Inférieur ou égal"
     }
   },
   "confirmationModal": {
