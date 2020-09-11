@@ -16,6 +16,7 @@
     using System.Threading.Tasks;
     using Signature.API.Model;
     using RestSharp;
+    using Microsoft.Extensions.Configuration;
 
     //using Rest;
 
@@ -28,15 +29,19 @@
     {
         private readonly ISignaturesService _signaturesService;
         private readonly SignatureSettings _settings;
+        private readonly IConfiguration _configuration;
+
         //private readonly IEventBus _eventBus;
 
         public UserSignaturesController(
             ISignaturesService signaturesService
             , IOptionsSnapshot<SignatureSettings> signatureSettings
+            , IConfiguration configuration
             )//, IEventBus eventBus)
         {
             _signaturesService = signaturesService ?? throw new ArgumentNullException(nameof(signaturesService));
             _settings = signatureSettings.Value;
+            _configuration = configuration;
             //_eventBus = eventBus;
         }
 
@@ -194,6 +199,23 @@
 
             return (IActionResult)Ok(result.Content);
             //return (IActionResult)Ok(false);
+        }
+
+        [HttpPost]
+        [Route("{user}/resetUserBranding")]
+        [ProducesResponseType(typeof(Result<UserSignatures>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(Result<UserSignatures>), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> ResetUserBrandings([FromHeader] string password, [FromRoute] string user)
+        {
+            if (password != _configuration.GetValue<string>("EventControllerPass"))
+                return Unauthorized();
+
+            if (string.IsNullOrEmpty(user))
+                return BadRequest("values invalid. Must be a valid user or \"all\"");
+
+            var result = await _signaturesService.ResetUserBrandings(user);
+
+            return (result.errors.Count > 0) ? (IActionResult)BadRequest(result) : Ok(result);
         }
 
     }
