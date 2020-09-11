@@ -263,8 +263,11 @@ class FolderContainer extends Component {
             if(dropLevel <= 1) {
                 // Moving folder to parent;
                 const newName =  this.getNodeName(draggedNodeData.node.name, true);       //`${draggedNodeData.text}`
-
                 await updateLabelName(draggedNodeData.id, newName);
+
+                if(draggedNodeData.node.hasChild === true) {
+                    await this.renameChilds(draggedNodeData.node.name, newName);
+                }
                 return;
             }
 
@@ -272,9 +275,25 @@ class FolderContainer extends Component {
                 if(this.props.folderTree[i].id === droppedNodeData.id) {
                     const newName = `${this.props.folderTree[i].name}/${this.getNodeName(draggedNodeData.node.name, true)}`
                     await updateLabelName(draggedNodeData.id, newName);
+                    if(draggedNodeData.node.hasChild === true) {
+                        await this.renameChilds(draggedNodeData.node.name, newName);
+                    }
                 }
             }
         }
+    }
+
+    async renameChilds(oldName, newName) {
+        let nodeId;
+        for(let i = 0; i < this.props.folderTree.length; i++) {
+            console.log(this.props.folderTree[i].name)
+            if (this.props.folderTree[i].name.includes(oldName) && this.props.folderTree[i].name !== oldName) {
+                const newNodeName = this.props.folderTree[i].name.replaceAll(oldName, newName);
+                nodeId = this.props.folderTree[i].id;
+                await updateLabelName(nodeId, newNodeName);
+            }
+        }
+        return true;
     }
 
     prepareTree() {
