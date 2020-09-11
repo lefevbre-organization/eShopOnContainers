@@ -122,7 +122,8 @@ namespace Signature.API.Infrastructure.Services
             request.AddParameter("subject", signatureInfo.subject);
             request.AddParameter("body", signatureInfo.body);
             request.AddParameter("branding_id", signatureInfo.brandingId);
-            request.AddParameter("reminders", signatureInfo.reminders);
+            //request.AddParameter("reminders", signatureInfo.reminders);
+            request.AddParameter("reminders", $"{String.Join(",", signatureInfo.reminders.Select(p => p.ToString()).ToArray())}");
             request.AddParameter("expire_time", signatureInfo.expiration);
             request.AddParameter("callback_url", _settings.Value.CallBackUrl.ToString());
 

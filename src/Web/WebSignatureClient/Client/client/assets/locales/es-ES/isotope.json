@@ -202,7 +202,11 @@
     "filters": {
       "contains": "Contiene",
       "startsWith": "Empieza por",
-      "equal": "Es igual a"
+      "equal": "Es igual a",
+      "greaterthan": "Mayor que",
+      "greaterthanorequal": "Igual o mayor que",
+      "lessthan": "Menor que",
+      "lessthanorequal": "Igual o menor que"
     }
   },
   "confirmationModal": {
@@ -299,7 +303,8 @@
           "sms": "SMS",
           "photo": "Fotografía",
           "none": "No",
-          "photoNumber": "(__) fotos adjuntas"
+          "photoNumber": "(__) fotos adjuntas",
+          "download": "Descargar"
         }
       },
       "body": {

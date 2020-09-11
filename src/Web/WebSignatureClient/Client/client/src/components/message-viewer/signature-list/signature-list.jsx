@@ -122,7 +122,7 @@ const SignatureList = (props) => {
                     <span className={`${props.styles['name_firmante']} left`}>
                       {`${getDoubleAuth(props.signatureConfig)} ${getDoubleAuthInfo(props.signatureConfig)}`}
                       {((props.getEventStatus(props.signer, 'document_signed') === true || props.getEventStatus(props.signer, 'validated') === true) && props.signatureConfig && props.signatureConfig.length > 4 && props.signatureConfig[4] === 'photo' )
-                        ? <a href='#' onClick={() => downloadAttachments2(props.signatureId, props.signer.id, props.signer.file.name, props.auth)}> - Descargar</a>
+                        ? <a href='#' onClick={() => downloadAttachments2(props.signatureId, props.signer.id, props.signer.file.name, props.auth)}> - {i18n.t('signatureViewer.signerCard.title.DoubleAuthentication.download')}</a>
                         : ''}  
                     </span> 
                   </li>

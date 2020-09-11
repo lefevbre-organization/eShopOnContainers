@@ -58,7 +58,8 @@ L10n.load({
         'FilterButton': 'Filtrar',
         'ClearButton': 'Borrar',
         'EnterValue': 'Introduzca el valor',
-        'ChooseDate': 'Introduzca la fecha'
+        'ChooseDate': 'Introduzca la fecha',
+        'SelectAll': 'Seleccionar todo'
       },
       'pager': {
         'pagerDropDown': 'Registros por página',
@@ -90,7 +91,8 @@ L10n.load({
           'FilterButton': 'Filtrar',
           'ClearButton': 'Borrar',
           'EnterValue': 'Introduzca el valor',
-          'ChooseDate': 'Introduzca la fecha'
+          'ChooseDate': 'Introduzca la fecha',
+          'SelectAll': 'Seleccionar todo'
         },
         'pager': {
           'pagerDropDown': 'Registros por página',
@@ -121,7 +123,8 @@ L10n.load({
           'Print': 'Print',
           'EnterValue': 'Enter the value',
           'FilterButton': 'Filter',
-          'ClearButton': 'Clear'
+          'ClearButton': 'Clear',
+          'SelectAll': 'Select all'
         },
         'pager': {
           'pagerDropDown': 'Items per page',
@@ -133,7 +136,10 @@ L10n.load({
           'lastPageTooltip': 'Go to last page',
           'nextPageTooltip': 'Go to next page',
           'previousPageTooltip': 'Go to previous page'
-          }
+          },
+        'datepicker': {
+         'today': "Today"
+        }        
     },
     'fr': {
         'grid': {
@@ -149,7 +155,8 @@ L10n.load({
             'Print': 'Printer',
             'EnterValue': 'Entrez la valeur',
             'FilterButton': 'Filtre',
-            'ClearButton': 'Emprunter'
+            'ClearButton': 'Emprunter',
+            'SelectAll': 'Tout'
           },
           'pager': {
             'pagerDropDown': 'Registres par page',
@@ -161,7 +168,10 @@ L10n.load({
             'lastPageTooltip': 'Aller à la dernière page',
             'nextPageTooltip': 'Aller à la page suivante',
             'previousPageTooltip': 'Aller à la page précédente'
-          }        
+          },
+          'datepicker': {
+            'today': "Aujourd'hui"
+          }     
     }
   });
   
@@ -675,11 +685,13 @@ class MessageList extends Component {
                     { value: 'startsWith', text: i18n.t('signaturesGrid.filters.startsWith')}
                 ],
                 dateOperator: [
-                    { value: 'equal', text: i18n.t('signaturesGrid.filters.equal')}
+                    { value: 'equal', text: i18n.t('signaturesGrid.filters.equal')},
+                    { value: 'greaterthan', text: i18n.t('signaturesGrid.filters.greaterthan')},
+                    { value: 'greaterthanorequal', text: i18n.t('signaturesGrid.filters.greaterthanorequal')},
+                    { value: 'lessthan ', text: i18n.t('signaturesGrid.filters.lessthan')},
+                    { value: 'lessthanorequal  ', text: i18n.t('signaturesGrid.filters.lessthanorequal')}
                 ],
-                
              } 
-            
         };
 
         const filterCheckBox = {
@@ -1201,6 +1213,60 @@ class MessageList extends Component {
                     .e-grid .e-excelexport::before {
                         content: '\e955';
                         font-family: 'lf-font' !important;
+                    }
+                    .e-date-wrapper span.e-input-group-icon.e-date-icon.e-icons.e-active{
+                        color: #001970 !important;
+                    }
+                    .e-calendar .e-content td.e-focused-date.e-today span.e-day, 
+                    .e-bigger.e-small .e-calendar .e-content td.e-focused-date.e-today span.e-day
+                    {
+                        background: #eee;
+                        border: 1px solid #001970;
+                        color: #001970;
+                    }
+                    .e-calendar .e-content td.e-today.e-selected span.e-day, 
+                    .e-bigger.e-small .e-calendar .e-content td.e-today.e-selected span.e-day 
+                    {
+                        background-color: #001970;
+                        border: 1px solid #001970;
+                        box-shadow: inset 0 0 0 2px #fff;
+                        color: #fff;
+                    }
+                    .e-calendar .e-content td.e-selected span.e-day,
+                    .e-bigger.e-small .e-calendar .e-content td.e-selected span.e-day
+                    {
+                        background-color: #001970;
+                        border: 1px solid #001970;
+                        box-shadow: inset 0 0 0 2px #fff;
+                        color: #fff;
+                    }
+                    .e-calendar .e-content td.e-today span.e-day, 
+                    .e-calendar .e-content td.e-focused-date.e-today span.e-day, 
+                    .e-bigger.e-small .e-calendar .e-content td.e-today span.e-day, 
+                    .e-bigger.e-small .e-calendar .e-content td.e-focused-date.e-today span.e-day {
+                        background: none;
+                        border: 1px solid #001970;
+                        border-radius: 50%;
+                        color: #001970;
+                    }
+                    .e-calendar .e-content td.e-today.e-selected:hover span.e-day, 
+                    .e-calendar .e-content td.e-selected:hover span.e-day, 
+                    .e-calendar .e-content td.e-selected.e-focused-date span.e-day, 
+                    .e-bigger.e-small .e-calendar .e-content td.e-today.e-selected:hover span.e-day, 
+                    .e-bigger.e-small .e-calendar .e-content td.e-selected:hover span.e-day, 
+                    .e-bigger.e-small .e-calendar .e-content td.e-selected.e-focused-date span.e-day {
+                        background-color: #001970;
+                        color: #fff;
+                    }
+                    .e-calendar .e-content td.e-today:hover span.e-day, 
+                    .e-calendar .e-content td.e-focused-date.e-today:hover span.e-day, 
+                    .e-calendar .e-content td.e-focused-date.e-today:focus span.e-day, 
+                    .e-bigger.e-small .e-calendar .e-content td.e-today:hover span.e-day, 
+                    .e-bigger.e-small .e-calendar .e-content td.e-focused-date.e-today:hover span.e-day, 
+                    .e-bigger.e-small .e-calendar .e-content td.e-focused-date.e-today:focus span.e-day {
+                        background-color: #eee;
+                        border: 1px solid #001970;
+                        color: #001970;
                     }
                 `}
                 </style>
