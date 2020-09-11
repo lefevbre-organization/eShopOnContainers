@@ -3,7 +3,8 @@ import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns';
 import i18n from 'i18next';
 import style from './contacts.scss';
 
-const Contacts = () => {
+const Contacts = (props) => {
+  
    const [result, setResult] = useState([{
     "name": "María Cruces",
     "email": "mariacruces@gmail.com",
@@ -37,14 +38,10 @@ const Contacts = () => {
       setFilter(e.target.value);
     }
     const handleChecked = (e) => {
-      let newResult = result;
-      result.forEach((contact, index) => {
-          if(contact.name == e.target.value) {
-            const isCheck = !e.target.checked ? false : true;
-             newResult[index].checked = isCheck;
-             setResult(newResult);
-          }
-      });
+      console.log(e.target.value);
+      const isCheck = !e.target.checked ? false : true;
+      result[e.target.value].checked = isCheck;
+      setResult(result);
     }
 
     return (
@@ -89,7 +86,7 @@ const Contacts = () => {
                     checked={contact.checked} 
                     onChange={handleChecked}
                     name="checked"
-                    value={contact.name}
+                    value={i}
                     />
                     <span>{contact.name}</span>
                     <div className={style['email']}>{contact.email}</div>
@@ -101,17 +98,22 @@ const Contacts = () => {
             <div className="row cont-inf-seleccionados">
              <div className="col s5 contactos-seleccionados">{sum}/{result.length} {i18n.t('contacts.selected')}</div>
                    <div className="col s7 right-align">
-                        <button className={`${style['btn-modal']} ${style['btn-gen-border']}`}>
-                        {i18n.t('expirationWidget.cancelButton')}
+                        <button className={`${style['btn-modal']} ${style['btn-gen-border']}`}
+                        onClick={props.dialogClose} >
+                          {i18n.t('expirationWidget.cancelButton')} 
                         </button>
-                        <button className={`${style['btn-modal']} ${style['btn-gen']}`}>
-                        {i18n.t('expirationWidget.acceptButton')}
+                        <button className={`${style['btn-modal']} ${style['btn-gen']}`}
+                        onClick={props.dialogClose} >
+                          {i18n.t('expirationWidget.acceptButton')}
                         </button>
                    </div>
                 </div>
             <div className="clearfix"></div>
            <style jsx global>
               {` 
+                #contactDialog_dialog-content {
+                  padding: 0px !important;
+                } 
                 .position-icon {
                   top: -31px;
                   position: relative;

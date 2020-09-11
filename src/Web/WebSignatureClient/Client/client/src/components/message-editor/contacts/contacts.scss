@@ -1,84 +1,80 @@
 .main-contact {
-    hr {
-      border: 0;
-      border-bottom: 1px solid #001978;
-      margin: 0;
-    }
-
-    ::placeholder { 
-      color: gray;
-    }
-
-    li {
-      padding: 15px;
-      border-bottom: 1px solid #ccd1e4;
-    }
-
-    [type="checkbox"] + span:not(.lever___3ADj_) {
-      height: 18px;
-    } 
-
-    .serch-contacts {
-      padding-left: 25px !important;
-      background: #ebedf4 !important;
-      border: none !important;
-      height: 39px !important;
-    }
-
-    .serch-contacts:focus {
-      border: none !important;
-      box-shadow: 0 1px 0 0 #26a69a00;
-    }
-
-    .email {
-      clear: both;
-      color: #777;
-      font-weight: 400;
-      font-size: 14px;
-      margin-left: 32px;
-      padding: 4px;
-    }
-
-    .btn-modal {
-      text-decoration: none;
-      letter-spacing: .5px;
-      font-size: 14px;
-      box-shadow: none;
-      border-radius: 0;
-      padding: 11px 20px;
-      text-transform: uppercase;
-      border: 2px solid #001978;
-      cursor: pointer;
-      font-weight: 600;
-      display: inline-block;
-    }
-
-    .btn-gen-border {
-      background: #ffffff;
-      color: #001978;                   
-    }
-
-    .btn-gen {
-      background: #001978;
-      color: #FFFFFF;
-      margin-left: 9px;
-    }
-     .btn-gen-border:hover {
-       background: #ffffff;
-       color: #9a9a9a;
-       border: 2px solid #9a9a9a;
-    }
-
-    .btn-gen:hover, .btn-gen:active, .btn-gen:focus {
-      background: #9a9a9a;
-      border: 2px solid #9a9a9a;
-      color: #FFF;
-    }
-    
-    button:focus {
-      outline: none;
-      background-color: #9a9a9a;
-      border: 2px solid #9a9a9a;
-      color: #FFF;
-    }
+  hr {
+    border: 0;
+    border-bottom: 1px solid #001978;
+    margin: 0;
+  }
+  ::placeholder { 
+    color: gray;
+  }
+  li {
+    padding: 15px;
+    border-bottom: 1px solid #ccd1e4;
+  }
+  [type="checkbox"] + span:not(.lever___3ADj_) {
+    height: 18px;
+  } 
+  [type="checkbox"]:checked + span:not(.lever___3ADj_):before {
+  
+    border-right: 2px solid #001978;
+    border-bottom: 2px solid #001978;
+  
+  }
+  .serch-contacts {
+    padding-left: 25px !important;
+    background: #ebedf4 !important;
+    border: none !important;
+    height: 39px !important;
+  }
+  .serch-contacts:focus {
+    border: none !important;
+    box-shadow: 0 1px 0 0 transparent !important;
+  }
+  .email {
+    clear: both;
+    color: #777;
+    font-weight: 400;
+    font-size: 14px;
+    margin-left: 32px;
+    padding: 4px;
+  }
+  .btn-modal {
+    text-decoration: none;
+    letter-spacing: .5px;
+    font-size: 14px;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 11px 20px;
+    text-transform: uppercase;
+    border: 2px solid #001978;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-block;
+  }
+  .btn-gen-border {
+    background: #ffffff;
+    color: #001978;                   
+  }
+  .btn-gen {
+    background: #001978;
+    color: #FFFFFF;
+    margin-left: 9px;
+  }
+   .btn-gen-border:hover {
+     background: #ffffff;
+     color: #9a9a9a;
+     border: 2px solid #9a9a9a;
+  }
+  .btn-gen:hover, .btn-gen:active, .btn-gen:focus {
+    background: #9a9a9a;
+    border: 2px solid #9a9a9a;
+    color: #FFF;
+  }
+  
+  button:focus {
+    outline: none;
+    background-color: #9a9a9a;
+    border: 2px solid #9a9a9a;
+    color: #FFF;
+  }
 }

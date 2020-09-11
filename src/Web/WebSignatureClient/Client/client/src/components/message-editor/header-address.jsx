@@ -94,14 +94,15 @@ export class HeaderAddress extends Component {
         <DialogComponent 
           id="contactDialog" 
           visible={this.state.hideContactDialog} 
-          showCloseIcon={true} 
           animationSettings={this.animationSettings} 
           width='45%'
           height='80%'
           ref={dialog => this.contactDialog = dialog} 
           close={this.dialogClose}
         >
-          <Contacts />
+          <Contacts 
+            dialogClose={this.dialogClose}
+          />
          
         </DialogComponent>
 
@@ -109,9 +110,6 @@ export class HeaderAddress extends Component {
           {` 
             #contactDialog {
               top: 17% !important;
-            }
-            #contactDialog_dialog-header > button > span {
-              color: #001978;
             }
           `}
         </style>
@@ -121,7 +119,7 @@ export class HeaderAddress extends Component {
   }
 
   fieldClick() {
-    this.inputRef.current.input.focus();
+    // this.inputRef.current.input.focus();
   }
 
   /**
