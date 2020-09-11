@@ -19,6 +19,8 @@
     using System.Threading.Tasks;
     using Microsoft.WindowsAzure.Storage;
     using System.Net.NetworkInformation;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
     #endregion
     public class SignaturesRepository : BaseClass<SignaturesRepository>, ISignaturesRepository
@@ -460,7 +462,91 @@
             return result;
         }
 
+        //private static UpdateOptions FindAccountsDefaultsInCollection()
+        //{
+        //    return new UpdateOptions
+        //    {
+        //        ArrayFilters = new List<ArrayFilterDefinition>
+        //            {
+        //                new BsonDocumentArrayFilterDefinition<BsonDocument>(new BsonDocument("i.defaultAccount", true))
+        //            }
+        //    };
+        //}
 
+        //public async Task<Result<bool>> ResetDefaultAccountByUser(string user)
+        //{
+        //    var result = new Result<bool>();
+        //    try
+        //    {
+        //        var resultUpdate = await _context.Accounts.UpdateManyAsync(
+        //            account => account.User == user,
+        //            Builders<UserMail>.Update
+        //                .Set("accounts.$[i].defaultAccount", false),
+        //                FindAccountsDefaultsInCollection()
+        //            );
+
+        //        ManageUpdate("Error when reset defaults accounts", $"Reset Accounts of {user}", result, resultUpdate);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TraceMessage(result.errors, ex);
+        //    }
+        //    return result;
+        //}
+
+        public async Task<Result<bool>> ResetUserBrandings(string user)
+        {
+            var result = new Result<bool>();
+            UpdateResult resultUpdate;
+            Dictionary<string, string> values = new Dictionary<string, string>();
+            var code = 0;
+
+            try
+            {
+
+                if (user == "all")
+                {
+                    resultUpdate = await _context.Signatures.UpdateManyAsync(
+                        f => true, 
+                        Builders<UserSignatures>.Update.Set("brandings", new BsonArray()));
+                } else
+                {
+                    resultUpdate = await _context.Signatures.UpdateManyAsync(
+                        u => u.User == user,
+                        Builders<UserSignatures>.Update.Set("brandings", new BsonArray())
+                    );
+                };
+
+                if (resultUpdate.IsAcknowledged)
+                {
+                    values.Add("IsAcknowledged", resultUpdate.IsAcknowledged.ToString());
+                    values.Add("IsModifiedCountAvailable", resultUpdate.IsModifiedCountAvailable.ToString());
+                    values.Add("MatchedCount", resultUpdate.MatchedCount.ToString());
+                    values.Add("ModifiedCount", resultUpdate.ModifiedCount.ToString());
+                }
+                else
+                {
+                    values.Add("Error:", "Error al ejecutar en mongo");
+                    code = 100;
+                }
+
+                var outputJson = JsonConvert.SerializeObject(values);
+                //Info info = new Info() { code = code.ToString(), message = outputJson };
+                //List<Info> infos = new List<Info>() { new Info() { code = code.ToString(), message = outputJson } } ;
+                //infos.Add(info);
+                result.data = true;
+                result.infos = new List<Info>() { new Info() { code = code.ToString(), message = outputJson } }; ;
+
+                Console.WriteLine(result);
+
+                
+            }
+            catch (Exception ex)
+            {
+                TraceMessage(result.errors, ex);
+            }
+            return result;
+        }
         #endregion
 
         #region Helpers

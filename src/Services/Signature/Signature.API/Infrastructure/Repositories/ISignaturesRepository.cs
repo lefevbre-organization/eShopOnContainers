@@ -30,6 +30,8 @@
 
         Task<Result<UserSignatures>> GetSignature(string signatureId);
 
+        Task<Result<bool>> ResetUserBrandings(string user);
+
         #region Events
         Task<Result<bool>> SaveEvent(SignEventInfo eventInfo);
         Task<Result<List<SignEventInfo>>> GetEvents(string signatureId);

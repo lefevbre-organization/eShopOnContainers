@@ -198,7 +198,7 @@ namespace Signature.API.Infrastructure.Services
         public async Task<IRestResponse> CreateBranding(BrandingConfiguration brandingInfo)
         {
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/brandings.json");
-            client.Timeout = _timeout;
+            client.Timeout = _timeoutCreate;
             var request = new RestRequest(Method.POST);
             request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
 
