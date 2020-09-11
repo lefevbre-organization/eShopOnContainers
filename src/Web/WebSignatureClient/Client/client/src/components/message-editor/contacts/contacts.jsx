@@ -4,6 +4,21 @@ import i18n from 'i18next';
 import style from './contacts.scss';
 
 const Contacts = () => {
+   const [result, setResult] = useState([{
+    "name": "María Cruces",
+    "email": "mariacruces@gmail.com",
+    "checked": false
+   },
+   {
+    "name": "Emilio Lopez",
+    "email": "emil@gmail.com",
+    "checked": false
+   },
+   {
+    "name": "Aleberto María Garrido",
+    "email": "gesssasa@esgl.com",
+    "checked": false
+   }]);
    const [contactValue, setContact] = useState('lexon');
    const [sum, setSum] = useState(0);
    const [filter, setFilter] = useState('');
@@ -12,33 +27,24 @@ const Contacts = () => {
         { 'Id': 'centinela', 'SelectContact': i18n.t('contacts.centinela') }
     ];
     const contactFields = { text: 'SelectContact', value: 'Id' };
-     const dataConstacts = [
-       {
-        "name": "María Cruces",
-        "email": "mariacruces@gmail.com",
-        "checked": true
-       },
-       {
-        "name": "Emilio Lopez",
-        "email": "emil@gmail.com",
-        "checked": false
-       },
-       {
-        "name": "Aleberto María Garrido",
-        "email": "gesssasa@esgl.com",
-        "checked": false
-       }    
-    ];
+
      useEffect(() => {
-       dataConstacts.forEach((contact, i) => {
-        if(contact.checked) {
-          setSum((i + 1));
-        }
-      });
+     const numberCheckeds = result.filter(conatct => conatct.checked == true);
+     setSum(numberCheckeds.length);
     });
 
     const filterContact = (e) => {
       setFilter(e.target.value);
+    }
+    const handleChecked = (e) => {
+      let newResult = result;
+      result.forEach((contact, index) => {
+          if(contact.name == e.target.value) {
+            const isCheck = !e.target.checked ? false : true;
+             newResult[index].checked = isCheck;
+             setResult(newResult);
+          }
+      });
     }
 
     return (
@@ -70,7 +76,7 @@ const Contacts = () => {
             </div>
             <hr className="clearfix" />
              <ul className="contactos">
-             {dataConstacts
+             {result
              .filter(contact => filter === '' 
              || contact.name.toLowerCase().includes(filter)
              || contact.email.toLowerCase().includes(filter)
@@ -81,7 +87,10 @@ const Contacts = () => {
                   <label>
                     <input type="checkbox"  
                     checked={contact.checked} 
-                    onChange={()=>{}}/>
+                    onChange={handleChecked}
+                    name="checked"
+                    value={contact.name}
+                    />
                     <span>{contact.name}</span>
                     <div className={style['email']}>{contact.email}</div>
                   </label>
@@ -90,7 +99,7 @@ const Contacts = () => {
                 
             </ul>
             <div className="row cont-inf-seleccionados">
-             <div className="col s5 contactos-seleccionados">{sum}/{dataConstacts.length} {i18n.t('contacts.selected')}</div>
+             <div className="col s5 contactos-seleccionados">{sum}/{result.length} {i18n.t('contacts.selected')}</div>
                    <div className="col s7 right-align">
                         <button className={`${style['btn-modal']} ${style['btn-gen-border']}`}>
                         {i18n.t('expirationWidget.cancelButton')}
