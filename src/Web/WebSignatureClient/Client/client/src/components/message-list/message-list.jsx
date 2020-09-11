@@ -58,7 +58,8 @@ L10n.load({
         'FilterButton': 'Filtrar',
         'ClearButton': 'Borrar',
         'EnterValue': 'Introduzca el valor',
-        'ChooseDate': 'Introduzca la fecha'
+        'ChooseDate': 'Introduzca la fecha',
+        'SelectAll': 'Seleccionar todo'
       },
       'pager': {
         'pagerDropDown': 'Registros por página',
@@ -90,7 +91,8 @@ L10n.load({
           'FilterButton': 'Filtrar',
           'ClearButton': 'Borrar',
           'EnterValue': 'Introduzca el valor',
-          'ChooseDate': 'Introduzca la fecha'
+          'ChooseDate': 'Introduzca la fecha',
+          'SelectAll': 'Seleccionar todo'
         },
         'pager': {
           'pagerDropDown': 'Registros por página',
@@ -121,7 +123,8 @@ L10n.load({
           'Print': 'Print',
           'EnterValue': 'Enter the value',
           'FilterButton': 'Filter',
-          'ClearButton': 'Clear'
+          'ClearButton': 'Clear',
+          'SelectAll': 'Select all'
         },
         'pager': {
           'pagerDropDown': 'Items per page',
@@ -152,7 +155,8 @@ L10n.load({
             'Print': 'Printer',
             'EnterValue': 'Entrez la valeur',
             'FilterButton': 'Filtre',
-            'ClearButton': 'Emprunter'
+            'ClearButton': 'Emprunter',
+            'SelectAll': 'Tout'
           },
           'pager': {
             'pagerDropDown': 'Registres par page',
@@ -687,9 +691,7 @@ class MessageList extends Component {
                     { value: 'lessthan ', text: i18n.t('signaturesGrid.filters.lessthan')},
                     { value: 'lessthanorequal  ', text: i18n.t('signaturesGrid.filters.lessthanorequal')}
                 ],
-                
              } 
-            
         };
 
         const filterCheckBox = {
