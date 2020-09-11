@@ -6,6 +6,7 @@ import style from './contacts.scss';
 const Contacts = () => {
    const [contactValue, setContact] = useState('lexon');
    const [sum, setSum] = useState(0);
+   const [filter, setFilter] = useState('');
    const selectContact = [
         { 'Id': 'lexon', 'SelectContact': i18n.t('contacts.lexon') }, 
         { 'Id': 'centinela', 'SelectContact': i18n.t('contacts.centinela') }
@@ -35,13 +36,22 @@ const Contacts = () => {
         }
       });
     });
+
+    const filterContact = (e) => {
+      setFilter(e.target.value);
+    }
+
     return (
         <div className={style['main-contact']}>
             <div className="contact row">
                 <div className="input-field col s7 left">
-                    <input placeholder={i18n.t('contacts.search')} 
+                    <input 
+                    name='search'
+                    type='text'
+                    placeholder={i18n.t('contacts.search')} 
                     className={style['serch-contacts']} 
-                    // ref={input => input && input.focus()}
+                    onChange={filterContact}  
+                    ref={input => input && input.focus()}
                      />
                     <span className="lf-icon-search position-icon"></span>
                 </div>
@@ -60,7 +70,13 @@ const Contacts = () => {
             </div>
             <hr className="clearfix" />
              <ul className="contactos">
-             {dataConstacts.map((contact, i) => 
+             {dataConstacts
+             .filter(contact => filter === '' 
+             || contact.name.toLowerCase().includes(filter)
+             || contact.email.toLowerCase().includes(filter)
+             || contact.name.toUpperCase().includes(filter)
+             || contact.email.toUpperCase().includes(filter))
+             .map((contact, i) => 
                 <li key={i}>
                   <label>
                     <input type="checkbox"  
@@ -95,7 +111,6 @@ const Contacts = () => {
                 .right {
                   text-align: right;  
                 }
-              
                 .contactos-seleccionados {
                   font-size: 12px;
                   color: #001978;
