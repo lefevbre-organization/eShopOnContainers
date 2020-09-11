@@ -72,6 +72,7 @@ namespace Lexon.Infrastructure.Services
             {
                 try
                 {
+                    //TODO: Delete token of user
                     var filtro = $"{{\"NavisionId\":\"{idNavisionUser}\"}}";
                     await GetUserCommon(result, conn, filtro);
                     await AddTokenProvisional(result, idNavisionUser);

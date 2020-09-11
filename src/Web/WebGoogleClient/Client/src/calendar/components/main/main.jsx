@@ -899,9 +899,25 @@ export class Main extends Component {
 
     onPopupOpen(args) {
 
+        //Not allow to update events of not owner or writer calendar permissions
+        let calendarRole = this.resourceCalendarData.find(x => x.id == args.data.CalendarId).accessRole
+        if (calendarRole != "owner" && 
+            calendarRole != "writer") {
+            //var buttonElementEdit = args.type === "QuickInfo" ? ".e-event-popup .e-edit" : ".e-schedule-dialog .e-event-edit";
+            //var editButton = document.querySelector(buttonElementEdit);
+            //editButton.disabled = true;
+
+            var buttonElementRemove = args.type === "QuickInfo" ? ".e-event-popup .e-delete" : ".e-schedule-dialog .e-event-delete";
+            var removeButton = document.querySelector(buttonElementRemove);
+            if (removeButton != undefined) {
+                removeButton.disabled = true;
+            }
+           
+        }
+
         //Not allow to change calendar property on update events
         this.ToogleCalendarResourceDirective(args);
-
+        
         //Not allow to change calendar property on update events
         if (args.data.Id != undefined) {
             console.log(this.scheduleObj.resourceCollection[0].cssClassField)
@@ -975,6 +991,26 @@ export class Main extends Component {
 
         }
         if (args.type === 'Editor') {
+
+
+            var editButton = document.querySelector('.e-event-delete');
+            editButton.disabled = false;
+
+            var editButtonSave = document.querySelector('.e-event-save');
+            editButtonSave.hidden = false;
+
+            if (args.data.Id != undefined) {
+                let calendarRole = this.resourceCalendarData.find(x => x.id == args.data.CalendarId).accessRole
+                if (calendarRole != "owner" &&
+                    calendarRole != "writer") {
+                    var editButton = document.querySelector('.e-event-delete');
+                    editButton.disabled = true;
+                    
+                    var editButtonSave = document.querySelector('.e-event-save');
+                    editButtonSave.hidden= true;
+                }
+            }            
+           
 
             var dialogObj = args.element.ej2_instances[0];
             dialogObj.buttons[1].buttonModel.isPrimary = false;
@@ -1218,19 +1254,23 @@ export class Main extends Component {
                 break;
 
             case 'eventCreated':
-
-                //if (this.scheduleObj.eventWindow.eventData != undefined) {
-                //    if (this.scheduleObj.eventWindow.eventData.typeEvent != "lexon") {
+               
                 event = this.buildEventoGoogle(args.data[0]);
 
-                //call function to add event
-                // this.addCalendarEventCRUD(args.data[0].CalendarId, event, args);   
+                // if the calendar is not checked remove from current view
+                if (!this.resourceCalendarData.find(x => x.id == args.data[0].CalendarId).checked) {                   
+                    delete this.scheduleObj.dataModule.dataManager.dataSource.json.splice(-1, 1);
+                }
+              
                 addCalendarEvent(args.data[0].CalendarId, event)
                     .then(result => {
+
                         // refresh event data
                         if (this.scheduleObj.eventWindow.eventData != undefined) {
                             this.scheduleObj.eventWindow.eventData.Id = result.id;
                         }
+
+                       
 
                         // this.scheduleObj.eventWindow.resetForm();
                         args.data[0].Id = result.id;
@@ -1353,7 +1393,9 @@ export class Main extends Component {
     }
 
     loadCalendarEvents(calendar, checked) {
-        this.scheduleObj.showSpinner();
+        this.scheduleObj.showSpinner();   
+        
+        
         let predicate;
 
         getEventList(calendar, this.scheduleObj.selectedDate)
