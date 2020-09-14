@@ -179,8 +179,14 @@
                 //Console.WriteLine(response.Content);
 
                 var response = await _signaturitService.CreateSignature(signatureInfo);
-
-                return Ok(response.Content);
+                if (response.IsSuccessful)
+                {
+                    return Ok(response.Content);
+                }
+                else
+                {
+                    throw new Exception(response.ErrorException.Message);
+                }
             }
             catch (TimeoutException)
             {
@@ -422,11 +428,25 @@
 
                 var response = await _signaturitService.CreateBranding(brandingInfo);
 
-                return Ok(response.Content);
+                if (response.IsSuccessful)
+                {
+                    return Ok(response.Content);
+                }
+                else
+                {
+                    if (response.ErrorException.Message == "The request timed-out") 
+                    {
+                        throw new TimeoutException(response.ErrorException.Message);
+                    } 
+                    else 
+                    { 
+                        throw new Exception(response.ErrorException.Message); 
+                    }
+                }
             }
-            catch (TimeoutException)
+            catch (TimeoutException ex)
             {
-                return StatusCode((int)HttpStatusCode.GatewayTimeout, $"Signature service timeout.");
+                return StatusCode((int)HttpStatusCode.GatewayTimeout, $"Signature service timeout. Signaturit Response:{ex.Message}");
             }
             catch (Exception ex)
             {

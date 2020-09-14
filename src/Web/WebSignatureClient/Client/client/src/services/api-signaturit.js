@@ -579,7 +579,14 @@ export const addOrUpdateBranding = async (user, brandingInfo) => {
     };
     
     fetch(`${window.API_SIGN_GATEWAY}/Signatures/${user}/branding/addorupdate`, requestOptions)
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok){
+          return response.json()
+        }
+        else {
+          throw new Error("Status:" + response.status + ' ' + " Headers:" + response.headers);
+        }
+      })
       .then(result => {
         console.log(result);
         resolve(result);
@@ -803,7 +810,13 @@ export const getSignatures = async (filters, auth, offset, signatures = []) => {
     };
     
     fetch(`${window.API_SIGN_GATEWAY}/Signaturit/newSignature`, requestOptions)
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok){
+          return response.json();
+        } else {
+          return response.text();
+        }
+      })
       .then(result => {
         console.log(result)
         resolve(result)
@@ -987,7 +1000,14 @@ export const createBranding2 = async (template, auth) => {
     };
 
     fetch(`${window.API_SIGN_GATEWAY}/Signaturit/newBranding`, requestOptions)
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok){
+          return response.json();
+        }
+        else {
+          return response.text();//reject(response.text());
+        }
+      })
       .then(result => {
         console.log(result);
         resolve(result);

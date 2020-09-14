@@ -109,6 +109,10 @@
             return await _signaturesRepository.UpSertBranding(user, brandingIn);
         }
 
+        public async Task<Result<bool>> ResetUserBrandings(string user)
+        {
+            return await _signaturesRepository.ResetUserBrandings(user);
+        }
         #endregion Signatures
 
         #region Events

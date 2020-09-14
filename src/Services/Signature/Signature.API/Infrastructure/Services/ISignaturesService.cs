@@ -38,6 +38,8 @@
         Task<Result<List<SignEventInfo>>> GetEvents(string signatureId);
 
         Task<Result<bool>> ProcessEvent(string signatureId, string documentId, string eventType);
+
+        Task<Result<bool>> ResetUserBrandings(string user);
         #endregion
 
     }

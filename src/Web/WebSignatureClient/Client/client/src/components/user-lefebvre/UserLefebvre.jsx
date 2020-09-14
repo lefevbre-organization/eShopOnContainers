@@ -183,21 +183,28 @@ class UserLefebvre extends Component {
                                 var newTemplate = JSON.parse(auxTemplate);
                                 createBranding2(newTemplate)
                                 .then( res => {
+                                    console.log('Resultado de creación de Branding');
+                                    console.log(res);
                                     var userBranding = [{app: app, externalId: res.id}];
                                     addOrUpdateBranding(user, userBranding[0]);
                                     this.props.setUserBrandings(userBranding);
+                                })
+                                .catch( err => {
+                                    console.log('Se ha producido un error al guardar el branding');
+                                    console.log(err);
                                 })
                             });
                         } else {
                             this.props.setUserBrandings(userInfo.data.brandings);
                         }
-
-                        getAvailableSignatures(idUserApp, idDocuments.length)
-                        .then(response => this.props.setAvailableSignatures(response.data))
-                        .catch(err => {
-                            console.log(err);
-                            this.props.setAvailableSignatures(true); // Esto se pone mientras el equipo encargado del api lo arregla
-                        });  
+                        if (idDocuments && idDocuments.length > 0){
+                            getAvailableSignatures(idUserApp, idDocuments.length)
+                            .then(response => this.props.setAvailableSignatures(response.data))
+                            .catch(err => {
+                                console.log(err);
+                                this.props.setAvailableSignatures(true); // Esto se pone mientras el equipo encargado del api lo arregla
+                            });  
+                        }
                     }                    
 
                     console.log("UserLefebvre.ComponentDidMount - userInfo:");
