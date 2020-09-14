@@ -5,7 +5,7 @@ import style from './contacts.scss';
 
 const Contacts = (props) => {
   
-   const [result, setResult] = useState([{
+   const [contacts, setContacts] = useState([{
     "name": "María Cruces",
     "email": "mariacruces@gmail.com",
     "checked": false
@@ -23,7 +23,7 @@ const Contacts = (props) => {
 
    const [contactValue, setContact] = useState('lexon');
 
-   const [sum, setSum] = useState(0);
+   const [numberCheckeds, setNumberCheckeds] = useState(0);
 
    const [filter, setFilter] = useState('');
 
@@ -35,8 +35,8 @@ const Contacts = (props) => {
     const contactFields = { text: 'SelectContact', value: 'Id' };
 
      useEffect(() => {
-     const numberCheckeds = result.filter(conatct => conatct.checked == true);
-     setSum(numberCheckeds.length);
+     const numberCheckeds = contacts.filter(conatct => conatct.checked == true);
+     setNumberCheckeds(numberCheckeds.length);
     });
 
     const filterContact = (e) => {
@@ -45,13 +45,13 @@ const Contacts = (props) => {
 
     const handleChecked = (e) => {
       const isCheck = !e.target.checked ? false : true;
-      result[e.target.value].checked = isCheck;
-      setResult([...result]);
-     
+      const index = e.target.value;
+      contacts[index].checked = isCheck;
+      setContacts([...contacts]);
     }
 
     const getContactsInfo = () => {
-      result.forEach(contact => {
+      contacts.forEach(contact => {
           if(contact.checked) {
             setTimeout(() => props.onAddressAdd(props.id, contact.email));
           }
@@ -88,7 +88,7 @@ const Contacts = (props) => {
             </div>
             <hr className="clearfix" />
             <ul className="contactos">
-             {result
+             {contacts
              .filter(contact => filter === '' 
              || contact.name.toLowerCase().includes(filter)
              || contact.email.toLowerCase().includes(filter)
@@ -111,7 +111,7 @@ const Contacts = (props) => {
                 
             </ul>
             <div className="row cont-inf-seleccionados">
-             <div className="col s5 contactos-seleccionados">{sum}/{result.length} {i18n.t('contacts.selected')}</div>
+             <div className="col s5 select-contacts">{numberCheckeds}/{contacts.length} {i18n.t('contacts.selected')}</div>
                    <div className="col s7 right-align">
                         <button className={`${style['btn-modal']} ${style['btn-gen-border']}`}
                         onClick={props.dialogClose} >
@@ -138,7 +138,7 @@ const Contacts = (props) => {
                 .right {
                   text-align: right;  
                 }
-                .contactos-seleccionados {
+                .select-contacts {
                   font-size: 12px;
                   color: #001978;
                   margin-top: 15px;
