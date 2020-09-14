@@ -208,7 +208,11 @@ export class MessageList extends Component {
       setTimeout(()=>{
         const msg = this.props.messagesResult.messages.find( msg => msg.id === evt.draggedNodeData.id);
         if(msg) {
-          this.moveMessage(msg.id, evt.droppedNodeData.id, this.props.selectedFolder)
+            const lbl = this.props.labels.find( lbl => lbl.name === this.props.selectedFolder);
+            if(lbl) {
+              this.moveMessage(msg.id, evt.droppedNodeData.id, lbl.id)
+            }
+
         }
       })
       evt.cancel = true;
@@ -348,6 +352,7 @@ export class MessageList extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    labels: state.labelsResult.labels,
     selectedMessages: state.messageList.selectedMessages,
     selectedFolder: state.messagesResult.label
       ? state.messagesResult.label.result.name
