@@ -899,21 +899,8 @@ export class Main extends Component {
 
     onPopupOpen(args) {
 
-        //Not allow to update events of not owner or writer calendar permissions
-        let calendarRole = this.resourceCalendarData.find(x => x.id == args.data.CalendarId).accessRole
-        if (calendarRole != "owner" && 
-            calendarRole != "writer") {
-            //var buttonElementEdit = args.type === "QuickInfo" ? ".e-event-popup .e-edit" : ".e-schedule-dialog .e-event-edit";
-            //var editButton = document.querySelector(buttonElementEdit);
-            //editButton.disabled = true;
 
-            var buttonElementRemove = args.type === "QuickInfo" ? ".e-event-popup .e-delete" : ".e-schedule-dialog .e-event-delete";
-            var removeButton = document.querySelector(buttonElementRemove);
-            if (removeButton != undefined) {
-                removeButton.disabled = true;
-            }
-           
-        }
+
 
         //Not allow to change calendar property on update events
         this.ToogleCalendarResourceDirective(args);
@@ -982,6 +969,23 @@ export class Main extends Component {
 
 
         if (args.type === 'QuickInfo') {
+
+            //Not allow to update events of not owner or writer calendar permissions
+            let calendarRole = this.resourceCalendarData.find(x => x.id == args.data.CalendarId).accessRole
+            if (calendarRole != "owner" &&
+                calendarRole != "writer") {
+                //var buttonElementEdit = args.type === "QuickInfo" ? ".e-event-popup .e-edit" : ".e-schedule-dialog .e-event-edit";
+                //var editButton = document.querySelector(buttonElementEdit);
+                //editButton.disabled = true;
+
+                var buttonElementRemove = args.type === "QuickInfo" ? ".e-event-popup .e-delete" : ".e-schedule-dialog .e-event-delete";
+                var removeButton = document.querySelector(buttonElementRemove);
+                if (removeButton != undefined) {
+                    removeButton.disabled = true;
+                }
+
+            }
+
 
             var formElement = args.element.querySelector('.e-schedule-form');
             if (formElement != null) {
