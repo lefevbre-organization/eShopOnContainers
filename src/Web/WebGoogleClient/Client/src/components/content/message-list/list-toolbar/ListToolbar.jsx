@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import {
   toggleSelected,
   modifyMessages,
+  deleteMessages
 } from '../actions/message-list.actions';
 import Pager from '../pager-buttons/PagerButtons';
 import Synkbutton from '../synk-buttons/SynkButtons';
@@ -27,6 +28,7 @@ export class MessageToolbar extends PureComponent {
     this.navigateToNextPage = this.navigateToNextPage.bind(this);
     this.navigateToPrevPage = this.navigateToPrevPage.bind(this);
     this.modifyMessages = this.modifyMessages.bind(this);
+    this.emptyTrash = this.emptyTrash.bind(this);
     this.getContentByHeader = this.getContentByHeader.bind(this);
     this.getLabelMessagesSynk = this.getLabelMessagesSynk.bind(this);
     this.markAsRead = this.markAsRead.bind(this);
@@ -117,10 +119,30 @@ export class MessageToolbar extends PureComponent {
     this.modifyMessages(['UNREAD'], []);
   }
 
+  emptyTrash() {
+    const ids = this.props.messagesResult.messages
+        .map((el) => el.id);
+    this.props.onDeletedMessages(
+        this.props.messagesResult.messages.filter((el) => el.selected)
+    );
+    this.props.deleteMessages({ ids });
+  }
+
   modifyMessages(addLabelIds, removeLabelIds) {
     const ids = this.props.messagesResult.messages
-      .filter((el) => el.selected)
-      .map((el) => el.id);
+        .filter((el) => el.selected)
+        .map((el) => el.id);
+
+    if(this.props.selectedFolderId === "TRASH" && addLabelIds[0] === "TRASH") {
+      if (this.props.onDeletedMessages && addLabelIds.indexOf('TRASH') > -1) {
+        this.props.onDeletedMessages(
+            this.props.messagesResult.messages.filter((el) => el.selected)
+        );
+      }
+      this.props.deleteMessages({ ids });
+      return;
+    }
+
     const actionParams = {
       ...(addLabelIds && { addLabelIds }),
       ...(removeLabelIds && { removeLabelIds }),
@@ -163,6 +185,8 @@ export class MessageToolbar extends PureComponent {
       showRead = unread.length > 0;
       showUnread = read.length > 0;
     }
+
+    const showEmptyTrash = this.props.selectedFolderId === "TRASH" && this.props.messagesResult.messages.length > 0;
     return (
       <>
         <div className='msg-toolbar'>
@@ -184,8 +208,13 @@ export class MessageToolbar extends PureComponent {
               <div className='ml-auto p-2 bd-highlight'>
                 <div>
                   {selectedMessages.length ? (
-                    <ListActionButtons onClick={this.modifyMessages} />
-                  ) : null}
+                    <ListActionButtons onClick={this.modifyMessages} folder={this.props.selectedFolderId}/>
+                  ) : showEmptyTrash? <div>
+                    <div className="action-btn" style={{width: 180, color: '#001978'}} onClick={this.emptyTrash}>
+                      <span>{i18n.t('message-list.empty-trash')}</span>
+                    </div>
+                  </div> : ''
+                  }
                 </div>
               </div>
 
@@ -237,20 +266,24 @@ export class MessageToolbar extends PureComponent {
   }
 }
 
-const mapStateToProps = (state) => ({
-  messagesResult: state.messagesResult,
-  selectedMessages: state.messageList.selectedMessages,
-  selectedFolder: state.messagesResult.label
-    ? state.messagesResult.label.result.name
-    : '',
-  lexon: state.lexon,
-});
+const mapStateToProps = (state) => {
+  return {
+    messagesResult: state.messagesResult,
+    selectedMessages: state.messageList.selectedMessages,
+    selectedFolderId: state.messagesResult.label ? state.messagesResult.label.result.id : '',
+    selectedFolder: state.messagesResult.label
+      ? state.messagesResult.label.result.name
+      : '',
+    lexon: state.lexon,
+  }
+};
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       toggleSelected,
       modifyMessages,
+      deleteMessages,
       deleteListMessages,
       addListMessages,
     },

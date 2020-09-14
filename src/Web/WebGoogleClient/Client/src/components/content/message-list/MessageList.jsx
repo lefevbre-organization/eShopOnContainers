@@ -211,7 +211,6 @@ export class MessageList extends Component {
   }
 
   nodeDragStop(evt) {
-    debugger
     if(evt.draggedNodeData.isFolder && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
       alert("Folder")
       evt.cancel = true;
