@@ -383,7 +383,7 @@ export class Main extends Component {
 
     text_truncate (str, length, ending) {
         if (length == null) {
-            length = 100;
+            length = 10;
         }
         if (ending == null) {
             ending = '...';
@@ -402,7 +402,7 @@ export class Main extends Component {
         }
         let subjectStr = props.Subject;
         if (props.Subject != undefined) {
-            props.Subject = this.text_truncate(props.Subject, 20)
+            subjectStr = this.text_truncate(props.Subject, 15)
         }
         else {
             subjectStr = i18n.t("schedule.notitle")
@@ -412,14 +412,14 @@ export class Main extends Component {
             <div Style="width: 98%;">
                 {/*  <div className="image"><img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {props.Subject}</div>*/}
                 <div className="image">
-                    <span className='eventicon truncate'>
+                    <div className='eventicon'>
                         <img width="16" height="16" src={"assets/img/" + props.ImageName + ".png"} /> {subjectStr}
                         {colorExist ? (
                             <span Style={`background-color: ${props.EventType.color} ;  margin-top: 3px`} className='dot floatleft'></span>
                         ) : (
                                 ''
                             )}
-                    </span>
+                    </div>
                 </div>
 
                 {/* <div className="subject">{props.Subject}</div>
