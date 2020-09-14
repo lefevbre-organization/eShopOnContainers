@@ -190,8 +190,13 @@ export class MessageList extends Component {
   }
 
   nodeDragging(evt) {
+    if(evt.draggedNodeData.isFolder) {
+      evt.dropIndicator = 'e-no-drop';
+      return;
+    }
     if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
       evt.dropIndicator = 'e-no-drop';
+      return;
     }
     evt.draggedNodeData.isMessage = true;
     if(this.state.showCheckbox) {
@@ -199,9 +204,23 @@ export class MessageList extends Component {
     }
   }
 
+  onDropNode(evt) {
+    if(evt.draggedNodeData.isFolder && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
+        evt.cancel = true;
+    }
+  }
+
   nodeDragStop(evt) {
+    debugger
+    if(evt.draggedNodeData.isFolder && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
+      alert("Folder")
+      evt.cancel = true;
+      return;
+    }
+
     if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
       evt.cancel = true;
+      return;
     }
 
     if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('tree-folder-item') && evt.droppedNode.getElementsByClassName('tree-folder-item').length > 0) {
@@ -254,6 +273,7 @@ export class MessageList extends Component {
                 allowMultiSelection={true}
                 fullRowSelected={true}
                 nodeDragging={this.nodeDragging.bind(this)}
+                nodeDropped={this.onDropNode.bind(this)}
                 nodeChecked={this.onSelectionChange}
                 nodeSelected={this.showMessage}
                 nodeTemplate={this.renderMessage}

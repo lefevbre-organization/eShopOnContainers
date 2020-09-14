@@ -151,11 +151,13 @@ class FolderContainer extends Component {
                                            }
                                        }}
                                        nodeDropped={this.onDropNode}
+                                       nodeDragStop={this.onDragStop.bind(this)}
                                        nodeDragStart={this.onDragStart}
                                        nodeExpanded={this.onNodeExpanded}
                                        nodeCollapsed={this.onNodeCollapsed}
                                        nodeTemplate={this.nodeTemplate}
                                        nodeClicked={this.onNodeClicked}
+                                       nodeDragging={this.nodeDragging.bind(this)}
 
                     >
                     </TreeViewComponent>
@@ -243,10 +245,24 @@ class FolderContainer extends Component {
         );
     }
 
+    async nodeDragging(event) {
+        if(event.draggedNodeData.isFolder && event.droppedNode && event.droppedNode.getElementsByClassName('message-row-item') && event.droppedNode.getElementsByClassName('message-row-item').length > 0) {
+            event.cancel = true;
+            event.dropIndicator = 'e-no-drop';
+        }
+    }
+
+    onDragStop(event) {
+        if(event.draggedNodeData.isFolder && event.droppedNode && event.droppedNode.getElementsByClassName('message-row-item') && event.droppedNode.getElementsByClassName('message-row-item').length > 0) {
+            event.cancel = true;
+            event.dropIndicator = 'e-no-drop';
+        }
+    }
+
     async onDragStart(event) {
-        console.log(event);
         for(let i = 0; i < this.props.folderTree.length; i++) {
             if(this.props.folderTree[i].id === event.draggedNodeData.id) {
+                event.draggedNodeData.isFolder = true;
                 event.draggedNodeData.node = this.props.folderTree[i]
                 break;
             }
@@ -254,8 +270,8 @@ class FolderContainer extends Component {
     }
 
     async onDropNode(event) {
+        debugger
         const { droppedNodeData, draggedNodeData, dropLevel } = event;
-
         if(event.draggedNodeData.isMessage) {
             event.cancel = true;
             return;
