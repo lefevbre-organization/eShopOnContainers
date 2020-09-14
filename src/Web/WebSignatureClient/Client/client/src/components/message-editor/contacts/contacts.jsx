@@ -16,17 +16,37 @@ const Contacts = (props) => {
     "checked": false
    },
    {
+    "name": "Emilio Lopez",
+    "email": "emil@gmail.com",
+    "checked": false
+   },
+   {
+    "name": "Emilio Lopez",
+    "email": "emil@gmail.com",
+    "checked": false
+   },
+   {
+    "name": "Emilio Lopez",
+    "email": "emil@gmail.com",
+    "checked": false
+   },
+   {
     "name": "Aleberto María Garrido",
     "email": "gesssasa@esgl.com",
     "checked": false
    }]);
+
    const [contactValue, setContact] = useState('lexon');
+
    const [sum, setSum] = useState(0);
+
    const [filter, setFilter] = useState('');
+
    const selectContact = [
         { 'Id': 'lexon', 'SelectContact': i18n.t('contacts.lexon') }, 
         { 'Id': 'centinela', 'SelectContact': i18n.t('contacts.centinela') }
     ];
+
     const contactFields = { text: 'SelectContact', value: 'Id' };
 
      useEffect(() => {
@@ -37,11 +57,11 @@ const Contacts = (props) => {
     const filterContact = (e) => {
       setFilter(e.target.value);
     }
+
     const handleChecked = (e) => {
-      console.log(e.target.value);
       const isCheck = !e.target.checked ? false : true;
       result[e.target.value].checked = isCheck;
-      setResult(result);
+      setResult([...result]);
     }
 
     return (
@@ -113,6 +133,7 @@ const Contacts = (props) => {
               {` 
                 #contactDialog_dialog-content {
                   padding: 0px !important;
+                  overflow: hidden;
                 } 
                 .position-icon {
                   top: -31px;

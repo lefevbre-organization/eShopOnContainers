@@ -7,6 +7,13 @@
   ::placeholder { 
     color: gray;
   }
+
+  ul {
+    position: relative;
+    height: 470px;
+    overflow-y: auto;
+  }
+
   li {
     padding: 15px;
     border-bottom: 1px solid #ccd1e4;

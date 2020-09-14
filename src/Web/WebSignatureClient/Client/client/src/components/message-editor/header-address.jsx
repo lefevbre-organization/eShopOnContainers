@@ -119,7 +119,7 @@ export class HeaderAddress extends Component {
   }
 
   fieldClick() {
-    // this.inputRef.current.input.focus();
+    this.inputRef.current.input.focus();
   }
 
   /**
