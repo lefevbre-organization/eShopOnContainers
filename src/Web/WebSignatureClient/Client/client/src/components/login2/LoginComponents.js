@@ -1,6 +1,5 @@
 import React from 'react';
 import i18n from '../../services/i18n';
-import { Input } from 'reactstrap';
 
 const LoginComponents = (children) => {
   const verificationLogin = children.errorsMessage.login ? (
@@ -41,12 +40,13 @@ const LoginComponents = (children) => {
                   <img src={"/assets/images/icon-user-login.png"} />
                 </span>
               </div>
-              <Input
+              <input
                 type='text'
                 name='login'
                 className='form-control login-input'
                 placeholder={i18n.t('login.user')}
                 onChange={children.handleChange}
+                onKeyUp={children.keyUpHandler}
               />
               {verificationLogin || verificationEmail ? (
                 <i className='lf-icon-close-round-full front-login__input-error-icon'></i>
@@ -68,6 +68,7 @@ const LoginComponents = (children) => {
                 className='form-control login-input'
                 onChange={children.handleChange}
                 placeholder={i18n.t('login.password')}
+                onKeyUp={children.keyUpHandler}
               />
               {verificationPassword ? (
                 <i className='lf-icon-close-round-full front-login__input-error-icon'></i>
@@ -77,7 +78,7 @@ const LoginComponents = (children) => {
           </div>
           <div className='row' style={{ flexDirection: 'column' }}>
             <button
-              onClick={children.handleEventAddon}
+              onClick={children.handleEventLogin}
               className='btn btn-label btn-login'>
               {i18n.t('login.login')}
             </button>

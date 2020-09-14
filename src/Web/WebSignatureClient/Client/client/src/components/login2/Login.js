@@ -35,7 +35,7 @@ class Login extends Component {
         password: '',
         auth: '',
       },
-
+      keyCodeEnter: 13,
       shopTitle: this.props.t('login.shop'),
       notClient: this.props.t('login.notClient'),
       requestInfo: this.props.t('login.requestInfo'),
@@ -145,11 +145,18 @@ class Login extends Component {
     this.props.history.push("/")
   };
 
-  handleEventAddon = (e) => {
+  handleEventLogin = (e) => {
     if (this.validateForm()) {
       this.getUser();
     }
   };
+
+
+  keyUpHandler = (event) => {
+    if(event.keyCode === this.state.keyCodeEnter) {
+      this.handleEventLogin();
+    }
+  }
 
   componentDidMount(){
     const { user } = this.state.form.login;
@@ -185,7 +192,8 @@ class Login extends Component {
           // logoLexon={logoLexon}
           handleChange={this.handleChange}
           errorsMessage={this.state.errorsMessage}
-          handleEventAddon={this.handleEventAddon}
+          handleEventLogin={this.handleEventLogin}
+          keyUpHandler={this.keyUpHandler}
           notClient={this.state.notClient}
           requestInfo={this.state.requestInfo}
           needHelp={this.state.needHelp}

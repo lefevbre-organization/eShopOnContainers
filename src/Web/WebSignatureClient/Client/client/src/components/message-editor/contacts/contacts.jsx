@@ -16,21 +16,6 @@ const Contacts = (props) => {
     "checked": false
    },
    {
-    "name": "Emilio Lopez",
-    "email": "emil@gmail.com",
-    "checked": false
-   },
-   {
-    "name": "Emilio Lopez",
-    "email": "emil@gmail.com",
-    "checked": false
-   },
-   {
-    "name": "Emilio Lopez",
-    "email": "emil@gmail.com",
-    "checked": false
-   },
-   {
     "name": "Aleberto María Garrido",
     "email": "gesssasa@esgl.com",
     "checked": false
@@ -62,6 +47,16 @@ const Contacts = (props) => {
       const isCheck = !e.target.checked ? false : true;
       result[e.target.value].checked = isCheck;
       setResult([...result]);
+     
+    }
+
+    const getContactsInfo = () => {
+      result.forEach(contact => {
+          if(contact.checked) {
+            setTimeout(() => props.onAddressAdd(props.id, contact.email));
+          }
+      });
+      props.dialogClose();
     }
 
     return (
@@ -92,7 +87,7 @@ const Contacts = (props) => {
                 </div>
             </div>
             <hr className="clearfix" />
-             <ul className="contactos">
+            <ul className="contactos">
              {result
              .filter(contact => filter === '' 
              || contact.name.toLowerCase().includes(filter)
@@ -123,11 +118,11 @@ const Contacts = (props) => {
                           {i18n.t('expirationWidget.cancelButton')} 
                         </button>
                         <button className={`${style['btn-modal']} ${style['btn-gen']}`}
-                        onClick={props.dialogClose} >
+                        onClick={getContactsInfo} >
                           {i18n.t('expirationWidget.acceptButton')}
                         </button>
                    </div>
-                </div>
+            </div>
             <div className="clearfix"></div>
            <style jsx global>
               {` 

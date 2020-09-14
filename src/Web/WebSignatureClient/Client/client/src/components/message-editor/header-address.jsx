@@ -101,6 +101,8 @@ export class HeaderAddress extends Component {
           close={this.dialogClose}
         >
           <Contacts 
+            id={id}
+            onAddressAdd={this.props.onAddressAdd}
             dialogClose={this.dialogClose}
           />
          

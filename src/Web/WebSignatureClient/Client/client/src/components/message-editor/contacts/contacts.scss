@@ -10,7 +10,7 @@
 
   ul {
     position: relative;
-    height: 470px;
+    height: 450px;
     overflow-y: auto;
   }
 
@@ -20,7 +20,12 @@
   }
   [type="checkbox"] + span:not(.lever___3ADj_) {
     height: 18px;
+  }
+
+  [type="checkbox"] + span:not(.lever___3ADj_):before {
+    border: 1px solid #001978;
   } 
+
   [type="checkbox"]:checked + span:not(.lever___3ADj_):before {
   
     border-right: 2px solid #001978;
