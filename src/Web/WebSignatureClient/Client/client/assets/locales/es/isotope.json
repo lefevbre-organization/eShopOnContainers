@@ -30,7 +30,8 @@
     "user-error": "Usuario o Contraseña inválidos",
     "user": "Usuario",
     "password": "Contraseña",
-    "login": "INICIAR SESIÓN"
+    "login": "INICIAR SESIÓN",
+    "load": "Cargando..."
   },
   "sideBar": {
     "newRequest": "Nueva firma",

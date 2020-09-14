@@ -35,6 +35,7 @@ class Login extends Component {
         password: '',
         auth: '',
       },
+      isloading: false,
       keyCodeEnter: 13,
       shopTitle: this.props.t('login.shop'),
       notClient: this.props.t('login.notClient'),
@@ -114,6 +115,8 @@ class Login extends Component {
   async getUser() {
     const user = await getUser(this.state.form);
     if (user.result.data._idEntrada) {
+      this.setState({isloading: false});
+      document.body.style.cursor = 'default';
       this.setState(
         {
           errorsMessage: {
@@ -125,6 +128,8 @@ class Login extends Component {
         }
       );
     } else {
+      this.setState({isloading: false});
+      document.body.style.cursor='default'
       this.setState({
         errorsMessage: {
           auth: i18n.t('login.user-error'),
@@ -147,6 +152,8 @@ class Login extends Component {
 
   handleEventLogin = (e) => {
     if (this.validateForm()) {
+      this.setState({isloading: true});
+      document.body.style.cursor = 'wait';
       this.getUser();
     }
   };
@@ -199,6 +206,7 @@ class Login extends Component {
           needHelp={this.state.needHelp}
           phoneNumber={this.state.phoneNumber}
           client={this.state.client}
+          isloading={this.state.isloading}
         />
         <Footer></Footer>
         

@@ -11,7 +11,8 @@
     "user-error": "User or password not valid.",
     "user": "User",
     "password": "Password",
-    "login": "LOG IN"
+    "login": "LOG IN",
+    "load": "Loading..."
   },
   "sideBar": {
     "newRequest": "New signature",

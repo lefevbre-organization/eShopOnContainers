@@ -77,11 +77,18 @@ const LoginComponents = (children) => {
             {verificationPassword}
           </div>
           <div className='row' style={{ flexDirection: 'column' }}>
+          {!children.isloading ?
             <button
               onClick={children.handleEventLogin}
               className='btn btn-label btn-login'>
               {i18n.t('login.login')}
-            </button>
+            </button> 
+            : 
+            <button 
+              onClick={children.handleEventLogin} 
+              className="btn btn-label btn-loading"> 
+              {i18n.t('login.load')}
+            </button> }  
             {verificationAuth}
           </div>
           <div className='row'>
@@ -301,6 +308,13 @@ const LoginComponents = (children) => {
           font-family: 'MTTMilano';
           font-weight: bold;
           line-height: 19px;
+        }
+
+        .btn-loading {
+          width: 340px !important;
+          height: 42px;
+          background-color: #7b7b7d !important;
+          border-radius: inherit !important;
         }
             
         `}
