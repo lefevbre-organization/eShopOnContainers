@@ -249,13 +249,20 @@ class FolderContainer extends Component {
         if(event.draggedNodeData.isFolder && event.droppedNode && event.droppedNode.getElementsByClassName('message-row-item') && event.droppedNode.getElementsByClassName('message-row-item').length > 0) {
             event.cancel = true;
             event.dropIndicator = 'e-no-drop';
+            return;
+        }
+        if(event.dropIndicator === 'e-drop-next') {
+            event.cancel = true;
+            event.dropIndicator = 'e-no-drop';
+            return;
         }
     }
 
     onDragStop(event) {
-        if(event.draggedNodeData.isFolder && event.droppedNode && event.droppedNode.getElementsByClassName('message-row-item') && event.droppedNode.getElementsByClassName('message-row-item').length > 0) {
+        if(event.dropIndicator === 'e-no-drop' || (event.draggedNodeData.isFolder && event.droppedNode && event.droppedNode.getElementsByClassName('message-row-item') && event.droppedNode.getElementsByClassName('message-row-item').length > 0)) {
             event.cancel = true;
             event.dropIndicator = 'e-no-drop';
+            return;
         }
     }
 
