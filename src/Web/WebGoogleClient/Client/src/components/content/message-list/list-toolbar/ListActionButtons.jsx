@@ -19,20 +19,32 @@ export class ListActionButtons extends PureComponent {
   }
 
   render() {
-    const { t } = this.props;
+    const { t, folder } = this.props;
 
-    return (
+  if(folder === 'TRASH') {
+      return (
       <div>
-        <div className="action-btn">
-          <FontAwesomeIcon
-            title={t('message-list.move-to-trash')}
-            onClick={this.trashHandler}
-            icon={faTrash}
-            size="lg"
-          />
-        </div>
+          <div className="action-btn" style={{width: 180, color: '#001978'}} onClick={this.trashHandler}>
+              <span>{t('message-list.delete-permanently')}</span>
+          </div>
       </div>
-    );
+      )
+  }
+    else {
+      return (
+          <div>
+              <div className="action-btn">
+                  <FontAwesomeIcon
+                      color={'#001978'}
+                      title={t('message-list.move-to-trash')}
+                      onClick={this.trashHandler}
+                      icon={faTrash}
+                      size="lg"
+                  />
+              </div>
+          </div>
+      );
+    }
   }
 }
 
