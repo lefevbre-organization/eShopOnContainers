@@ -4,12 +4,11 @@ import { listCalendarList } from "../../../api_graph/calendar-api";
 export const GET_CALENDARS = "GET_CALENDARS";
 export const SELECT_CALENDAR = "SELECT_CALENDAR";
 
-
 export const getCalendars = () => dispatch => {
   listCalendarList().then(calendarList => {
     dispatch({
       type: GET_CALENDARS,
-        payload: calendarList
+      payload: calendarList.items
     });
   });
 };
@@ -21,5 +20,3 @@ export const selectCalendar = calendarId => dispatch => {
     payload: calendarId
   });
 };
-
-

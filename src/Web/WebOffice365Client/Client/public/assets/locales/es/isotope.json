@@ -99,6 +99,7 @@
     "toast-processing": "Procesando",
     "toast-process-complete": "Proceso completado",
     "toast-process-error": "Error",
+    "toast-process-error-exist": "Ya existe un tipo de evento con el mismo nombre",
     "validator-required": "Campo obligatorio"
   },
   "calendar": {
@@ -116,6 +117,17 @@
     "reader": "Ver todos los detalles de los eventos",
     "writer": "Hacer cambios en eventos",
     "owner": "Hacer cambios y gestionar el uso"
+  },
+  "eventtype": {
+    "title": "Tipos de Eventos",
+    "name": "Nombre",
+    "color": "Color",
+    "required-name": "El nombre es obligatorio",
+    "required-color": "Es necesario seleccionar un color",
+    "add": "Añadir",
+    "modify": "Modificar",
+    "cancel": "Cancelar",
+    "newevent": "Añadir tipología"
   },
   "tooltips": {
     "lexon": "Lex-on",

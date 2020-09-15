@@ -1,46 +1,47 @@
-[data-reach-menu], [data-reach-menu-popover] {  
-    z-index: 1001 !important;
-}
-.menubutton {
-    cursor: pointer;
-    border: none;
-    background: none;
-    outline: none;
-    border: 0;
-    padding-right: 10px;
-    //color: transparent;
-    /*float: right;*/
-    font-size: 18px;
+﻿.errormessage{
+    color: red;
 }
 
-.menuitem {
-    font-size:14px !important;
+.submitRow {
+    margin: 15px 0 10px 15px;
+}
+.buttonadd {
+    padding-top: 22px !important;
 }
 
-.menubutton:focus {
-    outline: none;
-    box-shadow: none;   
-}
-.menubutton:hover {
-    color: black;
-}
-.menupanel {
-    min-width: 140px;   
+#container {
+    visibility: hidden;
 }
 
-.closeb {
+#loader {
+    color: #008cff;
+    height: 40px;
+    width: 30%;
     position: absolute;
-    top: 50%;
-    right: 0%;
-    padding: 0 5px;
-    transform: translate(0%, -50%);
-   
+    top: 45%;
+    left: 45%;
 }
 
-.closeb:hover {
-    //cursor: pointer;
-    background: rgba(255,255,255,0.7);
+#sample-list {
+    margin: 25px auto;
+    background-color:antiquewhite;
+    /*max-width: 500px;*/
 }
+
+#btn {
+    margin: 40px auto;
+    display: block;
+}
+
+
+
+.listicons {   
+    float: right;
+    cursor: pointer;
+    padding-top:10px;
+    padding-left:15px;    
+}
+
 
 /* Circle palette customization */
 .e-container .e-palette .e-circle-palette {
@@ -50,15 +51,18 @@
     border-radius: 20px;
     margin: 4px;
 }
+
 .e-bigger .e-container .e-palette .e-circle-palette {
     height: 32px;
     width: 32px;
 }
+
 .e-container .e-palette .e-circle-palette:hover {
     box-shadow: none;
     transform: scale(1.2);
     transition: transform .2s ease-out;
 }
+
 .e-circle-palette .e-circle-selection {
     height: 32px;
     width: 32px;
@@ -67,13 +71,15 @@
     transform: scale(0);
     transition: transform 1.2s ease-in;
 }
+
 .e-circle-palette.e-selected .e-circle-selection {
     transform: scale(0.8);
     background-color: #fff;
     transition: transform .2s ease-out;
 }
-#circle-palette+.e-container,
-#scroll-palette+.e-container {
+
+#circle-palette + .e-container,
+#scroll-palette + .e-container {
     background-color: transparent;
     border-color: transparent;
     box-shadow: none;
@@ -86,21 +92,22 @@
     height: 16px;
     width: 16px;
 }
+
 .e-bigger .e-container .e-palette .e-rounded-palette {
     height: 16px;
     width: 16px;
 }
+
 .e-container .e-palette .e-rounded-palette:hover,
 .e-container .e-palette .e-scroll-palette:hover {
     box-shadow: none;
 }
+
 .e-container .e-palette .e-circle-palette.e-selected,
 .e-container .e-palette .e-rounded-palette.e-selected,
 .e-container .e-palette .e-square-palette.e-selected,
 .e-container .e-palette .e-scroll-palette.e-selected {
     outline: none;
 }
-
-
 
 

@@ -26,6 +26,8 @@ export const getUser = async userId => {
   }
 };
 
+
+
 export const addOrUpdateAccount = async (userId, account) => {
   let url = `${window.URL_GET_ACCOUNTS}/${userId}/account/addorupdate`;
   if(window.currentUser && window.currentUser.env) {
@@ -112,4 +114,72 @@ export const classifyEmail = async (
   } catch (err) {
     throw err;
   }
+};
+
+export const getEventTypes = async (account) => {
+    let url = `${window.URL_GET_EVENTSTYPE}/ev/get`;
+    if (window.currentUser && window.currentUser.env) {
+        url += `?env=${window.currentUser.env}`;
+    }   
+
+    let value = {
+        "email": account
+    };
+
+    try {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(value),
+        });
+
+        const user = await res.json();
+        return user;
+    } catch (err) {
+        throw err;
+    }
+};
+
+export const addorUpdateEventType = async (eventType) => {
+    let url = `${window.URL_GET_EVENTSTYPE}/ev/eventtype/add`;
+    if (window.currentUser && window.currentUser.env) {
+        url += `?env=${window.currentUser.env}`;
+    }
+   
+    try {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(eventType),
+        });
+        const eventtype = await res.json();
+        return eventtype;
+    } catch (err) {
+        throw err;
+    }
+};
+
+
+export const deleteEventType = async (eventType) => {   
+    let url = `${window.URL_GET_EVENTSTYPE}/ev/eventtype/delete`;
+    if (window.currentUser && window.currentUser.env) {
+        url += `?env=${window.currentUser.env}`;
+    }
+    try {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(eventType),
+        });
+        const eventtype = await res.json();
+        return eventtype;
+    } catch (err) {
+        throw err;
+    }
 };

@@ -13,8 +13,7 @@ export class Acl extends React.Component {
     constructor(props) {
         super(props);
         this.listviewInstance = null;
-        this.position = { X: 'Center', Y: 'Bottom' }; 
-        this.fields = { text: "text", iconCss: "icon" };  
+        this.position = { X: 'Center', Y: 'Bottom' };        
         this.temp = 'roleData';
         this.fields = { text: 'Role', value: 'Id' };
         this.value = "reader";
@@ -161,7 +160,7 @@ export class Acl extends React.Component {
         return (<div className="text-content">
             {data.text} ({data.role})
              {!owner ? (
-                <span className="delete-icon" onClick={this.deleteItem.bind(this)} />
+                <span className="listicons lf-icon-close-round" onClick={this.deleteItem.bind(this)} />
             ) : (
                     ''
                 )}

@@ -229,7 +229,7 @@ class MenuUser extends Component {
                       <span className='company-name text-center'>
                         Lefebvre-El Derecho, S.A.
                       </span>
-                      <div className='add-sign' onClick={this.onSignClick}>
+                       <div className={`add-sign ${this.props.hiddeSign ? "hidden" : ""}`} onClick={this.onSignClick}>
                         <span className='lf-icon lf-icon-feather'></span>
                         <p>Firma de correo electrónico</p>
                       </div>
