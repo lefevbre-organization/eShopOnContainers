@@ -13,7 +13,7 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Infrastructure.S
 
         Task<Result<List<LefebvreApp>>> GetUserUtilsAsync(string idNavisionUser, bool onlyActives);
 
-        Task<Result<TokenData>> VadidateTokenAsync(TokenData tokenRequest);
+        Task<Result<TokenData>> VadidateTokenAsync(TokenData tokenRequest, bool validateCaducity = true);
 
         Task<Result<ServiceComUser>> GetUserDataWithLoginAsync(string login, string pass);
 

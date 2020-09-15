@@ -190,8 +190,13 @@ export class MessageList extends Component {
   }
 
   nodeDragging(evt) {
+    if(evt.draggedNodeData.isFolder) {
+      evt.dropIndicator = 'e-no-drop';
+      return;
+    }
     if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
       evt.dropIndicator = 'e-no-drop';
+      return;
     }
     evt.draggedNodeData.isMessage = true;
     if(this.state.showCheckbox) {
@@ -199,16 +204,33 @@ export class MessageList extends Component {
     }
   }
 
+  onDropNode(evt) {
+    if(evt.draggedNodeData.isFolder && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
+        evt.cancel = true;
+    }
+  }
+
   nodeDragStop(evt) {
+    if(evt.draggedNodeData.isFolder && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
+      alert("Folder")
+      evt.cancel = true;
+      return;
+    }
+
     if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
       evt.cancel = true;
+      return;
     }
 
     if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('tree-folder-item') && evt.droppedNode.getElementsByClassName('tree-folder-item').length > 0) {
       setTimeout(()=>{
         const msg = this.props.messagesResult.messages.find( msg => msg.id === evt.draggedNodeData.id);
         if(msg) {
-          this.moveMessage(msg.id, evt.droppedNodeData.id, this.props.selectedFolder)
+            const lbl = this.props.labels.find( lbl => lbl.name === this.props.selectedFolder);
+            if(lbl) {
+              this.moveMessage(msg.id, evt.droppedNodeData.id, lbl.id)
+            }
+
         }
       })
       evt.cancel = true;
@@ -250,6 +272,7 @@ export class MessageList extends Component {
                 allowMultiSelection={true}
                 fullRowSelected={true}
                 nodeDragging={this.nodeDragging.bind(this)}
+                nodeDropped={this.onDropNode.bind(this)}
                 nodeChecked={this.onSelectionChange}
                 nodeSelected={this.showMessage}
                 nodeTemplate={this.renderMessage}
@@ -348,6 +371,7 @@ export class MessageList extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    labels: state.labelsResult.labels,
     selectedMessages: state.messageList.selectedMessages,
     selectedFolder: state.messagesResult.label
       ? state.messagesResult.label.result.name

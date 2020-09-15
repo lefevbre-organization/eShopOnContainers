@@ -30,6 +30,9 @@ class FolderContainer extends Component {
         this.onNodeClicked = this.onNodeClicked.bind(this);
         this.nodeTemplate = this.nodeTemplate.bind(this);
         this.onNodeSelecting = this.onNodeSelecting.bind(this);
+        this.nodeDragging = this.nodeDragging.bind(this);
+        this.onDragStop = this.onDragStop.bind(this);
+        this.onDragStart= this.onDragStart.bind(this);
     }
 
     navigateToList(evt) {
@@ -146,6 +149,9 @@ class FolderContainer extends Component {
                                        nodeTemplate={this.nodeTemplate}
                                        nodeClicked={this.onNodeClicked}
                                        nodeDropped={this.onDropNode}
+                                       nodeDragStart={this.onDragStart}
+                                       nodeDragStop={this.onDragStop}
+                                       nodeDragging={this.nodeDragging}
                                        animation={{
                                            expand: {
                                                duration: 0
@@ -237,6 +243,35 @@ class FolderContainer extends Component {
                 </style>
             </div>
         );
+    }
+
+    nodeDragging(event) {
+        if(event.draggedNodeData.isFolder && event.droppedNode && event.droppedNode.getElementsByClassName('message-row-item') && event.droppedNode.getElementsByClassName('message-row-item').length > 0) {
+            event.cancel = true;
+            event.dropIndicator = 'e-no-drop';
+            return;
+        }
+        if(event.dropIndicator === 'e-drop-next') {
+            event.cancel = true;
+            event.dropIndicator = 'e-no-drop';
+            return;
+        }
+    }
+
+    onDragStop(event) {
+        if(event.dropIndicator === 'e-no-drop' || (event.draggedNodeData.isFolder && event.droppedNode && event.droppedNode.getElementsByClassName('message-row-item') && event.droppedNode.getElementsByClassName('message-row-item').length > 0)) {
+            event.cancel = true;
+            event.dropIndicator = 'e-no-drop';
+            return;
+        }
+    }
+
+    onDragStart(event) {
+        event.draggedNodeData.isFolder = true;
+        if(event.draggedNodeData.isFolder && event.droppedNode && event.droppedNode.getElementsByClassName('message-row-item') && event.droppedNode.getElementsByClassName('message-row-item').length > 0) {
+            event.cancel = true;
+            event.dropIndicator = 'e-no-drop';
+        }
     }
 
     async onDropNode(event) {

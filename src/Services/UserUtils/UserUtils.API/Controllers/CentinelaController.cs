@@ -96,14 +96,15 @@ namespace Lefebvre.eLefebvreOnContainers.Services.UserUtils.API.Controllers
         [ProducesResponseType(typeof(Result<TokenData>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(Result<TokenData>), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> TokenValidationAsync(
-             [FromBody] string token
+             [FromBody] string token,
+             [FromQuery] bool validateCaducity = true 
             )
         {
             if (string.IsNullOrEmpty(token))
                 return BadRequest("Must be a valid token to validate");
 
             var tokenRequest = new TokenData() { token = token, valid = false };
-            var result = await _service.VadidateTokenAsync(tokenRequest);
+            var result = await _service.VadidateTokenAsync(tokenRequest, validateCaducity);
             result.infos.Add(new Info() { code = "UserUtils.Centinela", message = "token/validation" });
 
             return result.data.valid ? Ok(result) : (IActionResult)BadRequest(result);

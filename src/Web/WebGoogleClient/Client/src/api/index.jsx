@@ -574,10 +574,10 @@ export const batchModify = ({ ids, addLabelIds = [], removeLabelIds = [] }) =>
       });
   });
 
-export const deleteMessages = ({ ids }) =>
+export const batchDeleteMessages = ({ ids }) =>
     new Promise((resolve, reject) => {
         window.gapi.client.gmail.users.messages
-            .delete({
+            .batchDelete({
                 userId: 'me',
                 ids               
             })

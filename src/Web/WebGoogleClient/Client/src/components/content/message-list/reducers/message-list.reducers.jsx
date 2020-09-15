@@ -23,7 +23,7 @@ import {
   SET_OPEN_MESSAGE,
   ADD_OPEN_MESSAGE_ATTACHMENT,
   CLEAR_OPEN_MESSAGE_ATTACHMENT,
-  REMOVE_MESSAGE_FROM_LIST,
+  REMOVE_MESSAGE_FROM_LIST, DELETE_MESSAGES_SUCCESS,
 } from '../actions/message-list.actions';
 
 const defaultMessagesState = {
@@ -87,6 +87,14 @@ export const messagesResult = (state = defaultMessagesState, action) => {
         ...state,
         pageTokens: [],
       };
+    case DELETE_MESSAGES_SUCCESS:
+      return {
+        ...state,
+        messages: state.messages.filter(
+            (el) => action.payload.ids.indexOf(el.id) === -1
+        ),
+      };
+      break;
     case MODIFY_MESSAGES_SUCCESS:
       if (action.payload.addLabelIds.indexOf('TRASH') > -1) {
         return {
