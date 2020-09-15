@@ -40,7 +40,7 @@ import { ClickEventArgs } from '@syncfusion/ej2-navigations';
 import { DropDownButtonComponent } from '@syncfusion/ej2-react-splitbuttons';
 import { detailedDiff } from 'deep-object-diff';
 import { DialogComponent } from '@syncfusion/ej2-react-popups';
-import i18n from '../../services/i18n';
+import i18n from 'i18next';
 
 L10n.load({
     'es-ES': {
