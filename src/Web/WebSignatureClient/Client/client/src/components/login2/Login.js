@@ -19,6 +19,7 @@ import i18n from 'i18next';
 import Cookies from 'js-cookie';
 import { clearUserCredentials, setUserCredentials } from "../../actions/application";
 import { setUser } from "../../actions/lefebvre";
+import { getSignedToken } from "../../services/api-signaturit";
 
 class Login extends Component {
   constructor(props) {
@@ -113,33 +114,47 @@ class Login extends Component {
   };
 
   async getUser() {
-    const user = await getUser(this.state.form);
-    if (user.result.data._idEntrada) {
-      this.setState({isloading: false});
-      document.body.style.cursor = 'default';
-      this.setState(
-        {
-          errorsMessage: {
-            auth: '',
-          },
-        },
-        () => {
-          this.gotoPortal(user.result.data._idEntrada);
-        }
-      );
-    } else {
-      this.setState({isloading: false});
-      document.body.style.cursor='default'
-      this.setState({
-        errorsMessage: {
-          auth: i18n.t('login.user-error'),
-        },
-      });
-    }
+    //const user = await getUser(this.state.form);
+    // if (user.result.data._idEntrada) {
+    //   this.setState(
+    //     {
+    //       errorsMessage: {
+    //         auth: '',
+    //       },
+    //     },
+    //     () => {
+    //       this.gotoPortal(user.result.data._idEntrada);
+    //     }
+    //   );
+    // } else {
+    //   this.setState({
+    //     errorsMessage: {
+    //       auth: i18n.t('login.user-error'),
+    //     },
+    //   });
+    // }
+    getSignedToken(this.state.form.login, this.state.form.password)
+    .then(info => {
+      if (info.data.valid){
+        this.setState({isloading: false});
+        document.body.style.cursor='default'
+        this.props.history.push(`/access/${info.data.token}`)
+      }
+      else {
+        this.setState({isloading: false});
+        document.body.style.cursor='default'
+        this.setState({
+            errorsMessage: {
+              auth: i18n.t('login.user-error'),
+            },
+        });
+      }
+    })
+    
   }
 
   gotoPortal = (userId) => {
-    userId = 'E1654569';
+    //userId = 'E1654569';
     this.props.setUser(`IM0${userId}`);
     const cookie = Cookies.set(`Lefebvre.Signaturit.${userId}`, "Logged by form", {
       expires: 1,
@@ -157,7 +172,6 @@ class Login extends Component {
       this.getUser();
     }
   };
-
 
   keyUpHandler = (event) => {
     if(event.keyCode === this.state.keyCodeEnter) {
@@ -229,6 +243,3 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(translate()(withRouter(Login)));
-
-
-//export default Login;
