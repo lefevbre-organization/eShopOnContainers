@@ -140,8 +140,8 @@ export class MessageToolbar extends PureComponent {
                     style={{ backgroundColor: 'transparent' }}>
                   <i className="lf-icon lf-icon-trash" style={{fontSize: 18, fontWeight: 'bold', color: '#001978'}}></i>
                 </button>
-              </div>):<div className="action-btn" style={{fontSize: 12, textTransform:'uppercase', width: 120, color: '#001978'}} onClick={this.trashHandler}>
-                <span>{i18n.t('message-list.empty-trash')}</span>
+              </div>):<div className="action-btn" style={{fontSize: 12, textTransform:'uppercase', width: 180, color: '#001978'}} onClick={this.trashHandler}>
+                <span>{i18n.t('message-list.delete-permanently')}</span>
               </div>
             }
             <div className='action-btn mr-2' title={t('message-toolbar.reply')}>

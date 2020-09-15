@@ -423,6 +423,13 @@ export class MessageContent extends Component {
     this.props.history.push('/inbox');
   }
 
+  renderTrash() {
+    setTimeout(()=>{
+      this.props.history.push('/trash');
+    }, 200);
+  }
+
+
   modifyMessage(addLabelIds, removeLabelIds) {
     const id = this.props.emailMessageResult.result.id;
     const actionParams = {
@@ -437,6 +444,8 @@ export class MessageContent extends Component {
         );
       }
       this.props.deleteMessages({ ids: [id] });
+      this.renderTrash();
+      return;
     } else {
       this.props.modifyMessages({ ids: [id], ...actionParams });
     }
