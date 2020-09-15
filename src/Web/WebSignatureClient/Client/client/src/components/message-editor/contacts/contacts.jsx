@@ -1,43 +1,51 @@
 import React, { useState, useEffect } from "react";
 import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns';
 import i18n from 'i18next';
+import { getContactsCentinela } from '../../../services/api-signaturit';
 import style from './contacts.scss';
 
 const Contacts = (props) => {
   
-   const [contacts, setContacts] = useState([{
-    "name": "María Cruces",
-    "email": "mariacruces@gmail.com",
-    "checked": false
-   },
-   {
-    "name": "Emilio Lopez",
-    "email": "emil@gmail.com",
-    "checked": false
-   },
-   {
-    "name": "Aleberto María Garrido",
-    "email": "gesssasa@esgl.com",
-    "checked": false
-   }]);
-
-   const [contactValue, setContact] = useState('lexon');
+   const [contacts, setContacts] = useState([]);
 
    const [numberCheckeds, setNumberCheckeds] = useState(0);
 
    const [filter, setFilter] = useState('');
 
+   useEffect(() => {
+    const numberCheckeds = contacts.filter(conatct => conatct.checked == true);
+    setNumberCheckeds(numberCheckeds.length);
+    getDataCentinela();
+   });
+
+
+   const getDataCentinela = async () => {
+    if(contacts.length == 0 ) {
+      const user = props.lefebvre.userId;
+      const contactsCentinela = await getContactsCentinela(user);
+      const newContactsCentinela = [];
+      contactsCentinela.data.forEach(contact => {
+      contact.checked = false;
+      newContactsCentinela.push(contact);
+      });
+      setContacts([...newContactsCentinela]);        
+    }
+   }
+
+
    const selectContact = [
         { 'Id': 'lexon', 'SelectContact': i18n.t('contacts.lexon') }, 
         { 'Id': 'centinela', 'SelectContact': i18n.t('contacts.centinela') }
     ];
-
+    
     const contactFields = { text: 'SelectContact', value: 'Id' };
 
-     useEffect(() => {
-     const numberCheckeds = contacts.filter(conatct => conatct.checked == true);
-     setNumberCheckeds(numberCheckeds.length);
-    });
+    const contactValue = 'centinela';
+
+    
+    const onChangeContacts = (e) => {
+      console.log(e.value);
+    }
 
     const filterContact = (e) => {
       setFilter(e.target.value);
@@ -79,9 +87,7 @@ const Contacts = (props) => {
                   className={style['select-contact']} 
                   dataSource={selectContact} 
                   fields={contactFields} 
-                  change={ event => {
-                    setContact(event.value)
-                  }}  
+                  change={onChangeContacts}  
                   value={contactValue} 
                   popupHeight="220px" />
                 </div>

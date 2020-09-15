@@ -130,9 +130,9 @@ class MessageEditor extends Component {
         const content = this.getEditor().getContent();
         const { cc, subject } = this.props;
         const { lefebvre } = this.props;
-        // const userBranding = lefebvre.userBrandings.find(
-        //   (b) => b.app === lefebvre.userApp
-        // );
+        const userBranding = lefebvre.userBrandings.find(
+          (b) => b.app === lefebvre.userApp
+        );
   
         let reminders = [];
         switch (this.state.selectedReminderOption) {
@@ -237,7 +237,7 @@ class MessageEditor extends Component {
             expiration,
             lefebvre.userId,
             guid,
-            ''
+            userBranding.externalId
           );
         }
         //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);
@@ -391,6 +391,7 @@ class MessageEditor extends Component {
       attachments,
       subject,
       content,
+      lefebvre
     } = this.props;
 
     console.log(this.state.centinelaDownloadError);
@@ -430,6 +431,7 @@ class MessageEditor extends Component {
               autoSuggestMenuClassName={styles.autoSuggestMenu}
               getAddresses={this.props.getAddresses}
               label={i18n.t('messageEditor.to')}
+              lefebvre={lefebvre}
             />
             <HeaderAddress
               id={'cc'}
@@ -443,6 +445,7 @@ class MessageEditor extends Component {
               autoSuggestMenuClassName={styles.autoSuggestMenu}
               getAddresses={this.props.getAddresses}
               label={t('messageEditor.cc')}
+              lefebvre={lefebvre}
             />
             <div className={styles.subject}>
               <input

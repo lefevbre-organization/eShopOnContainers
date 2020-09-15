@@ -43,7 +43,7 @@ export class HeaderAddress extends Component {
     const {
       id,
       className, chipClassName, autoSuggestClassName, autoSuggestMenuClassName,
-      label, addresses, onAddressRemove
+      label, addresses, onAddressRemove, lefebvre
     } = this.props;
     const { suggestions, value } = this.state;
     return (
@@ -104,6 +104,7 @@ export class HeaderAddress extends Component {
             id={id}
             onAddressAdd={this.props.onAddressAdd}
             dialogClose={this.dialogClose}
+            lefebvre={lefebvre}
           />
          
         </DialogComponent>
