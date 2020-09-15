@@ -59,7 +59,8 @@
     "unread": "Marcar como no leído",
     "read": "Marcar como leído",
     "reply-all": "Responder a todos",
-    "delete-permanently": "Eliminar definitivamente"
+    "delete-permanently": "Eliminar definitivamente",
+    "empty-trash": "Vaciar la papelera"
   },
   "message-footer": {
     "messages": "Mensajes"
