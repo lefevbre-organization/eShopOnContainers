@@ -125,11 +125,15 @@ namespace Signature.API.Infrastructure.Services
             request.AddParameter("branding_id", signatureInfo.brandingId);
             //request.AddParameter("reminders", signatureInfo.reminders);
             //request.AddParameter("reminders", $"{String.Join(",", signatureInfo.reminders.Select(p => p.ToString()).ToArray())}");
-            foreach (var reminder in signatureInfo.reminders)
+            if (signatureInfo.reminders != null && signatureInfo.reminders.Length > 0)
             {
-                request.AddParameter($"reminders[{i}]", reminder);
-                i += 1;
+                foreach (var reminder in signatureInfo.reminders)
+                {
+                    request.AddParameter($"reminders[{i}]", reminder);
+                    i += 1;
+                }
             }
+            
             request.AddParameter("expire_time", signatureInfo.expiration);
             request.AddParameter("callback_url", _settings.Value.CallBackUrl.ToString());
 
