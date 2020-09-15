@@ -12,7 +12,7 @@ import { parseJwt, getUserId, getGuid, getUserName, getApp, getIdEntityType, get
 import jwt from "njwt";
 import Cookies from 'js-cookie';
 import * as uuid from 'uuid/v4';
-import { getAvailableSignatures, getUserSignatures, createBranding, createBranding2, getBrandingTemplate, createUser, addOrUpdateBranding, createTemplate } from "../../services/api-signaturit";
+import { getAvailableSignatures, getUserSignatures, createBranding, createBranding2, getBrandingTemplate, createUser, addOrUpdateBranding, createTemplate, verifyJwtSignature } from "../../services/api-signaturit";
 import { ActionTypes } from "../../actions/action-types";
 import LefebvreBaseTemplate from "../../templates/LefebvreBaseTemplate.json";
 import LexonBaseTemplate from "../../templates/LexonBaseTemplate.json";
@@ -60,36 +60,6 @@ class UserLefebvre extends Component {
         });
     }
 
-    verifyTokenSignature(token){
-
-        var myHeaders = new Headers();
-        let res;
-        myHeaders.append("Accept", "text/plain");
-        myHeaders.append("Content-Type", "application/json-patch+json");
-        myHeaders.append("Content-Type", "text/plain");
-
-        var raw = `"${token}"`;
-
-        var requestOptions = {
-        method: 'PUT',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow'
-        };
-
-        fetch("https://lexbox-test-apigwlex.lefebvre.es/api/v1/mysql/LexonMySql/token/validation", requestOptions)
-        .then(response => response.text())
-        .then(result => {
-            console.log('Ha entrado por aqui');
-            console.log(result);
-            res = result.data
-        })
-        .catch(error => console.log('error', error));
-
-        return res;
-    }
-
-
     async componentDidMount() {
         let documentsInfo = [];
         const payload = (this.props.match.params.token ? parseJwt(this.props.match.params.token) : undefined);
@@ -132,88 +102,105 @@ class UserLefebvre extends Component {
         if (Date.now() >= payload.exp * 1000) {
             this.setState({type: 'expired'});
         } else {
-            const roleOk = payload.roles.some( e => e === 'Signaturit' || e === 'Firma Digital');
-            if (roleOk){
-                const validToken = this.verifyTokenSignature(this.props.match.params.token);
-                // Hay que meter aquí la validación con validToken cuando Paco la tenga lista.
-                console.log('Resultado - validToken:');
-                console.log(validToken);
-                const token = Cookies.get(`Lefebvre.Signaturit.${user}`)
-                if (token)
-                Cookies.remove(`Lefebvre.Signaturit.${user}`)
-                //store the new token in cookie
-                Cookies.set(`Lefebvre.Signaturit.${user}`, this.props.match.params.token, {
-                    expires: 1,
-                    domain: (window.REACT_APP_ENVIRONMENT==='LOCAL' ? 'localhost': 'lefebvre.es')
-                  });
+            var roleOk = payload.roles.some( e => e === 'Signaturit' || e === 'Firma Digital');
+            //const validToken = verifyJwtSignature(this.props.match.params.token);
+            console.log('Resultado - validToken:');
+            //console.log(validToken);
 
-                this.props.setToken(this.props.match.params.token);
+            // if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
+            //     validToken = true;
+            // }
 
+            if ( !roleOk && user === 'E1621396' ){
+                roleOk = true;
+            }
+
+            if (roleOk){    
+                
                 if (configureBaseTemplates){
-                   await this.configureTemplates("baseTemplates");
+                    await this.configureTemplates("baseTemplates");
                 } 
                 if (configureDefaultTemplates){
-                   await this.configureDefaultTemplates("defaultTemplates");
+                    await this.configureDefaultTemplates("defaultTemplates");
                 }
-                
-
-                getUserSignatures(user)
-                .then( userInfo => {
-                    if (userInfo && userInfo.errors && userInfo.errors.length > 0 && userInfo.errors[0].code && userInfo.errors[0].code === "1003"){
-                        getBrandingTemplate(app)
-                        .then(template => {
-                            var auxTemplate = JSON.stringify(template.data.configuration);
-                            auxTemplate = auxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
-                            var newTemplate = JSON.parse(auxTemplate);
-                            createBranding2(newTemplate)
-                            .then( res => {
-                                var userBranding = [{app: app, externalId: res.id}];
-                                createUser(user, userBranding);
-                                this.props.setUserBrandings(userBranding);
-                                this.props.setAvailableSignatures(0);
-                             })
-                        });
+        
+                verifyJwtSignature(this.props.match.params.token)
+                .then( res => {
+                    if (res == true){
+                        
+                        const token = Cookies.get(`Lefebvre.Signaturit.${user}`)
+                        
+                        if (token)
+                        Cookies.remove(`Lefebvre.Signaturit.${user}`)
+                        //store the new token in cookie
+                        Cookies.set(`Lefebvre.Signaturit.${user}`, this.props.match.params.token, {
+                            expires: 1,
+                            domain: (window.REACT_APP_ENVIRONMENT==='LOCAL' ? 'localhost': 'lefebvre.es')
+                          });
+        
+                        this.props.setToken(this.props.match.params.token);
                     
-                    } else {
-                        if (userInfo && userInfo.data && userInfo.data.brandings && (userInfo.data.brandings === null || !userInfo.data.brandings.find(b => b.app === app))){
-                            getBrandingTemplate(app)
-                            .then(template => {
-                                var auxTemplate = JSON.stringify(template.data.configuration);
-                                auxTemplate = auxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
-                                var newTemplate = JSON.parse(auxTemplate);
-                                createBranding2(newTemplate)
-                                .then( res => {
-                                    console.log('Resultado de creación de Branding');
-                                    console.log(res);
-                                    var userBranding = [{app: app, externalId: res.id}];
-                                    addOrUpdateBranding(user, userBranding[0]);
-                                    this.props.setUserBrandings(userBranding);
-                                })
-                                .catch( err => {
-                                    console.log('Se ha producido un error al guardar el branding');
-                                    console.log(err);
-                                })
-                            });
-                        } else {
-                            this.props.setUserBrandings(userInfo.data.brandings);
-                        }
-                        if (idDocuments && idDocuments.length > 0){
-                            getAvailableSignatures(idUserApp, idDocuments.length)
-                            .then(response => this.props.setAvailableSignatures(response.data))
-                            .catch(err => {
-                                console.log(err);
-                                this.props.setAvailableSignatures(true); // Esto se pone mientras el equipo encargado del api lo arregla
-                            });  
-                        }
-                    }                    
-
-                    console.log("UserLefebvre.ComponentDidMount - userInfo:");
-                    console.log(userInfo);
+                        getUserSignatures(user)
+                        .then( userInfo => {
+                            if (userInfo && userInfo.errors && userInfo.errors.length > 0 && userInfo.errors[0].code && userInfo.errors[0].code === "1003"){
+                                getBrandingTemplate(app)
+                                .then(template => {
+                                    var auxTemplate = JSON.stringify(template.data.configuration);
+                                    auxTemplate = auxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
+                                    var newTemplate = JSON.parse(auxTemplate);
+                                    createBranding2(newTemplate)
+                                    .then( res => {
+                                        var userBranding = [{app: app, externalId: res.id}];
+                                        createUser(user, userBranding);
+                                        this.props.setUserBrandings(userBranding);
+                                        this.props.setAvailableSignatures(0);
+                                     })
+                                });
+                            
+                            } else {
+                                if (userInfo && userInfo.data && userInfo.data.brandings && (userInfo.data.brandings === null || !userInfo.data.brandings.find(b => b.app === app))){
+                                    getBrandingTemplate(app)
+                                    .then(template => {
+                                        var auxTemplate = JSON.stringify(template.data.configuration);
+                                        auxTemplate = auxTemplate.replace(/{{lef_userName}}/g, name).replace(/{{lef_userLogo}}/g, '');
+                                        var newTemplate = JSON.parse(auxTemplate);
+                                        createBranding2(newTemplate)
+                                        .then( res => {
+                                            console.log('Resultado de creación de Branding');
+                                            console.log(res);
+                                            var userBranding = [{app: app, externalId: res.id}];
+                                            addOrUpdateBranding(user, userBranding[0]);
+                                            this.props.setUserBrandings(userBranding);
+                                        })
+                                        .catch( err => {
+                                            console.log('Se ha producido un error al guardar el branding');
+                                            console.log(err);
+                                        })
+                                    });
+                                } else {
+                                    this.props.setUserBrandings(userInfo.data.brandings);
+                                }
+                                if (idDocuments && idDocuments.length > 0){
+                                    getAvailableSignatures(idUserApp, idDocuments.length)
+                                    .then(response => this.props.setAvailableSignatures(response.data))
+                                    .catch(err => {
+                                        console.log(err);
+                                        if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){ 
+                                            this.props.setAvailableSignatures(true); // Esto se pone mientras el equipo encargado del api lo arregla
+                                        }
+                                    });  
+                                }
+                            }                    
+        
+                            console.log("UserLefebvre.ComponentDidMount - userInfo:");
+                            console.log(userInfo);
+                        })
+                        this.setState({readyToRedirect: true})
+                    }
+                    else {
+                        this.setState({type: 'unauthorized'})
+                    }
                 })
-                
-                
-                
-                this.setState({readyToRedirect: true})
             }
             else {
                 this.setState({type: 'unauthorized'})

@@ -144,6 +144,7 @@ class FolderContainer extends Component {
                                        cssClass={'folder-tree'}
                                        delayUpdate={true}
                                        loadOnDemand={false}
+                                       dragArea={".main"}
                                        nodeExpanded={this.onNodeExpanded}
                                        nodeCollapsed={this.onNodeCollapsed}
                                        nodeTemplate={this.nodeTemplate}
@@ -246,6 +247,11 @@ class FolderContainer extends Component {
     }
 
     nodeDragging(event) {
+        if(event.droppedNode === null) {
+            event.cancel = true;
+            event.dropIndicator = 'e-no-drop';
+            return;
+        }
         if(event.draggedNodeData.isFolder && event.droppedNode && event.droppedNode.getElementsByClassName('message-row-item') && event.droppedNode.getElementsByClassName('message-row-item').length > 0) {
             event.cancel = true;
             event.dropIndicator = 'e-no-drop';
@@ -263,6 +269,11 @@ class FolderContainer extends Component {
             event.cancel = true;
             event.dropIndicator = 'e-no-drop';
             return;
+        }
+
+        if(event.draggedNodeData.isFolder && event.droppedNode === null) {
+            event.cancel = true;
+            event.dropIndicator = 'e-no-drop';
         }
     }
 

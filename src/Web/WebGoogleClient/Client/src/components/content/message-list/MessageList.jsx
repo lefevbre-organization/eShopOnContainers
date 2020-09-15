@@ -190,7 +190,12 @@ export class MessageList extends Component {
   }
 
   nodeDragging(evt) {
-    if(evt.draggedNodeData.isFolder) {
+    if(this.state.showCheckbox) {
+      this.setState({showCheckbox: false});
+    }
+    evt.draggedNodeData.isMessage = true;
+
+    if(evt.draggedNodeData.isFolder || !evt.droppedNode) {
       evt.dropIndicator = 'e-no-drop';
       return;
     }
@@ -198,9 +203,10 @@ export class MessageList extends Component {
       evt.dropIndicator = 'e-no-drop';
       return;
     }
-    evt.draggedNodeData.isMessage = true;
-    if(this.state.showCheckbox) {
-      this.setState({showCheckbox: false});
+
+    if(evt.droppedNodeData.text === this.props.t('sidebar.more')) {
+      evt.dropIndicator = 'e-no-drop';
+      return;
     }
   }
 
@@ -211,6 +217,8 @@ export class MessageList extends Component {
   }
 
   nodeDragStop(evt) {
+    this.setState({showCheckbox: true});
+
     if(evt.draggedNodeData.isFolder && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
       alert("Folder")
       evt.cancel = true;
@@ -235,8 +243,6 @@ export class MessageList extends Component {
       })
       evt.cancel = true;
     }
-
-    this.setState({showCheckbox: true});
   }
 
   modifyMessage(id, addLabelIds, removeLabelIds) {
@@ -271,12 +277,13 @@ export class MessageList extends Component {
                 showCheckBox={this.state.showCheckbox}
                 allowMultiSelection={true}
                 fullRowSelected={true}
+                dragArea={".main"}
                 nodeDragging={this.nodeDragging.bind(this)}
+                nodeDragStop={this.nodeDragStop.bind(this)}
                 nodeDropped={this.onDropNode.bind(this)}
                 nodeChecked={this.onSelectionChange}
                 nodeSelected={this.showMessage}
                 nodeTemplate={this.renderMessage}
-                nodeDragStop={this.nodeDragStop.bind(this)}
                 allowDragAndDrop={true}
                 cssClass={'message-list'}
             >

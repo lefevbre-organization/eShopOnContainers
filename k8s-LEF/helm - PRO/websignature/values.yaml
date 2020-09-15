@@ -38,7 +38,7 @@ env:
       # values define environment variables with a fixed value (no configmap involved) (name is name of var, and value is its value)
   values:
     - name: ASPNETCORE_ENVIRONMENT
-      value: Development
+      value: Production
     - name: OrchestratorType
       value: 'K8S'
     - name: IsClusterEnv
@@ -53,4 +53,5 @@ configValues: |
   window.LEGAL_WARNING_URL = 'https://lefebvre.es/aviso-legal'
   window.URL_GET_ACCOUNTS = 'https://lexbox-apigwacc.lefebvre.es/api/v2/accounts/usermail'
   window.URL_GET_USER = 'https://lexbox-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login'
+  window.POLLING_INTERVAL = 45000
   window.RELEASE = 'RC 0.29'

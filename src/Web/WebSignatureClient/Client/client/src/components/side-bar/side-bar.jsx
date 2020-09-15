@@ -232,9 +232,11 @@ class SideBar extends Component {
         //alert('Ha agotado todas sus solicitudes de firma. Debe comprar más');
         this.setState({ hideAlertDialog: true });
         // Lo pongo para poder probar siempre aunque devuelva false, luego hay que quitar las tres líneas que siguen este comentario.
-        this.props.setAvailableSignatures(response.data);
-        this.props.setTitle(t('messageEditor.title'));
-        this.props.newMessage(lefebvre.sign);
+        if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
+          this.props.setAvailableSignatures(response.data);
+          this.props.setTitle(t('messageEditor.title'));
+          this.props.newMessage(lefebvre.sign);
+        }
       } else {
         this.props.setAvailableSignatures(response.data);
         this.props.setTitle(t('messageEditor.title'));
@@ -247,8 +249,10 @@ class SideBar extends Component {
         //alert('No se ha podido comprobar si tiene firmas disponibles');
         this.setState({ hideAlertDialog: true });
         // this.props.setAvailableSignatures(1);
-        this.props.newMessage(lefebvre.sign);
-        this.props.setTitle(t('messageEditor.title'));
+        if (window.REACT_APP_ENVIRONMENT === 'PREPRODUCTION' || window.REACT_APP_ENVIRONMENT === 'LOCAL'){
+          this.props.newMessage(lefebvre.sign);
+          this.props.setTitle(t('messageEditor.title'));
+        }
       }
     })
   }
