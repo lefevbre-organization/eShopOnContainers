@@ -251,6 +251,11 @@ class FolderContainer extends Component {
             event.dropIndicator = 'e-no-drop';
             return;
         }
+        if(event.draggedNodeData.isFolder && event.droppedNode === null) {
+            event.cancel = true;
+            event.dropIndicator = 'e-no-drop';
+            return;
+        }
         if(event.dropIndicator === 'e-drop-next') {
             event.cancel = true;
             event.dropIndicator = 'e-no-drop';
@@ -263,6 +268,11 @@ class FolderContainer extends Component {
             event.cancel = true;
             event.dropIndicator = 'e-no-drop';
             return;
+        }
+
+        if(event.draggedNodeData.isFolder && event.droppedNode === null) {
+            event.cancel = true;
+            event.dropIndicator = 'e-no-drop';
         }
     }
 

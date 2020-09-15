@@ -256,6 +256,12 @@ class FolderContainer extends Component {
         if(event.draggedNodeData.isFolder && event.droppedNode && event.droppedNode.getElementsByClassName('message-row-item') && event.droppedNode.getElementsByClassName('message-row-item').length > 0) {
             event.cancel = true;
             event.dropIndicator = 'e-no-drop';
+            return;
+        }
+
+        if(event.draggedNodeData.isFolder && event.droppedNode === null) {
+            event.cancel = true;
+            event.dropIndicator = 'e-no-drop';
         }
     }
 
