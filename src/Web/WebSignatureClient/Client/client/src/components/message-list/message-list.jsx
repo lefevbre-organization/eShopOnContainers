@@ -458,7 +458,7 @@ class MessageList extends Component {
                 if (i === signersInfo.length -1 ){
                     recipientsList.push(
                         {
-                            text: signer.name,
+                            text: (signer.name === '') ? signer.email.split('@')[0] : signer.name,
                             cssClass: 'test'
                         },
                         {
@@ -468,7 +468,7 @@ class MessageList extends Component {
                 } else {
                     recipientsList.push(
                         {
-                            text: signer.name,
+                            text: (signer.name === '') ? signer.email.split('@')[0] : signer.name,
                             cssClass: 'test'
                         },
                         {
