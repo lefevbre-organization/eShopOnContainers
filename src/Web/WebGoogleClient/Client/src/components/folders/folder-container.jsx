@@ -150,14 +150,15 @@ class FolderContainer extends Component {
                                                duration: 0
                                            }
                                        }}
+                                       dragArea={".main"}
                                        nodeDropped={this.onDropNode}
                                        nodeDragStop={this.onDragStop.bind(this)}
                                        nodeDragStart={this.onDragStart}
+                                       nodeDragging={this.nodeDragging.bind(this)}
                                        nodeExpanded={this.onNodeExpanded}
                                        nodeCollapsed={this.onNodeCollapsed}
                                        nodeTemplate={this.nodeTemplate}
                                        nodeClicked={this.onNodeClicked}
-                                       nodeDragging={this.nodeDragging.bind(this)}
 
                     >
                     </TreeViewComponent>
@@ -246,6 +247,11 @@ class FolderContainer extends Component {
     }
 
     async nodeDragging(event) {
+        if(event.droppedNode === null) {
+            event.cancel = true;
+            event.dropIndicator = 'e-no-drop';
+            return;
+        }
         if(event.draggedNodeData.isFolder && event.droppedNode && event.droppedNode.getElementsByClassName('message-row-item') && event.droppedNode.getElementsByClassName('message-row-item').length > 0) {
             event.cancel = true;
             event.dropIndicator = 'e-no-drop';
@@ -257,11 +263,6 @@ class FolderContainer extends Component {
             event.cancel = true;
             event.dropIndicator = 'e-no-drop';
             return;
-        }
-
-        if(event.draggedNodeData.isFolder && event.droppedNode === null) {
-            event.cancel = true;
-            event.dropIndicator = 'e-no-drop';
         }
     }
 
@@ -276,33 +277,32 @@ class FolderContainer extends Component {
     }
 
     async onDropNode(event) {
-        debugger
-        const { droppedNodeData, draggedNodeData, dropLevel } = event;
-        if(event.draggedNodeData.isMessage) {
-            event.cancel = true;
-            return;
-        } else {
-            if(dropLevel <= 1) {
-                // Moving folder to parent;
-                const newName =  this.getNodeName(draggedNodeData.node.name, true);       //`${draggedNodeData.text}`
-                await updateLabelName(draggedNodeData.id, newName);
-
-                if(draggedNodeData.node.hasChild === true) {
-                    await this.renameChilds(draggedNodeData.node.name, newName);
-                }
-                return;
-            }
-
-            for(let i = 0; i < this.props.folderTree.length; i++) {
-                if(this.props.folderTree[i].id === droppedNodeData.id) {
-                    const newName = `${this.props.folderTree[i].name}/${this.getNodeName(draggedNodeData.node.name, true)}`
-                    await updateLabelName(draggedNodeData.id, newName);
-                    if(draggedNodeData.node.hasChild === true) {
-                        await this.renameChilds(draggedNodeData.node.name, newName);
-                    }
-                }
-            }
-        }
+        // const { droppedNodeData, draggedNodeData, dropLevel } = event;
+        // if(event.draggedNodeData.isMessage) {
+        //     event.cancel = true;
+        //     return;
+        // } else {
+        //     if(dropLevel <= 1) {
+        //         // Moving folder to parent;
+        //         const newName =  this.getNodeName(draggedNodeData.node.name, true);       //`${draggedNodeData.text}`
+        //         await updateLabelName(draggedNodeData.id, newName);
+        //
+        //         if(draggedNodeData.node.hasChild === true) {
+        //             await this.renameChilds(draggedNodeData.node.name, newName);
+        //         }
+        //         return;
+        //     }
+        //
+        //     for(let i = 0; i < this.props.folderTree.length; i++) {
+        //         if(this.props.folderTree[i].id === droppedNodeData.id) {
+        //             const newName = `${this.props.folderTree[i].name}/${this.getNodeName(draggedNodeData.node.name, true)}`
+        //             await updateLabelName(draggedNodeData.id, newName);
+        //             if(draggedNodeData.node.hasChild === true) {
+        //                 await this.renameChilds(draggedNodeData.node.name, newName);
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     async renameChilds(oldName, newName) {
