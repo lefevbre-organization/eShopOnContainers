@@ -59,7 +59,8 @@
     "read": "Mark as read",
     "unread": "Mark as unread",
     "reply-all": "Reply to all",
-    "delete-permanently": "Delete permanently"
+    "delete-permanently": "Delete permanently",
+    "empty-trash": "Empty trash"
   },
   "message-footer": {
     "messages": "Messages"

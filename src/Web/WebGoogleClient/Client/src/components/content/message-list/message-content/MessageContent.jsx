@@ -6,6 +6,7 @@ import {
   getEmailMessage,
   getEmailHeaderMessage,
   modifyMessages,
+  deleteMessages,
   toggleSelected,
   clearListMessages,
   setOpenMessage,
@@ -428,7 +429,18 @@ export class MessageContent extends Component {
       ...(addLabelIds && { addLabelIds }),
       ...(removeLabelIds && { removeLabelIds }),
     };
-    this.props.modifyMessages({ ids: [id], ...actionParams });
+
+    if(this.props.selectedFolderId === "TRASH" && addLabelIds[0] === "TRASH") {
+      if (this.props.onDeletedMessages && addLabelIds.indexOf('TRASH') > -1) {
+        this.props.onDeletedMessages(
+            this.props.messagesResult.messages.filter((el) => el.selected)
+        );
+      }
+      this.props.deleteMessages({ ids: [id] });
+    } else {
+      this.props.modifyMessages({ ids: [id], ...actionParams });
+    }
+
     this.renderInbox();
   }
 
@@ -441,6 +453,7 @@ export class MessageContent extends Component {
     return (
       <React.Fragment>
         <MessageToolbar
+          label={this.props.selectedFolderId}
           sideBarCollapsed={this.props.sideBarCollapsed}
           sideBarToggle={this.props.sideBarToggle}
           history={this.props.history}
@@ -484,6 +497,7 @@ const mapStateToProps = (state) => ({
   emailMessageResult: state.emailMessageResult,
   emailHeaderMessageResult: state.emailHeaderMessageResult,
   selectedMessages: state.messageList.selectedMessages,
+  selectedFolderId: state.messagesResult.label.result.id,
   selectedFolder: state.messagesResult.label
     ? state.messagesResult.label.result.name
     : '',
@@ -497,6 +511,7 @@ const mapDispatchToProps = (dispatch) =>
       getEmailMessage,
       getEmailHeaderMessage,
       modifyMessages,
+      deleteMessages,
       clearListMessages,
       setOpenMessage,
       addOpenMessageAttachment,
