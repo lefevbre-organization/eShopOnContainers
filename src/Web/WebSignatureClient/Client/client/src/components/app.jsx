@@ -616,7 +616,7 @@ class App extends Component {
     var self = this;
     //Starting poll to update the inbox automatically
     //this.startPoll();
-    setInterval(this.startPoll.bind(this), 15000);
+    setInterval(this.startPoll.bind(this), window.POLLING_INTERVAL);
     //this.startPoll.bind(this);
     //adding connector App to right slide panel
     //setTimeout(function () { this.registerConnectorApp(); }, 2200);
@@ -728,157 +728,6 @@ class App extends Component {
       }
     })
     .catch(err => { throw new Error(err);} );
-
-
-
-
-    // if (userId !== null && email !== null) {
-    //   const userAux = await getUser(userId);
-
-    //   let sign = '';
-    //   const ac = userAux.data.accounts.filter(a => a.email === email);
-    //   if (ac.length >= 1) {
-    //     sign = ac[0].sign;
-    //   }
-
-    //   const GUID = uuid();
-    //   const newAccount = {
-    //     provider: PROVIDER,
-    //     email: email,
-    //     guid: GUID,
-    //     defaultAccount: true,
-    //     sign,
-    //     configAccount: {
-    //       imap: serverHost,
-    //       imapPort: serverPort,
-    //       imapUser: user,
-    //       imapPass: password,
-    //       imapSsl: imapSsl,
-    //       smtp: smtpHost,
-    //       smtpPort: smtpPort,
-    //       smtpSsl: smtpSsl,
-    //       smtpTls: smtpTls
-    //     }
-    //   };
-      // if (!newAccount.configAccount.imapPass) {
-      //   delete newAccount.configAccount;
-      // }
-      
-      // addOrUpdateAccount(userId, newAccount)
-      //   .then(() => {
-      //     this.setState({ isUpdatedDefaultAccount: true });
-      //     Cookies.set(`Lefebvre.DefaultAccount.${userId}`, GUID, {
-      //       domain: 'lefebvre.es'
-      //     });
-      //     this.props.setGUID(GUID);
-      //     this.props.setSign(sign);
-      //   })
-      //   .catch(error => {
-      //     console.log('error =>', error);
-      //   });
-      // if (
-      //   idCaseFile !== null &&
-      //   idCaseFile !== undefined &&
-      //   idEmail == undefined
-      // ) {
-      //   this.props.newMessage([], sign);
-      //   this.onSetSidebarOpenLexon(true);
-      // } else if (mailContacts) {
-      //   this.props.newMessage(mailContacts.split(','), sign);
-      //   this.onSetSidebarOpenLexon(true);
-      // } else if (idEmail) {
-      //   console.log('**************** Ha llegado un id de email');
-      //   console.log(this.state);
-      //   console.log(this.props);
-
-      //   if (Object.entries(this.props.folders.explodedItems).length > 0) {
-      //     var folderIdentifier = undefined;
-      //     var targetFolder = undefined;
-      //     const explodedItems = Object.entries(
-      //       this.props.folders.explodedItems
-      //     );
-
-      //     explodedItems.some(folder => {
-      //       if (folder[1].fullName.toUpperCase() === idFolder.toUpperCase()) {
-      //         console.log('*************** FOLDER FOUND');
-      //         targetFolder = folder[1];
-      //         folderIdentifier = folder[0];
-      //         console.log('*************** FOLDER ID: ' + folderIdentifier);
-      //       }
-      //       return folder[1].fullName.toUpperCase() === idFolder.toUpperCase();
-      //     });
-
-      //     if (targetFolder) {
-      //       this.props.selectFolder(targetFolder);
-      //       this.sleep(500).then(() => {
-      //         const messages = Array.from(
-      //           this.props.messages.cache[
-      //             this.props.application.selectedFolderId
-      //           ].values()
-      //         );
-      //         const message = messages.find(e => e.messageId === idEmail);
-      //         console.log({ messages });
-
-      //         if (message) {
-      //           console.log(
-      //             '**************************** MESSAGE FOUND:' + message.uid
-      //           );
-      //           if (
-      //             this.props.application.newMessage &&
-      //             Object.keys(this.props.application.newMessage).length > 0
-      //           ) {
-      //             this.props.close();
-      //           }
-      //           this.props.messageClicked(message);
-      //           this.props.setEmailShown(true);
-      //           this.onSetSidebarOpenLexon(true);
-      //         } else {
-      //           this.onSetSidebarOpenLexon(true);
-      //           this.renderNotFoundModal();
-      //           //window.alert("No se ha encontrado el mensaje en el servidor");
-      //         }
-      //       });
-      //     } else {
-      //       //window.alert("No se ha encontrado el mensaje en el servidor");
-      //       this.onSetSidebarOpenLexon(true);
-      //       this.renderNotFoundModal();
-      //     }
-      //   }
-      // } else if (bbdd) {
-      //   this.onSetSidebarOpenLexon(true);
-      // }
-    // } else {
-    //   this.setState({ isUpdatedDefaultAccount: true });
-    // }
-
-    // window.addEventListener(
-    //   'GetUserFromLexonConnector',
-    //   this.handleGetUserFromLexonConnector
-    // );
-
-    // window.addEventListener('RemoveSelectedDocument', event => {
-    //   const messages = [event.detail].map(msg => ({
-    //     ...msg,
-    //     messageId: msg.id
-    //   }));
-    //   //this.props.setSelected(messages, false, event.detail.folder);
-
-    //   dispatchEvent(
-    //     new CustomEvent('Checkclick', {
-    //       detail: {
-    //         id: event.detail.id,
-    //         extMessageId: event.detail.id,
-    //         name: event.detail.id,
-    //         subject: event.detail.subject,
-    //         sentDateTime: event.detail.sentDateTime,
-    //         folder: event.detail.folder,
-    //         provider: 'GOOGLE',
-    //         account: this.props.lexon.account,
-    //         chkselected: false
-    //       }
-    //     })
-    //   );
-    // });
 
     console.log('ENVIRONMENT ->', window.REACT_APP_ENVIRONMENT);
   }
@@ -1016,7 +865,7 @@ class App extends Component {
         //this.props.backendRequestCompleted();
       }
   
-    }, 45000);
+    }, window.POLLING_INTERVAL);
   }
 
   /**

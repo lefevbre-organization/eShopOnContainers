@@ -115,6 +115,7 @@ namespace Signature.API.Infrastructure.Services
                 request.AddFileBytes($"files[{i}]", file.file, file.fileName);
                 i += 1;
             }
+            i = 0;
             foreach (CustomField field in signatureInfo.customFields)
             {
                 request.AddParameter($"data[{field.name}]", field.value);
@@ -123,7 +124,12 @@ namespace Signature.API.Infrastructure.Services
             request.AddParameter("body", signatureInfo.body);
             request.AddParameter("branding_id", signatureInfo.brandingId);
             //request.AddParameter("reminders", signatureInfo.reminders);
-            request.AddParameter("reminders", $"{String.Join(",", signatureInfo.reminders.Select(p => p.ToString()).ToArray())}");
+            //request.AddParameter("reminders", $"{String.Join(",", signatureInfo.reminders.Select(p => p.ToString()).ToArray())}");
+            foreach (var reminder in signatureInfo.reminders)
+            {
+                request.AddParameter($"reminders[{i}]", reminder);
+                i += 1;
+            }
             request.AddParameter("expire_time", signatureInfo.expiration);
             request.AddParameter("callback_url", _settings.Value.CallBackUrl.ToString());
 

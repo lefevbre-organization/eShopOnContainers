@@ -1,6 +1,6 @@
 export const getUser = async userId => {
   const url = `${window.URL_GET_ACCOUNTS}/${userId}`;
-  const url2 = `${window.API_GATEWAY}/api/v1/lex/Lexon/user?idUserNavision=${userId}`;
+  const url2 = `${window.API_GATEWAY_LEX}/api/v1/lex/Lexon/user?idUserNavision=${userId}`;
 
   try {
     const res = await fetch(url, { method: 'GET' });
@@ -61,7 +61,7 @@ export const classifyEmail = async (
   bbdd,
   userId
 ) => {
-  const url = `${window.API_GATEWAY}/api/v1/lex/Lexon/classifications/contacts/add`;
+  const url = `${window.API_GATEWAY_LEX}/api/v1/lex/Lexon/classifications/contacts/add`;
   const classification = {
     contactList: [...to],
     mail: {

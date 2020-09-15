@@ -27,7 +27,7 @@ function onChange() {
   
     const doubleAuth = [
       { 'Id': 'none', 'Value': 'None' },
-      { 'Id': 'sms', 'Value': 'SMS' },
+      //{ 'Id': 'sms', 'Value': 'SMS' },
       { 'Id': 'photo', 'Value': 'Photo' }
     ]
   

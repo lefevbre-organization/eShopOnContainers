@@ -130,9 +130,9 @@ class MessageEditor extends Component {
         const content = this.getEditor().getContent();
         const { cc, subject } = this.props;
         const { lefebvre } = this.props;
-        // const userBranding = lefebvre.userBrandings.find(
-        //   (b) => b.app === lefebvre.userApp
-        // );
+        const userBranding = lefebvre.userBrandings.find(
+          (b) => b.app === lefebvre.userApp
+        );
   
         let reminders = [];
         switch (this.state.selectedReminderOption) {
@@ -237,7 +237,7 @@ class MessageEditor extends Component {
             expiration,
             lefebvre.userId,
             guid,
-            ''
+            userBranding.externalId
           );
         }
         //createSignature(to, subject, content.innerHTML, document.getElementById('file-input').files[0], reminders, expiration, lefebvre.userId, guid);

@@ -17,11 +17,13 @@
     using Microsoft.AspNetCore.Mvc;
     using Signature.API.Model;
     using RestSharp;
+    using Newtonsoft.Json;
     using System.Web;
     using Microsoft.Extensions.Configuration;
     using System.Net.Http;
     using System.Net.Http.Headers;
-    
+    using Newtonsoft.Json.Linq;
+
     #endregion
 
     [Route("api/v1/Signaturit")]
@@ -30,13 +32,15 @@
     {
         private readonly IConfiguration _configuration;
         private readonly ISignaturitService _signaturitService;
+        private readonly IOptions<SignatureSettings> _settings;
         private readonly int _timeout;
 
-        public SignaturitController(IConfiguration configuration, ISignaturitService signaturitService)
+        public SignaturitController(IConfiguration configuration, ISignaturitService signaturitService, IOptions<SignatureSettings> settings)
         {
             _configuration = configuration;
             _signaturitService = signaturitService ?? throw new ArgumentNullException(nameof(signaturitService));
             _timeout = 5000;
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }
 
 
@@ -458,17 +462,26 @@
 
         private bool checkToken(string authToken)
         {
-            var client = new RestClient("https://lexbox-test-apigwlex.lefebvre.es/api/v1/LexonMySql/token/validation");
+            var client = new RestClient($"{_settings.Value.LexonApiGwUrl}/utils/Lexon/token/validation?validateCaducity=false");
             client.Timeout = 10000;
             var request = new RestRequest(Method.PUT);
             request.AddHeader("Accept", "text/plain");
             request.AddHeader("Content-Type", "application/json-patch+json");
-            request.AddHeader("Content-Type", "text/plain");
-            request.AddParameter("application/json-patch+json,text/plain", authToken, ParameterType.RequestBody);
+            //request.AddHeader("Content-Type", "text/plain");
+            request.AddParameter("application/json-patch+json,text/plain", $"\"{authToken}\"", ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);
-            Console.WriteLine(response.Content);
 
-            return true;
+            var valid = (bool)JObject.Parse(response.Content).SelectToken("$..valid");
+
+            Console.WriteLine($"TokenValid:{valid} - {authToken}");        
+
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Preproduction" ||
+            Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            {
+                return true;
+            }
+
+            return valid;
         }
     }
 }

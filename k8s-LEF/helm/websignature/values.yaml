@@ -44,7 +44,7 @@ env:
     - name: IsClusterEnv
       value: 'True'
 configValues: |
-  window.REACT_APP_ENVIRONMENT = 'PRODUCTION'
+  window.REACT_APP_ENVIRONMENT = 'PREPRODUCTION'
   window.API_SIGN_GATEWAY = 'https://lexbox-test-apigwsig.lefebvre.es/api/v1/signservice'
   window.API_UTILS_GATEWAY = 'https://lexbox-test-apigwsig.lefebvre.es/api/v1/utils'
   window.TERMS_AND_CONDITIONS_URL = 'https://lefebvre.es/aviso-legal'
@@ -53,4 +53,5 @@ configValues: |
   window.LEGAL_WARNING_URL = 'https://lefebvre.es/aviso-legal'
   window.URL_GET_ACCOUNTS = 'https://lexbox-test-apigwacc.lefebvre.es/api/v2/accounts/usermail'
   window.URL_GET_USER = 'https://lexbox-test-apigwlex.lefebvre.es/api/v1/utils/UserUtils/user/login'
+  window.POLLING_INTERVAL = 25000
   window.RELEASE = 'RC 0.31'
