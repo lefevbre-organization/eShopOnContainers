@@ -44,5 +44,6 @@
         Task<Result<AccountEvents>> UpsertAccountEvents(AccountEvents accountIn);
         Task<Result<bool>> RemoveEvent(string email, string idEvent);
         Task<Result<EventType>> AddEvent(string email, EventType eventType);
+        Task<Result<bool>> RemoveAccountEvent(string email);
     }
 }
