@@ -78,6 +78,9 @@ namespace Signature.API.Infrastructure.Services
 
         public async Task<IRestResponse> CreateSignature(CreateSignaturit signatureInfo)
         {
+            Console.WriteLine("START CreateSignature");
+            Console.WriteLine($"Call to: {_settings.Value.SignaturitApiUrl}/signatures.json");
+
             var client = new RestClient($"{_settings.Value.SignaturitApiUrl}/signatures.json");
             var i = 0;
             client.Timeout = _timeoutCreate;
@@ -148,8 +151,13 @@ namespace Signature.API.Infrastructure.Services
                 request.AddParameter("delivery_type", signatureInfo.deliveryType);
             }
 
+            Console.WriteLine($"Parameters: {String.Join(",", request.Parameters.Select(p => p.ToString()).ToArray())}");
+
             IRestResponse response = await client.ExecuteAsync(request);
-            //Console.WriteLine(response.Content);
+            
+            Console.WriteLine($"Response: {response.Content.ToString()}");
+
+            Console.WriteLine("END CreateSignature");
 
             return response;
         }

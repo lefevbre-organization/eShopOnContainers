@@ -201,6 +201,9 @@ class UserLefebvre extends Component {
                         this.setState({type: 'unauthorized'})
                     }
                 })
+                .catch(err => {
+                    this.setState({type: 'unauthorized'})
+                })
             }
             else {
                 this.setState({type: 'unauthorized'})

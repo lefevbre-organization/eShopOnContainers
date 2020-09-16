@@ -153,43 +153,17 @@
 
             try
             {
-                //var client = new RestClient("https://api.sandbox.signaturit.com/v3/signatures.json");
-                //var i = 0;
-                //client.Timeout = _timeout;
-                //var request = new RestRequest(Method.POST);
-                //request.AddHeader("Authorization", $"Bearer {_configuration.GetValue<string>("Signaturit")}");
-                //foreach (Recipient recipient in signatureInfo.recipients)
-                //{
-                //    request.AddParameter($"recipients[{i}][name]", recipient.name);
-                //    request.AddParameter($"recipients[{i}][email]", recipient.email);
-                //    i += 1;
-                //}
-                //i = 0;
-                //foreach (UserFile file in signatureInfo.files)
-                //{
-                //    request.AddFileBytes($"files[{i}]", file.file, file.fileName);
-                //}
-                //foreach (CustomField field in signatureInfo.customFields)
-                //{
-                //    request.AddParameter($"data[{field.name}]", field.value);
-                //}
-                //request.AddParameter("subject", signatureInfo.subject);
-                //request.AddParameter("body", signatureInfo.body);
-                //request.AddParameter("branding_id", signatureInfo.brandingId);
-                //request.AddParameter("reminders", signatureInfo.reminders);
-                //request.AddParameter("expire_time", signatureInfo.reminders);
-
-                //IRestResponse response = await client.ExecuteAsync(request);
-                //Console.WriteLine(response.Content);
-
                 var response = await _signaturitService.CreateSignature(signatureInfo);
                 if (response.IsSuccessful)
                 {
+                    Console.WriteLine("Response IsSuccessful");
                     return Ok(response.Content);
                 }
                 else
                 {
-                    throw new Exception(response.ErrorException.Message);
+                    Console.WriteLine("Response Error");
+                    Console.WriteLine(response.Content.ToString());
+                    throw new Exception($"{response.ErrorException.Message} - {response.Content} - {response.StatusCode}" );
                 }
             }
             catch (TimeoutException)
