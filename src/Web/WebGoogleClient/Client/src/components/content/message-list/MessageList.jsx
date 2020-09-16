@@ -240,6 +240,14 @@ export class MessageList extends Component {
               // Check all selected messages
               this.moveMessages(msgs, evt.droppedNodeData.id, lbl.id)
             }
+        } else {
+          const msg = this.props.messagesResult.messages.find( msg => msg.id === evt.draggedNodeData.id);
+          if(msg) {
+            const lbl = this.props.labels.find( lbl => lbl.name === this.props.selectedFolder);
+            if(lbl) {
+              this.moveMessages([msg.id], evt.droppedNodeData.id, lbl.id)
+            }
+          }
         }
       })
       evt.cancel = true;

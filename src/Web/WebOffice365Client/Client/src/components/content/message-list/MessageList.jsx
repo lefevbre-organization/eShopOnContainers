@@ -207,11 +207,15 @@ export class MessageList extends Component {
 
         if(msgs && msgs.length > 0) {
           this.moveMessages(msgs, evt.droppedNodeData.id, this.props.selectedFolder)
+        } else {
+          const msg = this.props.messagesResult.messages.find(msg => msg.id === evt.draggedNodeData.id);
+          if (msg) {
+            this.moveMessages([msg.id], evt.droppedNodeData.id, this.props.selectedFolder)
+          }
         }
       })
       evt.cancel = true;
     }
-
   }
 
   onDropNode(evt) {
