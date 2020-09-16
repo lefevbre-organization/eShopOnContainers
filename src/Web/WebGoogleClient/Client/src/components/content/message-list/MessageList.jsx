@@ -190,9 +190,9 @@ export class MessageList extends Component {
   }
 
   nodeDragging(evt) {
-    if(this.state.showCheckbox) {
-      this.setState({showCheckbox: false});
-    }
+    // if(this.state.showCheckbox) {
+    //   this.setState({showCheckbox: false});
+    // }
     evt.draggedNodeData.isMessage = true;
 
     if(evt.draggedNodeData.isFolder || !evt.droppedNode) {
@@ -217,7 +217,7 @@ export class MessageList extends Component {
   }
 
   nodeDragStop(evt) {
-    this.setState({showCheckbox: true});
+    //this.setState({showCheckbox: true});
 
     if(evt.draggedNodeData.isFolder && evt.droppedNode.getElementsByClassName('message-row-item') && evt.droppedNode.getElementsByClassName('message-row-item').length > 0) {
       alert("Folder")
@@ -232,11 +232,12 @@ export class MessageList extends Component {
 
     if (evt.droppedNode != null && evt.droppedNode.getElementsByClassName('tree-folder-item') && evt.droppedNode.getElementsByClassName('tree-folder-item').length > 0) {
       setTimeout(()=>{
-        const msg = this.props.messagesResult.messages.find( msg => msg.id === evt.draggedNodeData.id);
-        if(msg) {
+        const msgs = this.props.messagesResult.messages.filter( msg => msg.selected === true).map(msg => msg.id);
+        if(msgs && msgs.length > 0) {
             const lbl = this.props.labels.find( lbl => lbl.name === this.props.selectedFolder);
             if(lbl) {
-              this.moveMessage(msg.id, evt.droppedNodeData.id, lbl.id)
+              // Check all selected messages
+              this.moveMessages(msgs, evt.droppedNodeData.id, lbl.id)
             }
 
         }
@@ -247,6 +248,10 @@ export class MessageList extends Component {
 
   modifyMessage(id, addLabelIds, removeLabelIds) {
     this.props.modifyMessages({ ids: [id], addLabelIds: [addLabelIds], removeLabelIds: [removeLabelIds] });
+  }
+
+  modifyMessages(ids, addLabelIds, removeLabelIds) {
+    this.props.modifyMessages({ ids, addLabelIds: [addLabelIds], removeLabelIds: [removeLabelIds] });
   }
 
    renderMessages() {
@@ -369,10 +374,11 @@ export class MessageList extends Component {
     );
   }
 
-  moveMessage(id, destination, source) {
-    this.modifyMessage(id, destination, source);
-    this.props.removeMessageFromList(id);
-    //this.treeViewRef.current.refresh();
+  moveMessages(ids, destination, source) {
+    this.modifyMessages(ids, destination, source);
+    for(let i = 0; i < ids.length; i++) {
+      this.props.removeMessageFromList(ids[i]);
+    }
   }
 }
 

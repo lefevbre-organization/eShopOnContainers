@@ -339,16 +339,21 @@ class FolderContainer extends Component {
             }
 
             if(it.name.indexOf("/") > -1) {
-              const pid = this.searchParentNode(it, tree);
-
+              const {pid, name, parent} = this.searchParentNode(it, tree) || {pid: undefined, name: it.name, parent: ""};
               if(pid) {
                   it.pid = pid;
+                  if(name !== "") {
+                      it.name = name;
+                  }
+                  if(parent !== "") {
+                      it.parent = parent;
+                  }
               }
             }
         }
 
 
-        return  _.sortBy(tree.map( it => ({ ...it, text: this.getNodeName(it.name, it.pid)})), ['text']);
+        return  _.sortBy(tree.map( it => ({ ...it, text: this.getNodeName(it.name, it.pid, it.parent)})), ['text']);
     }
 
     showLabel(node) {
@@ -401,22 +406,31 @@ class FolderContainer extends Component {
     searchParentNode(node, tree) {
         const parts = node.name.split("/");
         if(parts.length > 1) {
-            parts.pop();
-            const parentPath = parts.join('/');
+            let name = parts.pop();
 
-            for(let i = 0; i < tree.length; i++) {
-                if(tree[i].name === parentPath) {
-                    tree[i].hasChild = true;
-                    return tree[i].id;
+            while(parts.length > 0) {
+                for (let i = 0; i < parts.length; i++) {
+                    const parentPath = parts.join('/');
+
+                    for (let i = 0; i < tree.length; i++) {
+                        if (tree[i].name === parentPath) {
+                            tree[i].hasChild = true;
+                            return {pid: tree[i].id, name, parent: parentPath};
+                        }
+                    }
                 }
+
+                name = parts.pop() + "/" + name;
             }
         }
     }
 
-    getNodeName(folderName, parent) {
+    getNodeName(folderName, parent, parentName) {
         const { t } =this.props;
+        let name = "";
+
         const parts = folderName.split("/");
-        const name = parts.pop();
+        name = parts.pop();
 
         switch(name) {
             case "INBOX":
@@ -448,6 +462,9 @@ class FolderContainer extends Component {
             case "CATEGORY_UPDATES":
                 return t('sidebar.updates');
             default:
+                if(parentName && parentName !== "") {
+                    return folderName;
+                }
                 return parent?name:folderName;
         }
     }
